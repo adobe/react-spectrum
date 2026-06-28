@@ -100,6 +100,10 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
     stroke-width: 1px;
   }
 
+  &:not([data-open]) {
+    opacity: 0;
+  }
+
   &[data-entering],
   &[data-exiting] {
     transform: var(--starting-scale) var(--origin);
@@ -446,6 +450,10 @@ Popovers also support entry and exit animations via states exposed as data attri
 .react-aria-Popover {
   transition: opacity 300ms, scale 300ms;
   transform-origin: var(--trigger-anchor-point);
+
+  &:not([data-open]) {
+    opacity: 0;
+  }
 
   &[data-entering],
   &[data-exiting] {

@@ -108,7 +108,8 @@ function CommandPaletteExample() {
         >
           <div className="sticky top-0 left-0 w-full h-(--visual-viewport-height) flex items-start sm:items-center justify-center p-4 box-border text-center">
             <Modal
-              className={({ isEntering, isExiting }) => `
+              className={({ isEntering, isExiting, isOpen }) => `
+              ${!isOpen ? 'opacity-0' : ''}
               ${isEntering ? 'animate-in zoom-in-95 ease-out duration-300' : ''}
               ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
             `}

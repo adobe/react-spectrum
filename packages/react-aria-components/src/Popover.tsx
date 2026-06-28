@@ -52,6 +52,7 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {runAfterKeyboard} from 'react-aria/private/utils/runAfterKeyboard';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsHidden} from 'react-aria/private/collections/Hidden';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -126,6 +127,12 @@ export interface PopoverRenderProps {
    */
   placement: PlacementAxis | null;
   /**
+   * Whether the popover is ready to be displayed. Use this to avoid layout shift.
+   *
+   * @selector [data-open]
+   */
+  isOpen: boolean;
+  /**
    * Whether the popover is currently entering. Use this to apply animations.
    *
    * @selector [data-entering]
@@ -173,6 +180,7 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
       children = children({
         trigger: props.trigger || null,
         placement: 'bottom',
+        isOpen: false,
         isEntering: false,
         isExiting: false,
         defaultChildren: null
@@ -223,6 +231,9 @@ function PopoverInner({
   let groupCtx = useContext(PopoverGroupContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
 
+  let [isOpen, setIsOpen] = useState(false);
+  let [isDialog, setIsDialog] = useState(false);
+
   let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover(
     {
       ...props,
@@ -237,7 +248,7 @@ function PopoverInner({
 
   let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
   // oxlint-disable-next-line react/react-compiler
-  let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
+  let isEntering = useEnterAnimation(ref, !!placement && isOpen) || props.isEntering || false;
   // oxlint-disable-next-line react/react-compiler
   let renderProps = useRenderProps({
     // oxlint-disable-next-line react/react-compiler
@@ -248,6 +259,7 @@ function PopoverInner({
       // oxlint-disable-next-line react/react-compiler
       trigger: props.trigger || null,
       placement,
+      isOpen: !!placement && isOpen,
       // oxlint-disable-next-line react/react-compiler
       isEntering,
       isExiting
@@ -258,10 +270,9 @@ function PopoverInner({
   // or a dialog is already nested inside the popover.
   // oxlint-disable-next-line react/react-compiler
   let shouldBeDialog = !props.isNonModal || props.trigger === 'SubmenuTrigger';
-  let [isDialog, setDialog] = useState(false);
   useLayoutEffect(() => {
     if (ref.current) {
-      setDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
+      setIsDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
     }
   }, [ref, shouldBeDialog]);
 
@@ -315,6 +326,10 @@ function PopoverInner({
     '--trigger-width': renderProps.style?.['--trigger-width'] || triggerWidth
   };
 
+  // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
+  // TODO: This can cause native focus scroll-into-view to abort, so we might want to do that manually?
+  useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
+
   // oxlint-disable react/react-compiler
   let overlay = (
     <dom.div
@@ -331,6 +346,7 @@ function PopoverInner({
       dir={props.dir}
       data-trigger={props.trigger}
       data-placement={placement}
+      data-open={(!!placement && isOpen) || undefined}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}>
       {/* oxlint-disable-next-line react/react-compiler */}

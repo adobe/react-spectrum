@@ -67,11 +67,11 @@ export const isAppleDevice: () => boolean = cached(function () {
 });
 
 export const isWebKit: () => boolean = cached(function () {
-  return testUserAgent(/AppleWebKit/i) && !isChrome();
+  return testUserAgent(/AppleWebKit/i) && !isChrome() && !isFirefox();
 });
 
 export const isChrome: () => boolean = cached(function () {
-  return testUserAgent(/Chrome/i);
+  return testUserAgent(/Chrome|CriOS|CrMo/i);
 });
 
 export const isAndroid: () => boolean = cached(function () {
@@ -79,5 +79,5 @@ export const isAndroid: () => boolean = cached(function () {
 });
 
 export const isFirefox: () => boolean = cached(function () {
-  return testUserAgent(/Firefox/i);
+  return testUserAgent(/(Firefox|FxiOS)/i);
 });

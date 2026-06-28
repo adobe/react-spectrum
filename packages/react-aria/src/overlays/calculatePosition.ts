@@ -337,8 +337,9 @@ function getMaxHeight(
     (position.top != null
       ? position.top
       : containerDimensions[TOTAL_SIZE.height] - (position.bottom ?? 0) - overlayHeight) -
-    (containerDimensions.scroll.top ?? 0);
-  // calculate the dimentions of the "boundingRect" which is most restrictive top/bottom of the boundaryRect and the visual view port
+    (containerDimensions.scroll.top ?? 0) +
+    (visualViewport?.offsetTop ?? 0);
+  // calculate the dimensions of the "boundingRect" which is most restrictive top/bottom of the boundaryRect and the visual view port
   let boundaryToContainerTransformOffset = isContainerDescendentOfBoundary
     ? containerOffsetWithBoundary.top
     : 0;
