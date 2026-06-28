@@ -71,8 +71,8 @@ function preventScrollStandard() {
     scrollbarWidth > 0 &&
       // Use scrollbar-gutter when supported because it also works for fixed positioned elements.
       ('scrollbarGutter' in document.documentElement.style
-        ? setStyle(document.documentElement, 'scrollbarGutter', 'stable')
-        : setStyle(document.documentElement, 'paddingRight', `${scrollbarWidth}px`)),
+        ? setStyle(document.documentElement, 'scrollbar-gutter', 'stable')
+        : setStyle(document.documentElement, 'padding-right', `${scrollbarWidth}px`)),
     setStyle(document.documentElement, 'overflow', 'hidden')
   );
 }
