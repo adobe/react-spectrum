@@ -147,7 +147,7 @@ let popover = style(
           isExiting: 4
         },
         right: {
-          default: 4,
+          default: -4,
           isOpen: 0,
           isEntering: -4,
           isExiting: -4
