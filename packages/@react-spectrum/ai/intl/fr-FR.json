@@ -1,0 +1,6 @@
+{
+  "chat.newMessage": "Nouveau message",
+  "messagefeedback.thumbDown": "Réponse incorrecte",
+  "messagefeedback.thumbUp": "Réponse correcte",
+  "responsestatus.loading": "Chargement"
+}
