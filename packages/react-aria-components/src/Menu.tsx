@@ -379,7 +379,7 @@ function MenuInner<T>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
             /* We assume the context can never change between defined and undefined. */
-            /* eslint-disable-next-line react-hooks/rules-of-hooks */
+            // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
             [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
           <SharedElementTransition>

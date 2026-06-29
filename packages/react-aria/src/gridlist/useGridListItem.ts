@@ -345,6 +345,7 @@ export function useGridListItem<T>(
   //   });
   // }
 
+  // oxlint-disable-next-line react/react-compiler
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture: keyboardNavigationBehavior === 'arrow' ? onKeyDownCapture : undefined,
@@ -362,8 +363,6 @@ export function useGridListItem<T>(
     id: getRowId(state, node.key)
   });
 
-  // TODO: guarding against selection when firing space/enter/click on a element in a row is technically not only limited to textfields so I
-  // am not making it specific to keyboardNavigationBehavior = tab, but maybe we should still?
   // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
   // is stopped. this also fixes space not working in a textfield in a tree parent row
   let baseOnKeyDown = rowProps.onKeyDown;
@@ -413,6 +412,7 @@ export function useGridListItem<T>(
   };
 
   // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
+  // oxlint-disable react/react-compiler
   return {
     rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
@@ -421,6 +421,7 @@ export function useGridListItem<T>(
     },
     ...itemStates
   };
+  // oxlint-enable react/react-compiler
 }
 
 function handleTreeExpansionKeys<T>(

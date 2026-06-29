@@ -370,6 +370,7 @@ function DialogButton({children}) {
   let [isOpen, setOpen] = React.useState(false);
   let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
+    // oxlint-disable-next-line react/react-compiler
     ref: unwrapDOMRef(ref),
     onDropActivate() {
       setOpen(true);

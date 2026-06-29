@@ -171,6 +171,10 @@ declare module 'vitest/browser' {
 }
 
 export default defineConfig({
+  define: {
+    // run in dev mode so virtualizer and other test-env shortcuts are disabled
+    'process.env.NODE_ENV': '"development"'
+  },
   plugins: [
     // @ts-expect-error
     macros.vite(), // Must be first!

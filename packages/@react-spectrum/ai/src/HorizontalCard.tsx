@@ -36,7 +36,7 @@ import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
 interface HorizontalCardRenderProps {
@@ -516,6 +516,7 @@ const Card = forwardRef(function Card(
     </Provider>
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let press = pressScale(domRef);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
@@ -676,6 +677,7 @@ export const CardPreview = forwardRef(function CardPreview(
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
     useContext(InternalCardContext);
   let domRef = useDOMRef(ref);
+  // oxlint-disable react/react-compiler
   return (
     <div
       {...filterDOMProps(props)}
@@ -690,6 +692,7 @@ export const CardPreview = forwardRef(function CardPreview(
       </div>
     </div>
   );
+  // oxlint-enable react/react-compiler
 });
 
 const collection = style({
