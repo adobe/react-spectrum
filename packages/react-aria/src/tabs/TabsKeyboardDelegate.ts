@@ -45,7 +45,12 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private isDisabled(key: Key) {
-    return this.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled;
+    let item = this.collection.getItem(key);
+    // Tabs that opt into staying focusable while disabled remain navigable.
+    if (item?.props?.allowFocusWhenDisabled) {
+      return false;
+    }
+    return this.disabledKeys.has(key) || !!item?.props?.isDisabled;
   }
 
   getFirstKey(): Key | null {
