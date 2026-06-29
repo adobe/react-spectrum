@@ -209,11 +209,15 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   ]);
 
   isDisabled = isDisabled || manager.isDisabled(key);
+  // An item may be disabled for interaction (no selection/action, `aria-disabled`) yet remain
+  // focusable, following the ARIA APG "focusability of disabled controls" pattern. In that case we
+  // keep the roving tabindex/focus wiring even though the item stays otherwise non-interactive.
+  let isFocusableWhenDisabled = isDisabled && (manager.isFocusableWhenDisabled?.(key) ?? false);
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
   // on iOS 14 doesn't try to move real DOM focus to the item anyway.
   let itemProps: SelectableItemAria['itemProps'] = {};
-  if (!shouldUseVirtualFocus && !isDisabled) {
+  if (!shouldUseVirtualFocus && (!isDisabled || isFocusableWhenDisabled)) {
     itemProps = {
       tabIndex: key === manager.focusedKey ? 0 : -1,
       onFocus(e) {
@@ -222,6 +226,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       }
     };
+    // Note: a focusable disabled item stays non-interactive. Selection/actions are suppressed via
+    // `allowsSelection`/`allowsActions` below, and native link (`<a href>`) navigation is already
+    // blocked by the unconditional link `onClick` preventDefault near the return statement (since
+    // `pressProps` is never merged for a disabled item, no router open occurs).
   } else if (isDisabled) {
     itemProps.onMouseDown = e => {
       // Prevent focus going to the body when clicking on a disabled item.
@@ -230,10 +238,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   }
 
   useEffect(() => {
-    if (isDisabled && manager.focusedKey === key) {
+    if (isDisabled && !isFocusableWhenDisabled && manager.focusedKey === key) {
       manager.setFocusedKey(null);
     }
-  }, [manager, isDisabled, key]);
+  }, [manager, isDisabled, isFocusableWhenDisabled, key]);
 
   // With checkbox selection, onAction (i.e. navigation) becomes primary, and occurs on a single click of the row.
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.

@@ -1071,6 +1071,35 @@ describe('Tree', () => {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
+    it('should support allowFocusWhenDisabled on rows (focusable but not actionable)', async () => {
+      let {getAllByRole} = render(
+        <StaticTree
+          treeProps={{
+            selectionMode: 'none',
+            disabledBehavior: 'all',
+            onAction,
+            disabledKeys: ['projects']
+          }}
+          rowProps={{allowFocusWhenDisabled: true}}
+        />
+      );
+
+      let rows = getAllByRole('row');
+      let disabledRow = rows[1];
+      // aria-disabled stays even though the row remains focusable.
+      expect(disabledRow).toHaveAttribute('aria-disabled', 'true');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      // The disabled row is reachable via keyboard navigation (not skipped).
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(disabledRow);
+
+      // But it cannot be actioned.
+      await user.keyboard('{Enter}');
+      expect(onAction).toHaveBeenCalledTimes(0);
+    });
+
     it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
       let {getAllByRole} = render(
         <StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}} />
