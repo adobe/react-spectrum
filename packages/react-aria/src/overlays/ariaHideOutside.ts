@@ -16,7 +16,10 @@ import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 
-const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
+const supportsInert =
+  typeof HTMLElement !== 'undefined' &&
+  HTMLElement.prototype != null &&
+  'inert' in HTMLElement.prototype;
 
 function isAlwaysVisibleNode(node: HTMLElement | SVGElement): boolean {
   return node.dataset.liveAnnouncer === 'true' || node.dataset.reactAriaTopLayer !== undefined;

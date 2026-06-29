@@ -914,3 +914,29 @@ describe('ariaHideOutside with shadow DOM', function () {
     });
   });
 });
+
+describe('ariaHideOutside inert feature detection', function () {
+  let originalHTMLElement = global.HTMLElement;
+
+  afterEach(function () {
+    global.HTMLElement = originalHTMLElement;
+    jest.resetModules();
+  });
+
+  it('does not throw at import time when HTMLElement.prototype is undefined', function () {
+    // Simulate bundler/SSR environments where HTMLElement is defined but its prototype is not.
+    let FakeHTMLElement = function () {};
+    FakeHTMLElement.prototype = undefined;
+    global.HTMLElement = FakeHTMLElement;
+
+    jest.resetModules();
+    expect(() => require('../../src/overlays/ariaHideOutside')).not.toThrow();
+  });
+
+  it('does not throw at import time when HTMLElement is undefined (non-DOM SSR)', function () {
+    global.HTMLElement = undefined;
+
+    jest.resetModules();
+    expect(() => require('../../src/overlays/ariaHideOutside')).not.toThrow();
+  });
+});
