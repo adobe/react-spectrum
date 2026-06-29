@@ -290,33 +290,28 @@ export function scrollIntoViewport(
   let root = document.scrollingElement || document.documentElement;
   let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
 
-  if (!isScrollPrevented) {
-    let scrollParents = getScrollParents(targetElement, true);
-    for (let scrollParent of scrollParents) {
-      if (containingElement && !isAncestor(containingElement, scrollParent as Node)) {
+  // Step 1: Walk scroll parents of the TARGET that are INSIDE the containingElement.
+  let scrollParents = getScrollParents(targetElement, true);
+  for (let scrollParent of scrollParents) {
+    if (containingElement && !isAncestor(containingElement, scrollParent as Node)) {
+      continue;
+    }
+    if (isScrollPrevented && (scrollParent === root || scrollParent === document.body)) {
+      continue;
+    }
+    if (scrollParent instanceof HTMLElement && targetElement instanceof HTMLElement) {
+      scrollIntoViewIfNeeded(scrollParent, targetElement);
+    }
+  }
+
+  // Step 2: Ensure outer scroll containers above the containingElement are also checked.
+  // Instead of skipping them, we walk them relative to the target's newly updated location.
+  if (containingElement) {
+    let outerScrollParents = getScrollParents(containingElement, true);
+    for (let scrollParent of outerScrollParents) {
+      if (isScrollPrevented && (scrollParent === root || scrollParent === document.body)) {
         continue;
       }
-
-      if (scrollParent instanceof HTMLElement && targetElement instanceof HTMLElement) {
-        scrollIntoViewIfNeeded(scrollParent, targetElement);
-      }
-    }
-
-    if (containingElement) {
-      let outerScrollParents = getScrollParents(containingElement, true);
-      for (let scrollParent of outerScrollParents) {
-        if (scrollParent instanceof HTMLElement && targetElement instanceof HTMLElement) {
-          scrollIntoViewIfNeeded(scrollParent, targetElement);
-        }
-      }
-    }
-  } else {
-    let scrollParents = getScrollParents(targetElement, true);
-    for (let scrollParent of scrollParents) {
-      if (containingElement && !isAncestor(containingElement, scrollParent as Node)) {
-        continue;
-      }
-
       if (scrollParent instanceof HTMLElement && targetElement instanceof HTMLElement) {
         scrollIntoViewIfNeeded(scrollParent, targetElement);
       }
