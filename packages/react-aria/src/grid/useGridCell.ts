@@ -257,6 +257,12 @@ export function useGridCell<T, C extends GridCollection<T>>(
   let onFocus = (e: FocusEvent) => {
     keyWhenFocused.current = node.key;
     if (getEventTarget(e) !== ref.current) {
+      // useSelectableItem only handles setting the focused key when
+      // the focused element is the gridcell itself. We also want to
+      // set the focused key when a child element receives focus.
+      // If focus is currently visible (e.g. the user is navigating with the keyboard),
+      // then skip this. We want to restore focus to the previously focused row/cell
+      // in that case since the table should act like a single tab stop.
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
       }
@@ -264,8 +270,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
     }
 
     if (focusMode === 'child') {
-      // If the cell itself is focused, verify the active element state
-      // before determining if focus needs to fallback to a child element.
+      // If the cell itself is focused, wait a frame so that focus finishes propagating
       let activeElement = getActiveElement();
       if (ref.current && isFocusWithin(ref.current) && activeElement !== ref.current) {
         return;
