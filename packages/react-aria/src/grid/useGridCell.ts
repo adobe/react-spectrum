@@ -254,28 +254,25 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
-  let onFocus = e => {
+  let onFocus = (e: FocusEvent) => {
     keyWhenFocused.current = node.key;
     if (getEventTarget(e) !== ref.current) {
-      // useSelectableItem only handles setting the focused key when
-      // the focused element is the gridcell itself. We also want to
-      // set the focused key when a child element receives focus.
-      // If focus is currently visible (e.g. the user is navigating with the keyboard),
-      // then skip this. We want to restore focus to the previously focused row/cell
-      // in that case since the table should act like a single tab stop.
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
       }
       return;
     }
 
-    // If the cell itself is focused, wait a frame so that focus finishes propagatating
-    // up to the tree, and move focus to a focusable child if possible.
-    requestAnimationFrame(() => {
-      if (focusMode === 'child' && getActiveElement() === ref.current) {
-        focus();
+    if (focusMode === 'child') {
+      // If the cell itself is focused, verify the active element state
+      // before determining if focus needs to fallback to a child element.
+      let activeElement = getActiveElement();
+      if (ref.current && isFocusWithin(ref.current) && activeElement !== ref.current) {
+        return;
       }
-    });
+
+      focus();
+    }
   };
 
   // oxlint-disable-next-line react/react-compiler

@@ -157,4 +157,36 @@ describe('useGrid', () => {
     await user.keyboard('[ArrowLeft]');
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
   });
+
+  it('should retain focus on a specific child element if focus is restored to it', async () => {
+    let tree = renderGrid({gridFocusMode: 'cell', cellFocusMode: 'child'});
+    let switches = tree.getAllByRole('switch');
+    let cells = tree.getAllByRole('gridcell');
+
+    // 1. Initially move focus onto the grid via tab flow (focuses Switch 1)
+    await user.tab();
+    expect(document.activeElement).toBe(switches[0]);
+
+    // 2. Simulate focus returning directly to the second target element (Switch 2)
+    // exactly how the focus-restoration logic inside an overlay does it.
+    act(() => {
+      switches[1].focus();
+    });
+    expect(document.activeElement).toBe(switches[1]);
+
+    // 3. Fire a focus event directly on the gridcell container to trigger your
+    // onFocus handler in useGridCell.ts and simulate event bubbling
+    act(() => {
+      cells[0].dispatchEvent(new FocusEvent('focus', {bubbles: true}));
+    });
+
+    // 4. Force Jest's timer and requestAnimationFrame microtask cycles to execute completely
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    // 5. FINAL ASSERTION: Focus should accurately stay locked onto Switch 2
+    // instead of resetting to the initial index element Switch 1!
+    expect(document.activeElement).toBe(switches[1]);
+  });
 });
