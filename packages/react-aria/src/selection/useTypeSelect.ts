@@ -52,6 +52,21 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     timeout: undefined
   });
 
+  // Resolves the key to focus for the current search string. When `advance` is true, the
+  // delegate starts the search after the focused item so each press moves to the next match;
+  // otherwise it searches inclusively from the focused item, keeping it when it still matches.
+  let getKeyForSearch = (advance: boolean): Key | null => {
+    let {search} = state.current;
+    let key = keyboardDelegate.getKeyForSearch?.(search, selectionManager.focusedKey, {advance}) ?? null;
+
+    // If no key found, search the whole list from the top so the search wraps around.
+    if (key == null) {
+      key = keyboardDelegate.getKeyForSearch?.(search) ?? null;
+    }
+
+    return key;
+  };
+
   let onKeyDownCapture = (e: KeyboardEvent) => {
     // if we're in the middle of a search, then a spacebar should be treated as a search and we should not propagate the event
     // since we handle this one in a capture phase, we should ignore it in the bubble phase
@@ -66,18 +81,8 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       state.current.search += ' ';
 
       if (keyboardDelegate.getKeyForSearch != null) {
-        // Use the delegate to find a key to focus.
-        // Prioritize items after the currently focused item, falling back to searching the whole list.
-        let key = keyboardDelegate.getKeyForSearch(
-          state.current.search,
-          selectionManager.focusedKey
-        );
-
-        // If no key found, search from the top.
-        if (key == null) {
-          key = keyboardDelegate.getKeyForSearch(state.current.search);
-        }
-
+        // A space always continues a multi-character search, so never advance past the match.
+        let key = getKeyForSearch(false);
         if (key != null) {
           selectionManager.setFocusedKey(key);
           if (onTypeSelect) {
@@ -106,17 +111,24 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       return;
     }
 
-    state.current.search += character;
+    // A fresh search, or the same single letter pressed repeatedly, searches for just that
+    // letter rather than literally accumulating "aa", "aaa", etc.
+    let isFreshSearch = state.current.search.length === 0;
+    let isRepeatedLetter =
+      !isFreshSearch && state.current.search.split('').every(c => c === character);
+    if (isFreshSearch || isRepeatedLetter) {
+      state.current.search = character;
+    } else {
+      state.current.search += character;
+    }
+
+    // A single-letter search (fresh or a repeated letter) always advances past the focused
+    // item to the next match. Only an extended multi-character search stays on the focused
+    // item when it still matches.
+    let advance = isFreshSearch || isRepeatedLetter;
 
     if (keyboardDelegate.getKeyForSearch != null) {
-      // Use the delegate to find a key to focus.
-      // Prioritize items after the currently focused item, falling back to searching the whole list.
-      let key = keyboardDelegate.getKeyForSearch(state.current.search, selectionManager.focusedKey);
-
-      if (key == null) {
-        key = keyboardDelegate.getKeyForSearch(state.current.search);
-      }
-
+      let key = getKeyForSearch(advance);
       if (key != null) {
         selectionManager.setFocusedKey(key);
         if (onTypeSelect) {
