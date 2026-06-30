@@ -122,8 +122,13 @@ export const TextArea = forwardRef(function TextArea(
       {...props}
       ref={ref}
       fieldGroupCss={style({
-        alignItems: 'baseline',
-        height: 'auto'
+        // intentionally avoid using baseline due to an issue in Chrome where an empty textarea height would jump when an overlay was open
+        alignItems: 'start',
+        height: 'auto',
+        paddingTop: {
+          // offset the hidden baseline-anchor ::before down to the textarea's first line
+          '::before': '[calc((var(--field-height) - 1lh) / 2)]'
+        }
       })}>
       <TextAreaInput />
     </TextFieldBase>
