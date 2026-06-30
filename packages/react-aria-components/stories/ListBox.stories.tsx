@@ -920,6 +920,87 @@ export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = args 
   );
 };
 
+interface AsyncVirtualizedEndKeyItem {
+  id: number;
+  name: string;
+}
+
+export const AsyncListBoxVirtualizedEndKey: StoryFn<typeof AsyncListBoxRender> = args => {
+  let list = useAsyncList<AsyncVirtualizedEndKeyItem>({
+    async load({cursor}) {
+      let page = cursor ? Number(cursor) : 0;
+      let pageSize = 25;
+      let pageCount = 12;
+      let start = page * pageSize;
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+
+      return {
+        items: Array.from({length: pageSize}, (_, index) => ({
+          id: start + index,
+          name: `Item ${start + index}`
+        })),
+        cursor: page < pageCount - 1 ? String(page + 1) : undefined
+      };
+    }
+  });
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
+      <p style={{margin: 0, maxWidth: 520}}>
+        Focus the listbox, press End, wait for more items to load, and repeat. The focused item
+        should move to the last loaded item and scroll into view after each load.
+      </p>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 50,
+          padding: 4,
+          loaderHeight: 30
+        }}>
+        <ListBox
+          {...args}
+          style={{
+            height: 400,
+            width: 160,
+            border: '1px solid gray',
+            background: 'lightgray',
+            overflow: 'auto',
+            padding: 'unset',
+            display: 'flex'
+          }}
+          aria-label="async virtualized end key issue listbox"
+          renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+          <Collection items={list.items}>
+            {item => (
+              <MyListBoxItem
+                style={{
+                  backgroundColor: 'lightgrey',
+                  border: '1px solid black',
+                  boxSizing: 'border-box',
+                  height: '100%',
+                  width: '100%'
+                }}
+                id={item.id}>
+                {item.name}
+              </MyListBoxItem>
+            )}
+          </Collection>
+          <MyListBoxLoaderIndicator
+            isLoading={list.loadingState === 'loadingMore'}
+            onLoadMore={list.loadMore}
+          />
+        </ListBox>
+      </Virtualizer>
+    </div>
+  );
+};
+
+AsyncListBoxVirtualizedEndKey.args = {
+  delay: 500,
+  orientation: 'vertical'
+};
+
 export const ListBoxScrollMargin: ListBoxStory = args => {
   let items: {id: number; name: string; description: string}[] = [];
   for (let i = 0; i < 100; i++) {
