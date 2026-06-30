@@ -1,7 +1,15 @@
 const glob = require('glob');
 const fs = require('fs');
 
-for (let dir of glob.sync('packages/**/intl')) {
+// Collect both top-level intl dirs and one level of named subdirs (e.g. intl/datepicker).
+let dirs = [...glob.sync('packages/**/intl'), ...glob.sync('packages/**/intl/*/')].map(d =>
+  d.endsWith('/') ? d.slice(0, -1) : d
+);
+
+for (let dir of dirs) {
+  if (!fs.existsSync(`${dir}/en-US.json`)) {
+    continue;
+  }
   let en = JSON.parse(fs.readFileSync(`${dir}/en-US.json`, 'utf8'));
 
   for (let file of glob.sync('*.json', {cwd: dir})) {

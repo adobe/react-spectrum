@@ -2,5 +2,6 @@
   "rangeOverflow": "Väärtus peab olema {maxValue} või varasem.",
   "rangeReversed": "Alguskuupäev peab olema enne lõppkuupäeva.",
   "rangeUnderflow": "Väärtus peab olema {minValue} või hilisem.",
-  "unavailableDate": "Valitud kuupäev pole saadaval."
+  "unavailableDate": "Valitud kuupäev pole saadaval.",
+  "incompleteValue": "Please enter a value."
 }

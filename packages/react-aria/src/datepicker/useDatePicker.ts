@@ -29,7 +29,10 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
-import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
+import {
+  privateSetIsValuePartialProp,
+  privateValidationStateProp
+} from 'react-stately/private/form/useFormValidationState';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useDescription} from '../utils/useDescription';
@@ -177,6 +180,9 @@ export function useDatePicker<T extends DateValue>(
       validationBehavior: props.validationBehavior,
       // DatePicker owns the validation state for the date field.
       [privateValidationStateProp]: state,
+      // Forwarded so the field can push its partial-edit state up into the picker's
+      // validation pipeline (so partial values invalidate even without isRequired).
+      [privateSetIsValuePartialProp]: (state as any)[privateSetIsValuePartialProp],
       autoFocus: props.autoFocus,
       name: props.name,
       form: props.form

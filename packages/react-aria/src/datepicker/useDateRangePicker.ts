@@ -33,6 +33,7 @@ import {
 import {
   DEFAULT_VALIDATION_RESULT,
   mergeValidation,
+  privateSetIsValuePartialProp,
   privateValidationStateProp
 } from 'react-stately/private/form/useFormValidationState';
 import {filterDOMProps} from '../utils/filterDOMProps';
@@ -237,7 +238,9 @@ export function useDateRangePicker<T extends DateValue>(
         },
         resetValidation: state.resetValidation,
         commitValidation: state.commitValidation
-      }
+      },
+      // Push the start field's partial-edit state up into the range's validation pipeline.
+      [privateSetIsValuePartialProp]: (state as any)[`${privateSetIsValuePartialProp}-start`]
     },
     endFieldProps: {
       ...endFieldProps,
@@ -256,7 +259,9 @@ export function useDateRangePicker<T extends DateValue>(
         },
         resetValidation: state.resetValidation,
         commitValidation: state.commitValidation
-      }
+      },
+      // Push the end field's partial-edit state up into the range's validation pipeline.
+      [privateSetIsValuePartialProp]: (state as any)[`${privateSetIsValuePartialProp}-end`]
     },
     descriptionProps,
     errorMessageProps,
