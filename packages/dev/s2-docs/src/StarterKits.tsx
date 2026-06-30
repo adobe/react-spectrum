@@ -1,5 +1,7 @@
 import {Card, Content, Link, Text} from '@react-spectrum/s2';
 import Download from '@react-spectrum/s2/icons/Download';
+import {getPlaygroundFiles} from './CodeBlock';
+import {PlaygroundLink} from './PlaygroundLink';
 import {spawnSync} from 'child_process';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -17,6 +19,7 @@ const preview = style({
 });
 
 export function StarterKits() {
+  let playgroundFiles = getPlaygroundFiles();
   return (
     <section className={style({display: 'flex', gap: 16, flexWrap: 'wrap'})}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
@@ -36,14 +39,18 @@ export function StarterKits() {
             <Download />
           </div>
         </Card>
-        <Link
-          isStandalone
-          variant="secondary"
-          href="react-aria-starter/"
-          target="_blank"
-          UNSAFE_style={{width: 'fit-content'}}>
-          Preview
-        </Link>
+        <div className={style({display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap'})}>
+          <Link
+            isStandalone
+            variant="secondary"
+            href="react-aria-starter/"
+            target="_blank"
+            UNSAFE_style={{width: 'fit-content'}}>
+            Preview
+          </Link>
+          <span aria-hidden="true">-</span>
+          <PlaygroundLink files={playgroundFiles} />
+        </div>
       </div>
       <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
         <Card href={`react-aria-tailwind-starter.${gitHash}.zip`} download>
