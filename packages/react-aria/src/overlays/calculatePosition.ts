@@ -819,7 +819,19 @@ function getContainingBlock(node: HTMLElement): Element {
     offsetParent = document.documentElement;
   }
 
-  // TODO(later): handle table elements?
+  // The offsetParent can be a <table>, <td>, or <th> even when it is statically
+  // positioned, in which case it is not actually the element's containing block.
+  // Walk up to the true offsetParent so the position resolves against the real
+  // containing block, matching the behavior of Popper and Floating UI.
+  while (
+    offsetParent &&
+    (offsetParent.tagName === 'TABLE' ||
+      offsetParent.tagName === 'TD' ||
+      offsetParent.tagName === 'TH') &&
+    window.getComputedStyle(offsetParent).position === 'static'
+  ) {
+    offsetParent = (offsetParent as HTMLElement).offsetParent;
+  }
 
   // The offsetParent can be null if the element has position: fixed, or a few other cases.
   // We have to walk up the tree manually in this case because fixed positioned elements
