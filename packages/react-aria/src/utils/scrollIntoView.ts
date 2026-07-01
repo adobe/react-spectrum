@@ -133,55 +133,176 @@ export function scrollIntoView(
 }
 
 /**
+ * Computes the visible scroll port of a scroll parent, accounting for borders,
+ * scroll-padding, and scrollbars. Returns {top, bottom, left, right}.
+ */
+function getScrollPort(scrollView: HTMLElement): {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+} {
+  let root = document.scrollingElement || document.documentElement;
+  let isRoot = scrollView === root || scrollView === document.body;
+  let viewStyle = window.getComputedStyle(scrollView);
+
+  let viewTop = 0;
+  let viewBottom = 0;
+  let viewLeft = 0;
+  let viewRight = 0;
+
+  if (isRoot) {
+    viewBottom = scrollView.clientHeight;
+    viewRight = scrollView.clientWidth;
+  } else {
+    let view = scrollView.getBoundingClientRect();
+    viewTop = view.top;
+    viewBottom = view.bottom;
+    viewLeft = view.left;
+    viewRight = view.right;
+  }
+
+  let scrollPaddingTop = parseFloat(viewStyle.scrollPaddingTop) || 0;
+  let scrollPaddingBottom = parseFloat(viewStyle.scrollPaddingBottom) || 0;
+  let scrollPaddingLeft = parseFloat(viewStyle.scrollPaddingLeft) || 0;
+  let scrollPaddingRight = parseFloat(viewStyle.scrollPaddingRight) || 0;
+
+  let borderTop = isRoot ? 0 : parseFloat(viewStyle.borderTopWidth) || 0;
+  let borderBottom = isRoot ? 0 : parseFloat(viewStyle.borderBottomWidth) || 0;
+  let borderLeft = isRoot ? 0 : parseFloat(viewStyle.borderLeftWidth) || 0;
+  let borderRight = isRoot ? 0 : parseFloat(viewStyle.borderRightWidth) || 0;
+
+  let scrollBarOffsetX = isRoot ? 0 : borderLeft + borderRight;
+  let scrollBarOffsetY = isRoot ? 0 : borderTop + borderBottom;
+  let scrollBarWidth = isRoot
+    ? 0
+    : scrollView.offsetWidth - scrollView.clientWidth - scrollBarOffsetX;
+  let scrollBarHeight = isRoot
+    ? 0
+    : scrollView.offsetHeight - scrollView.clientHeight - scrollBarOffsetY;
+
+  let portLeft = viewLeft + borderLeft + scrollPaddingLeft;
+  let portRight = viewRight - borderRight - scrollPaddingRight;
+  let portTop = viewTop + borderTop + scrollPaddingTop;
+  let portBottom = viewBottom - borderBottom - scrollPaddingBottom - scrollBarHeight;
+
+  let direction = viewStyle.direction;
+  if (direction === 'rtl' && !isIOS()) {
+    portLeft += scrollBarWidth;
+  } else {
+    portRight -= scrollBarWidth;
+  }
+
+  return {top: portTop, bottom: portBottom, left: portLeft, right: portRight};
+}
+
+/**
+ * ScrollIntoViewIfNeeded(element, scrollView):
+ * Implements the non-standard scrollIntoViewIfNeeded(false) algorithm using
+ * direct pixel-delta math — no 'nearest' or 'center' alignment keywords.
+ */
+function scrollIntoViewIfNeeded(scrollView: HTMLElement, element: HTMLElement): boolean {
+  if (scrollView === element) {
+    return false;
+  }
+
+  let itemStyle = window.getComputedStyle(element);
+  let target = element.getBoundingClientRect();
+
+  let scrollMarginTop = parseFloat(itemStyle.scrollMarginTop) || 0;
+  let scrollMarginBottom = parseFloat(itemStyle.scrollMarginBottom) || 0;
+  let scrollMarginLeft = parseFloat(itemStyle.scrollMarginLeft) || 0;
+  let scrollMarginRight = parseFloat(itemStyle.scrollMarginRight) || 0;
+
+  let areaTop = target.top - scrollMarginTop;
+  let areaBottom = target.bottom + scrollMarginBottom;
+  let areaLeft = target.left - scrollMarginLeft;
+  let areaRight = target.right + scrollMarginRight;
+
+  let port = getScrollPort(scrollView);
+
+  let isVisibleV = areaTop >= port.top && areaBottom <= port.bottom;
+  let isVisibleH = areaLeft >= port.left && areaRight <= port.right;
+  if (isVisibleV && isVisibleH) {
+    return false;
+  }
+
+  let deltaY = 0;
+  let deltaX = 0;
+
+  if (!isVisibleV) {
+    if (areaTop < port.top) {
+      deltaY = areaTop - port.top;
+    } else {
+      deltaY = areaBottom - port.bottom;
+    }
+  }
+
+  if (!isVisibleH) {
+    if (areaLeft < port.left) {
+      deltaX = areaLeft - port.left;
+    } else {
+      deltaX = areaRight - port.right;
+    }
+  }
+
+  let newScrollTop = scrollView.scrollTop + deltaY;
+  let newScrollLeft = scrollView.scrollLeft + deltaX;
+
+  if (process.env.NODE_ENV === 'test') {
+    scrollView.scrollTop = newScrollTop;
+    scrollView.scrollLeft = newScrollLeft;
+    return true;
+  }
+
+  scrollView.scrollTo({top: newScrollTop, left: newScrollLeft});
+  return true;
+}
+
+/**
+ * Returns true if `parent` is an ancestor of (or the same node as) `child`.
+ * triggered by calling methods on values derived from hook results.
+ */
+function isAncestor(parent: Element, child: Node): boolean {
+  let current: Node | null = child;
+  while (current) {
+    if (current === parent) {
+      return true;
+    }
+    current = current.parentNode;
+  }
+  return false;
+}
+
+/**
  * Scrolls the `targetElement` so it is visible in the viewport. Accepts an optional
- * `opts.containingElement` that will be centered in the viewport prior to scrolling the
- * targetElement into view. If scrolling is prevented on the body (e.g. targetElement is in a
- * popover), this will only scroll the scroll parents of the targetElement up to but not including
- * the body itself.
+ * `opts.containingElement` that is used to limit which scroll parents are considered
+ * internal to the component vs external.
  */
 export function scrollIntoViewport(
   targetElement: Element | null,
   opts: ScrollIntoViewportOpts = {}
 ): void {
   let {containingElement} = opts;
-  if (targetElement && targetElement.isConnected) {
-    let root = document.scrollingElement || document.documentElement;
-    let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
-    if (!isScrollPrevented) {
-      let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+  if (!targetElement || !targetElement.isConnected) {
+    return;
+  }
 
-      // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
-      // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically
-      targetElement?.scrollIntoView?.({block: 'nearest'});
-      let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
-      // Account for sub pixel differences from rounding
-      if (Math.abs(originalLeft - newLeft) > 1 || Math.abs(originalTop - newTop) > 1) {
-        containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
-        targetElement.scrollIntoView?.({block: 'nearest'});
-      }
-    } else {
-      let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+  let root = document.scrollingElement || document.documentElement;
+  let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
 
-      // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
-      let scrollParents = getScrollParents(targetElement, true);
-      for (let scrollParent of scrollParents) {
-        scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
-      }
-      let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
-      // Account for sub pixel differences from rounding
-      if (Math.abs(originalLeft - newLeft) > 1 || Math.abs(originalTop - newTop) > 1) {
-        scrollParents = containingElement ? getScrollParents(containingElement, true) : [];
-        // scroll containing element into view first, then rescroll target element into view like the non chrome flow above
-        for (let scrollParent of scrollParents) {
-          scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {
-            block: 'center',
-            inline: 'center'
-          });
-        }
-        for (let scrollParent of getScrollParents(targetElement, true)) {
-          scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
-        }
-      }
+  // Single pass: every scroll parent of containingElement is also a scroll parent of
+  // targetElement (containingElement is an ancestor), so one getScrollParents call covers both.
+  // Scroll parents inside containingElement are always processed; those outside skip root/body
+  // when page scroll is prevented (e.g. an overlay has overflow:hidden on the root).
+  let scrollParents = getScrollParents(targetElement, true);
+  for (let scrollParent of scrollParents) {
+    let isOuter = containingElement != null && !isAncestor(containingElement, scrollParent as Node);
+    if (isOuter && isScrollPrevented && (scrollParent === root || scrollParent === document.body)) {
+      continue;
+    }
+    if (scrollParent instanceof HTMLElement && targetElement instanceof HTMLElement) {
+      scrollIntoViewIfNeeded(scrollParent, targetElement);
     }
   }
 }
