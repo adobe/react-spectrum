@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {beginTransientCollectionFocus} from '../interactions/utils';
+
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from '../utils/constants';
 
 import {dispatchVirtualFocus, moveVirtualFocus} from '../focus/virtualFocus';
@@ -401,6 +403,7 @@ export function useSelectableCollection(
 
   let shiftTab = () => {
     if (!allowsTabNavigation && ref.current) {
+      beginTransientCollectionFocus(ref.current);
       ref.current.focus();
     }
     return {shouldContinuePropagation: true, shouldPreventDefault: false};
