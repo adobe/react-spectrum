@@ -487,6 +487,44 @@ describe('Table', () => {
     }
   );
 
+  it('should support select all with Mod+A', async () => {
+    // eslint-disable-next-line no-unused-vars
+    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+    let onSelectionChange = jest.fn();
+    renderTable({
+      tableProps: {selectionMode: 'multiple', onSelectionChange}
+    });
+    await user.tab();
+    await user.keyboard('{Meta>}a{/Meta}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+  });
+
+  it('should support select all with Mod+A (Control) on Windows', async () => {
+    // eslint-disable-next-line no-unused-vars
+    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
+    let onSelectionChange = jest.fn();
+    renderTable({
+      tableProps: {selectionMode: 'multiple', onSelectionChange}
+    });
+    await user.tab();
+    await user.keyboard('{Control>}a{/Control}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+  });
+
+  it('should not select all with Mod+A when selection mode is single', async () => {
+    // eslint-disable-next-line no-unused-vars
+    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+    let onSelectionChange = jest.fn();
+    renderTable({
+      tableProps: {selectionMode: 'single', onSelectionChange}
+    });
+    await user.tab();
+    await user.keyboard('{Meta>}a{/Meta}');
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
   it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderTable({

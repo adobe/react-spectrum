@@ -6,7 +6,7 @@
 @source "../pages/react-aria/examples/plants/*.tsx";
 @source "../pages/react-aria/examples/Tab*.tsx";
 @plugin 'tailwindcss-react-aria-components';
-@plugin 'tailwindcss-animate';
+@import 'tw-animate-css';
 @source "../../docs/pages/react-aria/home/*.tsx";
 @import '../../docs/pages/react-aria/home/home.css';
 @source "../src/SearchMenuWrapper.tsx";

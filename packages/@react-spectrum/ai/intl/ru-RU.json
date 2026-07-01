@@ -1,0 +1,6 @@
+{
+  "chat.newMessage": "Новое сообщение",
+  "messagefeedback.thumbDown": "Плохой ответ",
+  "messagefeedback.thumbUp": "Хороший ответ",
+  "responsestatus.loading": "Загрузка"
+}

@@ -5,6 +5,7 @@ import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 export default function RootDropIndicator(): JSX.Element | null {
   let {dropState, dragAndDropHooks} = useContext(ListViewContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
     {
       target: {type: 'root'}

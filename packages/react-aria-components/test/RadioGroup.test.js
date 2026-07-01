@@ -524,6 +524,7 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
                     buttonClassName: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')
                   }}
                 />
+                <Text slot="description">Alert description</Text>
                 <Button onPress={close}>Close</Button>
               </>
             )}
