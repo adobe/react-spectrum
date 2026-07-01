@@ -107,7 +107,7 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
       }
       // ...otherwise the nearest focusable row before it. (Mirrors useListState's
       // getKeyAfter/getKeyBefore walk.)
-      if (newRow == null) {
+      if (newRow === null) {
         for (let i = index - 1; i >= 0; i--) {
           if (!selectionManager.isDisabled(rows[i].key) && rows[i].type !== 'headerrow') {
             newRow = rows[i];
