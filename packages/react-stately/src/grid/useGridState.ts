@@ -98,8 +98,6 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
       );
       let newRow: GridNode<T> | null = null;
       // Find the nearest focusable row at or after the deleted position...
-      // (Math.max(0, index) keeps an empty `rows` — index === -1 — from reading
-      // rows[-1], matching the old `while (index >= 0)` no-op.)
       for (let i = Math.max(0, index); i < rows.length; i++) {
         if (!selectionManager.isDisabled(rows[i].key) && rows[i].type !== 'headerrow') {
           newRow = rows[i];
