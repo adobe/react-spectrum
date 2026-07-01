@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {columnWidthsEqual} from '../table/columnWidthCSS';
 import {DropTarget, ItemDropTarget, Key} from '@react-types/shared';
 import {getChildNodes} from '../collections/getChildNodes';
 import {GridNode} from '../grid/GridCollection';
@@ -128,7 +129,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
 
   shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
     return (
-      newOptions.columnWidths !== oldOptions.columnWidths ||
+      !columnWidthsEqual(newOptions.columnWidths, oldOptions.columnWidths) ||
       super.shouldInvalidateLayoutOptions(newOptions, oldOptions)
     );
   }
