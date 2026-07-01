@@ -19,7 +19,7 @@ import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared'
 import {FocusEvent, useCallback} from 'react';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
-import {useSyntheticBlurEvent} from './utils';
+import {shouldIgnoreTransientFocusChange, useSyntheticBlurEvent} from './utils';
 
 export interface FocusProps<Target = FocusableElement> extends FocusEvents<Target> {
   /** Whether the focus events should be disabled. */
@@ -47,7 +47,10 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(
           onBlurProp(e);
         }
 
-        if (onFocusChange) {
+        if (
+          onFocusChange &&
+          !shouldIgnoreTransientFocusChange(e.relatedTarget as Element, e.currentTarget as Element)
+        ) {
           onFocusChange(false);
         }
 
@@ -72,7 +75,12 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(
           onFocusProp(e);
         }
 
-        if (onFocusChange) {
+        let isTransientPivot = shouldIgnoreTransientFocusChange(
+          e.relatedTarget as Element,
+          e.currentTarget as Element
+        );
+
+        if (onFocusChange && !isTransientPivot) {
           onFocusChange(true);
         }
 

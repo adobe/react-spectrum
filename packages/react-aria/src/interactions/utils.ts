@@ -12,7 +12,7 @@
 
 import {FocusableElement} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
-import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerWindow} from '../utils/domHelpers';
 import {isFocusable} from '../utils/isFocusable';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
@@ -111,6 +111,71 @@ export function useSyntheticBlurEvent<Target extends Element = Element>(
 }
 
 export let ignoreFocusEvent = false;
+export let ignoreTransientFocus = false;
+
+let transientFocusRoot: HTMLElement | null = null;
+let endTransientFocusCleanup: (() => void) | null = null;
+
+/**
+ * Suppresses focus ring and focus-visible updates while focus briefly moves to a
+ * collection root during Shift+Tab exit pivot.
+ */
+export function beginTransientCollectionFocus(root: HTMLElement): void {
+  endTransientCollectionFocus();
+
+  ignoreTransientFocus = true;
+  ignoreFocusEvent = true;
+  transientFocusRoot = root;
+
+  let window = getOwnerWindow(root);
+  let onFocusIn = (e: FocusEvent) => {
+    let target = getEventTarget(e) as Element;
+    if (transientFocusRoot && !nodeContains(transientFocusRoot, target)) {
+      endTransientCollectionFocus();
+    }
+  };
+
+  window.addEventListener('focusin', onFocusIn, true);
+
+  let raf = requestAnimationFrame(() => {
+    if (ignoreTransientFocus) {
+      endTransientCollectionFocus();
+    }
+  });
+
+  endTransientFocusCleanup = () => {
+    window.removeEventListener('focusin', onFocusIn, true);
+    cancelAnimationFrame(raf);
+    endTransientFocusCleanup = null;
+  };
+}
+
+export function endTransientCollectionFocus(): void {
+  endTransientFocusCleanup?.();
+  ignoreTransientFocus = false;
+  ignoreFocusEvent = false;
+  transientFocusRoot = null;
+}
+
+/**
+ * Returns true when the collection root receives focus from a descendant during
+ * a Shift+Tab exit pivot. Focus ring updates on the root should be suppressed,
+ * but descendant blur events should still update focus state normally.
+ */
+export function shouldIgnoreTransientFocusChange(
+  relatedTarget: Element | null,
+  currentTarget: Element
+): boolean {
+  if (!ignoreTransientFocus || !transientFocusRoot) {
+    return false;
+  }
+
+  if (currentTarget === transientFocusRoot) {
+    return relatedTarget !== null && nodeContains(transientFocusRoot, relatedTarget);
+  }
+
+  return false;
+}
 
 /**
  * This function prevents the next focus event fired on `target`, without using

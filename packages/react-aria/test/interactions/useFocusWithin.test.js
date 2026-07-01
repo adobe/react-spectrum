@@ -11,7 +11,12 @@
  */
 
 import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {
+  beginTransientCollectionFocus,
+  endTransientCollectionFocus
+} from '../../src/interactions/utils';
 import React, {useState} from 'react';
+import {useFocusRing} from '../../src/focus/useFocusRing';
 import {useFocusWithin} from '../../src/interactions/useFocusWithin';
 
 function Example(props) {
@@ -228,5 +233,54 @@ describe('useFocusWithin', function () {
       {type: 'blur', target: tree.getByTestId('test')},
       {type: 'focuschange', isFocused: false}
     ]);
+  });
+
+  it('ignores focus within changes when pivoting to collection root during shift tab exit', function () {
+    let changes = [];
+    let tree = render(
+      <Example onFocusWithinChange={isFocused => changes.push(isFocused)}>
+        <button data-testid="inner">inner</button>
+      </Example>
+    );
+
+    let inner = tree.getByTestId('inner');
+    let el = tree.getByTestId('example');
+    act(() => inner.focus());
+    changes = [];
+
+    act(() => {
+      beginTransientCollectionFocus(el);
+      el.focus();
+    });
+
+    expect(changes).toEqual([]);
+    endTransientCollectionFocus();
+  });
+
+  it('does not re-render useFocusRing when pivoting to collection root', function () {
+    function FocusRingExample(props) {
+      let {focusWithinProps} = useFocusRing({within: true});
+      props.onRender();
+      return (
+        <div tabIndex={-1} {...focusWithinProps} data-testid="example">
+          <button data-testid="inner">inner</button>
+        </div>
+      );
+    }
+
+    let renderCount = 0;
+    render(<FocusRingExample onRender={() => renderCount++} />);
+    let inner = document.querySelector('[data-testid="inner"]');
+    let el = document.querySelector('[data-testid="example"]');
+    act(() => inner.focus());
+    let countAfterFocus = renderCount;
+
+    act(() => {
+      beginTransientCollectionFocus(el);
+      el.focus();
+    });
+
+    expect(renderCount).toBe(countAfterFocus);
+    endTransientCollectionFocus();
   });
 });
