@@ -429,7 +429,8 @@ export function useSelectableCollection(
       Escape: escape,
       Tab: tab,
       'Tab+Shift': shiftTab
-    }
+    },
+    allowRepeats: true
   });
   // oxlint-enable react/react-compiler
 
