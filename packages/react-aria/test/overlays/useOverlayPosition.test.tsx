@@ -372,3 +372,104 @@ describe('useOverlayPosition with positioned container', () => {
     `);
   });
 });
+
+describe('useOverlayPosition with a table element in the offsetParent chain', () => {
+  let stubs: jest.SpyInstance<any, any>[] = [];
+  let tableElement: HTMLElement | null = null;
+  let realGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
+  let realGetComputedStyle = window.getComputedStyle;
+
+  afterEach(() => {
+    stubs.forEach(stub => stub.mockReset());
+    stubs.length = 0;
+    if (tableElement) {
+      document.body.removeChild(tableElement);
+      tableElement = null;
+    }
+  });
+
+  // A statically-positioned <table>, <td>, or <th> can be reported as an element's
+  // offsetParent even though it is not the element's containing block. It must be
+  // skipped so the overlay resolves against the real (positioned) containing block.
+  it.each(['table', 'td', 'th'])(
+    'walks up through a statically-positioned <%s> to the true containing block',
+    tagName => {
+      tableElement = document.createElement(tagName);
+      document.body.appendChild(tableElement);
+
+      window.visualViewport = {
+        offsetTop: 0,
+        height: 768,
+        offsetLeft: 0,
+        scale: 1,
+        width: 500,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+        onresize: () => {},
+        onscroll: () => {},
+        pageLeft: 0,
+        pageTop: 0
+      } as VisualViewport;
+      document.body.style.margin = '0';
+      Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+        configurable: true,
+        value: 768
+      });
+      Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
+
+      stubs.push(
+        jest
+          .spyOn(window.HTMLElement.prototype, 'offsetParent', 'get')
+          .mockImplementation(function (this: HTMLElement) {
+            // The overlay's offsetParent is the statically-positioned table element,
+            // whose own offsetParent is the positioned container.
+            if (this.attributes.getNamedItem('data-testid')?.value === 'overlay') {
+              return tableElement;
+            } else if (this === tableElement) {
+              return document.querySelector('[data-testid="container"]');
+            }
+            return null;
+          }),
+        jest
+          .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+          .mockImplementation(function (this: HTMLElement) {
+            return realGetBoundingClientRect.apply(this);
+          }),
+        jest.spyOn(window, 'getComputedStyle').mockImplementation(element => {
+          const sty = realGetComputedStyle(element);
+          if (element.attributes.getNamedItem('data-testid')?.value === 'container') {
+            sty.position = 'relative';
+          } else if (element === tableElement) {
+            sty.position = 'static';
+          }
+          return sty;
+        }),
+        jest
+          .spyOn(HTMLElement.prototype, 'offsetWidth', 'get')
+          .mockImplementation(function (this: HTMLElement) {
+            return parseInt(this.style.width, 10) || 0;
+          }),
+        jest
+          .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
+          .mockImplementation(function (this: HTMLElement) {
+            return parseInt(this.style.height, 10) || 0;
+          })
+      );
+
+      let res = render(<Example containerStyle={{top: 150, left: 0, width: 400, height: 400}} />);
+      let overlay = res.getByTestId('overlay');
+
+      // Identical to the positioned-container case: the static table element is
+      // transparent to positioning, so top is 200 (the container is offset by 150),
+      // not 350 as it would be if the table element were treated as the container.
+      expect(overlay).toHaveStyle(`
+        position: absolute;
+        z-index: 100000;
+        left: 12px;
+        top: 200px;
+        max-height: 406px;
+      `);
+    }
+  );
+});
