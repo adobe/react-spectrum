@@ -13,20 +13,6 @@
 import {FocusableElement} from './dom';
 import {FocusEvent, MouseEvent, KeyboardEvent as ReactKeyboardEvent, SyntheticEvent} from 'react';
 
-// Type helper to extract the target element type from an event
-export type EventTargetType<T> = T extends SyntheticEvent<infer E, any> ? E : EventTarget;
-
-// Type helper to extract the event map from a target
-export type EventMapType<T extends EventTarget> = T extends Window
-  ? WindowEventMap
-  : T extends Document
-    ? DocumentEventMap
-    : T extends Element
-      ? HTMLElementEventMap
-      : T extends VisualViewport
-        ? VisualViewportEventMap
-        : GlobalEventHandlersEventMap;
-
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
 export type BaseEvent<T extends SyntheticEvent> = T & {

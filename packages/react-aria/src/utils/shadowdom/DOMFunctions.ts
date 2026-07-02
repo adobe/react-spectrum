@@ -1,7 +1,6 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
 /* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target */
 
-import {EventTargetType} from '@react-types/shared';
 import {getOwnerWindow, isShadowRoot} from '../domHelpers';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 import type {SyntheticEvent} from 'react';
@@ -64,6 +63,9 @@ export const getActiveElement = (doc: Document = document): Element | null => {
 
   return activeElement;
 };
+
+// Type helper to extract the target element type from an event
+type EventTargetType<T> = T extends SyntheticEvent<infer E, any> ? E : EventTarget;
 
 // Possibly we can improve the types for this using https://github.com/adobe/react-spectrum/pull/8991/changes#diff-2d491c0c91701d28d08e1cf9fcadbdb21a030b67ab681460c9934140f29127b8R68 but it was more changes than I
 // wanted to make to fix the function.
