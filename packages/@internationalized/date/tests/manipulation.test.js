@@ -26,6 +26,7 @@ import {
   JapaneseCalendar,
   PersianCalendar,
   TaiwanCalendar,
+  Time,
   toCalendar,
   ZonedDateTime
 } from '..';
@@ -954,5 +955,17 @@ describe('ZonedDateTime manipulation', function () {
       let date = new ZonedDateTime(2020, 1, 1, 'UTC', 0, 5, 5, 5, 5);
       expect(date.subtract({[`${Unit}`]: 5})).toEqual(Expected);
     });
+  });
+});
+
+describe('Time manipulation', function () {
+  it('should clamp an out of range millisecond to 999', function () {
+    let time = new Time(1, 2, 3, 5000);
+    expect(time.millisecond).toBe(999);
+    expect(time.toString()).toBe('01:02:03.999');
+  });
+
+  it('should leave a valid millisecond unchanged', function () {
+    expect(new Time(1, 2, 3, 999).millisecond).toBe(999);
   });
 });
