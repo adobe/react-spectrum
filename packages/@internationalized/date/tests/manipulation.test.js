@@ -968,4 +968,31 @@ describe('Time manipulation', function () {
   it('should leave a valid millisecond unchanged', function () {
     expect(new Time(1, 2, 3, 999).millisecond).toBe(999);
   });
+
+  it('should clamp an out of range second to 59', function () {
+    let time = new Time(1, 2, 100, 4);
+    expect(time.second).toBe(59);
+    expect(time.toString()).toBe('01:02:59.004');
+  });
+
+  it('should clamp an out of range minute to 59', function () {
+    let time = new Time(1, 100, 3, 4);
+    expect(time.minute).toBe(59);
+    expect(time.toString()).toBe('01:59:03.004');
+  });
+
+  it('should clamp an out of range hour to 23', function () {
+    let time = new Time(100, 2, 3, 4);
+    expect(time.hour).toBe(23);
+    expect(time.toString()).toBe('23:02:03.004');
+  });
+
+  it('should clamp negative fields to 0', function () {
+    let time = new Time(-1, -2, -3, -4);
+    expect(time.hour).toBe(0);
+    expect(time.minute).toBe(0);
+    expect(time.second).toBe(0);
+    expect(time.millisecond).toBe(0);
+    expect(time.toString()).toBe('00:00:00');
+  });
 });
