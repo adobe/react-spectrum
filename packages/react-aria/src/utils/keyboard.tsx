@@ -35,6 +35,7 @@ interface KeyboardStatus {
   innerHeight?: number;
   resizeTimeStamp?: number;
   resizeTimeout?: number;
+  supportsKeyboard?: boolean;
 }
 
 interface KeyPressEvent {
@@ -52,11 +53,13 @@ function onResize(e: Event): void {
 
   if (status && timeStamp <= e.timeStamp + 50) {
     status.resizeTimeStamp = e.timeStamp + 150;
+    status.supportsKeyboard ||= isKeyboardVisible();
 
     ownerWindow.clearTimeout(status.resizeTimeout);
 
     status.resizeTimeout = ownerWindow.setTimeout(() => {
       status.isOpen = isKeyboardVisible();
+      status.supportsKeyboard ||= status.isOpen;
       delete status.resizeTimeout;
       delete status.resizeTimeStamp;
     }, 150);
@@ -71,6 +74,7 @@ function onIOSResize(e: Event): void {
 
   if (status) {
     status.isOpen = isKeyboardVisible();
+    status.supportsKeyboard ||= status.isOpen;
   }
 }
 
@@ -97,6 +101,17 @@ if (typeof document !== 'undefined') {
   } else {
     addEvent(document, 'DOMContentLoaded', setupGlobalEvents);
   }
+}
+
+export function supportsKeyboard(): boolean {
+  let ownerWindow = getOwnerWindow();
+  let ownerViewport = getOwnerViewport();
+
+  if (ownerWindow == null || ownerViewport == null) return false;
+
+  let status = cache.get(ownerWindow);
+
+  return !!status?.supportsKeyboard;
 }
 
 export function willOpenKeyboard(target: EventTarget | null): boolean {

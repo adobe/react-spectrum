@@ -2,5 +2,6 @@ export {
   isCtrlKeyPressed,
   isKeyboardOpen,
   isKeyboardVisible,
-  willOpenKeyboard
+  willOpenKeyboard,
+  supportsKeyboard
 } from '../../../src/utils/keyboard';

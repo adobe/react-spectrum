@@ -13,7 +13,7 @@
 import {getActiveElement} from './shadowdom/DOMFunctions';
 import {getOwnerDocument, getOwnerViewport, getOwnerWindow} from './domHelpers';
 import {isIOS, isWebKit} from './platform';
-import {isKeyboardOpen, isKeyboardVisible, willOpenKeyboard} from './keyboard';
+import {isKeyboardOpen, isKeyboardVisible, supportsKeyboard, willOpenKeyboard} from './keyboard';
 
 const intervalByWindow = new WeakMap<EventTarget, number | undefined>();
 const timeoutByWindow = new WeakMap<EventTarget, number | undefined>();
@@ -24,7 +24,7 @@ interface QueuedCallback {
   (isKeyboardOpen: boolean): void;
 }
 
-function onTransitionStart(): void {
+function onTransitionStart(ticks = 0): void {
   let ownerWindow = getOwnerWindow();
 
   let wasOpen = isKeyboardOpen();
@@ -42,22 +42,25 @@ function onTransitionStart(): void {
   transitionInterval = ownerWindow.setInterval(() => {
     let isOpen = isKeyboardOpen();
     let isVisible = isKeyboardVisible();
+    let isSupported = supportsKeyboard();
 
-    if (wasOpen !== isOpen) {
+    let isUnsupported = ++ticks >= 3 && !isSupported && !isVisible;
+
+    if (wasOpen !== isOpen || isUnsupported) {
       for (let callback of resizeCallbacks) {
         callback(isOpen);
         resizeCallbacks.delete(callback);
       }
     }
 
-    if ((!isIOS() && wasVisible !== isVisible) || (wasVisible && !isVisible)) {
+    if ((!isIOS() && wasVisible !== isVisible) || (wasVisible && !isVisible) || isUnsupported) {
       for (let callback of transitionCallbacks) {
         callback(isVisible);
         transitionCallbacks.delete(callback);
       }
     }
 
-    if (!transitionCallbacks.size && !resizeCallbacks.size) {
+    if ((!transitionCallbacks.size && !resizeCallbacks.size) || isUnsupported) {
       onTransitionEnd();
     }
   }, 50);
