@@ -627,11 +627,17 @@ function TabPanelInner(
   let domProps = isSelected
     ? mergeProps(DOMProps, tabPanelProps, focusProps, renderProps)
     : mergeProps(DOMProps, renderProps);
+  let style = {
+    '--tab-panel-width': 'auto',
+    '--tab-panel-height': 'auto',
+    ...renderProps.style
+  } as React.CSSProperties;
 
   return (
     <dom.div
       {...domProps}
       ref={ref}
+      style={style}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
