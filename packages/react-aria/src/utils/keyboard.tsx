@@ -53,7 +53,6 @@ function onResize(e: Event): void {
 
   if (status && timeStamp <= e.timeStamp + 50) {
     status.resizeTimeStamp = e.timeStamp + 150;
-    status.supportsKeyboard ||= isKeyboardVisible();
 
     ownerWindow.clearTimeout(status.resizeTimeout);
 

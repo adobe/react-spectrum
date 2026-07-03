@@ -24,7 +24,7 @@ interface QueuedCallback {
   (isKeyboardOpen: boolean): void;
 }
 
-function onTransitionStart(ticks = 0): void {
+function onTransitionStart(): void {
   let ownerWindow = getOwnerWindow();
 
   let wasOpen = isKeyboardOpen();
@@ -34,6 +34,7 @@ function onTransitionStart(ticks = 0): void {
   let transitionInterval = intervalByWindow.get(ownerWindow);
 
   let transitionTimer = isIOS() && isWebKit() && wasOpen ? 600 : 300;
+  let transitionTicks = ownerWindow.navigator.maxTouchPoints ? 4 : 3;
 
   if (transitionInterval != null || transitionTimeout != null) {
     return;
@@ -44,23 +45,23 @@ function onTransitionStart(ticks = 0): void {
     let isVisible = isKeyboardVisible();
     let isSupported = supportsKeyboard();
 
-    let isUnsupported = ++ticks >= 3 && !isSupported && !isVisible;
+    let isDisabled = --transitionTicks <= 0 && !isSupported && !isVisible;
 
-    if (wasOpen !== isOpen || isUnsupported) {
+    if (wasOpen !== isOpen || isDisabled) {
       for (let callback of resizeCallbacks) {
         callback(isOpen);
         resizeCallbacks.delete(callback);
       }
     }
 
-    if ((!isIOS() && wasVisible !== isVisible) || (wasVisible && !isVisible) || isUnsupported) {
+    if ((!isIOS() && wasVisible !== isVisible) || (wasVisible && !isVisible) || isDisabled) {
       for (let callback of transitionCallbacks) {
         callback(isVisible);
         transitionCallbacks.delete(callback);
       }
     }
 
-    if ((!transitionCallbacks.size && !resizeCallbacks.size) || isUnsupported) {
+    if ((!transitionCallbacks.size && !resizeCallbacks.size) || isDisabled) {
       onTransitionEnd();
     }
   }, 50);
