@@ -1,7 +1,7 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
 /* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target */
 
-import {getOwnerDocument, getOwnerWindow, isShadowRoot} from '../domHelpers';
+import {getOwnerWindow, isShadowRoot} from '../domHelpers';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 import type {SyntheticEvent} from 'react';
 
@@ -84,34 +84,30 @@ export function getEventTarget<T extends Event | SyntheticEvent>(event: T): Even
 }
 
 /**
- * Returns the set of event targets a listener must be attached to for an event
- * to be observed at `global`, given an element `refNode` that may live inside
- * one or more shadow roots.
+ * Returns the set of event targets a listener must be attached to in order to
+ * globally observe an event.
  *
- * Returns `[global, ...shadowRoots]`, where shadowRoots are the ShadowRoots
- * enclosing `refNode` that lie between it and `global`. Needed for events that
- * are `composed: false` and do not propagate out of shadow roots even in the
- * capture phase. Pass the result straight to `addEvent` (react-aria/domHelpers).
- *
- * Known `composed: false` events (non-exhaustive):
- * - `scroll`
- * - `scrollend`
- * - `change`
- * - `submit`
- * - `reset`
- * - `select`
- * - `selectstart`
- * - `slotchange`
+ * @param from - The target element to start from.
+ * @param to - The `global` element to stop at. @default getOwnerWindow(from)
+ * @returns [global, ...shadowRoots]
  */
-export function getPropagationTargets(from: Element | null | undefined): EventTarget[] {
-  const global = getOwnerDocument(from);
+export function getPropagationTargets(
+  from: Element | null | undefined,
+  to?: Element | null | undefined
+): EventTarget[] {
+  const global = to ?? getOwnerWindow(from);
   let targets: EventTarget[] = [global];
   if (!shadowDOM() || from == null) {
     return targets;
   }
 
+  if (from === global) {
+    return targets;
+  }
+
   let current: Node | null = from.getRootNode() ?? null;
   while (isShadowRoot(current)) {
+    // order shouldn't matter
     targets.push(current);
     current = current.host.getRootNode();
   }

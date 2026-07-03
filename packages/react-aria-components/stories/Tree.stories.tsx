@@ -18,7 +18,6 @@ import {Collection} from 'react-aria/Collection';
 import {ComboBox} from '../src/ComboBox';
 import {createPortal} from 'react-dom';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
-import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {Input} from '../src/Input';
 import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {ListBox} from '../src/ListBox';
@@ -1962,7 +1961,6 @@ export const TreeWithTextFieldStory: StoryObj<typeof TreeWithTextField> = {
 };
 
 export function VirtualizedTreeInShadowDOM(props: TreeProps<ITreeItem>) {
-  enableShadowDOM();
   const [portalNode] = useState<HTMLElement>(() => document.createElement('div'));
   const onMountCleanup = useRef<null | (() => void)>(null);
   const onMount = useCallback(
@@ -2009,7 +2007,7 @@ export function VirtualizedTreeInShadowDOM(props: TreeProps<ITreeItem>) {
 
           <div>
             <strong>+Tree + Virtualizer</strong>
-            <Virtualizer layout={ListLayout}>
+            <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
               <TreeExampleDynamicRender {...props} />
             </Virtualizer>
           </div>
