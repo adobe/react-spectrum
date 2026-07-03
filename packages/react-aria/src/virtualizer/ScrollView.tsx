@@ -221,6 +221,7 @@ export function useScrollView(
   // Attach a document-level capturing scroll listener so we can account for scrollable ancestors.
   useEffect(() => {
     return addEvent(
+      // @ts-expect-error
       getPropagationTargets(ref.current, getOwnerDocument(ref.current)),
       'scroll',
       onScroll,
