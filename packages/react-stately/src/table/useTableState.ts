@@ -195,9 +195,35 @@ export function UNSTABLE_useFilteredTableState<T extends object>(
   let selectionManager = state.selectionManager.withCollection(collection);
   // TODO: handle focus key reset? That logic is in useGridState
 
-  return {
-    ...state,
-    collection,
-    selectionManager
-  };
+  // The upstream state hooks return fresh object literals (and a new SelectionManager) on every
+  // render, which changes the identity of the value provided to TableStateContext and forces every
+  // Row/Cell consumer to re-render on unrelated updates (e.g. the focus ring toggling when tabbing
+  // out of the table). Memoize the derived state so its identity only changes when observable state
+  // actually changes. The SelectionManager reads focus state live via refs, so a stable wrapper
+  // still reflects the current focusedKey/isFocused.
+  return useMemo(
+    () => ({
+      ...state,
+      collection,
+      selectionManager
+    }),
+    // Note: `expandedKeys` is intentionally omitted because the state hooks recreate it (and
+    // several other fields) as fresh objects on every render. Changes to expanded keys are
+    // reflected through `collection`, which is rebuilt via `withExpandedKeys` whenever they change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
+    [
+      collection,
+      selectionManager.focusedKey,
+      selectionManager.isFocused,
+      selectionManager.rawSelection,
+      selectionManager.selectionMode,
+      selectionManager.selectionBehavior,
+      state.disabledKeys,
+      state.sortDescriptor,
+      state.isKeyboardNavigationDisabled,
+      state.showSelectionCheckboxes,
+      state.treeColumn
+    ]
+  );
 }

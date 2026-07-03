@@ -332,6 +332,63 @@ describe('Table', () => {
     jest.clearAllMocks();
   });
 
+  it('does not re-render cells in unaffected rows when moving focus out of the table (shift+tab)', async () => {
+    let renderCounts = new Map();
+    // RAC evaluates render-prop functions on every render of the component, so a function
+    // className is an accurate probe for how many times each Cell actually re-renders.
+    let countCell = key => () => {
+      renderCounts.set(key, (renderCounts.get(key) ?? 0) + 1);
+      return 'cell';
+    };
+
+    let {getByRole, getByTestId} = render(
+      <>
+        <input data-testid="before" />
+        <Table aria-label="Files">
+          <TableHeader>
+            <Column id="name" isRowHeader>
+              Name
+            </Column>
+            <Column id="type">Type</Column>
+          </TableHeader>
+          <TableBody>
+            <Row id="1">
+              <Cell className={countCell('1-name')}>Games</Cell>
+              <Cell className={countCell('1-type')}>File folder</Cell>
+            </Row>
+            <Row id="2">
+              <Cell className={countCell('2-name')}>Program Files</Cell>
+              <Cell className={countCell('2-type')}>File folder</Cell>
+            </Row>
+            <Row id="3">
+              <Cell className={countCell('3-name')}>bootmgr</Cell>
+              <Cell className={countCell('3-type')}>System file</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+        <input data-testid="after" />
+      </>
+    );
+
+    await user.tab(); // focus "before" input
+    await user.tab(); // move focus into the table (roving tabindex focuses the first row)
+    expect(getByRole('grid').contains(document.activeElement)).toBe(true);
+
+    // Only measure re-renders caused by moving focus back out of the table. Rows that never held
+    // focus should not re-render more than once: previously, an unstable TableStateContext value
+    // (and other context values) caused every cell in the table to re-render several times.
+    renderCounts.clear();
+    await user.tab({shift: true});
+    expect(getByTestId('before')).toHaveFocus();
+
+    for (let [key, count] of renderCounts) {
+      // Cells in rows that never held focus (rows 2 and 3) should re-render at most once.
+      if (!key.startsWith('1-')) {
+        expect(count).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
   it('should render with default classes', () => {
     let {getByRole} = renderTable();
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});

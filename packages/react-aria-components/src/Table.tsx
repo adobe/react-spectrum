@@ -888,13 +888,22 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   let DOMProps = filterDOMProps(props, {global: true});
 
+  // Memoize context values so that unrelated re-renders of the Table (e.g. focus ring toggles when
+  // tabbing in and out of the collection) don't change their identity and force every Row/Cell
+  // consumer to re-render.
+  let dragAndDropContextValue = useMemo(
+    () => ({dragAndDropHooks, dragState, dropState}),
+    [dragAndDropHooks, dragState, dropState]
+  );
+  let dropIndicatorContextValue = useMemo(() => ({render: TableDropIndicatorWrapper}), []);
+
   return (
     <Provider
       values={[
         [TableStateContext, filteredState],
         [TableColumnResizeStateContext, layoutState],
-        [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
-        [DropIndicatorContext, {render: TableDropIndicatorWrapper}],
+        [DragAndDropContext, dragAndDropContextValue],
+        [DropIndicatorContext, dropIndicatorContextValue],
         [SelectableCollectionContext, null],
         [FieldInputContext, null]
       ]}>
@@ -1867,6 +1876,17 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     delete DOMProps.id;
     delete DOMProps.onClick;
 
+    // Memoize context values so that re-rendering the row (e.g. when it gains/loses focus) doesn't
+    // change their identity and force the row's cells to re-render when nothing they observe changed.
+    let selectionIndicatorContextValue = useMemo(
+      () => ({isSelected: states.isSelected}),
+      [states.isSelected]
+    );
+    let rowFocusContextValue = useMemo(
+      () => ({isFocusVisibleWithinRow: isFocusVisibleWithin}),
+      [isFocusVisibleWithin]
+    );
+
     return (
       <>
         {dropIndicator && !dropIndicator.isHidden && (
@@ -1948,8 +1968,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                   }
                 }
               ],
-              [SelectionIndicatorContext, {isSelected: states.isSelected}],
-              [RowFocusContext, {isFocusVisibleWithinRow: isFocusVisibleWithin}]
+              [SelectionIndicatorContext, selectionIndicatorContextValue],
+              [RowFocusContext, rowFocusContextValue]
             ]}>
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
