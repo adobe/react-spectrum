@@ -152,5 +152,5 @@ export function isKeyboardVisible(): boolean {
   let minHeight = Number(ownerViewport?.height) * Number(ownerViewport?.scale);
   let maxHeight = Number(status?.innerHeight) || Number(ownerWindow.innerHeight);
 
-  return (willKeyboardOpen || !!status?.isOpen) && maxHeight - minHeight > 150;
+  return (willKeyboardOpen || !!status?.isOpen) && maxHeight - minHeight > 100;
 }
