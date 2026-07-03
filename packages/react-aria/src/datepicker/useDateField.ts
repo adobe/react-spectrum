@@ -41,6 +41,14 @@ export interface AriaDateFieldProps<T extends DateValue>
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
   autoComplete?: string;
+  /**
+   * Whether pressing the Tab key moves focus into and out of each individual segment
+   * (`'arrow'`), or into and out of the field as a single unit, with the Left/Right arrow
+   * keys used to move between segments (`'tab'`).
+   *
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab';
 }
 
 // Allows this hook to also be used with TimeField
@@ -71,9 +79,37 @@ interface HookData {
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
   focusManager: FocusManager;
+  keyboardNavigationBehavior: 'arrow' | 'tab';
+  tabbableSegmentStore: TabbableSegmentStore;
 }
 
 export const hookData: WeakMap<DateFieldState, HookData> = new WeakMap<DateFieldState, HookData>();
+
+// Tracks which segment is the current Tab stop when keyboardNavigationBehavior is 'tab'
+// (roving tabindex). Segments subscribe to this via useSyncExternalStore so that moving
+// the Tab stop from one segment to another re-renders exactly the affected segments.
+export class TabbableSegmentStore {
+  private current: string | null = null;
+  private listeners: Set<() => void> = new Set();
+
+  getCurrent: () => string | null = () => this.current;
+
+  setCurrent(type: string): void {
+    if (this.current !== type) {
+      this.current = type;
+      for (let listener of this.listeners) {
+        listener();
+      }
+    }
+  }
+
+  subscribe: (onChange: () => void) => () => void = onChange => {
+    this.listeners.add(onChange);
+    return () => {
+      this.listeners.delete(onChange);
+    };
+  };
+}
 
 // Private props that we pass from useDatePicker/useDateRangePicker.
 // Ideally we'd use a Symbol for this, but React doesn't support them: https://github.com/facebook/react/issues/7552
@@ -139,13 +175,19 @@ export function useDateField<T extends DateValue>(
   );
   let groupProps = useDatePickerGroup(state, ref, props[roleSymbol] === 'presentation');
 
+  // The store must be stable for the lifetime of a given state so that segment
+  // subscriptions aren't torn down and recreated on every render.
+  let tabbableSegmentStore = useMemo(() => new TabbableSegmentStore(), []);
+
   // Pass labels and other information to segments.
   hookData.set(state, {
     ariaLabel: props['aria-label'],
     ariaLabelledBy:
       [labelProps.id, props['aria-labelledby']].filter(Boolean).join(' ') || undefined,
     ariaDescribedBy: describedBy,
-    focusManager
+    focusManager,
+    keyboardNavigationBehavior: props.keyboardNavigationBehavior || 'arrow',
+    tabbableSegmentStore
   });
 
   let autoFocusRef = useRef(props.autoFocus);

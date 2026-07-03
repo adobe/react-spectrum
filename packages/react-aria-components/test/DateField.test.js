@@ -539,6 +539,60 @@ describe('DateField', () => {
     expect(input).toHaveTextContent('5/30/2000');
   });
 
+  it('should have a tab stop on every segment by default (keyboardNavigationBehavior="arrow")', () => {
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('tabIndex', '0');
+    }
+  });
+
+  it('should support a single tab stop with keyboardNavigationBehavior="tab"', async () => {
+    let {getAllByRole} = render(
+      <DateField keyboardNavigationBehavior="tab" defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    expect(segments[0]).toHaveAttribute('tabIndex', '0');
+    for (let segment of segments.slice(1)) {
+      expect(segment).toHaveAttribute('tabIndex', '-1');
+    }
+
+    // Tab into the field lands on the single tab stop (the first segment).
+    await user.tab();
+    expect(document.activeElement).toBe(segments[0]);
+
+    // Arrow keys still move focus between segments as usual.
+    await user.keyboard('[ArrowRight]');
+    expect(document.activeElement).toBe(segments[1]);
+
+    // The tab stop follows focus: the segment that was just focused is now
+    // the only one with tabIndex 0, and the rest (including the previous
+    // tab stop) are removed from the tab order.
+    expect(segments[1]).toHaveAttribute('tabIndex', '0');
+    expect(segments[0]).toHaveAttribute('tabIndex', '-1');
+    for (let segment of segments.slice(2)) {
+      expect(segment).toHaveAttribute('tabIndex', '-1');
+    }
+
+    // Pressing Tab again exits the field entirely instead of moving to the next segment.
+    await user.tab();
+    expect(document.activeElement).not.toBe(segments[2]);
+    expect(segments.includes(document.activeElement)).toBe(false);
+
+    // Tabbing back in returns focus to the last-focused segment, not the first one.
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(segments[1]);
+  });
+
   it('should reset to placeholders when deleting a partially filled DateField', async () => {
     let {getAllByRole} = render(
       <DateField>
