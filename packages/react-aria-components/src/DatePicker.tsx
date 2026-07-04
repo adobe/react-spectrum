@@ -126,6 +126,11 @@ export interface DatePickerProps<T extends DateValue>
    * @default 'react-aria-DatePicker'
    */
   className?: ClassNameOrFunction<DatePickerRenderProps>;
+  /**
+   * Whether the trigger button appears pressed (e.g. `data-pressed`) while the popover is open.
+   * @default true
+   */
+  isPressedWhenOpen?: boolean;
 }
 export interface DateRangePickerProps<T extends DateValue>
   extends
@@ -145,6 +150,11 @@ export interface DateRangePickerProps<T extends DateValue>
    * @default 'react-aria-DateRangePicker'
    */
   className?: ClassNameOrFunction<DateRangePickerRenderProps>;
+  /**
+   * Whether the trigger button appears pressed (e.g. `data-pressed`) while the popover is open.
+   * @default true
+   */
+  isPressedWhenOpen?: boolean;
 }
 
 export const DatePickerContext =
@@ -219,7 +229,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DatePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
         [DateFieldContext, fieldProps],
-        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: (props.isPressedWhenOpen ?? true) && state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps as any],
         [OverlayTriggerStateContext, state],
@@ -330,7 +340,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(
         values={[
           [DateRangePickerStateContext, state],
           [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
-          [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+          [ButtonContext, {...buttonProps, isPressed: (props.isPressedWhenOpen ?? true) && state.isOpen}],
           [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [RangeCalendarContext, calendarProps],
           [OverlayTriggerStateContext, state],

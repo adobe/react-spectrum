@@ -47,6 +47,11 @@ import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode;
+  /**
+   * Whether the trigger button appears pressed (e.g. `data-pressed`) while the dialog is open.
+   * @default true
+   */
+  isPressedWhenOpen?: boolean;
 }
 
 export interface DialogRenderProps {
@@ -110,7 +115,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           }
         ]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+      <PressResponder {...triggerProps} ref={buttonRef} isPressed={(props.isPressedWhenOpen ?? true) && state.isOpen}>
         {props.children}
       </PressResponder>
     </Provider>

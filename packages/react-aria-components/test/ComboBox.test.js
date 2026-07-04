@@ -131,6 +131,15 @@ describe('ComboBox', () => {
     expect(button).toHaveAttribute('data-pressed');
   });
 
+  it('should not apply isPressed state to button when expanded with isPressedWhenOpen={false}', async () => {
+    let {getByRole} = render(<TestComboBox isPressedWhenOpen={false} />);
+    let button = getByRole('button');
+
+    await user.click(button);
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support filtering sections', async () => {
     let tree = render(
       <ComboBox>

@@ -226,6 +226,26 @@ describe('Dialog', () => {
     expect(dialog).not.toBeInTheDocument();
   });
 
+  it('should not mark the trigger as pressed while open with isPressedWhenOpen={false}', async () => {
+    let {getByRole} = render(
+      <DialogTrigger isPressedWhenOpen={false}>
+        <Button aria-label="Help">?⃝</Button>
+        <Modal>
+          <Dialog>
+            <Heading slot="title">Help</Heading>
+            <p>For help accessing your account, please contact support.</p>
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
+    await dialogTester.open();
+    expect(dialogTester.getDialog()).toBeInTheDocument();
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should get default aria label from trigger', async () => {
     let {getByRole} = render(
       <DialogTrigger>

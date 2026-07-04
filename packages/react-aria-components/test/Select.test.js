@@ -49,6 +49,16 @@ describe('Select', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
+  it('should not mark the trigger as pressed while open with isPressedWhenOpen={false}', async () => {
+    let {getByTestId} = render(<TestSelect isPressedWhenOpen={false} />);
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.getTrigger();
+
+    await selectTester.open();
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    expect(trigger).not.toHaveAttribute('data-pressed');
+  });
+
   it('provides slots', async () => {
     let {getByTestId} = render(<TestSelect />);
     let wrapper = getByTestId('select');

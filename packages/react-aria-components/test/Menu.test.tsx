@@ -646,6 +646,25 @@ describe('Menu', () => {
     expect(onAction).toHaveBeenLastCalledWith('rename', undefined);
   });
 
+  it('should not mark the trigger as pressed while open with isPressedWhenOpen={false}', async () => {
+    let {getByRole} = render(
+      <MenuTrigger isPressedWhenOpen={false}>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+    expect(getByRole('menu')).toBeInTheDocument();
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support onScroll', () => {
     let onScroll = jest.fn();
     let {getByRole} = renderMenu({onScroll});

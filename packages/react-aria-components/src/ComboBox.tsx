@@ -129,6 +129,11 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
   formValue?: 'text' | 'key';
   /** Whether the combo box allows the menu to be open when the collection is empty. */
   allowsEmptyCollection?: boolean;
+  /**
+   * Whether the trigger button appears pressed (e.g. `data-pressed`) while the popover is open.
+   * @default true
+   */
+  isPressedWhenOpen?: boolean;
 }
 
 export const ComboBoxContext =
@@ -300,7 +305,7 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
       values={[
         [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: (props.isPressedWhenOpen ?? true) && state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
         [

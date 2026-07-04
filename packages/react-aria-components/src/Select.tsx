@@ -127,6 +127,11 @@ export interface SelectProps<T, M extends SelectionMode = 'single'>
    * @default 'Select an item' (localized)
    */
   placeholder?: string;
+  /**
+   * Whether the trigger button appears pressed (e.g. `data-pressed`) while the select is open.
+   * @default true
+   */
+  isPressedWhenOpen?: boolean;
 }
 
 export const SelectContext =
@@ -248,7 +253,7 @@ function SelectInner<T>({props, selectRef: ref, collection}: SelectInnerProps<T>
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [
           ButtonContext,
-          {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}
+          {...triggerProps, ref: buttonRef, isPressed: (props.isPressedWhenOpen ?? true) && state.isOpen, autoFocus: props.autoFocus}
         ],
         [OverlayTriggerStateContext, state],
         [
