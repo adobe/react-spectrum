@@ -128,6 +128,7 @@ export interface DatePickerProps<T extends DateValue>
   className?: ClassNameOrFunction<DatePickerRenderProps>;
   /**
    * Whether the trigger button appears pressed (e.g. `data-pressed`) while the popover is open.
+   *
    * @default true
    */
   isPressedWhenOpen?: boolean;
@@ -152,6 +153,7 @@ export interface DateRangePickerProps<T extends DateValue>
   className?: ClassNameOrFunction<DateRangePickerRenderProps>;
   /**
    * Whether the trigger button appears pressed (e.g. `data-pressed`) while the popover is open.
+   *
    * @default true
    */
   isPressedWhenOpen?: boolean;
@@ -229,7 +231,10 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DatePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
         [DateFieldContext, fieldProps],
-        [ButtonContext, {...buttonProps, isPressed: (props.isPressedWhenOpen ?? true) && state.isOpen}],
+        [
+          ButtonContext,
+          {...buttonProps, isPressed: (props.isPressedWhenOpen ?? true) && state.isOpen}
+        ],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps as any],
         [OverlayTriggerStateContext, state],
@@ -340,7 +345,10 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(
         values={[
           [DateRangePickerStateContext, state],
           [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
-          [ButtonContext, {...buttonProps, isPressed: (props.isPressedWhenOpen ?? true) && state.isOpen}],
+          [
+            ButtonContext,
+            {...buttonProps, isPressed: (props.isPressedWhenOpen ?? true) && state.isOpen}
+          ],
           [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [RangeCalendarContext, calendarProps],
           [OverlayTriggerStateContext, state],

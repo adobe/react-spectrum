@@ -118,6 +118,7 @@ export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children: ReactNode;
   /**
    * Whether the trigger button appears pressed (e.g. `data-pressed`) while the menu is open.
+   *
    * @default true
    */
   isPressedWhenOpen?: boolean;
@@ -160,7 +161,10 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element | null {
           }
         ]
       ]}>
-      <PressResponder {...menuTriggerProps} ref={ref} isPressed={(props.isPressedWhenOpen ?? true) && state.isOpen}>
+      <PressResponder
+        {...menuTriggerProps}
+        ref={ref}
+        isPressed={(props.isPressedWhenOpen ?? true) && state.isOpen}>
         {props.children}
       </PressResponder>
     </Provider>
