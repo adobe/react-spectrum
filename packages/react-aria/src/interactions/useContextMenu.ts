@@ -77,6 +77,7 @@ export function useContextMenu(props: ContextMenuProps): ContextMenuAria {
   }
 
   return {
+    // oxlint-disable-next-line react/react-compiler - it says we are reading a ref during render but that's not true...
     contextMenuProps: mergeProps(isIOS() ? longPressProps : {}, {
       onContextMenu(e) {
         e.stopPropagation();

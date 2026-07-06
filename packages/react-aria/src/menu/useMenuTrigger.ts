@@ -185,9 +185,8 @@ export function useMenuTrigger<T>(
     // Context menus are equally discoverable (or not) by sighted and non-sighted users,
     // so we don't need a screen reader specific announcement.
     // See https://github.com/w3c/aria/issues/1971 for further discussion.
-    delete triggerProps['aria-haspopup'];
-    delete triggerProps['aria-expanded'];
-    delete triggerProps['aria-controls'];
+    let {'aria-haspopup': _a, 'aria-expanded': _b, 'aria-controls': _c, ...rest} = triggerProps;
+    triggerProps = rest;
   }
 
   return {
