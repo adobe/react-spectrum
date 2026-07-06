@@ -12,9 +12,9 @@
 
 import {Button} from 'vanilla-starter/Button';
 import {Link} from 'vanilla-starter/Link';
-import {PreviewTrigger} from '../src/PreviewTrigger';
 import {Meta, StoryObj} from '@storybook/react';
 import {Popover} from 'vanilla-starter/Popover';
+import {PreviewTrigger} from '../src/PreviewTrigger';
 import React, {JSX, ReactNode} from 'react';
 
 export default {

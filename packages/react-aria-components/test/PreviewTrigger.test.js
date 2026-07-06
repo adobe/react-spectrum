@@ -19,8 +19,8 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {Link} from '../src/Link';
-import {PreviewTrigger} from '../src/PreviewTrigger';
 import {Popover} from '../src/Popover';
+import {PreviewTrigger} from '../src/PreviewTrigger';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

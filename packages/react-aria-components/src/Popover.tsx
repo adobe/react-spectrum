@@ -249,7 +249,9 @@ function PopoverInner({
   // Skip the automatic entry animation when opening instantly (e.g. swapping between previews
   // during warmup). An explicitly provided isEntering prop still takes precedence.
   let enterAnimation = useEnterAnimation(ref, !!placement);
+  // oxlint-disable-next-line react/react-compiler
   let isEntering = props.isEntering || (!props.shouldSkipAnimation && enterAnimation) || false;
+  // oxlint-disable-next-line react/react-compiler
   let renderProps = useRenderProps({
     // oxlint-disable-next-line react/react-compiler
     ...props,
@@ -268,7 +270,9 @@ function PopoverInner({
   // Automatically render Popover with role=dialog except when isNonModal is true,
   // or a dialog is already nested inside the popover.
   let shouldBeDialog =
+    // oxlint-disable-next-line react/react-compiler
     !props.isNonModal || props.trigger === 'SubmenuTrigger' || props.trigger === 'PreviewTrigger';
+  // oxlint-disable-next-line react/react-compiler
   let [isDialog, setDialog] = useState(props.trigger === 'PreviewTrigger');
   useLayoutEffect(() => {
     if (ref.current) {
