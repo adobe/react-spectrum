@@ -26,9 +26,8 @@ export interface PreviewTriggerProps extends AriaPreviewTriggerProps {
 }
 
 /**
- * A PreviewTrigger wraps a focusable trigger (e.g. Link) and a Popover to display a non-modal
- * preview of the content on hover, focus, or long press. Unlike a tooltip, the popover may contain
- * interactive content.
+ * A PreviewTrigger displays a non-modal popover on hover, focus, or long press. Unlike a tooltip,
+ * the popover may contain interactive content.
  */
 export function PreviewTrigger(props: PreviewTriggerProps): JSX.Element {
   let state = useTooltipTriggerState({
