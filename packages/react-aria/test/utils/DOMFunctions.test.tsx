@@ -13,7 +13,7 @@
 import {createShadowRoot, render} from '@react-spectrum/test-utils-internal';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {getPropagationTargets, nodeContains} from '../../src/utils/shadowdom/DOMFunctions';
-import React from 'react';
+import React, {HTMLAttributes, ReactNode, useCallback, useRef, useState} from 'react';
 import {screen} from 'shadow-dom-testing-library';
 
 describe('nodeContains with shadow DOM', function () {
@@ -73,26 +73,37 @@ describe('getPropagationTargets with shadow DOM', function () {
     );
     let target = screen.getByShadowRole('button');
     expect(getPropagationTargets(target)).toEqual([window, shadowRoot]);
-    // @ts-expect-error
     expect(getPropagationTargets(target, document)).toEqual([document, shadowRoot]);
-    // @ts-expect-error
     expect(getPropagationTargets(target, window)).toEqual([window, shadowRoot]);
     cleanup();
   });
 
   it('can get the propagation targets for multiple nested shadow roots', function () {
     const {shadowRoot, cleanup} = createShadowRoot();
-    const {shadowRoot: shadowRoot2, cleanup: cleanup2} = createShadowRoot(
-      shadowRoot as unknown as HTMLElement
-    );
+    const intermediateNode = document.createElement('div');
+    shadowRoot.appendChild(intermediateNode);
+    const {shadowRoot: shadowRoot2, cleanup: cleanup2} = createShadowRoot(intermediateNode);
 
     render(<button>Shadow root</button>, {container: shadowRoot2 as unknown as HTMLElement});
 
     let target = screen.getByShadowRole('button');
     expect(getPropagationTargets(target)).toEqual([window, shadowRoot2, shadowRoot]);
-    // @ts-expect-error
     expect(getPropagationTargets(target, document)).toEqual([document, shadowRoot2, shadowRoot]);
+    expect(getPropagationTargets(target, intermediateNode)).toEqual([
+      intermediateNode,
+      shadowRoot2
+    ]);
     cleanup2();
+    shadowRoot.removeChild(intermediateNode);
+    cleanup();
+  });
+
+  it('does not return propagation targets when given a null destination', function () {
+    const {shadowRoot, cleanup} = createShadowRoot();
+    render(<button>Shadow root</button>, {container: shadowRoot as unknown as HTMLElement});
+
+    let target = screen.getByShadowRole('button');
+    expect(getPropagationTargets(target, null)).toEqual([]);
     cleanup();
   });
 });
