@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,17 +12,17 @@
 
 import {Button} from 'vanilla-starter/Button';
 import {Link} from 'vanilla-starter/Link';
-import {LinkPreview} from '../src/LinkPreview';
+import {PreviewTrigger} from '../src/PreviewTrigger';
 import {Meta, StoryObj} from '@storybook/react';
 import {Popover} from 'vanilla-starter/Popover';
 import React, {JSX, ReactNode} from 'react';
 
 export default {
-  title: 'React Aria Components/LinkPreview',
-  component: LinkPreview
-} as Meta<typeof LinkPreview>;
+  title: 'React Aria Components/PreviewTrigger',
+  component: PreviewTrigger
+} as Meta<typeof PreviewTrigger>;
 
-export type LinkPreviewStory = StoryObj<typeof LinkPreview>;
+export type PreviewTriggerStory = StoryObj<typeof PreviewTrigger>;
 
 interface PreviewLinkProps {
   href: string;
@@ -42,7 +42,7 @@ function PreviewLink({
   closeDelay
 }: PreviewLinkProps): JSX.Element {
   return (
-    <LinkPreview delay={delay} closeDelay={closeDelay}>
+    <PreviewTrigger delay={delay} closeDelay={closeDelay}>
       <Link href={href} target="_blank">
         {children}
       </Link>
@@ -53,7 +53,7 @@ function PreviewLink({
           <Button onPress={() => window.open(href, '_blank', 'noopener')}>Open</Button>
         </div>
       </Popover>
-    </LinkPreview>
+    </PreviewTrigger>
   );
 }
 
@@ -94,11 +94,11 @@ function Example(props: {delay?: number; closeDelay?: number}): JSX.Element {
   );
 }
 
-export const Default: LinkPreviewStory = {
+export const Default: PreviewTriggerStory = {
   render: () => <Example />
 };
 
-export const WithDelays: LinkPreviewStory = {
+export const WithDelays: PreviewTriggerStory = {
   render: args => <Example delay={args.delay} closeDelay={args.closeDelay} />,
   args: {
     delay: 700,

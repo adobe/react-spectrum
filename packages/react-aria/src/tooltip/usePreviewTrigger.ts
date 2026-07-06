@@ -26,7 +26,7 @@ import {
   useInteractionModality
 } from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
-import intlMessages from '../../intl/linkpreview/*.json';
+import intlMessages from '../../intl/previewtrigger/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {TooltipTriggerProps, TooltipTriggerState} from 'react-stately/useTooltipTriggerState';
@@ -39,19 +39,19 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useLongPress} from '../interactions/useLongPress';
 import {useSafeArea} from './useSafeArea';
 
-export interface AriaLinkPreviewProps extends Omit<
+export interface AriaPreviewTriggerProps extends Omit<
   TooltipTriggerProps,
   'trigger' | 'shouldCloseOnPress'
 > {}
 
-export interface AriaLinkPreviewOptions extends AriaLinkPreviewProps {
+export interface AriaPreviewTriggerOptions extends AriaPreviewTriggerProps {
   /** A ref to the trigger element (e.g. a Link). */
   triggerRef: RefObject<FocusableElement | null>;
   /** A ref to the popover element. */
   popoverRef: RefObject<Element | null>;
 }
 
-export interface LinkPreviewTriggerAria {
+export interface PreviewTriggerTriggerAria {
   /**
    * Props for the trigger element (e.g. a Link).
    */
@@ -63,14 +63,14 @@ export interface LinkPreviewTriggerAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a link preview trigger.
- * A link preview displays a popover on hover, focus, or long press. Unlike a
+ * Provides the behavior and accessibility implementation for a preview trigger.
+ * A preview trigger displays a popover on hover, focus, or long press. Unlike a
  * tooltip, the popover may contain interactive content.
  */
-export function useLinkPreviewTrigger(
-  props: AriaLinkPreviewOptions,
+export function usePreviewTrigger(
+  props: AriaPreviewTriggerOptions,
   state: TooltipTriggerState
-): LinkPreviewTriggerAria {
+): PreviewTriggerTriggerAria {
   let {triggerRef, popoverRef, isDisabled} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/link-preview');
   let popoverId = useId();

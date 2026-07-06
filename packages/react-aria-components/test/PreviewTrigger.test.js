@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -19,27 +19,27 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {Link} from '../src/Link';
-import {LinkPreview} from '../src/LinkPreview';
+import {PreviewTrigger} from '../src/PreviewTrigger';
 import {Popover} from '../src/Popover';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-function TestLinkPreview(props) {
+function TestPreviewTrigger(props) {
   return (
     <>
-      <LinkPreview delay={0} closeDelay={0} {...props}>
+      <PreviewTrigger delay={0} closeDelay={0} {...props}>
         <Link href="https://example.com">Example</Link>
         <Popover data-testid="preview">
           <p>Preview content</p>
           <Button>Action</Button>
         </Popover>
-      </LinkPreview>
+      </PreviewTrigger>
       <button data-testid="after">After</button>
     </>
   );
 }
 
-describe('LinkPreview', () => {
+describe('PreviewTrigger', () => {
   let user;
 
   beforeEach(() => {
@@ -73,7 +73,7 @@ describe('LinkPreview', () => {
     };
 
     it('opens on hover, stays open across the safe area, and closes when the pointer leaves', async () => {
-      let {getByRole, getByTestId, queryByTestId} = render(<TestLinkPreview />);
+      let {getByRole, getByTestId, queryByTestId} = render(<TestPreviewTrigger />);
       let link = getByRole('link');
 
       fireEvent.mouseMove(document.body);
@@ -106,7 +106,7 @@ describe('LinkPreview', () => {
   });
 
   it('opens on keyboard focus', async () => {
-    let {getByRole, getByTestId} = render(<TestLinkPreview />);
+    let {getByRole, getByTestId} = render(<TestPreviewTrigger />);
     let link = getByRole('link');
 
     await user.tab();
@@ -118,7 +118,7 @@ describe('LinkPreview', () => {
   });
 
   it('exposes aria-haspopup, aria-expanded, and aria-controls on the trigger', async () => {
-    let {getByRole, getByTestId} = render(<TestLinkPreview />);
+    let {getByRole, getByTestId} = render(<TestPreviewTrigger />);
     let link = getByRole('link');
 
     // Closed: haspopup is always present, not expanded, and controls nothing.
@@ -135,7 +135,7 @@ describe('LinkPreview', () => {
   });
 
   it('delays opening on keyboard focus', async () => {
-    let {getByRole, getByTestId, queryByTestId} = render(<TestLinkPreview delay={300} />);
+    let {getByRole, getByTestId, queryByTestId} = render(<TestPreviewTrigger delay={300} />);
     let link = getByRole('link');
 
     await user.tab();
@@ -148,7 +148,7 @@ describe('LinkPreview', () => {
   });
 
   it('does not open when tabbing through before the delay elapses', async () => {
-    let {getByRole, getByTestId, queryByTestId} = render(<TestLinkPreview delay={300} />);
+    let {getByRole, getByTestId, queryByTestId} = render(<TestPreviewTrigger delay={300} />);
     let link = getByRole('link');
 
     await user.tab(); // focus the link, schedules the warmup
@@ -164,7 +164,7 @@ describe('LinkPreview', () => {
   });
 
   it('is non-modal (no underlay)', async () => {
-    let {getByRole, queryByTestId} = render(<TestLinkPreview />);
+    let {getByRole, queryByTestId} = render(<TestPreviewTrigger />);
 
     await user.tab();
     expect(getByRole('link')).toBeInTheDocument();
@@ -172,7 +172,7 @@ describe('LinkPreview', () => {
   });
 
   it('moves focus into the preview when tabbing from the link', async () => {
-    let {getByRole} = render(<TestLinkPreview />);
+    let {getByRole} = render(<TestPreviewTrigger />);
     let link = getByRole('link');
 
     await user.tab();
@@ -184,7 +184,7 @@ describe('LinkPreview', () => {
   });
 
   it('stays open while focus is inside the preview', async () => {
-    let {getByRole, getByTestId} = render(<TestLinkPreview />);
+    let {getByRole, getByTestId} = render(<TestPreviewTrigger />);
 
     await user.tab(); // focus link, opens preview
     await user.tab(); // focus into preview
@@ -195,7 +195,7 @@ describe('LinkPreview', () => {
   });
 
   it('tabs out of the preview to the element after the trigger', async () => {
-    let {getByRole, getByTestId} = render(<TestLinkPreview />);
+    let {getByRole, getByTestId} = render(<TestPreviewTrigger />);
 
     await user.tab(); // link, opens
     await user.tab(); // into preview (Action)
@@ -208,7 +208,7 @@ describe('LinkPreview', () => {
   });
 
   it('closes on Escape and restores focus to the link', async () => {
-    let {getByRole, queryByTestId} = render(<TestLinkPreview />);
+    let {getByRole, queryByTestId} = render(<TestPreviewTrigger />);
     let link = getByRole('link');
 
     await user.tab(); // link, opens
@@ -223,7 +223,7 @@ describe('LinkPreview', () => {
   });
 
   it('does not reopen when closed via the popover Dismiss button (focus restore)', async () => {
-    let {getByRole, queryByTestId} = render(<TestLinkPreview />);
+    let {getByRole, queryByTestId} = render(<TestPreviewTrigger />);
     let link = getByRole('link');
 
     await user.tab(); // link, opens
@@ -249,7 +249,7 @@ describe('LinkPreview', () => {
   });
 
   it('does not open when disabled', async () => {
-    let {getByRole, queryByTestId} = render(<TestLinkPreview isDisabled />);
+    let {getByRole, queryByTestId} = render(<TestPreviewTrigger isDisabled />);
     let link = getByRole('link');
 
     fireEvent.mouseMove(document.body);
@@ -260,7 +260,7 @@ describe('LinkPreview', () => {
 
   it('supports controlled open state', async () => {
     let onOpenChange = jest.fn();
-    let {getByTestId} = render(<TestLinkPreview isOpen onOpenChange={onOpenChange} />);
+    let {getByTestId} = render(<TestPreviewTrigger isOpen onOpenChange={onOpenChange} />);
     expect(getByTestId('preview')).toBeInTheDocument();
   });
 
@@ -272,7 +272,7 @@ describe('LinkPreview', () => {
     });
 
     it('opens on long press and moves focus into the popover', () => {
-      let {getByRole, getByTestId} = render(<TestLinkPreview />);
+      let {getByRole, getByTestId} = render(<TestPreviewTrigger />);
       let link = getByRole('link');
 
       fireEvent.pointerDown(link, {pointerType: 'touch'});
@@ -304,7 +304,7 @@ describe('LinkPreview', () => {
     it('only describes the long press interaction when using touch', async () => {
       setTouchCapable();
       try {
-        let {getByRole, queryByText} = render(<TestLinkPreview />);
+        let {getByRole, queryByText} = render(<TestPreviewTrigger />);
         let link = getByRole('link');
 
         // Keyboard modality: the long press hint would be confusing, so it is not present.

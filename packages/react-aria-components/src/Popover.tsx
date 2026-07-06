@@ -97,7 +97,7 @@ export interface PopoverProps
   isExiting?: boolean;
   /**
    * Whether the popover should appear and disappear without an entry or exit animation. This is
-   * used by components such as LinkPreview to skip animations when quickly swapping between
+   * used by components such as PreviewTrigger to skip animations when quickly swapping between
    * overlays.
    */
   shouldSkipAnimation?: boolean;
@@ -168,7 +168,7 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let localState = useOverlayTriggerState(props);
   let state =
     props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
-  // Skip the automatic exit animation when closing instantly (e.g. swapping between link previews
+  // Skip the automatic exit animation when closing instantly (e.g. swapping between previews
   // during warmup). An explicitly provided isExiting prop still takes precedence.
   let exitAnimation = useExitAnimation(ref, state.isOpen);
   let isExiting = props.isExiting || (!props.shouldSkipAnimation && exitAnimation) || false;
@@ -246,7 +246,7 @@ function PopoverInner({
   );
 
   let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
-  // Skip the automatic entry animation when opening instantly (e.g. swapping between link previews
+  // Skip the automatic entry animation when opening instantly (e.g. swapping between previews
   // during warmup). An explicitly provided isEntering prop still takes precedence.
   let enterAnimation = useEnterAnimation(ref, !!placement);
   let isEntering = props.isEntering || (!props.shouldSkipAnimation && enterAnimation) || false;
@@ -268,8 +268,8 @@ function PopoverInner({
   // Automatically render Popover with role=dialog except when isNonModal is true,
   // or a dialog is already nested inside the popover.
   let shouldBeDialog =
-    !props.isNonModal || props.trigger === 'SubmenuTrigger' || props.trigger === 'LinkPreview';
-  let [isDialog, setDialog] = useState(props.trigger === 'LinkPreview');
+    !props.isNonModal || props.trigger === 'SubmenuTrigger' || props.trigger === 'PreviewTrigger';
+  let [isDialog, setDialog] = useState(props.trigger === 'PreviewTrigger');
   useLayoutEffect(() => {
     if (ref.current) {
       setDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
@@ -282,7 +282,7 @@ function PopoverInner({
   useEffect(() => {
     if (
       isDialog &&
-      props.trigger !== 'LinkPreview' &&
+      props.trigger !== 'PreviewTrigger' &&
       (props.trigger !== 'SubmenuTrigger' || getInteractionModality() !== 'pointer') &&
       ref.current &&
       !isFocusWithin(ref.current)
@@ -361,7 +361,7 @@ function PopoverInner({
     return (
       <Overlay
         {...props}
-        shouldContainFocus={isDialog && props.trigger !== 'LinkPreview'}
+        shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
         isExiting={isExiting}
         portalContainer={UNSTABLE_portalContainer}>
         {/* oxlint-disable-next-line react/react-compiler */}
@@ -383,7 +383,7 @@ function PopoverInner({
   return (
     <Overlay
       {...props}
-      shouldContainFocus={isDialog && props.trigger !== 'LinkPreview'}
+      shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
       isExiting={isExiting}
       portalContainer={UNSTABLE_portalContainer ?? groupCtx?.current ?? undefined}>
       {overlay}

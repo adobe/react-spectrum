@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLinkPreviewProps, useLinkPreviewTrigger} from 'react-aria/useLinkPreviewTrigger';
+import {AriaPreviewTriggerProps, usePreviewTrigger} from 'react-aria/usePreviewTrigger';
 import {FocusableElement} from '@react-types/shared';
 import {FocusableProvider} from 'react-aria/private/interactions/useFocusable';
 import {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
@@ -20,16 +20,17 @@ import {Provider} from './utils';
 import React, {JSX, ReactNode, useMemo, useRef} from 'react';
 import {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 
-export interface LinkPreviewProps extends AriaLinkPreviewProps {
-  /** The Link and Popover that make up the link preview. */
+export interface PreviewTriggerProps extends AriaPreviewTriggerProps {
+  /** The trigger and Popover that make up the preview trigger. */
   children: ReactNode;
 }
 
 /**
- * A LinkPreview wraps a Link and a Popover to display a non-modal preview of the link's content
- * on hover, focus, or long press. Unlike a tooltip, the popover may contain interactive content.
+ * A PreviewTrigger wraps a focusable trigger (e.g. Link) and a Popover to display a non-modal
+ * preview of the content on hover, focus, or long press. Unlike a tooltip, the popover may contain
+ * interactive content.
  */
-export function LinkPreview(props: LinkPreviewProps): JSX.Element {
+export function PreviewTrigger(props: PreviewTriggerProps): JSX.Element {
   let state = useTooltipTriggerState({
     ...props,
     delay: props.delay ?? 600,
@@ -37,10 +38,7 @@ export function LinkPreview(props: LinkPreviewProps): JSX.Element {
   });
   let triggerRef = useRef<FocusableElement>(null);
   let popoverRef = useRef<HTMLElement>(null);
-  let {triggerProps, popoverProps} = useLinkPreviewTrigger(
-    {...props, triggerRef, popoverRef},
-    state
-  );
+  let {triggerProps, popoverProps} = usePreviewTrigger({...props, triggerRef, popoverRef}, state);
 
   // The Popover and usePopover expect an OverlayTriggerState. Adapt the TooltipTriggerState (which
   // provides the warmup/cooldown delay behavior) to that interface.
@@ -62,7 +60,7 @@ export function LinkPreview(props: LinkPreviewProps): JSX.Element {
         [
           PopoverContext,
           {
-            trigger: 'LinkPreview',
+            trigger: 'PreviewTrigger',
             triggerRef,
             ref: popoverRef,
             isNonModal: true,

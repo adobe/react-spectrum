@@ -9,8 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useLinkPreviewTrigger} from '../src/tooltip/useLinkPreviewTrigger';
+export {usePreviewTrigger} from '../src/tooltip/usePreviewTrigger';
 export type {
-  AriaLinkPreviewProps,
-  LinkPreviewTriggerAria
-} from '../src/tooltip/useLinkPreviewTrigger';
+  AriaPreviewTriggerProps,
+  PreviewTriggerTriggerAria
+} from '../src/tooltip/usePreviewTrigger';
