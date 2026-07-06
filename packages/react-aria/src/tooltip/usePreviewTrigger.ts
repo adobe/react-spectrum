@@ -20,11 +20,7 @@ import {AriaPopoverProps} from '../overlays/usePopover';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
-import {
-  getInteractionModality,
-  isFocusVisible,
-  useInteractionModality
-} from '../interactions/useFocusVisible';
+import {getInteractionModality, useInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
 import intlMessages from '../../intl/previewtrigger/*.json';
 import {mergeProps} from '../utils/mergeProps';
@@ -33,6 +29,7 @@ import {TooltipTriggerProps, TooltipTriggerState} from 'react-stately/useTooltip
 import {useEffect, useRef} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useEvent} from '../utils/useEvent';
+import {useFocusVisibleListener} from 'react-aria/private/interactions/useFocusVisible';
 import {useHover} from '../interactions/useHover';
 import {useId} from '../utils/useId';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
@@ -85,6 +82,11 @@ export function usePreviewTrigger(
   // from the link to the popover, even with closeDelay of 0.
   let pointerInSafeArea = useRef(false);
 
+  let isFocusVisible = useRef(false);
+  useFocusVisibleListener(visible => {
+    isFocusVisible.current = visible;
+  }, []);
+
   // Cancel a pending close and keep the preview open.
   let keepOpen = useEffectEvent(() => state.open(true));
 
@@ -97,8 +99,9 @@ export function usePreviewTrigger(
     }
     let active = triggerRef.current ? getActiveElement(getOwnerDocument(triggerRef.current)) : null;
     if (
-      (triggerRef.current && nodeContains(triggerRef.current, active)) ||
-      (popoverRef.current && nodeContains(popoverRef.current, active))
+      isFocusVisible.current &&
+      ((triggerRef.current && nodeContains(triggerRef.current, active)) ||
+        (popoverRef.current && nodeContains(popoverRef.current, active)))
     ) {
       return;
     }
@@ -146,7 +149,7 @@ export function usePreviewTrigger(
       return;
     }
 
-    if (isFocusVisible()) {
+    if (isFocusVisible.current) {
       // Open after the warmup delay on keyboard focus, not immediately like a tooltip. This way
       // tabbing quickly through the page doesn't open previews (and add their tab stops); the
       // delay ensures the user is actually interested in the link's details.
