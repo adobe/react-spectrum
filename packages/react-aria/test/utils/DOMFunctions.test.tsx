@@ -13,7 +13,7 @@
 import {createShadowRoot, render} from '@react-spectrum/test-utils-internal';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {getPropagationTargets, nodeContains} from '../../src/utils/shadowdom/DOMFunctions';
-import React, {HTMLAttributes, ReactNode, useCallback, useRef, useState} from 'react';
+import React from 'react';
 import {screen} from 'shadow-dom-testing-library';
 
 describe('nodeContains with shadow DOM', function () {
