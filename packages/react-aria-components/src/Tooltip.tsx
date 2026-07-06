@@ -173,7 +173,7 @@ export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
   // Skip the automatic exit animation when closing instantly (e.g. swapping between tooltips
   // during warmup). An explicitly provided isExiting prop still takes precedence.
   let exitAnimation = useExitAnimation(ref, state.isOpen);
-  let isExiting = props.isExiting || (!state.isInstant && exitAnimation) || false;
+  let isExiting = props.isExiting || (!state.shouldSkipAnimation && exitAnimation) || false;
   if (!state.isOpen && !isExiting) {
     return null;
   }
@@ -208,7 +208,7 @@ function TooltipInner(
   // Skip the automatic entry animation when opening instantly (e.g. swapping between tooltips
   // during warmup). An explicitly provided isEntering prop still takes precedence.
   let enterAnimation = useEnterAnimation(props.tooltipRef, !!placement);
-  let isEntering = props.isEntering || (!state.isInstant && enterAnimation) || false;
+  let isEntering = props.isEntering || (!state.shouldSkipAnimation && enterAnimation) || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Tooltip',

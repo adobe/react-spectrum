@@ -100,7 +100,7 @@ export interface PopoverProps
    * used by components such as LinkPreview to skip animations when quickly swapping between
    * overlays.
    */
-  isInstant?: boolean;
+  shouldSkipAnimation?: boolean;
   /**
    * The container element in which the overlay portal will be placed. This may have unknown
    * behavior depending on where it is portalled to.
@@ -171,7 +171,7 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   // Skip the automatic exit animation when closing instantly (e.g. swapping between link previews
   // during warmup). An explicitly provided isExiting prop still takes precedence.
   let exitAnimation = useExitAnimation(ref, state.isOpen);
-  let isExiting = props.isExiting || (!props.isInstant && exitAnimation) || false;
+  let isExiting = props.isExiting || (!props.shouldSkipAnimation && exitAnimation) || false;
   let isHidden = useIsHidden();
   let {direction} = useLocale();
 
@@ -211,7 +211,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   state: OverlayTriggerState;
   isEntering?: boolean;
   isExiting: boolean;
-  isInstant?: boolean;
+  shouldSkipAnimation?: boolean;
   UNSTABLE_portalContainer?: Element;
   trigger?: string;
   dir?: 'ltr' | 'rtl';
@@ -249,7 +249,7 @@ function PopoverInner({
   // Skip the automatic entry animation when opening instantly (e.g. swapping between link previews
   // during warmup). An explicitly provided isEntering prop still takes precedence.
   let enterAnimation = useEnterAnimation(ref, !!placement);
-  let isEntering = props.isEntering || (!props.isInstant && enterAnimation) || false;
+  let isEntering = props.isEntering || (!props.shouldSkipAnimation && enterAnimation) || false;
   let renderProps = useRenderProps({
     // oxlint-disable-next-line react/react-compiler
     ...props,

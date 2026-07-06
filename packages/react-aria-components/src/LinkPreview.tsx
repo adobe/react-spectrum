@@ -67,7 +67,7 @@ export function LinkPreview(props: LinkPreviewProps): JSX.Element {
             ref: popoverRef,
             isNonModal: true,
             // Skip enter/exit animations when swapping between previews during the warmup period.
-            isInstant: state.isInstant,
+            shouldSkipAnimation: state.shouldSkipAnimation,
             ...popoverProps
           }
         ]

@@ -60,7 +60,7 @@ export interface TooltipTriggerState {
    * Whether the tooltip is being shown or hidden without an animation. This is true while the
    * global warmup timer is active, i.e. when quickly moving between tooltips.
    */
-  isInstant: boolean;
+  shouldSkipAnimation: boolean;
   /**
    * Shows the tooltip. By default, the tooltip becomes visible after a delay
    * depending on a global warmup timer. The `immediate` option shows the
@@ -87,7 +87,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   let {isOpen, open, close} = useOverlayTriggerState(props);
   // Whether the current open/close transition should skip its animation. Set when swapping
   // between tooltips during the global warmup period.
-  let [isInstant, setIsInstant] = useState(false);
+  let [shouldSkipAnimation, setIsInstant] = useState(false);
   let id = useMemo(() => `${++tooltipId}`, []);
   let closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let closeCallback = useRef<() => void>(close);
@@ -199,7 +199,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
 
   return {
     isOpen,
-    isInstant,
+    shouldSkipAnimation,
     open: immediate => {
       if (!immediate && delay > 0 && !closeTimeout.current) {
         warmupTooltip();

@@ -371,7 +371,7 @@ describe('useTooltipTriggerState', function () {
             aria-label={props.label}
             ref={ref}
             {...triggerProps}
-            data-instant={String(state.isInstant)}>
+            data-instant={String(state.shouldSkipAnimation)}>
             {props.children}
           </button>
           {state.isOpen && (
