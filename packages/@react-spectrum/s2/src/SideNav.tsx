@@ -169,6 +169,8 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
             className={renderProps => tree(renderProps)}
             selectionBehavior="replace"
             selectionMode="single"
+            keyboardNavigationBehavior="arrow"
+            disallowEmptySelection
             ref={scrollRef}>
             {props.children}
           </Tree>
@@ -299,44 +301,13 @@ export const SideNavItem = (props: SideNavItemProps, ref: DOMRef<HTMLDivElement>
   let backupRef = useRef<HTMLDivElement | null>(null);
   let domRef = ref || backupRef;
 
-  let keyWhenFocused = useRef<Key | null>(null);
-  let focus = () => {
-    if (domRef.current) {
-      let treeWalker = getFocusableTreeWalker(domRef.current);
-      // If focus is already on a focusable child within the cell, early return so we don't shift focus
-      if (isFocusWithin(domRef.current) && domRef.current !== getActiveElement()) {
-        return;
-      }
-
-      let focusable = treeWalker.firstChild() as FocusableElement;
-      if (focusable) {
-        focusSafely(focusable);
-        return;
-      }
-
-      if (
-        (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-        !isFocusWithin(domRef.current)
-      ) {
-        focusSafely(domRef.current);
-      }
-    }
-  };
-
-  let onFocus = (e: React.FocusEvent<HTMLDivElement>) => {
-    props?.onFocus?.(e);
-    requestAnimationFrame(() => {
-      focus();
-    });
-  };
-
   return (
     <SideNavItemContext.Provider
       value={{href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions}}>
       <TreeItem
         {...rest}
         allowChildKeys
-        onFocus={onFocus}
+        focusMode="child"
         ref={domRef}
         className={renderProps => treeRow(renderProps)}
       />
