@@ -20,7 +20,11 @@ import {AriaPopoverProps} from '../overlays/usePopover';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
-import {getInteractionModality, useInteractionModality} from '../interactions/useFocusVisible';
+import {
+  getInteractionModality,
+  useFocusVisibleListener,
+  useInteractionModality
+} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
 import intlMessages from '../../intl/previewtrigger/*.json';
 import {mergeProps} from '../utils/mergeProps';
@@ -29,7 +33,6 @@ import {TooltipTriggerProps, TooltipTriggerState} from 'react-stately/useTooltip
 import {useEffect, useRef} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useEvent} from '../utils/useEvent';
-import {useFocusVisibleListener} from 'react-aria/private/interactions/useFocusVisible';
 import {useHover} from '../interactions/useHover';
 import {useId} from '../utils/useId';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
