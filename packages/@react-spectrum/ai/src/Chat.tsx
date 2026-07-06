@@ -123,6 +123,10 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
     // TODO: will need some kind of api to programatically set the focused item to
     // the newest item in the gridlist in the virtualizer case. this works for
     // non-virtualized for now though
+    // 'scrollend' does not compose across shadow DOM boundaries, but this listener is intentionally
+    // scoped to this specific scroll container element (not a global target), so shadow root
+    // propagation does not apply here.
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     el.addEventListener(
       'scrollend',
       () => {
