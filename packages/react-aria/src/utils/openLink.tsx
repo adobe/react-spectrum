@@ -205,7 +205,7 @@ export function useLinkProps(props?: LinkDOMProps): LinkDOMProps {
   let linkProps: LinkDOMProps = {};
   if (props) {
     for (let key of ['href', 'target', 'rel', 'download', 'ping', 'referrerPolicy']) {
-      if (key in props) {
+      if (key in props && props[key] !== undefined) {
         linkProps[key] = key === 'href' ? href : props[key];
       }
     }
