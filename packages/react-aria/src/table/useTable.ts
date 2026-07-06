@@ -113,10 +113,12 @@ export function useTable<T>(
 
   // Override to include header rows
   if (isVirtualized) {
+    // oxlint-disable-next-line react/react-compiler
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
   if (state.treeColumn != null) {
+    // oxlint-disable-next-line react/react-compiler
     gridProps.role = 'treegrid';
   }
 
@@ -125,7 +127,8 @@ export function useTable<T>(
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue ?? '';
     return sortDirection && column
-      ? stringFormatter.format(`${sortDirection}Sort`, {columnName})
+      ? // oxlint-disable-next-line react/react-compiler
+        stringFormatter.format(`${sortDirection}Sort`, {columnName})
       : undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortDirection, column, state.collection.columns]);

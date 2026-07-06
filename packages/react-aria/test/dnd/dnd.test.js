@@ -1951,6 +1951,55 @@ describe('useDrag and useDrop', function () {
         expect(document.activeElement).toBe(droppable);
       });
 
+      it('should prefer an ancestor drop target over the nearest drop target', async () => {
+        let onDropEnter = jest.fn();
+        let onDropEnter2 = jest.fn();
+        let tree = render(
+          <>
+            <Droppable onDropEnter={onDropEnter}>
+              <Draggable />
+            </Droppable>
+            <Droppable onDropEnter={onDropEnter2}>Drop here 2</Droppable>
+          </>
+        );
+
+        let draggable = tree.getByText('Drag me');
+        let droppable = draggable.parentElement;
+        let droppable2 = tree.getByText('Drop here 2');
+        let rect = (left, top) => ({
+          left,
+          top,
+          x: left,
+          y: top,
+          width: 100,
+          height: 50
+        });
+
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          if (this === droppable) {
+            return rect(1000, 0);
+          }
+
+          if (this === droppable2) {
+            return rect(10, 0);
+          }
+
+          return rect(0, 0);
+        });
+
+        await user.tab();
+        await user.tab();
+        expect(document.activeElement).toBe(draggable);
+
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(droppable);
+        expect(droppable).toHaveAttribute('data-droptarget', 'true');
+        expect(droppable2).toHaveAttribute('data-droptarget', 'false');
+        expect(onDropEnter).toHaveBeenCalledTimes(1);
+        expect(onDropEnter2).not.toHaveBeenCalled();
+      });
+
       it('should cancel the drag when pressing the escape key', async () => {
         let tree = render(
           <>
@@ -2882,6 +2931,9 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should support clicking the original drag target to cancel drag (virtual pointer event)', async () => {
+      // oxlint-disable-next-line no-unused-vars
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
       let tree = render(
         <>
           <Draggable />
@@ -2942,6 +2994,9 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should support double tapping the drop target to complete drag (virtual pointer event)', async () => {
+      // oxlint-disable-next-line no-unused-vars
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
       let onDrop = jest.fn();
       let tree = render(
         <>
