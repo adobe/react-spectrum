@@ -28,8 +28,8 @@ export function nodeContains(
     }
 
     if (
-      (currentNode as HTMLSlotElement).tagName === 'SLOT' &&
-      (currentNode as HTMLSlotElement).assignedSlot
+      typeof (currentNode as HTMLSlotElement).assignedElements !== 'function' &&
+      (currentNode as HTMLSlotElement).assignedSlot?.parentNode
     ) {
       // Element is slotted
       currentNode = (currentNode as HTMLSlotElement).assignedSlot!.parentNode;
