@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act} from '@react-spectrum/test-utils-internal';
 import {runAfterKeyboard, runAfterKeyboardTransition} from '../../src/utils/runAfterKeyboard';
-import {isKeyboardOpen} from '../../src/utils/keyboard';
 
 jest.mock('../../src/utils/platform', () => ({
   ...jest.requireActual('../../src/utils/platform'),
@@ -28,11 +28,12 @@ describe('runAfterKeyboard', function () {
     let input = document.createElement('input');
     document.body.appendChild(input);
     input.focus();
-    
-    // Remove after the current frame, so pending rAF reads still see the focus.
-    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-      document.body.removeChild(input);
-    }));
+
+    window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(() => {
+        document.body.removeChild(input);
+      })
+    );
   }
 
   function closeKeyboard(): void {
@@ -98,8 +99,8 @@ describe('runAfterKeyboard', function () {
       openKeyboard();
       closeKeyboard();
 
-      jest.advanceTimersByTime(700);
-      
+      act(() => jest.advanceTimersByTime(700));
+
       runAfterKeyboard(callback);
 
       expect(callback).toHaveBeenCalledWith(false);
@@ -113,12 +114,12 @@ describe('runAfterKeyboard', function () {
 
       closeKeyboard();
       resize({width: 300, height: 800});
-      
+
       runAfterKeyboard(callback);
 
       expect(callback).not.toHaveBeenCalled();
 
-      jest.runOnlyPendingTimers();
+      act(() => jest.runOnlyPendingTimers());
 
       expect(callback).toHaveBeenCalledWith(false);
     });
@@ -132,7 +133,7 @@ describe('runAfterKeyboard', function () {
       closeKeyboard();
       runAfterKeyboard(callback);
 
-      jest.runOnlyPendingTimers();
+      act(() => jest.runOnlyPendingTimers());
 
       expect(callback).toHaveBeenCalledWith(false);
     });
@@ -143,13 +144,13 @@ describe('runAfterKeyboard', function () {
       openKeyboard();
       runAfterKeyboard(callback);
 
-      jest.runOnlyPendingTimers();
+      act(() => jest.runOnlyPendingTimers());
 
       expect(callback).not.toHaveBeenCalled();
 
       resize({width: 300, height: 450});
 
-      jest.advanceTimersByTime(100);
+      act(() => jest.advanceTimersByTime(100));
 
       expect(callback).toHaveBeenCalledWith(true);
     });
@@ -160,8 +161,8 @@ describe('runAfterKeyboard', function () {
       openKeyboard();
       runAfterKeyboard(callback);
 
-      jest.runOnlyPendingTimers();
-      jest.advanceTimersByTime(700);
+      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersByTime(700));
 
       expect(callback).toHaveBeenCalledWith(false);
     });
@@ -172,7 +173,7 @@ describe('runAfterKeyboard', function () {
       openKeyboard();
       runAfterKeyboard(callback)();
 
-      jest.advanceTimersByTime(1000);
+      act(() => jest.advanceTimersByTime(1000));
 
       expect(callback).not.toHaveBeenCalled();
     });
@@ -184,7 +185,7 @@ describe('runAfterKeyboard', function () {
 
       openKeyboard();
 
-      jest.advanceTimersByTime(700);
+      act(() => jest.advanceTimersByTime(700));
 
       runAfterKeyboardTransition(callback);
 
@@ -199,12 +200,12 @@ describe('runAfterKeyboard', function () {
 
       closeKeyboard();
       resize({width: 300, height: 800});
-      
+
       runAfterKeyboardTransition(callback);
 
       expect(callback).not.toHaveBeenCalled();
 
-      jest.runOnlyPendingTimers();
+      act(() => jest.runOnlyPendingTimers());
 
       expect(callback).toHaveBeenCalledWith(false);
     });
@@ -218,11 +219,11 @@ describe('runAfterKeyboard', function () {
       closeKeyboard();
       runAfterKeyboardTransition(callback);
 
-      jest.runOnlyPendingTimers();
+      act(() => jest.runOnlyPendingTimers());
 
       resize({width: 300, height: 800});
 
-      jest.advanceTimersByTime(100);
+      act(() => jest.advanceTimersByTime(100));
 
       expect(callback).toHaveBeenCalledWith(false);
     });
@@ -233,15 +234,15 @@ describe('runAfterKeyboard', function () {
       openKeyboard();
       runAfterKeyboardTransition(callback);
 
-      jest.runOnlyPendingTimers();
+      act(() => jest.runOnlyPendingTimers());
 
       resize({width: 300, height: 450});
 
-      jest.advanceTimersByTime(50);
+      act(() => jest.advanceTimersByTime(50));
 
       expect(callback).not.toHaveBeenCalled();
 
-      jest.advanceTimersByTime(250);
+      act(() => jest.advanceTimersByTime(250));
 
       expect(callback).toHaveBeenCalledWith(true);
     });
@@ -252,8 +253,8 @@ describe('runAfterKeyboard', function () {
       openKeyboard();
       runAfterKeyboard(callback);
 
-      jest.runOnlyPendingTimers();
-      jest.advanceTimersByTime(700);
+      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersByTime(700));
 
       expect(callback).toHaveBeenCalledWith(false);
     });
@@ -267,8 +268,8 @@ describe('runAfterKeyboard', function () {
       closeKeyboard();
       runAfterKeyboardTransition(callback);
 
-      jest.runOnlyPendingTimers();
-      jest.advanceTimersByTime(700);
+      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersByTime(700));
 
       expect(callback).toHaveBeenCalledWith(true);
     });
@@ -279,7 +280,7 @@ describe('runAfterKeyboard', function () {
       openKeyboard();
       runAfterKeyboardTransition(callback)();
 
-      jest.advanceTimersByTime(1000);
+      act(() => jest.advanceTimersByTime(1000));
 
       expect(callback).not.toHaveBeenCalled();
     });

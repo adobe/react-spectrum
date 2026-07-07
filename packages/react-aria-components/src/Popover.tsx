@@ -127,7 +127,8 @@ export interface PopoverRenderProps {
    */
   placement: PlacementAxis | null;
   /**
-   * Whether the popover is ready to be displayed. Use this to hide the popover while it is not yet ready to enter.
+   * Whether the popover is ready to be displayed. Use this to hide the popover while it is not yet
+   * ready to enter.
    *
    * @selector [data-open]
    */

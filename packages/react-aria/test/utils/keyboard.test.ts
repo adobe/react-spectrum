@@ -10,22 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
+import {act} from '@react-spectrum/test-utils-internal';
 import {isKeyboardOpen, supportsKeyboard, willOpenKeyboard} from '../../src/utils/keyboard';
 
 describe('keyboard', function () {
   let clock = Date.now();
 
   let width = window.innerWidth;
-  let height = window.innerHeight;  
+  let height = window.innerHeight;
 
   function openKeyboard(): void {
     let input = document.createElement('input');
     document.body.appendChild(input);
     input.focus();
 
-    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-      document.body.removeChild(input);
-    }));
+    window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(() => {
+        document.body.removeChild(input);
+      })
+    );
   }
 
   function closeKeyboard(): void {
@@ -86,10 +89,12 @@ describe('keyboard', function () {
   });
 
   describe('willOpenKeyboard', function () {
-    it('returns true for text inputs, textareas and contenteditable', function () {
+    it('returns true for focusable inputs and editable content areas', function () {
       let input = document.createElement('input');
       let textarea = document.createElement('textarea');
       let editable = document.createElement('div');
+
+      editable.setAttribute('contenteditable', 'true');
 
       Object.defineProperty(editable, 'isContentEditable', {
         value: true,
@@ -97,9 +102,17 @@ describe('keyboard', function () {
         writable: false
       });
 
+      document.body.appendChild(input);
+      document.body.appendChild(textarea);
+      document.body.appendChild(editable);
+
       expect(willOpenKeyboard(input)).toBe(true);
       expect(willOpenKeyboard(textarea)).toBe(true);
       expect(willOpenKeyboard(editable)).toBe(true);
+
+      input.remove();
+      textarea.remove();
+      editable.remove();
     });
 
     it('returns false for non-text input types and non-inputs', function () {
@@ -178,7 +191,7 @@ describe('keyboard', function () {
     it('supports resizes before focus', function () {
       openKeyboard();
       closeKeyboard();
-      jest.advanceTimersByTime(1000);
+      act(() => jest.advanceTimersByTime(1000));
 
       resize({width: 300, height: 400});
       openKeyboard();
@@ -188,10 +201,10 @@ describe('keyboard', function () {
 
       closeKeyboard();
       resize({width: 300, height: 800});
-      jest.advanceTimersByTime(1000);
+      act(() => jest.advanceTimersByTime(1000));
 
       openKeyboard();
-      jest.advanceTimersByTime(700);
+      act(() => jest.advanceTimersByTime(700));
       expect(supportsKeyboard()).toBe(false);
     });
   });
@@ -212,15 +225,15 @@ describe('keyboard', function () {
 
     it('returns false when the keyboard did not open in time', function () {
       openKeyboard();
-      jest.advanceTimersByTime(700);
+      act(() => jest.advanceTimersByTime(700));
 
       expect(supportsKeyboard()).toBe(false);
     });
 
     it('recovers when the keyboard opened in time', function () {
       openKeyboard();
-      jest.advanceTimersByTime(700);
-  
+      act(() => jest.advanceTimersByTime(700));
+
       expect(supportsKeyboard()).toBe(false);
 
       openKeyboard();
@@ -236,7 +249,7 @@ describe('keyboard', function () {
       expect(supportsKeyboard()).toBe(true);
 
       closeKeyboard();
-      jest.advanceTimersByTime(700);
+      act(() => jest.advanceTimersByTime(700));
 
       expect(supportsKeyboard()).toBe(true);
     });

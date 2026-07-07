@@ -94,7 +94,8 @@ const InternalModalContext = createContext<InternalModalContextValue | null>(nul
 
 export interface ModalRenderProps {
   /**
-   * Whether the modal is ready to be displayed. Use this to hide the modal while it is not yet ready to enter.
+   * Whether the modal is ready to be displayed. Use this to hide the modal while it is not yet
+   * ready to enter.
    *
    * @selector [data-open]
    */

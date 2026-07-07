@@ -82,7 +82,7 @@ export {inertValue} from 'react-aria/private/utils/inertValue';
 export {
   isCtrlKeyPressed,
   isKeyboardOpen,
-  isKeyboardVisible,
+  supportsKeyboard,
   willOpenKeyboard
 } from 'react-aria/private/utils/keyboard';
 export {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';

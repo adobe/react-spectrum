@@ -11,10 +11,10 @@
  */
 
 import {addEvent} from './domHelpers';
-import {getMetaValue} from './getMetaValue';
 import {getEventTarget} from './shadowdom/DOMFunctions';
-import {isWebKit, isMac} from './platform';
+import {getMetaValue} from './getMetaValue';
 import {isFocusable} from './isFocusable';
+import {isMac, isWebKit} from './platform';
 
 const KEYBOARD_HEIGHT = 100;
 const KEYBOARD_TIMEOUT = 600;
@@ -29,7 +29,7 @@ const state: KeyboardState = {
   startTimeStamp: 0,
   endTimeStamp: 0,
   resizeTimeStamp: 0,
-  resizeTimeout: 0,
+  resizeTimeout: 0
 };
 
 // HTML input types that do not cause the software keyboard to appear.
@@ -115,9 +115,9 @@ function onResizeEnd(): void {
     delta = 0;
   }
 
-  // Update the screen if a resize happens outside the capture timeframe. We debounce 
-  // because WebKit may fire its single opening resize before the focus event, which 
-  // will cancel this timeout. This fails only if the content is resized while the keyboard 
+  // Update the screen if a resize happens outside the capture timeframe. We debounce
+  // because WebKit may fire its single opening resize before the focus event, which
+  // will cancel this timeout. This fails only if the content is resized while the keyboard
   // remains open, which is unlikely. Orientation changes are handled separately.
   if (elapsed > KEYBOARD_TIMEOUT) {
     window.clearTimeout(state.screenTimeout);
@@ -147,7 +147,7 @@ function onResizeEnd(): void {
   state.isOpen = delta >= KEYBOARD_HEIGHT;
 }
 
-function onOrientationChange(e: Event): void {
+function onOrientationChange(): void {
   let screen = getTouchScreen();
 
   let rotation = state.screenAngle - screen.angle;
@@ -243,13 +243,13 @@ export function supportsKeyboard(): boolean {
 }
 
 export function willOpenKeyboard(target: Element | null): boolean {
+  if (!(target instanceof Element) || !isFocusable(target)) {
+    return false;
+  }
+
   let isTextArea = target instanceof HTMLTextAreaElement;
   let isEditable = target instanceof HTMLElement && target.isContentEditable;
   let isTextInput = target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type);
-
-  if (target && !isFocusable(target)) {
-    return false;
-  }
 
   return isTextArea || isEditable || isTextInput;
 }
