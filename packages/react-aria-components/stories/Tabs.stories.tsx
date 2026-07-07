@@ -145,8 +145,8 @@ export const NestedTabs: TabsStory = () => (
   </Tabs>
 );
 
-// With the reset to auto on the enclosing TabPanel, inner TabPanels size to
-// their own content. Without it, they inherit the outer TabPanels' pixel vars.
+// With non-inheriting panel size variables, inner TabPanels size to their own content.
+// Without it, they inherit the outer TabPanels' pixel vars.
 export const NestedTabsSizeTransition: TabsStory = () => (
   <Tabs>
     <TabList aria-label="Outer tabs" style={{display: 'flex', gap: 8}}>
@@ -175,9 +175,7 @@ export const NestedTabsSizeTransition: TabsStory = () => (
         </Tabs>
       </TabPanel>
       <TabPanel id="large">
-        <div style={{width: 480, height: 240, padding: 8}}>
-          Large outer panel
-        </div>
+        <div style={{width: 480, height: 240, padding: 8}}>Large outer panel</div>
       </TabPanel>
     </TabPanels>
   </Tabs>

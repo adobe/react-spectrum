@@ -251,6 +251,44 @@ export interface TabPanelRenderProps {
 export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
 export const TabListStateContext = createContext<TabListState<any> | null>(null);
 
+interface CSSPropertyDefinition {
+  name: string;
+  syntax: string;
+  inherits: boolean;
+  initialValue: string;
+}
+
+interface CSSWithRegisterProperty {
+  registerProperty: (definition: CSSPropertyDefinition) => void;
+}
+
+let supportsTabPanelSizePropertyRegistration = registerTabPanelSizeProperties();
+
+function registerTabPanelSizeProperties(): boolean {
+  if (
+    typeof CSS === 'undefined' ||
+    typeof (CSS as unknown as CSSWithRegisterProperty).registerProperty !== 'function'
+  ) {
+    return false;
+  }
+
+  let css = CSS as unknown as CSSWithRegisterProperty;
+  for (let name of ['--tab-panel-width', '--tab-panel-height']) {
+    try {
+      css.registerProperty({
+        name,
+        syntax: '*',
+        inherits: false,
+        initialValue: 'auto'
+      });
+    } catch {
+      continue;
+    }
+  }
+
+  return true;
+}
+
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them.
  */
@@ -627,11 +665,14 @@ function TabPanelInner(
   let domProps = isSelected
     ? mergeProps(DOMProps, tabPanelProps, focusProps, renderProps)
     : mergeProps(DOMProps, renderProps);
-  let style = {
-    '--tab-panel-width': 'auto',
-    '--tab-panel-height': 'auto',
-    ...renderProps.style
-  } as React.CSSProperties;
+  let style = renderProps.style;
+  if (!supportsTabPanelSizePropertyRegistration) {
+    style = {
+      '--tab-panel-width': 'unset',
+      '--tab-panel-height': 'unset',
+      ...renderProps.style
+    } as React.CSSProperties;
+  }
 
   return (
     <dom.div

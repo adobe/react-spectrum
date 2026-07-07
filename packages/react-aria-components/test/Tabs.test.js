@@ -695,7 +695,7 @@ describe('Tabs', () => {
     expect(innerTabs[1]).toHaveTextContent('Two');
   });
 
-  it('resets tab panel transition variables for nested tabpanels', async () => {
+  it('falls back to resetting tab panel transition variables for nested tabpanels', async () => {
     let {getByTestId} = render(
       <Tabs>
         <TabList aria-label="Outer tabs">
@@ -735,8 +735,8 @@ describe('Tabs', () => {
 
     expect(outerTabPanels.style.getPropertyValue('--tab-panel-width')).toBe('320px');
     expect(outerTabPanels.style.getPropertyValue('--tab-panel-height')).toBe('240px');
-    expect(outerTabPanel.style.getPropertyValue('--tab-panel-width')).toBe('auto');
-    expect(outerTabPanel.style.getPropertyValue('--tab-panel-height')).toBe('auto');
+    expect(outerTabPanel.style.getPropertyValue('--tab-panel-width')).toBe('unset');
+    expect(outerTabPanel.style.getPropertyValue('--tab-panel-height')).toBe('unset');
     expect(innerTabPanels.style.getPropertyValue('--tab-panel-width')).toBe('');
     expect(innerTabPanels.style.getPropertyValue('--tab-panel-height')).toBe('');
   });
@@ -875,7 +875,7 @@ describe('Tabs', () => {
     expect(tabPanels).toHaveStyle({width: '100px'});
   });
 
-  it('should allow tab panel styles to override transition variable resets', () => {
+  it('should allow tab panel styles to override fallback transition variable resets', () => {
     let {getByTestId} = render(
       <Tabs>
         <TabList aria-label="test">
@@ -902,7 +902,7 @@ describe('Tabs', () => {
     expect(tabPanel.style.getPropertyValue('--tab-panel-height')).toBe('75px');
   });
 
-  it('should merge tab panel transition variable resets with style render props', () => {
+  it('should merge fallback transition variable resets with style render props', () => {
     let {getByTestId} = render(
       <Tabs>
         <TabList aria-label="test">
@@ -926,8 +926,8 @@ describe('Tabs', () => {
 
     let tabPanel = getByTestId('tabpanel');
     expect(tabPanel).toHaveAttribute('class', 'selected');
-    expect(tabPanel.style.getPropertyValue('--tab-panel-width')).toBe('auto');
-    expect(tabPanel.style.getPropertyValue('--tab-panel-height')).toBe('auto');
+    expect(tabPanel.style.getPropertyValue('--tab-panel-width')).toBe('unset');
+    expect(tabPanel.style.getPropertyValue('--tab-panel-height')).toBe('unset');
     expect(tabPanel).toHaveStyle({opacity: '1'});
   });
 
