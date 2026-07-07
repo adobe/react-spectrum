@@ -15,7 +15,7 @@
 @source "home/*.tsx";
 @source "../../../../../starters/tailwind/**/*.{ts,tsx}";
 @plugin "tailwindcss-react-aria-components";
-@plugin "tailwindcss-animate";
+@import 'tw-animate-css';
 @import './home/home.css';
 
 @font-face {

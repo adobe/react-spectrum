@@ -31,6 +31,7 @@ import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
+import {FieldInputContext} from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
@@ -115,7 +116,10 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
    * @default 'react-aria-ComboBox'
    */
   className?: ClassNameOrFunction<ComboBoxRenderProps>;
-  /** The filter function used to determine if a option should be included in the combo box list. */
+  /**
+   * The filter function used to determine if an option should be included in the combo box list.
+   * By default, a language-sensitive "contains" filter from `useFilter` is used.
+   */
   defaultFilter?: (textValue: string, inputValue: string) => boolean;
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form. When
@@ -174,7 +178,14 @@ export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
 });
 
 // Contexts to clear inside the popover.
-const CLEAR_CONTEXTS = [LabelContext, ButtonContext, InputContext, GroupContext, TextContext];
+const CLEAR_CONTEXTS = [
+  LabelContext,
+  ButtonContext,
+  InputContext,
+  FieldInputContext,
+  GroupContext,
+  TextContext
+];
 
 interface ComboBoxInnerProps<T> {
   props: ComboBoxProps<T, SelectionMode>;
@@ -255,6 +266,7 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
         return groupRef.current || inputRef.current;
       }
     }),
+    // oxlint-disable-next-line react/react-compiler
     [groupRef, inputRef]
   );
 
@@ -298,6 +310,15 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
         [LabelContext, {...labelProps, ref: labelRef}],
         [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
+        [
+          FieldInputContext,
+          {
+            ...inputProps,
+            ref: inputRef,
+            value: state.inputValue,
+            onChange: v => state.setInputValue(v as string)
+          } as any
+        ],
         [OverlayTriggerStateContext, state],
         [
           PopoverContext,

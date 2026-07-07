@@ -196,6 +196,7 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
     }
   };
 
+  // oxlint-disable-next-line react/react-compiler
   let listState = useListState({
     ...props,
     selectionMode,

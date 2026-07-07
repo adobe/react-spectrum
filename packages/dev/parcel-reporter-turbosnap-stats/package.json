@@ -1,5 +1,5 @@
 {
-  "name": "@parcel/reporter-turbosnap-stats",
+  "name": "parcel-reporter-turbosnap-stats",
   "version": "0.0.0",
   "private": true,
   "source": "StatsReporter.ts",
