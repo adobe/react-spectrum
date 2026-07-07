@@ -40,11 +40,11 @@ export const abTokCd = segments(text('ab'), token('TOK'), text('cd'));
 
 /** Story sample for adjacent-token arrow navigation. */
 export const adjacentTokensSample = new TokenSegmentList([
-  {type: 'token', text: 'Hello'},
-  {type: 'text', text: ' tokens testing '},
-  {type: 'token', text: 'World'},
-  {type: 'token', text: 'Testing'},
-  {type: 'text', text: ' test'}
+  token('Hello'),
+  text(' tokens testing '),
+  token('World'),
+  token('Testing'),
+  text(' test')
 ]);
 
 export function expectFieldText(value: TokenSegmentList, str: string) {
@@ -66,6 +66,10 @@ export function getFieldSelection(textboxEl: Element): [Position, Position] | nu
 /** Tests run in the browser; matches TokenField isMac() platform detection. */
 export function isMacPlatform(): boolean {
   return /^Mac/i.test(navigator.platform);
+}
+
+export function isWindowsPlatform(): boolean {
+  return /^Win/i.test(navigator.platform);
 }
 
 /** Returns Meta on Mac, Control elsewhere (matches TokenField undo/redo). */
@@ -95,6 +99,26 @@ export async function focusField(locator: Locator) {
 
 export function setFieldSelection(textboxEl: Element, start: Position, end: Position): void {
   setSelection(textboxEl, start, end);
+}
+
+/**
+ * Double clicks on the character at the given offset within a DOM node, selecting the word
+ * under the cursor. Used to create a real (directionless) word selection, since selecting
+ * programmatically via addRange sets a direction in some browsers.
+ */
+export async function dblClickAt(textbox: Locator, node: Node, offset: number): Promise<void> {
+  let el = textbox.element();
+  let range = document.createRange();
+  range.setStart(node, offset);
+  range.setEnd(node, offset + 1);
+  let elRect = el.getBoundingClientRect();
+  let charRect = range.getBoundingClientRect();
+  await userEvent.dblClick(textbox, {
+    position: {
+      x: charRect.left - elRect.left + charRect.width / 2,
+      y: charRect.top - elRect.top + charRect.height / 2
+    }
+  });
 }
 
 export async function navigateCaret(textbox: Locator, list: TokenSegmentList, target: Position) {
