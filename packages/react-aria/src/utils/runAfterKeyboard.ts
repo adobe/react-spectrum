@@ -11,12 +11,14 @@
  */
 
 import {getActiveElement} from './shadowdom/DOMFunctions';
-import {getOwnerDocument, getOwnerViewport, getOwnerWindow} from './domHelpers';
-import {isIOS, isWebKit} from './platform';
-import {isKeyboardOpen, isKeyboardVisible, supportsKeyboard, willOpenKeyboard} from './keyboard';
+import {isKeyboardOpen, supportsKeyboard, willOpenKeyboard} from './keyboard';
+import {isWebKit} from './platform';
 
-const intervalByWindow = new WeakMap<EventTarget, number | undefined>();
-const timeoutByWindow = new WeakMap<EventTarget, number | undefined>();
+const WEBKIT_OPEN_DELAY = 200;
+const TRANSITION_FRAMETIME = 50;
+const TRANSITION_TIMEOUT = 600;
+
+const listenersByWindow = new WeakMap<EventTarget, number | undefined>();
 const transitionCallbacks = new Set<QueuedCallback>();
 const resizeCallbacks = new Set<QueuedCallback>();
 
@@ -24,80 +26,47 @@ interface QueuedCallback {
   (isKeyboardOpen: boolean): void;
 }
 
-function onTransitionStart(): void {
-  let ownerWindow = getOwnerWindow();
+function onTransitionFrame(wasOpenKeyboard: boolean, signal: AbortSignal): void {
+  let isOpenKeyboard = isKeyboardOpen();
 
-  let wasOpen = isKeyboardOpen();
-  let wasVisible = isKeyboardVisible();
+  // Flush resize callbacks when the keyboard has affected layout or we ran out of time.
+  if (wasOpenKeyboard !== isOpenKeyboard || signal.aborted) {
+    for (let callback of resizeCallbacks) {
+      callback(isOpenKeyboard);
+      resizeCallbacks.delete(callback);
+    }
+  }
 
-  let transitionTimeout = timeoutByWindow.get(ownerWindow);
-  let transitionInterval = intervalByWindow.get(ownerWindow);
-
-  let transitionTimer = isIOS() && isWebKit() && wasOpen ? 600 : 300;
-  let transitionTicks = ownerWindow.navigator.maxTouchPoints ? 4 : 3;
-
-  if (transitionInterval != null || transitionTimeout != null) {
+  // WebKit only fires a single resize event at the start of an opening transition.
+  // The animation takes ~200ms, so restart the listener and flush when it runs out of time.
+  if (!wasOpenKeyboard && isOpenKeyboard && isWebKit() && !signal.aborted) {
+    window.clearInterval(listenersByWindow.get(window));
+    listenersByWindow.set(window, setupGlobalListeners(WEBKIT_OPEN_DELAY));
     return;
   }
 
-  transitionInterval = ownerWindow.setInterval(() => {
-    let isOpen = isKeyboardOpen();
-    let isVisible = isKeyboardVisible();
-    let isSupported = supportsKeyboard();
-
-    let isDisabled = --transitionTicks <= 0 && !isSupported && !isVisible;
-
-    if (wasOpen !== isOpen || isDisabled) {
-      for (let callback of resizeCallbacks) {
-        callback(isOpen);
-        resizeCallbacks.delete(callback);
-      }
-    }
-
-    if ((!isIOS() && wasVisible !== isVisible) || (wasVisible && !isVisible) || isDisabled) {
-      for (let callback of transitionCallbacks) {
-        callback(isVisible);
-        transitionCallbacks.delete(callback);
-      }
-    }
-
-    if ((!transitionCallbacks.size && !resizeCallbacks.size) || isDisabled) {
-      onTransitionEnd();
-    }
-  }, 50);
-
-  transitionTimeout = ownerWindow.setTimeout(() => {
-    let isOpen = isKeyboardOpen();
-    let isVisible = isKeyboardVisible();
-
-    for (let callback of resizeCallbacks) {
-      callback(isOpen);
-      resizeCallbacks.delete(callback);
-    }
-
+  // Flush transition callbacks when the animation has completed or we ran out of time.
+  if (wasOpenKeyboard !== isOpenKeyboard || signal.aborted) {
     for (let callback of transitionCallbacks) {
-      callback(isVisible);
+      callback(isOpenKeyboard);
       transitionCallbacks.delete(callback);
     }
+  }
 
-    onTransitionEnd();
-  }, transitionTimer);
-
-  timeoutByWindow.set(ownerWindow, transitionTimeout);
-  intervalByWindow.set(ownerWindow, transitionInterval);
+  // Cancel the observer when no pending updates remain or we ran out of time.
+  if (resizeCallbacks.size + transitionCallbacks.size <= 0 || signal.aborted) {
+    window.clearInterval(listenersByWindow.get(window));
+    listenersByWindow.delete(window);
+  }
 }
 
-function onTransitionEnd(): void {
-  let ownerWindow = getOwnerWindow();
-
-  let transitionTimeout = timeoutByWindow.get(ownerWindow);
-  let transitionInterval = intervalByWindow.get(ownerWindow);
-
-  ownerWindow.clearTimeout(transitionTimeout);
-  ownerWindow.clearInterval(transitionInterval);
-
-  timeoutByWindow.delete(ownerWindow);
-  intervalByWindow.delete(ownerWindow);
+function setupGlobalListeners(timeout = TRANSITION_TIMEOUT): number {
+  return window.setInterval(
+    onTransitionFrame,
+    TRANSITION_FRAMETIME,
+    isKeyboardOpen(),
+    AbortSignal.timeout(timeout)
+  );
 }
 
 /**
@@ -105,40 +74,36 @@ function onTransitionEnd(): void {
  * Guarantees an invocation if an expected transition did not finish within 300ms.
  */
 export function runAfterKeyboard(fn: QueuedCallback): () => void {
-  let ownerWindow = getOwnerWindow();
-  let ownerDocument = getOwnerDocument();
-  let ownerViewport = getOwnerViewport();
-
-  // Flush synchronously when the viewport API is unsupported.
-  if (ownerViewport == null) {
-    return fn(false) ?? (() => {});
+  // Flush synchronously when keyboard is unsupported. This is default for non-touch devices
+  // or devices which did not open their OSK within our opening timeout.
+  if (!supportsKeyboard()) {
+    return (fn(false), () => {});
   }
 
-  // Assert based on geometry rather than focus to support intermediate states, in which
-  // document.activeElement can't be used to reliably infer the open state of the OSK.
-  let wasKeyboardOpen = isKeyboardOpen();
-
   // Wait one frame to see if focus lands on an input.
-  let frame = ownerWindow.requestAnimationFrame(() => {
-    let activeElement = getActiveElement(ownerDocument);
-    let willKeyboardOpen = ownerDocument.hasFocus() && willOpenKeyboard(activeElement);
+  let frame = window.requestAnimationFrame(() => {
+    let activeElement = document.hasFocus() ? getActiveElement() : null;
+    let willKeyboardOpen = willOpenKeyboard(activeElement);
 
     // If keyboard won't change, call the function immediately.
-    if (wasKeyboardOpen === willKeyboardOpen) {
+    if (isKeyboardOpen() === willKeyboardOpen) {
       return fn(willKeyboardOpen);
     }
 
     // On close, fire immediately since consumers may assert the ICB.
-    if (wasKeyboardOpen && !willKeyboardOpen) {
+    if (isKeyboardOpen() && !willKeyboardOpen) {
       return fn(willKeyboardOpen);
     }
 
     resizeCallbacks.add(fn);
-    onTransitionStart();
+
+    if (!listenersByWindow.has(window)) {
+      listenersByWindow.set(window, setupGlobalListeners());
+    }
   });
 
   return () => {
-    ownerWindow.cancelAnimationFrame(frame);
+    window.cancelAnimationFrame(frame);
     resizeCallbacks.delete(fn);
   };
 }
@@ -148,35 +113,31 @@ export function runAfterKeyboard(fn: QueuedCallback): () => void {
  * Guarantees an invocation if an expected transition did not finish within 600ms.
  */
 export function runAfterKeyboardTransition(fn: QueuedCallback): () => void {
-  let ownerWindow = getOwnerWindow();
-  let ownerDocument = getOwnerDocument();
-  let ownerViewport = getOwnerViewport();
-
-  // Flush synchronously when the viewport API is unsupported.
-  if (ownerViewport == null) {
-    return fn(false) ?? (() => {});
+  // Flush synchronously when keyboard is unsupported. This is default for non-touch devices
+  // or devices which did not open their OSK within our opening timeout.
+  if (!supportsKeyboard()) {
+    return (fn(false), () => {});
   }
 
-  // Assert based on geometry rather than focus to support intermediate states, in which
-  // document.activeElement can't be used to reliably infer the open state of the OSK.
-  let wasKeyboardOpen = isKeyboardOpen();
-
   // Wait one frame to see if focus lands on an input.
-  let frame = ownerWindow.requestAnimationFrame(() => {
-    let activeElement = getActiveElement(ownerDocument);
-    let willKeyboardOpen = ownerDocument.hasFocus() && willOpenKeyboard(activeElement);
+  let frame = window.requestAnimationFrame(() => {
+    let activeElement = document.hasFocus() ? getActiveElement() : null;
+    let willKeyboardOpen = willOpenKeyboard(activeElement);
 
     // If keyboard won't transition, fire immediately.
-    if (wasKeyboardOpen === willKeyboardOpen) {
+    if (isKeyboardOpen() === willKeyboardOpen) {
       return fn(willKeyboardOpen);
     }
 
     transitionCallbacks.add(fn);
-    onTransitionStart();
+
+    if (!listenersByWindow.has(window)) {
+      listenersByWindow.set(window, setupGlobalListeners());
+    }
   });
 
   return () => {
-    ownerWindow.cancelAnimationFrame(frame);
+    window.cancelAnimationFrame(frame);
     transitionCallbacks.delete(fn);
   };
 }

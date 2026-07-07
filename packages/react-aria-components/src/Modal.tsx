@@ -94,7 +94,7 @@ const InternalModalContext = createContext<InternalModalContextValue | null>(nul
 
 export interface ModalRenderProps {
   /**
-   * Whether the modal is ready to be displayed. Use this to avoid layout shift.
+   * Whether the modal is ready to be displayed. Use this to hide the modal while it is not yet ready to enter.
    *
    * @selector [data-open]
    */
@@ -281,7 +281,6 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   };
 
   // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
-  // TODO: This can cause native focus scroll-into-view to abort, so we might want to do that manually?
   useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
   // oxlint-disable react/react-compiler

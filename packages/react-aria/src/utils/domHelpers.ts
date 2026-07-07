@@ -15,6 +15,8 @@ import type {EventMapType} from '@react-types/shared';
 export const getOwnerDocument = (target?: EventTarget | null): Document => {
   if (isWindow(target)) return target.document;
 
+  if (isDocument(target)) return target;
+
   // @ts-expect-error Ensure safe access in SSR environments.
   return target?.ownerDocument ?? (typeof document !== 'undefined' ? document : undefined);
 };
@@ -55,6 +57,14 @@ export function isNode(value: unknown): value is Node {
  */
 export function isWindow(value: unknown): value is Window & typeof globalThis {
   return typeof value === 'object' && value != null && 'window' in value && value.window === value;
+}
+
+/**
+ * Type guard that checks if a value is a Document. Uses nodeType and documentElement checks to
+ * distinguish Document from other values.
+ */
+export function isDocument(value: unknown): value is Document {
+  return isNode(value) && value.nodeType === 9 && 'documentElement' in value;
 }
 
 /**

@@ -10,12 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {addEvent, getOwnerDocument, getOwnerViewport, getOwnerWindow} from './domHelpers';
-import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
-import {isFirefox, isIOS, isMac} from './platform';
+import {addEvent} from './domHelpers';
+import {getMetaValue} from './getMetaValue';
+import {getEventTarget} from './shadowdom/DOMFunctions';
+import {isWebKit, isMac} from './platform';
+import {isFocusable} from './isFocusable';
 
-// Tracks layout status of the on-screen keyboard.
-const cache = new WeakMap<EventTarget, KeyboardStatus>();
+const KEYBOARD_HEIGHT = 100;
+const KEYBOARD_TIMEOUT = 600;
+
+// Tracks layout state of the on-screen keyboard.
+const state: KeyboardState = {
+  isOpen: false,
+  screenWidth: 0,
+  screenHeight: 0,
+  screenAngle: 0,
+  screenTimeout: 0,
+  startTimeStamp: 0,
+  endTimeStamp: 0,
+  resizeTimeStamp: 0,
+  resizeTimeout: 0,
+};
 
 // HTML input types that do not cause the software keyboard to appear.
 const nonTextInputTypes = new Set([
@@ -30,12 +45,16 @@ const nonTextInputTypes = new Set([
   'reset'
 ]);
 
-interface KeyboardStatus {
+interface KeyboardState {
   isOpen: boolean;
-  innerHeight?: number;
-  resizeTimeStamp?: number;
-  resizeTimeout?: number;
-  supportsKeyboard?: boolean;
+  screenHeight: number;
+  screenWidth: number;
+  screenAngle: number;
+  screenTimeout: number;
+  startTimeStamp: number;
+  endTimeStamp: number;
+  resizeTimeStamp: number;
+  resizeTimeout: number;
 }
 
 interface KeyPressEvent {
@@ -44,54 +63,146 @@ interface KeyPressEvent {
   metaKey: boolean;
 }
 
-function onResize(e: Event): void {
-  let target = getEventTarget(e);
-  let ownerWindow = getOwnerWindow(target);
+interface TouchScreen {
+  width: number;
+  height: number;
+  angle: number;
+}
 
-  let status = cache.get(ownerWindow);
-  let timeStamp = Number(status?.resizeTimeStamp ?? 0);
+function getTouchScreen(): TouchScreen {
+  // Normalize the screen by any scaling to get the layout coordinate space.
+  let screenWidth = Number(window.visualViewport?.width ?? window.innerWidth);
+  let screenHeight = Number(window.visualViewport?.height ?? window.innerHeight);
+  let visualScale = Number(window.visualViewport?.scale ?? 1);
 
-  if (status && timeStamp <= e.timeStamp + 50) {
-    status.resizeTimeStamp = e.timeStamp + 150;
+  return {
+    width: screenWidth * visualScale,
+    height: screenHeight * visualScale,
+    angle: window.screen.orientation.angle
+  };
+}
 
-    ownerWindow.clearTimeout(status.resizeTimeout);
+function onResizeStart(e: Event): void {
+  // So we don't constantly call clearTimeout and setTimeout, keep track of the
+  // current timeout time and only reschedule the timer when it is getting close.
+  if (state.resizeTimeStamp <= e.timeStamp + 50) {
+    state.resizeTimeStamp = e.timeStamp + 150;
 
-    status.resizeTimeout = ownerWindow.setTimeout(() => {
-      status.isOpen = isKeyboardVisible();
-      status.supportsKeyboard ||= status.isOpen;
-      delete status.resizeTimeout;
-      delete status.resizeTimeStamp;
-    }, 150);
+    window.clearTimeout(state.resizeTimeout);
+    state.resizeTimeout = window.setTimeout(onResizeEnd, 150);
   }
 }
 
-function onIOSResize(e: Event): void {
+function onResizeEnd(): void {
+  // Overlaying keyboards do not impact geometry, so there is nothing to measure.
+  if (getMetaValue('viewport')?.includes('overlays-content')) {
+    return;
+  }
+
+  let time = performance.now();
+  let screen = getTouchScreen();
+
+  let elapsed = time - state.startTimeStamp;
+  let delta = state.screenHeight - screen.height;
+  let rotation = state.screenAngle - screen.angle;
+
+  // Update the screen once an open keyboard that rotated along closes. The state swap was
+  // deferred, so the old width predicts the height it should close towards.
+  if (Math.abs(rotation) % 180 && state.screenWidth - screen.height < KEYBOARD_HEIGHT) {
+    state.screenWidth = screen.width;
+    state.screenHeight = screen.height;
+    state.screenAngle = screen.angle;
+    delta = 0;
+  }
+
+  // Update the screen if a resize happens outside the capture timeframe. We debounce 
+  // because WebKit may fire its single opening resize before the focus event, which 
+  // will cancel this timeout. This fails only if the content is resized while the keyboard 
+  // remains open, which is unlikely. Orientation changes are handled separately.
+  if (elapsed > KEYBOARD_TIMEOUT) {
+    window.clearTimeout(state.screenTimeout);
+
+    state.screenTimeout = window.setTimeout(() => {
+      let screen = getTouchScreen();
+
+      if (Math.abs(state.screenAngle - screen.angle) % 180) {
+        return;
+      }
+
+      state.screenWidth = screen.width;
+      state.screenHeight = screen.height;
+      state.screenAngle = screen.angle;
+
+      state.isOpen = false;
+    }, KEYBOARD_TIMEOUT);
+  }
+
+  // Otherwise, record an opening if the height changed by more than our threshold.
+  // This may fail if the layout viewport changes for other reasons during this timeframe.
+  if (elapsed <= KEYBOARD_TIMEOUT && delta >= KEYBOARD_HEIGHT) {
+    state.endTimeStamp = time;
+  }
+
+  // Store the new open state since the viewport is stable when this is reached.
+  state.isOpen = delta >= KEYBOARD_HEIGHT;
+}
+
+function onOrientationChange(e: Event): void {
+  let screen = getTouchScreen();
+
+  let rotation = state.screenAngle - screen.angle;
+
+  // Rotations swap the dimensions instantly, so a focus right after the
+  // rotation measures correctly. An open keyboard has shrunken the screen already,
+  // so we need to await its closure until we can re-anchor.
+  if (Math.abs(rotation) % 180 && !state.isOpen) {
+    let width = state.screenWidth;
+    let height = state.screenHeight;
+
+    state.screenWidth = height;
+    state.screenHeight = width;
+  }
+
+  if (!state.isOpen) {
+    state.screenAngle = screen.angle;
+  }
+}
+
+function onFocus(e: FocusEvent): void {
   let target = getEventTarget(e);
-  let ownerWindow = getOwnerWindow(target);
+  let willKeyboardOpen = willOpenKeyboard(target as Element);
 
-  let status = cache.get(ownerWindow);
+  let time = performance.now();
+  let screen = getTouchScreen();
 
-  if (status) {
-    status.isOpen = isKeyboardVisible();
-    status.supportsKeyboard ||= status.isOpen;
+  let delta = state.screenHeight - screen.height;
+
+  // Update the screen and start the timer if we are about to open.
+  if (delta < KEYBOARD_HEIGHT && willKeyboardOpen) {
+    state.screenWidth = screen.width;
+    state.screenHeight = screen.height;
+    state.screenAngle = screen.angle;
+    state.startTimeStamp = time;
+  }
+
+  // A keyboard focus claims any buffered shrink as its own (see onResizeEnd).
+  if (willKeyboardOpen) {
+    window.clearTimeout(state.screenTimeout);
   }
 }
 
 function setupGlobalEvents(): void {
-  let ownerWindow = getOwnerWindow();
-  let ownerViewport = getOwnerViewport();
+  let screen = getTouchScreen();
 
-  let status: KeyboardStatus = {isOpen: false};
+  // WebKit only fires a single event per resize.
+  addEvent(window.visualViewport, 'resize', isWebKit() ? onResizeEnd : onResizeStart);
+  addEvent(window.screen.orientation, 'change', onOrientationChange);
+  addEvent(window, 'focus', onFocus, {capture: true, passive: true});
 
-  if (ownerWindow == null || ownerViewport == null) return;
-
-  // https://github.com/mozilla-mobile/firefox-ios/issues/33806
-  if (isIOS() && isFirefox()) {
-    status.innerHeight = ownerWindow.innerHeight;
-  }
-
-  addEvent(ownerViewport, 'resize', isIOS() ? onIOSResize : onResize);
-  cache.set(ownerWindow, status);
+  // Store the initial screen dimensions.
+  state.screenWidth = screen.width;
+  state.screenHeight = screen.height;
+  state.screenAngle = screen.angle;
 }
 
 if (typeof document !== 'undefined') {
@@ -103,20 +214,42 @@ if (typeof document !== 'undefined') {
 }
 
 export function supportsKeyboard(): boolean {
-  let ownerWindow = getOwnerWindow();
-  let ownerViewport = getOwnerViewport();
+  // Overlaying keyboards do not impact geometry, so there is nothing to await.
+  if (getMetaValue('viewport')?.includes('overlays-content')) {
+    return false;
+  }
 
-  if (ownerWindow == null || ownerViewport == null) return false;
+  // WebKit may resize before focus, but an open keyboard always means we have support.
+  if (state.isOpen) {
+    return true;
+  }
 
-  let status = cache.get(ownerWindow);
+  // As long as no input has ever been focused, we return default support.
+  if (!state.startTimeStamp) {
+    return window.navigator.maxTouchPoints > 0;
+  }
 
-  return !!status?.supportsKeyboard;
+  // If keyboard geometry changed within the timeout period, we have support.
+  if (state.endTimeStamp >= state.startTimeStamp) {
+    return true;
+  }
+
+  // If a geometry change is mid-flight we return the most recent support.
+  // Supported platforms may have a hardware keyboard, which this won't catch, but thats
+  // about as far as we can reasonably go to exclude non-touch devices.
+  return performance.now() - state.startTimeStamp <= KEYBOARD_TIMEOUT
+    ? state.endTimeStamp > 0 || window.navigator.maxTouchPoints > 0
+    : false;
 }
 
-export function willOpenKeyboard(target: EventTarget | null): boolean {
+export function willOpenKeyboard(target: Element | null): boolean {
   let isTextArea = target instanceof HTMLTextAreaElement;
   let isEditable = target instanceof HTMLElement && target.isContentEditable;
   let isTextInput = target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type);
+
+  if (target && !isFocusable(target)) {
+    return false;
+  }
 
   return isTextArea || isEditable || isTextInput;
 }
@@ -126,30 +259,5 @@ export function isCtrlKeyPressed(event: KeyPressEvent): boolean {
 }
 
 export function isKeyboardOpen(): boolean {
-  let ownerWindow = getOwnerWindow();
-  let ownerViewport = getOwnerViewport();
-
-  if (ownerWindow == null || ownerViewport == null) return false;
-
-  let status = cache.get(ownerWindow);
-
-  return !!status?.isOpen;
-}
-
-export function isKeyboardVisible(): boolean {
-  let ownerWindow = getOwnerWindow();
-  let ownerDocument = getOwnerDocument();
-  let ownerViewport = getOwnerViewport();
-
-  if (ownerWindow == null || ownerViewport == null) return false;
-
-  let status = cache.get(ownerWindow);
-
-  let activeElement = getActiveElement(ownerDocument);
-  let willKeyboardOpen = ownerDocument.hasFocus() && willOpenKeyboard(activeElement);
-
-  let minHeight = Number(ownerViewport?.height) * Number(ownerViewport?.scale);
-  let maxHeight = Number(status?.innerHeight) || Number(ownerWindow.innerHeight);
-
-  return (willKeyboardOpen || !!status?.isOpen) && maxHeight - minHeight > 100;
+  return state.isOpen;
 }

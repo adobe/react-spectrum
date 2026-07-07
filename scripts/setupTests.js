@@ -99,6 +99,31 @@ expect.extend({
 failTestOnConsoleWarn();
 failTestOnConsoleError();
 
+// JSDOM does not implement VisualViewport or ScreenOrientation API.
+const visualViewport = Object.assign(new EventTarget(), {
+  offsetTop: 0,
+  offsetLeft: 0,
+  pageTop: 0,
+  pageLeft: 0,
+  scale: 1
+});
+
+const orientation = Object.assign(new EventTarget(), {
+  type: 'landscape-primary'
+});
+
+Object.defineProperty(window.screen, 'orientation', {
+  value: orientation,
+  configurable: true,
+  writable: true
+});
+
+Object.defineProperty(window, 'visualViewport', {
+  value: visualViewport,
+  configurable: true,
+  writable: true
+});
+
 beforeEach(() => {
   const mockIntersectionObserver = jest.fn();
   mockIntersectionObserver.mockReturnValue({
@@ -108,24 +133,48 @@ beforeEach(() => {
   });
   window.IntersectionObserver = mockIntersectionObserver;
 
-  // Set document.documentElement dimensions to match jsdom's default window.innerWidth/innerHeight
-  // This is needed because clientWidth/clientHeight default to 0 in jsdom unless explicitly set
+  // Proxy client dimensions to the window to match jsdom's default.
+  // This is needed because they default to 0 in jsdom unless explicitly set.
   Object.defineProperty(document.documentElement, 'clientWidth', {
-    writable: true,
+    get: () => window.innerWidth,
     configurable: true,
-    value: 1024
+    writeable: false
   });
+
   Object.defineProperty(document.documentElement, 'clientHeight', {
-    writable: true,
+    get: () => window.innerHeight,
     configurable: true,
-    value: 768
+    writeable: false
+  });
+
+  Object.defineProperty(window.screen.orientation, 'angle', {
+    get: () => window.orientation ?? 0,
+    configurable: true,
+    writeable: false
+  });
+
+  Object.defineProperty(visualViewport, 'width', {
+    get: () => window.innerWidth,
+    configurable: true,
+    writeable: false
+  });
+
+  Object.defineProperty(visualViewport, 'height', {
+    get: () => window.innerHeight,
+    configurable: true,
+    writeable: false
+  });
+
+  Object.assign(visualViewport, {
+    offsetTop: 0,
+    offsetLeft: 0,
+    pageTop: 0,
+    pageLeft: 0,
+    scale: 1
   });
 });
 
 afterEach(() => {
   delete window.IntersectionObserver;
-  // Clean up the clientWidth/clientHeight properties
-  delete document.documentElement.clientWidth;
-  delete document.documentElement.clientHeight;
   cleanupMatchMedia();
 });

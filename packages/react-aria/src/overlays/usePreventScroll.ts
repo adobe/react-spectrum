@@ -15,7 +15,7 @@ import {chain} from '../utils/chain';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
-import {isIOS, isWebKit} from '../utils/platform';
+import {isIOS} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
 import {runAfterKeyboard} from '../utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -47,7 +47,7 @@ export function usePreventScroll(options: PreventScrollOptions = {}): void {
 
     preventScrollCount++;
     if (preventScrollCount === 1) {
-      if (isIOS() && isWebKit()) {
+      if (isIOS()) {
         restore = preventScrollMobileSafari();
       } else {
         restore = preventScrollStandard();

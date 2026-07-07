@@ -56,7 +56,7 @@ export function useViewportSize(): ViewportSize {
         return;
       }
 
-      if (!willOpenKeyboard(getEventTarget(e))) {
+      if (!willOpenKeyboard(getEventTarget(e) as Element)) {
         return;
       }
 

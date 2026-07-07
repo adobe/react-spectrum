@@ -38,7 +38,8 @@
     "packages/**/exports",
     "lib/svg.d.ts",
     "lib/viewTransitions.d.ts",
-    "lib/css.d.ts"
+    "lib/css.d.ts",
+    "lib/dom.d.ts"
   ],
   "exclude": [
     "**/node_modules",

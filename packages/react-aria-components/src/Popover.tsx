@@ -127,7 +127,7 @@ export interface PopoverRenderProps {
    */
   placement: PlacementAxis | null;
   /**
-   * Whether the popover is ready to be displayed. Use this to avoid layout shift.
+   * Whether the popover is ready to be displayed. Use this to hide the popover while it is not yet ready to enter.
    *
    * @selector [data-open]
    */
@@ -326,8 +326,7 @@ function PopoverInner({
     '--trigger-width': renderProps.style?.['--trigger-width'] || triggerWidth
   };
 
-  // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
-  // TODO: This can cause native focus scroll-into-view to abort, so we might want to do that manually?
+  // Since our trigger may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
   useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
   // oxlint-disable react/react-compiler

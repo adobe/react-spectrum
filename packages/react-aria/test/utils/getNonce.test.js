@@ -77,8 +77,8 @@ describe('getNonce', () => {
 
     expect(getNonce()).toBe('cached-nonce');
 
-    // Remove the meta tag — cached value should still be returned
-    meta.remove();
+    // Change the meta tag — cached value should still be returned
+    meta.nonce = 'new-nonce';
     expect(getNonce()).toBe('cached-nonce');
   });
 

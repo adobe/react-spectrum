@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {addEvent, getOwnerDocument, getOwnerWindow} from './domHelpers';
+import {addEvent} from './domHelpers';
 import {getEventTarget} from './shadowdom/DOMFunctions';
 
 // We store a global list of elements that are currently transitioning,
@@ -85,10 +85,8 @@ function onTransitionEnd(e: Event) {
 }
 
 function setupGlobalEvents() {
-  let ownerDocument = getOwnerDocument();
-
-  addEvent(ownerDocument, 'transitionrun', onTransitionStart);
-  addEvent(ownerDocument, 'transitionend', onTransitionEnd);
+  addEvent(document, 'transitionrun', onTransitionStart);
+  addEvent(document, 'transitionend', onTransitionEnd);
 }
 
 /**
@@ -118,10 +116,8 @@ if (typeof document !== 'undefined') {
  * Delays a callback execution until all elements finished their transition.
  */
 export function runAfterTransition(fn: QueuedCallback): () => void {
-  let ownerWindow = getOwnerWindow();
-
   // Wait one frame to see if an animation starts, e.g. a transition on mount.
-  let frame = ownerWindow.requestAnimationFrame(() => {
+  let frame = window.requestAnimationFrame(() => {
     cleanupDetachedElements();
 
     // If no transitions are running, call the function immediately.
@@ -134,7 +130,7 @@ export function runAfterTransition(fn: QueuedCallback): () => void {
   });
 
   return () => {
-    ownerWindow.cancelAnimationFrame(frame);
+    window.cancelAnimationFrame(frame);
     transitionCallbacks.delete(fn);
   };
 }
