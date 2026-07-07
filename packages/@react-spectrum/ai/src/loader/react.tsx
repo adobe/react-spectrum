@@ -188,9 +188,11 @@ export function PixelLoader(props: PixelLoaderProps) {
   const [tick, setTick] = React.useState(0);
 
   // Restart from the first icon whenever the sequence changes.
-  React.useEffect(() => {
+  let [lastSequence, setLastSequence] = React.useState(sequence);
+  if (lastSequence !== sequence) {
+    setLastSequence(sequence);
     setTick(0);
-  }, [sequence]);
+  }
 
   // Advance the sequence one icon per cycle while playing. Single-icon
   // loaders never start a timer — they're a pure infinite CSS loop.
