@@ -31,7 +31,6 @@ import {useLabels} from '../utils/useLabels';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 import {useSpinButton} from '../spinbutton/useSpinButton';
-import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface DateSegmentAria {
   /** Props for the segment element. */
@@ -51,14 +50,8 @@ export function useDateSegment(
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let displayNames = useDisplayNames();
-  let {
-    ariaLabel,
-    ariaLabelledBy,
-    ariaDescribedBy,
-    focusManager,
-    keyboardNavigationBehavior,
-    tabbableSegmentStore
-  } = hookData.get(state)!;
+  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager, keyboardNavigationBehavior} =
+    hookData.get(state)!;
 
   let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
@@ -257,7 +250,6 @@ export function useDateSegment(
 
   let onFocus = () => {
     enteredKeys.current = '';
-    tabbableSegmentStore.setCurrent(segment.type);
     if (ref.current) {
       scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
     }
@@ -359,20 +351,6 @@ export function useDateSegment(
     ariaDescribedBy = undefined;
   }
 
-  // When keyboardNavigationBehavior is 'tab', only one segment (a roving Tab stop) should be
-  // reachable via the Tab key at a time; Left/Right arrow keys (handled in useDatePickerGroup)
-  // move between segments as usual. Falls back to the first editable segment if the segment
-  // that last had the Tab stop is no longer present (e.g. the calendar/locale changed).
-  let tabbableType = useSyncExternalStore(
-    tabbableSegmentStore.subscribe,
-    tabbableSegmentStore.getCurrent,
-    tabbableSegmentStore.getCurrent
-  );
-  let isRovingTabStop =
-    tabbableType != null && state.segments.some(s => s.isEditable && s.type === tabbableType)
-      ? segment.type === tabbableType
-      : segment === firstSegment;
-
   let id = useId();
   let isEditable = !state.isDisabled && !state.isReadOnly && segment.isEditable;
 
@@ -428,9 +406,11 @@ export function useDateSegment(
         state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable
           ? undefined
           : ('numeric' as const),
+      // When keyboardNavigationBehavior is 'tab', only the first segment is a Tab stop;
+      // Left/Right arrow keys (handled in useDatePickerGroup) still move focus between segments.
       tabIndex: state.isDisabled
         ? undefined
-        : keyboardNavigationBehavior === 'tab' && !isRovingTabStop
+        : keyboardNavigationBehavior === 'tab' && segment !== firstSegment
           ? -1
           : 0,
       onFocus,

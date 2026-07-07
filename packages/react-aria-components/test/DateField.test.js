@@ -570,27 +570,22 @@ describe('DateField', () => {
     await user.tab();
     expect(document.activeElement).toBe(segments[0]);
 
-    // Arrow keys still move focus between segments as usual.
+    // Arrow keys still move focus between segments as usual, but the tab
+    // stop stays pinned to the first segment (no roving tabindex).
     await user.keyboard('[ArrowRight]');
     expect(document.activeElement).toBe(segments[1]);
-
-    // The tab stop follows focus: the segment that was just focused is now
-    // the only one with tabIndex 0, and the rest (including the previous
-    // tab stop) are removed from the tab order.
-    expect(segments[1]).toHaveAttribute('tabIndex', '0');
-    expect(segments[0]).toHaveAttribute('tabIndex', '-1');
-    for (let segment of segments.slice(2)) {
+    expect(segments[0]).toHaveAttribute('tabIndex', '0');
+    for (let segment of segments.slice(1)) {
       expect(segment).toHaveAttribute('tabIndex', '-1');
     }
 
     // Pressing Tab again exits the field entirely instead of moving to the next segment.
     await user.tab();
-    expect(document.activeElement).not.toBe(segments[2]);
     expect(segments.includes(document.activeElement)).toBe(false);
 
-    // Tabbing back in returns focus to the last-focused segment, not the first one.
+    // Tabbing back in always returns focus to the first segment.
     await user.tab({shift: true});
-    expect(document.activeElement).toBe(segments[1]);
+    expect(document.activeElement).toBe(segments[0]);
   });
 
   it('should reset to placeholders when deleting a partially filled DateField', async () => {
