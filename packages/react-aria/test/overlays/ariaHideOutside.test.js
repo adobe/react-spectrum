@@ -336,12 +336,14 @@ describe('ariaHideOutside', function () {
 
     let {queryByRole, getAllByRole, getByTestId} = render(<Test />);
 
-    ariaHideOutside([getByTestId('test')]);
+    let revert = ariaHideOutside([getByTestId('test')]);
 
     queryByRole('button').click();
     await Promise.resolve(); // Wait for mutation observer tick
 
     expect(getAllByRole('listitem')).toHaveLength(1);
+
+    revert();
   });
 
   it('should handle when a new element is added and then reparented to a hidden container', async function () {
@@ -370,12 +372,14 @@ describe('ariaHideOutside', function () {
 
     let {queryByRole, queryAllByRole, getByTestId} = render(<Test />);
 
-    ariaHideOutside([getByTestId('test')]);
+    let revert = ariaHideOutside([getByTestId('test')]);
 
     queryByRole('button').click();
     await Promise.resolve(); // Wait for mutation observer tick
 
     expect(queryAllByRole('listitem')).toHaveLength(0);
+
+    revert();
   });
 
   it('work when called multiple times', function () {
@@ -585,12 +589,16 @@ describe('ariaHideOutside with shadow DOM', function () {
 
   describe('ariaHideOutside with Shadow DOM', () => {
     let cleanup;
-    afterEach(() => {
-      cleanup();
-      // iterate over anything leftover in the body and remove it
-      for (let element of document.body.children) {
-        document.body.removeChild(element);
+    afterEach(async () => {
+      cleanup?.();
+      cleanup = undefined;
+      // Remove anything leftover in the body. Use firstChild rather than iterating
+      // the live `children` collection, which skips elements as it mutates.
+      while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
       }
+      // Close out any pending observers
+      await act(async () => Promise.resolve());
     });
 
     it('should not apply aria-hidden to direct parents of the shadow root', () => {
@@ -707,7 +715,7 @@ describe('ariaHideOutside with shadow DOM', function () {
       siblingContent.textContent = 'Sibling Content';
       outerShadowRoot.appendChild(siblingContent);
 
-      ariaHideOutside([modal], innerShadowRoot);
+      cleanup = ariaHideOutside([modal], innerShadowRoot);
 
       expect(isEffectivelyHidden(modal)).toBe(false);
 
@@ -797,10 +805,12 @@ describe('ariaHideOutside with shadow DOM', function () {
   describe('ariaHideOutside with nested Shadow DOMs', () => {
     let cleanup;
     afterEach(() => {
-      cleanup();
-      // iterate over anything leftover in the body and remove it
-      for (let element of document.body.children) {
-        document.body.removeChild(element);
+      cleanup?.();
+      cleanup = undefined;
+      // Remove anything leftover in the body. Use firstChild rather than iterating
+      // the live `children` collection, which skips elements as it mutates.
+      while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
       }
     });
 

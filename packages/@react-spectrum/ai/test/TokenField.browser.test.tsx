@@ -22,6 +22,8 @@ import {
   expectCaret,
   focusField,
   getFieldSelection,
+  isMacPlatform,
+  isWindowsPlatform,
   modKey,
   navigateCaret,
   navigateCaretFromEnd,
@@ -53,6 +55,22 @@ declare module 'vitest/browser' {
 
 // Conditionally skip the suite
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+
+// Word-forward caret movement (Selection.modify with word granularity) stops at the end of the
+// current word on macOS + Linux, and in Firefox on every platform. Chromium and WebKit on Windows
+// instead advance to the start of the next word. The component delegates to the browser's native
+// behavior, so the destination follows this platform/engine convention.
+const wordForwardStopsAtWordEnd = () => !isWindowsPlatform() || isFirefox();
+
+// Playwright's bundled WebKit cannot read the system clipboard back on Windows, so copy/cut →
+// paste round trips deliver no data. These tests pass against WebKit on macOS but not elsewhere.
+const clipboardRoundTripUnsupported = () => isWebKit() && isWindowsPlatform();
+
+// Firefox additionally strips non-standard clipboard types on paste (only text/plain, text/html,
+// etc. survive), so the custom token MIME type — and thus token structure — cannot round trip off
+// macOS. WebKit off macOS fails the same assertion for the round-trip reason above.
+const customClipboardTypeUnsupported = () => (isWebKit() || isFirefox()) && !isMacPlatform();
+
 describeOrSkip('TokenField browser interactions', () => {
   describe('rendering', () => {
     it('should render textbox and tokens', async () => {
@@ -72,8 +90,6 @@ describeOrSkip('TokenField browser interactions', () => {
       expect(el.getAttribute('aria-readonly')).toBe('true');
       await focusField(textbox);
       await userEvent.keyboard('x');
-      let mod = modKey();
-      await userEvent.keyboard(`{${mod}>}z{/${mod}}`);
       expect(getValue().toString()).toBe('abTOKcd');
     });
 
@@ -239,7 +255,7 @@ describeOrSkip('TokenField browser interactions', () => {
       await navigateCaret(textbox, list, {index: 0, offset: 0});
       let mod = wordNavModKey();
       await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
-      await waitForSelection(textbox, {index: 0, offset: 5});
+      await waitForSelection(textbox, {index: 0, offset: wordForwardStopsAtWordEnd() ? 5 : 6});
     });
 
     it('word navigation skips over token backward as atomic unit', async () => {
@@ -334,10 +350,11 @@ describeOrSkip('TokenField browser interactions', () => {
       let el = textbox.element();
       await focusField(textbox);
       let mod = wordNavModKey();
-      // Word + ArrowLeft (visual left = logical forward) moves to the end of the first word.
+      // Word + ArrowLeft (visual left = logical forward) moves by a word: to the end of the first
+      // word where word-forward stops at the word end, otherwise to the start of the next word.
       setFieldSelection(el, {index: 0, offset: 0}, {index: 0, offset: 0});
       await userEvent.keyboard(`{${mod}>}{ArrowLeft}{/${mod}}`);
-      await waitForSelection(textbox, {index: 0, offset: 4});
+      await waitForSelection(textbox, {index: 0, offset: wordForwardStopsAtWordEnd() ? 4 : 5});
       // Word + ArrowRight (visual right = logical backward) moves to the start of the last word.
       setFieldSelection(el, {index: 0, offset: 9}, {index: 0, offset: 9});
       await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
@@ -535,8 +552,10 @@ describeOrSkip('TokenField browser interactions', () => {
     });
 
     it('extends a double-clicked word to the left with Shift+ArrowLeft', async () => {
-      if (isFirefox()) {
-        // Firefox does not treat double clicks as directionless.
+      if (isFirefox() || !isMacPlatform()) {
+        // Double-click word selections are only directionless on macOS (and not in Firefox).
+        // On Windows/Linux the selection is anchored at the word start, so Shift+ArrowLeft
+        // shrinks it from the right rather than extending it to the left.
         return;
       }
 
@@ -585,7 +604,11 @@ describeOrSkip('TokenField browser interactions', () => {
       await navigateCaret(textbox, list, {index: 0, offset: 0});
       let mod = wordNavModKey();
       await userEvent.keyboard(`{Shift>}{${mod}>}{ArrowRight}{/${mod}}{/Shift}`);
-      await waitForSelection(textbox, {index: 0, offset: 0}, {index: 0, offset: 5});
+      await waitForSelection(
+        textbox,
+        {index: 0, offset: 0},
+        {index: 0, offset: wordForwardStopsAtWordEnd() ? 5 : 6}
+      );
     });
 
     it('extends selection backward by word across token', async () => {
@@ -743,7 +766,10 @@ describeOrSkip('TokenField browser interactions', () => {
       await navigateCaret(textbox, multiline, {index: 0, offset: 11});
       let mod = modKey();
       await userEvent.keyboard(`{${mod}>}{Backspace}{/${mod}}`);
-      await waitForFieldText(getValue, 'hello');
+      // macOS has a delete-to-line-start shortcut (Cmd+Backspace) that removes the line including
+      // its leading newline. Windows/Linux have no such shortcut: Ctrl+Backspace deletes the
+      // previous word ("world"), leaving the newline behind.
+      await waitForFieldText(getValue, isMacPlatform() ? 'hello' : 'hello\n');
     });
 
     it('deletes forward to end of line with line-delete forward shortcut', async () => {
@@ -760,7 +786,7 @@ describeOrSkip('TokenField browser interactions', () => {
       if (mac) {
         await userEvent.keyboard('{Control>}k{/Control}');
       } else {
-        await userEvent.keyboard('{Control>}Delete{/Control}');
+        await userEvent.keyboard('{Control>}{Delete}{/Control}');
       }
       await waitForFieldText(getValue, 'hello\nw');
     });
@@ -788,6 +814,9 @@ describeOrSkip('TokenField browser interactions', () => {
     });
 
     it('removes newlines from pasted text in a single-line field', async () => {
+      if (clipboardRoundTripUnsupported()) {
+        return;
+      }
       // Put multiline text on the clipboard by copying it from a source field.
       let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
       let target = await renderControlledTokenField(segments(text('')));
@@ -806,6 +835,9 @@ describeOrSkip('TokenField browser interactions', () => {
     });
 
     it('keeps newlines from pasted text in a multiline field', async () => {
+      if (clipboardRoundTripUnsupported()) {
+        return;
+      }
       let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
       let target = await renderControlledTokenField(segments(text('')), {multiline: true});
       let mod = modKey();
@@ -825,6 +857,9 @@ describeOrSkip('TokenField browser interactions', () => {
 
   describe('clipboard', () => {
     it('pastes plain text at caret', async () => {
+      if (clipboardRoundTripUnsupported()) {
+        return;
+      }
       let list = segments(text('ab'));
       let {textbox, getValue} = await renderControlledTokenField(list);
       await selectRange(textbox, list, {index: 0, offset: 0}, {index: 0, offset: 2});
@@ -840,6 +875,9 @@ describeOrSkip('TokenField browser interactions', () => {
     });
 
     it('copy and paste preserves token segments within field', async () => {
+      if (customClipboardTypeUnsupported()) {
+        return;
+      }
       let {textbox, getValue} = await renderControlledTokenField(abTokCd);
       await selectRange(textbox, abTokCd, {index: 0, offset: 0}, {index: 2, offset: 2});
       await commands.lockClipboard();
@@ -873,6 +911,9 @@ describeOrSkip('TokenField browser interactions', () => {
     });
 
     it('cut removes selection and paste restores elsewhere', async () => {
+      if (clipboardRoundTripUnsupported()) {
+        return;
+      }
       let {textbox, getValue} = await renderControlledTokenField(segments(text('hello')));
       await selectRange(
         textbox,

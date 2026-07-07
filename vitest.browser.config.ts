@@ -195,6 +195,10 @@ declare module 'vitest/browser' {
 }
 
 export default defineConfig({
+  define: {
+    // run in dev mode so virtualizer and other test-env shortcuts are disabled
+    'process.env.NODE_ENV': '"development"'
+  },
   plugins: [
     // @ts-expect-error
     macros.vite(), // Must be first!
@@ -317,7 +321,7 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.svg'],
     alias: {
       '@react-spectrum/s2/illustrations': path.resolve(s2Dir, 'spectrum-illustrations'),
-      '@react-spectrum/s2': path.resolve(s2Dir, 'src')
+      '@react-spectrum/s2': path.resolve(s2Dir, 'exports')
     }
   },
   optimizeDeps: {

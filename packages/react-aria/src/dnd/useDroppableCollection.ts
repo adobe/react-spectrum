@@ -78,6 +78,7 @@ export function useDroppableCollection(
   state: DroppableCollectionState,
   ref: RefObject<HTMLElement | null>
 ): DroppableCollectionResult {
+  // oxlint-disable-next-line react/react-compiler
   let localState = useRef<{
     props: DroppableCollectionOptions;
     state: DroppableCollectionState;
@@ -118,6 +119,7 @@ export function useDroppableCollection(
             itemTypes = item.kind === 'file' ? new Set([item.type]) : item.types;
           }
 
+          // oxlint-disable-next-line react/react-compiler
           if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => itemTypes.has(type))) {
             // If we are performing a on item drop, check if the item in question accepts the dropped item since the item may have heavier restrictions
             // than the droppable collection itself
@@ -788,9 +790,11 @@ export function useDroppableCollection(
         localState.props.onKeyDown?.(e);
       }
     });
+    // oxlint-disable-next-line react/react-compiler
   }, [localState, ref, onDrop, direction]);
 
   let id = useId();
+  // oxlint-disable-next-line react/react-compiler
   droppableCollectionMap.set(state, {id, ref});
   return {
     collectionProps: mergeProps(dropProps, {

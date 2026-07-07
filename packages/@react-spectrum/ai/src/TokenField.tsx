@@ -854,7 +854,7 @@ function useMutationTracker(ref: React.RefObject<Element | null>) {
         mutationTracker.current = null;
       }
     }),
-    [ref]
+    []
   );
 }
 

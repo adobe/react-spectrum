@@ -6,10 +6,6 @@
     {
       "name": "monorepo",
       "specifier": "@jdb8/eslint-plugin-monorepo"
-    },
-    {
-      "name": "react-hooks-js",
-      "specifier": "eslint-plugin-react-hooks"
     }
   ],
   "categories": {
@@ -169,19 +165,7 @@
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "warn",
 
-    // React Compiler rules
-    "react-hooks-js/config": "error",
-    "react-hooks-js/error-boundaries": "error",
-    "react-hooks-js/component-hook-factories": "error",
-    "react-hooks-js/gating": "error",
-    "react-hooks-js/globals": "error",
-    "react-hooks-js/purity": "error",
-    "react-hooks-js/set-state-in-effect": "warn",
-    "react-hooks-js/set-state-in-render": "error",
-    "react-hooks-js/static-components": "error",
-    "react-hooks-js/unsupported-syntax": "warn",
-    "react-hooks-js/use-memo": "error",
-    "react-hooks-js/incompatible-library": "warn",
+    "react/react-compiler": "error",
 
     "rsp-rules/no-react-key": ["error"],
     "rsp-rules/sort-imports": ["error"],
