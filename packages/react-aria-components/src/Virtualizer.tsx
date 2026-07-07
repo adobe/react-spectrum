@@ -25,6 +25,7 @@ import {
   VirtualizerState
 } from 'react-stately/useVirtualizerState';
 import React, {createContext, JSX, ReactNode, RefObject, useContext, useMemo, useRef} from 'react';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
 import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 
@@ -137,9 +138,14 @@ function CollectionRoot({
     scrollRef!
   );
   let refreshVisibleRectRef = useContext(RefreshVisibleRectContext);
-  if (refreshVisibleRectRef) {
-    refreshVisibleRectRef.current = refreshVisibleRect;
-  }
+  useLayoutEffect(() => {
+    if (refreshVisibleRectRef) {
+      refreshVisibleRectRef.current = refreshVisibleRect;
+      return () => {
+        refreshVisibleRectRef.current = null;
+      };
+    }
+  }, [refreshVisibleRectRef, refreshVisibleRect]);
 
   return (
     <div {...contentProps}>
