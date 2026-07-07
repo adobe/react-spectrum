@@ -975,7 +975,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
             DOMProps,
             rowProps,
             focusProps,
-            {onFocus: props.onFocus, onBlur: props.onBlur},
             hoverProps,
             focusWithinProps,
             draggableItem?.dragProps

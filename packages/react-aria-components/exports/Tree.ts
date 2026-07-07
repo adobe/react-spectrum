@@ -25,6 +25,7 @@ export {
   TreeStateContext
 } from '../src/Tree';
 export type {
+  GridListSectionProps,
   TreeProps,
   TreeRenderProps,
   TreeEmptyStateRenderProps,

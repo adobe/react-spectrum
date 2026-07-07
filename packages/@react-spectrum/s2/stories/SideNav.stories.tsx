@@ -21,6 +21,7 @@ import {
   SideNavHeader,
   SideNavItem,
   SideNavItemContent,
+  SideNavItemLink,
   SideNavSection
 } from '../src/SideNav';
 import {Text} from '../src/Content';
@@ -52,15 +53,19 @@ const SideNavExampleStatic = args => (
       aria-label="test static tree"
       onExpandedChange={action('onExpandedChange')}
       onSelectionChange={action('onSelectionChange')}>
-      <SideNavItem id="Photos" textValue="Your files" href="https://www.adobe.com">
+      <SideNavItem id="Photos" textValue="Your files">
         <SideNavItemContent>
-          <Text>Your files</Text>
-          <Folder />
+          <SideNavItemLink href="https://www.adobe.com">
+            <Text>Your files</Text>
+            <Folder />
+          </SideNavItemLink>
         </SideNavItemContent>
       </SideNavItem>
-      <SideNavItem id="projects" textValue="Your libraries" href="https://www.google.com">
+      <SideNavItem id="projects" textValue="Your libraries">
         <SideNavItemContent>
-          <Text>Your libraries</Text>
+          <SideNavItemLink href="https://www.google.com">
+            <Text>Your libraries</Text>
+          </SideNavItemLink>
         </SideNavItemContent>
         <SideNavItem id="projects-1" textValue="Projects-1">
           <SideNavItemContent>
@@ -104,16 +109,20 @@ const SideNavSectionsExample = args => (
         <SideNavHeader>Photography</SideNavHeader>
         <SideNavItem id="Photos" textValue="Photos">
           <SideNavItemContent>
-            <Text>Your files</Text>
-            <Folder />
+            <SideNavItemLink href="https://www.adobe.com">
+              <Text>Your files</Text>
+              <Folder />
+            </SideNavItemLink>
           </SideNavItemContent>
         </SideNavItem>
       </SideNavSection>
       <SideNavSection>
         <SideNavHeader>Work</SideNavHeader>
-        <SideNavItem id="projects" textValue="Projects" counter={10}>
+        <SideNavItem id="projects" textValue="Projects">
           <SideNavItemContent>
-            <Text>Your libraries</Text>
+            <SideNavItemLink href="https://www.google.com">
+              <Text>Your libraries</Text>
+            </SideNavItemLink>
           </SideNavItemContent>
           <SideNavItem id="projects-1" textValue="Projects-1">
             <SideNavItemContent>

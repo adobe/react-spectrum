@@ -15,36 +15,36 @@ import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import Chevron from '../ui-icons/Chevron';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
-import {focusSafely} from 'react-aria/private/interactions/focusSafely';
-import {getActiveElement, isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {
   getAllowedOverrides,
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
-import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
-import {IconContext} from './Icon';
-import {Link} from 'react-aria-components/Link';
-import {Provider, useContextProps} from 'react-aria-components/slots';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {
+  GridListSectionProps,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
   Tree,
   TreeHeader,
   TreeItem,
   TreeItemContent,
+  TreeItemContentProps,
   TreeItemRenderProps,
   TreeRenderProps,
-  TreeSection,
-  TreeStateContext
+  TreeSection
 } from 'react-aria-components/Tree';
+import {IconContext} from './Icon';
+import {Link, LinkProps} from 'react-aria-components/Link';
+import {Provider, useContextProps} from 'react-aria-components/slots';
 import React, {
   createContext,
   forwardRef,
   JSXElementConstructor,
   ReactElement,
+  KeyboardEvent as ReactKeyboardEvent,
   ReactNode,
+  RefObject,
   useContext,
   useRef
 } from 'react';
@@ -52,15 +52,10 @@ import {SelectionIndicator} from 'react-aria-components/SelectionIndicator';
 import {Text, TextContext} from './Content';
 import {TreeState} from 'react-stately/useTreeState';
 import {useDOMRef} from './useDOMRef';
-import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useScale} from './utils';
 
-interface S2SideNavProps {}
-
-interface SideNavStyleProps {}
-
-export interface TreeViewProps<T>
+export interface SideNavProps<T>
   extends
     Omit<
       RACTreeProps<T>,
@@ -74,11 +69,12 @@ export interface TreeViewProps<T>
       | keyof GlobalDOMAttributes
     >,
     UnsafeStyles,
-    S2SideNavProps,
     SideNavStyleProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
 }
+
+interface SideNavStyleProps {}
 
 export interface SideNavItemProps extends Omit<
   RACTreeItemProps,
@@ -134,7 +130,14 @@ const tree = style<TreeRenderProps>({
   }
 });
 
-let InternalSideNavContext = createContext({});
+interface InternalSideNavContextValue {
+  /**
+   * Ref to the tree state, bridged up from SideNavItemContent so arrow-key handling can toggle
+   * expansion.
+   */
+  stateRef?: RefObject<TreeState<unknown> | null>;
+}
+let InternalSideNavContext = createContext<InternalSideNavContextValue>({});
 
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
@@ -152,14 +155,46 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
 
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLDivElement | null>(null);
+  let stateRef = useRef<TreeState<unknown> | null>(null);
+
+  // RAC swallows arrow keys at the collection level (stopPropagation during capture), so a handler
+  // on the link never sees them. Intercept here on an ancestor, before RAC's row handler runs, and
+  // expand a collapsed row when the expand arrow is pressed while focus is on its link.
+  let onKeyDownCapture = (e: ReactKeyboardEvent) => {
+    let state = stateRef.current;
+    if (!state) {
+      return;
+    }
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+      return;
+    }
+    let link = getEventTarget(e).closest?.('a');
+    if (!link) {
+      return;
+    }
+    let rowEl = link.closest<HTMLElement>('[role="row"]');
+    // Only intercept to open a collapsed, expandable row; let RAC handle everything else
+    // (e.g. an already-expanded row moves focus into its children).
+    if (!rowEl || rowEl.getAttribute('aria-expanded') !== 'false') {
+      return;
+    }
+    let key = rowEl.dataset.key;
+    if (key == null) {
+      return;
+    }
+    state.toggleKey(key);
+    e.stopPropagation();
+    e.preventDefault();
+  };
 
   return (
     <div
       ref={domRef}
-      className={(UNSAFE_className ?? '') + sideNavWrapper(props.styles)}
-      style={UNSAFE_style}>
+      className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
+      style={UNSAFE_style}
+      onKeyDownCapture={onKeyDownCapture}>
       <TreeRendererContext.Provider value={{renderer}}>
-        <InternalSideNavContext.Provider value={{}}>
+        <InternalSideNavContext.Provider value={{stateRef}}>
           <Tree
             {...props}
             style={{
@@ -214,9 +249,9 @@ const treeCellGrid = style({
   boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: [12, 'auto', 'auto', '1fr', 'auto'],
+  gridTemplateColumns: [12, 'auto', '1fr'],
   gridTemplateRows: '1fr',
-  gridTemplateAreas: ['. level-padding icon content expand-button'],
+  gridTemplateAreas: ['. level-padding content'],
   paddingEnd: 4, // account for any focus rings on the last item in the cell
   color: {
     default: baseColor('neutral-subdued'),
@@ -295,27 +330,31 @@ let treeRowFocusRing = style({
   pointerEvents: 'none'
 });
 
-const SideNavItemContext = createContext<{href?: string}>({});
-export const SideNavItem = (props: SideNavItemProps, ref: DOMRef<HTMLDivElement>): ReactNode => {
-  let {href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions, ...rest} = props;
-  let backupRef = useRef<HTMLDivElement | null>(null);
-  let domRef = ref || backupRef;
+const treeRowLink = style({
+  // The link is a grid so its own children (icon/content) lay out via treeIcon/treeContent,
+  // while the anchor keeps its box (and stays focusable, unlike display: contents).
+  display: 'grid',
+  gridArea: 'content',
+  gridTemplateColumns: ['auto', '1fr'],
+  gridTemplateAreas: ['icon content'],
+  alignItems: 'center',
+  minWidth: 0,
+  outlineStyle: 'none',
+  textDecoration: 'none',
+  color: 'inherit',
+  cursor: 'pointer'
+});
 
-  return (
-    <SideNavItemContext.Provider
-      value={{href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions}}>
-      <TreeItem
-        {...rest}
-        allowChildKeys
-        focusMode="child"
-        ref={domRef}
-        className={renderProps => treeRow(renderProps)}
-      />
-    </SideNavItemContext.Provider>
-  );
+const SideNavItemContext = createContext<{
+  /** Whether the item is selected, used to mark its link with aria-current="page". */
+  isCurrent?: boolean;
+}>({});
+
+export const SideNavItem = (props: SideNavItemProps): ReactNode => {
+  return <TreeItem {...props} focusMode="child" className={renderProps => treeRow(renderProps)} />;
 };
 
-export interface SideNavItemContentProps extends Omit<SideNavItemContentProps, 'children'> {
+export interface SideNavItemContentProps extends Omit<TreeItemContentProps, 'children'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode;
 }
@@ -365,92 +404,8 @@ const hoveredIndicator = style({
 export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode => {
   let {children} = props;
   let scale = useScale();
-  let {href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions} =
-    useContext(SideNavItemContext);
   let ref = useRef<HTMLDivElement | null>(null);
-
-  if (href) {
-    return (
-      <TreeItemContent>
-        {({
-          isExpanded,
-          hasChildItems,
-          isDisabled,
-          isSelected,
-          id,
-          state,
-          isHovered,
-          isFocusVisible
-        }) => {
-          return (
-            <>
-              {isHovered && <div className={hoveredIndicator} />}
-              <SelectionIndicator ref={ref} className={selectedIndicator({isDisabled})} />
-              <Link
-                aria-current={isSelected ? 'page' : undefined}
-                aria-expanded={isExpanded ? 'true' : hasChildItems ? 'false' : undefined}
-                href={href}
-                target={target}
-                hrefLang={hrefLang}
-                rel={rel}
-                download={download}
-                ping={ping}
-                referrerPolicy={referrerPolicy}
-                routerOptions={routerOptions}
-                className={style({outlineStyle: 'none', textDecoration: 'none'})}>
-                {({isFocusVisible: linkFocusVisible}) => {
-                  return (
-                    <div
-                      className={treeCellGrid({
-                        isDisabled,
-                        isNextSelected: isNextSelected(id, state),
-                        isSelected
-                      })}>
-                      {(linkFocusVisible || isFocusVisible) && (
-                        <div
-                          className={treeRowFocusRing({
-                            isFocusVisible: true,
-                            isSelected,
-                            isNextSelected: isNextSelected(id, state),
-                            isFirstItem: isFirstItem(id, state)
-                          })}
-                        />
-                      )}
-                      <div
-                        className={style({
-                          gridArea: 'level-padding',
-                          width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
-                        })}
-                      />
-                      <Provider
-                        values={[
-                          [TextContext, {styles: treeContent}],
-                          [
-                            IconContext,
-                            {
-                              render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                              styles: style({size: fontRelative(20), flexShrink: 0})
-                            }
-                          ]
-                        ]}>
-                        {typeof children === 'string' ? <Text>{children}</Text> : children}
-                      </Provider>
-                    </div>
-                  );
-                }}
-              </Link>
-              <ExpandableRowChevron
-                isDisabled={isDisabled}
-                isExpanded={isExpanded}
-                scale={scale}
-                isHidden={!hasChildItems}
-              />
-            </>
-          );
-        }}
-      </TreeItemContent>
-    );
-  }
+  let {stateRef} = useContext(InternalSideNavContext);
 
   return (
     <TreeItemContent>
@@ -462,8 +417,12 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
         id,
         state,
         isHovered,
-        isFocusVisible
+        isFocusVisibleWithin
       }) => {
+        // Bridge the tree state up to SideNav so its arrow-key handler can toggle expansion.
+        if (stateRef) {
+          stateRef.current = state;
+        }
         return (
           <>
             {isHovered && <div className={hoveredIndicator} />}
@@ -474,10 +433,10 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
                 isNextSelected: isNextSelected(id, state),
                 isSelected
               })}>
-              {isFocusVisible && (
+              {isFocusVisibleWithin && (
                 <div
                   className={treeRowFocusRing({
-                    isFocusVisible,
+                    isFocusVisible: true,
                     isSelected,
                     isNextSelected: isNextSelected(id, state),
                     isFirstItem: isFirstItem(id, state)
@@ -493,6 +452,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
               <Provider
                 values={[
                   [TextContext, {styles: treeContent}],
+                  [SideNavItemContext, {isCurrent: isSelected}],
                   [
                     IconContext,
                     {
@@ -594,7 +554,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   );
 }
 
-export interface SideNavSectionProps<T> extends SectionProps<T> {}
+export interface SideNavSectionProps<T> extends GridListSectionProps<T> {}
 
 export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) {
   return (
@@ -604,19 +564,19 @@ export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) 
   );
 }
 
-export const SideNavHeader = forwardRef<HTMLElement, {children: ReactNode}>((props, ref) => {
+export const SideNavHeader = (props: {children: ReactNode}): ReactNode => {
   return (
     <TreeHeader
-      ref={ref}
       className={style({
         font: 'ui-sm',
-        paddingStart: edgeToText(32),
-        marginBottom: '[10px]'
+        paddingStart: 'edge-to-text',
+        marginBottom: '[10px]',
+        height: 32
       })}>
       {props.children}
     </TreeHeader>
   );
-});
+};
 
 export interface SideNavCategoryProps extends Omit<
   RACTreeItemProps,
@@ -646,6 +606,35 @@ export const SideNavCategory = (props: SideNavCategoryProps): ReactNode => {
         })
       }
     />
+  );
+};
+
+interface SideNavItemLinkProps extends Omit<LinkProps, 'className' | 'style' | 'children'> {
+  /** Whether this item has children, even if not loaded yet. */
+  hasChildItems?: boolean;
+  /** Rendered contents of the link. */
+  children?: ReactNode;
+}
+
+export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
+  let {children} = props;
+  let {isCurrent} = useContext(SideNavItemContext);
+  return (
+    <Link {...props} aria-current={isCurrent ? 'page' : undefined} className={treeRowLink}>
+      <Provider
+        values={[
+          [TextContext, {styles: treeContent}],
+          [
+            IconContext,
+            {
+              render: centerBaseline({slot: 'icon', styles: treeIcon}),
+              styles: style({size: fontRelative(20), flexShrink: 0})
+            }
+          ]
+        ]}>
+        {typeof children === 'string' ? <Text>{children}</Text> : children}
+      </Provider>
+    </Link>
   );
 };
 
