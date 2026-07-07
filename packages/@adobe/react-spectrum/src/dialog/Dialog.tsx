@@ -53,7 +53,11 @@ let sizeMap = {
  */
 export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   props = useSlotProps(props, 'dialog');
-  let {type = 'modal', ...contextProps} = useContext(DialogContext) || ({} as DialogContextValue);
+  let {
+    type = 'modal',
+    onKeyDown: contextOnKeyDown,
+    ...contextProps
+  } = useContext(DialogContext) || ({} as DialogContextValue);
   let {
     children,
     isDismissable = contextProps.isDismissable,
@@ -70,6 +74,11 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
   let gridRef = useRef(null);
   let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps, contentProps} = useDialog(mergeProps(contextProps, props), domRef);
+  if (contextOnKeyDown) {
+    // useDialog filters out event handlers, so merge the context's onKeyDown separately.
+    // This allows components like AlertDialog to respond to the Escape key dismissing the dialog.
+    dialogProps = mergeProps(dialogProps, {onKeyDown: contextOnKeyDown});
+  }
 
   // oxlint-disable-next-line react/react-compiler
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));

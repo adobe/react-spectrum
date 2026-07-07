@@ -19,7 +19,7 @@ import {chain} from 'react-aria/chain';
 import {Content, Heading} from './Content';
 import {Dialog} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {forwardRef, ReactNode} from 'react';
+import {forwardRef, KeyboardEvent as ReactKeyboardEvent, ReactNode} from 'react';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
@@ -108,9 +108,19 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
 
   let domProps = filterDOMProps(props, {labelable: true});
 
+  // The Escape key is handled by the modal overlay, which closes the dialog without
+  // pressing the cancel button. Attach an onKeyDown handler to the dialog so that
+  // onCancel is also called when the Escape key dismisses the dialog.
+  let onKeyDown = (e: ReactKeyboardEvent) => {
+    if (e.key === 'Escape' && !e.nativeEvent.isComposing) {
+      onCancel();
+    }
+  };
+
   return (
     <Dialog
       {...domProps}
+      onKeyDown={onKeyDown}
       role="alertdialog"
       ref={ref}
       size={props.size}

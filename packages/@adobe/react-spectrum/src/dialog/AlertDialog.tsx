@@ -64,7 +64,8 @@ export const AlertDialog = forwardRef(function AlertDialog(
   props: SpectrumAlertDialogProps,
   ref: DOMRef
 ) {
-  let {onClose = () => {}} = useContext(DialogContext) || ({} as DialogContextValue);
+  let dialogContext = useContext(DialogContext) || ({} as DialogContextValue);
+  let {onClose = () => {}} = dialogContext;
 
   let {
     variant,
@@ -93,54 +94,68 @@ export const AlertDialog = forwardRef(function AlertDialog(
     }
   }
 
+  // The Escape key is handled by the overlay, which closes the dialog without pressing
+  // the cancel button. Provide an onKeyDown handler through the context so that onCancel
+  // is also called when the Escape key dismisses the dialog.
+  let context: DialogContextValue = {
+    ...dialogContext,
+    onKeyDown: chain(dialogContext.onKeyDown, (e: React.KeyboardEvent) => {
+      if (e.key === 'Escape' && !e.nativeEvent.isComposing) {
+        onCancel();
+      }
+    })
+  };
+
   return (
-    <Dialog
-      UNSAFE_style={styleProps.style}
-      UNSAFE_className={classNames(
-        styles,
-        {[`spectrum-Dialog--${variant}`]: variant},
-        styleProps.className
-      )}
-      isHidden={styleProps.hidden}
-      size="M"
-      role="alertdialog"
-      ref={ref}
-      {...filterDOMProps(props, {labelable: true})}>
-      <Heading>{title}</Heading>
-      {(variant === 'error' || variant === 'warning') && (
-        <AlertMedium slot="typeIcon" aria-label={stringFormatter.format('alert')} />
-      )}
-      <Divider />
-      <Content>{children}</Content>
-      <ButtonGroup align="end">
-        {cancelLabel && (
-          <Button
-            variant="secondary"
-            onPress={() => chain(onClose(), onCancel())}
-            autoFocus={autoFocusButton === 'cancel'}
-            data-testid="rsp-AlertDialog-cancelButton">
-            {cancelLabel}
-          </Button>
+    <DialogContext.Provider value={context}>
+      <Dialog
+        UNSAFE_style={styleProps.style}
+        UNSAFE_className={classNames(
+          styles,
+          {[`spectrum-Dialog--${variant}`]: variant},
+          styleProps.className
         )}
-        {secondaryActionLabel && (
-          <Button
-            variant="secondary"
-            onPress={() => chain(onClose(), onSecondaryAction())}
-            isDisabled={isSecondaryActionDisabled}
-            autoFocus={autoFocusButton === 'secondary'}
-            data-testid="rsp-AlertDialog-secondaryButton">
-            {secondaryActionLabel}
-          </Button>
+        isHidden={styleProps.hidden}
+        size="M"
+        role="alertdialog"
+        ref={ref}
+        {...filterDOMProps(props, {labelable: true})}>
+        <Heading>{title}</Heading>
+        {(variant === 'error' || variant === 'warning') && (
+          <AlertMedium slot="typeIcon" aria-label={stringFormatter.format('alert')} />
         )}
-        <Button
-          variant={confirmVariant}
-          onPress={() => chain(onClose(), onPrimaryAction())}
-          isDisabled={isPrimaryActionDisabled}
-          autoFocus={autoFocusButton === 'primary'}
-          data-testid="rsp-AlertDialog-confirmButton">
-          {primaryActionLabel}
-        </Button>
-      </ButtonGroup>
-    </Dialog>
+        <Divider />
+        <Content>{children}</Content>
+        <ButtonGroup align="end">
+          {cancelLabel && (
+            <Button
+              variant="secondary"
+              onPress={() => chain(onClose(), onCancel())}
+              autoFocus={autoFocusButton === 'cancel'}
+              data-testid="rsp-AlertDialog-cancelButton">
+              {cancelLabel}
+            </Button>
+          )}
+          {secondaryActionLabel && (
+            <Button
+              variant="secondary"
+              onPress={() => chain(onClose(), onSecondaryAction())}
+              isDisabled={isSecondaryActionDisabled}
+              autoFocus={autoFocusButton === 'secondary'}
+              data-testid="rsp-AlertDialog-secondaryButton">
+              {secondaryActionLabel}
+            </Button>
+          )}
+          <Button
+            variant={confirmVariant}
+            onPress={() => chain(onClose(), onPrimaryAction())}
+            isDisabled={isPrimaryActionDisabled}
+            autoFocus={autoFocusButton === 'primary'}
+            data-testid="rsp-AlertDialog-confirmButton">
+            {primaryActionLabel}
+          </Button>
+        </ButtonGroup>
+      </Dialog>
+    </DialogContext.Provider>
   );
 });
