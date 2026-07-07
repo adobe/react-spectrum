@@ -20,7 +20,9 @@ import './Calendar.css';
 export function Calendar(props: AriaCalendarProps<DateValue>) {
   let {locale} = useLocale();
   let state = useCalendarState({...props, locale, createCalendar});
+  /*- begin highlight -*/
   let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state);
+  /*- end highlight -*/
 
   return (
     <div {...calendarProps} className="react-aria-Calendar">

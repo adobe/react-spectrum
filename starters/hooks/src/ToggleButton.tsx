@@ -19,7 +19,9 @@ interface ToggleButtonProps extends AriaToggleButtonProps {
 export function ToggleButton({variant = 'primary', ...props}: ToggleButtonProps) {
   let ref = useRef<HTMLButtonElement>(null);
   let state = useToggleState(props);
+  /*- begin highlight -*/
   let {buttonProps, isPressed} = useToggleButton(props, state, ref);
+  /*- end highlight -*/
   let {hoverProps, isHovered} = useHover(props);
   let {focusProps, isFocusVisible} = useFocusRing();
 

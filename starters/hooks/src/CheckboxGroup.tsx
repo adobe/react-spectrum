@@ -55,11 +55,13 @@ export function CheckboxGroup({children, orientation = 'vertical', ...props}: Ch
 export function Checkbox(props: AriaCheckboxGroupItemProps) {
   let state = React.useContext(CheckboxGroupContext)!;
   let ref = useRef<HTMLInputElement>(null);
+  /*- begin highlight -*/
   let {inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useCheckboxGroupItem(
     props,
     state,
     ref
   );
+  /*- end highlight -*/
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isReadOnly});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
 

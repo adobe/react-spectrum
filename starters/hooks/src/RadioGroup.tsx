@@ -47,7 +47,9 @@ export function RadioGroup({children, ...props}: RadioGroupProps) {
 export function Radio(props: AriaRadioProps) {
   let state = React.useContext(RadioContext)!;
   let ref = useRef<HTMLInputElement>(null);
+  /*- begin highlight -*/
   let {inputProps, isSelected, isPressed, isDisabled} = useRadio(props, state, ref);
+  /*- end highlight -*/
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || state.isReadOnly});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
 

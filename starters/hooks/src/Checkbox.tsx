@@ -11,11 +11,13 @@ import './Checkbox.css';
 export function Checkbox(props: AriaCheckboxProps) {
   let state = useToggleState(props);
   let ref = useRef<HTMLInputElement>(null);
+  /*- begin highlight -*/
   let {inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useCheckbox(
     props,
     state,
     ref
   );
+  /*- end highlight -*/
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isReadOnly});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isIndeterminate = props.isIndeterminate || false;

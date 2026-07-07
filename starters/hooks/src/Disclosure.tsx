@@ -15,7 +15,9 @@ export function Disclosure(props: AriaDisclosureProps & {title?: ReactNode; chil
   let state = useDisclosureState(props);
   let panelRef = useRef<HTMLDivElement>(null);
   let buttonRef = useRef<HTMLButtonElement>(null);
+  /*- begin highlight -*/
   let {buttonProps, panelProps} = useDisclosure(props, state, panelRef);
+  /*- end highlight -*/
   let {buttonProps: pressProps, isPressed} = useButton(buttonProps, buttonRef);
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocusVisible} = useFocusRing();

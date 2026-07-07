@@ -16,11 +16,12 @@ export function ColorSlider(props: AriaColorSliderProps & {label?: string}) {
 
   // Default the label to the channel name in the current locale.
   let label = props.label || state.value.getChannelName(props.channel, locale);
-  // trackProps.style carries the gradient background, while thumbProps.style positions the thumb.
+  /*- begin highlight -*/
   let {trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider(
     {...props, label, trackRef, inputRef},
     state
   );
+  /*- end highlight -*/
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (

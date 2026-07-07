@@ -14,7 +14,9 @@ export function TimeField(props: AriaTimeFieldProps<TimeValue> & {label?: React.
   let {locale} = useLocale();
   let state = useTimeFieldState({...props, locale});
   let ref = useRef<HTMLDivElement>(null);
+  /*- begin highlight -*/
   let {labelProps, fieldProps} = useTimeField(props, state, ref);
+  /*- end highlight -*/
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setFocusWithin});
 

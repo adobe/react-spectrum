@@ -41,7 +41,9 @@ function Popover({state, children, triggerRef, ...props}: Omit<Parameters<typeof
   // usePopover positions the overlay relative to the trigger and closes it on
   // outside interaction or Escape. The state comes from useOverlayTriggerState.
   let popoverRef = React.useRef<HTMLDivElement>(null);
+  /*- begin highlight -*/
   let {popoverProps, underlayProps} = usePopover({...props, triggerRef, popoverRef}, state);
+  /*- end highlight -*/
 
   return (
     // Overlay renders into a portal and contains focus while the popover is open.

@@ -17,8 +17,10 @@ export function NumberField(props: AriaNumberFieldProps & {label?: React.ReactNo
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
   let inputRef = useRef<HTMLInputElement>(null);
+  /*- begin highlight -*/
   let {labelProps, groupProps, inputProps, incrementButtonProps, decrementButtonProps} =
     useNumberField(props, state, inputRef);
+  /*- end highlight -*/
 
   return (
     <div className="react-aria-NumberField">

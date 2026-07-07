@@ -58,11 +58,13 @@ function Toast({
   ...props
 }: AriaToastProps<string> & {state: ReturnType<typeof useToastState<string>>}) {
   let ref = useRef<HTMLDivElement>(null);
+  /*- begin highlight -*/
   let {toastProps, contentProps, titleProps, closeButtonProps} = useToast(
     {...props, toast},
     state,
     ref
   );
+  /*- end highlight -*/
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (

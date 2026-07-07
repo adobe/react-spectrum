@@ -34,7 +34,9 @@ export function Breadcrumbs(props: AriaBreadcrumbsProps & {children?: ReactNode}
 
 export function Breadcrumb(props: AriaBreadcrumbItemProps & {href?: string; children?: ReactNode}) {
   let ref = useRef<HTMLAnchorElement>(null);
+  /*- begin highlight -*/
   let {itemProps} = useBreadcrumbItem({...props, elementType: 'a'}, ref);
+  /*- end highlight -*/
   let {hoverProps, isHovered} = useHover(props);
   let {focusProps, isFocusVisible} = useFocusRing();
 

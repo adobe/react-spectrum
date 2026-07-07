@@ -12,7 +12,9 @@ import './Form.css';
 export function SearchField(props: AriaSearchFieldProps & {label?: React.ReactNode}) {
   let state = useSearchFieldState(props);
   let ref = useRef<HTMLInputElement>(null);
+  /*- begin highlight -*/
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, ref);
+  /*- end highlight -*/
   let [isFocused, setFocused] = useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
 

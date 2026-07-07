@@ -7,7 +7,9 @@ import './Toolbar.css';
 export function Toolbar(props: AriaToolbarProps & {children?: ReactNode}) {
   let {orientation = 'horizontal'} = props;
   let ref = useRef<HTMLDivElement>(null);
+  /*- begin highlight -*/
   let {toolbarProps} = useToolbar(props, ref);
+  /*- end highlight -*/
 
   return (
     <div {...toolbarProps} ref={ref} className="react-aria-Toolbar" data-orientation={orientation}>

@@ -10,7 +10,9 @@ import './Form.css';
 export function ColorField(props: AriaColorFieldProps & {label?: React.ReactNode}) {
   let state = useColorFieldState(props);
   let inputRef = useRef<HTMLInputElement>(null);
+  /*- begin highlight -*/
   let {labelProps, inputProps} = useColorField(props, state, inputRef);
+  /*- end highlight -*/
   let [isFocused, setFocused] = useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
 

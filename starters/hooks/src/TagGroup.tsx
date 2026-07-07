@@ -16,7 +16,9 @@ export function TagGroup(
 ) {
   let ref = useRef<HTMLDivElement>(null);
   let state = useListState(props);
+  /*- begin highlight -*/
   let {gridProps, labelProps} = useTagGroup(props, state, ref);
+  /*- end highlight -*/
 
   return (
     <div className="react-aria-TagGroup">

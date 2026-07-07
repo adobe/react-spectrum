@@ -11,7 +11,9 @@ import './Tabs.css';
 export function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTabListState>[0]) {
   let state = useTabListState(props);
   let ref = useRef<HTMLDivElement>(null);
+  /*- begin highlight -*/
   let {tabListProps} = useTabList(props, state, ref);
+  /*- end highlight -*/
   let orientation = props.orientation || 'horizontal';
 
   return (

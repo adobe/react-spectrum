@@ -33,7 +33,9 @@ export function Slider({label, thumbLabels, fillOffset, formatOptions, ...props}
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(formatOptions);
   let state = useSliderState({...props, numberFormatter});
+  /*- begin highlight -*/
   let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
+  /*- end highlight -*/
 
   // The fill spans from fillOffset (or the min) to the last thumb.
   let start =

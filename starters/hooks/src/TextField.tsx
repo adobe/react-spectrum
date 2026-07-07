@@ -8,7 +8,9 @@ import './Form.css';
 
 export function TextField(props: AriaTextFieldProps & {label?: React.ReactNode}) {
   let ref = useRef<HTMLInputElement>(null);
+  /*- begin highlight -*/
   let {labelProps, inputProps} = useTextField(props, ref);
+  /*- end highlight -*/
   let [isFocused, setFocused] = useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
 

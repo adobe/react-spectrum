@@ -81,7 +81,9 @@ function TableHeaderRow({
   children: ReactNode;
 }) {
   let ref = useRef<HTMLTableRowElement>(null);
+  /*- begin highlight -*/
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
+  /*- end highlight -*/
   return (
     <tr {...rowProps} ref={ref}>
       {children}

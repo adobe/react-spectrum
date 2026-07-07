@@ -5,7 +5,9 @@ import './Form.css';
 
 export function ProgressBar(props: AriaProgressBarProps) {
   let {label, value = 0, minValue = 0, maxValue = 100, isIndeterminate} = props;
+  /*- begin highlight -*/
   let {progressBarProps, labelProps} = useProgressBar(props);
+  /*- end highlight -*/
 
   // Calculate the width of the progress fill as a percentage.
   let percentage = ((value - minValue) / (maxValue - minValue)) * 100;

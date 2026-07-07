@@ -26,11 +26,13 @@ export function RangeCalendar(props: AriaRangeCalendarProps<DateValue>) {
   let {locale} = useLocale();
   let state = useRangeCalendarState({...props, locale, createCalendar});
   let ref = useRef<HTMLDivElement>(null);
+  /*- begin highlight -*/
   let {calendarProps, prevButtonProps, nextButtonProps, title} = useRangeCalendar(
     props,
     state,
     ref
   );
+  /*- end highlight -*/
 
   return (
     <div {...calendarProps} ref={ref} className="react-aria-RangeCalendar">
