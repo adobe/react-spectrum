@@ -150,6 +150,7 @@ export {useTag} from '../src/tag/useTag';
 export {useTagGroup} from '../src/tag/useTagGroup';
 export {useTextField} from '../src/textfield/useTextField';
 export {useToast} from '../src/toast/useToast';
+export {usePreviewTrigger} from '../src/tooltip/usePreviewTrigger';
 export {useToastRegion} from '../src/toast/useToastRegion';
 export {useToolbar} from '../src/toolbar/useToolbar';
 export {useTooltip} from '../src/tooltip/useTooltip';
@@ -470,6 +471,10 @@ export type {AriaToastProps, ToastAria} from '../src/toast/useToast';
 export type {AriaToolbarProps, ToolbarAria} from '../src/toolbar/useToolbar';
 export type {AriaTooltipProps, TooltipAria, TooltipProps} from '../src/tooltip/useTooltip';
 export type {TooltipTriggerAria} from '../src/tooltip/useTooltipTrigger';
+export type {
+  AriaPreviewTriggerProps,
+  PreviewTriggerTriggerAria
+} from '../src/tooltip/usePreviewTrigger';
 export type {TooltipTriggerProps} from 'react-stately/useTooltipTriggerState';
 export type {AriaTreeProps, TreeProps, TreeAria, AriaTreeOptions} from '../src/tree/useTree';
 export type {AriaTreeItemOptions, TreeItemAria} from '../src/tree/useTreeItem';
