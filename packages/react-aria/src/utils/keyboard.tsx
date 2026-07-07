@@ -152,9 +152,9 @@ function onOrientationChange(): void {
 
   let rotation = state.screenAngle - screen.angle;
 
-  // Rotations swap the dimensions instantly, so a focus right after the
-  // rotation measures correctly. An open keyboard has shrunken the screen already,
-  // so we need to await its closure until we can re-anchor.
+  // Rotation may cause the resize buffer to be filled, but we need to make sure a screen
+  // estimate is already available in case focus lands before it expires. This could fail
+  // if a top bar exceeds the keyboard threshold, in which case we may need to revisit.
   if (Math.abs(rotation) % 180 && !state.isOpen) {
     let width = state.screenWidth;
     let height = state.screenHeight;
@@ -185,7 +185,7 @@ function onFocus(e: FocusEvent): void {
     state.startTimeStamp = time;
   }
 
-  // A keyboard focus claims any buffered shrink as its own (see onResizeEnd).
+  // This focus will open a keyboard so cancel any buffered resizes.
   if (willKeyboardOpen) {
     window.clearTimeout(state.screenTimeout);
   }
