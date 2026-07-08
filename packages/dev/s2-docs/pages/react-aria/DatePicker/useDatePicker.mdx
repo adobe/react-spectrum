@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/datepicker';
 import statelyDocs from 'docs:@react-stately/datepicker';
@@ -108,8 +108,12 @@ function DatePicker(props: AriaDatePickerProps<DateValue>) {
 </DatePicker>
 ```
 
-<FunctionAPI function={statelyDocs.exports.useDatePickerState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useDatePicker} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useDatePickerState, links: statelyDocs.links},
+    {function: docs.exports.useDatePicker, links: docs.links},
+  ]}
+/>
 
 ### AriaDatePickerProps
 

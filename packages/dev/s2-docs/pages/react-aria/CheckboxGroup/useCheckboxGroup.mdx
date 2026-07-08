@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/checkbox';
 import statelyDocs from 'docs:@react-stately/checkbox';
@@ -40,9 +40,13 @@ import {CheckboxGroup, Checkbox} from 'hooks-starter/CheckboxGroup';
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useCheckboxGroupState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useCheckboxGroup} links={docs.links} />
-<FunctionAPI function={docs.exports.useCheckboxGroupItem} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useCheckboxGroupState, links: statelyDocs.links},
+    {function: docs.exports.useCheckboxGroup, links: docs.links},
+    {function: docs.exports.useCheckboxGroupItem, links: docs.links},
+  ]}
+/>
 
 ### AriaCheckboxGroupProps
 

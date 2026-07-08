@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../src/FunctionAPI';
 import {InterfaceType} from '../../src/types';
 import docs from 'docs:@react-aria/dnd';
 import statelyDocs from 'docs:@react-stately/dnd';
@@ -152,7 +152,11 @@ function Draggable() {
 
 ## API
 
-<FunctionAPI function={statelyDocs.exports.useDroppableCollectionState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useDroppableCollection} links={docs.links} />
-<FunctionAPI function={docs.exports.useDroppableItem} links={docs.links} />
-<FunctionAPI function={docs.exports.useDropIndicator} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useDroppableCollectionState, links: statelyDocs.links},
+    {function: docs.exports.useDroppableCollection, links: docs.links},
+    {function: docs.exports.useDroppableItem, links: docs.links},
+    {function: docs.exports.useDropIndicator, links: docs.links},
+  ]}
+/>

@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/overlays';
 import statelyDocs from 'docs:@react-stately/overlays';
@@ -104,8 +104,12 @@ function PopoverTrigger({label, children, ...props}: Parameters<typeof useOverla
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useOverlayTriggerState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.usePopover} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useOverlayTriggerState, links: statelyDocs.links},
+    {function: docs.exports.usePopover, links: docs.links},
+  ]}
+/>
 
 ### AriaPopoverProps
 

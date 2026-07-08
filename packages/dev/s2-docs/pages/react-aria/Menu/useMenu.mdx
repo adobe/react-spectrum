@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/menu';
 import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
@@ -121,12 +121,16 @@ function MenuItem({item, state}: {item: Node<unknown>, state: ReturnType<typeof 
 
 <Anatomy />
 
-<FunctionAPI function={menuStatelyDocs.exports.useMenuTriggerState} links={menuStatelyDocs.links} />
-<FunctionAPI function={treeStatelyDocs.exports.useTreeState} links={treeStatelyDocs.links} />
-<FunctionAPI function={docs.exports.useMenuTrigger} links={docs.links} />
-<FunctionAPI function={docs.exports.useMenu} links={docs.links} />
-<FunctionAPI function={docs.exports.useMenuItem} links={docs.links} />
-<FunctionAPI function={docs.exports.useMenuSection} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: menuStatelyDocs.exports.useMenuTriggerState, links: menuStatelyDocs.links},
+    {function: treeStatelyDocs.exports.useTreeState, links: treeStatelyDocs.links},
+    {function: docs.exports.useMenuTrigger, links: docs.links},
+    {function: docs.exports.useMenu, links: docs.links},
+    {function: docs.exports.useMenuItem, links: docs.links},
+    {function: docs.exports.useMenuSection, links: docs.links},
+  ]}
+/>
 
 ### AriaMenuTriggerProps
 

@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/table';
 import statelyDocs from 'docs:@react-stately/table';
@@ -48,13 +48,17 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'hooks-starter/Ta
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table" />
 
-<FunctionAPI function={statelyDocs.exports.useTableState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useTable} links={docs.links} />
-<FunctionAPI function={docs.exports.useTableRowGroup} links={docs.links} />
-<FunctionAPI function={docs.exports.useTableHeaderRow} links={docs.links} />
-<FunctionAPI function={docs.exports.useTableColumnHeader} links={docs.links} />
-<FunctionAPI function={docs.exports.useTableRow} links={docs.links} />
-<FunctionAPI function={docs.exports.useTableCell} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useTableState, links: statelyDocs.links},
+    {function: docs.exports.useTable, links: docs.links},
+    {function: docs.exports.useTableRowGroup, links: docs.links},
+    {function: docs.exports.useTableHeaderRow, links: docs.links},
+    {function: docs.exports.useTableColumnHeader, links: docs.links},
+    {function: docs.exports.useTableRow, links: docs.links},
+    {function: docs.exports.useTableCell, links: docs.links},
+  ]}
+/>
 
 ### AriaTableProps
 

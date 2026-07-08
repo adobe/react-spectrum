@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../src/FunctionAPI';
 import {InterfaceType} from '../../src/types';
 import docs from 'docs:@react-aria/dnd';
 import statelyDocs from 'docs:@react-stately/dnd';
@@ -127,6 +127,10 @@ function DropTarget() {
 
 ## API
 
-<FunctionAPI function={statelyDocs.exports.useDraggableCollectionState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useDraggableCollection} links={docs.links} />
-<FunctionAPI function={docs.exports.useDraggableItem} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useDraggableCollectionState, links: statelyDocs.links},
+    {function: docs.exports.useDraggableCollection, links: docs.links},
+    {function: docs.exports.useDraggableItem, links: docs.links},
+  ]}
+/>

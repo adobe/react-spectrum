@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/calendar';
 import statelyDocs from 'docs:@react-stately/calendar';
@@ -36,10 +36,14 @@ import {Calendar} from 'hooks-starter/Calendar';
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useCalendarState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useCalendar} links={docs.links} />
-<FunctionAPI function={docs.exports.useCalendarGrid} links={docs.links} />
-<FunctionAPI function={docs.exports.useCalendarCell} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useCalendarState, links: statelyDocs.links},
+    {function: docs.exports.useCalendar, links: docs.links},
+    {function: docs.exports.useCalendarGrid, links: docs.links},
+    {function: docs.exports.useCalendarCell, links: docs.links},
+  ]}
+/>
 
 ### AriaCalendarProps
 

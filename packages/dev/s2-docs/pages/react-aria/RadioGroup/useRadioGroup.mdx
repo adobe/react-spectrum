@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/radio';
 import statelyDocs from 'docs:@react-stately/radio';
@@ -39,9 +39,13 @@ import {RadioGroup, Radio} from 'hooks-starter/RadioGroup';
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useRadioGroupState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useRadioGroup} links={docs.links} />
-<FunctionAPI function={docs.exports.useRadio} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useRadioGroupState, links: statelyDocs.links},
+    {function: docs.exports.useRadioGroup, links: docs.links},
+    {function: docs.exports.useRadio, links: docs.links},
+  ]}
+/>
 
 ### AriaRadioGroupProps
 

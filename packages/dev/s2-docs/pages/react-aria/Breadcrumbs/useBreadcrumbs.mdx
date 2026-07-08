@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/breadcrumbs';
 import Anatomy from '/packages/react-aria/docs/breadcrumbs/anatomy.svg';
@@ -39,8 +39,12 @@ import {Breadcrumbs, Breadcrumb} from 'hooks-starter/Breadcrumbs';
 
 <Anatomy />
 
-<FunctionAPI function={docs.exports.useBreadcrumbs} links={docs.links} />
-<FunctionAPI function={docs.exports.useBreadcrumbItem} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: docs.exports.useBreadcrumbs, links: docs.links},
+    {function: docs.exports.useBreadcrumbItem, links: docs.links},
+  ]}
+/>
 
 ### AriaBreadcrumbsProps
 

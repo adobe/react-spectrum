@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/switch';
 import statelyDocs from 'docs:@react-stately/toggle';
@@ -36,8 +36,12 @@ import {Switch} from 'hooks-starter/Switch';
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useToggleState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useSwitch} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useToggleState, links: statelyDocs.links},
+    {function: docs.exports.useSwitch, links: docs.links},
+  ]}
+/>
 
 ### AriaSwitchProps
 

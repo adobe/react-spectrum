@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/datepicker';
 import statelyDocs from 'docs:@react-stately/datepicker';
@@ -36,9 +36,13 @@ import {DateField} from 'hooks-starter/DateField';
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useDateFieldState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useDateField} links={docs.links} />
-<FunctionAPI function={docs.exports.useDateSegment} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useDateFieldState, links: statelyDocs.links},
+    {function: docs.exports.useDateField, links: docs.links},
+    {function: docs.exports.useDateSegment, links: docs.links},
+  ]}
+/>
 
 ### AriaDateFieldProps
 

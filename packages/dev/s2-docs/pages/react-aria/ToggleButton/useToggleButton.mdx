@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/button';
 import statelyDocs from 'docs:@react-stately/toggle';
@@ -33,8 +33,12 @@ import {ToggleButton} from 'hooks-starter/ToggleButton';
 
 ## API
 
-<FunctionAPI function={statelyDocs.exports.useToggleState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useToggleButton} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useToggleState, links: statelyDocs.links},
+    {function: docs.exports.useToggleButton, links: docs.links},
+  ]}
+/>
 
 ### AriaToggleButtonProps
 

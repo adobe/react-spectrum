@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/combobox';
 import statelyDocs from 'docs:@react-stately/combobox';
@@ -117,8 +117,12 @@ function ComboBoxInner({collection, ...props}: {collection: ICollection<Node<obj
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useComboBoxState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useComboBox} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useComboBoxState, links: statelyDocs.links},
+    {function: docs.exports.useComboBox, links: docs.links},
+  ]}
+/>
 
 ### AriaComboBoxOptions
 

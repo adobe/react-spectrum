@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/slider';
 import statelyDocs from 'docs:@react-stately/slider';
@@ -36,9 +36,13 @@ import {Slider} from 'hooks-starter/Slider';
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useSliderState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useSlider} links={docs.links} />
-<FunctionAPI function={docs.exports.useSliderThumb} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useSliderState, links: statelyDocs.links},
+    {function: docs.exports.useSlider, links: docs.links},
+    {function: docs.exports.useSliderThumb, links: docs.links},
+  ]}
+/>
 
 ### AriaSliderProps
 

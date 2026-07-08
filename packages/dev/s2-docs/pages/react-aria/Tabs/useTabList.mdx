@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/tabs';
 import statelyDocs from 'docs:@react-stately/tabs';
@@ -41,10 +41,14 @@ import {Item} from 'react-stately/Item';
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useTabListState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useTabList} links={docs.links} />
-<FunctionAPI function={docs.exports.useTab} links={docs.links} />
-<FunctionAPI function={docs.exports.useTabPanel} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useTabListState, links: statelyDocs.links},
+    {function: docs.exports.useTabList, links: docs.links},
+    {function: docs.exports.useTab, links: docs.links},
+    {function: docs.exports.useTabPanel, links: docs.links},
+  ]}
+/>
 
 ### AriaTabListOptions
 

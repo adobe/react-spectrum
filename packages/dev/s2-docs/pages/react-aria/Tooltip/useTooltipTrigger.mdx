@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/tooltip';
 import statelyDocs from 'docs:@react-stately/tooltip';
@@ -98,9 +98,13 @@ function TooltipButton(props: Parameters<typeof useTooltipTrigger>[0] & {childre
 
 <Anatomy />
 
-<FunctionAPI function={statelyDocs.exports.useTooltipTriggerState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useTooltipTrigger} links={docs.links} />
-<FunctionAPI function={docs.exports.useTooltip} links={docs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useTooltipTriggerState, links: statelyDocs.links},
+    {function: docs.exports.useTooltipTrigger, links: docs.links},
+    {function: docs.exports.useTooltip, links: docs.links},
+  ]}
+/>
 
 ### TooltipTriggerProps
 

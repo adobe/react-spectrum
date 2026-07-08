@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
 export default Layout;
-import {FunctionAPI} from '../../../src/FunctionAPI';
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/overlays';
 import dialogDocs from 'docs:@react-aria/dialog';
@@ -182,9 +182,13 @@ Focus containment must be enabled from a component rendered _inside_ the [&lt;Ov
 </DialogTrigger>
 ```
 
-<FunctionAPI function={statelyDocs.exports.useOverlayTriggerState} links={statelyDocs.links} />
-<FunctionAPI function={docs.exports.useModalOverlay} links={docs.links} />
-<FunctionAPI function={dialogDocs.exports.useDialog} links={dialogDocs.links} />
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useOverlayTriggerState, links: statelyDocs.links},
+    {function: docs.exports.useModalOverlay, links: docs.links},
+    {function: dialogDocs.exports.useDialog, links: dialogDocs.links},
+  ]}
+/>
 
 ### AriaModalOverlayProps
 
