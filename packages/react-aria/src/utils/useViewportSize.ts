@@ -11,7 +11,7 @@
  */
 
 import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
-import {isIOS, isWebKit} from '../utils/platform';
+import {isIOS, isWebKit} from './platform';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
 import {willOpenKeyboard} from './keyboard';
