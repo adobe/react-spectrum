@@ -82,8 +82,8 @@ export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
 }
 
 /**
- * A token field allows users to enter text with inline tokens, such as hashtags, mentions, tags, or
- * template variables.
+ * A token field allows users to enter text with inline tokens. Use it to build AI prompt fields,
+ * tag inputs, structured search fields, mention inputs, and multi-select comboboxes.
  */
 export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TokenField<
   T extends TokenSegmentList = TokenSegmentList

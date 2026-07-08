@@ -4,10 +4,9 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 
-export const tags = ['input', 'tokens', 'mentions', 'tags', 'autocomplete'];
+export const tags = ['input', 'token', 'mention', 'tag', 'autocomplete', 'ai', 'prompt', 'comment', 'multi-select', 'combobox', 'search'];
 export const version = 'alpha';
-export const relatedPages = [{'title': 'useTokenField', 'url': 'TokenField/useTokenField.html'}];
-export const description = 'Allows users to enter text with inline tokens, such as hashtags, mentions, tags, or template variables.';
+export const description = 'Allows users to enter text with inline tokens such as mentions, tags, or object references.';
 
 # TokenField
 
@@ -49,7 +48,7 @@ export const description = 'Allows users to enter text with inline tokens, such 
 
 ## Value
 
-`TokenField` is controlled via a `TokenSegmentList` value, which represents a sequence of text and token segments. Use the `value` and `onChange` props to manage the field state, or `defaultValue` for uncontrolled usage.
+`TokenField` is controlled via a `TokenSegmentList` value, which represents a sequence of text and token segments. Use the `value` or `defaultValue` prop to set the value, and `onChange` to handle user input.
 
 ```tsx render
 "use client";
@@ -82,8 +81,6 @@ function Example() {
 ## Tokenization
 
 Extend the `TokenSegmentList` class to customize how text is converted into tokens. Override the `tokenize` method to parse user input, and use `createSegmentList` to return new instances of your subclass when the value changes.
-
-The following example automatically tokenizes hashtags and @mentions as the user types.
 
 ```tsx render
 "use client";
@@ -235,7 +232,7 @@ function Example() {
 
 ## Tag field
 
-Use a custom `TokenSegmentList` to build a tag input. The following example converts comma, space, or newline separated text into tokens.
+Use a custom `TokenSegmentList` to build a tag input. This example converts comma, space, or newline separated text into tokens.
 
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/TagFieldSegmentList.ts"]}
 "use client";
@@ -260,7 +257,7 @@ import {TagFieldSegmentList} from './TagFieldSegmentList';
 
 ## Search
 
-Token fields can be used to build advanced search UIs with structured query tokens. The following example suggests filters based on the current text segment.
+Token fields can be used to build advanced search UIs with structured query tokens. This example suggests filters based on the current text segment.
 
 ```tsx render
 "use client";
