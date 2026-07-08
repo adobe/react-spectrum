@@ -847,6 +847,7 @@ function useMutationTracker(ref: React.RefObject<Element | null>) {
       start() {
         // Android sometimes fires two compositionstart events in a row, without a compositionend.
         // In that case, reuse the existing tracker.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         mutationTracker.current ||= trackMutations(ref.current!);
       },
       stop() {
@@ -854,6 +855,7 @@ function useMutationTracker(ref: React.RefObject<Element | null>) {
         mutationTracker.current = null;
       }
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 }

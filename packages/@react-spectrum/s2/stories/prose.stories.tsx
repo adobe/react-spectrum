@@ -15,9 +15,10 @@ import type {Meta} from '@storybook/react';
 import {prose} from '../style/prose' with {type: 'macro'};
 import ProseExample from './prose.mdx';
 // @ts-ignore
-import React, {ReactNode, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useRef, useState} from 'react';
 import * as spectrumTokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
 const meta: Meta = {
   tags: ['autodocs'],
@@ -143,7 +144,7 @@ function MarginVisualizer({children}: {children: ReactNode}) {
   let [boxes, setBoxes] = useState<MarginBox[]>([]);
   let ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!active) {
       setBoxes([]);
       return;
