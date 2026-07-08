@@ -162,7 +162,10 @@ export function useMenuTrigger<T>(
     if (state.isOpen && trigger === 'contextMenu') {
       let onContextMenu = (e: MouseEvent) => {
         // Checking if the target is the body works because everything outside the menu is inert.
-        if (e.button === 2 && getEventTarget(e) === document.body) {
+        if (
+          (e.button === 2 || (e.button === 0 && e.ctrlKey === true)) &&
+          getEventTarget(e) === document.body
+        ) {
           state.close();
         }
       };
