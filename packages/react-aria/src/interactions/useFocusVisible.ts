@@ -113,8 +113,8 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  let ownerWindow = getOwnerWindow(getEventTarget(e) as Element);
-  let ownerDocument = getOwnerDocument(getEventTarget(e) as Element);
+  let ownerWindow = getOwnerWindow(getEventTarget(e));
+  let ownerDocument = getOwnerDocument(getEventTarget(e));
   if (
     getEventTarget(e) === ownerWindow ||
     getEventTarget(e) === ownerDocument ||

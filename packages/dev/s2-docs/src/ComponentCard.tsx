@@ -264,6 +264,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   NumberField: [NumberFieldLight, NumberFieldDark],
   Picker: [PickerLight, PickerDark],
   Popover: [PopoverLight, PopoverDark],
+  PreviewTrigger: [PopoverLight, PopoverDark],
   ProgressBar: [ProgressBarLight, ProgressBarDark],
   ProgressCircle: [ProgressCircleLight, ProgressCircleDark],
   Provider: [ProviderLight, ProviderDark],
