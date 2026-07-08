@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useMemo, useRef, useState} from 'react';
 import './styles.global.css';
@@ -18,26 +17,24 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {ChevronDown} from 'lucide-react';
 import {Collection, ComboBox} from 'react-aria-components';
 import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
-import {Direction, type TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
+import {
+  Direction,
+  type TokenFieldSegment,
+  TokenSegmentList
+} from 'react-stately/useTokenFieldState';
 import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
 import {Key} from '@react-types/shared';
 import {Popover} from 'vanilla-starter/Popover';
-import {positionToDOMRange, Token, TokenField} from '../src/TokenField';
+import {positionToDOMRange} from 'react-aria/useTokenField';
+import {Token, TokenField} from '../src/TokenField';
 import 'vanilla-starter/TagGroup.css';
 import {Text} from 'react-aria-components/Text';
 
-const events = ['onChange', 'onPaste', 'onSubmit', 'onFocus', 'onBlur', 'onFocusChange'];
-
 export default {
-  title: 'AI/TokenField',
+  title: 'React Aria Components/TokenField',
   component: TokenField,
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', events),
-    children: {table: {disable: true}}
-  },
-  args: {...getActionArgs(events)}
+  tags: ['autodocs']
 } as Meta<typeof TokenField>;
 
 export type TokenFieldStory = StoryFn<typeof TokenField>;

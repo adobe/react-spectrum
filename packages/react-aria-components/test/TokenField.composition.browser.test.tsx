@@ -42,7 +42,7 @@ import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
 import {Token, TokenField} from '../src/TokenField';
-import {TokenSegmentList} from '../src/TokenSegmentList';
+import {TokenSegmentList} from 'react-stately/useTokenFieldState';
 
 declare module 'vitest/browser' {
   interface BrowserCommands {

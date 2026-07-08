@@ -27,14 +27,13 @@ import {
   useRef,
   useState
 } from 'react';
-// eslint-disable-next-line
 import {
   Direction,
   Position,
   TokenFieldSegment,
   TokenSegment,
   TokenSegmentList
-} from './TokenSegmentList';
+} from 'react-stately/useTokenFieldState';
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group} from 'react-aria-components/Group';
 import {IconContext, mergeStyles} from '@react-spectrum/s2';
@@ -43,10 +42,9 @@ import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
-// eslint-disable-next-line
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
-import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
+import {positionToDOMRange, Token, TokenField, TokenProps} from 'react-aria-components/TokenField';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';

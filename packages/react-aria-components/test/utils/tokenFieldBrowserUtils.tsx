@@ -11,17 +11,12 @@
  */
 
 import {expect} from 'vitest';
-import {
-  getSelection,
-  setSelection,
-  Token,
-  TokenField,
-  type TokenFieldProps
-} from '../../src/TokenField';
+import {getSelection, setSelection} from '../../../react-aria/src/tokenfield/useTokenField';
 import {type Locator, userEvent} from 'vitest/browser';
-import {Position, TokenFieldSegment, TokenSegmentList} from '../../src/TokenSegmentList';
+import {Position, TokenFieldSegment, TokenSegmentList} from 'react-stately/useTokenFieldState';
 import React, {useEffect, useState} from 'react';
 import {render} from 'vitest-browser-react';
+import {Token, TokenField, type TokenFieldProps} from '../../src/TokenField';
 
 export function text(s: string): TokenFieldSegment {
   return {type: 'text', text: s};

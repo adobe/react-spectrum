@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, Position, TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
+import {
+  Direction,
+  Position,
+  TokenFieldSegment,
+  TokenSegmentList
+} from '../../src/tokenfield/TokenSegmentList';
 import React from 'react';
 
 function text(s: string): TokenFieldSegment {

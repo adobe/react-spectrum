@@ -1,5 +1,5 @@
-@import '../../../../starters/docs/src/theme.css';
-@import '../../../../starters/docs/src/utilities.css';
+@import '../../../starters/docs/src/theme.css';
+@import '../../../starters/docs/src/utilities.css';
 
 .react-aria-TokenField {
   padding: 4px 8px;

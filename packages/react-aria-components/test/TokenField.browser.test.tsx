@@ -39,12 +39,14 @@ import {
   wordDeleteModKey,
   wordNavModKey
 } from './utils/tokenFieldBrowserUtils';
-import {CLIPBOARD_MIME_TYPE, Token, TokenField} from '../src/TokenField';
 import {commands, userEvent} from 'vitest/browser';
 import {describe, expect, it} from 'vitest';
 import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
+import {Token, TokenField} from '../src/TokenField';
+
+const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
 declare module 'vitest/browser' {
   interface BrowserCommands {
