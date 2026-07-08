@@ -13,16 +13,17 @@
 import {ariaHideOutside, keepVisible} from './ariaHideOutside';
 import {AriaPositionProps, PlacementAxis, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
+import {FocusWithinProps, useFocusWithin} from '../interactions/useFocusWithin';
 import {mergeProps} from '../utils/mergeProps';
 import {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
-export interface AriaPopoverProps extends Omit<
-  AriaPositionProps,
-  'isOpen' | 'onClose' | 'targetRef' | 'overlayRef'
-> {
+export interface AriaPopoverProps
+  extends
+    Omit<AriaPositionProps, 'isOpen' | 'onClose' | 'targetRef' | 'overlayRef'>,
+    Omit<FocusWithinProps, 'isDisabled'> {
   /**
    * The ref for the element which the popover positions itself with respect to.
    */
@@ -138,8 +139,10 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     }
   }, [isNonModal, state.isOpen, popoverRef, groupRef]);
 
+  let {focusWithinProps} = useFocusWithin(props);
+
   return {
-    popoverProps: mergeProps(overlayProps, positionProps),
+    popoverProps: mergeProps(overlayProps, positionProps, focusWithinProps),
     arrowProps,
     underlayProps,
     placement,

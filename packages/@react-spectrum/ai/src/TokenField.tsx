@@ -20,11 +20,22 @@ import {
 } from './TokenSegmentList';
 import {FieldInputContext} from 'react-aria-components/Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {FocusableProps} from '@react-types/shared';
+import {FocusableProps, forwardRefType} from '@react-types/shared';
+import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {isMac} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {ForwardedRef, forwardRef, HTMLAttributes, useMemo, useRef, useState} from 'react';
+import React, {
+  ForwardedRef,
+  forwardRef,
+  HTMLAttributes,
+  memo,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {RenderProps, StyleRenderProps, useRenderProps} from 'react-aria-components/useRenderProps';
 import {SlotProps, useSlottedContext} from 'react-aria-components/slots';
 import {useControlledState} from 'react-stately/useControlledState';
@@ -45,12 +56,14 @@ interface TokenFieldRenderProps {
   isFocusVisible: boolean;
 }
 
-export interface TokenFieldProps
+export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
   extends StyleRenderProps<TokenFieldRenderProps>, SlotProps, FocusableProps {
-  value?: TokenSegmentList;
-  defaultValue?: TokenSegmentList;
-  onChange?: (value: TokenSegmentList) => void;
-  children: (segment: TokenSegment) => React.ReactElement;
+  value?: T;
+  defaultValue?: T;
+  onChange?: (value: T) => void;
+  children: (
+    segment: TokenSegment<T extends TokenSegmentList<infer V> ? V : never>
+  ) => React.ReactElement;
   multiline?: boolean;
   isReadOnly?: boolean;
   isDisabled?: boolean;
@@ -63,10 +76,9 @@ export interface TokenFieldProps
 
 export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
-export const TokenField = forwardRef(function TokenField(
-  props: TokenFieldProps,
-  forwardedRef: ForwardedRef<HTMLDivElement | null>
-) {
+export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TokenField<
+  T extends TokenSegmentList = TokenSegmentList
+>(props: TokenFieldProps<T>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     value: valueProp,
     defaultValue: defaultValueProp = new TokenSegmentList([]),
@@ -100,24 +112,86 @@ export const TokenField = forwardRef(function TokenField(
   let dropPosition = useRef<Position | null>(null);
   let transferredData = useRef<TokenFieldSegment[] | null>(null);
 
+  let nextValue = useRef<TokenSegmentList | null>(null);
   let apply = (fn: (value: TokenSegmentList) => TokenSegmentList) => {
     setState(value => {
       let newValue = fn(value);
+      nextValue.current = newValue;
       onAutocompleteChange?.(newValue.toString());
       return newValue;
     });
   };
 
+  // Composition events are not cancelable. The browser will mutate the DOM, making it out of sync with React.
+  // To account for this, we prevent React from re-rendering during composition, and track DOM mutations performed
+  // by the browser. When composition ends, we revert the DOM to its original state, and re-render with React.
+  // Mutating the DOM in any way during composition breaks the IME, causing composition to end unexpectedly.
+  // During composition, we still emit updates via onChange to ensure that things like autocomplete work,
+  // but we don't actually re-render to the DOM unless the value changes from what we expect (e.g. inserting a completion).
+  let [isComposing, setComposing] = useState(false);
+  let mutationTracker = useMutationTracker(ref);
+  let startComposition = useCallback(() => {
+    mutationTracker.start();
+    setComposing(true);
+  }, [mutationTracker]);
+  let stopComposition = useCallback(() => {
+    mutationTracker.stop();
+    setComposing(false);
+  }, [mutationTracker]);
+
+  useEvent(ref, 'compositionstart', () => {
+    startComposition();
+
+    let range = window.getSelection()?.getRangeAt(0);
+    if (range) {
+      let [start, end] = rangeToPositions(ref.current!, range);
+
+      // Normalize the range to ensure it is not inside a token, otherwise the browser
+      // will attempt to insert the composed text into the token instead of replacing it.
+      let r = createDOMRange(ref.current!, start, end);
+      if (r.startContainer !== range.startContainer || r.startOffset !== range.startOffset) {
+        range.setStart(r.startContainer, r.startOffset);
+      }
+      if (r.endContainer !== range.endContainer || r.endOffset !== range.endOffset) {
+        range.setEnd(r.endContainer, r.endOffset);
+      }
+    }
+  });
+
+  useEvent(ref, 'compositionend', stopComposition);
+
+  // If a prop update occurs during composition that doesn't match the expected value,
+  // end composition and re-render the controlled value.
+  useLayoutEffect(() => {
+    if (isComposing && state !== nextValue.current) {
+      stopComposition();
+    }
+    nextValue.current = state;
+  });
+
   let caretPosition = useRef<Position | null>(null);
   useLayoutEffect(() => {
-    if (ref.current && state.caretPosition && state.caretPosition !== caretPosition.current) {
-      setCursor(ref.current, state.caretPosition);
+    if (
+      ref.current &&
+      state.caretPosition &&
+      !isComposing &&
+      state.caretPosition !== caretPosition.current
+    ) {
+      // Only move the caret when the field is already focused.
+      if (ref.current === getActiveElement(getOwnerDocument(ref.current))) {
+        setCursor(ref.current, state.caretPosition);
+      }
       caretPosition.current = state.caretPosition;
     }
   });
 
   // Handle text editing commands and prevent browser default behavior.
   useEvent(ref, 'beforeinput', e => {
+    // Android sometimes doesn't fire a compositionend event before a regular input event.
+    if (isComposing && !e.isComposing) {
+      stopComposition();
+    }
+
     let selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) {
       return;
@@ -129,6 +203,8 @@ export const TokenField = forwardRef(function TokenField(
     switch (e.inputType) {
       case 'insertText':
       case 'insertReplacementText':
+      case 'insertCompositionText':
+      case 'insertFromComposition': // Removed from the spec, but still fired by Safari.
       case 'insertFromPaste':
       case 'insertFromYank':
       case 'insertFromDrop': {
@@ -137,8 +213,11 @@ export const TokenField = forwardRef(function TokenField(
           data = transferredData.current;
           transferredData.current = null;
         } else if (e.dataTransfer) {
-          if (e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)) {
-            data = JSON.parse(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
+          let parsed = e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)
+            ? parseSegments(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE))
+            : null;
+          if (parsed) {
+            data = parsed;
           } else if (e.dataTransfer.types.includes('text/plain')) {
             data[0].text = e.dataTransfer.getData('text/plain');
           }
@@ -149,12 +228,21 @@ export const TokenField = forwardRef(function TokenField(
           dropPosition.current = null;
         }
 
+        if (!multiline) {
+          for (let segment of data) {
+            segment.text = segment.text.replace(/[\r\n]+/g, ' ');
+          }
+        }
+
         apply(tokens =>
           tokens.replaceRangeWithSegments(
             start,
             end,
             data,
-            e.inputType === 'insertText' // Don't coalesce paste/drop events with other edits.
+            // Don't coalesce paste/drop events with other edits.
+            e.inputType === 'insertText' ||
+              e.inputType === 'insertCompositionText' ||
+              e.inputType === 'insertFromComposition'
           )
         );
         break;
@@ -181,7 +269,8 @@ export const TokenField = forwardRef(function TokenField(
       case 'deleteSoftLineForward':
       case 'deleteSoftLineBackward':
       case 'deleteContent':
-      case 'deleteByCut': {
+      case 'deleteByCut':
+      case 'deleteCompositionText': {
         if (!range.collapsed) {
           apply(tokens => tokens.replaceRange(start, end, ''));
           break;
@@ -235,24 +324,6 @@ export const TokenField = forwardRef(function TokenField(
     e.preventDefault();
   });
 
-  // Composition events are not cancelable, so we need to store the start position and update the value in the compositionend event.
-  let compositionStart = useRef<[Position, Position] | null>(null);
-  useEvent(ref, 'compositionstart', () => {
-    let selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return;
-    }
-    let range = selection.getRangeAt(0);
-    compositionStart.current = rangeToPositions(ref.current!, range);
-  });
-
-  useEvent(ref, 'compositionend', e => {
-    let range = compositionStart.current;
-    if (range) {
-      apply(tokens => tokens.replaceRange(range[0], range[1], e.data));
-    }
-  });
-
   let writeClipboardData = (e: ClipboardEvent | DragEvent) => {
     if ('clipboardData' in e) {
       e.preventDefault();
@@ -278,7 +349,7 @@ export const TokenField = forwardRef(function TokenField(
   useEvent(ref, 'paste', e => {
     // Safari doesn't pass the custom clipboard data type to beforeinput dataTransfer so we handle it here.
     if (e.clipboardData && e.clipboardData.types.includes(CLIPBOARD_MIME_TYPE)) {
-      transferredData.current = JSON.parse(e.clipboardData.getData(CLIPBOARD_MIME_TYPE));
+      transferredData.current = parseSegments(e.clipboardData.getData(CLIPBOARD_MIME_TYPE));
     }
   });
 
@@ -297,31 +368,33 @@ export const TokenField = forwardRef(function TokenField(
     }
 
     if (e.dataTransfer && e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)) {
-      transferredData.current = JSON.parse(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
+      transferredData.current = parseSegments(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
     }
   });
 
   useSelectionChange(ref, () => {
+    if (isComposing) {
+      return;
+    }
+
     state.endCoalescing();
 
     // When the cursor moves next to a token, announce it.
     // Otherwise the screen reader will only announce the first/last character.
     if (window.getSelection()?.isCollapsed) {
       let [start, end] = getSelection(ref.current!)!;
-      if (start.index === end.index && start.offset === 0) {
+      if (start.offset === 0) {
         let segment = state.segments[start.index];
+        if (segment?.type !== 'token') {
+          segment = state.segments[start.index - 1];
+        }
         if (segment?.type === 'token') {
           announce(segment.text, 'assertive');
         }
-      } else if (start.offset === state.segments[start.index].text.length) {
-        let segment = state.segments[start.index + 1];
-        if (segment?.type === 'token') {
-          announce(segment.text, 'assertive');
-        }
-      }
 
-      // Update the caret position in the value.
-      setState(value => value.withCaretPosition(end));
+        // Update the caret position in the value.
+        setState(value => value.withCaretPosition(end));
+      }
     }
   });
 
@@ -343,60 +416,78 @@ export const TokenField = forwardRef(function TokenField(
     }
   });
 
-  // Firefox does not allow placing the cursor between adjacent tokens, so navigate manually.
-  let moveSelection = (segmenter: Intl.Segmenter, direction: Direction, extend = false) => {
-    let selection = getSelection(ref.current!);
-    if (!selection) {
+  let moveSelection = (
+    direction: 'left' | 'right',
+    granularity: 'character' | 'word',
+    extend = false
+  ) => {
+    let selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || !selection.focusNode || !selection.anchorNode) {
       return false;
     }
-    let originalPos = direction === Direction.Backward ? selection[0] : selection[1];
-    let pos =
-      extend || isCollapsed(selection[0], selection[1])
-        ? state.findBoundaryWithSegmenter(originalPos, segmenter, direction)
-        : originalPos;
-    if (pos) {
-      let [start, end] =
-        direction === Direction.Backward
-          ? [pos, extend ? selection[1] : pos]
-          : [extend ? selection[0] : pos, pos];
-      setSelection(ref.current!, start, end, true);
-      return true;
+
+    // Pressing an arrow with a non-empty selection collapses it to the corresponding edge.
+    // The browser handles this natively.
+    if (!extend && !selection.isCollapsed) {
+      return false;
     }
-    return false;
+
+    // Move the caret using the browser's native caret movement (Selection.modify) so that
+    // bidirectional text is handled correctly. Repeat until the position actually changes
+    // to account for the zero width spaces around tokens.
+    let pos = getPosition(ref.current!, selection.focusNode, selection.focusOffset);
+    while (true) {
+      let {focusNode, focusOffset} = selection;
+      selection.modify(extend ? 'extend' : 'move', direction, granularity);
+      if (selection.focusNode === focusNode && selection.focusOffset === focusOffset) {
+        return false;
+      }
+      let newPos = getPosition(ref.current!, selection.focusNode, selection.focusOffset);
+      if (!isSamePosition(pos, newPos)) {
+        return true;
+      }
+    }
   };
 
   let mod = isMac() ? 'Meta' : 'Control';
   let wordModKey = isMac() ? 'Alt' : 'Control';
   let shortcuts: Record<string, () => boolean | void> = {
     [`${mod}+z`]: () => {
+      // If composing, the browser handles undo natively.
+      if (isComposing) {
+        return false;
+      }
       apply(state => state.undo());
     },
     [isMac() ? 'Shift+Meta+z' : 'Control+y']: () => {
+      if (isComposing) {
+        return false;
+      }
       apply(state => state.redo());
     },
     ArrowLeft: () => {
-      return moveSelection(graphemeSegmenter, Direction.Backward);
+      return moveSelection('left', 'character');
     },
     [`${wordModKey}+ArrowLeft`]: () => {
-      return moveSelection(wordSegmenter, Direction.Backward);
+      return moveSelection('left', 'word');
     },
     'Shift+ArrowLeft': () => {
-      return moveSelection(graphemeSegmenter, Direction.Backward, true);
+      return moveSelection('left', 'character', true);
     },
     [`Shift+${wordModKey}+ArrowLeft`]: () => {
-      return moveSelection(wordSegmenter, Direction.Backward, true);
+      return moveSelection('left', 'word', true);
     },
     ArrowRight: () => {
-      return moveSelection(graphemeSegmenter, Direction.Forward);
+      return moveSelection('right', 'character');
     },
     [`${wordModKey}+ArrowRight`]: () => {
-      return moveSelection(wordSegmenter, Direction.Forward);
+      return moveSelection('right', 'word');
     },
     'Shift+ArrowRight': () => {
-      return moveSelection(graphemeSegmenter, Direction.Forward, true);
+      return moveSelection('right', 'character', true);
     },
     [`Shift+${wordModKey}+ArrowRight`]: () => {
-      return moveSelection(wordSegmenter, Direction.Forward, true);
+      return moveSelection('right', 'word', true);
     },
     Home: () => {
       // Browsers do not behave consistently when there are tokens.
@@ -426,6 +517,7 @@ export const TokenField = forwardRef(function TokenField(
   };
 
   let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
     onKeyDown: e => {
       // mini version of useKeyboard shortcuts until it is merged.
       let modifiers = ['Shift', 'Control', 'Alt', 'Meta'] satisfies React.ModifierKey[];
@@ -473,37 +565,41 @@ export const TokenField = forwardRef(function TokenField(
         {onPaste: props.onPaste}
       )}
       ref={mergeRefs(ref, autocompleteRef as any)}
-      role="textbox"
-      contentEditable="true"
+      role={autocompleteProps['role'] || 'textbox'}
+      contentEditable={!isDisabled && !isReadOnly}
       suppressContentEditableWarning
       aria-multiline={multiline}
-      aria-label={ariaLabel}
-      aria-labelledby={ariaLabelledBy}
-      aria-describedby={ariaDescribedBy}
+      aria-label={ariaLabel ?? autocompleteProps['aria-label']}
+      aria-labelledby={ariaLabelledBy ?? autocompleteProps['aria-labelledby']}
+      aria-describedby={ariaDescribedBy ?? autocompleteProps['aria-describedby']}
+      aria-readonly={isReadOnly || undefined}
+      aria-disabled={isDisabled || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}
       style={{...renderProps.style, whiteSpace: 'pre-wrap'}}>
-      {state.segments.map((v, i) => {
-        switch (v.type) {
-          case 'token': {
-            let token = children(v);
-            return (
-              // Wrap tokens in zero-width spaces so the cursor is placed correctly.
-              <span key={i}>
-                {'\u200b'}
-                {token}
-                {'\u200b'}
-              </span>
-            );
+      <CompositionRenderBlocker isComposing={isComposing}>
+        {state.segments.map((v, i) => {
+          switch (v.type) {
+            case 'token': {
+              let token = children(v);
+              return (
+                // Wrap tokens in zero-width spaces so the cursor is placed correctly.
+                <span key={i}>
+                  {'\u200b'}
+                  {token}
+                  {'\u200b'}
+                </span>
+              );
+            }
+            case 'text':
+              return v.text;
           }
-          case 'text':
-            return v.text;
-        }
-      })}
-      {/* Force cursor to the next line if the last segment ends with a newline. */}
-      {state.segments.at(-1)?.text.endsWith('\n') && <br />}
+        })}
+        {/* Force cursor to the next line if the last segment ends with a newline. */}
+        {state.segments.at(-1)?.text.endsWith('\n') && <br />}
+      </CompositionRenderBlocker>
     </div>
   );
 });
@@ -603,23 +699,38 @@ function getPosition(container: Element, node: Node, offset: number): Position {
   let index = indexOfNode(node);
   if (node.nodeType === Node.ELEMENT_NODE) {
     let tokenNode = node.childNodes[1];
+    let atEnd: boolean;
+    let endOffset = 0;
     if (originalNode === tokenNode) {
       // Cursor is inside the token.
-      offset = offset > 0 ? (tokenNode?.textContent?.length ?? 0) : 0;
+      atEnd = offset > 0;
     } else if (originalNode === node) {
       // Cursor is inside the wrapper element.
-      offset = offset <= 1 ? 0 : (tokenNode?.textContent?.length ?? 0);
+      atEnd = offset > 1;
     } else {
       // Cursor is on one of the zero width spaces.
-      offset =
-        originalNode === tokenNode.previousSibling ? 0 : (tokenNode?.textContent?.length ?? 0);
+      atEnd = originalNode !== tokenNode.previousSibling;
+      // If the offset is greater than 1, the browser is trying to insert text into
+      // the zero width space node. This will actually end up in the next text node.
+      endOffset = atEnd && offset > 1 ? offset - 1 : 0;
     }
-    return {index, offset};
+
+    offset = atEnd ? (tokenNode?.textContent?.length ?? 0) : 0;
+
+    // Several positions are equivalent due to the zero width spaces around tokens.
+    // Normalize offset to the end of the preceding text node, or the beginning of the following node.
+    if (offset === 0 && node.previousSibling?.nodeType === Node.TEXT_NODE) {
+      index--;
+      offset = node.previousSibling?.textContent?.length ?? 0;
+    } else if (atEnd) {
+      index++;
+      offset = endOffset;
+    }
   }
   return {index, offset};
 }
 
-let isProgrammaticSelectionChange = false;
+let isProgrammaticSelectionChange = Symbol('isProgrammaticSelectionChange');
 
 // TODO: do we want to export these?
 export function setCursor(root: Element, pos: Position, fireEvent = false) {
@@ -630,7 +741,7 @@ export function setSelection(root: Element, start: Position, end: Position, fire
   let selection = window.getSelection();
   if (selection) {
     let range = createDOMRange(root, start, end);
-    isProgrammaticSelectionChange = !fireEvent;
+    root[isProgrammaticSelectionChange] = !fireEvent;
     selection.removeAllRanges();
     selection.addRange(range);
   }
@@ -642,31 +753,68 @@ export function positionToDOMRange(root: Element, pos: Position): Range {
 
 function createDOMRange(root: Element, start: Position, end: Position): Range {
   let range = document.createRange();
-  let child = root.childNodes[start.index];
-  if (!child) {
+  let startChild = root.childNodes[start.index];
+  if (!startChild) {
     range.setStart(root, Math.min(root.childNodes.length, start.index));
-  } else if (child.nodeType === Node.ELEMENT_NODE) {
-    // Place the cursor in one of the zero width space nodes.
-    range.setStart(child, start.offset > 0 ? 2 : 0);
+  } else if (startChild.nodeType === Node.ELEMENT_NODE) {
+    // Place the cursor outside the token wrapper element.
+    if (start.offset > 0) {
+      range.setStartAfter(startChild);
+    } else {
+      range.setStartBefore(startChild);
+    }
   } else {
-    // Place the cursor in the text node.
-    range.setStart(child, start.offset);
+    range.setStart(startChild, start.offset);
   }
-  child = root.childNodes[end.index];
-  if (!child) {
+
+  let endChild = root.childNodes[end.index];
+  if (!endChild) {
     range.setEnd(root, Math.min(root.childNodes.length, end.index));
-  } else if (child.nodeType === Node.ELEMENT_NODE) {
-    range.setEnd(child, end.offset > 0 ? 2 : 0);
+  } else if (endChild.nodeType === Node.ELEMENT_NODE) {
+    if (end.offset > 0) {
+      range.setEndAfter(endChild);
+    } else {
+      range.setEndBefore(endChild);
+    }
   } else {
-    range.setEnd(child, end.offset);
+    range.setEnd(endChild, end.offset);
   }
   return range;
 }
 
+function isSamePosition(a: Position, b: Position): boolean {
+  return a.index === b.index && a.offset === b.offset;
+}
+
+// Parse and validate segments from clipboard/drag data. Returns null if the data is not valid
+// JSON or does not match the expected shape, so malformed or untrusted data is ignored rather
+// than throwing or being inserted into the field.
+function parseSegments(json: string): TokenFieldSegment[] | null {
+  try {
+    let data = JSON.parse(json);
+    if (Array.isArray(data) && data.length > 0 && data.every(isValidSegment)) {
+      return data;
+    }
+  } catch {
+    // Ignore invalid clipboard data.
+  }
+  return null;
+}
+
+function isValidSegment(segment: unknown): segment is TokenFieldSegment {
+  return (
+    typeof segment === 'object' &&
+    segment != null &&
+    ((segment as TokenFieldSegment).type === 'text' ||
+      (segment as TokenFieldSegment).type === 'token') &&
+    typeof (segment as TokenFieldSegment).text === 'string'
+  );
+}
+
 function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
   useEvent(useRef(document), 'selectionchange', () => {
-    if (isProgrammaticSelectionChange) {
-      isProgrammaticSelectionChange = false;
+    if (ref.current && ref.current[isProgrammaticSelectionChange]) {
+      ref.current[isProgrammaticSelectionChange] = false;
       return;
     }
 
@@ -682,6 +830,74 @@ function useSelectionChange(ref: React.RefObject<Element | null>, handler: () =>
   });
 }
 
-function isCollapsed(pos1: Position, pos2: Position) {
-  return pos1.index === pos2.index && pos1.offset === pos2.offset;
+function useMutationTracker(ref: React.RefObject<Element | null>) {
+  let mutationTracker = useRef<(() => void) | null>(null);
+
+  // Disconnect the mutation observer if the field unmounts mid-composition.
+  useLayoutEffect(
+    () => () => {
+      mutationTracker.current?.();
+      mutationTracker.current = null;
+    },
+    []
+  );
+
+  return useMemo(
+    () => ({
+      start() {
+        // Android sometimes fires two compositionstart events in a row, without a compositionend.
+        // In that case, reuse the existing tracker.
+        mutationTracker.current ||= trackMutations(ref.current!);
+      },
+      stop() {
+        mutationTracker.current?.();
+        mutationTracker.current = null;
+      }
+    }),
+    []
+  );
 }
+
+// Tracks mutations to the DOM until the returned function is called,
+// at which point the mutations are reverted.
+function trackMutations(element: Element) {
+  let mutations: MutationRecord[] = [];
+  let observer = new MutationObserver(records => {
+    mutations.push(...records);
+  });
+
+  observer.observe(element, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    characterDataOldValue: true
+  });
+
+  return () => {
+    mutations.push(...observer.takeRecords());
+    observer.disconnect();
+
+    for (let record of mutations.reverse()) {
+      switch (record.type) {
+        case 'childList':
+          for (let node of record.removedNodes) {
+            record.target.insertBefore(node, record.nextSibling);
+          }
+          for (let node of record.addedNodes) {
+            record.target.removeChild(node);
+          }
+          break;
+        case 'characterData':
+          record.target.nodeValue = record.oldValue;
+          break;
+      }
+    }
+  };
+}
+
+// Prevents React from re-rendering during composition events.
+const CompositionRenderBlocker = memo(
+  ({children}: {children: React.ReactNode; isComposing: boolean}) => children,
+  (prevProps, nextProps) =>
+    nextProps.isComposing ? true : prevProps.children === nextProps.children
+);

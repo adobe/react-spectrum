@@ -664,6 +664,21 @@ describe('Tree', () => {
     }
   );
 
+  it('should allow unslotted checkboxes in item content', () => {
+    let {getByRole} = render(
+      <Tree aria-label="test tree">
+        <TreeItem id="item" textValue="Item">
+          <TreeItemContent>
+            <Text>Item</Text>
+            <Checkbox>Flag item</Checkbox>
+          </TreeItemContent>
+        </TreeItem>
+      </Tree>
+    );
+
+    expect(getByRole('checkbox', {name: 'Flag item'})).toBeInTheDocument();
+  });
+
   it('should not render checkboxes for selection with selectionBehavior=replace ', async () => {
     let {getByRole, getAllByRole} = render(
       <StaticTree treeProps={{selectionMode: 'multiple', selectionBehavior: 'replace'}} />

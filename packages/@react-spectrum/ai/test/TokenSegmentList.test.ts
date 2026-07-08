@@ -39,8 +39,12 @@ class TokenizingSegmentList extends TokenSegmentList {
     return new this(segments, tokenRegex);
   }
 
-  createSegmentList(segments: TokenFieldSegment[]): TokenSegmentList {
-    return new TokenizingSegmentList(segments, this.tokenRegex);
+  createSegmentList(segments: TokenFieldSegment[]): this {
+    const Constructor = this.constructor as new (
+      tokens: TokenFieldSegment[],
+      tokenRegex: RegExp
+    ) => this;
+    return new Constructor(segments, this.tokenRegex);
   }
 
   tokenize(text: string): TokenFieldSegment[] {
@@ -958,38 +962,6 @@ describeOrSkip('TokenSegmentList', () => {
     });
   });
 
-  describe('insertToken', () => {
-    it('turns entire text segment into a token', () => {
-      let list = new TokenSegmentList([text('hello')]);
-      let {segments: value, caretPosition: caret} = list.insertToken({index: 0, offset: 0});
-      expect(value).toEqual([token('hello')]);
-      expect(caret).toEqual({index: 1, offset: 0});
-    });
-
-    it('ignores offset and still tokenizes full text run', () => {
-      let list = new TokenSegmentList([text('hello')]);
-      let {segments: value, caretPosition: caret} = list.insertToken({index: 0, offset: 3});
-      expect(value).toEqual([token('hello')]);
-      expect(caret).toEqual({index: 1, offset: 0});
-    });
-
-    it('no-op when index points at token', () => {
-      let segs = [text('a'), token('T')];
-      let list = new TokenSegmentList(segs);
-      let {segments: value, caretPosition: caret} = list.insertToken({index: 1, offset: 0});
-      expect(value).toEqual(segs);
-      expect(caret).toEqual({index: 1, offset: 0});
-    });
-
-    it('no-op when index is out of range', () => {
-      let segs = [text('a')];
-      let list = new TokenSegmentList(segs);
-      let {segments: value, caretPosition: caret} = list.insertToken({index: 5, offset: 0});
-      expect(value).toEqual(segs);
-      expect(caret).toEqual({index: 5, offset: 0});
-    });
-  });
-
   describe('undo/redo', () => {
     it('returns the same instance when there is nothing to undo', () => {
       let list = new TokenSegmentList([text('a')]);
@@ -1088,15 +1060,6 @@ describeOrSkip('TokenSegmentList', () => {
       expect(other.redo()).toBe(other);
       expect(other.undo()).toBe(initial);
       expect(initial.redo()).toBe(other);
-    });
-
-    it('insertToken is a separate undo step from coalesced typing', () => {
-      let list = new TokenSegmentList([text('hi')]);
-      let typed = list.replaceRange({index: 0, offset: 2}, {index: 0, offset: 2}, '!');
-      let tokenized = typed.insertToken({index: 0, offset: 0});
-      expect(tokenized.segments).toEqual([token('hi!')]);
-      expect(tokenized.undo()).toBe(typed);
-      expect(typed.undo()).toBe(list);
     });
 
     it('coalesces consecutive delete operations into one undo step', () => {

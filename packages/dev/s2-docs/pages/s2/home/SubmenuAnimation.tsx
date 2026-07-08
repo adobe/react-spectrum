@@ -11,7 +11,7 @@
  */
 'use client';
 
-import {animate} from '@react-spectrum/docs/pages/react-aria/home/utils';
+import {animate} from '../../react-aria/home/utils';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
