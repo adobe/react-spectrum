@@ -3,12 +3,42 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {useGridList, useGridListItem, type AriaGridListProps} from 'react-aria/useGridList';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
-import type {Node} from '@react-types/shared';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
+import {Collection} from 'react-aria-components/Collection';
+import {ItemNode} from 'react-aria/private/collections/BaseCollection';
+import type {Collection as ICollection, Node} from '@react-types/shared';
 import {useRef} from 'react';
+import type {ReactNode} from 'react';
 import './GridList.css';
 
+export interface GridListItemProps {
+  id?: string;
+  textValue?: string;
+  children?: ReactNode;
+}
+
+export const GridListItem = createLeafComponent(
+  ItemNode,
+  function GridListItem(_props: GridListItemProps) {
+    return null;
+  }
+);
+
 export function GridList(props: AriaGridListProps<object> & ListProps<object>) {
+  return (
+    <CollectionBuilder content={<Collection>{props.children}</Collection>}>
+      {collection => <GridListInner {...props} collection={collection} />}
+    </CollectionBuilder>
+  );
+}
+
+function GridListInner({
+  collection,
+  ...props
+}: AriaGridListProps<object> &
+  Omit<ListProps<object>, 'children'> & {collection: ICollection<Node<object>>}) {
   /*- begin highlight -*/
+  let state = useListState({...props, collection, children: undefined});
   let ref = useRef<HTMLUListElement>(null);
   let {gridProps} = useGridList(props, state, ref);
   /*- end highlight -*/
@@ -17,6 +47,7 @@ export function GridList(props: AriaGridListProps<object> & ListProps<object>) {
     <ul
       {...gridProps}
       ref={ref}
+      className="react-aria-GridList"
       style={{
         padding: 0,
         margin: 0,

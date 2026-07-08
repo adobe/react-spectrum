@@ -3,12 +3,42 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useListBox, useOption, type AriaListBoxOptions} from 'react-aria/useListBox';
 import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
-import type {Node} from '@react-types/shared';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
+import {Collection} from 'react-aria-components/Collection';
+import {ItemNode} from 'react-aria/private/collections/BaseCollection';
+import type {Collection as ICollection, Node} from '@react-types/shared';
 import {useRef} from 'react';
+import type {ReactNode} from 'react';
 import './ListBox.css';
 
+export interface ListBoxItemProps {
+  id?: string;
+  textValue?: string;
+  children?: ReactNode;
+}
+
+export const ListBoxItem = createLeafComponent(
+  ItemNode,
+  function ListBoxItem(_props: ListBoxItemProps) {
+    return null;
+  }
+);
+
 export function ListBox(props: AriaListBoxOptions<object> & ListProps<object>) {
+  return (
+    <CollectionBuilder content={<Collection>{props.children}</Collection>}>
+      {collection => <ListBoxInner {...props} collection={collection} />}
+    </CollectionBuilder>
+  );
+}
+
+function ListBoxInner({
+  collection,
+  ...props
+}: AriaListBoxOptions<object> &
+  Omit<ListProps<object>, 'children'> & {collection: ICollection<Node<object>>}) {
   /*- begin highlight -*/
+  let state = useListState({...props, collection, children: undefined});
   let ref = useRef<HTMLDivElement>(null);
   let {listBoxProps} = useListBox(props, state, ref);
   /*- end highlight -*/

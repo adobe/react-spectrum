@@ -23,15 +23,16 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useListBox.description}</PageDescription>
 
+`ListBox` follows the [Collection Components API](collections?component=ListBox), accepting static collections of `ListBoxItem` elements.
+
 ```tsx render files={["starters/hooks/src/ListBox.tsx", "starters/hooks/src/ListBox.css"]}
 "use client";
-import {ListBox} from 'hooks-starter/ListBox';
-import {Item} from 'react-stately/Item';
+import {ListBox, ListBoxItem} from 'hooks-starter/ListBox';
 
 <ListBox aria-label="Alignment" selectionMode="single">
-  <Item>Left</Item>
-  <Item>Middle</Item>
-  <Item>Right</Item>
+  <ListBoxItem id="left">Left</ListBoxItem>
+  <ListBoxItem id="middle">Middle</ListBoxItem>
+  <ListBoxItem id="right">Right</ListBoxItem>
 </ListBox>
 ```
 
@@ -46,24 +47,24 @@ import {Item} from 'react-stately/Item';
 
 ### AriaListBoxOptions
 
-<InterfaceType {...docs.exports.AriaListBoxOptions} />
+<InterfaceType {...docs.exports.AriaListBoxOptions} links={docs.links} />
 
 ### ListBoxAria
 
-<InterfaceType {...docs.exports.ListBoxAria} />
+<InterfaceType {...docs.exports.ListBoxAria} links={docs.links} grouped={false} />
 
 ### AriaOptionProps
 
-<InterfaceType {...docs.exports.AriaOptionProps} />
+<InterfaceType {...docs.exports.AriaOptionProps} links={docs.links} />
 
 ### OptionAria
 
-<InterfaceType {...docs.exports.OptionAria} />
+<InterfaceType {...docs.exports.OptionAria} links={docs.links} grouped={false} />
 
 ### AriaListBoxSectionProps
 
-<InterfaceType {...docs.exports.AriaListBoxSectionProps} />
+<InterfaceType {...docs.exports.AriaListBoxSectionProps} links={docs.links} />
 
 ### ListBoxSectionAria
 
-<InterfaceType {...docs.exports.ListBoxSectionAria} />
+<InterfaceType {...docs.exports.ListBoxSectionAria} links={docs.links} grouped={false} />
