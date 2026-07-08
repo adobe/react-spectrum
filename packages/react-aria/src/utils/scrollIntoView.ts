@@ -90,7 +90,7 @@ export function scrollIntoView(
   let scrollPortRight = viewRight - (isRoot ? 0 : borderRightWidth) - scrollPaddingRight;
 
   // WebKit on iOS always positions the scrollbar on the right ¯\_(ツ)_/¯
-  if (isIOS() && isWebKit()) {
+  if ((isIOS() && isWebKit()) || viewStyle.direction === 'ltr') {
     scrollPortRight -= scrollBarWidth;
   } else if (viewStyle.direction === 'rtl') {
     scrollPortLeft += scrollBarWidth;
