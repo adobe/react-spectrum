@@ -13,6 +13,7 @@
 import Asterisk from '../../../@react-spectrum/s2/ui-icons/Asterisk';
 import {Code, styles as codeStyles} from './Code';
 import {ColorLink, Link as SpectrumLink} from './Link';
+import {DEFAULT_EXPANDED, GroupedPropTable, PROP_GROUPS} from './PropTable';
 import {getDoc} from 'globals-docs';
 import Markdown from 'markdown-to-jsx';
 import React, {ReactNode} from 'react';
@@ -739,6 +740,8 @@ interface InterfaceTypeProps extends TInterface {
   showDefault?: boolean;
   isComponent?: boolean;
   hideType?: boolean;
+  grouped?: boolean;
+  links?: any;
 }
 
 export function InterfaceType({
@@ -746,13 +749,17 @@ export function InterfaceType({
   showRequired,
   showDefault,
   isComponent,
-  hideType
+  hideType,
+  grouped = true,
+  links
 }: InterfaceTypeProps) {
-  let properties = Object.values(props)
-    .filter(
-      prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected'
+  let propertyEntries = Object.fromEntries(
+    Object.entries(props).filter(
+      ([, prop]) =>
+        prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected'
     )
-    .reverse();
+  );
+  let properties = Object.values(propertyEntries).reverse();
   let methods = Object.values(props).filter(
     prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected'
   ) as TMethod[];
@@ -767,7 +774,7 @@ export function InterfaceType({
   showDefault = showDefault || properties.some(p => !!p.default);
 
   // Sort props so required ones are shown first.
-  if (showRequired) {
+  if (showRequired && !grouped) {
     properties.sort((a, b) => {
       if (!a.optional && b.optional) {
         return -1;
@@ -786,7 +793,14 @@ export function InterfaceType({
       {methods.length > 0 && properties.length > 0 && (
         <h3 className={style({font: 'title'})}>Properties</h3>
       )}
-      {properties.length > 0 && (
+      {properties.length > 0 && grouped ? (
+        <GroupedPropTable
+          properties={propertyEntries}
+          links={links}
+          propGroups={PROP_GROUPS}
+          defaultExpanded={DEFAULT_EXPANDED}
+        />
+      ) : properties.length > 0 ? (
         <Table>
           <TableHeader>
             <tr>
@@ -861,7 +875,7 @@ export function InterfaceType({
             ))}
           </TableBody>
         </Table>
-      )}
+      ) : null}
       {methods.length > 0 && properties.length > 0 && (
         <h3 className={style({font: 'title'})}>Methods</h3>
       )}
