@@ -20,7 +20,9 @@ export function ToggleButtonGroup(props: AriaToggleButtonGroupProps & {children?
   let {orientation = 'horizontal'} = props;
   let state = useToggleGroupState(props);
   let ref = useRef<HTMLDivElement>(null);
+  /*- begin highlight -*/
   let {groupProps} = useToggleButtonGroup(props, state, ref);
+  /*- end highlight -*/
 
   return (
     <div

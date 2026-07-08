@@ -34,8 +34,9 @@ import {mergeProps} from 'react-aria/mergeProps';
 import 'vanilla-starter/Button.css';
 
 function Tooltip({state, ...props}: Parameters<typeof useTooltip>[0] & {state: ReturnType<typeof useTooltipTriggerState>, children?: React.ReactNode}) {
-  // useTooltip applies the tooltip ARIA role and connects it to the trigger.
+  /*- begin highlight -*/
   let {tooltipProps} = useTooltip(props, state);
+  /*- end highlight -*/
 
   return (
     <span
@@ -63,8 +64,9 @@ function TooltipButton(props: Parameters<typeof useTooltipTrigger>[0] & {childre
   let state = useTooltipTriggerState(props);
   let ref = React.useRef<HTMLButtonElement>(null);
 
-  // Get props for the trigger and its tooltip.
+  /*- begin highlight -*/
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+  /*- end highlight -*/
 
   return (
     <span style={{position: 'relative', display: 'inline-block'}}>

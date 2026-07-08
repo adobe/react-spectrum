@@ -8,9 +8,10 @@ import {useRef} from 'react';
 import './GridList.css';
 
 export function GridList(props: AriaGridListProps<object> & ListProps<object>) {
-  let state = useListState(props);
+  /*- begin highlight -*/
   let ref = useRef<HTMLUListElement>(null);
   let {gridProps} = useGridList(props, state, ref);
+  /*- end highlight -*/
 
   return (
     <ul

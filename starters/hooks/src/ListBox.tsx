@@ -8,9 +8,10 @@ import {useRef} from 'react';
 import './ListBox.css';
 
 export function ListBox(props: AriaListBoxOptions<object> & ListProps<object>) {
-  let state = useListState(props);
+  /*- begin highlight -*/
   let ref = useRef<HTMLDivElement>(null);
   let {listBoxProps} = useListBox(props, state, ref);
+  /*- end highlight -*/
 
   return (
     <div
