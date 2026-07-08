@@ -14,6 +14,7 @@ import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {isElementInChildOfActiveScope} from '../focus/FocusScope';
 import {useEffect, useRef} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useInteractOutside} from '../interactions/useInteractOutside';
 import {useKeyboard} from '../interactions/useKeyboard';
@@ -60,6 +61,15 @@ export interface OverlayAria {
 
 const visibleOverlays: RefObject<Element | null>[] = [];
 
+interface CloseWatcher {
+  onclose: (() => void) | null,
+  destroy: () => void
+}
+
+function supportsCloseWatcher(): boolean {
+  return typeof globalThis.CloseWatcher !== 'undefined';
+}
+
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
  * Hides the overlay when the user interacts outside it, when the Escape key is pressed,
@@ -77,25 +87,47 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
 
   let lastVisibleOverlay = useRef<RefObject<Element | null>>(undefined);
 
+  let onHide = () => {
+    onClose?.();
+  };
+
+  // Only hide the overlay when it is the topmost visible overlay in the stack.
+  let onHideTopmost = () => {
+    if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
+      onHide();
+    }
+  };
+
+  // Stable callback for CloseWatcher that always calls the latest onHideTopmost.
+  // useEffectEvent returns a stable reference, so the watcher doesn't need
+  // to be recreated when onClose changes.
+  let onHideTopmostEvent = useEffectEvent(onHideTopmost);
+
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
+  // When CloseWatcher is supported, each overlay gets its own instance so the browser's
+  // native close watcher stack handles nested overlay ordering for Escape and Android back.
   useEffect(() => {
     if (isOpen && !visibleOverlays.includes(ref)) {
       visibleOverlays.push(ref);
+
+      let watcher: CloseWatcher | null = null;
+      if (!isKeyboardDismissDisabled && supportsCloseWatcher()) {
+        let closeWatcher: CloseWatcher = new (globalThis as any).CloseWatcher();
+        closeWatcher.onclose = () => {
+          onHideTopmostEvent();
+        };
+        watcher = closeWatcher;
+      }
+
       return () => {
         let index = visibleOverlays.indexOf(ref);
         if (index >= 0) {
           visibleOverlays.splice(index, 1);
         }
+        watcher?.destroy();
       };
     }
-  }, [isOpen, ref]);
-
-  // Only hide the overlay when it is the topmost visible overlay in the stack
-  let onHide = () => {
-    if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
-      onClose();
-    }
-  };
+  }, [isOpen, isKeyboardDismissDisabled, ref]);
 
   let onInteractOutsideStart = (e: PointerEvent) => {
     const topMostOverlay = visibleOverlays[visibleOverlays.length - 1];
@@ -119,18 +151,21 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
         e.stopPropagation();
       }
       if (lastVisibleOverlay.current === ref) {
-        onHide();
+        onHideTopmost();
       }
     }
     lastVisibleOverlay.current = undefined;
   };
 
-  // Handle the escape key
+  // Handle the escape key. This only dismisses as a fallback when CloseWatcher is
+  // not supported. When CloseWatcher handles dismiss, this shortcut is a no-op so the
+  // native per-overlay close watcher owns nested Escape ordering (closing the innermost
+  // overlay first) and we avoid double-dismissing the parent overlay.
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       Escape: () => {
-        if (!isKeyboardDismissDisabled) {
-          onHide();
+        if (!supportsCloseWatcher() && !isKeyboardDismissDisabled) {
+          onHideTopmost();
           return;
         }
         return false;
