@@ -1,34 +1,65 @@
-export const getOwnerDocument = (el: Element | null | undefined): Document => {
-  return el?.ownerDocument ?? document;
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+export const getOwnerDocument = (target?: EventTarget | null): Document => {
+  if (isWindow(target)) return target.document;
+
+  if (isDocument(target)) return target;
+
+  // @ts-expect-error Ensure safe access in SSR environments.
+  return target?.ownerDocument ?? (typeof document !== 'undefined' ? document : undefined);
 };
 
-export const getOwnerWindow = (
-  el: (Window & typeof globalThis) | Element | null | undefined
-): Window & typeof globalThis => {
-  if (el && 'window' in el && el.window === el) {
-    return el;
-  }
+export const getOwnerWindow = (target?: EventTarget | null): Window & typeof globalThis => {
+  let ownerDocument = getOwnerDocument(target);
 
-  const doc = getOwnerDocument(el as Element | null | undefined);
-  return doc.defaultView || window;
+  // @ts-expect-error Ensure safe access in SSR environments.
+  return ownerDocument?.defaultView ?? (typeof window !== 'undefined' ? window : undefined);
 };
 
 /**
  * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType
  * property.
  */
-function isNode(value: unknown): value is Node {
+export function isNode(value: unknown): value is Node {
   return (
     value !== null &&
     typeof value === 'object' &&
     'nodeType' in value &&
-    typeof (value as Node).nodeType === 'number'
+    typeof value.nodeType === 'number'
   );
 }
+
 /**
- * Type guard that checks if a node is a ShadowRoot. Uses nodeType and host property checks to
- * distinguish ShadowRoot from other DocumentFragments.
+ * Type guard that checks if a value is a Window. Uses window self reference checks to
+ * distinguish Window from other values.
  */
-export function isShadowRoot(node: Node | null): node is ShadowRoot {
-  return isNode(node) && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in node;
+function isWindow(value: unknown): value is Window & typeof globalThis {
+  return typeof value === 'object' && value != null && 'window' in value && value.window === value;
+}
+
+/**
+ * Type guard that checks if a value is a Document. Uses nodeType and host property checks to
+ * distinguish Document from other values.
+ */
+export function isDocument(value: unknown): value is Document {
+  return isNode(value) && value.nodeType === 9;
+}
+
+/**
+ * Type guard that checks if a value is a ShadowRoot. Uses nodeType and host property checks to
+ * distinguish ShadowRoot from other values.
+ */
+export function isShadowRoot(value: unknown): value is ShadowRoot {
+  // 11 = DOCUMENT_FRAGMENT_NODE
+  return isNode(value) && value.nodeType === 11 && 'host' in value;
 }
