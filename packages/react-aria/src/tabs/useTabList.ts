@@ -25,8 +25,8 @@ import {useId} from '../utils/useId';
 import {useLabels} from '../utils/useLabels';
 import {useLocale} from '../i18n/I18nProvider';
 import {useMemo} from 'react';
-import {useSelectableCollection} from '../selection/useSelectableCollection';
 import {useKeyboard} from '../interactions/useKeyboard';
+import {useSelectableCollection} from '../selection/useSelectableCollection';
 
 export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabelingProps {
   /**
