@@ -114,6 +114,48 @@ describe('ComboBox', () => {
     expect(combobox).toHaveAttribute('aria-label', 'test');
   });
 
+  // While the popover is open, content outside the input and popover is hidden.
+  // Note: jsdom does not support the `inert` property, so `isNonModal={false}` falls back
+  // to `aria-hidden` here.
+  describe('isNonModal', () => {
+    let renderWithOutside = props =>
+      render(
+        <>
+          <a href="//example.com" data-testid="outside">
+            Outside link
+          </a>
+          <TestComboBox {...props} />
+        </>
+      );
+
+    it('hides outside elements with aria-hidden by default when open', async () => {
+      let {getByRole, getByTestId} = renderWithOutside();
+      let outside = getByTestId('outside');
+      let input = getByRole('combobox');
+
+      await user.click(getByRole('button'));
+
+      expect(getByRole('listbox')).toBeInTheDocument();
+      expect(outside).toHaveAttribute('aria-hidden', 'true');
+      expect(input).not.toHaveAttribute('aria-hidden');
+
+      await user.keyboard('{Escape}');
+      expect(outside).not.toHaveAttribute('aria-hidden');
+    });
+
+    it('hides outside elements when isNonModal is false', async () => {
+      let {getByRole, getByTestId} = renderWithOutside({isNonModal: false});
+      let outside = getByTestId('outside');
+      let input = getByRole('combobox');
+
+      await user.click(getByRole('button'));
+
+      expect(getByRole('listbox')).toBeInTheDocument();
+      expect(outside).toHaveAttribute('aria-hidden', 'true');
+      expect(input).not.toHaveAttribute('aria-hidden');
+    });
+  });
+
   it('should support custom render function', () => {
     let {getByRole} = render(
       <TestComboBox render={props => <div {...props} data-custom="true" />} />

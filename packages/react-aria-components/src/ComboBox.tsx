@@ -130,6 +130,12 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
   formValue?: 'text' | 'key';
   /** Whether the combo box allows the menu to be open when the collection is empty. */
   allowsEmptyCollection?: boolean;
+  /**
+   * Whether the popover is non-modal, i.e. elements outside the popover may be interacted with by assistive technologies.
+   *
+   * @default true
+   */
+  isNonModal?: boolean;
 }
 
 export const ComboBoxContext =

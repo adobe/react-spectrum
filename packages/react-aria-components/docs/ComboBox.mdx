@@ -1178,6 +1178,22 @@ The `description` slot can be used to associate additional help text with a Comb
 
 </details>
 
+## Modal
+
+While the popover is open, ComboBox hides content outside the input and popover from
+assistive technologies so that screen readers can easily navigate to the portalled popover.
+By default this uses the `aria-hidden` attribute. Set `isNonModal={false}` for a fully modal
+experience, where outside content receives the [inert](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/inert)
+attribute instead, preventing pointer and keyboard interaction with the hidden content.
+
+```tsx
+<ComboBox isNonModal={false}>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+</ComboBox>
+```
+
 ## Props
 
 ### ComboBox

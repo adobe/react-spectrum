@@ -201,7 +201,7 @@ describe('useComboBox', function () {
 
   // While the popover is open, content outside the input and popover is always hidden.
   // Note: jsdom does not support the `inert` property, so `shouldUseInert` falls back to
-  // `aria-hidden` here. The real `inert` behavior is validated in the browser/e2e tests.
+  // `aria-hidden` here.
   describe('ariaHideOutside behavior', function () {
     let inputEl, popoverEl, siblingEl;
 
