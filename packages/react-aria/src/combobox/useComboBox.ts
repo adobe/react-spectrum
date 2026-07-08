@@ -86,6 +86,18 @@ export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> exte
    * virtualized scrolling.
    */
   layoutDelegate?: LayoutDelegate;
+  /**
+   * Whether elements outside the combobox popover are hidden from assistive
+   * technologies.
+   *
+   * While the popover is open, content outside the input and popover is always
+   * hidden. By default this applies `aria-hidden` to those elemenst. Set to
+   * `false` to use `inert`, which prevents pointer and keyboard interaction with
+   * the hidden content.
+   *
+   * @default true
+   */
+  isNonModal?: boolean;
 }
 
 export interface ComboBoxAria<T> extends ValidationResult {
@@ -127,7 +139,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     // completionMode = 'suggest',
     shouldFocusWrap,
     isReadOnly,
-    isDisabled
+    isDisabled,
+    isNonModal = true
   } = props;
   let backupBtnRef = useRef(null);
   buttonRef = buttonRef ?? backupBtnRef;
@@ -449,10 +462,15 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
   useEffect(() => {
     if (state.isOpen) {
       return ariaHideOutside(
-        [inputRef.current, popoverRef.current].filter(element => element != null)
+        [inputRef.current, popoverRef.current].filter(element => element != null),
+        // Outside elements should always have `aria-hidden` while the popover is
+        // open to allow screen readers to immediately navigate to portalled popover.
+        // If `isNonModal` is false, we instead use `inert` to prevent pointer and
+        // keyboard interaction with the hidden content.
+        { shouldUseInert: !isNonModal }
       );
     }
-  }, [state.isOpen, inputRef, popoverRef]);
+  }, [state.isOpen, isNonModal, inputRef, popoverRef]);
 
   useUpdateEffect(() => {
     // Re-show focus ring when there is no virtually focused item.

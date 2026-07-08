@@ -674,6 +674,27 @@ function AsyncLoadingExample() {
 
 By default, interacting with an item in a ComboBox selects it and updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the selection or input value. See the [links](../ListBox/useListBox.html#links) section in the `useListBox` docs for details on how to support this.
 
+### Modal
+
+While the ComboBox popover is open, `useComboBox` always hides the content outside the input and popup
+from assistive technologies. This preserves the behavior described in the
+[building a ComboBox blog post](https://react-aria.adobe.com/blog/building-a-combobox#portals), where
+the surrounding page is hidden so that screen reader users can easily navigate to the popover.
+
+By default (`isNonModal: true`), content is hidden using the
+[aria-hidden](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden)
+attribute. Set `isNonModal={false}` for a fully modal experience, where outside content receives the
+[inert](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/inert) attribute instead. The attribute
+prevents pointer and keyboard interaction with the hidden content.
+
+```tsx
+<ComboBox label="Favorite Animal" isNonModal={false}>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+</ComboBox>
+```
+
 ## Internationalization
 
 `useComboBox` handles some aspects of internationalization automatically.

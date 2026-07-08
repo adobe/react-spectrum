@@ -22,7 +22,7 @@ import {useListBox} from '../../src/listbox/useListBox';
 import {useOption} from '../../src/listbox/useOption';
 import {useOverlay} from '../../src/overlays/useOverlay';
 
-export function ComboBox(props: AriaComboBoxProps<any>): JSX.Element {
+export function ComboBox(props: AriaComboBoxProps<any> & {isNonModal?: boolean}): JSX.Element {
   // Setup filter function and state.
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({...props, defaultFilter: contains});

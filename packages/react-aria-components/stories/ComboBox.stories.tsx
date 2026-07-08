@@ -590,3 +590,61 @@ export const InModal: ComboBoxStory = () => (
     </ModalOverlay>
   </DialogTrigger>
 );
+
+export const ModalComboBox: ComboBoxStory = () => (
+  <div>
+    <p>
+      <a href="//example.com">Content before</a> — inert while the list is open
+    </p>
+    <ComboBox name="modal-combo-box" isNonModal={false}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>
+            ▼
+          </span>
+        </Button>
+      </div>
+      <Popover>
+        <ListBox className={styles.menu} style={{width: 'var(--trigger-width)'}}>
+          <MyListBoxItem>Foo</MyListBoxItem>
+          <MyListBoxItem>Bar</MyListBoxItem>
+          <MyListBoxItem>Baz</MyListBoxItem>
+        </ListBox>
+      </Popover>
+    </ComboBox>
+    <p>
+      <a href="//example.com">Content after</a> — inert while the list is open
+    </p>
+  </div>
+);
+
+export const NonModalComboBox: ComboBoxStory = () => (
+  <div>
+    <p>
+      <a href="//example.com">Content before</a> — hidden (but interactive) while the list is open
+    </p>
+    <ComboBox name="non-modal-combo-box" isNonModal>
+      <Label style={{display: 'block'}}>Test</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>
+            ▼
+          </span>
+        </Button>
+      </div>
+      <Popover>
+        <ListBox className={styles.menu} style={{width: 'var(--trigger-width)'}}>
+          <MyListBoxItem>Foo</MyListBoxItem>
+          <MyListBoxItem>Bar</MyListBoxItem>
+          <MyListBoxItem>Baz</MyListBoxItem>
+        </ListBox>
+      </Popover>
+    </ComboBox>
+    <p>
+      <a href="//example.com">Content after</a> — hidden (but interactive) while the list is open
+    </p>
+  </div>
+);
