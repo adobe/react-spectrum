@@ -18,6 +18,7 @@ import {
   isIPad,
   isIPhone,
   isMac,
+  isSafari,
   isWebKit
 } from '../../src/utils/platform';
 import {Meta, StoryObj} from '@storybook/react';
@@ -64,6 +65,10 @@ const Template = (args: any): JSX.Element => (
     <tr>
       <td>isWebKit: </td>
       <td>{isWebKit().toString()}</td>
+    </tr>
+    <tr>
+      <td>isSafari: </td>
+      <td>{isSafari().toString()}</td>
     </tr>
   </table>
 );
