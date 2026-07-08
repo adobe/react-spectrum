@@ -806,7 +806,7 @@ describeOrSkip('TokenField browser interactions', () => {
 
     it('inserts a newline on Enter in a multiline field', async () => {
       let {textbox, getValue} = await renderControlledTokenField(segments(text('')), {
-        multiline: true
+        allowsNewlines: true
       });
       await focusField(textbox);
       await userEvent.type(textbox, 'ab');
@@ -820,7 +820,7 @@ describeOrSkip('TokenField browser interactions', () => {
         return;
       }
       // Put multiline text on the clipboard by copying it from a source field.
-      let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
+      let source = await renderControlledTokenField(segments(text('a\nb')), {allowsNewlines: true});
       let target = await renderControlledTokenField(segments(text('')));
       let mod = modKey();
       await commands.lockClipboard();
@@ -840,8 +840,8 @@ describeOrSkip('TokenField browser interactions', () => {
       if (clipboardRoundTripUnsupported()) {
         return;
       }
-      let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
-      let target = await renderControlledTokenField(segments(text('')), {multiline: true});
+      let source = await renderControlledTokenField(segments(text('a\nb')), {allowsNewlines: true});
+      let target = await renderControlledTokenField(segments(text('')), {allowsNewlines: true});
       let mod = modKey();
       await commands.lockClipboard();
       try {

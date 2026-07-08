@@ -48,7 +48,7 @@ export interface AriaTokenFieldProps<T extends TokenSegmentList = TokenSegmentLi
    */
   role?: 'textbox' | 'searchbox' | 'combobox';
   /** Whether the token field allows newlines. */
-  multiline?: boolean;
+  allowsNewlines?: boolean;
   /** Whether the token field is read only. */
   isReadOnly?: boolean;
   /** Whether the token field is disabled. */
@@ -88,7 +88,7 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
 ): TokenFieldAria {
   let {
     role = 'textbox',
-    multiline = false,
+    allowsNewlines: multiline = false,
     isReadOnly = false,
     isDisabled = false,
     'aria-label': ariaLabel,

@@ -13,7 +13,7 @@ export const description = 'Allows users to enter text with inline tokens such a
 <PageDescription>{docs.exports.TokenField.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.TokenField} links={docs.links} props={['multiline', 'isDisabled', 'isReadOnly']} initialProps={{multiline: true}} type="vanilla" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
+  ```tsx render docs={docs.exports.TokenField} links={docs.links} props={['allowsNewlines', 'isDisabled', 'isReadOnly']} initialProps={{allowsNewlines: true}} type="vanilla" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
   "use client";
   import {Token, TokenField} from 'vanilla-starter/TokenField';
   import {TokenizingSegmentList} from './TokenizingSegmentList';
@@ -29,7 +29,7 @@ export const description = 'Allows users to enter text with inline tokens such a
   </TokenField>
   ```
 
-  ```tsx render docs={docs.exports.TokenField} links={docs.links} props={['multiline', 'isDisabled', 'isReadOnly']} initialProps={{multiline: true}} type="tailwind" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
+  ```tsx render docs={docs.exports.TokenField} links={docs.links} props={['allowsNewlines', 'isDisabled', 'isReadOnly']} initialProps={{allowsNewlines: true}} type="tailwind" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
   "use client";
   import {Token, TokenField} from 'tailwind-starter/TokenField';
   import {TokenizingSegmentList} from './TokenizingSegmentList';
@@ -88,7 +88,7 @@ import {Token, TokenField} from 'vanilla-starter/TokenField';
 import {TokenizingSegmentList} from './TokenizingSegmentList';
 
 <TokenField
-  multiline
+  allowsNewlines
   defaultValue={TokenizingSegmentList.tokenize(
     'This example automatically tokenizes #hashtags and @usernames in the text.',
     /(?<=\s|^)[#@]\S+(?=\s)/g
@@ -240,7 +240,7 @@ import {Token, TokenField} from 'vanilla-starter/TokenField';
 import {TagFieldSegmentList} from './TagFieldSegmentList';
 
 <TokenField
-  multiline
+  allowsNewlines
   defaultValue={
     new TagFieldSegmentList([
       {type: 'token', text: 'Architecture'},

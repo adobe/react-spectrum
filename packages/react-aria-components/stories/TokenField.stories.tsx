@@ -91,7 +91,7 @@ class TokenizingSegmentList extends TokenSegmentList {
 export const AutoTokenize: TokenFieldStory = () => {
   return (
     <TokenField
-      multiline
+      allowsNewlines
       defaultValue={TokenizingSegmentList.tokenize(
         'This example automatically tokenizes #hashtags and @usernames in the text.',
         /(?<=\s|^)[#@]\S+(?=\s)/g
@@ -105,7 +105,7 @@ export const AutoTokenize: TokenFieldStory = () => {
 export const Template: TokenFieldStory = () => {
   return (
     <TokenField
-      multiline
+      allowsNewlines
       defaultValue={TokenizingSegmentList.tokenize(
         "Hello {{firstName}}, it's nice to meet you!",
         /(?<=\s|^)\{\{.+?\}\}/g
@@ -265,7 +265,7 @@ class TagFieldSegmentList extends TokenSegmentList {
 export const TagField: TokenFieldStory = () => {
   return (
     <TokenField
-      multiline
+      allowsNewlines
       defaultValue={
         new TagFieldSegmentList([
           {type: 'token', text: 'Architecture'},
