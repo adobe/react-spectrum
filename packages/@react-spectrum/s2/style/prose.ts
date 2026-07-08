@@ -1,4 +1,4 @@
-import {colorToken, getToken} from './tokens';
+import {colorToken, getToken} from './tokens' with {type: 'macro'};
 import {
   colorTokenToString,
   fontFamily,
@@ -225,6 +225,18 @@ export function prose(this: MacroContext | void) {
   return 'prose';
 }
 
+// Text color per font category. Resolved from static token names so the values
+// can be inlined at build time when `./tokens` is imported as a macro (matching
+// how spectrum-theme consumes tokens); a dynamically computed token name cannot.
+const fontColor = {
+  body: colorTokenToString(resolveColorToken(colorToken('body-color'))),
+  heading: colorTokenToString(resolveColorToken(colorToken('heading-color'))),
+  title: colorTokenToString(resolveColorToken(colorToken('title-color'))),
+  detail: colorTokenToString(resolveColorToken(colorToken('detail-color'))),
+  code: colorTokenToString(resolveColorToken(colorToken('code-color'))),
+  ui: colorTokenToString(resolveColorToken(colorToken('body-color')))
+} as const;
+
 function font(value: keyof typeof fontSize) {
   let type = value.split('-')[0];
   let size = fontSize[value];
@@ -235,9 +247,7 @@ function font(value: keyof typeof fontSize) {
     fontWeight:
       fontWeight[type === 'heading' || type === 'title' || type === 'detail' ? type : 'normal'],
     lineHeight: lineHeight[type],
-    color: colorTokenToString(
-      resolveColorToken(colorToken(type === 'ui' ? 'body-color' : (`${type}-color` as any)))
-    )
+    color: fontColor[type as keyof typeof fontColor]
   };
 }
 
