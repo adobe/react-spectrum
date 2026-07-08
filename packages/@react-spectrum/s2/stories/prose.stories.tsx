@@ -13,9 +13,10 @@
 import {createPortal} from 'react-dom';
 import type {Meta} from '@storybook/react';
 import {prose} from '../style/prose' with {type: 'macro'};
-// @ts-ignore
 import ProseExample from './prose.mdx';
+// @ts-ignore
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
+import * as spectrumTokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta = {
@@ -33,32 +34,75 @@ export const Example = () => (
   </MarginVisualizer>
 );
 
-let componentMapping: Record<string, string> = {
-  h1: 'font:heading-xl; margin:heading',
-  h2: 'font:heading-lg; margin:heading',
-  h3: 'font:heading; margin:heading',
-  h4: 'font:heading-sm; margin:heading',
-  h5: 'font:heading-xs; margin:heading',
-  h6: 'font:heading-2xs; margin:heading',
-  pre: 'font:code-sm; margin:body',
-  p: 'font:body; margin:body',
-  ul: 'font:body; margin:body',
-  ol: 'font:body; margin:body',
-  li: 'font:body; margin:body',
-  blockquote: 'font:body; margin:body',
-  hr: 'margin:32px',
-  code: 'font:code; margin:none',
-  kbd: 'font:ui; margin:none',
-  a: 'font: body; margin:none',
-  table: 'font:ui; margin:body',
-  thead: 'font:ui; margin:none',
-  th: 'font:ui; margin:none',
-  td: 'font:ui; margin:none',
-  img: 'font:body; margin:none',
-  video: 'font:body; margin:none',
-  figure: 'font:body; margin:body',
-  figcaption: 'font:body-sm; margin:body'
+// Spectrum tokens applied to each prose element (see style/prose.ts). When a
+// font isn't specified the element inherits `body`; when a margin isn't
+// specified it collapses to `none`.
+let componentMapping: Record<string, {font?: string; margin?: string}> = {
+  h1: {font: 'heading-xl', margin: 'heading'},
+  h2: {font: 'heading-lg', margin: 'heading'},
+  h3: {font: 'heading', margin: 'heading'},
+  h4: {font: 'heading-sm', margin: 'heading'},
+  h5: {font: 'heading-xs', margin: 'heading'},
+  h6: {font: 'heading-2xs', margin: 'heading'},
+  pre: {font: 'code-sm', margin: 'body'},
+  p: {font: 'body', margin: 'body'},
+  ul: {font: 'body', margin: 'body'},
+  ol: {font: 'body', margin: 'body'},
+  li: {font: 'body', margin: 'body'},
+  blockquote: {font: 'body', margin: 'body'},
+  hr: {margin: '32px'},
+  code: {font: 'code', margin: 'none'},
+  kbd: {font: 'ui', margin: 'none'},
+  a: {font: 'body', margin: 'none'},
+  table: {font: 'ui', margin: 'body'},
+  thead: {font: 'ui', margin: 'none'},
+  th: {font: 'ui', margin: 'none'},
+  td: {font: 'ui', margin: 'none'},
+  img: {font: 'body', margin: 'none'},
+  video: {font: 'body', margin: 'none'},
+  figure: {font: 'body', margin: 'body'},
+  figcaption: {font: 'body-sm', margin: 'body'}
 };
+
+// The spectrum font token for a tag, defaulting to `body` when unspecified.
+function fontToken(tag: string): string {
+  return componentMapping[tag]?.font ?? 'body';
+}
+
+// The margin category for a tag (see style/prose.ts), defaulting to `none`.
+function marginCategory(tag: string): string {
+  return componentMapping[tag]?.margin ?? 'none';
+}
+
+// Each margin category resolves to a spectrum multiplier token. Body uses a
+// single token for both sides; heading/title/detail split into distinct
+// top/bottom tokens whose values differ (top ≈ 0.889em, bottom ≈ 0.25em), so we
+// disambiguate by matching the measured margin against each token's value.
+const marginTokensByCategory: Record<string, string[]> = {
+  body: ['body-margin-multiplier'],
+  heading: ['heading-margin-top-multiplier', 'heading-margin-bottom-multiplier'],
+  title: ['title-margin-top-multiplier', 'title-margin-bottom-multiplier'],
+  detail: ['detail-margin-top-multiplier', 'detail-margin-bottom-multiplier']
+};
+
+function tokenValue(name: string): number {
+  return (spectrumTokens as unknown as Record<string, {value: number}>)[name].value;
+}
+
+// The actual spectrum token responsible for a margin, resolved from the tag's
+// category and the measured margin size (in em). Categories with no multiplier
+// token (`none`, or hr's fixed `32px`) pass through unchanged.
+function resolveMarginToken(tag: string, em: number): string {
+  let category = marginCategory(tag);
+  let candidates = marginTokensByCategory[category];
+  if (!candidates) {
+    return category;
+  }
+  // Pick the candidate token whose value is closest to the measured margin.
+  return candidates.reduce((best, name) =>
+    Math.abs(tokenValue(name) - em) < Math.abs(tokenValue(best) - em) ? name : best
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Margin visualizer (story-only debugging tool)
@@ -79,8 +123,11 @@ interface MarginBox {
   selector: string;
   // The pair of tags the margin sits between, e.g. "p + p" or "h3 + p".
   pair: string;
+  // The font tokens for each side of the pair, e.g. "heading-xl + body".
+  fontPair: string;
+  // The margin token responsible for the gap, e.g. "heading" or "none".
+  marginToken: string;
   element: Element;
-  mapping: string;
   // Document coordinates.
   left: number;
   top: number;
@@ -184,9 +231,11 @@ function RedBox({box}: {box: MarginBox}) {
           paddingRight: '4px'
         }}
         className={style({backgroundColor: 'red-700', color: 'black'})}>
-        <div>{box.pair}</div>
         <div>
-          {box.side === 'top' ? 'margin-top' : 'margin-bottom'}: {box.em}em
+          {box.pair} ({box.fontPair})
+        </div>
+        <div>
+          {box.side === 'top' ? 'margin-top' : 'margin-bottom'}: {box.em}em ({box.marginToken})
         </div>
       </div>
     </>
@@ -225,11 +274,10 @@ function BlueLine({box}: {box: MarginBox}) {
         }}
         className={style({backgroundColor: 'blue-700', color: 'black'})}>
         <div>
-          {box.pair}
-          {box.mapping && <span> {box.mapping}</span>}
+          {box.pair} ({box.fontPair})
         </div>
         <div>
-          {box.side === 'top' ? 'margin-top' : 'margin-bottom'}: {box.em}em
+          {box.side === 'top' ? 'margin-top' : 'margin-bottom'}: {box.em}em ({box.marginToken})
         </div>
       </div>
     </>
@@ -256,16 +304,21 @@ function computeBoxes(root: HTMLElement): MarginBox[] {
       // The tags on either side of the margin gap. For a bottom margin the
       // element sits above and the next flow element below; vice versa for top.
       let neighbor = adjacentTag(el, side === 'top' ? 'previous' : 'next', prose);
-      let pair = side === 'top' ? `${neighbor} + ${tag}` : `${tag} + ${neighbor}`;
+      let leftTag = side === 'top' ? neighbor : tag;
+      let rightTag = side === 'top' ? tag : neighbor;
+      let pair = `${leftTag} + ${rightTag}`;
+      // em resolves against the element's own font-size.
+      let em = Math.round((size / fontSize) * 1000) / 1000;
       entries.push({
         side,
         size,
-        // em resolves against the element's own font-size.
-        em: Math.round((size / fontSize) * 1000) / 1000,
+        em,
         selector: findSelector(el, prop),
         pair,
+        fontPair: `${fontToken(leftTag)} + ${fontToken(rightTag)}`,
+        // The margin belongs to `el`, the tag on this side of the gap.
+        marginToken: resolveMarginToken(tag, em),
         element: el,
-        mapping: componentMapping[el.tagName.toLowerCase()] ?? '',
         left: rect.left + scrollX,
         width: rect.width,
         top: (side === 'top' ? rect.top - size : rect.bottom) + scrollY,
@@ -342,7 +395,11 @@ function resolveOverlaps(entries: Omit<MarginBox, 'type' | 'groupIndex'>[]): Mar
     }
     seen.add(key);
     group.forEach((entry, index) => {
-      result.push({...entry, type: index === 0 ? 'red' : 'blue', groupIndex: index});
+      result.push({
+        ...entry,
+        type: index === 0 ? 'red' : 'blue',
+        groupIndex: index
+      });
     });
   }
   return result;
@@ -363,7 +420,11 @@ function findSelector(el: Element, prop: 'margin-top' | 'margin-bottom'): string
     for (let selector of selectors) {
       try {
         if (el.matches(selector)) {
-          candidates.push({selector, specificity: specificity(selector), order: o});
+          candidates.push({
+            selector,
+            specificity: specificity(selector),
+            order: o
+          });
         }
       } catch {
         // Ignore selectors el.matches can't parse.
