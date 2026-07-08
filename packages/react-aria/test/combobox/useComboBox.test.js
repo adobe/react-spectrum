@@ -198,4 +198,72 @@ describe('useComboBox', function () {
 
     expect(onBlurMock).toHaveBeenCalledTimes(1);
   });
+
+  // While the popover is open, content outside the input and popover is always hidden.
+  // Note: jsdom does not support the `inert` property, so `shouldUseInert` falls back to
+  // `aria-hidden` here. The real `inert` behavior is validated in the browser/e2e tests.
+  describe('ariaHideOutside behavior', function () {
+    let inputEl, popoverEl, siblingEl;
+
+    beforeEach(() => {
+      inputEl = document.createElement('input');
+      popoverEl = document.createElement('div');
+      siblingEl = document.createElement('div');
+      siblingEl.textContent = 'outside content';
+      document.body.appendChild(inputEl);
+      document.body.appendChild(popoverEl);
+      document.body.appendChild(siblingEl);
+    });
+
+    afterEach(() => {
+      inputEl.remove();
+      popoverEl.remove();
+      siblingEl.remove();
+    });
+
+    let renderOpenComboBox = extraProps => {
+      let hookProps = {
+        ...defaultProps,
+        ...props,
+        ...extraProps,
+        inputRef: {current: inputEl},
+        popoverRef: {current: popoverEl}
+      };
+      let {result: state} = renderHook(p => useComboBoxState(p), {initialProps: hookProps});
+      act(() => {
+        state.current.open();
+      });
+      return renderHook(p => useComboBox(p, state.current), {initialProps: hookProps});
+    };
+
+    it('hides outside elements by default, keeping the input and popover visible', function () {
+      renderOpenComboBox();
+
+      expect(siblingEl).toHaveAttribute('aria-hidden', 'true');
+      expect(inputEl).not.toHaveAttribute('aria-hidden');
+      expect(popoverEl).not.toHaveAttribute('aria-hidden');
+    });
+
+    it('hides outside elements when isNonModal is true', function () {
+      renderOpenComboBox({isNonModal: true});
+
+      expect(siblingEl).toHaveAttribute('aria-hidden', 'true');
+      expect(inputEl).not.toHaveAttribute('aria-hidden');
+      expect(popoverEl).not.toHaveAttribute('aria-hidden');
+    });
+
+    it('hides outside elements when isNonModal is false', function () {
+      let {unmount} = renderOpenComboBox({isNonModal: false});
+
+      expect(siblingEl).toHaveAttribute('aria-hidden', 'true');
+      expect(inputEl).not.toHaveAttribute('aria-hidden');
+      expect(popoverEl).not.toHaveAttribute('aria-hidden');
+
+      act(() => {
+        unmount();
+      });
+
+      expect(siblingEl).not.toHaveAttribute('aria-hidden');
+    });
+  });
 });

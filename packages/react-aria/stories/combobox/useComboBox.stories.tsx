@@ -27,7 +27,7 @@ for (let i = 0; i < 50; i++) {
   lotsOfItems.push({name: 'Item ' + i});
 }
 
-const Template = (args: AriaComboBoxProps<any>): JSX.Element => (
+const Template = (args: AriaComboBoxProps<any> & {isNonModal?: boolean}): JSX.Element => (
   <ComboBox {...args} label="Example" defaultItems={lotsOfItems}>
     {(item: any) => <Item key={item.name}>{item.name}</Item>}
   </ComboBox>
@@ -46,4 +46,34 @@ export const Disabled: TemplateStory = {
 export const FocusWrapping: TemplateStory = {
   render: Template,
   args: {shouldFocusWrap: true}
+};
+
+export const Modal: TemplateStory = {
+  render: (args: AriaComboBoxProps<any> & {isNonModal?: boolean}): JSX.Element => (
+    <div>
+      <p>
+        <a href="//example.com">Content before</a> — inert while the list is open
+      </p>
+      <Template {...args} />
+      <p>
+        <a href="//example.com">Content after</a> — inert while the list is open
+      </p>
+    </div>
+  ),
+  args: {isNonModal: false}
+};
+
+export const NonModal: TemplateStory = {
+  render: (args: AriaComboBoxProps<any> & {isNonModal?: boolean}): JSX.Element => (
+    <div>
+      <p>
+        <a href="//example.com">Content before</a> — hidden (but interactive) while the list is open
+      </p>
+      <Template {...args} />
+      <p>
+        <a href="//example.com">Content after</a> — hidden (but interactive) while the list is open
+      </p>
+    </div>
+  ),
+  args: {isNonModal: true}
 };
