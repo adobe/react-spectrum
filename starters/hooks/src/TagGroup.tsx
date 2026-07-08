@@ -1,13 +1,12 @@
 'use client';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useTagGroup, useTag, type AriaTagGroupProps} from 'react-aria/useTagGroup';
-import {useButton, type AriaButtonProps} from 'react-aria/useButton';
 import {useFocusRing} from 'react-aria/useFocusRing';
-import {useHover} from 'react-aria/useHover';
 import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
 import type {Node} from '@react-types/shared';
 import {useRef} from 'react';
 import type {ReactNode} from 'react';
+import {Button} from 'react-aria-components/TagGroup';
 import {X} from 'lucide-react';
 import './TagGroup.css';
 
@@ -61,27 +60,12 @@ function Tag({item, state}: {item: Node<object>; state: ListState<object>}) {
       {/* display: contents lets the row's flex layout apply to the tag content. */}
       <div {...gridCellProps} style={{display: 'contents'}}>
         {item.rendered}
-        {allowsRemoving && <RemoveButton {...removeButtonProps} />}
+        {allowsRemoving && (
+          <Button {...removeButtonProps} slot="remove" className="remove-button">
+            <X />
+          </Button>
+        )}
       </div>
     </div>
-  );
-}
-
-function RemoveButton(props: AriaButtonProps) {
-  let ref = useRef<HTMLButtonElement>(null);
-  let {buttonProps, isPressed} = useButton(props, ref);
-  let {hoverProps, isHovered} = useHover({});
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <button
-      {...mergeProps(buttonProps, hoverProps, focusProps)}
-      ref={ref}
-      className="remove-button"
-      data-pressed={isPressed || undefined}
-      data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      <X />
-    </button>
   );
 }
