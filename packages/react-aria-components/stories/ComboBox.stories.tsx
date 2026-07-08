@@ -625,7 +625,7 @@ export const NonModalComboBox: ComboBoxStory = () => (
     <p>
       <a href="//example.com">Content before</a> — hidden (but interactive) while the list is open
     </p>
-    <ComboBox name="non-modal-combo-box" isNonModal={true}>
+    <ComboBox name="non-modal-combo-box" isNonModal>
       <Label style={{display: 'block'}}>Test</Label>
       <div style={{display: 'flex'}}>
         <Input />
