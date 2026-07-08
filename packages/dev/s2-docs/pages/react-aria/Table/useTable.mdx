@@ -13,6 +13,7 @@ import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/table';
 import statelyDocs from 'docs:@react-stately/table';
+import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a table component.';
@@ -44,6 +45,8 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'hooks-starter/Ta
 ```
 
 ## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a table" />
 
 <FunctionAPI function={statelyDocs.exports.useTableState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useTable} links={docs.links} />

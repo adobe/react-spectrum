@@ -13,6 +13,7 @@ import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/combobox';
 import statelyDocs from 'docs:@react-stately/combobox';
+import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a combo box component.';
@@ -113,6 +114,8 @@ function ComboBoxInner({collection, ...props}: {collection: ICollection<Node<obj
 ```
 
 ## API
+
+<Anatomy />
 
 <FunctionAPI function={statelyDocs.exports.useComboBoxState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useComboBox} links={docs.links} />

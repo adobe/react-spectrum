@@ -13,6 +13,7 @@ import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/toast';
 import statelyDocs from 'docs:@react-stately/toast';
+import Anatomy from '/packages/react-aria/docs/toast/toast-anatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a toast notification.';
@@ -36,6 +37,8 @@ import {ToastProvider, Button} from 'hooks-starter/Toast';
 ```
 
 ## API
+
+<Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
 <FunctionAPI function={statelyDocs.exports.useToastState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useToastRegion} links={docs.links} />

@@ -13,6 +13,7 @@ import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/listbox';
 import statelyDocs from 'docs:@react-stately/list';
+import Anatomy from 'react-aria-components/docs/ListBoxAnatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a listbox component.';
@@ -35,6 +36,8 @@ import {Item} from 'react-stately/Item';
 ```
 
 ## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
 
 <FunctionAPI function={statelyDocs.exports.useListState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useListBox} links={docs.links} />

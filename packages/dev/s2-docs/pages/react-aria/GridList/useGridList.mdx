@@ -13,6 +13,7 @@ import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/gridlist';
 import statelyDocs from 'docs:@react-stately/list';
+import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a list component with interactive children.';
@@ -47,6 +48,8 @@ import {Item} from 'react-stately/Item';
 ```
 
 ## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
 
 <FunctionAPI function={statelyDocs.exports.useListState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useGridList} links={docs.links} />

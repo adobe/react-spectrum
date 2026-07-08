@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/menu';
+import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
 import menuStatelyDocs from 'docs:@react-stately/menu';
 import treeStatelyDocs from 'docs:@react-stately/tree';
 
@@ -117,6 +118,8 @@ function MenuItem({item, state}: {item: Node<unknown>, state: ReturnType<typeof 
 ```
 
 ## API
+
+<Anatomy />
 
 <FunctionAPI function={menuStatelyDocs.exports.useMenuTriggerState} links={menuStatelyDocs.links} />
 <FunctionAPI function={treeStatelyDocs.exports.useTreeState} links={treeStatelyDocs.links} />
