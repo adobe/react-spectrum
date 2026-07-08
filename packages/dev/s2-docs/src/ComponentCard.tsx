@@ -337,7 +337,6 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   useDateField: [DateFieldLight, DateFieldDark],
   useDatePicker: [DatePickerLight, DatePickerDark],
   useDateRangePicker: [DateRangePickerLight, DateRangePickerDark],
-  useDialog: [DialogLight, DialogDark],
   useDisclosure: [DisclosureLight, DisclosureDark],
   useDraggableCollection: [DragAndDropLight, DragAndDropDark],
   useDroppableCollection: [DragAndDropLight, DragAndDropDark],

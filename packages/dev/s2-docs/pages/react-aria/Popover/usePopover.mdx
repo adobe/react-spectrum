@@ -23,7 +23,7 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.usePopover.description}</PageDescription>
 
-`usePopover` is the popover primitive itself, so the overlay is built from scratch using an [&lt;Overlay&gt;](../Popover) portal and &lt;`DismissButton`&gt; elements. The trigger reuses the [Button](../Button) component, and the content reuses the [Dialog](../Modal/useDialog) component, both from React Aria Components.
+`usePopover` is the popover primitive itself, so the overlay is built from scratch using an [&lt;Overlay&gt;](../Popover) portal and &lt;`DismissButton`&gt; elements. The trigger reuses the [Button](../Button) component, and the content reuses the [Dialog](../Modal/useModalOverlay#usedialog) component, both from React Aria Components.
 
 ```tsx render
 "use client";
@@ -57,7 +57,9 @@ function Popover({state, children, triggerRef, ...props}: Omit<Parameters<typeof
           background: 'var(--overlay-background)',
           border: '1px solid var(--gray-300)',
           borderRadius: 8,
-          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)'
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
+          font: 'var(--font-size) system-ui',
+          padding: 8
         }}>
         {/* Visually hidden buttons let touch screen reader users dismiss the popover. */}
         <DismissButton onDismiss={state.close} />
@@ -96,7 +98,7 @@ function PopoverTrigger({label, children, ...props}: Parameters<typeof useOverla
 </PopoverTrigger>
 ```
 
-**Note**: `usePopover` only handles the overlay itself. It should be combined with [useDialog](../Modal/useDialog) to create fully accessible popovers. Other overlays such as menus may also be placed in a popover.
+**Note**: `usePopover` only handles the overlay itself. It should be combined with [useDialog](../Modal/useModalOverlay#usedialog) to create fully accessible popovers. Other overlays such as menus may also be placed in a popover.
 
 ## API
 
