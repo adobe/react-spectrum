@@ -30,33 +30,39 @@ export const isSubpage = true;
 import React from 'react';
 import {useTooltip, useTooltipTrigger} from 'react-aria/useTooltipTrigger';
 import {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
+import {Overlay} from 'react-aria/Overlay';
 import {mergeProps} from 'react-aria/mergeProps';
 import 'vanilla-starter/Button.css';
+import 'vanilla-starter/theme.css';
 
 function Tooltip({state, ...props}: Parameters<typeof useTooltip>[0] & {state: ReturnType<typeof useTooltipTriggerState>, children?: React.ReactNode}) {
   /*- begin highlight -*/
   let {tooltipProps} = useTooltip(props, state);
   /*- end highlight -*/
 
+  if (!state.isOpen) {
+    return null;
+  }
+
   return (
-    <span
-      {...mergeProps(props, tooltipProps)}
-      style={{
-        position: 'absolute',
-        left: 0,
-        top: '100%',
-        marginTop: 6,
-        background: 'var(--overlay-background)',
-        color: 'var(--text-color)',
-        border: '1px solid var(--gray-300)',
-        borderRadius: 6,
-        padding: '4px 8px',
-        fontSize: 14,
-        whiteSpace: 'nowrap',
-        zIndex: 1
-      }}>
-      {props.children}
-    </span>
+    <Overlay>
+      <span
+        {...mergeProps(props, tooltipProps)}
+        style={{
+          ...tooltipProps.style,
+          background: 'var(--overlay-background)',
+          color: 'var(--text-color)',
+          border: '1px solid var(--gray-300)',
+          borderRadius: 6,
+          padding: '4px 8px',
+          whiteSpace: 'nowrap',
+          zIndex: 100,
+          font: 'var(--font-size) system-ui',
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)'
+        }}>
+        {props.children}
+      </span>
+    </Overlay>
   );
 }
 
@@ -69,7 +75,7 @@ function TooltipButton(props: Parameters<typeof useTooltipTrigger>[0] & {childre
   /*- end highlight -*/
 
   return (
-    <span style={{position: 'relative', display: 'inline-block'}}>
+    <>
       <button
         {...triggerProps}
         ref={ref}
@@ -77,9 +83,8 @@ function TooltipButton(props: Parameters<typeof useTooltipTrigger>[0] & {childre
         data-variant="secondary">
         {props.children}
       </button>
-      {state.isOpen &&
-        <Tooltip state={state} {...tooltipProps}>{props.tooltip}</Tooltip>}
-    </span>
+      <Tooltip state={state} {...tooltipProps}>{props.tooltip}</Tooltip>
+    </>
   );
 }
 
@@ -99,16 +104,16 @@ function TooltipButton(props: Parameters<typeof useTooltipTrigger>[0] & {childre
 
 ### TooltipTriggerProps
 
-<InterfaceType {...docs.exports.TooltipTriggerProps} />
+<InterfaceType {...docs.exports.TooltipTriggerProps} links={docs.links} />
 
 ### TooltipTriggerAria
 
-<InterfaceType {...docs.exports.TooltipTriggerAria} />
+<InterfaceType {...docs.exports.TooltipTriggerAria} links={docs.links} grouped={false} />
 
 ### AriaTooltipProps
 
-<InterfaceType {...docs.exports.AriaTooltipProps} />
+<InterfaceType {...docs.exports.AriaTooltipProps} links={docs.links} />
 
 ### TooltipAria
 
-<InterfaceType {...docs.exports.TooltipAria} />
+<InterfaceType {...docs.exports.TooltipAria} links={docs.links} grouped={false} />

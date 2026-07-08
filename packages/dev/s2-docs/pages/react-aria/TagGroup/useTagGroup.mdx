@@ -13,6 +13,7 @@ import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/tag';
 import statelyDocs from 'docs:@react-stately/list';
+import Anatomy from '/packages/react-aria/docs/tag/anatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a tag group component.';
@@ -24,20 +25,43 @@ export const isSubpage = true;
 
 This example uses `useTagGroup` for the container and `useTag` for each tag, building the collection from scratch with `useListState` and items from `react-stately`. The remove button reuses the [Button](../Button) component from React Aria Components.
 
-```tsx render files={["starters/hooks/src/TagGroup.tsx", "starters/hooks/src/TagGroup.css"]}
+```tsx render files={["starters/hooks/src/TagGroup.tsx", "starters/hooks/src/TagGroup.css", "starters/docs/src/Button.tsx", "starters/docs/src/Button.css"]}
 "use client";
 import {TagGroup} from 'hooks-starter/TagGroup';
 import {Item} from 'react-stately/Item';
 
 <TagGroup label="Categories" onRemove={keys => alert(`Remove ${[...keys]}`)}>
-  <Item>News</Item>
-  <Item>Travel</Item>
-  <Item>Gaming</Item>
-  <Item>Shopping</Item>
+  <Item key="news">News</Item>
+  <Item key="travel">Travel</Item>
+  <Item key="gaming">Gaming</Item>
+  <Item key="shopping">Shopping</Item>
+</TagGroup>
+```
+
+Use the `onAction` prop to handle item actions. Provide an explicit `key` on each item so the action handler receives a meaningful identifier.
+
+```tsx render
+"use client";
+import {TagGroup} from 'hooks-starter/TagGroup';
+import {Item} from 'react-stately/Item';
+
+<TagGroup
+  label="Music genres"
+  ///- begin highlight -///
+  onAction={key => alert(`Clicked ${key}`)}
+  ///- end highlight -///
+>
+  <Item key="rock">Rock</Item>
+  <Item key="jazz">Jazz</Item>
+  <Item key="pop">Pop</Item>
+  <Item key="classical">Classical</Item>
+  <Item key="edm">EDM</Item>
 </TagGroup>
 ```
 
 ## API
+
+<Anatomy />
 
 <FunctionAPI function={statelyDocs.exports.useListState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useTagGroup} links={docs.links} />
@@ -45,16 +69,16 @@ import {Item} from 'react-stately/Item';
 
 ### AriaTagGroupProps
 
-<InterfaceType {...docs.exports.AriaTagGroupProps} />
+<InterfaceType {...docs.exports.AriaTagGroupProps} links={docs.links} />
 
 ### TagGroupAria
 
-<InterfaceType {...docs.exports.TagGroupAria} />
+<InterfaceType {...docs.exports.TagGroupAria} links={docs.links} grouped={false} />
 
 ### AriaTagProps
 
-<InterfaceType {...docs.exports.AriaTagProps} />
+<InterfaceType {...docs.exports.AriaTagProps} links={docs.links} />
 
 ### TagAria
 
-<InterfaceType {...docs.exports.TagAria} />
+<InterfaceType {...docs.exports.TagAria} links={docs.links} grouped={false} />

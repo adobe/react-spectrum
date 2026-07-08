@@ -1,8 +1,5 @@
 'use client';
 import {mergeProps} from 'react-aria/mergeProps';
-import {useButton, type AriaButtonProps} from 'react-aria/useButton';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {useHover} from 'react-aria/useHover';
 import {
   useToast,
   useToastRegion,
@@ -10,11 +7,12 @@ import {
   type AriaToastRegionProps
 } from 'react-aria/useToast';
 import {useToastState} from 'react-stately/useToastState';
+import {Button} from '../../docs/src/Button';
 import {X} from 'lucide-react';
 import {useRef} from 'react';
-import {Button} from './Button';
+import {useFocusRing} from 'react-aria/useFocusRing';
 import './Toast.css';
-import './Button.css';
+import '../../docs/src/Button.css';
 
 export function ToastProvider({
   children
@@ -36,7 +34,9 @@ function ToastRegion({
   ...props
 }: AriaToastRegionProps & {state: ReturnType<typeof useToastState<string>>}) {
   let ref = useRef<HTMLDivElement>(null);
+  /*- begin highlight -*/
   let {regionProps} = useToastRegion(props, state, ref);
+  /*- end highlight -*/
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
@@ -78,31 +78,10 @@ function Toast({
           {toast.content}
         </div>
       </div>
-      <CloseButton {...closeButtonProps}>
+      <Button {...closeButtonProps} slot="close" variant="quiet" aria-label="Close">
         <X size={16} />
-      </CloseButton>
+      </Button>
     </div>
-  );
-}
-
-function CloseButton(props: AriaButtonProps) {
-  let ref = useRef<HTMLButtonElement>(null);
-  // useButton turns the AriaButtonProps from useToast into DOM props for the close button.
-  let {buttonProps, isPressed} = useButton(props, ref);
-  let {hoverProps, isHovered} = useHover(props);
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <button
-      {...mergeProps(buttonProps, hoverProps, focusProps)}
-      ref={ref}
-      className="react-aria-Button"
-      slot="close"
-      data-pressed={isPressed || undefined}
-      data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      {props.children}
-    </button>
   );
 }
 
