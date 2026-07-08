@@ -23,6 +23,7 @@ import {StyleString} from './types';
 
 export {baseColor, color, lightDark, colorMix, size, style} from './spectrum-theme';
 export {css} from './style-macro';
+export {prose} from './prose';
 export {centerPadding, setColorScheme} from '../src/style-utils';
 export type {StyleString} from './types';
 
