@@ -1,23 +1,45 @@
 'use client';
 import {
   TokenField as AriaTokenField,
+  TokenInput as AriaTokenInput,
   Token as AriaToken,
   TokenFieldProps as AriaTokenFieldProps,
+  TokenInputProps,
   TokenProps
 } from 'react-aria-components/TokenField';
+import {Label, Description} from './Form';
 import './TokenField.css';
+import type React from 'react';
 
-export interface TokenFieldProps extends AriaTokenFieldProps {
+export interface TokenFieldProps extends Omit<AriaTokenFieldProps, 'children'> {
+  label?: string;
+  description?: string;
   placeholder?: string;
+  inputRef?: React.Ref<HTMLDivElement>;
+  children: TokenInputProps['children'];
 }
 
-export function TokenField(props: TokenFieldProps) {
+export function TokenField({
+  label,
+  description,
+  placeholder,
+  inputRef,
+  style,
+  children,
+  ...props
+}: TokenFieldProps) {
   return (
-    <AriaTokenField
-      {...props}
-      data-placeholder={props.placeholder}
-      className="react-aria-TokenField inset"
-    />
+    <AriaTokenField {...props}>
+      {label && <Label>{label}</Label>}
+      <AriaTokenInput
+        ref={inputRef}
+        style={style}
+        data-placeholder={placeholder}
+        className="react-aria-TokenInput inset">
+        {children}
+      </AriaTokenInput>
+      {description && <Description>{description}</Description>}
+    </AriaTokenField>
   );
 }
 

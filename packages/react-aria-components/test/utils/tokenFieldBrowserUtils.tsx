@@ -16,7 +16,13 @@ import {type Locator, userEvent} from 'vitest/browser';
 import {Position, TokenFieldSegment, TokenSegmentList} from 'react-stately/useTokenFieldState';
 import React, {useEffect, useState} from 'react';
 import {render} from 'vitest-browser-react';
-import {Token, TokenField, type TokenFieldProps} from '../../src/TokenField';
+import {
+  Token,
+  TokenField,
+  TokenInput,
+  type TokenFieldProps,
+  type TokenInputProps
+} from '../../src/TokenField';
 
 export function text(s: string): TokenFieldSegment {
   return {type: 'text', text: s};
@@ -176,12 +182,14 @@ interface ControlledProps extends Omit<
 > {
   initial: TokenSegmentList;
   valueRef: React.MutableRefObject<TokenSegmentList>;
+  children?: TokenInputProps['children'];
 }
 
 function ControlledTokenField({
   initial,
   valueRef,
   'aria-label': ariaLabel = 'Message',
+  children = segment => <Token>{segment.text}</Token>,
   ...props
 }: ControlledProps) {
   let [value, setValue] = useState(initial);
@@ -190,7 +198,7 @@ function ControlledTokenField({
   }, [value, valueRef]);
   return (
     <TokenField value={value} onChange={setValue} aria-label={ariaLabel} {...props}>
-      {segment => <Token>{segment.text}</Token>}
+      <TokenInput>{children}</TokenInput>
     </TokenField>
   );
 }

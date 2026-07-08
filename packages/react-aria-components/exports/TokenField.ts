@@ -10,12 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-export {TokenField, Token} from '../src/TokenField';
+export {TokenField, TokenInput, Token} from '../src/TokenField';
 export type {
   TokenFieldProps,
   TokenFieldRenderProps,
+  TokenInputProps,
+  TokenInputRenderProps,
   TokenProps,
-  TokenRenderProps
+  TokenRenderProps,
+  TokenFieldContext
 } from '../src/TokenField';
 export {positionToDOMRange} from 'react-aria/useTokenField';
 export {TokenSegmentList, Direction} from 'react-stately/useTokenFieldState';

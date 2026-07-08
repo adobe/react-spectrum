@@ -2,6 +2,7 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/TokenField';
 import '../../tailwind/tailwind.css';
 
 export const tags = ['input', 'token', 'mention', 'tag', 'autocomplete', 'ai', 'prompt', 'comment', 'multi-select', 'combobox', 'search'];
@@ -13,7 +14,7 @@ export const description = 'Allows users to enter text with inline tokens such a
 <PageDescription>{docs.exports.TokenField.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.TokenField} links={docs.links} props={['allowsNewlines', 'isDisabled', 'isReadOnly']} initialProps={{allowsNewlines: true}} type="vanilla" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
+  ```tsx render docs={vanillaDocs.exports.TokenField} links={vanillaDocs.links} props={['label', 'description', 'allowsNewlines', 'isDisabled']} initialProps={{label: 'Message', allowsNewlines: true}} type="vanilla" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
   "use client";
   import {Token, TokenField} from 'vanilla-starter/TokenField';
   import {TokenizingSegmentList} from './TokenizingSegmentList';
@@ -23,13 +24,12 @@ export const description = 'Allows users to enter text with inline tokens such a
     defaultValue={TokenizingSegmentList.tokenize(
       'This example automatically tokenizes #hashtags and @usernames in the text.',
       /(?<=\s|^)[#@]\S+(?=\s)/g
-    )}
-    aria-label="Message">
+    )}>
     {segment => <Token>{segment.text}</Token>}
   </TokenField>
   ```
 
-  ```tsx render docs={docs.exports.TokenField} links={docs.links} props={['allowsNewlines', 'isDisabled', 'isReadOnly']} initialProps={{allowsNewlines: true}} type="tailwind" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
+  ```tsx render docs={vanillaDocs.exports.TokenField} links={vanillaDocs.links} props={['label', 'description', 'allowsNewlines', 'isDisabled']} initialProps={{label: 'Message', allowsNewlines: true}} type="tailwind" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
   "use client";
   import {Token, TokenField} from 'tailwind-starter/TokenField';
   import {TokenizingSegmentList} from './TokenizingSegmentList';
@@ -39,8 +39,7 @@ export const description = 'Allows users to enter text with inline tokens such a
     defaultValue={TokenizingSegmentList.tokenize(
       'This example automatically tokenizes #hashtags and @usernames in the text.',
       /(?<=\s|^)[#@]\S+(?=\s)/g
-    )}
-    aria-label="Message">
+    )}>
     {segment => <Token>{segment.text}</Token>}
   </TokenField>
   ```
@@ -68,7 +67,7 @@ function Example() {
   return (
     <>
       {/*- begin highlight -*/}
-      <TokenField value={value} onChange={setValue} aria-label="Message">
+      <TokenField value={value} onChange={setValue} label="Message">
         {segment => <Token>{segment.text}</Token>}
       </TokenField>
       {/*- end highlight -*/}
@@ -93,7 +92,7 @@ import {TokenizingSegmentList} from './TokenizingSegmentList';
     'This example automatically tokenizes #hashtags and @usernames in the text.',
     /(?<=\s|^)[#@]\S+(?=\s)/g
   )}
-  aria-label="Message">
+  label="Message">
   {segment => <Token>{segment.text}</Token>}
 </TokenField>
 ```
@@ -185,7 +184,7 @@ function Example() {
   return (
     /*- begin highlight -*/
     <Autocomplete>
-      <TokenField value={value} onChange={setValue} aria-label="Message" ref={inputRef}>
+      <TokenField value={value} onChange={setValue} label="Prompt" allowsNewlines inputRef={inputRef}>
         {segment => <Token>{segment.text}</Token>}
       </TokenField>
       <Popover
@@ -250,7 +249,7 @@ import {TagFieldSegmentList} from './TagFieldSegmentList';
       {type: 'token', text: 'Sales'}
     ])
   }
-  aria-label="Categories">
+  label="Categories">
   {segment => <Token>{segment.text}</Token>}
 </TokenField>
 ```
@@ -339,7 +338,7 @@ function Example() {
 
   return (
     <Autocomplete>
-      <TokenField ref={inputRef} role="searchbox" value={value} onChange={setValue} aria-label="Search">
+      <TokenField role="searchbox" value={value} onChange={setValue} label="Search" inputRef={inputRef}>
         {segment => <Token>{segment.text}</Token>}
       </TokenField>
       <Popover
@@ -457,15 +456,21 @@ function Example() {
 
 ## API
 
-```tsx links={{TokenField: '#tokenfield', Token: '#token'}}
+```tsx links={{TokenField: '#tokenfield', TokenInput: '#token-input', Token: '#token'}}
 <TokenField>
-  {segment => <Token />}
+  <Label />
+  <TokenInput>{segment => <Token />}</TokenInput>
+  <Text slot="description" />
 </TokenField>
 ```
 
 ### TokenField
 
 <PropTable component={docs.exports.TokenField} links={docs.links} />
+
+### TokenInput
+
+<PropTable component={docs.exports.TokenInput} links={docs.links} />
 
 ### Token
 

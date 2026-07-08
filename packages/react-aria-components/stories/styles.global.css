@@ -1,7 +1,7 @@
 @import '../../../starters/docs/src/theme.css';
 @import '../../../starters/docs/src/utilities.css';
 
-.react-aria-TokenField {
+.react-aria-TokenInput {
   padding: 4px 8px;
   outline: none;
   border-radius: 8px;

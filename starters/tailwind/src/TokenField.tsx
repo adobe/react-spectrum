@@ -2,16 +2,22 @@
 import React from 'react';
 import {
   TokenField as AriaTokenField,
+  TokenInput as AriaTokenInput,
   Token as AriaToken,
-  type TokenFieldProps,
+  type TokenFieldProps as AriaTokenFieldProps,
+  type TokenInputProps,
   type TokenProps
 } from 'react-aria-components/TokenField';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {tv} from 'tailwind-variants';
-import {fieldBorderStyles} from './Field';
-import {focusRing} from './utils';
+import {Description, Label, fieldBorderStyles} from './Field';
+import {composeTailwindRenderProps, focusRing} from './utils';
 
 const tokenFieldStyles = tv({
+  base: 'flex flex-col gap-1 font-sans'
+});
+
+const tokenInputStyles = tv({
   extend: focusRing,
   base: 'group border-1 rounded-lg font-sans text-sm py-2 px-3 [&[aria-multiline=true]]:min-h-[100px] box-border w-full transition bg-white dark:bg-neutral-900 forced-colors:bg-[Field] text-neutral-800 dark:text-neutral-200 outline-0 disabled:text-neutral-200 dark:disabled:text-neutral-600 disabled:select-none [-webkit-tap-highlight-color:transparent]',
   variants: {
@@ -30,14 +36,31 @@ const tokenStyles = tv({
   }
 });
 
-export function TokenField(props: TokenFieldProps) {
+export interface TokenFieldProps extends Omit<AriaTokenFieldProps, 'children'> {
+  label?: string;
+  description?: string;
+  inputRef?: React.Ref<HTMLDivElement>;
+  children: TokenInputProps['children'];
+}
+
+export function TokenField({
+  label,
+  description,
+  className,
+  inputRef,
+  children,
+  ...props
+}: TokenFieldProps) {
   return (
     <AriaTokenField
       {...props}
-      className={composeRenderProps(props.className, (className, renderProps) =>
-        tokenFieldStyles({...renderProps, className})
-      )}
-    />
+      className={composeTailwindRenderProps(className, tokenFieldStyles())}>
+      {label && <Label>{label}</Label>}
+      <AriaTokenInput ref={inputRef} className={tokenInputStyles}>
+        {children}
+      </AriaTokenInput>
+      {description && <Description>{description}</Description>}
+    </AriaTokenField>
   );
 }
 

@@ -11,7 +11,7 @@
  */
 
 import {announce} from '../live-announcer/LiveAnnouncer';
-import {AriaLabelingProps, FocusableProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, FocusableProps} from '@react-types/shared';
 import {
   ClipboardEventHandler,
   HTMLAttributes,
@@ -33,7 +33,9 @@ import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
 import {isMac} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
+import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEvent} from '../utils/useEvent';
+import {useField} from '../label/useField';
 import {useFocusable} from '../interactions/useFocusable';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -75,7 +77,13 @@ export interface AriaTokenFieldProps<T extends TokenSegmentList = TokenSegmentLi
 }
 
 export interface TokenFieldAria {
+  /** Props for the token field's input element. */
   tokenFieldProps: HTMLAttributes<HTMLDivElement>;
+  /** Props for the text field's visible label element, if any. */
+  labelProps: DOMAttributes;
+  /** Props for the text field's description element, if any. */
+  descriptionProps: DOMAttributes;
+  /** Whether the input is composing. */
   isComposing: boolean;
 }
 
@@ -91,9 +99,6 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
     allowsNewlines: multiline = false,
     isReadOnly = false,
     isDisabled = false,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledBy,
-    'aria-describedby': ariaDescribedBy,
     'aria-details': ariaDetails
   } = props;
 
@@ -535,9 +540,25 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   });
 
   let {focusableProps} = useFocusable(props, ref);
+  let {labelProps, fieldProps, descriptionProps} = useField({
+    ...props,
+    labelElementType: 'span'
+  });
 
   return {
-    tokenFieldProps: mergeProps(focusableProps, keyboardProps, {
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        if (!props.isDisabled) {
+          ref.current?.focus();
+
+          // Show the focus ring so the user knows where focus went
+          setInteractionModality('keyboard');
+        }
+      }
+    },
+    descriptionProps,
+    tokenFieldProps: mergeProps(focusableProps, keyboardProps, fieldProps, {
       onPaste: props.onPaste,
       onCopy: props.onCopy,
       onCut: props.onCut,
@@ -545,9 +566,6 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
       suppressContentEditableWarning: true,
       role,
       'aria-multiline': multiline,
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledBy,
-      'aria-describedby': ariaDescribedBy,
       'aria-details': ariaDetails,
       'aria-readonly': isReadOnly,
       'aria-disabled': isDisabled,

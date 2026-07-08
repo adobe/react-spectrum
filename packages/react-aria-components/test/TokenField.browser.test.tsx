@@ -44,7 +44,7 @@ import {describe, expect, it} from 'vitest';
 import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {Token, TokenField} from '../src/TokenField';
+import {Token, TokenField, TokenInput} from '../src/TokenField';
 
 const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
@@ -78,7 +78,7 @@ describeOrSkip('TokenField browser interactions', () => {
     it('should render textbox and tokens', async () => {
       let screen = await render(
         <TokenField defaultValue={abTokCd} aria-label="Message">
-          {segment => <Token>{segment.text}</Token>}
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );
       await expect.element(screen.getByRole('textbox', {name: 'Message'})).toBeInTheDocument();
@@ -114,7 +114,7 @@ describeOrSkip('TokenField browser interactions', () => {
             onChange={e => setValue(segments(text(e.target.value)))}
           />
           <TokenField aria-label="Focus test" value={value} onChange={setValue}>
-            {segment => <Token>{segment.text}</Token>}
+            <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
           </TokenField>
         </>
       );

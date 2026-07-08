@@ -27,7 +27,7 @@ import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
 import {Key} from '@react-types/shared';
 import {Popover} from 'vanilla-starter/Popover';
 import {positionToDOMRange} from 'react-aria/useTokenField';
-import {Token, TokenField} from '../src/TokenField';
+import {Token, TokenField, TokenInput} from '../src/TokenField';
 import 'vanilla-starter/TagGroup.css';
 import {Text} from 'react-aria-components/Text';
 
@@ -95,9 +95,10 @@ export const AutoTokenize: TokenFieldStory = () => {
       defaultValue={TokenizingSegmentList.tokenize(
         'This example automatically tokenizes #hashtags and @usernames in the text.',
         /(?<=\s|^)[#@]\S+(?=\s)/g
-      )}
-      aria-label="Message">
-      {segment => <Token>{segment.text}</Token>}
+      )}>
+      <Label>Message</Label>
+      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
+      <Text slot="description">Type #hashtags or @usernames to create tokens.</Text>
     </TokenField>
   );
 };
@@ -109,9 +110,9 @@ export const Template: TokenFieldStory = () => {
       defaultValue={TokenizingSegmentList.tokenize(
         "Hello {{firstName}}, it's nice to meet you!",
         /(?<=\s|^)\{\{.+?\}\}/g
-      )}
-      aria-label="Message">
-      {segment => <Token>{segment.text}</Token>}
+      )}>
+      <Label>Message</Label>
+      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
     </TokenField>
   );
 };
@@ -197,8 +198,9 @@ export const WithAutocomplete: TokenFieldStory = () => {
 
   return (
     <Autocomplete>
-      <TokenField value={value} onChange={setValue} aria-label="Message" ref={inputRef}>
-        {segment => <Token>{segment.text}</Token>}
+      <TokenField value={value} onChange={setValue}>
+        <Label>Message</Label>
+        <TokenInput ref={inputRef}>{segment => <Token>{segment.text}</Token>}</TokenInput>
       </TokenField>
       <Popover
         triggerRef={inputRef}
@@ -274,9 +276,9 @@ export const TagField: TokenFieldStory = () => {
           {type: 'token', text: 'Marketing'},
           {type: 'token', text: 'Sales'}
         ])
-      }
-      aria-label="Categories">
-      {segment => <Token>{segment.text}</Token>}
+      }>
+      <Label>Categories</Label>
+      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
     </TokenField>
   );
 };
@@ -321,8 +323,9 @@ export const Search: TokenFieldStory = () => {
 
   return (
     <Autocomplete>
-      <TokenField ref={inputRef} value={value} onChange={setValue} aria-label="Search">
-        {segment => <Token>{segment.text}</Token>}
+      <TokenField value={value} onChange={setValue} role="searchbox">
+        <Label>Search</Label>
+        <TokenInput ref={inputRef}>{segment => <Token>{segment.text}</Token>}</TokenInput>
       </TokenField>
       <Popover
         triggerRef={inputRef}
@@ -435,8 +438,10 @@ export const ComboBoxExample: TokenFieldStory = () => {
       onChange={keys => setValue(value.setSelectedKeys(keys))}>
       <Label>Users</Label>
       <div className="combobox-field">
-        <TokenField value={value} onChange={setValue} style={{paddingInlineEnd: 36}}>
-          {segment => <Token>{segment.text}</Token>}
+        <TokenField value={value} onChange={setValue}>
+          <TokenInput style={{paddingInlineEnd: 36}}>
+            {segment => <Token>{segment.text}</Token>}
+          </TokenInput>
         </TokenField>
         <FieldButton>
           <ChevronDown />

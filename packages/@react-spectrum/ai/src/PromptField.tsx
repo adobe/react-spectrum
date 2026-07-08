@@ -44,7 +44,7 @@ import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
-import {positionToDOMRange, Token, TokenField, TokenProps} from 'react-aria-components/TokenField';
+import {positionToDOMRange, Token, TokenField, TokenInput, TokenProps} from 'react-aria-components/TokenField';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -331,63 +331,60 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
 
   return (
     <Autocomplete>
-      <TokenField
-        value={prompt}
-        onChange={setPrompt}
-        multiline
-        aria-label="Prompt"
-        data-placeholder="Ready to get started? Ask a question, share an idea, or add a task."
-        ref={inputRef}
-        onFocus={e => {
-          if (e.isTrusted) {
-            setFocused(true);
-          }
-        }}
-        onBlur={e => {
-          if (e.isTrusted) {
-            setFocused(false);
-          }
-        }}
-        onPaste={
-          acceptedAttachmentTypes
-            ? e => {
-                let clipboardData = e.clipboardData as DataTransfer;
-                let attachments: PromptFieldAttachment[] = [];
-                for (let item of clipboardData.items) {
-                  if (matchMimeType(item.type, acceptedAttachmentTypes)) {
-                    let file = item.getAsFile()!;
-                    attachments.push({
-                      id: crypto.randomUUID(),
-                      file,
-                      image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
-                    });
+      <TokenField value={prompt} onChange={setPrompt} allowsNewlines aria-label="Prompt" onSubmit={onSubmit}>
+        <TokenInput
+          data-placeholder="Ready to get started? Ask a question, share an idea, or add a task."
+          ref={inputRef}
+          onFocus={e => {
+            if (e.isTrusted) {
+              setFocused(true);
+            }
+          }}
+          onBlur={e => {
+            if (e.isTrusted) {
+              setFocused(false);
+            }
+          }}
+          onPaste={
+            acceptedAttachmentTypes
+              ? e => {
+                  let clipboardData = e.clipboardData as DataTransfer;
+                  let attachments: PromptFieldAttachment[] = [];
+                  for (let item of clipboardData.items) {
+                    if (matchMimeType(item.type, acceptedAttachmentTypes)) {
+                      let file = item.getAsFile()!;
+                      attachments.push({
+                        id: crypto.randomUUID(),
+                        file,
+                        image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+                      });
+                    }
+                  }
+                  if (attachments.length > 0) {
+                    onAddAttachments?.(attachments);
+                    setAttachments(prev => [...prev, ...attachments]);
                   }
                 }
-                if (attachments.length > 0) {
-                  onAddAttachments?.(attachments);
-                  setAttachments(prev => [...prev, ...attachments]);
+              : undefined
+          }
+          className={renderProps =>
+            css('&:empty::before { content: attr(data-placeholder); }') +
+            style({
+              font: 'body',
+              color: {
+                default: baseColor('neutral'),
+                ':empty': {
+                  default: 'gray-600',
+                  forcedColors: 'GrayText'
                 }
-              }
-            : undefined
-        }
-        onSubmit={onSubmit}
-        className={renderProps =>
-          css('&:empty::before { content: attr(data-placeholder); }') +
-          style({
-            font: 'body',
-            color: {
-              default: baseColor('neutral'),
-              ':empty': {
-                default: 'gray-600',
-                forcedColors: 'GrayText'
-              }
-            },
-            width: 'full',
-            outlineStyle: 'none',
-            cursor: 'text'
-          })(renderProps)
-        }>
-        {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
+              },
+              width: 'full',
+              outlineStyle: 'none',
+              cursor: 'text'
+            })(renderProps)
+          }>
+          {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
+        </TokenInput>
       </TokenField>
       <PromptTokenFieldPopover
         filterAnchor={filterAnchor}

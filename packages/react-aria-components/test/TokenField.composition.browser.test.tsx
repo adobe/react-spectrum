@@ -41,7 +41,7 @@ import {describe, expect, it} from 'vitest';
 import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {Token, TokenField} from '../src/TokenField';
+import {Token, TokenField, TokenInput} from '../src/TokenField';
 import {TokenSegmentList} from 'react-stately/useTokenFieldState';
 
 declare module 'vitest/browser' {
@@ -217,7 +217,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
       forceRender = () => setTick(t => t + 1);
       return (
         <TokenField value={value} onChange={setValue} aria-label="rerender-field">
-          {segment => <Token>{segment.text}</Token>}
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );
     }
@@ -322,7 +322,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
             setValue(v);
           }}
           aria-label="onchange-field">
-          {segment => <Token>{segment.text}</Token>}
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );
     }
@@ -357,7 +357,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
       let [value, setValue] = React.useState(() => new TokenSegmentList([token('A'), text('')]));
       return (
         <TokenField value={value} onChange={setValue} aria-label="norerender-field">
-          {segment => <CountingToken>{segment.text}</CountingToken>}
+          <TokenInput>{segment => <CountingToken>{segment.text}</CountingToken>}</TokenInput>
         </TokenField>
       );
     }
@@ -394,7 +394,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
       setValueExternal = setValue;
       return (
         <TokenField value={value} onChange={setValue} aria-label="completion-field">
-          {segment => <Token>{segment.text}</Token>}
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );
     }
