@@ -10,13 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  act,
-  pointerMap,
-  render,
-  simulateDesktop,
-  waitFor
-} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, simulateDesktop} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '../../src/button/ActionButton';
 import {AlertDialog} from '../../src/dialog/AlertDialog';
 import {DialogTrigger} from '../../src/dialog/DialogTrigger';
@@ -312,7 +306,7 @@ describe('AlertDialog', function () {
     expect(onCancelSpy).toHaveBeenCalledWith();
   });
 
-  it('does not throw on Escape when onCancel is not provided', async function () {
+  it('does not fire other handlers on Escape when onCancel is not provided', async function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let onPrimaryAction = jest.fn();
     let {getByRole} = render(
@@ -378,17 +372,12 @@ describe('AlertDialog', function () {
       });
 
       let dialog = getByRole('alertdialog');
-      await waitFor(() => {
-        expect(dialog).toBeVisible();
-      });
 
       await user.keyboard('{Escape}');
       act(() => {
         jest.runAllTimers();
       });
-      await waitFor(() => {
-        expect(dialog).not.toBeInTheDocument();
-      });
+      expect(dialog).not.toBeInTheDocument();
       expect(onCancelSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -418,17 +407,12 @@ describe('AlertDialog', function () {
       });
 
       let dialog = getByRole('alertdialog');
-      await waitFor(() => {
-        expect(dialog).toBeVisible();
-      });
 
       await user.click(getByText('cancel'));
       act(() => {
         jest.runAllTimers();
       });
-      await waitFor(() => {
-        expect(dialog).not.toBeInTheDocument();
-      });
+      expect(dialog).not.toBeInTheDocument();
       expect(onCancelSpy).toHaveBeenCalledTimes(1);
     });
   });

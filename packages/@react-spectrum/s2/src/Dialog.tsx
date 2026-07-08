@@ -14,7 +14,7 @@ import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
-import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
+import {DOMRef, FocusableElement, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef, KeyboardEventHandler} from 'react';
 import {ImageContext} from './Image';
 import {Modal} from './Modal';
@@ -47,7 +47,7 @@ export interface DialogProps
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean;
   /** @private */
-  onKeyDown?: KeyboardEventHandler<HTMLElement>;
+  onKeyDown?: KeyboardEventHandler<FocusableElement>;
 }
 
 const image = style({
@@ -112,7 +112,7 @@ export const dialogInner = style({
  * Dialog is acknowledged.
  */
 export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef) {
-  let {size = 'M', isDismissible, isKeyboardDismissDisabled, onKeyDown} = props;
+  let {size = 'M', isDismissible, isKeyboardDismissDisabled} = props;
   let domRef = useDOMRef(ref);
 
   return (
@@ -122,18 +122,6 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
-        // RAC Dialog filters out keyboard events, so attach onKeyDown to the dialog
-        // element with a custom render function. This allows components like AlertDialog
-        // to respond to the Escape key dismissing the dialog.
-        render={
-          onKeyDown
-            ? sectionProps => (
-                // The dialog role is included in sectionProps.
-                // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
-                <section {...sectionProps} onKeyDown={onKeyDown} />
-              )
-            : undefined
-        }
         ref={domRef}
         style={props.UNSAFE_style}
         className={(props.UNSAFE_className || '') + dialogInner}>
