@@ -106,6 +106,7 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
+    // oxlint-disable-next-line react/react-compiler
     descriptionProps.id = undefined;
   }
 

@@ -1,6 +1,6 @@
 {
-  "chat.newMessage": "New message",
-  "messagefeedback.thumbDown": "Bad response",
-  "messagefeedback.thumbUp": "Good response",
-  "responsestatus.loading": "Loading"
+  "chat.newMessage": "رسالة جديدة",
+  "messagefeedback.thumbDown": "استجابة  سيئة",
+  "messagefeedback.thumbUp": "استجابة جيدة",
+  "responsestatus.loading": "جارٍ التحميل"
 }

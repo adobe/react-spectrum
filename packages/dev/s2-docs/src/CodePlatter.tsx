@@ -105,6 +105,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   let {library} = useContext(CodePlatterContext);
   if (!type) {
     if (library === 'react-aria') {
+      // oxlint-disable-next-line react/react-compiler
       type = 'vanilla';
     } else if (library === 'react-spectrum') {
       type = 's2';
