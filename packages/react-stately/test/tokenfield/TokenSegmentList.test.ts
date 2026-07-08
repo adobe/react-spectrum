@@ -1126,5 +1126,22 @@ describeOrSkip('TokenSegmentList', () => {
       expect(value).toEqual([text('@alice ')]);
       expect(caret).toEqual({index: 0, offset: 7});
     });
+
+    it('tokenizes when pasting multiple segments', () => {
+      let list = new TokenizingSegmentList([text('')], mentionRe);
+      let {segments: value} = list.replaceRangeWithSegments(
+        {index: 0, offset: 0},
+        {index: 0, offset: 0},
+        [text('hello @alice '), token('@bob'), text(' world '), token('@charlie')]
+      );
+      expect(value).toEqual([
+        text('hello '),
+        token('@alice'),
+        text(' '),
+        token('@bob'),
+        text(' world '),
+        token('@charlie')
+      ]);
+    });
   });
 });
