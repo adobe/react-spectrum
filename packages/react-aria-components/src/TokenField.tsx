@@ -11,32 +11,80 @@
  */
 
 import {AriaTokenFieldProps} from 'react-aria/useTokenField';
+import {
+  ClassNameOrFunction,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  useRenderProps,
+  useSlottedContext
+} from './utils';
 import {FieldInputContext} from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType} from '@react-types/shared';
+import {HoverProps, useHover} from 'react-aria/useHover';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {ForwardedRef, forwardRef, HTMLAttributes, memo} from 'react';
-import {RenderProps, SlotProps, StyleRenderProps, useRenderProps, useSlottedContext} from './utils';
 import {TokenSegment, TokenSegmentList, useTokenFieldState} from 'react-stately/useTokenFieldState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useToken, useTokenField} from 'react-aria/useTokenField';
 
 export interface TokenFieldRenderProps {
-  isReadOnly: boolean;
-  isDisabled: boolean;
+  /**
+   * Whether the token field is currently hovered with a mouse.
+   *
+   * @selector [data-hovered]
+   */
+  isHovered: boolean;
+  /**
+   * Whether the token field is focused, either via a mouse or keyboard.
+   *
+   * @selector [data-focused]
+   */
   isFocused: boolean;
+  /**
+   * Whether the token field is keyboard focused.
+   *
+   * @selector [data-focus-visible]
+   */
   isFocusVisible: boolean;
+  /**
+   * Whether the token field is disabled.
+   *
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean;
+  /**
+   * Whether the token field is read only.
+   *
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean;
 }
 
 export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
-  extends AriaTokenFieldProps<T>, StyleRenderProps<TokenFieldRenderProps>, SlotProps {
+  extends AriaTokenFieldProps<T>, HoverProps, StyleRenderProps<TokenFieldRenderProps>, SlotProps {
+  /**
+   * A function that renders a token for each segment in the token field.
+   */
   children: (
     segment: TokenSegment<T extends TokenSegmentList<infer V> ? V : never>
   ) => React.ReactElement;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-TokenField'
+   */
+  className?: ClassNameOrFunction<TokenFieldRenderProps>;
 }
 
+/**
+ * A token field allows users to enter text with inline tokens, such as hashtags, mentions, tags, or
+ * template variables.
+ */
 export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TokenField<
   T extends TokenSegmentList = TokenSegmentList
 >(props: TokenFieldProps<T>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
@@ -70,6 +118,7 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   let {tokenFieldProps, isComposing} = useTokenField(
     {
       ...props,
+      role: props.role || autocompleteProps['role'] || 'textbox',
       'aria-label': ariaLabel ?? autocompleteProps['aria-label'],
       'aria-labelledby': ariaLabelledBy ?? autocompleteProps['aria-labelledby'],
       'aria-describedby': ariaDescribedBy ?? autocompleteProps['aria-describedby']
@@ -78,6 +127,7 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     ref
   );
 
+  let {isHovered, hoverProps} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
 
   let renderProps = useRenderProps({
@@ -85,6 +135,7 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     children: undefined,
     defaultClassName: 'react-aria-TokenField',
     values: {
+      isHovered,
       isFocused,
       isFocusVisible,
       isDisabled,
@@ -100,11 +151,11 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         DOMProps,
         renderProps,
         focusProps,
+        hoverProps,
         tokenFieldProps,
         autocompleteProps as HTMLAttributes<HTMLDivElement>
       )}
       ref={mergeRefs(ref, autocompleteRef as any)}
-      role={autocompleteProps['role'] || 'textbox'}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
@@ -136,12 +187,33 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 });
 
 export interface TokenRenderProps {
+  /**
+   * Whether the token is selected.
+   *
+   * @selector [data-selected]
+   */
   isSelected: boolean;
+  /**
+   * Whether the token is disabled.
+   *
+   * @selector [data-disabled]
+   */
   isDisabled: boolean;
 }
 
-export interface TokenProps extends RenderProps<TokenRenderProps, 'span'> {}
+export interface TokenProps extends RenderProps<TokenRenderProps, 'span'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-Token'
+   */
+  className?: ClassNameOrFunction<TokenRenderProps>;
+}
 
+/**
+ * A token represents an inline segment within a token field.
+ */
 export const Token = forwardRef(function Token(
   props: TokenProps,
   ref: ForwardedRef<HTMLSpanElement>
@@ -154,7 +226,7 @@ export const Token = forwardRef(function Token(
     defaultClassName: 'react-aria-Token',
     values: {
       isSelected,
-      isDisabled: false
+      isDisabled: false // TODO
     }
   });
 

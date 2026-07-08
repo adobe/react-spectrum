@@ -1,0 +1,60 @@
+@import './theme.css';
+@import './utilities.css';
+
+.react-aria-TokenField {
+  padding: var(--spacing-2) var(--spacing-3);
+  outline: none;
+  border-radius: var(--radius);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  font: var(--font-size) system-ui;
+  line-height: 1.2em;
+  color: var(--text-color);
+
+  &:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-color-placeholder);
+  }
+
+  &[aria-multiline='true'] {
+    min-height: 100px;
+    padding: var(--spacing-3);
+  }
+
+  &[data-focused] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+    user-select: none;
+  }
+}
+
+.react-aria-Token {
+  background-color: var(--tint-200);
+  color: var(--tint-1200);
+  border-radius: 9999px;
+  height: var(--spacing-5);
+  padding: 1px var(--spacing-2);
+  margin: 0 2px;
+  cursor: default;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-selected] {
+    background-color: var(--highlight-background);
+    color: white;
+  }
+
+  &::selection {
+    background-color: transparent;
+  }
+
+  [data-disabled] & {
+    background-color: var(--gray-200);
+    color: var(--text-color-disabled);
+  }
+}

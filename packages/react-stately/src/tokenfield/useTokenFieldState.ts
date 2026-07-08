@@ -12,12 +12,11 @@
 
 import {TokenSegmentList} from './TokenSegmentList';
 import {useControlledState} from '../utils/useControlledState';
+import {ValueBase} from '@react-types/shared';
 
-export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList> {
-  value?: T;
-  defaultValue?: T;
-  onChange?: (value: T) => void;
-}
+export interface TokenFieldProps<
+  T extends TokenSegmentList = TokenSegmentList
+> extends ValueBase<T> {}
 
 export interface TokenFieldState<T extends TokenSegmentList = TokenSegmentList> {
   value: T;

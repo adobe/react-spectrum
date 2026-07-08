@@ -28,7 +28,7 @@ export function useToken(
 ): TokenAria {
   let [isSelected, setSelected] = useState(false);
 
-  useEvent(useRef(document), 'selectionchange', () => {
+  useEvent(useRef(typeof document !== 'undefined' ? document : null), 'selectionchange', () => {
     let selection = window.getSelection();
     if (!selection || selection.rangeCount === 0 || !ref.current) {
       return;

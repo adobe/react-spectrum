@@ -44,13 +44,16 @@ export interface TokenSegmentListOptions {
  * A list of segments containing editable text and non-editable tokens.
  */
 export class TokenSegmentList<T = any> {
+  /** The text and token segments in the list. */
   readonly segments: readonly TokenFieldSegment<T>[];
+  /** The caret position. */
   caretPosition: Position = {index: 0, offset: 0};
   // Linked list representing the undo/redo history.
   private previous: this | null = null;
   private next: this | null = null;
   private isCoalescing = true;
 
+  /** Create a new list with the given segments. */
   constructor(tokens: readonly TokenFieldSegment<T>[], options?: TokenSegmentListOptions) {
     this.segments = tokens;
     this.caretPosition = options?.caretPosition ?? {index: 0, offset: 0};
@@ -64,6 +67,7 @@ export class TokenSegmentList<T = any> {
     return new Constructor(segments);
   }
 
+  /** Create a new list with the caret position set to the given position. */
   withCaretPosition(caretPosition: Position): this {
     if (
       this.caretPosition.index === caretPosition.index &&
@@ -369,18 +373,22 @@ export class TokenSegmentList<T = any> {
     return this.createSegmentList(result);
   }
 
+  /** Convert the list to a string. */
   toString(): string {
     return this.segments.map(seg => seg.text).join('');
   }
 
+  /** Returns the previous list in the undo history. */
   undo(): this {
     return this.previous ?? this;
   }
 
+  /** Returns the next list in the redo history. */
   redo(): this {
     return this.next ?? this;
   }
 
+  /** End coalescing undo/redo history. */
   endCoalescing(): void {
     this.isCoalescing = false;
   }

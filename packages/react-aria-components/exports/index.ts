@@ -225,6 +225,8 @@ export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from '../src/Ta
 export {Text, TextContext} from '../src/Text';
 export {TextArea, TextAreaContext} from '../src/TextArea';
 export {TextField, TextFieldContext} from '../src/TextField';
+export {TokenField, Token} from '../src/TokenField';
+export {TokenSegmentList} from 'react-stately/useTokenFieldState';
 export {
   UNSTABLE_Toast,
   UNSTABLE_ToastList,
@@ -494,6 +496,12 @@ export type {
 } from '../src/TagGroup';
 export type {TextAreaProps} from '../src/TextArea';
 export type {TextFieldProps, TextFieldRenderProps} from '../src/TextField';
+export type {
+  TokenFieldProps,
+  TokenFieldRenderProps,
+  TokenProps,
+  TokenRenderProps
+} from '../src/TokenField';
 export type {TextProps} from '../src/Text';
 export type {
   ToastRegionProps,

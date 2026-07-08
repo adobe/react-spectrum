@@ -13,6 +13,15 @@
 import {announce} from '../live-announcer/LiveAnnouncer';
 import {AriaLabelingProps, FocusableProps} from '@react-types/shared';
 import {
+  ClipboardEventHandler,
+  HTMLAttributes,
+  RefObject,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {
   Direction,
   Position,
   TokenFieldProps,
@@ -22,7 +31,6 @@ import {
 } from 'react-stately/useTokenFieldState';
 import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
-import {HTMLAttributes, RefObject, useCallback, useMemo, useRef, useState} from 'react';
 import {isMac} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {useEvent} from '../utils/useEvent';
@@ -33,11 +41,37 @@ import {useLocale} from '../i18n/I18nProvider';
 
 export interface AriaTokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
   extends TokenFieldProps<T>, FocusableProps, AriaLabelingProps {
+  /**
+   * The accessibility role of the token field.
+   *
+   * @default 'textbox'
+   */
+  role?: 'textbox' | 'searchbox' | 'combobox';
+  /** Whether the token field allows newlines. */
   multiline?: boolean;
+  /** Whether the token field is read only. */
   isReadOnly?: boolean;
+  /** Whether the token field is disabled. */
   isDisabled?: boolean;
-  onPaste?: (e: ClipboardEvent) => void;
+  /** A function that is called when the user presses the Enter key. */
   onSubmit?: () => void;
+  /**
+   * Handler that is called when the user copies text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
+   */
+  onCopy?: ClipboardEventHandler<T>;
+
+  /**
+   * Handler that is called when the user cuts text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
+   */
+  onCut?: ClipboardEventHandler<T>;
+
+  /**
+   * Handler that is called when the user pastes text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
+   */
+  onPaste?: ClipboardEventHandler<T>;
 }
 
 export interface TokenFieldAria {
@@ -53,6 +87,7 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   ref: RefObject<HTMLDivElement | null>
 ): TokenFieldAria {
   let {
+    role = 'textbox',
     multiline = false,
     isReadOnly = false,
     isDisabled = false,
@@ -479,6 +514,8 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   let {keyboardProps} = useKeyboard({
     isDisabled: isDisabled || isReadOnly,
     onKeyDown: e => {
+      props.onKeyDown?.(e);
+
       // mini version of useKeyboard shortcuts until it is merged.
       let modifiers = ['Shift', 'Control', 'Alt', 'Meta'] satisfies React.ModifierKey[];
       let modifierKeys = modifiers.filter(modifier => e.getModifierState(modifier));
@@ -493,7 +530,8 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
       }
 
       e.continuePropagation();
-    }
+    },
+    onKeyUp: props.onKeyUp
   });
 
   let {focusableProps} = useFocusable(props, ref);
@@ -501,8 +539,11 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   return {
     tokenFieldProps: mergeProps(focusableProps, keyboardProps, {
       onPaste: props.onPaste,
+      onCopy: props.onCopy,
+      onCut: props.onCut,
       contentEditable: !isDisabled && !isReadOnly,
       suppressContentEditableWarning: true,
+      role,
       'aria-multiline': multiline,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledBy,
@@ -667,7 +708,7 @@ function isValidSegment(segment: unknown): segment is TokenFieldSegment {
 }
 
 function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
-  useEvent(useRef(document), 'selectionchange', () => {
+  useEvent(useRef(typeof document !== 'undefined' ? document : null), 'selectionchange', () => {
     if (ref.current && ref.current[isProgrammaticSelectionChange]) {
       ref.current[isProgrammaticSelectionChange] = false;
       return;
