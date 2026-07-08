@@ -28,16 +28,6 @@ export const getOwnerWindow = (target?: EventTarget | null): Window & typeof glo
   return ownerDocument?.defaultView ?? (typeof window !== 'undefined' ? window : undefined);
 };
 
-export const getOwnerViewport = (target?: EventTarget | null): VisualViewport | null => {
-  let ownerWindow = getOwnerWindow(target);
-
-  if (target === ownerWindow?.visualViewport) {
-    return ownerWindow.visualViewport;
-  }
-
-  return ownerWindow?.visualViewport ?? null;
-};
-
 /**
  * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType
  * property.
@@ -55,16 +45,16 @@ export function isNode(value: unknown): value is Node {
  * Type guard that checks if a value is a Window. Uses window self reference checks to
  * distinguish Window from other values.
  */
-export function isWindow(value: unknown): value is Window & typeof globalThis {
+function isWindow(value: unknown): value is Window & typeof globalThis {
   return typeof value === 'object' && value != null && 'window' in value && value.window === value;
 }
 
 /**
- * Type guard that checks if a value is a Document. Uses nodeType and documentElement checks to
+ * Type guard that checks if a value is a Document. Uses nodeType and host property checks to
  * distinguish Document from other values.
  */
 export function isDocument(value: unknown): value is Document {
-  return isNode(value) && value.nodeType === 9 && 'documentElement' in value;
+  return isNode(value) && value.nodeType === 9;
 }
 
 /**
@@ -72,6 +62,7 @@ export function isDocument(value: unknown): value is Document {
  * distinguish ShadowRoot from other values.
  */
 export function isShadowRoot(value: unknown): value is ShadowRoot {
+  // 11 = DOCUMENT_FRAGMENT_NODE
   return isNode(value) && value.nodeType === 11 && 'host' in value;
 }
 

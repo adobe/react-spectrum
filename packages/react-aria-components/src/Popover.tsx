@@ -97,6 +97,12 @@ export interface PopoverProps
    */
   isExiting?: boolean;
   /**
+   * Whether the popover should appear and disappear without an entry or exit animation. This is
+   * used by components such as PreviewTrigger to skip animations when quickly swapping between
+   * overlays.
+   */
+  shouldSkipAnimation?: boolean;
+  /**
    * The container element in which the overlay portal will be placed. This may have unknown
    * behavior depending on where it is portalled to.
    *
@@ -170,7 +176,10 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let localState = useOverlayTriggerState(props);
   let state =
     props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
-  let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
+  // Skip the automatic exit animation when closing instantly (e.g. swapping between previews
+  // during warmup). An explicitly provided isExiting prop still takes precedence.
+  let exitAnimation = useExitAnimation(ref, state.isOpen);
+  let isExiting = props.isExiting || (!props.shouldSkipAnimation && exitAnimation) || false;
   let isHidden = useIsHidden();
   let {direction} = useLocale();
 
@@ -211,6 +220,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   state: OverlayTriggerState;
   isEntering?: boolean;
   isExiting: boolean;
+  shouldSkipAnimation?: boolean;
   UNSTABLE_portalContainer?: Element;
   trigger?: string;
   dir?: 'ltr' | 'rtl';
@@ -233,7 +243,6 @@ function PopoverInner({
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
 
   let [isOpen, setIsOpen] = useState(false);
-  let [isDialog, setIsDialog] = useState(false);
 
   let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover(
     {
@@ -248,8 +257,11 @@ function PopoverInner({
   );
 
   let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
+  // Skip the automatic entry animation when opening instantly (e.g. swapping between previews
+  // during warmup). An explicitly provided isEntering prop still takes precedence.
+  let enterAnimation = useEnterAnimation(ref, !!placement && isOpen);
   // oxlint-disable-next-line react/react-compiler
-  let isEntering = useEnterAnimation(ref, !!placement && isOpen) || props.isEntering || false;
+  let isEntering = props.isEntering || (!props.shouldSkipAnimation && enterAnimation) || false;
   // oxlint-disable-next-line react/react-compiler
   let renderProps = useRenderProps({
     // oxlint-disable-next-line react/react-compiler
@@ -269,11 +281,14 @@ function PopoverInner({
 
   // Automatically render Popover with role=dialog except when isNonModal is true,
   // or a dialog is already nested inside the popover.
+  let shouldBeDialog =
+    // oxlint-disable-next-line react/react-compiler
+    !props.isNonModal || props.trigger === 'SubmenuTrigger' || props.trigger === 'PreviewTrigger';
   // oxlint-disable-next-line react/react-compiler
-  let shouldBeDialog = !props.isNonModal || props.trigger === 'SubmenuTrigger';
+  let [isDialog, setDialog] = useState(props.trigger === 'PreviewTrigger');
   useLayoutEffect(() => {
     if (ref.current) {
-      setIsDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
+      setDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
     }
   }, [ref, shouldBeDialog]);
 
@@ -283,6 +298,7 @@ function PopoverInner({
   useEffect(() => {
     if (
       isDialog &&
+      props.trigger !== 'PreviewTrigger' &&
       (props.trigger !== 'SubmenuTrigger' || getInteractionModality() !== 'pointer') &&
       ref.current &&
       !isFocusWithin(ref.current)
@@ -365,7 +381,7 @@ function PopoverInner({
     return (
       <Overlay
         {...props}
-        shouldContainFocus={isDialog}
+        shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
         isExiting={isExiting}
         portalContainer={UNSTABLE_portalContainer}>
         {/* oxlint-disable-next-line react/react-compiler */}
@@ -387,7 +403,7 @@ function PopoverInner({
   return (
     <Overlay
       {...props}
-      shouldContainFocus={isDialog}
+      shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
       isExiting={isExiting}
       portalContainer={UNSTABLE_portalContainer ?? groupCtx?.current ?? undefined}>
       {overlay}

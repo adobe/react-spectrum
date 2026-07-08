@@ -136,6 +136,7 @@ export {
 export {Keyboard, KeyboardContext} from '../src/Keyboard';
 export {Label, LabelContext} from '../src/Label';
 export {Link, LinkContext} from '../src/Link';
+export {PreviewTrigger} from '../src/PreviewTrigger';
 export {
   ListBoxLoadMoreItem,
   ListBox,
@@ -389,6 +390,7 @@ export type {InputProps, InputRenderProps} from '../src/Input';
 export type {SectionProps, CollectionRenderer} from '../src/Collection';
 export type {LabelProps} from '../src/Label';
 export type {LinkProps, LinkRenderProps} from '../src/Link';
+export type {PreviewTriggerProps} from '../src/PreviewTrigger';
 export type {
   ListBoxProps,
   ListBoxRenderProps,
