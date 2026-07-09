@@ -31,6 +31,7 @@ import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HoverProps, useHover} from 'react-aria/useHover';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {
   createContext,
   ForwardedRef,
@@ -39,8 +40,7 @@ import React, {
   memo,
   RefObject,
   useContext,
-  useMemo,
-  useRef
+  useMemo
 } from 'react';
 import {TextContext} from './Text';
 import {
@@ -52,7 +52,6 @@ import {
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useToken, useTokenField} from 'react-aria/useTokenField';
-import {mergeRefs} from 'react-aria/mergeRefs';
 
 export interface TokenFieldRenderProps {
   /**
@@ -231,7 +230,7 @@ export const TokenField = /*#__PURE__*/ createHideableComponent(function TokenFi
               isDisabled,
               isReadOnly,
               autocompleteProps: autocompleteProps as HTMLAttributes<HTMLDivElement>,
-              ref: inputRef
+              ref: inputRef as RefObject<HTMLDivElement | null>
             }
           ]
         ]}>

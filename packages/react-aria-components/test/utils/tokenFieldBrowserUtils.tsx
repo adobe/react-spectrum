@@ -19,8 +19,8 @@ import {render} from 'vitest-browser-react';
 import {
   Token,
   TokenField,
-  TokenInput,
   type TokenFieldProps,
+  TokenInput,
   type TokenInputProps
 } from '../../src/TokenField';
 
