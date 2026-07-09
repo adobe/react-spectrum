@@ -11,6 +11,7 @@
  */
 
 import {ClearPressResponder} from '../interactions/PressResponder';
+import {FocusableContext} from '../interactions/useFocusable';
 import {FocusScope} from '../focus/FocusScope';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -82,7 +83,9 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
 
   contents = (
     <OverlayContext.Provider value={contextValue}>
-      <ClearPressResponder>{contents}</ClearPressResponder>
+      <ClearPressResponder>
+        <FocusableContext.Provider value={null}>{contents}</FocusableContext.Provider>
+      </ClearPressResponder>
     </OverlayContext.Provider>
   );
 
