@@ -14,7 +14,14 @@ import {baseColor, focusRing, fontRelative, style} from '../style' with {type: '
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import Chevron from '../ui-icons/Chevron';
-import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {
+  Collection,
+  DOMRef,
+  forwardRefType,
+  GlobalDOMAttributes,
+  Key,
+  Node
+} from '@react-types/shared';
 import {
   getAllowedOverrides,
   StylesPropWithHeight,
@@ -202,7 +209,6 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
               scrollPaddingBottom: 0
             }}
             className={renderProps => tree(renderProps)}
-            selectionBehavior="replace"
             selectionMode="single"
             keyboardNavigationBehavior="arrow"
             disallowEmptySelection
@@ -256,11 +262,15 @@ const treeCellGrid = style({
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
+    isDescendantSelected: baseColor('neutral'),
     isDisabled: {
       default: 'gray-400',
       forcedColors: 'GrayText'
     },
     forcedColors: 'ButtonText'
+  },
+  fontWeight: {
+    isDescendantSelected: 'bold'
   },
   '--rowSelectedBorderColor': {
     type: 'outlineColor',
@@ -372,15 +382,14 @@ const selectedIndicator = style<{isDisabled: boolean}>({
   height: 18,
   width: '[2px]',
   contain: 'strict',
-  transition: {
-    default: '[translate,width,height]',
-    '@media (prefers-reduced-motion: reduce)': 'none'
-  },
-  transitionDuration: 200,
-  transitionTimingFunction: 'out',
   top: '50%',
   transform: 'translateY(-50%)',
-  insetStart: 4,
+  '--indicator-indent': {
+    type: 'width',
+    value: 4
+  },
+  insetStart:
+    '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent) + var(--indicator-indent))]',
   borderStyle: 'none',
   borderRadius: 'full'
 });
@@ -396,7 +405,12 @@ const hoveredIndicator = style({
   contain: 'strict',
   top: '50%',
   transform: 'translateY(-50%)',
-  insetStart: 4,
+  '--indicator-indent': {
+    type: 'width',
+    value: 4
+  },
+  insetStart:
+    '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent) + var(--indicator-indent))]',
   borderStyle: 'none',
   borderRadius: 'full'
 });
@@ -431,7 +445,9 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
               className={treeCellGrid({
                 isDisabled,
                 isNextSelected: isNextSelected(id, state),
-                isSelected
+                isSelected,
+                isDescendantSelected:
+                  !isExpanded && hasChildItems && hasSelectedDescendant(id, state)
               })}>
               {isFocusVisibleWithin && (
                 <div
@@ -659,4 +675,39 @@ function isFirstItem(id: Key | undefined, state: TreeState<unknown>) {
     return false;
   }
   return state.collection.getFirstKey() === id;
+}
+
+// Cache so each row doesn't have to walk up the tree every time
+let selectedAncestorsCache = new WeakMap<
+  Collection<Node<unknown>>,
+  {selection: unknown; ancestors: Set<Key>}
+>();
+
+function getSelectedAncestors(state: TreeState<unknown>): Set<Key> {
+  let {collection} = state;
+  let selection = state.selectionManager.selectedKeys;
+  let cached = selectedAncestorsCache.get(collection);
+  if (cached && cached.selection === selection) {
+    return cached.ancestors;
+  }
+
+  let ancestors = new Set<Key>();
+  for (let selectedKey of state.selectionManager.selectedKeys) {
+    let node = collection.getItem(selectedKey);
+    while (node?.parentKey != null && !ancestors.has(node.parentKey)) {
+      ancestors.add(node.parentKey);
+      node = collection.getItem(node.parentKey);
+    }
+  }
+
+  selectedAncestorsCache.set(collection, {selection, ancestors});
+  return ancestors;
+}
+
+// Whether any selected item is a descendant of `id`.
+function hasSelectedDescendant(id: Key | undefined, state: TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  return getSelectedAncestors(state).has(id);
 }
