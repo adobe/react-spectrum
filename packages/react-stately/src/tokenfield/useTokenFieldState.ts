@@ -12,6 +12,7 @@
 
 import {TokenSegmentList} from './TokenSegmentList';
 import {useControlledState} from '../utils/useControlledState';
+import {useState} from 'react';
 import {ValueBase} from '@react-types/shared';
 
 export interface TokenFieldProps<
@@ -19,23 +20,32 @@ export interface TokenFieldProps<
 > extends ValueBase<T> {}
 
 export interface TokenFieldState<T extends TokenSegmentList = TokenSegmentList> {
+  /** The current value of the token field. */
   value: T;
+  /** Sets the value of the token field. */
   setValue: (fn: T | ((value: T) => T)) => void;
+  /** Whether the token field is composing. */
+  isComposing: boolean;
+  /** Sets the composing state of the token field. */
+  setComposing: (isComposing: boolean) => void;
 }
 
 export function useTokenFieldState<T extends TokenSegmentList = TokenSegmentList>(
   props: TokenFieldProps<T>
-) {
+): TokenFieldState<T> {
   let {
     value: valueProp,
     defaultValue: defaultValueProp = new TokenSegmentList([]),
     onChange
   } = props;
 
-  let [value, setValue] = useControlledState(valueProp, defaultValueProp, onChange);
+  let [value, setValue] = useControlledState(valueProp as any, defaultValueProp, onChange);
+  let [isComposing, setComposing] = useState(false);
 
   return {
     value,
-    setValue
+    setValue,
+    isComposing,
+    setComposing
   };
 }

@@ -139,7 +139,6 @@ export interface TokenInputProps<T extends TokenSegmentList = TokenSegmentList>
 
 interface TokenInputContextValue<T extends TokenSegmentList = TokenSegmentList> {
   tokenFieldProps: HTMLAttributes<HTMLDivElement>;
-  isComposing: boolean;
   state: TokenFieldState<T>;
   isDisabled: boolean;
   isReadOnly: boolean;
@@ -180,7 +179,7 @@ export const TokenField = /*#__PURE__*/ createHideableComponent(function TokenFi
     }
   });
 
-  let {tokenFieldProps, labelProps, descriptionProps, isComposing} = useTokenField(
+  let {tokenFieldProps, labelProps, descriptionProps} = useTokenField(
     {
       ...props,
       // @ts-ignore - not a public prop, used to determine if slot is present
@@ -225,8 +224,7 @@ export const TokenField = /*#__PURE__*/ createHideableComponent(function TokenFi
             TokenInputContext,
             {
               tokenFieldProps,
-              isComposing,
-              state,
+              state: state as any,
               isDisabled,
               isReadOnly,
               autocompleteProps: autocompleteProps as HTMLAttributes<HTMLDivElement>,
@@ -248,7 +246,6 @@ export const TokenInput = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 >(props: TokenInputProps<T>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     tokenFieldProps,
-    isComposing,
     state,
     isDisabled = false,
     isReadOnly = false,
@@ -291,7 +288,7 @@ export const TokenInput = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}
       style={{...renderProps.style, ...tokenFieldProps?.style}}>
-      <CompositionRenderBlocker isComposing={isComposing}>
+      <CompositionRenderBlocker isComposing={state.isComposing}>
         {state.value.segments.map((v, i) => {
           switch (v.type) {
             case 'token': {

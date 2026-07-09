@@ -18,8 +18,7 @@ import {
   RefObject,
   useCallback,
   useMemo,
-  useRef,
-  useState
+  useRef
 } from 'react';
 import {
   Direction,
@@ -83,8 +82,6 @@ export interface TokenFieldAria {
   labelProps: DOMAttributes;
   /** Props for the text field's description element, if any. */
   descriptionProps: DOMAttributes;
-  /** Whether the input is composing. */
-  isComposing: boolean;
 }
 
 const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
@@ -128,16 +125,15 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   // Mutating the DOM in any way during composition breaks the IME, causing composition to end unexpectedly.
   // During composition, we still emit updates via onChange to ensure that things like autocomplete work,
   // but we don't actually re-render to the DOM unless the value changes from what we expect (e.g. inserting a completion).
-  let [isComposing, setComposing] = useState(false);
   let mutationTracker = useMutationTracker(ref);
   let startComposition = useCallback(() => {
     mutationTracker.start();
-    setComposing(true);
-  }, [mutationTracker]);
+    state.setComposing(true);
+  }, [state, mutationTracker]);
   let stopComposition = useCallback(() => {
     mutationTracker.stop();
-    setComposing(false);
-  }, [mutationTracker]);
+    state.setComposing(false);
+  }, [state, mutationTracker]);
 
   useEvent(ref, 'compositionstart', () => {
     startComposition();
@@ -163,7 +159,7 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   // If a prop update occurs during composition that doesn't match the expected value,
   // end composition and re-render the controlled value.
   useLayoutEffect(() => {
-    if (isComposing && value !== nextValue.current) {
+    if (state.isComposing && value !== nextValue.current) {
       stopComposition();
     }
     nextValue.current = value;
@@ -174,7 +170,7 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
     if (
       ref.current &&
       value.caretPosition &&
-      !isComposing &&
+      !state.isComposing &&
       value.caretPosition !== caretPosition.current
     ) {
       // Only move the caret when the field is already focused.
@@ -188,7 +184,7 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   // Handle text editing commands and prevent browser default behavior.
   useEvent(ref, 'beforeinput', e => {
     // Android sometimes doesn't fire a compositionend event before a regular input event.
-    if (isComposing && !e.isComposing) {
+    if (state.isComposing && !e.isComposing) {
       stopComposition();
     }
 
@@ -373,7 +369,7 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   });
 
   useSelectionChange(ref, () => {
-    if (isComposing) {
+    if (state.isComposing) {
       return;
     }
 
@@ -454,13 +450,13 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   let shortcuts: Record<string, () => boolean | void> = {
     [`${mod}+z`]: () => {
       // If composing, the browser handles undo natively.
-      if (isComposing) {
+      if (state.isComposing) {
         return false;
       }
       apply(state => state.undo());
     },
     [isMac() ? 'Shift+Meta+z' : 'Control+y']: () => {
-      if (isComposing) {
+      if (state.isComposing) {
         return false;
       }
       apply(state => state.redo());
@@ -570,8 +566,7 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
       'aria-readonly': isReadOnly,
       'aria-disabled': isDisabled,
       style: {whiteSpace: 'pre-wrap'}
-    }),
-    isComposing
+    })
   };
 }
 
