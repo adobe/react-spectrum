@@ -556,12 +556,10 @@ describe('useInteractionModality with virtual (screen reader) pointer events', f
   });
 
   it('reports virtual modality for a JAWS/NVDA Chromium screen reader pointerdown', function () {
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
+    );
 
     expect(getInteractionModality()).toBe('virtual');
   });
@@ -569,27 +567,23 @@ describe('useInteractionModality with virtual (screen reader) pointer events', f
   it('notifies useInteractionModality subscribers of virtual modality on a screen reader pointerdown', function () {
     let {result} = renderHook(() => useInteractionModality());
 
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
+    );
 
     expect(result.current).toBe('virtual');
   });
 
   it('stays virtual through the pointerup paired with a screen reader pointerdown', function () {
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
-      );
-      fireEvent(
-        document.body,
-        pointerEvent('pointerup', {pointerType: 'mouse', width: 0, height: 0})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
+    );
+    fireEvent(
+      document.body,
+      pointerEvent('pointerup', {pointerType: 'mouse', width: 0, height: 0})
+    );
 
     expect(getInteractionModality()).toBe('virtual');
   });
@@ -597,30 +591,26 @@ describe('useInteractionModality with virtual (screen reader) pointer events', f
   it('reports virtual modality for an Android TalkBack pointerdown', function () {
     platform.isAndroid.mockReturnValue(true);
 
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {
-          pointerType: 'mouse',
-          width: 1,
-          height: 1,
-          pressure: 0,
-          detail: 0
-        })
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {
+        pointerType: 'mouse',
+        width: 1,
+        height: 1,
+        pressure: 0,
+        detail: 0
+      })
+    );
 
     expect(getInteractionModality()).toBe('virtual');
     platform.isAndroid.mockReturnValue(false);
   });
 
   it('reports pointer modality for a real mouse pointerdown', function () {
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'mouse', width: 1, height: 1})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'mouse', width: 1, height: 1})
+    );
 
     expect(getInteractionModality()).toBe('pointer');
   });
@@ -628,47 +618,37 @@ describe('useInteractionModality with virtual (screen reader) pointer events', f
   it('notifies useInteractionModality subscribers of pointer modality on a real mouse pointerdown', function () {
     let {result} = renderHook(() => useInteractionModality());
 
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'mouse', width: 1, height: 1})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'mouse', width: 1, height: 1})
+    );
 
     expect(result.current).toBe('pointer');
   });
 
   it('reports pointer modality for a real touch pointerdown', function () {
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'touch', width: 20, height: 20})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'touch', width: 20, height: 20})
+    );
 
     expect(getInteractionModality()).toBe('pointer');
   });
 
   it('reports virtual modality for a JAWS/VoiceOver click with no preceding pointerdown', function () {
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'mouse', width: 1, height: 1})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'mouse', width: 1, height: 1})
+    );
     expect(getInteractionModality()).toBe('pointer');
 
-    act(() => {
-      fireEvent(document.body, pointerEvent('click', {pointerType: '', detail: 0}));
-    });
+    fireEvent(document.body, pointerEvent('click', {pointerType: '', detail: 0}));
 
     expect(getInteractionModality()).toBe('virtual');
   });
 
   it('reports keyboard modality for a keydown', function () {
-    act(() => {
-      fireEvent.keyDown(document.body, {key: 'Tab'});
-    });
+    fireEvent.keyDown(document.body, {key: 'Tab'});
 
     expect(getInteractionModality()).toBe('keyboard');
   });
@@ -676,42 +656,34 @@ describe('useInteractionModality with virtual (screen reader) pointer events', f
   it('keeps focus visible after a screen reader pointerdown', function () {
     // The user-visible consequence of the modality: isFocusVisible() is false only
     // for 'pointer', so a screen reader activation must not suppress the focus ring.
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
+    );
 
     expect(isFocusVisible()).toBe(true);
   });
 
   it('reports pointer modality for a pen pointerdown', function () {
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'pen', width: 1, height: 1})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'pen', width: 1, height: 1})
+    );
 
     expect(getInteractionModality()).toBe('pointer');
   });
 
   it('returns to pointer modality when a real mouse moves after a screen reader pointerdown', function () {
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
+    );
     expect(getInteractionModality()).toBe('virtual');
 
-    act(() => {
-      fireEvent(
-        document.body,
-        pointerEvent('pointermove', {pointerType: 'mouse', width: 1, height: 1})
-      );
-    });
+    fireEvent(
+      document.body,
+      pointerEvent('pointermove', {pointerType: 'mouse', width: 1, height: 1})
+    );
 
     expect(getInteractionModality()).toBe('pointer');
   });
