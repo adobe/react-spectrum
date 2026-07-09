@@ -1374,7 +1374,7 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
   let {onResizeStart, onResize, onResizeEnd} = useContext(ResizableTableContainerContext)!;
   let {column, triggerRef} = useContext(ColumnResizerContext)!;
   let inputRef = useRef<HTMLInputElement>(null);
-  let {resizerProps, inputProps, isResizing} = useTableColumnResize(
+  let {resizerProps, inputProps, isResizing, isMouseResizing} = useTableColumnResize(
     {
       column,
       'aria-label': props['aria-label'] || stringFormatter.format('tableResizer'),
@@ -1425,24 +1425,15 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
     }
   });
 
-  let [isMouseDown, setMouseDown] = useState(false);
-  let onPointerDown = (e: PointerEvent) => {
-    if (e.pointerType === 'mouse') {
-      setMouseDown(true);
-    }
-  };
-
-  if (!isResizing && isMouseDown) {
-    setMouseDown(false);
-  }
-
   let DOMProps = filterDOMProps(props, {global: true});
 
+  // Cursor overlay is used to style the cursor against the entire screen.
+  // Do not turn off pointer events or the cursor will no longer be styled.
   return (
     <dom.div
       ref={objectRef}
       role="presentation"
-      {...mergeProps(DOMProps, renderProps, resizerProps, {onPointerDown}, hoverProps)}
+      {...mergeProps(DOMProps, renderProps, resizerProps, hoverProps)}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
@@ -1451,9 +1442,12 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
       {renderProps.children}
       <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       {isResizing &&
-        isMouseDown &&
+        isMouseResizing &&
         ReactDOM.createPortal(
-          <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />,
+          <div
+            style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}}
+            data-testid="cursor-overlay"
+          />,
           document.body
         )}
     </dom.div>

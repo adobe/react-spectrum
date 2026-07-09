@@ -524,6 +524,7 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
                     buttonClassName: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')
                   }}
                 />
+                <Text slot="description">Alert description</Text>
                 <Button onPress={close}>Close</Button>
               </>
             )}
@@ -847,5 +848,25 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     await user.click(labelB);
     expect(onFocusB).toHaveBeenCalledTimes(1);
     expect(onBlurA).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support implicit form submission from a focused radio on Enter', async () => {
+    let onSubmit = jest.fn(e => e.preventDefault());
+    let {getAllByRole} = render(
+      <form onSubmit={onSubmit}>
+        <RadioGroup defaultValue="a">
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <Radio value="b">B</Radio>
+        </RadioGroup>
+        <button type="submit">Submit</button>
+      </form>
+    );
+
+    let radio = getAllByRole('radio')[0];
+    await user.click(radio);
+    await user.keyboard('{Enter}');
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });

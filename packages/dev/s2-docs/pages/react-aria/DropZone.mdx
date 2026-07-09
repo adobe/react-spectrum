@@ -92,6 +92,71 @@ export const description = 'An area into which one or multiple objects can be dr
   ```
 </ExampleSwitcher>
 
+## FileTrigger
+
+To allow the selection of files from the user's device, pass `FileTrigger` as a child of `DropZone`.
+
+```tsx render type="vanilla"
+"use client";
+import {DropZone, Text} from 'vanilla-starter/DropZone';
+import {FileTrigger} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+import React from 'react';
+
+function Example() {
+  let [content, setContent] = useState<string | React.ReactElement | null>(null);
+
+  async function handleFiles(files: FileList | null) {
+    let file = files && [...files].find(f => f.type.startsWith('image/'));
+    if (file) {
+      let url = URL.createObjectURL(file);
+      setContent(<img src={url} alt={file.name} style={{maxHeight: 100, maxWidth: '100%'}} />);
+    }
+  }
+
+  return (
+    <DropZone
+      getDropOperation={types => (
+        ['text/plain', 'image/jpeg', 'image/png', 'image/gif'].some(t => types.has(t))
+          ? 'copy'
+          : 'cancel'
+      )}
+      onDrop={async (event) => {
+        let item = event.items.find(item => (
+          (item.kind === 'text' && item.types.has('text/plain')) ||
+          (item.kind === 'file' && item.type.startsWith('image/'))
+        ));
+
+        if (item?.kind === 'text') {
+          let text = await item.getText('text/plain');
+          setContent(text);
+        } else if (item?.kind === 'file') {
+          let file = await item.getFile();
+          let url = URL.createObjectURL(file);
+          setContent(<img src={url} alt={item.name} style={{maxHeight: 100, maxWidth: '100%'}} />)
+        }
+      }}>
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8}}>
+        <Text slot="label">
+          {content || "Drop files here, or click Browse"}
+        </Text>
+        {/*- begin highlight -*/}
+        <FileTrigger acceptedFileTypes={['image/*']} onSelect={handleFiles}>
+          <Button>Browse</Button>
+        </FileTrigger>
+        {/*- end highlight -*/}
+      </div>
+    </DropZone>
+  );
+}
+```
+
+If a `DropZone` is rendered in a positioned scroll container, focusing the visually hidden drop
+button may cause the container to scroll. The `dropButtonStyle` prop can be used to adjust the
+position of this internal button wrapper, for example `dropButtonStyle={{position: 'fixed', top: 0,
+left: 0}}`.
+
 ## Examples
 
 <ExampleList tag="dropzone" pages={props.pages} />

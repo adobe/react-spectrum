@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback} from 'react';
+import {useCallback, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface OverlayTriggerProps {
@@ -20,6 +20,11 @@ export interface OverlayTriggerProps {
   defaultOpen?: boolean;
   /** Handler that is called when the overlay's open state changes. */
   onOpenChange?: (isOpen: boolean) => void;
+}
+
+interface Point {
+  x: number;
+  y: number;
 }
 
 export interface OverlayTriggerState {
@@ -33,6 +38,10 @@ export interface OverlayTriggerState {
   close(): void;
   /** Toggles the overlay's visibility. */
   toggle(): void;
+  /** The cursor position when the overlay was triggered, relative to the window viewport. */
+  readonly point: Point | null;
+  /** Sets the cursor position relative to the window viewport. */
+  setPoint(point: Point): void;
 }
 
 /**
@@ -45,6 +54,7 @@ export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTrigg
     props.defaultOpen || false,
     props.onOpenChange
   );
+  let [point, setPoint] = useState<Point | null>(null);
 
   const open = useCallback(() => {
     setOpen(true);
@@ -63,6 +73,8 @@ export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTrigg
     setOpen,
     open,
     close,
-    toggle
+    toggle,
+    point,
+    setPoint
   };
 }
