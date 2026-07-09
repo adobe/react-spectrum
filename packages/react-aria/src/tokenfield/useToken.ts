@@ -11,7 +11,7 @@
  */
 
 import {HTMLAttributes, RefObject, useRef, useState} from 'react';
-import {useEvent} from 'react-aria/private/utils/useEvent';
+import {useEvent} from '../utils/useEvent';
 
 export interface TokenProps {}
 

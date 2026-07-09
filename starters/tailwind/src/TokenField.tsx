@@ -6,7 +6,8 @@ import {
   Token as AriaToken,
   type TokenFieldProps as AriaTokenFieldProps,
   type TokenInputProps,
-  type TokenProps
+  type TokenProps,
+  type TokenSegmentList
 } from 'react-aria-components/TokenField';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {tv} from 'tailwind-variants';
@@ -36,21 +37,24 @@ const tokenStyles = tv({
   }
 });
 
-export interface TokenFieldProps extends Omit<AriaTokenFieldProps, 'children'> {
+export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList> extends Omit<
+  AriaTokenFieldProps<T>,
+  'children'
+> {
   label?: string;
   description?: string;
   inputRef?: React.Ref<HTMLDivElement>;
   children: TokenInputProps['children'];
 }
 
-export function TokenField({
+export function TokenField<T extends TokenSegmentList = TokenSegmentList>({
   label,
   description,
   className,
   inputRef,
   children,
   ...props
-}: TokenFieldProps) {
+}: TokenFieldProps<T>) {
   return (
     <AriaTokenField
       {...props}
