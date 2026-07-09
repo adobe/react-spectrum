@@ -148,6 +148,7 @@ describe('useOverlay', function () {
       closeWatcherInstances = [];
       MockCloseWatcher = class {
         constructor() {
+          this.oncancel = null;
           this.onclose = null;
           closeWatcherInstances.push(this);
         }
@@ -233,38 +234,67 @@ describe('useOverlay', function () {
       expect(onCloseFirst).not.toHaveBeenCalled();
     });
 
-    it('should not attach onKeyDown when CloseWatcher is supported', function () {
+    it('should dismiss on Escape when CloseWatcher is supported', function () {
       let onClose = jest.fn();
       let res = render(<Example isOpen onClose={onClose} />);
       let el = res.getByTestId('test');
 
-      // With CloseWatcher active, Escape keydown should not trigger onClose
-      // (the browser's CloseWatcher handles it instead)
       fireEvent.keyDown(el, {key: 'Escape'});
-      expect(onClose).not.toHaveBeenCalled();
-
-      // But CloseWatcher still works
-      closeWatcherInstances[0].onclose();
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
-    it('should not double-dismiss nested overlays on Escape when CloseWatcher is active', function () {
+    it('should dismiss the most recently opened overlay on Escape when focus is in an older overlay', function () {
+      let onCloseFirst = jest.fn();
+      let onCloseSecond = jest.fn();
+      let first = render(
+        <Example isOpen onClose={onCloseFirst} data-testid="first">
+          <input data-testid="first-input" />
+        </Example>
+      );
+      render(
+        <Example isOpen onClose={onCloseSecond} data-testid="second">
+          <input data-testid="second-input" />
+        </Example>
+      );
+
+      expect(closeWatcherInstances.length).toBe(2);
+      let firstInput = first.getByTestId('first-input');
+      act(() => {
+        firstInput.focus();
+      });
+      expect(document.activeElement).toBe(firstInput);
+
+      fireEvent.keyDown(firstInput, {key: 'Escape'});
+      expect(onCloseSecond).toHaveBeenCalledTimes(1);
+      expect(onCloseFirst).not.toHaveBeenCalled();
+    });
+
+    it('should only dismiss the top-most nested overlay on Escape when CloseWatcher is active', function () {
       let onCloseOuter = jest.fn();
       let onCloseInner = jest.fn();
-      let outer = render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
+      render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
+      let inner = render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
+
+      let innerEl = inner.getByTestId('inner');
+
+      fireEvent.keyDown(innerEl, {key: 'Escape'});
+      expect(onCloseInner).toHaveBeenCalledTimes(1);
+      expect(onCloseOuter).not.toHaveBeenCalled();
+    });
+
+    it('should cancel non-topmost CloseWatcher close requests when possible', function () {
+      let onCloseOuter = jest.fn();
+      let onCloseInner = jest.fn();
+      render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
       render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
 
-      let outerEl = outer.getByTestId('outer');
+      let outerCancelEvent = new Event('cancel', {cancelable: true});
+      closeWatcherInstances[0].oncancel(outerCancelEvent);
+      expect(outerCancelEvent.defaultPrevented).toBe(true);
 
-      // Simulate browser behavior: CloseWatcher fires for inner overlay
-      closeWatcherInstances[1].onclose();
-      expect(onCloseInner).toHaveBeenCalledTimes(1);
-
-      // The Escape keydown event that triggered CloseWatcher also bubbles to the
-      // outer overlay's DOM. With the fix, onKeyDown is undefined so the outer
-      // overlay is NOT dismissed.
-      fireEvent.keyDown(outerEl, {key: 'Escape'});
-      expect(onCloseOuter).not.toHaveBeenCalled();
+      let innerCancelEvent = new Event('cancel', {cancelable: true});
+      closeWatcherInstances[1].oncancel(innerCancelEvent);
+      expect(innerCancelEvent.defaultPrevented).toBe(false);
     });
 
     it('should dismiss inner then outer with native watcher stack', function () {
