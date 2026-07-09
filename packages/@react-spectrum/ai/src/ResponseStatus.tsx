@@ -23,6 +23,7 @@ import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
+import CloseCircle from '@react-spectrum/s2/icons/CloseCircle';
 import {
   DisclosureStateContext,
   Disclosure as RACDisclosure,
@@ -38,11 +39,20 @@ import intlMessages from '../intl/*.json';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {Provider} from 'react-aria-components/slots';
-import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
+import React, {
+  createContext,
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useState
+} from 'react';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+
 export interface ResponseStatusProps extends Omit<
   RACDisclosureProps,
   'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
@@ -60,10 +70,11 @@ export interface ResponseStatusProps extends Omit<
    */
   density?: 'compact' | 'regular' | 'spacious';
   /**
-   * Whether the response is still being generated. When true, a ProgressCircle replaces
-   * the chevron and the panel cannot be expanded. The trigger remains focusable.
+   * The current status of the response.
+   *
+   * @default 'loading'
    */
-  isLoading?: boolean;
+  status?: 'loading' | 'failed' | 'success';
   /**
    * The contents of the response status, consisting of a ResponseStatusTitle and
    * ResponseStatusPanel.
@@ -78,8 +89,14 @@ export interface ResponseStatusProps extends Omit<
 const ResponseStatusContext = createContext<{
   size?: 'S' | 'M' | 'L' | 'XL';
   density?: 'compact' | 'regular' | 'spacious';
-  isLoading?: boolean;
-}>({});
+  status: 'loading' | 'failed' | 'success';
+  hasPanelContent: boolean;
+  registerPanel: (mounted: boolean) => void;
+}>({
+  status: 'loading',
+  hasPanelContent: false,
+  registerPanel: () => {}
+});
 
 const responseStatus = style({
   color: 'heading',
@@ -87,24 +104,28 @@ const responseStatus = style({
 });
 
 /**
- * A ResponseStatus indicates the progress of a system response while it is begin generated and when
- * it is complete.
+ * A ResponseStatus indicates the progress of a system response while it is being generated and when
+ * it is complete. If a ResponseStatusPanel is provided, the title can be pressed to expand and
+ * collapse it.
  */
 export const ResponseStatus = forwardRef(function ResponseStatus(
   props: ResponseStatusProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {size = 'M', density = 'regular', isLoading, styles} = props;
+  let {size = 'M', density = 'regular', status = 'loading', styles} = props;
   let domRef = useDOMRef(ref);
+  let [hasPanelContent, setHasPanelContent] = useState(false);
+  let registerPanel = useCallback((mounted: boolean) => setHasPanelContent(mounted), []);
 
   let disclosureProps: Partial<RACDisclosureProps> = {};
-  if (isLoading) {
+  if (status === 'loading') {
     disclosureProps.isExpanded = false;
     disclosureProps.onExpandedChange = () => {};
   }
 
   return (
-    <Provider values={[[ResponseStatusContext, {size, density, isLoading}]]}>
+    <Provider
+      values={[[ResponseStatusContext, {size, density, status, hasPanelContent, registerPanel}]]}>
       <RACDisclosure
         {...props}
         {...disclosureProps}
@@ -202,7 +223,8 @@ const buttonStyles = style({
     isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
     isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
     isPressed: lightDark('transparent-black-300', 'transparent-white-300'),
-    isLoading: 'transparent'
+    isLoading: 'transparent',
+    isOnlyText: 'transparent'
   },
   transition: 'default',
   borderWidth: 0,
@@ -244,9 +266,9 @@ const progressCircleStyles = style({
 });
 
 /**
- * A response status title consisting of a heading and a trigger button. The leading icon is
- * a progress circle while loading and a chevron once complete; a checkmark is rendered at
- * the trailing edge of the row when not loading.
+ * A response status title consisting of a heading and a trigger button. The leading icon is a
+ * progress circle while loading and a chevron once complete and there is further content to
+ * display.
  */
 export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   props: ResponseStatusTitleProps,
@@ -257,59 +279,79 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {size = 'M', density, isLoading} = useContext(ResponseStatusContext)!;
+  let {size = 'M', density, status, hasPanelContent} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
+  let isLoading = status === 'loading';
+  let isInteractive = hasPanelContent && !isLoading;
+
+  let rowContent = (
+    <>
+      {isLoading ? (
+        <CenterBaseline>
+          <ProgressCircle
+            styles={progressCircleStyles({size})}
+            isIndeterminate
+            aria-label={stringFormatter.format('responsestatus.loading')}
+          />
+        </CenterBaseline>
+      ) : isInteractive ? (
+        <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
+          <Chevron size={size} />
+        </CenterBaseline>
+      ) : null}
+      {props.children}
+      {!isLoading && (
+        <Provider
+          values={[
+            [
+              IconContext,
+              {
+                styles: style({
+                  marginStart: 'auto',
+                  flexShrink: 0,
+                  size: {
+                    size: {
+                      S: 16,
+                      M: 20,
+                      L: 24,
+                      XL: 28
+                    }
+                  },
+                  '--iconPrimary': {
+                    type: 'fill',
+                    value: 'currentColor'
+                  }
+                })({size})
+              }
+            ]
+          ]}>
+          <CenterBaseline slot="icon">
+            {status === 'failed' ? (
+              <CloseCircle aria-hidden="true" />
+            ) : (
+              // TODO: should this be a different color? This currently matches Coworker
+              <CheckmarkCircle aria-hidden="true" />
+            )}
+          </CenterBaseline>
+        </Provider>
+      )}
+    </>
+  );
+
   return (
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
+      {/* TODO: should this still be a button if the disclosure doesnt have a panel aka no content?
+        If we just render a div, we would need all the same render props and swapping the element would mean focus
+        gets lost when it goes from a button to a div
+      */}
       <Button
-        className={renderProps => buttonStyles({...renderProps, size, density, isLoading})}
-        slot="trigger">
-        {isLoading ? (
-          <CenterBaseline>
-            <ProgressCircle
-              styles={progressCircleStyles({size})}
-              isIndeterminate
-              aria-label={stringFormatter.format('responsestatus.loading')}
-            />
-          </CenterBaseline>
-        ) : (
-          <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
-            <Chevron size={size} />
-          </CenterBaseline>
-        )}
-        {props.children}
-        {!isLoading && (
-          <Provider
-            values={[
-              [
-                IconContext,
-                {
-                  styles: style({
-                    marginStart: 'auto',
-                    flexShrink: 0,
-                    size: {
-                      size: {
-                        S: 16,
-                        M: 20,
-                        L: 24,
-                        XL: 28
-                      }
-                    },
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
-                  })({size})
-                }
-              ]
-            ]}>
-            <CenterBaseline slot="icon">
-              <CheckmarkCircle aria-hidden="true" />
-            </CenterBaseline>
-          </Provider>
-        )}
+        className={renderProps =>
+          buttonStyles({...renderProps, size, density, isLoading, isOnlyText: !isInteractive})
+        }
+        slot={isInteractive ? 'trigger' : undefined}>
+        {rowContent}
       </Button>
     </Heading>
   );
@@ -352,16 +394,22 @@ const panelInner = style({
 
 /**
  * A response status panel is a collapsible section of content that is hidden until the
- * response status is expanded. The panel cannot be expanded while `isLoading` is true.
+ * response status is expanded. The panel cannot be expanded while `status` is `'loading'`.
  */
 export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   props: ResponseStatusPanelProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {styles} = props;
-  let {size = 'M'} = useContext(ResponseStatusContext)!;
+  let {size = 'M', registerPanel} = useContext(ResponseStatusContext)!;
   const domProps = filterDOMProps(props);
   let panelRef = useDOMRef(ref);
+
+  useLayoutEffect(() => {
+    registerPanel(true);
+    return () => registerPanel(false);
+  }, [registerPanel]);
+
   return (
     <RACDisclosurePanel {...domProps} ref={panelRef} className={mergeStyles(panelStyles, styles)}>
       <div className={panelInner({size})}>{props.children}</div>
