@@ -21,6 +21,7 @@ import {
 import {
   addWindowFocusTracking,
   getInteractionModality,
+  isFocusVisible,
   setInteractionModality,
   useFocusVisible,
   useFocusVisibleListener,
@@ -670,5 +671,48 @@ describe('useInteractionModality with virtual (screen reader) pointer events', f
     });
 
     expect(getInteractionModality()).toBe('keyboard');
+  });
+
+  it('keeps focus visible after a screen reader pointerdown', function () {
+    // The user-visible consequence of the modality: isFocusVisible() is false only
+    // for 'pointer', so a screen reader activation must not suppress the focus ring.
+    act(() => {
+      fireEvent(
+        document.body,
+        pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
+      );
+    });
+
+    expect(isFocusVisible()).toBe(true);
+  });
+
+  it('reports pointer modality for a pen pointerdown', function () {
+    act(() => {
+      fireEvent(
+        document.body,
+        pointerEvent('pointerdown', {pointerType: 'pen', width: 1, height: 1})
+      );
+    });
+
+    expect(getInteractionModality()).toBe('pointer');
+  });
+
+  it('returns to pointer modality when a real mouse moves after a screen reader pointerdown', function () {
+    act(() => {
+      fireEvent(
+        document.body,
+        pointerEvent('pointerdown', {pointerType: 'mouse', width: 0, height: 0})
+      );
+    });
+    expect(getInteractionModality()).toBe('virtual');
+
+    act(() => {
+      fireEvent(
+        document.body,
+        pointerEvent('pointermove', {pointerType: 'mouse', width: 1, height: 1})
+      );
+    });
+
+    expect(getInteractionModality()).toBe('pointer');
   });
 });
