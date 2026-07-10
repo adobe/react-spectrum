@@ -8,6 +8,7 @@ export {
   PromptFieldSubmitButton,
   PromptTokenField,
   AttachFileMenuItem,
+  InsertCallbackMenuItem,
   InsertMenuButton,
   InsertTextMenuItem,
   InsertTokenMenuItem,

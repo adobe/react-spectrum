@@ -14,6 +14,7 @@ import {action} from 'storybook/actions';
 import {
   AttachFileMenuItem,
   AutoLinkingSegmentList,
+  InsertCallbackMenuItem,
   InsertMenuButton,
   InsertTextMenuItem,
   InsertTokenMenuItem,
@@ -158,11 +159,14 @@ function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks)
             <Text slot="description">{item.description}</Text>
           </MenuItem>
         ) : item.command === '/compact' ? (
-          <MenuItem key={item.command} id={item.command} onAction={callbacks?.onCompact}>
+          <InsertCallbackMenuItem
+            key={item.command}
+            id={item.command}
+            onAction={callbacks?.onCompact}>
             <Prompt />
             <Text slot="label">{item.command}</Text>
             <Text slot="description">{item.description}</Text>
-          </MenuItem>
+          </InsertCallbackMenuItem>
         ) : item.command === '/feedback' || item.command === '/btw' ? (
           // coworker doesn't seem to have any text insertion commands anymore, so I added these for testing
           <InsertTextMenuItem key={item.command} id={item.command} value={item}>
@@ -320,7 +324,6 @@ function EverythingRender(args) {
                 setValue(new AutoLinkingSegmentList([]));
                 setAttachments([]);
               },
-              // TODO: since this ends up being called be a normal menu item, it ends up not closing the autocomplete menu...
               onCompact: action('onCompact')
             })
           }
@@ -353,6 +356,9 @@ function EverythingRender(args) {
                       <Text slot="description">{item.description}</Text>
                     </MenuItem>
                   ) : item.command === '/compact' ? (
+                    // TODO: technically can be a standard menu item since triggering this action
+                    // from the + menu means no partial text to clear, but maybe we can just standardize
+                    // InsertCallbackMenuItem as the "basic" menu item for prompt field
                     <MenuItem id={item.command} onAction={action('onCompact')}>
                       <Text slot="label">{item.command}</Text>
                       <Text slot="description">{item.description}</Text>

@@ -700,3 +700,19 @@ export function InsertTextMenuItem(props: MenuItemProps) {
 
   return <MenuItem {...props} onAction={() => insert(props.value)} />;
 }
+
+// specifically for menu items that only trigger a callback in the autocomplete menu
+// since they dont end up inserting a token or text, we need to clear the partial text that the user used
+// to filter the menu
+export function InsertCallbackMenuItem(props: MenuItemProps) {
+  let insert = useInsertPromptSegment(() => []);
+  return (
+    <MenuItem
+      {...props}
+      onAction={() => {
+        insert(undefined);
+        props.onAction?.();
+      }}
+    />
+  );
+}
