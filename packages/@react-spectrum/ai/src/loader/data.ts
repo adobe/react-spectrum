@@ -31,18 +31,18 @@ interface BuildOptions {
 // ai-logo: original 12-cell diamond layout with hand-tuned timings.
 // ─────────────────────────────────────────────────────────────
 export const aiLogo: Cell[] = [
-  {cx: 500, cy: 800, outer: true, stagger: 0, exitStart: 47, fadeIn: [1, 4], fadeOut: [47, 59]},
-  {cx: 300, cy: 700, outer: true, stagger: 2, exitStart: 48, fadeIn: [4, 7], fadeOut: [48, 60]},
-  {cx: 700, cy: 700, outer: true, stagger: 4, exitStart: 49, fadeIn: [6, 9], fadeOut: [49, 61]},
-  {cx: 400, cy: 600, outer: false, stagger: 6, exitStart: 50, fadeIn: [9, 12], fadeOut: [50, 62]},
-  {cx: 600, cy: 600, outer: false, stagger: 8, exitStart: 51, fadeIn: [13, 16], fadeOut: [51, 63]},
-  {cx: 200, cy: 500, outer: true, stagger: 10, exitStart: 52, fadeIn: [14, 17], fadeOut: [52, 64]},
-  {cx: 800, cy: 500, outer: true, stagger: 14, exitStart: 54, fadeIn: [18, 21], fadeOut: [54, 66]},
-  {cx: 400, cy: 400, outer: false, stagger: 16, exitStart: 55, fadeIn: [21, 24], fadeOut: [55, 67]},
-  {cx: 600, cy: 400, outer: false, stagger: 18, exitStart: 56, fadeIn: [23, 26], fadeOut: [56, 68]},
-  {cx: 300, cy: 300, outer: true, stagger: 20, exitStart: 57, fadeIn: [26, 29], fadeOut: [57, 69]},
-  {cx: 700, cy: 300, outer: true, stagger: 22, exitStart: 58, fadeIn: [27, 30], fadeOut: [58, 70]},
-  {cx: 500, cy: 200, outer: true, stagger: 24, exitStart: 59, fadeIn: [31, 34], fadeOut: [59, 71]}
+  {cx: 240, cy: 360, outer: true, stagger: 0, exitStart: 47, fadeIn: [1, 4], fadeOut: [47, 59]},
+  {cx: 160, cy: 320, outer: true, stagger: 2, exitStart: 48, fadeIn: [4, 7], fadeOut: [48, 60]},
+  {cx: 320, cy: 320, outer: true, stagger: 4, exitStart: 49, fadeIn: [6, 9], fadeOut: [49, 61]},
+  {cx: 200, cy: 280, outer: false, stagger: 6, exitStart: 50, fadeIn: [9, 12], fadeOut: [50, 62]},
+  {cx: 280, cy: 280, outer: false, stagger: 8, exitStart: 51, fadeIn: [13, 16], fadeOut: [51, 63]},
+  {cx: 120, cy: 240, outer: true, stagger: 10, exitStart: 52, fadeIn: [14, 17], fadeOut: [52, 64]},
+  {cx: 360, cy: 240, outer: true, stagger: 14, exitStart: 54, fadeIn: [18, 21], fadeOut: [54, 66]},
+  {cx: 200, cy: 200, outer: false, stagger: 16, exitStart: 55, fadeIn: [21, 24], fadeOut: [55, 67]},
+  {cx: 280, cy: 200, outer: false, stagger: 18, exitStart: 56, fadeIn: [23, 26], fadeOut: [56, 68]},
+  {cx: 160, cy: 160, outer: true, stagger: 20, exitStart: 57, fadeIn: [26, 29], fadeOut: [57, 69]},
+  {cx: 320, cy: 160, outer: true, stagger: 22, exitStart: 58, fadeIn: [27, 30], fadeOut: [58, 70]},
+  {cx: 240, cy: 120, outer: true, stagger: 24, exitStart: 59, fadeIn: [31, 34], fadeOut: [59, 71]}
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -697,8 +697,8 @@ export function buildCells(positions: number[][], options: BuildOptions = {}): C
     const stagger = staggers[i];
     const exitStart = 47 + (stagger / maxStagger) * 12;
     return {
-      cx: 200 + col * 100,
-      cy: 200 + (row + rowOffset) * 100,
+      cx: 120 + col * 40,
+      cy: 120 + (row + rowOffset) * 40,
       outer: false,
       stagger,
       exitStart,

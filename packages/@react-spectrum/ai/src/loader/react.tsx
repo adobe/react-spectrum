@@ -35,19 +35,18 @@ const TOTAL_FRAMES = 72;
 const FPS = 30;
 const DURATION_MS = (TOTAL_FRAMES / FPS) * 1000;
 
-// Per-cell vertical offsets in the 1000-unit VIEWBOX space: start off
+// Per-cell vertical offsets in the 24-unit space: start off
 // the top, overshoot just past the settled position, exit off the bottom.
-const Y_START = -876.156;
-const Y_OVERSHOOT = 18;
-const Y_EXIT = 1015;
+const Y_START = -26;
+const Y_OVERSHOOT = 1;
+const Y_EXIT = 26;
 
-// The animation lives in a fixed VIEWBOX-sized coordinate space (matching
-// the source Lottie's 1000×1000 canvas) that is scaled down to the
+// The animation lives in a fixed VIEWBOX-sized coordinate space that is scaled down to the
 // rendered `size`. Cells are absolutely positioned in this space, so all
 // the translateY offsets below are in these units — identical to the old
 // SVG viewBox math, just on HTML elements the compositor can accelerate.
-const VIEWBOX = 1000;
-const CELL = 100;
+const VIEWBOX = 480;
+const CELL = VIEWBOX / 12;
 
 // ─────────────────────────────────────────────────────────────
 // CSS @keyframes generation. Each piecewise segment of the motion
@@ -148,7 +147,6 @@ interface PixelLoaderProps {
   speed?: number;
   color?: string;
   className?: string;
-  style?: React.CSSProperties;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -161,13 +159,12 @@ interface PixelLoaderProps {
 // ─────────────────────────────────────────────────────────────
 export function PixelLoader(props: PixelLoaderProps) {
   const {
-    size = 64,
+    size = 21,
     playing = true,
     icon = aiLogo,
     speed = 1,
     color = 'currentColor',
     className,
-    style,
     ...rest
   } = props;
 
@@ -212,8 +209,14 @@ export function PixelLoader(props: PixelLoaderProps) {
   const iteration = isSequence ? '1 forwards' : 'infinite';
 
   // Map the VIEWBOX coordinate space down to the rendered size.
-  const px = typeof size === 'number' ? size : parseFloat(size);
-  const scaleFactor = px / VIEWBOX;
+  const cellSize = size / 7;
+  const offset = (size - cellSize * 7) / 2;
+  const matrix = Array.from({length: 7}, (_, i) => Array.from({length: 7}, (_, j) => false));
+  for (let c of cells) {
+    let x = (c.cx - 120) / CELL;
+    let y = (c.cy - 120) / CELL;
+    matrix[y][x] = true;
+  }
 
   return (
     <div
@@ -225,24 +228,21 @@ export function PixelLoader(props: PixelLoaderProps) {
         height: size,
         lineHeight: 0,
         overflow: 'clip',
-        position: 'relative',
-        ...style
+        position: 'relative'
       }}
       {...rest}>
       {playing ? <style>{css}</style> : null}
-      {/* VIEWBOX → size scale, mapping the 1000-unit coordinate space to `size`.
-          Keyed by `tick` so each sequence swap remounts and restarts cleanly. */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: VIEWBOX,
-          height: VIEWBOX,
-          transformOrigin: '0 0',
-          transform: `scale(${scaleFactor})`
-        }}>
-        {cells.map((c, i) => (
+      {cells.map((c, i) => {
+        let x = (c.cx - 120) / CELL;
+        let y = (c.cy - 120) / CELL;
+
+        // Convex-corner rounding: round a corner only when both orthogonal neighbors toward it are absent.
+        let left = matrix[y][x - 1];
+        let right = matrix[y][x + 1];
+        let top = matrix[y - 1]?.[x];
+        let bottom = matrix[y + 1]?.[x];
+        let corner = (a, b) => (!a && !b ? '1px' : '0px');
+        return (
           // When not playing, cells render with no animation — at their
           // settled position (left/top) and fully opaque, i.e. the
           // fully-assembled poster pose.
@@ -250,10 +250,11 @@ export function PixelLoader(props: PixelLoaderProps) {
             key={i}
             style={{
               position: 'absolute',
-              left: c.cx - CELL / 2,
-              top: c.cy - CELL / 2,
-              width: CELL,
-              height: CELL,
+              left: x * cellSize + offset,
+              top: y * cellSize + offset,
+              width: cellSize,
+              height: cellSize,
+              borderRadius: `${corner(left, top)} ${corner(right, top)} ${corner(right, bottom)} ${corner(left, bottom)}`,
               backgroundColor: color,
               ...(playing && {
                 animation:
@@ -263,8 +264,8 @@ export function PixelLoader(props: PixelLoaderProps) {
               })
             }}
           />
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }

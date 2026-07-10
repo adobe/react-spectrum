@@ -307,12 +307,16 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         display: 'flex',
         gap: 12,
         alignItems: 'baseline',
-        color: 'body',
+        color: {
+          default: 'transparent-overlay-600',
+          isFocused: 'body'
+        },
+        transition: 'default',
         paddingStart: 4,
         width: 'full'
-      })}>
+      })({isFocused: isFocused || prompt.segments.length > 0})}>
       <CenterBaseline>
-        <PixelLoader size={24} playing={isGenerating} icon={pixelLoader} />
+        <PixelLoader playing={isGenerating} icon={pixelLoader} />
       </CenterBaseline>
       <Autocomplete>
         <TokenField

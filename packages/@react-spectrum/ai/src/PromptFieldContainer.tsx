@@ -125,10 +125,12 @@ const containerBackground = css(`
       --bg-stop-3: light-dark(white, ${color('gray-75')});
       --bg-stop-4: light-dark(white, ${color('gray-75')});
       --border-color: ${token(`container.border.focus`)};
+      --drop-shadow-color: transparent;
 
       &[data-hovered] {
         ${stops('idle', 'hover', 'subtle')}
         --border-color: ${token(`container.border.default`)};
+        --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
       }
     }
 
