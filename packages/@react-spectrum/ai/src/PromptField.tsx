@@ -50,6 +50,7 @@ import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 
 export interface PromptFieldAttachment {
@@ -61,6 +62,14 @@ export interface PromptFieldAttachment {
 export interface PromptFieldProps {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
+  // TODO: mirrors tokenfield, maybe should also be a generic too
+  value?: TokenSegmentList;
+  defaultValue?: TokenSegmentList;
+  onChange?: (value: TokenSegmentList) => void;
+  // TODO: discuss, I can imagine a case where we also want to prefill these
+  attachments?: PromptFieldAttachment[];
+  defaultAttachments?: PromptFieldAttachment[];
+  onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
   onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
   isDisabled?: boolean;
@@ -87,7 +96,7 @@ interface PromptFieldState {
 
 // TODO: make this customizable
 const tokenRegex = /(?<=\s|^)(https?:\/\/)?(www\.)?([^/\s]+\.[a-z]{2,}(\/\S+)?)(?=\s)/g;
-class AutoLinkingSegmentList extends TokenSegmentList {
+export class AutoLinkingSegmentList extends TokenSegmentList {
   tokenize(text: string): TokenFieldSegment[] {
     if (text.length === 0) {
       return [{type: 'text', text}];
@@ -147,8 +156,16 @@ export function PromptField(props: PromptFieldProps) {
     onAddAttachments,
     onRemoveAttachments
   } = props;
-  let [prompt, setPrompt] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
-  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
+  let [prompt, setPrompt] = useControlledState(
+    props.value,
+    props.defaultValue ?? new AutoLinkingSegmentList([]),
+    props.onChange
+  );
+  let [attachments, setAttachments] = useControlledState(
+    props.attachments,
+    props.defaultAttachments ?? [],
+    props.onAttachmentsChange
+  );
 
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
@@ -179,14 +196,20 @@ export function PromptField(props: PromptFieldProps) {
   let {onFocusChange} = useContext(PromptFocusContext);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
 
+  let isPromptControlled = props.value !== undefined;
+  let isAttachmentsControlled = props.attachments !== undefined;
   let onSubmit = () => {
     if (prompt.segments.length === 0 || isDisabled) {
       return;
     }
 
     props.onSubmit?.(prompt, attachments);
-    setPrompt(new AutoLinkingSegmentList([]));
-    setAttachments([]);
+    if (!isPromptControlled) {
+      setPrompt(new AutoLinkingSegmentList([]));
+    }
+    if (!isAttachmentsControlled) {
+      setAttachments([]);
+    }
     inputRef.current?.focus();
   };
 

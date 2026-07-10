@@ -10,17 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {
   AttachFileMenuItem,
+  AutoLinkingSegmentList,
   InsertMenuButton,
   InsertTokenMenuItem,
   PromptField,
+  PromptFieldAttachment,
   PromptFieldAttachmentList,
   PromptFieldSubmitButton,
   PromptFieldToolbar,
   PromptToken,
   PromptTokenField
 } from '../src/PromptField';
+import {TokenSegmentList} from '../src/TokenSegmentList';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {Attachment} from '../src/AttachmentList';
 import Brand from '@react-spectrum/s2/icons/Brand';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
@@ -178,8 +183,31 @@ interface UploadState {
   progress?: number;
 }
 
+let prompts = [
+  new AutoLinkingSegmentList([
+    {type: 'text', text: 'Analyze '},
+    {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
+    {type: 'text', text: ' and suggest targeting strategies'}
+  ]),
+  new AutoLinkingSegmentList([
+    {type: 'text', text: 'Write a brief for '},
+    {
+      type: 'token',
+      text: 'Spring Launch 2026',
+      value: {type: 'campaign', title: 'Spring Launch 2026'}
+    }
+  ]),
+  new AutoLinkingSegmentList([
+    {type: 'text', text: 'Summarize the '},
+    {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}},
+    {type: 'text', text: ' journey performance https://test.com '}
+  ])
+];
+
 function EverythingRender(args) {
   let {placeholder, ...otherArgs} = args;
+  let [value, setValue] = useState<TokenSegmentList>(() => new AutoLinkingSegmentList([]));
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
 
   let mockUpload = async (id: string) => {
@@ -202,106 +230,125 @@ function EverythingRender(args) {
   };
 
   return (
-    <PromptField
-      {...otherArgs}
-      acceptedAttachmentTypes={['image/*']}
-      onAddAttachments={attachments => {
-        setAttachmentState(prev => {
-          let newState = new Map(prev);
-          attachments.forEach(attachment => {
-            newState.set(attachment.id, {status: 'uploading', progress: 0});
-            mockUpload(attachment.id);
-          });
-          return newState;
-        });
-      }}
-      onRemoveAttachments={attachments => {
-        setAttachmentState(prev => {
-          let newState = new Map(prev);
-          attachments.forEach(attachment => {
-            newState.delete(attachment.id);
-          });
-          return newState;
-        });
-      }}>
-      <PromptFieldAttachmentList dependencies={[attachmentState]}>
-        {attachment => {
-          let state = attachmentState.get(attachment.id);
-          return (
-            <Attachment
-              uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
-              {/* TODO: what about non-image attachments? */}
-              {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
-            </Attachment>
-          );
+    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+      <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
+        {prompts.map((prompt, i) => (
+          <ActionButton key={i} onPress={() => setValue(prompt)}>
+            {prompt.toString()}
+          </ActionButton>
+        ))}
+      </div>
+      <PromptField
+        {...otherArgs}
+        value={value}
+        onChange={setValue}
+        attachments={attachments}
+        onAttachmentsChange={setAttachments}
+        onSubmit={prompt => {
+          action('onSubmit')(prompt.toString());
+          setValue(new AutoLinkingSegmentList([]));
+          setAttachments([]);
+          setAttachmentState(new Map());
         }}
-      </PromptFieldAttachmentList>
-      <PromptTokenField
-        completionTrigger={/(?<=^|\s)[@/]/}
-        renderCompletions={renderCompletions}
-        placeholder={placeholder}>
-        {segment => (
-          <PromptToken>
-            {icons[segment.value?.type]}
-            {segment.text}
-          </PromptToken>
-        )}
-      </PromptTokenField>
-      <PromptFieldToolbar>
-        <InsertMenuButton>
-          <AttachFileMenuItem />
-          <SubmenuTrigger>
-            <MenuItem>
-              <Prompt />
-              <Text>Commands</Text>
-            </MenuItem>
-            <Menu items={slashCommands.filter(item => item.type === 'command')}>
-              {item => (
-                <InsertTokenMenuItem id={item.command}>
-                  <Text slot="label">{item.command}</Text>
-                  <Text slot="description">{item.description}</Text>
-                </InsertTokenMenuItem>
-              )}
-            </Menu>
-          </SubmenuTrigger>
-          <SubmenuTrigger>
-            <MenuItem>
-              <Plugin />
-              <Text>Skills</Text>
-            </MenuItem>
-            <Menu items={slashCommands.filter(item => item.type === 'skill')}>
-              {item => (
-                <InsertTokenMenuItem id={item.command}>
-                  <Text slot="label">{item.command}</Text>
-                  <Text slot="description">{item.description}</Text>
-                </InsertTokenMenuItem>
-              )}
-            </Menu>
-          </SubmenuTrigger>
-          <SubmenuTrigger>
-            <MenuItem>
-              <Data />
-              <Text>Reference an object</Text>
-            </MenuItem>
-            <Menu items={objects}>
-              {item => (
-                <MenuSection>
-                  <Header>
-                    <Heading>{item.section}</Heading>
-                  </Header>
-                  <Collection items={item.items}>
-                    {item => (
-                      <InsertTokenMenuItem id={item.title}>{item.title}</InsertTokenMenuItem>
-                    )}
-                  </Collection>
-                </MenuSection>
-              )}
-            </Menu>
-          </SubmenuTrigger>
-        </InsertMenuButton>
-        <PromptFieldSubmitButton />
-      </PromptFieldToolbar>
-    </PromptField>
+        acceptedAttachmentTypes={['image/*']}
+        onAddAttachments={newAttachments => {
+          setAttachmentState(prev => {
+            let newState = new Map(prev);
+            newAttachments.forEach(attachment => {
+              newState.set(attachment.id, {status: 'uploading', progress: 0});
+              mockUpload(attachment.id);
+            });
+            return newState;
+          });
+        }}
+        onRemoveAttachments={removedAttachments => {
+          setAttachmentState(prev => {
+            let newState = new Map(prev);
+            removedAttachments.forEach(attachment => {
+              newState.delete(attachment.id);
+            });
+            return newState;
+          });
+        }}>
+        <PromptFieldAttachmentList dependencies={[attachmentState]}>
+          {attachment => {
+            let state = attachmentState.get(attachment.id);
+            return (
+              <Attachment
+                uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
+                {/* TODO: what about non-image attachments? */}
+                {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+              </Attachment>
+            );
+          }}
+        </PromptFieldAttachmentList>
+        <PromptTokenField
+          completionTrigger={/(?<=^|\s)[@/]/}
+          renderCompletions={renderCompletions}
+          placeholder={placeholder}>
+          {segment => (
+            <PromptToken>
+              {icons[segment.value?.type]}
+              {segment.text}
+            </PromptToken>
+          )}
+        </PromptTokenField>
+        <PromptFieldToolbar>
+          <InsertMenuButton>
+            <AttachFileMenuItem />
+            <SubmenuTrigger>
+              <MenuItem>
+                <Prompt />
+                <Text>Commands</Text>
+              </MenuItem>
+              <Menu items={slashCommands.filter(item => item.type === 'command')}>
+                {item => (
+                  <InsertTokenMenuItem id={item.command}>
+                    <Text slot="label">{item.command}</Text>
+                    <Text slot="description">{item.description}</Text>
+                  </InsertTokenMenuItem>
+                )}
+              </Menu>
+            </SubmenuTrigger>
+            <SubmenuTrigger>
+              <MenuItem>
+                <Plugin />
+                <Text>Skills</Text>
+              </MenuItem>
+              <Menu items={slashCommands.filter(item => item.type === 'skill')}>
+                {item => (
+                  <InsertTokenMenuItem id={item.command}>
+                    <Text slot="label">{item.command}</Text>
+                    <Text slot="description">{item.description}</Text>
+                  </InsertTokenMenuItem>
+                )}
+              </Menu>
+            </SubmenuTrigger>
+            <SubmenuTrigger>
+              <MenuItem>
+                <Data />
+                <Text>Reference an object</Text>
+              </MenuItem>
+              <Menu items={objects}>
+                {item => (
+                  <MenuSection>
+                    <Header>
+                      <Heading>{item.section}</Heading>
+                    </Header>
+                    <Collection items={item.items}>
+                      {item => (
+                        <InsertTokenMenuItem id={item.title}>{item.title}</InsertTokenMenuItem>
+                      )}
+                    </Collection>
+                  </MenuSection>
+                )}
+              </Menu>
+            </SubmenuTrigger>
+          </InsertMenuButton>
+          <PromptFieldSubmitButton />
+        </PromptFieldToolbar>
+      </PromptField>
+    </div>
   );
 }
 

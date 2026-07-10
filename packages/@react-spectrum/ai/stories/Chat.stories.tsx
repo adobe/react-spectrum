@@ -21,6 +21,7 @@ import {Image} from '@react-spectrum/s2/Image';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
+  AutoLinkingSegmentList,
   MessageFeedback,
   MessageSource,
   MessageSuggestion,
@@ -41,7 +42,7 @@ import {
 } from '@react-spectrum/ai';
 import {action} from 'storybook/actions';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactNode, useRef, useState} from 'react';
+import {ReactNode, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
@@ -218,6 +219,16 @@ function StreamingChatRender() {
   let nextId = useRef(initialResponses.length);
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
+  let [promptValue, setPromptValue] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
+  let followUpMessage = useRef<TokenSegmentList | null>(null);
+
+  useEffect(() => {
+    if (!isGenerating && followUpMessage.current) {
+      let followup = followUpMessage.current;
+      followUpMessage.current = null;
+      handleSend(followup);
+    }
+  }, [isGenerating]);
 
   function handleSend(prompt: TokenSegmentList) {
     setGenerating(true);
@@ -543,7 +554,12 @@ function StreamingChatRender() {
           </Thread>
         </div>
         <PromptField
-          onSubmit={handleSend}
+          value={promptValue}
+          onChange={setPromptValue}
+          onSubmit={prompt => {
+            setPromptValue(new AutoLinkingSegmentList([]));
+            handleSend(prompt);
+          }}
           isGenerating={isGenerating}
           onStop={() => {
             setGenerating(false);
@@ -562,14 +578,21 @@ function StreamingChatRender() {
                   return;
                 }
 
+                // TODO: we could make this even more realistic but for now just fire storybook event
+                // and add follow up message to queue
                 if (e.key === 'Enter' && !e.altKey) {
                   e.preventDefault();
-                  // TODO: implement steering, also not sure why action wasn't working...
-                  console.log('calling steer');
+                  if (promptValue.segments.length > 0) {
+                    action('onSteer')(promptValue.toString());
+                    setPromptValue(new AutoLinkingSegmentList([]));
+                  }
                 } else if (e.key === 'Enter' && e.altKey) {
                   e.preventDefault();
-                  // TODO:  implement followup
-                  console.log('calling followup');
+                  if (promptValue.segments.length > 0) {
+                    action('onFollowUp')(promptValue.toString());
+                    followUpMessage.current = promptValue;
+                    setPromptValue(new AutoLinkingSegmentList([]));
+                  }
                 }
               }}
             />

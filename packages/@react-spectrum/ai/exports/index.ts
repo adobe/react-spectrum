@@ -3,6 +3,7 @@ export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
+  AutoLinkingSegmentList,
   PromptField,
   PromptFieldSubmitButton,
   PromptTokenField,
