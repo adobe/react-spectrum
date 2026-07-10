@@ -33,7 +33,8 @@ import {
   Position,
   TokenFieldSegment,
   TokenSegment,
-  TokenSegmentList
+  TokenSegmentList,
+  TokenSegmentListOptions
 } from './TokenSegmentList';
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group} from 'react-aria-components/Group';
@@ -46,7 +47,7 @@ import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Men
 // eslint-disable-next-line
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
-import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
+import {positionToDOMRange, setCursor, Token, TokenField, TokenProps} from './TokenField';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -96,30 +97,47 @@ interface PromptFieldState {
 
 // TODO: make this customizable
 const tokenRegex = /(?<=\s|^)(https?:\/\/)?(www\.)?([^/\s]+\.[a-z]{2,}(\/\S+)?)(?=\s)/g;
+function tokenizeURLs(text: string): TokenFieldSegment[] {
+  if (text.length === 0) {
+    return [{type: 'text', text}];
+  }
+
+  tokenRegex.lastIndex = 0;
+
+  let match: RegExpExecArray | null = null;
+  let start = 0;
+  let segments: TokenFieldSegment[] = [];
+  while ((match = tokenRegex.exec(text))) {
+    if (match.index > start) {
+      segments.push({type: 'text', text: text.slice(start, match.index)});
+    }
+    segments.push({type: 'token', text: match[3], value: {type: 'url', url: match[0]}});
+    start = match.index + match[0].length;
+  }
+
+  if (start < text.length) {
+    segments.push({type: 'text', text: text.slice(start)});
+  }
+
+  return segments;
+}
+
 export class AutoLinkingSegmentList extends TokenSegmentList {
-  tokenize(text: string): TokenFieldSegment[] {
-    if (text.length === 0) {
-      return [{type: 'text', text}];
-    }
-
-    tokenRegex.lastIndex = 0;
-
-    let match: RegExpExecArray | null = null;
-    let start = 0;
-    let segments: TokenFieldSegment[] = [];
-    while ((match = tokenRegex.exec(text))) {
-      if (match.index > start) {
-        segments.push({type: 'text', text: text.slice(start, match.index)});
+  // attempt to convert any text to url tokens if any
+  constructor(tokens: readonly TokenFieldSegment[], options?: TokenSegmentListOptions) {
+    let processedTokens: TokenFieldSegment[] = [];
+    for (let seg of tokens) {
+      if (seg.type === 'text') {
+        processedTokens.push(...tokenizeURLs(seg.text));
+      } else {
+        processedTokens.push(seg);
       }
-      segments.push({type: 'token', text: match[3], value: {type: 'url', url: match[0]}});
-      start = match.index + match[0].length;
     }
+    super(processedTokens, options);
+  }
 
-    if (start < text.length) {
-      segments.push({type: 'text', text: text.slice(start)});
-    }
-
-    return segments;
+  tokenize(text: string): TokenFieldSegment[] {
+    return tokenizeURLs(text);
   }
 }
 
@@ -642,9 +660,10 @@ export function AttachFileMenuItem() {
 
 export function InsertTokenMenuItem(props: MenuItemProps) {
   let {setPrompt, inputRef} = useContext(PromptFieldContext);
+  let pendingCaret = useRef<Position | null>(null);
   let onAction = (item: any) => {
-    setPrompt(value =>
-      value.replaceRangeWithSegments(
+    setPrompt(value => {
+      let newValue = value.replaceRangeWithSegments(
         value.caretPosition,
         value.caretPosition,
         [
@@ -656,12 +675,18 @@ export function InsertTokenMenuItem(props: MenuItemProps) {
           {type: 'text', text: ' '}
         ],
         false // Don't coalesce in undo/redo history.
-      )
-    );
+      );
+      pendingCaret.current = newValue.caretPosition;
+      return newValue;
+    });
 
-    // Wait for popover animation
+    // Wait for popover animation, then restore cursor to after the inserted token
     setTimeout(() => {
-      inputRef.current?.focus();
+      if (inputRef.current && pendingCaret.current) {
+        inputRef.current.focus();
+        setCursor(inputRef.current, pendingCaret.current);
+        pendingCaret.current = null;
+      }
     }, 400);
   };
 

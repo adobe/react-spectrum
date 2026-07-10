@@ -200,7 +200,8 @@ let prompts = [
   new AutoLinkingSegmentList([
     {type: 'text', text: 'Summarize the '},
     {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}},
-    {type: 'text', text: ' journey performance https://test.com '}
+    // TODO: note this needs a space after test.com for it to be autotokenized
+    {type: 'text', text: ' journey performance from test.com '}
   ])
 ];
 

@@ -230,6 +230,21 @@ function StreamingChatRender() {
     }
   }, [isGenerating]);
 
+  // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
+  function handleStop() {
+    followUpMessage.current = null;
+    timeouts.current.forEach(clearTimeout);
+    timeouts.current = [];
+    setMessages(prev =>
+      prev.map(m =>
+        (m.type === 'system' || m.type === 'status') && m.isStreaming
+          ? {...m, isStreaming: false}
+          : m
+      )
+    );
+    setGenerating(false);
+  }
+
   function handleSend(prompt: TokenSegmentList) {
     setGenerating(true);
     // user message added first so its announcement plays before
@@ -561,11 +576,7 @@ function StreamingChatRender() {
             handleSend(prompt);
           }}
           isGenerating={isGenerating}
-          onStop={() => {
-            setGenerating(false);
-            timeouts.current.forEach(clearTimeout);
-            timeouts.current = [];
-          }}>
+          onStop={handleStop}>
           <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
             <PromptTokenField
               placeholder={
@@ -593,6 +604,9 @@ function StreamingChatRender() {
                     followUpMessage.current = promptValue;
                     setPromptValue(new AutoLinkingSegmentList([]));
                   }
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  handleStop();
                 }
               }}
             />
