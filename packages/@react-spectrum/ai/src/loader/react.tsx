@@ -1,19 +1,18 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 // React pixel-fall loader. Renders plain HTML divs and lets the browser
-// drive the animation natively via generated CSS @keyframes — no
-// requestAnimationFrame loop, and no SVG. Cells animate only `transform`
-// and `opacity`, with exactly ONE `replace` animation per property per
-// cell, so Chrome composites both on the GPU (off the main thread) for
-// near-zero idle CPU. (An earlier shared-keyframe variant using
-// `animation-composition: add` and stacked opacity animations was ~2x
-// the CPU because additive/stacked animations fall back to the main
-// thread — composited residency matters far more than keyframe count.)
-//
-// The easing control points and Y offsets are the single
-// source of truth — the keyframes below are emitted from them. When not
-// playing, cells render with no animation: settled (translateY 0) and
-// opaque, i.e. the fully-assembled poster pose.
-//
-// Multi-icon sequences (presets) play one icon per 2.4s cycle and
+// drive the animation natively via generated CSS @keyframes. Multi-icon
+// sequences (presets) play one icon per 2.4s cycle and
 // advance via a single timer — only the current icon's cells are in the
 // DOM. A single-icon loader stays a pure infinite CSS loop with no JS.
 
@@ -149,14 +148,6 @@ interface PixelLoaderProps {
   className?: string;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Component. Only `size` and `playing` are load-bearing for the
-// PromptField usage. `icon` takes a single icon (`Cell[]`) or a
-// sequence (`Cell[][]`) imported from ./data; `speed`, `color`,
-// `className`, and `style` are supported because they're free. When not
-// playing, the loader renders a single static poster frame (no
-// animation).
-// ─────────────────────────────────────────────────────────────
 export function PixelLoader(props: PixelLoaderProps) {
   const {
     size = 21,
@@ -168,11 +159,7 @@ export function PixelLoader(props: PixelLoaderProps) {
     ...rest
   } = props;
 
-  // Normalize to a sequence. A `Cell[][]` (first element is itself an
-  // array) is already a sequence; a flat `Cell[]` is wrapped. A single-
-  // icon sequence loops forever in pure CSS; a multi-icon sequence
-  // advances one icon per cycle via the timer below, so only the current
-  // icon's cells are ever in the DOM.
+  // Normalize to a sequence.
   const sequence = React.useMemo(
     () => (Array.isArray(icon[0]) ? icon : [icon]) as Cell[][],
     [icon]
@@ -181,7 +168,6 @@ export function PixelLoader(props: PixelLoaderProps) {
   const duration = DURATION_MS / (speed || 1);
 
   // `tick` increments once per cycle; the current icon is `tick % len`.
-  // It's also the remount key, so each swap restarts the animation cleanly.
   const [tick, setTick] = React.useState(0);
 
   // Restart from the first icon whenever the sequence changes.
@@ -208,7 +194,6 @@ export function PixelLoader(props: PixelLoaderProps) {
   // (`forwards`) until the next remount; a single icon loops forever.
   const iteration = isSequence ? '1 forwards' : 'infinite';
 
-  // Map the VIEWBOX coordinate space down to the rendered size.
   const cellSize = size / 7;
   const offset = (size - cellSize * 7) / 2;
   const matrix = Array.from({length: 7}, () => Array.from({length: 7}, () => false));
@@ -243,9 +228,6 @@ export function PixelLoader(props: PixelLoaderProps) {
         let bottom = matrix[y + 1]?.[x];
         let corner = (a, b) => (!a && !b ? '1px' : '0px');
         return (
-          // When not playing, cells render with no animation — at their
-          // settled position (left/top) and fully opaque, i.e. the
-          // fully-assembled poster pose.
           <div
             key={i}
             style={{
