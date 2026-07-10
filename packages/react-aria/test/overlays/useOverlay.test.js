@@ -26,9 +26,23 @@ function Example(props) {
   let {overlayProps, underlayProps} = useOverlay(props, ref);
   return (
     <div {...mergeProps(underlayProps, props.underlayProps || {})}>
-      <div ref={ref} {...overlayProps} data-testid={props['data-testid'] || 'test'}>
+      <div
+        ref={ref}
+        {...mergeProps(props.overlayProps || {}, overlayProps)}
+        data-testid={props['data-testid'] || 'test'}>
         {props.children}
       </div>
+    </div>
+  );
+}
+
+function SharedRefExample(props) {
+  let ref = useRef();
+  let first = useOverlay({isOpen: true, onClose: props.onCloseFirst}, ref);
+  let second = useOverlay({isOpen: true, onClose: props.onCloseSecond}, ref);
+  return (
+    <div ref={ref} {...first.overlayProps} data-testid="group">
+      <div {...second.overlayProps} data-testid="test" />
     </div>
   );
 }
@@ -140,6 +154,48 @@ describe('useOverlay', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it('should not hide the overlay when an earlier Escape handler stops propagation', function () {
+    let onClose = jest.fn();
+    let res = render(
+      <Example
+        isOpen
+        onClose={onClose}
+        overlayProps={{
+          onKeyDown: e => e.stopPropagation()
+        }}
+      />
+    );
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'Escape'});
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('should hide the innermost overlay when nested overlays mount together', function () {
+    let onCloseOuter = jest.fn();
+    let onCloseInner = jest.fn();
+    let res = render(
+      <Example isOpen onClose={onCloseOuter} data-testid="outer">
+        <Example isOpen onClose={onCloseInner} data-testid="inner" />
+      </Example>
+    );
+
+    fireEvent.keyDown(res.getByTestId('inner'), {key: 'Escape'});
+    expect(onCloseInner).toHaveBeenCalledTimes(1);
+    expect(onCloseOuter).not.toHaveBeenCalled();
+  });
+
+  it('should keep separate close handlers for overlays using the same ref', function () {
+    let onCloseFirst = jest.fn();
+    let onCloseSecond = jest.fn();
+    let res = render(
+      <SharedRefExample onCloseFirst={onCloseFirst} onCloseSecond={onCloseSecond} />
+    );
+
+    fireEvent.keyDown(res.getByTestId('test'), {key: 'Escape'});
+    expect(onCloseSecond).toHaveBeenCalledTimes(1);
+    expect(onCloseFirst).not.toHaveBeenCalled();
+  });
+
   describe('CloseWatcher', function () {
     let closeWatcherInstances;
     let MockCloseWatcher;
@@ -234,16 +290,25 @@ describe('useOverlay', function () {
       expect(onCloseFirst).not.toHaveBeenCalled();
     });
 
-    it('should dismiss on Escape when CloseWatcher is supported', function () {
+    it('should let CloseWatcher handle Escape when supported', function () {
       let onClose = jest.fn();
-      let res = render(<Example isOpen onClose={onClose} />);
+      let onKeyDown = jest.fn();
+      let res = render(
+        <div role="presentation" onKeyDown={onKeyDown}>
+          <Example isOpen onClose={onClose} />
+        </div>
+      );
       let el = res.getByTestId('test');
 
       fireEvent.keyDown(el, {key: 'Escape'});
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onClose).not.toHaveBeenCalled();
+
+      closeWatcherInstances[0].onclose();
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
-    it('should dismiss the most recently opened overlay on Escape when focus is in an older overlay', function () {
+    it('should let native CloseWatcher dismiss the most recently opened overlay', function () {
       let onCloseFirst = jest.fn();
       let onCloseSecond = jest.fn();
       let first = render(
@@ -265,6 +330,10 @@ describe('useOverlay', function () {
       expect(document.activeElement).toBe(firstInput);
 
       fireEvent.keyDown(firstInput, {key: 'Escape'});
+      expect(onCloseSecond).not.toHaveBeenCalled();
+      expect(onCloseFirst).not.toHaveBeenCalled();
+
+      closeWatcherInstances[1].onclose();
       expect(onCloseSecond).toHaveBeenCalledTimes(1);
       expect(onCloseFirst).not.toHaveBeenCalled();
     });
@@ -278,6 +347,10 @@ describe('useOverlay', function () {
       let innerEl = inner.getByTestId('inner');
 
       fireEvent.keyDown(innerEl, {key: 'Escape'});
+      expect(onCloseInner).not.toHaveBeenCalled();
+      expect(onCloseOuter).not.toHaveBeenCalled();
+
+      closeWatcherInstances[1].onclose();
       expect(onCloseInner).toHaveBeenCalledTimes(1);
       expect(onCloseOuter).not.toHaveBeenCalled();
     });
