@@ -72,6 +72,7 @@ export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
   'aria-describedby'?: string;
   onPaste?: (e: ClipboardEvent) => void;
   onSubmit?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
 export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
@@ -516,6 +517,8 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     }
   };
 
+  // TODO: user provided onKeyDown currently relies on user provided preventDefault to stop submit
+  // maybe can have them specify a format like shortcuts and merge into above?
   let {keyboardProps} = useKeyboard({
     isDisabled: isDisabled || isReadOnly,
     onKeyDown: e => {

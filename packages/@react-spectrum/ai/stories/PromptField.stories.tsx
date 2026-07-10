@@ -38,7 +38,7 @@ import Data from '@react-spectrum/s2/icons/Data';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
@@ -55,9 +55,16 @@ const meta: Meta<typeof PromptField> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', events),
-    children: {table: {disable: true}}
+    children: {table: {disable: true}},
+    placeholder: {
+      control: 'text',
+      table: {category: 'PromptTokenField'}
+    }
   },
-  args: {...getActionArgs(events)},
+  args: {
+    ...getActionArgs(events),
+    placeholder: undefined
+  },
   title: 'AI/PromptField',
   decorators: [
     Story => (
@@ -69,6 +76,7 @@ const meta: Meta<typeof PromptField> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof PromptField>;
 
 const slashCommands = [
   {
@@ -170,7 +178,8 @@ interface UploadState {
   progress?: number;
 }
 
-export const Everything = () => {
+function EverythingRender(args) {
+  let {placeholder, ...otherArgs} = args;
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
 
   let mockUpload = async (id: string) => {
@@ -194,6 +203,7 @@ export const Everything = () => {
 
   return (
     <PromptField
+      {...otherArgs}
       acceptedAttachmentTypes={['image/*']}
       onAddAttachments={attachments => {
         setAttachmentState(prev => {
@@ -226,7 +236,10 @@ export const Everything = () => {
           );
         }}
       </PromptFieldAttachmentList>
-      <PromptTokenField completionTrigger={/(?<=^|\s)[@/]/} renderCompletions={renderCompletions}>
+      <PromptTokenField
+        completionTrigger={/(?<=^|\s)[@/]/}
+        renderCompletions={renderCompletions}
+        placeholder={placeholder}>
         {segment => (
           <PromptToken>
             {icons[segment.value?.type]}
@@ -290,16 +303,26 @@ export const Everything = () => {
       </PromptFieldToolbar>
     </PromptField>
   );
+}
+
+export const Everything: Story = {
+  render: args => <EverythingRender {...args} />
 };
 
-export const Basic = () => (
-  <PromptField>
-    <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-      <PromptTokenField />
-      <PromptFieldSubmitButton />
-    </div>
-  </PromptField>
-);
+function BasicRender({placeholder, isDisabled, ...args}: any) {
+  return (
+    <PromptField isDisabled={isDisabled} {...args}>
+      <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+        <PromptTokenField placeholder={placeholder} />
+        <PromptFieldSubmitButton />
+      </div>
+    </PromptField>
+  );
+}
+
+export const Basic: Story = {
+  render: args => <BasicRender {...args} />
+};
 
 export const AsyncCompletions = () => (
   <PromptField>

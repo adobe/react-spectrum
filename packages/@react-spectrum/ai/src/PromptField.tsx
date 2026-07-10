@@ -63,6 +63,7 @@ export interface PromptFieldProps {
   acceptedAttachmentTypes?: string[];
   onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
+  isDisabled?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
@@ -79,6 +80,7 @@ interface PromptFieldState {
   onSubmit?: () => void;
   onStop?: () => void;
   isGenerating: boolean;
+  isDisabled: boolean;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
 }
@@ -118,7 +120,8 @@ const PromptFieldContext = createContext<PromptFieldState>({
   prompt: new AutoLinkingSegmentList([]),
   setPrompt: () => {},
   inputRef: createRef(),
-  isGenerating: false
+  isGenerating: false,
+  isDisabled: false
 });
 
 function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
@@ -138,6 +141,7 @@ export function PromptField(props: PromptFieldProps) {
     children,
     acceptedAttachmentTypes,
     isGenerating,
+    isDisabled,
     onStop,
     styles,
     onAddAttachments,
@@ -176,7 +180,7 @@ export function PromptField(props: PromptFieldProps) {
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
 
   let onSubmit = () => {
-    if (prompt.segments.length === 0) {
+    if (prompt.segments.length === 0 || isDisabled) {
       return;
     }
 
@@ -197,6 +201,7 @@ export function PromptField(props: PromptFieldProps) {
         inputRef,
         onSubmit,
         isGenerating: isGenerating ?? false,
+        isDisabled: isDisabled ?? false,
         onStop,
         onAddAttachments,
         onRemoveAttachments
@@ -204,6 +209,7 @@ export function PromptField(props: PromptFieldProps) {
       <div {...focusWithinProps}>
         <Group
           {...dropProps}
+          isDisabled={isDisabled}
           role="group"
           className={renderProps =>
             mergeStyles(
@@ -223,8 +229,12 @@ export function PromptField(props: PromptFieldProps) {
                 borderColor: {
                   default: 'transparent',
                   isDropTarget: 'blue-800'
+                  // TODO: coworker's disabled style here is still transparent
                 },
-                cursor: 'text'
+                cursor: {
+                  default: 'text',
+                  isDisabled: 'default'
+                }
               })({...renderProps, isDropTarget}),
               styles
             )
@@ -297,10 +307,20 @@ export interface PromptTokenFieldProps {
     filterValue: string
   ) => React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   children?: (segment: TokenSegment) => React.ReactElement;
+  placeholder?: string;
+  isDisabled?: boolean;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
-  let {completionTrigger, renderCompletions, children} = props;
+  let {
+    completionTrigger,
+    renderCompletions,
+    children,
+    placeholder,
+    isDisabled: isDisabledProp,
+    onKeyDown
+  } = props;
   let {
     prompt,
     setPrompt,
@@ -308,8 +328,10 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     setAttachments,
     onAddAttachments,
     inputRef,
-    onSubmit
+    onSubmit,
+    isDisabled: isDisabledContext
   } = useContext(PromptFieldContext);
+  let isDisabled = isDisabledProp || isDisabledContext;
   let [isFocused, setFocused] = useState(false);
 
   let [filterAnchor, filterValue] = useMemo(() => {
@@ -338,7 +360,11 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         onChange={setPrompt}
         multiline
         aria-label="Prompt"
-        data-placeholder="Ready to get started? Ask a question, share an idea, or add a task."
+        data-placeholder={
+          placeholder ?? 'Ready to get started? Ask a question, share an idea, or add a task.'
+        }
+        isDisabled={isDisabled}
+        onKeyDown={onKeyDown}
         ref={inputRef}
         onFocus={e => {
           if (e.isTrusted) {
@@ -379,14 +405,25 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             font: 'body',
             color: {
               default: baseColor('neutral'),
+              isDisabled: {
+                default: 'disabled',
+                forcedColors: 'GrayText'
+              },
               ':empty': {
                 default: 'gray-600',
+                isDisabled: {
+                  default: 'disabled',
+                  forcedColors: 'GrayText'
+                },
                 forcedColors: 'GrayText'
               }
             },
             width: 'full',
             outlineStyle: 'none',
-            cursor: 'text'
+            cursor: {
+              default: 'text',
+              isDisabled: 'default'
+            }
           })(renderProps)
         }>
         {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
@@ -515,12 +552,12 @@ export interface PromptFieldSubmitButtonProps {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
-  let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  let {prompt, isGenerating, isDisabled, onSubmit, onStop} = useContext(PromptFieldContext);
   return (
     <Button
       variant="primary"
       // TODO: should it be possible to submit a prompt with only attachments?
-      isDisabled={prompt.segments.length === 0 && !isGenerating}
+      isDisabled={isDisabled || (prompt.segments.length === 0 && !isGenerating)}
       aria-label={isGenerating ? 'Stop' : 'Send'}
       onPress={isGenerating ? onStop : onSubmit}>
       {isGenerating ? <Stop /> : <Send />}
@@ -533,10 +570,11 @@ export interface InsertMenuItemProps {
 }
 
 export function InsertMenuButton(props: InsertMenuItemProps) {
+  let {isDisabled} = useContext(PromptFieldContext);
   let {children} = props;
   return (
     <MenuTrigger>
-      <ActionButton isQuiet aria-label="Add">
+      <ActionButton isDisabled={isDisabled} isQuiet aria-label="Add">
         <Plus />
       </ActionButton>
       <Menu>{children}</Menu>

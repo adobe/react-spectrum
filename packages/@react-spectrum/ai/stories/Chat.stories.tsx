@@ -39,7 +39,8 @@ import {
   TokenSegmentList,
   UserMessage
 } from '@react-spectrum/ai';
-import type {Meta} from '@storybook/react';
+import {action} from 'storybook/actions';
+import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
@@ -62,6 +63,7 @@ const meta: Meta<typeof Chat> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Chat>;
 
 let dummyResponses = [
   "Sure! Here's a summary of the key points based on the assets you shared. The main themes revolve around brand consistency, audience engagement, and clear calls to action across all touchpoints.",
@@ -209,7 +211,7 @@ function CardMessage({
   );
 }
 
-export function StreamingChat() {
+function StreamingChatRender() {
   let [messages, setMessages] = useState<StreamingMessage[]>(
     initialResponses as StreamingMessage[]
   );
@@ -549,7 +551,28 @@ export function StreamingChat() {
             timeouts.current = [];
           }}>
           <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-            <PromptTokenField />
+            <PromptTokenField
+              placeholder={
+                isGenerating
+                  ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+                  : undefined
+              }
+              onKeyDown={e => {
+                if (!isGenerating) {
+                  return;
+                }
+
+                if (e.key === 'Enter' && !e.altKey) {
+                  e.preventDefault();
+                  // TODO: implement steering, also not sure why action wasn't working...
+                  console.log('calling steer');
+                } else if (e.key === 'Enter' && e.altKey) {
+                  e.preventDefault();
+                  // TODO:  implement followup
+                  console.log('calling followup');
+                }
+              }}
+            />
             <PromptFieldSubmitButton />
           </div>
         </PromptField>
@@ -557,6 +580,10 @@ export function StreamingChat() {
     </div>
   );
 }
+
+export const StreamingChat: Story = {
+  render: () => <StreamingChatRender />
+};
 
 // Ignore this story, just here for local testing
 export function VirtualizedChat() {
