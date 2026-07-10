@@ -1,4 +1,3 @@
-import os from 'os';
 import path from 'path';
 import ts from 'typescript';
 import {ComponentDoc, Parser} from 'react-docgen-typescript';
@@ -10,19 +9,10 @@ export function getCacheDir(options: PluginOptions) {
   return path.join(options.projectRoot, 'node_modules', '.cache', 'docgen');
 }
 
-// macOS limits Unix socket paths to 104 characters. Use os.tmpdir() for the
-// socket when the project-relative path would exceed that.
-const UNIX_SOCKET_MAX = 104;
-
 function getSocketPath(options: PluginOptions) {
-  if (process.platform === 'win32') {
-    return path.join('\\\\?\\pipe', getCacheDir(options), options.instanceId);
-  }
-  let sock = path.join(getCacheDir(options), options.instanceId);
-  if (sock.length > UNIX_SOCKET_MAX) {
-    sock = path.join(os.tmpdir(), 'parcel-docgen-' + options.instanceId);
-  }
-  return sock;
+  return process.platform === 'win32'
+    ? path.join('\\\\?\\pipe', getCacheDir(options), options.instanceId)
+    : path.join(getCacheDir(options), options.instanceId);
 }
 
 // TypeScript is single threaded, but Parcel is multi-threaded.
