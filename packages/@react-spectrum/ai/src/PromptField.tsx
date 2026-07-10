@@ -37,6 +37,8 @@ import {
 } from './TokenSegmentList';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
@@ -49,6 +51,7 @@ import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface PromptFieldAttachment {
   id: string;
@@ -266,10 +269,11 @@ export interface PromptTokenFieldProps {
   ) => React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   children?: (segment: TokenSegment) => React.ReactElement;
   pixelLoader?: Cell[] | Cell[][];
+  placeholder?: string;
 }
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
-  let {completionTrigger, renderCompletions, children, pixelLoader} = props;
+  let {completionTrigger, renderCompletions, children, pixelLoader, placeholder} = props;
   let {
     prompt,
     setPrompt,
@@ -280,6 +284,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     onSubmit,
     isGenerating
   } = useContext(PromptFieldContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [isFocused, setFocused] = useState(false);
 
   let [filterAnchor, filterValue] = useMemo(() => {
@@ -312,6 +317,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           isFocused: 'body'
         },
         transition: 'default',
+        transitionDuration: 350,
         paddingStart: 4,
         width: 'full'
       })({isFocused: isFocused || prompt.segments.length > 0})}>
@@ -324,7 +330,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           onChange={setPrompt}
           multiline
           aria-label="Prompt"
-          data-placeholder="Ready to get started? Ask a question, share an idea, or add a task."
+          data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
           ref={inputRef}
           onFocus={e => {
             if (e.isTrusted) {
