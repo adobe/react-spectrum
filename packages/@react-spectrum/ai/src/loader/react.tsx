@@ -203,6 +203,8 @@ export function PixelLoader(props: PixelLoaderProps) {
     matrix[y][x] = true;
   }
 
+  const isHighDPI = window.devicePixelRatio >= 2;
+
   return (
     <div
       aria-hidden="true"
@@ -227,15 +229,26 @@ export function PixelLoader(props: PixelLoaderProps) {
         let top = matrix[y - 1]?.[x];
         let bottom = matrix[y + 1]?.[x];
         let corner = (a, b) => (!a && !b ? '1px' : '0px');
+
+        // Adjust position for outer cells on high DPI displays.
+        let xPx = x * cellSize + offset;
+        let yPx = y * cellSize + offset;
+        if (isHighDPI && c.outer && xPx > size / 2) {
+          xPx -= 0.5;
+        }
+        if (isHighDPI && c.outer && yPx > size / 2) {
+          yPx -= 0.5;
+        }
+
         return (
           <div
             key={i}
             style={{
               position: 'absolute',
-              left: x * cellSize + offset,
-              top: y * cellSize + offset,
-              width: cellSize,
-              height: cellSize,
+              left: xPx,
+              top: yPx,
+              width: cellSize + (isHighDPI && c.outer ? 0.5 : 0),
+              height: cellSize + (isHighDPI && c.outer ? 0.5 : 0),
               borderRadius: `${corner(left, top)} ${corner(right, top)} ${corner(right, bottom)} ${corner(left, bottom)}`,
               backgroundColor: color,
               ...(playing && {
