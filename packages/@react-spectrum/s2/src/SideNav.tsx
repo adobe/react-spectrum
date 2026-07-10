@@ -506,8 +506,6 @@ function useRouteFocusSync({state}: {state: TreeState<unknown>}): void {
     let key = findKeyForRoute(collection, selectedRoute);
     if (key != null) {
       syncedRouteRef.current = selectedRoute;
-      // selectionManager is recreated each render but delegates to stable state setters, so the
-      // value captured for [selectedRoute, collection] is safe to call here.
       selectionManager.setFocusedKey(key);
     }
   }, [selectedRoute, collection, syncedRouteRef, selectionManager]);
