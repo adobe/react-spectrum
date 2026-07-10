@@ -92,14 +92,26 @@ const containerBackground = css(`
   --border-color: ${token(`container.border.default`)};
   --inset-shadow-color: ${color('transparent-white-50')};
   --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
+  --prominent-outline-glow: ;
 
   box-shadow:
+    var(--prominent-outline-glow)
     inset 0 0 0 1px var(--border-color),
     inset 0 6px 15px 0 var(--inset-shadow-color),
     inset 0 0 0 0 transparent, /* placeholder for generating state so transition is smooth */
     inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
     inset 0 24px 32px 0 ${color('transparent-white-50')},
     0 -3px 10px 1px var(--drop-shadow-color);
+
+  &[data-variant=prominent] {
+    /* trailing comma is intentional so it can be interpolated above */
+    --prominent-outline-glow:
+      0 20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},
+      inset 0 -20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
+    &[data-focused] {
+      --prominent-outline-glow: 0 20px 20px -24px transparent, inset 0 -20px 20px -24px transparent,;
+    }
+  }
 
   &[data-state=idle] {
     &[data-variant=balanced] {
