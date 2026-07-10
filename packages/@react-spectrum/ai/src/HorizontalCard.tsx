@@ -115,46 +115,11 @@ let card = style({
   flexDirection: 'row',
   position: 'relative',
   borderRadius,
-  '--s2-container-bg': {
-    type: 'backgroundColor',
-    value: {
-      variant: {
-        primary: 'elevated',
-        secondary: 'layer-1',
-        tertiary: 'layer-2'
-      },
-      isBasic: {
-        variant: {
-          primary: 'layer-2',
-          secondary: 'layer-1',
-          tertiary: 'layer-2',
-          quiet: 'layer-2'
-        }
-      },
-      forcedColors: 'ButtonFace'
-    }
+  backgroundColor: {
+    default: lightDark('transparent-white-300', 'transparent-black-300'),
+    forcedColors: 'ButtonFace'
   },
-  backgroundColor: '--s2-container-bg',
-  // TODO: No box shadow for basic, secondary, dark
-  // also none for basic tertiary
-  boxShadow: {
-    default: 'emphasized',
-    isHovered: 'elevated',
-    isFocusVisible: 'elevated',
-    isSelected: 'elevated',
-    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
-    variant: {
-      tertiary: {
-        // Render border with box-shadow to avoid affecting layout.
-        default: `[0 0 0 2px ${color('gray-100')}]`,
-        isHovered: `[0 0 0 2px ${color('gray-200')}]`,
-        isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
-        isSelected: 'none',
-        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
-      },
-      quiet: 'none'
-    }
-  },
+  boxShadow: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
   forcedColorAdjust: 'none',
   transition: 'default',
   fontFamily: 'sans',

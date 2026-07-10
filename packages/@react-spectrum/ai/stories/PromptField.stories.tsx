@@ -34,6 +34,7 @@ import {
   SubmenuTrigger,
   Text
 } from '@react-spectrum/s2/Menu';
+import {Content} from '@react-spectrum/s2/Content';
 import Data from '@react-spectrum/s2/icons/Data';
 import * as data from '../src/loader/data';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -68,9 +69,18 @@ const meta: Meta<typeof PromptField> = {
       options: Object.keys(data),
       description: 'Sets the icon to use for the pixel loader.',
       table: {category: 'Theming'}
+    },
+    attachmentVariant: {
+      control: 'radio',
+      options: ['thumbnail', 'card']
     }
   },
-  args: {brand: 'rgb(236, 105, 255)', pixelLoader: 'aiLogo', ...getActionArgs(events)},
+  args: {
+    brand: 'rgb(236, 105, 255)',
+    pixelLoader: 'aiLogo',
+    attachmentVariant: 'thumbnail',
+    ...getActionArgs(events)
+  },
   title: 'AI/PromptField',
   decorators: [
     (Story, {args}) => (
@@ -235,7 +245,7 @@ export const Everything = args => {
           return newState;
         });
       }}>
-      <PromptFieldAttachmentList dependencies={[attachmentState]}>
+      <PromptFieldAttachmentList dependencies={[attachmentState, args.attachmentVariant]}>
         {attachment => {
           let state = attachmentState.get(attachment.id);
           return (
@@ -243,6 +253,12 @@ export const Everything = args => {
               uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
               {/* TODO: what about non-image attachments? */}
               {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+              {args.attachmentVariant === 'card' && (
+                <Content>
+                  <Text slot="title">{attachment.file.name}</Text>
+                  <Text slot="description">{attachment.file.type}</Text>
+                </Content>
+              )}
             </Attachment>
           );
         }}

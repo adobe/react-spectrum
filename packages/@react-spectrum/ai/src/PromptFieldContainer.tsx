@@ -242,12 +242,13 @@ interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
   children: React.ReactNode;
   variant: 'balanced' | 'prominent' | 'subtle';
   isGenerating: boolean;
+  isDropTarget: boolean;
   styles?: StyleString;
   inputRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export function PromptFieldContainer(props: PropFieldContainerProps) {
-  let {variant, isGenerating, styles, inputRef, ...otherProps} = props;
+  let {variant, isGenerating, isDropTarget, styles, inputRef, ...otherProps} = props;
   let [isFocused, setFocused] = useState(false);
 
   return (
@@ -297,11 +298,30 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 gap: 16,
                 padding: 16,
                 cursor: 'text',
-                borderRadius: '[24px]'
+                borderRadius: '[24px]',
+                position: 'relative'
               }),
               styles
             )
           }>
+          {isDropTarget && (
+            <div
+              className={style({
+                pointerEvents: 'none',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                boxSizing: 'border-box',
+                borderRadius: 'inherit',
+                backgroundColor: 'blue-800/10',
+                borderStyle: 'solid',
+                borderWidth: 2,
+                borderColor: 'blue-800'
+              })}
+            />
+          )}
           {props.children}
         </div>
       )}

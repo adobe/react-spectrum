@@ -17,7 +17,13 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  color,
+  css,
+  iconStyle,
+  style,
+  StyleString
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   createContext,
   createRef,
@@ -152,7 +158,7 @@ export function PromptField(props: PromptFieldProps) {
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
   let inputRef = useRef<HTMLDivElement>(null);
-  let {dropProps} = useDrop({
+  let {dropProps, isDropTarget} = useDrop({
     ref: inputRef,
     hasDropButton: true,
     isDisabled: !acceptedAttachmentTypes,
@@ -210,6 +216,7 @@ export function PromptField(props: PromptFieldProps) {
           role="group"
           variant={variant}
           isGenerating={isGenerating ?? false}
+          isDropTarget={isDropTarget}
           styles={styles}
           inputRef={inputRef}>
           {children}
@@ -485,7 +492,11 @@ export function PromptToken(props: PromptTokenProps) {
         gap: 4,
         verticalAlign: 'baseline'
       })}>
-      <IconContext.Provider value={{render: icon => <CenterBaseline>{icon}</CenterBaseline>}}>
+      <IconContext.Provider
+        value={{
+          styles: iconStyle({size: 'XS'}),
+          render: icon => <CenterBaseline>{icon}</CenterBaseline>
+        }}>
         {props.children}
       </IconContext.Provider>
     </Token>
