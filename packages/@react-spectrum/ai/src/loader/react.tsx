@@ -211,7 +211,7 @@ export function PixelLoader(props: PixelLoaderProps) {
   // Map the VIEWBOX coordinate space down to the rendered size.
   const cellSize = size / 7;
   const offset = (size - cellSize * 7) / 2;
-  const matrix = Array.from({length: 7}, (_, i) => Array.from({length: 7}, (_, j) => false));
+  const matrix = Array.from({length: 7}, () => Array.from({length: 7}, () => false));
   for (let c of cells) {
     let x = (c.cx - 120) / CELL;
     let y = (c.cy - 120) / CELL;
