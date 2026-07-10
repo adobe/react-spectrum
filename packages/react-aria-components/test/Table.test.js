@@ -315,6 +315,10 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
 
 let renderTable = props => render(<TestTable {...props} />);
 
+if (typeof Symbol.dispose === 'undefined') {
+  Object.defineProperty(Symbol, 'dispose', {value: Symbol('dispose')});
+}
+
 describe('Table', () => {
   let user;
   let testUtilUser = new User();
@@ -3534,6 +3538,43 @@ describe('Table', () => {
 
     expect(tableTester.getFooterRows()).toHaveLength(1);
     expect(tableTester.getFooterRows()[0]).toHaveTextContent('Blah');
+  });
+
+  it('should return focus to the specific button that opened a modal inside a cell, not the first button', async () => {
+    let {getByRole} = render(
+      <Table aria-label="Books">
+        <TableHeader>
+          <Column isRowHeader>Title</Column>
+          <Column>Actions</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>The Great Gatsby</Cell>
+            <Cell>
+              <Button data-testid="first-btn">Edit</Button>
+              <Button data-testid="trigger-btn">Open Dialog</Button>
+            </Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let triggerButton = getByRole('button', {name: 'Open Dialog'});
+    let firstButton = getByRole('button', {name: 'Edit'});
+    let actionsCell = getByRole('gridcell');
+
+    await user.tab();
+    await user.keyboard('[ArrowRight]');
+    await user.keyboard('[ArrowRight]');
+    await user.keyboard('[ArrowRight]');
+    expect(document.activeElement).toBe(triggerButton);
+
+    act(() => {
+      actionsCell.focus();
+    });
+
+    expect(document.activeElement).toBe(triggerButton);
+    expect(document.activeElement).not.toBe(firstButton);
   });
 });
 
