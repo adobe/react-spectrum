@@ -415,16 +415,22 @@ export function useSelectableCollection(
     };
   };
   // oxlint-disable react/react-compiler
-  let {keyboardProps} = useKeyboard({
+  let {keyboardProps: repeatKeyboardProps} = useKeyboard({
     shortcuts: {
       ...withShiftSel('ArrowDown', arrowDown),
       ...withShiftSel('ArrowUp', arrowUp),
       ...withShiftSel('ArrowLeft', arrowLeft),
       ...withShiftSel('ArrowRight', arrowRight),
+      ...withShiftSel('PageDown', pageDown),
+      ...withShiftSel('PageUp', pageUp)
+    },
+    allowRepeats: true
+  });
+  // oxlint-disable react/react-compiler
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
       ...withShiftSel('Home', home),
       ...withShiftSel('End', end),
-      ...withShiftSel('PageDown', pageDown),
-      ...withShiftSel('PageUp', pageUp),
       'Mod+A': aHandler,
       Escape: escape,
       Tab: tab,
@@ -698,7 +704,7 @@ export function useSelectableCollection(
   });
 
   let handlers = {
-    ...keyboardProps,
+    ...mergeProps(keyboardProps, repeatKeyboardProps),
     onFocus,
     onBlur,
     onMouseDown(e) {
