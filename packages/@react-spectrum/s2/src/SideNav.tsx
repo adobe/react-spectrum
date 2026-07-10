@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButtonGroupContext} from './ActionButtonGroup';
+import {ActionMenuContext} from './ActionMenu';
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
@@ -20,7 +22,8 @@ import {
   forwardRefType,
   GlobalDOMAttributes,
   Key,
-  Node
+  Node,
+  RouterOptions
 } from '@react-types/shared';
 import {
   getAllowedOverrides,
@@ -42,7 +45,7 @@ import {
   TreeSection
 } from 'react-aria-components/Tree';
 import {IconContext} from './Icon';
-import {Link, LinkProps} from 'react-aria-components/Link';
+import {Link} from 'react-aria-components/Link';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import React, {
   createContext,
@@ -53,9 +56,10 @@ import React, {
   ReactNode,
   RefObject,
   useContext,
-  useRef
+  useEffect,
+  useRef,
+  useState
 } from 'react';
-import {SelectionIndicator} from 'react-aria-components/SelectionIndicator';
 import {Text, TextContext} from './Content';
 import {TreeState} from 'react-stately/useTreeState';
 import {useDOMRef} from './useDOMRef';
@@ -73,12 +77,19 @@ export interface SideNavProps<T>
       | 'selectionBehavior'
       | 'onScroll'
       | 'onCellAction'
+      | 'onSelectionChange'
+      | 'selectedKeys'
+      | 'defaultSelectedKeys'
+      | 'disabledBehavior'
+      | 'selectionMode'
       | keyof GlobalDOMAttributes
     >,
     UnsafeStyles,
     SideNavStyleProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
+  /** The route that is currently selected. */
+  selectedRoute?: string;
 }
 
 interface SideNavStyleProps {}
@@ -129,7 +140,8 @@ const tree = style<TreeRenderProps>({
   minWidth: 0,
   width: 'full',
   height: 'full',
-  overflow: 'auto',
+  overflowY: 'auto',
+  overflowX: 'hidden',
   boxSizing: 'border-box',
   '--indent': {
     type: 'width',
@@ -143,6 +155,9 @@ interface InternalSideNavContextValue {
    * expansion.
    */
   stateRef?: RefObject<TreeState<unknown> | null>;
+  selectedRoute?: string;
+  /** The last route the focused key was synced to; dedupes the focus sync across items. */
+  syncedRouteRef?: RefObject<string | undefined>;
 }
 let InternalSideNavContext = createContext<InternalSideNavContextValue>({});
 
@@ -153,7 +168,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   props: SideNavProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, UNSAFE_className, UNSAFE_style} = props;
+  let {children, UNSAFE_className, UNSAFE_style, selectedRoute} = props;
 
   let renderer;
   if (typeof children === 'function') {
@@ -163,6 +178,11 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLDivElement | null>(null);
   let stateRef = useRef<TreeState<unknown> | null>(null);
+  let {direction} = useLocale();
+
+  // Tracks the last route we moved the focused key to, so the focus sync (driven from
+  // RouteFocusSync, which has the built collection) only runs when the route actually changes
+  let syncedRouteRef = useRef<string | undefined>(undefined);
 
   // RAC swallows arrow keys at the collection level (stopPropagation during capture), so a handler
   // on the link never sees them. Intercept here on an ancestor, before RAC's row handler runs, and
@@ -175,23 +195,53 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
       return;
     }
-    let link = getEventTarget(e).closest?.('a');
-    if (!link) {
+    let target = getEventTarget(e);
+    let link = target.closest?.('a');
+    if (!link || link !== target) {
       return;
     }
     let rowEl = link.closest<HTMLElement>('[role="row"]');
-    // Only intercept to open a collapsed, expandable row; let RAC handle everything else
-    // (e.g. an already-expanded row moves focus into its children).
-    if (!rowEl || rowEl.getAttribute('aria-expanded') !== 'false') {
+    if (!rowEl) {
       return;
     }
     let key = rowEl.dataset.key;
     if (key == null) {
       return;
     }
-    state.toggleKey(key);
-    e.stopPropagation();
-    e.preventDefault();
+    let node = state.collection.getItem(key);
+    // null = leaf, 'true' = expanded, 'false' = collapsed.
+    let ariaExpanded = rowEl.getAttribute('aria-expanded');
+    let collapseKey = direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
+    let expandKey = direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
+
+    // Move focus to the parent item. RAC's own parent-move (handleTreeExpansionKeys) only runs
+    // when the row itself has DOM focus, so with focusMode="child" (focus on the link) it never
+    // fires; replicate it here. Pointing the focused key at the parent makes useSelectableItem
+    // move DOM focus to it (and, in focusMode="child", into the parent's link).
+    let moveToParent = () => {
+      if (node?.parentKey != null && state.collection.getItem(node.parentKey)?.type === 'item') {
+        e.stopPropagation();
+        e.preventDefault();
+        state.selectionManager.setFocusedKey(node.parentKey);
+      }
+    };
+
+    if (e.key === collapseKey) {
+      if (ariaExpanded === 'true') {
+        // Expanded parent: collapse it (focus stays on the row).
+        e.stopPropagation();
+        e.preventDefault();
+        state.toggleKey(key);
+      } else {
+        // Leaf or already-collapsed row: step up to the parent.
+        moveToParent();
+      }
+    } else if (e.key === expandKey && ariaExpanded === 'false') {
+      // Collapsed parent: expand it.
+      e.stopPropagation();
+      e.preventDefault();
+      state.toggleKey(key);
+    }
   };
 
   return (
@@ -201,7 +251,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       style={UNSAFE_style}
       onKeyDownCapture={onKeyDownCapture}>
       <TreeRendererContext.Provider value={{renderer}}>
-        <InternalSideNavContext.Provider value={{stateRef}}>
+        <InternalSideNavContext.Provider value={{stateRef, selectedRoute, syncedRouteRef}}>
           <Tree
             {...props}
             style={{
@@ -255,9 +305,9 @@ const treeCellGrid = style({
   boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: [12, 'auto', '1fr'],
+  gridTemplateColumns: [12, 'auto', '1fr', 'auto', 'auto'],
   gridTemplateRows: '1fr',
-  gridTemplateAreas: ['. level-padding content'],
+  gridTemplateAreas: ['. level-padding content actions actionmenu'],
   paddingEnd: 4, // account for any focus rings on the last item in the cell
   color: {
     default: baseColor('neutral-subdued'),
@@ -323,26 +373,14 @@ let treeRowFocusRing = style({
   },
   position: 'absolute',
   inset: 0,
-  top: {
-    default: '[-1px]',
-    isFirstItem: 0
-  },
-  bottom: {
-    default: 0,
-    isNextSelected: '[-1px]',
-    isSelected: {
-      default: 0,
-      isNextSelected: 0
-    }
-  },
+  top: 0,
+  bottom: 0,
   borderRadius: 'default', // tokens say 12... but that seems a lot, should it match selection in other collections?
   zIndex: 1,
   pointerEvents: 'none'
 });
 
 const treeRowLink = style({
-  // The link is a grid so its own children (icon/content) lay out via treeIcon/treeContent,
-  // while the anchor keeps its box (and stays focusable, unlike display: contents).
   display: 'grid',
   gridArea: 'content',
   gridTemplateColumns: ['auto', '1fr'],
@@ -355,13 +393,44 @@ const treeRowLink = style({
   cursor: 'pointer'
 });
 
-const SideNavItemContext = createContext<{
-  /** Whether the item is selected, used to mark its link with aria-current="page". */
-  isCurrent?: boolean;
+const treeActions = style({
+  gridArea: 'actions',
+  marginStart: 2,
+  marginEnd: 4
+});
+
+const treeActionMenu = style({
+  gridArea: 'actionmenu'
+});
+
+const SideNavItemLinkContext = createContext<{
+  href?: string;
+  hrefLang?: string;
+  target?: string;
+  rel?: string;
+  download?: string | boolean;
+  ping?: string;
+  referrerPolicy?: ReferrerPolicy;
+  routerOptions?: RouterOptions;
+  // Lets the row track whether the link (as opposed to another focusable child like an ActionMenu
+  // trigger) is the focused element, so the row focus ring can follow the link specifically.
+  onFocusChange?: (isFocused: boolean) => void;
 }>({});
 
 export const SideNavItem = (props: SideNavItemProps): ReactNode => {
-  return <TreeItem {...props} focusMode="child" className={renderProps => treeRow(renderProps)} />;
+  let {href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions, ...rest} = props;
+
+  return (
+    <SideNavItemLinkContext.Provider
+      value={{href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions}}>
+      <TreeItem
+        {...rest}
+        data-href={href} // use a data attribute so it doesn't trigger Tree's handling of href
+        focusMode={href && href.length > 0 ? 'child' : undefined}
+        className={renderProps => treeRow(renderProps)}
+      />
+    </SideNavItemLinkContext.Provider>
+  );
 };
 
 export interface SideNavItemContentProps extends Omit<TreeItemContentProps, 'children'> {
@@ -369,8 +438,12 @@ export interface SideNavItemContentProps extends Omit<TreeItemContentProps, 'chi
   children: ReactNode;
 }
 
-const selectedIndicator = style<{isDisabled: boolean}>({
+const selectedIndicator = style<{isDisabled: boolean; isSelected: boolean}>({
   position: 'absolute',
+  display: {
+    default: 'none',
+    isSelected: 'block'
+  },
   backgroundColor: {
     default: 'neutral',
     isDisabled: 'disabled',
@@ -415,11 +488,36 @@ const hoveredIndicator = style({
   borderRadius: 'full'
 });
 
+// Moves the tree's focused key to the item matching selectedRoute. Lives here
+// (rather than in SideNav) because it needs the built collection off `state`, which only exists
+// after the tree has rendered. Runs when the route or the collection changes; the shared
+// syncedRouteRef dedupes across items so it fires once per route change
+function useRouteFocusSync({state}: {state: TreeState<unknown>}): void {
+  let {selectedRoute, syncedRouteRef} = useContext(InternalSideNavContext);
+  let {collection, selectionManager} = state;
+  useEffect(() => {
+    if (
+      selectedRoute == null ||
+      syncedRouteRef == null ||
+      syncedRouteRef.current === selectedRoute
+    ) {
+      return;
+    }
+    let key = findKeyForRoute(collection, selectedRoute);
+    if (key != null) {
+      syncedRouteRef.current = selectedRoute;
+      // selectionManager is recreated each render but delegates to stable state setters, so the
+      // value captured for [selectedRoute, collection] is safe to call here.
+      selectionManager.setFocusedKey(key);
+    }
+  }, [selectedRoute, collection, syncedRouteRef, selectionManager]);
+}
+
 export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode => {
   let {children} = props;
   let scale = useScale();
-  let ref = useRef<HTMLDivElement | null>(null);
-  let {stateRef} = useContext(InternalSideNavContext);
+  let linkProps = useContext(SideNavItemLinkContext);
+  let {stateRef, selectedRoute} = useContext(InternalSideNavContext);
 
   return (
     <TreeItemContent>
@@ -431,65 +529,118 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
         id,
         state,
         isHovered,
+        isFocusVisible,
         isFocusVisibleWithin
       }) => {
-        // Bridge the tree state up to SideNav so its arrow-key handler can toggle expansion.
-        if (stateRef) {
-          stateRef.current = state;
-        }
         return (
-          <>
-            {isHovered && <div className={hoveredIndicator} />}
-            <SelectionIndicator ref={ref} className={selectedIndicator({isDisabled})} />
-            <div
-              className={treeCellGrid({
-                isDisabled,
-                isNextSelected: isNextSelected(id, state),
-                isSelected,
-                isDescendantSelected:
-                  !isExpanded && hasChildItems && hasSelectedDescendant(id, state)
-              })}>
-              {isFocusVisibleWithin && (
-                <div
-                  className={treeRowFocusRing({
-                    isFocusVisible: true,
-                    isSelected,
-                    isNextSelected: isNextSelected(id, state),
-                    isFirstItem: isFirstItem(id, state)
-                  })}
-                />
-              )}
-              <div
-                className={style({
-                  gridArea: 'level-padding',
-                  width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
-                })}
-              />
-              <Provider
-                values={[
-                  [TextContext, {styles: treeContent}],
-                  [SideNavItemContext, {isCurrent: isSelected}],
-                  [
-                    IconContext,
-                    {
-                      render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                      styles: style({size: fontRelative(20), flexShrink: 0})
-                    }
-                  ]
-                ]}>
-                {typeof children === 'string' ? <Text>{children}</Text> : children}
-              </Provider>
-            </div>
-            <ExpandableRowChevron
-              isDisabled={isDisabled}
-              isExpanded={isExpanded}
-              scale={scale}
-              isHidden={!hasChildItems}
-            />
-          </>
+          <SideNaveItemContentInner
+            isExpanded={isExpanded}
+            hasChildItems={hasChildItems}
+            isDisabled={isDisabled}
+            isSelected={isSelected}
+            linkProps={linkProps}
+            scale={scale}
+            id={id}
+            state={state}
+            stateRef={stateRef}
+            selectedRoute={selectedRoute}
+            isHovered={isHovered}
+            isFocusVisible={isFocusVisible}
+            isFocusVisibleWithin={isFocusVisibleWithin}>
+            {children}
+          </SideNaveItemContentInner>
         );
       }}
     </TreeItemContent>
+  );
+};
+
+const SideNaveItemContentInner = props => {
+  let {
+    isExpanded,
+    hasChildItems,
+    isDisabled,
+    isSelected,
+    linkProps,
+    scale,
+    id,
+    state,
+    stateRef,
+    selectedRoute,
+    isHovered,
+    isFocusVisible,
+    isFocusVisibleWithin,
+    children
+  } = props;
+  // Whether the link within this row is the focused element (any modality). Combined with the
+  // keyboard-only isFocusVisibleWithin below, this lets the row focus ring follow the link
+  // specifically and not other focusable children (e.g. an ActionMenu trigger).
+  let [isLinkFocused, setLinkFocused] = useState(false);
+  // Bridge the tree state up to SideNav so its arrow-key handler can toggle expansion.
+  useEffect(() => {
+    if (stateRef) {
+      stateRef.current = state;
+    }
+  }, [state, stateRef]);
+
+  useRouteFocusSync({state});
+
+  return (
+    <>
+      {isHovered && <div className={hoveredIndicator} />}
+      <div
+        className={selectedIndicator({
+          isDisabled,
+          isSelected: linkProps.href === selectedRoute
+        })}
+      />
+      <div
+        className={treeCellGrid({
+          isDisabled,
+          isSelected: linkProps.href === selectedRoute,
+          isDescendantSelected:
+            !isExpanded && hasChildItems && hasSelectedDescendant(id, state, selectedRoute)
+        })}>
+        {(isFocusVisible || (isFocusVisibleWithin && isLinkFocused)) && (
+          <div
+            className={treeRowFocusRing({
+              isFocusVisible: true,
+              isSelected
+            })}
+          />
+        )}
+        <div
+          className={style({
+            gridArea: 'level-padding',
+            width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
+          })}
+        />
+        <Provider
+          values={[
+            [TextContext, {styles: treeContent}],
+            // forward this so that it gets out of the fake dom's tree and into the real one, and
+            // add onFocusChange so the link reports focus for the row focus ring.
+            [SideNavItemLinkContext, {...linkProps, onFocusChange: setLinkFocused}],
+            [
+              IconContext,
+              {
+                render: centerBaseline({slot: 'icon', styles: treeIcon}),
+                styles: style({size: fontRelative(20), flexShrink: 0})
+              }
+            ],
+            [ActionButtonGroupContext, {styles: treeActions, isDisabled}],
+            [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled, size: 'S'}]
+          ]}>
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
+        </Provider>
+      </div>
+      <ExpandableRowChevron
+        isDisabled={isDisabled}
+        isExpanded={isExpanded}
+        scale={scale}
+        isHidden={!hasChildItems}
+      />
+    </>
   );
 };
 
@@ -594,49 +745,22 @@ export const SideNavHeader = (props: {children: ReactNode}): ReactNode => {
   );
 };
 
-export interface SideNavCategoryProps extends Omit<
-  RACTreeItemProps,
-  | 'className'
-  | 'style'
-  | 'href'
-  | 'hrefLang'
-  | 'target'
-  | 'rel'
-  | 'download'
-  | 'ping'
-  | 'referrerPolicy'
-  | 'routerOptions'
-> {
-  /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean;
-  counter?: number;
-}
-
-export const SideNavCategory = (props: SideNavCategoryProps): ReactNode => {
-  return (
-    <TreeItem
-      {...props}
-      className={renderProps =>
-        treeRow({
-          ...renderProps
-        })
-      }
-    />
-  );
-};
-
-interface SideNavItemLinkProps extends Omit<LinkProps, 'className' | 'style' | 'children'> {
-  /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean;
+interface SideNavItemLinkProps {
   /** Rendered contents of the link. */
   children?: ReactNode;
 }
 
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
-  let {isCurrent} = useContext(SideNavItemContext);
+  let {selectedRoute} = useContext(InternalSideNavContext);
+  let linkProps = useContext(SideNavItemLinkContext);
+
   return (
-    <Link {...props} aria-current={isCurrent ? 'page' : undefined} className={treeRowLink}>
+    <Link
+      {...props}
+      {...linkProps}
+      aria-current={selectedRoute === linkProps.href ? 'page' : undefined}
+      className={treeRowLink}>
       <Provider
         values={[
           [TextContext, {styles: treeContent}],
@@ -654,27 +778,15 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   );
 };
 
-function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
-  if (id == null || !state) {
-    return false;
+// The collection key of the item whose href matches `route`, or null. getKeys() covers collapsed
+// items too, and the href is stored as a data attribute so it doesn't trigger Tree's link handling.
+function findKeyForRoute(collection: Collection<Node<unknown>>, route: string): Key | null {
+  for (let key of collection.getKeys()) {
+    if (collection.getItem(key)?.props?.['data-href'] === route) {
+      return key;
+    }
   }
-  let keyAfter = state.collection.getKeyAfter(id);
-
-  // We need to skip non-item nodes because the selection manager will map non-item nodes to their parent before checking selection
-  let node = keyAfter != null ? state.collection.getItem(keyAfter) : null;
-  while (node && node.type !== 'item' && keyAfter != null) {
-    keyAfter = state.collection.getKeyAfter(keyAfter);
-    node = keyAfter != null ? state.collection.getItem(keyAfter) : null;
-  }
-
-  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
-}
-
-function isFirstItem(id: Key | undefined, state: TreeState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  return state.collection.getFirstKey() === id;
+  return null;
 }
 
 // Cache so each row doesn't have to walk up the tree every time
@@ -683,31 +795,36 @@ let selectedAncestorsCache = new WeakMap<
   {selection: unknown; ancestors: Set<Key>}
 >();
 
-function getSelectedAncestors(state: TreeState<unknown>): Set<Key> {
+// The set of collection keys that are ancestors of the item matching `selectedRoute`.
+function getSelectedAncestors(state: TreeState<unknown>, selectedRoute: string): Set<Key> {
   let {collection} = state;
-  let selection = state.selectionManager.selectedKeys;
   let cached = selectedAncestorsCache.get(collection);
-  if (cached && cached.selection === selection) {
+  if (cached && cached.selection === selectedRoute) {
     return cached.ancestors;
   }
 
+  let matchKey = findKeyForRoute(collection, selectedRoute);
+
   let ancestors = new Set<Key>();
-  for (let selectedKey of state.selectionManager.selectedKeys) {
-    let node = collection.getItem(selectedKey);
-    while (node?.parentKey != null && !ancestors.has(node.parentKey)) {
-      ancestors.add(node.parentKey);
-      node = collection.getItem(node.parentKey);
-    }
+  let node = matchKey != null ? collection.getItem(matchKey) : null;
+  while (node?.parentKey != null && !ancestors.has(node.parentKey)) {
+    ancestors.add(node.parentKey);
+    node = collection.getItem(node.parentKey);
   }
 
-  selectedAncestorsCache.set(collection, {selection, ancestors});
+  selectedAncestorsCache.set(collection, {selection: selectedRoute, ancestors});
   return ancestors;
 }
 
-// Whether any selected item is a descendant of `id`.
-function hasSelectedDescendant(id: Key | undefined, state: TreeState<unknown>) {
-  if (id == null || !state) {
+// Whether the row `id` is an ancestor of the item matching `selectedRoute`, i.e. it has a
+// selected descendant. Used to keep a collapsed parent styled when its selected child is hidden.
+function hasSelectedDescendant(
+  id: Key | undefined,
+  state: TreeState<unknown>,
+  selectedRoute: string | undefined
+) {
+  if (id == null || selectedRoute == null || !state) {
     return false;
   }
-  return getSelectedAncestors(state).has(id);
+  return getSelectedAncestors(state, selectedRoute).has(id);
 }

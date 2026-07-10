@@ -11,15 +11,20 @@
  */
 
 import {action} from 'storybook/actions';
+import {ActionMenu} from '../src/ActionMenu';
 import {categorizeArgTypes, getActionArgs} from './utils';
+import {Collection} from 'react-aria/Collection';
+import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
+import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+import {Keyboard, Text} from '../src/Content';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
-import React, {ReactNode, useState} from 'react';
+import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
+import React, {ReactElement, ReactNode, useState} from 'react';
 import {RouterProvider} from 'react-aria-components';
-import {Selection} from '@react-types/shared';
 import {
   SideNav,
-  SideNavCategory,
   SideNavHeader,
   SideNavItem,
   SideNavItemContent,
@@ -27,7 +32,6 @@ import {
   SideNavProps,
   SideNavSection
 } from '../src/SideNav';
-import {Text} from '../src/Content';
 
 const events = ['onSelectionChange'];
 
@@ -52,21 +56,19 @@ type SideNavStoryObj = StoryObj<typeof SideNav>;
 // page doesn't actually navigate, and the activated href drives the controlled selected key. Any
 // non-link selection (e.g. keyboard or items without a link) flows through onSelectionChange.
 function RoutedSideNav(props: SideNavProps<unknown> & {children: ReactNode}) {
-  let {children, onSelectionChange, ...args} = props;
-  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['Photos']));
+  let {children, ...args} = props;
+  let [selectedRoute, setSelectedRoute] = useState<string>(props.selectedRoute ?? '/Photos');
 
-  let updateSelection = (keys: Selection) => {
-    setSelectedKeys(keys);
-    onSelectionChange?.(keys);
+  let updateSelection = (href: string) => {
+    setSelectedRoute(href);
   };
 
   return (
     <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'visible'}}>
-      <RouterProvider navigate={href => updateSelection(new Set([href.replace(/^\//, '')]))}>
+      <RouterProvider navigate={updateSelection}>
         <SideNav
           {...args}
-          selectedKeys={selectedKeys}
-          onSelectionChange={updateSelection}
+          selectedRoute={selectedRoute}
           disabledKeys={['projects-1']}
           aria-label="test static tree"
           onExpandedChange={action('onExpandedChange')}>
@@ -79,38 +81,46 @@ function RoutedSideNav(props: SideNavProps<unknown> & {children: ReactNode}) {
 
 const SideNavExampleStatic = args => (
   <RoutedSideNav {...args}>
-    <SideNavItem id="Photos" textValue="Your files">
+    <SideNavItem href="/Photos" textValue="Your files">
       <SideNavItemContent>
-        <SideNavItemLink href="/Photos">
+        <SideNavItemLink>
           <Text>Your files</Text>
           <Folder />
         </SideNavItemLink>
       </SideNavItemContent>
     </SideNavItem>
-    <SideNavItem id="projects" textValue="Your libraries">
+    <SideNavItem href="/projects" textValue="Your libraries">
       <SideNavItemContent>
-        <SideNavItemLink href="/projects">
+        <SideNavItemLink>
           <Text>Your libraries</Text>
         </SideNavItemLink>
       </SideNavItemContent>
-      <SideNavItem id="projects-1" textValue="Projects-1">
+      <SideNavItem href="/projects-1" id="projects-1" textValue="Projects-1">
         <SideNavItemContent>
-          <Text>Projects-1</Text>
+          <SideNavItemLink>
+            <Text>Projects-1</Text>
+          </SideNavItemLink>
         </SideNavItemContent>
-        <SideNavItem id="projects-1A" textValue="Projects-1A">
+        <SideNavItem href="/projects-1A" textValue="Projects-1A">
           <SideNavItemContent>
-            <Text>Projects-1A</Text>
+            <SideNavItemLink>
+              <Text>Projects-1A</Text>
+            </SideNavItemLink>
           </SideNavItemContent>
         </SideNavItem>
       </SideNavItem>
-      <SideNavItem id="projects-2" textValue="Projects-2">
+      <SideNavItem href="/projects-2" textValue="Projects-2">
         <SideNavItemContent>
-          <Text>Projects-2</Text>
+          <SideNavItemLink>
+            <Text>Projects-2</Text>
+          </SideNavItemLink>
         </SideNavItemContent>
       </SideNavItem>
-      <SideNavItem id="projects-3" textValue="Projects-3">
+      <SideNavItem href="/projects-3" textValue="Projects-3">
         <SideNavItemContent>
-          <Text>Projects-3</Text>
+          <SideNavItemLink>
+            <Text>Projects-3</Text>
+          </SideNavItemLink>
         </SideNavItemContent>
       </SideNavItem>
     </SideNavItem>
@@ -123,12 +133,12 @@ export const Example: SideNavStoryObj = {
 };
 
 const SideNavSectionsExample = args => (
-  <RoutedSideNav {...args}>
+  <RoutedSideNav {...args} selectedRoute="/projects">
     <SideNavSection>
       <SideNavHeader>Photography</SideNavHeader>
-      <SideNavItem id="Photos" textValue="Photos">
+      <SideNavItem href="/Photos" textValue="Photos">
         <SideNavItemContent>
-          <SideNavItemLink href="/Photos">
+          <SideNavItemLink>
             <Text>Your files</Text>
             <Folder />
           </SideNavItemLink>
@@ -137,30 +147,38 @@ const SideNavSectionsExample = args => (
     </SideNavSection>
     <SideNavSection>
       <SideNavHeader>Work</SideNavHeader>
-      <SideNavItem id="projects" textValue="Projects">
+      <SideNavItem href="/projects" textValue="Projects">
         <SideNavItemContent>
-          <SideNavItemLink href="/projects">
+          <SideNavItemLink>
             <Text>Your libraries</Text>
           </SideNavItemLink>
         </SideNavItemContent>
-        <SideNavItem id="projects-1" textValue="Projects-1">
+        <SideNavItem href="/projects-1" id="projects-1" textValue="Projects-1">
           <SideNavItemContent>
-            <Text>Projects-1</Text>
+            <SideNavItemLink>
+              <Text>Projects-1</Text>
+            </SideNavItemLink>
           </SideNavItemContent>
-          <SideNavItem id="projects-1A" textValue="Projects-1A">
+          <SideNavItem href="/projects-1A" textValue="Projects-1A">
             <SideNavItemContent>
-              <Text>Projects-1A</Text>
+              <SideNavItemLink>
+                <Text>Projects-1A</Text>
+              </SideNavItemLink>
             </SideNavItemContent>
           </SideNavItem>
         </SideNavItem>
-        <SideNavItem id="projects-2" textValue="Projects-2">
+        <SideNavItem href="/projects-2" textValue="Projects-2">
           <SideNavItemContent>
-            <Text>Projects-2</Text>
+            <SideNavItemLink>
+              <Text>Projects-2</Text>
+            </SideNavItemLink>
           </SideNavItemContent>
         </SideNavItem>
-        <SideNavItem id="projects-3" textValue="Projects-3">
+        <SideNavItem href="/projects-3" textValue="Projects-3">
           <SideNavItemContent>
-            <Text>Projects-3</Text>
+            <SideNavItemLink>
+              <Text>Projects-3</Text>
+            </SideNavItemLink>
           </SideNavItemContent>
         </SideNavItem>
       </SideNavItem>
@@ -175,45 +193,148 @@ export const SideNavSections = {
   }
 };
 
-const SideNavExampleCategory = args => (
-  <RoutedSideNav {...args}>
-    <SideNavItem id="Photos" textValue="Photos">
-      <SideNavItemContent>
-        <Text>Your files</Text>
-        <Folder />
-      </SideNavItemContent>
-    </SideNavItem>
-    <SideNavCategory id="projects" textValue="Projects" counter={10}>
-      <SideNavItemContent>
-        <Text>Your libraries</Text>
-      </SideNavItemContent>
-      <SideNavItem id="projects-1" textValue="Projects-1">
-        <SideNavItemContent>
-          <Text>Projects-1</Text>
-        </SideNavItemContent>
-        <SideNavItem id="projects-1A" textValue="Projects-1A">
-          <SideNavItemContent>
-            <Text>Projects-1A</Text>
-          </SideNavItemContent>
-        </SideNavItem>
-      </SideNavItem>
-      <SideNavItem id="projects-2" textValue="Projects-2">
-        <SideNavItemContent>
-          <Text>Projects-2</Text>
-        </SideNavItemContent>
-      </SideNavItem>
-      <SideNavItem id="projects-3" textValue="Projects-3">
-        <SideNavItemContent>
-          <Text>Projects-3</Text>
-        </SideNavItemContent>
-      </SideNavItem>
-    </SideNavCategory>
-  </RoutedSideNav>
-);
+interface SideNavItemType {
+  id: string;
+  name: string;
+  href?: string;
+  childItems?: SideNavItemType[];
+}
 
-export const Category = {
-  render: SideNavExampleCategory,
-  args: {
-    selectionMode: 'single'
+let dynamicItems: SideNavItemType[] = [
+  {id: 'Photos', name: 'Your files', href: '/Photos'},
+  {
+    id: 'projects',
+    name: 'Projects',
+    href: '/projects',
+    childItems: [
+      {id: 'projects-1', name: 'Projects-1', href: '/projects-1'},
+      {
+        id: 'projects-2',
+        name: 'Projects-2',
+        childItems: [
+          {id: 'projects-2A', name: 'Projects-2A', href: '/projects-2A'},
+          {id: 'projects-2B', name: 'Projects-2B', href: '/projects-2B'},
+          {id: 'projects-2C', name: 'Projects-2C', href: '/projects-2C'},
+          {id: 'projects-2D', name: 'Projects-2D', href: '/projects-2D'},
+          {id: 'projects-2E', name: 'Projects-2E', href: '/projects-2E'},
+          {id: 'projects-2F', name: 'Projects-2F', href: '/projects-2F'}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    href: '/reports',
+    childItems: [{id: 'reports-1', name: 'Reports-1', href: '/reports-1'}]
   }
+];
+
+const DynamicSideNavItem = (props: SideNavItemType): ReactElement => {
+  let {id, name, href, childItems} = props;
+  return (
+    <SideNavItem id={id} href={href} textValue={name}>
+      <SideNavItemContent>
+        {href && href.length > 0 && (
+          <SideNavItemLink>
+            <Text>{name}</Text>
+          </SideNavItemLink>
+        )}
+        {(!href || href.length === 0) && <Text>{name}</Text>}
+      </SideNavItemContent>
+      <Collection items={childItems}>
+        {(item: SideNavItemType) => <DynamicSideNavItem {...item} />}
+      </Collection>
+    </SideNavItem>
+  );
+};
+
+const SideNavDynamicExample = (args: SideNavProps<SideNavItemType>): ReactElement => {
+  let [selectedRoute, setSelectedRoute] = useState<string>('/Photos');
+  return (
+    <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'visible'}}>
+      <RouterProvider navigate={setSelectedRoute}>
+        <SideNav
+          {...args}
+          aria-label="dynamic side nav"
+          items={dynamicItems}
+          selectedRoute={selectedRoute}
+          defaultExpandedKeys={['projects', 'projects-2']}
+          onExpandedChange={action('onExpandedChange')}>
+          {(item: SideNavItemType) => <DynamicSideNavItem {...item} />}
+        </SideNav>
+      </RouterProvider>
+    </div>
+  );
+};
+type SideNavDynamicStoryObj = StoryObj<typeof SideNavDynamicExample>;
+
+export const SideNavDynamic: SideNavDynamicStoryObj = {
+  render: args => <SideNavDynamicExample {...args} />,
+  args: {}
+};
+
+const DynamicWithActionsSideNavItem = (props: SideNavItemType): ReactElement => {
+  let {id, name, href, childItems} = props;
+  return (
+    <SideNavItem id={id} href={href} textValue={name}>
+      <SideNavItemContent>
+        {href && href.length > 0 && (
+          <SideNavItemLink>
+            <Text>{name}</Text>
+          </SideNavItemLink>
+        )}
+        {(!href || href.length === 0) && <Text>{name}</Text>}
+        <ActionMenu>
+          <MenuItem textValue="Copy" onAction={() => alert('copy')}>
+            <Copy />
+            <Text slot="label">Copy</Text>
+            <Text slot="description">Copy the selected text</Text>
+            <Keyboard>⌘C</Keyboard>
+          </MenuItem>
+          <MenuItem textValue="Cut" onAction={() => alert('cut')}>
+            <Cut />
+            <Text slot="label">Cut</Text>
+            <Text slot="description">Cut the selected text</Text>
+            <Keyboard>⌘X</Keyboard>
+          </MenuItem>
+          <MenuItem textValue="Paste" onAction={() => alert('paste')}>
+            <Paste />
+            <Text slot="label">Paste</Text>
+            <Text slot="description">Paste the copied text</Text>
+            <Keyboard>⌘V</Keyboard>
+          </MenuItem>
+        </ActionMenu>
+      </SideNavItemContent>
+      <Collection items={childItems}>
+        {(item: SideNavItemType) => <DynamicWithActionsSideNavItem {...item} />}
+      </Collection>
+    </SideNavItem>
+  );
+};
+
+const SideNavDynamicWithActionsExample = (args: SideNavProps<SideNavItemType>): ReactElement => {
+  let [selectedRoute, setSelectedRoute] = useState<string>('/Photos');
+  return (
+    <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'visible'}}>
+      <RouterProvider navigate={setSelectedRoute}>
+        <SideNav
+          {...args}
+          aria-label="dynamic side nav"
+          items={dynamicItems}
+          selectedRoute={selectedRoute}
+          defaultExpandedKeys={['projects', 'projects-2']}
+          onExpandedChange={action('onExpandedChange')}>
+          {(item: SideNavItemType) => <DynamicWithActionsSideNavItem {...item} />}
+        </SideNav>
+      </RouterProvider>
+    </div>
+  );
+};
+type SideNavDynamicWithActionsStoryObj = StoryObj<typeof SideNavDynamicWithActionsExample>;
+
+export const SideNavDynamicWithActions: SideNavDynamicWithActionsStoryObj = {
+  render: args => <SideNavDynamicWithActionsExample {...args} />,
+  args: {},
+  name: 'WithActions'
 };
