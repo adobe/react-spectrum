@@ -151,6 +151,11 @@ const PromptFieldContext = createContext<PromptFieldState>({
   isDisabled: false
 });
 
+// to communicate the anchor position to the menu items in the completion popover
+// need this so we can replace the inline filter text rather than inserting it at the current caret
+// aka the difference between a slash command and using the + menu which won't have filter text
+const PromptCompletionAnchorContext = createContext<Position | null>(null);
+
 function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
   return acceptedMimeTypes.some(type => {
     if (type === '*/*') {
@@ -486,7 +491,7 @@ export interface PromptTokenFieldPopoverProps extends PopoverProps {
 
 function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
   let {filterAnchor, items, isFocused} = props;
-  let {inputRef, setPrompt} = useContext(PromptFieldContext);
+  let {inputRef} = useContext(PromptFieldContext);
 
   let resolvedItems = items instanceof Promise ? use(items) : items;
   let isOpen =
@@ -498,24 +503,6 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
     setMenuItems(resolvedItems);
   }
 
-  let onAction = (item: any) => {
-    setPrompt(value =>
-      value.replaceRangeWithSegments(
-        filterAnchor!,
-        value.caretPosition,
-        [
-          {
-            type: 'token',
-            text: 'command' in item ? item.command : item.title,
-            value: item
-          },
-          {type: 'text', text: ' '}
-        ],
-        false // Don't coalesce in undo/redo history.
-      )
-    );
-  };
-
   return (
     <Popover
       triggerRef={inputRef}
@@ -526,7 +513,9 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       getTargetRect={target => {
         return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
-      <Menu onAction={(key, value) => onAction(value)}>{menuItems}</Menu>
+      <PromptCompletionAnchorContext.Provider value={filterAnchor ?? null}>
+        <Menu>{menuItems}</Menu>
+      </PromptCompletionAnchorContext.Provider>
     </Popover>
   );
 }
@@ -658,37 +647,56 @@ export function AttachFileMenuItem() {
   );
 }
 
-export function InsertTokenMenuItem(props: MenuItemProps) {
+// either replace the filter text (aka token replace) or insert value at current caret position (aka plain text inject)
+function useInsertPromptSegment(buildSegments: (item: any) => TokenFieldSegment[]) {
   let {setPrompt, inputRef} = useContext(PromptFieldContext);
+  let anchor = useContext(PromptCompletionAnchorContext);
   let pendingCaret = useRef<Position | null>(null);
-  let onAction = (item: any) => {
+  return (item: any) => {
     setPrompt(value => {
       let newValue = value.replaceRangeWithSegments(
+        anchor ?? value.caretPosition,
         value.caretPosition,
-        value.caretPosition,
-        [
-          {
-            type: 'token',
-            text: 'command' in item ? item.command : item.title,
-            value: item
-          },
-          {type: 'text', text: ' '}
-        ],
+        buildSegments(item),
         false // Don't coalesce in undo/redo history.
       );
       pendingCaret.current = newValue.caretPosition;
       return newValue;
     });
 
-    // Wait for popover animation, then restore cursor to after the inserted token
-    setTimeout(() => {
-      if (inputRef.current && pendingCaret.current) {
-        inputRef.current.focus();
-        setCursor(inputRef.current, pendingCaret.current);
-        pendingCaret.current = null;
-      }
-    }, 400);
+    if (anchor == null) {
+      // Wait for popover animation, then restore cursor to after the inserted content.
+      setTimeout(() => {
+        if (inputRef.current && pendingCaret.current) {
+          let position = pendingCaret.current;
+          pendingCaret.current = null;
+          inputRef.current.focus();
+          setCursor(inputRef.current, position);
+          // TODO: double check this, claude debugged this one, but essentially reproduced with plain text insertion commands
+          // triggered one after another
+          // focus() fires a synchronous selectionchange before setCursor can set
+          // isProgrammaticSelectionChange, which resets caretPosition to {0,0} in
+          // TokenField's useSelectionChange handler. Re-assert the correct position.
+          setPrompt(value => value.withCaretPosition(position));
+        }
+      }, 400);
+    }
   };
+}
 
-  return <MenuItem {...props} onAction={() => onAction(props.value)} />;
+export function InsertTokenMenuItem(props: MenuItemProps) {
+  let insert = useInsertPromptSegment(item => [
+    {type: 'token', text: 'command' in item ? item.command : item.title, value: item},
+    {type: 'text', text: ' '}
+  ]);
+
+  return <MenuItem {...props} onAction={() => insert(props.value)} />;
+}
+
+export function InsertTextMenuItem(props: MenuItemProps) {
+  let insert = useInsertPromptSegment(item => [
+    {type: 'text', text: `${'command' in item ? item.command : item.title} `}
+  ]);
+
+  return <MenuItem {...props} onAction={() => insert(props.value)} />;
 }

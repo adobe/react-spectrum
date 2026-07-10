@@ -9,6 +9,7 @@ export {
   PromptTokenField,
   AttachFileMenuItem,
   InsertMenuButton,
+  InsertTextMenuItem,
   InsertTokenMenuItem,
   PromptFieldAttachmentList,
   PromptFieldToolbar,

@@ -15,6 +15,7 @@ import {
   AttachFileMenuItem,
   AutoLinkingSegmentList,
   InsertMenuButton,
+  InsertTextMenuItem,
   InsertTokenMenuItem,
   PromptField,
   PromptFieldAttachment,
@@ -89,9 +90,11 @@ const slashCommands = [
     type: 'skill',
     description: 'Explain an AEP audience in english'
   },
+  {command: '/btw', type: 'command', description: 'Ask a side question'},
   {command: '/clear', type: 'command', description: 'Clear the context'},
   {command: '/compact', type: 'command', description: 'Summarize conversation history'},
   {command: '/dataset-usage', type: 'skill', description: 'Explain how to use a dataset'},
+  {command: '/feedback', type: 'command', description: 'Submit feedback'},
   {command: '/plan', type: 'command', description: 'Create a plan before executing'},
   {command: '/visual-artifact', type: 'skill', description: 'Generate a chart or graph'}
 ];
@@ -138,26 +141,52 @@ const objects = [
   }
 ];
 
-function renderCompletions(filterValue: string) {
+interface CompletionCallbacks {
+  onClear?: () => void;
+  onCompact?: () => void;
+}
+
+function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks) {
   if (filterValue.startsWith('/')) {
     return slashCommands
       .filter(item => item.command.includes(filterValue.slice(1)))
-      .map(item => (
-        <MenuItem key={item.command} id={item.command} value={item}>
-          {item.type === 'skill' ? <Plugin /> : <Prompt />}
-          <Text slot="label">{item.command}</Text>
-          <Text slot="description">{item.description}</Text>
-        </MenuItem>
-      ));
+      .map(item =>
+        item.command === '/clear' ? (
+          <MenuItem key={item.command} id={item.command} onAction={callbacks?.onClear}>
+            <Prompt />
+            <Text slot="label">{item.command}</Text>
+            <Text slot="description">{item.description}</Text>
+          </MenuItem>
+        ) : item.command === '/compact' ? (
+          <MenuItem key={item.command} id={item.command} onAction={callbacks?.onCompact}>
+            <Prompt />
+            <Text slot="label">{item.command}</Text>
+            <Text slot="description">{item.description}</Text>
+          </MenuItem>
+        ) : item.command === '/feedback' || item.command === '/btw' ? (
+          // coworker doesn't seem to have any text insertion commands anymore, so I added these for testing
+          <InsertTextMenuItem key={item.command} id={item.command} value={item}>
+            <Prompt />
+            <Text slot="label">{item.command}</Text>
+            <Text slot="description">{item.description}</Text>
+          </InsertTextMenuItem>
+        ) : (
+          <InsertTokenMenuItem key={item.command} id={item.command} value={item}>
+            {item.type === 'skill' ? <Plugin /> : <Prompt />}
+            <Text slot="label">{item.command}</Text>
+            <Text slot="description">{item.description}</Text>
+          </InsertTokenMenuItem>
+        )
+      );
   } else if (filterValue.startsWith('@')) {
     return objects
       .map(section => {
         let matchingItems = section.items
           .filter(item => item.title.toLowerCase().includes(filterValue.slice(1).toLowerCase()))
           .map(item => (
-            <MenuItem key={item.title} id={item.title} value={item}>
+            <InsertTokenMenuItem key={item.title} id={item.title} value={item}>
               {item.title}
-            </MenuItem>
+            </InsertTokenMenuItem>
           ));
 
         if (matchingItems.length > 0) {
@@ -285,7 +314,16 @@ function EverythingRender(args) {
         </PromptFieldAttachmentList>
         <PromptTokenField
           completionTrigger={/(?<=^|\s)[@/]/}
-          renderCompletions={renderCompletions}
+          renderCompletions={filterValue =>
+            renderCompletions(filterValue, {
+              onClear: () => {
+                setValue(new AutoLinkingSegmentList([]));
+                setAttachments([]);
+              },
+              // TODO: since this ends up being called be a normal menu item, it ends up not closing the autocomplete menu...
+              onCompact: action('onCompact')
+            })
+          }
           placeholder={placeholder}>
           {segment => (
             <PromptToken>
@@ -303,12 +341,34 @@ function EverythingRender(args) {
                 <Text>Commands</Text>
               </MenuItem>
               <Menu items={slashCommands.filter(item => item.type === 'command')}>
-                {item => (
-                  <InsertTokenMenuItem id={item.command}>
-                    <Text slot="label">{item.command}</Text>
-                    <Text slot="description">{item.description}</Text>
-                  </InsertTokenMenuItem>
-                )}
+                {item =>
+                  item.command === '/clear' ? (
+                    <MenuItem
+                      id={item.command}
+                      onAction={() => {
+                        setValue(new AutoLinkingSegmentList([]));
+                        setAttachments([]);
+                      }}>
+                      <Text slot="label">{item.command}</Text>
+                      <Text slot="description">{item.description}</Text>
+                    </MenuItem>
+                  ) : item.command === '/compact' ? (
+                    <MenuItem id={item.command} onAction={action('onCompact')}>
+                      <Text slot="label">{item.command}</Text>
+                      <Text slot="description">{item.description}</Text>
+                    </MenuItem>
+                  ) : item.command === '/feedback' || item.command === '/btw' ? (
+                    <InsertTextMenuItem id={item.command} value={item}>
+                      <Text slot="label">{item.command}</Text>
+                      <Text slot="description">{item.description}</Text>
+                    </InsertTextMenuItem>
+                  ) : (
+                    <InsertTokenMenuItem id={item.command} value={item}>
+                      <Text slot="label">{item.command}</Text>
+                      <Text slot="description">{item.description}</Text>
+                    </InsertTokenMenuItem>
+                  )
+                }
               </Menu>
             </SubmenuTrigger>
             <SubmenuTrigger>
@@ -318,7 +378,7 @@ function EverythingRender(args) {
               </MenuItem>
               <Menu items={slashCommands.filter(item => item.type === 'skill')}>
                 {item => (
-                  <InsertTokenMenuItem id={item.command}>
+                  <InsertTokenMenuItem id={item.command} value={item}>
                     <Text slot="label">{item.command}</Text>
                     <Text slot="description">{item.description}</Text>
                   </InsertTokenMenuItem>
