@@ -291,12 +291,12 @@
 }
 
 .home .iphone-frame {
-  background-image: url(../../assets/iphone-frame.webp);
+  background-image: url(../../../assets/iphone-frame.webp);
   background-size: contain;
 }
 
 .home .iphone-mask {
-  mask-image: url(../../assets/iphone-mask.webp), linear-gradient(#fff 0 0);
+  mask-image: url(../../../assets/iphone-mask.webp), linear-gradient(#fff 0 0);
   mask-size: contain;
   mask-composite: exclude;
 }
