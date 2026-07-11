@@ -72,7 +72,6 @@ interface VisibleOverlay {
 const visibleOverlays: VisibleOverlay[] = [];
 
 interface CloseWatcher {
-  oncancel: ((event: Event) => void) | null;
   onclose: (() => void) | null;
   destroy: () => void;
 }
@@ -144,18 +143,6 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
 
   let onHideEvent = useEffectEvent(onHide);
 
-  // Only hide the overlay when it is the topmost visible overlay in the stack.
-  let onHideTopmost = () => {
-    if (getTopMostOverlay() === visibleOverlay.current && onClose) {
-      onHide();
-    }
-  };
-
-  // Stable callback for CloseWatcher that always calls the latest onHideTopmost.
-  // useEffectEvent returns a stable reference, so the watcher doesn't need
-  // to be recreated when onClose changes.
-  let onHideTopmostEvent = useEffectEvent(onHideTopmost);
-
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   // When CloseWatcher is supported, each overlay gets its own instance so the browser's
   // native close watcher stack handles nested overlay ordering for Escape and Android back.
@@ -174,13 +161,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
       let watcher: CloseWatcher | null = null;
       if (!isKeyboardDismissDisabled && supportsCloseWatcher()) {
         let closeWatcher: CloseWatcher = new (globalThis as any).CloseWatcher();
-        closeWatcher.oncancel = event => {
-          if (getTopMostOverlay() !== overlay) {
-            event.preventDefault();
-          }
-        };
         closeWatcher.onclose = () => {
-          onHideTopmostEvent();
+          onHideEvent();
         };
         watcher = closeWatcher;
       }

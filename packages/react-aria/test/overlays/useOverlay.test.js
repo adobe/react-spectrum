@@ -204,7 +204,6 @@ describe('useOverlay', function () {
       closeWatcherInstances = [];
       MockCloseWatcher = class {
         constructor() {
-          this.oncancel = null;
           this.onclose = null;
           closeWatcherInstances.push(this);
         }
@@ -355,19 +354,15 @@ describe('useOverlay', function () {
       expect(onCloseOuter).not.toHaveBeenCalled();
     });
 
-    it('should cancel non-topmost CloseWatcher close requests when possible', function () {
+    it('should let the browser determine which CloseWatcher closes', function () {
       let onCloseOuter = jest.fn();
       let onCloseInner = jest.fn();
       render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
       render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
 
-      let outerCancelEvent = new Event('cancel', {cancelable: true});
-      closeWatcherInstances[0].oncancel(outerCancelEvent);
-      expect(outerCancelEvent.defaultPrevented).toBe(true);
-
-      let innerCancelEvent = new Event('cancel', {cancelable: true});
-      closeWatcherInstances[1].oncancel(innerCancelEvent);
-      expect(innerCancelEvent.defaultPrevented).toBe(false);
+      closeWatcherInstances[0].onclose();
+      expect(onCloseOuter).toHaveBeenCalledTimes(1);
+      expect(onCloseInner).not.toHaveBeenCalled();
     });
 
     it('should dismiss inner then outer with native watcher stack', function () {
