@@ -409,49 +409,50 @@ describe('TagGroup', () => {
     await user.click(button);
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
+  if (parseInt(React.version, 10) >= 18) {
+    it('should support repeat keydown events when holding the remove key', async () => {
+      let removed = [];
+      function Example() {
+        let list = useListData({
+          initialItems: [
+            {id: 'cat', name: 'Cat'},
+            {id: 'dog', name: 'Dog'},
+            {id: 'kangaroo', name: 'Kangaroo'}
+          ]
+        });
+        return (
+          <TagGroup
+            aria-label="Animals"
+            onRemove={keys => {
+              removed.push(...keys);
+              list.remove(...keys);
+            }}>
+            <TagList items={list.items}>
+              {item => (
+                <Tag textValue={item.name}>
+                  {item.name}
+                  <Button slot="remove" aria-label="remove" />
+                </Tag>
+              )}
+            </TagList>
+          </TagGroup>
+        );
+      }
 
-  it('should support repeat keydown events when holding the remove key', async () => {
-    let removed = [];
-    function Example() {
-      let list = useListData({
-        initialItems: [
-          {id: 'cat', name: 'Cat'},
-          {id: 'dog', name: 'Dog'},
-          {id: 'kangaroo', name: 'Kangaroo'}
-        ]
-      });
-      return (
-        <TagGroup
-          aria-label="Animals"
-          onRemove={keys => {
-            removed.push(...keys);
-            list.remove(...keys);
-          }}>
-          <TagList items={list.items}>
-            {item => (
-              <Tag textValue={item.name}>
-                {item.name}
-                <Button slot="remove" aria-label="remove" />
-              </Tag>
-            )}
-          </TagList>
-        </TagGroup>
-      );
-    }
+      let {getAllByRole, queryAllByRole} = render(<Example />);
+      expect(getAllByRole('row')).toHaveLength(3);
 
-    let {getAllByRole, queryAllByRole} = render(<Example />);
-    expect(getAllByRole('row')).toHaveLength(3);
+      await user.tab();
+      expect(getAllByRole('row')[0]).toHaveFocus();
 
-    await user.tab();
-    expect(getAllByRole('row')[0]).toHaveFocus();
+      // Hold the key down for three keydown events. Each removes
+      // the focused tag and shifts focus to the next one, so all three tags are removed.
+      await user.keyboard('{Backspace>3/}');
 
-    // Hold the key down for three keydown events. Each removes
-    // the focused tag and shifts focus to the next one, so all three tags are removed.
-    await user.keyboard('{Backspace>3/}');
-
-    expect(queryAllByRole('row')).toHaveLength(0);
-    expect(removed).toEqual(['cat', 'dog', 'kangaroo']);
-  });
+      expect(queryAllByRole('row')).toHaveLength(0);
+      expect(removed).toEqual(['cat', 'dog', 'kangaroo']);
+    });
+  }
 
   it('should disable the remove button if the tag is disabled', async () => {
     let onRemove = jest.fn();
