@@ -232,7 +232,12 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         }
         state.revert();
         return {shouldContinuePropagation};
-      },
+      }
+    }
+  });
+
+  let {keyboardProps: repeatKeyboardProps} = useKeyboard({
+    shortcuts: {
       ArrowDown: () => {
         state.open('first', 'manual');
         return {shouldPreventDefault: false};
@@ -249,7 +254,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         state.selectionManager.setFocusedKey(null);
         return {shouldPreventDefault: false};
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
@@ -295,7 +301,12 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       onChange: state.setInputValue,
       onKeyDown: !isReadOnly
         ? // oxlint-disable-next-line react/react-compiler
-          chain(state.isOpen && collectionProps.onKeyDown, keyboardProps.onKeyDown, props.onKeyDown)
+          chain(
+            state.isOpen && collectionProps.onKeyDown,
+            keyboardProps.onKeyDown,
+            repeatKeyboardProps.onKeyDown,
+            props.onKeyDown
+          )
         : props.onKeyDown,
       onBlur,
       value: state.inputValue,
