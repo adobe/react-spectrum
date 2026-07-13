@@ -261,7 +261,6 @@ function scrollIntoViewIfNeeded(scrollView: HTMLElement, element: HTMLElement): 
 
 /**
  * Returns true if `parent` is an ancestor of (or the same node as) `child`.
- * triggered by calling methods on values derived from hook results.
  */
 function isAncestor(parent: Element, child: Node): boolean {
   let current: Node | null = child;
