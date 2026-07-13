@@ -18,15 +18,19 @@
 import {
   abTokCd,
   adjacentTokensSample,
+  dblClickAt,
   expectCaret,
   focusField,
   getFieldSelection,
+  isMacPlatform,
+  isWindowsPlatform,
   modKey,
   navigateCaret,
   navigateCaretFromEnd,
   renderControlledTokenField,
   segments,
   selectRange,
+  setFieldSelection,
   text,
   token,
   waitForCaret,
@@ -35,12 +39,12 @@ import {
   wordDeleteModKey,
   wordNavModKey
 } from './utils/tokenFieldBrowserUtils';
+import {CLIPBOARD_MIME_TYPE, Token, TokenField} from '../src/TokenField';
 import {commands, userEvent} from 'vitest/browser';
 import {describe, expect, it} from 'vitest';
 import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {Token, TokenField} from '../src/TokenField';
 
 declare module 'vitest/browser' {
   interface BrowserCommands {
@@ -51,6 +55,22 @@ declare module 'vitest/browser' {
 
 // Conditionally skip the suite
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+
+// Word-forward caret movement (Selection.modify with word granularity) stops at the end of the
+// current word on macOS + Linux, and in Firefox on every platform. Chromium and WebKit on Windows
+// instead advance to the start of the next word. The component delegates to the browser's native
+// behavior, so the destination follows this platform/engine convention.
+const wordForwardStopsAtWordEnd = () => !isWindowsPlatform() || isFirefox();
+
+// Playwright's bundled WebKit cannot read the system clipboard back on Windows, so copy/cut →
+// paste round trips deliver no data. These tests pass against WebKit on macOS but not elsewhere.
+const clipboardRoundTripUnsupported = () => isWebKit() && isWindowsPlatform();
+
+// Firefox additionally strips non-standard clipboard types on paste (only text/plain, text/html,
+// etc. survive), so the custom token MIME type — and thus token structure — cannot round trip off
+// macOS. WebKit off macOS fails the same assertion for the round-trip reason above.
+const customClipboardTypeUnsupported = () => (isWebKit() || isFirefox()) && !isMacPlatform();
+
 describeOrSkip('TokenField browser interactions', () => {
   describe('rendering', () => {
     it('should render textbox and tokens', async () => {
@@ -61,6 +81,57 @@ describeOrSkip('TokenField browser interactions', () => {
       );
       await expect.element(screen.getByRole('textbox', {name: 'Message'})).toBeInTheDocument();
       await expect.element(screen.getByText('TOK')).toBeInTheDocument();
+    });
+
+    it('does not allow editing when read only', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(abTokCd, {isReadOnly: true});
+      let el = textbox.element();
+      expect(el.getAttribute('contenteditable')).toBe('false');
+      expect(el.getAttribute('aria-readonly')).toBe('true');
+      await focusField(textbox);
+      await userEvent.keyboard('x');
+      expect(getValue().toString()).toBe('abTOKcd');
+    });
+
+    it('is not editable or focusable when disabled', async () => {
+      let {textbox} = await renderControlledTokenField(abTokCd, {isDisabled: true});
+      let el = textbox.element();
+      expect(el.getAttribute('contenteditable')).toBe('false');
+      expect(el.getAttribute('aria-disabled')).toBe('true');
+      expect(el.getAttribute('tabindex')).toBeNull();
+    });
+  });
+
+  describe('focus management', () => {
+    function FocusHarness() {
+      let [value, setValue] = React.useState(() => segments(text('hello')));
+      return (
+        <>
+          <input
+            aria-label="Other field"
+            onChange={e => setValue(segments(text(e.target.value)))}
+          />
+          <TokenField aria-label="Focus test" value={value} onChange={setValue}>
+            {segment => <Token>{segment.text}</Token>}
+          </TokenField>
+        </>
+      );
+    }
+
+    it('does not focus the field on mount', async () => {
+      let screen = await render(<FocusHarness />);
+      await expect.element(screen.getByRole('textbox', {name: 'Focus test'})).not.toHaveFocus();
+    });
+
+    it('does not steal focus when the value changes while another element is focused', async () => {
+      let screen = await render(<FocusHarness />);
+      let other = screen.getByRole('textbox', {name: 'Other field'});
+      await userEvent.click(other);
+      await expect.element(other).toHaveFocus();
+      // Typing into the other input updates the TokenField value; focus must stay on the input.
+      await userEvent.type(other, 'x');
+      await expect.element(other).toHaveFocus();
+      await expect.element(screen.getByRole('textbox', {name: 'Focus test'})).not.toHaveFocus();
     });
   });
 
@@ -126,6 +197,17 @@ describeOrSkip('TokenField browser interactions', () => {
       await waitForSelection(textbox, {index: 0, offset: 0});
     });
 
+    it('moves over an emoji as a single grapheme', async () => {
+      let list = segments(text('a😀b'));
+      let {textbox} = await renderControlledTokenField(list);
+      await navigateCaret(textbox, list, {index: 0, offset: 1});
+      // ArrowRight steps over the whole emoji (2 code units), not into the middle of it.
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 0, offset: 3});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 0, offset: 1});
+    });
+
     it('moves to field start with Home on single line', async () => {
       let list = segments(text('hello'));
       let {textbox} = await renderControlledTokenField(list);
@@ -173,7 +255,7 @@ describeOrSkip('TokenField browser interactions', () => {
       await navigateCaret(textbox, list, {index: 0, offset: 0});
       let mod = wordNavModKey();
       await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
-      await waitForSelection(textbox, {index: 0, offset: 5});
+      await waitForSelection(textbox, {index: 0, offset: wordForwardStopsAtWordEnd() ? 5 : 6});
     });
 
     it('word navigation skips over token backward as atomic unit', async () => {
@@ -208,6 +290,128 @@ describeOrSkip('TokenField browser interactions', () => {
       let mod = modKey();
       await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
       await waitForSelection(textbox, {index: 0, offset: 11});
+    });
+  });
+
+  describe('rtl caret movement', () => {
+    // In RTL text the visual arrow keys map to the opposite logical direction: ArrowLeft moves
+    // the caret forward through the text and ArrowRight moves it backward.
+    it('moves the caret in the visual direction in RTL text', async () => {
+      let list = segments(text('אבגד'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 0, offset: 3});
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 0, offset: 1});
+    });
+
+    it('skips over a token in the visual direction in RTL text', async () => {
+      let list = segments(text('אב'), token('ך'), text('גד'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      // ArrowLeft (visual left = logical forward) crosses the token to the following text.
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 2, offset: 0});
+      // ArrowRight (visual right = logical backward) crosses back over the token.
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 0, offset: 2});
+    });
+
+    it('extends the selection in the visual direction in RTL text', async () => {
+      let list = segments(text('אבגד'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 0, offset: 4});
+    });
+
+    it('extends the selection across a token in RTL text', async () => {
+      let list = segments(text('אב'), token('ך'), text('גד'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 2, offset: 0});
+    });
+
+    it('moves the caret by word in the visual direction in RTL text', async () => {
+      // "שלום עולם" = two words separated by a space (offsets 0-4 and 5-9).
+      let list = segments(text('שלום עולם'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      let mod = wordNavModKey();
+      // Word + ArrowLeft (visual left = logical forward) moves by a word: to the end of the first
+      // word where word-forward stops at the word end, otherwise to the start of the next word.
+      setFieldSelection(el, {index: 0, offset: 0}, {index: 0, offset: 0});
+      await userEvent.keyboard(`{${mod}>}{ArrowLeft}{/${mod}}`);
+      await waitForSelection(textbox, {index: 0, offset: wordForwardStopsAtWordEnd() ? 4 : 5});
+      // Word + ArrowRight (visual right = logical backward) moves to the start of the last word.
+      setFieldSelection(el, {index: 0, offset: 9}, {index: 0, offset: 9});
+      await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
+      await waitForSelection(textbox, {index: 0, offset: 5});
+    });
+
+    it('moves to the line boundaries with Home and End in RTL text', async () => {
+      let list = segments(text('שלום עולם'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 4}, {index: 0, offset: 4});
+      await userEvent.keyboard('{Home}');
+      await waitForSelection(textbox, {index: 0, offset: 0});
+      await userEvent.keyboard('{End}');
+      await waitForSelection(textbox, {index: 0, offset: 9});
+    });
+  });
+
+  describe('bidirectional text', () => {
+    it('deletes the previous character with Backspace in RTL text', async () => {
+      let list = segments(text('שלום'));
+      let {textbox, getValue} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 4}, {index: 0, offset: 4});
+      await userEvent.keyboard('{Backspace}');
+      await waitForFieldText(getValue, 'שלו');
+    });
+
+    it('crosses a token atomically in mixed RTL and LTR text', async () => {
+      // RTL text, an LTR token, then RTL text.
+      let list = segments(text('שלום'), token('ABC'), text('עולם'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      // From the boundary before the token, ArrowLeft (logical forward) jumps the whole token.
+      setFieldSelection(el, {index: 0, offset: 4}, {index: 0, offset: 4});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 2, offset: 0});
+      // ArrowRight (logical backward) crosses back over the token.
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 0, offset: 4});
+    });
+
+    it('moves through and back across mixed bidirectional text', async () => {
+      // "ab" (LTR) + "גד" (RTL) + "ef" (LTR). The visual path differs across browsers, but the
+      // caret must traverse the whole field and a round trip must return to the start.
+      let list = segments(text('abגדef'));
+      let {textbox} = await renderControlledTokenField(list);
+      await focusField(textbox);
+      await userEvent.keyboard('{Home}');
+      await waitForSelection(textbox, {index: 0, offset: 0});
+      await userEvent.keyboard('{ArrowRight>6}');
+      await waitForSelection(textbox, {index: 0, offset: 6});
+      await userEvent.keyboard('{ArrowLeft>6}');
+      await waitForSelection(textbox, {index: 0, offset: 0});
     });
   });
 
@@ -285,6 +489,106 @@ describeOrSkip('TokenField browser interactions', () => {
       await expect(tokenEl.getAttribute('data-selected')).toBe('true');
     });
 
+    it('extends selection to the left with Shift+ArrowLeft', async () => {
+      let list = segments(text('abcde'));
+      let {textbox} = await renderControlledTokenField(list);
+      await navigateCaret(textbox, list, {index: 0, offset: 3});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 3});
+    });
+
+    it('moves selection back to the right with Shift+ArrowRight without extending past the anchor', async () => {
+      let list = segments(text('abcde'));
+      let {textbox} = await renderControlledTokenField(list);
+      await navigateCaret(textbox, list, {index: 0, offset: 3});
+      // Extend left to select "bc".
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 3});
+      // Shift+ArrowRight shrinks the selection from the left rather than extending it to the right.
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 0, offset: 3});
+    });
+
+    it('extends back to the left after moving right with Shift+ArrowLeft', async () => {
+      let list = segments(text('abcde'));
+      let {textbox} = await renderControlledTokenField(list);
+      await navigateCaret(textbox, list, {index: 0, offset: 3});
+      // Extend left, move back right, then extend left again. The anchor stays fixed at offset 3.
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 3});
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 0, offset: 3});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 3});
+    });
+
+    it('keeps direction when shrinking a selection across a token', async () => {
+      let {textbox} = await renderControlledTokenField(abTokCd);
+      let tokenEl = textbox.getByText('TOK').element();
+      // Caret after the token (start of "cd"). Extend left across the token to select it.
+      await navigateCaretFromEnd(textbox, abTokCd, {index: 2, offset: 0});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 2, offset: 0});
+      await expect.poll(() => tokenEl.getAttribute('data-selected')).toBe('true');
+      // Shift+ArrowRight shrinks back across the token rather than extending to the right.
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}');
+      await waitForSelection(textbox, {index: 2, offset: 0}, {index: 2, offset: 0});
+      await expect.poll(() => tokenEl.getAttribute('data-selected')).toBe(null);
+    });
+
+    it('collapses the selection to the right edge with ArrowRight', async () => {
+      let {textbox} = await renderControlledTokenField(abTokCd);
+      await selectRange(textbox, abTokCd, {index: 0, offset: 1}, {index: 2, offset: 1});
+      // A plain arrow collapses to the edge without moving the caret past it.
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 2, offset: 1});
+    });
+
+    it('collapses the selection to the left edge with ArrowLeft', async () => {
+      let {textbox} = await renderControlledTokenField(abTokCd);
+      await selectRange(textbox, abTokCd, {index: 0, offset: 1}, {index: 2, offset: 1});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 0, offset: 1});
+    });
+
+    it('extends a double-clicked word to the left with Shift+ArrowLeft', async () => {
+      if (isFirefox() || !isMacPlatform()) {
+        // Double-click word selections are only directionless on macOS (and not in Firefox).
+        // On Windows/Linux the selection is anchored at the word start, so Shift+ArrowLeft
+        // shrinks it from the right rather than extending it to the left.
+        return;
+      }
+
+      // Double clicking a word creates a directionless selection. Shift+ArrowLeft should
+      // extend it to the left rather than shrinking it from the right.
+      let list = segments(text('aaaa bbbb cccc'));
+      let {textbox} = await renderControlledTokenField(list);
+      let el = textbox.element();
+      await focusField(textbox);
+      await dblClickAt(textbox, el.childNodes[0], 6); // inside "bbbb"
+      let sel = getFieldSelection(el)!;
+      let [start, end] = sel;
+      // The double click should have selected a whole word away from the field boundaries.
+      expect(start.offset).toBeGreaterThan(0);
+      expect(end.offset).toBeGreaterThan(start.offset);
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: start.index, offset: start.offset - 1}, end);
+    });
+
+    it('extends a double-clicked word to the right with Shift+ArrowRight', async () => {
+      let list = segments(text('aaaa bbbb cccc'));
+      let {textbox} = await renderControlledTokenField(list);
+      let el = textbox.element();
+      await focusField(textbox);
+      await dblClickAt(textbox, el.childNodes[0], 6); // inside "bbbb"
+      let sel = getFieldSelection(el)!;
+      let [start, end] = sel;
+      expect(end.offset).toBeGreaterThan(start.offset);
+      expect(end.offset).toBeLessThan(14);
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}');
+      await waitForSelection(textbox, start, {index: end.index, offset: end.offset + 1});
+    });
+
     it('extends selection backward by word with word selection shortcut', async () => {
       let list = segments(text('hello world'));
       let {textbox} = await renderControlledTokenField(list);
@@ -300,7 +604,11 @@ describeOrSkip('TokenField browser interactions', () => {
       await navigateCaret(textbox, list, {index: 0, offset: 0});
       let mod = wordNavModKey();
       await userEvent.keyboard(`{Shift>}{${mod}>}{ArrowRight}{/${mod}}{/Shift}`);
-      await waitForSelection(textbox, {index: 0, offset: 0}, {index: 0, offset: 5});
+      await waitForSelection(
+        textbox,
+        {index: 0, offset: 0},
+        {index: 0, offset: wordForwardStopsAtWordEnd() ? 5 : 6}
+      );
     });
 
     it('extends selection backward by word across token', async () => {
@@ -351,6 +659,7 @@ describeOrSkip('TokenField browser interactions', () => {
 
     it('inserts at clicked position in text', async () => {
       let {textbox, getValue} = await renderControlledTokenField(segments(text('hello')));
+      await focusField(textbox);
       let el = textbox.element();
       let textNode = Array.from(el.childNodes).find(n => n.nodeType === Node.TEXT_NODE) as Text;
       let range = document.createRange();
@@ -365,8 +674,9 @@ describeOrSkip('TokenField browser interactions', () => {
 
     it('replaces token when typing after clicking token', async () => {
       let {textbox, getValue} = await renderControlledTokenField(abTokCd);
+      await focusField(textbox);
       await userEvent.click(textbox.getByText('TOK'));
-      await waitForSelection(textbox, {index: 1, offset: 0}, {index: 1, offset: 3});
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 2, offset: 0});
       await userEvent.keyboard('NEW');
       await waitForFieldText(getValue, 'abNEWcd');
     });
@@ -456,7 +766,10 @@ describeOrSkip('TokenField browser interactions', () => {
       await navigateCaret(textbox, multiline, {index: 0, offset: 11});
       let mod = modKey();
       await userEvent.keyboard(`{${mod}>}{Backspace}{/${mod}}`);
-      await waitForFieldText(getValue, 'hello');
+      // macOS has a delete-to-line-start shortcut (Cmd+Backspace) that removes the line including
+      // its leading newline. Windows/Linux have no such shortcut: Ctrl+Backspace deletes the
+      // previous word ("world"), leaving the newline behind.
+      await waitForFieldText(getValue, isMacPlatform() ? 'hello' : 'hello\n');
     });
 
     it('deletes forward to end of line with line-delete forward shortcut', async () => {
@@ -473,14 +786,80 @@ describeOrSkip('TokenField browser interactions', () => {
       if (mac) {
         await userEvent.keyboard('{Control>}k{/Control}');
       } else {
-        await userEvent.keyboard('{Control>}Delete{/Control}');
+        await userEvent.keyboard('{Control>}{Delete}{/Control}');
       }
       await waitForFieldText(getValue, 'hello\nw');
     });
   });
 
+  describe('multiline', () => {
+    it('does not insert a newline on Enter in a single-line field', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')));
+      await focusField(textbox);
+      await userEvent.type(textbox, 'ab');
+      await userEvent.keyboard('{Enter}');
+      await userEvent.type(textbox, 'c');
+      await waitForFieldText(getValue, 'abc');
+    });
+
+    it('inserts a newline on Enter in a multiline field', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')), {
+        multiline: true
+      });
+      await focusField(textbox);
+      await userEvent.type(textbox, 'ab');
+      await userEvent.keyboard('{Enter}');
+      await userEvent.type(textbox, 'c');
+      await waitForFieldText(getValue, 'ab\nc');
+    });
+
+    it('removes newlines from pasted text in a single-line field', async () => {
+      if (clipboardRoundTripUnsupported()) {
+        return;
+      }
+      // Put multiline text on the clipboard by copying it from a source field.
+      let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
+      let target = await renderControlledTokenField(segments(text('')));
+      let mod = modKey();
+      await commands.lockClipboard();
+      try {
+        await focusField(source.textbox);
+        await userEvent.keyboard(`{${mod}>}a{/${mod}}`);
+        await userEvent.copy();
+        await focusField(target.textbox);
+        await userEvent.paste();
+        await waitForFieldText(target.getValue, 'a b');
+      } finally {
+        await commands.unlockClipboard();
+      }
+    });
+
+    it('keeps newlines from pasted text in a multiline field', async () => {
+      if (clipboardRoundTripUnsupported()) {
+        return;
+      }
+      let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
+      let target = await renderControlledTokenField(segments(text('')), {multiline: true});
+      let mod = modKey();
+      await commands.lockClipboard();
+      try {
+        await focusField(source.textbox);
+        await userEvent.keyboard(`{${mod}>}a{/${mod}}`);
+        await userEvent.copy();
+        await focusField(target.textbox);
+        await userEvent.paste();
+        await waitForFieldText(target.getValue, 'a\nb');
+      } finally {
+        await commands.unlockClipboard();
+      }
+    });
+  });
+
   describe('clipboard', () => {
     it('pastes plain text at caret', async () => {
+      if (clipboardRoundTripUnsupported()) {
+        return;
+      }
       let list = segments(text('ab'));
       let {textbox, getValue} = await renderControlledTokenField(list);
       await selectRange(textbox, list, {index: 0, offset: 0}, {index: 0, offset: 2});
@@ -496,6 +875,9 @@ describeOrSkip('TokenField browser interactions', () => {
     });
 
     it('copy and paste preserves token segments within field', async () => {
+      if (customClipboardTypeUnsupported()) {
+        return;
+      }
       let {textbox, getValue} = await renderControlledTokenField(abTokCd);
       await selectRange(textbox, abTokCd, {index: 0, offset: 0}, {index: 2, offset: 2});
       await commands.lockClipboard();
@@ -529,6 +911,9 @@ describeOrSkip('TokenField browser interactions', () => {
     });
 
     it('cut removes selection and paste restores elsewhere', async () => {
+      if (clipboardRoundTripUnsupported()) {
+        return;
+      }
       let {textbox, getValue} = await renderControlledTokenField(segments(text('hello')));
       await selectRange(
         textbox,
@@ -546,6 +931,44 @@ describeOrSkip('TokenField browser interactions', () => {
       } finally {
         await commands.unlockClipboard();
       }
+    });
+
+    it('ignores malformed data under the custom clipboard type without crashing', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('hi')));
+      let el = textbox.element();
+      await focusField(textbox);
+      // Simulate another app placing invalid JSON under our custom clipboard type. The field must
+      // not throw (it previously called JSON.parse unguarded) and its value must be unchanged.
+      let dt = new DataTransfer();
+      dt.setData(CLIPBOARD_MIME_TYPE, '{ not valid json');
+      el.dispatchEvent(
+        new ClipboardEvent('paste', {clipboardData: dt, bubbles: true, cancelable: true})
+      );
+      expect(getValue().toString()).toBe('hi');
+    });
+
+    it('ignores valid JSON with invalid segments under the custom clipboard type', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('hi')));
+      let el = textbox.element();
+      await focusField(textbox);
+      // Valid JSON that does not match the segment shape must be rejected by validation rather
+      // than trusted and inserted. Covers the non-array and per-segment validation branches.
+      for (let payload of [
+        '{"type":"text","text":"x"}', // not an array
+        '[]', // empty array
+        '[{"type":"evil","text":"x"}]', // invalid segment type
+        '[{"type":"text"}]', // missing text
+        '[{"type":"token","text":42}]', // non-string text
+        '["plain string"]', // not an object
+        '[null]' // null entry
+      ]) {
+        let dt = new DataTransfer();
+        dt.setData(CLIPBOARD_MIME_TYPE, payload);
+        el.dispatchEvent(
+          new ClipboardEvent('paste', {clipboardData: dt, bubbles: true, cancelable: true})
+        );
+      }
+      expect(getValue().toString()).toBe('hi');
     });
   });
 
@@ -568,6 +991,25 @@ describeOrSkip('TokenField browser interactions', () => {
       let mod = modKey();
       await userEvent.keyboard(`{${mod}>}z{/${mod}}`);
       await waitForFieldText(getValue, '');
+    });
+
+    it('coalesces consecutive typing in a second field instance', async () => {
+      // Reproduces a bug where two instances of a TokenField share state.
+      let tick = () => new Promise(resolve => setTimeout(resolve, 30));
+      await renderControlledTokenField(segments(text('')));
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')));
+      await focusField(textbox);
+      await userEvent.keyboard('x');
+      await tick();
+      await userEvent.keyboard('y');
+      await tick();
+      await userEvent.keyboard('z');
+      await tick();
+      await waitForFieldText(getValue, 'xyz');
+      let mod = modKey();
+      await userEvent.keyboard(`{${mod}>}z{/${mod}}`);
+      await tick();
+      expect(getValue().toString()).toBe('');
     });
 
     it('redoes after undo', async () => {

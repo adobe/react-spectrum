@@ -40,6 +40,7 @@ import React, {
   useRef
 } from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
+import {TextContext} from './Text';
 import {useId} from 'react-aria/useId';
 import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
@@ -104,6 +105,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           {
             trigger: 'DialogTrigger',
             triggerRef: buttonRef,
+            id: overlayProps.id,
             'aria-labelledby': overlayProps['aria-labelledby']
           }
         ]
@@ -124,7 +126,7 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
 ) {
   let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
-  let {dialogProps, titleProps} = useDialog(
+  let {dialogProps, titleProps, contentProps} = useDialog(
     {
       ...props,
       // Only pass aria-labelledby from props, not context.
@@ -173,6 +175,15 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
               slots: {
                 [DEFAULT_SLOT]: {},
                 title: {...titleProps, level: 2}
+              }
+            }
+          ],
+          [
+            TextContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                description: contentProps
               }
             }
           ],

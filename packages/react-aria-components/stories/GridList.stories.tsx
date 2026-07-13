@@ -1165,3 +1165,27 @@ export const GridListWithTextfield: StoryObj<typeof GridListWithTextfieldRender>
     }
   }
 };
+
+function VirtualizedDisplayNoneToggleRender() {
+  let [visible, setVisible] = useState(true);
+
+  return (
+    <div>
+      <Button onPress={() => setVisible(v => !v)} style={{marginBottom: 8}}>
+        {visible ? 'Hide' : 'Show'}
+      </Button>
+      <div style={{display: visible ? undefined : 'none'}}>
+        <VirtualizedGridDnD />
+      </div>
+    </div>
+  );
+}
+
+export const VirtualizedDisplayNoneToggle: StoryObj = {
+  render: VirtualizedDisplayNoneToggleRender,
+  parameters: {
+    description: {
+      data: 'toggling hide and show should not cause the items to disappear'
+    }
+  }
+};
