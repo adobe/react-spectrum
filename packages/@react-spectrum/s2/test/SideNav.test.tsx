@@ -26,9 +26,10 @@ import {
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
-function SideNavExample(props: SideNavProps<unknown> = {}) {
+function SideNavExample(props: Partial<SideNavProps<unknown>>) {
+  let {selectedRoute = '/files', ...rest} = props;
   return (
-    <SideNav aria-label="Test sidenav" {...props}>
+    <SideNav aria-label="Test sidenav" selectedRoute={selectedRoute} {...rest}>
       <SideNavItem id="files" href="/files" textValue="Your files">
         <SideNavItemContent>
           <SideNavItemLink>
@@ -64,7 +65,7 @@ function SideNavExample(props: SideNavProps<unknown> = {}) {
 
 // A controlled wrapper mirroring how SideNav is used with a router: activating a link is
 // intercepted by RouterProvider, and the navigated href becomes the controlled selectedRoute.
-function RoutedSideNavExample(props: SideNavProps<unknown> = {}) {
+function RoutedSideNavExample(props: Partial<SideNavProps<unknown>>) {
   let [selectedRoute, setSelectedRoute] = React.useState('/files');
   return (
     <RouterProvider navigate={setSelectedRoute}>
@@ -74,9 +75,10 @@ function RoutedSideNavExample(props: SideNavProps<unknown> = {}) {
 }
 
 // Three levels deep: Your libraries > Projects 1 > Projects 1A.
-function DeepSideNavExample(props: SideNavProps<unknown> = {}) {
+function DeepSideNavExample(props: Partial<SideNavProps<unknown>>) {
+  let {selectedRoute = '/libraries', ...rest} = props;
   return (
-    <SideNav aria-label="Test sidenav" {...props}>
+    <SideNav aria-label="Test sidenav" selectedRoute={selectedRoute} {...rest}>
       <SideNavItem id="libraries" href="/libraries" textValue="Your libraries">
         <SideNavItemContent>
           <SideNavItemLink>
@@ -103,9 +105,10 @@ function DeepSideNavExample(props: SideNavProps<unknown> = {}) {
 }
 
 // An item whose row has both a link and a secondary action (ActionMenu).
-function ActionMenuSideNavExample(props: SideNavProps<unknown> = {}) {
+function ActionMenuSideNavExample(props: Partial<SideNavProps<unknown>>) {
+  let {selectedRoute = '/files', ...rest} = props;
   return (
-    <SideNav aria-label="Test sidenav" selectedRoute="/files" {...props}>
+    <SideNav aria-label="Test sidenav" selectedRoute={selectedRoute} {...rest}>
       <SideNavItem id="files" href="/files" textValue="Your files">
         <SideNavItemContent>
           <SideNavItemLink>
@@ -127,9 +130,10 @@ function ActionMenuSideNavExample(props: SideNavProps<unknown> = {}) {
 
 // An item with no href and no link, but with a secondary action (ActionMenu). Focus should stay
 // on the row rather than jumping into the ActionMenu trigger.
-function NoLinkActionMenuSideNavExample(props: SideNavProps<unknown> = {}) {
+function NoLinkActionMenuSideNavExample(props: Partial<SideNavProps<unknown>>) {
+  let {selectedRoute = '/files', ...rest} = props;
   return (
-    <SideNav aria-label="Test sidenav" {...props}>
+    <SideNav aria-label="Test sidenav" selectedRoute={selectedRoute} {...rest}>
       <SideNavItem id="files" href="/files" textValue="Your files">
         <SideNavItemContent>
           <SideNavItemLink>

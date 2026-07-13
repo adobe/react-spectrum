@@ -25,6 +25,7 @@ export {
 } from '../src/GridList';
 export {Collection, type CollectionProps} from 'react-aria/Collection';
 export type {
+  GridListHeaderProps,
   GridListProps,
   GridListRenderProps,
   GridListItemProps,

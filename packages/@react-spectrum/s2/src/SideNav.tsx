@@ -26,28 +26,6 @@ import {
   RouterOptions
 } from '@react-types/shared';
 import {
-  getAllowedOverrides,
-  StylesPropWithHeight,
-  UnsafeStyles
-} from './style-utils' with {type: 'macro'};
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
-import {
-  GridListSectionProps,
-  TreeItemProps as RACTreeItemProps,
-  TreeProps as RACTreeProps,
-  Tree,
-  TreeHeader,
-  TreeItem,
-  TreeItemContent,
-  TreeItemContentProps,
-  TreeItemRenderProps,
-  TreeRenderProps,
-  TreeSection
-} from 'react-aria-components/Tree';
-import {IconContext} from './Icon';
-import {Link} from 'react-aria-components/Link';
-import {Provider, useContextProps} from 'react-aria-components/slots';
-import React, {
   createContext,
   forwardRef,
   JSXElementConstructor,
@@ -60,6 +38,28 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {GridListHeaderProps, GridListSectionProps} from 'react-aria-components/GridList';
+import {IconContext} from './Icon';
+import {Link} from 'react-aria-components/Link';
+import {Provider, useContextProps} from 'react-aria-components/slots';
+import {
+  TreeItemProps as RACTreeItemProps,
+  TreeProps as RACTreeProps,
+  Tree,
+  TreeHeader,
+  TreeItem,
+  TreeItemContent,
+  TreeItemContentProps,
+  TreeItemRenderProps,
+  TreeRenderProps,
+  TreeSection
+} from 'react-aria-components/Tree';
 import {Text, TextContext} from './Content';
 import {TreeState} from 'react-stately/useTreeState';
 import {useDOMRef} from './useDOMRef';
@@ -82,23 +82,39 @@ export interface SideNavProps<T>
       | 'defaultSelectedKeys'
       | 'disabledBehavior'
       | 'selectionMode'
+      | 'escapeKeyBehavior'
+      | 'shouldSelectOnPressUp'
+      | 'disallowEmptySelection'
+      | 'renderEmptyState'
+      | 'keyboardNavigationBehavior'
+      | 'dragAndDropHooks' // To be implemented
       | keyof GlobalDOMAttributes
     >,
     UnsafeStyles,
     SideNavStyleProps {
+  /** The route that is currently selected. */
+  selectedRoute: string;
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
-  /** The route that is currently selected. */
-  selectedRoute?: string;
 }
 
 interface SideNavStyleProps {}
 
 export interface SideNavItemProps extends Omit<
   RACTreeItemProps,
-  'className' | 'style' | 'render' | 'onClick' | keyof GlobalDOMAttributes
+  | 'className'
+  | 'style'
+  | 'render'
+  | 'onClick'
+  | 'allowsArrowNavigation'
+  | 'focusMode'
+  | 'value'
+  | 'onAction'
+  | keyof GlobalDOMAttributes
 > {
-  /** Whether this item has children, even if not loaded yet. */
+  /** A string representation of the side nav item's contents, used for features like typeahead. */
+  textValue: string;
+  /** Whether this item has children. */
   hasChildItems?: boolean;
 }
 
@@ -162,7 +178,7 @@ interface InternalSideNavContextValue {
 let InternalSideNavContext = createContext<InternalSideNavContextValue>({});
 
 /**
- * A tree view provides users with a way to navigate nested hierarchical information.
+ * A SideNav provides users with a way to navigate nested hierarchical set of links.
  */
 export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function SideNav<T>(
   props: SideNavProps<T>,
@@ -305,9 +321,9 @@ const treeCellGrid = style({
   boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: [12, 'auto', '1fr', 'auto', 'auto'],
+  gridTemplateColumns: [12, 'auto', 'auto', '1fr', 'auto', 'auto'],
   gridTemplateRows: '1fr',
-  gridTemplateAreas: ['. level-padding content actions actionmenu'],
+  gridTemplateAreas: ['. level-padding icon content actions actionmenu'],
   paddingEnd: 4, // account for any focus rings on the last item in the cell
   color: {
     default: baseColor('neutral-subdued'),
@@ -434,7 +450,7 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
 };
 
 export interface SideNavItemContentProps extends Omit<TreeItemContentProps, 'children'> {
-  /** Rendered contents of the tree item or child items. */
+  /** Rendered contents of the side nav item or child items. */
   children: ReactNode;
 }
 
@@ -719,7 +735,10 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   );
 }
 
-export interface SideNavSectionProps<T> extends GridListSectionProps<T> {}
+export interface SideNavSectionProps<T> extends Omit<
+  GridListSectionProps<T>,
+  'value' | 'render' | 'style' | 'className'
+> {}
 
 export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) {
   return (
@@ -729,7 +748,12 @@ export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) 
   );
 }
 
-export const SideNavHeader = (props: {children: ReactNode}): ReactNode => {
+export interface SideNavHeaderProps extends Omit<
+  GridListHeaderProps,
+  'value' | 'render' | 'style' | 'className'
+> {}
+
+export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
   return (
     <TreeHeader
       className={style({
@@ -743,7 +767,7 @@ export const SideNavHeader = (props: {children: ReactNode}): ReactNode => {
   );
 };
 
-interface SideNavItemLinkProps {
+export interface SideNavItemLinkProps {
   /** Rendered contents of the link. */
   children?: ReactNode;
 }

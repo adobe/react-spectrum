@@ -1,0 +1,305 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['hierarchy', 'navigation', 'nested'];
+export const relatedPages = [];
+export const description = 'Displays hierarchical navigation with collapsing.';
+
+# SideNav
+
+<PageDescription>{docs.exports.SideNav.description}</PageDescription>
+
+```tsx render docs={docs.exports.SideNav} links={docs.links} props={[]} type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+"use client";
+import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink} from '@react-spectrum/s2/SideNav';
+import {RoutedSideNav} from './RoutedSideNav';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<RoutedSideNav defaultSelectedRoute="/guidelines">
+  <SideNav
+    aria-label="Files"
+    /* PROPS */
+    styles={style({height: 240})}
+    defaultExpandedKeys={['guidelines', 'color']}>
+    <SideNavItem href="/guidelines" id="guidelines" textValue="Guidelines">
+      <SideNavItemContent><SideNavItemLink>Guidelines</SideNavItemLink></SideNavItemContent>
+      <SideNavItem href="/style" id="style" textValue="Style">
+        <SideNavItemContent><SideNavItemLink>Style</SideNavItemLink></SideNavItemContent>
+      </SideNavItem>
+      <SideNavItem href="/color" id="color" textValue="Color">
+        <SideNavItemContent><SideNavItemLink>Color</SideNavItemLink></SideNavItemContent>
+        <SideNavItem href="/background-layers" id="background-layers" textValue="Background Layers">
+          <SideNavItemContent><SideNavItemLink>Background Layers</SideNavItemLink></SideNavItemContent>
+        </SideNavItem>
+      </SideNavItem>
+    </SideNavItem>
+    <SideNavItem id="support" textValue="Support">
+      <SideNavItemContent>Support</SideNavItemContent>
+      <SideNavItem href="/contact-us" id="contact-us" textValue="Contact Us">
+        <SideNavItemContent><SideNavItemLink>Contact Us</SideNavItemLink></SideNavItemContent>
+      </SideNavItem>
+    </SideNavItem>
+  </SideNav>
+</RoutedSideNav>
+```
+
+## Selection
+
+SideNav doesn't support selection like other [Collections](collections). Instead of the `id`, it uses the `href` prop as a key for selection. Note that
+`id` is still used for the expansion state and disabled items as not every item will have an `href`.
+
+SideNavs do not support an uncontrolled selection state, you are responsible for managing it through the `selectedRoute` prop. You may wire this up
+to a router or other state management solution.
+
+If a SideNavItem has an `href`, then you must pass a `SideNavItemLink` as a child of the `SideNavItemContent`.
+
+## Content
+
+`SideNav` follows the [Collection Components API](collections), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+"use client";
+import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection} from '@react-spectrum/s2/SideNav';
+import {RoutedSideNav} from './RoutedSideNav';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+let items = [
+  {id: 1, title: 'Documents', type: 'directory', children: [
+    {id: 2, title: 'Project', type: 'directory', children: [
+      {id: 3, title: 'Weekly Report', type: 'file', href: '/weekly-report'},
+      {id: 4, title: 'Budget', type: 'file', href: '/budget'}
+    ]}
+  ]},
+  {id: 5, title: 'Photos', type: 'directory', children: [
+    {id: 6, title: 'Image 1', type: 'file', href: '/image-1'},
+    {id: 7, title: 'Image 2', type: 'file', href: '/image-2'}
+  ]}
+];
+///- end collapse -///
+
+<RoutedSideNav defaultSelectedRoute="/weekly-report">
+<SideNav
+  aria-label="Files"
+  styles={style({height: 260})}
+  defaultExpandedKeys={[1, 2, 5]}
+  items={items}>
+  {function renderItem(item) {
+    return (
+      <SideNavItem textValue={item.title} href={item.href}>
+        <SideNavItemContent>{item.href ? <SideNavItemLink>{item.title}</SideNavItemLink> : item.title}</SideNavItemContent>
+        {/*- begin highlight -*/}
+        {/* recursively render children */}
+        {item.children && <Collection items={item.children}>
+          {renderItem}
+        </Collection>}
+        {/*- end highlight -*/}
+      </SideNavItem>
+    );
+  }}
+</SideNav>
+</RoutedSideNav>
+```
+
+### Slots
+
+`SideNavItemContent` supports icons, `Text`, [ActionMenu](ActionMenu), and [ActionButtonGroup](ActionButtonGroup) as children.
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+"use client";
+import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SideNav';
+import {RoutedSideNav} from './RoutedSideNav';
+import {ActionMenu, MenuItem} from '@react-spectrum/s2/ActionMenu';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import File from '@react-spectrum/s2/icons/File';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Delete from '@react-spectrum/s2/icons/Delete';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+let items = [
+  {id: 1, title: 'Documents', type: 'directory', children: [
+    {id: 2, title: 'Project', type: 'directory', children: [
+      {id: 3, title: 'Weekly Report', type: 'file', href: '/weekly-report'},
+      {id: 4, title: 'Budget', type: 'file', href: '/budget'}
+    ]}
+  ]},
+  {id: 5, title: 'Photos', type: 'directory', children: [
+    {id: 6, title: 'Image 1', type: 'file', href: '/image-1'},
+    {id: 7, title: 'Image 2', type: 'file', href: '/image-2'}
+  ]}
+];
+///- end collapse -///
+
+<RoutedSideNav defaultSelectedRoute="/weekly-report">
+<SideNav
+  aria-label="Files"
+  styles={style({height: 260})}
+  defaultExpandedKeys={[1, 2, 5]}
+  items={items}>
+  {function renderItem(item) {
+    return (
+      <SideNavItem textValue={item.title} href={item.href}>
+        <SideNavItemContent>
+          {/*- begin highlight -*/}
+          {
+            item.href ? <SideNavItemLink>
+              {item.type === 'directory' ? <Folder /> : <File />}
+              <Text>{item.title}</Text>
+            </SideNavItemLink> : <>
+              {item.type === 'directory' ? <Folder /> : <File />}
+              <Text>{item.title}</Text>
+            </>
+          }
+          {/*- end highlight -*/}
+          <ActionMenu>
+            <MenuItem>
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem>
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </SideNavItemContent>
+        {item.children && <Collection items={item.children}>
+          {renderItem}
+        </Collection>}
+      </SideNavItem>
+    );
+  }}
+</SideNav>
+</RoutedSideNav>
+```
+
+## Sections
+
+A SideNav can contain sections to group items together. They are non-collapsible and non-interactive.
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+"use client";
+import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Collection, Text} from '@react-spectrum/s2/SideNav';
+import {RoutedSideNav} from './RoutedSideNav';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Delete from '@react-spectrum/s2/icons/Delete';
+import UserGroup from '@react-spectrum/s2/icons/UserGroup';
+import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
+import Files from '@react-spectrum/s2/icons/Files';
+import Images from '@react-spectrum/s2/icons/Images';
+import Animation from '@react-spectrum/s2/icons/Animation';
+import AudioWave from '@react-spectrum/s2/icons/AudioWave';
+
+<RoutedSideNav defaultSelectedRoute="/files">
+  <SideNav aria-label="Files" styles={style({height: 260})}>
+    <SideNavSection>
+      <SideNavHeader>Workspaces</SideNavHeader>
+      <SideNavItem href="/files" textValue="Files">
+        <SideNavItemContent>
+          <SideNavItemLink>
+            <Files />
+            <Text>Files</Text>
+          </SideNavItemLink>
+        </SideNavItemContent>
+      </SideNavItem>
+      <SideNavItem href="/your-libraries" textValue="Your Libraries">
+        <SideNavItemContent>
+          <SideNavItemLink>
+            <CCLibrary />
+            <Text>Your Libraries</Text>
+          </SideNavItemLink>
+        </SideNavItemContent>
+        <SideNavItem href="/photos" textValue="Photos">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Images />
+              <Text>Photos</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavItem>
+      <SideNavItem href="/shared-with-you" id="shared-with-you" textValue="Shared with You">
+        <SideNavItemContent>
+          <SideNavItemLink>
+            <UserGroup />
+            <Text>Shared with You</Text>
+          </SideNavItemLink>
+        </SideNavItemContent>
+        <SideNavItem href="/animations" textValue="Animations">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Animation />
+              <Text>Animations</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavItem>
+      <SideNavItem href="/deleted" id="deleted" textValue="Deleted">
+        <SideNavItemContent>
+          <SideNavItemLink>
+            <Delete />
+            <Text>Deleted</Text>
+          </SideNavItemLink>
+        </SideNavItemContent>
+        <SideNavItem href="/audio" textValue="Audio">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <AudioWave />
+              <Text>Audio</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavItem>
+    </SideNavSection>
+  </SideNav>
+</RoutedSideNav>
+```
+
+## API
+
+```tsx links={{SideNav: '#sidenav', SideNavItem: '#sidenavitem', SideNavItemContent: '#sidenavitemcontent', SideNavItemLink: '#sidenavitemlink', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
+<SideNav>
+  <SideNavItem>
+    <SideNavItemContent>
+      <Icon />
+      <Text />
+      <ActionMenu /> or <ActionButtonGroup />
+    </SideNavItemContent>
+  </SideNavItem>
+  <SideNavItem href>
+    <SideNavItemContent>
+      <SideNavItemLink>
+        <Icon />
+        <Text />
+      </SideNavItemLink>
+      <ActionMenu /> or <ActionButtonGroup />
+    </SideNavItemContent>
+  </SideNavItem>
+</SideNav>
+```
+
+### SideNav
+
+<PropTable component={docs.exports.SideNav} links={docs.links} />
+
+### SideNavItem
+
+<PropTable component={docs.exports.SideNavItem} links={docs.links} showDescription />
+
+### SideNavItemContent
+
+<PropTable component={docs.exports.SideNavItemContent} links={docs.links} showDescription />
+
+### SideNavItemLink
+
+<PropTable component={docs.exports.SideNavItemLink} links={docs.links} showDescription />
+
+### SideNavSection
+
+<PropTable component={docs.exports.SideNavSection} links={docs.links} showDescription />
+
+### SideNavHeader
+
+<PropTable component={docs.exports.SideNavHeader} links={docs.links} showDescription />
