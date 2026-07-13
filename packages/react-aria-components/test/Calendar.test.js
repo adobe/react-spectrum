@@ -509,15 +509,17 @@ describe('Calendar', () => {
     expect(calendar.getByLabelText(/selected/)).toBe(day16);
   });
 
-  it('should support repeat keydown events when holding an arrow key', async () => {
-    let {getByRole} = renderCalendar({defaultFocusedValue: new CalendarDate(2020, 3, 3)});
-    let cell = getByRole('button', {name: 'Tuesday, March 3, 2020'});
+  if (parseInt(React.version, 10) >= 18) {
+    it('should support repeat keydown events when holding an arrow key', async () => {
+      let {getByRole} = renderCalendar({defaultFocusedValue: new CalendarDate(2020, 3, 3)});
+      let cell = getByRole('button', {name: 'Tuesday, March 3, 2020'});
 
-    await user.click(cell);
-    await user.keyboard('{ArrowRight>2/}');
+      await user.click(cell);
+      await user.keyboard('{ArrowRight>2/}');
 
-    expect(document.activeElement).toHaveAttribute('aria-label', 'Thursday, March 5, 2020');
-  });
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Thursday, March 5, 2020');
+    });
+  }
 
   it('should not become focused just by setting the focused date', async () => {
     let DatePicker = () => {
