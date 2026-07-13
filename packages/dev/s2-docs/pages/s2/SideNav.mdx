@@ -66,7 +66,15 @@ import {RoutedSideNav} from './RoutedSideNav';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
-let items = [
+interface Item {
+  id: number;
+  title: string;
+  type: 'directory' | 'file';
+  href?: string;
+  children?: Item[];
+}
+
+let items: Item[] = [
   {id: 1, title: 'Documents', type: 'directory', children: [
     {id: 2, title: 'Project', type: 'directory', children: [
       {id: 3, title: 'Weekly Report', type: 'file', href: '/weekly-report'},
@@ -119,7 +127,14 @@ import Delete from '@react-spectrum/s2/icons/Delete';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
-let items = [
+interface Item {
+  id: number;
+  title: string;
+  type: 'directory' | 'file';
+  href?: string;
+  children?: Item[];
+}
+let items: Item[] = [
   {id: 1, title: 'Documents', type: 'directory', children: [
     {id: 2, title: 'Project', type: 'directory', children: [
       {id: 3, title: 'Weekly Report', type: 'file', href: '/weekly-report'},
