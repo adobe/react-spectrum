@@ -2423,8 +2423,8 @@ describe('ListBox', () => {
       }
 
       function App({mode, pathname = '/', ready = false}) {
-        let react = React.useMemo(() => ({mode, ready}), [mode, ready]);
-        let router = React.useMemo(() => ({pathname}), [pathname]);
+        let react = React.useMemo(() => ({mode}), [mode]);
+        let router = React.useMemo(() => ({pathname, ready}), [pathname, ready]);
 
         let route = React.useMemo(() => <Page />, []);
 
