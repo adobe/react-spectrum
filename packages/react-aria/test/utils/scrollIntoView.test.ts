@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { scrollIntoView, scrollIntoViewport } from '../../src/utils/scrollIntoView';
+import {scrollIntoView, scrollIntoViewport} from '../../src/utils/scrollIntoView';
 
 describe('scrollIntoView', () => {
   let target: HTMLElement;
@@ -21,7 +21,7 @@ describe('scrollIntoView', () => {
     document.body.appendChild(target);
 
     if (!HTMLElement.prototype.scrollIntoView) {
-      HTMLElement.prototype.scrollIntoView = () => { };
+      HTMLElement.prototype.scrollIntoView = () => {};
     }
     scrollIntoViewSpy = jest.spyOn(HTMLElement.prototype, 'scrollIntoView');
   });
@@ -66,10 +66,10 @@ describe('scrollIntoView', () => {
         } as unknown as CSSStyleDeclaration;
       });
 
-      Object.defineProperty(scrollView, 'clientHeight', { get: () => 500, configurable: true });
-      Object.defineProperty(scrollView, 'clientWidth', { get: () => 500, configurable: true });
+      Object.defineProperty(scrollView, 'clientHeight', {get: () => 500, configurable: true});
+      Object.defineProperty(scrollView, 'clientWidth', {get: () => 500, configurable: true});
 
-      scrollIntoView(scrollView, target, { block: 'start', inline: 'start' });
+      scrollIntoView(scrollView, target, {block: 'start', inline: 'start'});
       expect(scrollView.scrollLeft).toBe(100);
       expect(scrollView.scrollTop).toBe(2100);
     });
@@ -84,7 +84,7 @@ describe('scrollIntoView', () => {
         height: 1000,
         x: 100,
         y: 2100,
-        toJSON: () => { }
+        toJSON: () => {}
       } as DOMRect);
 
       jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
@@ -101,10 +101,10 @@ describe('scrollIntoView', () => {
         } as unknown as CSSStyleDeclaration;
       });
 
-      Object.defineProperty(scrollView, 'clientHeight', { get: () => 500, configurable: true });
-      Object.defineProperty(scrollView, 'clientWidth', { get: () => 500, configurable: true });
+      Object.defineProperty(scrollView, 'clientHeight', {get: () => 500, configurable: true});
+      Object.defineProperty(scrollView, 'clientWidth', {get: () => 500, configurable: true});
 
-      scrollIntoView(scrollView, target, { block: 'end', inline: 'end' });
+      scrollIntoView(scrollView, target, {block: 'end', inline: 'end'});
       expect(scrollView.scrollLeft).toBe(600);
       expect(scrollView.scrollTop).toBe(2600);
     });
@@ -118,7 +118,7 @@ describe('scrollIntoView', () => {
       document.body.appendChild(containingElement);
 
       jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
-        return { overflow: 'visible' } as CSSStyleDeclaration;
+        return {overflow: 'visible'} as CSSStyleDeclaration;
       });
 
       jest.spyOn(targetElement, 'getBoundingClientRect').mockReturnValue({
@@ -130,7 +130,7 @@ describe('scrollIntoView', () => {
         height: 30
       } as DOMRect);
 
-      scrollIntoViewport(targetElement, { containingElement });
+      scrollIntoViewport(targetElement, {containingElement});
 
       expect(scrollIntoViewSpy).not.toHaveBeenCalled();
 
@@ -146,7 +146,7 @@ describe('scrollIntoView', () => {
       document.body.appendChild(containingElement);
 
       jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
-        return { overflow: 'visible' } as CSSStyleDeclaration;
+        return {overflow: 'visible'} as CSSStyleDeclaration;
       });
 
       jest.spyOn(containingElement, 'getBoundingClientRect').mockReturnValue({
@@ -167,7 +167,7 @@ describe('scrollIntoView', () => {
         height: 30
       } as DOMRect);
 
-      scrollIntoViewport(targetElement, { containingElement });
+      scrollIntoViewport(targetElement, {containingElement});
 
       expect(scrollIntoViewSpy).not.toHaveBeenCalled();
 
@@ -183,7 +183,7 @@ describe('scrollIntoView', () => {
       document.body.appendChild(containingElement);
 
       jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
-        return { overflow: 'visible' } as CSSStyleDeclaration;
+        return {overflow: 'visible'} as CSSStyleDeclaration;
       });
 
       jest.spyOn(containingElement, 'getBoundingClientRect').mockReturnValue({
@@ -204,7 +204,7 @@ describe('scrollIntoView', () => {
         height: 50
       } as DOMRect);
 
-      scrollIntoViewport(targetElement, { containingElement });
+      scrollIntoViewport(targetElement, {containingElement});
 
       expect(scrollIntoViewSpy).not.toHaveBeenCalled();
 
@@ -222,7 +222,7 @@ describe('scrollIntoView', () => {
       const root = (document.scrollingElement as HTMLElement) || document.documentElement;
 
       jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
-        return { overflow: 'hidden' } as CSSStyleDeclaration;
+        return {overflow: 'hidden'} as CSSStyleDeclaration;
       });
 
       const originalScrollTop = root.scrollTop;
@@ -237,7 +237,7 @@ describe('scrollIntoView', () => {
         height: 50
       } as DOMRect);
 
-      scrollIntoViewport(targetElement, { containingElement });
+      scrollIntoViewport(targetElement, {containingElement});
 
       expect(root.scrollTop).toBe(originalScrollTop);
       expect(root.scrollLeft).toBe(originalScrollLeft);
@@ -261,14 +261,14 @@ describe('scrollIntoView', () => {
 
       internalScroller.scrollTop = 0;
 
-      Object.defineProperty(internalScroller, 'offsetHeight', { get: () => 300, configurable: true });
-      Object.defineProperty(internalScroller, 'clientHeight', { get: () => 300, configurable: true });
-      Object.defineProperty(internalScroller, 'offsetWidth', { get: () => 500, configurable: true });
-      Object.defineProperty(internalScroller, 'clientWidth', { get: () => 500, configurable: true });
+      Object.defineProperty(internalScroller, 'offsetHeight', {get: () => 300, configurable: true});
+      Object.defineProperty(internalScroller, 'clientHeight', {get: () => 300, configurable: true});
+      Object.defineProperty(internalScroller, 'offsetWidth', {get: () => 500, configurable: true});
+      Object.defineProperty(internalScroller, 'clientWidth', {get: () => 500, configurable: true});
 
       jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
         if (el === root || el === document.body) {
-          return { overflow: 'hidden' } as CSSStyleDeclaration;
+          return {overflow: 'hidden'} as CSSStyleDeclaration;
         }
         return {
           overflow: 'auto',
@@ -302,7 +302,7 @@ describe('scrollIntoView', () => {
         height: 30
       } as DOMRect);
 
-      scrollIntoViewport(targetElement, { containingElement });
+      scrollIntoViewport(targetElement, {containingElement});
       expect(internalScroller.scrollTop).not.toBe(0);
 
       document.body.removeChild(containingElement);
@@ -327,15 +327,15 @@ describe('scrollIntoView', () => {
       outerScroller.scrollTop = 0;
       internalScroller.scrollTop = 0;
 
-      Object.defineProperty(outerScroller, 'offsetHeight', { get: () => 400, configurable: true });
-      Object.defineProperty(outerScroller, 'clientHeight', { get: () => 400, configurable: true });
-      Object.defineProperty(outerScroller, 'offsetWidth', { get: () => 600, configurable: true });
-      Object.defineProperty(outerScroller, 'clientWidth', { get: () => 600, configurable: true });
+      Object.defineProperty(outerScroller, 'offsetHeight', {get: () => 400, configurable: true});
+      Object.defineProperty(outerScroller, 'clientHeight', {get: () => 400, configurable: true});
+      Object.defineProperty(outerScroller, 'offsetWidth', {get: () => 600, configurable: true});
+      Object.defineProperty(outerScroller, 'clientWidth', {get: () => 600, configurable: true});
 
-      Object.defineProperty(internalScroller, 'offsetHeight', { get: () => 300, configurable: true });
-      Object.defineProperty(internalScroller, 'clientHeight', { get: () => 300, configurable: true });
-      Object.defineProperty(internalScroller, 'offsetWidth', { get: () => 500, configurable: true });
-      Object.defineProperty(internalScroller, 'clientWidth', { get: () => 500, configurable: true });
+      Object.defineProperty(internalScroller, 'offsetHeight', {get: () => 300, configurable: true});
+      Object.defineProperty(internalScroller, 'clientHeight', {get: () => 300, configurable: true});
+      Object.defineProperty(internalScroller, 'offsetWidth', {get: () => 500, configurable: true});
+      Object.defineProperty(internalScroller, 'clientWidth', {get: () => 500, configurable: true});
 
       jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
         if (el === outerScroller || el === internalScroller) {
@@ -353,7 +353,7 @@ describe('scrollIntoView', () => {
           } as unknown as CSSStyleDeclaration;
         }
 
-        return { overflow: 'visible' } as CSSStyleDeclaration;
+        return {overflow: 'visible'} as CSSStyleDeclaration;
       });
 
       jest.spyOn(outerScroller, 'getBoundingClientRect').mockReturnValue({
@@ -392,7 +392,7 @@ describe('scrollIntoView', () => {
         height: 30
       } as DOMRect);
 
-      scrollIntoViewport(targetElement, { containingElement });
+      scrollIntoViewport(targetElement, {containingElement});
       expect(internalScroller.scrollTop).not.toBe(0);
       expect(outerScroller.scrollTop).not.toBe(0);
 
