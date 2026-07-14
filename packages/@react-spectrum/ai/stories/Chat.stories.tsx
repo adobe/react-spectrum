@@ -791,7 +791,7 @@ export function VirtualizedStreamingChat() {
           <Thread
             items={messages}
             anchorTo="end"
-            UNSTABLE_focusOnEntry="first"
+            UNSTABLE_focusOnEntry="last"
             aria-label="Chat thread"
             styles={style({
               flexGrow: 1,
@@ -990,7 +990,7 @@ export function EmptyChat() {
           <Thread
             items={messages}
             anchorTo="end"
-            UNSTABLE_focusOnEntry="first"
+            UNSTABLE_focusOnEntry="last"
             aria-label="Chat thread"
             styles={style({
               flexGrow: 1,

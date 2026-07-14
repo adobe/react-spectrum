@@ -303,7 +303,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           disallowTypeAhead
           onScroll={handleScroll}
           keyboardNavigationBehavior="tab"
-          UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'first'}
+          UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'last'}
           items={items}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
