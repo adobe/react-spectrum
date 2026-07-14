@@ -6,5 +6,13 @@
   "responsestatus.loading": "Loading",
   "voicebutton.stopListening": "Stop recording",
   "voicebutton.startListening": "Start recording",
-  "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task."
+  "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
+  "promptfield.aiDisclaimer": "Responses are generated using AI, and may be inaccurate. Check before using.",
+  "promptfield.aiUserGuidlines": "AI User Guidelines",
+  "promptfield.attachements": "Attachements",
+  "promptfield.prompt": "Prompt",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
+  "promptfield.insertButton": "Add",
+  "promptfield.uploading": "Uploading"
 }

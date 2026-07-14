@@ -23,6 +23,9 @@ import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import Close from '@react-spectrum/s2/icons/Close';
 import {forwardRef, ReactNode, useRef} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
@@ -214,6 +217,7 @@ export const Attachment = forwardRef(function Attachment(
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Tag
       id={id}
@@ -235,7 +239,11 @@ export const Attachment = forwardRef(function Attachment(
               },
               transform: 'translate(-50%, -50%)'
             })}>
-            <ProgressCircle aria-label="Uploading" value={props.uploadProgress} size="S" />
+            <ProgressCircle
+              aria-label={stringFormatter.format('promptfield.uploading')}
+              value={props.uploadProgress}
+              size="S"
+            />
           </div>
         )}
         {/* Reduce opacity of the thumbnail if upload is in progress */}

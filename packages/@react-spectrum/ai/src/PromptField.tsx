@@ -194,6 +194,7 @@ export function PromptField(props: PromptFieldProps) {
     onRemoveAttachments,
     variant = 'balanced'
   } = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [prompt, setPrompt] = useControlledState(
     props.value,
     props.defaultValue ?? new AutoLinkingSegmentList([]),
@@ -281,12 +282,12 @@ export function PromptField(props: PromptFieldProps) {
           {children}
         </PromptFieldContainer>
         <p className={style({font: 'ui-sm', textAlign: 'center'})}>
-          Responses are generated using AI, and may be inaccurate. Check before using.{' '}
+          {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
           <Link
             variant="secondary"
             href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
             target="_blank">
-            AI User Guidelines
+            {stringFormatter.format('promptfield.aiUserGuidlines')}
           </Link>
         </p>
       </div>
@@ -301,6 +302,7 @@ export interface PromptFieldAttachmentListProps extends AttachmentListProps<Prom
 export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps) {
   let {children} = props;
   let {attachments, setAttachments, onRemoveAttachments, inputRef} = useContext(PromptFieldContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   if (attachments.length === 0) {
     return null;
   }
@@ -308,7 +310,7 @@ export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps)
   return (
     <AttachmentList
       {...props}
-      aria-label="Attachments"
+      aria-label={stringFormatter.format('promptfield.attachements')}
       onRemove={keys => {
         let removedAttachments = attachments.filter(attachment => keys.has(attachment.id));
         onRemoveAttachments?.(removedAttachments);
@@ -397,7 +399,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           value={prompt}
           onChange={setPrompt}
           multiline
-          aria-label="Prompt"
+          aria-label={stringFormatter.format('promptfield.prompt')}
           data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
           isReadOnly={isListening}
           onKeyDown={onKeyDown}
@@ -574,13 +576,18 @@ export interface PromptFieldSubmitButtonProps {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
   let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Button
       variant="primary"
       staticColor="auto"
       // TODO: should it be possible to submit a prompt with only attachments?
       isDisabled={prompt.segments.length === 0 && !isGenerating}
-      aria-label={isGenerating ? 'Stop' : 'Send'}
+      aria-label={
+        isGenerating
+          ? stringFormatter.format('promptfield.stopButton')
+          : stringFormatter.format('promptfield.submitButton')
+      }
       onPress={isGenerating ? onStop : onSubmit}>
       {isGenerating ? <Stop /> : <Send />}
     </Button>
@@ -698,9 +705,13 @@ export interface InsertMenuItemProps {
 
 export function InsertMenuButton(props: InsertMenuItemProps) {
   let {children} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <MenuTrigger>
-      <ActionButton isQuiet staticColor="auto" aria-label="Add">
+      <ActionButton
+        isQuiet
+        staticColor="auto"
+        aria-label={stringFormatter.format('promptfield.insertButton')}>
         <Plus />
       </ActionButton>
       <Menu>{children}</Menu>
