@@ -22,6 +22,12 @@ export interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingPr
    * @default 'label'
    */
   labelElementType?: ElementType;
+  /**
+   * Whether the labeled element is hidden from assistive technology. When true, the
+   * missing-label development warning is suppressed: `aria-hidden` removes the element
+   * and its subtree from the accessibility tree, so an accessible name is not required.
+   */
+  'aria-hidden'?: boolean | 'false' | 'true';
 }
 
 export interface LabelAria {
@@ -43,6 +49,7 @@ export function useLabel(props: LabelAriaProps): LabelAria {
     label,
     'aria-labelledby': ariaLabelledby,
     'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
     labelElementType = 'label'
   } = props;
 
@@ -55,7 +62,15 @@ export function useLabel(props: LabelAriaProps): LabelAria {
       id: labelId,
       htmlFor: labelElementType === 'label' ? id : undefined
     };
-  } else if (!ariaLabelledby && !ariaLabel && process.env.NODE_ENV !== 'production') {
+  } else if (
+    !ariaLabelledby &&
+    !ariaLabel &&
+    ariaHidden !== true &&
+    ariaHidden !== 'true' &&
+    process.env.NODE_ENV !== 'production'
+  ) {
+    // An element with aria-hidden is removed from the accessibility tree, so it needs
+    // no accessible name — don't warn about a missing label in that case.
     console.warn(
       'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
     );

@@ -82,6 +82,21 @@ describe('useLabel hook', () => {
     );
   });
 
+  it('should not warn when no label is provided but aria-hidden is set', () => {
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    renderLabelHook({'aria-hidden': true});
+    renderLabelHook({'aria-hidden': 'true'});
+    expect(spyWarn).not.toHaveBeenCalled();
+  });
+
+  it('should still warn when no label is provided and aria-hidden is false', () => {
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    renderLabelHook({'aria-hidden': false});
+    expect(spyWarn).toHaveBeenCalledWith(
+      'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
+    );
+  });
+
   it('should not return a `for` attribute when the label element type is not <label>', () => {
     let {labelProps, fieldProps} = renderLabelHook({label: 'Test', labelElementType: 'span'});
     expect(labelProps.id).toBeDefined();
