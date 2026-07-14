@@ -23,6 +23,7 @@ import {
   PromptFieldAttachmentList,
   PromptFieldSubmitButton,
   PromptFieldToolbar,
+  PromptFieldVoiceButton,
   PromptToken,
   PromptTokenField
 } from '../src/PromptField';
@@ -412,7 +413,11 @@ function EverythingRender(args) {
               </Menu>
             </SubmenuTrigger>
           </InsertMenuButton>
-          <PromptFieldSubmitButton />
+          {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
+          <div style={{display: 'flex', gap: 4, alignItems: 'center'}}>
+            <PromptFieldVoiceButton />
+            <PromptFieldSubmitButton />
+          </div>
         </PromptFieldToolbar>
       </PromptField>
     </div>

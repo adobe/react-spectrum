@@ -11,7 +11,10 @@
  */
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import Attach from '@react-spectrum/s2/icons/Attach';
+import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {baseColor, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -23,6 +26,7 @@ import {
   use,
   useContext,
   useDeferredValue,
+  useEffect,
   useMemo,
   useRef,
   useState
@@ -40,6 +44,8 @@ import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group} from 'react-aria-components/Group';
 import {IconContext, mergeStyles} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {Link} from '@react-spectrum/s2/Link';
@@ -52,7 +58,10 @@ import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
+import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
 
 export interface PromptFieldAttachment {
   id: string;
@@ -93,6 +102,8 @@ interface PromptFieldState {
   isDisabled: boolean;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
+  isListening: boolean;
+  setListening: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // TODO: make this customizable
@@ -148,7 +159,9 @@ const PromptFieldContext = createContext<PromptFieldState>({
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false,
-  isDisabled: false
+  isDisabled: false,
+  isListening: false,
+  setListening: () => {}
 });
 
 // to communicate the anchor position to the menu items in the completion popover
@@ -216,6 +229,7 @@ export function PromptField(props: PromptFieldProps) {
     }
   });
 
+  let [isListening, setListening] = useState(false);
   let {onFocusChange} = useContext(PromptFocusContext);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
 
@@ -248,6 +262,8 @@ export function PromptField(props: PromptFieldProps) {
         onSubmit,
         isGenerating: isGenerating ?? false,
         isDisabled: isDisabled ?? false,
+        isListening,
+        setListening,
         onStop,
         onAddAttachments,
         onRemoveAttachments
@@ -375,7 +391,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     onAddAttachments,
     inputRef,
     onSubmit,
-    isDisabled: isDisabledContext
+    isDisabled: isDisabledContext,
+    isListening
   } = useContext(PromptFieldContext);
   let isDisabled = isDisabledProp || isDisabledContext;
   let [isFocused, setFocused] = useState(false);
@@ -410,6 +427,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           placeholder ?? 'Ready to get started? Ask a question, share an idea, or add a task.'
         }
         isDisabled={isDisabled}
+        isReadOnly={isListening}
         onKeyDown={onKeyDown}
         ref={inputRef}
         onFocus={e => {
@@ -593,6 +611,117 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
       {isGenerating ? <Stop /> : <Send />}
     </Button>
   );
+}
+
+export interface PromptFieldVoiceButtonProps {
+  lang?: string;
+  isDisabled?: boolean;
+  // TODO: coworker renders a toast too, but this gives more flexibility
+  onError?: (code: VoiceInputErrorCode) => void;
+}
+
+export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
+  let {lang, isDisabled: isDisabledProp, onError} = props;
+  let {
+    prompt,
+    setPrompt,
+    inputRef,
+    isDisabled: isDisabledContext,
+    setListening
+  } = useContext(PromptFieldContext);
+  let isDisabled = isDisabledProp ?? isDisabledContext;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+
+  let basePromptRef = useRef<TokenSegmentList>(prompt);
+  let updateBasePrompt = useEffectEvent(() => {
+    basePromptRef.current = prompt;
+  });
+
+  let {
+    isSupported,
+    isListening: isVoiceListening,
+    errorCode,
+    transcript,
+    toggle,
+    stop
+  } = useVoiceInput({lang});
+
+  let restoreFocus = useEffectEvent(() => {
+    if (!inputRef.current) {
+      return;
+    }
+    // similar to useInsertPromptSegment, calling programatic focus on the input causes the caret positioning
+    // to be inaccurate
+    let finalPrompt = buildVoicePrompt(basePromptRef.current, transcript);
+    inputRef.current.focus();
+    setCursor(inputRef.current, finalPrompt.caretPosition);
+    setPrompt(finalPrompt);
+  });
+
+  let wasListeningRef = useRef(false);
+  useEffect(() => {
+    if (isVoiceListening) {
+      updateBasePrompt();
+      wasListeningRef.current = true;
+    } else if (wasListeningRef.current) {
+      wasListeningRef.current = false;
+      restoreFocus();
+    }
+    setListening(isVoiceListening);
+  }, [isVoiceListening, setListening]);
+
+  useEffect(() => {
+    if (!transcript || !isVoiceListening) {
+      return;
+    }
+    setPrompt(buildVoicePrompt(basePromptRef.current, transcript));
+  }, [transcript, isVoiceListening, setPrompt]);
+
+  // TODO this is from coworker, is to stop mutating the input text since the button becomes disabled when the chat
+  // is streaming, keep it?
+  useEffect(() => {
+    if (isDisabled && isVoiceListening) {
+      stop();
+    }
+  }, [isDisabled, isVoiceListening, stop]);
+
+  useEffect(() => {
+    if (errorCode) {
+      onError?.(errorCode);
+    }
+  }, [errorCode, onError]);
+
+  if (!isSupported) {
+    return null;
+  }
+
+  let label = isVoiceListening
+    ? stringFormatter.format('voicebutton.stopListening')
+    : stringFormatter.format('voicebutton.startListening');
+
+  return (
+    <TooltipTrigger>
+      <ToggleButton
+        isQuiet
+        isSelected={isVoiceListening}
+        isDisabled={isDisabled}
+        aria-label={label}
+        onPress={toggle}>
+        <Microphone />
+      </ToggleButton>
+      <Tooltip>{label}</Tooltip>
+    </TooltipTrigger>
+  );
+}
+
+function buildVoicePrompt(base: TokenSegmentList, voiceText: string): AutoLinkingSegmentList {
+  if (!voiceText) {
+    return base as AutoLinkingSegmentList;
+  }
+  let segments: TokenFieldSegment[] = [...base.segments, {type: 'text', text: voiceText}];
+  return new AutoLinkingSegmentList(segments, {
+    caretPosition: {index: segments.length - 1, offset: voiceText.length}
+  });
 }
 
 export interface InsertMenuItemProps {

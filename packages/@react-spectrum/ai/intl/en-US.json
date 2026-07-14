@@ -3,5 +3,7 @@
   "chat.scrollToBottom": "Scroll to bottom",
   "messagefeedback.thumbDown": "Bad response",
   "messagefeedback.thumbUp": "Good response",
-  "responsestatus.loading": "Loading"
+  "responsestatus.loading": "Loading",
+  "voicebutton.stopListening": "Stop recording",
+  "voicebutton.startListening": "Start recording"
 }
