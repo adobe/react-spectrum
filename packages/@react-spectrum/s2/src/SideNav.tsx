@@ -164,11 +164,7 @@ const tree = style<TreeRenderProps>({
 });
 
 interface InternalSideNavContextValue {
-  /**
-   * Ref to the tree state, bridged up from SideNavItemContent so arrow-key handling can toggle
-   * expansion.
-   */
-  stateRef?: RefObject<TreeState<unknown> | null>;
+  /** The route that is currently selected. */
   selectedRoute?: string;
   /** The last route the focused key was synced to; dedupes the focus sync across items. */
   syncedRouteRef?: RefObject<string | undefined>;
@@ -182,7 +178,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   props: SideNavProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, UNSAFE_className, UNSAFE_style, selectedRoute} = props;
+  let {children, UNSAFE_className, UNSAFE_style, selectedRoute, ...rest} = props;
 
   let renderer;
   if (typeof children === 'function') {
@@ -190,8 +186,6 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   }
 
   let domRef = useDOMRef(ref);
-  let scrollRef = useRef<HTMLDivElement | null>(null);
-  let stateRef = useRef<TreeState<unknown> | null>(null);
 
   // Tracks the last route we moved the focused key to, so the focus sync (driven from
   // RouteFocusSync, which has the built collection) only runs when the route actually changes
@@ -203,18 +197,16 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
       style={UNSAFE_style}>
       <TreeRendererContext.Provider value={{renderer}}>
-        <InternalSideNavContext.Provider value={{stateRef, selectedRoute, syncedRouteRef}}>
+        <InternalSideNavContext.Provider value={{selectedRoute, syncedRouteRef}}>
           <Tree
-            {...props}
+            {...rest}
             style={{
               paddingBottom: 0,
               scrollPaddingBottom: 0
             }}
             className={renderProps => tree(renderProps)}
             selectionMode="none"
-            keyboardNavigationBehavior="tab"
-            disallowEmptySelection
-            ref={scrollRef}>
+            keyboardNavigationBehavior="tab">
             {props.children}
           </Tree>
         </InternalSideNavContext.Provider>
@@ -223,7 +215,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   );
 });
 
-const treeRow = style<TreeItemRenderProps & {isLink?: boolean; isPreviousSelected?: boolean}>({
+const treeRow = style<TreeItemRenderProps & {isLink?: boolean}>({
   outlineStyle: 'none',
   position: 'relative',
   display: 'flex',
@@ -238,10 +230,6 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean; isPreviousSelecte
   cursor: {
     default: 'default',
     isLink: 'pointer'
-  },
-  '--borderRadiusTreeItem': {
-    type: 'borderTopStartRadius',
-    value: 'sm'
   },
   borderRadius: 'sm',
   marginTop: {
@@ -273,28 +261,6 @@ const treeCellGrid = style({
   },
   fontWeight: {
     isDescendantSelected: 'bold'
-  },
-  '--rowSelectedBorderColor': {
-    type: 'outlineColor',
-    value: {
-      default: 'gray-800',
-      isFocusVisible: 'focus-ring',
-      forcedColors: 'Highlight'
-    }
-  },
-  '--rowForcedFocusBorderColor': {
-    type: 'outlineColor',
-    value: {
-      default: 'focus-ring',
-      forcedColors: 'Highlight'
-    }
-  },
-  '--borderColor': {
-    type: 'borderColor',
-    value: {
-      default: 'blue-900',
-      forcedColors: 'ButtonBorder'
-    }
   },
   forcedColorAdjust: 'none'
 });
@@ -405,14 +371,16 @@ export interface SideNavItemContentProps extends Omit<TreeItemContentProps, 'chi
   children: ReactNode;
 }
 
-const selectedIndicator = style<{isDisabled: boolean; isSelected: boolean}>({
+const indicator = style<{isDisabled: boolean; isSelected: boolean; isHovered: boolean}>({
   position: 'absolute',
   display: {
     default: 'none',
-    isSelected: 'block'
+    isSelected: 'block',
+    isHovered: 'block'
   },
   backgroundColor: {
-    default: 'gray-800',
+    isHovered: 'gray-400',
+    isSelected: 'gray-800',
     isDisabled: 'disabled',
     forcedColors: {
       default: 'Highlight',
@@ -434,33 +402,8 @@ const selectedIndicator = style<{isDisabled: boolean; isSelected: boolean}>({
   borderRadius: 'full'
 });
 
-const hoveredIndicator = style({
-  position: 'absolute',
-  display: {
-    default: 'none',
-    isVisible: 'block'
-  },
-  backgroundColor: {
-    default: 'gray-400',
-    forcedColors: 'Highlight'
-  },
-  height: 18,
-  width: '[2px]',
-  contain: 'strict',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  '--indicator-indent': {
-    type: 'width',
-    value: 4
-  },
-  insetStart:
-    '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent) + var(--indicator-indent))]',
-  borderStyle: 'none',
-  borderRadius: 'full'
-});
-
-// Moves the tree's focused key to the item matching selectedRoute. Lives here
-// (rather than in SideNav) because it needs the built collection off `state`, which only exists
+// Moves the tree's focused key to the item matching selectedRoute. Lives in items
+// (rather than up in SideNav) because it needs the built collection off `state`, which only exists
 // after the tree has rendered. Runs when the route or the collection changes; the shared
 // syncedRouteRef dedupes across items so it fires once per route change
 function useRouteFocusSync({state}: {state: TreeState<unknown>}): void {
@@ -486,7 +429,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
   let {children} = props;
   let scale = useScale();
   let linkProps = useContext(SideNavItemLinkContext);
-  let {stateRef, selectedRoute} = useContext(InternalSideNavContext);
+  let {selectedRoute} = useContext(InternalSideNavContext);
 
   return (
     <TreeItemContent>
@@ -511,7 +454,6 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
             scale={scale}
             id={id}
             state={state}
-            stateRef={stateRef}
             selectedRoute={selectedRoute}
             isHovered={isHovered}
             isFocusVisible={isFocusVisible}
@@ -534,7 +476,6 @@ const SideNaveItemContentInner = props => {
     scale,
     id,
     state,
-    stateRef,
     selectedRoute,
     isHovered,
     isFocusVisible,
@@ -545,12 +486,6 @@ const SideNaveItemContentInner = props => {
   // keyboard-only isFocusVisibleWithin below, this lets the row focus ring follow the link
   // specifically and not other focusable children (e.g. an ActionMenu trigger).
   let [isLinkFocused, setLinkFocused] = useState(false);
-  // Bridge the tree state up to SideNav so its arrow-key handler can toggle expansion.
-  useEffect(() => {
-    if (stateRef) {
-      stateRef.current = state;
-    }
-  }, [state, stateRef]);
 
   useRouteFocusSync({state});
 
@@ -558,11 +493,11 @@ const SideNaveItemContentInner = props => {
 
   return (
     <>
-      <div className={hoveredIndicator({isVisible: isHovered && hasLink})} />
       <div
-        className={selectedIndicator({
+        className={indicator({
           isDisabled,
-          isSelected: linkProps.href === selectedRoute
+          isSelected: linkProps.href === selectedRoute,
+          isHovered: isHovered && hasLink
         })}
       />
       <div
@@ -572,14 +507,12 @@ const SideNaveItemContentInner = props => {
           isDescendantSelected:
             !isExpanded && hasChildItems && hasSelectedDescendant(id, state, selectedRoute)
         })}>
-        {(isFocusVisible || (isFocusVisibleWithin && isLinkFocused)) && (
-          <div
-            className={treeRowFocusRing({
-              isFocusVisible: true,
-              isSelected
-            })}
-          />
-        )}
+        <div
+          className={treeRowFocusRing({
+            isFocusVisible: isFocusVisible || (isFocusVisibleWithin && isLinkFocused),
+            isSelected
+          })}
+        />
         <div
           className={style({
             gridArea: 'level-padding',
@@ -599,7 +532,7 @@ const SideNaveItemContentInner = props => {
                 styles: style({size: fontRelative(20), flexShrink: 0})
               }
             ],
-            [ActionButtonGroupContext, {styles: treeActions, isDisabled}],
+            [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
             [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled, size: 'S'}]
           ]}>
           {typeof children === 'string' ? <Text>{children}</Text> : children}
@@ -715,9 +648,12 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
     <TreeHeader
       className={style({
         font: 'ui-sm',
+        // Component/S/Medium for the font, doesn't appear to match our fonts
+        fontWeight: 'medium',
+        color: 'gray-600',
         paddingStart: 'edge-to-text',
-        marginBottom: '[10px]',
-        height: 32
+        marginBottom: '[8px]',
+        height: 16
       })}>
       {props.children}
     </TreeHeader>

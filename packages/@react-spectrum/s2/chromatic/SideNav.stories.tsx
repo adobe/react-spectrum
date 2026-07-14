@@ -232,19 +232,34 @@ export const Dynamic: StoryObj<typeof SideNavDynamicExample> = {
   render: args => <SideNavDynamicExample {...args} />
 };
 
-// Hovering an item that has a link reveals the hover indicator bar to the left of the row.
-// Rendered as a single instance (one color scheme + background) so the play function's role
-// query resolves to exactly one SideNav.
 export const Hovered: StoryObj<typeof SideNavExample> = {
   ...Static,
   play: async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
     // Hover a row that isn't the selected one (selectedRoute is /projects-2) so the hover
-    // indicator is distinct from the selection indicator. Hover the row itself (not the inner
-    // link): the row owns the useHover handlers, which use onPointerEnter/onMouseEnter and don't
-    // bubble, so hovering a child wouldn't trigger them.
+    // indicator is distinct from the selection indicator. Hover the row itself, not the inner
+    // link
     let row = screen.getByRole('row', {name: 'Projects-3'});
     await userEvent.hover(row);
     // Give the hover state time to settle before the screenshot is captured.
+    await new Promise(resolve => setTimeout(resolve, 100));
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};
+
+export const Focused: StoryObj<typeof SideNavExample> = {
+  ...Static,
+  play: async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await userEvent.tab();
+    // Give the focus state time to settle before the screenshot is captured.
     await new Promise(resolve => setTimeout(resolve, 100));
   },
   parameters: {
