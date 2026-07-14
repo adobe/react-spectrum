@@ -12,7 +12,7 @@
 
 import {FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
-import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useRef} from 'react';
+import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useEffect, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectionMode, SelectState} from 'react-stately/useSelectState';
 import {useFormReset} from '../utils/useFormReset';
@@ -103,17 +103,55 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(
   );
 
   let setValue = state.setValue;
+  let subscribeToValueChange = state.subscribeToValueChange;
+  let isDispatchingChange = useRef(false);
   let onChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      let eventTarget = getEventTarget(e);
-      if (eventTarget.multiple) {
-        setValue(Array.from(eventTarget.selectedOptions, option => option.value) as any);
-      } else {
-        setValue(e.currentTarget.value as any);
+      if (isDispatchingChange.current) {
+        return;
       }
+
+      let eventTarget = getEventTarget(e);
+      let value: string | string[];
+      if (eventTarget.multiple) {
+        value = Array.from(eventTarget.selectedOptions, option => option.value);
+      } else {
+        value = e.currentTarget.value;
+      }
+
+      setValue(value as any);
     },
     [setValue]
   );
+
+  useEffect(() => {
+    return subscribeToValueChange(value => {
+      let select = props.selectRef?.current;
+      if (!(select instanceof HTMLSelectElement)) {
+        return;
+      }
+
+      if (select.multiple) {
+        let values = new Set((Array.isArray(value) ? value : [value]).map(String));
+        for (let option of select.options) {
+          option.selected = values.has(option.value);
+        }
+      } else {
+        let valueSetter = Object.getOwnPropertyDescriptor(
+          Object.getPrototypeOf(select),
+          'value'
+        )?.set;
+        valueSetter?.call(select, String(Array.isArray(value) ? (value[0] ?? '') : (value ?? '')));
+      }
+
+      isDispatchingChange.current = true;
+      try {
+        select.dispatchEvent(new Event('change', {bubbles: true}));
+      } finally {
+        isDispatchingChange.current = false;
+      }
+    });
+  }, [props.selectRef, subscribeToValueChange]);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers

@@ -95,6 +95,97 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('Dog');
   });
 
+  it('should bubble a change event from the hidden select when the selection changes', async () => {
+    let onChange = jest.fn();
+    let {getByTestId} = render(
+      <form onChange={onChange}>
+        <TestSelect name="animal" />
+      </form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    let hiddenSelect = document.querySelector('select[name="animal"]');
+
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.calls[0][0].target).toBe(hiddenSelect);
+    expect(hiddenSelect).toHaveValue('dog');
+  });
+
+  it('should not duplicate change events from the hidden select', async () => {
+    let onChange = jest.fn();
+    render(
+      <form onChange={onChange}>
+        <TestSelect name="animal" />
+      </form>
+    );
+    let hiddenSelect = document.querySelector('select[name="animal"]');
+
+    await user.selectOptions(hiddenSelect, 'dog');
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.calls[0][0].target).toBe(hiddenSelect);
+    expect(hiddenSelect).toHaveValue('dog');
+  });
+
+  it('should bubble a change event for a controlled select', async () => {
+    let onChange = jest.fn();
+    let values = [];
+    let {getByTestId} = render(
+      <form onChange={e => values.push(e.target.value)}>
+        <TestSelect name="animal" value="cat" onChange={onChange} />
+      </form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    let hiddenSelect = document.querySelector('select[name="animal"]');
+
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+
+    expect(onChange).toHaveBeenCalledWith('dog');
+    expect(values).toEqual(['dog']);
+    expect(hiddenSelect).toHaveValue('cat');
+  });
+
+  it('should not bubble a change event when the form is reset', async () => {
+    let onChange = jest.fn();
+    let formRef = React.createRef();
+    let {getByTestId} = render(
+      <form ref={formRef} onChange={onChange}>
+        <TestSelect name="animal" defaultValue="cat" />
+      </form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    let hiddenSelect = document.querySelector('select[name="animal"]');
+
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(onChange).toHaveBeenCalledTimes(1);
+    onChange.mockClear();
+
+    act(() => formRef.current.reset());
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(hiddenSelect).toHaveValue('cat');
+  });
+
+  it('should bubble change events with the selected options for multiple selection', async () => {
+    let values = [];
+    let {getByTestId} = render(
+      <form onChange={e => values.push([...e.target.selectedOptions].map(option => option.value))}>
+        <TestSelect name="animal" selectionMode="multiple" />
+      </form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+
+    expect(values).toEqual([['cat'], ['cat', 'dog']]);
+  });
+
   it('should support slot', () => {
     let {getByTestId} = render(
       <SelectContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
