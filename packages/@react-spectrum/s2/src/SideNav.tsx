@@ -275,7 +275,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
               scrollPaddingBottom: 0
             }}
             className={renderProps => tree(renderProps)}
-            selectionMode="single"
+            selectionMode="none"
             keyboardNavigationBehavior="arrow"
             disallowEmptySelection
             ref={scrollRef}>
@@ -406,7 +406,10 @@ const treeRowLink = style({
   outlineStyle: 'none',
   textDecoration: 'none',
   color: 'inherit',
-  cursor: 'pointer'
+  cursor: {
+    default: 'pointer',
+    isDisabled: 'default'
+  }
 });
 
 const treeActions = style({
@@ -420,6 +423,7 @@ const treeActionMenu = style({
 });
 
 const SideNavItemLinkContext = createContext<{
+  isDisabled?: boolean;
   href?: string;
   hrefLang?: string;
   target?: string;
@@ -436,13 +440,23 @@ const SideNavItemLinkContext = createContext<{
 export const SideNavItem = (props: SideNavItemProps): ReactNode => {
   let {href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions, ...rest} = props;
 
+  let hasLink = href != null && href.length > 0;
   return (
     <SideNavItemLinkContext.Provider
-      value={{href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions}}>
+      value={{
+        href,
+        hrefLang,
+        target,
+        rel,
+        download,
+        ping,
+        referrerPolicy,
+        routerOptions
+      }}>
       <TreeItem
         {...rest}
         data-href={href} // use a data attribute so it doesn't trigger Tree's handling of href
-        focusMode={href && href.length > 0 ? 'child' : undefined}
+        focusMode={hasLink ? 'child' : undefined}
         className={renderProps => treeRow(renderProps)}
       />
     </SideNavItemLinkContext.Provider>
@@ -599,9 +613,11 @@ const SideNaveItemContentInner = props => {
 
   useRouteFocusSync({state});
 
+  let hasLink = linkProps.href != null && linkProps.href.length > 0;
+
   return (
     <>
-      {isHovered && <div className={hoveredIndicator} />}
+      {isHovered && hasLink && <div className={hoveredIndicator} />}
       <div
         className={selectedIndicator({
           isDisabled,
@@ -634,7 +650,7 @@ const SideNaveItemContentInner = props => {
             [TextContext, {styles: treeContent}],
             // forward this so that it gets out of the fake dom's tree and into the real one, and
             // add onFocusChange so the link reports focus for the row focus ring.
-            [SideNavItemLinkContext, {...linkProps, onFocusChange: setLinkFocused}],
+            [SideNavItemLinkContext, {...linkProps, isDisabled, onFocusChange: setLinkFocused}],
             [
               IconContext,
               {
@@ -782,7 +798,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
       {...props}
       {...linkProps}
       aria-current={selectedRoute === linkProps.href ? 'page' : undefined}
-      className={treeRowLink}>
+      className={treeRowLink({isDisabled: linkProps.isDisabled})}>
       <Provider
         values={[
           [TextContext, {styles: treeContent}],
