@@ -86,7 +86,6 @@ export interface PromptFieldProps {
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
   onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
-  isDisabled?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
@@ -104,7 +103,6 @@ interface PromptFieldState {
   onSubmit?: () => void;
   onStop?: () => void;
   isGenerating: boolean;
-  isDisabled: boolean;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   isListening: boolean;
@@ -164,7 +162,6 @@ const PromptFieldContext = createContext<PromptFieldState>({
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false,
-  isDisabled: false,
   isListening: false,
   setListening: () => {}
 });
@@ -191,7 +188,6 @@ export function PromptField(props: PromptFieldProps) {
     children,
     acceptedAttachmentTypes,
     isGenerating,
-    isDisabled,
     onStop,
     styles,
     onAddAttachments,
@@ -242,7 +238,7 @@ export function PromptField(props: PromptFieldProps) {
   let isPromptControlled = props.value !== undefined;
   let isAttachmentsControlled = props.attachments !== undefined;
   let onSubmit = () => {
-    if (prompt.segments.length === 0 || isDisabled) {
+    if (prompt.segments.length === 0) {
       return;
     }
 
@@ -267,7 +263,6 @@ export function PromptField(props: PromptFieldProps) {
         inputRef,
         onSubmit,
         isGenerating: isGenerating ?? false,
-        isDisabled: isDisabled ?? false,
         isListening,
         setListening,
         onStop,
@@ -277,7 +272,6 @@ export function PromptField(props: PromptFieldProps) {
       <div {...focusWithinProps}>
         <PromptFieldContainer
           {...dropProps}
-          isDisabled={isDisabled}
           role="group"
           variant={variant}
           isGenerating={isGenerating ?? false}
@@ -342,20 +336,11 @@ export interface PromptTokenFieldProps {
   children?: (segment: TokenSegment) => React.ReactElement;
   pixelLoader?: Cell[] | Cell[][];
   placeholder?: string;
-  isDisabled?: boolean;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
-  let {
-    completionTrigger,
-    renderCompletions,
-    children,
-    pixelLoader,
-    placeholder,
-    isDisabled: isDisabledProp,
-    onKeyDown
-  } = props;
+  let {completionTrigger, renderCompletions, children, pixelLoader, placeholder, onKeyDown} = props;
   let {
     prompt,
     setPrompt,
@@ -365,10 +350,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     inputRef,
     onSubmit,
     isGenerating,
-    isDisabled: isDisabledContext,
     isListening
   } = useContext(PromptFieldContext);
-  let isDisabled = isDisabledProp || isDisabledContext;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [isFocused, setFocused] = useState(false);
 
@@ -416,7 +399,6 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           multiline
           aria-label="Prompt"
           data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
-          isDisabled={isDisabled}
           isReadOnly={isListening}
           onKeyDown={onKeyDown}
           ref={inputRef}
@@ -591,13 +573,13 @@ export interface PromptFieldSubmitButtonProps {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
-  let {prompt, isGenerating, isDisabled, onSubmit, onStop} = useContext(PromptFieldContext);
+  let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
   return (
     <Button
       variant="primary"
       staticColor="auto"
       // TODO: should it be possible to submit a prompt with only attachments?
-      isDisabled={isDisabled || (prompt.segments.length === 0 && !isGenerating)}
+      isDisabled={prompt.segments.length === 0 && !isGenerating}
       aria-label={isGenerating ? 'Stop' : 'Send'}
       onPress={isGenerating ? onStop : onSubmit}>
       {isGenerating ? <Stop /> : <Send />}
@@ -614,14 +596,8 @@ export interface PromptFieldVoiceButtonProps {
 
 export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let {lang, isDisabled: isDisabledProp, onError} = props;
-  let {
-    prompt,
-    setPrompt,
-    inputRef,
-    isDisabled: isDisabledContext,
-    setListening
-  } = useContext(PromptFieldContext);
-  let isDisabled = isDisabledProp ?? isDisabledContext;
+  let {prompt, setPrompt, inputRef, setListening} = useContext(PromptFieldContext);
+  let isDisabled = isDisabledProp;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   let basePromptRef = useRef<TokenSegmentList>(prompt);
@@ -721,11 +697,10 @@ export interface InsertMenuItemProps {
 }
 
 export function InsertMenuButton(props: InsertMenuItemProps) {
-  let {isDisabled} = useContext(PromptFieldContext);
   let {children} = props;
   return (
     <MenuTrigger>
-      <ActionButton isDisabled={isDisabled} isQuiet staticColor="auto" aria-label="Add">
+      <ActionButton isQuiet staticColor="auto" aria-label="Add">
         <Plus />
       </ActionButton>
       <Menu>{children}</Menu>

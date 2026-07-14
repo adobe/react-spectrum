@@ -463,9 +463,9 @@ export const Everything: Story = {
   render: args => <EverythingRender {...args} />
 };
 
-function BasicRender({placeholder, isDisabled, ...args}: any) {
+function BasicRender({placeholder, ...args}: any) {
   return (
-    <PromptField isDisabled={isDisabled} {...args}>
+    <PromptField {...args}>
       <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
         <PromptTokenField placeholder={placeholder} />
         <PromptFieldSubmitButton />
