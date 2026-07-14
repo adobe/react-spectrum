@@ -35,6 +35,8 @@ export type VoiceInputErrorCode =
   | 'network'
   | 'no-speech'
   | 'audio-capture'
+  | 'language-not-supported'
+  | 'phrases-not-supported'
   | 'unknown';
 
 // doesn't have onStart/onInterim/etc, didn't seem like they were needed since coworker just used
@@ -90,6 +92,10 @@ const mapErrorCode = (error: string): VoiceInputErrorCode | null => {
       return 'no-speech';
     case 'audio-capture':
       return 'audio-capture';
+    case 'language-not-supported':
+      return 'language-not-supported';
+    case 'phrases-not-supported':
+      return 'phrases-not-supported';
     default:
       return 'unknown';
   }
