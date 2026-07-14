@@ -42,7 +42,9 @@ import {
   SubmenuTrigger,
   Text
 } from '@react-spectrum/s2/Menu';
+import {Content} from '@react-spectrum/s2/Content';
 import Data from '@react-spectrum/s2/icons/Data';
+import * as data from '../src/loader/data';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -64,19 +66,45 @@ const meta: Meta<typeof PromptField> = {
   argTypes: {
     ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}},
+    brand: {
+      control: 'color',
+      description:
+        'Sets the --brand custom property to retheme the PromptField. Only the hue is used; lightness and chroma come from the design tokens.',
+      table: {category: 'Theming'}
+    },
+    pixelLoader: {
+      control: 'select',
+      options: Object.keys(data),
+      description: 'Sets the icon to use for the pixel loader.',
+      table: {category: 'Theming'}
+    },
+    attachmentVariant: {
+      control: 'radio',
+      options: ['thumbnail', 'card']
+    },
     placeholder: {
       control: 'text',
       table: {category: 'PromptTokenField'}
     }
   },
   args: {
-    ...getActionArgs(events),
-    placeholder: undefined
+    brand: 'rgb(236, 105, 255)',
+    pixelLoader: 'aiLogo',
+    attachmentVariant: 'thumbnail',
+    placeholder: undefined,
+    ...getActionArgs(events)
   },
   title: 'AI/PromptField',
   decorators: [
-    Story => (
-      <div style={{width: '800px'}}>
+    (Story, {args}) => (
+      <div
+        style={{
+          width: '800px',
+          maxWidth: '90vw',
+          margin: '0 auto',
+          // @ts-ignore
+          '--brand': args.brand
+        }}>
         <Story />
       </div>
     )
@@ -305,7 +333,7 @@ function EverythingRender(args) {
             return newState;
           });
         }}>
-        <PromptFieldAttachmentList dependencies={[attachmentState]}>
+        <PromptFieldAttachmentList dependencies={[attachmentState, args.attachmentVariant]}>
           {attachment => {
             let state = attachmentState.get(attachment.id);
             return (
@@ -313,6 +341,12 @@ function EverythingRender(args) {
                 uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
                 {/* TODO: what about non-image attachments? */}
                 {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+                {args.attachmentVariant === 'card' && (
+                  <Content>
+                    <Text slot="title">{attachment.file.name}</Text>
+                    <Text slot="description">{attachment.file.type}</Text>
+                  </Content>
+                )}
               </Attachment>
             );
           }}
@@ -328,6 +362,7 @@ function EverythingRender(args) {
               onCompact: action('onCompact')
             })
           }
+          pixelLoader={data[args.pixelLoader]}
           placeholder={placeholder}>
           {segment => (
             <PromptToken>
