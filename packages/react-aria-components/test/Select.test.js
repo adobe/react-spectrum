@@ -98,7 +98,7 @@ describe('Select', () => {
   it('should bubble a change event from the hidden select when the selection changes', async () => {
     let onChange = jest.fn();
     let {getByTestId} = render(
-      <form onChange={onChange}>
+      <form onChange={e => onChange(e.target)}>
         <TestSelect name="animal" />
       </form>
     );
@@ -109,14 +109,14 @@ describe('Select', () => {
     await selectTester.toggleOptionSelection({option: 'Dog'});
 
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange.mock.calls[0][0].target).toBe(hiddenSelect);
+    expect(onChange).toHaveBeenCalledWith(hiddenSelect);
     expect(hiddenSelect).toHaveValue('dog');
   });
 
   it('should not duplicate change events from the hidden select', async () => {
     let onChange = jest.fn();
     render(
-      <form onChange={onChange}>
+      <form onChange={e => onChange(e.target)}>
         <TestSelect name="animal" />
       </form>
     );
@@ -125,7 +125,7 @@ describe('Select', () => {
     await user.selectOptions(hiddenSelect, 'dog');
 
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange.mock.calls[0][0].target).toBe(hiddenSelect);
+    expect(onChange).toHaveBeenCalledWith(hiddenSelect);
     expect(hiddenSelect).toHaveValue('dog');
   });
 
