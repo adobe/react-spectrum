@@ -216,7 +216,16 @@ export function useGridListItem<T>(
     walker.currentNode = activeElement;
 
     if (
-      handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+      handleTreeExpansionKeys(
+        e,
+        state,
+        node,
+        hasChildRows,
+        direction,
+        activeElement,
+        ref.current,
+        allowsArrowNavigation
+      )
     ) {
       return;
     }
@@ -359,7 +368,16 @@ export function useGridListItem<T>(
       }
 
       if (
-        handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+        handleTreeExpansionKeys(
+          e,
+          state,
+          node,
+          hasChildRows,
+          direction,
+          activeElement,
+          ref.current,
+          allowsArrowNavigation
+        )
       ) {
         return;
       }
@@ -415,6 +433,10 @@ export function useGridListItem<T>(
     id: getRowId(state, node.key)
   });
 
+  if (focusMode === 'child' && allowsArrowNavigation) {
+    rowProps.tabIndex = -1;
+  }
+
   // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
   // is stopped. this also fixes space not working in a textfield in a tree parent row
   let baseOnKeyDown = rowProps.onKeyDown;
@@ -461,9 +483,10 @@ function handleTreeExpansionKeys<T>(
   hasChildRows: boolean | undefined,
   direction: string,
   activeElement: Element | null,
-  rowRef: FocusableElement | null
+  rowRef: FocusableElement | null,
+  allowsArrowNavigation: boolean | undefined
 ): boolean {
-  if (!('expandedKeys' in state) || activeElement !== rowRef) {
+  if (!('expandedKeys' in state) || (!allowsArrowNavigation && activeElement !== rowRef)) {
     return false;
   }
   if (

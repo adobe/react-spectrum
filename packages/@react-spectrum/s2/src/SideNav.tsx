@@ -30,7 +30,6 @@ import {
   forwardRef,
   JSXElementConstructor,
   ReactElement,
-  KeyboardEvent as ReactKeyboardEvent,
   ReactNode,
   RefObject,
   useContext,
@@ -43,7 +42,6 @@ import {
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {GridListHeaderProps, GridListSectionProps} from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
@@ -194,78 +192,16 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLDivElement | null>(null);
   let stateRef = useRef<TreeState<unknown> | null>(null);
-  let {direction} = useLocale();
 
   // Tracks the last route we moved the focused key to, so the focus sync (driven from
   // RouteFocusSync, which has the built collection) only runs when the route actually changes
   let syncedRouteRef = useRef<string | undefined>(undefined);
 
-  // RAC swallows arrow keys at the collection level (stopPropagation during capture), so a handler
-  // on the link never sees them. Intercept here on an ancestor, before RAC's row handler runs, and
-  // expand a collapsed row when the expand arrow is pressed while focus is on its link.
-  let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    let state = stateRef.current;
-    if (!state) {
-      return;
-    }
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-      return;
-    }
-    let target = getEventTarget(e);
-    let link = target.closest?.('a');
-    if (!link || link !== target) {
-      return;
-    }
-    let rowEl = link.closest<HTMLElement>('[role="row"]');
-    if (!rowEl) {
-      return;
-    }
-    let key = rowEl.dataset.key;
-    if (key == null) {
-      return;
-    }
-    let node = state.collection.getItem(key);
-    // null = leaf, 'true' = expanded, 'false' = collapsed.
-    let ariaExpanded = rowEl.getAttribute('aria-expanded');
-    let collapseKey = direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
-    let expandKey = direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
-
-    // Move focus to the parent item. RAC's own parent-move (handleTreeExpansionKeys) only runs
-    // when the row itself has DOM focus, so with focusMode="child" (focus on the link) it never
-    // fires; replicate it here. Pointing the focused key at the parent makes useSelectableItem
-    // move DOM focus to it (and, in focusMode="child", into the parent's link).
-    let moveToParent = () => {
-      if (node?.parentKey != null && state.collection.getItem(node.parentKey)?.type === 'item') {
-        e.stopPropagation();
-        e.preventDefault();
-        state.selectionManager.setFocusedKey(node.parentKey);
-      }
-    };
-
-    if (e.key === collapseKey) {
-      if (ariaExpanded === 'true') {
-        // Expanded parent: collapse it (focus stays on the row).
-        e.stopPropagation();
-        e.preventDefault();
-        state.toggleKey(key);
-      } else {
-        // Leaf or already-collapsed row: step up to the parent.
-        moveToParent();
-      }
-    } else if (e.key === expandKey && ariaExpanded === 'false') {
-      // Collapsed parent: expand it.
-      e.stopPropagation();
-      e.preventDefault();
-      state.toggleKey(key);
-    }
-  };
-
   return (
     <div
       ref={domRef}
       className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
-      style={UNSAFE_style}
-      onKeyDownCapture={onKeyDownCapture}>
+      style={UNSAFE_style}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalSideNavContext.Provider value={{stateRef, selectedRoute, syncedRouteRef}}>
           <Tree
@@ -276,7 +212,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
             }}
             className={renderProps => tree(renderProps)}
             selectionMode="none"
-            keyboardNavigationBehavior="arrow"
+            keyboardNavigationBehavior="tab"
             disallowEmptySelection
             ref={scrollRef}>
             {props.children}
@@ -455,8 +391,9 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
       }}>
       <TreeItem
         {...rest}
-        data-href={href} // use a data attribute so it doesn't trigger Tree's handling of href
+        href={href}
         focusMode={hasLink ? 'child' : undefined}
+        allowsArrowNavigation
         className={renderProps => treeRow(renderProps)}
       />
     </SideNavItemLinkContext.Provider>
@@ -475,7 +412,7 @@ const selectedIndicator = style<{isDisabled: boolean; isSelected: boolean}>({
     isSelected: 'block'
   },
   backgroundColor: {
-    default: 'neutral',
+    default: 'gray-800',
     isDisabled: 'disabled',
     forcedColors: {
       default: 'Highlight',
@@ -499,8 +436,12 @@ const selectedIndicator = style<{isDisabled: boolean; isSelected: boolean}>({
 
 const hoveredIndicator = style({
   position: 'absolute',
+  display: {
+    default: 'none',
+    isVisible: 'block'
+  },
   backgroundColor: {
-    default: 'neutral-subdued',
+    default: 'gray-400',
     forcedColors: 'Highlight'
   },
   height: 18,
@@ -617,7 +558,7 @@ const SideNaveItemContentInner = props => {
 
   return (
     <>
-      {isHovered && hasLink && <div className={hoveredIndicator} />}
+      <div className={hoveredIndicator({isVisible: isHovered && hasLink})} />
       <div
         className={selectedIndicator({
           isDisabled,
@@ -820,7 +761,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
 // items too, and the href is stored as a data attribute so it doesn't trigger Tree's link handling.
 function findKeyForRoute(collection: Collection<Node<unknown>>, route: string): Key | null {
   for (let key of collection.getKeys()) {
-    if (collection.getItem(key)?.props?.['data-href'] === route) {
+    if (collection.getItem(key)?.props?.href === route) {
       return key;
     }
   }

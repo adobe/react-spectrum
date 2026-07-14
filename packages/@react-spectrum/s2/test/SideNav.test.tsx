@@ -74,7 +74,7 @@ function RoutedSideNavExample(props: Partial<SideNavProps<unknown>>) {
   );
 }
 
-// Three levels deep: Your libraries > Projects 1 > Projects 1A.
+// libraries > Projects 1 > Projects 1A
 function DeepSideNavExample(props: Partial<SideNavProps<unknown>>) {
   let {selectedRoute = '/libraries', ...rest} = props;
   return (
@@ -153,6 +153,13 @@ function NoLinkActionMenuSideNavExample(props: Partial<SideNavProps<unknown>>) {
             </MenuItem>
           </ActionMenu>
         </SideNavItemContent>
+        <SideNavItem id="section-2" href="/section-2" textValue="Section 2">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Text>Section 2</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
       </SideNavItem>
     </SideNav>
   );
@@ -310,7 +317,7 @@ describe('SideNav', () => {
     let childrenWithLinkFocused = cell.children.length;
 
     // Move focus to the ActionMenu trigger in the same row: the ring is gone.
-    await user.keyboard('{ArrowRight}');
+    await user.tab();
     act(() => {
       jest.runAllTimers();
     });
@@ -339,6 +346,14 @@ describe('SideNav', () => {
     expect(within(sectionRow).getByRole('button', {name: 'More actions'})).not.toHaveFocus();
   });
 
+  it("clicking on a category item's content expands the category", async () => {
+    let {getByRole} = render(<NoLinkActionMenuSideNavExample />);
+    let sectionRow = getByRole('row', {name: 'Section'});
+
+    await user.click(within(sectionRow).getByText('Section'));
+    expect(sectionRow).toHaveAttribute('aria-expanded', 'true');
+  });
+
   it('activates the link when clicked', async () => {
     let navigate = jest.fn();
     let {getByRole} = render(
@@ -359,11 +374,41 @@ describe('SideNav', () => {
       </RouterProvider>
     );
 
-    // Tab moves focus to the first item's link.
     await user.tab();
     expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
 
     await user.keyboard('{Enter}');
     expect(navigate).toHaveBeenCalledWith('/files', undefined);
+  });
+
+  it('takes one tab to leave the sidenav from a link', async () => {
+    let {getByRole} = render(
+      <>
+        <SideNavExample />
+        <input type="text" />
+      </>
+    );
+
+    await user.tab();
+    expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
+
+    await user.tab();
+    expect(getByRole('textbox')).toHaveFocus();
+  });
+
+  it('takes one shift tab to leave the sidenav from a link', async () => {
+    let {getByRole} = render(
+      <>
+        <input type="text" />
+        <SideNavExample />
+      </>
+    );
+
+    await user.tab();
+    await user.tab();
+    expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
+
+    await user.tab({shift: true});
+    expect(getByRole('textbox')).toHaveFocus();
   });
 });
