@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
+import {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
 import {ColumnSize} from 'react-stately/useTableState';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
@@ -38,6 +38,11 @@ export interface TableColumnResizeAria {
   resizerProps: DOMAttributes;
   /** Whether this column is currently being resized. */
   isResizing: boolean;
+  /**
+   * Whether this column is currently being resized via a mouse drag (e.g. to render a cursor
+   * overlay).
+   */
+  isMouseResizing: boolean;
 }
 
 export interface AriaTableColumnResizeProps<T> {
@@ -94,6 +99,9 @@ export function useTableColumnResize<T>(
   let lastSize = useRef<Map<Key, ColumnSize> | null>(null);
   let wasFocusedOnResizeStart = useRef(false);
   let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
+  // Whether a mouse drag-resize is active. Set on the first move (not on press) so a cursor
+  // overlay only mounts during an actual drag.
+  let [isMouseResizing, setMouseResizing] = useState(false);
 
   let {direction} = useLocale();
 
@@ -172,8 +180,11 @@ export function useTableColumnResize<T>(
 
   const columnResizeWidthRef = useRef<number>(0);
   const {moveProps} = useMove({
-    onMoveStart() {
+    onMoveStart(e) {
       columnResizeWidthRef.current = state.getColumnWidth(item.key);
+      if (e.pointerType === 'mouse') {
+        setMouseResizing(true);
+      }
       startResize(item);
     },
     onMove(e) {
@@ -196,6 +207,7 @@ export function useTableColumnResize<T>(
     onMoveEnd(e) {
       let {pointerType} = e;
       columnResizeWidthRef.current = 0;
+      setMouseResizing(false);
       if (pointerType === 'mouse' || (pointerType === 'touch' && wasFocusedOnResizeStart.current)) {
         endResize(item);
       }
@@ -222,6 +234,7 @@ export function useTableColumnResize<T>(
     modality = 'touch';
   }
   let description =
+    // oxlint-disable-next-line react/react-compiler
     triggerRef?.current == null &&
     (modality === 'keyboard' || modality === 'virtual') &&
     !isResizing
@@ -320,6 +333,7 @@ export function useTableColumnResize<T>(
     }),
     inputProps: mergeProps(
       visuallyHiddenProps,
+      // oxlint-disable-next-line react/react-compiler
       {
         id,
         onBlur: () => {
@@ -330,6 +344,7 @@ export function useTableColumnResize<T>(
       },
       ariaProps
     ),
-    isResizing
+    isResizing,
+    isMouseResizing
   };
 }

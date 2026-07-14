@@ -247,6 +247,7 @@ export function useTimeField<T extends TimeValue>(
   ref: RefObject<Element | null>
 ): DateFieldAria {
   let res = useDateField(props, state, ref);
+  // oxlint-disable-next-line react/react-compiler
   res.inputProps.value = state.timeValue?.toString() || '';
   return res;
 }

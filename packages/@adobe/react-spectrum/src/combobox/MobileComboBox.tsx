@@ -67,6 +67,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(
   props: SpectrumComboBoxProps<any>,
   ref: FocusableRef<HTMLElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   props = useProviderProps(props);
 
   let {
@@ -119,6 +120,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(
   });
 
   // Focus the button and show focus ring when clicking on the label
+  // oxlint-disable-next-line react/react-compiler
   labelProps.onClick = () => {
     if (!props.isDisabled) {
       buttonRef.current?.focus();
@@ -343,6 +345,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       ...props,
       // completionMode,
       layoutDelegate: layout,
+      // oxlint-disable-next-line react/react-compiler
       buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: popoverRef,
       listBoxRef,
@@ -382,9 +385,13 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
   // Unlike "combobox", "aria-expanded" is not a valid attribute on "searchbox".
+  // oxlint-disable-next-line react/react-compiler
   inputProps.role = 'searchbox';
+  // oxlint-disable-next-line react/react-compiler
   inputProps['aria-haspopup'] = 'listbox';
+  // oxlint-disable-next-line react/react-compiler
   delete inputProps['aria-expanded'];
+  // oxlint-disable-next-line react/react-compiler
   delete inputProps.onTouchEnd;
 
   let clearButton = (
@@ -453,6 +460,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       }
     } else if (loadingState !== 'filtering') {
       // If loading is no longer happening, clear any timers and hide the loading circle
+      // oxlint-disable-next-line react/react-compiler
       setShowLoading(false);
       if (timeout.current) {
         clearTimeout(timeout.current);

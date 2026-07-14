@@ -414,22 +414,30 @@ export function useSelectableCollection(
       [key]: callback
     };
   };
-  let {keyboardProps} = useKeyboard({
+  // oxlint-disable react/react-compiler
+  let {keyboardProps: repeatKeyboardProps} = useKeyboard({
     shortcuts: {
       ...withShiftSel('ArrowDown', arrowDown),
       ...withShiftSel('ArrowUp', arrowUp),
       ...withShiftSel('ArrowLeft', arrowLeft),
       ...withShiftSel('ArrowRight', arrowRight),
+      ...withShiftSel('PageDown', pageDown),
+      ...withShiftSel('PageUp', pageUp)
+    },
+    allowRepeats: true
+  });
+  // oxlint-disable react/react-compiler
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
       ...withShiftSel('Home', home),
       ...withShiftSel('End', end),
-      ...withShiftSel('PageDown', pageDown),
-      ...withShiftSel('PageUp', pageUp),
       'Mod+A': aHandler,
       Escape: escape,
       Tab: tab,
       'Tab+Shift': shiftTab
     }
   });
+  // oxlint-enable react/react-compiler
 
   // Store the scroll position so we can restore it later.
   /// TODO: should this happen all the time??
@@ -696,7 +704,7 @@ export function useSelectableCollection(
   });
 
   let handlers = {
-    ...keyboardProps,
+    ...mergeProps(keyboardProps, repeatKeyboardProps),
     onFocus,
     onBlur,
     onMouseDown(e) {
@@ -714,6 +722,7 @@ export function useSelectableCollection(
   });
 
   if (!disallowTypeAhead) {
+    // oxlint-disable-next-line react/react-compiler
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
@@ -726,6 +735,7 @@ export function useSelectableCollection(
 
   let collectionId = useCollectionId(manager.collection);
   return {
+    // oxlint-disable-next-line react/react-compiler
     collectionProps: mergeProps(handlers, {
       tabIndex,
       'data-collection': collectionId
