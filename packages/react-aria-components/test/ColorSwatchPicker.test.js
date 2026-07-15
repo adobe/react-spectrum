@@ -143,6 +143,49 @@ describe('ColorSwatchPicker', function () {
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('has no selection by default', async function () {
+    let {getByRole} = render(
+      <ColorSwatchPicker>
+        <ColorSwatchPickerItem color="#000">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+      </ColorSwatchPicker>
+    );
+
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options[0]).toHaveAttribute('aria-selected', 'false');
+    expect(options[1]).toHaveAttribute('aria-selected', 'false');
+  });
+
+  it('supports deselecting a swatch, including black', async function () {
+    let onChange = jest.fn();
+    let {getByRole} = render(
+      <ColorSwatchPicker onChange={onChange}>
+        <ColorSwatchPickerItem color="#000">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+      </ColorSwatchPicker>
+    );
+
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+
+    await user.click(options[0]);
+    expect(onChange).toHaveBeenLastCalledWith(parseColor('#000000'));
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    await user.click(options[0]);
+    expect(onChange).toHaveBeenLastCalledWith(null);
+    expect(options[0]).toHaveAttribute('aria-selected', 'false');
+  });
+
   it('handles keyboard input', async function () {
     let onChange = jest.fn();
     let {getByRole} = render(

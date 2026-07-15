@@ -24,7 +24,7 @@ import {useDOMRef} from '../utils/useDOMRef';
 import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumColorSwatchPickerProps
-  extends ValueBase<string | Color, Color>, StyleProps {
+  extends ValueBase<string | Color | null, Color | null>, StyleProps {
   /** The ColorSwatches within the ColorSwatchPicker. */
   children: ReactNode;
   /**
