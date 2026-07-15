@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {colorToken, getToken} from './tokens';
+import {colorToken, getToken} from './tokens' with {type: 'macro'};
 import {
   colorTokenToString,
   fontFamily,

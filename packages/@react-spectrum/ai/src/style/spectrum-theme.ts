@@ -22,7 +22,7 @@ import {
   generateOverlayColorScale,
   getToken,
   simpleColorScale
-} from './tokens';
+} from './tokens' with {type: 'macro'};
 
 function hcmColor(color: string) {
   // In the docs, HCM colors can be simulated.
