@@ -104,6 +104,44 @@ function DeepSideNavExample(props: Partial<SideNavProps<unknown>>) {
   );
 }
 
+// A top-level leaf ("Your files") followed by a three-level branch:
+// libraries > Projects 1 > Projects 1A
+function ThreeLevelSideNavExample(props: Partial<SideNavProps<unknown>>) {
+  let {selectedRoute = '/files', ...rest} = props;
+  return (
+    <SideNav aria-label="Test sidenav" selectedRoute={selectedRoute} {...rest}>
+      <SideNavItem id="files" href="/files" textValue="Your files">
+        <SideNavItemContent>
+          <SideNavItemLink>
+            <Text>Your files</Text>
+          </SideNavItemLink>
+        </SideNavItemContent>
+      </SideNavItem>
+      <SideNavItem id="libraries" href="/libraries" textValue="Your libraries">
+        <SideNavItemContent>
+          <SideNavItemLink>
+            <Text>Your libraries</Text>
+          </SideNavItemLink>
+        </SideNavItemContent>
+        <SideNavItem id="projects-1" href="/projects-1" textValue="Projects 1">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Text>Projects 1</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem id="projects-1A" href="/projects-1A" textValue="Projects 1A">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Text>Projects 1A</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+      </SideNavItem>
+    </SideNav>
+  );
+}
+
 // An item with no href and no link, but with a secondary action (ActionMenu). Focus should stay
 // on the row rather than jumping into the ActionMenu trigger.
 function NoLinkActionMenuSideNavExample(props: Partial<SideNavProps<unknown>>) {
@@ -146,8 +184,6 @@ describe('SideNav', () => {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    // jsdom doesn't implement getAnimations, which the selection indicator relies on.
-    Element.prototype.getAnimations = jest.fn().mockImplementation(() => []);
     jest.useFakeTimers();
   });
 
@@ -222,21 +258,42 @@ describe('SideNav', () => {
     expect(getByRole('link', {name: 'Your libraries'})).toHaveAttribute('aria-current', 'page');
   });
 
-  it('moves the focused key to the selectedRoute item, even nested farther down', () => {
+  it('moves the focused key to the selectedRoute item, even nested farther down', async () => {
     // Projects 2 is nested under (an expanded) Your libraries — farther down and visible.
     let {getByRole} = render(
       <SideNavExample defaultExpandedKeys={['libraries']} selectedRoute="/projects-2" />
     );
-    act(() => {
-      jest.runAllTimers();
-    });
 
-    // Focusing the tree moves focus to its focused key. That key was set from selectedRoute, so
-    // focus lands on Projects 2 rather than the first item.
-    act(() => {
-      getByRole('treegrid').focus();
-    });
+    await user.tab();
     expect(getByRole('link', {name: 'Projects 2'})).toHaveFocus();
+  });
+
+  it('moves the focused key to the closest visible ancestor when selectedRoute is under a collapsed parent', async () => {
+    let {getByRole, queryByRole} = render(<SideNavExample selectedRoute="/projects-2" />);
+
+    expect(getByRole('row', {name: 'Your libraries'})).toHaveAttribute('aria-expanded', 'false');
+    expect(queryByRole('link', {name: 'Projects 2'})).toBeNull();
+
+    await user.tab();
+    expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
+  });
+
+  it('moves the focused key past an expanded ancestor that is itself hidden by a collapsed ancestor', async () => {
+    // libraries (collapsed) > Projects 1 (expanded) > Projects 1A (selectedRoute). Projects 1 is
+    // expanded, but it's still hidden because its own parent (libraries) is collapsed. Focus must
+    // skip the expanded-but-hidden Projects 1 and land on the closest rendered ancestor, libraries
+    // (not the first row, "Your files").
+    let {getByRole, queryByRole} = render(
+      <ThreeLevelSideNavExample defaultExpandedKeys={['projects-1']} selectedRoute="/projects-1A" />
+    );
+
+    // Both descendants are hidden behind the collapsed parent.
+    expect(getByRole('row', {name: 'Your libraries'})).toHaveAttribute('aria-expanded', 'false');
+    expect(queryByRole('link', {name: 'Projects 1'})).toBeNull();
+    expect(queryByRole('link', {name: 'Projects 1A'})).toBeNull();
+
+    await user.tab();
+    expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
   });
 
   it('arrow left from a deep leaf steps to parent, collapses it, then moves to the grandparent', async () => {
@@ -246,14 +303,7 @@ describe('SideNav', () => {
         selectedRoute="/projects-1A"
       />
     );
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    // Focus starts on the deepest leaf (synced from selectedRoute).
-    act(() => {
-      getByRole('treegrid').focus();
-    });
+    await user.tab();
     expect(getByRole('link', {name: 'Projects 1A'})).toHaveFocus();
 
     // 1st ArrowLeft: leaf has nothing to collapse, so focus moves up to its parent.
@@ -274,18 +324,10 @@ describe('SideNav', () => {
 
   it('keeps focus on the row (not the ActionMenu) for an item with no href/link', async () => {
     let {getByRole} = render(<NoLinkActionMenuSideNavExample />);
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    // Tab lands on the first item's link, ArrowDown moves to the link-less "Section" row.
     await user.tab();
     expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
 
     await user.keyboard('{ArrowDown}');
-    act(() => {
-      jest.runAllTimers();
-    });
 
     // Focus stays on the row itself; it does not jump into the ActionMenu trigger.
     let sectionRow = getByRole('row', {name: 'Section'});

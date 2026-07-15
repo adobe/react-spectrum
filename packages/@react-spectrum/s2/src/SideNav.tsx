@@ -405,10 +405,12 @@ const indicator = style<{isDisabled: boolean; isSelected: boolean; isHovered: bo
 // Moves the tree's focused key to the item matching selectedRoute. Lives in items
 // (rather than up in SideNav) because it needs the built collection off `state`, which only exists
 // after the tree has rendered. Runs when the route or the collection changes; the shared
-// syncedRouteRef dedupes across items so it fires once per route change
+// syncedRouteRef dedupes across items so it fires once per route change.
+// If the item is inside a collapsed parent, the focused key is moved to the closest
+// visible ancestor instead of the hidden descendant.
 function useRouteFocusSync({state}: {state: TreeState<unknown>}): void {
   let {selectedRoute, syncedRouteRef} = useContext(InternalSideNavContext);
-  let {collection, selectionManager} = state;
+  let {collection, selectionManager, expandedKeys} = state;
   useEffect(() => {
     if (
       selectedRoute == null ||
@@ -419,10 +421,11 @@ function useRouteFocusSync({state}: {state: TreeState<unknown>}): void {
     }
     let key = findKeyForRoute(collection, selectedRoute);
     if (key != null) {
+      key = closestVisibleKey(collection, expandedKeys, key);
       syncedRouteRef.current = selectedRoute;
       selectionManager.setFocusedKey(key);
     }
-  }, [selectedRoute, collection, syncedRouteRef, selectionManager]);
+  }, [selectedRoute, collection, expandedKeys, syncedRouteRef, selectionManager]);
 }
 
 export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode => {
@@ -702,6 +705,25 @@ function findKeyForRoute(collection: Collection<Node<unknown>>, route: string): 
     }
   }
   return null;
+}
+
+// Walks up from `key` to the closest ancestor that is actually rendered (i.e. all of its ancestors
+// are expanded). Returns `key` unchanged when it is already visible. A collapsed ancestor hides
+// everything beneath it, so the highest collapsed ancestor is the closest visible row.
+function closestVisibleKey(
+  collection: Collection<Node<unknown>>,
+  expandedKeys: Set<Key>,
+  key: Key
+): Key {
+  let target = key;
+  let node = collection.getItem(key);
+  while (node?.parentKey != null) {
+    if (!expandedKeys.has(node.parentKey)) {
+      target = node.parentKey;
+    }
+    node = collection.getItem(node.parentKey);
+  }
+  return target;
 }
 
 // Cache so each row doesn't have to walk up the tree every time
