@@ -92,7 +92,9 @@ export function useSubmenuTriggerState(
       // TODO: Placeholders that aren't used but give us parity with OverlayTriggerState so we can use this in Popover. Refactor if we update Popover via
       // https://github.com/adobe/react-spectrum/pull/4976#discussion_r1336472863
       setOpen: () => {},
-      toggle
+      toggle,
+      point: null,
+      setPoint: () => {}
     }),
     [isOpen, open, close, closeAll, focusStrategy, toggle, submenuLevel]
   );

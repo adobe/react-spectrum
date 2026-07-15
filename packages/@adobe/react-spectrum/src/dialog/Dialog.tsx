@@ -69,7 +69,7 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
   let domRef = useDOMRef(ref);
   let gridRef = useRef(null);
   let sizeVariant = sizeMap[type] || sizeMap[size];
-  let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
+  let {dialogProps, titleProps, contentProps} = useDialog(mergeProps(contextProps, props), domRef);
 
   // oxlint-disable-next-line react/react-compiler
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
@@ -100,7 +100,7 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
       },
       typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
-      content: {UNSAFE_className: styles['spectrum-Dialog-content']},
+      content: {UNSAFE_className: styles['spectrum-Dialog-content'], ...contentProps},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
       buttonGroup: {
         UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {
@@ -110,7 +110,7 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
       }
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [hasFooter, hasHeader, titleProps]
+    [hasFooter, hasHeader, titleProps, contentProps]
   );
 
   return (

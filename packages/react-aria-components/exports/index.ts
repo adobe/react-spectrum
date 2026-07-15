@@ -136,6 +136,7 @@ export {
 export {Keyboard, KeyboardContext} from '../src/Keyboard';
 export {Label, LabelContext} from '../src/Label';
 export {Link, LinkContext} from '../src/Link';
+export {PreviewTrigger} from '../src/PreviewTrigger';
 export {
   ListBoxLoadMoreItem,
   ListBox,
@@ -389,6 +390,7 @@ export type {InputProps, InputRenderProps} from '../src/Input';
 export type {SectionProps, CollectionRenderer} from '../src/Collection';
 export type {LabelProps} from '../src/Label';
 export type {LinkProps, LinkRenderProps} from '../src/Link';
+export type {PreviewTriggerProps} from '../src/PreviewTrigger';
 export type {
   ListBoxProps,
   ListBoxRenderProps,
@@ -522,7 +524,18 @@ export type {
   DropIndicatorProps,
   DropIndicatorRenderProps
 } from '../src/useDragAndDrop';
-export type {ContextValue, RenderProps, SlotProps, StyleRenderProps} from '../src/utils';
+export type {
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  DOMRenderProps,
+  PossibleLinkDOMRenderProps,
+  DOMRenderFunction,
+  ClassNameOrFunction,
+  StyleOrFunction,
+  ChildrenOrFunction
+} from '../src/utils';
 export type {VirtualizerProps} from '../src/Virtualizer';
 
 export type {DateValue} from 'react-stately/useDateFieldState';

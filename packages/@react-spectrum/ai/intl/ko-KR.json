@@ -1,0 +1,6 @@
+{
+  "chat.newMessage": "새 메시지",
+  "messagefeedback.thumbDown": "잘못된 응답",
+  "messagefeedback.thumbUp": "양호한 응답",
+  "responsestatus.loading": "로드 중"
+}

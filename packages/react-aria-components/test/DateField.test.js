@@ -562,4 +562,32 @@ describe('DateField', () => {
     expect(segements[1]).toHaveTextContent('dd');
     expect(segements[2]).toHaveTextContent('yyyy');
   });
+
+  // Regression test for #10259: in Firefox a stale selection anchor can remain inside a segment
+  // after focus moves away, and the selectionchange handler would collapse onto it, stealing focus.
+  it('does not collapse the selection onto a segment while another element is focused', () => {
+    let {getByRole} = render(
+      <>
+        <button>sibling</button>
+        <DateField defaultValue={new CalendarDate(2020, 2, 3)}>
+          <Label>Date</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </>
+    );
+
+    let button = getByRole('button');
+    let segment = within(getByRole('group')).getAllByRole('spinbutton').at(-1);
+    act(() => button.focus());
+    expect(document.activeElement).toBe(button);
+
+    let collapse = jest.fn();
+    jest.spyOn(window, 'getSelection').mockReturnValue({anchorNode: segment.firstChild, collapse});
+    act(() => {
+      document.dispatchEvent(new Event('selectionchange'));
+    });
+
+    expect(collapse).not.toHaveBeenCalled();
+    jest.restoreAllMocks();
+  });
 });
