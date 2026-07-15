@@ -28,8 +28,6 @@ import {
 import {
   createContext,
   forwardRef,
-  JSXElementConstructor,
-  ReactElement,
   ReactNode,
   RefObject,
   useContext,
@@ -88,15 +86,12 @@ export interface SideNavProps<T>
       | 'dragAndDropHooks' // To be implemented
       | keyof GlobalDOMAttributes
     >,
-    UnsafeStyles,
-    SideNavStyleProps {
+    UnsafeStyles {
   /** The route that is currently selected. */
   selectedRoute: string;
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
 }
-
-interface SideNavStyleProps {}
 
 export interface SideNavItemProps extends Omit<
   RACTreeItemProps,
@@ -115,11 +110,6 @@ export interface SideNavItemProps extends Omit<
   /** Whether this item has children. */
   hasChildItems?: boolean;
 }
-
-interface TreeRendererContextValue {
-  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>;
-}
-const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
 const sideNavWrapper = style(
   {
@@ -180,11 +170,6 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
 ) {
   let {children, UNSAFE_className, UNSAFE_style, selectedRoute, ...rest} = props;
 
-  let renderer;
-  if (typeof children === 'function') {
-    renderer = children;
-  }
-
   let domRef = useDOMRef(ref);
 
   // Tracks the last route we moved the focused key to, so the focus sync (driven from
@@ -196,21 +181,19 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       ref={domRef}
       className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
       style={UNSAFE_style}>
-      <TreeRendererContext.Provider value={{renderer}}>
-        <InternalSideNavContext.Provider value={{selectedRoute, syncedRouteRef}}>
-          <Tree
-            {...rest}
-            style={{
-              paddingBottom: 0,
-              scrollPaddingBottom: 0
-            }}
-            className={renderProps => tree(renderProps)}
-            selectionMode="none"
-            keyboardNavigationBehavior="tab">
-            {props.children}
-          </Tree>
-        </InternalSideNavContext.Provider>
-      </TreeRendererContext.Provider>
+      <InternalSideNavContext.Provider value={{selectedRoute, syncedRouteRef}}>
+        <Tree
+          {...rest}
+          style={{
+            paddingBottom: 0,
+            scrollPaddingBottom: 0
+          }}
+          className={renderProps => tree(renderProps)}
+          selectionMode="none"
+          keyboardNavigationBehavior="tab">
+          {children}
+        </Tree>
+      </InternalSideNavContext.Provider>
     </div>
   );
 });
@@ -448,7 +431,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
         isFocusVisibleWithin
       }) => {
         return (
-          <SideNaveItemContentInner
+          <SideNavItemContentInner
             isExpanded={isExpanded}
             hasChildItems={hasChildItems}
             isDisabled={isDisabled}
@@ -462,14 +445,14 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
             isFocusVisible={isFocusVisible}
             isFocusVisibleWithin={isFocusVisibleWithin}>
             {children}
-          </SideNaveItemContentInner>
+          </SideNavItemContentInner>
         );
       }}
     </TreeItemContent>
   );
 };
 
-const SideNaveItemContentInner = props => {
+const SideNavItemContentInner = props => {
   let {
     isExpanded,
     hasChildItems,

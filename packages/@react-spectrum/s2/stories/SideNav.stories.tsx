@@ -69,18 +69,16 @@ function RoutedSideNav(props: SideNavProps<unknown> & {children: ReactNode}) {
   };
 
   return (
-    <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'visible'}}>
-      <RouterProvider navigate={updateSelection}>
-        <SideNav
-          {...args}
-          selectedRoute={selectedRoute}
-          disabledKeys={['projects-1']}
-          aria-label="test static tree"
-          onExpandedChange={action('onExpandedChange')}>
-          {children}
-        </SideNav>
-      </RouterProvider>
-    </div>
+    <RouterProvider navigate={updateSelection}>
+      <SideNav
+        {...args}
+        selectedRoute={selectedRoute}
+        disabledKeys={['projects-1']}
+        aria-label="test static tree"
+        onExpandedChange={action('onExpandedChange')}>
+        {children}
+      </SideNav>
+    </RouterProvider>
   );
 }
 
@@ -133,8 +131,19 @@ const SideNavExampleStatic = args => (
 );
 
 export const Example: SideNavStoryObj = {
-  render: SideNavExampleStatic,
+  render: args => (
+    <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'visible'}}>
+      <SideNavExampleStatic {...args} />
+    </div>
+  ),
   args: {}
+};
+
+export const ExampleCustomWidth: SideNavStoryObj = {
+  render: SideNavExampleStatic,
+  args: {
+    styles: style({width: 400})
+  }
 };
 
 const SideNavSectionsExample = args => (
