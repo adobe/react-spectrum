@@ -571,14 +571,13 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
 
     if (loaderCollectionNode) {
-      // Build the loader at a placeholder y=0, then position it above the oldest item.
-      let loaderNode = this.buildNode(loaderCollectionNode, this.padding, 0);
-      loaderNode.layoutInfo.rect.height = loaderExpectedHeight;
       // The bottom-up loop subtracts this.gap after the last item. When the sentinel is idle (height 0)
       // and items exist, add the gap back so the sentinel lands flush at the top padding boundary.
       const sentinelYOffset =
         !loaderCollectionNode.props.isLoading && itemHeights.length > 0 ? this.gap : 0;
-      loaderNode.layoutInfo.rect.y = currentBottom - loaderExpectedHeight + sentinelYOffset;
+      let loaderY = currentBottom - loaderExpectedHeight + sentinelYOffset;
+      let loaderNode = this.buildNode(loaderCollectionNode, this.padding, loaderY);
+      loaderNode.layoutInfo.rect.height = loaderExpectedHeight;
       loaderNode.layoutInfo.parentKey = null;
       loaderNode.layoutInfo.allowOverflow = true;
       // Mark as estimated so the virtualizer remeasures the loader once it renders.
