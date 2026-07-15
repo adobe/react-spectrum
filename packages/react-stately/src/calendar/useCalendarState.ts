@@ -230,7 +230,11 @@ export function useCalendarState<
 
   function normalizeValue(newValue: CalendarDate) {
     let constrained = constrainValue(newValue, minValue, maxValue);
-    let prev = previousAvailableDate(constrained, startDate, isDateUnavailable);
+    // The lower bound for finding the previous available date should not be after the
+    // value being selected. Otherwise, selecting a date before the visible range (e.g.
+    // programmatically while a later month is displayed) would always be rejected.
+    let lowerBound = constrained.compare(startDate) < 0 ? constrained : startDate;
+    let prev = previousAvailableDate(constrained, lowerBound, isDateUnavailable);
     if (!prev) {
       return null;
     }
