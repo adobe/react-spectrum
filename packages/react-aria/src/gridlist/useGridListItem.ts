@@ -433,7 +433,7 @@ export function useGridListItem<T>(
     id: getRowId(state, node.key)
   });
 
-  if (focusMode === 'child' && allowsArrowNavigation) {
+  if (focusMode === 'child' && allowsArrowNavigation && keyboardNavigationBehavior === 'tab') {
     rowProps.tabIndex = -1;
   }
 
