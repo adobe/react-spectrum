@@ -1362,6 +1362,7 @@ function renderAsyncMessage(msg: AsyncMessage) {
 function useAsyncMessages() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [messages, setMessages] = useState<AsyncMessage[]>(ALL_HISTORY.slice(-PAGE_SIZE));
+  const [hasMore, setHasMore] = useState(ALL_HISTORY.length - PAGE_SIZE > 0);
   const isLoadingRef = useRef(false);
   const cursorRef = useRef(ALL_HISTORY.length - PAGE_SIZE);
 
@@ -1377,17 +1378,18 @@ function useAsyncMessages() {
     const nextCursor = Math.max(0, cursorRef.current - PAGE_SIZE);
     const older = ALL_HISTORY.slice(nextCursor, cursorRef.current);
     cursorRef.current = nextCursor;
+    setHasMore(nextCursor > 0);
 
     setMessages(prev => [...older, ...prev]);
     setIsLoadingMore(false);
     isLoadingRef.current = false;
   }, []);
 
-  return {messages, isLoadingMore, handleLoadMore, cursorRef};
+  return {messages, isLoadingMore, handleLoadMore, hasMore};
 }
 
 export function AsyncLoadingChat() {
-  const {messages, isLoadingMore, handleLoadMore, cursorRef} = useAsyncMessages();
+  const {messages, isLoadingMore, handleLoadMore, hasMore} = useAsyncMessages();
 
   return (
     <div
@@ -1447,7 +1449,7 @@ export function AsyncLoadingChat() {
             })}>
             <ThreadLoadMoreItem
               isLoading={isLoadingMore}
-              onLoadMore={cursorRef.current > 0 ? handleLoadMore : undefined}>
+              onLoadMore={hasMore ? handleLoadMore : undefined}>
               <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
                 <ProgressCircle aria-label="Loading older messages" isIndeterminate />
               </div>
@@ -1467,7 +1469,7 @@ export function AsyncLoadingChat() {
 }
 
 export function NonVirtualizedAsyncLoadingChat() {
-  const {messages, isLoadingMore, handleLoadMore, cursorRef} = useAsyncMessages();
+  const {messages, isLoadingMore, handleLoadMore, hasMore} = useAsyncMessages();
   // column-reverse: last DOM child = visual top (where older messages appear)
   // Reverse so newest is DOM-first (visual bottom) and oldest is DOM-last (visual top)
   const reversedMessages = useMemo(() => [...messages].reverse(), [messages]);
@@ -1530,7 +1532,7 @@ export function NonVirtualizedAsyncLoadingChat() {
             <Collection items={reversedMessages}>{renderAsyncMessage}</Collection>
             <ThreadLoadMoreItem
               isLoading={isLoadingMore}
-              onLoadMore={cursorRef.current > 0 ? handleLoadMore : undefined}>
+              onLoadMore={hasMore ? handleLoadMore : undefined}>
               <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
                 <ProgressCircle aria-label="Loading older messages" isIndeterminate />
               </div>
