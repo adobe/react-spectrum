@@ -104,30 +104,6 @@ function DeepSideNavExample(props: Partial<SideNavProps<unknown>>) {
   );
 }
 
-// An item whose row has both a link and a secondary action (ActionMenu).
-function ActionMenuSideNavExample(props: Partial<SideNavProps<unknown>>) {
-  let {selectedRoute = '/files', ...rest} = props;
-  return (
-    <SideNav aria-label="Test sidenav" selectedRoute={selectedRoute} {...rest}>
-      <SideNavItem id="files" href="/files" textValue="Your files">
-        <SideNavItemContent>
-          <SideNavItemLink>
-            <Text>Your files</Text>
-          </SideNavItemLink>
-          <ActionMenu>
-            <MenuItem id="edit">
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem id="delete">
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
-        </SideNavItemContent>
-      </SideNavItem>
-    </SideNav>
-  );
-}
-
 // An item with no href and no link, but with a secondary action (ActionMenu). Focus should stay
 // on the row rather than jumping into the ActionMenu trigger.
 function NoLinkActionMenuSideNavExample(props: Partial<SideNavProps<unknown>>) {

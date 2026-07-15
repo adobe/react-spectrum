@@ -354,30 +354,44 @@ function Banner(props: {children: ReactNode}): ReactElement {
     <header
       ref={ref}
       {...landmarkProps}
-      style={{display: 'flex', alignItems: 'center', gap: 12, padding: 12, borderBottom: '1px solid #d5d5d5'}}>
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        padding: 12,
+        borderBottom: '1px solid #d5d5d5'
+      }}>
       {props.children}
     </header>
   );
 }
 
-function Navigation(props: {'aria-label'?: string, children: ReactNode}): ReactElement {
+function Navigation(props: {'aria-label'?: string; children: ReactNode}): ReactElement {
   let ref = useRef<HTMLElement>(null);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
   return (
     <nav
       ref={ref}
       {...landmarkProps}
-      style={{flexShrink: 0, boxSizing: 'border-box', padding: 8, borderInlineEnd: '1px solid #d5d5d5'}}>
+      style={{
+        flexShrink: 0,
+        boxSizing: 'border-box',
+        padding: 8,
+        borderInlineEnd: '1px solid #d5d5d5'
+      }}>
       {props.children}
     </nav>
   );
 }
 
-function Main(props: {'aria-label'?: string, children: ReactNode}): ReactElement {
+function Main(props: {'aria-label'?: string; children: ReactNode}): ReactElement {
   let ref = useRef<HTMLElement>(null);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
   return (
-    <main ref={ref} {...landmarkProps} style={{flex: 1, minWidth: 0, padding: 16, overflow: 'auto'}}>
+    <main
+      ref={ref}
+      {...landmarkProps}
+      style={{flex: 1, minWidth: 0, padding: 16, overflow: 'auto'}}>
       {props.children}
     </main>
   );
@@ -399,7 +413,9 @@ const AppLayoutExample = (args: SideNavProps<unknown>): ReactElement => {
           overflow: 'hidden'
         }}>
         <Banner>
-          <Heading level={3} styles={style({font: 'title', margin: 0})}>Acme Cloud</Heading>
+          <Heading level={3} styles={style({font: 'title', margin: 0})}>
+            Acme Cloud
+          </Heading>
           <div style={{flex: 1, maxWidth: 320}}>
             <SearchField aria-label="Search" />
           </div>
@@ -466,7 +482,9 @@ const AppLayoutExample = (args: SideNavProps<unknown>): ReactElement => {
             </SideNav>
           </Navigation>
           <Main aria-label="Content">
-            <Heading level={2} styles={style({font: 'heading', marginTop: 0})}>Workspace</Heading>
+            <Heading level={2} styles={style({font: 'heading', marginTop: 0})}>
+              Workspace
+            </Heading>
             <p style={{font: 'inherit', maxWidth: 520}}>
               This area is the main landmark and the side navigation on the left is wrapped in a
               navigation landmark. Press F6 (or Shift+F6) to move keyboard focus between the
