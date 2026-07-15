@@ -51,11 +51,11 @@ Use the `value` or `defaultValue` prop to set the selected color, and `onChange`
 ```tsx render
 "use client";
 import {ColorSwatchPicker, ColorSwatchPickerItem} from 'vanilla-starter/ColorSwatchPicker';
-import {parseColor} from 'react-aria-components/ColorSwatchPicker';
+import {parseColor, type Color} from 'react-aria-components/ColorSwatchPicker';
 import {useState} from 'react';
 
 function Example() {
-  let [value, setValue] = useState(parseColor('#A00'));
+  let [value, setValue] = useState<Color | null>(parseColor('#A00'));
 
   return (
     <>
@@ -69,7 +69,7 @@ function Example() {
         <ColorSwatchPickerItem color="#088" />
         <ColorSwatchPickerItem color="#008" />
       </ColorSwatchPicker>
-      <pre style={{fontSize: 12}}>Selected color: {value.toString('rgb')}</pre>
+      <pre style={{fontSize: 12}}>Selected color: {value ? value.toString('rgb') : 'none'}</pre>
     </>
   );
 }

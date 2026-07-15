@@ -31,12 +31,12 @@ Use the `value` or `defaultValue` prop to set the selected color, and `onChange`
 
 ```tsx render
 "use client";
-import {ColorSwatchPicker, ColorSwatch, parseColor} from '@react-spectrum/s2/ColorSwatchPicker';
+import {ColorSwatchPicker, ColorSwatch, parseColor, type Color} from '@react-spectrum/s2/ColorSwatchPicker';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
-  let [value, setValue] = useState(parseColor('#e11d48'));
+  let [value, setValue] = useState<Color | null>(parseColor('#e11d48'));
 
   return (
     <>
@@ -51,7 +51,7 @@ function Example() {
         <ColorSwatch color="#8b5cf6" />
         <ColorSwatch color="#ec4899" />
       </ColorSwatchPicker>
-      <pre className={style({font: 'body'})}>Selected color: {value.toString('rgb')}</pre>
+      <pre className={style({font: 'body'})}>Selected color: {value ? value.toString('rgb') : 'none'}</pre>
     </>
   );
 }
