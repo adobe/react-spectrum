@@ -15,6 +15,7 @@ import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {Chat} from '../src/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
+import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/s2/Content';
 import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
@@ -39,7 +40,6 @@ import {
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
-import {Collection} from 'react-aria-components';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};

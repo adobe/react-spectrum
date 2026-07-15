@@ -78,5 +78,5 @@ export function useLoadMoreSentinel(
         sentinelObserver.current.disconnect();
       }
     };
-  }, [collection, ref, scrollOffset]);
+  }, [collection, ref, scrollOffset, direction]);
 }
