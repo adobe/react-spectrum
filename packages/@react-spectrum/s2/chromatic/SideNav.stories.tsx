@@ -332,3 +332,77 @@ export const FocusedActionMenu: StoryObj<typeof SideNavDynamicExampleWithActions
     }
   }
 };
+
+function SideNavLongTextExample(props: SideNavProps<unknown>): ReactElement {
+  return (
+    <div style={{width: '300px', height: '320px'}}>
+      <SideNav
+        aria-label="test static side nav"
+        disabledKeys={['projects-1']}
+        expandedKeys={['projects']}
+        {...props}
+        selectedRoute="/projects-2">
+        <SideNavItem id="Photos" href="/Photos" textValue="Your files">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Text>Your files but really long text so that it wraps</Text>
+              <Folder />
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem id="projects" href="/projects" textValue="Your libraries">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Text>Your libraries but really long text so that it wraps</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem id="projects-1" href="/projects-1" textValue="Projects-1">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Text>Projects-1 but really long text so that it wraps</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+            <SideNavItem id="projects-1A" href="/projects-1A" textValue="Projects-1A">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Text>Projects-1A but really long text so that it wraps</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+          </SideNavItem>
+          <SideNavItem id="projects-2" href="/projects-2" textValue="Projects-2">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Text>Projects-2 but really long text so that it wraps</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+          <SideNavItem id="projects-3" href="/projects-3" textValue="Projects-3">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Text>Projects-3 but really long text so that it wraps</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+      </SideNav>
+    </div>
+  );
+}
+
+export const LongText: StoryObj<typeof SideNavLongTextExample> = {
+  render: args => <SideNavLongTextExample {...args} />,
+  play: async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await userEvent.tab();
+    await new Promise(resolve => setTimeout(resolve, 100));
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};

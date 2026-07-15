@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import Chevron from '../ui-icons/Chevron';
@@ -202,7 +202,7 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean}>({
   outlineStyle: 'none',
   position: 'relative',
   display: 'flex',
-  height: 32,
+  minHeight: 32,
   width: 'full',
   boxSizing: 'border-box',
   font: 'ui',
@@ -216,7 +216,7 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean}>({
   },
   borderRadius: 'sm',
   marginTop: {
-    ':not([aria-posinset="1"])': '[6px]',
+    default: space(6),
     ':first-child': 0
   }
 });
@@ -224,7 +224,7 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean}>({
 const treeCellGrid = style({
   display: 'grid',
   width: 'full',
-  height: 'full',
+  minHeight: 'full',
   boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
@@ -259,9 +259,7 @@ const treeIcon = style({
 
 const treeContent = style({
   gridArea: 'content',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden'
+  paddingY: '[7px]' // padding shouldn't scale
 });
 
 let treeRowFocusRing = style({

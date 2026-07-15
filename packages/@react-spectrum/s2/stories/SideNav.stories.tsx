@@ -143,6 +143,23 @@ export const ExampleCustomWidth: SideNavStoryObj = {
   render: SideNavExampleStatic,
   args: {
     styles: style({width: 400})
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const ExampleAutoWidth: SideNavStoryObj = {
+  render: SideNavExampleStatic,
+  args: {
+    styles: style({width: 'auto'})
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
@@ -511,6 +528,9 @@ export const WithLandmark: AppLayoutStoryObj = {
   args: {},
   name: 'With Landmark',
   parameters: {
-    layout: 'fullscreen'
+    layout: 'fullscreen',
+    docs: {
+      disable: true
+    }
   }
 };
