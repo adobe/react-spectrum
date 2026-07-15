@@ -229,7 +229,8 @@ export class Virtualizer<T extends object, V> {
               wasNearBottom,
               anchorShiftedDown,
               previousVisibleRect,
-              context.itemSizeChanged
+              context.itemSizeChanged,
+              contentHeightDelta
             )
           ) {
             return;
@@ -266,38 +267,58 @@ export class Virtualizer<T extends object, V> {
     }
   }
 
-  // Helper function that decides how to adjust the scroll position after content height changes in a reversed layout.
-  // There are four cases:
-  //   1. Streaming (item grew in place, user near bottom): snap to bottom.
-  //   2. History load (old messages prepended, items shifted down): scroll down to keep the
-  //      same item visible.
-  //   3. New message appended, user near bottom: snap to bottom.
-  //   4. User scrolled up: preserve their position regardless of what changed.
-  // Returns true if a scroll adjustment was made, false if no change was needed.
+  // Adjusts scroll position after content changes in a reversed layout.
+  // If old messages were prepended, scrolls down to keep the same item visible.
+  // If an item resized, corrects drift or snaps to bottom if content actually grew.
+  // If the user scrolled up, restores their anchor position.
   private _applyReverseAnchorScroll(
     anchor: ScrollAnchor,
     wasNearBottom: boolean,
     anchorShiftedDown: boolean,
     previousVisibleRect: Rect,
-    itemSizeChanged: boolean | undefined
+    itemSizeChanged: boolean | undefined,
+    contentHeightDelta: number
   ): boolean {
-    if (wasNearBottom && !this._isScrolling && itemSizeChanged) {
-      return this._snapToBottom(previousVisibleRect);
-    } else if (anchorShiftedDown) {
+    // Old messages prepended above viewport → existing items shift down.
+    if (anchorShiftedDown) {
       let targetY = this._computeScrollAnchorTarget(anchor);
       if (targetY != null) {
-        let rect = new Rect(
-          previousVisibleRect.x,
-          targetY,
-          previousVisibleRect.width,
-          previousVisibleRect.height
+        this.delegate.setVisibleRect(
+          new Rect(
+            previousVisibleRect.x,
+            targetY,
+            previousVisibleRect.width,
+            previousVisibleRect.height
+          )
         );
-        this.delegate.setVisibleRect(rect);
         return true;
       }
+    } else if (wasNearBottom && !this._isScrolling && itemSizeChanged) {
+      // Don't rely on wasNearBottom alone — the prior anchor adjustment may have placed
+      // us within the threshold. Check if the anchor moved first.
+      let targetY = this._computeScrollAnchorTarget(anchor);
+      if (targetY != null) {
+        this.delegate.setVisibleRect(
+          new Rect(
+            previousVisibleRect.x,
+            targetY,
+            previousVisibleRect.width,
+            previousVisibleRect.height
+          )
+        );
+        return true;
+      }
+
+      // Only snap if content actually grew (streaming occurred)
+      if (contentHeightDelta > 0) {
+        return this._snapToBottom(previousVisibleRect);
+      }
+      return false;
     } else if (wasNearBottom && !this._isScrolling) {
+      // New message appended at bottom while user is near bottom → snap.
       return this._snapToBottom(previousVisibleRect);
     } else {
+      // User scrolled up intentionally; preserve their position regardless.
       if (this._restoreScrollAnchor(anchor)) {
         return true;
       }
@@ -333,7 +354,7 @@ export class Virtualizer<T extends object, V> {
 
     let best: ScrollAnchor | null = null;
     for (let [key, view] of this._visibleViews) {
-      let layoutInfo = view.layoutInfo;
+      let layoutInfo = this.layout.getLayoutInfo(key) ?? view.layoutInfo;
       // Skip loader items — they always appear at the top, so anchoring to one
       // would scroll back to the top instead of preserving the user's position.
       if (layoutInfo && layoutInfo.type === 'loader') {
