@@ -43,10 +43,10 @@ function SideNavExample(props: SideNavProps<unknown>): ReactElement {
     <div style={{width: '300px', height: '320px'}}>
       <SideNav
         aria-label="test static side nav"
-        selectedRoute="/projects-2"
         disabledKeys={['projects-1']}
         expandedKeys={['projects']}
-        {...props}>
+        {...props}
+        selectedRoute="/projects-2">
         <SideNavItem id="Photos" href="/Photos" textValue="Your files">
           <SideNavItemContent>
             <SideNavItemLink>
@@ -114,10 +114,10 @@ function SideNavSectionsExample(props: SideNavProps<unknown>): ReactElement {
     <div style={{width: '300px', height: '320px'}}>
       <SideNav
         aria-label="test side nav with sections"
-        selectedRoute="/projects"
         disabledKeys={['projects-1']}
         expandedKeys={['projects']}
-        {...props}>
+        {...props}
+        selectedRoute="/projects">
         <SideNavSection>
           <SideNavHeader>Photography</SideNavHeader>
           <SideNavItem id="Photos" href="/Photos" textValue="Your files">
@@ -220,10 +220,10 @@ function SideNavDynamicExample(props: SideNavProps<SideNavItemType>): ReactEleme
       <SideNav
         aria-label="test dynamic side nav"
         items={rows}
-        selectedRoute="/projects-2A"
         disabledKeys={['projects-3', 'reports']}
         expandedKeys={['projects', 'projects-2']}
-        {...props}>
+        {...props}
+        selectedRoute="/projects-2A">
         {(item: SideNavItemType) => <DynamicSideNavItem {...item} />}
       </SideNav>
     </div>
@@ -304,10 +304,10 @@ function SideNavDynamicExampleWithActions(props: SideNavProps<SideNavItemType>):
       <SideNav
         aria-label="test dynamic side nav"
         items={rows}
-        selectedRoute="/projects-2A"
         disabledKeys={['projects-3', 'reports']}
         expandedKeys={['projects', 'projects-2']}
-        {...props}>
+        {...props}
+        selectedRoute="/projects-2A">
         {(item: SideNavItemType) => <DynamicSideNavItemWithActions {...item} />}
       </SideNav>
     </div>

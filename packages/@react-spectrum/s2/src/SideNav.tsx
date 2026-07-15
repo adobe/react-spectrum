@@ -91,7 +91,7 @@ export interface SideNavProps<T>
     UnsafeStyles,
     SideNavStyleProps {
   /** The route that is currently selected. */
-  selectedRoute?: string;
+  selectedRoute: string;
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
 }

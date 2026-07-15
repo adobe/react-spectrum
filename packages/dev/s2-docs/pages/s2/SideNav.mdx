@@ -18,30 +18,33 @@ import {RoutedSideNav} from './RoutedSideNav';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <RoutedSideNav defaultSelectedRoute="/guidelines">
-  <SideNav
-    aria-label="Files"
-    /* PROPS */
-    styles={style({height: 240})}
-    defaultExpandedKeys={['guidelines', 'color']}>
-    <SideNavItem href="/guidelines" id="guidelines" textValue="Guidelines">
-      <SideNavItemContent><SideNavItemLink>Guidelines</SideNavItemLink></SideNavItemContent>
-      <SideNavItem href="/style" id="style" textValue="Style">
-        <SideNavItemContent><SideNavItemLink>Style</SideNavItemLink></SideNavItemContent>
-      </SideNavItem>
-      <SideNavItem href="/color" id="color" textValue="Color">
-        <SideNavItemContent><SideNavItemLink>Color</SideNavItemLink></SideNavItemContent>
-        <SideNavItem href="/background-layers" id="background-layers" textValue="Background Layers">
-          <SideNavItemContent><SideNavItemLink>Background Layers</SideNavItemLink></SideNavItemContent>
+  {({selectedRoute}) => (
+    <SideNav
+      aria-label="Files"
+      /* PROPS */
+      selectedRoute={selectedRoute}
+      styles={style({height: 240})}
+      defaultExpandedKeys={['guidelines', 'color']}>
+      <SideNavItem href="/guidelines" id="guidelines" textValue="Guidelines">
+        <SideNavItemContent><SideNavItemLink>Guidelines</SideNavItemLink></SideNavItemContent>
+        <SideNavItem href="/style" id="style" textValue="Style">
+          <SideNavItemContent><SideNavItemLink>Style</SideNavItemLink></SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem href="/color" id="color" textValue="Color">
+          <SideNavItemContent><SideNavItemLink>Color</SideNavItemLink></SideNavItemContent>
+          <SideNavItem href="/background-layers" id="background-layers" textValue="Background Layers">
+            <SideNavItemContent><SideNavItemLink>Background Layers</SideNavItemLink></SideNavItemContent>
+          </SideNavItem>
         </SideNavItem>
       </SideNavItem>
-    </SideNavItem>
-    <SideNavItem id="support" textValue="Support">
-      <SideNavItemContent>Support</SideNavItemContent>
-      <SideNavItem href="/contact-us" id="contact-us" textValue="Contact Us">
-        <SideNavItemContent><SideNavItemLink>Contact Us</SideNavItemLink></SideNavItemContent>
+      <SideNavItem id="support" textValue="Support">
+        <SideNavItemContent>Support</SideNavItemContent>
+        <SideNavItem href="/contact-us" id="contact-us" textValue="Contact Us">
+          <SideNavItemContent><SideNavItemLink>Contact Us</SideNavItemLink></SideNavItemContent>
+        </SideNavItem>
       </SideNavItem>
-    </SideNavItem>
-  </SideNav>
+    </SideNav>
+  )}
 </RoutedSideNav>
 ```
 
@@ -89,25 +92,28 @@ let items: Item[] = [
 ///- end collapse -///
 
 <RoutedSideNav defaultSelectedRoute="/weekly-report">
-<SideNav
-  aria-label="Files"
-  styles={style({height: 260})}
-  defaultExpandedKeys={[1, 2, 5]}
-  items={items}>
-  {function renderItem(item) {
-    return (
-      <SideNavItem textValue={item.title} href={item.href}>
-        <SideNavItemContent>{item.href ? <SideNavItemLink>{item.title}</SideNavItemLink> : item.title}</SideNavItemContent>
-        {/*- begin highlight -*/}
-        {/* recursively render children */}
-        {item.children && <Collection items={item.children}>
-          {renderItem}
-        </Collection>}
-        {/*- end highlight -*/}
-      </SideNavItem>
-    );
-  }}
-</SideNav>
+  {({selectedRoute}) => (
+    <SideNav
+      aria-label="Files"
+      styles={style({height: 260})}
+      selectedRoute={selectedRoute}
+      defaultExpandedKeys={[1, 2, 5]}
+      items={items}>
+      {function renderItem(item) {
+        return (
+          <SideNavItem textValue={item.title} href={item.href}>
+            <SideNavItemContent>{item.href ? <SideNavItemLink>{item.title}</SideNavItemLink> : item.title}</SideNavItemContent>
+            {/*- begin highlight -*/}
+            {/* recursively render children */}
+            {item.children && <Collection items={item.children}>
+              {renderItem}
+            </Collection>}
+            {/*- end highlight -*/}
+          </SideNavItem>
+        );
+      }}
+    </SideNav>
+  )}
 </RoutedSideNav>
 ```
 
@@ -149,44 +155,47 @@ let items: Item[] = [
 ///- end collapse -///
 
 <RoutedSideNav defaultSelectedRoute="/weekly-report">
-<SideNav
-  aria-label="Files"
-  styles={style({height: 260})}
-  defaultExpandedKeys={[1, 2, 5]}
-  items={items}>
-  {function renderItem(item) {
-    return (
-      <SideNavItem textValue={item.title} href={item.href}>
-        <SideNavItemContent>
-          {/*- begin highlight -*/}
-          {
-            item.href ? <SideNavItemLink>
-              {item.type === 'directory' ? <Folder /> : <File />}
-              <Text>{item.title}</Text>
-            </SideNavItemLink> : <>
-              {item.type === 'directory' ? <Folder /> : <File />}
-              <Text>{item.title}</Text>
-            </>
-          }
-          {/*- end highlight -*/}
-          <ActionMenu>
-            <MenuItem>
-              <Edit />
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem>
-              <Delete />
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
-        </SideNavItemContent>
-        {item.children && <Collection items={item.children}>
-          {renderItem}
-        </Collection>}
-      </SideNavItem>
-    );
-  }}
-</SideNav>
+  {({selectedRoute}) => (
+    <SideNav
+      aria-label="Files"
+      styles={style({height: 260})}
+      selectedRoute={selectedRoute}
+      defaultExpandedKeys={[1, 2, 5]}
+      items={items}>
+      {function renderItem(item) {
+        return (
+          <SideNavItem textValue={item.title} href={item.href}>
+            <SideNavItemContent>
+              {/*- begin highlight -*/}
+              {
+                item.href ? <SideNavItemLink>
+                  {item.type === 'directory' ? <Folder /> : <File />}
+                  <Text>{item.title}</Text>
+                </SideNavItemLink> : <>
+                  {item.type === 'directory' ? <Folder /> : <File />}
+                  <Text>{item.title}</Text>
+                </>
+              }
+              {/*- end highlight -*/}
+              <ActionMenu>
+                <MenuItem>
+                  <Edit />
+                  <Text>Edit</Text>
+                </MenuItem>
+                <MenuItem>
+                  <Delete />
+                  <Text>Delete</Text>
+                </MenuItem>
+              </ActionMenu>
+            </SideNavItemContent>
+            {item.children && <Collection items={item.children}>
+              {renderItem}
+            </Collection>}
+          </SideNavItem>
+        );
+      }}
+    </SideNav>
+  )}
 </RoutedSideNav>
 ```
 
@@ -208,67 +217,69 @@ import Animation from '@react-spectrum/s2/icons/Animation';
 import AudioWave from '@react-spectrum/s2/icons/AudioWave';
 
 <RoutedSideNav defaultSelectedRoute="/files">
-  <SideNav aria-label="Files" styles={style({height: 260})}>
-    <SideNavSection>
-      <SideNavHeader>Workspaces</SideNavHeader>
-      <SideNavItem href="/files" textValue="Files">
-        <SideNavItemContent>
-          <SideNavItemLink>
-            <Files />
-            <Text>Files</Text>
-          </SideNavItemLink>
-        </SideNavItemContent>
-      </SideNavItem>
-      <SideNavItem href="/your-libraries" textValue="Your Libraries">
-        <SideNavItemContent>
-          <SideNavItemLink>
-            <CCLibrary />
-            <Text>Your Libraries</Text>
-          </SideNavItemLink>
-        </SideNavItemContent>
-        <SideNavItem href="/photos" textValue="Photos">
+  {({selectedRoute}) => (
+    <SideNav aria-label="Files" selectedRoute={selectedRoute} styles={style({height: 260})}>
+      <SideNavSection>
+        <SideNavHeader>Workspaces</SideNavHeader>
+        <SideNavItem href="/files" textValue="Files">
           <SideNavItemContent>
             <SideNavItemLink>
-              <Images />
-              <Text>Photos</Text>
+              <Files />
+              <Text>Files</Text>
             </SideNavItemLink>
           </SideNavItemContent>
         </SideNavItem>
-      </SideNavItem>
-      <SideNavItem href="/shared-with-you" id="shared-with-you" textValue="Shared with You">
-        <SideNavItemContent>
-          <SideNavItemLink>
-            <UserGroup />
-            <Text>Shared with You</Text>
-          </SideNavItemLink>
-        </SideNavItemContent>
-        <SideNavItem href="/animations" textValue="Animations">
+        <SideNavItem href="/your-libraries" textValue="Your Libraries">
           <SideNavItemContent>
             <SideNavItemLink>
-              <Animation />
-              <Text>Animations</Text>
+              <CCLibrary />
+              <Text>Your Libraries</Text>
             </SideNavItemLink>
           </SideNavItemContent>
+          <SideNavItem href="/photos" textValue="Photos">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Images />
+                <Text>Photos</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
         </SideNavItem>
-      </SideNavItem>
-      <SideNavItem href="/deleted" id="deleted" textValue="Deleted">
-        <SideNavItemContent>
-          <SideNavItemLink>
-            <Delete />
-            <Text>Deleted</Text>
-          </SideNavItemLink>
-        </SideNavItemContent>
-        <SideNavItem href="/audio" textValue="Audio">
+        <SideNavItem href="/shared-with-you" id="shared-with-you" textValue="Shared with You">
           <SideNavItemContent>
             <SideNavItemLink>
-              <AudioWave />
-              <Text>Audio</Text>
+              <UserGroup />
+              <Text>Shared with You</Text>
             </SideNavItemLink>
           </SideNavItemContent>
+          <SideNavItem href="/animations" textValue="Animations">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Animation />
+                <Text>Animations</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
         </SideNavItem>
-      </SideNavItem>
-    </SideNavSection>
-  </SideNav>
+        <SideNavItem href="/deleted" id="deleted" textValue="Deleted">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Delete />
+              <Text>Deleted</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem href="/audio" textValue="Audio">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <AudioWave />
+                <Text>Audio</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+      </SideNavSection>
+    </SideNav>
+  )}
 </RoutedSideNav>
 ```
 

@@ -344,9 +344,6 @@ export const SideNavDynamicWithActions: SideNavDynamicWithActionsStoryObj = {
   name: 'WithActions'
 };
 
-// Landmark wrappers used only by the story. useLandmark is called here in the app shell rather than
-// inside SideNav, so the consumer owns landmark registration. Each renders a semantic element and
-// spreads landmarkProps (role + labels). Press F6 / Shift+F6 to cycle landmarks with the keyboard.
 function Banner(props: {children: ReactNode}): ReactElement {
   let ref = useRef<HTMLElement>(null);
   let {landmarkProps} = useLandmark({...props, role: 'banner', 'aria-label': 'Global'}, ref);

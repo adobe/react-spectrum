@@ -2,7 +2,10 @@
 import {RouterProvider} from 'react-aria-components';
 import React, {ReactNode, useState} from 'react';
 
-export function RoutedSideNav(props: {children: ReactNode; defaultSelectedRoute?: string}) {
+export function RoutedSideNav(props: {
+  children: ({selectedRoute}: {selectedRoute: string | undefined}) => ReactNode;
+  defaultSelectedRoute?: string;
+}) {
   let {children} = props;
   let [selectedRoute, setSelectedRoute] = useState<string | undefined>(props.defaultSelectedRoute);
 
@@ -10,13 +13,5 @@ export function RoutedSideNav(props: {children: ReactNode; defaultSelectedRoute?
     setSelectedRoute(href);
   };
 
-  return (
-    <RouterProvider navigate={updateSelection}>
-      {/** Use cloneElement as an example only. */}
-      {React.cloneElement(
-        React.Children.toArray(children)[0] as React.ReactElement,
-        {selectedRoute: selectedRoute} as any
-      )}
-    </RouterProvider>
-  );
+  return <RouterProvider navigate={updateSelection}>{children({selectedRoute})}</RouterProvider>;
 }
