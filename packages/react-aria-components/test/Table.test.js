@@ -315,10 +315,6 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
 
 let renderTable = props => render(<TestTable {...props} />);
 
-if (typeof Symbol.dispose === 'undefined') {
-  Object.defineProperty(Symbol, 'dispose', {value: Symbol('dispose')});
-}
-
 describe('Table', () => {
   let user;
   let testUtilUser = new User();
@@ -3569,6 +3565,9 @@ describe('Table', () => {
     await user.keyboard('[ArrowRight]');
     expect(document.activeElement).toBe(triggerButton);
 
+    // Simulate focus being disrupted back onto the cell, e.g. a dialog opened from
+    // "Open Dialog" closing and its own focus restoration not directly reclaiming
+    // the button (see https://github.com/adobe/react-spectrum/issues/8686).
     act(() => {
       actionsCell.focus();
     });
