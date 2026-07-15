@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionMenu} from '../src/ActionMenu';
 import {Collection} from 'react-aria/Collection';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
 import {screen, userEvent} from 'storybook/test';
@@ -260,6 +262,65 @@ export const Focused: StoryObj<typeof SideNavExample> = {
     await new Promise(resolve => setTimeout(resolve, 100));
     await userEvent.tab();
     // Give the focus state time to settle before the screenshot is captured.
+    await new Promise(resolve => setTimeout(resolve, 100));
+  },
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
+  }
+};
+
+const DynamicSideNavItemWithActions = (props: SideNavItemType): ReactElement => {
+  let {id, name, href, childItems} = props;
+  return (
+    <SideNavItem id={id} href={href} textValue={name}>
+      <SideNavItemContent>
+        <SideNavItemLink>
+          <Text>{name}</Text>
+        </SideNavItemLink>
+        <ActionMenu>
+          <MenuItem id="edit" textValue="Edit">
+            Edit
+          </MenuItem>
+          <MenuItem id="delete" textValue="Delete">
+            Delete
+          </MenuItem>
+        </ActionMenu>
+      </SideNavItemContent>
+      <Collection items={childItems}>
+        {(item: SideNavItemType) => <DynamicSideNavItemWithActions {...item} />}
+      </Collection>
+    </SideNavItem>
+  );
+};
+
+function SideNavDynamicExampleWithActions(props: SideNavProps<SideNavItemType>): ReactElement {
+  return (
+    <div style={{width: '300px', height: '320px'}}>
+      <SideNav
+        aria-label="test dynamic side nav"
+        items={rows}
+        selectedRoute="/projects-2A"
+        disabledKeys={['projects-3', 'reports']}
+        expandedKeys={['projects', 'projects-2']}
+        {...props}>
+        {(item: SideNavItemType) => <DynamicSideNavItemWithActions {...item} />}
+      </SideNav>
+    </div>
+  );
+}
+
+export const FocusedActionMenu: StoryObj<typeof SideNavDynamicExampleWithActions> = {
+  render: args => <SideNavDynamicExampleWithActions {...args} />,
+  play: async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await userEvent.tab();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await userEvent.tab();
     await new Promise(resolve => setTimeout(resolve, 100));
   },
   parameters: {

@@ -296,35 +296,6 @@ describe('SideNav', () => {
     expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
   });
 
-  it('shows the row focus ring only when the link is focused, not the ActionMenu', async () => {
-    let {getByRole} = render(<ActionMenuSideNavExample />);
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    // The row focus ring is an extra element rendered into the cell grid alongside the link.
-    let link = getByRole('link', {name: 'Your files'});
-    let cell = link.parentElement!;
-
-    // Focus the link (focused key was synced to /files): the ring is present.
-    act(() => {
-      getByRole('treegrid').focus();
-    });
-    act(() => {
-      jest.runAllTimers();
-    });
-    expect(link).toHaveFocus();
-    let childrenWithLinkFocused = cell.children.length;
-
-    // Move focus to the ActionMenu trigger in the same row: the ring is gone.
-    await user.tab();
-    act(() => {
-      jest.runAllTimers();
-    });
-    expect(getByRole('button', {name: 'More actions'})).toHaveFocus();
-    expect(cell.children.length).toBe(childrenWithLinkFocused - 1);
-  });
-
   it('keeps focus on the row (not the ActionMenu) for an item with no href/link', async () => {
     let {getByRole} = render(<NoLinkActionMenuSideNavExample />);
     act(() => {

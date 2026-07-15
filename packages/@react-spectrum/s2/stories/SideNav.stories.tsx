@@ -12,17 +12,20 @@
 
 import {action} from 'storybook/actions';
 import {ActionMenu} from '../src/ActionMenu';
+import {Avatar} from '../src/Avatar';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import {Collection} from 'react-aria/Collection';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
+import {Divider} from '../src/Divider';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
-import {Keyboard, Text} from '../src/Content';
+import {Heading, Keyboard, Text} from '../src/Content';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
-import React, {ReactElement, ReactNode, useState} from 'react';
+import React, {ReactElement, ReactNode, useRef, useState} from 'react';
 import {RouterProvider} from 'react-aria-components';
+import {SearchField} from '../src/SearchField';
 import {
   SideNav,
   SideNavHeader,
@@ -32,6 +35,8 @@ import {
   SideNavProps,
   SideNavSection
 } from '../src/SideNav';
+import {style} from '../style' with {type: 'macro'};
+import {useLandmark} from 'react-aria';
 
 const events = ['onSelectionChange'];
 
@@ -337,4 +342,151 @@ export const SideNavDynamicWithActions: SideNavDynamicWithActionsStoryObj = {
   render: args => <SideNavDynamicWithActionsExample {...args} />,
   args: {},
   name: 'WithActions'
+};
+
+// Landmark wrappers used only by the story. useLandmark is called here in the app shell rather than
+// inside SideNav, so the consumer owns landmark registration. Each renders a semantic element and
+// spreads landmarkProps (role + labels). Press F6 / Shift+F6 to cycle landmarks with the keyboard.
+function Banner(props: {children: ReactNode}): ReactElement {
+  let ref = useRef<HTMLElement>(null);
+  let {landmarkProps} = useLandmark({...props, role: 'banner', 'aria-label': 'Global'}, ref);
+  return (
+    <header
+      ref={ref}
+      {...landmarkProps}
+      style={{display: 'flex', alignItems: 'center', gap: 12, padding: 12, borderBottom: '1px solid #d5d5d5'}}>
+      {props.children}
+    </header>
+  );
+}
+
+function Navigation(props: {'aria-label'?: string, children: ReactNode}): ReactElement {
+  let ref = useRef<HTMLElement>(null);
+  let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
+  return (
+    <nav
+      ref={ref}
+      {...landmarkProps}
+      style={{flexShrink: 0, boxSizing: 'border-box', padding: 8, borderInlineEnd: '1px solid #d5d5d5'}}>
+      {props.children}
+    </nav>
+  );
+}
+
+function Main(props: {'aria-label'?: string, children: ReactNode}): ReactElement {
+  let ref = useRef<HTMLElement>(null);
+  let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
+  return (
+    <main ref={ref} {...landmarkProps} style={{flex: 1, minWidth: 0, padding: 16, overflow: 'auto'}}>
+      {props.children}
+    </main>
+  );
+}
+
+const AppLayoutExample = (args: SideNavProps<unknown>): ReactElement => {
+  let [selectedRoute, setSelectedRoute] = useState<string>('/files');
+  return (
+    <RouterProvider navigate={setSelectedRoute}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: 860,
+          height: 520,
+          boxSizing: 'border-box',
+          border: '1px solid #d5d5d5',
+          borderRadius: 8,
+          overflow: 'hidden'
+        }}>
+        <Banner>
+          <Heading level={3} styles={style({font: 'title', margin: 0})}>Acme Cloud</Heading>
+          <div style={{flex: 1, maxWidth: 320}}>
+            <SearchField aria-label="Search" />
+          </div>
+          <Avatar alt="Your account" src="https://i.imgur.com/xIe7Wlb.png" />
+        </Banner>
+        <div style={{display: 'flex', flex: 1, minHeight: 0}}>
+          <Navigation aria-label="Primary">
+            <SideNav
+              {...args}
+              aria-label="Files and projects"
+              selectedRoute={selectedRoute}
+              defaultExpandedKeys={['projects']}
+              onExpandedChange={action('onExpandedChange')}>
+              <SideNavItem href="/home" textValue="Home">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Home</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+              <SideNavItem href="/files" textValue="Your files">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Your files</Text>
+                    <Folder />
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+              <SideNavItem href="/shared" textValue="Shared with you">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Shared with you</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+              <SideNavItem href="/projects" id="projects" textValue="Projects">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Projects</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+                <SideNavItem href="/projects/website" textValue="Website redesign">
+                  <SideNavItemContent>
+                    <SideNavItemLink>
+                      <Text>Website redesign</Text>
+                    </SideNavItemLink>
+                  </SideNavItemContent>
+                </SideNavItem>
+                <SideNavItem href="/projects/mobile" textValue="Mobile app">
+                  <SideNavItemContent>
+                    <SideNavItemLink>
+                      <Text>Mobile app</Text>
+                    </SideNavItemLink>
+                  </SideNavItemContent>
+                </SideNavItem>
+              </SideNavItem>
+              <SideNavItem href="/archive" textValue="Archive">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Archive</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+            </SideNav>
+          </Navigation>
+          <Main aria-label="Content">
+            <Heading level={2} styles={style({font: 'heading', marginTop: 0})}>Workspace</Heading>
+            <p style={{font: 'inherit', maxWidth: 520}}>
+              This area is the main landmark and the side navigation on the left is wrapped in a
+              navigation landmark. Press F6 (or Shift+F6) to move keyboard focus between the
+              navigation, banner, and main landmarks.
+            </p>
+            <Divider styles={style({marginY: 16})} />
+            <p style={{font: 'inherit'}}>Current route: {selectedRoute}</p>
+          </Main>
+        </div>
+      </div>
+    </RouterProvider>
+  );
+};
+type AppLayoutStoryObj = StoryObj<typeof AppLayoutExample>;
+
+export const WithLandmark: AppLayoutStoryObj = {
+  render: args => <AppLayoutExample {...args} />,
+  args: {},
+  name: 'With Landmark',
+  parameters: {
+    layout: 'fullscreen'
+  }
 };
