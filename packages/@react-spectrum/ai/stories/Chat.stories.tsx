@@ -42,8 +42,9 @@ import {
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
-import {prose, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {prose} from '../src/style/prose' with {type: 'macro'};
 import {ReactNode, useRef, useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 

@@ -7374,6 +7374,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/ai@workspace:packages/@react-spectrum/ai"
   dependencies:
+    "@adobe/spectrum-tokens": "npm:14.0.0"
     "@internationalized/date": "npm:^3.12.2"
     "@internationalized/number": "npm:^3.6.7"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
