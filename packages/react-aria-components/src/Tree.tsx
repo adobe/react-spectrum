@@ -1066,7 +1066,9 @@ export interface TreeLoadMoreItemRenderProps {
 }
 
 export interface TreeLoadMoreItemProps
-  extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
+  extends
+    Omit<LoadMoreSentinelProps, 'collection' | 'direction'>,
+    RenderProps<TreeLoadMoreItemRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.

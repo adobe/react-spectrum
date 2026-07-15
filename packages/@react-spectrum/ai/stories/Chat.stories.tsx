@@ -33,12 +33,15 @@ import {
   SourceListItem,
   Thread,
   ThreadItem,
+  ThreadLoadMoreItem,
   ThreadScrollButton,
   TokenSegmentList,
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
-import {ReactNode, useRef, useState} from 'react';
+import {Collection} from 'react-aria-components';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 
@@ -1103,5 +1106,444 @@ function SystemMessage({
         </MessageSource>
       )}
     </ThreadItem>
+  );
+}
+
+interface AsyncMessage {
+  id: number;
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+const ALL_HISTORY: AsyncMessage[] = [
+  {
+    id: 1,
+    role: 'user',
+    content: 'Hi, my laptop battery has been draining really quickly over the past few days.'
+  },
+  {
+    id: 2,
+    role: 'assistant',
+    content:
+      "I'm sorry to hear that. I can help troubleshoot. Could you tell me what model of laptop you have and approximately how old it is?"
+  },
+  {
+    id: 3,
+    role: 'user',
+    content: "It's a Dell XPS 13, about two years old."
+  },
+  {
+    id: 4,
+    role: 'assistant',
+    content:
+      "Thanks. Have you noticed whether the battery drains even when you're doing light tasks like browsing the web, or only during heavier workloads?"
+  },
+  {
+    id: 5,
+    role: 'user',
+    content: 'Mostly browsing, Slack, and Spotify. It used to last almost a full workday.'
+  },
+  {
+    id: 6,
+    role: 'assistant',
+    content:
+      'Understood. A sudden drop like that is worth investigating. Have you recently installed any new software or updated Windows?'
+  },
+  {
+    id: 7,
+    role: 'user',
+    content: 'Windows installed an update last week, and I also downloaded DaVinci Resolve.'
+  },
+  {
+    id: 8,
+    role: 'assistant',
+    content:
+      "Thanks. Sometimes Windows updates perform background tasks for a day or two, and creative software can install services that run in the background. Could you open Task Manager and tell me what's using the most CPU?"
+  },
+  {
+    id: 9,
+    role: 'user',
+    content:
+      "Chrome is around 7%, Windows Modules Installer is around 14%, and Resolve isn't running."
+  },
+  {
+    id: 10,
+    role: 'assistant',
+    content:
+      "That Windows process suggests update-related work is still happening. It should settle down once everything finishes. Let's also check your battery health."
+  },
+  {
+    id: 11,
+    role: 'user',
+    content: 'How do I do that?'
+  },
+  {
+    id: 12,
+    role: 'assistant',
+    content:
+      "Open Command Prompt and run `powercfg /batteryreport`. It will generate an HTML report showing your battery's design capacity and current full charge capacity."
+  },
+  {
+    id: 13,
+    role: 'user',
+    content:
+      'The report says the design capacity is 52,000 mWh and the full charge capacity is 39,100 mWh.'
+  },
+  {
+    id: 14,
+    role: 'assistant',
+    content:
+      "Thanks. That means your battery is retaining about 75% of its original capacity. That's fairly typical after two years, although it will reduce runtime."
+  },
+  {
+    id: 15,
+    role: 'user',
+    content: "Is that enough to explain why I'm only getting around 3 hours?"
+  },
+  {
+    id: 16,
+    role: 'assistant',
+    content:
+      "Probably not by itself. A 25% reduction in capacity shouldn't usually cut runtime by more than half, so it's likely that background activity is contributing as well."
+  },
+  {
+    id: 17,
+    role: 'user',
+    content: "What's the next thing I should check?"
+  },
+  {
+    id: 18,
+    role: 'assistant',
+    content:
+      "I'd recommend checking the Battery Usage page in Windows Settings. It can show which apps have been consuming the most power over the last 24 hours."
+  },
+  {
+    id: 19,
+    role: 'user',
+    content: 'Chrome is at 38%, Slack is 18%, and Screen is 22%.'
+  },
+  {
+    id: 20,
+    role: 'assistant',
+    content: 'Those numbers look fairly normal. How bright do you typically keep your display?'
+  },
+  {
+    id: 21,
+    role: 'user',
+    content: 'Usually around 90%. I work near a window.'
+  },
+  {
+    id: 22,
+    role: 'assistant',
+    content:
+      'Running at high brightness can have a noticeable impact on battery life. If possible, try lowering it to around 60–70% and see whether that improves things.'
+  },
+  {
+    id: 23,
+    role: 'user',
+    content: "I'll try that tomorrow."
+  },
+  {
+    id: 24,
+    role: 'assistant',
+    content:
+      "Great. I'd also suggest enabling Battery Saver when you're unplugged. It reduces background activity and can extend runtime."
+  },
+  {
+    id: 25,
+    role: 'user',
+    content: "I don't think I've ever used Battery Saver."
+  },
+  {
+    id: 26,
+    role: 'assistant',
+    content:
+      'You can enable it from Quick Settings or configure it to turn on automatically below a certain battery percentage in Settings > System > Power & Battery.'
+  },
+  {
+    id: 27,
+    role: 'user',
+    content: 'Would updating the BIOS help?'
+  },
+  {
+    id: 28,
+    role: 'assistant',
+    content:
+      "It can. Manufacturers sometimes release BIOS and firmware updates that improve power management or battery performance. Since you have a Dell XPS, it's worth checking Dell SupportAssist or Dell's support website."
+  },
+  {
+    id: 29,
+    role: 'user',
+    content: "I haven't updated the BIOS since I bought it."
+  },
+  {
+    id: 30,
+    role: 'assistant',
+    content:
+      "In that case, I'd recommend checking for updates. Just make sure the laptop is plugged into power during the update process."
+  },
+  {
+    id: 31,
+    role: 'user',
+    content: 'If none of this helps, should I replace the battery?'
+  },
+  {
+    id: 32,
+    role: 'assistant',
+    content:
+      "If you've ruled out software causes and battery health continues to decline, replacing the battery is a reasonable next step. It should restore battery life much closer to its original level."
+  },
+  {
+    id: 33,
+    role: 'user',
+    content: 'Does Dell usually sell replacement batteries?'
+  },
+  {
+    id: 34,
+    role: 'assistant',
+    content:
+      "Yes. Dell offers genuine replacement batteries for many models. I'd recommend purchasing directly from Dell or an authorized reseller to ensure compatibility and quality."
+  },
+  {
+    id: 35,
+    role: 'user',
+    content: 'Is replacing it something I can do myself?'
+  },
+  {
+    id: 36,
+    role: 'assistant',
+    content:
+      "For many XPS models, it's a relatively straightforward repair if you're comfortable removing the bottom cover. Dell also provides service manuals with step-by-step instructions."
+  },
+  {
+    id: 37,
+    role: 'user',
+    content: "Good to know. I'll try the software fixes first."
+  },
+  {
+    id: 38,
+    role: 'assistant',
+    content:
+      'That sounds like a good approach. Monitor battery life for a few days after the Windows background processes finish and after adjusting your settings.'
+  },
+  {
+    id: 39,
+    role: 'user',
+    content: 'Thanks for walking me through everything!'
+  },
+  {
+    id: 40,
+    role: 'assistant',
+    content:
+      "You're very welcome! If the battery life is still much lower than expected after trying these steps, feel free to come back with an updated battery report and I'd be happy to help you investigate further."
+  }
+];
+
+const PAGE_SIZE = 10;
+
+function renderAsyncMessage(msg: AsyncMessage) {
+  if (msg.role === 'user') {
+    return (
+      <ThreadItem
+        id={msg.id}
+        textValue={msg.content}
+        styles={style({display: 'flex', justifyContent: 'end'})}>
+        <UserMessage>{msg.content}</UserMessage>
+      </ThreadItem>
+    );
+  }
+  return (
+    <ThreadItem id={msg.id} textValue={msg.content} styles={style({font: 'body'})}>
+      {msg.content}
+    </ThreadItem>
+  );
+}
+
+function useAsyncMessages() {
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [messages, setMessages] = useState<AsyncMessage[]>(ALL_HISTORY.slice(-PAGE_SIZE));
+  const isLoadingRef = useRef(false);
+  const cursorRef = useRef(ALL_HISTORY.length - PAGE_SIZE);
+
+  const handleLoadMore = useCallback(async () => {
+    if (isLoadingRef.current || cursorRef.current <= 0) {
+      return;
+    }
+    isLoadingRef.current = true;
+    setIsLoadingMore(true);
+
+    await new Promise<void>(r => setTimeout(r, 2000));
+
+    const nextCursor = Math.max(0, cursorRef.current - PAGE_SIZE);
+    const older = ALL_HISTORY.slice(nextCursor, cursorRef.current);
+    cursorRef.current = nextCursor;
+
+    setMessages(prev => [...older, ...prev]);
+    setIsLoadingMore(false);
+    isLoadingRef.current = false;
+  }, []);
+
+  return {messages, isLoadingMore, handleLoadMore, cursorRef};
+}
+
+export function AsyncLoadingChat() {
+  const {messages, isLoadingMore, handleLoadMore, cursorRef} = useAsyncMessages();
+
+  return (
+    <div
+      className={style({
+        margin: 0,
+        marginX: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 32,
+        height: '100%'
+      })}>
+      <Chat
+        styles={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1,
+          gap: 16,
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
+        })}>
+        <div
+          className={style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0
+          })}>
+          <div
+            className={style({
+              position: 'absolute',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            })}>
+            <ThreadScrollButton>
+              <ActionButton slot="scroll" aria-label="Scroll to bottom">
+                <ChevronDown />
+              </ActionButton>
+            </ThreadScrollButton>
+          </div>
+          <Thread
+            aria-label="Chat"
+            anchorTo="end"
+            UNSTABLE_focusOnEntry="last"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              padding: 8,
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            <ThreadLoadMoreItem
+              isLoading={isLoadingMore}
+              onLoadMore={cursorRef.current > 0 ? handleLoadMore : undefined}>
+              <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
+                <ProgressCircle aria-label="Loading older messages" isIndeterminate />
+              </div>
+            </ThreadLoadMoreItem>
+            <Collection items={messages}>{renderAsyncMessage}</Collection>
+          </Thread>
+        </div>
+        <PromptField>
+          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
+      </Chat>
+    </div>
+  );
+}
+
+export function NonVirtualizedAsyncLoadingChat() {
+  const {messages, isLoadingMore, handleLoadMore, cursorRef} = useAsyncMessages();
+  // column-reverse: last DOM child = visual top (where older messages appear)
+  // Reverse so newest is DOM-first (visual bottom) and oldest is DOM-last (visual top)
+  const reversedMessages = useMemo(() => [...messages].reverse(), [messages]);
+
+  return (
+    <div
+      className={style({
+        margin: 0,
+        marginX: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 32,
+        height: '100%'
+      })}>
+      <Chat
+        styles={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1,
+          gap: 16,
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
+        })}>
+        <div
+          className={style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0
+          })}>
+          <div
+            className={style({
+              position: 'absolute',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            })}>
+            <ThreadScrollButton>
+              <ActionButton slot="scroll" aria-label="Scroll to bottom">
+                <ChevronDown />
+              </ActionButton>
+            </ThreadScrollButton>
+          </div>
+          <Thread
+            aria-label="Chat"
+            UNSTABLE_focusOnEntry="first"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              padding: 8,
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            <Collection items={reversedMessages}>{renderAsyncMessage}</Collection>
+            <ThreadLoadMoreItem
+              isLoading={isLoadingMore}
+              onLoadMore={cursorRef.current > 0 ? handleLoadMore : undefined}>
+              <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
+                <ProgressCircle aria-label="Loading older messages" isIndeterminate />
+              </div>
+            </ThreadLoadMoreItem>
+          </Thread>
+        </div>
+        <PromptField>
+          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
+      </Chat>
+    </div>
   );
 }

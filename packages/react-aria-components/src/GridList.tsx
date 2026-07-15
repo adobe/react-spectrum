@@ -836,17 +836,12 @@ export const GridListLoadMoreItem = createLeafComponent(
   ) {
     let state = useContext(ListStateContext)!;
     let {isVirtualized} = useContext(CollectionRendererContext);
-    let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+    let {isLoading, onLoadMore, scrollOffset, direction, ...otherProps} = props;
 
     let sentinelRef = useRef(null);
     let memoedLoadMoreProps = useMemo(
-      () => ({
-        onLoadMore,
-        collection: state?.collection,
-        sentinelRef,
-        scrollOffset
-      }),
-      [onLoadMore, scrollOffset, state?.collection]
+      () => ({onLoadMore, collection: state?.collection, scrollOffset, direction}),
+      [onLoadMore, scrollOffset, state?.collection, direction]
     );
     useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 

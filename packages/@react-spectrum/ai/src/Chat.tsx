@@ -31,6 +31,8 @@ import {
   GridList,
   GridListItem,
   GridListItemProps,
+  GridListLoadMoreItem,
+  GridListLoadMoreItemProps,
   GridListProps
 } from 'react-aria-components/GridList';
 // @ts-ignore
@@ -294,7 +296,8 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           estimatedRowHeight: 100,
           padding: 4,
           gap: 8,
-          anchorTo: 'end'
+          anchorTo: 'end',
+          loaderSize: 48
         }}
         scrollEndThreshold={scrollEndThreshold}
         shouldObserveItemSize>
@@ -416,4 +419,14 @@ export function ThreadItem(props: ThreadItemProps) {
       {children}
     </GridListItem>
   );
+}
+
+/**
+ * A load-more sentinel for `Thread`. Place it as the **first child** of `Thread` (before
+ * `<Collection>`), only when using `anchorTo="end"`. Triggers `onLoadMore` when the user
+ * scrolls to the top of the thread.
+ */
+export interface ThreadLoadMoreItemProps extends Omit<GridListLoadMoreItemProps, 'direction'> {}
+export function ThreadLoadMoreItem(props: ThreadLoadMoreItemProps) {
+  return <GridListLoadMoreItem direction="start" {...props} />;
 }

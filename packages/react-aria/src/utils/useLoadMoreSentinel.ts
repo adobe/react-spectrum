@@ -28,13 +28,20 @@ export interface LoadMoreSentinelProps extends Omit<AsyncLoadable, 'isLoading'> 
    * @default 1
    */
   scrollOffset?: number;
+  /**
+   * The scroll direction that triggers load more. Use 'start' for reversed layouts where older
+   * content loads when scrolling toward the top.
+   *
+   * @default 'end'
+   */
+  direction?: 'start' | 'end';
 }
 
 export function useLoadMoreSentinel(
   props: LoadMoreSentinelProps,
   ref: RefObject<HTMLElement | null>
 ): void {
-  let {collection, onLoadMore, scrollOffset = 1} = props;
+  let {collection, onLoadMore, scrollOffset = 1, direction = 'end'} = props;
 
   let sentinelObserver = useRef<IntersectionObserver>(null);
 
@@ -55,9 +62,13 @@ export function useLoadMoreSentinel(
       // Tear down and set up a new IntersectionObserver when the collection changes so that we can properly trigger additional loadMores if there is room for more items
       // Need to do this tear down and set up since using a large rootMargin will mean the observer's callback isn't called even when scrolling the item into view beause its visibility hasn't actually changed
       // https://codesandbox.io/p/sandbox/magical-swanson-dhgp89?file=%2Fsrc%2FApp.js%3A21%2C21
+      const margin = 100 * scrollOffset;
+      // For direction='start', right/left margins have no affect for vertical scroll containers. We are not supporting reverse horizontal scroll containers for now.
+      const rootMargin =
+        direction === 'start' ? `${margin}% 0px 0px 0px` : `0px ${margin}% ${margin}% ${margin}%`;
       sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {
         root: getScrollParent(ref?.current) as HTMLElement,
-        rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`
+        rootMargin
       });
       sentinelObserver.current.observe(ref.current);
     }

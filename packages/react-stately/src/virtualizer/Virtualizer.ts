@@ -334,6 +334,11 @@ export class Virtualizer<T extends object, V> {
     let best: ScrollAnchor | null = null;
     for (let [key, view] of this._visibleViews) {
       let layoutInfo = view.layoutInfo;
+      // Skip loader items — they always appear at the top, so anchoring to one
+      // would scroll back to the top instead of preserving the user's position.
+      if (layoutInfo && layoutInfo.type === 'loader') {
+        continue;
+      }
       if (layoutInfo && layoutInfo.rect.area > 0 && layoutInfo.rect.intersects(visibleRect)) {
         let corner = layoutInfo.rect.getCornerInRect(visibleRect) ?? 'topLeft';
         // Force top corners: bottom corners on a clipped item can drift if the item resizes.
