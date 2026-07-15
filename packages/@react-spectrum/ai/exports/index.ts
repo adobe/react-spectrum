@@ -38,6 +38,12 @@ export type {
   ResponseStatusTitleProps,
   ResponseStatusPanelProps
 } from '../src/ResponseStatus';
-export type {ChatProps, ThreadProps, ThreadItemProps, ThreadLoadMoreItemProps, ThreadScrollButtonProps} from '../src/Chat';
+export type {
+  ChatProps,
+  ThreadProps,
+  ThreadItemProps,
+  ThreadLoadMoreItemProps,
+  ThreadScrollButtonProps
+} from '../src/Chat';
 export type {TokenSegmentListOptions} from '../src/TokenSegmentList';
 export type {UserMessageProps} from '../src/UserMessage';
