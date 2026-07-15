@@ -40,7 +40,7 @@ import {
   writeToDataTransfer
 } from './utils';
 import intlMessages from '../../intl/dnd/*.json';
-import {isIOS} from '../utils/platform';
+import {isIOS, isWebKit} from '../utils/platform';
 import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
 import {useDescription} from '../utils/useDescription';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
@@ -369,7 +369,7 @@ export function useDrag(options: DragOptions): DragResult {
           : e.pointerType;
 
         // Try to detect virtual drag passthrough gestures.
-        if (e.width < 1 && e.height < 1 && isIOS()) {
+        if (e.width < 1 && e.height < 1 && isIOS() && isWebKit()) {
           // iOS VoiceOver.
           modalityOnPointerDown.current = 'virtual';
         } else {

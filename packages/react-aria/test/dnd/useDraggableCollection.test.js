@@ -1037,8 +1037,12 @@ describe('useDraggableCollection', () => {
     });
 
     it('should work with a listbox without a drag button', async () => {
-      let platformGetter = jest.spyOn(window.navigator, 'platform', 'get');
-      platformGetter.mockReturnValue('iPhone');
+      let platformGetter = jest
+        .spyOn(navigator, 'platform', 'get')
+        .mockImplementation(() => 'iPhone');
+      let userAgentGetter = jest
+        .spyOn(navigator, 'userAgent', 'get')
+        .mockImplementation(() => 'AppleWebKit');
       setMedia({pointer: 'coarse'});
       let onDragStart = jest.fn();
       let onDragEnd = jest.fn();
@@ -1129,12 +1133,17 @@ describe('useDraggableCollection', () => {
       });
 
       platformGetter.mockRestore();
+      userAgentGetter.mockRestore();
     });
 
     it('should support row actions', async () => {
       setMedia({pointer: 'coarse'});
-      let platformGetter = jest.spyOn(window.navigator, 'platform', 'get');
-      platformGetter.mockReturnValue('iPhone');
+      let platformGetter = jest
+        .spyOn(navigator, 'platform', 'get')
+        .mockImplementation(() => 'iPhone');
+      let userAgentGetter = jest
+        .spyOn(navigator, 'userAgent', 'get')
+        .mockImplementation(() => 'AppleWebKit');
       let onDragStart = jest.fn();
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
@@ -1240,6 +1249,7 @@ describe('useDraggableCollection', () => {
       });
 
       platformGetter.mockRestore();
+      userAgentGetter.mockRestore();
     });
   });
 });
