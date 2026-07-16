@@ -41,7 +41,7 @@ interface SpeechRecognition extends EventTarget {
 }
 
 interface SpeechRecognitionConstructor {
-  new(): SpeechRecognition;
+  new (): SpeechRecognition;
 }
 
 interface Window {

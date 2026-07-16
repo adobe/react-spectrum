@@ -24,11 +24,10 @@ import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import Close from '@react-spectrum/s2/icons/Close';
 import {forwardRef, ReactNode, useRef} from 'react';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ImageContext} from '@react-spectrum/s2/Image';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
@@ -42,6 +41,7 @@ import {
   TagProps
 } from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 interface AttachmentRenderProps {
   /** The size of the Card. */

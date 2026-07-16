@@ -45,11 +45,11 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
-  useLayoutEffect,
   useState
 } from 'react';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 

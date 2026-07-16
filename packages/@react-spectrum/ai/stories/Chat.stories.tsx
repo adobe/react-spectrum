@@ -10,16 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
-import {Chat} from '../src/Chat';
-import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
-import {Content} from '@react-spectrum/s2/Content';
-import {GridList} from 'react-aria-components';
-import {Image} from '@react-spectrum/s2/Image';
-import {ListLayout} from 'react-stately/useVirtualizerState';
-import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
   AutoLinkingSegmentList,
   MessageFeedback,
@@ -40,7 +34,13 @@ import {
   TokenSegmentList,
   UserMessage
 } from '@react-spectrum/ai';
-import {action} from 'storybook/actions';
+import {Chat} from '../src/Chat';
+import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
+import {Content} from '@react-spectrum/s2/Content';
+import {GridList} from 'react-aria-components';
+import {Image} from '@react-spectrum/s2/Image';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -221,29 +221,6 @@ function StreamingChatRender() {
   let timeouts = useRef<NodeJS.Timeout[]>([]);
   let [promptValue, setPromptValue] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
   let followUpMessage = useRef<TokenSegmentList | null>(null);
-
-  useEffect(() => {
-    if (!isGenerating && followUpMessage.current) {
-      let followup = followUpMessage.current;
-      followUpMessage.current = null;
-      handleSend(followup);
-    }
-  }, [isGenerating]);
-
-  // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
-  function handleStop() {
-    followUpMessage.current = null;
-    timeouts.current.forEach(clearTimeout);
-    timeouts.current = [];
-    setMessages(prev =>
-      prev.map(m =>
-        (m.type === 'system' || m.type === 'status') && m.isStreaming
-          ? {...m, isStreaming: false}
-          : m
-      )
-    );
-    setGenerating(false);
-  }
 
   function handleSend(prompt: TokenSegmentList) {
     setGenerating(true);
@@ -440,6 +417,29 @@ function StreamingChatRender() {
     }, streamEndTimestamp + 1000);
   }
 
+  useEffect(() => {
+    if (!isGenerating && followUpMessage.current) {
+      let followup = followUpMessage.current;
+      followUpMessage.current = null;
+      handleSend(followup);
+    }
+  }, [isGenerating]);
+
+  // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
+  function handleStop() {
+    followUpMessage.current = null;
+    timeouts.current.forEach(clearTimeout);
+    timeouts.current = [];
+    setMessages(prev =>
+      prev.map(m =>
+        (m.type === 'system' || m.type === 'status') && m.isStreaming
+          ? {...m, isStreaming: false}
+          : m
+      )
+    );
+    setGenerating(false);
+  }
+
   return (
     // TODO: these extra div wrappers would need to be implemented by the RAC user, maybe we can internalize some more?
     // of particular note is the scroll button. Same for the other styles
@@ -521,7 +521,7 @@ function StreamingChatRender() {
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
-                    <ResponseStatus isLoading={msg.isStreaming}>
+                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
                         {msg.details && (
@@ -686,7 +686,7 @@ export function VirtualizedChat() {
 
               return (
                 <ThreadItem textValue={message}>
-                  <ResponseStatus isLoading={isPending}>
+                  <ResponseStatus status={isPending ? 'loading' : 'success'}>
                     <ResponseStatusTitle>{message}</ResponseStatusTitle>
                   </ResponseStatus>
                 </ThreadItem>

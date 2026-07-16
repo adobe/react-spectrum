@@ -11,10 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
-import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
-import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import Attach from '@react-spectrum/s2/icons/Attach';
-import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button} from '@react-spectrum/s2/Button';
@@ -53,6 +50,7 @@ import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
+import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {PixelLoader} from './loader/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
@@ -61,10 +59,12 @@ import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
+import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import {useControlledState} from 'react-stately/useControlledState';
-import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
 
 export interface PromptFieldAttachment {

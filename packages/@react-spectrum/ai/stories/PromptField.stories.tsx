@@ -11,6 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {
   AttachFileMenuItem,
   AutoLinkingSegmentList,
@@ -27,8 +28,6 @@ import {
   PromptToken,
   PromptTokenField
 } from '../src/PromptField';
-import {TokenSegmentList} from '../src/TokenSegmentList';
-import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {Attachment} from '../src/AttachmentList';
 import Brand from '@react-spectrum/s2/icons/Brand';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
@@ -52,6 +51,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
+import {TokenSegmentList} from '../src/TokenSegmentList';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
 import {useState} from 'react';
 
