@@ -24,7 +24,7 @@ function testUserAgent(re: RegExp) {
 
 function testPlatform(re: RegExp) {
   return typeof window !== 'undefined' && window.navigator != null
-    ? re.test(window.navigator['userAgentData']?.platform || window.navigator.platform)
+    ? re.test((window.navigator['userAgentData'] as any)?.platform || window.navigator.platform)
     : false;
 }
 
