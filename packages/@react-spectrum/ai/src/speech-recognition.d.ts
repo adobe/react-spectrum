@@ -75,6 +75,7 @@ interface NavigatorUABrandVersion {
 
 interface NavigatorUAData {
   readonly brands: ReadonlyArray<NavigatorUABrandVersion>;
+  readonly platform?: string;
 }
 
 interface Navigator {
