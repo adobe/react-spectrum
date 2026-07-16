@@ -1165,3 +1165,36 @@ export const VirtualizedDisplayNoneToggle: StoryObj = {
     }
   }
 };
+
+function VirtualizedReversedGridListExample() {
+  let items: {id: number; name: string}[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        estimatedRowHeight: 100,
+        padding: 4,
+        gap: 8,
+        anchorTo: 'end'
+      }}>
+      <GridList
+        className={styles.menu}
+        selectionMode="multiple"
+        style={{height: 400}}
+        aria-label="virtualized gridlist reverse"
+        items={items}>
+        <Collection items={items}>
+          {item => <MyGridListItem>{item.name}</MyGridListItem>}
+        </Collection>
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+export const VirtualizedReversedGridList: StoryObj = {
+  render: VirtualizedReversedGridListExample
+};
