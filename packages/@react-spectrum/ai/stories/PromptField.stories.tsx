@@ -52,8 +52,8 @@ import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
 import {TokenSegmentList} from '../src/TokenSegmentList';
+import {useRef, useState} from 'react';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
-import {useState} from 'react';
 
 const events = ['onSubmit', 'onStop', 'onAddAttachments', 'onRemoveAttachments'];
 
@@ -277,6 +277,9 @@ function EverythingRender(args) {
   let [value, setValue] = useState<TokenSegmentList>(() => new AutoLinkingSegmentList([]));
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
+  let historyRef = useRef<TokenSegmentList[]>([]);
+  let historyIndexRef = useRef(-1);
+  let isHistoryNavigating = useRef(false);
 
   let mockUpload = async (id: string) => {
     await new Promise(resolve => setTimeout(resolve, Math.random() * 30));
@@ -297,6 +300,55 @@ function EverythingRender(args) {
     });
   };
 
+  let isFieldEmpty = (prompt: TokenSegmentList) => {
+    let text = prompt.toString();
+    return text === '' && !text.includes('\n');
+  };
+
+  // logic for using up/down arrow keys to fill field with previous prompts
+  let onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    let canNavigate = historyIndexRef.current !== -1 || isFieldEmpty(value);
+    let history = historyRef.current;
+    if (!canNavigate || history.length === 0) {
+      return;
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      let nextIndex =
+        historyIndexRef.current === -1
+          ? history.length - 1
+          : Math.max(0, historyIndexRef.current - 1);
+      historyIndexRef.current = nextIndex;
+      isHistoryNavigating.current = true;
+      setValue(history[nextIndex]);
+    } else if (e.key === 'ArrowDown') {
+      if (historyIndexRef.current === -1) {
+        return;
+      }
+      e.preventDefault();
+      let nextIndex = historyIndexRef.current + 1;
+      if (nextIndex >= history.length) {
+        historyIndexRef.current = -1;
+        isHistoryNavigating.current = true;
+        setValue(new AutoLinkingSegmentList([]));
+      } else {
+        historyIndexRef.current = nextIndex;
+        isHistoryNavigating.current = true;
+        setValue(history[nextIndex]);
+      }
+    }
+  };
+
+  let handleChange = (newValue: TokenSegmentList) => {
+    if (!isHistoryNavigating.current) {
+      // if user edits the field, then we want to reset the index so up arrow starts from latest prompt again
+      historyIndexRef.current = -1;
+    }
+    isHistoryNavigating.current = false;
+    setValue(newValue);
+  };
+
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
       <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
@@ -309,11 +361,13 @@ function EverythingRender(args) {
       <PromptField
         {...otherArgs}
         value={value}
-        onChange={setValue}
+        onChange={handleChange}
         attachments={attachments}
         onAttachmentsChange={setAttachments}
         onSubmit={prompt => {
           action('onSubmit')(prompt.toString());
+          historyRef.current = [...historyRef.current, prompt];
+          historyIndexRef.current = -1;
           setValue(new AutoLinkingSegmentList([]));
           setAttachments([]);
           setAttachmentState(new Map());
@@ -370,7 +424,8 @@ function EverythingRender(args) {
             })
           }
           pixelLoader={data[args.pixelLoader]}
-          placeholder={placeholder}>
+          placeholder={placeholder}
+          onKeyDown={onKeyDown}>
           {segment => (
             <PromptToken>
               {icons[segment.value?.type]}
