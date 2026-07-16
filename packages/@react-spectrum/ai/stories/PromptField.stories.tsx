@@ -82,6 +82,10 @@ const meta: Meta<typeof PromptField> = {
       control: 'radio',
       options: ['thumbnail', 'card']
     },
+    attachmentInvalid: {
+      control: 'boolean',
+      description: 'Sets attachments to an invalid state.'
+    },
     placeholder: {
       control: 'text',
       table: {category: 'PromptTokenField'}
@@ -91,6 +95,7 @@ const meta: Meta<typeof PromptField> = {
     brand: 'rgb(236, 105, 255)',
     pixelLoader: 'aiLogo',
     attachmentVariant: 'thumbnail',
+    attachmentInvalid: false,
     placeholder: undefined,
     ...getActionArgs(events)
   },
@@ -333,11 +338,13 @@ function EverythingRender(args) {
             return newState;
           });
         }}>
-        <PromptFieldAttachmentList dependencies={[attachmentState, args.attachmentVariant]}>
+        <PromptFieldAttachmentList
+          dependencies={[attachmentState, args.attachmentVariant, args.attachmentInvalid]}>
           {attachment => {
             let state = attachmentState.get(attachment.id);
             return (
               <Attachment
+                isInvalid={args.attachmentInvalid}
                 uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
                 {/* TODO: what about non-image attachments? */}
                 {attachment.image && <Image src={attachment.image} slot="thumbnail" />}

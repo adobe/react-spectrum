@@ -89,6 +89,8 @@ export interface BasicCardProps extends Omit<HorizontalCardProps, 'variant'> {
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  /** Whether the card is in an error state. */
+  isInvalid?: boolean;
 }
 
 const borderRadius = {
@@ -119,7 +121,11 @@ let card = style({
     default: lightDark('transparent-white-300', 'transparent-black-300'),
     forcedColors: 'ButtonFace'
   },
-  boxShadow: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
+  // TODO: for cards that only have images, should they have a red outline around the image thumbnail?
+  boxShadow: {
+    default: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
+    isInvalid: `[inset 0 0 0 1px ${color('negative-900')}]`
+  },
   forcedColorAdjust: 'none',
   transition: 'default',
   fontFamily: 'sans',
@@ -422,6 +428,7 @@ const actionButtonSize = {
 const Card = forwardRef(function Card(
   props: Omit<HorizontalCardProps, 'variant'> & {
     isBasic?: boolean;
+    isInvalid?: boolean;
     variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
   },
   ref: DOMRef<HTMLDivElement>
@@ -430,6 +437,7 @@ const Card = forwardRef(function Card(
   let domRef = useDOMRef(ref);
   let {
     isBasic = false,
+    isInvalid = false,
     density = 'regular',
     size = 'M',
     variant = 'primary',
@@ -498,6 +506,7 @@ const Card = forwardRef(function Card(
               density,
               variant,
               isBasic,
+              isInvalid,
               isCardView: false,
               isLink: true
             }),
@@ -527,7 +536,7 @@ const Card = forwardRef(function Card(
         inert={inertValue(isSkeleton)}
         ref={domRef}
         className={mergeStyles(
-          card({size, density, variant, isBasic, isCardView: ElementType !== 'div'}),
+          card({size, density, variant, isBasic, isInvalid, isCardView: ElementType !== 'div'}),
           styles
         )}>
         <InternalCardContext.Provider
@@ -559,7 +568,8 @@ const Card = forwardRef(function Card(
             size,
             density,
             variant,
-            isBasic
+            isBasic,
+            isInvalid
           }),
           styles
         )
@@ -809,6 +819,7 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                     styles: style({
                       position: 'relative',
                       alignSelf: 'center',
+                      flexShrink: 0,
                       pointerEvents: 'none',
                       userSelect: 'none',
                       size: '--basic-thumb-size',

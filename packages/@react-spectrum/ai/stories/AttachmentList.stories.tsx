@@ -28,9 +28,14 @@ const meta: Meta<typeof AttachmentList> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', events),
-    children: {table: {disable: true}}
+    children: {table: {disable: true}},
+    isInvalid: {control: 'boolean'},
+    size: {
+      control: 'radio',
+      options: ['XS', 'S', 'M', 'L', 'XL']
+    }
   },
-  args: {...getActionArgs(events)},
+  args: {isInvalid: false, size: 'M', ...getActionArgs(events)},
   title: 'AI/AttachmentList'
 };
 
@@ -38,28 +43,29 @@ export default meta;
 
 type Story = StoryObj<typeof AttachmentList>;
 
-export const AIAttachmentList: Story = {
-  render: args => (
-    <AttachmentList {...args} styles={style({width: 500})}>
-      <AttachmentComponent aria-label="Demo file.pdf">
+function AttachmentListRender(args) {
+  let {isInvalid, size, ...listArgs} = args;
+  return (
+    <AttachmentList {...listArgs} styles={style({width: 500})}>
+      <AttachmentComponent isInvalid={isInvalid} size={size} aria-label="Demo file.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent aria-label="Alligator.pdf">
+      <AttachmentComponent isInvalid={isInvalid} size={size} aria-label="Alligator.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent aria-label="Rules.pdf">
+      <AttachmentComponent isInvalid={isInvalid} size={size} aria-label="Rules.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent aria-label="Echidna.pdf">
+      <AttachmentComponent isInvalid={isInvalid} size={size} aria-label="Echidna.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
@@ -70,5 +76,9 @@ export const AIAttachmentList: Story = {
         </Content>
       </AttachmentComponent>
     </AttachmentList>
-  )
+  );
+}
+
+export const AIAttachmentList: Story = {
+  render: args => <AttachmentListRender {...args} />
 };

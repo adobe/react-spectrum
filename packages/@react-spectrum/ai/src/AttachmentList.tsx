@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
 import {
   AriaLabelingProps,
   DOMProps,
@@ -189,6 +190,8 @@ export interface AttachmentProps
   /** The children of the Attachment. */
   children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
   uploadProgress?: number;
+  /** Whether the attachment has an error. */
+  isInvalid?: boolean;
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
@@ -203,6 +206,17 @@ const tagStyles = style({
   borderRadius: 'default'
 });
 
+const attachmentErrorStyles = style({
+  display: 'flex',
+  flexShrink: 0,
+  alignItems: 'center',
+  paddingStart: 8,
+  '--iconPrimary': {
+    type: 'color',
+    value: 'negative'
+  }
+});
+
 export const Attachment = forwardRef(function Attachment(
   props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
@@ -214,6 +228,9 @@ export const Attachment = forwardRef(function Attachment(
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedby,
     styles,
+    isInvalid,
+    children,
+    size = 'M',
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -227,7 +244,7 @@ export const Attachment = forwardRef(function Attachment(
       aria-describedby={ariaDescribedby}
       ref={domRef}
       className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
-      <BasicHorizontalCard {...otherProps}>
+      <BasicHorizontalCard {...otherProps} isInvalid={isInvalid} size={size}>
         {props.uploadProgress != null && props.uploadProgress < 100 && (
           <div
             className={style({
@@ -265,12 +282,15 @@ export const Attachment = forwardRef(function Attachment(
                   }
                 }
               }}>
-              {typeof props.children === 'function'
-                ? props.children({size: otherProps.size || 'M'})
-                : props.children}
+              {typeof children === 'function' ? children({size}) : children}
             </ImageContext.Provider>
           )}
         </ImageContext.Consumer>
+        {isInvalid && (
+          <div data-slot="attachment-error" className={attachmentErrorStyles}>
+            <AlertTriangleIcon size={size} />
+          </div>
+        )}
       </BasicHorizontalCard>
       {/** Definitely not a close button, though looks like one. */}
       <div
@@ -285,3 +305,18 @@ export const Attachment = forwardRef(function Attachment(
     </Tag>
   );
 });
+
+function AlertTriangleIcon({size}) {
+  switch (size) {
+    case 'XS':
+      return <AlertTriangle styles={iconStyle({size: 'XS'})} />;
+    case 'S':
+      return <AlertTriangle styles={iconStyle({size: 'S'})} />;
+    case 'M':
+      return <AlertTriangle styles={iconStyle({size: 'M'})} />;
+    case 'L':
+      return <AlertTriangle styles={iconStyle({size: 'L'})} />;
+    case 'XL':
+      return <AlertTriangle styles={iconStyle({size: 'XL'})} />;
+  }
+}
