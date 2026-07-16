@@ -15,6 +15,17 @@
 // types, and the User-Agent Client Hints surface used for the Chromium browser
 // allowlist. SpeechRecognitionAlternative, SpeechRecognitionResult, and
 // SpeechRecognitionResultList ARE provided by lib.dom and are not redeclared.
+// Spec: https://wicg.github.io/speech-api/
+
+type SpeechRecognitionErrorCode =
+  | 'no-speech'
+  | 'aborted'
+  | 'audio-capture'
+  | 'network'
+  | 'not-allowed'
+  | 'service-not-allowed'
+  | 'language-not-supported'
+  | 'phrases-not-supported';
 
 interface SpeechRecognitionEvent extends Event {
   readonly resultIndex: number;
@@ -22,7 +33,7 @@ interface SpeechRecognitionEvent extends Event {
 }
 
 interface SpeechRecognitionErrorEvent extends Event {
-  readonly error: string;
+  readonly error: SpeechRecognitionErrorCode;
   readonly message: string;
 }
 
@@ -34,10 +45,17 @@ interface SpeechRecognition extends EventTarget {
   start(): void;
   stop(): void;
   abort(): void;
+  onaudiostart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onsoundstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onspeechstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onspeechend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onsoundend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onaudioend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
   onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
   onend: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
 }
 
 interface SpeechRecognitionConstructor {
