@@ -28,7 +28,7 @@ import React, {
   useEffect,
   useMemo
 } from 'react';
-import {useControlledState} from 'react-stately/useControlledState';
+import {useColorSwatchPickerState} from 'react-stately/useColorSwatchPickerState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
@@ -68,16 +68,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
   ref: ForwardedRef<HTMLDivElement>
 ) {
   [props, ref] = useContextProps(props, ref, ColorSwatchPickerContext);
-  let {value: valueProp, defaultValue: defaultValueProp, onChange} = props;
-  let value = useMemo(
-    () => (typeof valueProp === 'string' ? parseColor(valueProp) : valueProp),
-    [valueProp]
-  );
-  let defaultValue = useMemo(
-    () => (typeof defaultValueProp === 'string' ? parseColor(defaultValueProp) : defaultValueProp),
-    [defaultValueProp]
-  );
-  let [color, setColor] = useControlledState<Color | null>(value, defaultValue ?? null, onChange);
+  let state = useColorSwatchPickerState(props);
   let colorMap = useMemo(() => new Map(), []);
   let formatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
 
@@ -93,14 +84,14 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
       }
       layout={props.layout || 'grid'}
       selectionMode="single"
-      selectedKeys={color ? [color.toString('hexa')] : []}
+      selectedKeys={state.color ? [state.color.toString('hexa')] : []}
       onSelectionChange={keys => {
         // single select, 'all' cannot occur. appease typescript.
         if (keys !== 'all') {
-          let key = [...keys][0];
-          setColor(key != null ? colorMap.get(key) : null);
+          state.setColor(colorMap.get([...keys][0]));
         }
-      }}>
+      }}
+      disallowEmptySelection>
       <ColorMapContext.Provider value={colorMap}>{props.children}</ColorMapContext.Provider>
     </ListBox>
   );

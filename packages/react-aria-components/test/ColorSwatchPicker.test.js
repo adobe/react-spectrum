@@ -161,7 +161,7 @@ describe('ColorSwatchPicker', function () {
     expect(options[1]).toHaveAttribute('aria-selected', 'false');
   });
 
-  it('supports deselecting a swatch, including black', async function () {
+  it('supports selecting black, and does not allow deselecting via click', async function () {
     let onChange = jest.fn();
     let {getByRole} = render(
       <ColorSwatchPicker onChange={onChange}>
@@ -181,9 +181,43 @@ describe('ColorSwatchPicker', function () {
     expect(onChange).toHaveBeenLastCalledWith(parseColor('#000000'));
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
 
+    // Clicking the already-selected swatch again should not deselect it,
+    // matching how selection normally works elsewhere.
     await user.click(options[0]);
-    expect(onChange).toHaveBeenLastCalledWith(null);
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('supports clearing the selection via a controlled null value', async function () {
+    let {getByRole, rerender} = render(
+      <ColorSwatchPicker value="#000">
+        <ColorSwatchPickerItem color="#000">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+      </ColorSwatchPicker>
+    );
+
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    rerender(
+      <ColorSwatchPicker value={null}>
+        <ColorSwatchPickerItem color="#000">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+      </ColorSwatchPicker>
+    );
+
+    options = within(listbox).getAllByRole('option');
     expect(options[0]).toHaveAttribute('aria-selected', 'false');
+    expect(options[1]).toHaveAttribute('aria-selected', 'false');
   });
 
   it('handles keyboard input', async function () {

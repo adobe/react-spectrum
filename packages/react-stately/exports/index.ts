@@ -35,6 +35,10 @@ export type {
 export type {ColorFieldProps, ColorFieldState} from '../src/color/useColorFieldState';
 export type {ColorPickerProps, ColorPickerState} from '../src/color/useColorPickerState';
 export type {
+  ColorSwatchPickerStateProps,
+  ColorSwatchPickerState
+} from '../src/color/useColorSwatchPickerState';
+export type {
   ColorSliderState,
   ColorSliderStateOptions,
   ColorSliderProps
@@ -179,6 +183,7 @@ export {useColorAreaState} from '../src/color/useColorAreaState';
 export {useColorChannelFieldState} from '../src/color/useColorChannelFieldState';
 export {useColorFieldState} from '../src/color/useColorFieldState';
 export {useColorPickerState} from '../src/color/useColorPickerState';
+export {useColorSwatchPickerState} from '../src/color/useColorSwatchPickerState';
 export {useColorSliderState} from '../src/color/useColorSliderState';
 export {useColorWheelState} from '../src/color/useColorWheelState';
 export {useComboBoxState} from '../src/combobox/useComboBoxState';
