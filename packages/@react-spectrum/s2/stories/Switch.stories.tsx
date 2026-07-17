@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button} from '../src/Button';
-import {Form} from '../src/Form';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 import {Switch} from '../src/Switch';
@@ -59,21 +57,4 @@ export const HelpText: Story = {
       disable: true
     }
   }
-};
-
-export const Test: Story = {
-  render: () => (
-    <div style={{overflow: 'scroll', width: '100vw', height: '100vh'}}>
-      <div style={{border: '1px solid black', width: '100%', height: '1200px'}}>abcd</div>
-      <Form>
-        <Switch
-          name="two-factor"
-          isRequired
-          description="Your organization requires two-factor authentication.">
-          Two-factor authentication
-        </Switch>
-        <Button type="submit">Submit</Button>
-      </Form>
-    </div>
-  )
 };
