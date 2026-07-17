@@ -16,8 +16,8 @@ import {describe, expect, it, vi} from 'vitest';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {UserMessage} from '../src/UserMessage';
 import {userEvent} from 'vitest/browser';
+import {UserMessage} from '../src/UserMessage';
 
 // Applied to Thread when it needs its own scroll viewport.
 let scrollThreadStyles = style({
@@ -138,16 +138,13 @@ const CONVERSATION: Message[] = [
 function renderAsyncMessage(msg: Message) {
   if (msg.role === 'user') {
     return (
-      <ThreadItem
-        id={msg.id}
-        textValue={msg.content}
-        styles={style({display: 'flex', justifyContent: 'end'})}>
+      <ThreadItem textValue={msg.content} styles={style({display: 'flex', justifyContent: 'end'})}>
         <UserMessage>{msg.content}</UserMessage>
       </ThreadItem>
     );
   }
   return (
-    <ThreadItem id={msg.id} textValue={msg.content} styles={style({font: 'body'})}>
+    <ThreadItem textValue={msg.content} styles={style({font: 'body'})}>
       {msg.content}
     </ThreadItem>
   );
@@ -197,11 +194,7 @@ function AsyncVirtualizedThread({
             <span aria-label="Loading older messages">Loading…</span>
           </ThreadLoadMoreItem>
           <Collection items={visible}>
-            {item => (
-              <ThreadItem id={item.id} textValue={item.content}>
-                {item.content}
-              </ThreadItem>
-            )}
+            {item => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
           </Collection>
         </Thread>
       </Chat>
@@ -275,7 +268,7 @@ describeOrSkip('Chat browser', () => {
       let {container} = await render(
         <Chat>
           <Thread UNSTABLE_focusOnEntry="first" aria-label="Chat" items={messages}>
-            {(item: Message) => <ThreadItem textValue={item.text}>{item.text}</ThreadItem>}
+            {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
           </Thread>
         </Chat>
       );
@@ -519,7 +512,7 @@ describeOrSkip('Chat browser', () => {
     it('stays hidden when near the bottom', async () => {
       let messages: Message[] = Array.from({length: 20}, (_, i) => ({
         id: String(i + 1),
-        text: `Message number ${i + 1} in the chat thread`
+        content: `Message number ${i + 1} in the chat thread`
       }));
 
       let {container} = await render(
@@ -538,7 +531,7 @@ describeOrSkip('Chat browser', () => {
               </Button>
             </ThreadScrollButton>
             <Thread anchorTo="end" items={messages} aria-label="Chat" styles={scrollThreadStyles}>
-              {(item: Message) => <ThreadItem textValue={item.text}>{item.text}</ThreadItem>}
+              {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
           </Chat>
         </div>

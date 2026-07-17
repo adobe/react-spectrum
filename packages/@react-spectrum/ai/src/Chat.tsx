@@ -424,7 +424,6 @@ export function ThreadItem(props: ThreadItemProps) {
 
   return (
     <GridListItem
-      id={id}
       textValue={textValue}
       focusMode={focusMode}
       allowsArrowNavigation={allowsArrowNavigation}

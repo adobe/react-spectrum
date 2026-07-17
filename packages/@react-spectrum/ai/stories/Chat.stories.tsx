@@ -1346,16 +1346,13 @@ const PAGE_SIZE = 10;
 function renderAsyncMessage(msg: AsyncMessage) {
   if (msg.role === 'user') {
     return (
-      <ThreadItem
-        id={msg.id}
-        textValue={msg.content}
-        styles={style({display: 'flex', justifyContent: 'end'})}>
+      <ThreadItem textValue={msg.content} styles={style({display: 'flex', justifyContent: 'end'})}>
         <UserMessage>{msg.content}</UserMessage>
       </ThreadItem>
     );
   }
   return (
-    <ThreadItem id={msg.id} textValue={msg.content} styles={style({font: 'body'})}>
+    <ThreadItem textValue={msg.content} styles={style({font: 'body'})}>
       {msg.content}
     </ThreadItem>
   );
