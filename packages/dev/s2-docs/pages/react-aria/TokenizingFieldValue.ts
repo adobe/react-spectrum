@@ -1,6 +1,6 @@
-import {type TokenFieldSegment, TokenSegmentList} from 'react-aria-components/TokenField';
+import {type TokenFieldSegment, TokenFieldValue} from 'react-aria-components/TokenField';
 
-export class TokenizingSegmentList extends TokenSegmentList {
+export class TokenizingFieldValue extends TokenFieldValue {
   tokenRegex: RegExp;
 
   constructor(tokens: TokenFieldSegment[], tokenRegex: RegExp) {
@@ -8,13 +8,13 @@ export class TokenizingSegmentList extends TokenSegmentList {
     this.tokenRegex = tokenRegex;
   }
 
-  static tokenize(text: string, tokenRegex: RegExp): TokenSegmentList {
+  static tokenize(text: string, tokenRegex: RegExp): TokenFieldValue {
     let list = new this([], tokenRegex);
     let segments = list.tokenize(text);
     return new this(segments, tokenRegex);
   }
 
-  createSegmentList(segments: TokenFieldSegment[]): this {
+  createFieldValue(segments: TokenFieldSegment[]): this {
     let Constructor = this.constructor as new (
       tokens: TokenFieldSegment[],
       tokenRegex: RegExp

@@ -1,7 +1,7 @@
 import {Key} from '@react-types/shared';
-import {TokenSegmentList} from 'react-aria-components/TokenField';
+import {TokenFieldValue} from 'react-aria-components/TokenField';
 
-export class ComboBoxSegmentList extends TokenSegmentList<Key> {
+export class ComboBoxTokenFieldValue extends TokenFieldValue<Key> {
   getSelectedKeys(): Key[] {
     return this.segments.filter(seg => seg.type === 'token').map(seg => seg.value!);
   }
@@ -11,7 +11,7 @@ export class ComboBoxSegmentList extends TokenSegmentList<Key> {
     return segment?.type === 'text' ? segment.text : '';
   }
 
-  setSelectedKeys(keys: Key[]): ComboBoxSegmentList {
+  setSelectedKeys(keys: Key[]): ComboBoxTokenFieldValue {
     let selectedKeys = this.getSelectedKeys();
     let added: Key[] = [];
     for (let key of keys) {

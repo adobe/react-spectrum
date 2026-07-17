@@ -6,13 +6,13 @@ import {
   TokenFieldProps as AriaTokenFieldProps,
   TokenInputProps,
   TokenProps,
-  TokenSegmentList
+  TokenFieldValue
 } from 'react-aria-components/TokenField';
 import {Label, Description} from './Form';
 import './TokenField.css';
 import type React from 'react';
 
-export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList> extends Omit<
+export interface TokenFieldProps<T extends TokenFieldValue = TokenFieldValue> extends Omit<
   AriaTokenFieldProps<T>,
   'children'
 > {
@@ -23,7 +23,7 @@ export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList> 
   children: TokenInputProps['children'];
 }
 
-export function TokenField<T extends TokenSegmentList = TokenSegmentList>({
+export function TokenField<T extends TokenFieldValue = TokenFieldValue>({
   label,
   description,
   placeholder,

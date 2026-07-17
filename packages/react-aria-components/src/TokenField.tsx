@@ -45,8 +45,8 @@ import React, {
 import {TextContext} from './Text';
 import {
   TokenFieldState,
+  TokenFieldValue,
   TokenSegment,
-  TokenSegmentList,
   useTokenFieldState
 } from 'react-stately/useTokenFieldState';
 import {useFocusRing} from 'react-aria/useFocusRing';
@@ -68,7 +68,7 @@ export interface TokenFieldRenderProps {
   isReadOnly: boolean;
 }
 
-export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
+export interface TokenFieldProps<T extends TokenFieldValue = TokenFieldValue>
   extends
     AriaTokenFieldProps<T>,
     RenderProps<TokenFieldRenderProps>,
@@ -116,7 +116,7 @@ export interface TokenInputRenderProps {
   isReadOnly: boolean;
 }
 
-export interface TokenInputProps<T extends TokenSegmentList = TokenSegmentList>
+export interface TokenInputProps<T extends TokenFieldValue = TokenFieldValue>
   extends
     HoverProps,
     StyleRenderProps<TokenInputRenderProps>,
@@ -126,7 +126,7 @@ export interface TokenInputProps<T extends TokenSegmentList = TokenSegmentList>
    * A function that renders a token for each segment in the token field.
    */
   children: (
-    segment: TokenSegment<T extends TokenSegmentList<infer V> ? V : never>
+    segment: TokenSegment<T extends TokenFieldValue<infer V> ? V : never>
   ) => React.ReactElement;
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -137,7 +137,7 @@ export interface TokenInputProps<T extends TokenSegmentList = TokenSegmentList>
   className?: ClassNameOrFunction<TokenInputRenderProps>;
 }
 
-interface TokenInputContextValue<T extends TokenSegmentList = TokenSegmentList> {
+interface TokenInputContextValue<T extends TokenFieldValue = TokenFieldValue> {
   tokenFieldProps: HTMLAttributes<HTMLDivElement>;
   state: TokenFieldState<T>;
   isDisabled: boolean;
@@ -154,7 +154,7 @@ const TokenInputContext = createContext<TokenInputContextValue | null>(null);
  * tag inputs, structured search fields, mention inputs, and multi-select comboboxes.
  */
 export const TokenField = /*#__PURE__*/ createHideableComponent(function TokenField<
-  T extends TokenSegmentList = TokenSegmentList
+  T extends TokenFieldValue = TokenFieldValue
 >(props: TokenFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TokenFieldContext);
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
@@ -242,7 +242,7 @@ export const TokenField = /*#__PURE__*/ createHideableComponent(function TokenFi
  * A token input represents the editable area within a token field.
  */
 export const TokenInput = /*#__PURE__*/ (forwardRef as forwardRefType)(function TokenInput<
-  T extends TokenSegmentList = TokenSegmentList
+  T extends TokenFieldValue = TokenFieldValue
 >(props: TokenInputProps<T>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     tokenFieldProps,

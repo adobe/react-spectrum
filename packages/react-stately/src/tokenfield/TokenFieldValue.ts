@@ -36,14 +36,14 @@ export enum Direction {
   Backward = -1
 }
 
-export interface TokenSegmentListOptions {
+export interface TokenFieldValueOptions {
   caretPosition?: Position | null;
 }
 
 /**
  * A list of segments containing editable text and non-editable tokens.
  */
-export class TokenSegmentList<T = any> {
+export class TokenFieldValue<T = any> {
   /** The text and token segments in the list. */
   readonly segments: readonly TokenFieldSegment<T>[];
   /** The caret position. */
@@ -54,15 +54,15 @@ export class TokenSegmentList<T = any> {
   private isCoalescing = true;
 
   /** Create a new list with the given segments. */
-  constructor(tokens: readonly TokenFieldSegment<T>[], options?: TokenSegmentListOptions) {
+  constructor(tokens: readonly TokenFieldSegment<T>[], options?: TokenFieldValueOptions) {
     this.segments = tokens;
     this.caretPosition = options?.caretPosition ?? {index: 0, offset: 0};
   }
 
-  protected createSegmentList(segments: readonly TokenFieldSegment<T>[]): this {
+  protected createFieldValue(segments: readonly TokenFieldSegment<T>[]): this {
     const Constructor = this.constructor as new (
       segments: readonly TokenFieldSegment<T>[],
-      options?: TokenSegmentListOptions
+      options?: TokenFieldValueOptions
     ) => this;
     return new Constructor(segments);
   }
@@ -76,7 +76,7 @@ export class TokenSegmentList<T = any> {
       return this;
     }
 
-    let result = this.createSegmentList(this.segments);
+    let result = this.createFieldValue(this.segments);
     result.caretPosition = caretPosition;
     result.previous = this.previous;
     result.next = this.next;
@@ -171,7 +171,7 @@ export class TokenSegmentList<T = any> {
 
     appendSegments(newSegments, this.segments.slice(end.index + 1));
 
-    let segments = this.createSegmentList(newSegments);
+    let segments = this.createFieldValue(newSegments);
     segments.caretPosition = caret;
     segments.isCoalescing = coalesce;
     if (this.isCoalescing && coalesce && this.previous) {
@@ -330,16 +330,16 @@ export class TokenSegmentList<T = any> {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
     if (start.index === end.index && start.offset === end.offset) {
-      return this.createSegmentList([]);
+      return this.createFieldValue([]);
     }
     if (start.index === end.index) {
       let segment = this.segments[start.index];
       if (segment.type === 'text') {
-        return this.createSegmentList([
+        return this.createFieldValue([
           {type: 'text', text: segment.text.slice(start.offset, end.offset)}
         ]);
       }
-      return this.createSegmentList([segment]);
+      return this.createFieldValue([segment]);
     }
     let startSegment = this.segments[start.index];
     let endSegment = this.segments[end.index];
@@ -354,7 +354,7 @@ export class TokenSegmentList<T = any> {
     if (endSplit) {
       result.push(endSplit);
     }
-    return this.createSegmentList(result);
+    return this.createFieldValue(result);
   }
 
   /** Convert the list to a string. */

@@ -1,6 +1,6 @@
-import {type TokenFieldSegment, TokenSegmentList} from 'react-aria-components/TokenField';
+import {type TokenFieldSegment, TokenFieldValue} from 'react-aria-components/TokenField';
 
-export class TagFieldSegmentList extends TokenSegmentList {
+export class TagFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
     let parts = text.split(/[, \n]/);
 

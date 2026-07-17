@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {TokenSegmentList} from './TokenSegmentList';
+import {TokenFieldValue} from './TokenFieldValue';
 import {useControlledState} from '../utils/useControlledState';
 import {useState} from 'react';
 import {ValueBase} from '@react-types/shared';
 
 export interface TokenFieldProps<
-  T extends TokenSegmentList = TokenSegmentList
+  T extends TokenFieldValue = TokenFieldValue
 > extends ValueBase<T> {}
 
-export interface TokenFieldState<T extends TokenSegmentList = TokenSegmentList> {
+export interface TokenFieldState<T extends TokenFieldValue = TokenFieldValue> {
   /** The current value of the token field. */
   value: T;
   /** Sets the value of the token field. */
@@ -30,12 +30,12 @@ export interface TokenFieldState<T extends TokenSegmentList = TokenSegmentList> 
   setComposing: (isComposing: boolean) => void;
 }
 
-export function useTokenFieldState<T extends TokenSegmentList = TokenSegmentList>(
+export function useTokenFieldState<T extends TokenFieldValue = TokenFieldValue>(
   props: TokenFieldProps<T>
 ): TokenFieldState<T> {
   let {
     value: valueProp,
-    defaultValue: defaultValueProp = new TokenSegmentList([]),
+    defaultValue: defaultValueProp = new TokenFieldValue([]),
     onChange
   } = props;
 

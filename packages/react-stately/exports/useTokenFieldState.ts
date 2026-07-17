@@ -11,7 +11,7 @@
  */
 
 export {useTokenFieldState} from '../src/tokenfield/useTokenFieldState';
-export {TokenSegmentList, Direction} from '../src/tokenfield/TokenSegmentList';
+export {TokenFieldValue, Direction} from '../src/tokenfield/TokenFieldValue';
 
 export type {TokenFieldProps, TokenFieldState} from '../src/tokenfield/useTokenFieldState';
 export type {
@@ -19,5 +19,5 @@ export type {
   TokenSegment,
   TextSegment,
   Position,
-  TokenSegmentListOptions
-} from '../src/tokenfield/TokenSegmentList';
+  TokenFieldValueOptions
+} from '../src/tokenfield/TokenFieldValue';

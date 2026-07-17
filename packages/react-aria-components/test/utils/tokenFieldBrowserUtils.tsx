@@ -13,7 +13,7 @@
 import {expect} from 'vitest';
 import {getSelection, setSelection} from '../../../react-aria/src/tokenfield/useTokenField';
 import {type Locator, userEvent} from 'vitest/browser';
-import {Position, TokenFieldSegment, TokenSegmentList} from 'react-stately/useTokenFieldState';
+import {Position, TokenFieldSegment, TokenFieldValue} from 'react-stately/useTokenFieldState';
 import React, {useEffect, useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {
@@ -32,15 +32,15 @@ export function token(s: string): TokenFieldSegment {
   return {type: 'token', text: s};
 }
 
-export function segments(...segs: TokenFieldSegment[]): TokenSegmentList {
-  return new TokenSegmentList(segs);
+export function segments(...segs: TokenFieldSegment[]): TokenFieldValue {
+  return new TokenFieldValue(segs);
 }
 
 /** Primary fixture: "ab" + token("TOK") + "cd" */
 export const abTokCd = segments(text('ab'), token('TOK'), text('cd'));
 
 /** Story sample for adjacent-token arrow navigation. */
-export const adjacentTokensSample = new TokenSegmentList([
+export const adjacentTokensSample = new TokenFieldValue([
   token('Hello'),
   text(' tokens testing '),
   token('World'),
@@ -48,11 +48,11 @@ export const adjacentTokensSample = new TokenSegmentList([
   text(' test')
 ]);
 
-export function expectFieldText(value: TokenSegmentList, str: string) {
+export function expectFieldText(value: TokenFieldValue, str: string) {
   expect(value.toString()).toBe(str);
 }
 
-export function expectCaret(value: TokenSegmentList, pos: Position) {
+export function expectCaret(value: TokenFieldValue, pos: Position) {
   expect(value.caretPosition).toEqual(pos);
 }
 
@@ -122,7 +122,7 @@ export async function dblClickAt(textbox: Locator, node: Node, offset: number): 
   });
 }
 
-export async function navigateCaret(textbox: Locator, list: TokenSegmentList, target: Position) {
+export async function navigateCaret(textbox: Locator, list: TokenFieldValue, target: Position) {
   await focusField(textbox);
   await userEvent.keyboard('{Home}');
   let el = textbox.element();
@@ -138,7 +138,7 @@ export async function navigateCaret(textbox: Locator, list: TokenSegmentList, ta
 /** Positions the caret by starting at the field end and stepping left. */
 export async function navigateCaretFromEnd(
   textbox: Locator,
-  _list: TokenSegmentList,
+  _list: TokenFieldValue,
   target: Position
 ) {
   await focusField(textbox);
@@ -155,7 +155,7 @@ export async function navigateCaretFromEnd(
 
 export async function selectRange(
   textbox: Locator,
-  list: TokenSegmentList,
+  list: TokenFieldValue,
   start: Position,
   end: Position
 ) {
@@ -172,7 +172,7 @@ export async function selectRange(
 }
 
 export interface ControlledTokenFieldResult {
-  getValue: () => TokenSegmentList;
+  getValue: () => TokenFieldValue;
   textbox: Locator;
 }
 
@@ -180,8 +180,8 @@ interface ControlledProps extends Omit<
   TokenFieldProps,
   'value' | 'defaultValue' | 'onChange' | 'children'
 > {
-  initial: TokenSegmentList;
-  valueRef: React.MutableRefObject<TokenSegmentList>;
+  initial: TokenFieldValue;
+  valueRef: React.MutableRefObject<TokenFieldValue>;
   children?: TokenInputProps['children'];
 }
 
@@ -206,7 +206,7 @@ function ControlledTokenField({
 let fieldInstance = 0;
 
 export async function renderControlledTokenField(
-  initial: TokenSegmentList,
+  initial: TokenFieldValue,
   props?: Omit<TokenFieldProps, 'value' | 'defaultValue' | 'onChange' | 'children'>
 ): Promise<ControlledTokenFieldResult> {
   let label = `TokenField-${++fieldInstance}`;
@@ -221,10 +221,10 @@ export async function renderControlledTokenField(
   };
 }
 
-export async function waitForFieldText(getValue: () => TokenSegmentList, str: string) {
+export async function waitForFieldText(getValue: () => TokenFieldValue, str: string) {
   await expect.poll(() => getValue().toString()).toBe(str);
 }
 
-export async function waitForCaret(getValue: () => TokenSegmentList, pos: Position) {
+export async function waitForCaret(getValue: () => TokenFieldValue, pos: Position) {
   await expect.poll(() => getValue().caretPosition).toEqual(pos);
 }

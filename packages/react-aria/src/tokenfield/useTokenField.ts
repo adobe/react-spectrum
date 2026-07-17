@@ -26,7 +26,7 @@ import {
   TokenFieldProps,
   TokenFieldSegment,
   TokenFieldState,
-  TokenSegmentList
+  TokenFieldValue
 } from 'react-stately/useTokenFieldState';
 import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
@@ -40,7 +40,7 @@ import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 
-export interface AriaTokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
+export interface AriaTokenFieldProps<T extends TokenFieldValue = TokenFieldValue>
   extends TokenFieldProps<T>, FocusableProps, AriaLabelingProps {
   /**
    * The accessibility role of the token field.
@@ -86,7 +86,7 @@ export interface TokenFieldAria {
 
 const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
-export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
+export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
   props: AriaTokenFieldProps<T>,
   state: TokenFieldState,
   ref: RefObject<HTMLDivElement | null>
@@ -110,8 +110,8 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
   let dropPosition = useRef<Position | null>(null);
   let transferredData = useRef<TokenFieldSegment[] | null>(null);
 
-  let nextValue = useRef<TokenSegmentList | null>(null);
-  let apply = (fn: (value: TokenSegmentList) => TokenSegmentList) => {
+  let nextValue = useRef<TokenFieldValue | null>(null);
+  let apply = (fn: (value: TokenFieldValue) => TokenFieldValue) => {
     state.setValue(value => {
       let newValue = fn(value);
       nextValue.current = newValue;

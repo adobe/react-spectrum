@@ -39,8 +39,8 @@ import {
   Direction,
   Position,
   TokenFieldSegment,
-  TokenSegment,
-  TokenSegmentList
+  TokenFieldValue,
+  TokenSegment
 } from 'react-stately/useTokenFieldState';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
@@ -75,7 +75,7 @@ export interface PromptFieldAttachment {
 export interface PromptFieldProps {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
-  onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
+  onSubmit?: (prompt: TokenFieldValue, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
@@ -88,8 +88,8 @@ interface PromptFieldState {
   attachments: PromptFieldAttachment[];
   setAttachments: React.Dispatch<React.SetStateAction<PromptFieldAttachment[]>>;
   acceptedAttachmentTypes?: string[];
-  prompt: TokenSegmentList;
-  setPrompt: React.Dispatch<React.SetStateAction<TokenSegmentList>>;
+  prompt: TokenFieldValue;
+  setPrompt: React.Dispatch<React.SetStateAction<TokenFieldValue>>;
   inputRef: React.RefObject<HTMLDivElement | null>;
   onSubmit?: () => void;
   onStop?: () => void;
@@ -100,7 +100,7 @@ interface PromptFieldState {
 
 // TODO: make this customizable
 const tokenRegex = /(?<=\s|^)(https?:\/\/)?(www\.)?([^/\s]+\.[a-z]{2,}(\/\S+)?)(?=\s)/g;
-class AutoLinkingSegmentList extends TokenSegmentList {
+class AutoLinkingTokenFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
     if (text.length === 0) {
       return [{type: 'text', text}];
@@ -130,7 +130,7 @@ class AutoLinkingSegmentList extends TokenSegmentList {
 const PromptFieldContext = createContext<PromptFieldState>({
   attachments: [],
   setAttachments: () => {},
-  prompt: new AutoLinkingSegmentList([]),
+  prompt: new AutoLinkingTokenFieldValue([]),
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false
@@ -159,7 +159,7 @@ export function PromptField(props: PromptFieldProps) {
     onRemoveAttachments,
     variant = 'balanced'
   } = props;
-  let [prompt, setPrompt] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
+  let [prompt, setPrompt] = useState<TokenFieldValue>(new AutoLinkingTokenFieldValue([]));
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
 
   // Not using RAC DropZone because it adds its own focusable button,
@@ -197,7 +197,7 @@ export function PromptField(props: PromptFieldProps) {
     }
 
     props.onSubmit?.(prompt, attachments);
-    setPrompt(new AutoLinkingSegmentList([]));
+    setPrompt(new AutoLinkingTokenFieldValue([]));
     setAttachments([]);
     inputRef.current?.focus();
   };

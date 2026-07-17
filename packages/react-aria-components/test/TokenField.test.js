@@ -15,11 +15,11 @@ import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {Text} from '../src/Text';
 import {Token, TokenField, TokenInput} from '../src/TokenField';
-import {TokenSegmentList} from 'react-stately/useTokenFieldState';
+import {TokenFieldValue} from 'react-stately/useTokenFieldState';
 
 let TestTokenField = props => (
   <TokenField
-    defaultValue={new TokenSegmentList([{type: 'text', text: 'hello'}])}
+    defaultValue={new TokenFieldValue([{type: 'text', text: 'hello'}])}
     data-foo="bar"
     {...props}>
     <Label>Test</Label>
@@ -61,7 +61,7 @@ describe('TokenField', () => {
       let {getByRole} = render(
         <TokenField
           aria-label="Message"
-          defaultValue={new TokenSegmentList([{type: 'text', text: 'hello'}])}>
+          defaultValue={new TokenFieldValue([{type: 'text', text: 'hello'}])}>
           <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );

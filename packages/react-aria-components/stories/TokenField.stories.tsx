@@ -20,7 +20,7 @@ import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
 import {
   Direction,
   type TokenFieldSegment,
-  TokenSegmentList
+  TokenFieldValue
 } from 'react-stately/useTokenFieldState';
 import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
@@ -39,7 +39,7 @@ export default {
 
 export type TokenFieldStory = StoryFn<typeof TokenField>;
 
-class TokenizingSegmentList extends TokenSegmentList {
+class TokenizingFieldValue extends TokenFieldValue {
   tokenRegex: RegExp;
 
   constructor(tokens: TokenFieldSegment[], tokenRegex: RegExp) {
@@ -47,13 +47,13 @@ class TokenizingSegmentList extends TokenSegmentList {
     this.tokenRegex = tokenRegex;
   }
 
-  static tokenize(text: string, tokenRegex: RegExp): TokenSegmentList {
+  static tokenize(text: string, tokenRegex: RegExp): TokenFieldValue {
     let list = new this([], tokenRegex);
     let segments = list.tokenize(text);
     return new this(segments, tokenRegex);
   }
 
-  createSegmentList(segments: TokenFieldSegment[]): this {
+  createFieldValue(segments: TokenFieldSegment[]): this {
     let Constructor = this.constructor as new (
       tokens: TokenFieldSegment[],
       tokenRegex: RegExp
@@ -92,7 +92,7 @@ export const AutoTokenize: TokenFieldStory = () => {
   return (
     <TokenField
       allowsNewlines
-      defaultValue={TokenizingSegmentList.tokenize(
+      defaultValue={TokenizingFieldValue.tokenize(
         'This example automatically tokenizes #hashtags and @usernames in the text.',
         /(?<=\s|^)[#@]\S+(?=\s)/g
       )}>
@@ -107,7 +107,7 @@ export const Template: TokenFieldStory = () => {
   return (
     <TokenField
       allowsNewlines
-      defaultValue={TokenizingSegmentList.tokenize(
+      defaultValue={TokenizingFieldValue.tokenize(
         "Hello {{firstName}}, it's nice to meet you!",
         /(?<=\s|^)\{\{.+?\}\}/g
       )}>
@@ -172,7 +172,7 @@ type Item = {username: string} | {command: string; description: string};
 export const WithAutocomplete: TokenFieldStory = () => {
   let inputRef = useRef(null);
   let [value, setValue] = useState(
-    new TokenSegmentList([
+    new TokenFieldValue([
       {type: 'text', text: 'This example has autocomplete for '},
       {type: 'token', text: '@usernames'},
       {type: 'text', text: ' and '},
@@ -242,7 +242,7 @@ export const WithAutocomplete: TokenFieldStory = () => {
   );
 };
 
-class TagFieldSegmentList extends TokenSegmentList {
+class TagFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
     let parts = text.split(/[, \n]/);
 
@@ -269,7 +269,7 @@ export const TagField: TokenFieldStory = () => {
     <TokenField
       allowsNewlines
       defaultValue={
-        new TagFieldSegmentList([
+        new TagFieldValue([
           {type: 'token', text: 'Architecture'},
           {type: 'token', text: 'Design'},
           {type: 'token', text: 'Development'},
@@ -286,7 +286,7 @@ export const TagField: TokenFieldStory = () => {
 export const Search: TokenFieldStory = () => {
   let inputRef = useRef(null);
   let [value, setValue] = useState(
-    new TokenSegmentList([{type: 'token', text: 'From: Alice Smith'}])
+    new TokenFieldValue([{type: 'token', text: 'From: Alice Smith'}])
   );
 
   let last = value.segments.at(-1);
@@ -365,7 +365,7 @@ export const Search: TokenFieldStory = () => {
   );
 };
 
-class ComboBoxSegmentList extends TokenSegmentList<Key> {
+class ComboBoxTokenFieldValue extends TokenFieldValue<Key> {
   getSelectedKeys(): Key[] {
     return this.segments.filter(seg => seg.type === 'token').map(seg => seg.value!);
   }
@@ -375,7 +375,7 @@ class ComboBoxSegmentList extends TokenSegmentList<Key> {
     return segment?.type === 'text' ? segment.text : '';
   }
 
-  setSelectedKeys(keys: Key[]): ComboBoxSegmentList {
+  setSelectedKeys(keys: Key[]): ComboBoxTokenFieldValue {
     let selectedKeys = this.getSelectedKeys();
     let added: Key[] = [];
     for (let key of keys) {
@@ -427,7 +427,7 @@ class ComboBoxSegmentList extends TokenSegmentList<Key> {
 }
 
 export const ComboBoxExample: TokenFieldStory = () => {
-  let [value, setValue] = useState(new ComboBoxSegmentList([]));
+  let [value, setValue] = useState(new ComboBoxTokenFieldValue([]));
 
   return (
     <ComboBox

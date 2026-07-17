@@ -15,7 +15,7 @@ export {
 } from '../src/PromptField';
 export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
 export {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
-export {TokenSegmentList} from 'react-aria-components/TokenField';
+export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';
 
 export type {AttachmentProps, AttachmentListProps} from '../src/AttachmentList';
@@ -39,5 +39,5 @@ export type {
   ResponseStatusPanelProps
 } from '../src/ResponseStatus';
 export type {ChatProps, ThreadProps, ThreadItemProps, ThreadScrollButtonProps} from '../src/Chat';
-export type {TokenSegmentListOptions} from 'react-aria-components/TokenField';
+export type {TokenFieldValueOptions} from 'react-aria-components/TokenField';
 export type {UserMessageProps} from '../src/UserMessage';

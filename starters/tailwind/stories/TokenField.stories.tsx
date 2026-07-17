@@ -1,6 +1,6 @@
 import {type Meta} from '@storybook/react';
 import React from 'react';
-import {type TokenFieldSegment, TokenSegmentList} from 'react-aria-components/TokenField';
+import {type TokenFieldSegment, TokenFieldValue} from 'react-aria-components/TokenField';
 import {Token, TokenField} from '../src/TokenField';
 
 const meta: Meta<typeof TokenField> = {
@@ -16,7 +16,7 @@ const meta: Meta<typeof TokenField> = {
 
 export default meta;
 
-class TokenizingSegmentList extends TokenSegmentList {
+class TokenizingFieldValue extends TokenFieldValue {
   tokenRegex: RegExp;
 
   constructor(tokens: TokenFieldSegment[], tokenRegex: RegExp) {
@@ -24,13 +24,13 @@ class TokenizingSegmentList extends TokenSegmentList {
     this.tokenRegex = tokenRegex;
   }
 
-  static tokenize(text: string, tokenRegex: RegExp): TokenSegmentList {
+  static tokenize(text: string, tokenRegex: RegExp): TokenFieldValue {
     let list = new this([], tokenRegex);
     let segments = list.tokenize(text);
     return new this(segments, tokenRegex);
   }
 
-  createSegmentList(segments: TokenFieldSegment[]): this {
+  createFieldValue(segments: TokenFieldSegment[]): this {
     let Constructor = this.constructor as new (
       tokens: TokenFieldSegment[],
       tokenRegex: RegExp
@@ -65,7 +65,7 @@ class TokenizingSegmentList extends TokenSegmentList {
   }
 }
 
-class TagFieldSegmentList extends TokenSegmentList {
+class TagFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
     let parts = text.split(/[, \n]/);
 
@@ -87,7 +87,7 @@ export const Example = (args: any) => (
   <TokenField
     {...args}
     defaultValue={
-      new TokenSegmentList([
+      new TokenFieldValue([
         {type: 'text', text: 'Hello '},
         {type: 'token', text: '@username'},
         {type: 'text', text: '!'}
@@ -106,7 +106,7 @@ export const AutoTokenize = (args: any) => (
   <TokenField
     {...args}
     allowsNewlines
-    defaultValue={TokenizingSegmentList.tokenize(
+    defaultValue={TokenizingFieldValue.tokenize(
       'This example automatically tokenizes #hashtags and @usernames in the text.',
       /(?<=\s|^)[#@]\S+(?=\s)/g
     )}>
@@ -124,7 +124,7 @@ export const TagField = (args: any) => (
     {...args}
     allowsNewlines
     defaultValue={
-      new TagFieldSegmentList([
+      new TagFieldValue([
         {type: 'token', text: 'Architecture'},
         {type: 'token', text: 'Design'},
         {type: 'token', text: 'Development'},

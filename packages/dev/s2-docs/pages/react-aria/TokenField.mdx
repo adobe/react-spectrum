@@ -14,14 +14,14 @@ export const description = 'Allows users to enter text with inline tokens such a
 <PageDescription>{docs.exports.TokenField.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.TokenField} links={vanillaDocs.links} props={['label', 'description', 'allowsNewlines', 'isDisabled']} initialProps={{label: 'Message', allowsNewlines: true}} type="vanilla" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
+  ```tsx render docs={vanillaDocs.exports.TokenField} links={vanillaDocs.links} props={['label', 'description', 'allowsNewlines', 'isDisabled']} initialProps={{label: 'Message', allowsNewlines: true}} type="vanilla" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingFieldValue.ts"]}
   "use client";
   import {Token, TokenField} from 'vanilla-starter/TokenField';
-  import {TokenizingSegmentList} from './TokenizingSegmentList';
+  import {TokenizingFieldValue} from './TokenizingFieldValue';
 
   <TokenField
     /* PROPS */
-    defaultValue={TokenizingSegmentList.tokenize(
+    defaultValue={TokenizingFieldValue.tokenize(
       'This example automatically tokenizes #hashtags and @usernames in the text.',
       /(?<=\s|^)[#@]\S+(?=\s)/g
     )}>
@@ -29,14 +29,14 @@ export const description = 'Allows users to enter text with inline tokens such a
   </TokenField>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.TokenField} links={vanillaDocs.links} props={['label', 'description', 'allowsNewlines', 'isDisabled']} initialProps={{label: 'Message', allowsNewlines: true}} type="tailwind" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingSegmentList.ts"]}
+  ```tsx render docs={vanillaDocs.exports.TokenField} links={vanillaDocs.links} props={['label', 'description', 'allowsNewlines', 'isDisabled']} initialProps={{label: 'Message', allowsNewlines: true}} type="tailwind" files={["starters/docs/src/TokenField.tsx", "starters/docs/src/TokenField.css", "packages/dev/s2-docs/pages/react-aria/TokenizingFieldValue.ts"]}
   "use client";
   import {Token, TokenField} from 'tailwind-starter/TokenField';
-  import {TokenizingSegmentList} from './TokenizingSegmentList';
+  import {TokenizingFieldValue} from './TokenizingFieldValue';
 
   <TokenField
     /* PROPS */
-    defaultValue={TokenizingSegmentList.tokenize(
+    defaultValue={TokenizingFieldValue.tokenize(
       'This example automatically tokenizes #hashtags and @usernames in the text.',
       /(?<=\s|^)[#@]\S+(?=\s)/g
     )}>
@@ -47,17 +47,17 @@ export const description = 'Allows users to enter text with inline tokens such a
 
 ## Value
 
-`TokenField` is controlled via a `TokenSegmentList` value, which represents a sequence of text and token segments. Use the `value` or `defaultValue` prop to set the value, and `onChange` to handle user input.
+`TokenField` is controlled via a `TokenFieldValue` value, which represents a sequence of text and token segments. Use the `value` or `defaultValue` prop to set the value, and `onChange` to handle user input.
 
 ```tsx render
 "use client";
 import {Token, TokenField} from 'vanilla-starter/TokenField';
-import {TokenSegmentList} from 'react-stately/useTokenFieldState';
+import {TokenFieldValue} from 'react-stately/useTokenFieldState';
 import {useState} from 'react';
 
 function Example() {
   let [value, setValue] = useState(
-    new TokenSegmentList([
+    new TokenFieldValue([
       {type: 'text', text: 'Hello '},
       {type: 'token', text: '@username'},
       {type: 'text', text: '!'}
@@ -79,16 +79,16 @@ function Example() {
 
 ## Tokenization
 
-Extend the `TokenSegmentList` class to customize how text is converted into tokens. Override the `tokenize` method to parse user input, and use `createSegmentList` to return new instances of your subclass when the value changes.
+Extend the `TokenFieldValue` class to customize how text is converted into tokens. Override the `tokenize` method to parse user input, and use `createFieldValue` to return new instances of your subclass when the value changes.
 
 ```tsx render
 "use client";
 import {Token, TokenField} from 'vanilla-starter/TokenField';
-import {TokenizingSegmentList} from './TokenizingSegmentList';
+import {TokenizingFieldValue} from './TokenizingFieldValue';
 
 <TokenField
   allowsNewlines
-  defaultValue={TokenizingSegmentList.tokenize(
+  defaultValue={TokenizingFieldValue.tokenize(
     'This example automatically tokenizes #hashtags and @usernames in the text.',
     /(?<=\s|^)[#@]\S+(?=\s)/g
   )}
@@ -99,7 +99,7 @@ import {TokenizingSegmentList} from './TokenizingSegmentList';
 
 ## Autocomplete
 
-Combine `TokenField` with [Autocomplete](Autocomplete) to provide inline completions such as @mentions and slash commands. Use `TokenSegmentList.findText` to locate the anchor character, and `positionToDOMRange` to position a [Popover](Popover) relative to the filter text.
+Combine `TokenField` with [Autocomplete](Autocomplete) to provide inline completions such as @mentions and slash commands. Use `TokenFieldValue.findText` to locate the anchor character, and `positionToDOMRange` to position a [Popover](Popover) relative to the filter text.
 
 ```tsx render
 "use client";
@@ -107,7 +107,7 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Text} from 'react-aria-components/Text';
 import {Token, TokenField} from 'vanilla-starter/TokenField';
 import {positionToDOMRange} from 'react-aria/useTokenField';
-import {Direction, TokenSegmentList} from 'react-aria-components/TokenField';
+import {Direction, TokenFieldValue} from 'react-aria-components/TokenField';
 import {Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Popover} from 'vanilla-starter/Popover';
 import {useMemo, useRef, useState} from 'react';
@@ -157,7 +157,7 @@ const slashCommands = [
 function Example() {
   let inputRef = useRef(null);
   let [value, setValue] = useState(
-    new TokenSegmentList([
+    new TokenFieldValue([
       {type: 'text', text: 'This example has autocomplete for '},
       {type: 'token', text: '@usernames'},
       {type: 'text', text: ' and '},
@@ -231,17 +231,17 @@ function Example() {
 
 ## Tag field
 
-Use a custom `TokenSegmentList` to build a tag input. This example converts comma, space, or newline separated text into tokens.
+Use a custom `TokenFieldValue` to build a tag input. This example converts comma, space, or newline separated text into tokens.
 
-```tsx render files={["packages/dev/s2-docs/pages/react-aria/TagFieldSegmentList.ts"]}
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/TagFieldValue.ts"]}
 "use client";
 import {Token, TokenField} from 'vanilla-starter/TokenField';
-import {TagFieldSegmentList} from './TagFieldSegmentList';
+import {TagFieldValue} from './TagFieldValue';
 
 <TokenField
   allowsNewlines
   defaultValue={
-    new TagFieldSegmentList([
+    new TagFieldValue([
       {type: 'token', text: 'Architecture'},
       {type: 'token', text: 'Design'},
       {type: 'token', text: 'Development'},
@@ -266,7 +266,7 @@ import {Token, TokenField} from 'vanilla-starter/TokenField';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
 import {Popover} from 'vanilla-starter/Popover';
 import {useRef, useState} from 'react';
-import {TokenSegmentList} from 'react-stately/useTokenFieldState';
+import {TokenFieldValue} from 'react-stately/useTokenFieldState';
 
 /*- begin collapse -*/
 const usernames = [
@@ -301,7 +301,7 @@ const usernames = [
 function Example() {
   let inputRef = useRef(null);
   let [value, setValue] = useState(
-    new TokenSegmentList([{type: 'token', text: 'From: Alice Smith'}])
+    new TokenFieldValue([{type: 'token', text: 'From: Alice Smith'}])
   );
 
   let last = value.segments[value.caretPosition.index];
@@ -382,16 +382,16 @@ function Example() {
 
 ## ComboBox
 
-Use `TokenField` as the input for a [ComboBox](ComboBox) to build a multi-select field with tokens. Synchronize the `TokenSegmentList` with the ComboBox `value` and `inputValue` props using a custom segment list class.
+Use `TokenField` as the input for a [ComboBox](ComboBox) to build a multi-select field with tokens. Synchronize the `TokenFieldValue` with the ComboBox `value` and `inputValue` props using a custom segment list class.
 
-```tsx render files={["packages/dev/s2-docs/pages/react-aria/ComboBoxSegmentList.ts"]}
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/ComboBoxTokenFieldValue.ts"]}
 "use client";
 import {ComboBox} from 'react-aria-components/ComboBox';
 import {Token, TokenField} from 'vanilla-starter/TokenField';
 import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
 import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Popover} from 'vanilla-starter/Popover';
-import {ComboBoxSegmentList} from './ComboBoxSegmentList';
+import {ComboBoxTokenFieldValue} from './ComboBoxTokenFieldValue';
 import {ChevronDown} from 'lucide-react';
 import {useState} from 'react';
 
@@ -426,7 +426,7 @@ const usernames = [
 /*- end collapse -*/
 
 function Example() {
-  let [value, setValue] = useState(new ComboBoxSegmentList([]));
+  let [value, setValue] = useState(new ComboBoxTokenFieldValue([]));
 
   return (
     <ComboBox
@@ -476,6 +476,6 @@ function Example() {
 
 <PropTable component={docs.exports.Token} links={docs.links} />
 
-### TokenSegmentList
+### TokenFieldValue
 
-<ClassAPI class={docs.exports.TokenSegmentList} links={docs.links} />
+<ClassAPI class={docs.exports.TokenFieldValue} links={docs.links} />

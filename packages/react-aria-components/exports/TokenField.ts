@@ -21,11 +21,11 @@ export type {
   TokenFieldContext
 } from '../src/TokenField';
 export {positionToDOMRange} from 'react-aria/useTokenField';
-export {TokenSegmentList, Direction} from 'react-stately/useTokenFieldState';
+export {TokenFieldValue, Direction} from 'react-stately/useTokenFieldState';
 export type {
   TokenFieldSegment,
   TokenSegment,
   TextSegment,
   Position,
-  TokenSegmentListOptions
+  TokenFieldValueOptions
 } from 'react-stately/useTokenFieldState';
