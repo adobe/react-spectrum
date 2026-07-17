@@ -11,7 +11,7 @@
  */
 
 import {Button} from '@react-spectrum/s2/Button';
-import {endProse, prose} from '@react-spectrum/ai/style' with {type: 'macro'};
+import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import type {Meta, StoryObj} from '@storybook/react';
 import ProseExample from '../stories/prose.mdx';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -100,10 +100,6 @@ export const ProseOverrides: Story = {
         overrides <code>.prose a</code> for every state: because a higher layer beats a lower one
         regardless of specificity, the override even wins over prose’s <code>:hover</code> and{' '}
         <code>:active</code> colors.
-      </p>
-      <p className={endProse()}>
-        This paragraph is back to user agent defaults. Except for inherited things like fontFamily
-        or color. You'll see the margins are from the browser agent though.
       </p>
     </article>
   ),

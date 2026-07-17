@@ -1,1 +1,1 @@
-export {endProse, prose} from '../src/style/prose';
+export {prose} from '../src/style/prose';

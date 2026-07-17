@@ -237,15 +237,11 @@ export function prose(this: MacroContext | void) {
     return css;
   };
 
-  // Generate a single `.prose` block: the root declarations live at the top and
-  // every element becomes a nested rule (e.g. `h1 { ... }` resolves to `.prose h1`).
-  let css = '@scope (.prose) to (.stop-cascade) {\n';
+  let css = '.prose {\n';
   for (let key in rules) {
     let properties = rules[key];
     if (key === '.prose') {
-      css += `  :scope {\n`;
       css += emitProperties(properties, '  ');
-      css += '  }\n';
     } else {
       css += `  ${key} {\n`;
       css += emitProperties(properties, '    ');
@@ -270,11 +266,6 @@ export function prose(this: MacroContext | void) {
   });
 
   return hashedRoot;
-}
-
-export function endProse() {
-  // TODO: good way to hash this?
-  return 'stop-cascade';
 }
 
 // Generate a class name from a number, e.g. index within the theme.
