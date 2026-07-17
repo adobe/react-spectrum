@@ -37,6 +37,9 @@ export const Default: Story = {
       <ProseExample components={{CodeBlock: 'pre'}} />
     </article>
   ),
+  parameters: {
+    chromatic: {delay: 2000}
+  },
   name: 'prose'
 };
 
@@ -103,5 +106,8 @@ export const ProseOverrides: Story = {
         or color. You'll see the margins are from the browser agent though.
       </p>
     </article>
-  )
+  ),
+  parameters: {
+    chromatic: {delay: 2000}
+  }
 };
