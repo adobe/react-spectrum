@@ -17,11 +17,7 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {ChevronDown} from 'lucide-react';
 import {Collection, ComboBox} from 'react-aria-components';
 import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
-import {
-  Direction,
-  type TokenFieldSegment,
-  TokenFieldValue
-} from 'react-stately/useTokenFieldState';
+import {Direction, type TokenFieldSegment, TokenFieldValue} from 'react-stately/useTokenFieldState';
 import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
 import {Key} from '@react-types/shared';
