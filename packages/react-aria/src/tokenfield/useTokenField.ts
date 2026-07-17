@@ -445,9 +445,30 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
     }
   };
 
+  // macOS supports additional keyboard shortcuts for text editing.
+  // We need to handle these manually so they behave consistently with tokens.
+  // https://support.apple.com/en-us/102650#text
+  let macShortcuts: Record<string, () => boolean | void> = isMac()
+    ? {
+        'Control+a': () => {
+          return shortcuts.Home();
+        },
+        'Control+e': () => {
+          return shortcuts.End();
+        },
+        'Control+f': () => {
+          return shortcuts.ArrowRight();
+        },
+        'Control+b': () => {
+          return shortcuts.ArrowLeft();
+        }
+      }
+    : {};
+
   let mod = isMac() ? 'Meta' : 'Control';
   let wordModKey = isMac() ? 'Alt' : 'Control';
   let shortcuts: Record<string, () => boolean | void> = {
+    ...macShortcuts,
     [`${mod}+z`]: () => {
       // If composing, the browser handles undo natively.
       if (state.isComposing) {
@@ -514,25 +535,10 @@ export function useTokenField<T extends TokenSegmentList = TokenSegmentList>(
 
   let {keyboardProps} = useKeyboard({
     isDisabled: isDisabled || isReadOnly,
-    onKeyDown: e => {
-      props.onKeyDown?.(e);
-
-      // mini version of useKeyboard shortcuts until it is merged.
-      let modifiers = ['Shift', 'Control', 'Alt', 'Meta'] satisfies React.ModifierKey[];
-      let modifierKeys = modifiers.filter(modifier => e.getModifierState(modifier));
-      let keys = modifierKeys.length > 0 ? `${modifierKeys.join('+')}+${e.key}` : e.key;
-      let handler = shortcuts[keys];
-      if (handler) {
-        let result = handler();
-        if (result === true || result === undefined) {
-          e.preventDefault();
-          return;
-        }
-      }
-
-      e.continuePropagation();
-    },
-    onKeyUp: props.onKeyUp
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp,
+    shortcuts: shortcuts,
+    allowRepeats: true
   });
 
   let {focusableProps} = useFocusable(props, ref);

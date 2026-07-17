@@ -293,6 +293,92 @@ describeOrSkip('TokenField browser interactions', () => {
       await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
       await waitForSelection(textbox, {index: 0, offset: 11});
     });
+
+    describe('macOS Control shortcuts', () => {
+      it('moves to field start with Control+a on single line', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let list = segments(text('hello'));
+        let {textbox} = await renderControlledTokenField(list);
+        await navigateCaret(textbox, list, {index: 0, offset: 5});
+        await userEvent.keyboard('{Control>}a{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 0});
+      });
+
+      it('moves to field end with Control+e on single line', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let list = segments(text('hello'));
+        let {textbox} = await renderControlledTokenField(list);
+        await navigateCaret(textbox, list, {index: 0, offset: 0});
+        await userEvent.keyboard('{Control>}e{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 5});
+      });
+
+      it('moves to previous line boundary with Control+a in multiline field', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let multiline = segments(text('hello\nworld'));
+        let {textbox} = await renderControlledTokenField(multiline);
+        await navigateCaret(textbox, multiline, {index: 0, offset: 11});
+        await userEvent.keyboard('{Control>}a{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 5});
+      });
+
+      it('moves to end of line with Control+e in multiline field', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let multiline = segments(text('hello\nworld'));
+        let {textbox} = await renderControlledTokenField(multiline);
+        await navigateCaret(textbox, multiline, {index: 0, offset: 6});
+        await userEvent.keyboard('{Control>}e{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 11});
+      });
+
+      it('skips over token with Control+f from end of preceding text', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let {textbox} = await renderControlledTokenField(abTokCd);
+        await navigateCaretFromEnd(textbox, abTokCd, {index: 0, offset: 2});
+        await userEvent.keyboard('{Control>}f{/Control}');
+        await waitForSelection(textbox, {index: 2, offset: 0});
+      });
+
+      it('skips over token with Control+b from start of following text', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let {textbox} = await renderControlledTokenField(abTokCd);
+        await navigateCaretFromEnd(textbox, abTokCd, {index: 2, offset: 0});
+        await userEvent.keyboard('{Control>}b{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 2});
+      });
+
+      it('moves over an emoji as a single grapheme with Control+f and Control+b', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let list = segments(text('a😀b'));
+        let {textbox} = await renderControlledTokenField(list);
+        await navigateCaret(textbox, list, {index: 0, offset: 1});
+        await userEvent.keyboard('{Control>}f{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 3});
+        await userEvent.keyboard('{Control>}b{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 1});
+      });
+    });
   });
 
   describe('rtl caret movement', () => {
