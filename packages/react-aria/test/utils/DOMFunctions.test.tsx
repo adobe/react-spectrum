@@ -40,6 +40,37 @@ describe('nodeContains with shadow DOM', function () {
 
     cleanup();
   });
+
+  it('can tell if slotted light DOM content is contained by a node inside the shadow root', function () {
+    const {shadowHost, shadowRoot, cleanup} = createShadowRoot();
+
+    // A <slot> lives inside the shadow root, wrapped in a container element.
+    const container = document.createElement('div');
+    const slot = document.createElement('slot');
+    container.appendChild(slot);
+    shadowRoot.appendChild(container);
+
+    // A light DOM child of the host gets projected into the slot.
+    const button = document.createElement('button');
+    shadowHost.appendChild(button);
+
+    // Sanity check that the browser assigned the button to the slot.
+    expect(button.assignedSlot).toBe(slot);
+
+    // The button's DOM parent is the host (light DOM), so reaching `container`
+    // (inside the shadow root) is only possible by following assignedSlot:
+    // button -> assignedSlot (slot) -> slot.parentNode (container).
+    expect(nodeContains(container, button)).toBe(true);
+    expect(nodeContains(shadowRoot, button)).toBe(true);
+
+    // A sibling outside the slotted subtree should not be considered contained.
+    const outside = document.createElement('span');
+    document.body.appendChild(outside);
+    expect(nodeContains(container, outside)).toBe(false);
+    document.body.removeChild(outside);
+
+    cleanup();
+  });
 });
 
 describe('getPropagationTargets with shadow DOM', function () {
