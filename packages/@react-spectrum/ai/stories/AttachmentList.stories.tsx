@@ -30,6 +30,7 @@ const meta: Meta<typeof AttachmentList> = {
     ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}},
     isInvalid: {control: 'boolean'},
+    uploadProgress: {control: 'number', min: 0, max: 100},
     size: {
       control: 'radio',
       options: ['XS', 'S', 'M', 'L', 'XL']
@@ -44,28 +45,44 @@ export default meta;
 type Story = StoryObj<typeof AttachmentList>;
 
 function AttachmentListRender(args) {
-  let {isInvalid, size, ...listArgs} = args;
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
   return (
     <AttachmentList {...listArgs} styles={style({width: 500})}>
-      <AttachmentComponent isInvalid={isInvalid} size={size} aria-label="Demo file.pdf">
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="Demo file.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent isInvalid={isInvalid} size={size} aria-label="Alligator.pdf">
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="Alligator.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent isInvalid={isInvalid} size={size} aria-label="Rules.pdf">
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="Rules.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent isInvalid={isInvalid} size={size} aria-label="Echidna.pdf">
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="Echidna.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}

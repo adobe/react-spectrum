@@ -20,6 +20,7 @@ import {
   useRef,
   useState
 } from 'react';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 
 /**
  * Chromium brands whose Web Speech backend is known to work. Other Chromium
@@ -43,6 +44,8 @@ export type VoiceInputErrorCode =
 // it to contruct the transcript while still allowing the field be editable by the user and it was quite buggy
 export interface VoiceInputProps {
   lang?: string;
+  onError?: (code: VoiceInputErrorCode) => void;
+  onListeningChange?: (isListening: boolean) => void;
 }
 
 // TODO: make a accompanying aria hook later, this is more stately like
@@ -155,6 +158,8 @@ const readTranscript = (event: SpeechRecognitionEvent): {interim: string; final:
 interface RecognizerSetup {
   recognitionRef: RefObject<SpeechRecognition | null>;
   setListening: Dispatch<SetStateAction<boolean>>;
+  onListeningChange: (isListening: boolean) => void;
+  onError: (code: VoiceInputErrorCode) => void;
   setError: Dispatch<SetStateAction<VoiceInputErrorCode | null>>;
   setInterim: Dispatch<SetStateAction<string>>;
   appendFinal: (s: string) => void;
@@ -182,6 +187,7 @@ const createRecognizer = (
 
   recognition.onstart = () => {
     setup.setListening(true);
+    setup.onListeningChange(true);
   };
   recognition.onresult = event => {
     if (!isActive()) {
@@ -200,8 +206,10 @@ const createRecognizer = (
     const code = mapErrorCode(event.error);
     if (code) {
       setup.setError(code);
+      setup.onError(code);
     }
     setup.setListening(false);
+    setup.onListeningChange(false);
     setup.setInterim('');
     // Clear so the next press starts a fresh session instead of calling stop().
     setup.recognitionRef.current = null;
@@ -211,6 +219,7 @@ const createRecognizer = (
       return;
     }
     setup.setListening(false);
+    setup.onListeningChange(false);
     setup.setInterim('');
     setup.recognitionRef.current = null;
   };
@@ -219,7 +228,7 @@ const createRecognizer = (
 };
 
 export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
-  const {lang} = options;
+  const {lang, onError, onListeningChange} = options;
 
   // Resolve support once — it cannot change for the lifetime of the page.
   const ctor = useMemo(() => (isSecureVoiceContext() ? getRecognitionCtor() : null), []);
@@ -233,7 +242,12 @@ export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const startingRef = useRef(false);
-  const mountedRef = useRef(true);
+  const handleError = useEffectEvent((code: VoiceInputErrorCode) => {
+    onError?.(code);
+  });
+  const handleListeningChange = useEffectEvent((v: boolean) => {
+    onListeningChange?.(v);
+  });
 
   const stop = useCallback(() => {
     recognitionRef.current?.stop();
@@ -254,14 +268,12 @@ export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
     // and a denial is reported before recognition starts.
     void requestMicrophone().then(micError => {
       startingRef.current = false;
-      if (!mountedRef.current) {
-        return;
-      }
       if (micError) {
         setErrorCode(micError);
+        handleError(micError);
         return;
       }
-      // Bail if unmounted or already started while the prompt was open.
+      // Bail if already started while the permission prompt was open.
       if (recognitionRef.current) {
         return;
       }
@@ -269,6 +281,8 @@ export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
       const recognition = createRecognizer(ctor, lang ?? navigator.language ?? 'en-US', {
         recognitionRef,
         setListening: setIsListening,
+        onListeningChange: handleListeningChange,
+        onError: handleError,
         setError: setErrorCode,
         setInterim: setInterimTranscript,
         appendFinal: s => setFinalTranscript(prev => prev + s)
@@ -289,7 +303,6 @@ export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
   // Abort on unmount so dangling callbacks never fire after teardown.
   useEffect(() => {
     return () => {
-      mountedRef.current = false;
       recognitionRef.current?.abort();
     };
   }, []);

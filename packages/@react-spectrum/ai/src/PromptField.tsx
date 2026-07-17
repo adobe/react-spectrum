@@ -64,6 +64,7 @@ import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
+import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
 
@@ -310,7 +311,7 @@ export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps)
   return (
     <AttachmentList
       {...props}
-      aria-label={stringFormatter.format('promptfield.attachements')}
+      aria-label={stringFormatter.format('promptfield.attachments')}
       onRemove={keys => {
         let removedAttachments = attachments.filter(attachment => keys.has(attachment.id));
         onRemoveAttachments?.(removedAttachments);
@@ -342,7 +343,15 @@ export interface PromptTokenFieldProps {
 }
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
-  let {completionTrigger, renderCompletions, children, pixelLoader, placeholder, onKeyDown} = props;
+  let {
+    completionTrigger,
+    renderCompletions,
+    children,
+    pixelLoader,
+    placeholder,
+    onKeyDown: onKeyDownProp
+  } = props;
+  let {keyboardProps} = useKeyboard({onKeyDown: onKeyDownProp});
   let {
     prompt,
     setPrompt,
@@ -396,13 +405,13 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
       </CenterBaseline>
       <Autocomplete>
         <TokenField
+          {...keyboardProps}
           value={prompt}
           onChange={setPrompt}
           multiline
           aria-label={stringFormatter.format('promptfield.prompt')}
           data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
           isReadOnly={isListening}
-          onKeyDown={onKeyDown}
           ref={inputRef}
           onFocus={e => {
             if (e.isTrusted) {
@@ -615,11 +624,10 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let {
     isSupported,
     isListening: isVoiceListening,
-    errorCode,
     transcript,
     toggle,
     stop
-  } = useVoiceInput({lang});
+  } = useVoiceInput({lang, onError, onListeningChange: setListening});
 
   let restoreFocus = useEffectEvent(() => {
     if (!inputRef.current) {
@@ -642,15 +650,18 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
       wasListeningRef.current = false;
       restoreFocus();
     }
-    setListening(isVoiceListening);
-  }, [isVoiceListening, setListening]);
+  }, [isVoiceListening]);
 
-  useEffect(() => {
+  let applyVoiceTranscript = useEffectEvent(() => {
     if (!transcript || !isVoiceListening) {
       return;
     }
+
     setPrompt(buildVoicePrompt(basePromptRef.current, transcript));
-  }, [transcript, isVoiceListening, setPrompt]);
+  });
+  useEffect(() => {
+    applyVoiceTranscript();
+  }, [transcript, isVoiceListening]);
 
   // TODO this is from coworker, is to stop mutating the input text since the button becomes disabled when the chat
   // is streaming, keep it?
@@ -659,12 +670,6 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
       stop();
     }
   }, [isDisabled, isVoiceListening, stop]);
-
-  useEffect(() => {
-    if (errorCode) {
-      onError?.(errorCode);
-    }
-  }, [errorCode, onError]);
 
   if (!isSupported) {
     return null;

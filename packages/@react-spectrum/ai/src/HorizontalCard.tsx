@@ -532,6 +532,7 @@ const Card = forwardRef(function Card(
       <div
         {...filterDOMProps(otherProps)}
         id={id != null ? String(id) : undefined}
+        aria-invalid={isInvalid || undefined}
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
         ref={domRef}
@@ -559,6 +560,7 @@ const Card = forwardRef(function Card(
     <ElementType
       {...props}
       ref={domRef}
+      aria-invalid={isInvalid || undefined}
       className={renderProps =>
         mergeStyles(
           card({

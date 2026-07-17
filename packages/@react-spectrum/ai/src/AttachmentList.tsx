@@ -252,13 +252,16 @@ export const Attachment = forwardRef(function Attachment(
               top: '50%',
               insetStart: {
                 default: '50%',
-                ':has(~ [data-slot=content])': 32
+                ':has(~ [data-slot=content])':
+                  '[calc(var(--card-padding-x) + var(--basic-thumb-size) / 2)]'
               },
               transform: 'translate(-50%, -50%)'
             })}>
             <ProgressCircle
               aria-label={stringFormatter.format('promptfield.uploading')}
               value={props.uploadProgress}
+              // TODO: should probably be M for most thumbnail only attachments at varying sizes, but needs to be S if there is text content
+              // aka like a actualy horizontal card, but to do this I need to know if text sibling is there...
               size="S"
             />
           </div>
@@ -287,7 +290,7 @@ export const Attachment = forwardRef(function Attachment(
           )}
         </ImageContext.Consumer>
         {isInvalid && (
-          <div data-slot="attachment-error" className={attachmentErrorStyles}>
+          <div aria-hidden="true" className={attachmentErrorStyles}>
             <AlertTriangleIcon size={size} />
           </div>
         )}
