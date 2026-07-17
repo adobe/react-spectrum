@@ -2976,12 +2976,12 @@ describe('Table', () => {
 
       await act(() => stories.makePromise([]));
 
-      expect(mockCollectionUpdate).toHaveBeenCalledTimes(1);
+      expect(mockCollectionUpdate).toHaveBeenCalledTimes(2);
 
       let button = tree.getByRole('button');
       await act(() => button.click());
 
-      expect(mockCollectionUpdate).toHaveBeenCalledTimes(2);
+      expect(mockCollectionUpdate).toHaveBeenCalledTimes(3);
     });
   });
 
