@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '../src/Button';
+import {Form} from '../src/Form';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 import {Switch} from '../src/Switch';
-import {Form} from '../src/Form';
-import {Button} from '../src/Button';
 
 const meta: Meta<typeof Switch> = {
   component: Switch,
