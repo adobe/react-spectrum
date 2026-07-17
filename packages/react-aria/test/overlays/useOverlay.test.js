@@ -18,7 +18,7 @@ import {
   render
 } from '@react-spectrum/test-utils-internal';
 import {mergeProps} from '../../src/utils/mergeProps';
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {useOverlay} from '../../src/overlays/useOverlay';
 
 function Example(props) {
@@ -33,6 +33,19 @@ function Example(props) {
         {props.children}
       </div>
     </div>
+  );
+}
+
+function StatefulExample({defaultIsOpen, onClose, ...props}) {
+  let [isOpen, setIsOpen] = useState(defaultIsOpen);
+  return (
+    <Example
+      {...props}
+      isOpen={isOpen}
+      onClose={() => {
+        setIsOpen(false);
+        onClose?.();
+      }} />
   );
 }
 
@@ -213,6 +226,9 @@ describe('useOverlay', function () {
             closeWatcherInstances.splice(index, 1);
           }
         }
+        static closeTopMost() {
+          closeWatcherInstances[closeWatcherInstances.length - 1]?.onclose();
+        }
       };
       globalThis.CloseWatcher = MockCloseWatcher;
     });
@@ -340,51 +356,47 @@ describe('useOverlay', function () {
     it('should only dismiss the top-most nested overlay on Escape when CloseWatcher is active', function () {
       let onCloseOuter = jest.fn();
       let onCloseInner = jest.fn();
-      render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
-      let inner = render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
+      let res = render(
+        <>
+          <StatefulExample defaultIsOpen onClose={onCloseOuter} data-testid="outer" />
+          <StatefulExample defaultIsOpen onClose={onCloseInner} data-testid="inner" />
+        </>
+      );
 
-      let innerEl = inner.getByTestId('inner');
+      let innerEl = res.getByTestId('inner');
 
       fireEvent.keyDown(innerEl, {key: 'Escape'});
       expect(onCloseInner).not.toHaveBeenCalled();
       expect(onCloseOuter).not.toHaveBeenCalled();
 
-      closeWatcherInstances[1].onclose();
+      act(() => MockCloseWatcher.closeTopMost());
       expect(onCloseInner).toHaveBeenCalledTimes(1);
       expect(onCloseOuter).not.toHaveBeenCalled();
-    });
-
-    it('should let the browser determine which CloseWatcher closes', function () {
-      let onCloseOuter = jest.fn();
-      let onCloseInner = jest.fn();
-      render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
-      render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
-
-      closeWatcherInstances[0].onclose();
-      expect(onCloseOuter).toHaveBeenCalledTimes(1);
-      expect(onCloseInner).not.toHaveBeenCalled();
+      expect(res.queryByTestId('inner')).toBeNull();
+      expect(closeWatcherInstances).toHaveLength(1);
     });
 
     it('should dismiss inner then outer with native watcher stack', function () {
       let onCloseOuter = jest.fn();
       let onCloseInner = jest.fn();
-      render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
-      let inner = render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
+      let res = render(
+        <>
+          <StatefulExample defaultIsOpen onClose={onCloseOuter} data-testid="outer" />
+          <StatefulExample defaultIsOpen onClose={onCloseInner} data-testid="inner" />
+        </>
+      );
 
       expect(closeWatcherInstances.length).toBe(2);
 
-      // Dismiss inner overlay via its watcher
-      closeWatcherInstances[1].onclose();
+      act(() => MockCloseWatcher.closeTopMost());
       expect(onCloseInner).toHaveBeenCalledTimes(1);
-      expect(closeWatcherInstances.length).toBe(2);
-
-      // Unmount inner - the outer watcher remains.
-      inner.unmount();
+      expect(res.queryByTestId('inner')).toBeNull();
       expect(closeWatcherInstances.length).toBe(1);
 
-      // Dismiss outer via its watcher
-      closeWatcherInstances[0].onclose();
+      act(() => MockCloseWatcher.closeTopMost());
       expect(onCloseOuter).toHaveBeenCalledTimes(1);
+      expect(res.queryByTestId('outer')).toBeNull();
+      expect(closeWatcherInstances.length).toBe(0);
     });
   });
 });

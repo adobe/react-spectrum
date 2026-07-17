@@ -220,13 +220,9 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
 
   // Handle the escape key.
   let {keyboardProps} = useKeyboard({
-    shortcuts: {
+    shortcuts: supportsCloseWatcher() ? undefined : {
       Escape: e => {
         if (e.nativeEvent.cancelBubble) {
-          return false;
-        }
-
-        if (supportsCloseWatcher()) {
           return false;
         }
 
