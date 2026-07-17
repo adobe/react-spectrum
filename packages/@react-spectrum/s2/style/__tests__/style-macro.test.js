@@ -37,7 +37,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a, _.b, _.c;
+"@layer prose, _.a, _.b, _.c;
 
 @layer _.b {
   .Jbs151:first-child {
@@ -70,7 +70,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer prose, _.a;
 
 @layer _.a {
   ._kc151 {
@@ -238,7 +238,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer prose, _.a;
 
 @layer _.a {
   .gH151 {
@@ -292,7 +292,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer prose, _.a;
 
 @layer _.a {
   .gH151 {
@@ -352,7 +352,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a, _.b;
+"@layer prose, _.a, _.b;
 
 @layer _.b.l {
   @media (forced-colors: active) {
@@ -402,7 +402,7 @@ describe('style-macro', () => {
 
     expect(js).toMatchInlineSnapshot(`" Th151 Qh151 Sh151 Rh151 -macro-static-dvFMTb"`);
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer prose, _.a;
 
 @layer _.a {
   .Th151 {
@@ -439,7 +439,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer prose, _.a;
 
 @layer _.a {
   .gpQzfVb151 {
@@ -464,7 +464,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer prose, _.a;
 
 @layer _.a {
   .-FUeYm-gE151 {

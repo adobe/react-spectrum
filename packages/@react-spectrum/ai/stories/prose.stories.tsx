@@ -12,7 +12,7 @@
 
 import {createPortal} from 'react-dom';
 import type {Meta} from '@storybook/react';
-import {prose} from '../src/style/prose' with {type: 'macro'};
+import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import ProseExample from './prose.mdx';
 // @ts-ignore
 import React, {ReactNode, useRef, useState} from 'react';

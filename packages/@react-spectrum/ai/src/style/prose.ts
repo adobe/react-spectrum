@@ -25,6 +25,13 @@ interface MacroContext {
   addAsset(asset: {type: string; content: string}): void;
 }
 
+// in order of importance
+// - Opt out API for elements, Tailwind .not-prose. Can we use `scope`? @scope is "newly available"
+// - Size variable?
+// - mergeStyles?
+// - plan for eventually extending, such as changing font
+// - plan for https://github.com/tailwindlabs/tailwindcss-typography#element-modifiers
+
 const marginTop = {
   body: getToken('body-margin-multiplier') + 'em',
   heading: getToken('heading-margin-top-multiplier') + 'em',
@@ -41,7 +48,7 @@ const marginBottom = {
 
 export function prose(this: MacroContext | void) {
   let rules = {
-    '.prose': font('body'),
+    '.prose': font('body'), // note: `prose` is a placeholder class name that will be replaced with a hashed class name
     h1: {
       ...font('heading-xl'),
       ...margin('heading')
@@ -205,39 +212,117 @@ export function prose(this: MacroContext | void) {
     }
   };
 
-  let css = '';
-  for (let key in rules) {
-    let selector = key === '.prose' ? '.prose' : `.prose ${key}`;
-    css += `${selector} {\n`;
-    let properties = rules[key];
+  // Emit the declarations (and any conditional sub-rules) for a single element,
+  // indented by `indent`. Nested `&`-conditions are relative to the enclosing rule.
+  let emitProperties = (properties: Record<string, any>, indent: string) => {
+    let css = '';
     for (let property in properties) {
       let value = properties[property];
       let prop = property.replace(/([a-z])([A-Z])/g, (_, a, b) => `${a}-${b.toLowerCase()}`);
       if (typeof value === 'object') {
         if (value.default) {
-          css += `  ${prop}: ${value.default};\n`;
+          css += `${indent}${prop}: ${value.default};\n`;
         }
         for (let condition in value) {
-          // eslint-disable-next-line
+          // eslint-disable-next-line max-depth
           if (condition === 'default') {
             continue;
           }
-          css += `  ${condition.startsWith(':') ? '&' : ''}${condition} { ${prop}: ${value[condition]}; }\n`;
+          css += `${indent}${condition.startsWith(':') ? '&' : ''}${condition} { ${prop}: ${value[condition]}; }\n`;
         }
       } else {
-        css += `  ${prop}: ${value};\n`;
+        css += `${indent}${prop}: ${value};\n`;
       }
     }
+    return css;
+  };
 
-    css += `}\n\n`;
+  // Generate a single `.prose` block: the root declarations live at the top and
+  // every element becomes a nested rule (e.g. `h1 { ... }` resolves to `.prose h1`).
+  let css = '@scope (.prose) to (.stop-cascade) {\n';
+  for (let key in rules) {
+    let properties = rules[key];
+    if (key === '.prose') {
+      css += `  :scope {\n`;
+      css += emitProperties(properties, '  ');
+      css += '  }\n';
+    } else {
+      css += `  ${key} {\n`;
+      css += emitProperties(properties, '    ');
+      css += '  }\n';
+    }
   }
+  css += '}\n';
+
+  let hashedRoot = toBase62(hash(css));
+  css = css.replaceAll('prose', `${hashedRoot}`);
+
+  // The prose layer is always lower priority than the style macro layers.
+  css = `@layer prose, _;
+  
+@layer prose {
+  ${css}
+}`;
 
   this?.addAsset({
     type: 'css',
     content: css
   });
 
-  return 'prose';
+  return hashedRoot;
+}
+
+export function endProse() {
+  // TODO: good way to hash this?
+  return 'stop-cascade';
+}
+
+// Generate a class name from a number, e.g. index within the theme.
+// This maps to an alphabet containing lower case letters, upper case letters, and numbers.
+// For numbers larger than 62, an underscore is prepended.
+// This encoding allows easy parsing to enable runtime merging by property.
+function generateName(index: number, atStart = false): string {
+  if (index < 26) {
+    // lower case letters
+    return String.fromCharCode(index + 97);
+  }
+
+  if (index < 52) {
+    // upper case letters
+    return String.fromCharCode(index - 26 + 65);
+  }
+
+  if (index < 62 && !atStart) {
+    // numbers
+    return String.fromCharCode(index - 52 + 48);
+  }
+
+  return '_' + generateName(index - (atStart ? 52 : 62));
+}
+
+function toBase62(value: number) {
+  if (value === 0) {
+    return generateName(value);
+  }
+
+  let res = '';
+  while (value) {
+    let remainder = value % 62;
+    res += generateName(remainder);
+    value = Math.floor((value - remainder) / 62);
+  }
+
+  return res;
+}
+
+// djb2 hash function.
+// http://www.cse.yorku.ca/~oz/hash.html
+function hash(v: string) {
+  let hash = 5381;
+  for (let i = 0; i < v.length; i++) {
+    hash = ((hash << 5) + hash + v.charCodeAt(i)) >>> 0;
+  }
+  return hash;
 }
 
 // Text color per font category. Resolved from static token names so the values
