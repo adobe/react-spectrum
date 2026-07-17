@@ -15,7 +15,7 @@ import {Description, Label, fieldBorderStyles} from './Field';
 import {composeTailwindRenderProps, focusRing} from './utils';
 
 const tokenFieldStyles = tv({
-  base: 'flex flex-col gap-1 font-sans'
+  base: 'flex flex-col gap-1 font-sans w-full'
 });
 
 const tokenInputStyles = tv({

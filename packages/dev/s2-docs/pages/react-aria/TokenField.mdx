@@ -431,7 +431,7 @@ function Example() {
   return (
     <ComboBox
       selectionMode="multiple"
-      style={{width: 500}}
+      style={{width: 500, maxWidth: '100%'}}
       value={value.getSelectedKeys()}
       inputValue={value.getInputValue()}
       onChange={keys => setValue(value.setSelectedKeys(keys))}>
