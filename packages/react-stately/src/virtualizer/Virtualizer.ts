@@ -343,9 +343,9 @@ export class Virtualizer<T extends object, V> {
   }
 
   // Captures a reference point before a layout change so the user's scroll position can
-  // be restored afterward. Finds the visible item whose top edge sits closest to the top
-  // of the viewport, and records its key and distance from the viewport top.
-  // Top corners are always used. Returns null if the layout is not reversed.
+  // be restored afterward. Finds the visible item whose corner sits closest to the top
+  // of the viewport, and records its key, that corner, and its distance from the viewport top.
+  // Returns null if the layout is not reversed.
   private _getScrollAnchor(): ScrollAnchor | null {
     if (!this._isAnchoredToEnd) {
       return null;
@@ -361,14 +361,11 @@ export class Virtualizer<T extends object, V> {
         continue;
       }
       if (layoutInfo && layoutInfo.rect.area > 0 && layoutInfo.rect.intersects(visibleRect)) {
+        // If the item spans the entire viewport (e.g. very large item), none of its corners
+        // are contained in visibleRect and getCornerInRect returns null. Falling back to
+        // topLeft here anchors on a point that may be off-screen — a known latent issue,
+        // not addressed here.
         let corner = layoutInfo.rect.getCornerInRect(visibleRect) ?? 'topLeft';
-        // Force top corners: bottom corners on a clipped item can drift if the item resizes.
-        if (corner === 'bottomLeft') {
-          corner = 'topLeft';
-        }
-        if (corner === 'bottomRight') {
-          corner = 'topRight';
-        }
         let offset = layoutInfo.rect[corner].y - visibleRect.y;
         if (!best || offset < best.offset) {
           best = {key, corner, offset};
