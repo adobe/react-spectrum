@@ -88,6 +88,7 @@ export {useFocusable, Focusable} from '../src/interactions/useFocusable';
 export {Pressable} from '../src/interactions/Pressable';
 export {useField} from '../src/label/useField';
 export {useLabel} from '../src/label/useLabel';
+export {useFileField} from '../src/filetrigger/useFileField';
 export {useGridList} from '../src/gridlist/useGridList';
 export {useGridListItem} from '../src/gridlist/useGridListItem';
 export {useGridListSection} from '../src/gridlist/useGridListSection';
@@ -347,6 +348,11 @@ export type {PressableProps} from '../src/interactions/Pressable';
 export type {ScrollWheelProps} from '../src/interactions/useScrollWheel';
 export type {AriaFieldProps, FieldAria} from '../src/label/useField';
 export type {LabelAria, LabelAriaProps} from '../src/label/useLabel';
+export type {
+  AriaFileFieldProps,
+  FileFieldAria,
+  FileFieldTriggerProps
+} from '../src/filetrigger/useFileField';
 export type {
   AriaLandmarkRole,
   AriaLandmarkProps,
