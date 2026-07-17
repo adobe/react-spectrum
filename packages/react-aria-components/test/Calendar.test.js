@@ -501,6 +501,84 @@ describe('Calendar', () => {
     expect(cell).not.toHaveClass('selected');
   });
 
+  describe('selectDate', () => {
+    // Use a fixed date so the tests are deterministic regardless of the current date.
+    let focusedDate = new CalendarDate(2026, 4, 15);
+
+    let SelectDateExample = () => {
+      let state = useContext(CalendarStateContext);
+      return (
+        <ButtonContext.Provider value={null}>
+          <Button onPress={() => state.selectDate(focusedDate)}>Select focused</Button>
+          <Button onPress={() => state.selectDate(focusedDate.subtract({months: 1}))}>
+            Select one month before
+          </Button>
+          <Button onPress={() => state.selectDate(focusedDate.add({months: 1}))}>
+            Select one month after
+          </Button>
+          <span data-testid="selected-value">{state.value ? state.value.toString() : 'none'}</span>
+        </ButtonContext.Provider>
+      );
+    };
+
+    it('selects a date before the visible range when isDateUnavailable is provided', async () => {
+      let {getByRole, getAllByRole, getByTestId} = render(
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={focusedDate}
+          isDateUnavailable={() => false}>
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarHeading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <SelectDateExample />
+        </Calendar>
+      );
+
+      // Navigate to the next month so the focused date is before the visible range.
+      await user.click(getAllByRole('button', {name: 'Next'})[0]);
+
+      // Selecting a date before the visible range should still work.
+      await user.click(getByRole('button', {name: 'Select focused'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(focusedDate.toString());
+
+      await user.click(getByRole('button', {name: 'Select one month before'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(
+        focusedDate.subtract({months: 1}).toString()
+      );
+    });
+
+    it('selects a date after the visible range when isDateUnavailable is provided', async () => {
+      let {getByRole, getByTestId} = render(
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={focusedDate}
+          isDateUnavailable={() => false}>
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarHeading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <SelectDateExample />
+        </Calendar>
+      );
+
+      // Navigate to the previous month so the focused date is after the visible range.
+      await user.click(getByRole('button', {name: 'Previous'}));
+
+      await user.click(getByRole('button', {name: 'Select focused'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(focusedDate.toString());
+
+      await user.click(getByRole('button', {name: 'Select one month after'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(
+        focusedDate.add({months: 1}).toString()
+      );
+    });
+  });
+
   it('should not modify selection when trying to select an unavailable date by keyboard', async () => {
     let calendar = renderCalendar({isDateUnavailable: d => d.day === 15});
     let day16 = calendar.getByText('16');

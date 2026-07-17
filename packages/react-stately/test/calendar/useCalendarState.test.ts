@@ -11,32 +11,37 @@
  */
 
 import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
-import {createCalendar, getLocalTimeZone, today} from '@internationalized/date';
+import {CalendarDate, createCalendar} from '@internationalized/date';
 import {useCalendarState} from '../../src/calendar/useCalendarState';
 
 describe('useCalendarState', () => {
   describe('selectDate', () => {
     // https://github.com/adobe/react-spectrum/issues/7779
+    let selectedDate = new CalendarDate(2026, 4, 15);
+
     it('selects a date before the visible range when isDateUnavailable is provided', () => {
       let {result} = renderHook(() =>
         useCalendarState({
           locale: 'en-US',
           createCalendar,
-          isDateUnavailable: () => false
+          isDateUnavailable: () => false,
+          defaultFocusedValue: selectedDate
         })
       );
 
-      let todayDate = today(getLocalTimeZone());
+      // Navigate to the next month so the selected date is before the visible range.
+      act(() => {
+        result.current.focusNextPage();
+      });
+      expect(result.current.visibleRange.start.compare(selectedDate)).toBeGreaterThan(0);
 
-      // Navigate to the next month so today is before the visible range.
-      act(() => {result.current.focusNextPage();});
-      expect(result.current.visibleRange.start.compare(todayDate)).toBeGreaterThan(0);
-
-      // Selecting today (which is before the visible range) should still work.
-      act(() => {result.current.selectDate(todayDate);});
+      // Selecting a date before the visible range should still work.
+      act(() => {
+        result.current.selectDate(selectedDate);
+      });
 
       expect(result.current.value).not.toBeNull();
-      expect(result.current.value!.compare(todayDate)).toBe(0);
+      expect(result.current.value!.compare(selectedDate)).toBe(0);
     });
 
     it('selects a date after the visible range when isDateUnavailable is provided', () => {
@@ -44,20 +49,23 @@ describe('useCalendarState', () => {
         useCalendarState({
           locale: 'en-US',
           createCalendar,
-          isDateUnavailable: () => false
+          isDateUnavailable: () => false,
+          defaultFocusedValue: selectedDate
         })
       );
 
-      let todayDate = today(getLocalTimeZone());
+      // Navigate to the previous month so the selected date is after the visible range.
+      act(() => {
+        result.current.focusPreviousPage();
+      });
+      expect(result.current.visibleRange.end.compare(selectedDate)).toBeLessThan(0);
 
-      // Navigate to the previous month so today is after the visible range.
-      act(() => {result.current.focusPreviousPage();});
-      expect(result.current.visibleRange.end.compare(todayDate)).toBeLessThan(0);
-
-      act(() => {result.current.selectDate(todayDate);});
+      act(() => {
+        result.current.selectDate(selectedDate);
+      });
 
       expect(result.current.value).not.toBeNull();
-      expect(result.current.value!.compare(todayDate)).toBe(0);
+      expect(result.current.value!.compare(selectedDate)).toBe(0);
     });
   });
 });
