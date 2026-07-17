@@ -732,7 +732,7 @@ let photos = [
   items={photos}
   selectionMode="multiple"
   aria-label="Shared files">
-    {item => (
+  {item => (
     <GridListItem textValue={item.title}>
       <img src={item.src} alt="" />
       <Text>
@@ -742,6 +742,58 @@ let photos = [
     </GridListItem>
   )}
 </GridList>
+```
+
+You can further control if a row automatically focuses itself or its children on keyboard focus via `focusMode`. Futhermore, `allowsArrowNavigation` can be used to allow arrow key navigation from the row's children to adjacent rows.
+This allows keyboard users to navigate to the contents of the row without needing to tab in and out of the row even when in tab keyboard navigation.
+Be sure to only set `allowsArrowNavigation` on rows whose interactive content don't use arrow keys.
+
+```tsx render
+"use client";
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+///- begin collapse -///
+let initialItems = [
+  {id: 1, name: 'Apple', image: 'https://images.unsplash.com/photo-1630563451961-ac2ff27616ab?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0'},
+  {id: 2, name: 'Peach', image: 'https://images.unsplash.com/photo-1642372849486-f88b963cb734?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0'},
+  {id: 3, name: 'Blueberry', image: 'https://images.unsplash.com/photo-1606757389667-45c2024f9fa4?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0'},
+  {id: 4, name: 'Broccoli', image: 'https://images.unsplash.com/photo-1685504445355-0e7bdf90d415?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0'},
+  {id: 5, name: 'Brussels Sprouts', image: 'https://images.unsplash.com/photo-1685504507286-dc290728c01a?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0'},
+  {id: 6, name: 'Peas', image: 'https://images.unsplash.com/photo-1587411768345-867e228218c8?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0'},
+];
+///- end collapse -///
+
+function Example() {
+  let [items, setItems] = useState(initialItems);
+  return (
+    <GridList
+      items={items}
+      layout="stack"
+      orientation="vertical"
+      keyboardNavigationBehavior="tab"
+      aria-label="Shopping cart">
+      {item => (
+        <GridListItem
+          /*- begin highlight -*/
+          focusMode="child"
+          allowsArrowNavigation
+          /*- end highlight -*/
+          textValue={item.name}>
+          <img src={item.image} width={60} height={60} alt="" />
+          <Text>{item.name}</Text>
+          <Button
+            style={{width: 150, marginInlineStart: 10}}
+            variant="secondary"
+            onPress={() => setItems(prev => prev.filter(i => i.id !== item.id))}>
+            Remove from cart
+          </Button>
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
 ```
 
 ## Drag and drop
