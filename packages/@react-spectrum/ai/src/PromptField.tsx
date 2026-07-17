@@ -682,6 +682,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   return (
     <TooltipTrigger>
       <ToggleButton
+        staticColor="auto"
         isQuiet
         isSelected={isVoiceListening}
         isDisabled={isDisabled}
@@ -698,10 +699,11 @@ function buildVoicePrompt(base: TokenSegmentList, voiceText: string): AutoLinkin
   if (!voiceText) {
     return base as AutoLinkingSegmentList;
   }
-  let segments: TokenFieldSegment[] = [...base.segments, {type: 'text', text: voiceText}];
-  return new AutoLinkingSegmentList(segments, {
-    caretPosition: {index: segments.length - 1, offset: voiceText.length}
-  });
+  return base.replaceRange(
+    base.caretPosition,
+    base.caretPosition,
+    voiceText
+  ) as AutoLinkingSegmentList;
 }
 
 export interface InsertMenuItemProps {
@@ -816,7 +818,7 @@ export function InsertTextMenuItem(props: MenuItemProps) {
 // specifically for menu items that only trigger a callback in the autocomplete menu
 // since they dont end up inserting a token or text, we need to clear the partial text that the user used
 // to filter the menu
-export function InsertCallbackMenuItem(props: MenuItemProps) {
+export function CommandMenuItem(props: MenuItemProps) {
   let insert = useInsertPromptSegment(() => []);
   return (
     <MenuItem

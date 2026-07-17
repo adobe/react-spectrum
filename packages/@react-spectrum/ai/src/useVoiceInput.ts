@@ -290,7 +290,8 @@ export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
       recognitionRef.current = recognition;
       recognition.start();
     });
-  }, [ctor, lang]);
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [ctor, lang, handleError, handleListeningChange]);
 
   const toggle = useCallback(() => {
     if (recognitionRef.current) {

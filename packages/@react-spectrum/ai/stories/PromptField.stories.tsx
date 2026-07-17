@@ -15,7 +15,7 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {
   AttachFileMenuItem,
   AutoLinkingSegmentList,
-  InsertCallbackMenuItem,
+  CommandMenuItem,
   InsertMenuButton,
   InsertTextMenuItem,
   InsertTokenMenuItem,
@@ -193,14 +193,11 @@ function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks)
             <Text slot="description">{item.description}</Text>
           </MenuItem>
         ) : item.command === '/compact' ? (
-          <InsertCallbackMenuItem
-            key={item.command}
-            id={item.command}
-            onAction={callbacks?.onCompact}>
+          <CommandMenuItem key={item.command} id={item.command} onAction={callbacks?.onCompact}>
             <Prompt />
             <Text slot="label">{item.command}</Text>
             <Text slot="description">{item.description}</Text>
-          </InsertCallbackMenuItem>
+          </CommandMenuItem>
         ) : item.command === '/feedback' || item.command === '/btw' ? (
           // coworker doesn't seem to have any text insertion commands anymore, so I added these for testing
           <InsertTextMenuItem key={item.command} id={item.command} value={item}>
@@ -456,7 +453,7 @@ function EverythingRender(args) {
                   ) : item.command === '/compact' ? (
                     // TODO: technically can be a standard menu item since triggering this action
                     // from the + menu means no partial text to clear, but maybe we can just standardize
-                    // InsertCallbackMenuItem as the "basic" menu item for prompt field
+                    // CommandMenuItem as the "basic" menu item for prompt field
                     <MenuItem id={item.command} onAction={action('onCompact')}>
                       <Text slot="label">{item.command}</Text>
                       <Text slot="description">{item.description}</Text>
@@ -511,7 +508,7 @@ function EverythingRender(args) {
             </SubmenuTrigger>
           </InsertMenuButton>
           {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
-          <div style={{display: 'flex', gap: 4, alignItems: 'center'}}>
+          <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
             <PromptFieldVoiceButton />
             <PromptFieldSubmitButton />
           </div>
