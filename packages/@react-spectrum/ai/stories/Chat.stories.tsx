@@ -479,6 +479,8 @@ export function StreamingChat() {
                 // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
                 return (
                   <ThreadItem
+                    allowsArrowNavigation
+                    focusMode="child"
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
