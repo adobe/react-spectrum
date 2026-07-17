@@ -523,11 +523,7 @@ export class Virtualizer<T extends object, V> {
       needsLayout = true;
     }
 
-    // If the reversed mode was off and is now being turned on, reset the initialization flag so the initial snap-to-bottom fires.
     if (isReversed !== this._isAnchoredToEnd || scrollEndThreshold !== this._scrollEndThreshold) {
-      if (!this._isAnchoredToEnd && isReversed) {
-        this._hasInitializedReverseAnchor = false;
-      }
       this._isAnchoredToEnd = isReversed;
       this._scrollEndThreshold = scrollEndThreshold;
       needsLayout = true;
