@@ -37,9 +37,6 @@ export const Default: Story = {
       <ProseExample components={{CodeBlock: 'pre'}} />
     </article>
   ),
-  parameters: {
-    chromatic: {delay: 2000}
-  },
   name: 'prose'
 };
 
@@ -102,8 +99,5 @@ export const ProseOverrides: Story = {
         <code>:active</code> colors.
       </p>
     </article>
-  ),
-  parameters: {
-    chromatic: {delay: 2000}
-  }
+  )
 };
