@@ -39,12 +39,14 @@ import {
   wordDeleteModKey,
   wordNavModKey
 } from './utils/tokenFieldBrowserUtils';
-import {CLIPBOARD_MIME_TYPE, Token, TokenField} from '../src/TokenField';
 import {commands, userEvent} from 'vitest/browser';
 import {describe, expect, it} from 'vitest';
 import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
+import {Token, TokenField, TokenInput} from '../src/TokenField';
+
+const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
 declare module 'vitest/browser' {
   interface BrowserCommands {
@@ -76,7 +78,7 @@ describeOrSkip('TokenField browser interactions', () => {
     it('should render textbox and tokens', async () => {
       let screen = await render(
         <TokenField defaultValue={abTokCd} aria-label="Message">
-          {segment => <Token>{segment.text}</Token>}
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );
       await expect.element(screen.getByRole('textbox', {name: 'Message'})).toBeInTheDocument();
@@ -112,7 +114,7 @@ describeOrSkip('TokenField browser interactions', () => {
             onChange={e => setValue(segments(text(e.target.value)))}
           />
           <TokenField aria-label="Focus test" value={value} onChange={setValue}>
-            {segment => <Token>{segment.text}</Token>}
+            <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
           </TokenField>
         </>
       );
@@ -290,6 +292,92 @@ describeOrSkip('TokenField browser interactions', () => {
       let mod = modKey();
       await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
       await waitForSelection(textbox, {index: 0, offset: 11});
+    });
+
+    describe('macOS Control shortcuts', () => {
+      it('moves to field start with Control+a on single line', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let list = segments(text('hello'));
+        let {textbox} = await renderControlledTokenField(list);
+        await navigateCaret(textbox, list, {index: 0, offset: 5});
+        await userEvent.keyboard('{Control>}a{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 0});
+      });
+
+      it('moves to field end with Control+e on single line', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let list = segments(text('hello'));
+        let {textbox} = await renderControlledTokenField(list);
+        await navigateCaret(textbox, list, {index: 0, offset: 0});
+        await userEvent.keyboard('{Control>}e{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 5});
+      });
+
+      it('moves to previous line boundary with Control+a in multiline field', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let multiline = segments(text('hello\nworld'));
+        let {textbox} = await renderControlledTokenField(multiline);
+        await navigateCaret(textbox, multiline, {index: 0, offset: 11});
+        await userEvent.keyboard('{Control>}a{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 5});
+      });
+
+      it('moves to end of line with Control+e in multiline field', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let multiline = segments(text('hello\nworld'));
+        let {textbox} = await renderControlledTokenField(multiline);
+        await navigateCaret(textbox, multiline, {index: 0, offset: 6});
+        await userEvent.keyboard('{Control>}e{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 11});
+      });
+
+      it('skips over token with Control+f from end of preceding text', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let {textbox} = await renderControlledTokenField(abTokCd);
+        await navigateCaretFromEnd(textbox, abTokCd, {index: 0, offset: 2});
+        await userEvent.keyboard('{Control>}f{/Control}');
+        await waitForSelection(textbox, {index: 2, offset: 0});
+      });
+
+      it('skips over token with Control+b from start of following text', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let {textbox} = await renderControlledTokenField(abTokCd);
+        await navigateCaretFromEnd(textbox, abTokCd, {index: 2, offset: 0});
+        await userEvent.keyboard('{Control>}b{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 2});
+      });
+
+      it('moves over an emoji as a single grapheme with Control+f and Control+b', async () => {
+        if (!isMacPlatform()) {
+          return;
+        }
+
+        let list = segments(text('a😀b'));
+        let {textbox} = await renderControlledTokenField(list);
+        await navigateCaret(textbox, list, {index: 0, offset: 1});
+        await userEvent.keyboard('{Control>}f{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 3});
+        await userEvent.keyboard('{Control>}b{/Control}');
+        await waitForSelection(textbox, {index: 0, offset: 1});
+      });
     });
   });
 
@@ -804,7 +892,7 @@ describeOrSkip('TokenField browser interactions', () => {
 
     it('inserts a newline on Enter in a multiline field', async () => {
       let {textbox, getValue} = await renderControlledTokenField(segments(text('')), {
-        multiline: true
+        allowsNewlines: true
       });
       await focusField(textbox);
       await userEvent.type(textbox, 'ab');
@@ -818,7 +906,7 @@ describeOrSkip('TokenField browser interactions', () => {
         return;
       }
       // Put multiline text on the clipboard by copying it from a source field.
-      let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
+      let source = await renderControlledTokenField(segments(text('a\nb')), {allowsNewlines: true});
       let target = await renderControlledTokenField(segments(text('')));
       let mod = modKey();
       await commands.lockClipboard();
@@ -838,8 +926,8 @@ describeOrSkip('TokenField browser interactions', () => {
       if (clipboardRoundTripUnsupported()) {
         return;
       }
-      let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
-      let target = await renderControlledTokenField(segments(text('')), {multiline: true});
+      let source = await renderControlledTokenField(segments(text('a\nb')), {allowsNewlines: true});
+      let target = await renderControlledTokenField(segments(text('')), {allowsNewlines: true});
       let mod = modKey();
       await commands.lockClipboard();
       try {
