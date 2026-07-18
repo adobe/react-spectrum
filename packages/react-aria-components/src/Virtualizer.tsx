@@ -69,12 +69,7 @@ const VirtualizerOptionsContext = createContext<VirtualizerOptionsContextValue |
  * them as the user scrolls.
  */
 export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
-  let {
-    children,
-    layout: layoutProp,
-    layoutOptions,
-    shouldObserveItemSize
-  } = props;
+  let {children, layout: layoutProp, layoutOptions, shouldObserveItemSize} = props;
   let layout = useMemo(
     () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
     [layoutProp]
@@ -94,8 +89,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <VirtualizerOptionsContext.Provider
-        value={{layout, layoutOptions, shouldObserveItemSize}}>
+      <VirtualizerOptionsContext.Provider value={{layout, layoutOptions, shouldObserveItemSize}}>
         {children}
       </VirtualizerOptionsContext.Provider>
     </CollectionRendererContext.Provider>
@@ -108,8 +102,7 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions, shouldObserveItemSize} =
-    useContext(VirtualizerOptionsContext)!;
+  let {layout, layoutOptions, shouldObserveItemSize} = useContext(VirtualizerOptionsContext)!;
   // oxlint-disable-next-line react/react-compiler
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
