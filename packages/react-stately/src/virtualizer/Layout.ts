@@ -74,15 +74,23 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   }
 
   /**
-   * Returns whether this layout anchors content to the bottom (content grows upward).
-   * When true, the virtualizer preserves scroll position across content shifts and
-   * snaps to the bottom on first render. The `layoutOptions` argument reflects
-   * incoming options before `update()` applies them, ensuring correctness on the
-   * first render when internal fields are not yet set.
+   * Describes the edge-anchoring this layout wants, if any. Returning null (or omitting this
+   * method) disables scroll-anchoring entirely — the virtualizer's generic anchor-tracking logic
+   * is skipped.
    */
-  isReversed(_layoutOptions?: O): boolean {
-    return false;
-  }
+  getScrollAnchorInfo?(_layoutOptions?: O): {
+    /** Which edge of the content the viewport should stay anchored to. */
+    edge: 'start' | 'end';
+    /** Which axis `edge` refers to — 'y' for vertical lists, 'x' for horizontal. */
+    axis: 'x' | 'y';
+    /** Distance (px) from `edge` within which the viewport is considered "following" it. */
+    threshold: number;
+    /**
+     * Optional classifier excluding structural/ephemeral layout infos (e.g. loaders) from being
+     * selected as the anchor. Defaults to allowing any layoutInfo.
+     */
+    isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
+  } | null;
 
   /**
    * This method allows the layout to perform any pre-computation

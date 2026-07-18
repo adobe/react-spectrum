@@ -297,9 +297,9 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           padding: 4,
           gap: 8,
           anchorTo: 'end',
-          loaderSize: 48
+          loaderSize: 48,
+          scrollEndThreshold
         }}
-        scrollEndThreshold={scrollEndThreshold}
         shouldObserveItemSize>
         <GridList
           ref={callbackRef}

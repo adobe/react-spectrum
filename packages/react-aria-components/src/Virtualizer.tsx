@@ -52,15 +52,12 @@ export interface VirtualizerProps<O> {
    * Whether to observe each item's size with a ResizeObserver and re-measure when it changes.
    */
   shouldObserveItemSize?: boolean;
-  /** Distance from content bottom (px) within which the viewport is considered "near end". */
-  scrollEndThreshold?: number;
 }
 
 interface VirtualizerOptionsContextValue {
   layout: ILayout<any>;
   layoutOptions?: any;
   shouldObserveItemSize?: boolean;
-  scrollEndThreshold?: number;
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
@@ -76,8 +73,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
     children,
     layout: layoutProp,
     layoutOptions,
-    shouldObserveItemSize,
-    scrollEndThreshold
+    shouldObserveItemSize
   } = props;
   let layout = useMemo(
     () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
@@ -99,7 +95,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   return (
     <CollectionRendererContext.Provider value={renderer}>
       <VirtualizerOptionsContext.Provider
-        value={{layout, layoutOptions, shouldObserveItemSize, scrollEndThreshold}}>
+        value={{layout, layoutOptions, shouldObserveItemSize}}>
         {children}
       </VirtualizerOptionsContext.Provider>
     </CollectionRendererContext.Provider>
@@ -112,7 +108,7 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions, shouldObserveItemSize, scrollEndThreshold} =
+  let {layout, layoutOptions, shouldObserveItemSize} =
     useContext(VirtualizerOptionsContext)!;
   // oxlint-disable-next-line react/react-compiler
   let layoutOptions2 = layout.useLayoutOptions?.();
@@ -132,13 +128,13 @@ function CollectionRoot({
       }
     },
     persistedKeys,
-    layoutOptions: useMemo(() => {
-      if (layoutOptions && layoutOptions2) {
-        return {...layoutOptions, ...layoutOptions2};
-      }
-      return layoutOptions || layoutOptions2;
-    }, [layoutOptions, layoutOptions2]),
-    scrollEndThreshold
+    layoutOptions: useMemo(
+      () =>
+        layoutOptions && layoutOptions2
+          ? {...layoutOptions, ...layoutOptions2}
+          : layoutOptions || layoutOptions2,
+      [layoutOptions, layoutOptions2]
+    )
   });
 
   let {contentProps} = useScrollView(

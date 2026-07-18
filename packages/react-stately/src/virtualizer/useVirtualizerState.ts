@@ -33,7 +33,6 @@ interface VirtualizerProps<T extends object, V, O> {
   persistedKeys?: Set<Key> | null;
   layoutOptions?: O;
   allowsWindowScrolling?: boolean;
-  scrollEndThreshold?: number;
 }
 
 export interface VirtualizerState<T extends object, V> {
@@ -97,8 +96,7 @@ export function useVirtualizerState<T extends object, V, O = any>(
     visibleRect,
     size: opts.allowsWindowScrolling ? size : visibleRect,
     invalidationContext: mergedInvalidationContext,
-    isScrolling,
-    scrollEndThreshold: opts.scrollEndThreshold
+    isScrolling
   });
 
   let contentSize = virtualizer.contentSize;

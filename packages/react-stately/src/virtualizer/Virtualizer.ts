@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {captureScrollAnchor, isNearEdge, resolveScrollAdjustment} from './ScrollAnchor';
 import {ChildView, ReusableView, RootView} from './ReusableView';
 import {Collection, Key} from '@react-types/shared';
 import {
@@ -76,9 +77,26 @@ export class Virtualizer<T extends object, V> {
   private _isScrolling: boolean;
   private _invalidationContext: InvalidationContext;
   private _overscanManager: OverscanManager;
-  private _hasInitializedReverseAnchor: boolean;
-  private _isAnchoredToEnd: boolean;
-  private _scrollEndThreshold: number;
+  private _hasSnappedToAnchorEdge: boolean;
+  /**
+   * Whether any currently-visible item was still using an estimated size as of the end of the
+   * previous relayout pass. Used to keep forcing edge-follow through the entire initial
+   * estimate-to-measured settling cascade, since a single pass's jump from an estimated to a
+   * measured size can otherwise exceed the distance-based `isNearEdge` check. Paired with
+   * `_wasNearAnchorEdge` so this only forces edge-follow near the anchored edge.
+   */
+  private _hadEstimatedVisibleItems: boolean;
+  /**
+   * Whether the viewport was near the anchored edge (per the real, unforced `isNearEdge` check),
+   * latched at the *start* of the current estimate-to-measured settling cascade and held fixed
+   * for its duration. Only re-derived once the cascade ends and a new one begins. Must not be
+   * recomputed every pass while settling: a single oversized jump mid-cascade routinely exceeds
+   * `isNearEdge`'s distance threshold on its own, which would wrongly conclude the user scrolled
+   * away even though nothing touched the scrollbar — this is exactly the failure
+   * `_hadEstimatedVisibleItems` exists to paper over, so re-deriving this flag every pass would
+   * silently defeat it.
+   */
+  private _wasNearAnchorEdge: boolean;
 
   constructor(options: VirtualizerOptions<T, V>) {
     this.delegate = options.delegate;
@@ -94,9 +112,9 @@ export class Virtualizer<T extends object, V> {
     this._isScrolling = false;
     this._invalidationContext = {};
     this._overscanManager = new OverscanManager();
-    this._hasInitializedReverseAnchor = false;
-    this._isAnchoredToEnd = false;
-    this._scrollEndThreshold = 0;
+    this._hasSnappedToAnchorEdge = false;
+    this._hadEstimatedVisibleItems = false;
+    this._wasNearAnchorEdge = false;
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
@@ -179,67 +197,108 @@ export class Virtualizer<T extends object, V> {
   }
 
   private relayout(context: InvalidationContext = {}) {
-    let isAnchoredToEnd = this._isAnchoredToEnd;
-    let scrollEndThreshold = this._scrollEndThreshold;
+    let anchorInfo = this.layout.getScrollAnchorInfo?.(context.layoutOptions) ?? null;
+    let wasSettlingLastPass = this._hadEstimatedVisibleItems;
+    let wasNearAnchorEdgeLastPass = this._wasNearAnchorEdge;
 
     // Capture scroll anchor from current (pre-layout) view positions.
-    // Returns non-null only when isAnchoredToEnd is true AND a visible item was found.
-    // On first render _visibleViews is empty so _getScrollAnchor returns null.
-    let anchor = this._getScrollAnchor();
-    let previousRawContentHeight = this.contentSize.height;
+    // On first render _visibleViews is empty so no anchor will be found.
+    let anchor: ScrollAnchor | null = null;
+    if (anchorInfo) {
+      let visibleLayoutInfos: [Key, LayoutInfo][] = [];
+      for (let [key, view] of this._visibleViews) {
+        let layoutInfo = this.layout.getLayoutInfo(key) ?? view.layoutInfo;
+        if (layoutInfo) {
+          visibleLayoutInfos.push([key, layoutInfo]);
+        }
+      }
+      anchor = captureScrollAnchor(
+        anchorInfo.edge,
+        anchorInfo.axis,
+        this.visibleRect,
+        visibleLayoutInfos,
+        anchorInfo.isAnchorable
+      );
+    }
+    let previousContentSize = this.contentSize;
     let previousVisibleRect = this.visibleRect;
 
     // Update the layout
     this.layout.update(context);
 
     let rawContentSize = this.layout.getContentSize();
-    let rawContentHeight = rawContentSize.height;
-    (this as Mutable<this>).contentSize = new Size(rawContentSize.width, rawContentHeight);
+    (this as Mutable<this>).contentSize = new Size(rawContentSize.width, rawContentSize.height);
 
-    if (isAnchoredToEnd && previousVisibleRect.area > 0) {
-      let contentHeightDelta = rawContentHeight - previousRawContentHeight;
-      let distanceFromEnd = previousRawContentHeight - previousVisibleRect.maxY;
-      let wasNearBottom = distanceFromEnd <= scrollEndThreshold;
-
-      if (!this._hasInitializedReverseAnchor) {
-        // Always snap to bottom on first layout
-        this._hasInitializedReverseAnchor = true;
-        if (this._snapToBottom(previousVisibleRect)) {
-          return;
+    if (anchorInfo) {
+      let hasEstimated = false;
+      for (let layoutInfo of this.getVisibleLayoutInfos().values()) {
+        if (layoutInfo.estimatedSize) {
+          hasEstimated = true;
+          break;
         }
-      } else if (contentHeightDelta !== 0 || context.itemSizeChanged) {
-        // Only modify scroll when content actually changed — prevents the setVisibleRect
-        // re-render after the initial snap from triggering a spurious anchor-restore.
-        if (anchor) {
-          // Two things can increase content height, and they need different handling.
-          // Old messages prepended at the top push existing items down (y increases) — we must adjust
-          // scroll to compensate so the user's view doesn't jump.
-          // New messages appended at the bottom leave existing items in place (y unchanged) — no adjustment needed.
-          let preLayoutCornerY = anchor.offset + previousVisibleRect.y;
-          let freshInfo = this.layout.getLayoutInfo(anchor.key);
-          let anchorShiftedDown =
-            freshInfo != null && freshInfo.rect[anchor.corner].y > preLayoutCornerY;
+      }
+      this._hadEstimatedVisibleItems = hasEstimated;
+      // Don't recheck "near edge?" mid-resize because it could look like a scroll that never happened.
+      // Reuse the answer from before the resizing started.
+      if (!wasSettlingLastPass) {
+        this._wasNearAnchorEdge = isNearEdge(
+          previousVisibleRect,
+          previousContentSize,
+          anchorInfo.edge,
+          anchorInfo.axis,
+          anchorInfo.threshold
+        );
+      }
+    }
+    if (anchorInfo && previousVisibleRect.area > 0) {
+      let dimension = anchorInfo.axis === 'x' ? 'width' : 'height';
+      let contentSizeDelta = this.contentSize[dimension] - previousContentSize[dimension];
+      let isFirstAnchoredLayout = !this._hasSnappedToAnchorEdge;
+      this._hasSnappedToAnchorEdge = true;
 
+      // Only modify scroll when content actually changed (or this is the first layout, which always snaps)
+      if (isFirstAnchoredLayout || contentSizeDelta !== 0 || context.itemSizeChanged) {
+        let wasNearAnchorEdge =
+          isFirstAnchoredLayout ||
+          (wasSettlingLastPass && wasNearAnchorEdgeLastPass) ||
+          isNearEdge(
+            previousVisibleRect,
+            previousContentSize,
+            anchorInfo.edge,
+            anchorInfo.axis,
+            anchorInfo.threshold
+          );
+        // A first-ever layout always snaps to the edge, even if the raw distance check says
+        // otherwise. Save that real decision here so later passes in this cascade reuse it.
+        if (!wasSettlingLastPass) {
+          this._wasNearAnchorEdge = wasNearAnchorEdge;
+        }
+        let getLayoutInfo = (key: Key) => this.layout.getLayoutInfo(key);
+        // Skip restoring to the captured anchor while still resizing because items above it are also still growing,
+        // and following it would fall short of the edge.
+        let effectiveAnchor =
+          isFirstAnchoredLayout || (wasSettlingLastPass && wasNearAnchorEdgeLastPass)
+            ? null
+            : anchor;
+        let target = resolveScrollAdjustment(
+          anchorInfo.edge,
+          anchorInfo.axis,
+          effectiveAnchor,
+          wasNearAnchorEdge,
+          this._isScrolling,
+          context.itemSizeChanged ?? false,
+          contentSizeDelta,
+          getLayoutInfo,
+          previousVisibleRect,
+          this.contentSize
+        );
+
+        if (target) {
           // Queues a new render cycle. Return early to skip updateSubviews — running it now
           // would position views against the old visibleRect, causing a flash before the
           // incoming relayout corrects them.
-          if (
-            this._applyReverseAnchorScroll(
-              anchor,
-              wasNearBottom,
-              anchorShiftedDown,
-              previousVisibleRect,
-              context.itemSizeChanged,
-              contentHeightDelta
-            )
-          ) {
-            return;
-          }
-        } else if (wasNearBottom && !this._isScrolling) {
-          // No anchor captured (views not yet populated): fall back to near-bottom snap.
-          if (this._snapToBottom(previousVisibleRect)) {
-            return;
-          }
+          this.delegate.setVisibleRect(target);
+          return;
         }
       }
     }
@@ -265,148 +324,6 @@ export class Virtualizer<T extends object, V> {
     } else {
       this.updateSubviews();
     }
-  }
-
-  // Adjusts scroll position after content changes in a reversed layout.
-  // If old messages were prepended, scrolls down to keep the same item visible.
-  // If an item resized, corrects drift or snaps to bottom if content actually grew.
-  // If the user scrolled up, restores their anchor position.
-  private _applyReverseAnchorScroll(
-    anchor: ScrollAnchor,
-    wasNearBottom: boolean,
-    anchorShiftedDown: boolean,
-    previousVisibleRect: Rect,
-    itemSizeChanged: boolean | undefined,
-    contentHeightDelta: number
-  ): boolean {
-    // Old messages prepended above viewport → existing items shift down.
-    if (anchorShiftedDown) {
-      let targetY = this._computeScrollAnchorTarget(anchor);
-      if (targetY != null) {
-        this.delegate.setVisibleRect(
-          new Rect(
-            previousVisibleRect.x,
-            targetY,
-            previousVisibleRect.width,
-            previousVisibleRect.height
-          )
-        );
-        return true;
-      }
-    } else if (wasNearBottom && !this._isScrolling && itemSizeChanged) {
-      // Don't rely on wasNearBottom alone — the prior anchor adjustment may have placed
-      // us within the threshold. Check if the anchor moved first.
-      let targetY = this._computeScrollAnchorTarget(anchor);
-      if (targetY != null) {
-        this.delegate.setVisibleRect(
-          new Rect(
-            previousVisibleRect.x,
-            targetY,
-            previousVisibleRect.width,
-            previousVisibleRect.height
-          )
-        );
-        return true;
-      }
-
-      // Only snap if content actually grew (streaming occurred)
-      if (contentHeightDelta > 0) {
-        return this._snapToBottom(previousVisibleRect);
-      }
-      return false;
-    } else if (wasNearBottom && !this._isScrolling) {
-      // New message appended at bottom while user is near bottom → snap.
-      return this._snapToBottom(previousVisibleRect);
-    } else {
-      // User scrolled up intentionally; preserve their position regardless.
-      if (this._restoreScrollAnchor(anchor)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // Pins the viewport to the bottom of the content
-  private _snapToBottom(previousVisibleRect: Rect): boolean {
-    let maxVisibleY = Math.max(0, this.contentSize.height - previousVisibleRect.height);
-    let target = new Rect(
-      previousVisibleRect.x,
-      maxVisibleY,
-      previousVisibleRect.width,
-      previousVisibleRect.height
-    );
-    if (!target.equals(this.visibleRect)) {
-      this.delegate.setVisibleRect(target);
-      return true;
-    }
-    return false;
-  }
-
-  // Captures a reference point before a layout change so the user's scroll position can
-  // be restored afterward. Finds the visible item whose corner sits closest to the top
-  // of the viewport, and records its key, that corner, and its distance from the viewport top.
-  // Returns null if the layout is not reversed.
-  private _getScrollAnchor(): ScrollAnchor | null {
-    if (!this._isAnchoredToEnd) {
-      return null;
-    }
-    let visibleRect = this.visibleRect;
-
-    let best: ScrollAnchor | null = null;
-    for (let [key, view] of this._visibleViews) {
-      let layoutInfo = this.layout.getLayoutInfo(key) ?? view.layoutInfo;
-      // Skip loader items — they always appear at the top, so anchoring to one
-      // would scroll back to the top instead of preserving the user's position.
-      if (layoutInfo && layoutInfo.type === 'loader') {
-        continue;
-      }
-      if (layoutInfo && layoutInfo.rect.area > 0 && layoutInfo.rect.intersects(visibleRect)) {
-        // If the item spans the entire viewport (e.g. very large item), none of its corners
-        // are contained in visibleRect and getCornerInRect returns null. Falling back to
-        // topLeft here anchors on a point that may be off-screen — a known latent issue,
-        // not addressed here.
-        let corner = layoutInfo.rect.getCornerInRect(visibleRect) ?? 'topLeft';
-        let offset = layoutInfo.rect[corner].y - visibleRect.y;
-        if (!best || offset < best.offset) {
-          best = {key, corner, offset};
-        }
-      }
-    }
-    return best;
-  }
-
-  // Computes the viewport y position needed to keep the anchor item at the same relative
-  // position it had before the layout change. Measures how far the anchor item shifted,
-  // then offsets the viewport by the same amount. Clamps to valid scroll bounds.
-  // Returns null if no adjustment is needed, or if clamping would leave the viewport unchanged.
-  private _computeScrollAnchorTarget(anchor: ScrollAnchor): number | null {
-    let finalInfo = this.layout.getLayoutInfo(anchor.key);
-    if (!finalInfo) {
-      return null;
-    }
-    let visibleRect = this.visibleRect;
-    let adjustment = finalInfo.rect[anchor.corner].y - visibleRect.y - anchor.offset;
-    if (adjustment === 0) {
-      return null;
-    }
-    let targetY = visibleRect.y + adjustment;
-    let maxY = Math.max(0, this.contentSize.height - visibleRect.height);
-    let clampedY = Math.max(0, Math.min(maxY, targetY));
-    return clampedY !== visibleRect.y ? clampedY : null;
-  }
-
-  // Applies the scroll adjustment computed from the anchor to keep the user's view stable.
-  // Returns true if scroll changed, false if the anchor item didn't move or is gone.
-  private _restoreScrollAnchor(anchor: ScrollAnchor): boolean {
-    let targetY = this._computeScrollAnchorTarget(anchor);
-    if (targetY == null) {
-      return false;
-    }
-    let visibleRect = this.visibleRect;
-    this.delegate.setVisibleRect(
-      new Rect(visibleRect.x, targetY, visibleRect.width, visibleRect.height)
-    );
-    return true;
   }
 
   getVisibleLayoutInfos(): Map<Key, LayoutInfo> {
@@ -501,9 +418,6 @@ export class Virtualizer<T extends object, V> {
     let layoutOptionsChanged = false;
     let needsUpdate = false;
 
-    let isReversed = opts.layout.isReversed(opts.layoutOptions);
-    let scrollEndThreshold = opts.scrollEndThreshold ?? 0;
-
     if (opts.collection !== this.collection) {
       mutableThis.collection = opts.collection;
       needsLayout = true;
@@ -516,13 +430,9 @@ export class Virtualizer<T extends object, V> {
 
       opts.layout.virtualizer = this;
       mutableThis.layout = opts.layout;
-      this._hasInitializedReverseAnchor = false;
-      needsLayout = true;
-    }
-
-    if (isReversed !== this._isAnchoredToEnd || scrollEndThreshold !== this._scrollEndThreshold) {
-      this._isAnchoredToEnd = isReversed;
-      this._scrollEndThreshold = scrollEndThreshold;
+      this._hasSnappedToAnchorEdge = false;
+      this._hadEstimatedVisibleItems = false;
+      this._wasNearAnchorEdge = false;
       needsLayout = true;
     }
 

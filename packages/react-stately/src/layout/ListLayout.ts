@@ -26,12 +26,22 @@ import {LayoutInfo} from '../virtualizer/LayoutInfo';
 import {Rect} from '../virtualizer/Rect';
 import {Size} from '../virtualizer/Size';
 
+const isLoaderAnchorable = (layoutInfo: LayoutInfo): boolean => layoutInfo.type !== 'loader';
+
 export interface ListLayoutOptions {
   /**
    * Anchors the vertical list content to the end (bottom) of the viewport. When set to `'end'`,
    * the viewport stays pinned to the latest content unless the user scrolls up.
    */
   anchorTo?: 'end';
+  /**
+   * The maximum distance in px from the anchored edge of the content for the viewport to be
+   * considered "near the end". While near the end, appended content and streaming size changes
+   * will keep the viewport pinned to `anchorTo`.
+   *
+   * @default 0
+   */
+  scrollEndThreshold?: number;
   /**
    * The primary orientation of the items. Usually this is the direction that the collection
    * scrolls.
@@ -153,6 +163,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   protected gap: number;
   protected padding: number;
   protected anchorTo: 'end' | undefined;
+  protected scrollEndThreshold: number;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   protected lastCollection: Collection<Node<T>> | null;
@@ -170,6 +181,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   constructor(options: ListLayoutOptions = {}) {
     super();
     this.anchorTo = options.anchorTo;
+    this.scrollEndThreshold = options.scrollEndThreshold ?? 0;
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? null;
     this.orientation = options.orientation ?? 'vertical';
     this.estimatedRowSize = options?.estimatedRowSize ?? options?.estimatedRowHeight ?? null;
@@ -189,11 +201,20 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.contentSize = new Size();
   }
 
-  isReversed(layoutOptions?: O): boolean {
+  getScrollAnchorInfo(layoutOptions?: O): {
+    edge: 'start' | 'end';
+    axis: 'x' | 'y';
+    threshold: number;
+    isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
+  } | null {
     let anchorTo = layoutOptions?.anchorTo ?? this.anchorTo;
     let orientation = layoutOptions?.orientation ?? this.orientation;
-    // reversed layouts are only supported in vertical orientations
-    return anchorTo === 'end' && orientation !== 'horizontal';
+    // TODO: Reversed (anchorTo: 'end') layouts are only supported in vertical orientations (for now).
+    if (anchorTo !== 'end' || orientation === 'horizontal') {
+      return null;
+    }
+    let threshold = layoutOptions?.scrollEndThreshold ?? this.scrollEndThreshold;
+    return {edge: 'end', axis: 'y', threshold, isAnchorable: isLoaderAnchorable};
   }
 
   // Backward compatibility for subclassing.
@@ -347,7 +368,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
         (oldOptions?.loaderSize ?? oldOptions?.loaderHeight) ||
       newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness ||
       newOptions.gap !== oldOptions.gap ||
-      newOptions.padding !== oldOptions.padding
+      newOptions.padding !== oldOptions.padding ||
+      newOptions.scrollEndThreshold !== oldOptions.scrollEndThreshold
     );
   }
 
@@ -366,6 +388,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? this.rowSize;
     this.orientation = options?.orientation ?? this.orientation;
     this.anchorTo = options?.anchorTo ?? this.anchorTo;
+    this.scrollEndThreshold = options?.scrollEndThreshold ?? this.scrollEndThreshold;
     this.estimatedRowSize =
       options?.estimatedRowSize ?? options?.estimatedRowHeight ?? this.estimatedRowSize;
     this.headingSize = options?.headingSize ?? options?.headingHeight ?? this.headingSize;

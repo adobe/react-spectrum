@@ -45,7 +45,6 @@ export interface VirtualizerRenderOptions<T extends object, O = any> {
   invalidationContext: InvalidationContext;
   isScrolling: boolean;
   layoutOptions?: O;
-  scrollEndThreshold?: number;
 }
 
 export type Mutable<T> = {
