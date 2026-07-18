@@ -23,7 +23,7 @@ import {DialogContainer} from '@adobe/react-spectrum/DialogContainer';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {FocusScope, useFocusManager} from '../../src/focus/FocusScope';
 import {focusScopeTree} from '../../src/focus/FocusScope';
-import {focusWithoutScrolling} from '../../src/utils/focusWithoutScrolling';
+import {focusSafely} from '../../src/interactions/focusSafely';
 import {Provider} from '@adobe/react-spectrum/Provider';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -31,11 +31,11 @@ import {Example as StorybookExample} from '../../stories/focus/FocusScope.storie
 import {useEvent} from '../../src/utils/useEvent';
 import userEvent from '@testing-library/user-event';
 
-jest.mock('../../src/utils/focusWithoutScrolling', () => {
-  let actual = jest.requireActual('../../src/utils/focusWithoutScrolling');
+jest.mock('../../src/interactions/focusSafely', () => {
+  let actual = jest.requireActual('../../src/interactions/focusSafely');
   return {
     ...actual,
-    focusWithoutScrolling: jest.fn(actual.focusWithoutScrolling)
+    focusSafely: jest.fn(actual.focusSafely)
   };
 });
 
@@ -333,13 +333,13 @@ describe('FocusScope', function () {
       });
       expect(document.activeElement).toBe(input2);
 
-      focusWithoutScrolling.mockClear();
+      focusSafely.mockClear();
       act(() => {
         outside.focus();
       });
       fireEvent.focusIn(outside);
       expect(document.activeElement).toBe(input2);
-      expect(focusWithoutScrolling).toHaveBeenCalledWith(input2);
+      expect(focusSafely).toHaveBeenCalledWith(input2);
     });
 
     it('should restore focus to the last focused element in the scope on focus out', async function () {
@@ -368,7 +368,7 @@ describe('FocusScope', function () {
       });
       expect(document.activeElement).toBe(input2);
 
-      focusWithoutScrolling.mockClear();
+      focusSafely.mockClear();
 
       act(() => {
         input2.blur();
@@ -377,7 +377,7 @@ describe('FocusScope', function () {
         jest.runAllTimers();
       });
       expect(document.activeElement).toBe(input2);
-      expect(focusWithoutScrolling).toHaveBeenCalledWith(input2);
+      expect(focusSafely).toHaveBeenCalledWith(input2);
       fireEvent.focusOut(input2);
       expect(document.activeElement).toBe(input2);
     });

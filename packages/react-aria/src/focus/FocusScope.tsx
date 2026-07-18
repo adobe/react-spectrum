@@ -19,7 +19,6 @@ import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {isAndroid, isChrome} from '../utils/platform';
 import {isFocusable, isTabbable} from '../utils/isFocusable';
-import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import React, {JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
@@ -411,7 +410,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
-          focusWithoutScrolling(focusedNode.current);
+          focusElement(focusedNode.current);
         } else if (activeScope && activeScope.current) {
           focusFirstInScope(activeScope.current);
         }
@@ -445,7 +444,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
           let target = getEventTarget(e) as FocusableElement;
           if (target && target.isConnected) {
             focusedNode.current = target;
-            focusWithoutScrolling(focusedNode.current);
+            focusElement(focusedNode.current);
           } else if (activeScope.current) {
             focusFirstInScope(activeScope.current);
           }
