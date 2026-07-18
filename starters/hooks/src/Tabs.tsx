@@ -3,13 +3,62 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {useTab, useTabList, useTabPanel, type AriaTabListOptions} from 'react-aria/useTabList';
 import {useTabListState} from 'react-stately/useTabListState';
 import {useFocusRing} from 'react-aria/useFocusRing';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {useHover} from 'react-aria/useHover';
-import type {Node} from '@react-types/shared';
-import {useRef} from 'react';
+import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
+import {Collection} from 'react-aria-components/Collection';
+import {ItemNode} from 'react-aria/private/collections/BaseCollection';
+import type {Collection as ICollection, Key, Node} from '@react-types/shared';
+import {createContext, useContext, useRef} from 'react';
+import type {ForwardedRef, ReactNode} from 'react';
 import './Tabs.css';
 
+type TabListState = ReturnType<typeof useTabListState>;
+let TabListStateContext = createContext<TabListState | null>(null);
+
+export interface TabProps {
+  id?: Key;
+  title?: ReactNode;
+  children?: ReactNode;
+}
+
+export const Tab = createLeafComponent(ItemNode, function Tab(
+  _props: TabProps,
+  forwardedRef: ForwardedRef<HTMLDivElement>,
+  item: Node<object>
+) {
+  let state = useContext(TabListStateContext)!;
+  let ref = useObjectRef(forwardedRef);
+  let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key}, state, ref);
+  let {hoverProps, isHovered} = useHover({isDisabled});
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      {...mergeProps(tabProps, hoverProps, focusProps)}
+      ref={ref}
+      className="react-aria-Tab"
+      data-selected={isSelected || undefined}
+      data-disabled={isDisabled || undefined}
+      data-pressed={isPressed || undefined}
+      data-hovered={isHovered || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
+      {item.props.title}
+      <span className="react-aria-SelectionIndicator" />
+    </div>
+  );
+});
+
 export function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTabListState>[0]) {
-  let state = useTabListState(props);
+  return (
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => <TabsInner {...props} collection={collection} />}
+    </CollectionBuilder>
+  );
+}
+
+function TabsInner({collection, ...props}: AriaTabListOptions<object> & Omit<Parameters<typeof useTabListState>[0], 'children'> & {collection: ICollection<Node<object>>}) {
+  let state = useTabListState({...props, collection, children: undefined});
   let ref = useRef<HTMLDivElement>(null);
   /*- begin highlight -*/
   let {tabListProps} = useTabList(props, state, ref);
@@ -23,34 +72,12 @@ export function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTa
         ref={ref}
         className="react-aria-TabList"
         data-orientation={orientation}>
-        {[...state.collection].map(item => (
-          <Tab key={item.key} item={item} state={state} />
-        ))}
+        <TabListStateContext.Provider value={state}>
+          {[...state.collection].map(item => item.render!(item))}
+        </TabListStateContext.Provider>
       </div>
       {/* Re-mount the panel when the selection changes so DOM state isn't shared between tabs. */}
       <TabPanel key={state.selectedItem?.key} state={state} />
-    </div>
-  );
-}
-
-function Tab({item, state}: {item: Node<object>; state: ReturnType<typeof useTabListState>}) {
-  let ref = useRef<HTMLDivElement>(null);
-  let {tabProps, isSelected, isDisabled} = useTab({key: item.key}, state, ref);
-  let {hoverProps, isHovered} = useHover({});
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <div
-      {...mergeProps(tabProps, hoverProps, focusProps)}
-      ref={ref}
-      className="react-aria-Tab"
-      data-selected={isSelected || undefined}
-      data-disabled={isDisabled || undefined}
-      data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      {item.rendered}
-      {/* The selection indicator is only visible on the selected tab (transparent otherwise). */}
-      <span className="react-aria-SelectionIndicator" />
     </div>
   );
 }

@@ -27,13 +27,12 @@ export const isSubpage = true;
 
 ```tsx render files={["starters/hooks/src/Tabs.tsx", "starters/hooks/src/Tabs.css"]}
 "use client";
-import {Tabs} from 'hooks-starter/Tabs';
-import {Item} from 'react-stately/Item';
+import {Tab, Tabs} from 'hooks-starter/Tabs';
 
 <Tabs aria-label="History of Ancient Rome">
-  <Item key="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Item>
-  <Item key="MaR" title="Monarchy and Republic">Senatus Populusque Romanus.</Item>
-  <Item key="Emp" title="Empire">Alea jacta est.</Item>
+  <Tab id="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Tab>
+  <Tab id="MaR" title="Monarchy and Republic">Senatus Populusque Romanus.</Tab>
+  <Tab id="Emp" title="Empire">Alea jacta est.</Tab>
 </Tabs>
 ```
 
