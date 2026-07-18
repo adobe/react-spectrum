@@ -27,14 +27,13 @@ This example uses `useTagGroup` for the container and `useTag` for each tag, bui
 
 ```tsx render files={["starters/hooks/src/TagGroup.tsx", "starters/hooks/src/TagGroup.css"]}
 "use client";
-import {TagGroup} from 'hooks-starter/TagGroup';
-import {Item} from 'react-stately/Item';
+import {Tag, TagGroup} from 'hooks-starter/TagGroup';
 
 <TagGroup label="Categories" onRemove={keys => alert(`Remove ${[...keys]}`)}>
-  <Item key="news">News</Item>
-  <Item key="travel">Travel</Item>
-  <Item key="gaming">Gaming</Item>
-  <Item key="shopping">Shopping</Item>
+  <Tag id="news">News</Tag>
+  <Tag id="travel">Travel</Tag>
+  <Tag id="gaming">Gaming</Tag>
+  <Tag id="shopping">Shopping</Tag>
 </TagGroup>
 ```
 
@@ -42,8 +41,7 @@ Use the `onAction` prop to handle item actions. Provide an explicit `key` on eac
 
 ```tsx render
 "use client";
-import {TagGroup} from 'hooks-starter/TagGroup';
-import {Item} from 'react-stately/Item';
+import {Tag, TagGroup} from 'hooks-starter/TagGroup';
 
 <TagGroup
   label="Music genres"
@@ -51,11 +49,11 @@ import {Item} from 'react-stately/Item';
   onAction={key => alert(`Clicked ${key}`)}
   ///- end highlight -///
 >
-  <Item key="rock">Rock</Item>
-  <Item key="jazz">Jazz</Item>
-  <Item key="pop">Pop</Item>
-  <Item key="classical">Classical</Item>
-  <Item key="edm">EDM</Item>
+  <Tag id="rock">Rock</Tag>
+  <Tag id="jazz">Jazz</Tag>
+  <Tag id="pop">Pop</Tag>
+  <Tag id="classical">Classical</Tag>
+  <Tag id="edm">EDM</Tag>
 </TagGroup>
 ```
 

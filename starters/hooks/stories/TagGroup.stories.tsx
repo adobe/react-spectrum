@@ -1,5 +1,4 @@
-import {Item} from 'react-stately/Item';
-import {TagGroup} from '../src/TagGroup';
+import {Tag, TagGroup} from '../src/TagGroup';
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof TagGroup> = {
@@ -16,9 +15,9 @@ type Story = StoryFn<typeof TagGroup>;
 
 export const Example: Story = args => (
   <TagGroup label="Ice cream flavor" selectionMode="single" {...args}>
-    <Item>Chocolate</Item>
-    <Item>Mint</Item>
-    <Item>Strawberry</Item>
-    <Item>Vanilla</Item>
+    <Tag id="chocolate">Chocolate</Tag>
+    <Tag id="mint">Mint</Tag>
+    <Tag id="strawberry">Strawberry</Tag>
+    <Tag id="vanilla">Vanilla</Tag>
   </TagGroup>
 );
