@@ -1,32 +1,52 @@
 'use client';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useFocusRing} from 'react-aria/useFocusRing';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {useListBox, useOption, type AriaListBoxOptions} from 'react-aria/useListBox';
 import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
 import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {Collection} from 'react-aria-components/Collection';
 import {ItemNode} from 'react-aria/private/collections/BaseCollection';
-import type {Collection as ICollection, Node} from '@react-types/shared';
-import {useRef} from 'react';
-import type {ReactNode} from 'react';
+import type {Collection as ICollection, Key, Node} from '@react-types/shared';
+import {createContext, useContext, useRef} from 'react';
+import type {ForwardedRef, ReactNode} from 'react';
 import './ListBox.css';
 
 export interface ListBoxItemProps {
-  id?: string;
+  id?: Key;
   textValue?: string;
   children?: ReactNode;
 }
 
-export const ListBoxItem = createLeafComponent(
-  ItemNode,
-  function ListBoxItem(_props: ListBoxItemProps) {
-    return null;
-  }
-);
+let ListStateContext = createContext<ListState<object> | null>(null);
+
+export const ListBoxItem = createLeafComponent(ItemNode, function ListBoxItem(
+  _props: ListBoxItemProps,
+  forwardedRef: ForwardedRef<HTMLDivElement>,
+  item: Node<object>
+) {
+  let state = useContext(ListStateContext)!;
+  let ref = useObjectRef(forwardedRef);
+  let {optionProps, isSelected, isDisabled, isPressed} = useOption({key: item.key}, state, ref);
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      {...mergeProps(optionProps, focusProps)}
+      ref={ref}
+      className="react-aria-ListBoxItem"
+      data-selected={isSelected || undefined}
+      data-disabled={isDisabled || undefined}
+      data-pressed={isPressed || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
+      {item.rendered}
+    </div>
+  );
+});
 
 export function ListBox(props: AriaListBoxOptions<object> & ListProps<object>) {
   return (
-    <CollectionBuilder content={<Collection>{props.children}</Collection>}>
+    <CollectionBuilder content={<Collection {...props} />}>
       {collection => <ListBoxInner {...props} collection={collection} />}
     </CollectionBuilder>
   );
@@ -50,28 +70,9 @@ function ListBoxInner({
       className="react-aria-ListBox"
       data-layout="stack"
       data-orientation="vertical">
-      {[...state.collection].map(item => (
-        <Option key={item.key} item={item} state={state} />
-      ))}
-    </div>
-  );
-}
-
-function Option({item, state}: {item: Node<object>; state: ListState<object>}) {
-  let ref = useRef<HTMLDivElement>(null);
-  let {optionProps, isSelected, isDisabled, isPressed} = useOption({key: item.key}, state, ref);
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <div
-      {...mergeProps(optionProps, focusProps)}
-      ref={ref}
-      className="react-aria-ListBoxItem"
-      data-selected={isSelected || undefined}
-      data-disabled={isDisabled || undefined}
-      data-pressed={isPressed || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      {item.rendered}
+      <ListStateContext.Provider value={state}>
+        {[...state.collection].map(item => item.render!(item))}
+      </ListStateContext.Provider>
     </div>
   );
 }

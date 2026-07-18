@@ -1,5 +1,4 @@
-import {Item} from 'react-stately/Item';
-import {ListBox} from '../src/ListBox';
+import {ListBox, ListBoxItem} from '../src/ListBox';
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ListBox> = {
@@ -15,11 +14,11 @@ type Story = StoryFn<typeof ListBox>;
 
 export const Example: Story = args => (
   <ListBox aria-label="Favorite animal" selectionMode="single" {...args}>
-    <Item>Aardvark</Item>
-    <Item>Cat</Item>
-    <Item>Dog</Item>
-    <Item>Kangaroo</Item>
-    <Item>Panda</Item>
-    <Item>Snake</Item>
+    <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+    <ListBoxItem id="cat">Cat</ListBoxItem>
+    <ListBoxItem id="dog">Dog</ListBoxItem>
+    <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+    <ListBoxItem id="panda">Panda</ListBoxItem>
+    <ListBoxItem id="snake">Snake</ListBoxItem>
   </ListBox>
 );
