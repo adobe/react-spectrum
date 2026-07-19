@@ -37,7 +37,7 @@ export function Table(
     <table
       {...gridProps}
       ref={ref}
-      style={{borderCollapse: 'collapse', color: 'var(--text-color)'}}>
+      className="react-aria-Table">
       <TableRowGroup type="thead">
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
@@ -63,9 +63,7 @@ export function Table(
 function TableRowGroup({type: Element, children}: {type: 'thead' | 'tbody'; children: ReactNode}) {
   let {rowGroupProps} = useTableRowGroup();
   return (
-    <Element
-      {...rowGroupProps}
-      style={Element === 'thead' ? {borderBottom: '2px solid var(--gray-300)'} : undefined}>
+    <Element {...rowGroupProps} className={Element === 'thead' ? 'react-aria-TableHeader' : 'react-aria-TableBody'}>
       {children}
     </Element>
   );
@@ -105,13 +103,8 @@ function TableColumnHeader({
     <th
       {...mergeProps(columnHeaderProps, focusProps)}
       ref={ref}
-      style={{
-        textAlign: 'start',
-        padding: '6px 12px',
-        cursor: 'default',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: -2
-      }}>
+      className="react-aria-Column"
+      data-focus-visible={isFocusVisible || undefined}>
       {column.rendered}
     </th>
   );
@@ -127,20 +120,17 @@ function TableRow({
   state: ReturnType<typeof useTableState>;
 }) {
   let ref = useRef<HTMLTableRowElement>(null);
-  let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useTableRow({node: item}, state, ref);
+  let {rowProps, isSelected, isDisabled, isPressed} = useTableRow({node: item}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   return (
     <tr
       {...mergeProps(rowProps, focusProps)}
       ref={ref}
-      style={{
-        cursor: 'default',
-        background: isSelected ? 'var(--highlight-background)' : 'transparent',
-        color: isSelected ? 'var(--highlight-foreground)' : 'var(--text-color)',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: -2
-      }}>
+      className="react-aria-Row"
+      data-selected={isSelected || undefined}
+      data-disabled={isDisabled || undefined}
+      data-pressed={isPressed || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
       {children}
     </tr>
   );
@@ -154,11 +144,8 @@ function TableCell({cell, state}: {cell: Node<object>; state: ReturnType<typeof 
     <td
       {...mergeProps(gridCellProps, focusProps)}
       ref={ref}
-      style={{
-        padding: '6px 12px',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: -2
-      }}>
+      className="react-aria-Cell"
+      data-focus-visible={isFocusVisible || undefined}>
       {cell.rendered}
     </td>
   );
