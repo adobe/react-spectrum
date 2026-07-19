@@ -1,6 +1,9 @@
 @import './theme.css';
 
 .react-aria-Menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   min-height: 0;
   max-height: inherit;
   box-sizing: border-box;

@@ -8,6 +8,8 @@
     width: 100%;
     align-items: center;
     height: var(--spacing-8);
+    border-radius: var(--radius);
+    overflow: clip;
   }
 
   .react-aria-DateInput {
@@ -17,5 +19,9 @@
     overflow-x: auto;
     overflow-y: clip;
     scrollbar-width: none;
+  }
+
+  .field-Button {
+    margin-right: var(--spacing-1);
   }
 }

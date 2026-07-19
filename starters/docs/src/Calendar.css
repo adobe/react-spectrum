@@ -36,7 +36,15 @@
   }
 
   .react-aria-CalendarGrid {
+    border-collapse: collapse;
     border-spacing: 0;
+    width: 100%;
+    table-layout: fixed;
+
+    td,
+    th {
+      padding: 0;
+    }
   }
 
   [slot='errorMessage'] {

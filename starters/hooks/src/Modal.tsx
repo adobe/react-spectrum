@@ -69,7 +69,7 @@ export function Dialog(
 
   return (
     <div {...dialogProps} ref={ref} className="react-aria-Dialog">
-      {title && <h3 {...titleProps} className="react-aria-Heading">{title}</h3>}
+      {title && <h3 {...titleProps} slot="title" className="react-aria-Heading">{title}</h3>}
       {children}
     </div>
   );

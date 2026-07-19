@@ -7,7 +7,7 @@
   overflow: auto;
   padding: var(--spacing-10);
 
-  .react-aria-Heading {
+  .react-aria-Heading[slot='title'] {
     margin-top: 0;
     margin-bottom: 1em;
   }

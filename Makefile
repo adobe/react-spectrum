@@ -1,4 +1,4 @@
-.PHONY: clean test lint build
+.PHONY: clean test lint build sync-starter-css check-starter-css
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
@@ -130,7 +130,13 @@ website-production:
 	mv starters/hooks/storybook-static dist/production/docs/react-aria-hooks-starter
 	mv starters/hooks/react-aria-hooks-starter.zip dist/production/docs/react-aria-hooks-starter.$$(git rev-parse --short HEAD).zip
 
-check-examples:
+sync-starter-css:
+	yarn sync:starter-css
+
+check-starter-css:
+	yarn check:starter-css
+
+check-examples: check-starter-css
 	node scripts/extractExamplesS2.mjs
 	yarn tsgo --project dist/docs-examples/tsconfig.json
 
@@ -149,7 +155,7 @@ tailwind-starter:
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	cd starters/tailwind && yarn build-storybook
 
-hooks-starter:
+hooks-starter: sync-starter-css
 	cp LICENSE starters/hooks/.
 	cd starters/hooks && yarn --no-immutable && yarn up react-aria react-stately @internationalized/date && yarn tsc
 	cd starters/hooks && zip -r react-aria-hooks-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
@@ -183,7 +189,7 @@ s2-docs-production:
 	cd starters/tailwind && yarn install --no-immutable && yarn up react-aria-components tailwindcss-react-aria-components
 	$(MAKE) build-starters
 
-build-s2-docs:
+build-s2-docs: check-starter-css
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
 	LIBRARY=react-aria node scripts/buildRegistry.mjs

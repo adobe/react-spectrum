@@ -1,12 +1,5 @@
 @import './theme.css';
-
-.react-aria-CheckboxGroup .react-aria-Label {
-  display: block;
-  font: var(--font-size) system-ui;
-  color: var(--text-color);
-  margin-bottom: var(--spacing-2);
-  font-weight: 500;
-}
+@import './Form.css';
 
 .react-aria-CheckboxGroup {
   display: flex;
