@@ -26,94 +26,14 @@ export const isSubpage = true;
 
 This example uses `useMenuTrigger` to build a menu button, and reuses the [Button](../Button) and [Popover](../Popover) components from React Aria Components to render the trigger and popup. The trigger props returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. The menu itself is built from scratch with `useMenu` and `useMenuItem`, since those hooks are what a `Menu` component is composed from.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Menu.tsx", "starters/hooks/src/Menu.css", "starters/hooks/src/Button.css", "starters/hooks/src/Popover.css"]}
 "use client";
-import React from 'react';
-import {useMenuTrigger, useMenu, useMenuItem} from 'react-aria/useMenu';
-import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
-import {useTreeState} from 'react-stately/useTreeState';
-import {Item} from 'react-stately/Item';
-import type {Node} from '@react-types/shared';
-import {Provider} from 'react-aria-components/slots';
-import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
-import {PopoverContext} from 'react-aria-components/Popover';
-import {ButtonContext} from 'react-aria-components/Button';
-import {Button} from 'vanilla-starter/Button';
-import {Popover} from 'vanilla-starter/Popover';
-import {Ellipsis} from 'lucide-react';
-
-function MenuButton(props: Parameters<typeof useMenuTriggerState>[0] & Parameters<typeof useMenu>[0] & Parameters<typeof useTreeState>[0] & {children?: React.ReactNode}) {
-  // Create state to track whether the menu is open.
-  let state = useMenuTriggerState(props);
-
-  // Get props for the menu trigger and menu elements.
-  let ref = React.useRef<HTMLButtonElement>(null);
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
-
-  // Provide the trigger props to the reused Button and Popover via context.
-  return (
-    <Provider
-      values={[
-        [ButtonContext, {...menuTriggerProps, ref, isPressed: state.isOpen}],
-        [OverlayTriggerStateContext, state],
-        [PopoverContext, {trigger: 'MenuTrigger', triggerRef: ref, placement: 'bottom start'}]
-      ]}>
-      <Button>
-        <Ellipsis size={18} />
-      </Button>
-      <Popover>
-        <Menu {...props} {...menuProps} />
-      </Popover>
-    </Provider>
-  );
-}
-
-function Menu(props: Parameters<typeof useMenu>[0] & Parameters<typeof useTreeState>[0] & {children?: React.ReactNode}) {
-  // Create menu state based on the incoming props, building a collection from the items.
-  let state = useTreeState(props);
-
-  // Get props for the menu element.
-  let ref = React.useRef<HTMLUListElement>(null);
-  let {menuProps} = useMenu(props, state, ref);
-
-  return (
-    <ul
-      {...menuProps}
-      ref={ref}
-      style={{margin: 0, padding: 4, listStyle: 'none', minWidth: 150, outline: 'none'}}>
-      {[...state.collection].map(item => (
-        <MenuItem key={item.key} item={item} state={state} />
-      ))}
-    </ul>
-  );
-}
-
-function MenuItem({item, state}: {item: Node<unknown>, state: ReturnType<typeof useTreeState>}) {
-  // Get props for the individual menu item.
-  let ref = React.useRef<HTMLLIElement>(null);
-  let {menuItemProps, isFocused, isDisabled} = useMenuItem({key: item.key}, state, ref);
-
-  return (
-    <li
-      {...menuItemProps}
-      ref={ref}
-      style={{
-        padding: '4px 8px',
-        borderRadius: 6,
-        outline: 'none',
-        cursor: 'default',
-        background: isFocused ? 'var(--highlight-hover)' : 'transparent',
-        color: isDisabled ? 'var(--text-color-disabled)' : 'var(--text-color)'
-      }}>
-      {item.rendered}
-    </li>
-  );
-}
+import {MenuButton, MenuItem} from 'hooks-starter/Menu';
 
 <MenuButton aria-label="Actions" onAction={key => alert(key)}>
-  <Item key="copy">Copy</Item>
-  <Item key="cut">Cut</Item>
-  <Item key="paste">Paste</Item>
+  <MenuItem id="copy">Copy</MenuItem>
+  <MenuItem id="cut">Cut</MenuItem>
+  <MenuItem id="paste">Paste</MenuItem>
 </MenuButton>
 ```
 
