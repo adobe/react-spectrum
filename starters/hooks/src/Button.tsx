@@ -7,6 +7,7 @@ import {useRef} from 'react';
 import './Button.css';
 
 interface ButtonProps extends AriaButtonProps {
+  slot?: string;
   /**
    * The visual style of the button (Vanilla CSS implementation specific).
    *
