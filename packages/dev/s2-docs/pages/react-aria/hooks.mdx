@@ -10,10 +10,11 @@ governing permissions and limitations under the License. */}
 import {Layout} from '../../src/Layout';
 export default Layout;
 import {HooksStarterKit} from '../../src/StarterKits';
+import docs from 'docs:react-aria-components';
 
 export const section = 'Guides';
 export const description = 'When to use the lower level React Aria Hooks, and how to use them standalone or together with React Aria Components.';
-export const tags = ['hooks', 'standalone', 'composition', 'low-level', 'react-stately'];
+export const tags = ['hooks', 'standalone', 'composition', 'low-level', 'react-stately', 'useContextProps', 'useRenderProps'];
 
 # Hooks
 
@@ -52,6 +53,130 @@ See [useButton](Button/useButton) and [useCalendar](Calendar/useCalendar) for co
 
 ## Combining hooks with React Aria Components
 
-Using hooks isn't all-or-nothing. A hook returns props that you can pass to React Aria Components via context, following the [Reusing children](customization#reusing-children) pattern. This lets you implement a component's behavior with a hook while reusing the styled sub-components you already have for the individual parts.
+Using hooks isn't all-or-nothing. A hook returns props that you can pass to React Aria Components via context, following the [Reusing children](#reusing-children) pattern. This lets you implement a component's behavior with a hook while reusing the styled sub-components you already have for the individual parts.
 
 For example, [useSelect](Select/useSelect), [useComboBox](ComboBox/useComboBox), and [useDateRangePicker](DateRangePicker/useDateRangePicker) build the overall component with a hook, then render React Aria Components for the button, popover, listbox, and calendar.
+
+### Consuming component contexts
+
+Each React Aria component exports a corresponding [context](customization#contexts). You can build a custom implementation of a component using Hooks by consuming from the relevant context with <TypeLink links={docs.links} type={docs.exports.useContextProps} />.
+
+This example shows how a custom checkbox can consume `CheckboxContext` so it receives props from parent React Aria Components.
+
+```tsx
+import {CheckboxContext, type CheckboxProps} from 'react-aria-components/Checkbox';
+import {useContextProps} from 'react-aria-components/slots';
+import {useToggleState} from 'react-stately/useToggleState';
+import {useCheckbox} from 'react-aria/useCheckbox';
+
+const MyCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  let [mergedProps, mergedRef] = useContextProps(props, ref, CheckboxContext);
+  ///- end highlight -///
+
+  let state = useToggleState(mergedProps);
+  let {inputProps} = useCheckbox(mergedProps, state, mergedRef);
+  return <input {...inputProps} ref={mergedRef} />;
+});
+```
+
+Since `MyCheckbox` consumes from `CheckboxContext`, it can replace the built-in `Checkbox` within a [Table](Table) or [GridList](GridList) without rewriting the rest of the pattern.
+
+```tsx
+<GridList>
+  <GridListItem>
+    {/*- begin highlight -*/}
+    <MyCheckbox slot="selection" />
+    {/*- end highlight -*/}
+    {/* ... */}
+  </GridListItem>
+</GridList>
+```
+
+### Reusing children
+
+You can also provide values for React Aria Components from a Hook-based implementation. This lets you customize the parent of a larger pattern while reusing existing child components.
+
+This example follows the [useNumberField](NumberField/useNumberField) docs, then uses [Provider](customization#provider) to send values returned by the hook to each child through its corresponding context.
+
+```tsx
+import type {NumberFieldProps} from 'react-aria-components/NumberField';
+import {Provider} from 'react-aria-components/slots';
+import {GroupContext} from 'react-aria-components/Group';
+import {InputContext} from 'react-aria-components/Input';
+import {LabelContext} from 'react-aria-components/Label';
+import {ButtonContext} from 'react-aria-components/Button';
+import {useNumberFieldState} from 'react-stately/useNumberFieldState';
+import {useNumberField} from 'react-aria/useNumberField';
+import {useLocale} from 'react-aria/I18nProvider';
+
+function CustomNumberField(props: NumberFieldProps) {
+  let {locale} = useLocale();
+  let state = useNumberFieldState({...props, locale});
+  let ref = useRef<HTMLInputElement>(null);
+  let {
+    labelProps,
+    groupProps,
+    inputProps,
+    incrementButtonProps,
+    decrementButtonProps
+  } = useNumberField(props, state, ref);
+
+  return (
+    /*- begin highlight -*/
+    <Provider
+      values={[
+        [GroupContext, groupProps],
+        [InputContext, {...inputProps, ref}],
+        [LabelContext, labelProps],
+        [ButtonContext, {
+          slots: {
+            increment: incrementButtonProps,
+            decrement: decrementButtonProps
+          }
+        }]
+      ]}>
+      {props.children}
+    </Provider>
+    /*- end highlight -*/
+  );
+}
+```
+
+Because `CustomNumberField` provides values for `Group`, `Input`, `Label`, and `Button`, their React Aria Components implementations can be reused.
+
+```tsx
+<CustomNumberField>
+  <Label>Width</Label>
+  <Group>
+    <Input />
+    <Button slot="increment">+</Button>
+    <Button slot="decrement">-</Button>
+  </Group>
+</CustomNumberField>
+```
+
+### Supporting render props
+
+To support the [render props](styling#render-props) API in a fully custom component, use <TypeLink links={docs.links} type={docs.exports.useRenderProps} />. It resolves the `className`, `style`, and `children` props against the `values` you provide, and returns the computed values to spread onto your element.
+
+```tsx
+import {useRenderProps} from 'react-aria-components';
+
+function MyComponent(props) {
+  /*- begin highlight -*/
+  let renderProps = useRenderProps({
+    className: props.className,
+    style: props.style,
+    children: props.children,
+    defaultClassName: 'my-component',
+    values: {isSelected: props.isSelected}
+  });
+  /*- end highlight -*/
+
+  return <div {...renderProps} />;
+}
+```
+
+The `values` object is passed to each render props function, so consumers of `MyComponent` can style and render based on `isSelected`, just like a built-in component.
