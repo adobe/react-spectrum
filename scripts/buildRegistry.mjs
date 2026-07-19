@@ -118,7 +118,7 @@ items.push(hooks);
 
 for (let file of globSync('starters/hooks/src/*.{ts,tsx}').sort()) {
   let name = path.basename(file, path.extname(file));
-  let {dependencies, registryDependencies, content} = analyzeDeps(file, 'hooks');
+  let {dependencies, registryDependencies, cssImports, content} = analyzeDeps(file, 'hooks');
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
   let item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -136,9 +136,15 @@ for (let file of globSync('starters/hooks/src/*.{ts,tsx}').sort()) {
     ]
   };
 
-  let cssFile = file.slice(0, -path.extname(file).length) + '.css';
-  if (fs.existsSync(cssFile)) {
-    item.files.push(...analyzeCss(cssFile));
+  let cssFiles = new Set(cssImports);
+  let componentCssFile = path.resolve(file.slice(0, -path.extname(file).length) + '.css');
+  if (fs.existsSync(componentCssFile)) {
+    cssFiles.add(componentCssFile);
+  }
+
+  let seenCssFiles = new Set();
+  for (let cssFile of cssFiles) {
+    item.files.push(...analyzeCss(cssFile, seenCssFiles));
   }
 
   fs.writeFileSync(
@@ -187,11 +193,14 @@ function analyzeDeps(file, type) {
 
   let dependencies = new Set();
   let registryDependencies = new Set();
+  let cssImports = new Set();
   for (let node of ast.program.body) {
     if (node.type === 'ImportDeclaration') {
       let source = node.source.value;
       if (source.startsWith('./')) {
-        if (!source.endsWith('.css')) {
+        if (source.endsWith('.css')) {
+          cssImports.add(path.resolve(path.dirname(file), source));
+        } else {
           registryDependencies.add(
             publicUrl + '/' + type + '-' + source.slice(2).toLowerCase() + '.json'
           );
@@ -214,7 +223,7 @@ function analyzeDeps(file, type) {
   }
 
   content = recast.print(ast, {objectCurlySpacing: false, quote: 'single'}).code;
-  return {dependencies, registryDependencies, content};
+  return {dependencies, registryDependencies, cssImports, content};
 }
 
 function analyzeCss(file, seen = new Set()) {
