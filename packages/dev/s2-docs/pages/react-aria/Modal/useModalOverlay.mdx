@@ -15,7 +15,7 @@ import docs from 'docs:@react-aria/overlays';
 import dialogDocs from 'docs:@react-aria/dialog';
 import statelyDocs from 'docs:@react-stately/overlays';
 import Anatomy from '/packages/react-aria/docs/overlays/modal-anatomy.svg';
-import 'vanilla-starter/theme.css';
+import 'hooks-starter/theme.css';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a modal overlay and dialog.';
@@ -27,85 +27,16 @@ export const isSubpage = true;
 
 `useModalOverlay` is the modal primitive itself, so the overlay and underlay are built from scratch using an [&lt;Overlay&gt;](../Popover) portal. The trigger and close action reuse the [Button](../Button) component, and the content reuses the [Dialog](#usedialog) component, both from React Aria Components.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Modal.tsx", "starters/hooks/src/Modal.css", "starters/hooks/src/Dialog.css", "starters/hooks/src/Button.css"]}
 "use client";
-import React from 'react';
-import {useModalOverlay} from 'react-aria/useModalOverlay';
-import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
-import {Overlay} from 'react-aria/Overlay';
-import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
-import {Provider} from 'react-aria-components/slots';
-import {ButtonContext} from 'react-aria-components/Button';
-import {Button} from 'vanilla-starter/Button';
-import {Dialog, Heading} from 'vanilla-starter/Dialog';
-import {TextField} from 'vanilla-starter/TextField';
-import {Form} from 'vanilla-starter/Form';
-import 'vanilla-starter/Button.css';
-import 'vanilla-starter/Dialog.css';
-import 'vanilla-starter/Form.css';
-import 'vanilla-starter/TextField.css';
-
-function Modal({state, children, ...props}: Parameters<typeof useModalOverlay>[0] & {state: ReturnType<typeof useOverlayTriggerState>, children: React.ReactNode}) {
-  let ref = React.useRef<HTMLDivElement>(null);
-  /*- begin highlight -*/
-  let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
-  /*- end highlight -*/
-
-  return (
-    <Overlay>
-      <div
-        {...underlayProps}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 100,
-          background: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          font: 'var(--font-size) system-ui'
-        }}>
-        <div
-          {...modalProps}
-          ref={ref}
-          style={{
-            background: 'var(--overlay-background)',
-            border: '1px solid var(--gray-300)',
-            borderRadius: 8
-          }}>
-          {children}
-        </div>
-      </div>
-    </Overlay>
-  );
-}
-
-function ModalTrigger({label, children, ...props}: Parameters<typeof useOverlayTriggerState>[0] & {label: React.ReactNode, children: (close: () => void) => React.ReactElement}) {
-  let state = useOverlayTriggerState(props);
-  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state);
-
-  return (
-    <>
-      <Provider values={[[ButtonContext, {...triggerProps}]]}>
-        <Button>{label}</Button>
-      </Provider>
-      {state.isOpen &&
-        <Modal {...props} state={state}>
-          {React.cloneElement(children(state.close), overlayProps)}
-        </Modal>}
-    </>
-  );
-}
+import {Button} from 'react-aria-components/Button';
+import {Dialog, ModalTrigger} from 'hooks-starter/Modal';
 
 <ModalTrigger label="Open dialog">
   {close =>
-    <Dialog>
-      <Heading slot="title">Enter your name</Heading>
-      <Form style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-        <TextField label="First Name" />
-        <TextField label="Last Name" />
-        <Button onPress={close} style={{marginTop: 8}}>Submit</Button>
-      </Form>
+    <Dialog title="Enter your name">
+      <p>This dialog is built with <code>useModalOverlay</code> and <code>useDialog</code>.</p>
+      <Button onPress={close} className="react-aria-Button button-base" data-variant="primary">Close</Button>
     </Dialog>}
 </ModalTrigger>
 ```
@@ -114,47 +45,17 @@ function ModalTrigger({label, children, ...props}: Parameters<typeof useOverlayT
 
 `useDialog` is the dialog primitive itself, so the `Dialog` component is built from scratch. To render it interactively, this example reuses the [Modal](../Modal), [Button](../Button), and `DialogTrigger` components from React Aria Components to provide the overlay container and trigger. A dialog may also be placed within a [popover](../Popover/usePopover).
 
-```tsx render
+```tsx render files={["starters/hooks/src/Modal.tsx", "starters/hooks/src/Modal.css", "starters/hooks/src/Dialog.css", "starters/hooks/src/Button.css"]}
 "use client";
-import React from 'react';
-import {useDialog} from 'react-aria/useDialog';
-import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
-import {DialogTrigger} from 'vanilla-starter/Dialog';
-import {Modal} from 'vanilla-starter/Modal';
-import {Button} from 'vanilla-starter/Button';
-import 'vanilla-starter/Button.css';
-import 'vanilla-starter/Dialog.css';
-import 'vanilla-starter/Modal.css';
+import {CloseButton, Dialog, ModalTrigger} from 'hooks-starter/Modal';
 
-function Dialog({title, children, ...props}: Parameters<typeof useDialog>[0] & {title?: React.ReactNode, children?: React.ReactNode}) {
-  let ref = React.useRef<HTMLDivElement>(null);
-  /*- begin highlight -*/
-  let {dialogProps, titleProps} = useDialog(props, ref);
-  /*- end highlight -*/
-
-  return (
-    <div {...dialogProps} ref={ref} style={{outline: 'none', padding: 24}}>
-      {title &&
-        <h3 {...titleProps} style={{marginTop: 0}}>{title}</h3>}
-      {children}
-    </div>
-  );
-}
-
-function CloseButton() {
-  let state = React.useContext(OverlayTriggerStateContext);
-  return <Button onPress={() => state?.close()}>Close</Button>;
-}
-
-<DialogTrigger>
-  <Button>Open dialog</Button>
-  <Modal>
+<ModalTrigger label="Open dialog">
+  {() =>
     <Dialog title="Notice">
       <p style={{marginTop: 0}}>This dialog is built with useDialog.</p>
       <CloseButton />
-    </Dialog>
-  </Modal>
-</DialogTrigger>
+    </Dialog>}
+</ModalTrigger>
 ```
 
 A dialog consists of a container element and an optional title. `useDialog` handles exposing this to assistive technology using ARIA. It can be combined with `useModalOverlay` or [usePopover](../Popover/usePopover) to create modal dialogs, popovers, and other types of overlays.
