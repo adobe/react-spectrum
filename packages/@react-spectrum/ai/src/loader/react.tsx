@@ -1,0 +1,266 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+// React pixel-fall loader. Renders plain HTML divs and lets the browser
+// drive the animation natively via generated CSS @keyframes. Multi-icon
+// sequences (presets) play one icon per 2.4s cycle and
+// advance via a single timer — only the current icon's cells are in the
+// DOM. A single-icon loader stays a pure infinite CSS loop with no JS.
+
+import {aiLogo, type Cell} from './data';
+import * as React from 'react';
+
+// Easing control points, formatted into `cubic-bezier(...)` in the
+// generated keyframes. `fade` is intentionally linear — its control
+// points lie on y=x.
+const EASE = {
+  drop: [0.333, 0, 0.667, 1],
+  recover: [0.333, 0, 0.833, 1],
+  exit: [0.563, 0, 0.906, 0.757],
+  fade: [0.167, 0.167, 0.833, 0.833]
+};
+
+// One full cycle is 72 frames at 30fps (2.4s).
+const TOTAL_FRAMES = 72;
+const FPS = 30;
+const DURATION_MS = (TOTAL_FRAMES / FPS) * 1000;
+
+// Per-cell vertical offsets in the 24-unit space: start off
+// the top, overshoot just past the settled position, exit off the bottom.
+const Y_START = -26;
+const Y_OVERSHOOT = 1;
+const Y_EXIT = 26;
+
+// The animation lives in a fixed VIEWBOX-sized coordinate space that is scaled down to the
+// rendered `size`. Cells are absolutely positioned in this space, so all
+// the translateY offsets below are in these units — identical to the old
+// SVG viewBox math, just on HTML elements the compositor can accelerate.
+const VIEWBOX = 480;
+const CELL = VIEWBOX / 12;
+
+// ─────────────────────────────────────────────────────────────
+// CSS @keyframes generation. Each piecewise segment of the motion
+// becomes one keyframe stop whose `animation-timing-function` is the
+// matching cubic-bezier (from EASE), so the browser interpolates the
+// drop/recover/exit/fade curves natively.
+// ─────────────────────────────────────────────────────────────
+
+function pct(frame) {
+  // Frame → keyframe offset percentage, trimmed of noise.
+  return `${+((frame / TOTAL_FRAMES) * 100).toFixed(4)}%`;
+}
+
+function cb(coeffs) {
+  return `cubic-bezier(${coeffs.join(',')})`;
+}
+
+// stops: ordered [{f, decl, ease}]. `decl` is the CSS declarations for
+// that stop; `ease` (optional) is the timing function for the segment
+// starting at it. Stops sharing a frame are de-duped (first wins).
+type Stop = {f: number; decl: string; ease?: readonly number[] | null};
+
+function emitKeyframes(name: string, stops: Stop[]) {
+  let body = '';
+  let lastPct: string | null = null;
+  for (const s of stops) {
+    const p = pct(s.f);
+    if (p === lastPct) continue;
+    lastPct = p;
+    const ease = s.ease ? `animation-timing-function:${cb(s.ease)};` : '';
+    body += `${p}{${s.decl}${ease}}`;
+  }
+  return `@keyframes ${name}{${body}}`;
+}
+
+const ty = v => `transform:translateY(${v}px);`;
+const op = v => `opacity:${v};`;
+
+function cellYKeyframes(name, c) {
+  const s = c.stagger;
+  const e = c.exitStart;
+  const stops: Stop[] = [{f: 0, decl: ty(Y_START), ease: s > 0 ? null : EASE.drop}];
+  if (s > 0) {
+    stops.push({f: s, decl: ty(Y_START), ease: EASE.drop});
+  }
+  stops.push({f: s + 10, decl: ty(Y_OVERSHOOT), ease: EASE.recover});
+  stops.push({f: s + 13, decl: ty(0)}); // settled — hold until exit
+  stops.push({f: e, decl: ty(0), ease: EASE.exit});
+  stops.push({f: e + 12, decl: ty(Y_EXIT)});
+  stops.push({f: TOTAL_FRAMES, decl: ty(Y_EXIT)}); // hold offscreen until wrap
+  return emitKeyframes(name, stops);
+}
+
+function cellOpacityKeyframes(name, c) {
+  const [fi0, fi1] = c.fadeIn;
+  const [fo0, fo1] = c.fadeOut;
+  return emitKeyframes(name, [
+    {f: 0, decl: op(0)},
+    {f: fi0, decl: op(0), ease: EASE.fade},
+    {f: fi1, decl: op(1)},
+    {f: fo0, decl: op(1), ease: EASE.fade},
+    {f: fo1, decl: op(0)},
+    {f: TOTAL_FRAMES, decl: op(0)}
+  ]);
+}
+
+// Stable per-icon id, keyed by the cell-array reference (icons are
+// module-level consts, so the reference is stable). Used to namespace
+// each icon's @keyframes and to cache its generated CSS.
+let nextIconId = 0;
+const iconIds = new WeakMap<object, string>();
+function iconId(cells: object): string {
+  let id = iconIds.get(cells);
+  if (id === undefined) {
+    id = `pl${nextIconId++}`;
+    iconIds.set(cells, id);
+  }
+  return id;
+}
+
+const cssCache = new WeakMap<object, string>();
+function keyframesFor(cells: Cell[]): string {
+  let css = cssCache.get(cells);
+  if (css === undefined) {
+    const id = iconId(cells);
+    css = cells
+      .map((c, i) => cellYKeyframes(`${id}-${i}-y`, c) + cellOpacityKeyframes(`${id}-${i}-o`, c))
+      .join('');
+    cssCache.set(cells, css);
+  }
+  return css;
+}
+
+interface PixelLoaderProps {
+  size?: number;
+  playing?: boolean;
+  icon?: Cell[] | Cell[][];
+  speed?: number;
+  color?: string;
+  className?: string;
+}
+
+export function PixelLoader(props: PixelLoaderProps) {
+  const {
+    size = 21,
+    playing = true,
+    icon = aiLogo,
+    speed = 1,
+    color = 'currentColor',
+    className,
+    ...rest
+  } = props;
+
+  // Normalize to a sequence.
+  const sequence = React.useMemo(
+    () => (Array.isArray(icon[0]) ? icon : [icon]) as Cell[][],
+    [icon]
+  );
+  const isSequence = sequence.length > 1;
+  const duration = DURATION_MS / (speed || 1);
+
+  // `tick` increments once per cycle; the current icon is `tick % len`.
+  const [tick, setTick] = React.useState(0);
+
+  // Restart from the first icon whenever the sequence changes.
+  let [lastSequence, setLastSequence] = React.useState(sequence);
+  if (lastSequence !== sequence) {
+    setLastSequence(sequence);
+    setTick(0);
+  }
+
+  // Advance the sequence one icon per cycle while playing. Single-icon
+  // loaders never start a timer — they're a pure infinite CSS loop.
+  React.useEffect(() => {
+    if (!playing || !isSequence) {
+      return undefined;
+    }
+    const id = setInterval(() => setTick(t => t + 1), duration);
+    return () => clearInterval(id);
+  }, [playing, isSequence, duration, sequence]);
+
+  const cells = sequence[isSequence ? tick % sequence.length : 0];
+  const animId = iconId(cells);
+  const css = keyframesFor(cells);
+  // Sequences play each icon once and hold its faded-out final frame
+  // (`forwards`) until the next remount; a single icon loops forever.
+  const iteration = isSequence ? '1 forwards' : 'infinite';
+
+  const cellSize = size / 7;
+  const offset = (size - cellSize * 7) / 2;
+  const matrix = Array.from({length: 7}, () => Array.from({length: 7}, () => false));
+  for (let c of cells) {
+    let x = (c.cx - 120) / CELL;
+    let y = (c.cy - 120) / CELL;
+    matrix[y][x] = true;
+  }
+
+  const isHighDPI = window.devicePixelRatio >= 2;
+
+  return (
+    <div
+      aria-hidden="true"
+      className={className}
+      style={{
+        display: 'inline-block',
+        width: size,
+        height: size,
+        lineHeight: 0,
+        overflow: 'clip',
+        position: 'relative'
+      }}
+      {...rest}>
+      {playing ? <style>{css}</style> : null}
+      {cells.map((c, i) => {
+        let x = (c.cx - 120) / CELL;
+        let y = (c.cy - 120) / CELL;
+
+        // Convex-corner rounding: round a corner only when both orthogonal neighbors toward it are absent.
+        let left = matrix[y][x - 1];
+        let right = matrix[y][x + 1];
+        let top = matrix[y - 1]?.[x];
+        let bottom = matrix[y + 1]?.[x];
+        let corner = (a, b) => (!a && !b ? '1px' : '0px');
+
+        // Adjust position for outer cells on high DPI displays.
+        let xPx = x * cellSize + offset;
+        let yPx = y * cellSize + offset;
+        if (isHighDPI && c.outer && xPx > size / 2) {
+          xPx -= 0.5;
+        }
+        if (isHighDPI && c.outer && yPx > size / 2) {
+          yPx -= 0.5;
+        }
+
+        return (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: xPx,
+              top: yPx,
+              width: cellSize + (isHighDPI && c.outer ? 0.5 : 0),
+              height: cellSize + (isHighDPI && c.outer ? 0.5 : 0),
+              borderRadius: `${corner(left, top)} ${corner(right, top)} ${corner(right, bottom)} ${corner(left, bottom)}`,
+              backgroundColor: color,
+              ...(playing && {
+                animation:
+                  `${animId}-${i}-y ${duration}ms linear ${iteration}, ` +
+                  `${animId}-${i}-o ${duration}ms linear ${iteration}`,
+                willChange: 'transform, opacity'
+              })
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}

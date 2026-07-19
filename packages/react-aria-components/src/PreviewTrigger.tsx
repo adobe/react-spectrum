@@ -47,7 +47,9 @@ export function PreviewTrigger(props: PreviewTriggerProps): JSX.Element {
       open: () => state.open(),
       close: () => state.close(),
       setOpen: isOpen => (isOpen ? state.open() : state.close()),
-      toggle: () => (state.isOpen ? state.close() : state.open())
+      toggle: () => (state.isOpen ? state.close() : state.open()),
+      point: null,
+      setPoint: () => {}
     }),
     [state]
   );
