@@ -25,7 +25,17 @@ export const isSubpage = true;
 
 This example uses `useDatePicker` to combine a date field and a calendar popover, and reuses the [DateField](../DateField), [Button](../Button), [Popover](../Popover), and [Calendar](../Calendar) components from React Aria Components to render each part. The values returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. Date values use the [@internationalized/date](../internationalized/date/) library.
 
-```tsx render
+```tsx render files={["starters/hooks/src/DatePicker.tsx", "starters/hooks/src/DatePicker.css", "starters/hooks/src/DateField.css", "starters/hooks/src/Calendar.css", "starters/hooks/src/Button.css", "starters/hooks/src/Form.css", "starters/hooks/src/Popover.css"]}
+"use client";
+import {DatePicker} from 'hooks-starter/DatePicker';
+
+<DatePicker label="Event date" />
+```
+
+<details>
+<summary>View implementation</summary>
+
+```tsx
 "use client";
 import React from 'react';
 import {useDatePicker, type AriaDatePickerProps} from 'react-aria/useDatePicker';
@@ -88,6 +98,8 @@ function DatePicker(props: AriaDatePickerProps<DateValue>) {
 
 <DatePicker label="Event date" />
 ```
+
+</details>
 
 ## API
 
