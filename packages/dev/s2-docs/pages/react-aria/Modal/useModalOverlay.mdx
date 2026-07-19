@@ -25,8 +25,6 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useModalOverlay.description}</PageDescription>
 
-`useModalOverlay` is the modal primitive itself, so the overlay and underlay are built from scratch using an [&lt;Overlay&gt;](../Popover) portal. The trigger and close action reuse the [Button](../Button) component, and the content reuses the [Dialog](#usedialog) component, both from React Aria Components.
-
 ```tsx render files={["starters/hooks/src/Modal.tsx", "starters/hooks/src/Modal.css", "starters/hooks/src/Dialog.css", "starters/hooks/src/Button.css"]}
 "use client";
 import {Button} from 'react-aria-components/Button';

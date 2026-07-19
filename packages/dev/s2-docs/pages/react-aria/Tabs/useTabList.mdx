@@ -23,8 +23,6 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useTabList.description}</PageDescription>
 
-`useTabList`, `useTab`, and `useTabPanel` are the tabs primitives, so the tab list, tabs, and tab panel are built from scratch. The currently selected tab is the only tab stop in the tab list (roving tabindex), and `useTab`/`useTabPanel` handle associating each tab with its panel for assistive technology.
-
 ```tsx render files={["starters/hooks/src/Tabs.tsx", "starters/hooks/src/Tabs.css"]}
 "use client";
 import {Tab, Tabs} from 'hooks-starter/Tabs';

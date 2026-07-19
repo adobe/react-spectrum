@@ -24,8 +24,6 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useMenu.description}</PageDescription>
 
-This example uses `useMenuTrigger` to build a menu button, and reuses the [Button](../Button) and [Popover](../Popover) components from React Aria Components to render the trigger and popup. The trigger props returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. The menu itself is built from scratch with `useMenu` and `useMenuItem`, since those hooks are what a `Menu` component is composed from.
-
 ```tsx render files={["starters/hooks/src/Menu.tsx", "starters/hooks/src/Menu.css", "starters/hooks/src/Button.css", "starters/hooks/src/Popover.css"]}
 "use client";
 import {MenuButton, MenuItem} from 'hooks-starter/Menu';

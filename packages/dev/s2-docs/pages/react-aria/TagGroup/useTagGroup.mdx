@@ -23,22 +23,6 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useTagGroup.description}</PageDescription>
 
-This example uses `useTagGroup` for the container and `useTag` for each tag, building the collection from scratch with `useListState` and items from `react-stately`. The remove button reuses the [Button](../Button) component from React Aria Components.
-
-```tsx render files={["starters/hooks/src/TagGroup.tsx", "starters/hooks/src/TagGroup.css"]}
-"use client";
-import {Tag, TagGroup} from 'hooks-starter/TagGroup';
-
-<TagGroup label="Categories" onRemove={keys => alert(`Remove ${[...keys]}`)}>
-  <Tag id="news">News</Tag>
-  <Tag id="travel">Travel</Tag>
-  <Tag id="gaming">Gaming</Tag>
-  <Tag id="shopping">Shopping</Tag>
-</TagGroup>
-```
-
-Use the `onAction` prop to handle item actions. Provide an explicit `key` on each item so the action handler receives a meaningful identifier.
-
 ```tsx render
 "use client";
 import {Tag, TagGroup} from 'hooks-starter/TagGroup';

@@ -23,8 +23,6 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.usePopover.description}</PageDescription>
 
-`usePopover` is the popover primitive itself, so the overlay is built from scratch using an [&lt;Overlay&gt;](../Popover) portal and &lt;`DismissButton`&gt; elements. The trigger reuses the [Button](../Button) component, and the content reuses the [Dialog](../Modal/useModalOverlay#usedialog) component, both from React Aria Components.
-
 ```tsx render files={["starters/hooks/src/Popover.tsx", "starters/hooks/src/Popover.css", "starters/hooks/src/Button.css", "starters/docs/src/Dialog.css"]}
 "use client";
 import {Dialog, Heading} from 'react-aria-components/Dialog';
