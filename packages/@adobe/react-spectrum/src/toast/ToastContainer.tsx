@@ -41,11 +41,14 @@ export type CloseFunction = () => void;
 
 function wrapInViewTransition(fn: () => void): void {
   if ('startViewTransition' in document) {
-    document
-      .startViewTransition(() => {
-        flushSync(fn);
-      })
-      .ready.catch(() => {});
+    let transition = document.startViewTransition(() => {
+      flushSync(fn);
+    });
+    // Prevents unhandled promise rejections when a transition is
+    // preempted by another (e.g. overlapping toasts).
+    transition.finished.catch(() => {});
+    transition.ready.catch(() => {});
+    transition.updateCallbackDone.catch(() => {});
   } else {
     fn();
   }
