@@ -36,6 +36,19 @@ import {NumberField} from 'hooks-starter/NumberField';
 
 <Anatomy />
 
+```tsx
+<NumberField>
+  <Label />
+  <Group>
+    <Input />
+    <Button slot="increment" />
+    <Button slot="decrement" />
+  </Group>
+  <Text slot="description" />
+  <FieldError />
+</NumberField>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useNumberFieldState, links: statelyDocs.links},

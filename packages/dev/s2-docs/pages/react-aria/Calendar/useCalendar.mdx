@@ -36,6 +36,25 @@ import {Calendar} from 'hooks-starter/Calendar';
 
 <Anatomy />
 
+```tsx
+<Calendar>
+  <CalendarHeading />
+  <CalendarMonthPicker />
+  <CalendarYearPicker />
+  <Button slot="previous" />
+  <Button slot="next" />
+  <CalendarGrid>
+    <CalendarGridHeader>
+      {day => <CalendarHeaderCell />}
+    </CalendarGridHeader>
+    <CalendarGridBody>
+      {date => <CalendarCell date={date} />}
+    </CalendarGridBody>
+  </CalendarGrid>
+  <Text slot="errorMessage" />
+</Calendar>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useCalendarState, links: statelyDocs.links},

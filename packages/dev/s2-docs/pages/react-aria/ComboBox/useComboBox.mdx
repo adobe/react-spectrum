@@ -43,6 +43,22 @@ import {ComboBox, ComboBoxItem} from 'hooks-starter/ComboBox';
 
 <Anatomy />
 
+```tsx
+<ComboBox>
+  <Label />
+  <Group>
+    <Input />
+    <Button />
+  </Group>
+  <ComboBoxValue />
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox />
+  </Popover>
+</ComboBox>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useComboBoxState, links: statelyDocs.links},

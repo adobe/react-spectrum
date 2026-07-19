@@ -48,6 +48,40 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'hooks-starter/Ta
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table" />
 
+```tsx
+<ResizableTableContainer>
+  <Table>
+    <TableHeader>
+      <Column />
+      <Column><Checkbox slot="selection" /></Column>
+      <Column><ColumnResizer /></Column>
+      <Column />
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell><Button slot="drag" /></Cell>
+        <Cell>
+          <Checkbox slot="selection" /> or <SelectionIndicator />
+        </Cell>
+        <Cell>
+          <Button slot="chevron" />
+        </Cell>
+        <Cell />
+        <Row>
+          {/* ... */}
+        </Row>
+      </Row>
+      <TableLoadMoreItem />
+    </TableBody>
+    <TableFooter>
+      <Row>
+        <Cell />
+      </Row>
+    </TableFooter>
+  </Table>
+</ResizableTableContainer>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useTableState, links: statelyDocs.links},

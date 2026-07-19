@@ -40,6 +40,20 @@ import {ToastProvider, Button} from 'hooks-starter/Toast';
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
+```tsx
+<ToastRegion>
+  {({toast}) => (
+    <Toast toast={toast}>
+      <ToastContent>
+        <Text slot="title" />
+        <Text slot="description" />
+      </ToastContent>
+      <Button slot="close" />
+    </Toast>
+  )}
+</ToastRegion>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useToastState, links: statelyDocs.links},

@@ -36,6 +36,17 @@ import {TimeField} from 'hooks-starter/TimeField';
 
 <Anatomy />
 
+```tsx
+<TimeField>
+  <Label />
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  <Text slot="description" />
+  <FieldError />
+</TimeField>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useTimeFieldState, links: statelyDocs.links},

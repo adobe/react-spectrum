@@ -61,6 +61,20 @@ import {Tag, TagGroup} from 'hooks-starter/TagGroup';
 
 <Anatomy />
 
+```tsx
+<TagGroup>
+  <Label />
+  <TagList>
+    <Tag>
+      <SelectionIndicator />
+      <Button slot="remove" />
+    </Tag>
+  </TagList>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</TagGroup>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useListState, links: statelyDocs.links},

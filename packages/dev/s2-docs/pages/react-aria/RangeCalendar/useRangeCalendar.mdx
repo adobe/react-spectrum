@@ -36,6 +36,25 @@ import {RangeCalendar} from 'hooks-starter/RangeCalendar';
 
 <Anatomy />
 
+```tsx
+<RangeCalendar>
+  <CalendarHeading />
+  <CalendarMonthPicker />
+  <CalendarYearPicker />
+  <Button slot="previous" />
+  <Button slot="next" />
+  <CalendarGrid>
+    <CalendarGridHeader>
+      {day => <CalendarHeaderCell />}
+    </CalendarGridHeader>
+    <CalendarGridBody>
+      {date => <CalendarCell date={date} />}
+    </CalendarGridBody>
+  </CalendarGrid>
+  <Text slot="errorMessage" />
+</RangeCalendar>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useRangeCalendarState, links: statelyDocs.links},

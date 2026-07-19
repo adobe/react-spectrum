@@ -39,6 +39,20 @@ import {RadioGroup, Radio} from 'hooks-starter/RadioGroup';
 
 <Anatomy />
 
+```tsx
+<RadioGroup>
+  <Label />
+  <RadioField>
+    <RadioButton>
+      <SelectionIndicator />
+    </RadioButton>
+    <Text slot="description" />
+  </RadioField>
+  <Text slot="description" />
+  <FieldError />
+</RadioGroup>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useRadioGroupState, links: statelyDocs.links},

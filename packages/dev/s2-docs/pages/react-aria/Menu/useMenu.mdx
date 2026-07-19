@@ -41,6 +41,33 @@ import {MenuButton, MenuItem} from 'hooks-starter/Menu';
 
 <Anatomy />
 
+```tsx
+<MenuTrigger>
+  <Button />
+  <Popover>
+    <Menu>
+      <MenuItem>
+        <Text slot="label" />
+        <Text slot="description" />
+        <Keyboard />
+        <SelectionIndicator />
+      </MenuItem>
+      <Separator />
+      <MenuSection>
+        <Header />
+        <MenuItem />
+      </MenuSection>
+      <SubmenuTrigger>
+        <MenuItem />
+        <Popover>
+          <Menu />
+        </Popover>
+      </SubmenuTrigger>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
 <FunctionAPIGroup
   functions={[
     {function: menuStatelyDocs.exports.useMenuTriggerState, links: menuStatelyDocs.links},
