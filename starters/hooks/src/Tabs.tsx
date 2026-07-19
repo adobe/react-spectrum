@@ -9,7 +9,7 @@ import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuild
 import {Collection} from 'react-aria-components/Collection';
 import {ItemNode} from 'react-aria/private/collections/BaseCollection';
 import type {Collection as ICollection, Key, Node} from '@react-types/shared';
-import {createContext, useContext, useRef} from 'react';
+import {createContext, Fragment, useContext, useRef} from 'react';
 import type {ForwardedRef, ReactNode} from 'react';
 import './Tabs.css';
 
@@ -73,7 +73,9 @@ function TabsInner({collection, ...props}: AriaTabListOptions<object> & Omit<Par
         className="react-aria-TabList"
         data-orientation={orientation}>
         <TabListStateContext.Provider value={state}>
-          {[...state.collection].map(item => item.render!(item))}
+          {[...state.collection].map(item => (
+            <Fragment key={item.key}>{item.render!(item)}</Fragment>
+          ))}
         </TabListStateContext.Provider>
       </div>
       {/* Re-mount the panel when the selection changes so DOM state isn't shared between tabs. */}
