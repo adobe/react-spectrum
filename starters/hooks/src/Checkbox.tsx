@@ -12,7 +12,7 @@ export function Checkbox(props: AriaCheckboxProps) {
   let state = useToggleState(props);
   let ref = useRef<HTMLInputElement>(null);
   /*- begin highlight -*/
-  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useCheckbox(
+  let {labelProps, inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useCheckbox(
     props,
     state,
     ref
@@ -26,7 +26,7 @@ export function Checkbox(props: AriaCheckboxProps) {
     <div className="react-aria-CheckboxField" data-disabled={isDisabled || undefined}>
       {/* The label wraps a visually hidden native input plus the styled indicator. */}
       <label
-        {...hoverProps}
+        {...mergeProps(labelProps, hoverProps)}
         className="react-aria-CheckboxButton"
         data-selected={isSelected || undefined}
         data-indeterminate={isIndeterminate || undefined}
