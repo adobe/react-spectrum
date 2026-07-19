@@ -7,12 +7,12 @@ import {
   type AriaToastRegionProps
 } from 'react-aria/useToast';
 import {useToastState} from 'react-stately/useToastState';
-import {Button} from '../../docs/src/Button';
+import {Button} from './Button';
 import {X} from 'lucide-react';
 import {useRef} from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import './Toast.css';
-import '../../docs/src/Button.css';
+import './Button.css';
 
 export function ToastProvider({
   children
