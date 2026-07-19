@@ -25,7 +25,17 @@ export const isSubpage = true;
 
 This example uses `useDateRangePicker` to combine two date fields and a calendar popover, and reuses the [DateField](../DateField), [Button](../Button), [Popover](../Popover), and [RangeCalendar](../RangeCalendar) components from React Aria Components to render each part. The values returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. The start and end fields are provided as `start` and `end` slots on the `DateFieldContext`. Date values use the [@internationalized/date](../internationalized/date/) library.
 
-```tsx render
+```tsx render files={["starters/hooks/src/DateRangePicker.tsx", "starters/hooks/src/DateRangePicker.css", "starters/hooks/src/DateField.css", "starters/hooks/src/RangeCalendar.css", "starters/hooks/src/Button.css", "starters/hooks/src/Form.css", "starters/hooks/src/Popover.css"]}
+"use client";
+import {DateRangePicker} from 'hooks-starter/DateRangePicker';
+
+<DateRangePicker label="Trip dates" />
+```
+
+<details>
+<summary>View implementation</summary>
+
+```tsx
 "use client";
 import React from 'react';
 import {useDateRangePicker, type AriaDateRangePickerProps} from 'react-aria/useDateRangePicker';
@@ -99,6 +109,8 @@ function DateRangePicker(props: AriaDateRangePickerProps<DateValue>) {
 
 <DateRangePicker label="Trip dates" />
 ```
+
+</details>
 
 ## API
 
