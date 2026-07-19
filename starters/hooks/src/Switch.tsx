@@ -12,7 +12,7 @@ export function Switch(props: AriaSwitchProps) {
   let state = useToggleState(props);
   let ref = useRef<HTMLInputElement>(null);
   /*- begin highlight -*/
-  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useSwitch(
+  let {labelProps, inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useSwitch(
     props,
     state,
     ref
@@ -25,7 +25,7 @@ export function Switch(props: AriaSwitchProps) {
     <div className="react-aria-SwitchField" data-disabled={isDisabled || undefined}>
       {/* The label wraps a visually hidden native input plus the styled track/handle. */}
       <label
-        {...hoverProps}
+        {...mergeProps(labelProps, hoverProps)}
         className="react-aria-SwitchButton"
         data-selected={isSelected || undefined}
         data-pressed={isPressed || undefined}
