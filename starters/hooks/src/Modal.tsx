@@ -33,12 +33,14 @@ export function Modal({state, children, ...props}: ModalProps) {
   );
 }
 
-export function ModalTrigger(
-  {label, children, ...props}: Parameters<typeof useOverlayTriggerState>[0] & {
-    label: ReactNode;
-    children: (close: () => void) => ReactElement;
-  }
-) {
+export function ModalTrigger({
+  label,
+  children,
+  ...props
+}: Parameters<typeof useOverlayTriggerState>[0] & {
+  label: ReactNode;
+  children: (close: () => void) => ReactElement;
+}) {
   let state = useOverlayTriggerState(props);
   let triggerRef = useRef<HTMLButtonElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
@@ -61,15 +63,21 @@ export function ModalTrigger(
   );
 }
 
-export function Dialog(
-  {title, children, ...props}: AriaDialogProps & {title?: ReactNode; children?: ReactNode}
-) {
+export function Dialog({
+  title,
+  children,
+  ...props
+}: AriaDialogProps & {title?: ReactNode; children?: ReactNode}) {
   let ref = useRef<HTMLDivElement>(null);
   let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (
     <div {...dialogProps} ref={ref} className="react-aria-Dialog">
-      {title && <h3 {...titleProps} slot="title" className="react-aria-Heading">{title}</h3>}
+      {title && (
+        <h3 {...titleProps} slot="title" className="react-aria-Heading">
+          {title}
+        </h3>
+      )}
       {children}
     </div>
   );

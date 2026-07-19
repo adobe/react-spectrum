@@ -36,17 +36,21 @@ export function Select(props: SelectProps<object> & {label?: ReactNode}) {
   );
 }
 
-function SelectInner(
-  {collection, ...props}: SelectProps<object> & {
-    collection: ICollection<Node<object>>;
-    label?: ReactNode;
-  }
-) {
+function SelectInner({
+  collection,
+  ...props
+}: SelectProps<object> & {
+  collection: ICollection<Node<object>>;
+  label?: ReactNode;
+}) {
   let state = useSelectState({...props, collection, children: undefined});
   let buttonRef = useRef<HTMLButtonElement>(null);
   let scrollRef = useRef<HTMLDivElement>(null);
-  let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps} =
-    useSelect(props, state, buttonRef);
+  let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps} = useSelect(
+    props,
+    state,
+    buttonRef
+  );
 
   return (
     <Provider
@@ -57,7 +61,10 @@ function SelectInner(
         [LabelContext, {...labelProps, elementType: 'span'}],
         [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {trigger: 'Select', triggerRef: buttonRef, scrollRef, placement: 'bottom start'}],
+        [
+          PopoverContext,
+          {trigger: 'Select', triggerRef: buttonRef, scrollRef, placement: 'bottom start'}
+        ],
         [ListBoxContext, {...menuProps, ref: scrollRef}],
         [ListStateContext, state]
       ]}>

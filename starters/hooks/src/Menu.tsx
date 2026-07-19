@@ -26,36 +26,43 @@ export interface MenuItemProps {
   children?: ReactNode;
 }
 
-export const MenuItem = createLeafComponent(ItemNode, function MenuItem(
-  _props: MenuItemProps,
-  forwardedRef: ForwardedRef<HTMLLIElement>,
-  item: Node<object>
-) {
-  let state = useContext(TreeStateContext)!;
-  let ref = useObjectRef(forwardedRef);
-  let {menuItemProps, isFocused, isDisabled, isPressed} = useMenuItem(
-    {key: item.key},
-    state,
-    ref
-  );
+export const MenuItem = createLeafComponent(
+  ItemNode,
+  function MenuItem(
+    _props: MenuItemProps,
+    forwardedRef: ForwardedRef<HTMLLIElement>,
+    item: Node<object>
+  ) {
+    let state = useContext(TreeStateContext)!;
+    let ref = useObjectRef(forwardedRef);
+    let {menuItemProps, isFocused, isDisabled, isPressed} = useMenuItem(
+      {key: item.key},
+      state,
+      ref
+    );
 
-  return (
-    <li
-      {...menuItemProps}
-      ref={ref}
-      className="react-aria-MenuItem"
-      data-focused={isFocused || undefined}
-      data-disabled={isDisabled || undefined}
-      data-pressed={isPressed || undefined}>
-      {typeof item.rendered === 'string'
-        ? <span slot="label">{item.rendered}</span>
-        : item.rendered}
-    </li>
-  );
-});
+    return (
+      <li
+        {...menuItemProps}
+        ref={ref}
+        className="react-aria-MenuItem"
+        data-focused={isFocused || undefined}
+        data-disabled={isDisabled || undefined}
+        data-pressed={isPressed || undefined}>
+        {typeof item.rendered === 'string' ? (
+          <span slot="label">{item.rendered}</span>
+        ) : (
+          item.rendered
+        )}
+      </li>
+    );
+  }
+);
 
 export function MenuButton(
-  props: Parameters<typeof useMenuTriggerState>[0] & AriaMenuOptions<object> & TreeProps<object> & {children?: ReactNode}
+  props: Parameters<typeof useMenuTriggerState>[0] &
+    AriaMenuOptions<object> &
+    TreeProps<object> & {children?: ReactNode}
 ) {
   let state = useMenuTriggerState(props);
   let ref = useRef<HTMLButtonElement>(null);
@@ -89,11 +96,13 @@ function Menu(props: AriaMenuOptions<object> & TreeProps<object>) {
   );
 }
 
-function MenuInner(
-  {collection, ...props}: AriaMenuOptions<object> & Omit<TreeProps<object>, 'children'> & {
+function MenuInner({
+  collection,
+  ...props
+}: AriaMenuOptions<object> &
+  Omit<TreeProps<object>, 'children'> & {
     collection: ICollection<Node<object>>;
-  }
-) {
+  }) {
   let state = useTreeState({...props, collection, children: undefined});
   let ref = useRef<HTMLUListElement>(null);
   let {menuProps} = useMenu(props, state, ref);

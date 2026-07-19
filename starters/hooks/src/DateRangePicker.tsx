@@ -39,7 +39,10 @@ export function DateRangePicker(props: AriaDateRangePickerProps<DateValue>) {
         [LabelContext, {...labelProps, elementType: 'span'}],
         [DialogContext, dialogProps],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {trigger: 'DateRangePicker', triggerRef: groupRef, placement: 'bottom start'}],
+        [
+          PopoverContext,
+          {trigger: 'DateRangePicker', triggerRef: groupRef, placement: 'bottom start'}
+        ],
         [DateFieldContext, {slots: {start: startFieldProps, end: endFieldProps}}]
       ]}>
       <div className="react-aria-DateRangePicker">

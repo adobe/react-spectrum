@@ -22,32 +22,31 @@ export interface TabProps {
   children?: ReactNode;
 }
 
-export const Tab = createLeafComponent(ItemNode, function Tab(
-  _props: TabProps,
-  forwardedRef: ForwardedRef<HTMLDivElement>,
-  item: Node<object>
-) {
-  let state = useContext(TabListStateContext)!;
-  let ref = useObjectRef(forwardedRef);
-  let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key}, state, ref);
-  let {hoverProps, isHovered} = useHover({isDisabled});
-  let {focusProps, isFocusVisible} = useFocusRing();
+export const Tab = createLeafComponent(
+  ItemNode,
+  function Tab(_props: TabProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<object>) {
+    let state = useContext(TabListStateContext)!;
+    let ref = useObjectRef(forwardedRef);
+    let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key}, state, ref);
+    let {hoverProps, isHovered} = useHover({isDisabled});
+    let {focusProps, isFocusVisible} = useFocusRing();
 
-  return (
-    <div
-      {...mergeProps(tabProps, hoverProps, focusProps)}
-      ref={ref}
-      className="react-aria-Tab"
-      data-selected={isSelected || undefined}
-      data-disabled={isDisabled || undefined}
-      data-pressed={isPressed || undefined}
-      data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      {item.props.title}
-      <span className="react-aria-SelectionIndicator" />
-    </div>
-  );
-});
+    return (
+      <div
+        {...mergeProps(tabProps, hoverProps, focusProps)}
+        ref={ref}
+        className="react-aria-Tab"
+        data-selected={isSelected || undefined}
+        data-disabled={isDisabled || undefined}
+        data-pressed={isPressed || undefined}
+        data-hovered={isHovered || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
+        {item.props.title}
+        <span className="react-aria-SelectionIndicator" />
+      </div>
+    );
+  }
+);
 
 export function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTabListState>[0]) {
   return (
@@ -57,7 +56,13 @@ export function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTa
   );
 }
 
-function TabsInner({collection, ...props}: AriaTabListOptions<object> & Omit<Parameters<typeof useTabListState>[0], 'children'> & {collection: ICollection<Node<object>>}) {
+function TabsInner({
+  collection,
+  ...props
+}: AriaTabListOptions<object> &
+  Omit<Parameters<typeof useTabListState>[0], 'children'> & {
+    collection: ICollection<Node<object>>;
+  }) {
   let state = useTabListState({...props, collection, children: undefined});
   let ref = useRef<HTMLDivElement>(null);
   /*- begin highlight -*/

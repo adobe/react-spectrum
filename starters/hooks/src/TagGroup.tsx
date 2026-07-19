@@ -22,46 +22,47 @@ export interface TagProps {
   children?: ReactNode;
 }
 
-export const Tag = createLeafComponent(ItemNode, function Tag(
-  _props: TagProps,
-  forwardedRef: ForwardedRef<HTMLDivElement>,
-  item: Node<object>
-) {
-  let state = useContext(ListStateContext)!;
-  let ref = useObjectRef(forwardedRef);
-  let {focusProps, isFocusVisible} = useFocusRing();
-  let {
-    rowProps,
-    gridCellProps,
-    removeButtonProps,
-    allowsRemoving,
-    isSelected,
-    isDisabled,
-    isPressed
-  } = useTag({item}, state, ref);
+export const Tag = createLeafComponent(
+  ItemNode,
+  function Tag(_props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<object>) {
+    let state = useContext(ListStateContext)!;
+    let ref = useObjectRef(forwardedRef);
+    let {focusProps, isFocusVisible} = useFocusRing();
+    let {
+      rowProps,
+      gridCellProps,
+      removeButtonProps,
+      allowsRemoving,
+      isSelected,
+      isDisabled,
+      isPressed
+    } = useTag({item}, state, ref);
 
-  return (
-    <div
-      {...mergeProps(rowProps, focusProps)}
-      ref={ref}
-      className="react-aria-Tag button-base"
-      data-selected={isSelected || undefined}
-      data-disabled={isDisabled || undefined}
-      data-pressed={isPressed || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      <div {...gridCellProps} style={{display: 'contents'}}>
-        {item.rendered}
-        {allowsRemoving && (
-          <Button {...removeButtonProps} slot="remove" className="remove-button">
-            <X />
-          </Button>
-        )}
+    return (
+      <div
+        {...mergeProps(rowProps, focusProps)}
+        ref={ref}
+        className="react-aria-Tag button-base"
+        data-selected={isSelected || undefined}
+        data-disabled={isDisabled || undefined}
+        data-pressed={isPressed || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
+        <div {...gridCellProps} style={{display: 'contents'}}>
+          {item.rendered}
+          {allowsRemoving && (
+            <Button {...removeButtonProps} slot="remove" className="remove-button">
+              <X />
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
-export function TagGroup(props: AriaTagGroupProps<object> & ListProps<object> & {label?: ReactNode}) {
+export function TagGroup(
+  props: AriaTagGroupProps<object> & ListProps<object> & {label?: ReactNode}
+) {
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => <TagGroupInner {...props} collection={collection} />}
@@ -69,7 +70,14 @@ export function TagGroup(props: AriaTagGroupProps<object> & ListProps<object> & 
   );
 }
 
-function TagGroupInner({collection, ...props}: AriaTagGroupProps<object> & Omit<ListProps<object>, 'children'> & {label?: ReactNode, collection: ICollection<Node<object>>}) {
+function TagGroupInner({
+  collection,
+  ...props
+}: AriaTagGroupProps<object> &
+  Omit<ListProps<object>, 'children'> & {
+    label?: ReactNode;
+    collection: ICollection<Node<object>>;
+  }) {
   let ref = useRef<HTMLDivElement>(null);
   let state = useListState({...props, collection, children: undefined});
   /*- begin highlight -*/

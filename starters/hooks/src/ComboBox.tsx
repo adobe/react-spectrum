@@ -32,14 +32,20 @@ export function ComboBox(props: ComboBoxProps<object> & {label?: ReactNode}) {
   );
 }
 
-function ComboBoxInner(
-  {collection, ...props}: ComboBoxProps<object> & {
-    collection: ICollection<Node<object>>;
-    label?: ReactNode;
-  }
-) {
+function ComboBoxInner({
+  collection,
+  ...props
+}: ComboBoxProps<object> & {
+  collection: ICollection<Node<object>>;
+  label?: ReactNode;
+}) {
   let {contains} = useFilter({sensitivity: 'base'});
-  let state = useComboBoxState({...props, defaultFilter: contains, collection, children: undefined});
+  let state = useComboBoxState({
+    ...props,
+    defaultFilter: contains,
+    collection,
+    children: undefined
+  });
   let fieldRef = useRef<HTMLDivElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -58,7 +64,17 @@ function ComboBoxInner(
         [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {ref: popoverRef, triggerRef: fieldRef, scrollRef: listBoxRef, trigger: 'ComboBox', placement: 'bottom start', isNonModal: true}],
+        [
+          PopoverContext,
+          {
+            ref: popoverRef,
+            triggerRef: fieldRef,
+            scrollRef: listBoxRef,
+            trigger: 'ComboBox',
+            placement: 'bottom start',
+            isNonModal: true
+          }
+        ],
         [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
         [ListStateContext, state]
       ]}>

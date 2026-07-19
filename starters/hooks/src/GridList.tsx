@@ -23,49 +23,52 @@ export interface GridListItemProps {
 
 let ListStateContext = createContext<ListState<object> | null>(null);
 
-export const GridListItem = createLeafComponent(ItemNode, function GridListItem(
-  _props: GridListItemProps,
-  forwardedRef: ForwardedRef<HTMLDivElement>,
-  item: Node<object>
-) {
-  let state = useContext(ListStateContext)!;
-  let ref = useObjectRef(forwardedRef);
-  let {rowProps, gridCellProps, isSelected, isDisabled, isPressed} = useGridListItem(
-    {node: item},
-    state,
-    ref
-  );
-  let {isFocusVisible, focusProps} = useFocusRing();
+export const GridListItem = createLeafComponent(
+  ItemNode,
+  function GridListItem(
+    _props: GridListItemProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
+    item: Node<object>
+  ) {
+    let state = useContext(ListStateContext)!;
+    let ref = useObjectRef(forwardedRef);
+    let {rowProps, gridCellProps, isSelected, isDisabled, isPressed} = useGridListItem(
+      {node: item},
+      state,
+      ref
+    );
+    let {isFocusVisible, focusProps} = useFocusRing();
 
-  return (
-    <div
-      {...mergeProps(rowProps, focusProps)}
-      ref={ref}
-      className="react-aria-GridListItem"
-      data-selected={isSelected || undefined}
-      data-selection-mode={
-        state.selectionManager.selectionMode === 'none'
-          ? undefined
-          : state.selectionManager.selectionMode
-      }
-      data-disabled={isDisabled || undefined}
-      data-pressed={isPressed || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      <div {...gridCellProps} style={{display: 'contents'}}>
-        {state.selectionManager.selectionMode === 'multiple' &&
-          state.selectionManager.selectionBehavior === 'toggle' && (
-            <Checkbox
-              aria-label={`Select ${item.textValue}`}
-              isSelected={isSelected}
-              isDisabled={isDisabled}
-              onChange={() => state.selectionManager.toggleSelection(item.key)}
-            />
-          )}
-        {item.rendered}
+    return (
+      <div
+        {...mergeProps(rowProps, focusProps)}
+        ref={ref}
+        className="react-aria-GridListItem"
+        data-selected={isSelected || undefined}
+        data-selection-mode={
+          state.selectionManager.selectionMode === 'none'
+            ? undefined
+            : state.selectionManager.selectionMode
+        }
+        data-disabled={isDisabled || undefined}
+        data-pressed={isPressed || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
+        <div {...gridCellProps} style={{display: 'contents'}}>
+          {state.selectionManager.selectionMode === 'multiple' &&
+            state.selectionManager.selectionBehavior === 'toggle' && (
+              <Checkbox
+                aria-label={`Select ${item.textValue}`}
+                isSelected={isSelected}
+                isDisabled={isDisabled}
+                onChange={() => state.selectionManager.toggleSelection(item.key)}
+              />
+            )}
+          {item.rendered}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 type GridListProps = AriaGridListProps<object> &
   ListProps<object> & {

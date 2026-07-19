@@ -34,10 +34,7 @@ export function Table(
   let {gridProps} = useTable(props, state, ref);
 
   return (
-    <table
-      {...gridProps}
-      ref={ref}
-      className="react-aria-Table">
+    <table {...gridProps} ref={ref} className="react-aria-Table">
       <TableRowGroup type="thead">
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
@@ -63,7 +60,9 @@ export function Table(
 function TableRowGroup({type: Element, children}: {type: 'thead' | 'tbody'; children: ReactNode}) {
   let {rowGroupProps} = useTableRowGroup();
   return (
-    <Element {...rowGroupProps} className={Element === 'thead' ? 'react-aria-TableHeader' : 'react-aria-TableBody'}>
+    <Element
+      {...rowGroupProps}
+      className={Element === 'thead' ? 'react-aria-TableHeader' : 'react-aria-TableBody'}>
       {children}
     </Element>
   );

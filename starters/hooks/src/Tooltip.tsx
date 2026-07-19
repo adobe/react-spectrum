@@ -1,7 +1,11 @@
 'use client';
 import {Overlay} from 'react-aria/Overlay';
 import {useOverlayPosition} from 'react-aria/useOverlayPosition';
-import {useTooltip, useTooltipTrigger, type TooltipTriggerProps} from 'react-aria/useTooltipTrigger';
+import {
+  useTooltip,
+  useTooltipTrigger,
+  type TooltipTriggerProps
+} from 'react-aria/useTooltipTrigger';
 import {FocusableProvider} from 'react-aria/private/interactions/useFocusable';
 import {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 import {useRef} from 'react';
@@ -44,7 +48,7 @@ function Tooltip({children, state, triggerRef, ...props}: TooltipProps) {
 }
 
 export function TooltipTrigger(
-  props: TooltipTriggerProps & {children: ReactElement, tooltip: ReactNode}
+  props: TooltipTriggerProps & {children: ReactElement; tooltip: ReactNode}
 ) {
   let state = useTooltipTriggerState(props);
   let ref = useRef<HTMLElement>(null);

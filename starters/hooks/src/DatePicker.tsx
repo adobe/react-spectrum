@@ -21,8 +21,11 @@ import './Popover.css';
 export function DatePicker(props: AriaDatePickerProps<DateValue>) {
   let state = useDatePickerState(props);
   let groupRef = useRef<HTMLDivElement>(null);
-  let {groupProps, labelProps, fieldProps, buttonProps, dialogProps, calendarProps} =
-    useDatePicker(props, state, groupRef);
+  let {groupProps, labelProps, fieldProps, buttonProps, dialogProps, calendarProps} = useDatePicker(
+    props,
+    state,
+    groupRef
+  );
 
   return (
     <Provider

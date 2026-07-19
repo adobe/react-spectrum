@@ -20,29 +20,32 @@ export interface ListBoxItemProps {
 
 let ListStateContext = createContext<ListState<object> | null>(null);
 
-export const ListBoxItem = createLeafComponent(ItemNode, function ListBoxItem(
-  _props: ListBoxItemProps,
-  forwardedRef: ForwardedRef<HTMLDivElement>,
-  item: Node<object>
-) {
-  let state = useContext(ListStateContext)!;
-  let ref = useObjectRef(forwardedRef);
-  let {optionProps, isSelected, isDisabled, isPressed} = useOption({key: item.key}, state, ref);
-  let {focusProps, isFocusVisible} = useFocusRing();
+export const ListBoxItem = createLeafComponent(
+  ItemNode,
+  function ListBoxItem(
+    _props: ListBoxItemProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
+    item: Node<object>
+  ) {
+    let state = useContext(ListStateContext)!;
+    let ref = useObjectRef(forwardedRef);
+    let {optionProps, isSelected, isDisabled, isPressed} = useOption({key: item.key}, state, ref);
+    let {focusProps, isFocusVisible} = useFocusRing();
 
-  return (
-    <div
-      {...mergeProps(optionProps, focusProps)}
-      ref={ref}
-      className="react-aria-ListBoxItem"
-      data-selected={isSelected || undefined}
-      data-disabled={isDisabled || undefined}
-      data-pressed={isPressed || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      {item.rendered}
-    </div>
-  );
-});
+    return (
+      <div
+        {...mergeProps(optionProps, focusProps)}
+        ref={ref}
+        className="react-aria-ListBoxItem"
+        data-selected={isSelected || undefined}
+        data-disabled={isDisabled || undefined}
+        data-pressed={isPressed || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
+        {item.rendered}
+      </div>
+    );
+  }
+);
 
 export function ListBox(props: AriaListBoxOptions<object> & ListProps<object>) {
   return (
