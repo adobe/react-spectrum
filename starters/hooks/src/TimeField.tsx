@@ -2,7 +2,8 @@
 import {useDateSegment} from 'react-aria/useDateField';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useTimeField, type AriaTimeFieldProps, type TimeValue} from 'react-aria/useTimeField';
-import {useTimeFieldState} from 'react-stately/useTimeFieldState';
+import {type DateSegment as DateSegmentType} from 'react-stately/useDateFieldState';
+import {useTimeFieldState, type TimeFieldState} from 'react-stately/useTimeFieldState';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useRef, useState} from 'react';
@@ -38,13 +39,7 @@ export function TimeField(props: AriaTimeFieldProps<TimeValue> & {label?: React.
   );
 }
 
-function DateSegment({
-  segment,
-  state
-}: {
-  segment: ReturnType<typeof useTimeFieldState>['segments'][number];
-  state: ReturnType<typeof useTimeFieldState>;
-}) {
+function DateSegment({segment, state}: {segment: DateSegmentType; state: TimeFieldState}) {
   let ref = useRef<HTMLSpanElement>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 

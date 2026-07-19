@@ -2,7 +2,11 @@
 import {DismissButton, Overlay} from 'react-aria/Overlay';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
 import {usePopover, type AriaPopoverProps} from 'react-aria/usePopover';
-import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
+import {
+  useOverlayTriggerState,
+  type OverlayTriggerProps,
+  type OverlayTriggerState
+} from 'react-stately/useOverlayTriggerState';
 import {Button} from 'react-aria-components/Button';
 import {cloneElement, useRef} from 'react';
 import type {ReactElement, ReactNode} from 'react';
@@ -11,7 +15,7 @@ import './Popover.css';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: ReactNode;
-  state: ReturnType<typeof useOverlayTriggerState>;
+  state: OverlayTriggerState;
 }
 
 export function Popover({state, children, triggerRef, ...props}: PopoverProps) {
@@ -41,7 +45,7 @@ export function PopoverTrigger({
   label,
   children,
   ...props
-}: Parameters<typeof useOverlayTriggerState>[0] & {
+}: OverlayTriggerProps & {
   label: ReactNode;
   children: ReactElement;
   placement?: AriaPopoverProps['placement'];

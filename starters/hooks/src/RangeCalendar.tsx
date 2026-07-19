@@ -14,7 +14,7 @@ import {
   type AriaCalendarGridProps,
   type AriaRangeCalendarProps
 } from 'react-aria/useRangeCalendar';
-import {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
+import {useRangeCalendarState, type RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -55,10 +55,7 @@ export function RangeCalendar(props: AriaRangeCalendarProps<DateValue>) {
   );
 }
 
-function CalendarGrid({
-  state,
-  ...props
-}: AriaCalendarGridProps & {state: ReturnType<typeof useRangeCalendarState>}) {
+function CalendarGrid({state, ...props}: AriaCalendarGridProps & {state: RangeCalendarState}) {
   let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
 
   return (
@@ -87,13 +84,7 @@ function CalendarGrid({
   );
 }
 
-function CalendarCell({
-  state,
-  date
-}: {
-  state: ReturnType<typeof useRangeCalendarState>;
-  date: CalendarDate;
-}) {
+function CalendarCell({state, date}: {state: RangeCalendarState; date: CalendarDate}) {
   let ref = useRef<HTMLDivElement>(null);
   let {
     cellProps,

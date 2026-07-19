@@ -7,7 +7,10 @@ import {
   type TooltipTriggerProps
 } from 'react-aria/useTooltipTrigger';
 import {FocusableProvider} from 'react-aria/private/interactions/useFocusable';
-import {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
+import {
+  useTooltipTriggerState,
+  type TooltipTriggerState
+} from 'react-stately/useTooltipTriggerState';
 import {useRef} from 'react';
 import type {ReactElement, ReactNode} from 'react';
 import './Button.css';
@@ -15,7 +18,7 @@ import './Tooltip.css';
 
 interface TooltipProps {
   children?: ReactNode;
-  state: ReturnType<typeof useTooltipTriggerState>;
+  state: TooltipTriggerState;
   triggerRef: React.RefObject<HTMLElement | null>;
 }
 

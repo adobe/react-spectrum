@@ -7,7 +7,11 @@ import {
   type AriaDateFieldProps,
   type DateValue
 } from 'react-aria/useDateField';
-import {useDateFieldState} from 'react-stately/useDateFieldState';
+import {
+  useDateFieldState,
+  type DateFieldState,
+  type DateSegment as DateSegmentType
+} from 'react-stately/useDateFieldState';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useRef, useState} from 'react';
@@ -42,13 +46,7 @@ export function DateField(props: AriaDateFieldProps<DateValue> & {label?: React.
   );
 }
 
-export function DateSegment({
-  segment,
-  state
-}: {
-  segment: ReturnType<typeof useDateFieldState>['segments'][number];
-  state: ReturnType<typeof useDateFieldState>;
-}) {
+export function DateSegment({segment, state}: {segment: DateSegmentType; state: DateFieldState}) {
   let ref = useRef<HTMLSpanElement>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 

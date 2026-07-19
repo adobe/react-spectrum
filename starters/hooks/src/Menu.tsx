@@ -1,7 +1,7 @@
 'use client';
 import {useMenuTrigger, useMenu, useMenuItem, type AriaMenuOptions} from 'react-aria/useMenu';
 import {useObjectRef} from 'react-aria/useObjectRef';
-import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
+import {useMenuTriggerState, type MenuTriggerProps} from 'react-stately/useMenuTriggerState';
 import {useTreeState, type TreeProps, type TreeState} from 'react-stately/useTreeState';
 import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {ItemNode} from 'react-aria/private/collections/BaseCollection';
@@ -60,9 +60,7 @@ export const MenuItem = createLeafComponent(
 );
 
 export function MenuButton(
-  props: Parameters<typeof useMenuTriggerState>[0] &
-    AriaMenuOptions<object> &
-    TreeProps<object> & {children?: ReactNode}
+  props: MenuTriggerProps & AriaMenuOptions<object> & TreeProps<object> & {children?: ReactNode}
 ) {
   let state = useMenuTriggerState(props);
   let ref = useRef<HTMLButtonElement>(null);

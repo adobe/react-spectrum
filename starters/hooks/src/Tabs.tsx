@@ -1,7 +1,11 @@
 'use client';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useTab, useTabList, useTabPanel, type AriaTabListOptions} from 'react-aria/useTabList';
-import {useTabListState} from 'react-stately/useTabListState';
+import {
+  useTabListState,
+  type TabListState,
+  type TabListStateOptions
+} from 'react-stately/useTabListState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useHover} from 'react-aria/useHover';
@@ -13,8 +17,7 @@ import {createContext, Fragment, useContext, useRef} from 'react';
 import type {ForwardedRef, ReactNode} from 'react';
 import './Tabs.css';
 
-type TabListState = ReturnType<typeof useTabListState>;
-let TabListStateContext = createContext<TabListState | null>(null);
+let TabListStateContext = createContext<TabListState<object> | null>(null);
 
 export interface TabProps {
   id?: Key;
@@ -48,7 +51,7 @@ export const Tab = createLeafComponent(
   }
 );
 
-export function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTabListState>[0]) {
+export function Tabs(props: AriaTabListOptions<object> & TabListStateOptions<object>) {
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => <TabsInner {...props} collection={collection} />}
@@ -60,7 +63,7 @@ function TabsInner({
   collection,
   ...props
 }: AriaTabListOptions<object> &
-  Omit<Parameters<typeof useTabListState>[0], 'children'> & {
+  Omit<TabListStateOptions<object>, 'children'> & {
     collection: ICollection<Node<object>>;
   }) {
   let state = useTabListState({...props, collection, children: undefined});
@@ -89,7 +92,7 @@ function TabsInner({
   );
 }
 
-function TabPanel({state, ...props}: {state: ReturnType<typeof useTabListState>}) {
+function TabPanel({state, ...props}: {state: TabListState<object>}) {
   let ref = useRef<HTMLDivElement>(null);
   let {tabPanelProps} = useTabPanel(props, state, ref);
   let {focusProps, isFocusVisible} = useFocusRing();

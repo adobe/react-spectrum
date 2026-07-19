@@ -6,7 +6,7 @@ import {
   type AriaToastProps,
   type AriaToastRegionProps
 } from 'react-aria/useToast';
-import {useToastState} from 'react-stately/useToastState';
+import {useToastState, type ToastState} from 'react-stately/useToastState';
 import {Button} from './Button';
 import {X} from 'lucide-react';
 import {useRef} from 'react';
@@ -17,7 +17,7 @@ import './Button.css';
 export function ToastProvider({
   children
 }: {
-  children: (state: ReturnType<typeof useToastState<string>>) => React.ReactNode;
+  children: (state: ToastState<string>) => React.ReactNode;
 }) {
   let state = useToastState<string>({maxVisibleToasts: 5});
 
@@ -29,10 +29,7 @@ export function ToastProvider({
   );
 }
 
-function ToastRegion({
-  state,
-  ...props
-}: AriaToastRegionProps & {state: ReturnType<typeof useToastState<string>>}) {
+function ToastRegion({state, ...props}: AriaToastRegionProps & {state: ToastState<string>}) {
   let ref = useRef<HTMLDivElement>(null);
   /*- begin highlight -*/
   let {regionProps} = useToastRegion(props, state, ref);
@@ -52,11 +49,7 @@ function ToastRegion({
   );
 }
 
-function Toast({
-  state,
-  toast,
-  ...props
-}: AriaToastProps<string> & {state: ReturnType<typeof useToastState<string>>}) {
+function Toast({state, toast, ...props}: AriaToastProps<string> & {state: ToastState<string>}) {
   let ref = useRef<HTMLDivElement>(null);
   /*- begin highlight -*/
   let {toastProps, contentProps, titleProps, closeButtonProps} = useToast(

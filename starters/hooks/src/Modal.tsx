@@ -3,7 +3,11 @@ import {Overlay} from 'react-aria/Overlay';
 import {useDialog, type AriaDialogProps} from 'react-aria/useDialog';
 import {useModalOverlay, type AriaModalOverlayProps} from 'react-aria/useModalOverlay';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
-import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
+import {
+  useOverlayTriggerState,
+  type OverlayTriggerProps,
+  type OverlayTriggerState
+} from 'react-stately/useOverlayTriggerState';
 import {Button} from 'react-aria-components/Button';
 import {cloneElement, createContext, useContext, useRef} from 'react';
 import type {ReactElement, ReactNode} from 'react';
@@ -11,10 +15,10 @@ import './Button.css';
 import './Dialog.css';
 import './Modal.css';
 
-let OverlayStateContext = createContext<ReturnType<typeof useOverlayTriggerState> | null>(null);
+let OverlayStateContext = createContext<OverlayTriggerState | null>(null);
 
 interface ModalProps extends AriaModalOverlayProps {
-  state: ReturnType<typeof useOverlayTriggerState>;
+  state: OverlayTriggerState;
   children: ReactNode;
 }
 
@@ -37,7 +41,7 @@ export function ModalTrigger({
   label,
   children,
   ...props
-}: Parameters<typeof useOverlayTriggerState>[0] & {
+}: OverlayTriggerProps & {
   label: ReactNode;
   children: (close: () => void) => ReactElement;
 }) {

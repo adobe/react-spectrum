@@ -8,7 +8,7 @@ import {
   type AriaSliderProps,
   type AriaSliderThumbOptions
 } from 'react-aria/useSlider';
-import {useSliderState} from 'react-stately/useSliderState';
+import {useSliderState, type SliderState} from 'react-stately/useSliderState';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 import {useRef} from 'react';
 import './Slider.css';
@@ -87,7 +87,7 @@ function Thumb({
   trackRef,
   index,
   ...props
-}: Omit<AriaSliderThumbOptions, 'inputRef'> & {state: ReturnType<typeof useSliderState>}) {
+}: Omit<AriaSliderThumbOptions, 'inputRef'> & {state: SliderState}) {
   let inputRef = useRef<HTMLInputElement>(null);
   let {thumbProps, inputProps, isDragging} = useSliderThumb(
     {...props, index, trackRef, inputRef},

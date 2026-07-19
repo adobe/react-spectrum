@@ -6,7 +6,8 @@ import {
   useTableColumnHeader,
   useTableHeaderRow,
   useTableRow,
-  useTableRowGroup
+  useTableRowGroup,
+  type AriaTableProps
 } from 'react-aria/useTable';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {
@@ -15,7 +16,9 @@ import {
   Column,
   Row,
   TableBody,
-  TableHeader
+  TableHeader,
+  type TableState,
+  type TableStateProps
 } from 'react-stately/useTableState';
 import type {Node} from '@react-types/shared';
 import {useRef} from 'react';
@@ -24,10 +27,7 @@ import './Table.css';
 
 export {Cell, Column, Row, TableBody, TableHeader};
 
-export function Table(
-  props: Parameters<typeof useTableState>[0] &
-    Parameters<typeof useTable>[0] & {children?: ReactNode}
-) {
+export function Table(props: TableStateProps<object> & AriaTableProps & {children?: ReactNode}) {
   let state = useTableState({...props, showSelectionCheckboxes: false});
   let ref = useRef<HTMLTableElement>(null);
   let {collection} = state;
@@ -74,7 +74,7 @@ function TableHeaderRow({
   children
 }: {
   item: Node<object>;
-  state: ReturnType<typeof useTableState>;
+  state: TableState<object>;
   children: ReactNode;
 }) {
   let ref = useRef<HTMLTableRowElement>(null);
@@ -88,13 +88,7 @@ function TableHeaderRow({
   );
 }
 
-function TableColumnHeader({
-  column,
-  state
-}: {
-  column: Node<object>;
-  state: ReturnType<typeof useTableState>;
-}) {
+function TableColumnHeader({column, state}: {column: Node<object>; state: TableState<object>}) {
   let ref = useRef<HTMLTableCellElement>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -116,7 +110,7 @@ function TableRow({
 }: {
   item: Node<object>;
   children: ReactNode;
-  state: ReturnType<typeof useTableState>;
+  state: TableState<object>;
 }) {
   let ref = useRef<HTMLTableRowElement>(null);
   let {rowProps, isSelected, isDisabled, isPressed} = useTableRow({node: item}, state, ref);
@@ -135,7 +129,7 @@ function TableRow({
   );
 }
 
-function TableCell({cell, state}: {cell: Node<object>; state: ReturnType<typeof useTableState>}) {
+function TableCell({cell, state}: {cell: Node<object>; state: TableState<object>}) {
   let ref = useRef<HTMLTableCellElement>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
