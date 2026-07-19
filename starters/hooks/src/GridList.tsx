@@ -2,97 +2,118 @@
 import {mergeProps} from 'react-aria/mergeProps';
 import {useGridList, useGridListItem, type AriaGridListProps} from 'react-aria/useGridList';
 import {useFocusRing} from 'react-aria/useFocusRing';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
 import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuilder';
 import {Collection} from 'react-aria-components/Collection';
 import {ItemNode} from 'react-aria/private/collections/BaseCollection';
-import type {Collection as ICollection, Node} from '@react-types/shared';
-import {useRef} from 'react';
-import type {ReactNode} from 'react';
+import type {Collection as ICollection, Key, Node} from '@react-types/shared';
+import {createContext, Fragment, useContext, useRef} from 'react';
+import type {ForwardedRef, ReactNode} from 'react';
+import {Text} from 'react-aria-components/Text';
+import {Checkbox} from './Checkbox';
+import './Checkbox.css';
 import './GridList.css';
 
 export interface GridListItemProps {
-  id?: string;
+  id?: Key;
   textValue?: string;
   children?: ReactNode;
 }
 
-export const GridListItem = createLeafComponent(
-  ItemNode,
-  function GridListItem(_props: GridListItemProps) {
-    return null;
-  }
-);
+let ListStateContext = createContext<ListState<object> | null>(null);
 
-export function GridList(props: AriaGridListProps<object> & ListProps<object>) {
+export const GridListItem = createLeafComponent(ItemNode, function GridListItem(
+  _props: GridListItemProps,
+  forwardedRef: ForwardedRef<HTMLDivElement>,
+  item: Node<object>
+) {
+  let state = useContext(ListStateContext)!;
+  let ref = useObjectRef(forwardedRef);
+  let {rowProps, gridCellProps, isSelected, isDisabled, isPressed} = useGridListItem(
+    {node: item},
+    state,
+    ref
+  );
+  let {isFocusVisible, focusProps} = useFocusRing();
+
   return (
-    <CollectionBuilder content={<Collection>{props.children}</Collection>}>
-      {collection => <GridListInner {...props} collection={collection} />}
+    <div
+      {...mergeProps(rowProps, focusProps)}
+      ref={ref}
+      className="react-aria-GridListItem"
+      data-selected={isSelected || undefined}
+      data-selection-mode={
+        state.selectionManager.selectionMode === 'none'
+          ? undefined
+          : state.selectionManager.selectionMode
+      }
+      data-disabled={isDisabled || undefined}
+      data-pressed={isPressed || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
+      <div {...gridCellProps} style={{display: 'contents'}}>
+        {state.selectionManager.selectionMode === 'multiple' &&
+          state.selectionManager.selectionBehavior === 'toggle' && (
+            <Checkbox
+              aria-label={`Select ${item.textValue}`}
+              isSelected={isSelected}
+              isDisabled={isDisabled}
+              onChange={() => state.selectionManager.toggleSelection(item.key)}
+            />
+          )}
+        {item.rendered}
+      </div>
+    </div>
+  );
+});
+
+type GridListProps = AriaGridListProps<object> &
+  ListProps<object> & {
+    layout?: 'grid' | 'stack';
+    orientation?: 'horizontal' | 'vertical';
+  };
+
+export function GridList({layout = 'grid', orientation = 'vertical', ...props}: GridListProps) {
+  return (
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => (
+        <GridListInner
+          {...props}
+          collection={collection}
+          layout={layout}
+          orientation={orientation}
+        />
+      )}
     </CollectionBuilder>
   );
 }
 
 function GridListInner({
   collection,
+  layout,
+  orientation,
   ...props
-}: AriaGridListProps<object> &
-  Omit<ListProps<object>, 'children'> & {collection: ICollection<Node<object>>}) {
+}: Omit<GridListProps, 'children'> & {collection: ICollection<Node<object>>}) {
   /*- begin highlight -*/
   let state = useListState({...props, collection, children: undefined});
-  let ref = useRef<HTMLUListElement>(null);
+  let ref = useRef<HTMLDivElement>(null);
   let {gridProps} = useGridList(props, state, ref);
   /*- end highlight -*/
 
   return (
-    <ul
+    <div
       {...gridProps}
       ref={ref}
       className="react-aria-GridList"
-      style={{
-        padding: 0,
-        margin: 0,
-        listStyle: 'none',
-        width: 280,
-        border: '1px solid var(--gray-300)',
-        borderRadius: 8,
-        overflow: 'hidden',
-        color: 'var(--text-color)'
-      }}>
-      {[...state.collection].map(item => (
-        <ListItem key={item.key} item={item} state={state} />
-      ))}
-    </ul>
+      data-layout={layout}
+      data-orientation={orientation}>
+      <ListStateContext.Provider value={state}>
+        {[...state.collection].map(item => (
+          <Fragment key={item.key}>{item.render!(item)}</Fragment>
+        ))}
+      </ListStateContext.Provider>
+    </div>
   );
 }
 
-function ListItem({item, state}: {item: Node<object>; state: ListState<object>}) {
-  let ref = useRef<HTMLLIElement>(null);
-  let {rowProps, gridCellProps} = useGridListItem({node: item}, state, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
-  let isSelected = state.selectionManager.isSelected(item.key);
-
-  return (
-    <li
-      {...mergeProps(rowProps, focusProps)}
-      ref={ref}
-      style={{
-        cursor: 'default',
-        background: isSelected ? 'var(--highlight-background)' : 'transparent',
-        color: isSelected ? 'var(--highlight-foreground)' : 'var(--text-color)',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: -2
-      }}>
-      <div
-        {...gridCellProps}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 8,
-          padding: '8px 12px'
-        }}>
-        {item.rendered}
-      </div>
-    </li>
-  );
-}
+export {Text};

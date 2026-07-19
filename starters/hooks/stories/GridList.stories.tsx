@@ -1,6 +1,5 @@
-import {Item} from 'react-stately/Item';
 import {Button} from '../src/Button';
-import {GridList} from '../src/GridList';
+import {GridList, GridListItem} from '../src/GridList';
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof GridList> = {
@@ -16,23 +15,23 @@ type Story = StoryFn<typeof GridList>;
 
 export const Example: Story = args => (
   <GridList aria-label="Pokémon" selectionMode="multiple" selectionBehavior="replace" {...args}>
-    <Item textValue="Charizard">
+    <GridListItem id="charizard" textValue="Charizard">
       Charizard
       <Button variant="secondary" onPress={() => alert('Info for Charizard')}>
         Info
       </Button>
-    </Item>
-    <Item textValue="Blastoise">
+    </GridListItem>
+    <GridListItem id="blastoise" textValue="Blastoise">
       Blastoise
       <Button variant="secondary" onPress={() => alert('Info for Blastoise')}>
         Info
       </Button>
-    </Item>
-    <Item textValue="Venusaur">
+    </GridListItem>
+    <GridListItem id="venusaur" textValue="Venusaur">
       Venusaur
       <Button variant="secondary" onPress={() => alert('Info for Venusaur')}>
         Info
       </Button>
-    </Item>
+    </GridListItem>
   </GridList>
 );
