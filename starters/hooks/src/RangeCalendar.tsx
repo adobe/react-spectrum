@@ -19,8 +19,8 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useRef} from 'react';
-import {Button} from '../../docs/src/Button';
-import '../../docs/src/Button.css';
+import {Button} from './Button';
+import './Button.css';
 import './RangeCalendar.css';
 
 export function RangeCalendar(props: AriaRangeCalendarProps<DateValue>) {
