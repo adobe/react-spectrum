@@ -4,7 +4,11 @@ import {useRef} from 'react';
 import type {ReactNode} from 'react';
 import './Toolbar.css';
 
-export function Toolbar(props: AriaToolbarProps & {children?: ReactNode}) {
+export interface ToolbarProps extends AriaToolbarProps {
+  children?: ReactNode;
+}
+
+export function Toolbar(props: ToolbarProps) {
   let {orientation = 'horizontal'} = props;
   let ref = useRef<HTMLDivElement>(null);
   /*- begin highlight -*/

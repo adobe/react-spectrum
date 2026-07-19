@@ -1,5 +1,6 @@
 'use client';
 import {useProgressBar, type AriaProgressBarProps} from 'react-aria/useProgressBar';
+import type {CSSProperties} from 'react';
 import './ProgressBar.css';
 import './Form.css';
 
@@ -21,7 +22,11 @@ export function ProgressBar(props: AriaProgressBarProps) {
       <div className="track inset">
         <div
           className="fill"
-          style={{'--percent': (isIndeterminate ? 100 : percentage) + '%'} as any}
+          style={
+            {'--percent': (isIndeterminate ? 100 : percentage) + '%'} as CSSProperties & {
+              '--percent': string;
+            }
+          }
         />
       </div>
     </div>

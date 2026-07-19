@@ -13,10 +13,16 @@ import type {ReactElement, ReactNode} from 'react';
 import './Button.css';
 import './Popover.css';
 
-interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
+export interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: ReactNode;
   state: OverlayTriggerState;
 }
+
+export type PopoverTriggerProps = OverlayTriggerProps & {
+  label: ReactNode;
+  children: ReactElement;
+  placement?: AriaPopoverProps['placement'];
+};
 
 export function Popover({state, children, triggerRef, ...props}: PopoverProps) {
   let popoverRef = useRef<HTMLDivElement>(null);
@@ -41,15 +47,7 @@ export function Popover({state, children, triggerRef, ...props}: PopoverProps) {
   );
 }
 
-export function PopoverTrigger({
-  label,
-  children,
-  ...props
-}: OverlayTriggerProps & {
-  label: ReactNode;
-  children: ReactElement;
-  placement?: AriaPopoverProps['placement'];
-}) {
+export function PopoverTrigger({label, children, ...props}: PopoverTriggerProps) {
   let triggerRef = useRef<HTMLButtonElement>(null);
   let state = useOverlayTriggerState(props);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);

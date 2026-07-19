@@ -7,7 +7,7 @@ import {useToggleState} from 'react-stately/useToggleState';
 import {useRef} from 'react';
 import './ToggleButton.css';
 
-interface ToggleButtonProps extends AriaToggleButtonProps {
+export interface ToggleButtonProps extends AriaToggleButtonProps {
   /**
    * The visual style of the button (Vanilla CSS implementation specific).
    *

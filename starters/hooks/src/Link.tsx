@@ -7,7 +7,11 @@ import {useRef} from 'react';
 import type {ReactNode} from 'react';
 import './Link.css';
 
-export function Link(props: AriaLinkOptions & {children?: ReactNode}) {
+export interface LinkProps extends AriaLinkOptions {
+  children?: ReactNode;
+}
+
+export function Link(props: LinkProps) {
   let ref = useRef<HTMLAnchorElement>(null);
   let {linkProps, isPressed} = useLink(props, ref);
   let {hoverProps, isHovered} = useHover(props);

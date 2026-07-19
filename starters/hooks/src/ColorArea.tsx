@@ -3,10 +3,15 @@ import {useColorArea, type AriaColorAreaProps} from 'react-aria/useColorArea';
 import {useColorAreaState} from 'react-stately/useColorAreaState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useRef} from 'react';
+import type {CSSProperties} from 'react';
 import './ColorArea.css';
 import './ColorThumb.css';
 
-export function ColorArea(props: AriaColorAreaProps) {
+export interface ColorAreaProps extends AriaColorAreaProps {
+  style?: CSSProperties;
+}
+
+export function ColorArea(props: ColorAreaProps) {
   let inputXRef = useRef<HTMLInputElement>(null);
   let inputYRef = useRef<HTMLInputElement>(null);
   let containerRef = useRef<HTMLDivElement>(null);
@@ -26,7 +31,7 @@ export function ColorArea(props: AriaColorAreaProps) {
       ref={containerRef}
       className="react-aria-ColorArea"
       data-disabled={props.isDisabled || undefined}
-      style={colorAreaProps.style}>
+      style={{...colorAreaProps.style, ...props.style}}>
       <div
         {...thumbProps}
         className="react-aria-ColorThumb"

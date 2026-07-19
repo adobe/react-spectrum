@@ -26,6 +26,10 @@ export interface MenuItemProps {
   children?: ReactNode;
 }
 
+export type MenuButtonProps = MenuTriggerProps &
+  AriaMenuOptions<object> &
+  TreeProps<object> & {children?: ReactNode};
+
 export const MenuItem = createLeafComponent(
   ItemNode,
   function MenuItem(
@@ -59,12 +63,10 @@ export const MenuItem = createLeafComponent(
   }
 );
 
-export function MenuButton(
-  props: MenuTriggerProps & AriaMenuOptions<object> & TreeProps<object> & {children?: ReactNode}
-) {
+export function MenuButton(props: MenuButtonProps) {
   let state = useMenuTriggerState(props);
   let ref = useRef<HTMLButtonElement>(null);
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
+  let {menuTriggerProps, menuProps} = useMenuTrigger<object>({}, state, ref);
 
   return (
     <Provider
@@ -80,7 +82,7 @@ export function MenuButton(
         <Ellipsis size={18} />
       </Button>
       <Popover className="react-aria-Popover">
-        <Menu {...(menuProps as AriaMenuOptions<object>)} {...props} />
+        <Menu {...menuProps} {...props} />
       </Popover>
     </Provider>
   );

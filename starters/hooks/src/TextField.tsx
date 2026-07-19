@@ -6,7 +6,11 @@ import {useRef, useState} from 'react';
 import './TextField.css';
 import './Form.css';
 
-export function TextField(props: AriaTextFieldProps & {label?: React.ReactNode}) {
+export interface TextFieldProps extends AriaTextFieldProps {
+  label?: React.ReactNode;
+}
+
+export function TextField(props: TextFieldProps) {
   let ref = useRef<HTMLInputElement>(null);
   /*- begin highlight -*/
   let {labelProps, inputProps} = useTextField(props, ref);

@@ -9,7 +9,11 @@ import {useRef, useState} from 'react';
 import './SearchField.css';
 import './Form.css';
 
-export function SearchField(props: AriaSearchFieldProps & {label?: React.ReactNode}) {
+export interface SearchFieldProps extends AriaSearchFieldProps {
+  label?: React.ReactNode;
+}
+
+export function SearchField(props: SearchFieldProps) {
   let state = useSearchFieldState(props);
   let ref = useRef<HTMLInputElement>(null);
   /*- begin highlight -*/

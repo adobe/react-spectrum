@@ -16,7 +16,11 @@ import './ToggleButton.css';
 
 const ToggleButtonGroupContext = createContext<ToggleGroupState | null>(null);
 
-export function ToggleButtonGroup(props: AriaToggleButtonGroupProps & {children?: ReactNode}) {
+export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps {
+  children?: ReactNode;
+}
+
+export function ToggleButtonGroup(props: ToggleButtonGroupProps) {
   let {orientation = 'horizontal'} = props;
   let state = useToggleGroupState(props);
   let ref = useRef<HTMLDivElement>(null);

@@ -1,6 +1,6 @@
 'use client';
 import {HiddenSelect, useSelect} from 'react-aria/useSelect';
-import {useSelectState, type SelectProps} from 'react-stately/useSelectState';
+import {useSelectState, type SelectProps as StatelySelectProps} from 'react-stately/useSelectState';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import type {Collection as ICollection, Node} from '@react-types/shared';
 import {Provider} from 'react-aria-components/slots';
@@ -28,7 +28,9 @@ import './Select.css';
 
 export {DropdownItem as SelectItem};
 
-export function Select(props: SelectProps<object> & {label?: ReactNode}) {
+export type SelectProps = StatelySelectProps<object> & {label?: ReactNode};
+
+export function Select(props: SelectProps) {
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => <SelectInner {...props} collection={collection} />}
@@ -39,7 +41,7 @@ export function Select(props: SelectProps<object> & {label?: ReactNode}) {
 function SelectInner({
   collection,
   ...props
-}: SelectProps<object> & {
+}: StatelySelectProps<object> & {
   collection: ICollection<Node<object>>;
   label?: ReactNode;
 }) {

@@ -27,7 +27,9 @@ import './Table.css';
 
 export {Cell, Column, Row, TableBody, TableHeader};
 
-export function Table(props: TableStateProps<object> & AriaTableProps & {children?: ReactNode}) {
+export type TableProps = TableStateProps<object> & AriaTableProps & {children?: ReactNode};
+
+export function Table(props: TableProps) {
   let state = useTableState({...props, showSelectionCheckboxes: false});
   let ref = useRef<HTMLTableElement>(null);
   let {collection} = state;

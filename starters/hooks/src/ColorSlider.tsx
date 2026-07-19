@@ -4,10 +4,16 @@ import {useColorSliderState} from 'react-stately/useColorSliderState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useRef} from 'react';
+import type {CSSProperties} from 'react';
 import './ColorSlider.css';
 import './ColorThumb.css';
 
-export function ColorSlider(props: AriaColorSliderProps & {label?: string}) {
+export interface ColorSliderProps extends AriaColorSliderProps {
+  label?: string;
+  style?: CSSProperties;
+}
+
+export function ColorSlider({style, ...props}: ColorSliderProps) {
   let {locale} = useLocale();
   // useColorSliderState manages the single channel value behind the gradient track.
   let state = useColorSliderState({...props, locale});
@@ -28,7 +34,8 @@ export function ColorSlider(props: AriaColorSliderProps & {label?: string}) {
     <div
       className="react-aria-ColorSlider"
       data-orientation={state.orientation}
-      data-disabled={state.isDisabled || undefined}>
+      data-disabled={state.isDisabled || undefined}
+      style={style}>
       <label {...labelProps} className="react-aria-Label">
         {label}
       </label>

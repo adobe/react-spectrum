@@ -11,7 +11,12 @@ import type {ReactNode} from 'react';
 import './Disclosure.css';
 import './Content.css';
 
-export function Disclosure(props: AriaDisclosureProps & {title?: ReactNode; children?: ReactNode}) {
+export interface DisclosureProps extends AriaDisclosureProps {
+  title?: ReactNode;
+  children?: ReactNode;
+}
+
+export function Disclosure(props: DisclosureProps) {
   let state = useDisclosureState(props);
   let panelRef = useRef<HTMLDivElement>(null);
   let buttonRef = useRef<HTMLButtonElement>(null);

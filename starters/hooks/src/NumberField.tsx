@@ -13,7 +13,11 @@ import './Button.css';
 import './NumberField.css';
 import './Form.css';
 
-export function NumberField(props: AriaNumberFieldProps & {label?: React.ReactNode}) {
+export interface NumberFieldProps extends AriaNumberFieldProps {
+  label?: React.ReactNode;
+}
+
+export function NumberField(props: NumberFieldProps) {
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
   let inputRef = useRef<HTMLInputElement>(null);

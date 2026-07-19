@@ -1,5 +1,6 @@
 'use client';
 import {useMeter, type AriaMeterProps} from 'react-aria/useMeter';
+import type {CSSProperties} from 'react';
 import './Meter.css';
 import './Form.css';
 
@@ -26,7 +27,7 @@ export function Meter(props: AriaMeterProps) {
               width: percentage + '%',
               '--fill-color':
                 percentage < 70 ? 'var(--green)' : percentage < 90 ? 'var(--orange)' : 'var(--red)'
-            } as any
+            } as CSSProperties & {'--fill-color': string}
           }
         />
       </div>

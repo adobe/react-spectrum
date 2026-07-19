@@ -14,11 +14,11 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import './Toast.css';
 import './Button.css';
 
-export function ToastProvider({
-  children
-}: {
+export interface ToastProviderProps {
   children: (state: ToastState<string>) => React.ReactNode;
-}) {
+}
+
+export function ToastProvider({children}: ToastProviderProps) {
   let state = useToastState<string>({maxVisibleToasts: 5});
 
   return (

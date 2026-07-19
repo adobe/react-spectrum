@@ -17,9 +17,23 @@ import './Modal.css';
 
 let OverlayStateContext = createContext<OverlayTriggerState | null>(null);
 
-interface ModalProps extends AriaModalOverlayProps {
+export interface ModalProps extends AriaModalOverlayProps {
   state: OverlayTriggerState;
   children: ReactNode;
+}
+
+export type ModalTriggerProps = OverlayTriggerProps & {
+  label: ReactNode;
+  children: (close: () => void) => ReactElement;
+};
+
+export interface DialogProps extends AriaDialogProps {
+  title?: ReactNode;
+  children?: ReactNode;
+}
+
+export interface CloseButtonProps {
+  children?: ReactNode;
 }
 
 export function Modal({state, children, ...props}: ModalProps) {
@@ -37,14 +51,7 @@ export function Modal({state, children, ...props}: ModalProps) {
   );
 }
 
-export function ModalTrigger({
-  label,
-  children,
-  ...props
-}: OverlayTriggerProps & {
-  label: ReactNode;
-  children: (close: () => void) => ReactElement;
-}) {
+export function ModalTrigger({label, children, ...props}: ModalTriggerProps) {
   let state = useOverlayTriggerState(props);
   let triggerRef = useRef<HTMLButtonElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
@@ -67,11 +74,7 @@ export function ModalTrigger({
   );
 }
 
-export function Dialog({
-  title,
-  children,
-  ...props
-}: AriaDialogProps & {title?: ReactNode; children?: ReactNode}) {
+export function Dialog({title, children, ...props}: DialogProps) {
   let ref = useRef<HTMLDivElement>(null);
   let {dialogProps, titleProps} = useDialog(props, ref);
 
@@ -87,7 +90,7 @@ export function Dialog({
   );
 }
 
-export function CloseButton({children = 'Close'}: {children?: ReactNode}) {
+export function CloseButton({children = 'Close'}: CloseButtonProps) {
   let state = useContext(OverlayStateContext);
   return (
     <Button

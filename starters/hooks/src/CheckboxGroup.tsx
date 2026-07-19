@@ -14,7 +14,7 @@ import React, {useRef} from 'react';
 import './CheckboxGroup.css';
 import './Checkbox.css';
 
-interface CheckboxGroupProps extends AriaCheckboxGroupProps {
+export interface CheckboxGroupProps extends AriaCheckboxGroupProps {
   children?: React.ReactNode;
   /**
    * The axis the checkboxes should align with (Vanilla CSS implementation specific).

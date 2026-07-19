@@ -4,7 +4,7 @@ import {useOverlayPosition} from 'react-aria/useOverlayPosition';
 import {
   useTooltip,
   useTooltipTrigger,
-  type TooltipTriggerProps
+  type TooltipTriggerProps as AriaTooltipTriggerProps
 } from 'react-aria/useTooltipTrigger';
 import {FocusableProvider} from 'react-aria/private/interactions/useFocusable';
 import {
@@ -21,6 +21,11 @@ interface TooltipProps {
   state: TooltipTriggerState;
   triggerRef: React.RefObject<HTMLElement | null>;
 }
+
+export type TooltipTriggerProps = AriaTooltipTriggerProps & {
+  children: ReactElement;
+  tooltip: ReactNode;
+};
 
 function Tooltip({children, state, triggerRef, ...props}: TooltipProps) {
   let tooltipRef = useRef<HTMLDivElement>(null);
@@ -50,9 +55,7 @@ function Tooltip({children, state, triggerRef, ...props}: TooltipProps) {
   );
 }
 
-export function TooltipTrigger(
-  props: TooltipTriggerProps & {children: ReactElement; tooltip: ReactNode}
-) {
+export function TooltipTrigger(props: TooltipTriggerProps) {
   let state = useTooltipTriggerState(props);
   let ref = useRef<HTMLElement>(null);
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);

@@ -13,7 +13,7 @@ import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 import React, {useRef} from 'react';
 import './RadioGroup.css';
 
-interface RadioGroupProps extends AriaRadioGroupProps {
+export interface RadioGroupProps extends AriaRadioGroupProps {
   children?: React.ReactNode;
 }
 

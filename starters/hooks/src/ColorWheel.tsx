@@ -9,7 +9,9 @@ import './ColorThumb.css';
 const RADIUS = 100;
 const TRACK_THICKNESS = 28;
 
-export function ColorWheel(props: Omit<AriaColorWheelProps, 'outerRadius' | 'innerRadius'>) {
+export type ColorWheelProps = Omit<AriaColorWheelProps, 'outerRadius' | 'innerRadius'>;
+
+export function ColorWheel(props: ColorWheelProps) {
   // useColorWheelState manages the hue value behind the circular gradient track.
   let state = useColorWheelState(props);
   let inputRef = useRef<HTMLInputElement>(null);

@@ -47,7 +47,9 @@ export const ListBoxItem = createLeafComponent(
   }
 );
 
-export function ListBox(props: AriaListBoxOptions<object> & ListProps<object>) {
+export type ListBoxProps = AriaListBoxOptions<object> & ListProps<object>;
+
+export function ListBox(props: ListBoxProps) {
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => <ListBoxInner {...props} collection={collection} />}

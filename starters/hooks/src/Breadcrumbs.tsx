@@ -10,11 +10,15 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {ChevronRight} from 'lucide-react';
 import {Children, cloneElement, isValidElement, useRef} from 'react';
-import type {ReactElement, ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import './Breadcrumbs.css';
 import './Link.css';
 
-export function Breadcrumbs(props: AriaBreadcrumbsProps & {children?: ReactNode}) {
+export interface BreadcrumbsProps extends AriaBreadcrumbsProps {
+  children?: ReactNode;
+}
+
+export function Breadcrumbs(props: BreadcrumbsProps) {
   let {navProps} = useBreadcrumbs(props);
   let childCount = Children.count(props.children);
 
@@ -23,8 +27,8 @@ export function Breadcrumbs(props: AriaBreadcrumbsProps & {children?: ReactNode}
       <ol className="react-aria-Breadcrumbs">
         {/* Mark the last item as the current page. */}
         {Children.map(props.children, (child, i) =>
-          isValidElement(child)
-            ? cloneElement(child as ReactElement<any>, {isCurrent: i === childCount - 1})
+          isValidElement<BreadcrumbProps>(child)
+            ? cloneElement(child, {isCurrent: i === childCount - 1})
             : child
         )}
       </ol>
@@ -32,7 +36,9 @@ export function Breadcrumbs(props: AriaBreadcrumbsProps & {children?: ReactNode}
   );
 }
 
-export function Breadcrumb(props: AriaBreadcrumbItemProps & {href?: string; children?: ReactNode}) {
+export type BreadcrumbProps = AriaBreadcrumbItemProps;
+
+export function Breadcrumb(props: BreadcrumbProps) {
   let ref = useRef<HTMLAnchorElement>(null);
   /*- begin highlight -*/
   let {itemProps} = useBreadcrumbItem({...props, elementType: 'a'}, ref);

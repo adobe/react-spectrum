@@ -11,7 +11,11 @@ import './DateField.css';
 import './TimeField.css';
 import './Form.css';
 
-export function TimeField(props: AriaTimeFieldProps<TimeValue> & {label?: React.ReactNode}) {
+export interface TimeFieldProps extends AriaTimeFieldProps<TimeValue> {
+  label?: React.ReactNode;
+}
+
+export function TimeField(props: TimeFieldProps) {
   let {locale} = useLocale();
   let state = useTimeFieldState({...props, locale});
   let ref = useRef<HTMLDivElement>(null);

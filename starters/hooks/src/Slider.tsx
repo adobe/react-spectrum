@@ -11,10 +11,11 @@ import {
 import {useSliderState, type SliderState} from 'react-stately/useSliderState';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 import {useRef} from 'react';
+import type {CSSProperties} from 'react';
 import './Slider.css';
 import './Form.css';
 
-interface SliderProps extends AriaSliderProps {
+export interface SliderProps extends AriaSliderProps {
   /** Label for the slider. */
   label?: string;
   /** Aria labels for each thumb. */
@@ -27,9 +28,18 @@ interface SliderProps extends AriaSliderProps {
   fillOffset?: number;
   /** Formatting options for the value label. */
   formatOptions?: Intl.NumberFormatOptions;
+  /** Styles for the root element. */
+  style?: CSSProperties;
 }
 
-export function Slider({label, thumbLabels, fillOffset, formatOptions, ...props}: SliderProps) {
+export function Slider({
+  label,
+  thumbLabels,
+  fillOffset,
+  formatOptions,
+  style,
+  ...props
+}: SliderProps) {
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(formatOptions);
   let state = useSliderState({...props, numberFormatter});
@@ -47,7 +57,11 @@ export function Slider({label, thumbLabels, fillOffset, formatOptions, ...props}
   let sizePercent = Math.max(0, Math.max(start, end) - startPercent);
 
   return (
-    <div {...groupProps} className="react-aria-Slider" data-orientation={state.orientation}>
+    <div
+      {...groupProps}
+      className="react-aria-Slider"
+      data-orientation={state.orientation}
+      style={style}>
       {label && (
         <label className="react-aria-Label" {...labelProps}>
           {label}

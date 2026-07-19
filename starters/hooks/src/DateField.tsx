@@ -18,7 +18,16 @@ import {useRef, useState} from 'react';
 import './DateField.css';
 import './Form.css';
 
-export function DateField(props: AriaDateFieldProps<DateValue> & {label?: React.ReactNode}) {
+export interface DateFieldProps extends AriaDateFieldProps<DateValue> {
+  label?: React.ReactNode;
+}
+
+export interface DateSegmentProps {
+  segment: DateSegmentType;
+  state: DateFieldState;
+}
+
+export function DateField(props: DateFieldProps) {
   let {locale} = useLocale();
   let state = useDateFieldState({...props, locale, createCalendar});
   let ref = useRef<HTMLDivElement>(null);
@@ -46,7 +55,7 @@ export function DateField(props: AriaDateFieldProps<DateValue> & {label?: React.
   );
 }
 
-export function DateSegment({segment, state}: {segment: DateSegmentType; state: DateFieldState}) {
+export function DateSegment({segment, state}: DateSegmentProps) {
   let ref = useRef<HTMLSpanElement>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 

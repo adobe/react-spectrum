@@ -60,9 +60,9 @@ export const Tag = createLeafComponent(
   }
 );
 
-export function TagGroup(
-  props: AriaTagGroupProps<object> & ListProps<object> & {label?: ReactNode}
-) {
+export type TagGroupProps = AriaTagGroupProps<object> & ListProps<object> & {label?: ReactNode};
+
+export function TagGroup(props: TagGroupProps) {
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => <TagGroupInner {...props} collection={collection} />}

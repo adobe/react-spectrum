@@ -70,7 +70,7 @@ export const GridListItem = createLeafComponent(
   }
 );
 
-type GridListProps = AriaGridListProps<object> &
+export type GridListProps = AriaGridListProps<object> &
   ListProps<object> & {
     layout?: 'grid' | 'stack';
     orientation?: 'horizontal' | 'vertical';

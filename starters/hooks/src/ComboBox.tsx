@@ -1,7 +1,10 @@
 'use client';
 import {useComboBox} from 'react-aria/useComboBox';
 import {useFilter} from 'react-aria/useFilter';
-import {useComboBoxState, type ComboBoxProps} from 'react-stately/useComboBoxState';
+import {
+  useComboBoxState,
+  type ComboBoxProps as StatelyComboBoxProps
+} from 'react-stately/useComboBoxState';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import type {Collection as ICollection, Node} from '@react-types/shared';
 import {Provider} from 'react-aria-components/slots';
@@ -24,7 +27,9 @@ import './Popover.css';
 
 export {DropdownItem as ComboBoxItem};
 
-export function ComboBox(props: ComboBoxProps<object> & {label?: ReactNode}) {
+export type ComboBoxProps = StatelyComboBoxProps<object> & {label?: ReactNode};
+
+export function ComboBox(props: ComboBoxProps) {
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => <ComboBoxInner {...props} collection={collection} />}
@@ -35,7 +40,7 @@ export function ComboBox(props: ComboBoxProps<object> & {label?: ReactNode}) {
 function ComboBoxInner({
   collection,
   ...props
-}: ComboBoxProps<object> & {
+}: StatelyComboBoxProps<object> & {
   collection: ICollection<Node<object>>;
   label?: ReactNode;
 }) {

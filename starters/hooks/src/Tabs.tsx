@@ -51,7 +51,9 @@ export const Tab = createLeafComponent(
   }
 );
 
-export function Tabs(props: AriaTabListOptions<object> & TabListStateOptions<object>) {
+export type TabsProps = AriaTabListOptions<object> & TabListStateOptions<object>;
+
+export function Tabs(props: TabsProps) {
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => <TabsInner {...props} collection={collection} />}

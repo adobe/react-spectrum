@@ -7,7 +7,11 @@ import {useRef, useState} from 'react';
 import './ColorField.css';
 import './Form.css';
 
-export function ColorField(props: AriaColorFieldProps & {label?: React.ReactNode}) {
+export interface ColorFieldProps extends AriaColorFieldProps {
+  label?: React.ReactNode;
+}
+
+export function ColorField(props: ColorFieldProps) {
   let state = useColorFieldState(props);
   let inputRef = useRef<HTMLInputElement>(null);
   /*- begin highlight -*/
