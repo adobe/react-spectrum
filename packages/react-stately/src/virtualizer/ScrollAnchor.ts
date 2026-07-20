@@ -19,6 +19,14 @@ import {Size} from './Size';
 export type ScrollAnchorAxis = 'x' | 'y';
 export type ScrollAnchorEdge = 'start' | 'end';
 
+/**
+ * Minimum overlap an item must have with the viewport, along the scroll axis,
+ * to be eligible as a scroll anchor. Without this, an item that only overlaps the viewport
+ * by a sliver (e.g. 1px, essentially scrolled out of view) can still "win" the anchor
+ * tie-break over a substantially visible item.
+ */
+const MIN_ANCHOR_OVERLAP = 4;
+
 function dimensionForAxis(axis: ScrollAnchorAxis): 'width' | 'height' {
   return axis === 'x' ? 'width' : 'height';
 }
@@ -61,12 +69,14 @@ export function captureScrollAnchor(
   visibleLayoutInfos: Iterable<[Key, LayoutInfo]>,
   isAnchorable: (layoutInfo: LayoutInfo) => boolean = () => true
 ): ScrollAnchor | null {
+  let dimension = dimensionForAxis(axis);
   let best: ScrollAnchor | null = null;
   for (let [key, layoutInfo] of visibleLayoutInfos) {
     if (!layoutInfo || !isAnchorable(layoutInfo)) {
       continue;
     }
-    if (layoutInfo.rect.area > 0 && layoutInfo.rect.intersects(visibleRect)) {
+    let overlap = layoutInfo.rect.intersection(visibleRect)[dimension];
+    if (layoutInfo.rect.area > 0 && overlap >= MIN_ANCHOR_OVERLAP) {
       let corner = layoutInfo.rect.getCornerInRect(visibleRect) ?? 'topLeft';
       let offset = layoutInfo.rect[corner][axis] - visibleRect[axis];
       let isBetter = !best || (edge === 'end' ? offset < best.offset : offset > best.offset);
