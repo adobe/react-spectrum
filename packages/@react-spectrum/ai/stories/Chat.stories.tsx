@@ -449,7 +449,6 @@ export function StreamingChat() {
           </div>
           <Thread
             items={messages}
-            UNSTABLE_focusOnEntry="first"
             aria-label="Chat thread"
             styles={style({
               flexGrow: 1,
@@ -796,7 +795,6 @@ export function VirtualizedStreamingChat() {
           <Thread
             items={messages}
             anchorTo="end"
-            UNSTABLE_focusOnEntry="last"
             aria-label="Chat thread"
             styles={style({
               flexGrow: 1,
@@ -995,7 +993,6 @@ export function EmptyChat() {
           <Thread
             items={messages}
             anchorTo="end"
-            UNSTABLE_focusOnEntry="last"
             aria-label="Chat thread"
             styles={style({
               flexGrow: 1,
@@ -1437,7 +1434,6 @@ export function AsyncLoadingChat() {
           <Thread
             aria-label="Chat"
             anchorTo="end"
-            UNSTABLE_focusOnEntry="last"
             styles={style({
               flexGrow: 1,
               overflowX: 'hidden',
@@ -1519,7 +1515,6 @@ export function NonVirtualizedAsyncLoadingChat() {
           </div>
           <Thread
             aria-label="Chat"
-            UNSTABLE_focusOnEntry="first"
             styles={style({
               flexGrow: 1,
               overflowX: 'hidden',

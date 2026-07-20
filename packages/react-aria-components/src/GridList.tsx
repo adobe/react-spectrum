@@ -819,7 +819,7 @@ function RootDropIndicator() {
 
 export interface GridListLoadMoreItemProps
   extends
-    Omit<LoadMoreSentinelProps, 'collection'>,
+    Omit<LoadMoreSentinelProps, 'collection' | 'direction'>,
     StyleProps,
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
@@ -849,12 +849,12 @@ export const GridListLoadMoreItem = createLeafComponent(
   ) {
     let state = useContext(ListStateContext)!;
     let {isVirtualized} = useContext(CollectionRendererContext);
-    let {isLoading, onLoadMore, scrollOffset, direction, ...otherProps} = props;
+    let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 
     let sentinelRef = useRef(null);
     let memoedLoadMoreProps = useMemo(
-      () => ({onLoadMore, collection: state?.collection, scrollOffset, direction}),
-      [onLoadMore, scrollOffset, state?.collection, direction]
+      () => ({onLoadMore, collection: state?.collection, scrollOffset}),
+      [onLoadMore, scrollOffset, state?.collection]
     );
     useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 

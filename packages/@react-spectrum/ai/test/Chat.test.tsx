@@ -28,7 +28,6 @@ interface Message {
 
 function TestThread({
   messages,
-  UNSTABLE_focusOnEntry
 }: {
   messages: Message[];
   UNSTABLE_focusOnEntry?: 'first' | 'last';
@@ -38,7 +37,7 @@ function TestThread({
       <ThreadScrollButton>
         <Button slot="scroll">Scroll to bottom</Button>
       </ThreadScrollButton>
-      <Thread items={messages} aria-label="Chat" UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry}>
+      <Thread items={messages} aria-label="Chat">
         {(item: Message) => (
           <ThreadItem textValue={item.text} isStreaming={item.isStreaming}>
             {item.text}

@@ -241,7 +241,7 @@ function AsyncNonVirtualizedThread({
         overflow: 'hidden'
       }}>
       <Chat>
-        <Thread aria-label="Chat" UNSTABLE_focusOnEntry="first" styles={scrollThreadStyles}>
+        <Thread aria-label="Chat" styles={scrollThreadStyles}>
           <Collection items={reversed}>{renderAsyncMessage}</Collection>
           <ThreadLoadMoreItem
             isLoading={isLoading}
@@ -267,7 +267,7 @@ describeOrSkip('Chat browser', () => {
 
       let {container} = await render(
         <Chat>
-          <Thread UNSTABLE_focusOnEntry="first" aria-label="Chat" items={messages}>
+          <Thread aria-label="Chat" items={messages}>
             {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
           </Thread>
         </Chat>
@@ -304,8 +304,7 @@ describeOrSkip('Chat browser', () => {
                   {id: '2', content: 'World', role: 'system'}
                 ] as Message[]
               }
-              aria-label="Chat"
-              UNSTABLE_focusOnEntry="last">
+              aria-label="Chat">
               {(item: Message) => {
                 return <ThreadItem textValue={item.content}>{item.content}</ThreadItem>;
               }}
@@ -331,7 +330,6 @@ describeOrSkip('Chat browser', () => {
       expect(input).toHaveFocus();
       await userEvent.tab();
 
-      // // focusOnEntry is implemented via useEffect so it fires asynchronously after tab.
       let rows = gridlist.querySelectorAll('[role="row"]');
       await vi.waitFor(
         () => {
@@ -356,8 +354,7 @@ describeOrSkip('Chat browser', () => {
                   {id: '2', content: 'World'}
                 ] as Message[]
               }
-              aria-label="Chat"
-              UNSTABLE_focusOnEntry="last">
+              aria-label="Chat">
               {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
           </Chat>
@@ -382,7 +379,6 @@ describeOrSkip('Chat browser', () => {
       await userEvent.tab();
 
       let rows = gridlist.querySelectorAll('[role="row"]');
-      // Wait for focusOnEntry to settle on rows[0] = World (newest).
       await vi.waitFor(() => expect(rows[0]).toHaveFocus(), {timeout: 2000});
 
       // ArrowUp from World (visual bottom) → Hello (visual top) = rows[1] in DOM.
@@ -409,8 +405,7 @@ describeOrSkip('Chat browser', () => {
                   {id: '2', content: 'World'}
                 ] as Message[]
               }
-              aria-label="Chat"
-              UNSTABLE_focusOnEntry="last">
+              aria-label="Chat">
               {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
           </Chat>

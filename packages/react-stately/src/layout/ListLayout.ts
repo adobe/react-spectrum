@@ -856,9 +856,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
 
     // Store the real measured height and signal a relayout. Unlike the normal path, we don't
     // adjust validRect/requestedRect here. In a bottom-up layout, each item's absolute y
-    // depends on contentLength, which requires summing all item heights first. That full
-    // height-sum pass is unavoidable, and once it's done the position pass is cheap anyway —
-    // so buildReversedCollection always recomputes all positions from scratch.
+    // depends on contentLength, which requires summing all item heights first.
     if (this.anchorTo === 'end' && this.orientation === 'vertical') {
       if (layoutInfo.rect[heightProperty] !== size[heightProperty]) {
         let newLayoutInfo = layoutInfo.copy();

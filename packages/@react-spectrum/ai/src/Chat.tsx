@@ -14,6 +14,7 @@ import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {ButtonContext} from 'react-aria-components/Button';
 import {
   createContext,
+  ForwardedRef,
   forwardRef,
   ReactNode,
   RefObject,
@@ -25,7 +26,7 @@ import {
   useState
 } from 'react';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {DOMRef, forwardRefType} from '@react-types/shared';
+import {DOMRef, forwardRefType, Node} from '@react-types/shared';
 import {focusRing, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   GridList,
@@ -35,6 +36,7 @@ import {
   GridListLoadMoreItemProps,
   GridListProps
 } from 'react-aria-components/GridList';
+import {inertValue} from 'react-aria/private/utils/inertValue';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from 'react-stately/useVirtualizerState';
@@ -45,6 +47,16 @@ import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
+import {
+  CollectionRendererContext,
+  createLeafComponent,
+  ListStateContext,
+  useRenderProps
+} from 'react-aria-components';
+import {LoaderNode} from 'react-aria/private/collections/BaseCollection';
+import {useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {dom} from '/packages/react-aria-components/src/utils';
 
 const scrollButtonWrapper = style({
   opacity: {
@@ -207,10 +219,9 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   );
 });
 
-// TODO: do we want UNSTABLE_focusOnEntry on ThreadProps or do we just want to set it on Thread for users so they don't have to do it themselves?
 export interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
-  'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby'
+  'items' | 'children' | 'aria-label' | 'aria-labelledby'
 > {
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
@@ -232,7 +243,6 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     items,
     children,
     styles,
-    UNSTABLE_focusOnEntry,
     anchorTo,
     scrollEndThreshold = 100,
     'aria-label': ariaLabel,
@@ -272,7 +282,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       disallowTypeAhead
       onScroll={handleScroll}
       keyboardNavigationBehavior="tab"
-      UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'first'}
+      UNSTABLE_focusOnEntry="first"
       items={reversedItems}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
@@ -306,7 +316,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           disallowTypeAhead
           onScroll={handleScroll}
           keyboardNavigationBehavior="tab"
-          UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'last'}
+          UNSTABLE_focusOnEntry="last"
           items={items}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
@@ -433,12 +443,59 @@ export function ThreadItem(props: ThreadItemProps) {
   );
 }
 
-/**
- * A load-more sentinel for `Thread`. Place it as the **first child** of `Thread` (before
- * `<Collection>`), only when using `anchorTo="end"`. Triggers `onLoadMore` when the user
- * scrolls to the top of the thread.
- */
-export interface ThreadLoadMoreItemProps extends Omit<GridListLoadMoreItemProps, 'direction'> {}
-export function ThreadLoadMoreItem(props: ThreadLoadMoreItemProps) {
-  return <GridListLoadMoreItem direction="start" {...props} />;
-}
+export interface ThreadLoadMoreItemProps extends GridListLoadMoreItemProps {}
+
+// TODO: Reuse GridListLoadMoreItem instead when Thread component moves into RAC.
+// Re-implementing here so we can avoid passing 'direction' to the LoadMore item
+export const ThreadLoadMoreItem = createLeafComponent(
+  LoaderNode,
+  function GridListLoadingIndicator(
+    props: GridListLoadMoreItemProps,
+    ref: ForwardedRef<HTMLDivElement>,
+    item: Node<object>
+  ) {
+    let state = useContext(ListStateContext)!;
+    let direction: 'start' | 'end' | undefined = 'start';
+    let {isVirtualized} = useContext(CollectionRendererContext);
+    let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+
+    let sentinelRef = useRef(null);
+    let memoedLoadMoreProps = useMemo(
+      () => ({onLoadMore, collection: state?.collection, scrollOffset, direction}),
+      [onLoadMore, scrollOffset, state?.collection, direction]
+    );
+    useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+
+    let renderProps = useRenderProps({
+      ...otherProps,
+      id: undefined,
+      children: item.rendered,
+      defaultClassName: 'react-aria-GridListLoadingIndicator',
+      values: undefined
+    });
+    // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+    // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+    // item count
+
+    return (
+      <>
+        {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+        {/* @ts-ignore - compatibility with React < 19 */}
+        <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)}>
+          <div
+            data-testid="loadMoreSentinel"
+            ref={sentinelRef}
+            style={{position: 'absolute', height: 1, width: 1}}
+          />
+        </div>
+        {isLoading && renderProps.children && (
+          <dom.div {...renderProps} {...filterDOMProps(props, {global: true})} role="row" ref={ref}>
+            <div aria-colindex={isVirtualized ? 1 : undefined} role="gridcell">
+              {renderProps.children}
+            </div>
+          </dom.div>
+        )}
+      </>
+    );
+  }
+);
