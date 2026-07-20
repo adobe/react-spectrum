@@ -503,115 +503,108 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let collectionNodes = toArray(this.virtualizer!.collection, node => node.type !== 'content');
     this.assertReversedCollectionSupported(collectionNodes);
 
-    let itemNodes = collectionNodes.filter(node => node.type !== 'loader');
-    let loaderCollectionNode = collectionNodes.find(node => node.type === 'loader') ?? null;
-
-    // Height-only pass: we need the sum of all item heights to compute contentSize before we
-    // can assign y positions. Read cached heights (or estimated fallback) without calling
-    // buildNode — y is unknown here, so calling it would cache items at the wrong position.
-    let itemHeights = itemNodes.map(node => {
-      let cached = this.layoutNodes.get(node.key);
-      return cached && !cached.layoutInfo.estimatedSize
-        ? cached.layoutInfo.rect.height
-        : (this.rowSize ?? this.estimatedRowSize ?? DEFAULT_HEIGHT);
-    });
-
-    // Compute the loader height that will be used for layout
-    let loaderExpectedHeight = 0;
-    // Track whether the loader height is a measured value (from cache) or a fallback estimate.
-    // The loader here sits above all items, so a wrong estimate shifts every message — making remeasurement important.
-    let loaderHeightIsEstimated = false;
-    if (loaderCollectionNode) {
-      if (loaderCollectionNode.props.isLoading) {
-        let cached = this.layoutNodes.get(loaderCollectionNode.key);
-        if (cached && !cached.layoutInfo.estimatedSize && cached.layoutInfo.rect.height > 0) {
-          loaderExpectedHeight = cached.layoutInfo.rect.height;
-        } else {
-          loaderExpectedHeight =
-            this.loaderSize ?? this.rowSize ?? this.estimatedRowSize ?? DEFAULT_HEIGHT;
-          loaderHeightIsEstimated = this.loaderSize == null && this.rowSize == null;
+    // Height-only pass: walk collectionNodes once, in collection order, to determine every
+    // node's height (items and loaders alike)
+    let heights = new Map<Node<T>, number>();
+    let loaderHeightIsEstimated = new Map<Node<T>, boolean>();
+    let visibleCount = 0;
+    let sumHeights = 0;
+    let anyLoader = false;
+    for (let node of collectionNodes) {
+      if (node.type === 'loader') {
+        anyLoader = true;
+        let height = 0;
+        let estimated = false;
+        if (node.props.isLoading) {
+          let cached = this.layoutNodes.get(node.key);
+          if (cached && !cached.layoutInfo.estimatedSize && cached.layoutInfo.rect.height > 0) {
+            height = cached.layoutInfo.rect.height;
+          } else {
+            height = this.loaderSize ?? this.rowSize ?? this.estimatedRowSize ?? DEFAULT_HEIGHT;
+            estimated = this.loaderSize == null && this.rowSize == null;
+          }
+        }
+        // Not loading: the sentinel is 0px tall and doesn't occupy space.
+        heights.set(node, height);
+        loaderHeightIsEstimated.set(node, estimated);
+        if (height > 0) {
+          visibleCount++;
+          sumHeights += height;
         }
       } else {
-        // Not loading: the sentinel is 0px tall and doesn't occupy space.
-        loaderExpectedHeight = 0;
+        let cached = this.layoutNodes.get(node.key);
+        let height =
+          cached && !cached.layoutInfo.estimatedSize
+            ? cached.layoutInfo.rect.height
+            : (this.rowSize ?? this.estimatedRowSize ?? DEFAULT_HEIGHT);
+        heights.set(node, height);
+        visibleCount++;
+        sumHeights += height;
       }
     }
 
-    let contentLength = itemHeights.reduce(
-      (total, height, index) => total + height + (index < itemHeights.length - 1 ? this.gap : 0),
-      0
-    );
-    if (itemHeights.length > 0 || loaderCollectionNode != null) {
+    // Gap count only depends on the total number of visible slots (items + loaders with height >
+    // 0), not their arrangement, so this holds regardless of how items/loaders interleave.
+    let contentLength = sumHeights + Math.max(visibleCount - 1, 0) * this.gap;
+    if (visibleCount > 0 || anyLoader) {
       contentLength += this.padding * 2;
-    }
-    if (loaderExpectedHeight > 0) {
-      const loaderGap = itemHeights.length > 0 ? this.gap : 0;
-      contentLength += loaderExpectedHeight + loaderGap;
     }
 
     let contentHeight = Math.max(contentLength, this.virtualizer!.size.height);
     this.contentSize = new Size(this.virtualizer!.size.width, contentHeight);
 
-    // Bottom-up position pass: assign y to every item
-    let width = this.virtualizer!.size.width - this.padding * 2;
-    let hasLoader = loaderCollectionNode != null;
-    let offset = hasLoader ? 1 : 0;
-    let nodes: LayoutNode[] = Array.from({length: itemNodes.length + offset});
-    let currentBottom = contentLength - this.padding;
-
     // Iterate last → first so the last item in the collection (newest) is placed at the visual
     // bottom and written to nodes[0] (first in DOM) for screen-reader accessibility.
-    let nodesIndex = 0;
-    for (let i = itemNodes.length - 1; i >= 0; i--) {
-      let node = itemNodes[i];
-      let y = currentBottom - itemHeights[i];
-      let cached = this.layoutNodes.get(node.key);
+    let width = this.virtualizer!.size.width - this.padding * 2;
+    let nodes: LayoutNode[] = [];
+    let currentBottom = contentLength - this.padding;
+
+    for (let i = collectionNodes.length - 1; i >= 0; i--) {
+      let node = collectionNodes[i];
+      let height = heights.get(node)!;
       let layoutNode: LayoutNode;
 
-      if (cached && !cached.layoutInfo.estimatedSize) {
-        // Already measured: reuse the real height, update y only
-        let newLayoutInfo = cached.layoutInfo.copy();
-        newLayoutInfo.rect.y = y;
-        layoutNode = {layoutInfo: newLayoutInfo, validRect: new Rect(0, 0, 0, 0), children: []};
-      } else {
-        let itemRect = new Rect(this.padding, y, width, itemHeights[i]);
-        if (itemRect.intersects(this.requestedRect)) {
-          layoutNode = this.buildNode(node, this.padding, y);
-        } else {
-          // Outside the visible window and unmeasured: skip buildNode
-          let layoutInfo = new LayoutInfo(node.type, node.key, itemRect);
-          layoutInfo.estimatedSize = true;
-          layoutNode = {layoutInfo, validRect: new Rect(0, 0, 0, 0), children: [], node};
+      if (node.type === 'loader') {
+        const sentinelYOffset = i === 0 && height === 0 && visibleCount > 0 ? this.gap : 0;
+        let loaderY = currentBottom - height + sentinelYOffset;
+        let loaderNode = this.buildNode(node, this.padding, loaderY);
+        loaderNode.layoutInfo.rect.height = height;
+        loaderNode.layoutInfo.parentKey = null;
+        loaderNode.layoutInfo.allowOverflow = true;
+        if (node.props.isLoading) {
+          loaderNode.layoutInfo.estimatedSize = loaderHeightIsEstimated.get(node)!;
         }
+        loaderNode.validRect = loaderNode.layoutInfo.rect.intersection(this.requestedRect);
+        this.layoutNodes.set(loaderNode.layoutInfo.key, loaderNode);
+        layoutNode = loaderNode;
+        currentBottom = loaderY - this.gap;
+      } else {
+        let y = currentBottom - height;
+        let cached = this.layoutNodes.get(node.key);
+
+        if (cached && !cached.layoutInfo.estimatedSize) {
+          let newLayoutInfo = cached.layoutInfo.copy();
+          newLayoutInfo.rect.y = y;
+          layoutNode = {layoutInfo: newLayoutInfo, validRect: new Rect(0, 0, 0, 0), children: []};
+        } else {
+          let itemRect = new Rect(this.padding, y, width, height);
+          if (itemRect.intersects(this.requestedRect)) {
+            layoutNode = this.buildNode(node, this.padding, y);
+          } else {
+            let layoutInfo = new LayoutInfo(node.type, node.key, itemRect);
+            layoutInfo.estimatedSize = true;
+            layoutNode = {layoutInfo, validRect: new Rect(0, 0, 0, 0), children: [], node};
+          }
+        }
+
+        layoutNode.layoutInfo.parentKey = null;
+        layoutNode.layoutInfo.allowOverflow = true;
+        layoutNode.validRect = layoutNode.layoutInfo.rect.intersection(this.requestedRect);
+        this.layoutNodes.set(layoutNode.layoutInfo.key, layoutNode);
+        currentBottom = y - this.gap;
       }
 
-      layoutNode.layoutInfo.parentKey = null;
-      layoutNode.layoutInfo.allowOverflow = true;
-      layoutNode.validRect = layoutNode.layoutInfo.rect.intersection(this.requestedRect);
-      this.layoutNodes.set(layoutNode.layoutInfo.key, layoutNode);
-      nodes[nodesIndex++ + offset] = layoutNode;
-      currentBottom = y - this.gap;
-    }
-
-    if (loaderCollectionNode) {
-      // The bottom-up loop subtracts this.gap after the last item. When the sentinel is idle (height 0)
-      // and items exist, add the gap back so the sentinel lands flush at the top padding boundary.
-      const sentinelYOffset =
-        !loaderCollectionNode.props.isLoading && itemHeights.length > 0 ? this.gap : 0;
-      let loaderY = currentBottom - loaderExpectedHeight + sentinelYOffset;
-      let loaderNode = this.buildNode(loaderCollectionNode, this.padding, loaderY);
-      loaderNode.layoutInfo.rect.height = loaderExpectedHeight;
-      loaderNode.layoutInfo.parentKey = null;
-      loaderNode.layoutInfo.allowOverflow = true;
-      // Mark as estimated so the virtualizer remeasures the loader once it renders.
-      // This only matters when using a fallback height. If loaderSize or rowSize is set,
-      // the height is already known and no remeasure is needed.
-      if (loaderCollectionNode.props.isLoading) {
-        loaderNode.layoutInfo.estimatedSize = loaderHeightIsEstimated;
-      }
-      loaderNode.validRect = loaderNode.layoutInfo.rect.intersection(this.requestedRect);
-      this.layoutNodes.set(loaderNode.layoutInfo.key, loaderNode);
-      nodes[0] = loaderNode;
+      nodes.push(layoutNode);
     }
 
     return nodes;
