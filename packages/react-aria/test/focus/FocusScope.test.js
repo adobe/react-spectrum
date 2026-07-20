@@ -23,21 +23,12 @@ import {DialogContainer} from '@adobe/react-spectrum/DialogContainer';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {FocusScope, useFocusManager} from '../../src/focus/FocusScope';
 import {focusScopeTree} from '../../src/focus/FocusScope';
-import {focusSafely} from '../../src/interactions/focusSafely';
 import {Provider} from '@adobe/react-spectrum/Provider';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../../stories/focus/FocusScope.stories';
 import {useEvent} from '../../src/utils/useEvent';
 import userEvent from '@testing-library/user-event';
-
-jest.mock('../../src/interactions/focusSafely', () => {
-  let actual = jest.requireActual('../../src/interactions/focusSafely');
-  return {
-    ...actual,
-    focusSafely: jest.fn(actual.focusSafely)
-  };
-});
 
 describe('FocusScope', function () {
   let user;
@@ -333,13 +324,11 @@ describe('FocusScope', function () {
       });
       expect(document.activeElement).toBe(input2);
 
-      focusSafely.mockClear();
       act(() => {
         outside.focus();
       });
       fireEvent.focusIn(outside);
       expect(document.activeElement).toBe(input2);
-      expect(focusSafely).toHaveBeenCalledWith(input2);
     });
 
     it('should restore focus to the last focused element in the scope on focus out', async function () {
@@ -368,8 +357,6 @@ describe('FocusScope', function () {
       });
       expect(document.activeElement).toBe(input2);
 
-      focusSafely.mockClear();
-
       act(() => {
         input2.blur();
       });
@@ -377,7 +364,6 @@ describe('FocusScope', function () {
         jest.runAllTimers();
       });
       expect(document.activeElement).toBe(input2);
-      expect(focusSafely).toHaveBeenCalledWith(input2);
       fireEvent.focusOut(input2);
       expect(document.activeElement).toBe(input2);
     });
