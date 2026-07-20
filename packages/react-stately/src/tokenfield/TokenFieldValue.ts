@@ -36,34 +36,38 @@ export enum Direction {
   Backward = -1
 }
 
-export interface TokenSegmentListOptions {
+export interface TokenFieldValueOptions {
   caretPosition?: Position | null;
 }
 
 /**
  * A list of segments containing editable text and non-editable tokens.
  */
-export class TokenSegmentList<T = any> {
+export class TokenFieldValue<T = any> {
+  /** The text and token segments in the list. */
   readonly segments: readonly TokenFieldSegment<T>[];
+  /** The caret position. */
   caretPosition: Position = {index: 0, offset: 0};
   // Linked list representing the undo/redo history.
   private previous: this | null = null;
   private next: this | null = null;
   private isCoalescing = true;
 
-  constructor(tokens: readonly TokenFieldSegment<T>[], options?: TokenSegmentListOptions) {
+  /** Create a new list with the given segments. */
+  constructor(tokens: readonly TokenFieldSegment<T>[], options?: TokenFieldValueOptions) {
     this.segments = tokens;
     this.caretPosition = options?.caretPosition ?? {index: 0, offset: 0};
   }
 
-  protected createSegmentList(segments: readonly TokenFieldSegment<T>[]): this {
+  protected createFieldValue(segments: readonly TokenFieldSegment<T>[]): this {
     const Constructor = this.constructor as new (
       segments: readonly TokenFieldSegment<T>[],
-      options?: TokenSegmentListOptions
+      options?: TokenFieldValueOptions
     ) => this;
     return new Constructor(segments);
   }
 
+  /** Create a new list with the caret position set to the given position. */
   withCaretPosition(caretPosition: Position): this {
     if (
       this.caretPosition.index === caretPosition.index &&
@@ -72,7 +76,7 @@ export class TokenSegmentList<T = any> {
       return this;
     }
 
-    let result = this.createSegmentList(this.segments);
+    let result = this.createFieldValue(this.segments);
     result.caretPosition = caretPosition;
     result.previous = this.previous;
     result.next = this.next;
@@ -151,7 +155,7 @@ export class TokenSegmentList<T = any> {
     }
 
     if (insert.length) {
-      appendSegments(newSegments, insert);
+      appendSegments(newSegments, insert, text => this.tokenize(text));
     }
 
     let lastSegment = newSegments[newSegments.length - 1];
@@ -167,23 +171,7 @@ export class TokenSegmentList<T = any> {
 
     appendSegments(newSegments, this.segments.slice(end.index + 1));
 
-    if (insert.length > 0) {
-      let i = caret.index;
-      let seg = newSegments[i];
-      if (seg?.type === 'text') {
-        let window = seg.text.slice(0, caret.offset);
-        let suffix = seg.text.slice(caret.offset);
-        let tokenized = this.tokenize(window);
-        caret.index += tokenized.length - 1;
-        caret.offset = tokenized[tokenized.length - 1].text.length;
-        if (suffix.length > 0) {
-          appendSegments(tokenized, [this.createTextSegment(suffix)]);
-        }
-        newSegments.splice(i, 1, ...tokenized);
-      }
-    }
-
-    let segments = this.createSegmentList(newSegments);
+    let segments = this.createFieldValue(newSegments);
     segments.caretPosition = caret;
     segments.isCoalescing = coalesce;
     if (this.isCoalescing && coalesce && this.previous) {
@@ -342,16 +330,16 @@ export class TokenSegmentList<T = any> {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
     if (start.index === end.index && start.offset === end.offset) {
-      return this.createSegmentList([]);
+      return this.createFieldValue([]);
     }
     if (start.index === end.index) {
       let segment = this.segments[start.index];
       if (segment.type === 'text') {
-        return this.createSegmentList([
+        return this.createFieldValue([
           {type: 'text', text: segment.text.slice(start.offset, end.offset)}
         ]);
       }
-      return this.createSegmentList([segment]);
+      return this.createFieldValue([segment]);
     }
     let startSegment = this.segments[start.index];
     let endSegment = this.segments[end.index];
@@ -366,21 +354,25 @@ export class TokenSegmentList<T = any> {
     if (endSplit) {
       result.push(endSplit);
     }
-    return this.createSegmentList(result);
+    return this.createFieldValue(result);
   }
 
+  /** Convert the list to a string. */
   toString(): string {
     return this.segments.map(seg => seg.text).join('');
   }
 
+  /** Returns the previous list in the undo history. */
   undo(): this {
     return this.previous ?? this;
   }
 
+  /** Returns the next list in the redo history. */
   redo(): this {
     return this.next ?? this;
   }
 
+  /** End coalescing undo/redo history. */
   endCoalescing(): void {
     this.isCoalescing = false;
   }
@@ -417,7 +409,8 @@ function findInText(
 
 function appendSegments(
   segments: TokenFieldSegment[],
-  insert: TokenFieldSegment[]
+  insert: TokenFieldSegment[],
+  tokenize?: (text: string) => TokenFieldSegment[]
 ): TokenFieldSegment[] {
   for (let segment of insert) {
     if (segment.type === 'text' && segment.text.length === 0) {
@@ -426,7 +419,15 @@ function appendSegments(
 
     let last = segments[segments.length - 1];
     if (last && last.type === 'text' && segment.type === 'text') {
-      segments[segments.length - 1] = {type: 'text', text: last.text + segment.text};
+      if (tokenize) {
+        let tokenized = tokenize(last.text + segment.text);
+        segments.splice(segments.length - 1, 1, ...tokenized);
+      } else {
+        segments[segments.length - 1] = {type: 'text', text: last.text + segment.text};
+      }
+    } else if (tokenize && segment.type === 'text') {
+      let tokenized = tokenize(segment.text);
+      segments.push(...tokenized);
     } else {
       segments.push(segment);
     }

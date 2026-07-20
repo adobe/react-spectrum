@@ -288,7 +288,8 @@ export function useSubmenuTrigger<T>(
 
   return {
     submenuTriggerProps: {
-      ...(submenuTriggerKeyboardProps as any), // TODO: fix this
+      onKeyDown: submenuTriggerKeyboardProps.onKeyDown,
+      onKeyUp: submenuTriggerKeyboardProps.onKeyUp,
       id: submenuTriggerId,
       'aria-controls': state.isOpen ? overlayId : undefined,
       'aria-haspopup': !isDisabled ? type : undefined,
