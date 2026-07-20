@@ -579,7 +579,8 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           index,
           isExpanded
         })
-      }>
+      }
+      {...filterDOMProps(toast.content)}>
       <div
         role="presentation"
         className={toastBody({isSingle: !isMain || visibleToasts.length <= 1 || isExpanded})}>
