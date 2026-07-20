@@ -1,0 +1,91 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/calendar';
+import statelyDocs from 'docs:@react-stately/calendar';
+import Anatomy from '/packages/react-aria/docs/calendar/calendar-anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a calendar component.';
+export const isSubpage = true;
+
+# useCalendar
+
+<PageDescription>{docs.exports.useCalendar.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Calendar.tsx", "starters/hooks/src/Calendar.css", "starters/docs/src/Button.tsx", "starters/docs/src/Button.css"]}
+"use client";
+import {Calendar} from 'hooks-starter/Calendar';
+
+<Calendar aria-label="Event date" />
+```
+
+## API
+
+<Anatomy />
+
+```tsx
+<Calendar>
+  <CalendarHeading />
+  <CalendarMonthPicker />
+  <CalendarYearPicker />
+  <Button slot="previous" />
+  <Button slot="next" />
+  <CalendarGrid>
+    <CalendarGridHeader>
+      {day => <CalendarHeaderCell />}
+    </CalendarGridHeader>
+    <CalendarGridBody>
+      {date => <CalendarCell date={date} />}
+    </CalendarGridBody>
+  </CalendarGrid>
+  <Text slot="errorMessage" />
+</Calendar>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useCalendarState, links: statelyDocs.links},
+    {function: docs.exports.useCalendar, links: docs.links},
+    {function: docs.exports.useCalendarGrid, links: docs.links},
+    {function: docs.exports.useCalendarCell, links: docs.links},
+  ]}
+/>
+
+### CalendarState
+
+<InterfaceType {...statelyDocs.exports.CalendarState} links={statelyDocs.links} />
+
+### AriaCalendarProps
+
+<InterfaceType {...docs.exports.AriaCalendarProps} />
+
+### CalendarAria
+
+<InterfaceType {...docs.exports.CalendarAria} />
+
+### AriaCalendarGridProps
+
+<InterfaceType {...docs.exports.AriaCalendarGridProps} />
+
+### CalendarGridAria
+
+<InterfaceType {...docs.exports.CalendarGridAria} />
+
+### AriaCalendarCellProps
+
+<InterfaceType {...docs.exports.AriaCalendarCellProps} />
+
+### CalendarCellAria
+
+<InterfaceType {...docs.exports.CalendarCellAria} />
