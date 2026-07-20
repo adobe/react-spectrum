@@ -114,7 +114,8 @@ export function useActionGroup<T>(
       ArrowUp: () => {
         focusManager.focusPrevious({wrap: true});
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let role: string | undefined = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
