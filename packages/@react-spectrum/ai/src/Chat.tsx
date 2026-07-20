@@ -12,7 +12,10 @@
 
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {ButtonContext} from 'react-aria-components/Button';
-import {CollectionRendererContext, createLeafComponent} from 'react-aria-components/CollectionBuilder';
+import {
+  CollectionRendererContext,
+  createLeafComponent
+} from 'react-aria-components/CollectionBuilder';
 import {
   createContext,
   ForwardedRef,

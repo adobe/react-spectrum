@@ -26,12 +26,7 @@ interface Message {
   isStreaming?: boolean;
 }
 
-function TestThread({
-  messages,
-}: {
-  messages: Message[];
-  UNSTABLE_focusOnEntry?: 'first' | 'last';
-}) {
+function TestThread({messages}: {messages: Message[]; UNSTABLE_focusOnEntry?: 'first' | 'last'}) {
   return (
     <Chat>
       <ThreadScrollButton>
