@@ -12,6 +12,7 @@
 
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {ButtonContext} from 'react-aria-components/Button';
+import {CollectionRendererContext, createLeafComponent} from 'react-aria-components/CollectionBuilder';
 import {
   createContext,
   ForwardedRef,
@@ -27,12 +28,12 @@ import {
 } from 'react';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {DOMRef, forwardRefType, Node} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusRing, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   GridList,
   GridListItem,
   GridListItemProps,
-  GridListLoadMoreItem,
   GridListLoadMoreItemProps,
   GridListProps
 } from 'react-aria-components/GridList';
@@ -40,23 +41,17 @@ import {inertValue} from 'react-aria/private/utils/inertValue';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from 'react-stately/useVirtualizerState';
+import {ListStateContext} from 'react-aria-components/ListBox';
+import {LoaderNode} from 'react-aria/private/collections/BaseCollection';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
-import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
-import {
-  CollectionRendererContext,
-  createLeafComponent,
-  ListStateContext,
-  useRenderProps
-} from 'react-aria-components';
-import {LoaderNode} from 'react-aria/private/collections/BaseCollection';
 import {useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
-import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {dom} from '/packages/react-aria-components/src/utils';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useRenderProps} from 'react-aria-components/useRenderProps';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const scrollButtonWrapper = style({
   opacity: {
@@ -489,11 +484,11 @@ export const ThreadLoadMoreItem = createLeafComponent(
           />
         </div>
         {isLoading && renderProps.children && (
-          <dom.div {...renderProps} {...filterDOMProps(props, {global: true})} role="row" ref={ref}>
+          <div {...renderProps} {...filterDOMProps(props, {global: true})} role="row" ref={ref}>
             <div aria-colindex={isVirtualized ? 1 : undefined} role="gridcell">
               {renderProps.children}
             </div>
-          </dom.div>
+          </div>
         )}
       </>
     );
