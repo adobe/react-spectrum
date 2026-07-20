@@ -97,9 +97,9 @@ export const FileTrigger = forwardRef(function FileTrigger(
     defaultCamera,
     children,
     acceptDirectory,
-    name,
     isDisabled,
     isInvalid,
+    name,
     ...rest
   } = props;
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
