@@ -305,8 +305,7 @@ export const FieldGroup = forwardRef(function FieldGroup(
             styles={style({
               color: 'gray-600',
               flexShrink: 0,
-              marginEnd: 'text-to-visual',
-              minHeight: '[var(--field-height)]'
+              marginEnd: 'text-to-visual'
             })}>
             {props.prefix}
           </CenterBaseline>
@@ -481,7 +480,6 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
               styles: style({
                 order: 0,
                 flexShrink: 0,
-                minHeight: '[var(--field-height)]',
                 '--iconPrimary': {
                   type: 'fill',
                   value: {
