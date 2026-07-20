@@ -293,6 +293,26 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
   return {files: fileContents, deps: npmDeps};
 }
 
+export const getPlaygroundFiles = cache((): DownloadFiles => {
+  let dir = path.resolve('../../../starters/docs/src');
+  let entries = fs.readdirSync(dir);
+  let fileContents: DownloadFiles['files'] = {};
+  let npmDeps: {[name: string]: string} = {};
+
+  for (let entry of entries) {
+    let ext = path.extname(entry);
+    if (ext !== '.tsx' && ext !== '.ts' && ext !== '.css') {
+      continue;
+    }
+    let full = path.join(dir, entry);
+    let {contents} = readFileReplace(full);
+    fileContents[entry] = {contents};
+    parseFile(full, contents, npmDeps);
+  }
+
+  return {files: fileContents, deps: npmDeps};
+});
+
 function findAllFiles(files: string[], npmDeps = {}) {
   files = files.map(file => (path.isAbsolute(file) ? file : path.resolve('../../../', file)));
 
