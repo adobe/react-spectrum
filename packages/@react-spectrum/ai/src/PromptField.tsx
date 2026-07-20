@@ -14,16 +14,17 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
 import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
-import {Button} from '@react-spectrum/s2/Button';
-import {Cell} from './loader/data';
-import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
+  baseColor,
   color,
   css,
   iconStyle,
   style,
   StyleString
 } from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button} from '@react-spectrum/s2/Button';
+import {Cell} from './loader/data';
+import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
   createContext,
   createRef,
@@ -38,9 +39,9 @@ import {
   Direction,
   Position,
   TokenFieldSegment,
-  TokenSegment,
-  TokenSegmentList
-} from './TokenSegmentList';
+  TokenFieldValue,
+  TokenSegment
+} from 'react-stately/useTokenFieldState';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
@@ -51,7 +52,13 @@ import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Men
 import {PixelLoader} from './loader/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
-import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
+import {
+  positionToDOMRange,
+  Token,
+  TokenField,
+  TokenInput,
+  TokenProps
+} from 'react-aria-components/TokenField';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
@@ -68,7 +75,7 @@ export interface PromptFieldAttachment {
 export interface PromptFieldProps {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
-  onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
+  onSubmit?: (prompt: TokenFieldValue, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
@@ -81,8 +88,8 @@ interface PromptFieldState {
   attachments: PromptFieldAttachment[];
   setAttachments: React.Dispatch<React.SetStateAction<PromptFieldAttachment[]>>;
   acceptedAttachmentTypes?: string[];
-  prompt: TokenSegmentList;
-  setPrompt: React.Dispatch<React.SetStateAction<TokenSegmentList>>;
+  prompt: TokenFieldValue;
+  setPrompt: React.Dispatch<React.SetStateAction<TokenFieldValue>>;
   inputRef: React.RefObject<HTMLDivElement | null>;
   onSubmit?: () => void;
   onStop?: () => void;
@@ -93,7 +100,7 @@ interface PromptFieldState {
 
 // TODO: make this customizable
 const tokenRegex = /(?<=\s|^)(https?:\/\/)?(www\.)?([^/\s]+\.[a-z]{2,}(\/\S+)?)(?=\s)/g;
-class AutoLinkingSegmentList extends TokenSegmentList {
+class AutoLinkingTokenFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
     if (text.length === 0) {
       return [{type: 'text', text}];
@@ -123,7 +130,7 @@ class AutoLinkingSegmentList extends TokenSegmentList {
 const PromptFieldContext = createContext<PromptFieldState>({
   attachments: [],
   setAttachments: () => {},
-  prompt: new AutoLinkingSegmentList([]),
+  prompt: new AutoLinkingTokenFieldValue([]),
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false
@@ -152,7 +159,7 @@ export function PromptField(props: PromptFieldProps) {
     onRemoveAttachments,
     variant = 'balanced'
   } = props;
-  let [prompt, setPrompt] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
+  let [prompt, setPrompt] = useState<TokenFieldValue>(new AutoLinkingTokenFieldValue([]));
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
 
   // Not using RAC DropZone because it adds its own focusable button,
@@ -190,7 +197,7 @@ export function PromptField(props: PromptFieldProps) {
     }
 
     props.onSubmit?.(prompt, attachments);
-    setPrompt(new AutoLinkingSegmentList([]));
+    setPrompt(new AutoLinkingTokenFieldValue([]));
     setAttachments([]);
     inputRef.current?.focus();
   };
@@ -335,10 +342,10 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         <TokenField
           value={prompt}
           onChange={setPrompt}
-          multiline
-          aria-label="Prompt"
-          data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
-          ref={inputRef}
+          allowsNewlines
+          className={style({flexGrow: 1})}
+          aria-label={stringFormatter.format('promptfield.label')}
+          onSubmit={onSubmit}
           onFocus={e => {
             if (e.isTrusted) {
               setFocused(true);
@@ -370,26 +377,28 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                   }
                 }
               : undefined
-          }
-          onSubmit={onSubmit}
-          className={
-            css('&:empty::before { content: attr(data-placeholder); }') +
-            style({
-              flexGrow: 1,
-              font: 'body',
-              color: {
-                default: 'gray-800',
-                ':empty': {
-                  default: 'transparent-overlay-600',
-                  forcedColors: 'GrayText'
-                }
-              },
-              width: 'full',
-              outlineStyle: 'none',
-              cursor: 'text'
-            })
           }>
-          {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
+          <TokenInput
+            data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
+            ref={inputRef}
+            className={renderProps =>
+              css('&:empty::before { content: attr(data-placeholder); }') +
+              style({
+                font: 'body',
+                color: {
+                  default: baseColor('neutral'),
+                  ':empty': {
+                    default: 'gray-600',
+                    forcedColors: 'GrayText'
+                  }
+                },
+                width: 'full',
+                outlineStyle: 'none',
+                cursor: 'text'
+              })(renderProps)
+            }>
+            {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
+          </TokenInput>
         </TokenField>
         <PromptTokenFieldPopover
           filterAnchor={filterAnchor}

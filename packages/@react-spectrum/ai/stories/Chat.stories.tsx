@@ -36,7 +36,7 @@ import {
   ThreadItem,
   ThreadLoadMoreItem,
   ThreadScrollButton,
-  TokenSegmentList,
+  TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
@@ -211,7 +211,7 @@ export function StreamingChat() {
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
 
-  function handleSend(prompt: TokenSegmentList) {
+  function handleSend(prompt: TokenFieldValue) {
     setGenerating(true);
     // user message added first so its announcement plays before
     setMessages(prev => [
@@ -557,7 +557,7 @@ export function VirtualizedStreamingChat() {
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
 
-  function handleSend(prompt: TokenSegmentList) {
+  function handleSend(prompt: TokenFieldValue) {
     setGenerating(true);
     // user message added first so its announcement plays before
     setMessages(prev => [
@@ -907,7 +907,7 @@ export function EmptyChat() {
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
 
-  function handleSend(prompt: TokenSegmentList) {
+  function handleSend(prompt: TokenFieldValue) {
     setGenerating(true);
     setMessages(prev => [
       ...prev,

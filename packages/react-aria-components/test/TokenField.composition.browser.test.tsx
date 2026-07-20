@@ -41,8 +41,8 @@ import {describe, expect, it} from 'vitest';
 import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {Token, TokenField} from '../src/TokenField';
-import {TokenSegmentList} from '../src/TokenSegmentList';
+import {Token, TokenField, TokenInput} from '../src/TokenField';
+import {TokenFieldValue} from 'react-stately/useTokenFieldState';
 
 declare module 'vitest/browser' {
   interface BrowserCommands {
@@ -161,7 +161,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
   });
 
   itAndroid('composes between two adjacent tokens', async () => {
-    let list = new TokenSegmentList([token('A'), token('B')]);
+    let list = new TokenFieldValue([token('A'), token('B')]);
     let {textbox, getValue} = await renderControlledTokenField(list);
     // Caret between the two tokens.
     await navigateCaret(textbox, list, {index: 1, offset: 0});
@@ -175,7 +175,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
   // without the compositionend DOM-reconciliation the DOM would show 'TOKhellohello' even
   // though the model is the correct 'TOKhello'.
   itAndroid('composes immediately after a lone leading token without duplicating', async () => {
-    let list = new TokenSegmentList([token('TOK')]);
+    let list = new TokenFieldValue([token('TOK')]);
     let {textbox, getValue} = await renderControlledTokenField(list);
     await focusField(textbox);
     await userEvent.keyboard('{End}');
@@ -217,7 +217,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
       forceRender = () => setTick(t => t + 1);
       return (
         <TokenField value={value} onChange={setValue} aria-label="rerender-field">
-          {segment => <Token>{segment.text}</Token>}
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );
     }
@@ -322,7 +322,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
             setValue(v);
           }}
           aria-label="onchange-field">
-          {segment => <Token>{segment.text}</Token>}
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );
     }
@@ -354,10 +354,10 @@ describeOrSkip('TokenField IME composition (Android)', () => {
     }
     function Harness() {
       // Leading token (rendered via the child fn) followed by editable text.
-      let [value, setValue] = React.useState(() => new TokenSegmentList([token('A'), text('')]));
+      let [value, setValue] = React.useState(() => new TokenFieldValue([token('A'), text('')]));
       return (
         <TokenField value={value} onChange={setValue} aria-label="norerender-field">
-          {segment => <CountingToken>{segment.text}</CountingToken>}
+          <TokenInput>{segment => <CountingToken>{segment.text}</CountingToken>}</TokenInput>
         </TokenField>
       );
     }
@@ -386,7 +386,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
   // re-renders so it matches the controlled value rather than the in-progress composition.
   itAndroid('ends composition early when a controlled update inserts a completion', async () => {
     let valueRef = {current: segments(text(''))};
-    let setValueExternal: (v: TokenSegmentList) => void = () => {};
+    let setValueExternal: (v: TokenFieldValue) => void = () => {};
     function Harness() {
       let [value, setValue] = React.useState(() => segments(text('')));
       valueRef.current = value;
@@ -394,7 +394,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
       setValueExternal = setValue;
       return (
         <TokenField value={value} onChange={setValue} aria-label="completion-field">
-          {segment => <Token>{segment.text}</Token>}
+          <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
         </TokenField>
       );
     }
@@ -410,7 +410,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
 
     // The user selects a completion: the parent replaces the value with a token. This does
     // not match the in-progress composition, so composition ends early and the DOM updates.
-    setValueExternal(new TokenSegmentList([token('Calendar')]));
+    setValueExternal(new TokenFieldValue([token('Calendar')]));
 
     await expectDOMText(textbox, 'Calendar');
     expect(valueRef.current.toString()).toBe('Calendar');
