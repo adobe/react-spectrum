@@ -49,6 +49,13 @@ export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
   shouldSelectOnPressUp?: boolean;
   /** The id of the column that displays hierarchical data. */
   treeColumn?: Key;
+  /**
+   * Whether keyboard navigation to focusable elements within the cells is
+   * via the left/right arrow keys or the tab key.
+   *
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab';
 }
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
@@ -125,6 +132,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
       columns: []
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
     [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]
   );
 

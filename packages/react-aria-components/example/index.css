@@ -517,7 +517,7 @@ input {
   outline: none;
 }
 
-[aria-autocomplete][data-focus-visible] {
+input[aria-autocomplete][data-focus-visible] {
   outline: 3px solid blue;
 }
 

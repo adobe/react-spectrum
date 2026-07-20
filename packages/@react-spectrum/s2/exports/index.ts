@@ -150,6 +150,8 @@ export {pressScale} from '../src/pressScale';
 
 export {mergeStyles} from '../style/runtime';
 
+export {CenterBaseline} from '../src/CenterBaseline';
+
 export {Autocomplete} from 'react-aria-components/Autocomplete';
 export {Collection} from 'react-aria/Collection';
 export {FileTrigger} from 'react-aria-components/FileTrigger';

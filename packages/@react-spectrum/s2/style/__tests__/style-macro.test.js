@@ -40,26 +40,26 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs14:first-child {
+  .Jbs151:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv14:first-child {
+    .Jbpv151:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
-.-macro-static-I08ui {
-        --macro-data-I08ui: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+.-macro-static-OZFeNe {
+        --macro-data-OZFeNe: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
-    expect(js).toMatchInlineSnapshot(`" Jbs14 Jbpv14 -macro-static-I08ui"`);
+    expect(js).toMatchInlineSnapshot(`" Jbs151 Jbpv151 -macro-static-OZFeNe"`);
   });
 
   it('should support self references', () => {
@@ -73,60 +73,60 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  ._kc14 {
+  ._kc151 {
     border-top-width: 2px;
   }
 
 
-  .hc14 {
+  .hc151 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc14 {
+  .mCPFGYc151 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc14 {
+  .lc151 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc14 {
+  .SMBFGYc151 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv14 {
+  .Rv151 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd14 {
+  .ZjUQgKd151 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc14 {
+  .-m_-mc151 {
     --m: 2px;
   }
 
 
-  .-S_-Sv14 {
+  .-S_-Sv151 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
-.-macro-static-e1GIg {
-        --macro-data-e1GIg: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+.-macro-static-6DrPJb {
+        --macro-data-6DrPJb: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
 
     expect(js).toMatchInlineSnapshot(
-      `" _kc14 hc14 mCPFGYc14 lc14 SMBFGYc14 Rv14 ZjUQgKd14 -m_-mc14 -S_-Sv14 -macro-static-e1GIg"`
+      `" _kc151 hc151 mCPFGYc151 lc151 SMBFGYc151 Rv151 ZjUQgKd151 -m_-mc151 -S_-Sv151 -macro-static-6DrPJb"`
     );
   });
 
@@ -144,9 +144,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gw14 pg14 -macro-dynamic-1hksi7i"`);
-    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb14 pHJ3AUd14 -macro-static-QgnkJd"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb14 pg14 -macro-dynamic-7jtiyi"`);
+    expect(js()).toMatchInlineSnapshot(`"  gw151 pg151 -macro-dynamic-ksiu6q"`);
+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb151 pHJ3AUd151 -macro-static-4DCFgd"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb151 pg151 -macro-dynamic-197x9i6"`);
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -161,10 +161,10 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B14 __Ya14 -macro-dynamic-1hkkiwv"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D14 __Ya14 -macro-static-F3q0Dd"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B151 __Ya151 -macro-dynamic-clboub"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D151 __Ya151 -macro-static-pdFIDc"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  -_7PloMd-D14 __Ya14 -macro-dynamic-j53z9d"`
+      `"  -_7PloMd-D151 __Ya151 -macro-dynamic-n9a5xh"`
     );
   });
 
@@ -180,10 +180,10 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  Tk14 Qk14 Sk14 Rk14 -macro-dynamic-10enpkp"`);
-    expect(overrides).toMatchInlineSnapshot(`" Tm14 Qm14 Sm14 Rm14 -macro-static-rawlJc"`);
+    expect(js()).toMatchInlineSnapshot(`"  Tk151 Qk151 Sk151 Rk151 -macro-dynamic-1esad0h"`);
+    expect(overrides).toMatchInlineSnapshot(`" Tm151 Qm151 Sm151 Rm151 -macro-static-Nfrh6d"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  Tm14 Qm14 Sm14 Rm14 -macro-dynamic-5anb29"`
+      `"  Tm151 Qm151 Sm151 Rm151 -macro-dynamic-7axbah"`
     );
   });
 
@@ -199,9 +199,11 @@ describe('style-macro', () => {
       fontSize: 'ui-xs'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc14 vx14 -macro-dynamic-bw4d5q"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a14 vx14 -macro-static-cD4zjb"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a14 vx14 -macro-dynamic-1yik7yo"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc151 vx151 -macro-dynamic-xhgg6a"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a151 vx151 -macro-static-grInxd"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      `"  -_6BNtrc-a151 vx151 -macro-dynamic-hitxxw"`
+    );
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -216,9 +218,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gE14 -macro-dynamic-1tvo6tc"`);
-    expect(overrides).toMatchInlineSnapshot(`" Nk14 -macro-static-1ozQQc"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk14 gE14 -macro-dynamic-1fyk7lq"`);
+    expect(js()).toMatchInlineSnapshot(`"  gE151 -macro-dynamic-wd489e"`);
+    expect(overrides).toMatchInlineSnapshot(`" Nk151 -macro-static-f34NMd"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk151 gE151 -macro-dynamic-1qncav6"`);
   });
 
   it('should support runtime conditions', () => {
@@ -239,32 +241,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH14 {
+  .gH151 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF14 {
+  .gF151 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE14 {
+  .gE151 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt14 {
+  .pt151 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po14 {
+  .po151 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm14 {
+  .pm151 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -272,9 +274,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  gH14 pt14 -macro-dynamic-1bsdq7g"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF14 po14 -macro-dynamic-mtyglh"`);
-    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE14 pm14 -macro-dynamic-1nxkx1e"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH151 pt151 -macro-dynamic-13m9l9s"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF151 po151 -macro-dynamic-1e5szmx"`);
+    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE151 pm151 -macro-dynamic-1ltkejq"`);
   });
 
   it('should support nested runtime conditions', () => {
@@ -293,33 +295,33 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH14 {
+  .gH151 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF14 {
+  .gF151 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h14 {
+  .g_h151 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g314 {
+  .g3151 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot(`"  gH14 -macro-dynamic-874gf7"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF14 -macro-dynamic-mz49cx"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h14 -macro-dynamic-15g8h7m"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH151 -macro-dynamic-1ap2imt"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF151 -macro-dynamic-1153npv"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h151 -macro-dynamic-7jyd2s"`);
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      `"  g314 -macro-dynamic-1ktebam"`
+      `"  g3151 -macro-dynamic-heik00"`
     );
   });
 
@@ -334,9 +336,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY14 -macro-dynamic-1o5y9ec"`);
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe14 -macro-dynamic-1nrp3ym"`);
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw14 -macro-dynamic-1fldd9u"`);
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY151 -macro-dynamic-1kvorfq"`);
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe151 -macro-dynamic-17tas0w"`);
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw151 -macro-dynamic-1m4zj7o"`);
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -354,14 +356,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb14 {
+    .plb151 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple14 {
+    .ple151 {
       color: HighlightText;
     }
   }
@@ -370,8 +372,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  plb14 -macro-dynamic-42tseq"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple14 -macro-dynamic-hfe3zp"`);
+    expect(js({})).toMatchInlineSnapshot(`"  plb151 -macro-dynamic-1gtim5g"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple151 -macro-dynamic-1v5gwiv"`);
   });
 
   it('inherits parent default when nested branch has no default key', () => {
@@ -387,9 +389,9 @@ describe('style-macro', () => {
     });
     // forcedColors.default should apply when variant=highlight but !isSelected
     expect(css).toContain('ButtonText');
-    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb14 -macro-dynamic-42tseq"`);
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb151 -macro-dynamic-1gtim5g"`);
     expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot(
-      `"  ple14 -macro-dynamic-hfe3zp"`
+      `"  ple151 -macro-dynamic-1v5gwiv"`
     );
   });
 
@@ -398,33 +400,33 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot(`" Th14 Qh14 Sh14 Rh14 -macro-static-xbQCP"`);
+    expect(js).toMatchInlineSnapshot(`" Th151 Qh151 Sh151 Rh151 -macro-static-dvFMTb"`);
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
 @layer _.a {
-  .Th14 {
+  .Th151 {
     padding-top: 24px;
   }
 
 
-  .Qh14 {
+  .Qh151 {
     padding-bottom: 24px;
   }
 
 
-  .Sh14 {
+  .Sh151 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh14 {
+  .Rh151 {
     padding-inline-end: 24px;
   }
 }
 
-.-macro-static-xbQCP {
-        --macro-data-xbQCP: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+.-macro-static-dvFMTb {
+        --macro-data-dvFMTb: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -440,13 +442,13 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gpQzfVb14 {
+  .gpQzfVb151 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
 
-.-macro-static-mwnohc {
-        --macro-data-mwnohc: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+.-macro-static-GJJsFd {
+        --macro-data-GJJsFd: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -465,13 +467,13 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .-FUeYm-gE14 {
+  .-FUeYm-gE151 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
 
-.-macro-static-OWe9Jb {
-        --macro-data-OWe9Jb: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+.-macro-static-QA93Ie {
+        --macro-data-QA93Ie: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
       }
 
 "

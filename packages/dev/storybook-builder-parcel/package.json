@@ -17,6 +17,7 @@
     "@parcel/reporter-cli": "^2.16.3",
     "@parcel/utils": "^2.16.3",
     "http-proxy-middleware": "^2.0.6",
+    "parcel-reporter-turbosnap-stats": "0.0.0",
     "storybook": "^10.0.0"
   },
   "devDependencies": {

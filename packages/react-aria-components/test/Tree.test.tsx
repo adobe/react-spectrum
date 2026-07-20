@@ -47,7 +47,8 @@ import {Virtualizer} from '../src/Virtualizer';
 let {
   EmptyTreeStaticStory: EmptyLoadingTree,
   LoadingStoryDepOnTopStory: LoadingMoreTree,
-  TreeWithDragAndDrop
+  TreeWithDragAndDrop,
+  TreeWithTextFieldStory
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
@@ -662,6 +663,21 @@ describe('Tree', () => {
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['projects-1']));
     }
   );
+
+  it('should allow unslotted checkboxes in item content', () => {
+    let {getByRole} = render(
+      <Tree aria-label="test tree">
+        <TreeItem id="item" textValue="Item">
+          <TreeItemContent>
+            <Text>Item</Text>
+            <Checkbox>Flag item</Checkbox>
+          </TreeItemContent>
+        </TreeItem>
+      </Tree>
+    );
+
+    expect(getByRole('checkbox', {name: 'Flag item'})).toBeInTheDocument();
+  });
 
   it('should not render checkboxes for selection with selectionBehavior=replace ', async () => {
     let {getByRole, getAllByRole} = render(
@@ -2837,6 +2853,282 @@ describe('Tree', () => {
     expect(rows[18]).toHaveAttribute('aria-level', '5');
     expect(rows[18]).toHaveAttribute('aria-posinset', '1');
     expect(rows[18]).toHaveAttribute('aria-setsize', '1');
+  });
+
+  describe('tab navigation and textfields', () => {
+    it('should not navigate rows when arrow keys are pressed while a text input child has focus', async () => {
+      let {getByRole} = render(<TreeWithTextFieldStory />);
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+      let input = getByRole('textbox', {name: 'Name'});
+
+      // tab past the before tree input
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(input);
+    });
+
+    it('should not trigger typeahead when typing in a text input child', async () => {
+      let {getByRole} = render(<TreeWithTextFieldStory />);
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+      let input = getByRole('textbox', {name: 'Name'});
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('row');
+      expect(document.activeElement).toBe(input);
+      expect(input).toHaveValue('row');
+    });
+
+    it('should not trigger selection when pressing Space in a text input child of a leaf row', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <TreeWithTextFieldStory selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+      let input = getByRole('textbox', {name: 'Name'});
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard(' ');
+      expect(input).toHaveValue(' ');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should allow typing space in the text input child of a parent row', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <TreeWithTextFieldStory selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      await user.tab();
+      await user.tab();
+      let parentInput = getByRole('textbox', {name: 'row 1 input'});
+      expect(document.activeElement).toBe(parentInput);
+
+      await user.keyboard(' ');
+      expect(parentInput).toHaveValue(' ');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('focusMode and allowsArrowNavigation', () => {
+    it('focusMode="child" auto-focuses first child when item receives focus', async () => {
+      let {getByRole} = render(
+        <Tree aria-label="Tab mode tree" keyboardNavigationBehavior="tab">
+          <TreeItem id="item1" textValue="Item 1" focusMode="child">
+            <TreeItemContent>
+              {() => (
+                <button tabIndex={0} aria-label="Item 1 action">
+                  Go
+                </button>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+          <TreeItem id="item2" textValue="Item 2" focusMode="child">
+            <TreeItemContent>
+              {() => (
+                <button tabIndex={0} aria-label="Item 2 action">
+                  Go
+                </button>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      await user.tab({shift: true});
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+    });
+
+    it('allowsArrowNavigation allows arrow key navigation when focused on child', async () => {
+      let {getByRole} = render(
+        <Tree aria-label="Tab mode tree" keyboardNavigationBehavior="tab">
+          <TreeItem id="item1" textValue="Item 1" focusMode="child" allowsArrowNavigation>
+            <TreeItemContent>
+              {() => (
+                <button tabIndex={0} aria-label="Item 1 action">
+                  Go
+                </button>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+          <TreeItem id="item2" textValue="Item 2" focusMode="child" allowsArrowNavigation>
+            <TreeItemContent>
+              {() => (
+                <button tabIndex={0} aria-label="Item 2 action">
+                  Go
+                </button>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+    });
+
+    describe('focusMode="child" with default arrow navigation', () => {
+      it('ArrowDown from child navigates to first child of next item', async () => {
+        let {getByRole} = render(
+          <Tree aria-label="Tree">
+            <TreeItem id="item1" textValue="Item 1" focusMode="child">
+              <TreeItemContent>
+                <button tabIndex={0} aria-label="Item 1 action">
+                  Go
+                </button>
+                <input />
+              </TreeItemContent>
+            </TreeItem>
+            <TreeItem id="item2" textValue="Item 2" focusMode="child">
+              <TreeItemContent>
+                <button tabIndex={0} aria-label="Item 2 action">
+                  Go
+                </button>
+                <input />
+              </TreeItemContent>
+            </TreeItem>
+            <TreeItem id="item3" textValue="Item 3" focusMode="child">
+              <TreeItemContent>
+                <button tabIndex={0} aria-label="Item 3 action">
+                  Go
+                </button>
+                <input />
+              </TreeItemContent>
+            </TreeItem>
+          </Tree>
+        );
+        await user.tab();
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 3 action'}));
+      });
+
+      it('ArrowUp from child navigates to first child of previous item', async () => {
+        let {getByRole} = render(
+          <Tree aria-label="Tree">
+            <TreeItem id="item1" textValue="Item 1" focusMode="child">
+              <TreeItemContent>
+                <button tabIndex={0} aria-label="Item 1 action">
+                  Go
+                </button>
+                <input />
+              </TreeItemContent>
+            </TreeItem>
+            <TreeItem id="item2" textValue="Item 2" focusMode="child">
+              <TreeItemContent>
+                <button tabIndex={0} aria-label="Item 2 action">
+                  Go
+                </button>
+                <input />
+              </TreeItemContent>
+            </TreeItem>
+          </Tree>
+        );
+        await user.tab();
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+        await user.keyboard('{ArrowUp}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      });
+    });
+
+    describe('focusMode="row" (default) with tab navigation', () => {
+      it('Tab into tree focuses row, Tab from row enters child, Shift+Tab returns to row', async () => {
+        let {getByRole, getAllByRole} = render(
+          <Tree aria-label="Tree" keyboardNavigationBehavior="tab">
+            <TreeItem id="item1" textValue="Item 1">
+              <TreeItemContent>
+                <button tabIndex={0} aria-label="Item 1 action">
+                  Go
+                </button>
+                <button tabIndex={0} aria-label="Item 1 action 2">
+                  Go
+                </button>
+              </TreeItemContent>
+            </TreeItem>
+          </Tree>
+        );
+        let rows = getAllByRole('row');
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+        await user.tab();
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action 2'}));
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(rows[0]);
+      });
+
+      it('ArrowRight expands collapsed parent item in tab mode', async () => {
+        let {getAllByRole} = render(
+          <Tree aria-label="Tree" keyboardNavigationBehavior="tab">
+            <TreeItem id="parent" textValue="Parent">
+              <TreeItemContent>
+                {({hasChildItems, isExpanded}) => (
+                  <>
+                    {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+                    <span>Parent</span>
+                  </>
+                )}
+              </TreeItemContent>
+              <TreeItem id="child1" textValue="Child 1">
+                <TreeItemContent>{() => <span>Child 1</span>}</TreeItemContent>
+              </TreeItem>
+            </TreeItem>
+            <TreeItem id="item2" textValue="Item 2">
+              <TreeItemContent>{() => <span>Item 2</span>}</TreeItemContent>
+            </TreeItem>
+          </Tree>
+        );
+        let rows = getAllByRole('row');
+        // Only parent and item2 visible initially (parent is collapsed)
+        expect(rows).toHaveLength(2);
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        // ArrowRight on a collapsed parent with children expands it (handleTreeExpansionKeys returns true)
+        await user.keyboard('{ArrowRight}');
+        let expandedRows = getAllByRole('row');
+        expect(expandedRows).toHaveLength(3);
+      });
+    });
   });
 });
 

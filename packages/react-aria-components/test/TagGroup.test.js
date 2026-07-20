@@ -660,6 +660,9 @@ describe('TagGroup', () => {
     expect(onRemove).toHaveBeenCalledTimes(2);
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['cat']));
 
+    await user.tab({shift: true});
+    expect(tags[0]).toHaveFocus();
+
     await user.keyboard('{ArrowRight}');
     expect(tags[1]).toHaveFocus();
 

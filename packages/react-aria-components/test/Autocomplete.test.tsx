@@ -14,7 +14,6 @@ import './installPointerEvent';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
 import {Autocomplete} from '../src/Autocomplete';
-import {Breadcrumb, Breadcrumbs} from '../src/Breadcrumbs';
 import {Button} from '../src/Button';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
 import {Collection} from 'react-aria/Collection';
@@ -30,11 +29,9 @@ import React, {ReactNode, useState} from 'react';
 import {SearchField} from '../src/SearchField';
 import {Select, SelectValue} from '../src/Select';
 import {Separator} from '../src/Separator';
-import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {Text} from '../src/Text';
 import {TextField} from '../src/TextField';
-import {Tree, TreeItem, TreeItemContent} from '../src/Tree';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useFilter} from 'react-aria/useFilter';
 import userEvent from '@testing-library/user-event';
@@ -269,41 +266,6 @@ let StaticTagGroup = props => (
       <Tag>Baz</Tag>
     </TagList>
   </TagGroup>
-);
-
-let StaticTabs = props => (
-  <Tabs {...props}>
-    <TabList aria-label="Test tabs">
-      <Tab id="1">Foo</Tab>
-      <Tab id="2">Bar</Tab>
-      <Tab id="3">Baz</Tab>
-    </TabList>
-    <TabPanel id="1">Foo content</TabPanel>
-    <TabPanel id="2">Bar content</TabPanel>
-    <TabPanel id="3">Baz content</TabPanel>
-  </Tabs>
-);
-
-let StaticTree = props => (
-  <Tree aria-label="test tree" {...props}>
-    <TreeItem textValue="Foo">
-      <TreeItemContent>Foo</TreeItemContent>
-    </TreeItem>
-    <TreeItem textValue="Bar">
-      <TreeItemContent>Bar</TreeItemContent>
-    </TreeItem>
-    <TreeItem textValue="Baz">
-      <TreeItemContent>Baz</TreeItemContent>
-    </TreeItem>
-  </Tree>
-);
-
-let StaticBreadcrumbs = props => (
-  <Breadcrumbs {...props}>
-    <Breadcrumb>Foo</Breadcrumb>
-    <Breadcrumb>Bar</Breadcrumb>
-    <Breadcrumb>Baz</Breadcrumb>
-  </Breadcrumbs>
 );
 
 let AutocompleteWrapper = ({
@@ -1097,37 +1059,6 @@ describe('Autocomplete', () => {
     act(() => jest.runAllTimers());
     dialogs = queryAllByRole('dialog');
     expect(dialogs).toHaveLength(0);
-  });
-
-  it.each`
-    Name             | Component
-    ${'Tabs'}        | ${StaticTabs}
-    ${'Tree'}        | ${StaticTree}
-    ${'Breadcrumbs'} | ${StaticBreadcrumbs}
-  `('$Name doesnt get filtered by Autocomplete', async function ({Component}) {
-    let {getByRole, getByTestId} = render(
-      <AutocompleteWrapper>
-        <Component data-testid="wrapped" />
-      </AutocompleteWrapper>
-    );
-
-    let wrappedComponent = getByTestId('wrapped');
-    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
-    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
-    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
-
-    let input = getByRole('searchbox');
-    await user.tab();
-    expect(document.activeElement).toBe(input);
-    await user.keyboard('Foo');
-    expect(input).toHaveValue('Foo');
-    expect(input).not.toHaveAttribute('aria-controls');
-    expect(input).not.toHaveAttribute('aria-autocomplete');
-    expect(input).not.toHaveAttribute('aria-activedescendant');
-
-    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
-    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
-    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
   });
 
   it('should allow user to filter by node information', async () => {

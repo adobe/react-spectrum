@@ -151,7 +151,8 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element | null {
             triggerRef: ref,
             scrollRef,
             placement: 'bottom start',
-            'aria-labelledby': menuProps['aria-labelledby']
+            'aria-labelledby': menuProps['aria-labelledby'],
+            offset: props.trigger === 'contextMenu' ? 0 : undefined
           }
         ]
       ]}>
@@ -379,7 +380,7 @@ function MenuInner<T>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
             /* We assume the context can never change between defined and undefined. */
-            /* eslint-disable-next-line react-hooks/rules-of-hooks */
+            // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
             [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
           <SharedElementTransition>

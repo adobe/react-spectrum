@@ -11,7 +11,6 @@
  */
 
 import {chain} from '../utils/chain';
-
 import {
   Collection,
   DOMAttributes,
@@ -28,6 +27,7 @@ import {
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {getRowId, listMap} from './utils';
 import {getScrollParent} from '../utils/getScrollParent';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
@@ -53,6 +53,19 @@ export interface AriaGridListItemOptions {
   shouldSelectOnPressUp?: boolean;
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean;
+  /**
+   * Whether the row or its first focusable child element should be focused when the row is
+   * focused.
+   *
+   * @default 'row'
+   */
+  focusMode?: 'child' | 'row';
+  /**
+   * Whether the row should support arrow key navigation even when the containing collection uses
+   * tab keyboard navigation. Allows users to navigate between rows with arrow keys while
+   * focus is on an interactive child element within the row.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 export interface GridListItemAria extends SelectableItemStates {
@@ -88,7 +101,7 @@ export function useGridListItem<T>(
   ref: RefObject<FocusableElement | null>
 ): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
-  let {node, isVirtualized} = props;
+  let {node, isVirtualized, focusMode = 'row', allowsArrowNavigation} = props;
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
@@ -100,12 +113,33 @@ export function useGridListItem<T>(
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
   let keyWhenFocused = useRef<Key | null>(null);
   let focus = () => {
+    if (ref.current === null) {
+      return;
+    }
+
+    if (focusMode === 'child') {
+      // If focus is already on a focusable child within the row, early return so we don't shift focus
+      if (
+        isFocusWithin(ref.current) &&
+        ref.current !== getActiveElement(getOwnerDocument(ref.current))
+      ) {
+        return;
+      }
+
+      let treeWalker = getFocusableTreeWalker(ref.current, {tabbable: true});
+      let focusable = treeWalker.firstChild() as FocusableElement;
+      if (focusable) {
+        focusSafely(focusable);
+        scrollIntoViewport(focusable, {containingElement: getScrollParent(focusable)});
+        return;
+      }
+    }
+
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
     if (
-      ref.current !== null &&
-      ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-        !isFocusWithin(ref.current))
+      (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
+      !isFocusWithin(ref.current)
     ) {
       focusSafely(ref.current);
     }
@@ -169,7 +203,7 @@ export function useGridListItem<T>(
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
       !ref.current ||
@@ -181,36 +215,10 @@ export function useGridListItem<T>(
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = activeElement;
 
-    if ('expandedKeys' in state && activeElement === ref.current) {
-      if (
-        e.key === EXPANSION_KEYS['expand'][direction] &&
-        state.selectionManager.focusedKey === node.key &&
-        hasChildRows &&
-        !state.expandedKeys.has(node.key)
-      ) {
-        state.toggleKey(node.key);
-        e.stopPropagation();
-        return;
-      } else if (
-        e.key === EXPANSION_KEYS['collapse'][direction] &&
-        state.selectionManager.focusedKey === node.key
-      ) {
-        // If item is collapsible, collapse it; else move to parent
-        if (hasChildRows && state.expandedKeys.has(node.key)) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-          return;
-        } else if (
-          !state.expandedKeys.has(node.key) &&
-          node.parentKey &&
-          state.collection.getItem(node.parentKey)?.type === 'item'
-        ) {
-          // Item is a leaf or already collapsed, move focus to parent
-          state.selectionManager.setFocusedKey(node.parentKey);
-          e.stopPropagation();
-          return;
-        }
-      }
+    if (
+      handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+    ) {
+      return;
     }
 
     switch (e.key) {
@@ -308,16 +316,53 @@ export function useGridListItem<T>(
       }
       return;
     }
+
+    // if focus goes back to cell from child, make sure we don't refocus the cell if we are in focusMode=child
+    // since that would be a focus trap
+    if (
+      focusMode === 'child' &&
+      e.relatedTarget &&
+      nodeContains(ref.current, e.relatedTarget as Element)
+    ) {
+      return;
+    }
+
+    // If the cell itself is focused, wait a frame so that focus finishes propagating
+    // up to the tree, and move focus to a focusable child if possible.
+    requestAnimationFrame(() => {
+      if (
+        focusMode === 'child' &&
+        getActiveElement(getOwnerDocument(ref.current)) === ref.current
+      ) {
+        focus();
+      }
+    });
   };
 
-  let onKeyDown = e => {
-    let activeElement = getActiveElement();
+  let onKeyDown = (e: ReactKeyboardEvent) => {
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
       !ref.current ||
       !activeElement
     ) {
       return;
+    }
+
+    if (keyboardNavigationBehavior === 'tab') {
+      // Stop propagation for all events that originate from the children of the gridlist item since we don't want to trigger
+      // grid level interactions (row navigation/typeselect/etc)
+      // exception made for Tab since that needs to propagate to useSelectableCollection to tab out of the gridlist, might be others?
+      if (getEventTarget(e) !== ref.current && e.key !== 'Tab') {
+        e.stopPropagation();
+        return;
+      }
+
+      if (
+        handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+      ) {
+        return;
+      }
     }
 
     switch (e.key) {
@@ -349,10 +394,13 @@ export function useGridListItem<T>(
   //   });
   // }
 
+  // oxlint-disable-next-line react/react-compiler
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture,
-    onKeyDown,
+    onKeyDownCapture:
+      keyboardNavigationBehavior === 'arrow' || allowsArrowNavigation
+        ? onKeyDownCapture
+        : undefined,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node['aria-label'] || node.textValue || undefined,
@@ -366,6 +414,16 @@ export function useGridListItem<T>(
         : undefined,
     id: getRowId(state, node.key)
   });
+
+  // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
+  // is stopped. this also fixes space not working in a textfield in a tree parent row
+  let baseOnKeyDown = rowProps.onKeyDown;
+  rowProps.onKeyDown = (e: ReactKeyboardEvent<FocusableElement>) => {
+    onKeyDown(e as ReactKeyboardEvent);
+    if (!e.isPropagationStopped()) {
+      baseOnKeyDown?.(e);
+    }
+  };
 
   if (isVirtualized) {
     let {collection} = state;
@@ -384,6 +442,7 @@ export function useGridListItem<T>(
   };
 
   // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
+  // oxlint-disable react/react-compiler
   return {
     rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
@@ -392,6 +451,51 @@ export function useGridListItem<T>(
     },
     ...itemStates
   };
+  // oxlint-enable react/react-compiler
+}
+
+function handleTreeExpansionKeys<T>(
+  e: ReactKeyboardEvent,
+  state: ListState<T> | TreeState<T>,
+  node: RSNode<unknown>,
+  hasChildRows: boolean | undefined,
+  direction: string,
+  activeElement: Element | null,
+  rowRef: FocusableElement | null
+): boolean {
+  if (!('expandedKeys' in state) || activeElement !== rowRef) {
+    return false;
+  }
+  if (
+    e.key === EXPANSION_KEYS['expand'][direction] &&
+    state.selectionManager.focusedKey === node.key &&
+    hasChildRows &&
+    !state.expandedKeys.has(node.key)
+  ) {
+    state.toggleKey(node.key);
+    e.stopPropagation();
+    return true;
+  } else if (
+    e.key === EXPANSION_KEYS['collapse'][direction] &&
+    state.selectionManager.focusedKey === node.key
+  ) {
+    // If item is collapsible, collapse it; else move to parent
+    if (hasChildRows && state.expandedKeys.has(node.key)) {
+      state.toggleKey(node.key);
+      e.stopPropagation();
+      return true;
+    } else if (
+      !state.expandedKeys.has(node.key) &&
+      node.parentKey &&
+      state.collection.getItem(node.parentKey)?.type === 'item'
+    ) {
+      // Item is a leaf or already collapsed, move focus to parent
+      state.selectionManager.setFocusedKey(node.parentKey);
+      e.stopPropagation();
+      return true;
+    }
+  }
+  return false;
 }
 
 function last(walker: TreeWalker) {

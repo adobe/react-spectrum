@@ -166,6 +166,7 @@ export function useAutocomplete<T>(
   // Tracks if a collection has been connected to the autocomplete. If false, we don't want to add various attributes to the autocomplete input
   // since it isn't attached to a filterable collection (e.g. Tabs)
   let [hasCollection, setHasCollection] = useState(false);
+  let [autoFocusOnMount, setAutoFocusOnMount] = useState(false);
 
   useEffect(() => {
     return () => clearTimeout(timeout.current);
@@ -243,10 +244,16 @@ export function useAutocomplete<T>(
 
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef(
+    // oxlint-disable-next-line react/react-compiler
     useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef])
   );
 
   let focusFirstItem = useCallback(() => {
+    if (!collectionRef.current) {
+      setAutoFocusOnMount(true);
+      return;
+    }
+
     delayNextActiveDescendant.current = true;
     collectionRef.current?.dispatchEvent(
       new CustomEvent(FOCUS_EVENT, {
@@ -261,6 +268,7 @@ export function useAutocomplete<T>(
 
   let clearVirtualFocus = useCallback(
     (clearFocusKey?: boolean) => {
+      setAutoFocusOnMount(false);
       moveVirtualFocus(getActiveElement());
       queuedActiveDescendant.current = null;
       state.setFocusedNodeId(null);
@@ -279,7 +287,7 @@ export function useAutocomplete<T>(
   );
 
   let lastInputType = useRef('');
-  useEvent(inputRef, 'input', e => {
+  useEvent(inputRef, 'beforeinput', e => {
     let {inputType} = e as InputEvent;
     lastInputType.current = inputType;
   });
@@ -287,7 +295,14 @@ export function useAutocomplete<T>(
   let onChange = (value: string) => {
     // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when modifying the text via
     // copy paste/backspacing/undo/redo for screen reader announcements
-    if (lastInputType.current === 'insertText' && !disableAutoFocusFirst) {
+    if (
+      (lastInputType.current === 'insertText' ||
+        // IME composition (e.g. CJK input) reports 'insertCompositionText'/'insertFromComposition'
+        // instead of 'insertText'. Treat these as forward typing so the first item gets virtual focus.
+        lastInputType.current === 'insertCompositionText' ||
+        lastInputType.current === 'insertFromComposition') &&
+      !disableAutoFocusFirst
+    ) {
       focusFirstItem();
     } else if (
       lastInputType.current &&
@@ -367,7 +382,7 @@ export function useAutocomplete<T>(
         // to the wrapped collection if there is a focused node so that a user can continue moving the
         // virtual focus. However, if the user doesn't have a focus in the collection, just move the text
         // cursor instead. They can move focus down into the collection via down/up arrow if need be
-        if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && state.inputValue.length > 0) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
           if (focusedNodeId == null) {
             if (!e.isPropagationStopped()) {
               e.stopPropagation();
@@ -545,27 +560,26 @@ export function useAutocomplete<T>(
     onPointerDown
   };
 
-  if (hasCollection) {
-    inputProps = {
-      ...inputProps,
-      ...(shouldUseVirtualFocus && virtualFocusProps),
-      enterKeyHint: 'go',
-      'aria-controls': collectionId,
-      // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
-      'aria-autocomplete': 'list',
-      // This disable's iOS's autocorrect suggestions, since the autocomplete provides its own suggestions.
-      autoCorrect: 'off',
-      // This disable's the macOS Safari spell check auto corrections.
-      spellCheck: 'false',
-      autoComplete: 'off'
-    };
-  }
+  inputProps = {
+    ...inputProps,
+    ...(shouldUseVirtualFocus && hasCollection && virtualFocusProps),
+    enterKeyHint: 'go',
+    'aria-controls': hasCollection ? collectionId : undefined,
+    // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
+    'aria-autocomplete': 'list',
+    // This disable's iOS's autocorrect suggestions, since the autocomplete provides its own suggestions.
+    autoCorrect: 'off',
+    // This disable's the macOS Safari spell check auto corrections.
+    spellCheck: 'false',
+    autoComplete: 'off'
+  };
 
   return {
     inputProps,
     collectionProps: mergeProps(collectionProps, {
       shouldUseVirtualFocus,
-      disallowTypeAhead: shouldUseVirtualFocus
+      disallowTypeAhead: shouldUseVirtualFocus,
+      autoFocus: autoFocusOnMount ? 'first' : false
     }),
     collectionRef: mergedCollectionRef,
     filter: filter != null ? filterFn : undefined

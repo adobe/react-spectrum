@@ -643,7 +643,96 @@ describe('Menu', () => {
     expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
     await user.click(getAllByRole('menuitem')[1]);
-    expect(onAction).toHaveBeenLastCalledWith('rename');
+    expect(onAction).toHaveBeenLastCalledWith('rename', undefined);
+  });
+
+  it('should support a context menu trigger', async () => {
+    let onAction = jest.fn();
+    let {getByRole, getAllByRole, queryByRole} = render(
+      <MenuTrigger trigger="contextMenu">
+        <Button>Right click here</Button>
+        <Popover>
+          <Menu onAction={onAction}>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-haspopup');
+    expect(button).not.toHaveAttribute('aria-expanded');
+    expect(button).not.toHaveAttribute('aria-controls');
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    // A regular press should not open a context menu trigger.
+    await user.click(button);
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    // Right click opens the menu at the pointer position.
+    await user.pointer({target: button, keys: '[MouseRight]', coords: {clientX: 10, clientY: 20}});
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let menu = getByRole('menu');
+    expect(getAllByRole('menuitem')).toHaveLength(5);
+    expect(button).not.toHaveAttribute('aria-expanded');
+    expect(button).not.toHaveAttribute('aria-controls');
+
+    let popover = menu.closest('.react-aria-Popover');
+    expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
+
+    await user.click(getAllByRole('menuitem')[1]);
+    expect(onAction).toHaveBeenLastCalledWith('rename', undefined);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+  });
+
+  it('should close a context menu when right clicking outside', async () => {
+    let {getByRole, queryByRole} = render(
+      <MenuTrigger trigger="contextMenu">
+        <Button>Right click here</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    // Right click opens the menu at the pointer position.
+    await user.pointer({target: button, keys: '[MouseRight]'});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(getByRole('menu')).toBeInTheDocument();
+
+    // Right clicking inside the menu should not close it.
+    await user.pointer({target: getByRole('menu'), keys: '[MouseRight]'});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(getByRole('menu')).toBeInTheDocument();
+
+    // Right clicking outside (on the body) closes the menu so the browser's context menu can appear.
+    await user.pointer({target: document.body, keys: '[MouseRight]'});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(queryByRole('menu')).not.toBeInTheDocument();
   });
 
   it('should support onScroll', () => {
@@ -893,7 +982,7 @@ describe('Menu', () => {
 
       // Click a submenu item
       await user.click(getAllByRole('menuitem')[5]);
-      expect(onAction).toHaveBeenLastCalledWith('email');
+      expect(onAction).toHaveBeenLastCalledWith('email', undefined);
       expect(menu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
     });
@@ -990,7 +1079,7 @@ describe('Menu', () => {
 
       // Click a nested submenu item
       await user.click(getAllByRole('menuitem')[8]);
-      expect(onAction).toHaveBeenLastCalledWith('work');
+      expect(onAction).toHaveBeenLastCalledWith('work', undefined);
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
     });
@@ -1433,7 +1522,7 @@ describe('Menu', () => {
       });
 
       expect(onAction).toHaveBeenCalledTimes(1);
-      expect(onAction).toHaveBeenLastCalledWith('email-work');
+      expect(onAction).toHaveBeenLastCalledWith('email-work', undefined);
 
       expect(submenu).not.toBeInTheDocument();
       expect(menu).not.toBeInTheDocument();

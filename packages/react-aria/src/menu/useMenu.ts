@@ -34,7 +34,7 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean;
   /** Handler that is called when an item is selected. */
-  onAction?: (key: Key) => void;
+  onAction?: (key: Key, value: T) => void;
   /** Handler that is called when the menu should close after selecting an item. */
   onClose?: () => void;
 }

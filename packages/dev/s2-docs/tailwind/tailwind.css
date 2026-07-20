@@ -6,9 +6,9 @@
 @source "../pages/react-aria/examples/plants/*.tsx";
 @source "../pages/react-aria/examples/Tab*.tsx";
 @plugin 'tailwindcss-react-aria-components';
-@plugin 'tailwindcss-animate';
-@source "../../docs/pages/react-aria/home/*.tsx";
-@import '../../docs/pages/react-aria/home/home.css';
+@import 'tw-animate-css';
+@source "../pages/react-aria/home/*.tsx";
+@import '../pages/react-aria/home/home.css';
 @source "../src/SearchMenuWrapper.tsx";
 
 @media (min-resolution: 200dpi) {

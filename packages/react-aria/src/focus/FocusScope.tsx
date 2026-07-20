@@ -190,6 +190,7 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
     };
   }, [scopeRef]);
 
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
   let value = useMemo(
     () => ({
@@ -632,6 +633,7 @@ function useRestoreFocus(
   const nodeToRestoreRef = useRef(
     typeof document !== 'undefined'
       ? (getActiveElement(
+          // oxlint-disable-next-line react/react-compiler
           getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined)
         ) as FocusableElement)
       : null

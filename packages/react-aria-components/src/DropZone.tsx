@@ -23,6 +23,7 @@ import {
 } from './utils';
 import {DropOptions, useDrop} from 'react-aria/useDrop';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {focusWithoutScrolling} from 'react-aria/private/utils/focusWithoutScrolling';
 import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
@@ -99,6 +100,7 @@ export const DropZone = forwardRef(function DropZone(
   ref: ForwardedRef<HTMLDivElement>
 ) {
   let {isDisabled = false} = props;
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -149,8 +151,8 @@ export const DropZone = forwardRef(function DropZone(
           while (target && nodeContains(dropzoneRef.current, target)) {
             if (isFocusable(target)) {
               break;
-            } else if (target === dropzoneRef.current) {
-              buttonRef.current?.focus();
+            } else if (target === dropzoneRef.current && buttonRef.current) {
+              focusWithoutScrolling(buttonRef.current);
               break;
             }
 

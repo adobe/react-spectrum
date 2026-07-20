@@ -1,0 +1,8 @@
+{
+  "chat.newMessage": "New message",
+  "messagefeedback.thumbDown": "Bad response",
+  "messagefeedback.thumbUp": "Good response",
+  "responsestatus.loading": "Loading",
+  "promptfield.label": "Prompt",
+  "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task."
+}
