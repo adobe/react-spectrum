@@ -80,21 +80,12 @@ export class Virtualizer<T extends object, V> {
   private _hasSnappedToAnchorEdge: boolean;
   /**
    * Whether any currently-visible item was still using an estimated size as of the end of the
-   * previous relayout pass. Used to keep forcing edge-follow through the entire initial
-   * estimate-to-measured settling cascade, since a single pass's jump from an estimated to a
-   * measured size can otherwise exceed the distance-based `isNearEdge` check. Paired with
-   * `_wasNearAnchorEdge` so this only forces edge-follow near the anchored edge.
+   * previous relayout pass.
    */
   private _hadEstimatedVisibleItems: boolean;
   /**
-   * Whether the viewport was near the anchored edge (per the real, unforced `isNearEdge` check),
-   * latched at the *start* of the current estimate-to-measured settling cascade and held fixed
-   * for its duration. Only re-derived once the cascade ends and a new one begins. Must not be
-   * recomputed every pass while settling: a single oversized jump mid-cascade routinely exceeds
-   * `isNearEdge`'s distance threshold on its own, which would wrongly conclude the user scrolled
-   * away even though nothing touched the scrollbar — this is exactly the failure
-   * `_hadEstimatedVisibleItems` exists to paper over, so re-deriving this flag every pass would
-   * silently defeat it.
+   * Whether the screen was near the end, locked in when the current update started so one big jump
+   * can't look like the user scrolled away.
    */
   private _wasNearAnchorEdge: boolean;
 
