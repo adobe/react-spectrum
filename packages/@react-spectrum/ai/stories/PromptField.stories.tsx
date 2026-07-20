@@ -11,7 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
-import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import {
   AttachFileMenuItem,
   AutoLinkingTokenFieldValue,
@@ -352,13 +352,13 @@ function EverythingRender(args) {
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-      <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
+      <MessageSuggestionList title="Suggestions">
         {prompts.map((prompt, i) => (
-          <ActionButton key={i} onPress={() => setValue(prompt)}>
+          <MessageSuggestion key={i} onPress={() => setValue(prompt)}>
             {prompt.toString()}
-          </ActionButton>
+          </MessageSuggestion>
         ))}
-      </div>
+      </MessageSuggestionList>
       <PromptField
         {...otherArgs}
         value={value}
