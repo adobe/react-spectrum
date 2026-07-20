@@ -13,6 +13,7 @@
 import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
+import {wasScrolledIntoView} from '../utils/scrollIntoView';
 
 // This behavior moved from useOverlayTrigger to useOverlayPosition.
 // For backward compatibility, where useOverlayTrigger handled hiding the popover on close,
@@ -37,6 +38,10 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
     }
 
     let onScroll = (e: Event) => {
+      if (wasScrolledIntoView()) {
+        return;
+      }
+
       // Ignore if scrolling an scrollable region outside the trigger's tree.
       let target = getEventTarget(e);
       // window is not a Node and doesn't have contain, but window contains everything

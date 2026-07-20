@@ -16,6 +16,7 @@ import {Focusable} from 'react-aria/Focusable';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
+import {scrollIntoViewport} from '@react-aria/utils';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
@@ -204,6 +205,22 @@ describe('Tooltip', () => {
     expect(scrollContainer).toBeInTheDocument();
     fireEvent.scroll(scrollContainer, {target: {top: 100}});
     expect(tooltip1).not.toBeVisible();
+  });
+
+  it('should not hide tooltip on scroll caused by scrollIntoView/scrollIntoViewport, but should hide on a later unrelated scroll', async () => {
+    let {getByRole} = renderTooltip();
+
+    await user.tab();
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+
+    scrollIntoViewport(document.body);
+    fireEvent.scroll(document.body);
+    expect(tooltip).toBeVisible();
+
+    act(() => jest.advanceTimersByTime(100));
+    fireEvent.scroll(document.body);
+    expect(tooltip).not.toBeVisible();
   });
 
   describe('portalProvider', () => {

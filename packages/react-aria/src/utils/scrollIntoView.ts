@@ -13,6 +13,19 @@
 import {getScrollParents} from './getScrollParents';
 import {isIOS} from './platform';
 
+let lastProgrammaticScrollTime = 0;
+function markScrolledIntoView(): void {
+  lastProgrammaticScrollTime = Date.now();
+}
+
+/**
+ * Scroll events don't say what caused them, so useCloseOnScroll uses this to ignore ones it
+ * triggered itself.
+ */
+export function wasScrolledIntoView(): boolean {
+  return Date.now() - lastProgrammaticScrollTime < 100;
+}
+
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
   block?: ScrollLogicalPosition;
@@ -40,6 +53,8 @@ export function scrollIntoView(
   if (scrollView === element) {
     return;
   }
+
+  markScrolledIntoView();
 
   let y = scrollView.scrollTop;
   let x = scrollView.scrollLeft;
@@ -145,6 +160,7 @@ export function scrollIntoViewport(
 ): void {
   let {containingElement} = opts;
   if (targetElement && targetElement.isConnected) {
+    markScrolledIntoView();
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
     if (!isScrollPrevented) {
