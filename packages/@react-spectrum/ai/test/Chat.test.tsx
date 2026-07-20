@@ -26,11 +26,7 @@ interface Message {
   isStreaming?: boolean;
 }
 
-function TestThread({
-  messages,
-}: {
-  messages: Message[];
-}) {
+function TestThread({messages}: {messages: Message[]}) {
   return (
     <Chat>
       <ThreadScrollButton>
