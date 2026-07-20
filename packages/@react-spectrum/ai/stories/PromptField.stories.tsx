@@ -247,6 +247,15 @@ interface UploadState {
   progress?: number;
 }
 
+let prompt3Base = new AutoLinkingSegmentList([
+  {type: 'text', text: 'Summarize the '},
+  {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}}
+]);
+let prompt3End = {
+  index: 1,
+  offset: prompt3Base.segments[1].text.length
+};
+
 let prompts = [
   new AutoLinkingSegmentList([
     {type: 'text', text: 'Analyze '},
@@ -261,12 +270,7 @@ let prompts = [
       value: {type: 'campaign', title: 'Spring Launch 2026'}
     }
   ]),
-  new AutoLinkingSegmentList([
-    {type: 'text', text: 'Summarize the '},
-    {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}},
-    // TODO: note this needs a space after test.com for it to be autotokenized
-    {type: 'text', text: ' journey performance from test.com '}
-  ])
+  prompt3Base.replaceRange(prompt3End, prompt3End, ' journey performance from test.com ')
 ];
 
 function EverythingRender(args) {

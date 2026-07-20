@@ -40,8 +40,7 @@ import {
   Position,
   TokenFieldSegment,
   TokenSegment,
-  TokenSegmentList,
-  TokenSegmentListOptions
+  TokenSegmentList
 } from './TokenSegmentList';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
@@ -138,19 +137,6 @@ function tokenizeURLs(text: string): TokenFieldSegment[] {
 }
 
 export class AutoLinkingSegmentList extends TokenSegmentList {
-  // attempt to convert any text to url tokens if any
-  constructor(tokens: readonly TokenFieldSegment[], options?: TokenSegmentListOptions) {
-    let processedTokens: TokenFieldSegment[] = [];
-    for (let seg of tokens) {
-      if (seg.type === 'text') {
-        processedTokens.push(...tokenizeURLs(seg.text));
-      } else {
-        processedTokens.push(seg);
-      }
-    }
-    super(processedTokens, options);
-  }
-
   tokenize(text: string): TokenFieldSegment[] {
     return tokenizeURLs(text);
   }
@@ -785,12 +771,13 @@ function useInsertPromptSegment(buildSegments: (item: any) => TokenFieldSegment[
           let position = pendingCaret.current;
           pendingCaret.current = null;
           inputRef.current.focus();
+          // we need to update the position manually since TokenField's update caret logic only happens if the field is focused
+          // but this insert can happen from the + menu aka the field isn't focused until this gets called which is too late
           setCursor(inputRef.current, position);
-          // TODO: double check this, claude debugged this one, but essentially reproduced with plain text insertion commands
-          // triggered one after another
-          // focus() fires a synchronous selectionchange before setCursor can set
-          // isProgrammaticSelectionChange, which resets caretPosition to {0,0} in
-          // TokenField's useSelectionChange handler. Re-assert the correct position.
+          // the above focus and setCursor call can cause the internally tracked caret position to be reset incorrectly
+          // seemingly due to TokenField's isProgrammaticSelectionChange being flipped to false by setCursor and thus reset to 0 by the .focus
+          // fix this by resetting to proper position below
+          // happens when injecting multiple tokens one after another via + menu
           setPrompt(value => value.withCaretPosition(position));
         }
       }, 400);
