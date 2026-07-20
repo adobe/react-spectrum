@@ -26,7 +26,11 @@ interface Message {
   isStreaming?: boolean;
 }
 
-function TestThread({messages}: {messages: Message[]; UNSTABLE_focusOnEntry?: 'first' | 'last'}) {
+function TestThread({
+  messages,
+}: {
+  messages: Message[];
+}) {
   return (
     <Chat>
       <ThreadScrollButton>
@@ -243,7 +247,6 @@ describeOrSkip('Thread', () => {
     it('focuses the first item in the list when tabbing in if UNSTABLE_focusOnEntry="first"', async () => {
       let {getByRole} = render(
         <TestThread
-          UNSTABLE_focusOnEntry="first"
           messages={[
             {id: '1', text: 'Hello'},
             {id: '2', text: 'World'}
@@ -268,32 +271,33 @@ describeOrSkip('Thread', () => {
       expect(document.activeElement).toBe(rows[0]);
     });
 
-    it('focuses the last item in the list when tabbing in if UNSTABLE_focusOnEntry="last"', async () => {
-      let {getByRole} = render(
-        <TestThread
-          UNSTABLE_focusOnEntry="last"
-          messages={[
-            {id: '1', text: 'Hello'},
-            {id: '2', text: 'World'}
-          ]}
-        />
-      );
+    //  Now we pass focusOnEntry for the user so they will never set it. By default, the non-virtualized Thread will pass focusOnEntry="first"
+    // it('focuses the last item in the list when tabbing in if UNSTABLE_focusOnEntry="last"', async () => {
+    //   let {getByRole} = render(
+    //     <TestThread
+    //       UNSTABLE_focusOnEntry="last"
+    //       messages={[
+    //         {id: '1', text: 'Hello'},
+    //         {id: '2', text: 'World'}
+    //       ]}
+    //     />
+    //   );
 
-      let gridlist = getByRole('grid');
-      let rows = gridlist.querySelectorAll('[role="row"]');
-      await user.tab();
-      expect(document.activeElement).toBe(rows[1]);
-      expect(rows[1]).toHaveTextContent('Hello');
+    //   let gridlist = getByRole('grid');
+    //   let rows = gridlist.querySelectorAll('[role="row"]');
+    //   await user.tab();
+    //   expect(document.activeElement).toBe(rows[1]);
+    //   expect(rows[1]).toHaveTextContent('Hello');
 
-      await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(rows[0]);
+    //   await user.keyboard('{ArrowUp}');
+    //   expect(document.activeElement).toBe(rows[0]);
 
-      await user.tab();
-      expect(document.activeElement).toBe(getByRole('textbox'));
+    //   await user.tab();
+    //   expect(document.activeElement).toBe(getByRole('textbox'));
 
-      // should always move to last item when entering the thread via tab regardless of last focused row
-      await user.tab({shift: true});
-      expect(document.activeElement).toBe(rows[1]);
-    });
+    //   // should always move to last item when entering the thread via tab regardless of last focused row
+    //   await user.tab({shift: true});
+    //   expect(document.activeElement).toBe(rows[1]);
+    // });
   });
 });
