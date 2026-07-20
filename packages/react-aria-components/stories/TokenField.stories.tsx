@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useMemo, useRef, useState} from 'react';
 import './styles.global.css';
@@ -18,31 +17,25 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {ChevronDown} from 'lucide-react';
 import {Collection, ComboBox} from 'react-aria-components';
 import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
-import {Direction, type TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
+import {Direction, type TokenFieldSegment, TokenFieldValue} from 'react-stately/useTokenFieldState';
 import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
 import {Key} from '@react-types/shared';
 import {Popover} from 'vanilla-starter/Popover';
-import {positionToDOMRange, Token, TokenField} from '../src/TokenField';
+import {positionToDOMRange} from 'react-aria/useTokenField';
+import {Token, TokenField, TokenInput} from '../src/TokenField';
 import 'vanilla-starter/TagGroup.css';
 import {Text} from 'react-aria-components/Text';
 
-const events = ['onChange', 'onPaste', 'onSubmit', 'onFocus', 'onBlur', 'onFocusChange'];
-
 export default {
-  title: 'AI/TokenField',
+  title: 'React Aria Components/TokenField',
   component: TokenField,
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', events),
-    children: {table: {disable: true}}
-  },
-  args: {...getActionArgs(events)}
+  tags: ['autodocs']
 } as Meta<typeof TokenField>;
 
 export type TokenFieldStory = StoryFn<typeof TokenField>;
 
-class TokenizingSegmentList extends TokenSegmentList {
+class TokenizingFieldValue extends TokenFieldValue {
   tokenRegex: RegExp;
 
   constructor(tokens: TokenFieldSegment[], tokenRegex: RegExp) {
@@ -50,13 +43,13 @@ class TokenizingSegmentList extends TokenSegmentList {
     this.tokenRegex = tokenRegex;
   }
 
-  static tokenize(text: string, tokenRegex: RegExp): TokenSegmentList {
+  static tokenize(text: string, tokenRegex: RegExp): TokenFieldValue {
     let list = new this([], tokenRegex);
     let segments = list.tokenize(text);
     return new this(segments, tokenRegex);
   }
 
-  createSegmentList(segments: TokenFieldSegment[]): this {
+  createFieldValue(segments: TokenFieldSegment[]): this {
     let Constructor = this.constructor as new (
       tokens: TokenFieldSegment[],
       tokenRegex: RegExp
@@ -94,13 +87,14 @@ class TokenizingSegmentList extends TokenSegmentList {
 export const AutoTokenize: TokenFieldStory = () => {
   return (
     <TokenField
-      multiline
-      defaultValue={TokenizingSegmentList.tokenize(
+      allowsNewlines
+      defaultValue={TokenizingFieldValue.tokenize(
         'This example automatically tokenizes #hashtags and @usernames in the text.',
         /(?<=\s|^)[#@]\S+(?=\s)/g
-      )}
-      aria-label="Message">
-      {segment => <Token>{segment.text}</Token>}
+      )}>
+      <Label>Message</Label>
+      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
+      <Text slot="description">Type #hashtags or @usernames to create tokens.</Text>
     </TokenField>
   );
 };
@@ -108,13 +102,13 @@ export const AutoTokenize: TokenFieldStory = () => {
 export const Template: TokenFieldStory = () => {
   return (
     <TokenField
-      multiline
-      defaultValue={TokenizingSegmentList.tokenize(
+      allowsNewlines
+      defaultValue={TokenizingFieldValue.tokenize(
         "Hello {{firstName}}, it's nice to meet you!",
         /(?<=\s|^)\{\{.+?\}\}/g
-      )}
-      aria-label="Message">
-      {segment => <Token>{segment.text}</Token>}
+      )}>
+      <Label>Message</Label>
+      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
     </TokenField>
   );
 };
@@ -174,7 +168,7 @@ type Item = {username: string} | {command: string; description: string};
 export const WithAutocomplete: TokenFieldStory = () => {
   let inputRef = useRef(null);
   let [value, setValue] = useState(
-    new TokenSegmentList([
+    new TokenFieldValue([
       {type: 'text', text: 'This example has autocomplete for '},
       {type: 'token', text: '@usernames'},
       {type: 'text', text: ' and '},
@@ -200,8 +194,9 @@ export const WithAutocomplete: TokenFieldStory = () => {
 
   return (
     <Autocomplete>
-      <TokenField value={value} onChange={setValue} aria-label="Message" ref={inputRef}>
-        {segment => <Token>{segment.text}</Token>}
+      <TokenField value={value} onChange={setValue}>
+        <Label>Message</Label>
+        <TokenInput ref={inputRef}>{segment => <Token>{segment.text}</Token>}</TokenInput>
       </TokenField>
       <Popover
         triggerRef={inputRef}
@@ -243,7 +238,7 @@ export const WithAutocomplete: TokenFieldStory = () => {
   );
 };
 
-class TagFieldSegmentList extends TokenSegmentList {
+class TagFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
     let parts = text.split(/[, \n]/);
 
@@ -268,18 +263,18 @@ class TagFieldSegmentList extends TokenSegmentList {
 export const TagField: TokenFieldStory = () => {
   return (
     <TokenField
-      multiline
+      allowsNewlines
       defaultValue={
-        new TagFieldSegmentList([
+        new TagFieldValue([
           {type: 'token', text: 'Architecture'},
           {type: 'token', text: 'Design'},
           {type: 'token', text: 'Development'},
           {type: 'token', text: 'Marketing'},
           {type: 'token', text: 'Sales'}
         ])
-      }
-      aria-label="Categories">
-      {segment => <Token>{segment.text}</Token>}
+      }>
+      <Label>Categories</Label>
+      <TokenInput>{segment => <Token>{segment.text}</Token>}</TokenInput>
     </TokenField>
   );
 };
@@ -287,7 +282,7 @@ export const TagField: TokenFieldStory = () => {
 export const Search: TokenFieldStory = () => {
   let inputRef = useRef(null);
   let [value, setValue] = useState(
-    new TokenSegmentList([{type: 'token', text: 'From: Alice Smith'}])
+    new TokenFieldValue([{type: 'token', text: 'From: Alice Smith'}])
   );
 
   let last = value.segments.at(-1);
@@ -324,8 +319,9 @@ export const Search: TokenFieldStory = () => {
 
   return (
     <Autocomplete>
-      <TokenField ref={inputRef} value={value} onChange={setValue} aria-label="Search">
-        {segment => <Token>{segment.text}</Token>}
+      <TokenField value={value} onChange={setValue} role="searchbox">
+        <Label>Search</Label>
+        <TokenInput ref={inputRef}>{segment => <Token>{segment.text}</Token>}</TokenInput>
       </TokenField>
       <Popover
         triggerRef={inputRef}
@@ -365,7 +361,7 @@ export const Search: TokenFieldStory = () => {
   );
 };
 
-class ComboBoxSegmentList extends TokenSegmentList<Key> {
+class ComboBoxTokenFieldValue extends TokenFieldValue<Key> {
   getSelectedKeys(): Key[] {
     return this.segments.filter(seg => seg.type === 'token').map(seg => seg.value!);
   }
@@ -375,7 +371,7 @@ class ComboBoxSegmentList extends TokenSegmentList<Key> {
     return segment?.type === 'text' ? segment.text : '';
   }
 
-  setSelectedKeys(keys: Key[]): ComboBoxSegmentList {
+  setSelectedKeys(keys: Key[]): ComboBoxTokenFieldValue {
     let selectedKeys = this.getSelectedKeys();
     let added: Key[] = [];
     for (let key of keys) {
@@ -427,7 +423,7 @@ class ComboBoxSegmentList extends TokenSegmentList<Key> {
 }
 
 export const ComboBoxExample: TokenFieldStory = () => {
-  let [value, setValue] = useState(new ComboBoxSegmentList([]));
+  let [value, setValue] = useState(new ComboBoxTokenFieldValue([]));
 
   return (
     <ComboBox
@@ -438,8 +434,10 @@ export const ComboBoxExample: TokenFieldStory = () => {
       onChange={keys => setValue(value.setSelectedKeys(keys))}>
       <Label>Users</Label>
       <div className="combobox-field">
-        <TokenField value={value} onChange={setValue} style={{paddingInlineEnd: 36}}>
-          {segment => <Token>{segment.text}</Token>}
+        <TokenField value={value} onChange={setValue}>
+          <TokenInput style={{paddingInlineEnd: 36}}>
+            {segment => <Token>{segment.text}</Token>}
+          </TokenInput>
         </TokenField>
         <FieldButton>
           <ChevronDown />

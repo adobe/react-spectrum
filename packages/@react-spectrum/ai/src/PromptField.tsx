@@ -14,16 +14,17 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
 import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
-import {Button} from '@react-spectrum/s2/Button';
-import {Cell} from './loader/data';
-import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
+  baseColor,
   color,
   css,
   iconStyle,
   style,
   StyleString
 } from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button} from '@react-spectrum/s2/Button';
+import {Cell} from './loader/data';
+import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
   createContext,
   createRef,
@@ -39,9 +40,9 @@ import {
   Direction,
   Position,
   TokenFieldSegment,
-  TokenSegment,
-  TokenSegmentList
-} from './TokenSegmentList';
+  TokenFieldValue,
+  TokenSegment
+} from 'react-stately/useTokenFieldState';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
@@ -53,10 +54,17 @@ import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {PixelLoader} from './loader/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
-import {positionToDOMRange, setCursor, Token, TokenField, TokenProps} from './TokenField';
+import {
+  positionToDOMRange,
+  Token,
+  TokenField,
+  TokenInput,
+  TokenProps
+} from 'react-aria-components/TokenField';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
+import {setSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
@@ -77,14 +85,14 @@ export interface PromptFieldProps {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
   // TODO: mirrors tokenfield, maybe should also be a generic too
-  value?: TokenSegmentList;
-  defaultValue?: TokenSegmentList;
-  onChange?: (value: TokenSegmentList) => void;
+  value?: TokenFieldValue;
+  defaultValue?: TokenFieldValue;
+  onChange?: (value: TokenFieldValue) => void;
   // TODO: discuss, I can imagine a case where we also want to prefill these
   attachments?: PromptFieldAttachment[];
   defaultAttachments?: PromptFieldAttachment[];
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
-  onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
+  onSubmit?: (prompt: TokenFieldValue, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
@@ -97,8 +105,8 @@ interface PromptFieldState {
   attachments: PromptFieldAttachment[];
   setAttachments: React.Dispatch<React.SetStateAction<PromptFieldAttachment[]>>;
   acceptedAttachmentTypes?: string[];
-  prompt: TokenSegmentList;
-  setPrompt: React.Dispatch<React.SetStateAction<TokenSegmentList>>;
+  prompt: TokenFieldValue;
+  setPrompt: React.Dispatch<React.SetStateAction<TokenFieldValue>>;
   inputRef: React.RefObject<HTMLDivElement | null>;
   onSubmit?: () => void;
   onStop?: () => void;
@@ -136,7 +144,7 @@ function tokenizeURLs(text: string): TokenFieldSegment[] {
   return segments;
 }
 
-export class AutoLinkingSegmentList extends TokenSegmentList {
+export class AutoLinkingTokenFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
     return tokenizeURLs(text);
   }
@@ -145,7 +153,7 @@ export class AutoLinkingSegmentList extends TokenSegmentList {
 const PromptFieldContext = createContext<PromptFieldState>({
   attachments: [],
   setAttachments: () => {},
-  prompt: new AutoLinkingSegmentList([]),
+  prompt: new AutoLinkingTokenFieldValue([]),
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false,
@@ -184,7 +192,7 @@ export function PromptField(props: PromptFieldProps) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [prompt, setPrompt] = useControlledState(
     props.value,
-    props.defaultValue ?? new AutoLinkingSegmentList([]),
+    props.defaultValue ?? new AutoLinkingTokenFieldValue([]),
     props.onChange
   );
   let [attachments, setAttachments] = useControlledState(
@@ -232,7 +240,7 @@ export function PromptField(props: PromptFieldProps) {
 
     props.onSubmit?.(prompt, attachments);
     if (!isPromptControlled) {
-      setPrompt(new AutoLinkingSegmentList([]));
+      setPrompt(new AutoLinkingTokenFieldValue([]));
     }
     if (!isAttachmentsControlled) {
       setAttachments([]);
@@ -391,14 +399,13 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
       </CenterBaseline>
       <Autocomplete>
         <TokenField
-          {...keyboardProps}
           value={prompt}
           onChange={setPrompt}
-          multiline
-          aria-label={stringFormatter.format('promptfield.prompt')}
-          data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
+          allowsNewlines
+          className={style({flexGrow: 1})}
+          aria-label={stringFormatter.format('promptfield.label')}
           isReadOnly={isListening}
-          ref={inputRef}
+          onSubmit={onSubmit}
           onFocus={e => {
             if (e.isTrusted) {
               setFocused(true);
@@ -430,26 +437,29 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                   }
                 }
               : undefined
-          }
-          onSubmit={onSubmit}
-          className={
-            css('&:empty::before { content: attr(data-placeholder); }') +
-            style({
-              flexGrow: 1,
-              font: 'body',
-              color: {
-                default: 'gray-800',
-                ':empty': {
-                  default: 'transparent-overlay-600',
-                  forcedColors: 'GrayText'
-                }
-              },
-              width: 'full',
-              outlineStyle: 'none',
-              cursor: 'text'
-            })
           }>
-          {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
+          <TokenInput
+            {...keyboardProps}
+            data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
+            ref={inputRef}
+            className={renderProps =>
+              css('&:empty::before { content: attr(data-placeholder); }') +
+              style({
+                font: 'body',
+                color: {
+                  default: baseColor('neutral'),
+                  ':empty': {
+                    default: 'gray-600',
+                    forcedColors: 'GrayText'
+                  }
+                },
+                width: 'full',
+                outlineStyle: 'none',
+                cursor: 'text'
+              })(renderProps)
+            }>
+            {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
+          </TokenInput>
         </TokenField>
         <PromptTokenFieldPopover
           filterAnchor={filterAnchor}
@@ -602,7 +612,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let isDisabled = isDisabledProp;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
-  let basePromptRef = useRef<TokenSegmentList>(prompt);
+  let basePromptRef = useRef<TokenFieldValue>(prompt);
   let updateBasePrompt = useEffectEvent(() => {
     basePromptRef.current = prompt;
   });
@@ -623,7 +633,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     // to be inaccurate
     let finalPrompt = buildVoicePrompt(basePromptRef.current, transcript);
     inputRef.current.focus();
-    setCursor(inputRef.current, finalPrompt.caretPosition);
+    setSelection(inputRef.current, finalPrompt.caretPosition, finalPrompt.caretPosition);
     setPrompt(finalPrompt);
   });
 
@@ -681,15 +691,15 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   );
 }
 
-function buildVoicePrompt(base: TokenSegmentList, voiceText: string): AutoLinkingSegmentList {
+function buildVoicePrompt(base: TokenFieldValue, voiceText: string): AutoLinkingTokenFieldValue {
   if (!voiceText) {
-    return base as AutoLinkingSegmentList;
+    return base as AutoLinkingTokenFieldValue;
   }
   return base.replaceRange(
     base.caretPosition,
     base.caretPosition,
     voiceText
-  ) as AutoLinkingSegmentList;
+  ) as AutoLinkingTokenFieldValue;
 }
 
 export interface InsertMenuItemProps {
@@ -773,7 +783,7 @@ function useInsertPromptSegment(buildSegments: (item: any) => TokenFieldSegment[
           inputRef.current.focus();
           // we need to update the position manually since TokenField's update caret logic only happens if the field is focused
           // but this insert can happen from the + menu aka the field isn't focused until this gets called which is too late
-          setCursor(inputRef.current, position);
+          setSelection(inputRef.current, position, position);
           // the above focus and setCursor call can cause the internally tracked caret position to be reset incorrectly
           // seemingly due to TokenField's isProgrammaticSelectionChange being flipped to false by setCursor and thus reset to 0 by the .focus
           // fix this by resetting to proper position below

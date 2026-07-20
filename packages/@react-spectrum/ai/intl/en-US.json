@@ -10,7 +10,7 @@
   "promptfield.aiDisclaimer": "Responses are generated using AI, and may be inaccurate. Check before using.",
   "promptfield.aiUserGuidlines": "AI User Guidelines",
   "promptfield.attachments": "Attachments",
-  "promptfield.prompt": "Prompt",
+  "promptfield.label": "Prompt",
   "promptfield.stopButton": "Stop",
   "promptfield.submitButton": "Send",
   "promptfield.insertButton": "Add",

@@ -14,7 +14,7 @@ import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {
   AttachFileMenuItem,
-  AutoLinkingSegmentList,
+  AutoLinkingTokenFieldValue,
   CommandMenuItem,
   InsertMenuButton,
   InsertTextMenuItem,
@@ -51,7 +51,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
-import {TokenSegmentList} from '../src/TokenSegmentList';
+import {TokenFieldValue} from 'react-aria-components';
 import {useRef, useState} from 'react';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
 
@@ -247,7 +247,7 @@ interface UploadState {
   progress?: number;
 }
 
-let prompt3Base = new AutoLinkingSegmentList([
+let prompt3Base = new AutoLinkingTokenFieldValue([
   {type: 'text', text: 'Summarize the '},
   {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}}
 ]);
@@ -257,12 +257,12 @@ let prompt3End = {
 };
 
 let prompts = [
-  new AutoLinkingSegmentList([
+  new AutoLinkingTokenFieldValue([
     {type: 'text', text: 'Analyze '},
     {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
     {type: 'text', text: ' and suggest targeting strategies'}
   ]),
-  new AutoLinkingSegmentList([
+  new AutoLinkingTokenFieldValue([
     {type: 'text', text: 'Write a brief for '},
     {
       type: 'token',
@@ -275,10 +275,10 @@ let prompts = [
 
 function EverythingRender(args) {
   let {placeholder, ...otherArgs} = args;
-  let [value, setValue] = useState<TokenSegmentList>(() => new AutoLinkingSegmentList([]));
+  let [value, setValue] = useState<TokenFieldValue>(() => new AutoLinkingTokenFieldValue([]));
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
-  let historyRef = useRef<TokenSegmentList[]>([]);
+  let historyRef = useRef<TokenFieldValue[]>([]);
   let historyIndexRef = useRef(-1);
   let isHistoryNavigating = useRef(false);
 
@@ -301,7 +301,7 @@ function EverythingRender(args) {
     });
   };
 
-  let isFieldEmpty = (prompt: TokenSegmentList) => {
+  let isFieldEmpty = (prompt: TokenFieldValue) => {
     let text = prompt.toString();
     return text === '' && !text.includes('\n');
   };
@@ -332,7 +332,7 @@ function EverythingRender(args) {
       if (nextIndex >= history.length) {
         historyIndexRef.current = -1;
         isHistoryNavigating.current = true;
-        setValue(new AutoLinkingSegmentList([]));
+        setValue(new AutoLinkingTokenFieldValue([]));
       } else {
         historyIndexRef.current = nextIndex;
         isHistoryNavigating.current = true;
@@ -341,7 +341,7 @@ function EverythingRender(args) {
     }
   };
 
-  let handleChange = (newValue: TokenSegmentList) => {
+  let handleChange = (newValue: TokenFieldValue) => {
     if (!isHistoryNavigating.current) {
       // if user edits the field, then we want to reset the index so up arrow starts from latest prompt again
       historyIndexRef.current = -1;
@@ -369,7 +369,7 @@ function EverythingRender(args) {
           action('onSubmit')(prompt.toString());
           historyRef.current = [...historyRef.current, prompt];
           historyIndexRef.current = -1;
-          setValue(new AutoLinkingSegmentList([]));
+          setValue(new AutoLinkingTokenFieldValue([]));
           setAttachments([]);
           setAttachmentState(new Map());
         }}
@@ -418,7 +418,7 @@ function EverythingRender(args) {
           renderCompletions={filterValue =>
             renderCompletions(filterValue, {
               onClear: () => {
-                setValue(new AutoLinkingSegmentList([]));
+                setValue(new AutoLinkingTokenFieldValue([]));
                 setAttachments([]);
               },
               onCompact: action('onCompact')
@@ -448,7 +448,7 @@ function EverythingRender(args) {
                     <MenuItem
                       id={item.command}
                       onAction={() => {
-                        setValue(new AutoLinkingSegmentList([]));
+                        setValue(new AutoLinkingTokenFieldValue([]));
                         setAttachments([]);
                       }}>
                       <Text slot="label">{item.command}</Text>

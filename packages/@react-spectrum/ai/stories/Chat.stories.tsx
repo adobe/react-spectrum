@@ -15,7 +15,7 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {
-  AutoLinkingSegmentList,
+  AutoLinkingTokenFieldValue,
   MessageFeedback,
   MessageSource,
   MessageSuggestion,
@@ -31,7 +31,7 @@ import {
   Thread,
   ThreadItem,
   ThreadScrollButton,
-  TokenSegmentList,
+  TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
 import {Chat} from '../src/Chat';
@@ -219,10 +219,10 @@ function StreamingChatRender() {
   let nextId = useRef(initialResponses.length);
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
-  let [promptValue, setPromptValue] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
-  let followUpMessage = useRef<TokenSegmentList | null>(null);
+  let [promptValue, setPromptValue] = useState<TokenFieldValue>(new AutoLinkingTokenFieldValue([]));
+  let followUpMessage = useRef<TokenFieldValue | null>(null);
 
-  function handleSend(prompt: TokenSegmentList) {
+  function handleSend(prompt: TokenFieldValue) {
     setGenerating(true);
     // user message added first so its announcement plays before
     setMessages(prev => [
@@ -518,6 +518,8 @@ function StreamingChatRender() {
                 // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
                 return (
                   <ThreadItem
+                    allowsArrowNavigation
+                    focusMode="child"
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
@@ -572,7 +574,7 @@ function StreamingChatRender() {
           value={promptValue}
           onChange={setPromptValue}
           onSubmit={prompt => {
-            setPromptValue(new AutoLinkingSegmentList([]));
+            setPromptValue(new AutoLinkingTokenFieldValue([]));
             handleSend(prompt);
           }}
           isGenerating={isGenerating}
@@ -595,14 +597,14 @@ function StreamingChatRender() {
                   e.preventDefault();
                   if (promptValue.segments.length > 0) {
                     action('onSteer')(promptValue.toString());
-                    setPromptValue(new AutoLinkingSegmentList([]));
+                    setPromptValue(new AutoLinkingTokenFieldValue([]));
                   }
                 } else if (e.key === 'Enter' && e.altKey) {
                   e.preventDefault();
                   if (promptValue.segments.length > 0) {
                     action('onFollowUp')(promptValue.toString());
                     followUpMessage.current = promptValue;
-                    setPromptValue(new AutoLinkingSegmentList([]));
+                    setPromptValue(new AutoLinkingTokenFieldValue([]));
                   }
                 } else if (e.key === 'Escape') {
                   e.preventDefault();
@@ -628,7 +630,7 @@ export function VirtualizedChat() {
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
-  function handleSend(prompt: TokenSegmentList) {
+  function handleSend(prompt: TokenFieldValue) {
     setMessages(prev => [
       ...prev,
       {id: nextId.current++, type: 'user', content: prompt.toString()},
@@ -685,7 +687,7 @@ export function VirtualizedChat() {
               let message = isPending ? 'Generating response' : 'Response generated';
 
               return (
-                <ThreadItem textValue={message}>
+                <ThreadItem allowsArrowNavigation focusMode="child" textValue={message}>
                   <ResponseStatus status={isPending ? 'loading' : 'success'}>
                     <ResponseStatusTitle>{message}</ResponseStatusTitle>
                   </ResponseStatus>

@@ -448,6 +448,7 @@ export const TableView = forwardRef(function TableView(
     selectionStyle = 'checkbox',
     dragAndDropHooks,
     disabledBehavior = 'all',
+    keyboardNavigationBehavior = 'arrow',
     ...otherProps
   } = props;
 
@@ -496,7 +497,8 @@ export const TableView = forwardRef(function TableView(
       setIsInResizeMode,
       selectionMode,
       selectionStyle,
-      disabledBehavior
+      disabledBehavior,
+      keyboardNavigationBehavior
     }),
     [
       isQuiet,
@@ -508,7 +510,8 @@ export const TableView = forwardRef(function TableView(
       setIsInResizeMode,
       selectionMode,
       selectionStyle,
-      disabledBehavior
+      disabledBehavior,
+      keyboardNavigationBehavior
     ]
   );
 
@@ -563,6 +566,7 @@ export const TableView = forwardRef(function TableView(
             onRowAction={onAction}
             dragAndDropHooks={dragAndDropHooks}
             disabledBehavior={disabledBehavior}
+            keyboardNavigationBehavior={keyboardNavigationBehavior}
             {...otherProps}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
@@ -770,13 +774,17 @@ export interface ColumnProps extends Omit<
  * A column within a `<Table>`.
  */
 export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef<HTMLDivElement>) {
-  let {isQuiet} = useContext(InternalTableContext);
+  let {isQuiet, keyboardNavigationBehavior} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
   let isMenu = allowsResizing || !!props.menuItems;
 
   return (
     <RACColumn
+      // will need to make sure that focusMode and allowsArrowNavigation are only both set if said cell
+      // doesn't have a textfield/interactive component that will need the arrow keys
+      focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+      allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
       {...props}
       ref={domRef}
       style={{borderInlineEndColor: 'transparent'}}
@@ -1184,7 +1192,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 ) {
   let scale = useScale();
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
-  let {isQuiet, selectionStyle} = useContext(InternalTableContext);
+  let {isQuiet, selectionStyle, keyboardNavigationBehavior} = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
@@ -1216,15 +1224,13 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           isSticky
           width={scale === 'medium' ? 40 : 52}
           minWidth={scale === 'medium' ? 40 : 52}
+          focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+          allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
           className={selectAllCheckboxColumn({isQuiet})}>
           {({isFocusVisible}) => (
             <>
-              {selectionMode === 'single' && (
-                <>
-                  {isFocusVisible && <CellFocusRing />}
-                  <VisuallyHiddenSelectAllLabel />
-                </>
-              )}
+              {isFocusVisible && <CellFocusRing />}
+              {selectionMode === 'single' && <VisuallyHiddenSelectAllLabel />}
               {selectionMode === 'multiple' && (
                 <Checkbox styles={selectAllCheckbox} slot="selection" />
               )}
@@ -1650,7 +1656,7 @@ function EditableCellInner(
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
 
-  let {density} = useContext(InternalTableContext);
+  let {density, keyboardNavigationBehavior} = useContext(InternalTableContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
   if (density === 'compact') {
     size = 'S';
@@ -1735,7 +1741,7 @@ function EditableCellInner(
                 isPending: isSaving,
                 isQuiet: !isSaving,
                 size,
-                excludeFromTabOrder: true,
+                excludeFromTabOrder: keyboardNavigationBehavior === 'arrow',
                 styles: style({
                   // TODO: really need access to display here instead, but not possible right now
                   // will be addressable with displayOuter
@@ -2206,7 +2212,8 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
   ref: DOMRef<HTMLDivElement>
 ) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
-  let {selectionStyle, ...tableVisualOptions} = useContext(InternalTableContext);
+  let {selectionStyle, keyboardNavigationBehavior, ...tableVisualOptions} =
+    useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let isInFooter = useContext(FooterContext);
 
@@ -2236,6 +2243,8 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
         <RACCell
           // @ts-ignore
           isSticky
+          focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+          allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
           className={dragCellStyle}>
           {({isFocusVisibleWithinRow}) =>
             !(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
@@ -2249,8 +2258,12 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
         selectionStyle === 'checkbox' && (
           // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
           // The `spread` otherProps must be after className in Cell.
-          // @ts-ignore
-          <Cell isSticky className={checkboxCellStyle}>
+          <Cell
+            isSticky
+            // @ts-ignore
+            className={checkboxCellStyle}
+            focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+            allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}>
             <Checkbox slot="selection" styles={selectionCheckbox} />
           </Cell>
         )}
