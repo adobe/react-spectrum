@@ -144,8 +144,6 @@ export function resolveScrollAdjustment(
         );
 
   if (anchor) {
-    // Edge-agnostic and axis-agnostic: computeScrollAnchorTarget doesn't need to know which edge
-    // or axis is anchored, since offset is always measured from the viewport's start along `axis`.
     let target = computeScrollAnchorTarget(
       anchor,
       axis,
@@ -158,11 +156,6 @@ export function resolveScrollAdjustment(
     }
   }
 
-  // No anchor, or the anchor didn't move (e.g. content appended past it) — snap to the anchored
-  // edge if the user was already there. For a pure item resize (itemSizeChanged, no
-  // append/prepend), only snap if content actually grew — a resize that shrinks content shouldn't
-  // pull the viewport to the edge. For append/prepend without a captured anchor (views not yet
-  // populated), snap unconditionally when near the edge.
   if (wasNearAnchorEdge && !isScrolling && (!itemSizeChanged || contentSizeDelta > 0)) {
     let target = withTarget(getEdgeSnapTarget(edge, axis, contentSize, previousVisibleRect));
     return target.equals(previousVisibleRect) ? null : target;
