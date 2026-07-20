@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, Position, TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
+import {
+  Direction,
+  Position,
+  TokenFieldSegment,
+  TokenFieldValue
+} from '../../src/tokenfield/TokenFieldValue';
 import React from 'react';
 
 function text(s: string): TokenFieldSegment {
@@ -22,10 +27,10 @@ function token(s: string): TokenFieldSegment {
 }
 
 function replace(segments: TokenFieldSegment[], start: Position, end: Position, insert: string) {
-  return new TokenSegmentList(segments).replaceRange(start, end, insert);
+  return new TokenFieldValue(segments).replaceRange(start, end, insert);
 }
 
-class TokenizingSegmentList extends TokenSegmentList {
+class TokenizingFieldValue extends TokenFieldValue {
   tokenRegex: RegExp;
 
   constructor(tokens: TokenFieldSegment[], tokenRegex: RegExp) {
@@ -33,13 +38,13 @@ class TokenizingSegmentList extends TokenSegmentList {
     this.tokenRegex = tokenRegex;
   }
 
-  static tokenize(text: string, tokenRegex: RegExp): TokenSegmentList {
+  static tokenize(text: string, tokenRegex: RegExp): TokenFieldValue {
     let list = new this([], tokenRegex);
     let segments = list.tokenize(text);
     return new this(segments, tokenRegex);
   }
 
-  createSegmentList(segments: TokenFieldSegment[]): this {
+  createFieldValue(segments: TokenFieldSegment[]): this {
     const Constructor = this.constructor as new (
       tokens: TokenFieldSegment[],
       tokenRegex: RegExp
@@ -81,7 +86,7 @@ function replaceWithRegex(
   insert: string,
   regex: RegExp
 ) {
-  return new TokenizingSegmentList(segments, regex).replaceRange(start, end, insert);
+  return new TokenizingFieldValue(segments, regex).replaceRange(start, end, insert);
 }
 
 function replaceSeg(
@@ -90,7 +95,7 @@ function replaceSeg(
   end: Position,
   insert: TokenFieldSegment[]
 ) {
-  return new TokenSegmentList(segments).replaceRangeWithSegments(start, end, insert);
+  return new TokenFieldValue(segments).replaceRangeWithSegments(start, end, insert);
 }
 
 function replaceSegWithRegex(
@@ -100,12 +105,12 @@ function replaceSegWithRegex(
   insert: TokenFieldSegment[],
   regex: RegExp
 ) {
-  return new TokenizingSegmentList(segments, regex).replaceRangeWithSegments(start, end, insert);
+  return new TokenizingFieldValue(segments, regex).replaceRangeWithSegments(start, end, insert);
 }
 
 // Conditionally skip the suite
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
-describeOrSkip('TokenSegmentList', () => {
+describeOrSkip('TokenFieldValue', () => {
   let graphemeSegmenter: Intl.Segmenter;
   let wordSegmenter: Intl.Segmenter;
 
@@ -392,7 +397,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('replaceRange delegates to replaceRangeWithSegments (non-empty string)', () => {
-      let list = new TokenSegmentList([text('ab')]);
+      let list = new TokenFieldValue([text('ab')]);
       let a = list.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'Z');
       let b = list.replaceRangeWithSegments({index: 0, offset: 1}, {index: 0, offset: 1}, [
         text('Z')
@@ -427,7 +432,7 @@ describeOrSkip('TokenSegmentList', () => {
 
   describe('delete', () => {
     it('deletes one grapheme backward inside ASCII text', () => {
-      let list = new TokenSegmentList([text('abc')]);
+      let list = new TokenFieldValue([text('abc')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 3},
         graphemeSegmenter,
@@ -438,7 +443,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('deletes one grapheme forward from middle of ASCII text', () => {
-      let list = new TokenSegmentList([text('abc')]);
+      let list = new TokenFieldValue([text('abc')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
@@ -449,7 +454,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('deletes one grapheme forward at offset 0', () => {
-      let list = new TokenSegmentList([text('abc')]);
+      let list = new TokenFieldValue([text('abc')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
@@ -461,7 +466,7 @@ describeOrSkip('TokenSegmentList', () => {
 
     it('deletes full emoji as one grapheme backward', () => {
       let s = `a${'😀'}b`;
-      let list = new TokenSegmentList([text(s)]);
+      let list = new TokenFieldValue([text(s)]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1 + 2},
         graphemeSegmenter,
@@ -473,7 +478,7 @@ describeOrSkip('TokenSegmentList', () => {
 
     it('deletes full emoji as one grapheme forward from before emoji', () => {
       let s = `a${'😀'}b`;
-      let list = new TokenSegmentList([text(s)]);
+      let list = new TokenFieldValue([text(s)]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
@@ -484,7 +489,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('backward deletes trailing token when last segment is a token', () => {
-      let list = new TokenSegmentList([text('x'), token('T')]);
+      let list = new TokenFieldValue([text('x'), token('T')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 2, offset: 0},
         graphemeSegmenter,
@@ -495,7 +500,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('at start of text backward removes previous token', () => {
-      let list = new TokenSegmentList([token('T'), text('ab')]);
+      let list = new TokenFieldValue([token('T'), text('ab')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
@@ -506,7 +511,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('at start of text backward removes character from previous text segment', () => {
-      let list = new TokenSegmentList([text('xy'), text('ab')]);
+      let list = new TokenFieldValue([text('xy'), text('ab')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
@@ -517,7 +522,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('at end of text forward removes next token', () => {
-      let list = new TokenSegmentList([text('ab'), token('T')]);
+      let list = new TokenFieldValue([text('ab'), token('T')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 2},
         graphemeSegmenter,
@@ -528,7 +533,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('on token index at offset 0 backward removes previous character', () => {
-      let list = new TokenSegmentList([text('ab'), token('T')]);
+      let list = new TokenFieldValue([text('ab'), token('T')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
@@ -539,7 +544,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('on token index at offset > 0 backward removes token', () => {
-      let list = new TokenSegmentList([text('ab'), token('T')]);
+      let list = new TokenFieldValue([text('ab'), token('T')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 1},
         graphemeSegmenter,
@@ -550,7 +555,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('on token index at offset 0 forward removes token segment', () => {
-      let list = new TokenSegmentList([text('a'), token('T')]);
+      let list = new TokenFieldValue([text('a'), token('T')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
@@ -561,7 +566,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('on token index at offset > 0 forward removes next character', () => {
-      let list = new TokenSegmentList([token('T'), text('ab')]);
+      let list = new TokenFieldValue([token('T'), text('ab')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
@@ -572,7 +577,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('backward from start of second token removes first token', () => {
-      let list = new TokenSegmentList([token('A'), token('B')]);
+      let list = new TokenFieldValue([token('A'), token('B')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
@@ -583,7 +588,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('forward from start of second token removes second token', () => {
-      let list = new TokenSegmentList([token('A'), token('B')]);
+      let list = new TokenFieldValue([token('A'), token('B')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
@@ -594,7 +599,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('backward from end of first token removes first token', () => {
-      let list = new TokenSegmentList([token('A'), token('B')]);
+      let list = new TokenFieldValue([token('A'), token('B')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
@@ -605,7 +610,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('forward from end of first token removes second token', () => {
-      let list = new TokenSegmentList([token('A'), token('B')]);
+      let list = new TokenFieldValue([token('A'), token('B')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
@@ -616,7 +621,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('at first segment offset 0 backward is no-op', () => {
-      let list = new TokenSegmentList([text('ab')]);
+      let list = new TokenFieldValue([text('ab')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
@@ -627,7 +632,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('at end of last segment forward is a no-op', () => {
-      let list = new TokenSegmentList([text('ab')]);
+      let list = new TokenFieldValue([text('ab')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 2},
         graphemeSegmenter,
@@ -638,7 +643,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('uses word segmenter for deleteWordBackward-style range', () => {
-      let list = new TokenSegmentList([text('hello world')]);
+      let list = new TokenFieldValue([text('hello world')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 11},
         wordSegmenter,
@@ -649,7 +654,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('uses word segmenter for deleteWordForward-style range', () => {
-      let list = new TokenSegmentList([text('hello world')]);
+      let list = new TokenFieldValue([text('hello world')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 6},
         wordSegmenter,
@@ -660,7 +665,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('forward from end of a text segment deletes first grapheme of the next text segment (merged into one run)', () => {
-      let list = new TokenSegmentList([text('ab'), text('cd')]);
+      let list = new TokenFieldValue([text('ab'), text('cd')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 2},
         graphemeSegmenter,
@@ -671,7 +676,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('is a no-op when segments are empty', () => {
-      let list = new TokenSegmentList([]);
+      let list = new TokenFieldValue([]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
@@ -682,7 +687,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('on lone token at offset 0 backward is a no-op', () => {
-      let list = new TokenSegmentList([token('T')]);
+      let list = new TokenFieldValue([token('T')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
@@ -693,7 +698,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('on lone token at offset 0 forward removes the token', () => {
-      let list = new TokenSegmentList([token('T')]);
+      let list = new TokenFieldValue([token('T')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
@@ -705,7 +710,7 @@ describeOrSkip('TokenSegmentList', () => {
 
     it('deletes e plus combining acute as one grapheme backward (entire cluster removed)', () => {
       let s = 'e\u0301';
-      let list = new TokenSegmentList([text(s)]);
+      let list = new TokenFieldValue([text(s)]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 2},
         graphemeSegmenter,
@@ -716,7 +721,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('backward delete of last character leaves caret between the two tokens', () => {
-      let list = new TokenSegmentList([token('L'), text('a'), token('R')]);
+      let list = new TokenFieldValue([token('L'), text('a'), token('R')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 1},
         graphemeSegmenter,
@@ -727,7 +732,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('forward delete of last character leaves caret between the two tokens', () => {
-      let list = new TokenSegmentList([token('L'), text('a'), token('R')]);
+      let list = new TokenFieldValue([token('L'), text('a'), token('R')]);
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
@@ -741,7 +746,7 @@ describeOrSkip('TokenSegmentList', () => {
   describe('findText', () => {
     describe('string search', () => {
       it('finds text forward in same segment', () => {
-        let list = new TokenSegmentList([text('hello world')]);
+        let list = new TokenFieldValue([text('hello world')]);
         expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'world')).toEqual({
           index: 0,
           offset: 6
@@ -749,7 +754,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds text forward starting at caret offset', () => {
-        let list = new TokenSegmentList([text('hello hello')]);
+        let list = new TokenFieldValue([text('hello hello')]);
         expect(list.findText({index: 0, offset: 6}, Direction.Forward, 'hello')).toEqual({
           index: 0,
           offset: 6
@@ -757,7 +762,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds text backward in same segment', () => {
-        let list = new TokenSegmentList([text('hello world')]);
+        let list = new TokenFieldValue([text('hello world')]);
         expect(list.findText({index: 0, offset: 11}, Direction.Backward, 'hello')).toEqual({
           index: 0,
           offset: 0
@@ -765,7 +770,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds text backward before caret offset', () => {
-        let list = new TokenSegmentList([text('hello hello')]);
+        let list = new TokenFieldValue([text('hello hello')]);
         expect(list.findText({index: 0, offset: 6}, Direction.Backward, 'hello')).toEqual({
           index: 0,
           offset: 0
@@ -773,7 +778,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds text in a later segment when searching forward', () => {
-        let list = new TokenSegmentList([text('ab'), token('T'), text('cd')]);
+        let list = new TokenFieldValue([text('ab'), token('T'), text('cd')]);
         expect(list.findText({index: 0, offset: 2}, Direction.Forward, 'cd')).toEqual({
           index: 2,
           offset: 0
@@ -781,7 +786,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds text in an earlier segment when searching backward', () => {
-        let list = new TokenSegmentList([text('ab'), token('T'), text('cd')]);
+        let list = new TokenFieldValue([text('ab'), token('T'), text('cd')]);
         expect(list.findText({index: 2, offset: 0}, Direction.Backward, 'ab')).toEqual({
           index: 0,
           offset: 0
@@ -789,19 +794,19 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('returns null when not found', () => {
-        let list = new TokenSegmentList([text('hello')]);
+        let list = new TokenFieldValue([text('hello')]);
         expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'x')).toBeNull();
       });
 
       it('returns null for empty list', () => {
-        let list = new TokenSegmentList([]);
+        let list = new TokenFieldValue([]);
         expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'a')).toBeNull();
       });
     });
 
     describe('regex search', () => {
       it('finds regex forward in same segment', () => {
-        let list = new TokenSegmentList([text('hello @alice world')]);
+        let list = new TokenFieldValue([text('hello @alice world')]);
         expect(list.findText({index: 0, offset: 0}, Direction.Forward, / @/)).toEqual({
           index: 0,
           offset: 5
@@ -809,7 +814,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds regex backward for mention anchor', () => {
-        let list = new TokenSegmentList([text('hello @alice')]);
+        let list = new TokenFieldValue([text('hello @alice')]);
         expect(list.findText({index: 0, offset: 13}, Direction.Backward, / @/)).toEqual({
           index: 0,
           offset: 5
@@ -817,7 +822,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds regex forward starting at caret offset', () => {
-        let list = new TokenSegmentList([text('a @b @c')]);
+        let list = new TokenFieldValue([text('a @b @c')]);
         expect(list.findText({index: 0, offset: 4}, Direction.Forward, / @\w/)).toEqual({
           index: 0,
           offset: 4
@@ -825,7 +830,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds last regex match backward before caret', () => {
-        let list = new TokenSegmentList([text('a @b @c')]);
+        let list = new TokenFieldValue([text('a @b @c')]);
         expect(list.findText({index: 0, offset: 7}, Direction.Backward, / @\w/)).toEqual({
           index: 0,
           offset: 4
@@ -833,7 +838,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('finds regex in a later segment when searching forward', () => {
-        let list = new TokenSegmentList([text('no match '), text('@here')]);
+        let list = new TokenFieldValue([text('no match '), text('@here')]);
         expect(list.findText({index: 0, offset: 9}, Direction.Forward, /@\w+/)).toEqual({
           index: 1,
           offset: 0
@@ -842,20 +847,20 @@ describeOrSkip('TokenSegmentList', () => {
 
       it('does not mutate global regex lastIndex', () => {
         let re = / @/g;
-        let list = new TokenSegmentList([text(' @ @')]);
+        let list = new TokenFieldValue([text(' @ @')]);
         list.findText({index: 0, offset: 4}, Direction.Backward, re);
         expect(re.lastIndex).toBe(0);
       });
 
       it('returns null when regex does not match', () => {
-        let list = new TokenSegmentList([text('hello')]);
+        let list = new TokenFieldValue([text('hello')]);
         expect(list.findText({index: 0, offset: 5}, Direction.Backward, / @/)).toBeNull();
       });
     });
 
     describe('findLineBoundary', () => {
       it('finds newline via findText when searching backward', () => {
-        let list = new TokenSegmentList([text('hello\nworld')]);
+        let list = new TokenFieldValue([text('hello\nworld')]);
         expect(list.findLineBoundary({index: 0, offset: 8}, Direction.Backward)).toEqual({
           index: 0,
           offset: 5
@@ -863,7 +868,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('falls back to document start when no newline before caret', () => {
-        let list = new TokenSegmentList([text('hello')]);
+        let list = new TokenFieldValue([text('hello')]);
         expect(list.findLineBoundary({index: 0, offset: 3}, Direction.Backward)).toEqual({
           index: 0,
           offset: 0
@@ -871,7 +876,7 @@ describeOrSkip('TokenSegmentList', () => {
       });
 
       it('falls back to document end when no newline after caret', () => {
-        let list = new TokenSegmentList([text('hello')]);
+        let list = new TokenFieldValue([text('hello')]);
         expect(list.findLineBoundary({index: 0, offset: 3}, Direction.Forward)).toEqual({
           index: 0,
           offset: 5
@@ -882,7 +887,7 @@ describeOrSkip('TokenSegmentList', () => {
 
   describe('deleteLine (forward)', () => {
     it('deletes from caret through character before newline in same segment', () => {
-      let list = new TokenSegmentList([text('hello\nworld')]);
+      let list = new TokenFieldValue([text('hello\nworld')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 2},
         Direction.Forward
@@ -892,7 +897,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('finds newline in a later segment when none after caret in first', () => {
-      let list = new TokenSegmentList([text('ab'), text('cd\nef')]);
+      let list = new TokenFieldValue([text('ab'), text('cd\nef')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 1},
         Direction.Forward
@@ -902,7 +907,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('when no newline after caret, deletes to end of last segment', () => {
-      let list = new TokenSegmentList([text('ab'), text('cd')]);
+      let list = new TokenFieldValue([text('ab'), text('cd')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 1},
         Direction.Forward
@@ -912,7 +917,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('uses newline after caret in same segment when multiple newlines exist', () => {
-      let list = new TokenSegmentList([text('a\nb\nc')]);
+      let list = new TokenFieldValue([text('a\nb\nc')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 2},
         Direction.Forward
@@ -924,7 +929,7 @@ describeOrSkip('TokenSegmentList', () => {
 
   describe('deleteLine (backward)', () => {
     it('deletes from newline through caret (range start is the newline code unit)', () => {
-      let list = new TokenSegmentList([text('hello\nworld')]);
+      let list = new TokenFieldValue([text('hello\nworld')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 10},
         Direction.Backward
@@ -934,7 +939,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('finds newline in an earlier segment', () => {
-      let list = new TokenSegmentList([text('a\nb'), text('cd')]);
+      let list = new TokenFieldValue([text('a\nb'), text('cd')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 1, offset: 1},
         Direction.Backward
@@ -944,7 +949,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('when no newline before caret, deletes from document start', () => {
-      let list = new TokenSegmentList([text('hello')]);
+      let list = new TokenFieldValue([text('hello')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 3},
         Direction.Backward
@@ -956,7 +961,7 @@ describeOrSkip('TokenSegmentList', () => {
 
   describe('deleteLine empty list', () => {
     it('returns unchanged for empty segments', () => {
-      let list = new TokenSegmentList([]);
+      let list = new TokenFieldValue([]);
       expect(list.deleteLine({index: 0, offset: 0}, Direction.Forward)).toEqual(list);
       expect(list.deleteLine({index: 0, offset: 0}, Direction.Backward)).toEqual(list);
     });
@@ -964,17 +969,17 @@ describeOrSkip('TokenSegmentList', () => {
 
   describe('undo/redo', () => {
     it('returns the same instance when there is nothing to undo', () => {
-      let list = new TokenSegmentList([text('a')]);
+      let list = new TokenFieldValue([text('a')]);
       expect(list.undo()).toBe(list);
     });
 
     it('returns the same instance when there is nothing to redo', () => {
-      let list = new TokenSegmentList([text('a')]);
+      let list = new TokenFieldValue([text('a')]);
       expect(list.redo()).toBe(list);
     });
 
     it('undo restores the prior list and redo returns to the newer list', () => {
-      let initial = new TokenSegmentList([text('hello')]);
+      let initial = new TokenFieldValue([text('hello')]);
       let updated = initial.replaceRange({index: 0, offset: 0}, {index: 0, offset: 5}, 'hi');
       expect(updated.toString()).toBe('hi');
       let undone = updated.undo();
@@ -986,7 +991,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('coalesces consecutive replaceRange edits into a single undo step', () => {
-      let empty = new TokenSegmentList([text('')]);
+      let empty = new TokenFieldValue([text('')]);
       let afterX = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'x');
       let afterXY = afterX.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'y');
       let afterXYZ = afterXY.replaceRange({index: 0, offset: 2}, {index: 0, offset: 2}, 'z');
@@ -996,7 +1001,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('endCoalescing starts a new undo group for the next edit only', () => {
-      let empty = new TokenSegmentList([text('')]);
+      let empty = new TokenFieldValue([text('')]);
       let afterA = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'a');
       afterA.endCoalescing();
       let afterAB = afterA.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'b');
@@ -1007,7 +1012,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('calling endCoalescing on the head before each edit keeps every change on its own undo step', () => {
-      let empty = new TokenSegmentList([text('')]);
+      let empty = new TokenFieldValue([text('')]);
       let afterA = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'a');
       afterA.endCoalescing();
       let afterAB = afterA.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'b');
@@ -1020,7 +1025,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('supports undo and redo across multiple history entries', () => {
-      let a = new TokenSegmentList([text('')]);
+      let a = new TokenFieldValue([text('')]);
       let b = a.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, '1');
       b.endCoalescing();
       let c = b.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, '2');
@@ -1041,7 +1046,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('replaceRange with coalesce false does not merge into the prior coalesced group', () => {
-      let empty = new TokenSegmentList([text('')]);
+      let empty = new TokenFieldValue([text('')]);
       let afterA = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'a');
       let afterAB = afterA.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'b', false);
       expect(afterAB.toString()).toBe('ab');
@@ -1050,7 +1055,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('a new edit after undo replaces the redo branch', () => {
-      let initial = new TokenSegmentList([text('a')]);
+      let initial = new TokenFieldValue([text('a')]);
       let branched = initial.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'X');
       expect(branched.toString()).toBe('Xa');
       let back = branched.undo();
@@ -1063,7 +1068,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('coalesces consecutive delete operations into one undo step', () => {
-      let list = new TokenSegmentList([text('abc')]);
+      let list = new TokenFieldValue([text('abc')]);
       let afterC = list.delete({index: 0, offset: 3}, graphemeSegmenter, Direction.Backward);
       let afterB = afterC.delete({index: 0, offset: 2}, graphemeSegmenter, Direction.Backward);
       expect(afterB.toString()).toBe('a');
@@ -1112,7 +1117,7 @@ describeOrSkip('TokenSegmentList', () => {
     });
 
     it('does not run tokenization on empty insert even when pattern would match full string', () => {
-      let list = new TokenizingSegmentList([text('@alice  ')], mentionRe);
+      let list = new TokenizingFieldValue([text('@alice  ')], mentionRe);
       let {segments: value, caretPosition: caret} = list.replaceRange(
         {index: 0, offset: 7},
         {index: 0, offset: 8},
@@ -1120,6 +1125,23 @@ describeOrSkip('TokenSegmentList', () => {
       );
       expect(value).toEqual([text('@alice ')]);
       expect(caret).toEqual({index: 0, offset: 7});
+    });
+
+    it('tokenizes when pasting multiple segments', () => {
+      let list = new TokenizingFieldValue([text('')], mentionRe);
+      let {segments: value} = list.replaceRangeWithSegments(
+        {index: 0, offset: 0},
+        {index: 0, offset: 0},
+        [text('hello @alice '), token('@bob'), text(' world '), token('@charlie')]
+      );
+      expect(value).toEqual([
+        text('hello '),
+        token('@alice'),
+        text(' '),
+        token('@bob'),
+        text(' world '),
+        token('@charlie')
+      ]);
     });
   });
 });

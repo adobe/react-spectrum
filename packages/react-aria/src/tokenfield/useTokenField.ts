@@ -7,101 +7,99 @@
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ * governing
  */
 
-import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {announce} from '../live-announcer/LiveAnnouncer';
+import {AriaLabelingProps, DOMAttributes, FocusableProps} from '@react-types/shared';
+import {
+  ClipboardEventHandler,
+  HTMLAttributes,
+  RefObject,
+  useCallback,
+  useMemo,
+  useRef
+} from 'react';
 import {
   Direction,
   Position,
+  TokenFieldProps,
   TokenFieldSegment,
-  TokenSegment,
-  TokenSegmentList
-} from './TokenSegmentList';
-import {FieldInputContext} from 'react-aria-components/Autocomplete';
-import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {FocusableProps, forwardRefType} from '@react-types/shared';
-import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
-import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
-import {isMac} from 'react-aria/private/utils/platform';
-import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {
-  ForwardedRef,
-  forwardRef,
-  HTMLAttributes,
-  memo,
-  useCallback,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
-import {RenderProps, StyleRenderProps, useRenderProps} from 'react-aria-components/useRenderProps';
-import {SlotProps, useSlottedContext} from 'react-aria-components/slots';
-import {useControlledState} from 'react-stately/useControlledState';
-import {useEvent} from 'react-aria/private/utils/useEvent';
-import {useFocusable} from 'react-aria/useFocusable';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {useKeyboard} from 'react-aria/useKeyboard';
-import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
-import {useLocale} from 'react-aria/I18nProvider';
-import {useObjectRef} from 'react-aria/useObjectRef';
+  TokenFieldState,
+  TokenFieldValue
+} from 'react-stately/useTokenFieldState';
+import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from '../utils/domHelpers';
+import {isMac} from '../utils/platform';
+import {mergeProps} from '../utils/mergeProps';
+import {setInteractionModality} from '../interactions/useFocusVisible';
+import {useEvent} from '../utils/useEvent';
+import {useField} from '../label/useField';
+import {useFocusable} from '../interactions/useFocusable';
+import {useKeyboard} from '../interactions/useKeyboard';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
+import {useLocale} from '../i18n/I18nProvider';
 
-export type {TokenFieldSegment};
-
-interface TokenFieldRenderProps {
-  isReadOnly: boolean;
-  isDisabled: boolean;
-  isFocused: boolean;
-  isFocusVisible: boolean;
-}
-
-export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
-  extends StyleRenderProps<TokenFieldRenderProps>, SlotProps, FocusableProps {
-  value?: T;
-  defaultValue?: T;
-  onChange?: (value: T) => void;
-  children: (
-    segment: TokenSegment<T extends TokenSegmentList<infer V> ? V : never>
-  ) => React.ReactElement;
-  multiline?: boolean;
+export interface AriaTokenFieldProps<T extends TokenFieldValue = TokenFieldValue>
+  extends TokenFieldProps<T>, FocusableProps, AriaLabelingProps {
+  /**
+   * The accessibility role of the token field.
+   *
+   * @default 'textbox'
+   */
+  role?: 'textbox' | 'searchbox' | 'combobox';
+  /** Whether the token field allows newlines. */
+  allowsNewlines?: boolean;
+  /** Whether the token field is read only. */
   isReadOnly?: boolean;
+  /** Whether the token field is disabled. */
   isDisabled?: boolean;
-  'aria-label'?: string;
-  'aria-labelledby'?: string;
-  'aria-describedby'?: string;
-  onPaste?: (e: ClipboardEvent) => void;
+  /** A function that is called when the user presses the Enter key. */
   onSubmit?: () => void;
+  /**
+   * Handler that is called when the user copies text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
+   */
+  onCopy?: ClipboardEventHandler<T>;
+
+  /**
+   * Handler that is called when the user cuts text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
+   */
+  onCut?: ClipboardEventHandler<T>;
+
+  /**
+   * Handler that is called when the user pastes text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
+   */
+  onPaste?: ClipboardEventHandler<T>;
 }
 
-export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
+export interface TokenFieldAria {
+  /** Props for the token field's input element. */
+  tokenFieldProps: HTMLAttributes<HTMLDivElement>;
+  /** Props for the text field's visible label element, if any. */
+  labelProps: DOMAttributes;
+  /** Props for the text field's description element, if any. */
+  descriptionProps: DOMAttributes;
+}
 
-export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TokenField<
-  T extends TokenSegmentList = TokenSegmentList
->(props: TokenFieldProps<T>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
+const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
+
+export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
+  props: AriaTokenFieldProps<T>,
+  state: TokenFieldState,
+  ref: RefObject<HTMLDivElement | null>
+): TokenFieldAria {
   let {
-    value: valueProp,
-    defaultValue: defaultValueProp = new TokenSegmentList([]),
-    onChange,
-    children,
-    multiline = false,
+    role = 'textbox',
+    allowsNewlines: multiline = false,
     isReadOnly = false,
     isDisabled = false,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledBy,
-    'aria-describedby': ariaDescribedBy
+    'aria-details': ariaDetails
   } = props;
 
-  let fieldCtx = useSlottedContext(FieldInputContext, props.slot);
-  let {
-    value: _autocompleteValue,
-    onChange: onAutocompleteChange,
-    ref: autocompleteRef,
-    ...autocompleteProps
-  } = fieldCtx ?? {};
-
-  let ref = useObjectRef(forwardedRef);
-  let [state, setState] = useControlledState(valueProp, defaultValueProp, onChange);
+  let {value} = state;
   let {locale} = useLocale();
   let graphemeSegmenter = useMemo(
     () => new Intl.Segmenter(locale, {granularity: 'grapheme'}),
@@ -112,12 +110,11 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   let dropPosition = useRef<Position | null>(null);
   let transferredData = useRef<TokenFieldSegment[] | null>(null);
 
-  let nextValue = useRef<TokenSegmentList | null>(null);
-  let apply = (fn: (value: TokenSegmentList) => TokenSegmentList) => {
-    setState(value => {
+  let nextValue = useRef<TokenFieldValue | null>(null);
+  let apply = (fn: (value: TokenFieldValue) => TokenFieldValue) => {
+    state.setValue(value => {
       let newValue = fn(value);
       nextValue.current = newValue;
-      onAutocompleteChange?.(newValue.toString());
       return newValue;
     });
   };
@@ -128,16 +125,15 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   // Mutating the DOM in any way during composition breaks the IME, causing composition to end unexpectedly.
   // During composition, we still emit updates via onChange to ensure that things like autocomplete work,
   // but we don't actually re-render to the DOM unless the value changes from what we expect (e.g. inserting a completion).
-  let [isComposing, setComposing] = useState(false);
   let mutationTracker = useMutationTracker(ref);
   let startComposition = useCallback(() => {
     mutationTracker.start();
-    setComposing(true);
-  }, [mutationTracker]);
+    state.setComposing(true);
+  }, [state, mutationTracker]);
   let stopComposition = useCallback(() => {
     mutationTracker.stop();
-    setComposing(false);
-  }, [mutationTracker]);
+    state.setComposing(false);
+  }, [state, mutationTracker]);
 
   useEvent(ref, 'compositionstart', () => {
     startComposition();
@@ -163,32 +159,32 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   // If a prop update occurs during composition that doesn't match the expected value,
   // end composition and re-render the controlled value.
   useLayoutEffect(() => {
-    if (isComposing && state !== nextValue.current) {
+    if (state.isComposing && value !== nextValue.current) {
       stopComposition();
     }
-    nextValue.current = state;
+    nextValue.current = value;
   });
 
   let caretPosition = useRef<Position | null>(null);
   useLayoutEffect(() => {
     if (
       ref.current &&
-      state.caretPosition &&
-      !isComposing &&
-      state.caretPosition !== caretPosition.current
+      value.caretPosition &&
+      !state.isComposing &&
+      value.caretPosition !== caretPosition.current
     ) {
       // Only move the caret when the field is already focused.
       if (ref.current === getActiveElement(getOwnerDocument(ref.current))) {
-        setCursor(ref.current, state.caretPosition);
+        setCursor(ref.current, value.caretPosition);
       }
-      caretPosition.current = state.caretPosition;
+      caretPosition.current = value.caretPosition;
     }
   });
 
   // Handle text editing commands and prevent browser default behavior.
   useEvent(ref, 'beforeinput', e => {
     // Android sometimes doesn't fire a compositionend event before a regular input event.
-    if (isComposing && !e.isComposing) {
+    if (state.isComposing && !e.isComposing) {
       stopComposition();
     }
 
@@ -333,7 +329,7 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       return;
     }
     let [start, end] = selection;
-    let slice = state.slice(start, end);
+    let slice = value.slice(start, end);
     let dataTransfer = 'clipboardData' in e ? e.clipboardData : e.dataTransfer;
     dataTransfer?.setData(CLIPBOARD_MIME_TYPE, JSON.stringify(slice.segments));
     dataTransfer?.setData('text/plain', slice.toString());
@@ -373,27 +369,27 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   });
 
   useSelectionChange(ref, () => {
-    if (isComposing) {
+    if (state.isComposing) {
       return;
     }
 
-    state.endCoalescing();
+    value.endCoalescing();
 
     // When the cursor moves next to a token, announce it.
     // Otherwise the screen reader will only announce the first/last character.
     if (window.getSelection()?.isCollapsed) {
       let [start, end] = getSelection(ref.current!)!;
       if (start.offset === 0) {
-        let segment = state.segments[start.index];
+        let segment = value.segments[start.index];
         if (segment?.type !== 'token') {
-          segment = state.segments[start.index - 1];
+          segment = value.segments[start.index - 1];
         }
         if (segment?.type === 'token') {
           announce(segment.text, 'assertive');
         }
 
         // Update the caret position in the value.
-        setState(value => value.withCaretPosition(end));
+        state.setValue(value => value.withCaretPosition(end));
       }
     }
   });
@@ -407,8 +403,8 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         return;
       }
 
-      let start = state.findLineBoundary(selection[0], Direction.Backward);
-      let end = state.findLineBoundary(selection[1], Direction.Forward);
+      let start = value.findLineBoundary(selection[0], Direction.Backward);
+      let end = value.findLineBoundary(selection[1], Direction.Forward);
       if (start && end) {
         e.preventDefault();
         setSelection(ref.current!, start, end, true);
@@ -449,18 +445,39 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     }
   };
 
+  // macOS supports additional keyboard shortcuts for text editing.
+  // We need to handle these manually so they behave consistently with tokens.
+  // https://support.apple.com/en-us/102650#text
+  let macShortcuts: Record<string, () => boolean | void> = isMac()
+    ? {
+        'Control+a': () => {
+          return shortcuts.Home();
+        },
+        'Control+e': () => {
+          return shortcuts.End();
+        },
+        'Control+f': () => {
+          return shortcuts.ArrowRight();
+        },
+        'Control+b': () => {
+          return shortcuts.ArrowLeft();
+        }
+      }
+    : {};
+
   let mod = isMac() ? 'Meta' : 'Control';
   let wordModKey = isMac() ? 'Alt' : 'Control';
   let shortcuts: Record<string, () => boolean | void> = {
+    ...macShortcuts,
     [`${mod}+z`]: () => {
       // If composing, the browser handles undo natively.
-      if (isComposing) {
+      if (state.isComposing) {
         return false;
       }
       apply(state => state.undo());
     },
     [isMac() ? 'Shift+Meta+z' : 'Control+y']: () => {
-      if (isComposing) {
+      if (state.isComposing) {
         return false;
       }
       apply(state => state.redo());
@@ -495,7 +512,7 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       if (!selection) {
         return false;
       }
-      let boundary = state.findLineBoundary(selection[0], Direction.Backward);
+      let boundary = value.findLineBoundary(selection[0], Direction.Backward);
       if (boundary) {
         setCursor(ref.current!, boundary, true);
         return true;
@@ -507,7 +524,7 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       if (!selection) {
         return false;
       }
-      let boundary = state.findLineBoundary(selection[1], Direction.Forward);
+      let boundary = value.findLineBoundary(selection[1], Direction.Forward);
       if (boundary) {
         setCursor(ref.current!, boundary, true);
         return true;
@@ -518,145 +535,46 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 
   let {keyboardProps} = useKeyboard({
     isDisabled: isDisabled || isReadOnly,
-    onKeyDown: e => {
-      // mini version of useKeyboard shortcuts until it is merged.
-      let modifiers = ['Shift', 'Control', 'Alt', 'Meta'] satisfies React.ModifierKey[];
-      let modifierKeys = modifiers.filter(modifier => e.getModifierState(modifier));
-      let keys = modifierKeys.length > 0 ? `${modifierKeys.join('+')}+${e.key}` : e.key;
-      let handler = shortcuts[keys];
-      if (handler) {
-        let result = handler();
-        if (result === true || result === undefined) {
-          e.preventDefault();
-          return;
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp,
+    shortcuts: shortcuts,
+    allowRepeats: true
+  });
+
+  let {focusableProps} = useFocusable(props, ref);
+  let {labelProps, fieldProps, descriptionProps} = useField({
+    ...props,
+    labelElementType: 'span'
+  });
+
+  return {
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        if (!props.isDisabled) {
+          ref.current?.focus();
+
+          // Show the focus ring so the user knows where focus went
+          setInteractionModality('keyboard');
         }
       }
-
-      e.continuePropagation();
-    }
-  });
-
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {focusableProps} = useFocusable(props, ref);
-
-  let renderProps = useRenderProps({
-    ...props,
-    children: undefined,
-    defaultClassName: 'react-aria-TokenField',
-    values: {
-      isFocused,
-      isFocusVisible,
-      isDisabled,
-      isReadOnly
-    }
-  });
-
-  let DOMProps = filterDOMProps(props, {global: true});
-
-  return (
-    <div
-      {...mergeProps(
-        DOMProps,
-        renderProps,
-        focusProps,
-        focusableProps,
-        autocompleteProps as HTMLAttributes<HTMLDivElement>,
-        keyboardProps,
-        {onPaste: props.onPaste}
-      )}
-      ref={mergeRefs(ref, autocompleteRef as any)}
-      role={autocompleteProps['role'] || 'textbox'}
-      contentEditable={!isDisabled && !isReadOnly}
-      suppressContentEditableWarning
-      aria-multiline={multiline}
-      aria-label={ariaLabel ?? autocompleteProps['aria-label']}
-      aria-labelledby={ariaLabelledBy ?? autocompleteProps['aria-labelledby']}
-      aria-describedby={ariaDescribedBy ?? autocompleteProps['aria-describedby']}
-      aria-readonly={isReadOnly || undefined}
-      aria-disabled={isDisabled || undefined}
-      data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
-      data-disabled={isDisabled || undefined}
-      data-readonly={isReadOnly || undefined}
-      style={{...renderProps.style, whiteSpace: 'pre-wrap'}}>
-      <CompositionRenderBlocker isComposing={isComposing}>
-        {state.segments.map((v, i) => {
-          switch (v.type) {
-            case 'token': {
-              let token = children(v);
-              return (
-                // Wrap tokens in zero-width spaces so the cursor is placed correctly.
-                <span key={i}>
-                  {'\u200b'}
-                  {token}
-                  {'\u200b'}
-                </span>
-              );
-            }
-            case 'text':
-              return v.text;
-          }
-        })}
-        {/* Force cursor to the next line if the last segment ends with a newline. */}
-        {state.segments.at(-1)?.text.endsWith('\n') && <br />}
-      </CompositionRenderBlocker>
-    </div>
-  );
-});
-
-interface TokenRenderProps {
-  isSelected: boolean;
-  isDisabled: boolean;
+    },
+    descriptionProps,
+    tokenFieldProps: mergeProps(focusableProps, keyboardProps, fieldProps, {
+      onPaste: props.onPaste,
+      onCopy: props.onCopy,
+      onCut: props.onCut,
+      contentEditable: !isDisabled && !isReadOnly,
+      suppressContentEditableWarning: true,
+      role,
+      'aria-multiline': multiline,
+      'aria-details': ariaDetails,
+      'aria-readonly': isReadOnly,
+      'aria-disabled': isDisabled,
+      style: {whiteSpace: 'pre-wrap'}
+    })
+  };
 }
-
-export interface TokenProps extends RenderProps<TokenRenderProps, 'span'> {}
-
-export const Token = forwardRef(function Token(
-  props: TokenProps,
-  ref: ForwardedRef<HTMLSpanElement>
-) {
-  let objectRef = useObjectRef(ref);
-  let [isSelected, setSelected] = useState(false);
-
-  useEvent(useRef(document), 'selectionchange', () => {
-    let selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0 || !objectRef.current) {
-      return;
-    }
-
-    let range = selection.getRangeAt(0);
-    if (!range.collapsed && range.intersectsNode(objectRef.current)) {
-      setSelected(true);
-    } else {
-      setSelected(false);
-    }
-  });
-
-  let renderProps = useRenderProps({
-    ...props,
-    defaultClassName: 'react-aria-Token',
-    values: {
-      isSelected,
-      isDisabled: false
-    }
-  });
-
-  return (
-    <span
-      ref={objectRef}
-      {...renderProps}
-      contentEditable="false"
-      suppressContentEditableWarning
-      data-selected={isSelected || undefined}
-      style={{
-        ...renderProps.style,
-        userSelect: 'all',
-        WebkitUserSelect: 'all'
-      }}>
-      {renderProps.children}
-    </span>
-  );
-});
 
 function indexOfNode(node: Node) {
   let index = 0;
@@ -677,10 +595,7 @@ export function getSelection(container: Element): [Position, Position] | null {
   return rangeToPositions(container, range);
 }
 
-export function rangeToPositions(
-  container: Element,
-  range: Range | StaticRange
-): [Position, Position] {
+function rangeToPositions(container: Element, range: Range | StaticRange): [Position, Position] {
   let start = getPosition(container, range.startContainer, range.startOffset);
   let end = getPosition(container, range.endContainer, range.endOffset);
   return [start, end];
@@ -732,11 +647,11 @@ function getPosition(container: Element, node: Node, offset: number): Position {
 
 let isProgrammaticSelectionChange = Symbol('isProgrammaticSelectionChange');
 
-// TODO: do we want to export these?
-export function setCursor(root: Element, pos: Position, fireEvent = false) {
+function setCursor(root: Element, pos: Position, fireEvent = false) {
   setSelection(root, pos, pos, fireEvent);
 }
 
+// Exported for tests.
 export function setSelection(root: Element, start: Position, end: Position, fireEvent = false) {
   let selection = window.getSelection();
   if (selection) {
@@ -812,7 +727,7 @@ function isValidSegment(segment: unknown): segment is TokenFieldSegment {
 }
 
 function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
-  useEvent(useRef(document), 'selectionchange', () => {
+  useEvent(useRef(typeof document !== 'undefined' ? document : null), 'selectionchange', () => {
     if (ref.current && ref.current[isProgrammaticSelectionChange]) {
       ref.current[isProgrammaticSelectionChange] = false;
       return;
@@ -847,7 +762,6 @@ function useMutationTracker(ref: React.RefObject<Element | null>) {
       start() {
         // Android sometimes fires two compositionstart events in a row, without a compositionend.
         // In that case, reuse the existing tracker.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         mutationTracker.current ||= trackMutations(ref.current!);
       },
       stop() {
@@ -855,7 +769,7 @@ function useMutationTracker(ref: React.RefObject<Element | null>) {
         mutationTracker.current = null;
       }
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps - conflicts with compiler
     []
   );
 }
@@ -896,10 +810,3 @@ function trackMutations(element: Element) {
     }
   };
 }
-
-// Prevents React from re-rendering during composition events.
-const CompositionRenderBlocker = memo(
-  ({children}: {children: React.ReactNode; isComposing: boolean}) => children,
-  (prevProps, nextProps) =>
-    nextProps.isComposing ? true : prevProps.children === nextProps.children
-);
