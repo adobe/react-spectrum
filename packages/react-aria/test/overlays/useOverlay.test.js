@@ -138,4 +138,53 @@ describe('useOverlay', function () {
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  describe('with CloseWatcher', () => {
+    class FakeCloseWatcher {
+      static instances = [];
+      constructor() {
+        this.onclose = null;
+        FakeCloseWatcher.instances.push(this);
+      }
+      destroy() {
+        let i = FakeCloseWatcher.instances.indexOf(this);
+        if (i >= 0) {
+          FakeCloseWatcher.instances.splice(i, 1);
+        }
+      }
+      fire() {
+        this.destroy();
+        this.onclose?.();
+      }
+    }
+
+    beforeEach(() => {
+      FakeCloseWatcher.instances = [];
+      window.CloseWatcher = FakeCloseWatcher;
+    });
+    afterEach(() => {
+      delete window.CloseWatcher;
+    });
+
+    it('closes via a fired close watcher instead of the keydown handler', function () {
+      let onClose = jest.fn();
+      let res = render(<Example isOpen onClose={onClose} />);
+      let el = res.getByTestId('test');
+
+      // The keydown handler must NOT be registered when CloseWatcher exists,
+      // so Escape keydown alone does nothing.
+      fireEvent.keyDown(el, {key: 'Escape'});
+      expect(onClose).not.toHaveBeenCalled();
+
+      // Firing the watcher (as the platform would) closes the overlay.
+      FakeCloseWatcher.instances[FakeCloseWatcher.instances.length - 1].fire();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not subscribe when isKeyboardDismissDisabled', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} isKeyboardDismissDisabled />);
+      expect(FakeCloseWatcher.instances).toHaveLength(0);
+    });
+  });
 });

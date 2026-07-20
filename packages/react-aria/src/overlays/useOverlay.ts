@@ -13,7 +13,9 @@
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {isElementInChildOfActiveScope} from '../focus/FocusScope';
+import {subscribeCloseWatcher} from './closeWatchers';
 import {useEffect, useRef} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useInteractOutside} from '../interactions/useInteractOutside';
 import {useKeyboard} from '../interactions/useKeyboard';
@@ -58,7 +60,7 @@ export interface OverlayAria {
   underlayProps: DOMAttributes;
 }
 
-const visibleOverlays: RefObject<Element | null>[] = [];
+export const visibleOverlays: RefObject<Element | null>[] = [];
 
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
@@ -97,6 +99,20 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     }
   };
 
+  let hasCloseWatcher = typeof window !== 'undefined' && typeof window.CloseWatcher === 'function';
+
+  // A stable callback that always calls the latest onClose, so the close watcher
+  // subscription does not need to re-run (and churn the pool) on every re-render.
+  let onCloseRequest = useEffectEvent(() => onClose?.());
+
+  useEffect(() => {
+    if (!isOpen || isKeyboardDismissDisabled || !hasCloseWatcher) {
+      return;
+    }
+    return subscribeCloseWatcher({ref, onClose: onCloseRequest});
+    // onCloseRequest is a stable useEffectEvent and must be omitted from deps.
+  }, [isOpen, isKeyboardDismissDisabled, hasCloseWatcher, ref]);
+
   let onInteractOutsideStart = (e: PointerEvent) => {
     const topMostOverlay = visibleOverlays[visibleOverlays.length - 1];
     lastVisibleOverlay.current = topMostOverlay;
@@ -125,8 +141,11 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     lastVisibleOverlay.current = undefined;
   };
 
-  // Handle the escape key
-  let {keyboardProps} = useKeyboard({
+  // Fallback Escape handling for browsers without CloseWatcher support.
+  // When CloseWatcher is available, Escape is handled via the subscription
+  // above and we must NOT preventDefault here or the native close request
+  // would be suppressed.
+  let {keyboardProps} = useKeyboard(hasCloseWatcher ? {} : {
     shortcuts: {
       Escape: () => {
         if (!isKeyboardDismissDisabled) {
