@@ -87,6 +87,19 @@ function convertColor(value: any) {
   return brand(Math.round(L * 1e4) / 1e4, Math.round(C * 1e4) / 1e4, offset, alpha);
 }
 
+// Wraps a color value in a `var(--_t-<name>, <value>)` marker so the token name
+// survives in the authored CSS for tooling (e.g. the exploded-layer story). The
+// custom property is never defined, so the fallback (the real value) is always
+// used and rendering is unchanged. Only applied to actual colors — numeric tokens
+// (opacities) are returned untouched so arithmetic on them still works.
+const COLOR_FN = /(?:oklch|oklab|rgba?|hsla?|hwb|lab|lch|color)\(/;
+function markColor(name: string, value: any) {
+  if (typeof value !== 'string' || !COLOR_FN.test(value)) {
+    return value;
+  }
+  return `var(--_t-${name.replace(/\./g, '__')}, ${value})`;
+}
+
 export function token(name: string) {
   let token = name.split('.').reduce((acc, curr) => {
     let res = acc[curr];
@@ -96,14 +109,29 @@ export function token(name: string) {
     return res;
   }, tokens) as any;
   if (token?.light && token.dark) {
-    return `light-dark(${convertColor(token.light)}, ${convertColor(token.dark)})`;
+    return markColor(name, `light-dark(${convertColor(token.light)}, ${convertColor(token.dark)})`);
   } else if (token?.light) {
-    return convertColor(token.light);
+    return markColor(name, convertColor(token.light));
   } else if (token?.dark) {
-    return convertColor(token.dark);
+    return markColor(name, convertColor(token.dark));
   } else {
-    return convertColor(token.value ?? token);
+    return markColor(name, convertColor(token.value ?? token));
   }
+}
+
+export function spectrumToken(name: any) {
+  let [tokenName, opacity] = name.split('/');
+  let value = color(tokenName);
+  if (value.startsWith('light-dark(')) {
+    let parts = value.slice(11, -1).replace(/rgb\(.+?\)/g, m => convertColor(m));
+    value = `light-dark(${parts})`;
+  } else {
+    value = convertColor(value);
+  }
+  if (opacity != null) {
+    value = `rgb(from ${value} r g b / ${opacity}%)`;
+  }
+  return markColor(tokenName, value);
 }
 
 export function mix(gray: string, stop: string, opacity: string) {

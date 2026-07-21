@@ -1,12 +1,12 @@
+import {css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
-  brand,
   defaultBrand,
   defineProperties,
   outerBorderStops,
+  spectrumToken,
   stops,
   token
 } from './tokens.macro' with {type: 'macro'};
-import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
@@ -90,8 +90,8 @@ const containerBackground = css(`
     );
 
   --border-color: ${token(`container.border.default`)};
-  --inset-shadow-color: ${color('transparent-white-50')};
-  --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
+  --inset-shadow-color: ${spectrumToken('transparent-white-50')};
+  --drop-shadow-color: ${spectrumToken('fuchsia-900/5')};
   --prominent-outline-glow: ;
 
   box-shadow:
@@ -99,8 +99,8 @@ const containerBackground = css(`
     inset 0 0 0 1px var(--border-color),
     inset 0 6px 15px 0 var(--inset-shadow-color),
     inset 0 0 0 0 transparent, /* placeholder for generating state so transition is smooth */
-    inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
-    inset 0 24px 32px 0 ${color('transparent-white-50')},
+    inset 0 -5px 21.6px 0 ${spectrumToken('transparent-white-50')},
+    inset 0 24px 32px 0 ${spectrumToken('transparent-white-50')},
     0 -3px 10px 1px var(--drop-shadow-color);
 
   &[data-variant=prominent] {
@@ -132,26 +132,26 @@ const containerBackground = css(`
 
     &[data-variant=subtle] {
       --con-hue-opacity: 0%;
-      --bg-stop-1: light-dark(white, ${color('gray-75')});
-      --bg-stop-2: light-dark(white, ${color('gray-75')});
-      --bg-stop-3: light-dark(white, ${color('gray-75')});
-      --bg-stop-4: light-dark(white, ${color('gray-75')});
+      --bg-stop-1: light-dark(white, ${spectrumToken('gray-75')});
+      --bg-stop-2: light-dark(white, ${spectrumToken('gray-75')});
+      --bg-stop-3: light-dark(white, ${spectrumToken('gray-75')});
+      --bg-stop-4: light-dark(white, ${spectrumToken('gray-75')});
       --border-color: ${token(`container.border.focus`)};
       --drop-shadow-color: transparent;
 
       &[data-hovered] {
         ${stops('idle', 'hover', 'subtle')}
         --border-color: ${token(`container.border.default`)};
-        --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
+        --drop-shadow-color: ${spectrumToken('fuchsia-900/5')};
       }
     }
 
     &[data-focused][data-focused] {
       --con-hue-opacity: 0%;
-      --bg-stop-1: light-dark(white, ${color('gray-75')});
-      --bg-stop-2: light-dark(white, ${color('gray-75')});
-      --bg-stop-3: light-dark(white, ${color('gray-75')});
-      --bg-stop-4: light-dark(white, ${color('gray-75')});
+      --bg-stop-1: light-dark(white, ${spectrumToken('gray-75')});
+      --bg-stop-2: light-dark(white, ${spectrumToken('gray-75')});
+      --bg-stop-3: light-dark(white, ${spectrumToken('gray-75')});
+      --bg-stop-4: light-dark(white, ${spectrumToken('gray-75')});
       --border-color: ${token(`container.border.focus`)};
       --inset-shadow-color: transparent;
       --drop-shadow-color: transparent;
@@ -163,8 +163,8 @@ const containerBackground = css(`
       inset 0 0 0 1px var(--border-color),
       inset 0 6px 15px 0 var(--inset-shadow-color),
       inset 0 -32px 100px -50px ${token('container.color.inner-shadow.generating')},
-      inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
-      inset 0 24px 32px 0 ${color('transparent-white-50')},
+      inset 0 -5px 21.6px 0 ${spectrumToken('transparent-white-50')},
+      inset 0 24px 32px 0 ${spectrumToken('transparent-white-50')},
       0 -3px 10px 1px var(--drop-shadow-color),
       0 6px 83px rgb(from ${token('outer-border.gradient.ob-spread-shadow.generating.stop-3')} r g b / var(--spread-shadow-opacity));
 
