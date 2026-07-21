@@ -5,6 +5,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['hierarchy', 'navigation', 'nested'];
 export const relatedPages = [];
+export const version = 'alpha';
 export const description = 'Displays hierarchical navigation with collapsing.';
 
 # SideNav
@@ -50,7 +51,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Selection
 
-SideNav doesn't support selection like other [Collections](collections). Instead of the `id`, it uses the `href` prop as a key for selection. Note that
+SideNav does not support selection like other [Collections](collections). Instead of the `id`, it uses the `href` prop as a key for selection. Note that
 `id` is still used for the expansion state and disabled items as not every item will have an `href`.
 
 SideNavs do not support an uncontrolled selection state, you are responsible for managing it through the `selectedRoute` prop. You may wire this up

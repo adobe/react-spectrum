@@ -156,6 +156,8 @@ import SelectBoxGroupDark from 'url:../assets/component-illustrations/dark/Selec
 import SelectBoxGroupLight from 'url:../assets/component-illustrations/light/SelectBoxGroup.avif';
 import SelectionDark from 'url:../assets/component-illustrations/dark/Selection.avif';
 import SelectionLight from 'url:../assets/component-illustrations/light/Selection.avif';
+import SideNavDark from 'url:../assets/component-illustrations/dark/Tree.avif';
+import SideNavLight from 'url:../assets/component-illustrations/light/Tree.avif';
 import SkeletonDark from 'url:../assets/component-illustrations/dark/Skeleton.avif';
 import SkeletonLight from 'url:../assets/component-illustrations/light/Skeleton.avif';
 import SliderDark from 'url:../assets/component-illustrations/dark/Slider.avif';
@@ -276,6 +278,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Select: [PickerLight, PickerDark],
   SelectBoxGroup: [SelectBoxGroupLight, SelectBoxGroupDark],
   Separator: [DividerLight, DividerDark],
+  SideNav: [SideNavLight, SideNavDark],
   Skeleton: [SkeletonLight, SkeletonDark],
   Slider: [SliderLight, SliderDark],
   StatusLight: [StatusLightLight, StatusLightDark],
