@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {colorToken, getToken} from './tokens' with {type: 'macro'};
+import {colorToken, getToken} from '../../../s2/style/tokens' with {type: 'macro'};
 import {
   colorTokenToString,
   fontFamily,
@@ -19,7 +19,7 @@ import {
   fontWeight,
   lineHeight,
   resolveColorToken
-} from './spectrum-theme';
+} from '../../../s2/style/spectrum-theme' with {type: 'macro'};
 
 interface MacroContext {
   addAsset(asset: {type: string; content: string}): void;
