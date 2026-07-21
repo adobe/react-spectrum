@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {captureScrollAnchor, isNearEdge, resolveScrollAdjustment} from './ScrollAnchor';
 import {ChildView, ReusableView, RootView} from './ReusableView';
 import {Collection, Key} from '@react-types/shared';
 import {
@@ -26,6 +25,7 @@ import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
 import {Rect} from './Rect';
+import {ScrollAnchorTracker} from './ScrollAnchor';
 import {Size} from './Size';
 
 interface VirtualizerOptions<T extends object, V> {
@@ -77,17 +77,7 @@ export class Virtualizer<T extends object, V> {
   private _isScrolling: boolean;
   private _invalidationContext: InvalidationContext;
   private _overscanManager: OverscanManager;
-  private _hasSnappedToAnchorEdge: boolean;
-  /**
-   * Whether any currently-visible item was still using an estimated size as of the end of the
-   * previous relayout pass.
-   */
-  private _hadEstimatedVisibleItems: boolean;
-  /**
-   * Whether the screen was near the end, locked in when the current update started so one big jump
-   * can't look like the user scrolled away.
-   */
-  private _wasNearAnchorEdge: boolean;
+  private _scrollAnchor: ScrollAnchorTracker;
 
   constructor(options: VirtualizerOptions<T, V>) {
     this.delegate = options.delegate;
@@ -103,9 +93,7 @@ export class Virtualizer<T extends object, V> {
     this._isScrolling = false;
     this._invalidationContext = {};
     this._overscanManager = new OverscanManager();
-    this._hasSnappedToAnchorEdge = false;
-    this._hadEstimatedVisibleItems = false;
-    this._wasNearAnchorEdge = false;
+    this._scrollAnchor = new ScrollAnchorTracker();
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
@@ -189,28 +177,21 @@ export class Virtualizer<T extends object, V> {
 
   private relayout(context: InvalidationContext = {}) {
     let anchorInfo = this.layout.getScrollAnchorInfo?.(context.layoutOptions) ?? null;
-    let wasSettlingLastPass = this._hadEstimatedVisibleItems;
-    let wasNearAnchorEdgeLastPass = this._wasNearAnchorEdge;
 
     // Capture scroll anchor from current (pre-layout) view positions.
     // On first render _visibleViews is empty so no anchor will be found.
     let anchor: ScrollAnchor | null = null;
     if (anchorInfo) {
-      let visibleLayoutInfos: [Key, LayoutInfo][] = [];
+      let preLayoutInfos: [Key, LayoutInfo][] = [];
       for (let [key, view] of this._visibleViews) {
         let layoutInfo = this.layout.getLayoutInfo(key) ?? view.layoutInfo;
         if (layoutInfo) {
-          visibleLayoutInfos.push([key, layoutInfo]);
+          preLayoutInfos.push([key, layoutInfo]);
         }
       }
-      anchor = captureScrollAnchor(
-        anchorInfo.edge,
-        anchorInfo.axis,
-        this.visibleRect,
-        visibleLayoutInfos,
-        anchorInfo.isAnchorable
-      );
+      anchor = this._scrollAnchor.captureBeforeLayout(anchorInfo, preLayoutInfos, this.visibleRect);
     }
+
     let previousContentSize = this.contentSize;
     let previousVisibleRect = this.visibleRect;
 
@@ -220,78 +201,24 @@ export class Virtualizer<T extends object, V> {
     let rawContentSize = this.layout.getContentSize();
     (this as Mutable<this>).contentSize = new Size(rawContentSize.width, rawContentSize.height);
 
-    if (anchorInfo) {
-      let hasEstimated = false;
-      for (let layoutInfo of this.getVisibleLayoutInfos().values()) {
-        if (layoutInfo.estimatedSize) {
-          hasEstimated = true;
-          break;
-        }
-      }
-      this._hadEstimatedVisibleItems = hasEstimated;
-      // Don't recheck "near edge?" mid-resize because it could look like a scroll that never happened.
-      // Reuse the answer from before the resizing started.
-      if (!wasSettlingLastPass) {
-        this._wasNearAnchorEdge = isNearEdge(
-          previousVisibleRect,
-          previousContentSize,
-          anchorInfo.edge,
-          anchorInfo.axis,
-          anchorInfo.threshold
-        );
-      }
-    }
-    if (anchorInfo && previousVisibleRect.area > 0) {
-      let dimension = anchorInfo.axis === 'x' ? 'width' : 'height';
-      let contentSizeDelta = this.contentSize[dimension] - previousContentSize[dimension];
-      let isFirstAnchoredLayout = !this._hasSnappedToAnchorEdge;
-      this._hasSnappedToAnchorEdge = true;
+    let target = this._scrollAnchor.resolveAfterLayout({
+      anchorInfo,
+      anchor,
+      postLayoutInfos: anchorInfo ? this.getVisibleLayoutInfos() : new Map(),
+      previousVisibleRect,
+      previousContentSize,
+      contentSize: this.contentSize,
+      itemSizeChanged: context.itemSizeChanged ?? false,
+      isScrolling: this._isScrolling,
+      getLayoutInfo: (key: Key) => this.layout.getLayoutInfo(key)
+    });
 
-      // Only modify scroll when content actually changed (or this is the first layout, which always snaps)
-      if (isFirstAnchoredLayout || contentSizeDelta !== 0 || context.itemSizeChanged) {
-        let wasNearAnchorEdge =
-          isFirstAnchoredLayout ||
-          (wasSettlingLastPass && wasNearAnchorEdgeLastPass) ||
-          isNearEdge(
-            previousVisibleRect,
-            previousContentSize,
-            anchorInfo.edge,
-            anchorInfo.axis,
-            anchorInfo.threshold
-          );
-        // A first-ever layout always snaps to the edge, even if the raw distance check says
-        // otherwise. Save that real decision here so later passes in this cascade reuse it.
-        if (!wasSettlingLastPass) {
-          this._wasNearAnchorEdge = wasNearAnchorEdge;
-        }
-        let getLayoutInfo = (key: Key) => this.layout.getLayoutInfo(key);
-        // Skip restoring to the captured anchor while still resizing because items above it are also still growing,
-        // and following it would fall short of the edge.
-        let effectiveAnchor =
-          isFirstAnchoredLayout || (wasSettlingLastPass && wasNearAnchorEdgeLastPass)
-            ? null
-            : anchor;
-        let target = resolveScrollAdjustment(
-          anchorInfo.edge,
-          anchorInfo.axis,
-          effectiveAnchor,
-          wasNearAnchorEdge,
-          this._isScrolling,
-          context.itemSizeChanged ?? false,
-          contentSizeDelta,
-          getLayoutInfo,
-          previousVisibleRect,
-          this.contentSize
-        );
-
-        if (target) {
-          // Queues a new render cycle. Return early to skip updateSubviews — running it now
-          // would position views against the old visibleRect, causing a flash before the
-          // incoming relayout corrects them.
-          this.delegate.setVisibleRect(target);
-          return;
-        }
-      }
+    if (target) {
+      // Queues a new render cycle. Return early to skip updateSubviews — running it now
+      // would position views against the old visibleRect, causing a flash before the
+      // incoming relayout corrects them.
+      this.delegate.setVisibleRect(target);
+      return;
     }
 
     // Constrain scroll position.
@@ -421,9 +348,7 @@ export class Virtualizer<T extends object, V> {
 
       opts.layout.virtualizer = this;
       mutableThis.layout = opts.layout;
-      this._hasSnappedToAnchorEdge = false;
-      this._hadEstimatedVisibleItems = false;
-      this._wasNearAnchorEdge = false;
+      this._scrollAnchor.reset();
       needsLayout = true;
     }
 

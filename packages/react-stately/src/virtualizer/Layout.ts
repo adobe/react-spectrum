@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {InvalidationContext} from './types';
+import {InvalidationContext, ScrollAnchorInfo} from './types';
 import {ItemDropTarget, Key, LayoutDelegate, Node} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
@@ -78,19 +78,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
    * method) disables scroll-anchoring entirely — the virtualizer's generic anchor-tracking logic
    * is skipped.
    */
-  getScrollAnchorInfo?(_layoutOptions?: O): {
-    /** Which edge of the content the viewport should stay anchored to. */
-    edge: 'start' | 'end';
-    /** Which axis `edge` refers to — 'y' for vertical lists, 'x' for horizontal. */
-    axis: 'x' | 'y';
-    /** Distance (px) from `edge` within which the viewport is considered "following" it. */
-    threshold: number;
-    /**
-     * Optional classifier excluding structural/ephemeral layout infos (e.g. loaders) from being
-     * selected as the anchor. Defaults to allowing any layoutInfo.
-     */
-    isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
-  } | null;
+  getScrollAnchorInfo?(_layoutOptions?: O): ScrollAnchorInfo | null;
 
   /**
    * This method allows the layout to perform any pre-computation

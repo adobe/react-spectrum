@@ -20,7 +20,7 @@ import {
   Orientation
 } from '@react-types/shared';
 import {getChildNodes} from '../collections/getChildNodes';
-import {InvalidationContext} from '../virtualizer/types';
+import {InvalidationContext, ScrollAnchorInfo} from '../virtualizer/types';
 import {Layout} from '../virtualizer/Layout';
 import {LayoutInfo} from '../virtualizer/LayoutInfo';
 import {Rect} from '../virtualizer/Rect';
@@ -201,12 +201,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.contentSize = new Size();
   }
 
-  getScrollAnchorInfo(layoutOptions?: O): {
-    edge: 'start' | 'end';
-    axis: 'x' | 'y';
-    threshold: number;
-    isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
-  } | null {
+  getScrollAnchorInfo(layoutOptions?: O): ScrollAnchorInfo | null {
     let anchorTo = layoutOptions?.anchorTo ?? this.anchorTo;
     let orientation = layoutOptions?.orientation ?? this.orientation;
     // TODO: Reversed (anchorTo: 'end') layouts are only supported in vertical orientations (for now).

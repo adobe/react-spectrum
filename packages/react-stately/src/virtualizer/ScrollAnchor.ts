@@ -13,7 +13,7 @@
 import {Key} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
-import {ScrollAnchor} from './types';
+import {ScrollAnchor, ScrollAnchorInfo} from './types';
 import {Size} from './Size';
 
 export type ScrollAnchorAxis = 'x' | 'y';
@@ -172,4 +172,148 @@ export function resolveScrollAdjustment(
   }
 
   return null;
+}
+
+export interface ResolveAfterLayoutOptions {
+  anchorInfo: ScrollAnchorInfo | null;
+  /** The anchor captured by `captureBeforeLayout` before this pass's `layout.update()` ran. */
+  anchor: ScrollAnchor | null;
+  /** The full post-layout visible layout infos, i.e. `virtualizer.getVisibleLayoutInfos()`. */
+  postLayoutInfos: Map<Key, LayoutInfo>;
+  previousVisibleRect: Rect;
+  previousContentSize: Size;
+  contentSize: Size;
+  itemSizeChanged: boolean;
+  isScrolling: boolean;
+  getLayoutInfo: (key: Key) => LayoutInfo | null;
+}
+
+/**
+ * Tracks the cross-pass state needed to keep the viewport anchored to a layout's edge across relayouts.
+ */
+export class ScrollAnchorTracker {
+  private hasSnappedToEdge = false;
+  private hadEstimatedVisibleItems = false;
+  private wasNearAnchorEdge = false;
+
+  /** Resets all tracked state, e.g. when the virtualizer's layout instance changes. */
+  reset(): void {
+    this.hasSnappedToEdge = false;
+    this.hadEstimatedVisibleItems = false;
+    this.wasNearAnchorEdge = false;
+  }
+
+  /**
+   * Captures the anchor from pre-layout view positions.
+   */
+  captureBeforeLayout(
+    anchorInfo: ScrollAnchorInfo | null,
+    preLayoutInfos: Iterable<[Key, LayoutInfo]>,
+    visibleRect: Rect
+  ): ScrollAnchor | null {
+    if (!anchorInfo) {
+      return null;
+    }
+    return captureScrollAnchor(
+      anchorInfo.edge,
+      anchorInfo.axis,
+      visibleRect,
+      preLayoutInfos,
+      anchorInfo.isAnchorable
+    );
+  }
+
+  /**
+   * Runs the full post-layout decision: updates the tracked state for the next pass, and
+   * returns the resolved scroll target, or null if nothing should change.
+   */
+  resolveAfterLayout(options: ResolveAfterLayoutOptions): Rect | null {
+    let {
+      anchorInfo,
+      anchor,
+      postLayoutInfos,
+      previousVisibleRect,
+      previousContentSize,
+      contentSize,
+      itemSizeChanged,
+      isScrolling,
+      getLayoutInfo
+    } = options;
+
+    if (!anchorInfo) {
+      return null;
+    }
+
+    // Read the previous pass's state into locals before any writes below overwrite it.
+    let wasSettlingLastPass = this.hadEstimatedVisibleItems;
+    let wasNearAnchorEdgeLastPass = this.wasNearAnchorEdge;
+
+    let hasEstimated = false;
+    for (let layoutInfo of postLayoutInfos.values()) {
+      if (layoutInfo.estimatedSize) {
+        hasEstimated = true;
+        break;
+      }
+    }
+    this.hadEstimatedVisibleItems = hasEstimated;
+    // Don't recheck "near edge?" mid-resize because it could look like a scroll that never happened.
+    // Reuse the answer from before the resizing started.
+    if (!wasSettlingLastPass) {
+      this.wasNearAnchorEdge = isNearEdge(
+        previousVisibleRect,
+        previousContentSize,
+        anchorInfo.edge,
+        anchorInfo.axis,
+        anchorInfo.threshold
+      );
+    }
+
+    if (previousVisibleRect.area === 0) {
+      return null;
+    }
+
+    let dimension = anchorInfo.axis === 'x' ? 'width' : 'height';
+    let contentSizeDelta = contentSize[dimension] - previousContentSize[dimension];
+    let isFirstAnchoredLayout = !this.hasSnappedToEdge;
+    this.hasSnappedToEdge = true;
+
+    // Only modify scroll when content actually changed (or this is the first layout, which always snaps)
+    if (!(isFirstAnchoredLayout || contentSizeDelta !== 0 || itemSizeChanged)) {
+      return null;
+    }
+
+    let wasNearAnchorEdge =
+      isFirstAnchoredLayout ||
+      (wasSettlingLastPass && wasNearAnchorEdgeLastPass) ||
+      isNearEdge(
+        previousVisibleRect,
+        previousContentSize,
+        anchorInfo.edge,
+        anchorInfo.axis,
+        anchorInfo.threshold
+      );
+    // A first-ever layout always snaps to the edge, even if the raw distance check says
+    // otherwise. Save that real decision here so later passes in this cascade reuse it.
+    if (!wasSettlingLastPass) {
+      this.wasNearAnchorEdge = wasNearAnchorEdge;
+    }
+    // Skip restoring to the captured anchor while still resizing because items above it are also still growing,
+    // and following it would fall short of the edge.
+    let effectiveAnchor =
+      isFirstAnchoredLayout || (wasSettlingLastPass && wasNearAnchorEdgeLastPass)
+        ? null
+        : anchor;
+    return resolveScrollAdjustment(
+      anchorInfo.edge,
+      anchorInfo.axis,
+      effectiveAnchor,
+      wasNearAnchorEdge,
+      isScrolling,
+      itemSizeChanged,
+      contentSizeDelta,
+      getLayoutInfo,
+      previousVisibleRect,
+      contentSize
+    );
+  }
 }
