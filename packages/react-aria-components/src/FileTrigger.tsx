@@ -64,8 +64,7 @@ export interface FileTriggerProps
    */
   acceptDirectory?: boolean;
   /**
-   * The name of the input element, used when submitting an HTML form. See the [MDN
-   * docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#name) for more info.
+   * The name of the input element, used when submitting an HTML form
    */
   name?: string;
   /**
@@ -118,7 +117,8 @@ export const FileTrigger = forwardRef(function FileTrigger(
             inputRef.current.value = '';
           }
           inputRef.current?.click();
-        }}>
+        }}
+      >
         {children}
       </PressResponder>
       <VisuallyHidden>
@@ -135,8 +135,8 @@ export const FileTrigger = forwardRef(function FileTrigger(
           name={name}
           disabled={isDisabled}
           required={props.isRequired && validationBehavior === 'native'}
-          aria-required={(props.isRequired && validationBehavior === 'aria') || undefined}
-          aria-invalid={isInvalid || undefined}
+          aria-required={props.isRequired && validationBehavior === 'aria' ? true : undefined}
+          aria-invalid={isInvalid}
           // @ts-expect-error
           webkitdirectory={acceptDirectory ? '' : undefined}
         />
@@ -236,17 +236,17 @@ export const FileField = /*#__PURE__*/ (forwardRef as forwardRefType)(function F
   });
 
   let DOMProps = filterDOMProps(props, {global: true});
-  delete DOMProps.id;
 
   return (
     <dom.div
+      ref={ref}
+      slot={props.slot}
+      data-disabled={props.isDisabled}
+      data-invalid={validation.isInvalid}
+      data-required={props.isRequired}
       {...DOMProps}
       {...renderProps}
-      ref={ref}
-      slot={props.slot || undefined}
-      data-disabled={props.isDisabled || undefined}
-      data-invalid={validation.isInvalid || undefined}
-      data-required={props.isRequired || undefined}>
+    >
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
@@ -262,13 +262,14 @@ export const FileField = /*#__PURE__*/ (forwardRef as forwardRefType)(function F
           [FieldErrorContext, validation]
         ]}>
         <FileTrigger
-          {...triggerProps}
           ref={inputRef}
           acceptedFileTypes={props.acceptedFileTypes}
           allowsMultiple={props.allowsMultiple}
           defaultCamera={props.defaultCamera}
           acceptDirectory={props.acceptDirectory}
-          validationBehavior={validationBehavior}>
+          {...triggerProps} 
+          validationBehavior={validationBehavior}
+        >
           {renderProps.children}
         </FileTrigger>
       </Provider>
