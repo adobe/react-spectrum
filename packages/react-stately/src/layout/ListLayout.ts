@@ -199,6 +199,19 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.validRect = new Rect();
     this.requestedRect = new Rect();
     this.contentSize = new Size();
+    this.warnIfReversedHorizontal();
+  }
+
+  private warnIfReversedHorizontal(): void {
+    if (
+      this.anchorTo === 'end' &&
+      this.orientation === 'horizontal' &&
+      process.env.NODE_ENV !== 'production'
+    ) {
+      console.warn(
+        'ListLayout: anchorTo="end" is only supported in vertical orientations and will be ignored in horizontal orientation.'
+      );
+    }
   }
 
   getScrollAnchorInfo(layoutOptions?: O): ScrollAnchorInfo | null {
@@ -393,6 +406,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.dropIndicatorThickness = options?.dropIndicatorThickness ?? this.dropIndicatorThickness;
     this.gap = options?.gap ?? this.gap;
     this.padding = options?.padding ?? this.padding;
+    this.warnIfReversedHorizontal();
 
     this.rootNodes = this.buildCollection();
 
