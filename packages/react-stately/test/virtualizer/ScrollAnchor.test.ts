@@ -84,13 +84,7 @@ describe('computeScrollAnchorTarget', () => {
     let contentSize = new Size(400, 2000);
     let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 110, 400, 40));
 
-    let target = computeScrollAnchorTarget(
-      anchor,
-      'y',
-      () => layoutInfo,
-      visibleRect,
-      contentSize
-    );
+    let target = computeScrollAnchorTarget(anchor, 'y', () => layoutInfo, visibleRect, contentSize);
 
     expect(target).toBeNull();
   });
@@ -103,13 +97,7 @@ describe('computeScrollAnchorTarget', () => {
     let contentSize = new Size(400, 2000);
     let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 310, 400, 40));
 
-    let target = computeScrollAnchorTarget(
-      anchor,
-      'y',
-      () => layoutInfo,
-      visibleRect,
-      contentSize
-    );
+    let target = computeScrollAnchorTarget(anchor, 'y', () => layoutInfo, visibleRect, contentSize);
 
     expect(target).toBe(300);
   });
@@ -121,13 +109,7 @@ describe('computeScrollAnchorTarget', () => {
     // Item moved up, so the naive target would be negative.
     let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 0, 400, 40));
 
-    let target = computeScrollAnchorTarget(
-      anchor,
-      'y',
-      () => layoutInfo,
-      visibleRect,
-      contentSize
-    );
+    let target = computeScrollAnchorTarget(anchor, 'y', () => layoutInfo, visibleRect, contentSize);
 
     expect(target).toBe(0);
   });
@@ -139,13 +121,7 @@ describe('computeScrollAnchorTarget', () => {
     // Item moved far down, well past what the content size can accommodate.
     let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 5000, 400, 40));
 
-    let target = computeScrollAnchorTarget(
-      anchor,
-      'y',
-      () => layoutInfo,
-      visibleRect,
-      contentSize
-    );
+    let target = computeScrollAnchorTarget(anchor, 'y', () => layoutInfo, visibleRect, contentSize);
 
     expect(target).toBe(600 - 468);
   });
@@ -156,13 +132,7 @@ describe('computeScrollAnchorTarget', () => {
     let contentSize = new Size(2000, 400);
     let layoutInfo = new LayoutInfo('item', 'item', new Rect(310, 0, 40, 400));
 
-    let target = computeScrollAnchorTarget(
-      anchor,
-      'x',
-      () => layoutInfo,
-      visibleRect,
-      contentSize
-    );
+    let target = computeScrollAnchorTarget(anchor, 'x', () => layoutInfo, visibleRect, contentSize);
 
     expect(target).toBe(300);
   });

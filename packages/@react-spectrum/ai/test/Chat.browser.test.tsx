@@ -341,7 +341,7 @@ describeOrSkip('Chat browser', () => {
       expect(rows[0]).toHaveTextContent('World');
     });
 
-    // Flaky in Firefox. Skip for now. 
+    // Flaky in Firefox. Skip for now.
     it.skip('navigates between items with arrow keys', async () => {
       let {container} = await render(
         <div>
@@ -393,7 +393,7 @@ describeOrSkip('Chat browser', () => {
       expect(rows[0]).toHaveTextContent('World');
     });
 
-    // Flaky in Firefox. Skip for now. 
+    // Flaky in Firefox. Skip for now.
     // We might change this behavior in the future so that it doesn't always re-focus the newest item when re-tabbing in. Instead, it will focus the previous focused item (if there was one).
     it.skip('always re-focuses the newest item when re-tabbing in', async () => {
       let {container} = await render(
