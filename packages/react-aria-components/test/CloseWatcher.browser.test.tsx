@@ -332,7 +332,7 @@ describe('CloseWatcher dismissal', () => {
     let testUtilUser = new User();
     let screen = await render(<Example />);
     let menuTester = testUtilUser.createTester('Menu', {
-      root: screen.getByRole('button', {name: 'Menu'}).element(),
+      root: screen.getByRole('button', {name: 'Menu'}).element() as HTMLElement,
       interactionType: 'keyboard'
     });
     await menuTester.open();
