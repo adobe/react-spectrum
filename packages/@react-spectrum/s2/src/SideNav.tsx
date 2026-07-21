@@ -43,7 +43,6 @@ import {
 import {GridListHeaderProps, GridListSectionProps} from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
-import {mergeProps} from 'react-aria/mergeProps';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import {
