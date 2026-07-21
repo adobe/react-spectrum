@@ -243,6 +243,7 @@ const treeCellGrid = style({
     forcedColors: 'ButtonText'
   },
   fontWeight: {
+    isSelected: 'bold',
     isDescendantSelected: 'bold'
   },
   forcedColorAdjust: 'none'
