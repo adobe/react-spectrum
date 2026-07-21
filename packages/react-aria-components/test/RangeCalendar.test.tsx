@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  createShadowRoot,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 
 import {
@@ -34,6 +42,7 @@ import {
   today
 } from '@internationalized/date';
 import {DateValue} from 'react-stately/useRangeCalendarState';
+import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {RangeValue} from '@react-types/shared';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -665,5 +674,85 @@ describe('RangeCalendar', () => {
     expect(tree.getAllByRole('gridcell')).toHaveLength(2);
     let heading = tree.container.querySelector('.react-aria-CalendarHeading');
     expect(heading).toHaveTextContent('April 1 – 2, 2026');
+  });
+
+  describe('shadow DOM', () => {
+    installPointerEvent();
+
+    beforeAll(() => {
+      enableShadowDOM();
+    });
+
+    let pointerOpts = {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, detail: 1};
+    let clickCell = (cell: Element) => {
+      fireEvent.pointerDown(cell, pointerOpts);
+      fireEvent.pointerUp(cell, pointerOpts);
+      fireEvent.click(cell, {detail: 1});
+    };
+
+    it('should support selecting a range by clicking two dates', () => {
+      let {shadowRoot, cleanup} = createShadowRoot();
+      let container = document.createElement('div');
+      shadowRoot.appendChild(container);
+      let onChange = jest.fn();
+      render(
+        <TestCalendar
+          calendarProps={{onChange, defaultFocusedValue: new CalendarDate(2019, 6, 5)}}
+        />,
+        {container}
+      );
+
+      let grid = shadowRoot.querySelector<HTMLElement>('[role="grid"]')!;
+      let startCell = within(grid).getByText('17');
+      clickCell(startCell);
+
+      // The window pointerup listener receives an event retargeted to the shadow host.
+      // It must resolve the real target and not treat the click as a release outside
+      // the calendar, which would commit the selection early.
+      expect(startCell).toHaveAttribute('data-selection-start', 'true');
+      expect(startCell).toHaveAttribute('data-selection-end', 'true');
+      expect(onChange).not.toHaveBeenCalled();
+
+      let endCell = within(grid).getByText('23');
+      clickCell(endCell);
+
+      expect(startCell).toHaveAttribute('data-selection-start', 'true');
+      expect(endCell).toHaveAttribute('data-selection-end', 'true');
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let {start, end} = onChange.mock.calls[0][0];
+      expect(start).toEqual(new CalendarDate(2019, 6, 17));
+      expect(end).toEqual(new CalendarDate(2019, 6, 23));
+
+      cleanup();
+    });
+
+    it('should commit the selection when releasing a drag outside the calendar', () => {
+      let {shadowRoot, cleanup} = createShadowRoot();
+      let container = document.createElement('div');
+      shadowRoot.appendChild(container);
+      let onChange = jest.fn();
+      render(
+        <TestCalendar
+          calendarProps={{onChange, defaultFocusedValue: new CalendarDate(2019, 6, 5)}}
+        />,
+        {container}
+      );
+
+      let grid = shadowRoot.querySelector<HTMLElement>('[role="grid"]')!;
+      fireEvent.pointerDown(within(grid).getByText('17'), pointerOpts);
+      fireEvent.pointerEnter(within(grid).getByText('23'));
+      expect(onChange).not.toHaveBeenCalled();
+
+      // Guards the inverse path: resolving the real target must not make releases
+      // outside the shadow root look like they are inside the calendar.
+      fireEvent.pointerUp(document.body, pointerOpts);
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let {start, end} = onChange.mock.calls[0][0];
+      expect(start).toEqual(new CalendarDate(2019, 6, 17));
+      expect(end).toEqual(new CalendarDate(2019, 6, 23));
+
+      cleanup();
+    });
   });
 });
