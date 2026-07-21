@@ -142,7 +142,7 @@ export const Example: SideNavStoryObj = {
 export const ExampleCustomWidth: SideNavStoryObj = {
   render: SideNavExampleStatic,
   args: {
-    styles: style({width: 400})
+    styles: style({width: 400, height: 240})
   },
   parameters: {
     docs: {
@@ -154,7 +154,7 @@ export const ExampleCustomWidth: SideNavStoryObj = {
 export const ExampleAutoWidth: SideNavStoryObj = {
   render: SideNavExampleStatic,
   args: {
-    styles: style({width: 'auto'})
+    styles: style({width: 'auto', height: 240})
   },
   parameters: {
     docs: {
@@ -164,7 +164,7 @@ export const ExampleAutoWidth: SideNavStoryObj = {
 };
 
 const SideNavSectionsExample = args => (
-  <RoutedSideNav {...args} selectedRoute="/projects">
+  <RoutedSideNav {...args} selectedRoute="/projects" styles={style({height: 360})}>
     <SideNavSection>
       <SideNavHeader>Photography</SideNavHeader>
       <SideNavItem href="/Photos" textValue="Photos">
