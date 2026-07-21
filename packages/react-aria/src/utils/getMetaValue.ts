@@ -12,6 +12,14 @@
 
 import {getOwnerDocument, getOwnerWindow} from './domHelpers';
 
+declare global {
+  interface Window {
+    __webpack_nonce__?: string
+  }
+  // eslint-disable-next-line no-var
+  var __webpack_nonce__: string | undefined;
+}
+
 export function getMetaValue(key: string, doc?: Document): string | undefined {
   let ownerWindow = getOwnerWindow(doc);
   let ownerDocument = getOwnerDocument(doc);

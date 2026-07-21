@@ -36,7 +36,7 @@ import {
   Thread,
   ThreadItem,
   ThreadScrollButton,
-  TokenSegmentList,
+  TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
@@ -217,7 +217,7 @@ export function StreamingChat() {
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
 
-  function handleSend(prompt: TokenSegmentList) {
+  function handleSend(prompt: TokenFieldValue) {
     setGenerating(true);
     // user message added first so its announcement plays before
     setMessages(prev => [
@@ -490,6 +490,8 @@ export function StreamingChat() {
                 // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
                 return (
                   <ThreadItem
+                    allowsArrowNavigation
+                    focusMode="child"
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
@@ -564,7 +566,7 @@ export function VirtualizedChat() {
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
-  function handleSend(prompt: TokenSegmentList) {
+  function handleSend(prompt: TokenFieldValue) {
     setMessages(prev => [
       ...prev,
       {id: nextId.current++, type: 'user', content: prompt.toString()},
@@ -621,7 +623,7 @@ export function VirtualizedChat() {
               let message = isPending ? 'Generating response' : 'Response generated';
 
               return (
-                <ThreadItem textValue={message}>
+                <ThreadItem allowsArrowNavigation focusMode="child" textValue={message}>
                   <ResponseStatus isLoading={isPending}>
                     <ResponseStatusTitle>{message}</ResponseStatusTitle>
                   </ResponseStatus>

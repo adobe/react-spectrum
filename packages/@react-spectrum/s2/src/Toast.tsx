@@ -579,7 +579,8 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           index,
           isExpanded
         })
-      }>
+      }
+      {...filterDOMProps(toast.content)}>
       <div
         role="presentation"
         className={toastBody({isSingle: !isMain || visibleToasts.length <= 1 || isExpanded})}>
@@ -636,7 +637,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
 }
 
 function fixSafariTransform(el: HTMLDivElement | null) {
-  // Safari has a bug where the toasts display in the wrong position (CSS transform is not applied correctly).
+  // WebKit has a bug where the toasts display in the wrong position (CSS transform is not applied correctly).
   // Work around this by removing it, forcing a reflow, and re-applying.
   if (el && isWebKit()) {
     let translate = el.style.translate;

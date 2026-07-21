@@ -8,7 +8,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['dropdown'];
 export const relatedPages = [
-  {title: 'useMenu', url: 'Menu/useMenu.html'},
+  {title: 'useMenu', url: './Menu/useMenu'},
   {title: 'Testing Menu', url: './Menu/testing'}
 ];
 export const description = 'Displays a list of actions or options that a user can choose.';
@@ -496,6 +496,59 @@ import {ChevronDown} from 'lucide-react';
     <MenuItem>Clone stamp</MenuItem>
   </Menu>
 </MenuTrigger>
+```
+
+### Context menu
+
+Use `trigger="contextMenu"` to open the menu when right clicking with a mouse, long pressing on touch, or via OS and screen reader specific keyboard shortcuts. The menu is positioned at the point the user clicked.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, SubmenuTrigger, Separator} from 'vanilla-starter/Menu';
+import {Button} from 'react-aria-components/Button';
+
+<MenuTrigger trigger="contextMenu">
+  <Button className="context-menu-trigger">
+    Right click here
+  </Button>
+  <Menu>
+    <MenuItem>Open</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem>Open with</MenuItem>
+      <Menu>
+        <MenuItem>Preview</MenuItem>
+        <MenuItem>Photoshop</MenuItem>
+        <MenuItem>Safari</MenuItem>
+      </Menu>
+    </SubmenuTrigger>
+    <Separator />
+    <MenuItem>Get Info</MenuItem>
+    <MenuItem>Rename</MenuItem>
+    <MenuItem>Duplicate</MenuItem>
+    <MenuItem>Move to Trash</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+```css render hidden
+.context-menu-trigger {
+  width: 250px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--gray-400);
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+}
 ```
 
 ## Examples
