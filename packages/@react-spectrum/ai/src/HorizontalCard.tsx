@@ -121,7 +121,7 @@ let card = style({
     default: lightDark('transparent-white-300', 'transparent-black-300'),
     forcedColors: 'ButtonFace'
   },
-  // TODO: for cards that only have images, should they have a red outline around the image thumbnail?
+  // TODO: waiting for design to investigate thumbnail card/attachement error state
   boxShadow: {
     default: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
     isInvalid: `[inset 0 0 0 1px ${color('negative-900')}]`

@@ -455,9 +455,6 @@ function EverythingRender(args) {
                       <Text slot="description">{item.description}</Text>
                     </MenuItem>
                   ) : item.command === '/compact' ? (
-                    // TODO: technically can be a standard menu item since triggering this action
-                    // from the + menu means no partial text to clear, but maybe we can just standardize
-                    // CommandMenuItem as the "basic" menu item for prompt field
                     <MenuItem id={item.command} onAction={action('onCompact')}>
                       <Text slot="label">{item.command}</Text>
                       <Text slot="description">{item.description}</Text>

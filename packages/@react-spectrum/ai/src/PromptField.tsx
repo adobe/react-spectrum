@@ -84,11 +84,9 @@ export interface PromptFieldAttachment {
 export interface PromptFieldProps {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
-  // TODO: mirrors tokenfield, maybe should also be a generic too
   value?: TokenFieldValue;
   defaultValue?: TokenFieldValue;
   onChange?: (value: TokenFieldValue) => void;
-  // TODO: discuss, I can imagine a case where we also want to prefill these
   attachments?: PromptFieldAttachment[];
   defaultAttachments?: PromptFieldAttachment[];
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
@@ -602,7 +600,6 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
 export interface PromptFieldVoiceButtonProps {
   lang?: string;
   isDisabled?: boolean;
-  // TODO: coworker renders a toast too, but this gives more flexibility
   onError?: (code: VoiceInputErrorCode) => void;
 }
 
@@ -659,8 +656,6 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     applyVoiceTranscript();
   }, [transcript, isVoiceListening]);
 
-  // TODO this is from coworker, is to stop mutating the input text since the button becomes disabled when the chat
-  // is streaming, keep it?
   useEffect(() => {
     if (isDisabled && isVoiceListening) {
       stop();

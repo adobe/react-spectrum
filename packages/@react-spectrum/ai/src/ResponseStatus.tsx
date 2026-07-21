@@ -331,7 +331,6 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
             {status === 'failed' ? (
               <CloseCircle aria-hidden="true" />
             ) : (
-              // TODO: should this be a different color? This currently matches Coworker
               <CheckmarkCircle aria-hidden="true" />
             )}
           </CenterBaseline>
@@ -342,10 +341,6 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
 
   return (
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
-      {/* TODO: should this still be a button if the disclosure doesnt have a panel aka no content?
-        If we just render a div, we would need all the same render props and swapping the element would mean focus
-        gets lost when it goes from a button to a div
-      */}
       <Button
         className={renderProps =>
           buttonStyles({...renderProps, size, density, isLoading, isOnlyText: !isInteractive})
