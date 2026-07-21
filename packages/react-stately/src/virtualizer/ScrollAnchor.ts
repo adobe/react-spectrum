@@ -189,7 +189,8 @@ export interface ResolveAfterLayoutOptions {
 }
 
 /**
- * Tracks the cross-pass state needed to keep the viewport anchored to a layout's edge across relayouts.
+ * Tracks the cross-pass state needed to keep the viewport anchored to a layout's edge across
+ * relayouts.
  */
 export class ScrollAnchorTracker {
   private hasSnappedToEdge = false;
@@ -300,9 +301,7 @@ export class ScrollAnchorTracker {
     // Skip restoring to the captured anchor while still resizing because items above it are also still growing,
     // and following it would fall short of the edge.
     let effectiveAnchor =
-      isFirstAnchoredLayout || (wasSettlingLastPass && wasNearAnchorEdgeLastPass)
-        ? null
-        : anchor;
+      isFirstAnchoredLayout || (wasSettlingLastPass && wasNearAnchorEdgeLastPass) ? null : anchor;
     return resolveScrollAdjustment(
       anchorInfo.edge,
       anchorInfo.axis,
