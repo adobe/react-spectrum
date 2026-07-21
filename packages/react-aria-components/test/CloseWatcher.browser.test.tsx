@@ -186,6 +186,42 @@ describe('CloseWatcher dismissal', () => {
     await expect.element(screen.getByRole('dialog')).not.toBeInTheDocument();
   });
 
+  it('a non-dismissable modal on top blocks Escape from closing the modal beneath it', async () => {
+    // Outer (dismissable) opens on mount; inner (isKeyboardDismissDisabled) is
+    // opened on top. Escape must NOT close the outer modal past the inner one.
+    let screen = await render(
+      <DialogTrigger defaultOpen>
+        <Button>Open outer</Button>
+        <Modal>
+          <Dialog>
+            <Heading slot="title">Outer</Heading>
+            <DialogTrigger>
+              <Button autoFocus>Open inner</Button>
+              <ModalOverlay isKeyboardDismissDisabled>
+                <Modal>
+                  <Dialog>
+                    <Heading slot="title">Inner</Heading>
+                    <Button autoFocus>Inner focus</Button>
+                  </Dialog>
+                </Modal>
+              </ModalOverlay>
+            </DialogTrigger>
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+    await userEvent.click(screen.getByRole('button', {name: 'Open inner'}));
+    await expect.poll(() => screen.getByRole('dialog').elements().length).toBe(2);
+    let innerContent = screen.getByRole('button', {name: 'Inner focus'});
+    await expect.poll(() => document.activeElement).toBe(innerContent.element());
+
+    // Escape does nothing: the non-dismissable inner modal absorbs/blocks the
+    // close request, so neither modal closes.
+    await press('Escape');
+    await press('Escape');
+    await expect.poll(() => screen.getByRole('dialog').elements().length).toBe(2);
+  });
+
   it('Escape clears the autocomplete input, then closes the popover, then the dialog', async () => {
     function Example() {
       let {contains} = useFilter({sensitivity: 'base'});
