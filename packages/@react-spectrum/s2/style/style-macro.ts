@@ -375,16 +375,18 @@ export function createTheme<T extends Theme>(
 
     // Declare layers for each priority ahead of time so the order is always correct.
     // The `prose` layer is declared first so that it is always lower priority than
-    // the style macro layers. Reserving here will make more sense when prose eventually
-    // moves to live here after the API settles.
+    // the rest of the style macro layers. Reserving here will make more sense when
+    // prose eventually moves to live here after the API settles.
     // See the prose macro in @react-spectrum/ai.
-    css += '@layer prose, ';
+    css += '@layer ';
     let first = true;
     for (let i = 0; i <= usedPriorities; i++) {
+      if (!first) {
+        css += ', ';
+      }
       if (first) {
         first = false;
-      } else {
-        css += ', ';
+        css += '_.prose, ';
       }
       css += layerName(generateName(i, true));
     }

@@ -25,13 +25,6 @@ interface MacroContext {
   addAsset(asset: {type: string; content: string}): void;
 }
 
-// in order of importance
-// - Opt out API for elements, Tailwind .not-prose. Can we use `scope`? @scope is "newly available"
-// - Size variable?
-// - mergeStyles?
-// - plan for eventually extending, such as changing font
-// - plan for https://github.com/tailwindlabs/tailwindcss-typography#element-modifiers
-
 const marginTop = {
   body: getToken('body-margin-multiplier') + 'em',
   heading: getToken('heading-margin-top-multiplier') + 'em',
@@ -48,7 +41,7 @@ const marginBottom = {
 
 export function prose(this: MacroContext | void) {
   let rules = {
-    '.prose': font('body'), // note: `prose` is a placeholder class name that will be replaced with a hashed class name
+    '.prose': font('body'), // note: `prose` is a placeholder class name that is replaced with a hashed class name below
     h1: {
       ...font('heading-xl'),
       ...margin('heading')
@@ -254,9 +247,8 @@ export function prose(this: MacroContext | void) {
   css = css.replaceAll('prose', `${hashedRoot}`);
 
   // The prose layer is always lower priority than the style macro layers.
-  css = `@layer prose, _;
-  
-@layer prose {
+  css = `
+@layer _.prose {
   ${css}
 }`;
 
