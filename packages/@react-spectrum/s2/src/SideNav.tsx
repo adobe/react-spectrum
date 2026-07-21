@@ -43,6 +43,8 @@ import {
 import {GridListHeaderProps, GridListSectionProps} from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
+import {mergeProps} from 'react-aria/mergeProps';
+import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import {
   TreeItemProps as RACTreeItemProps,
@@ -319,6 +321,8 @@ const SideNavItemLinkContext = createContext<{
   // Lets the row track whether the link (as opposed to another focusable child like an ActionMenu
   // trigger) is the focused element, so the row focus ring can follow the link specifically.
   onFocusChange?: (isFocused: boolean) => void;
+  // So we can scale the row when the link is pressed.
+  onPressChange?: (isPressed: boolean) => void;
 }>({});
 
 export const SideNavItem = (props: SideNavItemProps): ReactNode => {
@@ -426,6 +430,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
         id,
         state,
         isHovered,
+        isPressed,
         isFocusVisible,
         isFocusVisibleWithin
       }) => {
@@ -441,6 +446,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
             state={state}
             selectedRoute={selectedRoute}
             isHovered={isHovered}
+            isPressed={isPressed}
             isFocusVisible={isFocusVisible}
             isFocusVisibleWithin={isFocusVisibleWithin}>
             {children}
@@ -463,35 +469,44 @@ const SideNavItemContentInner = props => {
     state,
     selectedRoute,
     isHovered,
+    isPressed,
     isFocusVisible,
     isFocusVisibleWithin,
     children
   } = props;
+
+  useRouteFocusSync({state});
+
   // Whether the link within this row is the focused element (any modality). Combined with the
   // keyboard-only isFocusVisibleWithin below, this lets the row focus ring follow the link
   // specifically and not other focusable children (e.g. an ActionMenu trigger).
   let [isLinkFocused, setLinkFocused] = useState(false);
-
-  useRouteFocusSync({state});
+  let [isLinkPressed, setLinkPressed] = useState(false);
+  let cellRef = useRef<HTMLDivElement | null>(null);
 
   let hasLink = linkProps.href != null && linkProps.href.length > 0;
+
+  // oxlint-disable-next-line react-compiler
+  let itemScaling = pressScale(cellRef)({isPressed: isLinkPressed || isPressed});
 
   return (
     <>
       <div
-        className={indicator({
-          isDisabled,
-          isSelected: linkProps.href === selectedRoute,
-          isHovered: isHovered && hasLink
-        })}
-      />
-      <div
+        ref={cellRef}
         className={treeCellGrid({
           isDisabled,
           isSelected: linkProps.href === selectedRoute,
           isDescendantSelected:
             !isExpanded && hasChildItems && hasSelectedDescendant(id, state, selectedRoute)
-        })}>
+        })}
+        style={itemScaling}>
+        <div
+          className={indicator({
+            isDisabled,
+            isSelected: linkProps.href === selectedRoute,
+            isHovered: isHovered && hasLink
+          })}
+        />
         <div
           className={treeRowFocusRing({
             isFocusVisible: isFocusVisible || (isFocusVisibleWithin && isLinkFocused),
@@ -509,7 +524,15 @@ const SideNavItemContentInner = props => {
             [TextContext, {styles: treeContent}],
             // forward this so that it gets out of the fake dom's tree and into the real one, and
             // add onFocusChange so the link reports focus for the row focus ring.
-            [SideNavItemLinkContext, {...linkProps, isDisabled, onFocusChange: setLinkFocused}],
+            [
+              SideNavItemLinkContext,
+              {
+                ...linkProps,
+                isDisabled,
+                onFocusChange: setLinkFocused,
+                onPressChange: setLinkPressed
+              }
+            ],
             [
               IconContext,
               {
