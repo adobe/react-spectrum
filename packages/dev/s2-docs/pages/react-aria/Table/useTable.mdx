@@ -1,0 +1,109 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/table';
+import statelyDocs from 'docs:@react-stately/table';
+import Anatomy from '../TableAnatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a table component.';
+export const isSubpage = true;
+
+# useTable
+
+<PageDescription>{docs.exports.useTable.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Table.tsx", "starters/hooks/src/Table.css"]}
+"use client";
+import {Table, TableHeader, TableBody, Column, Row, Cell} from 'hooks-starter/Table';
+
+<Table aria-label="Pokémon" selectionMode="multiple" selectionBehavior="replace">
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="charizard"><Cell>Charizard</Cell><Cell>Fire, Flying</Cell><Cell>67</Cell></Row>
+    <Row key="blastoise"><Cell>Blastoise</Cell><Cell>Water</Cell><Cell>56</Cell></Row>
+    <Row key="venusaur"><Cell>Venusaur</Cell><Cell>Grass, Poison</Cell><Cell>83</Cell></Row>
+    <Row key="pikachu"><Cell>Pikachu</Cell><Cell>Electric</Cell><Cell>100</Cell></Row>
+  </TableBody>
+</Table>
+```
+
+## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a table" />
+
+```tsx
+<ResizableTableContainer>
+  <Table>
+    <TableHeader>
+      <Column />
+      <Column><Checkbox slot="selection" /></Column>
+      <Column><ColumnResizer /></Column>
+      <Column />
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell><Button slot="drag" /></Cell>
+        <Cell>
+          <Checkbox slot="selection" /> or <SelectionIndicator />
+        </Cell>
+        <Cell>
+          <Button slot="chevron" />
+        </Cell>
+        <Cell />
+        <Row>
+          {/* ... */}
+        </Row>
+      </Row>
+      <TableLoadMoreItem />
+    </TableBody>
+    <TableFooter>
+      <Row>
+        <Cell />
+      </Row>
+    </TableFooter>
+  </Table>
+</ResizableTableContainer>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useTableState, links: statelyDocs.links},
+    {function: docs.exports.useTable, links: docs.links},
+    {function: docs.exports.useTableRowGroup, links: docs.links},
+    {function: docs.exports.useTableHeaderRow, links: docs.links},
+    {function: docs.exports.useTableColumnHeader, links: docs.links},
+    {function: docs.exports.useTableRow, links: docs.links},
+    {function: docs.exports.useTableCell, links: docs.links},
+  ]}
+/>
+
+### TableState
+
+<InterfaceType {...statelyDocs.exports.TableState} links={statelyDocs.links} />
+
+### AriaTableProps
+
+<InterfaceType {...docs.exports.AriaTableProps} />
+
+### AriaTableColumnHeaderProps
+
+<InterfaceType {...docs.exports.AriaTableColumnHeaderProps} />
+
+### AriaTableCellProps
+
+<InterfaceType {...docs.exports.AriaTableCellProps} />

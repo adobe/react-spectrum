@@ -511,8 +511,8 @@ export interface GridListItemProps<T = object>
    */
   onAction?: () => void;
   /**
-   * Whether the row or its first focusable child element should be focused when the row is
-   * focused. Defaults to 'row'.
+   * Whether the row or its first focusable child element should be focused when navigating
+   * to the row. Defaults to 'row'.
    */
   focusMode?: 'child' | 'row';
   /**

@@ -137,7 +137,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       ArrowUp: e => {
         return getNextElement('prev', e);
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let groupName = useId(name);

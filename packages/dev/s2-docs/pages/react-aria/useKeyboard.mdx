@@ -20,7 +20,7 @@ export const description = 'Handles keyboard interactions with improved event pr
 <PageDescription>{docs.exports.useKeyboard.description}</PageDescription>
 
 ```tsx render
-"use client"
+"use client";
 import React from 'react';
 import {useKeyboard} from 'react-aria/useKeyboard';
 
@@ -41,12 +41,11 @@ function Example() {
       <input
         {...keyboardProps}
         id="example" />
-      <ul style={{
-        height: 100,
-        overflow: 'auto',
-        border: '1px solid gray',
-        width: 200
-      }}>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
         {events.map((e, i) => <li key={i}>{e}</li>)}
       </ul>
     </>
@@ -61,6 +60,83 @@ is stopped by default if there is an event handler, unless `event.continuePropag
 This provides better modularity by default, so that a parent component doesn't respond to an event
 that a child already handled. If the child doesn't handle the event (e.g. it was for an unknown key),
 it can call `event.continuePropagation()` to allow parents to handle the event.
+
+### Shortcuts
+
+`useKeyboard` also accepts a `shortcuts` prop, which maps shortcut strings to handler functions.
+Shortcuts combine modifiers and keys with `+` (e.g. `"Mod+s"`, `"Shift+ArrowLeft"`). Modifier names
+are case-insensitive and can appear in any order. **Mod** means Command on macOS and Control on
+other platforms. (You can also use dynamic keys to create platform-specific shortcuts.
+`[key + (isMac() ? '+Alt' : '+Control')]`)
+
+When a key is pressed, the event is matched against the shortcuts map. If a handler is found, it is
+called after any `onKeyDown` handler. Handlers may return:
+
+* Nothing — the shortcut is handled. Propagation is stopped and the default action is prevented.
+* `true` or `false` — shorthand for preventing the default action (`true`) or allowing the browser
+  default and propagation to continue (`false`).
+* An object with `shouldContinuePropagation` and/or `shouldPreventDefault` for fine-grained control.
+
+If no shortcut matches, the event is propagated to parent elements.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useKeyboard} from 'react-aria/useKeyboard';
+
+function Example() {
+  let [events, setEvents] = React.useState<string[]>([]);
+  let add = (message: string) => setEvents(events => [message, ...events]);
+
+  let {keyboardProps: parentProps} = useKeyboard({
+    onKeyDown: () => add('parent onKeyDown')
+  });
+
+  let {keyboardProps: childProps} = useKeyboard({
+    shortcuts: {
+      'Mod+s': () => add('child shortcut: Mod+s (prevents save dialog)'),
+      'ArrowLeft': () => add('child shortcut: ArrowLeft (prevents default, stops propagation)'),
+      'ArrowRight': () => {
+        add('child shortcut: ArrowRight (allows default, continues propagation)');
+        return false;
+      }
+    },
+    onKeyDown: () => add('child onKeyDown')
+  });
+
+  return (
+    <>
+      <p>
+        Focus the text field and press <kbd>Mod</kbd>+<kbd>S</kbd>, <kbd>←</kbd>,
+        or <kbd>→</kbd>. <kbd>←</kbd> prevents the cursor from moving. <kbd>→</kbd> moves the
+        cursor and propagates to the parent. Press any other key to see unmatched events propagate.
+      </p>
+      <div
+        {...parentProps}
+        style={{
+          border: '1px solid gray',
+          padding: 16
+        }}>
+        <label htmlFor="shortcuts-example" style={{display: 'block', marginBottom: 8}}>
+          Text field
+        </label>
+        <input
+          {...childProps}
+          id="shortcuts-example"
+          defaultValue="Move the cursor with arrow keys"
+          style={{width: '100%'}} />
+      </div>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```
 
 ## API
 

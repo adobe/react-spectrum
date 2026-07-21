@@ -10,7 +10,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['data', 'grid'];
 export const relatedPages = [
-  {title: 'useTable', url: 'Table/useTable.html'},
+  {title: 'useTable', url: './Table/useTable'},
   {title: 'Testing Table', url: './Table/testing'}
 ];
 export const description = 'Displays data in rows and columns and enables a user to navigate its contents via directional navigation keys.';
@@ -762,17 +762,12 @@ let files = [
         <Cell>{item.name}</Cell>
         <Cell>{item.type}</Cell>
         <Cell>{item.date}</Cell>
-        <Cell><TextField aria-label={`${item.name} notes`} defaultValue="" /></Cell>
+        <Cell><TextField aria-label={`${item.name} notes`} placeholder="Enter notes" /></Cell>
       </Row>
     )}
   </TableBody>
 </Table>
 ```
-
-You can further control if a cell automatically focuses itself or its children on keyboard focus via `focusMode`. Futhermore, `allowsArrowNavigation` can be used to allow arrow key navigation from the cell's children to adjacent cells.
-This allows keyboard users to navigate to the selection checkboxes without needing to tab in and out of the selection cell even when in tab keyboard navigation.
-The vanilla CSS starter applies these to selection cells automatically, see the **Table.tsx** tab above.
-Be sure to only set `allowsArrowNavigation` on cells whose interactive content don't use arrow keys.
 
 ## Drag and drop
 
