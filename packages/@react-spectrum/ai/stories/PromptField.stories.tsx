@@ -11,7 +11,6 @@
  */
 
 import {action} from 'storybook/actions';
-import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import {
   AttachFileMenuItem,
   AutoLinkingTokenFieldValue,
@@ -47,6 +46,7 @@ import * as data from '../src/loader/data';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
+import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
