@@ -699,10 +699,11 @@ function closestVisibleKey(
   let target = key;
   let node = collection.getItem(key);
   while (node?.parentKey != null) {
-    if (!expandedKeys.has(node.parentKey)) {
+    let parent = collection.getItem(node.parentKey);
+    if (parent?.type === 'item' && !expandedKeys.has(node.parentKey)) {
       target = node.parentKey;
     }
-    node = collection.getItem(node.parentKey);
+    node = parent;
   }
   return target;
 }

@@ -18,10 +18,12 @@ import React from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {
   SideNav,
+  SideNavHeader,
   SideNavItem,
   SideNavItemContent,
   SideNavItemLink,
-  SideNavProps
+  SideNavProps,
+  SideNavSection
 } from '../src/SideNav';
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
@@ -293,6 +295,70 @@ describe('SideNav', () => {
     expect(queryByRole('link', {name: 'Projects 1A'})).toBeNull();
 
     await user.tab();
+    expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
+  });
+
+  it('can tab onto the selected item when items are grouped in sections', async () => {
+    // A Section ancestor is always visible; it must not be treated as a collapsed parent (which
+    // would move the tab stop onto the section, leaving no focusable link and breaking tabbing in).
+    function RoutedSideNavExample(props: Partial<SideNavProps<unknown>>) {
+      let [selectedRoute, setSelectedRoute] = React.useState('/projects');
+      return (
+        <RouterProvider navigate={setSelectedRoute}>
+          <SideNav aria-label="Test sidenav" selectedRoute={selectedRoute} {...props}>
+            <SideNavSection>
+              <SideNavHeader>Photography</SideNavHeader>
+              <SideNavItem id="photos" href="/Photos" textValue="Photos">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Your files</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+            </SideNavSection>
+            <SideNavSection>
+              <SideNavHeader>Work</SideNavHeader>
+              <SideNavItem id="projects" href="/projects" textValue="Projects">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Your libraries</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+                <SideNavItem id="projects-2" href="/projects-2" textValue="Projects 2">
+                  <SideNavItemContent>
+                    <SideNavItemLink>
+                      <Text>Projects 2</Text>
+                    </SideNavItemLink>
+                  </SideNavItemContent>
+                </SideNavItem>
+              </SideNavItem>
+            </SideNavSection>
+          </SideNav>
+        </RouterProvider>
+      );
+    }
+    let {getByRole} = render(<RoutedSideNavExample />);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await user.tab();
+    expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
+
+    await user.keyboard('{ArrowRight}');
+    await user.keyboard('{ArrowDown}');
+    expect(getByRole('link', {name: 'Projects 2'})).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(getByRole('link', {name: 'Projects 2'})).toHaveAttribute('aria-current', 'page');
+
+    await user.keyboard('{ArrowUp}');
+    expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
+    await user.keyboard('{ArrowUp}');
+    expect(getByRole('link', {name: 'Your files'})).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(getByRole('link', {name: 'Your files'})).toHaveAttribute('aria-current', 'page');
+
+    await user.keyboard('{ArrowDown}');
     expect(getByRole('link', {name: 'Your libraries'})).toHaveFocus();
   });
 
