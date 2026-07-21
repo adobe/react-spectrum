@@ -101,16 +101,13 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
 
   let hasCloseWatcher = typeof window !== 'undefined' && typeof window.CloseWatcher === 'function';
 
-  // A stable callback that always calls the latest onClose, so the close watcher
-  // subscription does not need to re-run (and churn the pool) on every re-render.
   let onCloseRequest = useEffectEvent(() => onClose?.());
-
   useEffect(() => {
     if (!isOpen || isKeyboardDismissDisabled || !hasCloseWatcher) {
       return;
     }
+    // Should *every* overlay be closed by close watcher? should some just be Esc? "Tooltip" for example?
     return subscribeCloseWatcher({ref, onClose: onCloseRequest});
-    // onCloseRequest is a stable useEffectEvent and must be omitted from deps.
   }, [isOpen, isKeyboardDismissDisabled, hasCloseWatcher, ref]);
 
   let onInteractOutsideStart = (e: PointerEvent) => {
@@ -145,17 +142,21 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   // When CloseWatcher is available, Escape is handled via the subscription
   // above and we must NOT preventDefault here or the native close request
   // would be suppressed.
-  let {keyboardProps} = useKeyboard(hasCloseWatcher ? {} : {
-    shortcuts: {
-      Escape: () => {
-        if (!isKeyboardDismissDisabled) {
-          onHide();
-          return;
+  let {keyboardProps} = useKeyboard(
+    hasCloseWatcher
+      ? {}
+      : {
+          shortcuts: {
+            Escape: () => {
+              if (!isKeyboardDismissDisabled) {
+                onHide();
+                return;
+              }
+              return false;
+            }
+          }
         }
-        return false;
-      }
-    }
-  });
+  );
 
   // Handle clicking outside the overlay to close it
   useInteractOutside({
