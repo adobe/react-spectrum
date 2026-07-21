@@ -75,7 +75,8 @@ export function useDatePickerGroup(
         }
         return false;
       }
-    }
+    },
+    allowRepeats: true
   });
 
   // Focus the first placeholder segment from the end on mouse down/touch up in the field.

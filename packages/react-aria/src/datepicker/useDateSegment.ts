@@ -138,7 +138,8 @@ export function useDateSegment(
         // Firefox does not fire selectstart for Ctrl/Cmd + A
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
       }
-    }
+    },
+    allowRepeats: true
   });
 
   // Safari dayPeriod option doesn't work...
@@ -264,7 +265,13 @@ export function useDateSegment(
     // Otherwise, when tapping on a segment in Android Chrome and then entering text,
     // composition events will be fired that break the DOM structure and crash the page.
     let selection = window.getSelection();
-    if (selection?.anchorNode && nodeContains(ref.current, selection?.anchorNode)) {
+    // Only collapse while focused, otherwise a stale anchor left in the segment (e.g. on Firefox)
+    // steals focus back into it on selectionchange. See #10259.
+    if (
+      selection?.anchorNode &&
+      nodeContains(ref.current, selection?.anchorNode) &&
+      getActiveElement() === ref.current
+    ) {
       selection.collapse(ref.current);
     }
   });

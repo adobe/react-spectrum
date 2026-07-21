@@ -136,6 +136,7 @@ export {
 export {Keyboard, KeyboardContext} from '../src/Keyboard';
 export {Label, LabelContext} from '../src/Label';
 export {Link, LinkContext} from '../src/Link';
+export {PreviewTrigger} from '../src/PreviewTrigger';
 export {
   ListBoxLoadMoreItem,
   ListBox,
@@ -224,6 +225,8 @@ export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from '../src/Ta
 export {Text, TextContext} from '../src/Text';
 export {TextArea, TextAreaContext} from '../src/TextArea';
 export {TextField, TextFieldContext} from '../src/TextField';
+export {TokenField, TokenInput, Token, TokenFieldContext} from '../src/TokenField';
+export {TokenFieldValue} from 'react-stately/useTokenFieldState';
 export {
   UNSTABLE_Toast,
   UNSTABLE_ToastList,
@@ -389,6 +392,7 @@ export type {InputProps, InputRenderProps} from '../src/Input';
 export type {SectionProps, CollectionRenderer} from '../src/Collection';
 export type {LabelProps} from '../src/Label';
 export type {LinkProps, LinkRenderProps} from '../src/Link';
+export type {PreviewTriggerProps} from '../src/PreviewTrigger';
 export type {
   ListBoxProps,
   ListBoxRenderProps,
@@ -492,6 +496,14 @@ export type {
 } from '../src/TagGroup';
 export type {TextAreaProps} from '../src/TextArea';
 export type {TextFieldProps, TextFieldRenderProps} from '../src/TextField';
+export type {
+  TokenFieldProps,
+  TokenFieldRenderProps,
+  TokenInputProps,
+  TokenInputRenderProps,
+  TokenProps,
+  TokenRenderProps
+} from '../src/TokenField';
 export type {TextProps} from '../src/Text';
 export type {
   ToastRegionProps,

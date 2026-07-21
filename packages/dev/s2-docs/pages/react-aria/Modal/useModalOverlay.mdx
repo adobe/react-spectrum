@@ -1,0 +1,110 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/overlays';
+import dialogDocs from 'docs:@react-aria/dialog';
+import statelyDocs from 'docs:@react-stately/overlays';
+import Anatomy from '/packages/react-aria/docs/overlays/modal-anatomy.svg';
+import 'hooks-starter/theme.css';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a modal overlay and dialog.';
+export const isSubpage = true;
+
+# useModalOverlay
+
+<PageDescription>{docs.exports.useModalOverlay.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Modal.tsx", "starters/hooks/src/Modal.css", "starters/hooks/src/Dialog.css", "starters/hooks/src/Button.css"]}
+"use client";
+import {Button} from 'react-aria-components/Button';
+import {Dialog, ModalTrigger} from 'hooks-starter/Modal';
+
+<ModalTrigger label="Open dialog">
+  {close =>
+    <Dialog title="Enter your name">
+      <p>This dialog is built with <code>useModalOverlay</code> and <code>useDialog</code>.</p>
+      <Button onPress={close} className="react-aria-Button button-base" data-variant="primary">Close</Button>
+    </Dialog>}
+</ModalTrigger>
+```
+
+## useDialog
+
+`useDialog` is the dialog primitive itself, so the `Dialog` component is built from scratch. To render it interactively, this example reuses the [Modal](../Modal), [Button](../Button), and `DialogTrigger` components from React Aria Components to provide the overlay container and trigger. A dialog may also be placed within a [popover](../Popover/usePopover).
+
+```tsx render files={["starters/hooks/src/Modal.tsx", "starters/hooks/src/Modal.css", "starters/hooks/src/Dialog.css", "starters/hooks/src/Button.css"]}
+"use client";
+import {CloseButton, Dialog, ModalTrigger} from 'hooks-starter/Modal';
+
+<ModalTrigger label="Open dialog">
+  {() =>
+    <Dialog title="Notice">
+      <p style={{marginTop: 0}}>This dialog is built with useDialog.</p>
+      <CloseButton />
+    </Dialog>}
+</ModalTrigger>
+```
+
+A dialog consists of a container element and an optional title. `useDialog` handles exposing this to assistive technology using ARIA. It can be combined with `useModalOverlay` or [usePopover](../Popover/usePopover) to create modal dialogs, popovers, and other types of overlays.
+
+If a dialog does not have a visible title element, an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive technology.
+
+Focus containment must be enabled from a component rendered _inside_ the [&lt;Overlay&gt;](../Popover) — `useDialog` does this automatically, which is why focus is contained in the examples above. If you render content that does not use `useDialog` (or another hook that enables containment), make sure `useModalOverlay` is called from a component rendered inside `<Overlay>` so that focus is properly contained.
+
+## API
+
+<Anatomy />
+
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button', ModalOverlay: '#modaloverlay', Modal: '#modal', Dialog: '#dialog'}}
+<DialogTrigger>
+  <Button />
+  <ModalOverlay>
+    <Modal>
+      <Dialog>
+        <Heading slot="title" />
+        <Text slot="description" />
+        <Button slot="close" />
+      </Dialog>
+    </Modal>
+  </ModalOverlay>
+</DialogTrigger>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useOverlayTriggerState, links: statelyDocs.links},
+    {function: docs.exports.useModalOverlay, links: docs.links},
+    {function: dialogDocs.exports.useDialog, links: dialogDocs.links},
+  ]}
+/>
+
+### OverlayTriggerState
+
+<InterfaceType {...statelyDocs.exports.OverlayTriggerState} links={statelyDocs.links} />
+
+### AriaModalOverlayProps
+
+<InterfaceType {...docs.exports.AriaModalOverlayProps} links={docs.links} />
+
+### ModalOverlayAria
+
+<InterfaceType {...docs.exports.ModalOverlayAria} links={dialogDocs.links} grouped={false} />
+
+### AriaDialogProps
+
+<InterfaceType {...dialogDocs.exports.AriaDialogProps} links={dialogDocs.links} />
+
+### DialogAria
+
+<InterfaceType {...dialogDocs.exports.DialogAria} links={dialogDocs.links} grouped={false} />

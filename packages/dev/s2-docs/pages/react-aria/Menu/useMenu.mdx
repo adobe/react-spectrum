@@ -1,0 +1,118 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/menu';
+import Anatomy from '../MenuAnatomy.svg';
+import menuStatelyDocs from 'docs:@react-stately/menu';
+import treeStatelyDocs from 'docs:@react-stately/tree';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a menu component.';
+export const isSubpage = true;
+
+# useMenu
+
+<PageDescription>{docs.exports.useMenu.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Menu.tsx", "starters/hooks/src/Menu.css", "starters/hooks/src/Button.css", "starters/hooks/src/Popover.css"]}
+"use client";
+import {MenuButton, MenuItem} from 'hooks-starter/Menu';
+
+<MenuButton aria-label="Actions" onAction={key => alert(key)}>
+  <MenuItem id="copy">Copy</MenuItem>
+  <MenuItem id="cut">Cut</MenuItem>
+  <MenuItem id="paste">Paste</MenuItem>
+</MenuButton>
+```
+
+## API
+
+<Anatomy />
+
+```tsx
+<MenuTrigger>
+  <Button />
+  <Popover>
+    <Menu>
+      <MenuItem>
+        <Text slot="label" />
+        <Text slot="description" />
+        <Keyboard />
+        <SelectionIndicator />
+      </MenuItem>
+      <Separator />
+      <MenuSection>
+        <Header />
+        <MenuItem />
+      </MenuSection>
+      <SubmenuTrigger>
+        <MenuItem />
+        <Popover>
+          <Menu />
+        </Popover>
+      </SubmenuTrigger>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: menuStatelyDocs.exports.useMenuTriggerState, links: menuStatelyDocs.links},
+    {function: treeStatelyDocs.exports.useTreeState, links: treeStatelyDocs.links},
+    {function: docs.exports.useMenuTrigger, links: docs.links},
+    {function: docs.exports.useMenu, links: docs.links},
+    {function: docs.exports.useMenuItem, links: docs.links},
+    {function: docs.exports.useMenuSection, links: docs.links},
+  ]}
+/>
+
+### MenuTriggerState
+
+<InterfaceType {...menuStatelyDocs.exports.MenuTriggerState} links={menuStatelyDocs.links} />
+
+### TreeState
+
+<InterfaceType {...treeStatelyDocs.exports.TreeState} links={treeStatelyDocs.links} />
+
+### AriaMenuTriggerProps
+
+<InterfaceType {...docs.exports.AriaMenuTriggerProps} />
+
+### MenuTriggerAria
+
+<InterfaceType {...docs.exports.MenuTriggerAria} />
+
+### AriaMenuOptions
+
+<InterfaceType {...docs.exports.AriaMenuOptions} />
+
+### MenuAria
+
+<InterfaceType {...docs.exports.MenuAria} />
+
+### AriaMenuItemProps
+
+<InterfaceType {...docs.exports.AriaMenuItemProps} />
+
+### MenuItemAria
+
+<InterfaceType {...docs.exports.MenuItemAria} />
+
+### AriaMenuSectionProps
+
+<InterfaceType {...docs.exports.AriaMenuSectionProps} />
+
+### MenuSectionAria
+
+<InterfaceType {...docs.exports.MenuSectionAria} />

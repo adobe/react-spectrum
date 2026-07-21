@@ -3315,7 +3315,7 @@ describe('usePress', function () {
       fireEvent.keyDown(el, {key: 'Enter'});
       fireEvent.keyUp(el, {key: 'Enter'});
 
-      // Enter key handled should do nothing on a checkbox
+      // Enter key handled should not result in a press event on a checkbox
       expect(events).toEqual([]);
 
       let allow = fireEvent.keyDown(el, {key: ' '});

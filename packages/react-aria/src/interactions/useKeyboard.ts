@@ -25,7 +25,9 @@ export interface KeyboardProps extends KeyboardEvents {
   isDisabled?: boolean;
   /** Keyboard shortcuts to handle. */
   shortcuts?: KeyboardShortcutBindings;
+  /** Whether to allow repeating keys. Only affects shortcuts. */
   allowRepeats?: boolean;
+  /** Whether to allow composing keys. Only affects shortcuts. */
   allowComposing?: boolean;
 }
 

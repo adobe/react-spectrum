@@ -381,6 +381,36 @@ describe('Select', () => {
     expect(button).toHaveTextContent('0');
   });
 
+  it('should support repeat keydown events when holding an arrow key', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <Select onChange={onSelectionChange} aria-label="Pick a number">
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox items={Array.from({length: 3}).map((_, i) => ({id: i, label: `${i}`}))}>
+            {item => (
+              <ListBoxItem id={item.id} textValue={item.label}>
+                {item.label}
+              </ListBoxItem>
+            )}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    await user.tab();
+    expect(button).toHaveFocus();
+
+    // Arrow key navigation while closed moves the selection.
+    await user.keyboard('{ArrowRight>2/}');
+
+    expect(onSelectionChange).toHaveBeenLastCalledWith(1);
+    expect(button).toHaveTextContent('1');
+  });
+
   it('should support falsy (0) as a valid default value', async () => {
     let {getByRole} = render(
       <Select placeholder="pick a number">

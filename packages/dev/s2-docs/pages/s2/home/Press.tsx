@@ -1,5 +1,5 @@
 'use client';
-import {animate, useIntersectionObserver} from '@react-spectrum/docs/pages/react-aria/home/utils';
+import {animate, useIntersectionObserver} from '../../react-aria/home/utils';
 import {ReactNode, RefObject, useCallback, useRef, useState} from 'react';
 import {Button, Checkbox} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
