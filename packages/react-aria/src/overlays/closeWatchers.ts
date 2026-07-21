@@ -44,7 +44,7 @@ declare global {
 // In this case, we need to reconcile that difference and create a new CloseWatcher.
 
 export interface CloseWatcherSubscriber {
-  /** The overlay container ref, used to determine z-order via visibleOverlays. */
+  /** The overlay container ref, used to determine react aria's stacking order via visibleOverlays. */
   ref: RefObject<Element | null>;
   /** Called when this overlay should close because it is the top-most. */
   onClose: () => void;
