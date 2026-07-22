@@ -43,13 +43,7 @@
       "/*": ["./*"]
     }
   },
-  "include": [
-    "packages",
-    "lib/svg.d.ts",
-    "lib/viewTransitions.d.ts",
-    "lib/css.d.ts",
-    "lib/dom.d.ts"
-  ],
+  "include": ["packages", "lib/svg.d.ts", "lib/viewTransitions.d.ts", "lib/css.d.ts"],
   "exclude": [
     "**/node_modules",
     "packages/dev/optimize-locales-plugin",

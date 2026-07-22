@@ -14,7 +14,7 @@ import {getOwnerDocument, getOwnerWindow} from './domHelpers';
 
 declare global {
   interface Window {
-    __webpack_nonce__?: string
+    __webpack_nonce__?: string;
   }
   // eslint-disable-next-line no-var
   var __webpack_nonce__: string | undefined;
