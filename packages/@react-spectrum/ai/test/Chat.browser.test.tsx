@@ -13,11 +13,10 @@
 import {Button, Collection} from 'react-aria-components';
 import {Chat, Thread, ThreadItem, ThreadLoadMoreItem, ThreadScrollButton} from '../src/Chat';
 import {describe, expect, it, vi} from 'vitest';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {userEvent} from 'vitest/browser';
-import {UserMessage} from '../src/UserMessage';
 
 // Applied to Thread when it needs its own scroll viewport.
 let scrollThreadStyles = style({
@@ -135,21 +134,6 @@ const CONVERSATION: Message[] = [
   }
 ];
 
-function renderAsyncMessage(msg: Message) {
-  if (msg.role === 'user') {
-    return (
-      <ThreadItem textValue={msg.content} styles={style({display: 'flex', justifyContent: 'end'})}>
-        <UserMessage>{msg.content}</UserMessage>
-      </ThreadItem>
-    );
-  }
-  return (
-    <ThreadItem textValue={msg.content} styles={style({font: 'body'})}>
-      {msg.content}
-    </ThreadItem>
-  );
-}
-
 // Async virtualized thread that starts with the most recent `pageSize` messages and
 // prepends older batches on demand. Pass `delay` to slow down loads in tests that
 // need to observe the in-flight loading state.
@@ -187,7 +171,7 @@ function AsyncVirtualizedThread({
   return (
     <div>
       <Chat>
-        <Thread anchorTo="end" aria-label="Chat">
+        <Thread aria-label="Chat">
           <ThreadLoadMoreItem
             isLoading={isLoading}
             onLoadMore={hasMore ? handleLoadMore : undefined}>
@@ -202,63 +186,13 @@ function AsyncVirtualizedThread({
   );
 }
 
-// Non-virtualized equivalent — uses column-reverse layout. Items are reversed so the
-// newest is first in the DOM (visible at scrollTop=0). ThreadLoadMoreItem goes after
-// Collection so it lands at the visual top (DOM end in column-reverse).
-function AsyncNonVirtualizedThread({
-  messages,
-  pageSize = 5,
-  delay = 20
-}: {
-  messages: Message[];
-  pageSize?: number;
-  delay?: number;
-}) {
-  let [visible, setVisible] = useState(() => messages.slice(-pageSize));
-  let [loaded, setLoaded] = useState(pageSize);
-  let [isLoading, setIsLoading] = useState(false);
-  let reversed = useMemo(() => [...visible].reverse(), [visible]);
-  let hasMore = loaded < messages.length;
-
-  let handleLoadMore = useCallback(async () => {
-    setIsLoading(true);
-    await new Promise<void>(r => setTimeout(r, delay));
-    let start = Math.max(0, messages.length - loaded - pageSize);
-    let end = messages.length - loaded;
-    let batch = messages.slice(start, end);
-    setVisible(prev => [...batch, ...prev]);
-    setLoaded(prev => Math.min(prev + pageSize, messages.length));
-    setIsLoading(false);
-  }, [messages, pageSize, loaded, delay]);
-
-  return (
-    <div
-      style={{
-        width: 600,
-        height: 400,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden'
-      }}>
-      <Chat>
-        <Thread aria-label="Chat" styles={scrollThreadStyles}>
-          <Collection items={reversed}>{renderAsyncMessage}</Collection>
-          <ThreadLoadMoreItem
-            isLoading={isLoading}
-            onLoadMore={hasMore && !isLoading ? handleLoadMore : undefined}>
-            <span aria-label="Loading older messages">Loading…</span>
-          </ThreadLoadMoreItem>
-        </Thread>
-      </Chat>
-    </div>
-  );
-}
-
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+const itOrSkip = process.env.CI ? it.skip : it;
+
 describeOrSkip('Chat browser', () => {
   describe('spatial navigation', () => {
     // This test is flaky in Firefox. Skipping for now.
-    it.skip('navigates between items in spatial order via arrow keys', async () => {
+    itOrSkip('navigates between items in spatial order via arrow keys', async () => {
       let messages: Message[] = [
         {id: '1', content: 'First message'},
         {id: '2', content: 'Second message'},
@@ -297,7 +231,6 @@ describeOrSkip('Chat browser', () => {
           <input type="text" id="before" />
           <Chat>
             <Thread
-              anchorTo="end"
               items={
                 [
                   {id: '1', content: 'Hello', role: 'user'},
@@ -341,14 +274,13 @@ describeOrSkip('Chat browser', () => {
       expect(rows[0]).toHaveTextContent('World');
     });
 
-    // Flaky in Firefox. Skip for now.
-    it.skip('navigates between items with arrow keys', async () => {
+    // Flaky in Firefox. Skip for now in CI.
+    itOrSkip('navigates between items with arrow keys', async () => {
       let {container} = await render(
         <div>
           <input type="text" id="before" />
           <Chat>
             <Thread
-              anchorTo="end"
               items={
                 [
                   {id: '1', content: 'Hello'},
@@ -393,15 +325,14 @@ describeOrSkip('Chat browser', () => {
       expect(rows[0]).toHaveTextContent('World');
     });
 
-    // Flaky in Firefox. Skip for now.
+    // Flaky in Firefox. Skip for now in CI.
     // We might change this behavior in the future so that it doesn't always re-focus the newest item when re-tabbing in. Instead, it will focus the previous focused item (if there was one).
-    it.skip('always re-focuses the newest item when re-tabbing in', async () => {
+    itOrSkip('always re-focuses the newest item when re-tabbing in', async () => {
       let {container} = await render(
         <div>
           <input type="text" id="before" />
           <Chat>
             <Thread
-              anchorTo="end"
               items={
                 [
                   {id: '1', content: 'Hello'},
@@ -474,7 +405,7 @@ describeOrSkip('Chat browser', () => {
                 Scroll to bottom
               </Button>
             </ThreadScrollButton>
-            <Thread anchorTo="end" items={messages} aria-label="Chat" styles={scrollThreadStyles}>
+            <Thread items={messages} aria-label="Chat" styles={scrollThreadStyles}>
               {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
           </Chat>
@@ -528,7 +459,7 @@ describeOrSkip('Chat browser', () => {
                 Scroll to bottom
               </Button>
             </ThreadScrollButton>
-            <Thread anchorTo="end" items={messages} aria-label="Chat" styles={scrollThreadStyles}>
+            <Thread items={messages} aria-label="Chat" styles={scrollThreadStyles}>
               {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
           </Chat>
@@ -570,7 +501,7 @@ describeOrSkip('Chat browser', () => {
                 Scroll to bottom
               </Button>
             </ThreadScrollButton>
-            <Thread anchorTo="end" items={messages} aria-label="Chat" styles={scrollThreadStyles}>
+            <Thread items={messages} aria-label="Chat" styles={scrollThreadStyles}>
               {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
           </Chat>
@@ -677,56 +608,6 @@ describeOrSkip('Chat browser', () => {
       await new Promise(r => setTimeout(r, 200));
       let rows = container.querySelectorAll('[role="row"]');
       expect(rows.length).toBe(3);
-    });
-  });
-
-  describe('async loading – non-virtualized', () => {
-    it('shows loading indicator while onLoadMore is in-flight', async () => {
-      // 3 of 6 messages fit in the 400px container → sentinel visible → load starts.
-      let {container} = await render(
-        <AsyncNonVirtualizedThread messages={CONVERSATION.slice(0, 6)} pageSize={3} delay={5000} />
-      );
-
-      await vi.waitFor(
-        () => {
-          expect(
-            container.querySelector('[aria-label="Loading older messages"]')
-          ).toBeInTheDocument();
-        },
-        {timeout: 3000}
-      );
-    });
-
-    it('fires onLoadMore when sentinel is visible and prepends older items', async () => {
-      let {container} = await render(
-        <AsyncNonVirtualizedThread messages={CONVERSATION.slice(0, 6)} pageSize={3} />
-      );
-
-      // Wait for all 6 rows to appear.
-      await vi.waitFor(
-        () => {
-          let rows = container.querySelectorAll('[role="row"]');
-          expect(rows.length).toBe(6);
-        },
-        {timeout: 3000}
-      );
-    });
-
-    it('hides loading indicator after load completes', async () => {
-      let {container} = await render(
-        <AsyncNonVirtualizedThread messages={CONVERSATION.slice(0, 6)} pageSize={3} />
-      );
-
-      await vi.waitFor(
-        () => {
-          let rows = container.querySelectorAll('[role="row"]');
-          expect(rows.length).toBe(6);
-          expect(
-            container.querySelector('[aria-label="Loading older messages"]')
-          ).not.toBeInTheDocument();
-        },
-        {timeout: 3000}
-      );
     });
   });
 });

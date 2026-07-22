@@ -233,7 +233,6 @@ export interface ThreadProps<T extends object> extends Pick<
    * @default 100
    */
   scrollEndThreshold?: number;
-  anchorTo?: 'end';
 }
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
@@ -241,13 +240,10 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     items,
     children,
     styles,
-    anchorTo,
     scrollEndThreshold = 100,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
-
-  let reversedItems = useMemo(() => (items != null ? [...items].reverse() : undefined), [items]);
 
   let {setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
   let isNearBottomRef = useRef(true);
@@ -266,73 +262,109 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       return;
     }
 
-    let nearBottom =
-      anchorTo === 'end'
-        ? el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold
-        : el.scrollTop > -100;
+    let nearBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold;
     isNearBottomRef.current = nearBottom;
     setIsNearBottom(nearBottom);
-  }, [setIsNearBottom, scrollEndThreshold, anchorTo]);
+  }, [setIsNearBottom, scrollEndThreshold]);
 
-  let gridList = (
-    <GridList
-      ref={callbackRef}
-      disallowTypeAhead
-      onScroll={handleScroll}
-      keyboardNavigationBehavior="tab"
-      UNSTABLE_focusOnEntry="first"
-      items={reversedItems}
-      aria-label={ariaLabel}
-      aria-labelledby={ariaLabelledby}
-      // TODO: for now we enforce this, but to be configurable?
-      style={{
-        display: 'flex',
-        boxSizing: 'border-box',
-        flexDirection: 'column-reverse',
-        minWidth: 0
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        estimatedRowHeight: 100,
+        padding: 4,
+        gap: 8,
+        anchorTo: 'end',
+        loaderSize: 48,
+        scrollEndThreshold
       }}
-      className={styles}>
-      {children}
-    </GridList>
+      shouldObserveItemSize>
+      <GridList
+        ref={callbackRef}
+        disallowTypeAhead
+        onScroll={handleScroll}
+        keyboardNavigationBehavior="tab"
+        UNSTABLE_focusOnEntry="last"
+        items={items}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
+        // TODO: for now we enforce this, but to be configurable?
+        style={{
+          display: 'flex',
+          boxSizing: 'border-box',
+          minWidth: 0
+        }}
+        className={styles}>
+        {children}
+      </GridList>
+    </Virtualizer>
   );
 
-  if (anchorTo === 'end') {
-    return (
-      <Virtualizer
-        layout={ListLayout}
-        layoutOptions={{
-          estimatedRowHeight: 100,
-          padding: 4,
-          gap: 8,
-          anchorTo: 'end',
-          loaderSize: 48,
-          scrollEndThreshold
-        }}
-        shouldObserveItemSize>
-        <GridList
-          ref={callbackRef}
-          disallowTypeAhead
-          onScroll={handleScroll}
-          keyboardNavigationBehavior="tab"
-          UNSTABLE_focusOnEntry="last"
-          items={items}
-          aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledby}
-          // TODO: for now we enforce this, but to be configurable?
-          style={{
-            display: 'flex',
-            boxSizing: 'border-box',
-            minWidth: 0
-          }}
-          className={styles}>
-          {children}
-        </GridList>
-      </Virtualizer>
-    );
-  }
-
-  return gridList;
+  // return gridList;
 }
+
+// interface BasicThreadProps<T extends object> extends Pick<
+//   GridListProps<T>,
+//   'items' | 'children' | 'aria-label' | 'aria-labelledby' | 'UNSTABLE_focusOnEntry' | 'onScroll'
+// > {
+//   /**
+//    * Spectrum-defined styles, returned by the `style()` macro.
+//    */
+//   styles?: StyleString;
+// }
+
+// export function BasicThread<T extends object>(props: BasicThreadProps<T>) {
+//   let {
+//     items,
+//     children,
+//     styles,
+//     'aria-label': ariaLabel,
+//     'aria-labelledby': ariaLabelledby
+//   } = props;
+//   let {setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
+//   let isNearBottomRef = useRef(true);
+//   let gridListRef = useRef<HTMLDivElement | null>(null);
+//   let callbackRef = useCallback(
+//     (el: HTMLDivElement | null) => {
+//       gridListRef.current = el;
+//       setScrollElement(el);
+//     },
+//     [setScrollElement]
+//   );
+
+//   let handleScroll = useCallback(() => {
+//     let el = gridListRef.current;
+//     if (!el) {
+//       return;
+//     }
+
+//     let nearBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold;
+//   isNearBottomRef.current = nearBottom;
+//     setIsNearBottom(nearBottom);
+//   }, [setIsNearBottom, scrollEndThreshold]);
+
+//   return (
+//     <GridList
+//       ref={callbackRef}
+//       disallowTypeAhead
+//       onScroll={handleScroll}
+//       keyboardNavigationBehavior="tab"
+//       UNSTABLE_focusOnEntry="first"
+//       items={items}
+//       aria-label={ariaLabel}
+//       aria-labelledby={ariaLabelledby}
+//       // TODO: for now we enforce this, but to be configurable?
+//       style={{
+//         display: 'flex',
+//         boxSizing: 'border-box',
+//         flexDirection: 'column-reverse',
+//         minWidth: 0
+//       }}
+//       className={styles}>
+//       {children}
+//     </GridList>
+//   )
+// }
 
 export interface ThreadScrollButtonProps {
   children?: ReactNode;
