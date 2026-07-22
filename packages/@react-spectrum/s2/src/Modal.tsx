@@ -40,6 +40,8 @@ const modalOverlayStyles = style({
   isolation: 'isolate',
   backgroundColor: 'transparent-black-500',
   opacity: {
+    default: 0,
+    isOpen: 1,
     isEntering: 0,
     isExiting: 0
   },
@@ -148,6 +150,8 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
               },
               backgroundColor: '--s2-container-bg',
               opacity: {
+                default: 0,
+                isOpen: 1,
                 isEntering: 0,
                 isExiting: 0
               },

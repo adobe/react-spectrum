@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {addEvent, setStyle} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
-
-import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
+import {runAfterKeyboard} from '../utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {willOpenKeyboard} from '../utils/keyboard';
 
@@ -70,8 +71,8 @@ function preventScrollStandard() {
     scrollbarWidth > 0 &&
       // Use scrollbar-gutter when supported because it also works for fixed positioned elements.
       ('scrollbarGutter' in document.documentElement.style
-        ? setStyle(document.documentElement, 'scrollbarGutter', 'stable')
-        : setStyle(document.documentElement, 'paddingRight', `${scrollbarWidth}px`)),
+        ? setStyle(document.documentElement, 'scrollbar-gutter', 'stable')
+        : setStyle(document.documentElement, 'padding-right', `${scrollbarWidth}px`)),
     setStyle(document.documentElement, 'overflow', 'hidden')
   );
 }
@@ -180,7 +181,7 @@ function preventScrollMobileWebKit() {
     if (relatedTarget && willOpenKeyboard(relatedTarget)) {
       // Focus without scrolling the whole page, and then scroll into view manually.
       relatedTarget.focus({preventScroll: true});
-      scrollIntoViewWhenReady(relatedTarget, willOpenKeyboard(target));
+      runAfterKeyboard(() => scrollIntoView(relatedTarget));
     } else if (!relatedTarget) {
       // When tapping the Done button on the keyboard, focus moves to the body.
       // FocusScope will then restore focus back to the input. Later when tapping
@@ -194,18 +195,18 @@ function preventScrollMobileWebKit() {
 
   // Override programmatic focus to scroll into view without scrolling the whole page.
   let focus = HTMLElement.prototype.focus;
-  HTMLElement.prototype.focus = function (opts) {
-    // Track whether the keyboard was already visible before.
-    let activeElement = getActiveElement();
-    let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
+  Reflect.defineProperty(HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: function (opts?: FocusOptions) {
+      // Focus the element without scrolling the page.
+      focus.call(this, {...opts, preventScroll: true});
 
-    // Focus the element without scrolling the page.
-    focus.call(this, {...opts, preventScroll: true});
-
-    if (!opts || !opts.preventScroll) {
-      scrollIntoViewWhenReady(this, wasKeyboardVisible);
+      if (!opts || !opts.preventScroll) {
+        runAfterKeyboard(() => scrollIntoView(this));
+      }
     }
-  };
+  });
 
   let removeEvents = chain(
     addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
@@ -217,51 +218,18 @@ function preventScrollMobileWebKit() {
     restoreOverflow();
     removeEvents();
     style.remove();
-    HTMLElement.prototype.focus = focus;
+    Reflect.defineProperty(HTMLElement.prototype, 'focus', {
+      configurable: true,
+      writable: true,
+      value: focus
+    });
   };
-}
-
-// Sets a CSS property on an element, and returns a function to revert it to the previous value.
-function setStyle(element: HTMLElement, style: string, value: string) {
-  let cur = element.style[style];
-  element.style[style] = value;
-
-  return () => {
-    element.style[style] = cur;
-  };
-}
-
-// Adds an event listener to an element, and returns a function to remove it.
-function addEvent<K extends keyof GlobalEventHandlersEventMap>(
-  target: Document | Window,
-  event: K,
-  handler: (this: Document | Window, ev: GlobalEventHandlersEventMap[K]) => any,
-  options?: boolean | AddEventListenerOptions
-) {
-  // internal function, so it's ok to ignore the difficult to fix type error
-  // @ts-ignore
-  target.addEventListener(event, handler, options);
-  return () => {
-    // @ts-ignore
-    target.removeEventListener(event, handler, options);
-  };
-}
-
-function scrollIntoViewWhenReady(target: Element, wasKeyboardVisible: boolean) {
-  if (wasKeyboardVisible || !visualViewport) {
-    // If the keyboard was already visible, scroll the target into view immediately.
-    scrollIntoView(target);
-  } else {
-    // Otherwise, wait for the visual viewport to resize before scrolling so we can
-    // measure the correct position to scroll to.
-    visualViewport.addEventListener('resize', () => scrollIntoView(target), {once: true});
-  }
 }
 
 function scrollIntoView(target: Element) {
   let root = document.scrollingElement || document.documentElement;
   let nextTarget: Element | null = target;
-  while (nextTarget && nextTarget !== root) {
+  while (nextTarget && nextTarget !== root && nextTarget.isConnected) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
     let scrollable = getScrollParent(nextTarget);
     if (

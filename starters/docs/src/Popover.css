@@ -28,6 +28,10 @@
     stroke-width: 2px;
   }
 
+  &:not([data-open]) {
+    opacity: 0;
+  }
+
   &[data-entering],
   &[data-exiting] {
     transform: var(--origin);
