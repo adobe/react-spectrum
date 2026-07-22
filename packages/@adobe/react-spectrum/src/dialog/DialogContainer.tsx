@@ -33,6 +33,13 @@ export interface SpectrumDialogContainerProps {
   isDismissable?: boolean;
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean;
+  /**
+   * Whether to disable focus management for the dialog, including focus containment
+   * and restoration. This option should be used very carefully. When focus management
+   * is disabled, you must implement focus containment and restoration to ensure the
+   * dialog is keyboard accessible.
+   */
+  disableFocusManagement?: boolean;
 }
 
 /**
@@ -41,7 +48,14 @@ export interface SpectrumDialogContainerProps {
  * or when the trigger unmounts while the dialog is open.
  */
 export function DialogContainer(props: SpectrumDialogContainerProps): JSX.Element {
-  let {children, type = 'modal', onDismiss, isDismissable, isKeyboardDismissDisabled} = props;
+  let {
+    children,
+    type = 'modal',
+    onDismiss,
+    isDismissable,
+    isKeyboardDismissDisabled,
+    disableFocusManagement
+  } = props;
 
   let childArray = React.Children.toArray(children);
   if (childArray.length > 1) {
@@ -83,7 +97,8 @@ export function DialogContainer(props: SpectrumDialogContainerProps): JSX.Elemen
       state={state}
       type={type}
       isDismissable={isDismissable}
-      isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+      isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+      disableFocusManagement={disableFocusManagement}>
       <DialogContext.Provider value={context}>{lastChild}</DialogContext.Provider>
     </Modal>
   );
