@@ -158,7 +158,8 @@ async function extractExamples() {
       "skipLibCheck": true,
       "paths": {
         "vanilla-starter/*": ["../../starters/docs/src/*"],
-        "tailwind-starter/*": ["../../starters/tailwind/src/*"]
+        "tailwind-starter/*": ["../../starters/tailwind/src/*"],
+        "hooks-starter/*": ["../../starters/hooks/src/*"]
       }
     }
   }

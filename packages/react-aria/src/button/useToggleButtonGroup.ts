@@ -39,6 +39,14 @@ export interface ToggleButtonGroupAria {
   groupProps: DOMAttributes;
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a toggle button group component.
+ * Toggle button groups allow users to select one or more options from a group.
+ *
+ * @param props - Props for the toggle button group.
+ * @param state - State for the toggle button group, as returned by `useToggleGroupState`.
+ * @param ref - A ref to the toggle button group element.
+ */
 export function useToggleButtonGroup(
   props: AriaToggleButtonGroupProps,
   state: ToggleGroupState,

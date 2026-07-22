@@ -1,0 +1,69 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/breadcrumbs';
+import Anatomy from '/packages/react-aria/docs/breadcrumbs/anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a breadcrumbs component.';
+export const isSubpage = true;
+
+# useBreadcrumbs
+
+<PageDescription>{docs.exports.useBreadcrumbs.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Breadcrumbs.tsx", "starters/hooks/src/Breadcrumbs.css", "starters/hooks/src/Link.css"]}
+"use client";
+import {Breadcrumbs, Breadcrumb} from 'hooks-starter/Breadcrumbs';
+
+<Breadcrumbs>
+  <Breadcrumb onPress={() => alert('Pressed Folder 1')}>Folder 1</Breadcrumb>
+  <Breadcrumb onPress={() => alert('Pressed Folder 2')}>Folder 2</Breadcrumb>
+  <Breadcrumb>Folder 3</Breadcrumb>
+</Breadcrumbs>
+```
+
+## API
+
+<Anatomy />
+
+```tsx
+<Breadcrumbs>
+  <Breadcrumb>
+    <Link />
+  </Breadcrumb>
+</Breadcrumbs>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: docs.exports.useBreadcrumbs, links: docs.links},
+    {function: docs.exports.useBreadcrumbItem, links: docs.links},
+  ]}
+/>
+
+### AriaBreadcrumbsProps
+
+<InterfaceType {...docs.exports.AriaBreadcrumbsProps} />
+
+### BreadcrumbsAria
+
+<InterfaceType {...docs.exports.BreadcrumbsAria} />
+
+### AriaBreadcrumbItemProps
+
+<InterfaceType {...docs.exports.AriaBreadcrumbItemProps} />
+
+### BreadcrumbItemAria
+
+<InterfaceType {...docs.exports.BreadcrumbItemAria} />

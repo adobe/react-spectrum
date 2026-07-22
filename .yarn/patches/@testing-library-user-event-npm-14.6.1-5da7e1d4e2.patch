@@ -24,6 +24,42 @@ index 55027cb256f66b808d17280dc01bc55a796a1032..993d5de5a838a711d7ae009344354772
              focus.focusElement(dest);
              if (selection.hasOwnSelection(dest)) {
                  UI.setUISelection(dest, {
+diff --git a/dist/cjs/keyboard/index.js b/dist/cjs/keyboard/index.js
+index 18f5b4b8eb995fe5ecb352230f71b25e90f2a8a0..e5e17d1d3089aa8ea5c3f55a06aa746eb3a8258a 100644
+--- a/dist/cjs/keyboard/index.js
++++ b/dist/cjs/keyboard/index.js
+@@ -19,7 +19,7 @@ async function keyboardAction(instance, { keyDef, releasePrevious, releaseSelf,
+     }
+     if (!releasePrevious) {
+         for(let i = 1; i <= repeat; i++){
+-            await system.keyboard.keydown(instance, keyDef);
++            await system.keyboard.keydown(instance, keyDef, i > 1);
+             if (i < repeat) {
+                 await wait.wait(instance.config);
+             }
+diff --git a/dist/cjs/system/keyboard.js b/dist/cjs/system/keyboard.js
+index 3272fd7e642e79a8f67052b4b521355314cbc496..e1b16e9213eb609e7cd2335ecee792c3c19d35b4 100644
+--- a/dist/cjs/system/keyboard.js
++++ b/dist/cjs/system/keyboard.js
+@@ -52,7 +52,7 @@ class KeyboardHost {
+     getPressedKeys() {
+         return this.pressed.values().map((p)=>p.keyDef);
+     }
+-    /** Press a key */ async keydown(instance, keyDef) {
++    /** Press a key */ async keydown(instance, keyDef, repeat = false) {
+         const key = String(keyDef.key);
+         const code = String(keyDef.code);
+         const target = getActiveElement.getActiveElementOrBody(instance.config.document);
+@@ -63,7 +63,8 @@ class KeyboardHost {
+         }
+         const unprevented = instance.dispatchUIEvent(target, 'keydown', {
+             key,
+-            code
++            code,
++            repeat
+         });
+         if (isModifierLock(key) && !this.modifiers[key]) {
+             this.modifiers[key] = true;
 diff --git a/dist/cjs/utils/focus/getActiveElement.js b/dist/cjs/utils/focus/getActiveElement.js
 index d25f3a8ef67e856e43614559f73012899c0b53d7..4ed9ee45565ed438ee9284d8d3043c0bd50463eb 100644
 --- a/dist/cjs/utils/focus/getActiveElement.js
@@ -37,3 +73,39 @@ index d25f3a8ef67e856e43614559f73012899c0b53d7..4ed9ee45565ed438ee9284d8d3043c0b
      } else {
          // Browser does not yield disabled elements as document.activeElement - jsdom does
          if (isDisabled.isDisabled(activeElement)) {
+diff --git a/dist/esm/keyboard/index.js b/dist/esm/keyboard/index.js
+index 9c9feb7b82aabeadd8acbd9ec8f4127e302a4634..1456a5cf406382ee08b4bb7184499632bd8d3bd3 100644
+--- a/dist/esm/keyboard/index.js
++++ b/dist/esm/keyboard/index.js
+@@ -17,7 +17,7 @@ async function keyboardAction(instance, { keyDef, releasePrevious, releaseSelf,
+     }
+     if (!releasePrevious) {
+         for(let i = 1; i <= repeat; i++){
+-            await system.keyboard.keydown(instance, keyDef);
++            await system.keyboard.keydown(instance, keyDef, i > 1);
+             if (i < repeat) {
+                 await wait(instance.config);
+             }
+diff --git a/dist/esm/system/keyboard.js b/dist/esm/system/keyboard.js
+index 43700ca3a873aa6eb1cb4553c0889b685ff90fff..9607372660dcb1737b26abcdc4bc71f35e4d43c3 100644
+--- a/dist/esm/system/keyboard.js
++++ b/dist/esm/system/keyboard.js
+@@ -50,7 +50,7 @@ class KeyboardHost {
+     getPressedKeys() {
+         return this.pressed.values().map((p)=>p.keyDef);
+     }
+-    /** Press a key */ async keydown(instance, keyDef) {
++    /** Press a key */ async keydown(instance, keyDef, repeat = false) {
+         const key = String(keyDef.key);
+         const code = String(keyDef.code);
+         const target = getActiveElementOrBody(instance.config.document);
+@@ -61,7 +61,8 @@ class KeyboardHost {
+         }
+         const unprevented = instance.dispatchUIEvent(target, 'keydown', {
+             key,
+-            code
++            code,
++            repeat
+         });
+         if (isModifierLock(key) && !this.modifiers[key]) {
+             this.modifiers[key] = true;

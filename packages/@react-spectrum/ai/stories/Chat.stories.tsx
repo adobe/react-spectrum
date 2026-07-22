@@ -14,9 +14,12 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {Chat} from '../src/Chat';
+import ChatIcon from '@react-spectrum/s2/icons/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/s2/Content';
+import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
+import {GridList} from 'react-aria-components';
 import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
@@ -40,6 +43,7 @@ import {
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
+import {prose} from '../src/style/prose' with {type: 'macro'};
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {ReactNode, useCallback, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -729,6 +733,120 @@ export function EmptyChat() {
         </PromptField>
       </Chat>
     </div>
+  );
+}
+
+// A system response rendered as prose, e.g. markdown returned from the server.
+// Uses the `prose` macro from S2 to style the semantic HTML elements.
+function ProseResponse() {
+  return (
+    <div role="document" className={prose()}>
+      <h3>Setting up a design token pipeline</h3>
+      <p>
+        A token pipeline turns brand decisions into typed, versioned values every component can
+        consume. At a high level there are three layers:
+      </p>
+      <ul>
+        <li>
+          <strong>Global palette</strong> — raw values like <code>gray-100</code> through{' '}
+          <code>gray-900</code>.
+        </li>
+        <li>
+          <strong>Semantic aliases</strong> — roles such as <code>text-primary</code> that point at
+          palette steps.
+        </li>
+        <li>
+          <strong>Component tokens</strong> — per-component overrides layered on top.
+        </li>
+      </ul>
+      <p>A minimal build step reads your tokens and emits platform files:</p>
+      <pre>
+        <code>{`import StyleDictionary from 'style-dictionary';
+
+StyleDictionary.extend({
+  source: ['tokens/**/*.json'],
+  platforms: {
+    css: {transformGroup: 'css', buildPath: 'dist/css/'}
+  }
+}).buildAllPlatforms();`}</code>
+      </pre>
+      <p>
+        Run it after every change and components import semantic values instead of literals. See the{' '}
+        <a href="https://spectrum.adobe.com/page/design-tokens/">Spectrum design tokens docs</a> for
+        the full naming conventions.
+      </p>
+    </div>
+  );
+}
+
+type PopoverMessage = {id: number; type: 'user'; content: string} | {id: number; type: 'prose'};
+
+// A Chat rendered inside an S2 Popover, where the system response is prose
+// (markdown) styled with the `prose` macro.
+export function ChatPopover() {
+  let messages: PopoverMessage[] = [
+    {
+      id: 0,
+      type: 'user',
+      content: 'Can you explain how a design token pipeline works?'
+    },
+    {id: 1, type: 'prose'}
+  ];
+
+  return (
+    <DialogTrigger>
+      <ActionButton aria-label="Open assistant" styles={style({marginX: 'auto'})}>
+        <ChatIcon />
+      </ActionButton>
+      <Popover styles={style({width: 400, height: 520})}>
+        <Chat
+          styles={style({
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            height: 'full',
+            gap: 16,
+            boxSizing: 'border-box',
+            minWidth: 0
+          })}>
+          <Thread
+            items={messages}
+            aria-label="Chat thread"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              padding: 8,
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            {(msg: PopoverMessage) => {
+              if (msg.type === 'user') {
+                return (
+                  <ThreadItem
+                    textValue={msg.content}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{msg.content}</UserMessage>
+                  </ThreadItem>
+                );
+              }
+              return (
+                <SystemMessage textValue="Design token pipeline overview">
+                  <ProseResponse />
+                  <MessageFeedback />
+                </SystemMessage>
+              );
+            }}
+          </Thread>
+          <PromptField onSubmit={() => {}}>
+            <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+              <PromptTokenField />
+              <PromptFieldSubmitButton />
+            </div>
+          </PromptField>
+        </Chat>
+      </Popover>
+    </DialogTrigger>
   );
 }
 
