@@ -58,6 +58,8 @@ export interface AriaTokenFieldProps<T extends TokenFieldValue = TokenFieldValue
   onSubmit?: () => void;
   /** Handler that is called when a key is pressed. */
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  /** Handler that is called when a key is released. */
+  onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   /**
    * Handler that is called when the user copies text. See
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
