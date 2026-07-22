@@ -28,16 +28,16 @@ interface MacroContext {
 
 const marginTop = {
   body: getToken('body-margin-multiplier') + 'em',
-  heading: getToken('heading-margin-top-multiplier') + 'em',
-  title: getToken('title-margin-top-multiplier') + 'em',
-  detail: getToken('detail-margin-top-multiplier') + 'em'
+  heading: 1 + 'em',
+  title: 1 + 'em',
+  detail: 1 + 'em'
 } as const;
 
 const marginBottom = {
   body: getToken('body-margin-multiplier') + 'em',
   heading: getToken('heading-margin-bottom-multiplier') + 'em',
   title: getToken('title-margin-bottom-multiplier') + 'em',
-  detail: getToken('detail-margin-bottom-multiplier') + 'em'
+  detail: 1 + 'em'
 } as const;
 
 export function prose(this: MacroContext | void) {
@@ -99,6 +99,10 @@ export function prose(this: MacroContext | void) {
     ol: {
       listStyleType: 'decimal'
     },
+    li: {
+      marginTop: '.25em',
+      marginBottom: '.25em'
+    },
     'li > p:last-child:not(:first-child)': {
       marginBottom: marginBottom.body
     },
@@ -109,8 +113,8 @@ export function prose(this: MacroContext | void) {
       borderColor: colorTokenToString(resolveColorToken(colorToken('gray-200'))),
       borderInlineStartWidth: getToken('border-width-200'),
       // Padding uses px, spacing (margin) uses rem — matching the style macro's maps.
-      paddingInlineStart: '12px',
-      marginInlineStart: space(4)
+      paddingInlineStart: '14px',
+      marginInlineStart: space(8)
     },
     hr: {
       marginBlock: '32px',
