@@ -24,7 +24,8 @@ import {
   useVirtualizerState,
   VirtualizerState
 } from 'react-stately/useVirtualizerState';
-import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, JSX, ReactNode, RefObject, useContext, useMemo, useRef} from 'react';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
 import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 
@@ -57,6 +58,7 @@ interface LayoutContextValue {
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
 const LayoutContext = createContext<LayoutContextValue | null>(null);
+const RefreshVisibleRectContext = createContext<RefObject<(() => void) | null> | null>(null);
 
 /**
  * A Virtualizer renders a scrollable collection of data using customizable layouts.
@@ -69,6 +71,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
     () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
     [layoutProp]
   );
+  let refreshVisibleRectRef = useRef<(() => void) | null>(null);
   let renderer: CollectionRenderer = useMemo(
     () => ({
       isVirtualized: true,
@@ -76,6 +79,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
       dropTargetDelegate: layout.getDropTargetFromPoint
         ? (layout as DropTargetDelegate)
         : undefined,
+      refreshVisibleRect: () => refreshVisibleRectRef.current?.(),
       CollectionRoot,
       CollectionBranch
     }),
@@ -84,7 +88,9 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <LayoutContext.Provider value={{layout, layoutOptions}}>{children}</LayoutContext.Provider>
+      <RefreshVisibleRectContext.Provider value={refreshVisibleRectRef}>
+        <LayoutContext.Provider value={{layout, layoutOptions}}>{children}</LayoutContext.Provider>
+      </RefreshVisibleRectContext.Provider>
     </CollectionRendererContext.Provider>
   );
 }
@@ -122,7 +128,7 @@ function CollectionRoot({
     }, [layoutOptions, layoutOptions2])
   });
 
-  let {contentProps} = useScrollView(
+  let {contentProps, refreshVisibleRect} = useScrollView(
     {
       onVisibleRectChange: state.setVisibleRect,
       onSizeChange: state.setSize,
@@ -133,6 +139,15 @@ function CollectionRoot({
     },
     scrollRef!
   );
+  let refreshVisibleRectRef = useContext(RefreshVisibleRectContext);
+  useLayoutEffect(() => {
+    if (refreshVisibleRectRef) {
+      refreshVisibleRectRef.current = refreshVisibleRect;
+      return () => {
+        refreshVisibleRectRef.current = null;
+      };
+    }
+  }, [refreshVisibleRectRef, refreshVisibleRect]);
 
   return (
     <div {...contentProps}>
