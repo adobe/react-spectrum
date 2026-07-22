@@ -187,7 +187,7 @@ function AsyncVirtualizedThread({
 }
 
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
-const itOrSkip = process.env.CI ? it.skip : it;
+const itOrSkip = process.env.CI === 'true' ? it.skip : it;
 
 describeOrSkip('Chat browser', () => {
   describe('spatial navigation', () => {
