@@ -1,0 +1,32 @@
+{
+  "name": "s2-rslib-semiworking",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-react": "^1.4.5",
+    "@rslib/core": "^0.19.6",
+    "@types/react": "^19.2.14",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3",
+    "unplugin-parcel-macros": "^0.2.0"
+  },
+  "dependencies": {
+    "@react-spectrum/s2": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
