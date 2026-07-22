@@ -332,6 +332,8 @@ export class Virtualizer<T extends object, V> {
     let needsLayout = false;
     let offsetChanged = false;
     let sizeChanged = false;
+    let widthChanged = false;
+    let heightChanged = false;
     let itemSizeChanged = false;
     let layoutOptionsChanged = false;
     let needsUpdate = false;
@@ -379,6 +381,8 @@ export class Virtualizer<T extends object, V> {
       if (shouldInvalidate) {
         offsetChanged = !opts.visibleRect.pointEquals(this.visibleRect);
         sizeChanged = !this.size.equals(opts.size);
+        widthChanged = this.size.width !== opts.size.width;
+        heightChanged = this.size.height !== opts.size.height;
         needsLayout = true;
       } else {
         needsUpdate = true;
@@ -391,6 +395,8 @@ export class Virtualizer<T extends object, V> {
     if (opts.invalidationContext !== this._invalidationContext) {
       if (opts.invalidationContext) {
         sizeChanged ||= opts.invalidationContext.sizeChanged || false;
+        widthChanged ||= opts.invalidationContext.widthChanged || false;
+        heightChanged ||= opts.invalidationContext.heightChanged || false;
         offsetChanged ||= opts.invalidationContext.offsetChanged || false;
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
         layoutOptionsChanged ||=
@@ -418,6 +424,8 @@ export class Virtualizer<T extends object, V> {
       this.relayout({
         offsetChanged,
         sizeChanged,
+        widthChanged,
+        heightChanged,
         itemSizeChanged,
         layoutOptionsChanged,
         layoutOptions: this._invalidationContext.layoutOptions

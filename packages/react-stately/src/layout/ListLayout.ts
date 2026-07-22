@@ -344,12 +344,20 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>): boolean {
-    // Invalidate cache if the size of the collection changed.
-    // In this case, we need to recalculate the entire layout.
+    // Invalidate cache if the cross-axis size of the collection changed (e.g. width, for a
+    // vertical list): that can change how items wrap, so cached row heights are no longer
+    // trustworthy. A change to only the main-axis size (e.g. height, for a vertical list) just
+    // means more or less of the list is visible, and doesn't affect any row's real height, so it
+    // shouldn't throw away the cache.
     // Also invalidate if fixed sizes/gaps change.
     let options = invalidationContext.layoutOptions;
+    let orientation = options?.orientation ?? this.orientation;
+    let crossAxisSizeChanged =
+      orientation === 'horizontal'
+        ? invalidationContext.heightChanged
+        : invalidationContext.widthChanged;
     return (
-      invalidationContext.sizeChanged ||
+      crossAxisSizeChanged ||
       this.rowSize !== (options?.rowSize ?? options?.rowHeight ?? this.rowSize) ||
       this.orientation !== (options?.orientation ?? this.orientation) ||
       this.anchorTo !== (options?.anchorTo ?? this.anchorTo) ||
