@@ -18,7 +18,8 @@ import {
   fontSizeCalc,
   fontWeight,
   lineHeight,
-  resolveColorToken
+  resolveColorToken,
+  space
 } from '../../../s2/style/spectrum-theme' with {type: 'macro'};
 
 interface MacroContext {
@@ -68,7 +69,6 @@ export function prose(this: MacroContext | void) {
     },
     pre: {
       ...font('code-sm'),
-      ...margin('body'),
       borderRadius: getToken('corner-radius-large-default'),
       backgroundColor: colorTokenToString(
         resolveColorToken(colorToken('background-layer-1-color'))
@@ -107,9 +107,10 @@ export function prose(this: MacroContext | void) {
       borderStyle: 'solid',
       borderWidth: 0,
       borderColor: colorTokenToString(resolveColorToken(colorToken('gray-200'))),
-      borderInlineStartWidth: 2,
-      paddingInlineStart: 12,
-      marginInlineStart: 4
+      borderInlineStartWidth: getToken('border-width-200'),
+      // Padding uses px, spacing (margin) uses rem — matching the style macro's maps.
+      paddingInlineStart: '12px',
+      marginInlineStart: space(4)
     },
     hr: {
       marginBlock: '32px',
@@ -125,7 +126,7 @@ export function prose(this: MacroContext | void) {
         resolveColorToken(colorToken('background-layer-1-color'))
       ),
       paddingInline: '4px',
-      borderWidth: 1,
+      borderWidth: getToken('border-width-100'),
       borderColor: colorTokenToString(resolveColorToken(colorToken('gray-100'))),
       borderStyle: 'solid',
       borderRadius: getToken('corner-radius-small-default'),
@@ -163,11 +164,14 @@ export function prose(this: MacroContext | void) {
       borderStyle: 'solid',
       overflow: 'hidden',
       borderSpacing: 0,
-      width: 'full'
+      width: '100%'
     },
     thead: {
       backgroundColor: colorTokenToString(resolveColorToken(colorToken('gray-75'))),
-      borderTopRadius: 'default'
+      // `borderTopRadius` isn't a real CSS property; the style macro expands it into
+      // the two top logical-corner properties, so do the same here.
+      borderStartStartRadius: getToken('corner-radius-medium-default'),
+      borderStartEndRadius: getToken('corner-radius-medium-default')
     },
     th: {
       paddingInline: '16px',
@@ -175,7 +179,7 @@ export function prose(this: MacroContext | void) {
       fontWeight: 'bold',
       borderColor: colorTokenToString(resolveColorToken(colorToken('gray-300'))),
       borderWidth: 0,
-      borderBottomWidth: 1,
+      borderBottomWidth: getToken('border-width-100'),
       borderStyle: 'solid',
       height: '32px',
       boxSizing: 'border-box'
@@ -285,13 +289,15 @@ function generateName(index: number, atStart = false): string {
 
 function toBase62(value: number) {
   if (value === 0) {
-    return generateName(value);
+    return generateName(value, true);
   }
 
   let res = '';
+  let atStart = true;
   while (value) {
     let remainder = value % 62;
-    res += generateName(remainder);
+    res += generateName(remainder, atStart);
+    atStart = false;
     value = Math.floor((value - remainder) / 62);
   }
 
