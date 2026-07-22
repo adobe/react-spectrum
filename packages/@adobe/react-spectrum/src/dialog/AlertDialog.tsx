@@ -45,7 +45,10 @@ export interface SpectrumAlertDialogProps extends AriaLabelingProps, DOMProps, S
   isPrimaryActionDisabled?: boolean;
   /** Whether the secondary button is disabled. */
   isSecondaryActionDisabled?: boolean;
-  /** Handler that is called when the cancel button is pressed. */
+  /**
+   * Handler that is called when the cancel button is pressed, or the dialog is dismissed with the
+   * Escape key.
+   */
   onCancel?: () => void;
   /** Handler that is called when the primary button is pressed. */
   onPrimaryAction?: () => void;
@@ -93,6 +96,26 @@ export const AlertDialog = forwardRef(function AlertDialog(
     }
   }
 
+  // The Escape key is normally handled by the overlay, which closes the dialog without
+  // pressing the cancel button. Handle it on the dialog itself instead, so that dismissing
+  // an AlertDialog with the Escape key is equivalent to pressing the cancel button.
+  let onKeyDown = (e: React.KeyboardEvent) => {
+    if (
+      e.key === 'Escape' &&
+      !e.nativeEvent.isComposing &&
+      !e.nativeEvent.repeat &&
+      !e.altKey &&
+      !e.ctrlKey &&
+      !e.shiftKey &&
+      !e.metaKey
+    ) {
+      onClose();
+      onCancel();
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  };
+
   return (
     <Dialog
       UNSAFE_style={styleProps.style}
@@ -104,6 +127,7 @@ export const AlertDialog = forwardRef(function AlertDialog(
       isHidden={styleProps.hidden}
       size="M"
       role="alertdialog"
+      onKeyDown={onKeyDown}
       ref={ref}
       {...filterDOMProps(props, {labelable: true})}>
       <Heading>{title}</Heading>
