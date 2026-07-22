@@ -19,7 +19,6 @@ import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/s2/Content';
 import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
-import {GridList} from 'react-aria-components';
 import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
@@ -43,8 +42,8 @@ import {
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
-import {prose} from '../src/style/prose' with {type: 'macro'};
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {prose} from '../src/style/prose' with {type: 'macro'};
 import {ReactNode, useCallback, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
