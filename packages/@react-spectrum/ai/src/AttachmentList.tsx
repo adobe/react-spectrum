@@ -21,9 +21,8 @@ import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type:
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
-import Close from '@react-spectrum/s2/icons/Close';
+import Cross from '../ui-icons/Cross';
 import {forwardRef, ReactNode, useRef} from 'react';
-import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
@@ -82,16 +81,17 @@ const styles = style<{
     isFocusVisible: hoverBackground,
     isPressed: hoverBackground
   },
-  '--iconPrimary': {
-    type: 'color',
-    value: {
-      default: baseColor('neutral'),
-      isDisabled: 'disabled',
-      forcedColors: {
-        default: 'ButtonText',
-        isDisabled: 'GrayText'
-      }
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
     }
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
   },
   outlineColor: {
     default: 'focus-ring',
@@ -99,14 +99,6 @@ const styles = style<{
   },
   disableTapHighlight: true
 });
-
-const closeIconStyle = ({size = 'M'}) => {
-  if (size === 'S') return iconStyle({size: 'XS'});
-  else if (size === 'M') return iconStyle({size: 'S'});
-  else if (size === 'L') return iconStyle({size: 'M'});
-  else if (size === 'XL') return iconStyle({size: 'L'});
-  else return iconStyle({size: 'S'});
-};
 
 const CloseButton = function CloseButton(props) {
   let ref = useRef(null);
@@ -120,7 +112,7 @@ const CloseButton = function CloseButton(props) {
       className={renderProps =>
         mergeStyles(styles({...renderProps, size: props.size || 'M'}), props.styles)
       }>
-      <Close styles={closeIconStyle({size: props.size ?? 'M'})} />
+      <Cross size="M" />
     </Button>
   );
   // oxlint-enable react/react-compiler
