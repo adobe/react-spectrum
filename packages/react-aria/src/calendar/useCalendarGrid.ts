@@ -81,6 +81,24 @@ export function useCalendarGrid(
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
+      End: () => {
+        state.focusSectionEnd();
+      },
+      Home: () => {
+        state.focusSectionStart();
+      },
+      Escape: () => {
+        // Cancel the selection.
+        if ('setAnchorDate' in state) {
+          state.setAnchorDate(null);
+        }
+        return false; // TODO: is this really correct? or should it return true when we cancel and only propagate if there's nothing to do
+      }
+    }
+  });
+
+  let {keyboardProps: repeatKeyboardProps} = useKeyboard({
+    shortcuts: {
       Enter: () => {
         state.selectFocusedDate();
       },
@@ -98,12 +116,6 @@ export function useCalendarGrid(
       },
       'Shift+PageDown': () => {
         state.focusNextSection(true);
-      },
-      End: () => {
-        state.focusSectionEnd();
-      },
-      Home: () => {
-        state.focusSectionStart();
       },
       ArrowLeft: () => {
         if (direction === 'rtl') {
@@ -124,15 +136,9 @@ export function useCalendarGrid(
       },
       ArrowDown: () => {
         state.focusNextRow();
-      },
-      Escape: () => {
-        // Cancel the selection.
-        if ('setAnchorDate' in state) {
-          state.setAnchorDate(null);
-        }
-        return false; // TODO: is this really correct? or should it return true when we cancel and only propagate if there's nothing to do
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let visibleRangeDescription = useVisibleRangeDescription(
@@ -168,16 +174,20 @@ export function useCalendarGrid(
   let weeksInMonth = state.getWeeksInMonth(startDate);
 
   return {
-    gridProps: mergeProps(labelProps, {
-      role: 'grid',
-      'aria-readonly': state.isReadOnly || undefined,
-      'aria-disabled': state.isDisabled || undefined,
-      'aria-multiselectable':
-        'highlightedRange' in state || state.selectionMode === 'multiple' || undefined,
-      ...keyboardProps,
-      onFocus: () => state.setFocused(true),
-      onBlur: () => state.setFocused(false)
-    }),
+    gridProps: mergeProps(
+      labelProps,
+      {
+        role: 'grid',
+        'aria-readonly': state.isReadOnly || undefined,
+        'aria-disabled': state.isDisabled || undefined,
+        'aria-multiselectable':
+          'highlightedRange' in state || state.selectionMode === 'multiple' || undefined,
+        onFocus: () => state.setFocused(true),
+        onBlur: () => state.setFocused(false)
+      },
+      keyboardProps,
+      repeatKeyboardProps
+    ),
     headerProps: {
       // Column headers are hidden to screen readers to make navigating with a touch screen reader easier.
       // The day names are already included in the label of each cell, so there's no need to announce them twice.

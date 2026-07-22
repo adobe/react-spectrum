@@ -1,0 +1,72 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/checkbox';
+import statelyDocs from 'docs:@react-stately/checkbox';
+import Anatomy from '/packages/react-aria/docs/checkbox/checkboxgroup-anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a checkbox group component.';
+export const isSubpage = true;
+
+# useCheckboxGroup
+
+<PageDescription>{docs.exports.useCheckboxGroup.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/CheckboxGroup.tsx", "starters/hooks/src/CheckboxGroup.css", "starters/hooks/src/Checkbox.css"]}
+"use client";
+import {CheckboxGroup, Checkbox} from 'hooks-starter/CheckboxGroup';
+
+<CheckboxGroup label="Favorite sports">
+  <Checkbox value="soccer" isDisabled>Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+## API
+
+<Anatomy />
+
+```tsx
+<CheckboxGroup>
+  <Label />
+  <CheckboxField />
+  <Text slot="description" />
+  <FieldError />
+</CheckboxGroup>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useCheckboxGroupState, links: statelyDocs.links},
+    {function: docs.exports.useCheckboxGroup, links: docs.links},
+    {function: docs.exports.useCheckboxGroupItem, links: docs.links},
+  ]}
+/>
+
+### CheckboxGroupState
+
+<InterfaceType {...statelyDocs.exports.CheckboxGroupState} links={statelyDocs.links} />
+
+### AriaCheckboxGroupProps
+
+<InterfaceType {...docs.exports.AriaCheckboxGroupProps} />
+
+### CheckboxGroupAria
+
+<InterfaceType {...docs.exports.CheckboxGroupAria} />
+
+### AriaCheckboxGroupItemProps
+
+<InterfaceType {...docs.exports.AriaCheckboxGroupItemProps} />

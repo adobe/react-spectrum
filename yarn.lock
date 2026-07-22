@@ -10704,10 +10704,10 @@ __metadata:
 
 "@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch":
   version: 14.6.1
-  resolution: "@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch::version=14.6.1&hash=3511b9"
+  resolution: "@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch::version=14.6.1&hash=13c598"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 10c0/5a3e378cfdcad1ae09b73141ba9ea5adb0e7ed0d9f6bf1c4ba3631c91554414c4f2ab255c23f08425d2d398daa11d745ead8ef7ba0d1de76e19252db0b5dbba3
+  checksum: 10c0/e8a21739fb7bcba5956394b4e0ef001613566bb3a31aa0788398ea614b846a26aa1cc496ca036dbbbf6f9038c4b863f4d419d80e82bfe69240e9622b8ba0a50e
   languageName: node
   linkType: hard
 
