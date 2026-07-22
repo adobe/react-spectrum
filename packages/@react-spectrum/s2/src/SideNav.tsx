@@ -40,7 +40,6 @@ import {
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
-import {GridListHeaderProps, GridListSectionProps} from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
 import {pressScale} from './pressScale';
@@ -50,12 +49,14 @@ import {
   TreeProps as RACTreeProps,
   Tree,
   TreeHeader,
+  TreeHeaderProps,
   TreeItem,
   TreeItemContent,
   TreeItemContentProps,
   TreeItemRenderProps,
   TreeRenderProps,
-  TreeSection
+  TreeSection,
+  TreeSectionProps
 } from 'react-aria-components/Tree';
 import {Text, TextContext} from './Content';
 import {TreeState} from 'react-stately/useTreeState';
@@ -70,6 +71,7 @@ export interface SideNavProps<T>
       | 'style'
       | 'className'
       | 'render'
+      | 'onAction'
       | 'onRowAction'
       | 'selectionBehavior'
       | 'onScroll'
@@ -121,15 +123,7 @@ const sideNavWrapper = style(
     isolation: 'isolate',
     disableTapHighlight: true,
     position: 'relative',
-    overflow: 'clip',
-    '--indicator-level-padding': {
-      type: 'width',
-      value: {
-        // 4 (start gap) + 10 (drag handle) + (hasCheckbox ? 16 + 8 : 0) + 40 (expand button)
-        // keep in sync with treeCellGrid gridTemplateColumns
-        default: 54
-      }
-    }
+    overflow: 'clip'
   },
   getAllowedOverrides({height: true})
 );
@@ -148,6 +142,8 @@ const tree = style<TreeRenderProps>({
   overflowY: 'auto',
   overflowX: 'hidden',
   boxSizing: 'border-box',
+  paddingBottom: 0,
+  scrollPaddingBottom: 0,
   '--indent': {
     type: 'width',
     value: 16
@@ -185,10 +181,6 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       <InternalSideNavContext.Provider value={{selectedRoute, syncedRouteRef}}>
         <Tree
           {...rest}
-          style={{
-            paddingBottom: 0,
-            scrollPaddingBottom: 0
-          }}
           className={renderProps => tree(renderProps)}
           selectionMode="none"
           keyboardNavigationBehavior="tab">
@@ -633,7 +625,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
 }
 
 export interface SideNavSectionProps<T> extends Omit<
-  GridListSectionProps<T>,
+  TreeSectionProps<T>,
   'value' | 'render' | 'style' | 'className'
 > {}
 
@@ -646,7 +638,7 @@ export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) 
 }
 
 export interface SideNavHeaderProps extends Omit<
-  GridListHeaderProps,
+  TreeHeaderProps,
   'value' | 'render' | 'style' | 'className'
 > {}
 
