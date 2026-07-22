@@ -299,72 +299,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       </GridList>
     </Virtualizer>
   );
-
-  // return gridList;
 }
-
-// interface BasicThreadProps<T extends object> extends Pick<
-//   GridListProps<T>,
-//   'items' | 'children' | 'aria-label' | 'aria-labelledby' | 'UNSTABLE_focusOnEntry' | 'onScroll'
-// > {
-//   /**
-//    * Spectrum-defined styles, returned by the `style()` macro.
-//    */
-//   styles?: StyleString;
-// }
-
-// export function BasicThread<T extends object>(props: BasicThreadProps<T>) {
-//   let {
-//     items,
-//     children,
-//     styles,
-//     'aria-label': ariaLabel,
-//     'aria-labelledby': ariaLabelledby
-//   } = props;
-//   let {setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
-//   let isNearBottomRef = useRef(true);
-//   let gridListRef = useRef<HTMLDivElement | null>(null);
-//   let callbackRef = useCallback(
-//     (el: HTMLDivElement | null) => {
-//       gridListRef.current = el;
-//       setScrollElement(el);
-//     },
-//     [setScrollElement]
-//   );
-
-//   let handleScroll = useCallback(() => {
-//     let el = gridListRef.current;
-//     if (!el) {
-//       return;
-//     }
-
-//     let nearBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold;
-//   isNearBottomRef.current = nearBottom;
-//     setIsNearBottom(nearBottom);
-//   }, [setIsNearBottom, scrollEndThreshold]);
-
-//   return (
-//     <GridList
-//       ref={callbackRef}
-//       disallowTypeAhead
-//       onScroll={handleScroll}
-//       keyboardNavigationBehavior="tab"
-//       UNSTABLE_focusOnEntry="first"
-//       items={items}
-//       aria-label={ariaLabel}
-//       aria-labelledby={ariaLabelledby}
-//       // TODO: for now we enforce this, but to be configurable?
-//       style={{
-//         display: 'flex',
-//         boxSizing: 'border-box',
-//         flexDirection: 'column-reverse',
-//         minWidth: 0
-//       }}
-//       className={styles}>
-//       {children}
-//     </GridList>
-//   )
-// }
 
 export interface ThreadScrollButtonProps {
   children?: ReactNode;
