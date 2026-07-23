@@ -10,12 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  Chat,
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptTokenField,
+  Thread,
+  ThreadItem,
+  UserMessage
+} from '../exports';
+import ChatExample from './chat.mdx';
 import {createPortal} from 'react-dom';
 import type {Meta} from '@storybook/react';
 import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import ProseExample from './prose.mdx';
 // @ts-ignore
 import React, {ReactNode, useRef, useState} from 'react';
+import {Slider} from '@react-spectrum/s2';
 import * as spectrumTokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -27,13 +38,34 @@ const meta: Meta = {
 
 export default meta;
 
-export const Example = () => (
-  <MarginVisualizer>
-    <article className={`${prose()} ${style({maxWidth: 800, marginX: 'auto'})}`}>
-      <ProseExample components={{CodeBlock: 'pre'}} />
-    </article>
-  </MarginVisualizer>
-);
+function ProseStory() {
+  let [fontSize, setFontSize] = useState(14);
+  return (
+    <MarginVisualizer>
+      <div
+        className={style({
+          position: 'absolute'
+        })}>
+        <Slider
+          labelPosition="side"
+          label="Font Size"
+          minValue={10}
+          maxValue={24}
+          value={fontSize}
+          onChange={setFontSize}
+        />
+      </div>
+      <article
+        data-testid="prose"
+        className={`${prose()} ${style({maxWidth: 800, marginX: 'auto'})}`}
+        style={{'--s2-font-size-base': fontSize} as React.CSSProperties}>
+        <ProseExample components={{CodeBlock: 'pre'}} />
+      </article>
+    </MarginVisualizer>
+  );
+}
+
+export const Example = () => <ProseStory />;
 
 // Spectrum tokens applied to each prose element (see style/prose.ts). When a
 // font isn't specified the element inherits `body`; when a margin isn't
@@ -251,7 +283,7 @@ function BlueLine({box}: {box: MarginBox}) {
     <>
       <div
         style={{
-          display: 'none',
+          // display: 'none',
           position: 'absolute',
           left: x,
           top: box.top,
@@ -286,7 +318,9 @@ function BlueLine({box}: {box: MarginBox}) {
 }
 
 function computeBoxes(root: HTMLElement): MarginBox[] {
-  let prose = root.querySelector('.prose') ?? root;
+  // Scope measurement to the prose article (tagged with data-testid) so the
+  // overlay ignores sibling controls like the font size slider.
+  let prose = root.querySelector('[data-testid="prose"]') ?? root;
   let scrollX = window.scrollX;
   let scrollY = window.scrollY;
   let entries: Omit<MarginBox, 'type' | 'groupIndex'>[] = [];
@@ -540,3 +574,167 @@ function specificity(selector: string): number {
     .length;
   return ids * 100 + classes * 10 + types;
 }
+
+// The side panel thread: a user prompt followed by the assistant's reply,
+// which is rendered from chat.mdx as prose.
+type ChatMessage = {id: number; type: 'user'; content: string} | {id: number; type: 'prose'};
+
+const chatMessages: ChatMessage[] = [
+  {id: 0, type: 'user', content: 'Summarize key travel reimbursement rules'},
+  {id: 1, type: 'prose'}
+];
+
+function SidePanelExample() {
+  let [fontSize, setFontSize] = useState(14);
+
+  return (
+    <div
+      className={style({
+        display: 'grid',
+        gridTemplateColumns: [300, '1fr', 400],
+        gridTemplateRows: [60, '1fr'],
+        height: '100vh',
+        gridTemplateAreas: ['header header header', 'left main right']
+      })}
+      style={{'--prose-base-font': fontSize} as React.CSSProperties}>
+      <div
+        className={style({
+          gridArea: 'header',
+          backgroundColor: 'gray-200',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 12
+        })}>
+        <h1 className={style({font: 'heading'})}>Heading stuff</h1>
+        <Slider
+          labelPosition="side"
+          label="Font Size"
+          minValue={10}
+          maxValue={24}
+          value={fontSize}
+          onChange={setFontSize}
+        />
+      </div>
+      <div
+        className={style({
+          gridArea: 'left',
+          backgroundColor: 'gray-100',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        })}>
+        <h2>Left Panel</h2>
+      </div>
+      <div
+        className={style({
+          gridArea: 'main',
+          backgroundColor: 'gray-50',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        })}>
+        <h2>Main Content</h2>
+      </div>
+      <div
+        className={style({
+          gridArea: 'right',
+          backgroundColor: 'layer-2',
+          display: 'flex',
+          // Allow this grid item to shrink below its content so the prose can
+          // scroll internally instead of stretching the grid past 100vh.
+          minHeight: 0,
+          minWidth: 0,
+          borderStartWidth: 1,
+          borderEndWidth: 0,
+          borderTopWidth: 0,
+          borderBottomWidth: 0,
+          borderColor: 'gray-300',
+          borderStyle: 'solid'
+        })}>
+        <div
+          className={style({
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+            padding: 12,
+            // Fill the panel and permit shrinking so the nested overflow works.
+            flexGrow: 1,
+            minHeight: 0,
+            minWidth: 0
+          })}>
+          <h2
+            className={style({
+              font: 'heading-lg',
+              flexGrow: 0,
+              flexShrink: 0,
+              flexBasis: 'auto',
+              marginY: 4
+            })}>
+            Ask AI Assistant
+          </h2>
+          <Chat
+            styles={style({
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              // Fill the panel and permit shrinking so the nested overflow works.
+              flexGrow: 1,
+              gap: 16,
+              minHeight: 0,
+              minWidth: 0
+            })}>
+            <Thread
+              // Thread lays out column-reversed, so pass items newest-first to
+              // render the user prompt above the assistant's reply.
+              items={[...chatMessages].reverse()}
+              aria-label="Chat thread"
+              styles={style({
+                flexGrow: 1,
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                paddingEnd: 4,
+                rowGap: 16
+              })}>
+              {(msg: ChatMessage) => {
+                if (msg.type === 'user') {
+                  return (
+                    <ThreadItem
+                      textValue={msg.content}
+                      styles={style({display: 'flex', justifyContent: 'end'})}>
+                      <UserMessage>{msg.content}</UserMessage>
+                    </ThreadItem>
+                  );
+                }
+                return (
+                  <ThreadItem textValue="Travel reimbursement rules">
+                    <div
+                      role="document"
+                      className={prose()}
+                      style={
+                        {'--s2-font-size-base': 'var(--prose-base-font)'} as React.CSSProperties
+                      }>
+                      <ChatExample components={{CodeBlock: 'pre'}} />
+                    </div>
+                  </ThreadItem>
+                );
+              }}
+            </Thread>
+            <PromptField onSubmit={() => {}}>
+              <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+                <PromptTokenField />
+                <PromptFieldSubmitButton />
+              </div>
+            </PromptField>
+          </Chat>
+        </div>
+      </div>
+    </div>
+  );
+}
+export const SidePanel = {
+  render: () => <SidePanelExample />,
+  parameters: {
+    layout: 'fullscreen'
+  }
+};
