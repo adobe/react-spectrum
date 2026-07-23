@@ -14,7 +14,6 @@ import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-t
 import {
   baseColor,
   focusRing,
-  iconStyle,
   lightDark,
   space,
   style
@@ -22,7 +21,7 @@ import {
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
+import Chevron from '../ui-icons/Chevron';
 import CloseCircle from '@react-spectrum/s2/icons/CloseCircle';
 import {
   DisclosureStateContext,
@@ -411,18 +410,3 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
     </RACDisclosurePanel>
   );
 });
-
-// Ideally I would use iconStyle but since it must be fully evaluated at compile time — passing a runtime variable (size prop) to it is not allowed.
-// TODO: Should iconStyle also return a runtime function?
-function Chevron({size}) {
-  switch (size) {
-    case 'S':
-      return <ChevronRight styles={iconStyle({size: 'S'})} />;
-    case 'M':
-      return <ChevronRight styles={iconStyle({size: 'M'})} />;
-    case 'L':
-      return <ChevronRight styles={iconStyle({size: 'L'})} />;
-    case 'XL':
-      return <ChevronRight styles={iconStyle({size: 'XL'})} />;
-  }
-}
