@@ -98,11 +98,13 @@ const InternalChatContext = createContext<InternalChatContextValue>({
 interface ThreadScrollButtonContextValue {
   isNearBottom: boolean;
   scrollToBottom: () => void;
+  'aria-label': string;
 }
 
 const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>({
   isNearBottom: true,
-  scrollToBottom: () => {}
+  scrollToBottom: () => {},
+  'aria-label': ''
 });
 
 // TODO: make this more RAC like (aka default class name and other RAC prop)
@@ -138,6 +140,10 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
     // TODO: will need some kind of api to programatically set the focused item to
     // the newest item in the gridlist in the virtualizer case. this works for
     // non-virtualized for now though
+    // 'scrollend' does not compose across shadow DOM boundaries, but this listener is intentionally
+    // scoped to this specific scroll container element (not a global target), so shadow root
+    // propagation does not apply here.
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     el.addEventListener(
       'scrollend',
       () => {
@@ -200,7 +206,14 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
     <Provider
       values={[
         [InternalChatContext, {announceItem, setIsNearBottom, setScrollElement}],
-        [ThreadScrollButtonContext, {isNearBottom, scrollToBottom}],
+        [
+          ThreadScrollButtonContext,
+          {
+            isNearBottom,
+            scrollToBottom,
+            'aria-label': stringFormatter.format('chat.scrollToBottom')
+          }
+        ],
         [
           PromptFocusContext,
           {
@@ -308,7 +321,7 @@ export interface ThreadScrollButtonProps {
 // TODO: wrapper so we can do the "if isNearBottom then hide" logic, could do this via inline styles perhaps
 // and ditch the wrapper?
 export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
-  let {isNearBottom, scrollToBottom} = useContext(ThreadScrollButtonContext);
+  let {isNearBottom, scrollToBottom, ...buttonProps} = useContext(ThreadScrollButtonContext);
   let ref = useRef<HTMLDivElement>(null);
   let isVisible = !isNearBottom;
   let isExiting = useExitAnimation(ref, isVisible);
@@ -319,7 +332,7 @@ export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
 
   return (
     <ButtonContext.Provider
-      value={{slots: {[DEFAULT_SLOT]: {}, scroll: {onPress: scrollToBottom}}}}>
+      value={{slots: {[DEFAULT_SLOT]: {}, scroll: {onPress: scrollToBottom, ...buttonProps}}}}>
       <ThreadScrollButtonInner domRef={ref} isExiting={isExiting}>
         {children}
       </ThreadScrollButtonInner>
@@ -349,7 +362,7 @@ const threadItemBase = style({
 
 export interface ThreadItemProps extends Pick<
   GridListItemProps,
-  'children' | 'textValue' | 'focusMode' | 'allowsArrowNavigation'
+  'children' | 'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'
 > {
   /**
    * Spectrum-defined styles, returned by the `style()` macro.

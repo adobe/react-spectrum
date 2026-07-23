@@ -7377,6 +7377,7 @@ __metadata:
     "@internationalized/date": "npm:^3.12.2"
     "@internationalized/number": "npm:^3.6.7"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
+    "@react-aria/utils": "npm:^3.8.0"
     "@react-spectrum/s2": "npm:1.5.1"
     "@react-types/shared": "npm:^3.36.0"
     "@storybook/jest": "npm:^0.2.3"

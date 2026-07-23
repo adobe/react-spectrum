@@ -191,6 +191,10 @@ declare module 'vitest/browser' {
     ) => Promise<void>;
     // Commit text that doesn't come from a key press (finalizes an active composition).
     commitComposition: (text: string) => Promise<void>;
+    // Placeholder until newer version of library
+    mouseDownOnElement: (selector: string, offsetX?: number, offsetY?: number) => Promise<void>;
+    // Same as above
+    mouseUp: () => Promise<void>;
   }
 }
 
@@ -306,6 +310,25 @@ export default defineConfig({
         commitComposition: async ({page, context}: any, text) => {
           const cdp = await getCDP(page, context);
           await cdp.send('Input.insertText', {text});
+        },
+        // Once we upgrade to a newer version, we can use the below and delete mouseDownOnElement
+        // await userEvent.hover(button)
+        // await userEvent.pointer({ keys: '[MouseLeft>]', target: button })
+        // await userEvent.pointer('[/MouseLeft]')
+        mouseDownOnElement: async (
+          {page, iframe}: any,
+          selector: string,
+          offsetX: number = 5,
+          offsetY?: number
+        ) => {
+          const box = await iframe.locator(selector).boundingBox();
+          const x = box.x + offsetX;
+          const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY;
+          await page.mouse.move(x, y);
+          await page.mouse.down();
+        },
+        mouseUp: async ({page}: any) => {
+          await page.mouse.up();
         }
       }
     },

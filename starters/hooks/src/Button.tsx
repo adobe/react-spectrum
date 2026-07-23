@@ -26,6 +26,7 @@ export function Button({variant = 'primary', ...props}: ButtonProps) {
     <button
       {...mergeProps(buttonProps, hoverProps, focusProps)}
       ref={ref}
+      slot={props.slot}
       className="react-aria-Button button-base"
       data-variant={variant}
       data-pressed={isPressed || undefined}

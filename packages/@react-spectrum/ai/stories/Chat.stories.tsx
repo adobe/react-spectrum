@@ -10,18 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
-import {Chat} from '../src/Chat';
-import ChatIcon from '@react-spectrum/s2/icons/Chat';
-import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
-import {Collection} from 'react-aria-components';
-import {Content} from '@react-spectrum/s2/Content';
-import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
-import {Image} from '@react-spectrum/s2/Image';
-import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
+  AutoLinkingTokenFieldValue,
   MessageFeedback,
   MessageSource,
   MessageSuggestion,
@@ -41,10 +35,17 @@ import {
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
-import type {Meta} from '@storybook/react';
-import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {Chat} from '../src/Chat';
+import ChatIcon from '@react-spectrum/s2/icons/Chat';
+import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
+import {Collection} from 'react-aria-components';
+import {Content} from '@react-spectrum/s2/Content';
+import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
+import {Image} from '@react-spectrum/s2/Image';
+import {MenuItem} from '@react-spectrum/s2/Menu';
+import type {Meta, StoryObj} from '@storybook/react';
 import {prose} from '../src/style/prose' with {type: 'macro'};
-import {ReactNode, useCallback, useRef, useState} from 'react';
+import {ReactNode, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 
@@ -65,6 +66,7 @@ const meta: Meta<typeof Chat> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Chat>;
 
 type Message =
   | {id: number; type: 'user' | 'system'; content: string}
@@ -213,6 +215,8 @@ export function VirtualizedStreamingChat() {
   let nextId = useRef(initialResponses.length);
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
+  let [promptValue, setPromptValue] = useState<TokenFieldValue>(new AutoLinkingTokenFieldValue([]));
+  let followUpMessage = useRef<TokenFieldValue | null>(null);
 
   function handleSend(prompt: TokenFieldValue) {
     setGenerating(true);
@@ -404,6 +408,29 @@ export function VirtualizedStreamingChat() {
     }, streamEndTimestamp + 1000);
   }
 
+  useEffect(() => {
+    if (!isGenerating && followUpMessage.current) {
+      let followup = followUpMessage.current;
+      followUpMessage.current = null;
+      handleSend(followup);
+    }
+  }, [isGenerating]);
+
+  // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
+  function handleStop() {
+    followUpMessage.current = null;
+    timeouts.current.forEach(clearTimeout);
+    timeouts.current = [];
+    setMessages(prev =>
+      prev.map(m =>
+        (m.type === 'system' || m.type === 'status') && m.isStreaming
+          ? {...m, isStreaming: false}
+          : m
+      )
+    );
+    setGenerating(false);
+  }
+
   return (
     // TODO: these extra div wrappers would need to be implemented by the RAC user, maybe we can internalize some more?
     // of particular note is the scroll button. Same for the other styles
@@ -483,7 +510,7 @@ export function VirtualizedStreamingChat() {
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
-                    <ResponseStatus isLoading={msg.isStreaming}>
+                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
                         {msg.details && (
@@ -531,15 +558,47 @@ export function VirtualizedStreamingChat() {
           </Thread>
         </div>
         <PromptField
-          onSubmit={handleSend}
+          value={promptValue}
+          onChange={setPromptValue}
+          onSubmit={prompt => {
+            setPromptValue(new AutoLinkingTokenFieldValue([]));
+            handleSend(prompt);
+          }}
           isGenerating={isGenerating}
-          onStop={() => {
-            setGenerating(false);
-            timeouts.current.forEach(clearTimeout);
-            timeouts.current = [];
-          }}>
+          onStop={handleStop}>
           <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-            <PromptTokenField />
+            <PromptTokenField
+              placeholder={
+                isGenerating
+                  ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+                  : undefined
+              }
+              onKeyDown={e => {
+                if (!isGenerating) {
+                  return;
+                }
+
+                // TODO: we could make this even more realistic but for now just fire storybook event
+                // and add follow up message to queue
+                if (e.key === 'Enter' && !e.altKey) {
+                  e.preventDefault();
+                  if (promptValue.segments.length > 0) {
+                    action('onSteer')(promptValue.toString());
+                    setPromptValue(new AutoLinkingTokenFieldValue([]));
+                  }
+                } else if (e.key === 'Enter' && e.altKey) {
+                  e.preventDefault();
+                  if (promptValue.segments.length > 0) {
+                    action('onFollowUp')(promptValue.toString());
+                    followUpMessage.current = promptValue;
+                    setPromptValue(new AutoLinkingTokenFieldValue([]));
+                  }
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  handleStop();
+                }
+              }}
+            />
             <PromptFieldSubmitButton />
           </div>
         </PromptField>

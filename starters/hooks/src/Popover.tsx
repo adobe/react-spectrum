@@ -11,6 +11,7 @@ import {Button} from 'react-aria-components/Button';
 import {cloneElement, useRef} from 'react';
 import type {ReactElement, ReactNode} from 'react';
 import './Button.css';
+import './Dialog.css';
 import './Popover.css';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
