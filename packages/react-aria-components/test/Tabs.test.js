@@ -1079,4 +1079,34 @@ describe('Tabs', () => {
     expect(menu.getOptions()).toHaveLength(3);
     await menu.close();
   });
+
+  it('allows browser back/forward navigation (Meta+ArrowLeft/Right on Mac, Alt+ArrowLeft/Right on Windows)', async () => {
+    let {getByRole} = renderTabs();
+    let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
+    let tabs = tabsTester.getTabs();
+
+    // Select first tab
+    await tabsTester.triggerTab({tab: 0});
+    expect(tabsTester.getSelectedTab()).toBe(tabs[0]);
+
+    // Try to navigate with Meta+ArrowRight (Mac browser back/forward) - should NOT switch tabs
+    await user.keyboard('{Meta>}{ArrowRight}{/Meta}');
+    expect(tabsTester.getSelectedTab()).toBe(tabs[0]);
+
+    // Try to navigate with Meta+ArrowLeft - should NOT switch tabs
+    await user.keyboard('{Meta>}{ArrowLeft}{/Meta}');
+    expect(tabsTester.getSelectedTab()).toBe(tabs[0]);
+
+    // Try to navigate with Alt+ArrowRight (Windows browser back/forward) - should NOT switch tabs
+    await user.keyboard('{Alt>}{ArrowRight}{/Alt}');
+    expect(tabsTester.getSelectedTab()).toBe(tabs[0]);
+
+    // Try to navigate with Alt+ArrowLeft - should NOT switch tabs
+    await user.keyboard('{Alt>}{ArrowLeft}{/Alt}');
+    expect(tabsTester.getSelectedTab()).toBe(tabs[0]);
+
+    // Regular arrow keys should still work
+    await user.keyboard('{ArrowRight}');
+    expect(tabsTester.getSelectedTab()).toBe(tabs[1]);
+  });
 });

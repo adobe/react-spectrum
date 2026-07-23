@@ -25,6 +25,7 @@ import {useId} from '../utils/useId';
 import {useLabels} from '../utils/useLabels';
 import {useLocale} from '../i18n/I18nProvider';
 import {useMemo} from 'react';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useSelectableCollection} from '../selection/useSelectableCollection';
 
 export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabelingProps {
@@ -76,6 +77,19 @@ export function useTabList<T>(
     linkBehavior: 'selection'
   });
 
+  // Add keyboard handlers to allow browser back/forward navigation (Cmd+Left/Right on Mac, Alt+Left/Right on Windows)
+  // to propagate so the browser can handle them instead of switching tabs.
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      // On Mac, Cmd+Left/Right are browser back/forward
+      'Meta+ArrowLeft': () => ({shouldContinuePropagation: true}),
+      'Meta+ArrowRight': () => ({shouldContinuePropagation: true}),
+      // On Windows/Linux, Alt+Left/Right are browser back/forward
+      'Alt+ArrowLeft': () => ({shouldContinuePropagation: true}),
+      'Alt+ArrowRight': () => ({shouldContinuePropagation: true})
+    }
+  });
+
   // Compute base id for all tabs
   let tabsId = useId();
   tabsIds.set(state, tabsId);
@@ -84,7 +98,7 @@ export function useTabList<T>(
 
   return {
     tabListProps: {
-      ...mergeProps(collectionProps, tabListLabelProps),
+      ...mergeProps(collectionProps, tabListLabelProps, keyboardProps),
       role: 'tablist',
       'aria-orientation': orientation,
       tabIndex: undefined
