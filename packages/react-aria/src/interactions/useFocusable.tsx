@@ -210,6 +210,7 @@ export const Focusable: React.ForwardRefExoticComponent<
     return React.cloneElement(child, {
       ...mergeProps(focusableProps, child.props),
       // @ts-ignore
+      // oxlint-disable-next-line react/react-compiler
       ref: mergeRefs(childRef, ref)
     });
   }

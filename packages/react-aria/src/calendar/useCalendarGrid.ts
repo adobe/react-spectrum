@@ -14,12 +14,13 @@ import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
-import {KeyboardEvent, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useDateFormatter} from '../i18n/useDateFormatter';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLocale} from '../i18n/I18nProvider';
+import {useMemo} from 'react';
 
 export interface AriaCalendarGridProps {
   /**
@@ -78,70 +79,67 @@ export function useCalendarGrid(
 
   let {direction} = useLocale();
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        state.selectFocusedDate();
-        break;
-      case 'PageUp':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusPreviousSection(e.shiftKey);
-        break;
-      case 'PageDown':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusNextSection(e.shiftKey);
-        break;
-      case 'End':
-        e.preventDefault();
-        e.stopPropagation();
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      End: () => {
         state.focusSectionEnd();
-        break;
-      case 'Home':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      Home: () => {
         state.focusSectionStart();
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        e.stopPropagation();
-        if (direction === 'rtl') {
-          state.focusNextDay();
-        } else {
-          state.focusPreviousDay();
-        }
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusPreviousRow();
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        e.stopPropagation();
-        if (direction === 'rtl') {
-          state.focusPreviousDay();
-        } else {
-          state.focusNextDay();
-        }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusNextRow();
-        break;
-      case 'Escape':
+      },
+      Escape: () => {
         // Cancel the selection.
         if ('setAnchorDate' in state) {
-          e.preventDefault();
           state.setAnchorDate(null);
         }
-        break;
+        return false; // TODO: is this really correct? or should it return true when we cancel and only propagate if there's nothing to do
+      }
     }
-  };
+  });
+
+  let {keyboardProps: repeatKeyboardProps} = useKeyboard({
+    shortcuts: {
+      Enter: () => {
+        state.selectFocusedDate();
+      },
+      ' ': () => {
+        state.selectFocusedDate();
+      },
+      PageUp: () => {
+        state.focusPreviousSection();
+      },
+      'Shift+PageUp': () => {
+        state.focusPreviousSection(true);
+      },
+      PageDown: () => {
+        state.focusNextSection();
+      },
+      'Shift+PageDown': () => {
+        state.focusNextSection(true);
+      },
+      ArrowLeft: () => {
+        if (direction === 'rtl') {
+          state.focusNextDay();
+        } else {
+          state.focusPreviousDay();
+        }
+      },
+      ArrowUp: () => {
+        state.focusPreviousRow();
+      },
+      ArrowRight: () => {
+        if (direction === 'rtl') {
+          state.focusPreviousDay();
+        } else {
+          state.focusNextDay();
+        }
+      },
+      ArrowDown: () => {
+        state.focusNextRow();
+      }
+    },
+    allowRepeats: true
+  });
 
   let visibleRangeDescription = useVisibleRangeDescription(
     startDate,
@@ -176,16 +174,20 @@ export function useCalendarGrid(
   let weeksInMonth = state.getWeeksInMonth(startDate);
 
   return {
-    gridProps: mergeProps(labelProps, {
-      role: 'grid',
-      'aria-readonly': state.isReadOnly || undefined,
-      'aria-disabled': state.isDisabled || undefined,
-      'aria-multiselectable':
-        'highlightedRange' in state || state.selectionMode === 'multiple' || undefined,
-      onKeyDown,
-      onFocus: () => state.setFocused(true),
-      onBlur: () => state.setFocused(false)
-    }),
+    gridProps: mergeProps(
+      labelProps,
+      {
+        role: 'grid',
+        'aria-readonly': state.isReadOnly || undefined,
+        'aria-disabled': state.isDisabled || undefined,
+        'aria-multiselectable':
+          'highlightedRange' in state || state.selectionMode === 'multiple' || undefined,
+        onFocus: () => state.setFocused(true),
+        onBlur: () => state.setFocused(false)
+      },
+      keyboardProps,
+      repeatKeyboardProps
+    ),
     headerProps: {
       // Column headers are hidden to screen readers to make navigating with a touch screen reader easier.
       // The day names are already included in the label of each cell, so there's no need to announce them twice.

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-ignore
+import {addEvent, getOwnerDocument} from '../utils/domHelpers';
 import {flushSync} from 'react-dom';
-import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getEventTarget, getPropagationTargets, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollLeft} from './utils';
 import {Point, Rect, Size} from 'react-stately/useVirtualizerState';
 import React, {
@@ -84,6 +84,7 @@ export function useScrollView(
     ...otherProps
   } = props;
 
+  // oxlint-disable-next-line react/react-compiler
   let state = useRef({
     // Internal scroll position of the scroll view.
     scrollPosition: new Point(),
@@ -219,9 +220,13 @@ export function useScrollView(
 
   // Attach a document-level capturing scroll listener so we can account for scrollable ancestors.
   useEffect(() => {
-    document.addEventListener('scroll', onScroll, true);
-    return () => document.removeEventListener('scroll', onScroll, true);
-  }, [onScroll]);
+    return addEvent(
+      getPropagationTargets(ref.current, getOwnerDocument(ref.current)),
+      'scroll',
+      onScroll,
+      true
+    );
+  }, [onScroll, ref]);
 
   useEffect(() => {
     return () => {
@@ -367,6 +372,7 @@ export function useScrollView(
   if (scrollDirection === 'horizontal') {
     style.overflowX = 'auto';
     style.overflowY = 'hidden';
+    // oxlint-disable-next-line react/react-compiler
   } else if (scrollDirection === 'vertical' || contentSize.width === state.size.width) {
     // Set overflow-x: hidden if content size is equal to the width of the scroll view.
     // This prevents horizontal scrollbars from flickering during resizing due to resize observer

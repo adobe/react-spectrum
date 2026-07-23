@@ -30,7 +30,7 @@ for (let file of globSync('starters/tailwind/src/*.{ts,tsx}').sort()) {
     name: `tailwind-${name.toLowerCase()}`,
     type,
     title: name,
-    dependencies: [...dependencies, 'tailwindcss-react-aria-components', 'tailwindcss-animate'],
+    dependencies: [...dependencies, 'tailwindcss-react-aria-components', 'tw-animate-css'],
     registryDependencies: [...registryDependencies],
     files: [
       {
@@ -41,7 +41,7 @@ for (let file of globSync('starters/tailwind/src/*.{ts,tsx}').sort()) {
     ],
     css: {
       '@plugin "tailwindcss-react-aria-components"': {},
-      '@plugin "tailwindcss-animate"': {}
+      '@import "tw-animate-css"': {}
     }
   };
 
@@ -107,6 +107,60 @@ for (let file of globSync('starters/docs/src/*.{ts,tsx}').sort()) {
 }
 
 fs.writeFileSync(path.join(distDir, 'css.json'), JSON.stringify(css, null, 2) + '\n');
+
+let hooks = {
+  $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+  name: 'hooks',
+  type: 'registry:style',
+  registryDependencies: []
+};
+items.push(hooks);
+
+for (let file of globSync('starters/hooks/src/*.{ts,tsx}').sort()) {
+  let name = path.basename(file, path.extname(file));
+  let {dependencies, registryDependencies, cssImports, content} = analyzeDeps(file, 'hooks');
+  let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
+  let item = {
+    $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+    name: `hooks-${name.toLowerCase()}`,
+    type,
+    title: name,
+    dependencies: [...dependencies],
+    registryDependencies: [...registryDependencies],
+    files: [
+      {
+        path: name === 'utils' ? 'lib/react-aria-utils.ts' : 'components/ui/' + path.basename(file),
+        type,
+        content
+      }
+    ]
+  };
+
+  let cssFiles = new Set(cssImports);
+  let componentCssFile = path.resolve(file.slice(0, -path.extname(file).length) + '.css');
+  if (fs.existsSync(componentCssFile)) {
+    cssFiles.add(componentCssFile);
+  }
+
+  let seenCssFiles = new Set();
+  for (let cssFile of cssFiles) {
+    item.files.push(...analyzeCss(cssFile, seenCssFiles));
+  }
+
+  fs.writeFileSync(
+    path.join(distDir, `hooks-${name.toLowerCase()}.json`),
+    JSON.stringify(item, null, 2) + '\n'
+  );
+
+  for (let file of item.files) {
+    delete file.content;
+  }
+
+  items.push(item);
+  hooks.registryDependencies.push(`${publicUrl}/hooks-${name.toLowerCase()}.json`);
+}
+
+fs.writeFileSync(path.join(distDir, 'hooks.json'), JSON.stringify(hooks, null, 2) + '\n');
 fs.writeFileSync(
   path.join(distDir, 'registry.json'),
   JSON.stringify(
@@ -139,11 +193,14 @@ function analyzeDeps(file, type) {
 
   let dependencies = new Set();
   let registryDependencies = new Set();
+  let cssImports = new Set();
   for (let node of ast.program.body) {
     if (node.type === 'ImportDeclaration') {
       let source = node.source.value;
       if (source.startsWith('./')) {
-        if (!source.endsWith('.css')) {
+        if (source.endsWith('.css')) {
+          cssImports.add(path.resolve(path.dirname(file), source));
+        } else {
           registryDependencies.add(
             publicUrl + '/' + type + '-' + source.slice(2).toLowerCase() + '.json'
           );
@@ -153,13 +210,20 @@ function analyzeDeps(file, type) {
               : '@/registry/react-aria/ui/' + source.slice(2);
         }
       } else {
-        dependencies.add(source);
+        // Use the bare package name (e.g. `react-aria-components`) rather than the
+        // deep import path (`react-aria-components/Button`). npm treats `owner/repo`
+        // specifiers as GitHub shorthand, so passing deep paths to `shadcn add` (which
+        // runs `npm install <deps>`) would fail to resolve the dependency.
+        let pkg = source.startsWith('@')
+          ? source.split('/').slice(0, 2).join('/')
+          : source.split('/')[0];
+        dependencies.add(pkg);
       }
     }
   }
 
   content = recast.print(ast, {objectCurlySpacing: false, quote: 'single'}).code;
-  return {dependencies, registryDependencies, content};
+  return {dependencies, registryDependencies, cssImports, content};
 }
 
 function analyzeCss(file, seen = new Set()) {

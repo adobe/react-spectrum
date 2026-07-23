@@ -1,13 +1,13 @@
 {
   "ascending": "stigande",
   "ascendingSort": "sorterat på kolumn {columnName} i stigande ordning",
+  "collapse": "Dölj",
   "columnSize": "{value} pixlar",
   "descending": "fallande",
   "descendingSort": "sorterat på kolumn {columnName} i fallande ordning",
+  "expand": "Expandera",
   "resizerDescription": "Tryck på Retur för att börja ändra storlek",
   "select": "Markera",
   "selectAll": "Markera allt",
-  "sortable": "sorterbar kolumn",
-  "collapse": "Dölj",
-  "expand": "Expandera"
+  "sortable": "sorterbar kolumn"
 }

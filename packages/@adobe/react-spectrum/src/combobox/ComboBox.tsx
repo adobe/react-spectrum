@@ -141,6 +141,7 @@ export const ComboBox = React.forwardRef(function ComboBox<T extends object>(
   props: SpectrumComboBoxProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   props = useProviderProps(props);
   props = useFormProps(props);
 

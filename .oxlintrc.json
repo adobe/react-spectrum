@@ -6,10 +6,6 @@
     {
       "name": "monorepo",
       "specifier": "@jdb8/eslint-plugin-monorepo"
-    },
-    {
-      "name": "react-hooks-js",
-      "specifier": "eslint-plugin-react-hooks"
     }
   ],
   "categories": {
@@ -169,21 +165,11 @@
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "warn",
 
-    // React Compiler rules
-    "react-hooks-js/config": "error",
-    "react-hooks-js/error-boundaries": "error",
-    "react-hooks-js/component-hook-factories": "error",
-    "react-hooks-js/gating": "error",
-    "react-hooks-js/globals": "error",
-    "react-hooks-js/purity": "error",
-    "react-hooks-js/set-state-in-effect": "warn",
-    "react-hooks-js/set-state-in-render": "error",
-    "react-hooks-js/static-components": "error",
-    "react-hooks-js/unsupported-syntax": "warn",
-    "react-hooks-js/use-memo": "error",
-    "react-hooks-js/incompatible-library": "warn",
+    "react/react-compiler": "error",
 
     "rsp-rules/no-react-key": ["error"],
+    "rsp-rules/add-event-non-composing": ["error"],
+    "rsp-rules/no-non-composing-event-listener": ["error"],
     "rsp-rules/sort-imports": ["error"],
     "rsp-rules/no-non-shadow-contains": ["error"],
     "rsp-rules/safe-event-target": ["error"],
@@ -286,6 +272,8 @@
         "rsp-rules/no-react-key": ["error"],
         "rsp-rules/act-events-test": "error",
         "rsp-rules/no-getByRole-toThrow": "error",
+        "rsp-rules/add-event-non-composing": "off",
+        "rsp-rules/no-non-composing-event-listener": "off",
         "rsp-rules/no-non-shadow-contains": "off",
         "rsp-rules/safe-event-target": "off",
         "rsp-rules/shadow-safe-active-element": "off",
@@ -319,7 +307,9 @@
     {
       "files": ["**/dev/**", "**/scripts/**"],
       "rules": {
-        "rsp-rules/safe-event-target": "off"
+        "rsp-rules/safe-event-target": "off",
+        "rsp-rules/add-event-non-composing": "off",
+        "rsp-rules/no-non-composing-event-listener": "off"
       }
     },
     {

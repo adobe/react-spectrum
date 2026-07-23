@@ -13,7 +13,51 @@
 import {act} from 'react-dom/test-utils';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {getActiveElement} from '../../src/utils/shadowdom/DOMFunctions';
-import {getOwnerWindow} from '../../src/utils/domHelpers';
+import {getOwnerDocument, getOwnerWindow} from '../../src/utils/domHelpers';
+
+describe('getOwnerDocument', () => {
+  beforeAll(() => {
+    enableShadowDOM();
+  });
+  test.each([null, undefined])('returns the document if the argument is %p', value => {
+    expect(getOwnerDocument(value)).toBe(document);
+  });
+
+  it('returns the document if the argument is the document', () => {
+    expect(getOwnerDocument(document)).toBe(document);
+  });
+
+  it('returns the document if the argument is the window', () => {
+    expect(getOwnerDocument(window)).toBe(document);
+  });
+
+  it("returns the element's document if the element is in the document", () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    expect(getOwnerDocument(div)).toBe(document);
+    div.remove();
+  });
+
+  it("returns the iframe's document if the argument is the iframe's document", () => {
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    expect(getOwnerDocument(iframe.contentWindow.document)).toBe(iframe.contentWindow.document);
+
+    iframe.remove();
+  });
+
+  it("returns the iframe's document if the element is in the iframe", () => {
+    const iframe = document.createElement('iframe');
+    const iframeDiv = document.createElement('div');
+    document.body.appendChild(iframe);
+    iframe.contentWindow.document.body.appendChild(iframeDiv);
+
+    expect(getOwnerDocument(iframeDiv)).toBe(iframe.contentWindow.document);
+
+    iframe.remove();
+  });
+});
 
 describe('getOwnerWindow', () => {
   beforeAll(() => {

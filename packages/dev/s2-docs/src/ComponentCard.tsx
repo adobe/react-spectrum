@@ -156,6 +156,8 @@ import SelectBoxGroupDark from 'url:../assets/component-illustrations/dark/Selec
 import SelectBoxGroupLight from 'url:../assets/component-illustrations/light/SelectBoxGroup.avif';
 import SelectionDark from 'url:../assets/component-illustrations/dark/Selection.avif';
 import SelectionLight from 'url:../assets/component-illustrations/light/Selection.avif';
+import SideNavDark from 'url:../assets/component-illustrations/dark/SideNav.avif';
+import SideNavLight from 'url:../assets/component-illustrations/light/SideNav.avif';
 import SkeletonDark from 'url:../assets/component-illustrations/dark/Skeleton.avif';
 import SkeletonLight from 'url:../assets/component-illustrations/light/Skeleton.avif';
 import SliderDark from 'url:../assets/component-illustrations/dark/Slider.avif';
@@ -189,6 +191,8 @@ import ToggleButtonDark from 'url:../assets/component-illustrations/dark/ToggleB
 import ToggleButtonGroupDark from 'url:../assets/component-illustrations/dark/ToggleButtonGroup.avif';
 import ToggleButtonGroupLight from 'url:../assets/component-illustrations/light/ToggleButtonGroup.avif';
 import ToggleButtonLight from 'url:../assets/component-illustrations/light/ToggleButton.avif';
+import TokenFieldDark from 'url:../assets/component-illustrations/dark/TokenField.avif';
+import TokenFieldLight from 'url:../assets/component-illustrations/light/TokenField.avif';
 import TooltipDark from 'url:../assets/component-illustrations/dark/Tooltip.avif';
 import TooltipLight from 'url:../assets/component-illustrations/light/Tooltip.avif';
 import TreeDark from 'url:../assets/component-illustrations/dark/Tree.avif';
@@ -205,6 +209,9 @@ export interface ComponentCardItem {
 }
 
 // Mapping from component names to their illustration [light, dark] tuple
+// to add new illustrations run `node scripts/processComponentImages.mjs <source-dir>` where source dir needs the
+// "Light" and "Dark" folders containing the component illustrations (make sure they are the bluish gradient not gray)
+// then add imports above and entries below.
 const componentIllustrations: Record<string, [string, string] | undefined> = {
   // Components
   Accordion: [AccordionLight, AccordionDark],
@@ -264,6 +271,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   NumberField: [NumberFieldLight, NumberFieldDark],
   Picker: [PickerLight, PickerDark],
   Popover: [PopoverLight, PopoverDark],
+  PreviewTrigger: [PopoverLight, PopoverDark],
   ProgressBar: [ProgressBarLight, ProgressBarDark],
   ProgressCircle: [ProgressCircleLight, ProgressCircleDark],
   Provider: [ProviderLight, ProviderDark],
@@ -275,6 +283,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Select: [PickerLight, PickerDark],
   SelectBoxGroup: [SelectBoxGroupLight, SelectBoxGroupDark],
   Separator: [DividerLight, DividerDark],
+  SideNav: [SideNavLight, SideNavDark],
   Skeleton: [SkeletonLight, SkeletonDark],
   Slider: [SliderLight, SliderDark],
   StatusLight: [StatusLightLight, StatusLightDark],
@@ -289,6 +298,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Toast: [ToastLight, ToastDark],
   ToggleButton: [ToggleButtonLight, ToggleButtonDark],
   ToggleButtonGroup: [ToggleButtonGroupLight, ToggleButtonGroupDark],
+  TokenField: [TokenFieldLight, TokenFieldDark],
   Toolbar: [ActionGroupLight, ActionGroupDark],
   Tooltip: [TooltipLight, TooltipDark],
   Tree: [TreeLight, TreeDark],
@@ -322,6 +332,50 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   useLongPress: [PressLight, PressDark],
   useMove: [MoveLight, MoveDark],
   usePress: [PressLight, PressDark],
+  // Hooks - component hooks
+  useBreadcrumbs: [BreadcrumbsLight, BreadcrumbsDark],
+  useButton: [ButtonLight, ButtonDark],
+  useCalendar: [CalendarLight, CalendarDark],
+  useCheckbox: [CheckboxLight, CheckboxDark],
+  useCheckboxGroup: [CheckboxGroupLight, CheckboxGroupDark],
+  useColorArea: [ColorAreaLight, ColorAreaDark],
+  useColorField: [ColorFieldLight, ColorFieldDark],
+  useColorSlider: [ColorSliderLight, ColorSliderDark],
+  useColorSwatch: [ColorSwatchLight, ColorSwatchDark],
+  useColorWheel: [ColorWheelLight, ColorWheelDark],
+  useComboBox: [ComboBoxLight, ComboBoxDark],
+  useDateField: [DateFieldLight, DateFieldDark],
+  useDatePicker: [DatePickerLight, DatePickerDark],
+  useDateRangePicker: [DateRangePickerLight, DateRangePickerDark],
+  useDisclosure: [DisclosureLight, DisclosureDark],
+  useDraggableCollection: [DragAndDropLight, DragAndDropDark],
+  useDroppableCollection: [DragAndDropLight, DragAndDropDark],
+  useGridList: [CardViewLight, CardViewDark],
+  useLink: [LinkLight, LinkDark],
+  useListBox: [SelectionLight, SelectionDark],
+  useMenu: [MenuLight, MenuDark],
+  useMeter: [MeterLight, MeterDark],
+  useModalOverlay: [DialogLight, DialogDark],
+  useNumberField: [NumberFieldLight, NumberFieldDark],
+  usePopover: [PopoverLight, PopoverDark],
+  useProgressBar: [ProgressBarLight, ProgressBarDark],
+  useRadioGroup: [RadioGroupLight, RadioGroupDark],
+  useRangeCalendar: [RangeCalendarLight, RangeCalendarDark],
+  useSearchField: [SearchFieldLight, SearchFieldDark],
+  useSelect: [PickerLight, PickerDark],
+  useSeparator: [DividerLight, DividerDark],
+  useSlider: [SliderLight, SliderDark],
+  useSwitch: [SwitchLight, SwitchDark],
+  useTabList: [TabsLight, TabsDark],
+  useTable: [TableLight, TableDark],
+  useTagGroup: [TagGroupLight, TagGroupDark],
+  useTextField: [TextFieldLight, TextFieldDark],
+  useTimeField: [TimeFieldLight, TimeFieldDark],
+  useToast: [ToastLight, ToastDark],
+  useToggleButton: [ToggleButtonLight, ToggleButtonDark],
+  useToggleButtonGroup: [ToggleButtonGroupLight, ToggleButtonGroupDark],
+  useToolbar: [ActionGroupLight, ActionGroupDark],
+  useTooltipTrigger: [TooltipLight, TooltipDark],
   // Hooks - utility hooks
   I18nProvider: [UtilityLight, UtilityDark],
   mergeProps: [UtilityLight, UtilityDark],
@@ -335,6 +389,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   useIsSSR: [UtilityLight, UtilityDark],
   useLabel: [FormsLight, FormsDark],
   useLandmark: [AccessibilityLight, AccessibilityDark],
+  useListFormatter: [UtilityLight, UtilityDark],
   useLocale: [UtilityLight, UtilityDark],
   useNumberFormatter: [NumberFieldLight, NumberFieldDark],
   useObjectRef: [UtilityLight, UtilityDark],

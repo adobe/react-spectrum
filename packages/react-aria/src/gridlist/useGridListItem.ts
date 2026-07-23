@@ -27,17 +27,11 @@ import {
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {getRowId, listMap} from './utils';
 import {getScrollParent} from '../utils/getScrollParent';
-import {
-  HTMLAttributes,
-  KeyboardEvent as ReactKeyboardEvent,
-  MouseEvent as ReactMouseEvent,
-  PointerEvent as ReactPointerEvent,
-  useRef
-} from 'react';
+import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {isFocusVisible} from '../interactions/useFocusVisible';
-import {isTabbable} from '../utils/isFocusable';
 import type {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
@@ -59,6 +53,19 @@ export interface AriaGridListItemOptions {
   shouldSelectOnPressUp?: boolean;
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean;
+  /**
+   * Whether the row or its first focusable child element should be focused when the row is
+   * focused.
+   *
+   * @default 'row'
+   */
+  focusMode?: 'child' | 'row';
+  /**
+   * Whether the row should support arrow key navigation even when the containing collection uses
+   * tab keyboard navigation. Allows users to navigate between rows with arrow keys while
+   * focus is on an interactive child element within the row.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 export interface GridListItemAria extends SelectableItemStates {
@@ -94,7 +101,7 @@ export function useGridListItem<T>(
   ref: RefObject<FocusableElement | null>
 ): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
-  let {node, isVirtualized} = props;
+  let {node, isVirtualized, focusMode = 'row', allowsArrowNavigation} = props;
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
@@ -106,12 +113,33 @@ export function useGridListItem<T>(
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
   let keyWhenFocused = useRef<Key | null>(null);
   let focus = () => {
+    if (ref.current === null) {
+      return;
+    }
+
+    if (focusMode === 'child') {
+      // If focus is already on a focusable child within the row, early return so we don't shift focus
+      if (
+        isFocusWithin(ref.current) &&
+        ref.current !== getActiveElement(getOwnerDocument(ref.current))
+      ) {
+        return;
+      }
+
+      let treeWalker = getFocusableTreeWalker(ref.current, {tabbable: true});
+      let focusable = treeWalker.firstChild() as FocusableElement;
+      if (focusable) {
+        focusSafely(focusable);
+        scrollIntoViewport(focusable, {containingElement: getScrollParent(focusable)});
+        return;
+      }
+    }
+
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
     if (
-      ref.current !== null &&
-      ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-        !isFocusWithin(ref.current))
+      (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
+      !isFocusWithin(ref.current)
     ) {
       focusSafely(ref.current);
     }
@@ -175,7 +203,7 @@ export function useGridListItem<T>(
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
       !ref.current ||
@@ -288,10 +316,31 @@ export function useGridListItem<T>(
       }
       return;
     }
+
+    // if focus goes back to cell from child, make sure we don't refocus the cell if we are in focusMode=child
+    // since that would be a focus trap
+    if (
+      focusMode === 'child' &&
+      e.relatedTarget &&
+      nodeContains(ref.current, e.relatedTarget as Element)
+    ) {
+      return;
+    }
+
+    // If the cell itself is focused, wait a frame so that focus finishes propagating
+    // up to the tree, and move focus to a focusable child if possible.
+    requestAnimationFrame(() => {
+      if (
+        focusMode === 'child' &&
+        getActiveElement(getOwnerDocument(ref.current)) === ref.current
+      ) {
+        focus();
+      }
+    });
   };
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
       !ref.current ||
@@ -345,9 +394,13 @@ export function useGridListItem<T>(
   //   });
   // }
 
+  // oxlint-disable-next-line react/react-compiler
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture: keyboardNavigationBehavior === 'arrow' ? onKeyDownCapture : undefined,
+    onKeyDownCapture:
+      keyboardNavigationBehavior === 'arrow' || allowsArrowNavigation
+        ? onKeyDownCapture
+        : undefined,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node['aria-label'] || node.textValue || undefined,
@@ -362,8 +415,6 @@ export function useGridListItem<T>(
     id: getRowId(state, node.key)
   });
 
-  // TODO: guarding against selection when firing space/enter/click on a element in a row is technically not only limited to textfields so I
-  // am not making it specific to keyboardNavigationBehavior = tab, but maybe we should still?
   // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
   // is stopped. this also fixes space not working in a textfield in a tree parent row
   let baseOnKeyDown = rowProps.onKeyDown;
@@ -372,28 +423,6 @@ export function useGridListItem<T>(
     if (!e.isPropagationStopped()) {
       baseOnKeyDown?.(e);
     }
-  };
-
-  // guard against presses triggering row selecition when they happen on elements within the row
-  // am currently assuming if it is tabbable it is interactive, but maybe can use a different kind of check
-  let baseOnPointerDown = rowProps.onPointerDown;
-  rowProps.onPointerDown = (e: ReactPointerEvent<FocusableElement>) => {
-    let target = getEventTarget(e) as Element | null;
-    if (target && target !== ref.current && isTabbable(target)) {
-      e.stopPropagation();
-      return;
-    }
-    baseOnPointerDown?.(e);
-  };
-
-  let baseOnMouseDown = rowProps.onMouseDown;
-  rowProps.onMouseDown = (e: ReactMouseEvent<FocusableElement>) => {
-    let target = getEventTarget(e) as Element | null;
-    if (target && target !== ref.current && isTabbable(target)) {
-      e.stopPropagation();
-      return;
-    }
-    baseOnMouseDown?.(e);
   };
 
   if (isVirtualized) {
@@ -413,6 +442,7 @@ export function useGridListItem<T>(
   };
 
   // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
+  // oxlint-disable react/react-compiler
   return {
     rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
@@ -421,6 +451,7 @@ export function useGridListItem<T>(
     },
     ...itemStates
   };
+  // oxlint-enable react/react-compiler
 }
 
 function handleTreeExpansionKeys<T>(

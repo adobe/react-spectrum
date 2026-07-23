@@ -111,6 +111,38 @@ describe('TableUtils', () => {
       );
       expect(widths).toStrictEqual([133, 134, 533]);
     });
+
+    it('keeps columns flush with a fractional table width', () => {
+      let tableWidth = 1000.5;
+      let widths = calculateColumnSizes(
+        tableWidth,
+        [
+          {key: 'name', width: '1fr'},
+          {key: 'type', width: '1fr'}
+        ],
+        new Map(),
+        () => 150,
+        () => 50
+      );
+      expect(widths).toStrictEqual([500, 500.5]);
+      expect(widths.reduce((a, b) => a + b, 0)).toBe(tableWidth);
+    });
+
+    it('handles js fp rounding errors', () => {
+      let tableWidth = 1000.7;
+      let widths = calculateColumnSizes(
+        tableWidth,
+        [
+          {key: 'name', width: '1fr'},
+          {key: 'type', width: '1fr'}
+        ],
+        new Map(),
+        () => 150,
+        () => 50
+      );
+      expect(widths).toStrictEqual([500, 500.7]);
+      expect(widths.reduce((a, b) => a + b, 0)).toBe(tableWidth);
+    });
   });
 
   describe('table column layout', () => {

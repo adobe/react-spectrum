@@ -94,10 +94,6 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   };
 
   let onKeyDown = (e: KeyboardEvent) => {
-    if (e.altKey) {
-      return;
-    }
-
     let character = getStringForKey(e.key);
     if (
       !character ||

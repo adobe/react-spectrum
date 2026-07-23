@@ -1,13 +1,13 @@
 {
   "ascending": "stigende",
   "ascendingSort": "sortert etter kolonne {columnName} i stigende rekkefølge",
+  "collapse": "Skjul",
   "columnSize": "{value} piksler",
   "descending": "synkende",
   "descendingSort": "sortert etter kolonne {columnName} i synkende rekkefølge",
+  "expand": "Utvid",
   "resizerDescription": "Trykk på Enter for å starte størrelsesendring",
   "select": "Velg",
   "selectAll": "Velg alle",
-  "sortable": "kolonne som kan sorteres",
-  "collapse": "Skjul",
-  "expand": "Utvid"
+  "sortable": "kolonne som kan sorteres"
 }

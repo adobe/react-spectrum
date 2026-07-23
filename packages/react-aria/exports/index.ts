@@ -84,6 +84,7 @@ export {useKeyboard} from '../src/interactions/useKeyboard';
 export {useMove} from '../src/interactions/useMove';
 export {usePress} from '../src/interactions/usePress';
 export {useLongPress} from '../src/interactions/useLongPress';
+export {useContextMenu} from '../src/interactions/useContextMenu';
 export {useFocusable, Focusable} from '../src/interactions/useFocusable';
 export {Pressable} from '../src/interactions/Pressable';
 export {useField} from '../src/label/useField';
@@ -151,6 +152,7 @@ export {useTag} from '../src/tag/useTag';
 export {useTagGroup} from '../src/tag/useTagGroup';
 export {useTextField} from '../src/textfield/useTextField';
 export {useToast} from '../src/toast/useToast';
+export {usePreviewTrigger} from '../src/tooltip/usePreviewTrigger';
 export {useToastRegion} from '../src/toast/useToastRegion';
 export {useToolbar} from '../src/toolbar/useToolbar';
 export {useTooltip} from '../src/tooltip/useTooltip';
@@ -329,6 +331,11 @@ export type {InteractOutsideProps} from '../src/interactions/useInteractOutside'
 export type {KeyboardProps, KeyboardResult} from '../src/interactions/useKeyboard';
 export type {LongPressProps, LongPressResult} from '../src/interactions/useLongPress';
 export type {
+  ContextMenuProps,
+  ContextMenuAria,
+  ContextMenuEvent
+} from '../src/interactions/useContextMenu';
+export type {
   MoveEvents,
   PressEvent,
   PressEvents,
@@ -476,6 +483,10 @@ export type {AriaToastProps, ToastAria} from '../src/toast/useToast';
 export type {AriaToolbarProps, ToolbarAria} from '../src/toolbar/useToolbar';
 export type {AriaTooltipProps, TooltipAria, TooltipProps} from '../src/tooltip/useTooltip';
 export type {TooltipTriggerAria} from '../src/tooltip/useTooltipTrigger';
+export type {
+  AriaPreviewTriggerProps,
+  PreviewTriggerTriggerAria
+} from '../src/tooltip/usePreviewTrigger';
 export type {TooltipTriggerProps} from 'react-stately/useTooltipTriggerState';
 export type {AriaTreeProps, TreeProps, TreeAria, AriaTreeOptions} from '../src/tree/useTree';
 export type {AriaTreeItemOptions, TreeItemAria} from '../src/tree/useTreeItem';

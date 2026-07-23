@@ -15,7 +15,6 @@ import {AriaButtonProps} from '../button/useButton';
 import {ariaHideOutside} from '../overlays/ariaHideOutside';
 import {
   AriaLabelingProps,
-  BaseEvent,
   DOMAttributes,
   DOMProps,
   InputDOMProps,
@@ -31,9 +30,9 @@ import {chain} from '../utils/chain';
 import {ComboBoxProps, ComboBoxState, SelectionMode} from 'react-stately/useComboBoxState';
 import {dispatchVirtualFocus} from '../focus/virtualFocus';
 import {
+  ElementType,
   FocusEvent,
   InputHTMLAttributes,
-  KeyboardEvent,
   TouchEvent,
   useEffect,
   useMemo,
@@ -50,9 +49,11 @@ import {isAppleDevice} from '../utils/platform';
 import {ListKeyboardDelegate} from '../selection/ListKeyboardDelegate';
 import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
+import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
@@ -79,6 +80,12 @@ export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> exte
   listBoxRef: RefObject<HTMLElement | null>;
   /** The ref for the optional list box popup trigger button. */
   buttonRef?: RefObject<Element | null>;
+  /**
+   * The HTML element used to render the label, e.g. 'label', or 'span'.
+   *
+   * @default 'label'
+   */
+  labelElementType?: ElementType;
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate;
   /**
@@ -176,19 +183,12 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
 
   let router = useRouter();
 
-  // For textfield specific keydown operations
-  let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
-    if (e.nativeEvent.isComposing) {
-      return;
-    }
-    switch (e.key) {
-      case 'Enter':
-      case 'Tab':
-        // Prevent form submission if menu is open since we may be selecting a option
-        if (state.isOpen && e.key === 'Enter') {
-          e.preventDefault();
-        }
-
+  // for textfield specific operations
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      Enter: e => {
+        // Prevent default form submission if menu is open since we may be selecting a option
+        let shouldPreventDefault = state.isOpen;
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
         if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
           let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
@@ -196,7 +196,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
             let item = listBoxRef.current.querySelector(
               `[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`
             );
-            if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
+            if (item instanceof HTMLAnchorElement) {
               router.open(
                 item,
                 e,
@@ -205,39 +205,66 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
               );
             }
             state.close();
-            break;
+            return {shouldPreventDefault};
           } else if (collectionItem?.props.onAction) {
             collectionItem.props.onAction();
             state.close();
-            break;
+            return {shouldPreventDefault};
           }
         }
-        if (e.key === 'Enter' || state.isOpen) {
+        state.commit();
+        return {shouldPreventDefault};
+      },
+      Tab: () => {
+        // If the focused item is a link, trigger opening it. Items that are links are not selectable.
+        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
+          let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+          if (collectionItem?.props.href) {
+            state.close();
+            return {shouldPreventDefault: false};
+          } else if (collectionItem?.props.onAction) {
+            collectionItem.props.onAction();
+            state.close();
+            return {shouldPreventDefault: false, shouldContinuePropagation: true};
+          }
+        }
+        if (state.isOpen) {
           state.commit();
         }
-        if (e.key === 'Tab') {
-          e.continuePropagation();
-        }
-
-        break;
-      case 'Escape':
+        return {shouldPreventDefault: false, shouldContinuePropagation: true};
+      },
+      Escape: () => {
+        let shouldContinuePropagation = false;
         if (!state.selectionManager.isEmpty || state.inputValue === '' || props.allowsCustomValue) {
-          e.continuePropagation();
+          shouldContinuePropagation = true;
         }
         state.revert();
-        break;
-      case 'ArrowDown':
-        state.open('first', 'manual');
-        break;
-      case 'ArrowUp':
-        state.open('last', 'manual');
-        break;
-      case 'ArrowLeft':
-      case 'ArrowRight':
-        state.selectionManager.setFocusedKey(null);
-        break;
+        return {shouldContinuePropagation};
+      }
     }
-  };
+  });
+
+  let {keyboardProps: repeatKeyboardProps} = useKeyboard({
+    shortcuts: {
+      ArrowDown: () => {
+        state.open('first', 'manual');
+        return {shouldPreventDefault: false};
+      },
+      ArrowUp: () => {
+        state.open('last', 'manual');
+        return {shouldPreventDefault: false};
+      },
+      ArrowLeft: () => {
+        state.selectionManager.setFocusedKey(null);
+        return {shouldPreventDefault: false};
+      },
+      ArrowRight: () => {
+        state.selectionManager.setFocusedKey(null);
+        return {shouldPreventDefault: false};
+      }
+    },
+    allowRepeats: true
+  });
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
@@ -281,7 +308,13 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           : props.isRequired,
       onChange: state.setInputValue,
       onKeyDown: !isReadOnly
-        ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown)
+        ? // oxlint-disable-next-line react/react-compiler
+          chain(
+            state.isOpen && collectionProps.onKeyDown,
+            keyboardProps.onKeyDown,
+            repeatKeyboardProps.onKeyDown,
+            props.onKeyDown
+          )
         : props.onKeyDown,
       onBlur,
       value: state.inputValue,
@@ -462,7 +495,17 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
   );
 
   return {
-    labelProps,
+    labelProps: {
+      ...labelProps,
+      // Focus the input in case the label is not a native <label> element.
+      onClick:
+        ('htmlFor' in labelProps && labelProps.htmlFor) || props.isDisabled
+          ? undefined
+          : () => {
+              inputRef.current?.focus();
+              setInteractionModality('keyboard');
+            }
+    },
     buttonProps: {
       ...menuTriggerProps,
       ...triggerLabelProps,
@@ -472,6 +515,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       onPressStart,
       isDisabled: isDisabled || isReadOnly
     },
+    // oxlint-disable-next-line react/react-compiler
     inputProps: mergeProps(inputProps, {
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
@@ -523,7 +567,7 @@ function useValueId(depArray: ReadonlyArray<any> = []): string | undefined {
 
   useEffect(() => {
     if (exists && !document.getElementById(id)) {
-      // oxlint-disable-next-line react-hooks-js/set-state-in-effect
+      // oxlint-disable-next-line react/react-compiler
       setExists(false);
     }
   }, [id, exists, lastDeps]);
