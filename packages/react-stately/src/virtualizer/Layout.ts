@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {InvalidationContext} from './types';
+import {InvalidationContext, ScrollAnchorInfo} from './types';
 import {ItemDropTarget, Key, LayoutDelegate, Node} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
@@ -72,6 +72,13 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
     return newOptions !== oldOptions;
   }
+
+  /**
+   * Describes the edge-anchoring this layout wants, if any. Returning null (or omitting this
+   * method) disables scroll-anchoring entirely — the virtualizer's generic anchor-tracking logic
+   * is skipped.
+   */
+  getScrollAnchorInfo?(_layoutOptions?: O): ScrollAnchorInfo | null;
 
   /**
    * This method allows the layout to perform any pre-computation

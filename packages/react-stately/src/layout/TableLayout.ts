@@ -143,11 +143,12 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
         if (this.columnWidths.get(key) !== val) {
           this.columnWidths = invalidationContext.layoutOptions.columnWidths;
           invalidationContext.sizeChanged = true;
+          invalidationContext.widthChanged = true;
           break;
         }
       }
     } else if (
-      invalidationContext.sizeChanged ||
+      invalidationContext.widthChanged ||
       this.columnsChanged(newCollection, this.lastCollection)
     ) {
       let columnLayout = new TableColumnLayout({});
@@ -157,6 +158,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
         new Map()
       );
       invalidationContext.sizeChanged = true;
+      invalidationContext.widthChanged = true;
     }
 
     super.update(invalidationContext);

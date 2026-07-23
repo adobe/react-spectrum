@@ -12,16 +12,40 @@
 
 import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
-import {Rect} from './Rect';
+import {LayoutInfo} from './LayoutInfo';
+import {Rect, RectCorner} from './Rect';
 import {Size} from './Size';
 
 export interface InvalidationContext<O = any> {
   contentChanged?: boolean;
   offsetChanged?: boolean;
   sizeChanged?: boolean;
+  widthChanged?: boolean;
+  heightChanged?: boolean;
   itemSizeChanged?: boolean;
   layoutOptionsChanged?: boolean;
   layoutOptions?: O;
+}
+
+export interface ScrollAnchor {
+  key: Key;
+  corner: RectCorner;
+  offset: number;
+}
+
+/** Describes the edge-anchoring a layout wants. See `Layout.getScrollAnchorInfo`. */
+export interface ScrollAnchorInfo {
+  /** Which edge of the content the viewport should stay anchored to. */
+  edge: 'start' | 'end';
+  /** Which axis `edge` refers to — 'y' for vertical lists, 'x' for horizontal. */
+  axis: 'x' | 'y';
+  /** Distance (px) from `edge` within which the viewport is considered "following" it. */
+  threshold: number;
+  /**
+   * Optional classifier excluding structural/ephemeral layout infos (e.g. loaders) from being
+   * selected as the anchor. Defaults to allowing any layoutInfo.
+   */
+  isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
 }
 
 export interface VirtualizerDelegate<T extends object, V> {

@@ -12,13 +12,20 @@
 
 import {ChildView, ReusableView, RootView} from './ReusableView';
 import {Collection, Key} from '@react-types/shared';
-import {InvalidationContext, Mutable, VirtualizerDelegate, VirtualizerRenderOptions} from './types';
+import {
+  InvalidationContext,
+  Mutable,
+  ScrollAnchor,
+  VirtualizerDelegate,
+  VirtualizerRenderOptions
+} from './types';
 import {isSetEqual} from './utils';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
 import {Rect} from './Rect';
+import {ScrollAnchorTracker} from './ScrollAnchor';
 import {Size} from './Size';
 
 interface VirtualizerOptions<T extends object, V> {
@@ -70,6 +77,7 @@ export class Virtualizer<T extends object, V> {
   private _isScrolling: boolean;
   private _invalidationContext: InvalidationContext;
   private _overscanManager: OverscanManager;
+  private _scrollAnchor: ScrollAnchorTracker;
 
   constructor(options: VirtualizerOptions<T, V>) {
     this.delegate = options.delegate;
@@ -85,6 +93,7 @@ export class Virtualizer<T extends object, V> {
     this._isScrolling = false;
     this._invalidationContext = {};
     this._overscanManager = new OverscanManager();
+    this._scrollAnchor = new ScrollAnchorTracker();
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
@@ -167,9 +176,50 @@ export class Virtualizer<T extends object, V> {
   }
 
   private relayout(context: InvalidationContext = {}) {
+    let anchorInfo = this.layout.getScrollAnchorInfo?.(context.layoutOptions) ?? null;
+
+    // Capture scroll anchor from current (pre-layout) view positions.
+    // On first render _visibleViews is empty so no anchor will be found.
+    let anchor: ScrollAnchor | null = null;
+    if (anchorInfo) {
+      let preLayoutInfos: [Key, LayoutInfo][] = [];
+      for (let [key, view] of this._visibleViews) {
+        let layoutInfo = this.layout.getLayoutInfo(key) ?? view.layoutInfo;
+        if (layoutInfo) {
+          preLayoutInfos.push([key, layoutInfo]);
+        }
+      }
+      anchor = this._scrollAnchor.captureBeforeLayout(anchorInfo, preLayoutInfos, this.visibleRect);
+    }
+
+    let previousContentSize = this.contentSize;
+    let previousVisibleRect = this.visibleRect;
+
     // Update the layout
     this.layout.update(context);
-    (this as Mutable<this>).contentSize = this.layout.getContentSize();
+
+    let rawContentSize = this.layout.getContentSize();
+    (this as Mutable<this>).contentSize = new Size(rawContentSize.width, rawContentSize.height);
+
+    let target = this._scrollAnchor.resolveAfterLayout({
+      anchorInfo,
+      anchor,
+      postLayoutInfos: anchorInfo ? this.getVisibleLayoutInfos() : new Map(),
+      previousVisibleRect,
+      previousContentSize,
+      contentSize: this.contentSize,
+      itemSizeChanged: context.itemSizeChanged ?? false,
+      isScrolling: this._isScrolling,
+      getLayoutInfo: (key: Key) => this.layout.getLayoutInfo(key)
+    });
+
+    if (target) {
+      // Queues a new render cycle. Return early to skip updateSubviews — running it now
+      // would position views against the old visibleRect, causing a flash before the
+      // incoming relayout corrects them.
+      this.delegate.setVisibleRect(target);
+      return;
+    }
 
     // Constrain scroll position.
     // If the content changed, scroll to the top.
@@ -282,6 +332,8 @@ export class Virtualizer<T extends object, V> {
     let needsLayout = false;
     let offsetChanged = false;
     let sizeChanged = false;
+    let widthChanged = false;
+    let heightChanged = false;
     let itemSizeChanged = false;
     let layoutOptionsChanged = false;
     let needsUpdate = false;
@@ -298,6 +350,7 @@ export class Virtualizer<T extends object, V> {
 
       opts.layout.virtualizer = this;
       mutableThis.layout = opts.layout;
+      this._scrollAnchor.reset();
       needsLayout = true;
     }
 
@@ -328,6 +381,8 @@ export class Virtualizer<T extends object, V> {
       if (shouldInvalidate) {
         offsetChanged = !opts.visibleRect.pointEquals(this.visibleRect);
         sizeChanged = !this.size.equals(opts.size);
+        widthChanged = this.size.width !== opts.size.width;
+        heightChanged = this.size.height !== opts.size.height;
         needsLayout = true;
       } else {
         needsUpdate = true;
@@ -340,6 +395,8 @@ export class Virtualizer<T extends object, V> {
     if (opts.invalidationContext !== this._invalidationContext) {
       if (opts.invalidationContext) {
         sizeChanged ||= opts.invalidationContext.sizeChanged || false;
+        widthChanged ||= opts.invalidationContext.widthChanged || false;
+        heightChanged ||= opts.invalidationContext.heightChanged || false;
         offsetChanged ||= opts.invalidationContext.offsetChanged || false;
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
         layoutOptionsChanged ||=
@@ -367,6 +424,8 @@ export class Virtualizer<T extends object, V> {
       this.relayout({
         offsetChanged,
         sizeChanged,
+        widthChanged,
+        heightChanged,
         itemSizeChanged,
         layoutOptionsChanged,
         layoutOptions: this._invalidationContext.layoutOptions
