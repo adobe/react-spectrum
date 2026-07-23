@@ -38,13 +38,34 @@ const meta: Meta = {
 
 export default meta;
 
-export const Example = () => (
-  <MarginVisualizer>
-    <article className={`${prose()} ${style({maxWidth: 800, marginX: 'auto'})}`}>
-      <ProseExample components={{CodeBlock: 'pre'}} />
-    </article>
-  </MarginVisualizer>
-);
+function ProseStory() {
+  let [fontSize, setFontSize] = useState(14);
+  return (
+    <MarginVisualizer>
+      <div
+        className={style({
+          position: 'absolute'
+        })}>
+        <Slider
+          labelPosition="side"
+          label="Font Size"
+          minValue={10}
+          maxValue={24}
+          value={fontSize}
+          onChange={setFontSize}
+        />
+      </div>
+      <article
+        data-testid="prose"
+        className={`${prose()} ${style({maxWidth: 800, marginX: 'auto'})}`}
+        style={{'--s2-font-size-base': fontSize} as React.CSSProperties}>
+        <ProseExample components={{CodeBlock: 'pre'}} />
+      </article>
+    </MarginVisualizer>
+  );
+}
+
+export const Example = () => <ProseStory />;
 
 // Spectrum tokens applied to each prose element (see style/prose.ts). When a
 // font isn't specified the element inherits `body`; when a margin isn't
@@ -297,7 +318,9 @@ function BlueLine({box}: {box: MarginBox}) {
 }
 
 function computeBoxes(root: HTMLElement): MarginBox[] {
-  let prose = root.querySelector('.prose') ?? root;
+  // Scope measurement to the prose article (tagged with data-testid) so the
+  // overlay ignores sibling controls like the font size slider.
+  let prose = root.querySelector('[data-testid="prose"]') ?? root;
   let scrollX = window.scrollX;
   let scrollY = window.scrollY;
   let entries: Omit<MarginBox, 'type' | 'groupIndex'>[] = [];
