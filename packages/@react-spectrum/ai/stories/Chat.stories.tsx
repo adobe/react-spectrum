@@ -45,9 +45,10 @@ import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {prose} from '../src/style/prose' with {type: 'macro'};
-import {ReactNode, useEffect, useRef, useState} from 'react';
+import {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 
 const meta: Meta<typeof Chat> = {
   component: Chat,
