@@ -95,6 +95,112 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('Dog');
   });
 
+  it('should bubble a change event from the hidden select when a ListBox option is selected', async () => {
+    let onChange = jest.fn();
+    let {getByTestId} = render(
+      <form onChange={e => onChange(e.target)}>
+        <TestSelect name="animal" />
+      </form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    let hiddenSelect = document.querySelector('select[name="animal"]');
+
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(hiddenSelect);
+    expect(hiddenSelect).toHaveValue('dog');
+  });
+
+  it('should bubble a native change event from the hidden select only once', async () => {
+    let onChange = jest.fn();
+    render(
+      <form onChange={e => onChange(e.target)}>
+        <TestSelect name="animal" />
+      </form>
+    );
+    let hiddenSelect = document.querySelector('select[name="animal"]');
+
+    await user.selectOptions(hiddenSelect, 'dog');
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(hiddenSelect);
+    expect(hiddenSelect).toHaveValue('dog');
+  });
+
+  it('should bubble a change event for a controlled select', async () => {
+    let onChange = jest.fn();
+    let values = [];
+
+    function ControlledSelect() {
+      let [value, setValue] = useState('cat');
+      return (
+        <TestSelect
+          name="animal"
+          value={value}
+          onChange={value => {
+            onChange(value);
+            setValue(value);
+          }}
+        />
+      );
+    }
+
+    let {getByTestId} = render(
+      <form onChange={e => values.push(e.target.value)}>
+        <ControlledSelect />
+      </form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    let hiddenSelect = document.querySelector('select[name="animal"]');
+
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+
+    expect(onChange).toHaveBeenCalledWith('dog');
+    expect(values).toEqual(['dog']);
+    expect(hiddenSelect).toHaveValue('dog');
+  });
+
+  it('should not bubble a change event when the form is reset', async () => {
+    let onChange = jest.fn();
+    let formRef = React.createRef();
+    let {getByTestId} = render(
+      <form ref={formRef} onChange={onChange}>
+        <TestSelect name="animal" defaultValue="cat" />
+      </form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    let hiddenSelect = document.querySelector('select[name="animal"]');
+
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(onChange).toHaveBeenCalledTimes(1);
+    onChange.mockClear();
+
+    act(() => formRef.current.reset());
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(hiddenSelect).toHaveValue('cat');
+  });
+
+  it('should bubble change events with the selected options for multiple selection', async () => {
+    let values = [];
+    let {getByTestId} = render(
+      <form onChange={e => values.push([...e.target.selectedOptions].map(option => option.value))}>
+        <TestSelect name="animal" selectionMode="multiple" />
+      </form>
+    );
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+
+    expect(values).toEqual([['cat'], ['cat', 'dog']]);
+  });
+
   it('should support slot', () => {
     let {getByTestId} = render(
       <SelectContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -778,12 +884,16 @@ describe('Select', () => {
 
   it('should support multiple selection form integration with many items', async () => {
     let items = [];
+    let values = [];
     for (let i = 0; i < 320; i++) {
       items.push({id: i, name: 'item' + i});
     }
 
     let {getByTestId} = render(
-      <Form data-testid="form" onSubmit={e => e.preventDefault()}>
+      <Form
+        data-testid="form"
+        onChange={e => values.push([...e.target.selectedOptions].map(option => option.value))}
+        onSubmit={e => e.preventDefault()}>
         <Select data-testid="select" name="select" selectionMode="multiple" isRequired>
           <Label>Select</Label>
           <Button>
@@ -818,6 +928,7 @@ describe('Select', () => {
     await user.click(options[1]);
     await selectTester.close();
     expect(trigger).toHaveTextContent('item0 and item1');
+    expect(values).toEqual([['0'], ['0', '1']]);
 
     let formData = new FormData(getByTestId('form'));
     expect(formData.getAll('select')).toEqual(['0', '1']);
