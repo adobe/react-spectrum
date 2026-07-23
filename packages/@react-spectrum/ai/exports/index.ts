@@ -3,18 +3,21 @@ export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
+  AutoLinkingTokenFieldValue,
   PromptField,
   PromptFieldSubmitButton,
   PromptTokenField,
   AttachFileMenuItem,
+  CommandMenuItem,
   InsertMenuButton,
+  InsertTextMenuItem,
   InsertTokenMenuItem,
   PromptFieldAttachmentList,
   PromptFieldToolbar,
   PromptToken
 } from '../src/PromptField';
 export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
-export {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
+export {Chat, Thread, ThreadItem, ThreadScrollButton, PromptFocusContext} from '../src/Chat';
 export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';
 

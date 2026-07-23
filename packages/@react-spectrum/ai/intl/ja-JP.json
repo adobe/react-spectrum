@@ -2,5 +2,17 @@
   "chat.newMessage": "新規メッセージ",
   "messagefeedback.thumbDown": "無効な応答",
   "messagefeedback.thumbUp": "有効な応答",
-  "responsestatus.loading": "読み込み中"
+  "responsestatus.loading": "読み込み中",
+  "chat.scrollToBottom": "Scroll to bottom",
+  "voicebutton.stopListening": "Stop recording",
+  "voicebutton.startListening": "Start recording",
+  "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
+  "promptfield.aiDisclaimer": "回答は AI を使用して生成されますが、不正確になる場合があります。使用する前に確認してください。",
+  "promptfield.aiUserGuidlines": "AI ユーザーガイドライン",
+  "promptfield.attachments": "Attachments",
+  "promptfield.label": "Prompt",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
+  "promptfield.insertButton": "Add",
+  "promptfield.uploading": "Uploading"
 }
