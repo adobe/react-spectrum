@@ -2,5 +2,6 @@
   "rangeOverflow": "Der Wert muss {maxValue} oder früher sein.",
   "rangeReversed": "Das Startdatum muss vor dem Enddatum liegen.",
   "rangeUnderflow": "Der Wert muss {minValue} oder später sein.",
-  "unavailableDate": "Das ausgewählte Datum ist nicht verfügbar."
+  "unavailableDate": "Das ausgewählte Datum ist nicht verfügbar.",
+  "incompleteValue": "Please enter a value."
 }

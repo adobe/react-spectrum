@@ -2,5 +2,6 @@
   "rangeOverflow": "Значение должно быть не позже {maxValue}.",
   "rangeReversed": "Дата начала должна предшествовать дате окончания.",
   "rangeUnderflow": "Значение должно быть не раньше {minValue}.",
-  "unavailableDate": "Выбранная дата недоступна."
+  "unavailableDate": "Выбранная дата недоступна.",
+  "incompleteValue": "Please enter a value."
 }
