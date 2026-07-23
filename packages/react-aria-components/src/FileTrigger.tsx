@@ -64,7 +64,7 @@ export interface FileTriggerProps
    */
   acceptDirectory?: boolean;
   /**
-   * The name of the input element, used when submitting an HTML form
+   * The name of the input element, used when submitting an HTML form.
    */
   name?: string;
   /**
@@ -117,8 +117,7 @@ export const FileTrigger = forwardRef(function FileTrigger(
             inputRef.current.value = '';
           }
           inputRef.current?.click();
-        }}
-      >
+        }}>
         {children}
       </PressResponder>
       <VisuallyHidden>
@@ -245,8 +244,7 @@ export const FileField = /*#__PURE__*/ (forwardRef as forwardRefType)(function F
       data-invalid={validation.isInvalid}
       data-required={props.isRequired}
       {...DOMProps}
-      {...renderProps}
-    >
+      {...renderProps}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
@@ -267,9 +265,8 @@ export const FileField = /*#__PURE__*/ (forwardRef as forwardRefType)(function F
           allowsMultiple={props.allowsMultiple}
           defaultCamera={props.defaultCamera}
           acceptDirectory={props.acceptDirectory}
-          {...triggerProps} 
-          validationBehavior={validationBehavior}
-        >
+          {...triggerProps}
+          validationBehavior={validationBehavior}>
           {renderProps.children}
         </FileTrigger>
       </Provider>
