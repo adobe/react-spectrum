@@ -43,12 +43,12 @@ import {Content} from '@react-spectrum/s2/Content';
 import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
 import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta} from '@storybook/react';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {prose} from '../src/style/prose' with {type: 'macro'};
 import {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
-import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 
 const meta: Meta<typeof Chat> = {
   component: Chat,
@@ -67,7 +67,6 @@ const meta: Meta<typeof Chat> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Chat>;
 
 type Message =
   | {id: number; type: 'user' | 'system'; content: string}
@@ -735,7 +734,7 @@ export function EmptyChat() {
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
-                    <ResponseStatus isLoading={msg.isStreaming}>
+                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
                         {msg.details && (
