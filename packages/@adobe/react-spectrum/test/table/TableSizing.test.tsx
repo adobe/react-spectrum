@@ -813,6 +813,54 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
 
+      it('updates cell widths live during drag before pointer up', () => {
+        simulateDesktop();
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">
+                Foo
+              </Column>
+              <Column key="bar" maxWidth={200}>
+                Bar
+              </Column>
+              <Column key="baz" maxWidth={200}>
+                Baz
+              </Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
+            </TableBody>
+          </TableView>
+        );
+
+        fireEvent.pointerMove(tree.container);
+        let rows = tree.getAllByRole('row');
+        // Cells must position via the column CSS variable so imperative drag updates are visible
+        // live (a raw pixel width would only change after the resize commits).
+        for (let row of rows) {
+          let cell = row.childNodes[0] as HTMLElement;
+          expect(cell.style.width).toBe('var(--col-0-width)');
+        }
+        for (let row of rows) {
+          expect(getCellWidth(row.childNodes[0] as HTMLElement)).toBe(600);
+        }
+
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        fireEvent.pointerEnter(resizableHeader);
+        let resizer = tree.getByRole('slider');
+        fireEvent.pointerEnter(resizer);
+
+        fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 600, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
+        // No pointerUp yet: widths must already reflect the drag (live), not only after commit.
+        for (let row of rows) {
+          expect(getCellWidth(row.childNodes[0] as HTMLElement)).toBe(595);
+        }
+
+        fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+      });
+
       it('dragging the resizer works - mobile', () => {
         let onResizeEnd = jest.fn();
         let tree = render(

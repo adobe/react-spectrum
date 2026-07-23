@@ -37,6 +37,7 @@ import {
   getInteractionModality,
   isFocusVisible
 } from 'react-aria/private/interactions/useFocusVisible';
+import {getTableVirtualizerItemStyle} from 'react-aria/private/table/tableVirtualizerStyle';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {HoverProps, useHover} from 'react-aria/useHover';
 import {InsertionIndicator} from './InsertionIndicator';
@@ -89,6 +90,7 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {usePress} from 'react-aria/usePress';
 import {useProvider, useProviderProps} from '../provider/Provider';
 import {useStyleProps} from '../utils/styleProps';
+import {useSyncColumnWidthCSSVars} from 'react-aria/private/table/columnWidthDOM';
 import {
   useTable,
   useTableCell,
@@ -389,10 +391,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
           virtualizer={reusableView.virtualizer}
           parent={parent!}
           columnIndex={getColumnLayoutIndex(reusableView.content)}
-          colSpan={reusableView.content?.colSpan ?? 1}
-          useColumnCSSVariables={
-            reusableView.layoutInfo?.type === 'column' || reusableView.layoutInfo?.type === 'cell'
-          }>
+          colSpan={reusableView.content?.colSpan ?? 1}>
           {reusableView.rendered}
         </TableCellWrapper>
       );
@@ -691,15 +690,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
 
   let onWidthsApplied = useCallback(
     (totalWidth: number) => {
-      let width = `${totalWidth}px`;
-      let bodyContent = bodyRef.current?.firstElementChild;
-      if (bodyContent instanceof HTMLElement) {
-        bodyContent.style.width = width;
-      }
-      let headerContent = headerRef.current?.firstElementChild;
-      if (headerContent instanceof HTMLElement) {
-        headerContent.style.width = width;
-      }
+      setScrollContentWidth(bodyRef, headerRef, totalWidth);
     },
     [bodyRef, headerRef]
   );
@@ -708,12 +699,17 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     {
       tableWidth,
       getDefaultWidth,
-      getDefaultMinWidth,
-      columnWidthRootRef: domRef,
-      onWidthsApplied
+      getDefaultMinWidth
     },
     tableState
   );
+
+  useSyncColumnWidthCSSVars({
+    rootRef: domRef,
+    state: columnResizeState,
+    tableWidth,
+    onWidthsApplied
+  });
 
   let state = useVirtualizerState<GridNode<unknown>, ReactNode>({
     layout,
@@ -1631,8 +1627,7 @@ function TableCellWrapper({
   parent,
   children,
   columnIndex,
-  colSpan = 1,
-  useColumnCSSVariables = false
+  colSpan = 1
 }: {
   layoutInfo: LayoutInfo;
   virtualizer: any;
@@ -1640,8 +1635,8 @@ function TableCellWrapper({
   children: ReactNode;
   columnIndex?: number;
   colSpan?: number;
-  useColumnCSSVariables?: boolean;
 }) {
+  let {direction} = useLocale();
   let {isTableDroppable, dropState} = useContext(TableContext)!;
   let isDropTarget = false;
   let isRootDroptarget = false;
@@ -1656,14 +1651,25 @@ function TableCellWrapper({
     isRootDroptarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let usesColumnCSSVariables = layoutInfo.type === 'column' || layoutInfo.type === 'cell';
+  let itemStyle =
+    usesColumnCSSVariables && columnIndex != null
+      ? getTableVirtualizerItemStyle(
+          layoutInfo,
+          direction,
+          parent?.layoutInfo,
+          columnIndex,
+          colSpan
+        )
+      : undefined;
+
   return (
     <VirtualizerItem
       layoutInfo={layoutInfo}
       virtualizer={virtualizer}
       parent={parent?.layoutInfo}
-      useColumnCSSVariables={useColumnCSSVariables}
-      columnIndex={columnIndex}
-      colSpan={colSpan}
+      style={itemStyle}
+      nativeProps={columnIndex != null ? {'data-column-index': columnIndex} : undefined}
       className={useMemo(
         () =>
           classNames(
@@ -1780,6 +1786,22 @@ function CenteredWrapper({children}) {
       </div>
     </div>
   );
+}
+
+function setScrollContentWidth(
+  bodyRef: RefObject<HTMLElement | null>,
+  headerRef: RefObject<HTMLElement | null>,
+  totalWidth: number
+) {
+  let width = `${totalWidth}px`;
+  let bodyContent = bodyRef.current?.firstElementChild;
+  if (bodyContent instanceof HTMLElement) {
+    bodyContent.style.width = width;
+  }
+  let headerContent = headerRef.current?.firstElementChild;
+  if (headerContent instanceof HTMLElement) {
+    headerContent.style.width = width;
+  }
 }
 
 const ForwardTableViewBase = React.forwardRef(TableViewBase) as <T>(

@@ -12,6 +12,7 @@
 
 import {TableLayout as BaseTableLayout, TableLayoutProps} from 'react-stately/useVirtualizerState';
 import {LayoutOptionsDelegate} from './Virtualizer';
+import {renderTableVirtualizerItem} from './TableVirtualizerItem';
 import {TableColumnResizeStateContext} from './Table';
 import {useContext, useMemo} from 'react';
 
@@ -19,6 +20,11 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps>
   extends BaseTableLayout<T, O>
   implements LayoutOptionsDelegate<TableLayoutProps>
 {
+  // Tables position columns/cells via CSS variables, so the Virtualizer must wrap items
+  // with the table-aware renderer. Carrying it on the layout means callers can't forget it
+  // (a plain VirtualizerItem would use pixel widths and break live column resizing).
+  renderItem = renderTableVirtualizerItem;
+
   // Invalidate the layout whenever the column widths change.
   useLayoutOptions(): TableLayoutProps {
     // This is not a React class component, just a regular class.

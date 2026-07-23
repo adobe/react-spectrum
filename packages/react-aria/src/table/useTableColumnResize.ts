@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {applyColumnWidthsToDOM} from './columnWidthDOM';
 import {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
 import {ColumnSize} from 'react-stately/useTableState';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
@@ -114,7 +115,12 @@ export function useTableColumnResize<T>(
     (resizingColumnKey?: Key) => {
       let root = columnWidthRootRef?.current;
       if (root) {
-        state.applyToDOM(root, resizingColumnKey ?? state.resizingColumn);
+        applyColumnWidthsToDOM(
+          root,
+          state.columnEntries,
+          state.getCurrentPixelWidths(),
+          resizingColumnKey ?? state.resizingColumn
+        );
       }
     },
     [columnWidthRootRef, state]

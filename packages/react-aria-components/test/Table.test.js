@@ -43,6 +43,10 @@ import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {
+  findColumnWidthRoot,
+  getColumnWidthsFromRow
+} from 'react-aria/test/table/columnWidthTestUtils';
 import {Label} from '../src/Label';
 import {Modal} from '../src/Modal';
 import React, {useMemo, useState} from 'react';
@@ -1937,6 +1941,125 @@ describe('Table', () => {
       let {getAllByTestId} = render(<ControlledResizableTable />);
       let resizers = getAllByTestId('resizer');
       expect(resizers).toHaveLength(5);
+    });
+
+    describe('virtualized', () => {
+      installPointerEvent();
+      let clientWidth, clientHeight;
+      beforeAll(() => {
+        clientWidth = jest
+          .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+          .mockImplementation(() => 800);
+        clientHeight = jest
+          .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+          .mockImplementation(() => 400);
+      });
+      afterAll(() => {
+        clientWidth.mockReset();
+        clientHeight.mockReset();
+      });
+
+      let rows = [];
+      for (let i = 1; i <= 20; i++) {
+        rows.push({id: i, name: 'Name ' + i, type: 'Type ' + i, height: '' + i});
+      }
+      let columns = [
+        {name: 'Name', id: 'name', width: '1fr'},
+        {name: 'Type', id: 'type', width: '1fr'},
+        {name: 'Height', id: 'height', width: '1fr'}
+      ];
+
+      function VirtualizedResizableTable(props) {
+        return (
+          <ResizableTableContainer
+            onResizeStart={props.onResizeStart}
+            onResize={props.onResize}
+            onResizeEnd={props.onResizeEnd}>
+            <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25, headingHeight: 25}}>
+              <Table aria-label="virtualized resizable table">
+                <MyTableHeader columns={columns}>
+                  {column => (
+                    <MyColumn {...column} isRowHeader={column.id === 'name'} allowsResizing>
+                      {column.name}
+                    </MyColumn>
+                  )}
+                </MyTableHeader>
+                <TableBody items={rows}>
+                  {item => (
+                    <MyRow columns={columns}>{column => <Cell>{item[column.id]}</Cell>}</MyRow>
+                  )}
+                </TableBody>
+              </Table>
+            </Virtualizer>
+          </ResizableTableContainer>
+        );
+      }
+
+      // Renders without a "unique key" warning (setupTests throws on console.error),
+      // so this guards against the Virtualizer renderItem losing its key.
+      it('renders a resizable virtualized table without key warnings', () => {
+        let tree = render(<VirtualizedResizableTable />);
+        act(() => {
+          jest.runAllTimers();
+        });
+        let headerRow = tree.getByRole('grid').querySelector('[role="row"]');
+        let widths = getColumnWidthsFromRow(headerRow);
+        // 3 equal 1fr columns across 800px table.
+        expect(widths).toEqual([expect.any(Number), expect.any(Number), expect.any(Number)]);
+        expect(widths.every(w => w > 0)).toBe(true);
+      });
+
+      it('positions cells via column CSS variables and data-column-index', () => {
+        let tree = render(<VirtualizedResizableTable />);
+        act(() => {
+          jest.runAllTimers();
+        });
+        // Cells rendered through the table-aware renderItem carry data-column-index
+        // and position via the --col-N-width CSS variable (not a raw pixel width, which
+        // would not update live during an imperative drag).
+        let indexedCells = tree.getByRole('grid').querySelectorAll('[data-column-index]');
+        expect(indexedCells.length).toBeGreaterThan(0);
+        let columnHeaderWrapper = tree
+          .getAllByRole('columnheader')[0]
+          .closest('[data-column-index]');
+        expect(columnHeaderWrapper.style.width).toBe('var(--col-0-width)');
+        let headerRow = tree.getByRole('grid').querySelector('[role="row"]');
+        expect(getColumnWidthsFromRow(headerRow).every(w => Number.isFinite(w) && w > 0)).toBe(
+          true
+        );
+      });
+
+      it('updates column width CSS variables live during drag (before pointer up)', () => {
+        let onResize = jest.fn();
+        let tree = render(<VirtualizedResizableTable onResize={onResize} />);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let headerRow = tree.getByRole('grid').querySelector('[role="row"]');
+        let root = findColumnWidthRoot(headerRow);
+        expect(root).not.toBeNull();
+        let before = root.style.getPropertyValue('--col-0-width');
+
+        // Start the drag and move without releasing: widths should update imperatively mid-drag.
+        act(() => {
+          setInteractionModality('pointer');
+        });
+        let column = getColumn(tree, 'Name');
+        let resizer = within(column).getByRole('slider');
+        fireEvent.pointerEnter(resizer);
+        fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 100, pageY: 25});
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let during = root.style.getPropertyValue('--col-0-width');
+        expect(during).not.toBe(before);
+        expect(parseFloat(during)).toBeGreaterThan(parseFloat(before));
+
+        fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+      });
     });
   });
 

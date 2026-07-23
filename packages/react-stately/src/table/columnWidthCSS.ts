@@ -27,43 +27,6 @@ export interface ColumnWidthEntry {
 }
 
 /**
- * Applies column width CSS custom properties to a table root element.
- * Returns the total table content width.
- */
-export function applyColumnWidthsToDOM(
-  root: HTMLElement,
-  columns: ColumnWidthEntry[],
-  columnWidths: Map<Key, number>,
-  resizingColumnKey?: Key | null
-): number {
-  let start = 0;
-  let totalWidth = 0;
-
-  for (let column of columns) {
-    let width = columnWidths.get(column.key) ?? 0;
-    root.style.setProperty(getColumnWidthVarName(column.index), `${width}px`);
-    root.style.setProperty(getColumnStartVarName(column.index), `${start}px`);
-    start += width;
-    totalWidth += width;
-  }
-
-  root.style.setProperty('--table-total-width', `${totalWidth}px`);
-
-  if (resizingColumnKey != null) {
-    let indicatorPosition = 0;
-    for (let column of columns) {
-      indicatorPosition += columnWidths.get(column.key) ?? 0;
-      if (column.key === resizingColumnKey) {
-        root.style.setProperty('--resize-indicator-position', `${indicatorPosition - 2}px`);
-        break;
-      }
-    }
-  }
-
-  return totalWidth;
-}
-
-/**
  * Returns mount-time styles for a column or cell wrapper that reads horizontal
  * positioning from CSS custom properties on an ancestor.
  */

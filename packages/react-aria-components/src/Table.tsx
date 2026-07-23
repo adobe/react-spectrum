@@ -120,6 +120,7 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
+import {useSyncColumnWidthCSSVars} from 'react-aria/private/table/columnWidthDOM';
 import {
   useTable,
   useTableCell,
@@ -886,8 +887,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     // oxlint-disable-next-line react/react-compiler
     layoutState = tableContainerContext.useTableColumnResizeState(
       {
-        tableWidth: tableContainerContext.tableWidth,
-        columnWidthRootRef: tableContainerContext.columnWidthRootRef
+        tableWidth: tableContainerContext.tableWidth
       },
       filteredState
     );
@@ -901,6 +901,13 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       };
     }
   }
+
+  let nullRootRef = useRef<HTMLElement | null>(null);
+  useSyncColumnWidthCSSVars({
+    rootRef: tableContainerContext?.columnWidthRootRef ?? nullRootRef,
+    state: layoutState,
+    tableWidth: tableContainerContext?.tableWidth ?? 0
+  });
 
   let DOMProps = filterDOMProps(props, {global: true});
 

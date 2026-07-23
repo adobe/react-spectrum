@@ -292,4 +292,41 @@ describe('TableView', () => {
     await user.click(tableTester.getRows()[0]);
     expect(onSelectionChange).toHaveBeenCalled();
   });
+
+  it('positions columns via CSS variables so live resizing works (regression)', async () => {
+    // Regression: the virtualized S2 table must render items through the table-aware
+    // renderItem so cells read their width from --col-N-width. If they fall back to a
+    // plain pixel width, column resizing no longer updates the layout live during drag.
+    let {getByRole} = render(
+      <TableView aria-label="Resizable table">
+        <TableHeader columns={columns}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader} allowsResizing>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={items}>
+          {item => (
+            <Row id={item.id} columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+    );
+    await act(() => Promise.resolve());
+
+    // Every column must have a wrapper that reads its width from the --col-N-width
+    // variable. Without renderItem wiring these would all be plain pixel widths and no
+    // var-backed wrapper would exist, so live column resizing would silently break.
+    let widths = new Set(
+      Array.from(getByRole('grid').querySelectorAll<HTMLElement>('[data-column-index]')).map(
+        el => el.style.width
+      )
+    );
+    for (let index of [0, 1, 2, 3]) {
+      expect(widths.has(`var(--col-${index}-width)`)).toBe(true);
+    }
+  });
 });

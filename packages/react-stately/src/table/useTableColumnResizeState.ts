@@ -10,16 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {applyColumnWidthsToDOM, ColumnWidthEntry, columnWidthsEqual} from './columnWidthCSS';
 import {ColumnSize} from './Column';
+import {ColumnWidthEntry, columnWidthsEqual} from './columnWidthCSS';
 import {GridNode} from '../grid/GridCollection';
-import {Key, RefObject} from '@react-types/shared';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {Key} from '@react-types/shared';
 import {TableColumnLayout} from './TableColumnLayout';
 import {TableState} from './useTableState';
-
-const useLayoutEffect: typeof React.useLayoutEffect =
-  typeof document !== 'undefined' ? React.useLayoutEffect : () => {};
+import {useCallback, useMemo, useRef, useState} from 'react';
 
 function buildPixelWidths<T>(
   layout: TableColumnLayout<T>,
@@ -44,16 +41,6 @@ export interface TableColumnResizeStateProps<T> {
   getDefaultWidth?: (node: GridNode<T>) => ColumnSize | null | undefined;
   /** A function that is called to find the default minWidth for a given column. */
   getDefaultMinWidth?: (node: GridNode<T>) => ColumnSize | null | undefined;
-  /**
-   * Ref to the table root element where column width CSS custom properties
-   * should be applied.
-   */
-  columnWidthRootRef?: RefObject<HTMLElement | null>;
-  /**
-   * Called after column widths are applied to the DOM. Can be used to update
-   * scroll container sizes without a React re-render.
-   */
-  onWidthsApplied?: (totalWidth: number) => void;
 }
 
 export interface TableColumnResizeState<T> {
@@ -78,8 +65,12 @@ export interface TableColumnResizeState<T> {
   tableState: TableState<T>;
   /** A map of the current committed column widths. */
   columnWidths: Map<Key, number>;
-  /** Applies column width CSS custom properties to the table root element. */
-  applyToDOM: (root: HTMLElement, resizingColumnKey?: Key | null) => void;
+  /** Column entries with keys and indices for CSS variable application. */
+  columnEntries: ColumnWidthEntry[];
+  /** Returns the current pixel column widths, including during an active resize. */
+  getCurrentPixelWidths: () => Map<Key, number>;
+  /** Rebuilds pixel widths when the table viewport resizes during an active column resize. */
+  rebuildWidthsForViewportResize: () => void;
 }
 
 /**
@@ -95,13 +86,7 @@ export function useTableColumnResizeState<T>(
   props: TableColumnResizeStateProps<T>,
   state: TableState<T>
 ): TableColumnResizeState<T> {
-  let {
-    getDefaultWidth,
-    getDefaultMinWidth,
-    tableWidth = 0,
-    columnWidthRootRef,
-    onWidthsApplied
-  } = props;
+  let {getDefaultWidth, getDefaultMinWidth, tableWidth = 0} = props;
 
   let [resizingColumn, setResizingColumn] = useState<Key | null>(null);
   let isResizingRef = useRef(false);
@@ -163,6 +148,7 @@ export function useTableColumnResizeState<T>(
     ]
   );
 
+  // oxlint-disable react/react-compiler
   let columnWidths = useMemo(() => {
     let sizes = colWidths;
 
@@ -183,34 +169,16 @@ export function useTableColumnResizeState<T>(
 
     return columnLayout.buildColumnWidths(tableWidth, state.collection, sizes);
   }, [tableWidth, state.collection, colWidths, columnLayout]);
+  // oxlint-enable react/react-compiler
 
-  let applyToDOM = useCallback(
-    (root: HTMLElement, activeResizingColumn?: Key | null) => {
-      let totalWidth = applyColumnWidthsToDOM(
-        root,
-        columnEntries,
-        columnLayout.columnWidths,
-        activeResizingColumn ?? resizingColumn
-      );
-      onWidthsApplied?.(totalWidth);
-    },
-    [columnEntries, columnLayout, resizingColumn, onWidthsApplied]
-  );
+  let getCurrentPixelWidths = useCallback(() => columnLayout.columnWidths, [columnLayout]);
 
-  // Sync CSS variables when committed widths or table width change.
-  useLayoutEffect(() => {
-    if (columnWidthRootRef?.current && !isResizingRef.current) {
-      applyToDOM(columnWidthRootRef.current);
-    }
-  }, [columnWidths, columnWidthRootRef, applyToDOM, tableWidth]);
-
-  // Rebuild widths when the table is resized during an active column resize.
-  useLayoutEffect(() => {
-    if (isResizingRef.current && columnWidthRootRef?.current && pendingSizesRef.current) {
+  let rebuildWidthsForViewportResize = useCallback(() => {
+    // oxlint-disable-next-line react/react-compiler
+    if (isResizingRef.current && pendingSizesRef.current) {
       columnLayout.buildColumnWidths(tableWidth, state.collection, pendingSizesRef.current);
-      applyToDOM(columnWidthRootRef.current);
     }
-  }, [tableWidth, columnWidthRootRef, columnLayout, state.collection, applyToDOM]);
+  }, [columnLayout, tableWidth, state.collection]);
 
   let startResize = useCallback(
     (key: Key) => {
@@ -237,6 +205,7 @@ export function useTableColumnResizeState<T>(
         Array.from(uncontrolledColumns).map(([colKey]) => [colKey, newSizes.get(colKey)!])
       );
       map.set(key, width);
+      // oxlint-disable-next-line react/react-compiler
       pendingSizesRef.current = newSizes;
 
       if (isResizingRef.current) {
@@ -251,13 +220,14 @@ export function useTableColumnResizeState<T>(
     [uncontrolledColumns, columnLayout, state.collection, uncontrolledWidths, tableWidth]
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let endResize = useCallback(() => {
     if (isResizingRef.current) {
       setUncontrolledWidths(pendingUncontrolledWidthsRef.current);
       isResizingRef.current = false;
     }
     setResizingColumn(null);
-  }, []);
+  }, [setUncontrolledWidths]);
 
   return useMemo(
     () => ({
@@ -270,17 +240,21 @@ export function useTableColumnResizeState<T>(
       getColumnMaxWidth: (key: Key) => columnLayout.getColumnMaxWidth(key),
       tableState: state,
       columnWidths,
-      applyToDOM
+      columnEntries,
+      getCurrentPixelWidths,
+      rebuildWidthsForViewportResize
     }),
     [
       columnLayout,
       columnWidths,
+      columnEntries,
       resizingColumn,
       updateResizedColumns,
       startResize,
       endResize,
-      state,
-      applyToDOM
+      getCurrentPixelWidths,
+      rebuildWidthsForViewportResize,
+      state
     ]
   );
 }

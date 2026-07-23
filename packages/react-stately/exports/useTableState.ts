@@ -18,7 +18,6 @@ export type {TableProps, TableState, TableStateProps} from '../src/table/useTabl
 
 export {useTableColumnResizeState} from '../src/table/useTableColumnResizeState';
 export {
-  applyColumnWidthsToDOM,
   getColumnHorizontalStyle,
   getColumnStartVarName,
   getColumnWidthVarName,

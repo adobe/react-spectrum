@@ -17,10 +17,10 @@ import {
   CollectionRootProps,
   renderAfterDropIndicators
 } from './Collection';
-import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
-import {GridNode} from 'react-stately/private/grid/GridCollection';
+import {DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
 import {
   Layout,
+  LayoutInfo,
   ReusableView,
   useVirtualizerState,
   VirtualizerState
@@ -36,10 +36,26 @@ export interface LayoutOptionsDelegate<O> {
 }
 
 interface ILayout<O>
-  extends Layout<Node<unknown>, O>, Partial<DropTargetDelegate>, LayoutOptionsDelegate<O> {}
+  extends Layout<Node<unknown>, O>, Partial<DropTargetDelegate>, LayoutOptionsDelegate<O> {
+  /**
+   * A default item renderer supplied by the layout itself. Used when the `renderItem`
+   * prop is not provided, so layouts with special item requirements (e.g. tables that
+   * position cells via CSS variables) work correctly without callers wiring it up.
+   */
+  renderItem?: (props: VirtualizerItemRenderProps) => ReactNode;
+}
 
 interface LayoutClass<O> {
   new (): ILayout<O>;
+}
+
+export interface VirtualizerItemRenderProps {
+  viewKey: Key;
+  layoutInfo: LayoutInfo;
+  virtualizer: ReusableView<Node<unknown>, ReactNode>['virtualizer'];
+  parent: LayoutInfo | null;
+  children: ReactNode;
+  content: Node<unknown> | null;
 }
 
 export interface VirtualizerProps<O> {
@@ -49,15 +65,33 @@ export interface VirtualizerProps<O> {
   layout: LayoutClass<O> | ILayout<O>;
   /** Options for the layout. */
   layoutOptions?: O;
+  /**
+   * A custom renderer for virtualizer items. When not provided, items are wrapped in
+   * the default `VirtualizerItem` component.
+   */
+  renderItem?: (props: VirtualizerItemRenderProps) => ReactNode;
 }
 
 interface LayoutContextValue {
   layout: ILayout<any>;
   layoutOptions?: any;
+  renderItem?: (props: VirtualizerItemRenderProps) => ReactNode;
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
 const LayoutContext = createContext<LayoutContextValue | null>(null);
+
+function defaultRenderItem(props: VirtualizerItemRenderProps): ReactNode {
+  return (
+    <VirtualizerItem
+      key={props.viewKey}
+      layoutInfo={props.layoutInfo}
+      virtualizer={props.virtualizer}
+      parent={props.parent}>
+      {props.children}
+    </VirtualizerItem>
+  );
+}
 
 /**
  * A Virtualizer renders a scrollable collection of data using customizable layouts.
@@ -65,7 +99,7 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
  * them as the user scrolls.
  */
 export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
-  let {children, layout: layoutProp, layoutOptions} = props;
+  let {children, layout: layoutProp, layoutOptions, renderItem} = props;
   let layout = useMemo(
     () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
     [layoutProp]
@@ -85,7 +119,10 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <LayoutContext.Provider value={{layout, layoutOptions}}>{children}</LayoutContext.Provider>
+      <LayoutContext.Provider
+        value={{layout, layoutOptions, renderItem: renderItem ?? layout.renderItem}}>
+        {children}
+      </LayoutContext.Provider>
     </CollectionRendererContext.Provider>
   );
 }
@@ -96,7 +133,7 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions} = useContext(LayoutContext)!;
+  let {layout, layoutOptions, renderItem} = useContext(LayoutContext)!;
   // oxlint-disable-next-line react/react-compiler
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
@@ -138,7 +175,7 @@ function CollectionRoot({
   return (
     <div {...contentProps}>
       <VirtualizerContext.Provider value={state}>
-        {renderChildren(null, state.visibleViews, renderDropIndicator)}
+        {renderChildren(null, state.visibleViews, renderDropIndicator, renderItem)}
       </VirtualizerContext.Provider>
     </div>
   );
@@ -146,41 +183,39 @@ function CollectionRoot({
 
 function CollectionBranch({parent, renderDropIndicator}: CollectionBranchProps) {
   let virtualizer = useContext(VirtualizerContext);
+  let {renderItem} = useContext(LayoutContext)!;
   let parentView = virtualizer!.virtualizer.getVisibleView(parent.key)!;
-  return renderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
+  return renderChildren(
+    parentView,
+    Array.from(parentView.children),
+    renderDropIndicator,
+    renderItem
+  );
 }
 
 function renderChildren(
   parent: View | null,
   children: View[],
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode,
+  renderItem?: (props: VirtualizerItemRenderProps) => ReactNode
 ) {
-  return children.map(view => renderWrapper(parent, view, renderDropIndicator));
+  return children.map(view => renderWrapper(parent, view, renderDropIndicator, renderItem));
 }
 
 function renderWrapper(
   parent: View | null,
   reusableView: View,
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode,
+  renderItem: (props: VirtualizerItemRenderProps) => ReactNode = defaultRenderItem
 ): ReactNode {
-  let layoutInfo = reusableView.layoutInfo!;
-  let useColumnCSSVariables = layoutInfo.type === 'column' || layoutInfo.type === 'cell';
-  let gridNode = reusableView.content as GridNode<unknown> | null | undefined;
-  let columnIndex = gridNode != null ? (gridNode.colIndex ?? gridNode.index) : undefined;
-  let colSpan = gridNode?.colSpan ?? 1;
-
-  let rendered = (
-    <VirtualizerItem
-      key={reusableView.key}
-      layoutInfo={layoutInfo}
-      virtualizer={reusableView.virtualizer}
-      parent={parent?.layoutInfo}
-      useColumnCSSVariables={useColumnCSSVariables}
-      columnIndex={columnIndex}
-      colSpan={colSpan}>
-      {reusableView.rendered}
-    </VirtualizerItem>
-  );
+  let rendered = renderItem({
+    viewKey: reusableView.key,
+    layoutInfo: reusableView.layoutInfo!,
+    virtualizer: reusableView.virtualizer,
+    parent: parent?.layoutInfo ?? null,
+    children: reusableView.rendered,
+    content: reusableView.content
+  });
 
   let {collection, layout} = reusableView.virtualizer;
   let node = reusableView.content;
@@ -191,11 +226,12 @@ function renderWrapper(
           parent,
           reusableView,
           {type: 'item', key: reusableView.content!.key, dropPosition: 'before'},
-          renderDropIndicator
+          renderDropIndicator,
+          renderItem
         )}
         {rendered}
         {renderAfterDropIndicators(collection, node, target =>
-          renderDropIndicatorWrapper(parent, reusableView, target, renderDropIndicator)
+          renderDropIndicatorWrapper(parent, reusableView, target, renderDropIndicator, renderItem)
         )}
       </React.Fragment>
     );
@@ -208,19 +244,20 @@ function renderDropIndicatorWrapper(
   parent: View | null,
   reusableView: View,
   target: ItemDropTarget,
-  renderDropIndicator: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator: (target: ItemDropTarget) => ReactNode,
+  renderItem: (props: VirtualizerItemRenderProps) => ReactNode = defaultRenderItem
 ) {
   let indicator = renderDropIndicator(target);
   if (indicator) {
     let layoutInfo = reusableView.virtualizer.layout.getDropTargetLayoutInfo!(target);
-    indicator = (
-      <VirtualizerItem
-        layoutInfo={layoutInfo}
-        virtualizer={reusableView.virtualizer}
-        parent={parent?.layoutInfo}>
-        {indicator}
-      </VirtualizerItem>
-    );
+    indicator = renderItem({
+      viewKey: `${reusableView.key}-drop-${target.dropPosition}`,
+      layoutInfo,
+      virtualizer: reusableView.virtualizer,
+      parent: parent?.layoutInfo ?? null,
+      children: indicator,
+      content: null
+    });
   }
 
   return indicator;

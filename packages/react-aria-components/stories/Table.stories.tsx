@@ -42,9 +42,9 @@ import styles from '../example/index.css';
 import {TableLayout} from '../src/TableLayout';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
+import {useTreeData} from 'react-stately';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
-import {useTreeData} from 'react-stately';
 
 export default {
   title: 'React Aria Components/Table',
