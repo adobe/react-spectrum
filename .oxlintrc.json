@@ -168,6 +168,8 @@
     "react/react-compiler": "error",
 
     "rsp-rules/no-react-key": ["error"],
+    "rsp-rules/add-event-non-composing": ["error"],
+    "rsp-rules/no-non-composing-event-listener": ["error"],
     "rsp-rules/sort-imports": ["error"],
     "rsp-rules/no-non-shadow-contains": ["error"],
     "rsp-rules/safe-event-target": ["error"],
@@ -270,6 +272,8 @@
         "rsp-rules/no-react-key": ["error"],
         "rsp-rules/act-events-test": "error",
         "rsp-rules/no-getByRole-toThrow": "error",
+        "rsp-rules/add-event-non-composing": "off",
+        "rsp-rules/no-non-composing-event-listener": "off",
         "rsp-rules/no-non-shadow-contains": "off",
         "rsp-rules/safe-event-target": "off",
         "rsp-rules/shadow-safe-active-element": "off",
@@ -303,7 +307,9 @@
     {
       "files": ["**/dev/**", "**/scripts/**"],
       "rules": {
-        "rsp-rules/safe-event-target": "off"
+        "rsp-rules/safe-event-target": "off",
+        "rsp-rules/add-event-non-composing": "off",
+        "rsp-rules/no-non-composing-event-listener": "off"
       }
     },
     {

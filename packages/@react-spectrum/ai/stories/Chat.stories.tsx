@@ -10,17 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
-import {Chat} from '../src/Chat';
-import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
-import {Content} from '@react-spectrum/s2/Content';
-import {GridList} from 'react-aria-components';
-import {Image} from '@react-spectrum/s2/Image';
-import {ListLayout} from 'react-stately/useVirtualizerState';
-import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
+  AutoLinkingTokenFieldValue,
   MessageFeedback,
   MessageSource,
   MessageSuggestion,
@@ -39,8 +34,18 @@ import {
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
-import type {Meta} from '@storybook/react';
-import {ReactNode, useRef, useState} from 'react';
+import {Chat} from '../src/Chat';
+import ChatIcon from '@react-spectrum/s2/icons/Chat';
+import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
+import {Content} from '@react-spectrum/s2/Content';
+import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
+import {GridList} from 'react-aria-components';
+import {Image} from '@react-spectrum/s2/Image';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {MenuItem} from '@react-spectrum/s2/Menu';
+import type {Meta, StoryObj} from '@storybook/react';
+import {prose} from '../src/style/prose' with {type: 'macro'};
+import {ReactNode, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
@@ -62,6 +67,7 @@ const meta: Meta<typeof Chat> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Chat>;
 
 let dummyResponses = [
   "Sure! Here's a summary of the key points based on the assets you shared. The main themes revolve around brand consistency, audience engagement, and clear calls to action across all touchpoints.",
@@ -209,13 +215,15 @@ function CardMessage({
   );
 }
 
-export function StreamingChat() {
+function StreamingChatRender() {
   let [messages, setMessages] = useState<StreamingMessage[]>(
     initialResponses as StreamingMessage[]
   );
   let nextId = useRef(initialResponses.length);
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
+  let [promptValue, setPromptValue] = useState<TokenFieldValue>(new AutoLinkingTokenFieldValue([]));
+  let followUpMessage = useRef<TokenFieldValue | null>(null);
 
   function handleSend(prompt: TokenFieldValue) {
     setGenerating(true);
@@ -412,6 +420,29 @@ export function StreamingChat() {
     }, streamEndTimestamp + 1000);
   }
 
+  useEffect(() => {
+    if (!isGenerating && followUpMessage.current) {
+      let followup = followUpMessage.current;
+      followUpMessage.current = null;
+      handleSend(followup);
+    }
+  }, [isGenerating]);
+
+  // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
+  function handleStop() {
+    followUpMessage.current = null;
+    timeouts.current.forEach(clearTimeout);
+    timeouts.current = [];
+    setMessages(prev =>
+      prev.map(m =>
+        (m.type === 'system' || m.type === 'status') && m.isStreaming
+          ? {...m, isStreaming: false}
+          : m
+      )
+    );
+    setGenerating(false);
+  }
+
   return (
     // TODO: these extra div wrappers would need to be implemented by the RAC user, maybe we can internalize some more?
     // of particular note is the scroll button. Same for the other styles
@@ -495,7 +526,7 @@ export function StreamingChat() {
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
-                    <ResponseStatus isLoading={msg.isStreaming}>
+                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
                         {msg.details && (
@@ -543,15 +574,47 @@ export function StreamingChat() {
           </Thread>
         </div>
         <PromptField
-          onSubmit={handleSend}
+          value={promptValue}
+          onChange={setPromptValue}
+          onSubmit={prompt => {
+            setPromptValue(new AutoLinkingTokenFieldValue([]));
+            handleSend(prompt);
+          }}
           isGenerating={isGenerating}
-          onStop={() => {
-            setGenerating(false);
-            timeouts.current.forEach(clearTimeout);
-            timeouts.current = [];
-          }}>
+          onStop={handleStop}>
           <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-            <PromptTokenField />
+            <PromptTokenField
+              placeholder={
+                isGenerating
+                  ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+                  : undefined
+              }
+              onKeyDown={e => {
+                if (!isGenerating) {
+                  return;
+                }
+
+                // TODO: we could make this even more realistic but for now just fire storybook event
+                // and add follow up message to queue
+                if (e.key === 'Enter' && !e.altKey) {
+                  e.preventDefault();
+                  if (promptValue.segments.length > 0) {
+                    action('onSteer')(promptValue.toString());
+                    setPromptValue(new AutoLinkingTokenFieldValue([]));
+                  }
+                } else if (e.key === 'Enter' && e.altKey) {
+                  e.preventDefault();
+                  if (promptValue.segments.length > 0) {
+                    action('onFollowUp')(promptValue.toString());
+                    followUpMessage.current = promptValue;
+                    setPromptValue(new AutoLinkingTokenFieldValue([]));
+                  }
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  handleStop();
+                }
+              }}
+            />
             <PromptFieldSubmitButton />
           </div>
         </PromptField>
@@ -559,6 +622,10 @@ export function StreamingChat() {
     </div>
   );
 }
+
+export const StreamingChat: Story = {
+  render: () => <StreamingChatRender />
+};
 
 // Ignore this story, just here for local testing
 export function VirtualizedChat() {
@@ -624,7 +691,7 @@ export function VirtualizedChat() {
 
               return (
                 <ThreadItem allowsArrowNavigation focusMode="child" textValue={message}>
-                  <ResponseStatus isLoading={isPending}>
+                  <ResponseStatus status={isPending ? 'loading' : 'success'}>
                     <ResponseStatusTitle>{message}</ResponseStatusTitle>
                   </ResponseStatus>
                 </ThreadItem>
@@ -648,6 +715,120 @@ export function VirtualizedChat() {
         </div>
       </PromptField>
     </div>
+  );
+}
+
+// A system response rendered as prose, e.g. markdown returned from the server.
+// Uses the `prose` macro from S2 to style the semantic HTML elements.
+function ProseResponse() {
+  return (
+    <div role="document" className={prose()}>
+      <h3>Setting up a design token pipeline</h3>
+      <p>
+        A token pipeline turns brand decisions into typed, versioned values every component can
+        consume. At a high level there are three layers:
+      </p>
+      <ul>
+        <li>
+          <strong>Global palette</strong> — raw values like <code>gray-100</code> through{' '}
+          <code>gray-900</code>.
+        </li>
+        <li>
+          <strong>Semantic aliases</strong> — roles such as <code>text-primary</code> that point at
+          palette steps.
+        </li>
+        <li>
+          <strong>Component tokens</strong> — per-component overrides layered on top.
+        </li>
+      </ul>
+      <p>A minimal build step reads your tokens and emits platform files:</p>
+      <pre>
+        <code>{`import StyleDictionary from 'style-dictionary';
+
+StyleDictionary.extend({
+  source: ['tokens/**/*.json'],
+  platforms: {
+    css: {transformGroup: 'css', buildPath: 'dist/css/'}
+  }
+}).buildAllPlatforms();`}</code>
+      </pre>
+      <p>
+        Run it after every change and components import semantic values instead of literals. See the{' '}
+        <a href="https://spectrum.adobe.com/page/design-tokens/">Spectrum design tokens docs</a> for
+        the full naming conventions.
+      </p>
+    </div>
+  );
+}
+
+type PopoverMessage = {id: number; type: 'user'; content: string} | {id: number; type: 'prose'};
+
+// A Chat rendered inside an S2 Popover, where the system response is prose
+// (markdown) styled with the `prose` macro.
+export function ChatPopover() {
+  let messages: PopoverMessage[] = [
+    {
+      id: 0,
+      type: 'user',
+      content: 'Can you explain how a design token pipeline works?'
+    },
+    {id: 1, type: 'prose'}
+  ];
+
+  return (
+    <DialogTrigger>
+      <ActionButton aria-label="Open assistant" styles={style({marginX: 'auto'})}>
+        <ChatIcon />
+      </ActionButton>
+      <Popover styles={style({width: 400, height: 520})}>
+        <Chat
+          styles={style({
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            height: 'full',
+            gap: 16,
+            boxSizing: 'border-box',
+            minWidth: 0
+          })}>
+          <Thread
+            items={messages}
+            aria-label="Chat thread"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              padding: 8,
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            {(msg: PopoverMessage) => {
+              if (msg.type === 'user') {
+                return (
+                  <ThreadItem
+                    textValue={msg.content}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{msg.content}</UserMessage>
+                  </ThreadItem>
+                );
+              }
+              return (
+                <SystemMessage textValue="Design token pipeline overview">
+                  <ProseResponse />
+                  <MessageFeedback />
+                </SystemMessage>
+              );
+            }}
+          </Thread>
+          <PromptField onSubmit={() => {}}>
+            <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+              <PromptTokenField />
+              <PromptFieldSubmitButton />
+            </div>
+          </PromptField>
+        </Chat>
+      </Popover>
+    </DialogTrigger>
   );
 }
 
