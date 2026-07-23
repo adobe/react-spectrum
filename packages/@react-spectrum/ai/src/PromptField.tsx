@@ -28,6 +28,7 @@ import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
   createContext,
   createRef,
+  forwardRef,
   use,
   useContext,
   useDeferredValue,
@@ -43,6 +44,7 @@ import {
   TokenFieldValue,
   TokenSegment
 } from 'react-stately/useTokenFieldState';
+import {DOMRef} from '@react-types/shared';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
@@ -69,6 +71,7 @@ import Stop from '@react-spectrum/s2/icons/StopProcessing';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import {useControlledState} from 'react-stately/useControlledState';
+import {useDOMRef} from './useDOMRef';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useKeyboard} from 'react-aria/useKeyboard';
@@ -97,6 +100,7 @@ export interface PromptFieldProps {
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   styles?: StyleString;
   variant?: 'balanced' | 'prominent' | 'subtle';
+  hideDisclaimer?: boolean;
 }
 
 interface PromptFieldState {
@@ -176,7 +180,10 @@ function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
   });
 }
 
-export function PromptField(props: PromptFieldProps) {
+export const PromptField = forwardRef(function PromptField(
+  props: PromptFieldProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     children,
     acceptedAttachmentTypes,
@@ -185,8 +192,10 @@ export function PromptField(props: PromptFieldProps) {
     styles,
     onAddAttachments,
     onRemoveAttachments,
+    hideDisclaimer,
     variant = 'balanced'
   } = props;
+  let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [prompt, setPrompt] = useControlledState(
     props.value,
@@ -263,7 +272,7 @@ export function PromptField(props: PromptFieldProps) {
         onAddAttachments,
         onRemoveAttachments
       }}>
-      <div {...focusWithinProps}>
+      <div ref={domRef} {...focusWithinProps}>
         <PromptFieldContainer
           {...dropProps}
           role="group"
@@ -274,19 +283,21 @@ export function PromptField(props: PromptFieldProps) {
           inputRef={inputRef}>
           {children}
         </PromptFieldContainer>
-        <p className={style({font: 'ui-sm', textAlign: 'center'})}>
-          {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
-          <Link
-            variant="secondary"
-            href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-            target="_blank">
-            {stringFormatter.format('promptfield.aiUserGuidlines')}
-          </Link>
-        </p>
+        {!hideDisclaimer && (
+          <p className={style({font: 'ui-sm', textAlign: 'center'})}>
+            {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
+            <Link
+              variant="secondary"
+              href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
+              target="_blank">
+              {stringFormatter.format('promptfield.aiUserGuidlines')}
+            </Link>
+          </p>
+        )}
       </div>
     </PromptFieldContext.Provider>
   );
-}
+});
 
 export interface PromptFieldAttachmentListProps extends AttachmentListProps<PromptFieldAttachment> {
   children?: (attachment: PromptFieldAttachment) => React.ReactNode;
