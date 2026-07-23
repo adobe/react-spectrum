@@ -12,7 +12,14 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
+import {
+  baseColor,
+  focusRing,
+  fontRelative,
+  size,
+  space,
+  style
+} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import Chevron from '../ui-icons/Chevron';
@@ -701,7 +708,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
             fontWeight: 'bold',
             overflow: 'hidden',
             gridArea: 'content'
-          })}>>
+          })}>
           <Provider
             values={[
               [TextContext, {styles: treeContent}],
@@ -713,7 +720,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
                 }
               ]
             ]}>
-          {typeof children === 'string' ? <Text>{children}</Text> : children}
+            {typeof children === 'string' ? <Text>{children}</Text> : children}
           </Provider>
         </div>
       </Provider>
