@@ -14,6 +14,7 @@ import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {isElementInChildOfActiveScope} from '../focus/FocusScope';
 import {useEffect, useRef} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useInteractOutside} from '../interactions/useInteractOutside';
 import {useKeyboard} from '../interactions/useKeyboard';
@@ -58,7 +59,65 @@ export interface OverlayAria {
   underlayProps: DOMAttributes;
 }
 
-const visibleOverlays: RefObject<Element | null>[] = [];
+interface VisibleOverlayData {
+  onClose: () => void;
+  isKeyboardDismissDisabled: boolean;
+}
+
+interface VisibleOverlay {
+  ref: RefObject<Element | null>;
+  data: VisibleOverlayData;
+}
+
+const visibleOverlays: VisibleOverlay[] = [];
+
+interface CloseWatcher {
+  onclose: (() => void) | null;
+  destroy: () => void;
+}
+
+function supportsCloseWatcher(): boolean {
+  return typeof globalThis.CloseWatcher !== 'undefined';
+}
+
+function getTopMostOverlay(): VisibleOverlay | undefined {
+  let topMostOverlay: VisibleOverlay | undefined;
+  for (let overlay of visibleOverlays) {
+    let element = overlay.ref.current;
+    if (!element) {
+      continue;
+    }
+
+    if (!topMostOverlay?.ref.current) {
+      topMostOverlay = overlay;
+      continue;
+    }
+
+    let topMostElement = topMostOverlay.ref.current;
+    if (topMostElement === element) {
+      topMostOverlay = overlay;
+      continue;
+    }
+
+    let ownerNode = element.ownerDocument.defaultView?.Node;
+    let position = topMostElement.compareDocumentPosition(element);
+    if (
+      ownerNode &&
+      !(position & ownerNode.DOCUMENT_POSITION_DISCONNECTED) &&
+      position & ownerNode.DOCUMENT_POSITION_FOLLOWING
+    ) {
+      topMostOverlay = overlay;
+    }
+  }
+
+  return topMostOverlay ?? visibleOverlays[visibleOverlays.length - 1];
+}
+
+function isOnlyVisibleOverlayForRef(overlay: VisibleOverlay): boolean {
+  return !visibleOverlays.some(
+    visibleOverlay => visibleOverlay !== overlay && visibleOverlay.ref === overlay.ref
+  );
+}
 
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
@@ -75,36 +134,62 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     shouldCloseOnInteractOutside
   } = props;
 
-  let lastVisibleOverlay = useRef<RefObject<Element | null>>(undefined);
+  let lastVisibleOverlay = useRef<VisibleOverlay | undefined>(undefined);
+  let visibleOverlay = useRef<VisibleOverlay | null>(null);
+
+  let onHide = () => {
+    onClose?.();
+  };
+
+  let onHideEvent = useEffectEvent(onHide);
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
+  // When CloseWatcher is supported, each overlay gets its own instance so the browser's
+  // native close watcher stack handles nested overlay ordering for Escape and Android back.
   useEffect(() => {
-    if (isOpen && !visibleOverlays.includes(ref)) {
-      visibleOverlays.push(ref);
+    if (isOpen && !visibleOverlay.current) {
+      let overlay: VisibleOverlay = {
+        ref,
+        data: {
+          onClose: () => onHideEvent(),
+          isKeyboardDismissDisabled
+        }
+      };
+      visibleOverlay.current = overlay;
+      visibleOverlays.push(overlay);
+
+      let watcher: CloseWatcher | null = null;
+      if (!isKeyboardDismissDisabled && supportsCloseWatcher()) {
+        let closeWatcher: CloseWatcher = new (globalThis as any).CloseWatcher();
+        closeWatcher.onclose = () => {
+          onHideEvent();
+        };
+        watcher = closeWatcher;
+      }
+
       return () => {
-        let index = visibleOverlays.indexOf(ref);
+        let index = visibleOverlays.indexOf(overlay);
         if (index >= 0) {
           visibleOverlays.splice(index, 1);
         }
+        visibleOverlay.current = null;
+        watcher?.destroy();
       };
     }
-  }, [isOpen, ref]);
-
-  // Only hide the overlay when it is the topmost visible overlay in the stack
-  let onHide = () => {
-    if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
-      onClose();
-    }
-  };
+  }, [isOpen, isKeyboardDismissDisabled, ref]);
 
   let onInteractOutsideStart = (e: PointerEvent) => {
-    const topMostOverlay = visibleOverlays[visibleOverlays.length - 1];
+    const topMostOverlay = getTopMostOverlay();
     lastVisibleOverlay.current = topMostOverlay;
     if (
       !shouldCloseOnInteractOutside ||
       shouldCloseOnInteractOutside(getEventTarget(e) as Element)
     ) {
-      if (topMostOverlay === ref) {
+      if (
+        topMostOverlay &&
+        topMostOverlay === visibleOverlay.current &&
+        isOnlyVisibleOverlayForRef(topMostOverlay)
+      ) {
         e.stopPropagation();
       }
     }
@@ -115,25 +200,51 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
       !shouldCloseOnInteractOutside ||
       shouldCloseOnInteractOutside(getEventTarget(e) as Element)
     ) {
-      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+      let topMostOverlay = getTopMostOverlay();
+      if (
+        topMostOverlay &&
+        topMostOverlay === visibleOverlay.current &&
+        isOnlyVisibleOverlayForRef(topMostOverlay)
+      ) {
         e.stopPropagation();
       }
-      if (lastVisibleOverlay.current === ref) {
+      if (
+        lastVisibleOverlay.current === visibleOverlay.current ||
+        lastVisibleOverlay.current?.ref === ref
+      ) {
         onHide();
       }
     }
     lastVisibleOverlay.current = undefined;
   };
 
-  // Handle the escape key
+  // Handle the escape key.
   let {keyboardProps} = useKeyboard({
-    shortcuts: {
-      Escape: () => {
-        if (!isKeyboardDismissDisabled) {
-          onHide();
-          return;
+    shortcuts: supportsCloseWatcher() ? undefined : {
+      Escape: e => {
+        if (e.nativeEvent.cancelBubble) {
+          return false;
         }
-        return false;
+
+        let topMostOverlay = getTopMostOverlay();
+        if (!topMostOverlay) {
+          return false;
+        }
+
+        let overlay = topMostOverlay.ref === ref ? visibleOverlay.current : topMostOverlay;
+        if (!overlay) {
+          return false;
+        }
+
+        if (overlay.data.isKeyboardDismissDisabled) {
+          if (overlay !== visibleOverlay.current) {
+            return;
+          }
+          return false;
+        }
+
+        overlay.data.onClose();
+        return;
       }
     }
   });

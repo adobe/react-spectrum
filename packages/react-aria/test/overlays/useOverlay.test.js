@@ -11,13 +11,14 @@
  */
 
 import {
+  act,
   fireEvent,
   installMouseEvent,
   installPointerEvent,
   render
 } from '@react-spectrum/test-utils-internal';
 import {mergeProps} from '../../src/utils/mergeProps';
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {useOverlay} from '../../src/overlays/useOverlay';
 
 function Example(props) {
@@ -25,9 +26,36 @@ function Example(props) {
   let {overlayProps, underlayProps} = useOverlay(props, ref);
   return (
     <div {...mergeProps(underlayProps, props.underlayProps || {})}>
-      <div ref={ref} {...overlayProps} data-testid={props['data-testid'] || 'test'}>
+      <div
+        ref={ref}
+        {...mergeProps(props.overlayProps || {}, overlayProps)}
+        data-testid={props['data-testid'] || 'test'}>
         {props.children}
       </div>
+    </div>
+  );
+}
+
+function StatefulExample({defaultIsOpen, onClose, ...props}) {
+  let [isOpen, setIsOpen] = useState(defaultIsOpen);
+  return (
+    <Example
+      {...props}
+      isOpen={isOpen}
+      onClose={() => {
+        setIsOpen(false);
+        onClose?.();
+      }} />
+  );
+}
+
+function SharedRefExample(props) {
+  let ref = useRef();
+  let first = useOverlay({isOpen: true, onClose: props.onCloseFirst}, ref);
+  let second = useOverlay({isOpen: true, onClose: props.onCloseSecond}, ref);
+  return (
+    <div ref={ref} {...first.overlayProps} data-testid="group">
+      <div {...second.overlayProps} data-testid="test" />
     </div>
   );
 }
@@ -137,5 +165,238 @@ describe('useOverlay', function () {
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not hide the overlay when an earlier Escape handler stops propagation', function () {
+    let onClose = jest.fn();
+    let res = render(
+      <Example
+        isOpen
+        onClose={onClose}
+        overlayProps={{
+          onKeyDown: e => e.stopPropagation()
+        }}
+      />
+    );
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'Escape'});
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('should hide the innermost overlay when nested overlays mount together', function () {
+    let onCloseOuter = jest.fn();
+    let onCloseInner = jest.fn();
+    let res = render(
+      <Example isOpen onClose={onCloseOuter} data-testid="outer">
+        <Example isOpen onClose={onCloseInner} data-testid="inner" />
+      </Example>
+    );
+
+    fireEvent.keyDown(res.getByTestId('inner'), {key: 'Escape'});
+    expect(onCloseInner).toHaveBeenCalledTimes(1);
+    expect(onCloseOuter).not.toHaveBeenCalled();
+  });
+
+  it('should keep separate close handlers for overlays using the same ref', function () {
+    let onCloseFirst = jest.fn();
+    let onCloseSecond = jest.fn();
+    let res = render(
+      <SharedRefExample onCloseFirst={onCloseFirst} onCloseSecond={onCloseSecond} />
+    );
+
+    fireEvent.keyDown(res.getByTestId('test'), {key: 'Escape'});
+    expect(onCloseSecond).toHaveBeenCalledTimes(1);
+    expect(onCloseFirst).not.toHaveBeenCalled();
+  });
+
+  describe('CloseWatcher', function () {
+    let closeWatcherInstances;
+    let MockCloseWatcher;
+
+    beforeEach(function () {
+      closeWatcherInstances = [];
+      MockCloseWatcher = class {
+        constructor() {
+          this.onclose = null;
+          closeWatcherInstances.push(this);
+        }
+        destroy() {
+          let index = closeWatcherInstances.indexOf(this);
+          if (index >= 0) {
+            closeWatcherInstances.splice(index, 1);
+          }
+        }
+        static closeTopMost() {
+          closeWatcherInstances[closeWatcherInstances.length - 1]?.onclose();
+        }
+      };
+      globalThis.CloseWatcher = MockCloseWatcher;
+    });
+
+    afterEach(function () {
+      delete globalThis.CloseWatcher;
+    });
+
+    it('should use CloseWatcher to dismiss overlay when available', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} />);
+      expect(closeWatcherInstances.length).toBe(1);
+      closeWatcherInstances[0].onclose();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not create CloseWatcher when isKeyboardDismissDisabled is true', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen onClose={onClose} isKeyboardDismissDisabled />);
+      expect(closeWatcherInstances.length).toBe(0);
+    });
+
+    it('should not create CloseWatcher when overlay is not open', function () {
+      let onClose = jest.fn();
+      render(<Example isOpen={false} onClose={onClose} />);
+      expect(closeWatcherInstances.length).toBe(0);
+    });
+
+    it('should destroy CloseWatcher when overlay unmounts', function () {
+      let onClose = jest.fn();
+      let res = render(<Example isOpen onClose={onClose} />);
+      expect(closeWatcherInstances.length).toBe(1);
+      res.unmount();
+      expect(closeWatcherInstances.length).toBe(0);
+    });
+
+    it('should dismiss only the top-most overlay with nested overlays', function () {
+      let onCloseOuter = jest.fn();
+      let onCloseInner = jest.fn();
+      render(<Example isOpen onClose={onCloseOuter} data-testid="outer" />);
+      render(<Example isOpen onClose={onCloseInner} data-testid="inner" />);
+
+      expect(closeWatcherInstances.length).toBe(2);
+
+      // The browser's native CloseWatcher stack closes the most recently created watcher first.
+      closeWatcherInstances[1].onclose();
+      expect(onCloseInner).toHaveBeenCalledTimes(1);
+      expect(onCloseOuter).not.toHaveBeenCalled();
+    });
+
+    it('should dismiss the most recently opened overlay even when focus is in an older overlay', function () {
+      let onCloseFirst = jest.fn();
+      let onCloseSecond = jest.fn();
+      let first = render(
+        <Example isOpen onClose={onCloseFirst} data-testid="first">
+          <input data-testid="first-input" />
+        </Example>
+      );
+      render(
+        <Example isOpen onClose={onCloseSecond} data-testid="second">
+          <input data-testid="second-input" />
+        </Example>
+      );
+
+      expect(closeWatcherInstances.length).toBe(2);
+      let firstInput = first.getByTestId('first-input');
+      act(() => {
+        firstInput.focus();
+      });
+      expect(document.activeElement).toBe(firstInput);
+
+      closeWatcherInstances[1].onclose();
+      expect(onCloseSecond).toHaveBeenCalledTimes(1);
+      expect(onCloseFirst).not.toHaveBeenCalled();
+    });
+
+    it('should let CloseWatcher handle Escape when supported', function () {
+      let onClose = jest.fn();
+      let onKeyDown = jest.fn();
+      let res = render(
+        <div role="presentation" onKeyDown={onKeyDown}>
+          <Example isOpen onClose={onClose} />
+        </div>
+      );
+      let el = res.getByTestId('test');
+
+      fireEvent.keyDown(el, {key: 'Escape'});
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onClose).not.toHaveBeenCalled();
+
+      closeWatcherInstances[0].onclose();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should let native CloseWatcher dismiss the most recently opened overlay', function () {
+      let onCloseFirst = jest.fn();
+      let onCloseSecond = jest.fn();
+      let first = render(
+        <Example isOpen onClose={onCloseFirst} data-testid="first">
+          <input data-testid="first-input" />
+        </Example>
+      );
+      render(
+        <Example isOpen onClose={onCloseSecond} data-testid="second">
+          <input data-testid="second-input" />
+        </Example>
+      );
+
+      expect(closeWatcherInstances.length).toBe(2);
+      let firstInput = first.getByTestId('first-input');
+      act(() => {
+        firstInput.focus();
+      });
+      expect(document.activeElement).toBe(firstInput);
+
+      fireEvent.keyDown(firstInput, {key: 'Escape'});
+      expect(onCloseSecond).not.toHaveBeenCalled();
+      expect(onCloseFirst).not.toHaveBeenCalled();
+
+      closeWatcherInstances[1].onclose();
+      expect(onCloseSecond).toHaveBeenCalledTimes(1);
+      expect(onCloseFirst).not.toHaveBeenCalled();
+    });
+
+    it('should only dismiss the top-most nested overlay on Escape when CloseWatcher is active', function () {
+      let onCloseOuter = jest.fn();
+      let onCloseInner = jest.fn();
+      let res = render(
+        <>
+          <StatefulExample defaultIsOpen onClose={onCloseOuter} data-testid="outer" />
+          <StatefulExample defaultIsOpen onClose={onCloseInner} data-testid="inner" />
+        </>
+      );
+
+      let innerEl = res.getByTestId('inner');
+
+      fireEvent.keyDown(innerEl, {key: 'Escape'});
+      expect(onCloseInner).not.toHaveBeenCalled();
+      expect(onCloseOuter).not.toHaveBeenCalled();
+
+      act(() => MockCloseWatcher.closeTopMost());
+      expect(onCloseInner).toHaveBeenCalledTimes(1);
+      expect(onCloseOuter).not.toHaveBeenCalled();
+      expect(res.queryByTestId('inner')).toBeNull();
+      expect(closeWatcherInstances).toHaveLength(1);
+    });
+
+    it('should dismiss inner then outer with native watcher stack', function () {
+      let onCloseOuter = jest.fn();
+      let onCloseInner = jest.fn();
+      let res = render(
+        <>
+          <StatefulExample defaultIsOpen onClose={onCloseOuter} data-testid="outer" />
+          <StatefulExample defaultIsOpen onClose={onCloseInner} data-testid="inner" />
+        </>
+      );
+
+      expect(closeWatcherInstances.length).toBe(2);
+
+      act(() => MockCloseWatcher.closeTopMost());
+      expect(onCloseInner).toHaveBeenCalledTimes(1);
+      expect(res.queryByTestId('inner')).toBeNull();
+      expect(closeWatcherInstances.length).toBe(1);
+
+      act(() => MockCloseWatcher.closeTopMost());
+      expect(onCloseOuter).toHaveBeenCalledTimes(1);
+      expect(res.queryByTestId('outer')).toBeNull();
+      expect(closeWatcherInstances.length).toBe(0);
+    });
   });
 });
