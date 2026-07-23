@@ -579,6 +579,134 @@ describe('Select', () => {
       expect(trigger).toHaveTextContent('Northern Territory');
       expect(trigger).not.toHaveAttribute('data-pressed');
     });
+
+    it('should move to the next matching item when the same letter is typed again after timeout', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Banana</ListBoxItem>
+              <ListBoxItem>Blackberry</ListBoxItem>
+              <ListBoxItem>Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
+      await user.tab();
+      await user.keyboard('B');
+      expect(trigger).toHaveTextContent('Banana');
+
+      act(() => {
+        jest.advanceTimersByTime(1001);
+      });
+
+      await user.keyboard('B');
+      expect(trigger).toHaveTextContent('Blackberry');
+    });
+
+    it('should cycle to the next matching item when the same letter is typed twice quickly', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Banana</ListBoxItem>
+              <ListBoxItem>Blackberry</ListBoxItem>
+              <ListBoxItem>Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
+      await user.tab();
+      await user.keyboard('bb');
+      expect(trigger).toHaveTextContent('Blackberry');
+    });
+
+    it('should wrap if typeahead is not found after the current key', async function () {
+      let {getByTestId} = render(
+        <Select defaultSelectedKey="blueberry" data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="banana">Banana</ListBoxItem>
+              <ListBoxItem id="blackberry">Blackberry</ListBoxItem>
+              <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
+      await user.tab();
+      await user.keyboard('b');
+      expect(trigger).toHaveTextContent('Banana');
+    });
+
+    // This matches the three main browsers behavior. Even though it seems like it should go to double "b" blackberry,
+    // it's just cycling through the items that start with "b".
+    it('searches the next item that starts with the same letter, not the next item that starts with the same letter twice', async function () {
+      let {getByTestId} = render(
+        <Select data-testid="select">
+          <Label>Favorite Fruit</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="banana">Banana</ListBoxItem>
+              <ListBoxItem id="boisenberry">Boisenberry</ListBoxItem>
+              <ListBoxItem id="bblackberry">Bblackberry</ListBoxItem>
+              <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      );
+
+      let wrapper = getByTestId('select');
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
+      await user.tab();
+      await user.keyboard('bb');
+      expect(trigger).toHaveTextContent('Boisenberry');
+    });
   });
 
   it('should support autoFocus', () => {
