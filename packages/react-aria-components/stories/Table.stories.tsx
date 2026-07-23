@@ -37,14 +37,15 @@ import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
+import {renderTableVirtualizerItem} from '../src/TableVirtualizerItem';
 import {Selection} from '@react-types/shared';
 import styles from '../example/index.css';
 import {TableLayout} from '../src/TableLayout';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
+import {useTreeData} from 'react-stately';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
-import {useTreeData} from 'react-stately';
 
 export default {
   title: 'React Aria Components/Table',
@@ -1081,7 +1082,8 @@ export const VirtualizedTableWithResizing: TableStory = () => {
         layoutOptions={{
           rowHeight: 25,
           headingHeight: 25
-        }}>
+        }}
+        renderItem={renderTableVirtualizerItem}>
         <Table aria-label="virtualized table">
           <TableHeader
             style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
@@ -1123,7 +1125,8 @@ function VirtualizedTableWithEmptyState(args: {
         layoutOptions={{
           rowHeight: 25,
           headingHeight: 25
-        }}>
+        }}
+        renderItem={renderTableVirtualizerItem}>
         <Table aria-label="virtualized table">
           <TableHeader
             style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
@@ -1252,7 +1255,8 @@ const OnLoadMoreTableVirtualizedResizeWrapper = (args: {delay: number}): JSX.Ele
           rowHeight: 25,
           headingHeight: 25,
           loaderHeight: 30
-        }}>
+        }}
+        renderItem={renderTableVirtualizerItem}>
         <Table aria-label="Load more table virtualized">
           <TableHeader
             style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>

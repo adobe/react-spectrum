@@ -15,7 +15,8 @@
 import 'client-only';
 
 export {Virtualizer} from '../src/Virtualizer';
-export type {VirtualizerProps} from '../src/Virtualizer';
+export type {VirtualizerItemRenderProps, VirtualizerProps} from '../src/Virtualizer';
+export {renderTableVirtualizerItem, TableVirtualizerItem} from '../src/TableVirtualizerItem';
 export {
   ListLayout,
   GridLayout,

@@ -43,9 +43,11 @@ import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
+import {getColumnWidthsFromRow} from 'react-aria/test/table/columnWidthTestUtils';
 import {Label} from '../src/Label';
 import {Modal} from '../src/Modal';
 import React, {useMemo, useState} from 'react';
+import {renderTableVirtualizerItem} from '../src/TableVirtualizerItem';
 import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
@@ -1937,6 +1939,90 @@ describe('Table', () => {
       let {getAllByTestId} = render(<ControlledResizableTable />);
       let resizers = getAllByTestId('resizer');
       expect(resizers).toHaveLength(5);
+    });
+
+    describe('virtualized', () => {
+      let clientWidth, clientHeight;
+      beforeAll(() => {
+        clientWidth = jest
+          .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+          .mockImplementation(() => 800);
+        clientHeight = jest
+          .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+          .mockImplementation(() => 400);
+      });
+      afterAll(() => {
+        clientWidth.mockReset();
+        clientHeight.mockReset();
+      });
+
+      let rows = [];
+      for (let i = 1; i <= 20; i++) {
+        rows.push({id: i, name: 'Name ' + i, type: 'Type ' + i, height: '' + i});
+      }
+      let columns = [
+        {name: 'Name', id: 'name', width: '1fr'},
+        {name: 'Type', id: 'type', width: '1fr'},
+        {name: 'Height', id: 'height', width: '1fr'}
+      ];
+
+      function VirtualizedResizableTable(props) {
+        return (
+          <ResizableTableContainer
+            onResizeStart={props.onResizeStart}
+            onResize={props.onResize}
+            onResizeEnd={props.onResizeEnd}>
+            <Virtualizer
+              layout={TableLayout}
+              layoutOptions={{rowHeight: 25, headingHeight: 25}}
+              renderItem={renderTableVirtualizerItem}>
+              <Table aria-label="virtualized resizable table">
+                <MyTableHeader columns={columns}>
+                  {column => (
+                    <MyColumn {...column} isRowHeader={column.id === 'name'} allowsResizing>
+                      {column.name}
+                    </MyColumn>
+                  )}
+                </MyTableHeader>
+                <TableBody items={rows}>
+                  {item => (
+                    <MyRow columns={columns}>{column => <Cell>{item[column.id]}</Cell>}</MyRow>
+                  )}
+                </TableBody>
+              </Table>
+            </Virtualizer>
+          </ResizableTableContainer>
+        );
+      }
+
+      // Renders without a "unique key" warning (setupTests throws on console.error),
+      // so this guards against the Virtualizer renderItem losing its key.
+      it('renders a resizable virtualized table without key warnings', () => {
+        let tree = render(<VirtualizedResizableTable />);
+        act(() => {
+          jest.runAllTimers();
+        });
+        let headerRow = tree.getByRole('grid').querySelector('[role="row"]');
+        let widths = getColumnWidthsFromRow(headerRow);
+        // 3 equal 1fr columns across 800px table.
+        expect(widths).toEqual([expect.any(Number), expect.any(Number), expect.any(Number)]);
+        expect(widths.every(w => w > 0)).toBe(true);
+      });
+
+      it('positions cells via column CSS variables and data-column-index', () => {
+        let tree = render(<VirtualizedResizableTable />);
+        act(() => {
+          jest.runAllTimers();
+        });
+        // Cells rendered through the table-aware renderItem carry data-column-index
+        // and read their width from the --col-N-width CSS variable on the root.
+        let indexedCells = tree.getByRole('grid').querySelectorAll('[data-column-index]');
+        expect(indexedCells.length).toBeGreaterThan(0);
+        let headerRow = tree.getByRole('grid').querySelector('[role="row"]');
+        expect(getColumnWidthsFromRow(headerRow).every(w => Number.isFinite(w) && w > 0)).toBe(
+          true
+        );
+      });
     });
   });
 

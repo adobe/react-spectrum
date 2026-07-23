@@ -215,7 +215,6 @@ export {Row} from '../src/table/Row';
 export {Cell} from '../src/table/Cell';
 export {useTableColumnResizeState} from '../src/table/useTableColumnResizeState';
 export {
-  applyColumnWidthsToDOM,
   getColumnHorizontalStyle,
   getColumnStartVarName,
   getColumnWidthVarName,

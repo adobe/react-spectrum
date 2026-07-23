@@ -264,6 +264,7 @@ export {
   DragAndDropContext
 } from '../src/useDragAndDrop';
 export {Virtualizer} from '../src/Virtualizer';
+export {renderTableVirtualizerItem, TableVirtualizerItem} from '../src/TableVirtualizerItem';
 export {SSRProvider} from 'react-aria/SSRProvider';
 export {RouterProvider} from 'react-aria/private/utils/openLink';
 export {I18nProvider, useLocale, isRTL} from 'react-aria/I18nProvider';
@@ -534,7 +535,7 @@ export type {
   StyleOrFunction,
   ChildrenOrFunction
 } from '../src/utils';
-export type {VirtualizerProps} from '../src/Virtualizer';
+export type {VirtualizerItemRenderProps, VirtualizerProps} from '../src/Virtualizer';
 
 export type {DateValue} from 'react-stately/useDateFieldState';
 export type {DateRange} from 'react-stately/useDateRangePickerState';
