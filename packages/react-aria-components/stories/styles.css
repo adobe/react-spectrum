@@ -22,6 +22,16 @@
   }
 }
 
+:global(.animated-tabpanels) {
+  display: block;
+  overflow: hidden;
+  width: var(--tab-panel-width);
+  height: var(--tab-panel-height);
+  transition:
+    width 300ms,
+    height 300ms;
+}
+
 .my-modal {
   position: fixed;
   top: 0;
