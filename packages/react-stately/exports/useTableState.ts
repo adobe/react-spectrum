@@ -17,6 +17,13 @@ export type {
 export type {TableProps, TableState, TableStateProps} from '../src/table/useTableState';
 
 export {useTableColumnResizeState} from '../src/table/useTableColumnResizeState';
+export {
+  getColumnHorizontalStyle,
+  getColumnStartVarName,
+  getColumnWidthVarName,
+  columnWidthsEqual
+} from '../src/table/columnWidthCSS';
+export type {ColumnWidthEntry} from '../src/table/columnWidthCSS';
 export {useTableState, UNSTABLE_useFilteredTableState} from '../src/table/useTableState';
 
 export type {CellProps, CellElement, CellRenderer} from '../src/table/Cell';

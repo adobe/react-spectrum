@@ -214,6 +214,13 @@ export {Column} from '../src/table/Column';
 export {Row} from '../src/table/Row';
 export {Cell} from '../src/table/Cell';
 export {useTableColumnResizeState} from '../src/table/useTableColumnResizeState';
+export {
+  getColumnHorizontalStyle,
+  getColumnStartVarName,
+  getColumnWidthVarName,
+  columnWidthsEqual
+} from '../src/table/columnWidthCSS';
+export type {ColumnWidthEntry} from '../src/table/columnWidthCSS';
 export {useTabListState} from '../src/tabs/useTabListState';
 export {useToastState, ToastQueue, useToastQueue} from '../src/toast/useToastState';
 export {useToggleState} from '../src/toggle/useToggleState';
