@@ -9,23 +9,23 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { act, pointerMap, render } from '@react-spectrum/test-utils-internal';
-import { Button } from '../src/Button';
-import { FieldError } from '../src/FieldError';
-import { FileField, FileTrigger } from '../src/FileTrigger';
-import { Form } from '../src/Form';
-import { Label } from '../src/Label';
-import { Link } from '../src/Link';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {FileField, FileTrigger} from '../src/FileTrigger';
+import {Form} from '../src/Form';
+import {Label} from '../src/Label';
+import {Link} from '../src/Link';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('FileTrigger', () => {
   let user;
   beforeAll(() => {
-    user = userEvent.setup({ delay: null, pointerMap });
+    user = userEvent.setup({delay: null, pointerMap});
   });
   it('should render a FileTrigger with Link', () => {
-    let { getByRole } = render(
+    let {getByRole} = render(
       <FileTrigger>
         <Link>Upload</Link>
       </FileTrigger>
@@ -36,7 +36,7 @@ describe('FileTrigger', () => {
   });
 
   it('should render a FileTrigger with Button', () => {
-    let { getByRole } = render(
+    let {getByRole} = render(
       <FileTrigger data-testid="foo">
         <Button>Upload</Button>
       </FileTrigger>
@@ -47,8 +47,8 @@ describe('FileTrigger', () => {
   });
 
   it('should upload a file with Button', async () => {
-    let file = new File(['hello'], 'hello.png', { type: 'image/png' });
-    let { getByRole } = render(
+    let file = new File(['hello'], 'hello.png', {type: 'image/png'});
+    let {getByRole} = render(
       <FileTrigger data-testid="testid">
         <Button>Upload</Button>
       </FileTrigger>
@@ -66,8 +66,8 @@ describe('FileTrigger', () => {
   });
 
   it('should upload a file with Link', async () => {
-    let file = new File(['hello'], 'hello.png', { type: 'image/png' });
-    let { getByRole } = render(
+    let file = new File(['hello'], 'hello.png', {type: 'image/png'});
+    let {getByRole} = render(
       <FileTrigger>
         <Link>Upload</Link>
       </FileTrigger>
@@ -84,7 +84,7 @@ describe('FileTrigger', () => {
 
   it('should attach a ref to the input', () => {
     let ref = React.createRef();
-    let { getByTestId } = render(
+    let {getByTestId} = render(
       <FileTrigger ref={ref} data-testid="foo">
         <Button>Upload</Button>
       </FileTrigger>
@@ -117,7 +117,7 @@ describe('FileTrigger', () => {
   });
 
   it('should disable the hidden input and prevent opening the file picker when isDisabled is set', async () => {
-    let { getByRole } = render(
+    let {getByRole} = render(
       <FileTrigger isDisabled>
         <Button>Upload</Button>
       </FileTrigger>
@@ -168,8 +168,8 @@ describe('FileTrigger', () => {
   });
 
   it('should allow multiple files to be selected', async () => {
-    let file1 = new File(['hello'], 'hello.png', { type: 'image/png' });
-    let file2 = new File(['world'], 'world.png', { type: 'image/png' });
+    let file1 = new File(['hello'], 'hello.png', {type: 'image/png'});
+    let file2 = new File(['world'], 'world.png', {type: 'image/png'});
     render(
       <FileTrigger name="photos" allowsMultiple>
         <Button>Upload</Button>
@@ -210,7 +210,7 @@ describe('FileTrigger', () => {
 
   it('should call onSelect when files are selected', async () => {
     let onSelect = jest.fn();
-    let file = new File(['hello'], 'hello.png', { type: 'image/png' });
+    let file = new File(['hello'], 'hello.png', {type: 'image/png'});
     render(
       <FileTrigger onSelect={onSelect}>
         <Button>Upload</Button>
@@ -227,11 +227,11 @@ describe('FileTrigger', () => {
 describe('FileField', () => {
   let user;
   beforeAll(() => {
-    user = userEvent.setup({ delay: null, pointerMap });
+    user = userEvent.setup({delay: null, pointerMap});
   });
 
   it('should associate the Label with the hidden input', () => {
-    let { getByText } = render(
+    let {getByText} = render(
       <FileField name="files">
         <Label>Files</Label>
         <Button>Upload</Button>
@@ -257,7 +257,7 @@ describe('FileField', () => {
   });
 
   it('should open the file picker when the trigger is pressed', async () => {
-    let { getByRole } = render(
+    let {getByRole} = render(
       <FileField name="files">
         <Label>Files</Label>
         <Button>Upload</Button>
@@ -272,7 +272,7 @@ describe('FileField', () => {
   });
 
   it('should disable the hidden input and mark the wrapper as disabled when isDisabled is set', async () => {
-    let { getByRole } = render(
+    let {getByRole} = render(
       <FileField name="files" isDisabled>
         <Label>Files</Label>
         <Button>Upload</Button>
@@ -290,7 +290,7 @@ describe('FileField', () => {
   });
 
   it('supports required validation errors', () => {
-    let { getByRole, getByTestId } = render(
+    let {getByRole, getByTestId} = render(
       <form data-testid="form">
         <FileField name="files" isRequired>
           <Label>Files</Label>
@@ -319,8 +319,8 @@ describe('FileField', () => {
   });
 
   it('supports selecting multiple files', async () => {
-    let file1 = new File(['hello'], 'hello.png', { type: 'image/png' });
-    let file2 = new File(['world'], 'world.png', { type: 'image/png' });
+    let file1 = new File(['hello'], 'hello.png', {type: 'image/png'});
+    let file2 = new File(['world'], 'world.png', {type: 'image/png'});
     render(
       <FileField name="photos" allowsMultiple>
         <Label>Photos</Label>
@@ -351,7 +351,7 @@ describe('FileField', () => {
     );
 
     let input = document.querySelector('input[type="file"]');
-    let file = new File(['hello world'], 'hello.png', { type: 'image/png' });
+    let file = new File(['hello world'], 'hello.png', {type: 'image/png'});
     await user.upload(input, file);
 
     expect(input).toHaveAttribute('aria-invalid', 'true');
@@ -361,8 +361,8 @@ describe('FileField', () => {
   });
 
   it('supports server validation errors via Form', () => {
-    let { getByRole } = render(
-      <Form validationErrors={{ files: 'Upload failed, try again.' }}>
+    let {getByRole} = render(
+      <Form validationErrors={{files: 'Upload failed, try again.'}}>
         <FileField name="files">
           <Label>Files</Label>
           <Button>Upload</Button>
