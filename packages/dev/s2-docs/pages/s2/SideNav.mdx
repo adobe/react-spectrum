@@ -202,7 +202,7 @@ If a SideNavItem has an `href`, then you must pass a `SideNavItemLink` as a chil
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
 "use client";
-import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNav';
+import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Text} from '@react-spectrum/s2/SideNav';
 import {RoutedSideNav} from './RoutedSideNav';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Delete from '@react-spectrum/s2/icons/Delete';
@@ -210,8 +210,6 @@ import UserGroup from '@react-spectrum/s2/icons/UserGroup';
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
 import Files from '@react-spectrum/s2/icons/Files';
 import Images from '@react-spectrum/s2/icons/Images';
-import Animation from '@react-spectrum/s2/icons/Animation';
-import AudioWave from '@react-spectrum/s2/icons/AudioWave';
 
 <RoutedSideNav defaultSelectedRoute="/files">
   {({selectedRoute}) => (
