@@ -370,6 +370,64 @@ describe('Tabs', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('supports allowFocusWhenDisabled on a tab (focusable but not selectable)', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = render(
+      <Tabs keyboardActivation="manual" onSelectionChange={onSelectionChange}>
+        <TabList aria-label="Test">
+          <Tab id="a">A</Tab>
+          <Tab id="b" isDisabled allowFocusWhenDisabled>
+            B
+          </Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    // The disabled tab is reachable via keyboard navigation (not skipped).
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[1]);
+    // But it cannot be selected/activated.
+    await user.keyboard('{Enter}');
+    expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).not.toHaveBeenCalledWith('b');
+  });
+
+  it('supports allowFocusWhenDisabled with collection-level disabledKeys', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = render(
+      <Tabs keyboardActivation="manual" disabledKeys={['b']} onSelectionChange={onSelectionChange}>
+        <TabList aria-label="Test">
+          <Tab id="a">A</Tab>
+          <Tab id="b" allowFocusWhenDisabled>
+            B
+          </Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{Enter}');
+    expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).not.toHaveBeenCalledWith('b');
+  });
+
   it('finds the first non-disabled tab', async () => {
     let {getAllByRole} = render(
       <Tabs>
