@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaFileFieldProps, useFileField} from 'react-aria/useFileField';
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {
   ClassNameOrFunction,
@@ -24,7 +25,6 @@ import {
   useSlot,
   useSlottedContext
 } from './utils';
-import {AriaFileFieldProps, useFileField} from 'react-aria/useFileField';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
@@ -239,9 +239,9 @@ export const FileField = /*#__PURE__*/ (forwardRef as forwardRefType)(function F
   return (
     <dom.div
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-disabled={props.isDisabled}
-      data-invalid={validation.isInvalid}
+      data-invalid={validation.isInvalid ?? undefined}
       data-required={props.isRequired}
       {...DOMProps}
       {...renderProps}>
