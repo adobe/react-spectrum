@@ -12,16 +12,15 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {
-  baseColor,
-  focusRing,
-  fontRelative,
-  size,
-  space,
-  style
-} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
+import {
+  centerPadding,
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import Chevron from '../ui-icons/Chevron';
 import {
   Collection,
@@ -42,12 +41,6 @@ import {
   useRef,
   useState
 } from 'react';
-import {
-  centerPadding,
-  getAllowedOverrides,
-  StylesPropWithHeight,
-  UnsafeStyles
-} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
 import {pressScale} from './pressScale';
