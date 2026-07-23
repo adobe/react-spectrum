@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import Chevron from '../ui-icons/Chevron';
@@ -36,6 +36,7 @@ import {
   useState
 } from 'react';
 import {
+  centerPadding,
   getAllowedOverrides,
   StylesPropWithHeight,
   UnsafeStyles
@@ -211,6 +212,10 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean}>({
   marginTop: {
     default: space(6),
     ':first-child': 0
+  },
+  '--centerPadding': {
+    type: 'paddingTop',
+    value: centerPadding()
   }
 });
 
@@ -239,6 +244,7 @@ const treeCellGrid = style({
     isSelected: 'bold',
     isDescendantSelected: 'bold'
   },
+  transition: 'default',
   forcedColorAdjust: 'none'
 });
 
@@ -253,7 +259,7 @@ const treeIcon = style({
 
 const treeContent = style({
   gridArea: 'content',
-  paddingY: '[7px]' // padding shouldn't scale
+  paddingY: `--centerPadding`
 });
 
 let treeRowFocusRing = style({
@@ -687,6 +693,29 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
           ]
         ]}>
         {typeof children === 'string' ? <Text>{children}</Text> : children}
+        <div
+          aria-hidden
+          className={style({
+            visibility: 'hidden',
+            height: 0,
+            fontWeight: 'bold',
+            overflow: 'hidden',
+            gridArea: 'content'
+          })}>>
+          <Provider
+            values={[
+              [TextContext, {styles: treeContent}],
+              [
+                IconContext,
+                {
+                  render: centerBaseline({slot: 'icon', styles: treeIcon}),
+                  styles: style({display: 'none'})
+                }
+              ]
+            ]}>
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
+          </Provider>
+        </div>
       </Provider>
     </Link>
   );
