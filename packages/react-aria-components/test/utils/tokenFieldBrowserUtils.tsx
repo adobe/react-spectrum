@@ -1,0 +1,230 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {expect} from 'vitest';
+import {getSelection, setSelection} from '../../../react-aria/src/tokenfield/useTokenField';
+import {type Locator, userEvent} from 'vitest/browser';
+import {Position, TokenFieldSegment, TokenFieldValue} from 'react-stately/useTokenFieldState';
+import React, {useEffect, useState} from 'react';
+import {render} from 'vitest-browser-react';
+import {
+  Token,
+  TokenField,
+  type TokenFieldProps,
+  TokenInput,
+  type TokenInputProps
+} from '../../src/TokenField';
+
+export function text(s: string): TokenFieldSegment {
+  return {type: 'text', text: s};
+}
+
+export function token(s: string): TokenFieldSegment {
+  return {type: 'token', text: s};
+}
+
+export function segments(...segs: TokenFieldSegment[]): TokenFieldValue {
+  return new TokenFieldValue(segs);
+}
+
+/** Primary fixture: "ab" + token("TOK") + "cd" */
+export const abTokCd = segments(text('ab'), token('TOK'), text('cd'));
+
+/** Story sample for adjacent-token arrow navigation. */
+export const adjacentTokensSample = new TokenFieldValue([
+  token('Hello'),
+  text(' tokens testing '),
+  token('World'),
+  token('Testing'),
+  text(' test')
+]);
+
+export function expectFieldText(value: TokenFieldValue, str: string) {
+  expect(value.toString()).toBe(str);
+}
+
+export function expectCaret(value: TokenFieldValue, pos: Position) {
+  expect(value.caretPosition).toEqual(pos);
+}
+
+export function positionsEqual(a: Position, b: Position) {
+  return a.index === b.index && a.offset === b.offset;
+}
+
+export function getFieldSelection(textboxEl: Element): [Position, Position] | null {
+  return getSelection(textboxEl);
+}
+
+/** Tests run in the browser; matches TokenField isMac() platform detection. */
+export function isMacPlatform(): boolean {
+  return /^Mac/i.test(navigator.platform);
+}
+
+export function isWindowsPlatform(): boolean {
+  return /^Win/i.test(navigator.platform);
+}
+
+/** Returns Meta on Mac, Control elsewhere (matches TokenField undo/redo). */
+export function modKey(): 'Meta' | 'Control' {
+  return isMacPlatform() ? 'Meta' : 'Control';
+}
+
+/** Alt on Mac, Control elsewhere for word delete/navigation shortcuts in Chromium. */
+export function wordDeleteModKey(): 'Alt' | 'Control' {
+  return isMacPlatform() ? 'Alt' : 'Control';
+}
+
+/** Alias for wordDeleteModKey — Option/Ctrl + Arrow for word-wise caret movement. */
+export function wordNavModKey(): 'Alt' | 'Control' {
+  return wordDeleteModKey();
+}
+
+export async function waitForSelection(textbox: Locator, start: Position, end: Position = start) {
+  let el = textbox.element();
+  await expect.poll(() => getFieldSelection(el)).toEqual([start, end]);
+}
+
+export async function focusField(locator: Locator) {
+  await userEvent.click(locator);
+  await expect.element(locator).toHaveFocus();
+}
+
+export function setFieldSelection(textboxEl: Element, start: Position, end: Position): void {
+  setSelection(textboxEl, start, end);
+}
+
+/**
+ * Double clicks on the character at the given offset within a DOM node, selecting the word
+ * under the cursor. Used to create a real (directionless) word selection, since selecting
+ * programmatically via addRange sets a direction in some browsers.
+ */
+export async function dblClickAt(textbox: Locator, node: Node, offset: number): Promise<void> {
+  let el = textbox.element();
+  let range = document.createRange();
+  range.setStart(node, offset);
+  range.setEnd(node, offset + 1);
+  let elRect = el.getBoundingClientRect();
+  let charRect = range.getBoundingClientRect();
+  await userEvent.dblClick(textbox, {
+    position: {
+      x: charRect.left - elRect.left + charRect.width / 2,
+      y: charRect.top - elRect.top + charRect.height / 2
+    }
+  });
+}
+
+export async function navigateCaret(textbox: Locator, list: TokenFieldValue, target: Position) {
+  await focusField(textbox);
+  await userEvent.keyboard('{Home}');
+  let el = textbox.element();
+  for (let i = 0; i < 100; i++) {
+    let sel = getFieldSelection(el);
+    if (sel && positionsEqual(sel[0], target) && positionsEqual(sel[1], target)) {
+      break;
+    }
+    await userEvent.keyboard(`{ArrowRight}`);
+  }
+}
+
+/** Positions the caret by starting at the field end and stepping left. */
+export async function navigateCaretFromEnd(
+  textbox: Locator,
+  _list: TokenFieldValue,
+  target: Position
+) {
+  await focusField(textbox);
+  let el = textbox.element();
+  await userEvent.keyboard('{End}');
+  for (let i = 0; i < 100; i++) {
+    let sel = getFieldSelection(el);
+    if (sel && positionsEqual(sel[0], target) && positionsEqual(sel[1], target)) {
+      break;
+    }
+    await userEvent.keyboard('{ArrowLeft}');
+  }
+}
+
+export async function selectRange(
+  textbox: Locator,
+  list: TokenFieldValue,
+  start: Position,
+  end: Position
+) {
+  let el = textbox.element();
+  await focusField(textbox);
+  await navigateCaret(textbox, list, start);
+  for (let i = 0; i < 100; i++) {
+    let sel = getFieldSelection(el);
+    if (sel && positionsEqual(sel[1], end)) {
+      break;
+    }
+    await userEvent.keyboard(`{Shift>}{ArrowRight}{/Shift}`);
+  }
+}
+
+export interface ControlledTokenFieldResult {
+  getValue: () => TokenFieldValue;
+  textbox: Locator;
+}
+
+interface ControlledProps extends Omit<
+  TokenFieldProps,
+  'value' | 'defaultValue' | 'onChange' | 'children'
+> {
+  initial: TokenFieldValue;
+  valueRef: React.MutableRefObject<TokenFieldValue>;
+  children?: TokenInputProps['children'];
+}
+
+function ControlledTokenField({
+  initial,
+  valueRef,
+  'aria-label': ariaLabel = 'Message',
+  children = segment => <Token>{segment.text}</Token>,
+  ...props
+}: ControlledProps) {
+  let [value, setValue] = useState(initial);
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value, valueRef]);
+  return (
+    <TokenField value={value} onChange={setValue} aria-label={ariaLabel} {...props}>
+      <TokenInput>{children}</TokenInput>
+    </TokenField>
+  );
+}
+
+let fieldInstance = 0;
+
+export async function renderControlledTokenField(
+  initial: TokenFieldValue,
+  props?: Omit<TokenFieldProps, 'value' | 'defaultValue' | 'onChange' | 'children'>
+): Promise<ControlledTokenFieldResult> {
+  let label = `TokenField-${++fieldInstance}`;
+  let valueRef = {current: initial};
+  let screen = await render(
+    <ControlledTokenField initial={initial} valueRef={valueRef} aria-label={label} {...props} />
+  );
+  let textbox = screen.getByRole('textbox', {name: label});
+  return {
+    getValue: () => valueRef.current,
+    textbox
+  };
+}
+
+export async function waitForFieldText(getValue: () => TokenFieldValue, str: string) {
+  await expect.poll(() => getValue().toString()).toBe(str);
+}
+
+export async function waitForCaret(getValue: () => TokenFieldValue, pos: Position) {
+  await expect.poll(() => getValue().caretPosition).toEqual(pos);
+}

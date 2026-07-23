@@ -163,10 +163,38 @@ function iconWrapperPlugin(): Plugin {
 
 let unlock: ((value: any) => void) | null = null;
 
+// Cache one CDP session per page so we don't re-attach on every composition step.
+// Chromium only — used by the IME/composition commands below.
+const cdpSessions = new WeakMap<object, Promise<any>>();
+function getCDP(page: any, context: any): Promise<any> {
+  let session = cdpSessions.get(page);
+  if (!session) {
+    session = context.newCDPSession(page);
+    cdpSessions.set(page, session!);
+  }
+  return session!;
+}
+
 declare module 'vitest/browser' {
   interface BrowserCommands {
     lockClipboard: () => Promise<void>;
     unlockClipboard: () => void;
+    // Drive a real IME composition via CDP to emulate soft-keyboard (e.g. Android) input.
+    // Chromium only. selectionStart/End and replacementStart/End are passed straight to
+    // Input.imeSetComposition (offsets are relative to the current caret).
+    setComposition: (
+      text: string,
+      selectionStart: number,
+      selectionEnd: number,
+      replacementStart?: number,
+      replacementEnd?: number
+    ) => Promise<void>;
+    // Commit text that doesn't come from a key press (finalizes an active composition).
+    commitComposition: (text: string) => Promise<void>;
+    // Placeholder until newer version of library
+    mouseDownOnElement: (selector: string, offsetX?: number, offsetY?: number) => Promise<void>;
+    // Same as above
+    mouseUp: () => Promise<void>;
   }
 }
 
@@ -259,6 +287,47 @@ export default defineConfig({
             unlock(null);
             unlock = null;
           }
+        },
+        setComposition: async (
+          {page, context}: any,
+          text,
+          selectionStart,
+          selectionEnd,
+          replacementStart,
+          replacementEnd
+        ) => {
+          const cdp = await getCDP(page, context);
+          const params: Record<string, unknown> = {text, selectionStart, selectionEnd};
+          if (replacementStart != null) {
+            params.replacementStart = replacementStart;
+          }
+          if (replacementEnd != null) {
+            params.replacementEnd = replacementEnd;
+          }
+          await cdp.send('Input.imeSetComposition', params);
+        },
+        commitComposition: async ({page, context}: any, text) => {
+          const cdp = await getCDP(page, context);
+          await cdp.send('Input.insertText', {text});
+        },
+        // Once we upgrade to a newer version, we can use the below and delete mouseDownOnElement
+        // await userEvent.hover(button)
+        // await userEvent.pointer({ keys: '[MouseLeft>]', target: button })
+        // await userEvent.pointer('[/MouseLeft]')
+        mouseDownOnElement: async (
+          {page, iframe}: any,
+          selector: string,
+          offsetX: number = 5,
+          offsetY?: number
+        ) => {
+          const box = await iframe.locator(selector).boundingBox();
+          const x = box.x + offsetX;
+          const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY;
+          await page.mouse.move(x, y);
+          await page.mouse.down();
+        },
+        mouseUp: async ({page}: any) => {
+          await page.mouse.up();
         }
       }
     },
@@ -275,7 +344,7 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.svg'],
     alias: {
       '@react-spectrum/s2/illustrations': path.resolve(s2Dir, 'spectrum-illustrations'),
-      '@react-spectrum/s2': path.resolve(s2Dir, 'src')
+      '@react-spectrum/s2': path.resolve(s2Dir, 'exports')
     }
   },
   optimizeDeps: {

@@ -123,6 +123,10 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
     // TODO: will need some kind of api to programatically set the focused item to
     // the newest item in the gridlist in the virtualizer case. this works for
     // non-virtualized for now though
+    // 'scrollend' does not compose across shadow DOM boundaries, but this listener is intentionally
+    // scoped to this specific scroll container element (not a global target), so shadow root
+    // propagation does not apply here.
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     el.addEventListener(
       'scrollend',
       () => {
@@ -328,7 +332,10 @@ const threadItemBase = style({
   borderRadius: 'default'
 });
 
-export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 'textValue'> {
+export interface ThreadItemProps extends Pick<
+  GridListItemProps,
+  'children' | 'textValue' | 'focusMode' | 'allowsArrowNavigation'
+> {
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
@@ -340,7 +347,15 @@ export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 't
 }
 
 export function ThreadItem(props: ThreadItemProps) {
-  let {styles, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
+  let {
+    styles,
+    children,
+    textValue = ' ',
+    isStreaming,
+    shouldAnnounceOnMount,
+    focusMode,
+    allowsArrowNavigation
+  } = props;
   let {announceItem} = useContext(InternalChatContext);
 
   // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
@@ -370,6 +385,8 @@ export function ThreadItem(props: ThreadItemProps) {
   return (
     <GridListItem
       textValue={textValue}
+      focusMode={focusMode}
+      allowsArrowNavigation={allowsArrowNavigation}
       className={renderProps => mergeStyles(threadItemBase({...renderProps}), styles)}>
       {children}
     </GridListItem>

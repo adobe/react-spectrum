@@ -28,6 +28,10 @@ export function useFormReset<T>(
   useEffect(() => {
     let form = ref?.current?.form;
 
+    // 'reset' does not compose across shadow DOM boundaries, but this listener is intentionally
+    // scoped to this specific form element (not a global target), so shadow root propagation does
+    // not apply here.
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     form?.addEventListener('reset', handleReset);
     return () => {
       form?.removeEventListener('reset', handleReset);

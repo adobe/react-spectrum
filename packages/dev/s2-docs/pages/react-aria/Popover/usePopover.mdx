@@ -1,0 +1,71 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/overlays';
+import statelyDocs from 'docs:@react-stately/overlays';
+import Anatomy from '/packages/react-aria/docs/overlays/popover-anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a popover overlay.';
+export const isSubpage = true;
+
+# usePopover
+
+<PageDescription>{docs.exports.usePopover.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Popover.tsx", "starters/hooks/src/Popover.css", "starters/hooks/src/Button.css", "starters/hooks/src/Dialog.css"]}
+"use client";
+import {Dialog, Heading} from 'react-aria-components/Dialog';
+import {PopoverTrigger} from 'hooks-starter/Popover';
+
+<PopoverTrigger label="Open popover" placement="bottom">
+  <Dialog>
+    <Heading slot="title">Popover title</Heading>
+    <p style={{margin: 0}}>This is the content of the popover.</p>
+  </Dialog>
+</PopoverTrigger>
+```
+
+**Note**: `usePopover` only handles the overlay itself. It should be combined with [useDialog](../Modal/useModalOverlay#usedialog) to create fully accessible popovers. Other overlays such as menus may also be placed in a popover.
+
+## API
+
+<Anatomy />
+
+```tsx
+<DialogTrigger>
+  <Button />
+  <Popover>
+    <OverlayArrow />
+  </Popover>
+</DialogTrigger>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useOverlayTriggerState, links: statelyDocs.links},
+    {function: docs.exports.usePopover, links: docs.links},
+  ]}
+/>
+
+### OverlayTriggerState
+
+<InterfaceType {...statelyDocs.exports.OverlayTriggerState} links={statelyDocs.links} />
+
+### AriaPopoverProps
+
+<InterfaceType {...docs.exports.AriaPopoverProps} />
+
+### PopoverAria
+
+<InterfaceType {...docs.exports.PopoverAria} />
