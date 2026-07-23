@@ -13,7 +13,13 @@ export {
   PromptFieldToolbar,
   PromptToken
 } from '../src/PromptField';
-export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
+export {
+  ResponseStatus,
+  ResponseStatusTitle,
+  ResponseStatusPanel,
+  ResponseStatusActionList,
+  ResponseStatusAction
+} from '../src/ResponseStatus';
 export {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
 export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';

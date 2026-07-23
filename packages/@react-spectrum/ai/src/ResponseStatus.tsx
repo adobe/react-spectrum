@@ -383,3 +383,182 @@ function Chevron({size}) {
       return <ChevronRight styles={iconStyle({size: 'XL'})} />;
   }
 }
+
+export interface ResponseStatusActionListProps extends DOMProps, AriaLabelingProps {
+  /**
+   * The ResponseStatusAction elements to render as a timeline. Typically placed inside a
+   * ResponseStatusPanel.
+   */
+  children: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
+
+const responseStatusActionListStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  margin: 0,
+  padding: 0,
+  paddingStart: 8
+});
+
+/**
+ * A ResponseStatusActionList displays a timeline of the actions taken while generating a
+ * response, such as tool calls or searches.
+ */
+export const ResponseStatusActionList = forwardRef(function ResponseStatusActionList(
+  props: ResponseStatusActionListProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {styles, children, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let domProps = filterDOMProps(otherProps);
+
+  return (
+    <div {...domProps} ref={domRef} className={mergeStyles(responseStatusActionListStyles, styles)}>
+      {children}
+    </div>
+  );
+});
+
+interface ActionItemDetailTriggerProps {
+  children: ReactNode;
+}
+
+const actionItemDetailTriggerStyles = style({
+  paddingX: 4,
+  paddingY: 4,
+  marginTop: -2
+});
+
+const detailTriggerChevronStyles = style({
+  rotate: {
+    isRTL: 180,
+    isExpanded: 90
+  },
+  transition: 'default',
+  flexShrink: 0,
+  marginStart: 'auto'
+});
+
+function ActionItemDetailTrigger(props: ActionItemDetailTriggerProps) {
+  let {children} = props;
+  let {direction} = useLocale();
+  let isRTL = direction === 'rtl';
+  let {isExpanded} = useContext(DisclosureStateContext)!;
+
+  return (
+    <Button
+      className={renderProps =>
+        // TODO: remove size conditional once size is also removed from ResponseStatus
+        mergeStyles(buttonStyles({...renderProps, size: 'M'}), actionItemDetailTriggerStyles)
+      }
+      slot="trigger">
+      {children}
+      <CenterBaseline styles={detailTriggerChevronStyles({isExpanded, isRTL})}>
+        <Chevron size="M" />
+      </CenterBaseline>
+    </Button>
+  );
+}
+
+export interface ResponseStatusActionProps extends DOMProps, AriaLabelingProps {
+  /** An icon representing the action, shown at the leading edge of the row. */
+  icon?: ReactNode;
+  /** A label describing the action. */
+  children: ReactNode;
+  /**
+   * Additional detail revealed when the action is expanded, such as tool call input or output.
+   * If omitted, the row is static and cannot be expanded.
+   */
+  detail?: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
+
+const responseStatusActionStyles = style({
+  font: 'body',
+  display: 'flex',
+  gap: 8,
+  marginTop: {
+    isDetailed: -2
+  },
+  '--divider-display': {
+    type: 'display',
+    value: {
+      default: 'flex',
+      ':last-child': 'none'
+    }
+  }
+});
+
+const actionIconContainerStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  flexShrink: 0,
+  paddingTop: {
+    isDetailed: 4
+  }
+});
+
+const responseStatusActionDividerStyles = style({
+  width: 1,
+  flexGrow: 1,
+  marginY: 2,
+  backgroundColor: 'gray-500',
+  display: 'var(--divider-display, flex)'
+});
+
+const responseStatusActionContentStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  paddingBottom: 12
+});
+
+const actionStaticRowStyles = style({
+  font: 'body',
+  minHeight: 24,
+  paddingX: 4
+});
+
+/**
+ * A ResponseStatusAction represents a single action within a ResponseStatusActionList, such as
+ * a tool call or search. When a `detail` is provided, the row can be expanded to reveal it.
+ */
+export const ResponseStatusAction = forwardRef(function ResponseStatusAction(
+  props: ResponseStatusActionProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {icon, detail, children, styles, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let domProps = filterDOMProps(otherProps);
+  let hasDetail = detail != null;
+
+  return (
+    <div
+      {...domProps}
+      ref={domRef}
+      className={mergeStyles(responseStatusActionStyles({isDetailed: hasDetail}), styles)}>
+      <div className={actionIconContainerStyles({isDetailed: hasDetail})}>
+        {icon}
+        <div className={responseStatusActionDividerStyles} />
+      </div>
+      {hasDetail ? (
+        <RACDisclosure className={responseStatusActionContentStyles}>
+          <ActionItemDetailTrigger>{children}</ActionItemDetailTrigger>
+          <RACDisclosurePanel>{detail}</RACDisclosurePanel>
+        </RACDisclosure>
+      ) : (
+        <div className={mergeStyles(responseStatusActionContentStyles, actionStaticRowStyles)}>
+          <span>{children}</span>
+        </div>
+      )}
+    </div>
+  );
+});
