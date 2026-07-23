@@ -115,7 +115,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
     if (ref.current) {
       let treeWalker = getFocusableTreeWalker(ref.current);
       if (focusMode === 'child') {
-        let activeElement = getActiveElement();
+        let activeElement = getActiveElement(getOwnerDocument(ref.current));
 
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
         if (isFocusWithin(ref.current) && ref.current !== activeElement) {
@@ -127,12 +127,16 @@ export function useGridCell<T, C extends GridCollection<T>>(
         // e.g. because an overlay closed and removed the element that had focus. In
         // that case, restore the child that was last focused instead of defaulting to
         // childFocusStrategy's first/last child.
-        let ownerDocument = ref.current.ownerDocument;
+        let ownerDocument = getOwnerDocument(ref.current);
         let isDisrupted =
           ref.current === activeElement || !activeElement || activeElement === ownerDocument.body;
         if (isDisrupted) {
           let lastChild = lastFocusedChild.current;
-          if (lastChild && nodeContains(ref.current, lastChild)) {
+          if (
+            lastChild &&
+            keyWhenFocused.current === node.key &&
+            nodeContains(ref.current, lastChild)
+          ) {
             focusSafely(lastChild);
             return;
           }
@@ -355,9 +359,26 @@ export function useGridCell<T, C extends GridCollection<T>>(
       return;
     }
 
-    if (focusMode === 'child') {
-      focus();
+    // if focus goes back to cell from child, make sure we don't refocus the cell if we are in focusMode=child
+    // since that would be a focus trap
+    if (
+      focusMode === 'child' &&
+      e.relatedTarget &&
+      nodeContains(ref.current, e.relatedTarget as Element)
+    ) {
+      return;
     }
+
+    // If the cell itself is focused, wait a frame so that focus finishes propagating
+    // up to the tree, and move focus to a focusable child if possible.
+    requestAnimationFrame(() => {
+      if (
+        focusMode === 'child' &&
+        getActiveElement(getOwnerDocument(ref.current)) === ref.current
+      ) {
+        focus();
+      }
+    });
   };
 
   // oxlint-disable-next-line react/react-compiler

@@ -172,6 +172,9 @@ describe('useGrid', () => {
     act(() => {
       cells[0].focus();
     });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(document.activeElement).toBe(switches[1]);
   });
