@@ -18,7 +18,12 @@ import {
   forwardRefType,
   GlobalDOMAttributes
 } from '@react-types/shared';
-import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  baseColor,
+  focusRing,
+  iconStyle,
+  style
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
