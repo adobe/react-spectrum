@@ -11,13 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
-import {
-  baseColor,
-  focusRing,
-  lightDark,
-  space,
-  style
-} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
@@ -217,14 +211,7 @@ const buttonStyles = style({
     }
   },
   width: 'full',
-  backgroundColor: {
-    default: 'transparent',
-    isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
-    isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
-    isPressed: lightDark('transparent-black-300', 'transparent-white-300'),
-    isLoading: 'transparent',
-    isOnlyText: 'transparent'
-  },
+  backgroundColor: 'transparent',
   transition: 'default',
   borderWidth: 0,
   borderRadius: 'default',
