@@ -1,8 +1,18 @@
 {
   "chat.newMessage": "New message",
+  "chat.scrollToBottom": "Scroll to bottom",
   "messagefeedback.thumbDown": "Bad response",
   "messagefeedback.thumbUp": "Good response",
   "responsestatus.loading": "Loading",
+  "voicebutton.stopListening": "Stop recording",
+  "voicebutton.startListening": "Start recording",
+  "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
+  "promptfield.aiDisclaimer": "Responses are generated using AI, and may be inaccurate. Check before using.",
+  "promptfield.aiUserGuidlines": "AI User Guidelines",
+  "promptfield.attachments": "Attachments",
   "promptfield.label": "Prompt",
-  "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task."
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
+  "promptfield.insertButton": "Add",
+  "promptfield.uploading": "Uploading"
 }

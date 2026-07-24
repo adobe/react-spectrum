@@ -34,13 +34,14 @@ const meta: Meta<typeof ResponseStatus> = {
       control: 'radio',
       options: ['compact', 'regular', 'spacious']
     },
-    isLoading: {
-      control: {type: 'boolean'}
+    status: {
+      control: 'radio',
+      options: ['loading', 'failed', 'success']
     },
     children: {table: {disable: true}}
   },
   args: {
-    isLoading: true,
+    status: 'loading',
     ...getActionArgs(events)
   },
   title: 'AI/ResponseStatus'
@@ -54,12 +55,32 @@ export const Example: Story = {
     <div className={style({width: 320, minHeight: 240})}>
       <ResponseStatus {...args}>
         <ResponseStatusTitle>
-          {args.isLoading ? 'Generating response' : 'Response generated'}
+          {args.status === 'loading'
+            ? 'Generating response'
+            : args.status === 'success'
+              ? 'Response generated'
+              : 'Response failed'}
         </ResponseStatusTitle>
         <ResponseStatusPanel>
           Here is the generated response content. This area is hidden until the disclosure is
           expanded, and cannot be expanded while loading.
         </ResponseStatusPanel>
+      </ResponseStatus>
+    </div>
+  )
+};
+
+export const NoResponseContent: Story = {
+  render: args => (
+    <div className={style({width: 320, minHeight: 240})}>
+      <ResponseStatus {...args}>
+        <ResponseStatusTitle>
+          {args.status === 'loading'
+            ? 'Generating response'
+            : args.status === 'success'
+              ? 'Response generated'
+              : 'Response failed'}
+        </ResponseStatusTitle>
       </ResponseStatus>
     </div>
   )

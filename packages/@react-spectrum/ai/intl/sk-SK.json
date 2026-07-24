@@ -2,5 +2,17 @@
   "chat.newMessage": "Nová správa",
   "messagefeedback.thumbDown": "Zlá odozva",
   "messagefeedback.thumbUp": "Dobrá odozva",
-  "responsestatus.loading": "Načítava sa"
+  "responsestatus.loading": "Načítava sa",
+  "chat.scrollToBottom": "Scroll to bottom",
+  "voicebutton.stopListening": "Stop recording",
+  "voicebutton.startListening": "Start recording",
+  "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
+  "promptfield.aiDisclaimer": "Responses are generated using AI, and may be inaccurate. Check before using.",
+  "promptfield.aiUserGuidlines": "AI User Guidelines",
+  "promptfield.attachments": "Attachments",
+  "promptfield.label": "Prompt",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
+  "promptfield.insertButton": "Add",
+  "promptfield.uploading": "Uploading"
 }
