@@ -310,20 +310,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>): boolean {
-    // Invalidate cache if the cross-axis size of the collection changed (e.g. width, for a
-    // vertical list): that can change how items wrap, so cached row heights are no longer
-    // trustworthy. A change to only the main-axis size (e.g. height, for a vertical list) just
-    // means more or less of the list is visible, and doesn't affect any row's real height, so it
-    // shouldn't throw away the cache.
-    // Also invalidate if fixed sizes/gaps change.
     let options = invalidationContext.layoutOptions;
-    let orientation = options?.orientation ?? this.orientation;
-    let crossAxisSizeChanged =
-      orientation === 'horizontal'
-        ? invalidationContext.heightChanged
-        : invalidationContext.widthChanged;
     return (
-      crossAxisSizeChanged ||
+      invalidationContext.sizeChanged ||
       this.rowSize !== (options?.rowSize ?? options?.rowHeight ?? this.rowSize) ||
       this.orientation !== (options?.orientation ?? this.orientation) ||
       this.headingSize !== (options?.headingSize ?? options?.headingHeight ?? this.headingSize) ||
@@ -375,7 +364,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.dropIndicatorThickness = options?.dropIndicatorThickness ?? this.dropIndicatorThickness;
     this.gap = options?.gap ?? this.gap;
     this.padding = options?.padding ?? this.padding;
-    this.warnIfReversedHorizontal();
 
     this.rootNodes = this.buildCollection();
 
@@ -463,11 +451,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
 
     offset = Math.max(offset - this.gap, 0);
     offset += isEmptyOrLoading ? 0 : this.padding;
-    let contentLength = offset;
     this.contentSize =
       this.orientation === 'horizontal'
         ? new Size(offset, this.virtualizer!.size.height)
-        : new Size(this.virtualizer!.size.width, contentLength);
+        : new Size(this.virtualizer!.size.width, offset);
 
     return nodes;
   }
@@ -703,7 +690,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
     layoutInfo.estimatedSize = false;
-
     if (layoutInfo.rect[heightProperty] !== size[heightProperty]) {
       // Copy layout info rather than mutating so that later caches are invalidated.
       let newLayoutInfo = layoutInfo.copy();
