@@ -295,13 +295,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
             aria-label={stringFormatter.format('responsestatus.loading')}
           />
         </CenterBaseline>
-      ) : isInteractive ? (
-        <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
-          <Chevron size={size} />
-        </CenterBaseline>
-      ) : null}
-      {props.children}
-      {!isLoading && (
+      ) : (
         <Provider
           values={[
             [
@@ -335,6 +329,12 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
           </CenterBaseline>
         </Provider>
       )}
+      {props.children}
+      {isInteractive ? (
+        <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
+          <Chevron size={size} />
+        </CenterBaseline>
+      ) : null}
     </>
   );
 
