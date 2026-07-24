@@ -214,7 +214,6 @@ export function PixelLoader(props: PixelLoaderProps) {
         width: size,
         height: size,
         lineHeight: 0,
-        overflow: 'clip',
         position: 'relative'
       }}
       {...rest}>
