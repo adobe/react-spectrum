@@ -11,7 +11,13 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
-import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  baseColor,
+  focusRing,
+  iconStyle,
+  space,
+  style
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
@@ -395,5 +401,206 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
     <RACDisclosurePanel {...domProps} ref={panelRef} className={mergeStyles(panelStyles, styles)}>
       <div className={panelInner({size})}>{props.children}</div>
     </RACDisclosurePanel>
+  );
+});
+
+export interface ExecutionTraceProps extends DOMProps, AriaLabelingProps {
+  /**
+   * The ExecutionTraceItem elements to render as a timeline. Typically placed inside a
+   * ResponseStatusPanel.
+   */
+  children: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
+
+const executionTraceStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  margin: 0,
+  padding: 0,
+  paddingStart: 4,
+  listStyleType: 'none'
+});
+
+/**
+ * An ExecutionTrace displays a timeline of the steps taken while generating a
+ * response, such as tool calls or searches.
+ */
+export const ExecutionTrace = forwardRef(function ExecutionTrace(
+  props: ExecutionTraceProps,
+  ref: DOMRef<HTMLOListElement>
+) {
+  let {styles, children, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let domProps = filterDOMProps(otherProps);
+
+  return (
+    <ol {...domProps} ref={domRef} className={mergeStyles(executionTraceStyles, styles)}>
+      {children}
+    </ol>
+  );
+});
+
+interface DetailTriggerProps {
+  children: ReactNode;
+}
+
+const detailTriggerStyles = style({
+  display: 'block',
+  paddingY: 4,
+  marginTop: -2,
+  textAlign: 'start'
+});
+
+const detailTriggerChevronStyles = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  verticalAlign: 'middle',
+  marginStart: 4,
+  rotate: {
+    isRTL: 180,
+    isExpanded: 90
+  },
+  transition: 'default'
+});
+
+function DetailTrigger(props: DetailTriggerProps) {
+  let {children} = props;
+  let {direction} = useLocale();
+  let isRTL = direction === 'rtl';
+  let {isExpanded} = useContext(DisclosureStateContext)!;
+
+  return (
+    <Button
+      className={renderProps =>
+        // TODO: remove size conditional once size is also removed from ResponseStatus
+        mergeStyles(buttonStyles({...renderProps, size: 'M'}), detailTriggerStyles)
+      }
+      slot="trigger">
+      {children}
+      <CenterBaseline styles={detailTriggerChevronStyles({isExpanded, isRTL})}>
+        <Chevron size="S" />
+      </CenterBaseline>
+    </Button>
+  );
+}
+
+export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
+  /** Allows detail content to render but prevents the row from being collapsible. */
+  isDetailNotCollapsible?: boolean;
+  /**
+   * The label describing the step.
+   */
+  children: ReactNode;
+  /**
+   * An icon shown at the leading edge of the row. If omitted, a checkmark is rendered by default.
+   */
+  icon?: ReactNode;
+  /**
+   * Additional detail revealed when the step is expanded, such as tool call input or output.
+   * If omitted, the row is static and cannot be expanded.
+   */
+  detail?: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
+
+const executionTraceItemStyles = style({
+  font: 'body',
+  display: 'flex',
+  gap: 8,
+  marginTop: {
+    isDetailed: -2
+  },
+  '--divider-display': {
+    type: 'display',
+    value: {
+      default: 'flex',
+      ':last-child': 'none'
+    }
+  }
+});
+
+const itemIconContainerStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  flexShrink: 0,
+  paddingTop: {
+    isDetailed: 2
+  }
+});
+
+const executionTraceItemDividerStyles = style({
+  width: 1,
+  flexGrow: 1,
+  marginY: 2,
+  backgroundColor: 'gray-500',
+  display: 'var(--divider-display, flex)'
+});
+
+const executionTraceItemContentStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  paddingBottom: 12,
+  paddingX: 8
+});
+
+const executionTraceItemNoCollapseStyles = style({
+  minHeight: 24
+});
+
+/**
+ * An ExecutionTraceItem represents a single step within an ExecutionTrace, such as
+ * a tool call or search. When a `detail` is provided, the row can be expanded to reveal it.
+ */
+export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
+  props: ExecutionTraceItemProps,
+  ref: DOMRef<HTMLLIElement>
+) {
+  let {
+    isDetailNotCollapsible,
+    detail,
+    icon = <CheckmarkCircle aria-hidden="true" />,
+    children,
+    styles,
+    ...otherProps
+  } = props;
+  let domRef = useDOMRef(ref);
+  let domProps = filterDOMProps(otherProps);
+  let hasDetail = detail != null;
+
+  return (
+    <li
+      {...domProps}
+      ref={domRef}
+      className={mergeStyles(executionTraceItemStyles({isDetailed: hasDetail}), styles)}>
+      <div className={itemIconContainerStyles({isDetailed: hasDetail && !isDetailNotCollapsible})}>
+        <Provider values={[[IconContext, {styles: iconStyle({size: 'M'})}]]}>
+          <CenterBaseline>{icon}</CenterBaseline>
+        </Provider>
+        <div className={executionTraceItemDividerStyles} />
+      </div>
+      {hasDetail && !isDetailNotCollapsible ? (
+        <RACDisclosure className={executionTraceItemContentStyles}>
+          <DetailTrigger>{children}</DetailTrigger>
+          <RACDisclosurePanel className={panelStyles}>{detail}</RACDisclosurePanel>
+        </RACDisclosure>
+      ) : (
+        <div
+          className={mergeStyles(
+            executionTraceItemContentStyles,
+            executionTraceItemNoCollapseStyles
+          )}>
+          <span>{children}</span>
+          {hasDetail && isDetailNotCollapsible ? <div>{detail}</div> : null}
+        </div>
+      )}
+    </li>
   );
 });
