@@ -120,6 +120,14 @@ export {
   SegmentedControlContext
 } from '../src/SegmentedControl';
 export {SelectBox, SelectBoxGroup, SelectBoxGroupContext} from '../src/SelectBoxGroup';
+export {
+  SideNav,
+  SideNavItem,
+  SideNavItemContent,
+  SideNavItemLink,
+  SideNavSection,
+  SideNavHeader
+} from '../src/SideNav';
 export {Slider, SliderContext} from '../src/Slider';
 export {Skeleton, useIsSkeleton} from '../src/Skeleton';
 export {SkeletonCollection} from '../src/SkeletonCollection';
@@ -259,6 +267,14 @@ export type {SelectBoxProps, SelectBoxGroupProps} from '../src/SelectBoxGroup';
 export type {SliderProps} from '../src/Slider';
 export type {RangeCalendarProps} from '../src/RangeCalendar';
 export type {RangeSliderProps} from '../src/RangeSlider';
+export type {
+  SideNavProps,
+  SideNavItemProps,
+  SideNavItemContentProps,
+  SideNavItemLinkProps,
+  SideNavSectionProps,
+  SideNavHeaderProps
+} from '../src/SideNav';
 export type {SkeletonProps} from '../src/Skeleton';
 export type {SkeletonCollectionProps} from '../src/SkeletonCollection';
 export type {StatusLightProps} from '../src/StatusLight';
