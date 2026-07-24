@@ -17,7 +17,13 @@ export {
   PromptToken,
   PromptFieldVoiceButton
 } from '../src/PromptField';
-export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
+export {
+  ExecutionTrace,
+  ExecutionTraceItem,
+  ResponseStatus,
+  ResponseStatusTitle,
+  ResponseStatusPanel
+} from '../src/ResponseStatus';
 export {Chat, Thread, ThreadItem, ThreadScrollButton, PromptFocusContext} from '../src/Chat';
 export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';
@@ -39,6 +45,8 @@ export type {MessageFeedbackProps} from '../src/MessageFeedback';
 export type {MessageSourceProps, SourceListProps, SourceListItemProps} from '../src/MessageSource';
 export type {MessageSuggestionProps, MessageSuggestionListProps} from '../src/MessageSuggestion';
 export type {
+  ExecutionTraceProps,
+  ExecutionTraceItemProps,
   ResponseStatusProps,
   ResponseStatusTitleProps,
   ResponseStatusPanelProps
