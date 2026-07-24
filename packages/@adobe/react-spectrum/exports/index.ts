@@ -52,7 +52,7 @@ export {DateRangePicker} from '../src/datepicker/DateRangePicker';
 export {TimeField} from '../src/datepicker/TimeField';
 export {Divider} from '../src/divider/Divider';
 export {DropZone} from '../src/dropzone/DropZone';
-export {FileTrigger} from 'react-aria-components/FileTrigger';
+export {FileTrigger, FileField} from 'react-aria-components/FileTrigger';
 export {Form} from '../src/form/Form';
 export {Icon} from '../src/icon/Icon';
 export {IllustratedMessage} from '../src/illustratedmessage/IllustratedMessage';
@@ -160,7 +160,7 @@ export type {SpectrumDateRangePickerProps} from '../src/datepicker/DateRangePick
 export type {SpectrumTimeFieldProps} from '../src/datepicker/TimeField';
 export type {SpectrumDividerProps} from '../src/divider/Divider';
 export type {SpectrumDropZoneProps} from '../src/dropzone/DropZone';
-export type {FileTriggerProps} from 'react-aria-components/FileTrigger';
+export type {FileTriggerProps, FileFieldProps} from 'react-aria-components/FileTrigger';
 export type {SpectrumFormProps} from '../src/form/Form';
 export type {IconProps} from '../src/icon/Icon';
 export type {IllustrationProps} from '../src/icon/Illustration';

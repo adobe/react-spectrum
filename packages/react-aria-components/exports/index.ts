@@ -111,7 +111,7 @@ export {
 } from '../src/Disclosure';
 export {DropZone, DropZoneContext} from '../src/DropZone';
 export {FieldError, FieldErrorContext} from '../src/FieldError';
-export {FileTrigger} from '../src/FileTrigger';
+export {FileTrigger, FileField, FileFieldContext} from '../src/FileTrigger';
 export {Form, FormContext} from '../src/Form';
 export {
   GridListLoadMoreItem,
@@ -375,7 +375,7 @@ export type {
 } from '../src/Disclosure';
 export type {DropZoneProps, DropZoneRenderProps} from '../src/DropZone';
 export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
-export type {FileTriggerProps} from '../src/FileTrigger';
+export type {FileTriggerProps, FileFieldProps, FileFieldRenderProps} from '../src/FileTrigger';
 export type {FormProps} from '../src/Form';
 export type {
   GridListProps,

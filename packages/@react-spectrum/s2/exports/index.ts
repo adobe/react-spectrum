@@ -154,7 +154,7 @@ export {CenterBaseline} from '../src/CenterBaseline';
 
 export {Autocomplete} from 'react-aria-components/Autocomplete';
 export {Collection} from 'react-aria/Collection';
-export {FileTrigger} from 'react-aria-components/FileTrigger';
+export {FileTrigger, FileField} from 'react-aria-components/FileTrigger';
 export {parseColor, getColorChannels} from 'react-stately/Color';
 export {useLocale} from 'react-aria/I18nProvider';
 export {useListData} from 'react-stately/useListData';
@@ -289,7 +289,7 @@ export type {
 export type {AutocompleteProps} from 'react-aria-components/Autocomplete';
 export type {DateValue, DateRange} from 'react-aria-components/RangeCalendar';
 export type {TimeValue} from 'react-aria-components/TimeField';
-export type {FileTriggerProps} from 'react-aria-components/FileTrigger';
+export type {FileTriggerProps, FileFieldProps} from 'react-aria-components/FileTrigger';
 export type {TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components/Tooltip';
 export type {
   SortDescriptor,
