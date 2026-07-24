@@ -64,7 +64,6 @@ import {TreeState} from 'react-stately/useTreeState';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useScale} from './utils';
-import {inertValue} from 'react-aria/private/utils/inertValue';
 
 export interface SideNavProps<T>
   extends
@@ -694,30 +693,6 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
           ]
         ]}>
         {typeof children === 'string' ? <Text>{children}</Text> : children}
-        <div
-          // @ts-ignore
-          inert={inertValue(true)}
-          aria-hidden
-          className={style({
-            visibility: 'hidden',
-            height: 0,
-            fontWeight: 'bold',
-            overflow: 'hidden',
-            gridArea: 'content'
-          })}>
-          <Provider
-            values={[
-              [TextContext, {styles: treeContent}],
-              [
-                IconContext,
-                {
-                  styles: style({display: 'none'})
-                }
-              ]
-            ]}>
-            {typeof children === 'string' ? <Text>{children}</Text> : children}
-          </Provider>
-        </div>
       </Provider>
     </Link>
   );
