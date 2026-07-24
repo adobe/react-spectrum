@@ -1583,8 +1583,9 @@ export let tableTests = () => {
           jest.runAllTimers();
         });
 
+        // After the reset, a fresh 'J' advances past the focused Julia to the next match.
         moveFocus('J');
-        expect(document.activeElement).toBe(getCell(tree, 'Julia'));
+        expect(document.activeElement).toBe(getCell(tree, 'John'));
       });
 
       it('wraps around when reaching the end of the collection', function () {
@@ -1604,8 +1605,9 @@ export let tableTests = () => {
           jest.runAllTimers();
         });
 
+        // No 'J' match past the focused John, so the search wraps around to Julia.
         moveFocus('J');
-        expect(document.activeElement).toBe(getCell(tree, 'John'));
+        expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
         moveFocus('u');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
