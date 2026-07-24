@@ -106,18 +106,40 @@ export function useGridCell<T, C extends GridCollection<T>>(
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
   let keyWhenFocused = useRef<Key | null>(null);
 
+  // Tracks the specific focusable child that was last focused within this cell.
+  let lastFocusedChild = useRef<FocusableElement | null>(null);
+
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
     if (ref.current) {
       let treeWalker = getFocusableTreeWalker(ref.current);
       if (focusMode === 'child') {
+        let activeElement = getActiveElement(getOwnerDocument(ref.current));
+
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
-        if (
-          isFocusWithin(ref.current) &&
-          ref.current !== getActiveElement(getOwnerDocument(ref.current))
-        ) {
+        if (isFocusWithin(ref.current) && ref.current !== activeElement) {
           return;
+        }
+
+        // Focus counts as "disrupted" (as opposed to a fresh keyboard entry from a
+        // sibling row/cell) when it's on the cell itself or fell back to body/nothing,
+        // e.g. because an overlay closed and removed the element that had focus. In
+        // that case, restore the child that was last focused instead of defaulting to
+        // childFocusStrategy's first/last child.
+        let ownerDocument = getOwnerDocument(ref.current);
+        let isDisrupted =
+          ref.current === activeElement || !activeElement || activeElement === ownerDocument.body;
+        if (isDisrupted) {
+          let lastChild = lastFocusedChild.current;
+          if (
+            lastChild &&
+            keyWhenFocused.current === node.key &&
+            nodeContains(ref.current, lastChild)
+          ) {
+            focusSafely(lastChild);
+            return;
+          }
         }
 
         let focusable =
@@ -309,7 +331,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
-  let onFocus = e => {
+  let onFocus = (e: FocusEvent) => {
     keyWhenFocused.current = node.key;
     if (getEventTarget(e) !== ref.current) {
       // useSelectableItem only handles setting the focused key when
@@ -318,6 +340,19 @@ export function useGridCell<T, C extends GridCollection<T>>(
       // If focus is currently visible (e.g. the user is navigating with the keyboard),
       // then skip this. We want to restore focus to the previously focused row/cell
       // in that case since the table should act like a single tab stop.
+
+      // Remember which child was focused so that if something later forces focus
+      // back to this cell (e.g. a closing overlay), focus() can restore it directly
+      // instead of falling back to the first/last focusable child. Only do this for
+      // actual DOM descendants of the cell -- portalled content (e.g. a dialog opened
+      // from within the cell) can still reach this handler because React dispatches
+      // events along the component tree rather than the DOM tree for portals, even
+      // though it isn't really inside this cell in the DOM.
+      let target = getEventTarget(e) as FocusableElement;
+      if (ref.current && nodeContains(ref.current, target)) {
+        lastFocusedChild.current = target;
+      }
+
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
       }
