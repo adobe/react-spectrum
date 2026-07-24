@@ -192,53 +192,65 @@ let items: Item[] = [
 
 ## Routing
 
-SideNav uses the `href` prop as a key for selection. 
-`id` is used for the expansion state and disabled items as not every item will have an `href`.
-
 SideNavs do not support an uncontrolled selection state, you are responsible for managing it through the `selectedRoute` prop. You may wire this up
-to a router or other state management solution.
+to a router or other state management solution. The example below derives `selectedRoute` from the router's current location,
+and provides React Aria's `RouterProvider` with the router's `navigate` function so that clicking an item performs a client side navigation.
 
 If a SideNavItem has an `href`, then you must pass a `SideNavItemLink` as a child of the `SideNavItemContent`.
 
-```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+See Routing setup in [Getting Started](./getting-started) for more info.
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/router.tsx']}
 "use client";
 import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Text} from '@react-spectrum/s2/SideNav';
-import {RoutedSideNav} from './RoutedSideNav';
+import {RouterProvider} from 'react-aria-components';
+import {MemoryRouter, useLocation, useNavigate} from './router';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
 import Files from '@react-spectrum/s2/icons/Files';
 import Images from '@react-spectrum/s2/icons/Images';
 
-<RoutedSideNav defaultSelectedRoute="/files">
-  {({selectedRoute}) => (
-    <SideNav aria-label="Files" defaultExpandedKeys={['your-libraries']} selectedRoute={selectedRoute} styles={style({height: 120, width: 210})}>
-      <SideNavItem href="/files" textValue="Files">
-        <SideNavItemContent>
-          <SideNavItemLink>
-            <Files />
-            <Text>Files</Text>
-          </SideNavItemLink>
-        </SideNavItemContent>
-      </SideNavItem>
-      <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
-        <SideNavItemContent>
-          <SideNavItemLink>
-            <CCLibrary />
-            <Text>Your Libraries</Text>
-          </SideNavItemLink>
-        </SideNavItemContent>
-        <SideNavItem id="photos" href="/photos" textValue="Photos">
+function FilesSideNav() {
+  /*- begin highlight -*/
+  let navigate = useNavigate();
+  let {pathname} = useLocation();
+
+  return (
+    <RouterProvider navigate={navigate}>
+      <SideNav aria-label="Files" defaultExpandedKeys={['your-libraries']} selectedRoute={pathname} styles={style({height: 120, width: 210})}>
+      {/*- end highlight -*/}
+        <SideNavItem href="/files" textValue="Files">
           <SideNavItemContent>
             <SideNavItemLink>
-              <Images />
-              <Text>Photos</Text>
+              <Files />
+              <Text>Files</Text>
             </SideNavItemLink>
           </SideNavItemContent>
         </SideNavItem>
-      </SideNavItem>
-    </SideNav>
-  )}
-</RoutedSideNav>
+        <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <CCLibrary />
+              <Text>Your Libraries</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem id="photos" href="/photos" textValue="Photos">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Images />
+                <Text>Photos</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+      </SideNav>
+    </RouterProvider>
+  );
+}
+
+<MemoryRouter initialEntries={['/files']}>
+  <FilesSideNav />
+</MemoryRouter>
 ```
 
 ## Sections

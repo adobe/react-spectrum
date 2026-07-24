@@ -694,6 +694,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
         ]}>
         {typeof children === 'string' ? <Text>{children}</Text> : children}
         <div
+          inert
           aria-hidden
           className={style({
             visibility: 'hidden',
@@ -708,7 +709,6 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
               [
                 IconContext,
                 {
-                  render: centerBaseline({slot: 'icon', styles: treeIcon}),
                   styles: style({display: 'none'})
                 }
               ]
