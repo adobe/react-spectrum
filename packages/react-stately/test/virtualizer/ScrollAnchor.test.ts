@@ -20,7 +20,7 @@ import {
 } from '../../src/virtualizer/ScrollAnchor';
 import {LayoutInfo} from '../../src/virtualizer/LayoutInfo';
 import {Rect} from '../../src/virtualizer/Rect';
-import {ScrollAnchor, ScrollAnchorInfo} from '../../src/virtualizer/types';
+import {ScrollAnchor, ScrollAnchorInfo} from '../../src/virtualizer/ScrollAnchor';
 import {Size} from '../../src/virtualizer/Size';
 
 describe('captureScrollAnchor', () => {

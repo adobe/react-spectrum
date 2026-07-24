@@ -43,7 +43,7 @@ import {
 import {inertValue} from 'react-aria/private/utils/inertValue';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListLayout} from 'react-stately/useVirtualizerState';
+import {ListLayout} from './ListLayout';
 import {ListStateContext} from 'react-aria-components/ListBox';
 import {LoaderNode} from 'react-aria/private/collections/BaseCollection';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';

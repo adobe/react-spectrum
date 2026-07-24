@@ -12,12 +12,30 @@
 
 import {Key} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
-import {Rect} from './Rect';
-import {ScrollAnchor, ScrollAnchorInfo} from './types';
+import {Rect, RectCorner} from './Rect';
 import {Size} from './Size';
 
 export type ScrollAnchorAxis = 'x' | 'y';
 export type ScrollAnchorEdge = 'start' | 'end';
+export interface ScrollAnchor {
+  key: Key;
+  corner: RectCorner;
+  offset: number;
+}
+
+export interface ScrollAnchorInfo {
+  /** Which edge of the content the viewport should stay anchored to. */
+  edge: 'start' | 'end';
+  /** Which axis `edge` refers to — 'y' for vertical lists, 'x' for horizontal. */
+  axis: 'x' | 'y';
+  /** Distance (px) from `edge` within which the viewport is considered "following" it. */
+  threshold: number;
+  /**
+   * Optional classifier excluding structural/ephemeral layout infos (e.g. loaders) from being
+   * selected as the anchor. Defaults to allowing any layoutInfo.
+   */
+  isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
+}
 
 /**
  * Minimum overlap an item must have with the viewport, along the scroll axis,

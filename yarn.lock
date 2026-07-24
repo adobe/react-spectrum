@@ -7379,6 +7379,7 @@ __metadata:
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
     "@react-aria/utils": "npm:^3.8.0"
     "@react-spectrum/s2": "npm:1.5.1"
+    "@react-stately/virtualizer": "npm:^4.5.1"
     "@react-types/shared": "npm:^3.36.0"
     "@storybook/jest": "npm:^0.2.3"
     "@testing-library/dom": "npm:^10.1.0"
@@ -8926,7 +8927,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/virtualizer@workspace:packages/@react-stately/virtualizer":
+"@react-stately/virtualizer@npm:^4.5.1, @react-stately/virtualizer@workspace:packages/@react-stately/virtualizer":
   version: 0.0.0-use.local
   resolution: "@react-stately/virtualizer@workspace:packages/@react-stately/virtualizer"
   dependencies:

@@ -12,19 +12,13 @@
 
 import {ChildView, ReusableView, RootView} from './ReusableView';
 import {Collection, Key} from '@react-types/shared';
-import {
-  InvalidationContext,
-  Mutable,
-  ScrollAnchor,
-  VirtualizerDelegate,
-  VirtualizerRenderOptions
-} from './types';
+import {InvalidationContext, Mutable, VirtualizerDelegate, VirtualizerRenderOptions} from './types';
 import {isSetEqual} from './utils';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
-import {Rect} from './Rect';
+import {Rect, RectCorner} from './Rect';
 import {ScrollAnchorTracker} from './ScrollAnchor';
 import {Size} from './Size';
 
@@ -32,6 +26,12 @@ interface VirtualizerOptions<T extends object, V> {
   delegate: VirtualizerDelegate<T, V>;
   collection: Collection<T>;
   layout: Layout<T>;
+}
+
+interface ScrollAnchor {
+  key: Key;
+  corner: RectCorner;
+  offset: number;
 }
 
 /**
@@ -176,7 +176,7 @@ export class Virtualizer<T extends object, V> {
   }
 
   private relayout(context: InvalidationContext = {}) {
-    let anchorInfo = this.layout.getScrollAnchorInfo?.(context.layoutOptions) ?? null;
+    let anchorInfo = this.layout.UNSTABLE_getScrollAnchorInfo?.(context.layoutOptions) ?? null;
 
     // Capture scroll anchor from current (pre-layout) view positions.
     // On first render _visibleViews is empty so no anchor will be found.
