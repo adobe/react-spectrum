@@ -38,11 +38,12 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
     }
 
     let onScroll = (e: Event) => {
-      if (wasScrolledIntoView()) {
+      let target = getEventTarget(e);
+      if (wasScrolledIntoView(target)) {
         return;
       }
+
       // Ignore if scrolling an scrollable region outside the trigger's tree.
-      let target = getEventTarget(e);
       // window is not a Node and doesn't have contain, but window contains everything
       if (
         !triggerRef.current ||
