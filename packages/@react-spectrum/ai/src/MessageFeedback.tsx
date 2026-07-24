@@ -20,13 +20,14 @@ import {StylesPropWithHeight} from '@react-spectrum/s2';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
-import {ToggleButtonGroup} from '@react-spectrum/s2/ToggleButtonGroup';
+import {ToggleButtonGroup, ToggleButtonGroupProps} from '@react-spectrum/s2/ToggleButtonGroup';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export type MessageFeedbackValue = 'up' | 'down' | null;
 
-export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotProps {
+export interface MessageFeedbackProps
+  extends DOMProps, AriaLabelingProps, SlotProps, Pick<ToggleButtonGroupProps, 'size'> {
   /** The selected feedback value (controlled). */
   value?: MessageFeedbackValue;
   /** The default feedback value (uncontrolled). */
@@ -57,7 +58,16 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let domRef = useDOMRef(ref);
-  let {value, defaultValue, onChange, isDisabled, thumbUpLabel, thumbDownLabel, styles} = props;
+  let {
+    value,
+    defaultValue,
+    onChange,
+    isDisabled,
+    thumbUpLabel,
+    thumbDownLabel,
+    styles,
+    size = 'M'
+  } = props;
 
   let handleSelectionChange = (selection: Selection): void => {
     onChange?.(selectionToValue(selection));
@@ -76,6 +86,7 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
     <ToggleButtonGroup
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
+      size={size}
       selectionMode="single"
       selectedKeys={selectedKeys}
       defaultSelectedKeys={defaultSelectedKeys}
