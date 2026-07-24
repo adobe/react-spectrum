@@ -378,6 +378,7 @@ export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
 export type {FileTriggerProps} from '../src/FileTrigger';
 export type {FormProps} from '../src/Form';
 export type {
+  GridListHeaderProps,
   GridListProps,
   GridListRenderProps,
   GridListItemProps,
