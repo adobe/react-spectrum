@@ -180,15 +180,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.validRect = new Rect();
     this.requestedRect = new Rect();
     this.contentSize = new Size();
-    this.warnIfReversedHorizontal();
-  }
-
-  private warnIfReversedHorizontal(): void {
-    if (this.orientation === 'horizontal' && process.env.NODE_ENV !== 'production') {
-      console.warn(
-        'ListLayout: anchorTo="end" is only supported in vertical orientations and will be ignored in horizontal orientation.'
-      );
-    }
   }
 
   // Backward compatibility for subclassing.
