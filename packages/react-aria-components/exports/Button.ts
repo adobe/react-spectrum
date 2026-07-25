@@ -16,4 +16,4 @@ import 'client-only';
 
 export {Button, ButtonContext} from '../src/Button';
 export type {ButtonProps, ButtonRenderProps} from '../src/Button';
-export type {PressEvent} from '@react-types/shared';
+export type {PressEvent, FocusableElement, HoverEvent, KeyboardEvent} from '@react-types/shared';
