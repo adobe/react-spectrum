@@ -146,7 +146,10 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
           break;
         }
       }
-    } else if (this.columnsChanged(newCollection, this.lastCollection)) {
+    } else if (
+      invalidationContext.sizeChanged ||
+      this.columnsChanged(newCollection, this.lastCollection)
+    ) {
       let columnLayout = new TableColumnLayout({});
       this.columnWidths = columnLayout.buildColumnWidths(
         this.virtualizer!.size.width - this.padding * 2,
@@ -154,7 +157,6 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
         new Map()
       );
       invalidationContext.sizeChanged = true;
-      invalidationContext.widthChanged = true;
     }
 
     super.update(invalidationContext);
