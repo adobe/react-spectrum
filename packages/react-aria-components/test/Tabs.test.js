@@ -20,7 +20,7 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {ComboBox} from '../src/ComboBox';
-import {Dialog, DialogTrigger} from '../src/Dialog';
+import {DialogTrigger} from '../src/Dialog';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
