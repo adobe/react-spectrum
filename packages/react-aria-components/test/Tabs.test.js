@@ -1091,13 +1091,11 @@ describe('Tabs', () => {
           </TabList>
           <DialogTrigger>
             <Button>Dialog button</Button>
-            <Popover>
-              <Dialog aria-label="Filters">
-                <Menu aria-label="Filter options">
-                  <MenuItem>Item 1</MenuItem>
-                  <MenuItem>Item 2</MenuItem>
-                </Menu>
-              </Dialog>
+            <Popover aria-label="Filters">
+              <Menu aria-label="Filter options">
+                <MenuItem>Item 1</MenuItem>
+                <MenuItem>Item 2</MenuItem>
+              </Menu>
             </Popover>
           </DialogTrigger>
         </div>
