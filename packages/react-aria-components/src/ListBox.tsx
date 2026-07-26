@@ -252,6 +252,7 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
     isVirtualized,
     layoutDelegate,
     dropTargetDelegate: ctxDropTargetDelegate,
+    refreshVisibleRect,
     CollectionRoot
   } = useContext(CollectionRendererContext);
   let keyboardDelegate = useMemo(
@@ -288,7 +289,8 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
       ...props,
       shouldSelectOnPressUp: isListDraggable || props.shouldSelectOnPressUp,
       keyboardDelegate,
-      isVirtualized
+      isVirtualized,
+      UNSTABLE_virtualizerRefresh: refreshVisibleRect
     },
     state,
     listBoxRef

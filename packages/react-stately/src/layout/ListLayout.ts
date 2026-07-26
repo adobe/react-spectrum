@@ -276,11 +276,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     // If the layout info wasn't found, it might be outside the bounds of the area that we've
     // computed layout for so far. This can happen when accessing a random key, e.g pressing Home/End.
     // Compute the full layout and try again.
-    if (
-      !this.layoutNodes.has(key) &&
-      this.requestedRect.area < this.contentSize.area &&
-      this.lastCollection
-    ) {
+    if (!this.layoutNodes.has(key) && this.lastCollection?.getItem(key)) {
       this.requestedRect = new Rect(0, 0, Infinity, Infinity);
       this.rootNodes = this.buildCollection();
       this.requestedRect = new Rect(0, 0, this.contentSize.width, this.contentSize.height);

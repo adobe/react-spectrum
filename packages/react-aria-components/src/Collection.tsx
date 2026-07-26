@@ -192,6 +192,8 @@ export interface CollectionRenderer {
   layoutDelegate?: LayoutDelegate;
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate?: DropTargetDelegate;
+  /** Refreshes the virtualized collection's visible rect after programmatic scrolling. */
+  refreshVisibleRect?: () => void;
   /** A component that renders the root collection items. */
   CollectionRoot: React.ComponentType<CollectionRootProps>;
   /** A component that renders the child collection items. */

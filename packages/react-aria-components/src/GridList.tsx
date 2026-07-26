@@ -261,7 +261,8 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
     CollectionRoot,
     isVirtualized,
     layoutDelegate,
-    dropTargetDelegate: ctxDropTargetDelegate
+    dropTargetDelegate: ctxDropTargetDelegate,
+    refreshVisibleRect
   } = useContext(CollectionRendererContext);
   let gridlistState = useListState({
     ...DOMCollectionProps,
@@ -308,6 +309,7 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
       // Only tab navigation is supported in grid layout.
       keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
       isVirtualized,
+      UNSTABLE_virtualizerRefresh: refreshVisibleRect,
       shouldSelectOnPressUp: props.shouldSelectOnPressUp,
       disallowTypeAhead,
       UNSTABLE_focusOnEntry
