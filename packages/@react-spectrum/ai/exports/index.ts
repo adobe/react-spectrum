@@ -34,6 +34,7 @@ export {
 } from '../src/Chat';
 export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';
+export {PixelLoader} from '../src/loader/react';
 
 export type {AttachmentProps, AttachmentListProps} from '../src/AttachmentList';
 export type {

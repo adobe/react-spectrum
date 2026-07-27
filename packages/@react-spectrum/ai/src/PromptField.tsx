@@ -404,7 +404,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         width: 'full'
       })({isFocused: isFocused || prompt.segments.length > 0})}>
       <CenterBaseline>
-        <PixelLoader playing={isGenerating} icon={pixelLoader} />
+        <PixelLoader isPlaying={isGenerating} icon={pixelLoader} />
       </CenterBaseline>
       <Autocomplete>
         <TokenField
