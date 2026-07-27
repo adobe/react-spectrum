@@ -382,15 +382,11 @@ interface DetailTriggerProps {
 
 const detailTriggerStyles = style({
   display: 'block',
-  paddingY: 4,
-  marginTop: -2,
-  textAlign: 'start'
+  paddingStart: 8
 });
 
 const detailTriggerChevronStyles = style({
   display: 'inline-flex',
-  alignItems: 'center',
-  verticalAlign: 'middle',
   marginStart: 4,
   rotate: {
     isRTL: 180,
@@ -440,29 +436,23 @@ export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
 }
 
 const executionTraceItemStyles = style({
-  font: 'body',
   display: 'flex',
-  gap: 8,
-  marginTop: {
-    isDetailed: -2
-  },
+  font: 'body',
+  gap: 4,
   '--divider-display': {
     type: 'display',
     value: {
-      default: 'flex',
+      default: 'block',
       ':last-child': 'none'
     }
   }
 });
 
-const itemIconContainerStyles = style({
+const executionTraceItemIconContainerStyles = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  flexShrink: 0,
-  paddingTop: {
-    isDetailed: 2
-  }
+  flexShrink: 0
 });
 
 const executionTraceItemDividerStyles = style({
@@ -473,16 +463,19 @@ const executionTraceItemDividerStyles = style({
   display: 'var(--divider-display, flex)'
 });
 
-const executionTraceItemContentStyles = style({
+const executionTraceItemBaseStyles = {
+  paddingBottom: 12,
+  paddingStart: 8
+} as const;
+
+const executionTraceWithoutDisclosureStyles = style({
+  ...executionTraceItemBaseStyles,
   display: 'flex',
   flexDirection: 'column',
-  paddingBottom: 12,
-  paddingX: 8
-});
-
-const executionTraceItemNoCollapseStyles = style({
   minHeight: 24
 });
+
+const executionTraceDetailPanelStyles = style(executionTraceItemBaseStyles);
 
 /**
  * An ExecutionTraceItem represents a single step within an ExecutionTrace, such as
@@ -505,27 +498,22 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   let hasDetail = detail != null;
 
   return (
-    <li
-      {...domProps}
-      ref={domRef}
-      className={mergeStyles(executionTraceItemStyles({isDetailed: hasDetail}), styles)}>
-      <div className={itemIconContainerStyles({isDetailed: hasDetail && !isDetailNotCollapsible})}>
+    <li {...domProps} ref={domRef} className={mergeStyles(executionTraceItemStyles, styles)}>
+      <div className={executionTraceItemIconContainerStyles}>
         <Provider values={[[IconContext, {styles: iconStyle({size: 'M'})}]]}>
           <CenterBaseline>{icon}</CenterBaseline>
         </Provider>
-        <div className={executionTraceItemDividerStyles} />
+        <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
       {hasDetail && !isDetailNotCollapsible ? (
-        <RACDisclosure className={executionTraceItemContentStyles}>
+        <RACDisclosure>
           <DetailTrigger>{children}</DetailTrigger>
-          <RACDisclosurePanel className={panelStyles}>{detail}</RACDisclosurePanel>
+          <RACDisclosurePanel className={mergeStyles(panelStyles, executionTraceDetailPanelStyles)}>
+            {detail}
+          </RACDisclosurePanel>
         </RACDisclosure>
       ) : (
-        <div
-          className={mergeStyles(
-            executionTraceItemContentStyles,
-            executionTraceItemNoCollapseStyles
-          )}>
+        <div className={executionTraceWithoutDisclosureStyles}>
           <span>{children}</span>
           {hasDetail && isDetailNotCollapsible ? <div>{detail}</div> : null}
         </div>

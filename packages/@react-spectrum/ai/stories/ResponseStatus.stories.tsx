@@ -40,10 +40,6 @@ const meta: Meta<typeof ResponseStatus> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', events),
-    size: {
-      control: 'radio',
-      options: ['S', 'M', 'L', 'XL']
-    },
     density: {
       control: 'radio',
       options: ['compact', 'regular', 'spacious']
@@ -103,8 +99,7 @@ export const NoResponseContent: Story = {
 export const WithExecutionTrace: Story = {
   args: {
     defaultExpanded: true,
-    status: 'success',
-    size: 'M'
+    status: 'success'
   },
   render: args => (
     <div className={style({width: 800, minHeight: 240})}>
@@ -206,9 +201,6 @@ export const WithExecutionTrace: Story = {
               docs
             </ExecutionTraceItem>
           </ExecutionTrace>
-          {/* <div>
-            This example has isOpen hard coded, so only the inner disclosures are collapsable
-          </div> */}
         </ResponseStatusPanel>
       </ResponseStatus>
     </div>
