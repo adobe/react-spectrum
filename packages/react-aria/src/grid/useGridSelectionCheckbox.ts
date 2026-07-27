@@ -9,6 +9,8 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 export interface AriaGridSelectionCheckboxProps {
   /** A unique key for the checkbox. */
   key: Key;
+  /** An explicit id to use for the checkbox element. */
+  id?: string;
 }
 
 export interface GridSelectionCheckboxAria {
@@ -26,7 +28,7 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(
   props: AriaGridSelectionCheckboxProps,
   state: GridState<T, C>
 ): GridSelectionCheckboxAria {
-  let {key} = props;
+  let {key, id} = props;
 
   let manager = state.selectionManager;
   let checkboxId = useId();
@@ -40,7 +42,7 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(
 
   return {
     checkboxProps: {
-      id: checkboxId,
+      id: id ?? checkboxId,
       'aria-label': stringFormatter.format('select'),
       isSelected,
       isDisabled,

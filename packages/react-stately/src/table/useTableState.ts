@@ -33,6 +33,10 @@ import {useControlledState} from '../utils/useControlledState';
 export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>];
+  /**
+   * An explicit id to use for the select all checkbox so it remains stable across renders and refreshes.
+   */
+  rowHeaderCustomColumnId?: string;
   /** A list of row keys to disable. */
   disabledKeys?: Iterable<Key>;
   /**
@@ -90,6 +94,7 @@ export interface CollectionBuilderContext<T> {
   showDragButtons: boolean;
   selectionMode: SelectionMode;
   columns: Node<T>[];
+  rowHeaderCustomColumnId?: string;
 }
 
 export interface TableStateProps<T> extends MultipleSelectionStateProps, Expandable, Sortable {
@@ -107,6 +112,10 @@ export interface TableStateProps<T> extends MultipleSelectionStateProps, Expanda
   showDragButtons?: boolean;
   /** @private - Do not use unless you know what you're doing. */
   UNSAFE_selectionState?: MultipleSelectionState;
+  /**
+   * An explicit id to use for the select all checkbox so it remains stable across renders and refreshes.
+   */
+  rowHeaderCustomColumnId?: string;
   /** The id of the column that displays hierarchical data. */
   treeColumn?: Key;
 }
@@ -129,11 +138,12 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
       showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
       showDragButtons: showDragButtons,
       selectionMode,
-      columns: []
+      columns: [],
+      rowHeaderCustomColumnId: props.rowHeaderCustomColumnId
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-    [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]
+    [props.children, showSelectionCheckboxes, selectionMode, showDragButtons, props.rowHeaderCustomColumnId]
   );
 
   let collection = useCollection<T, ITableCollection<T>>(

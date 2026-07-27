@@ -34,6 +34,7 @@ export interface ITableCollection<T> extends IGridCollection<T> {
 interface GridCollectionOptions {
   showSelectionCheckboxes?: boolean;
   showDragButtons?: boolean;
+  rowHeaderCustomColumnId?: string;
 }
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
@@ -218,7 +219,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     if (opts?.showSelectionCheckboxes) {
       let rowHeaderColumn: GridNode<T> = {
         type: 'column',
-        key: ROW_HEADER_COLUMN_KEY,
+        key: opts?.rowHeaderCustomColumnId || ROW_HEADER_COLUMN_KEY,
         value: null,
         textValue: '',
         level: 0,

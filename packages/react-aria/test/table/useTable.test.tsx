@@ -157,5 +157,23 @@ describe('useTable', () => {
       );
       expect(getByTestId('test-id').id).toEqual('table-id');
     });
+
+    it('uses a custom id for the select all checkbox', () => {
+      let {container} = render(
+        <Table
+          aria-label="Table with select all id"
+          selectionMode="multiple"
+          rowHeaderCustomColumnId="custom-select-all-id">
+          <TableHeader columns={columns}>
+            {column => <Column key={column.uid}>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={rows}>
+            {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
+          </TableBody>
+        </Table>
+      );
+
+      expect(container.querySelector('#custom-select-all-id')).toBeTruthy();
+    });
   });
 });

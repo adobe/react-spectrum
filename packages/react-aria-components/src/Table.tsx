@@ -615,6 +615,10 @@ export interface TableProps
    * the Table.
    */
   dragAndDropHooks?: DragAndDropHooks;
+  /**
+   * An explicit id to use for the select all checkbox so it remains stable across renders and refreshes.
+   */
+  rowHeaderCustomColumnId?: string;
 }
 
 /**

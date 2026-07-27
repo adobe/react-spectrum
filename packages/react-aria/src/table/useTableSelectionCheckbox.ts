@@ -21,6 +21,8 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 export interface AriaTableSelectionCheckboxProps {
   /** A unique key for the checkbox. */
   key: Key;
+  /** An explicit id to use for the checkbox element. */
+  id?: string;
 }
 
 export interface TableSelectionCheckboxAria {
@@ -43,8 +45,8 @@ export function useTableSelectionCheckbox<T>(
   props: AriaTableSelectionCheckboxProps,
   state: TableState<T>
 ): TableSelectionCheckboxAria {
-  let {key} = props;
-  const {checkboxProps} = useGridSelectionCheckbox(props, state);
+  let {key, id} = props;
+  const {checkboxProps} = useGridSelectionCheckbox({...props, id}, state);
 
   return {
     checkboxProps: {
@@ -64,8 +66,11 @@ export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectA
   let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
 
+  let selectionColumn = state.collection.columns.find(column => column.props?.isSelectionCell);
+
   return {
     checkboxProps: {
+      id: selectionColumn?.key?.toString(),
       'aria-label': stringFormatter.format(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
       isDisabled:
