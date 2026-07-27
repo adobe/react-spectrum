@@ -113,8 +113,8 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  let ownerWindow = getOwnerWindow(getEventTarget(e) as Element);
-  let ownerDocument = getOwnerDocument(getEventTarget(e) as Element);
+  let ownerWindow = getOwnerWindow(getEventTarget(e));
+  let ownerDocument = getOwnerDocument(getEventTarget(e));
   if (
     getEventTarget(e) === ownerWindow ||
     getEventTarget(e) === ownerDocument ||
@@ -347,7 +347,7 @@ const nonTextInputTypes = new Set([
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
   let eventTarget = e ? (getEventTarget(e) as Element) : undefined;
-  let document = getOwnerDocument(eventTarget);
+  let ownerDocument = getOwnerDocument(eventTarget);
   let ownerWindow = getOwnerWindow(eventTarget);
   const IHTMLInputElement =
     typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLInputElement : HTMLInputElement;
@@ -359,7 +359,7 @@ function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: Handl
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element
-  let activeElement = getActiveElement(document);
+  let activeElement = getActiveElement(ownerDocument);
   isTextInput =
     isTextInput ||
     (activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(activeElement.type)) ||

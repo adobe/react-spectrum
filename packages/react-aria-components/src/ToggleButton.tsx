@@ -95,9 +95,9 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 
   let {buttonProps, isPressed, isSelected, isDisabled} =
     groupState && props.id != null
-      ? // eslint-disable-next-line react-hooks/rules-of-hooks
+      ? // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
         useToggleButtonGroupItem({...props, id: props.id}, groupState, ref)
-      : // eslint-disable-next-line react-hooks/rules-of-hooks
+      : // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
         useToggleButton(
           {...props, id: props.id != null ? String(props.id) : undefined},
           state,

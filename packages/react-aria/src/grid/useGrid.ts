@@ -88,6 +88,13 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   escapeKeyBehavior?: 'clearSelection' | 'none';
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean;
+  /**
+   * Whether keyboard navigation to focusable elements within grid cells is
+   * via arrow keys or the tab key.
+   *
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab';
 }
 
 export interface GridAria {
@@ -120,7 +127,8 @@ export function useGrid<T>(
     onRowAction,
     onCellAction,
     escapeKeyBehavior = 'clearSelection',
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    keyboardNavigationBehavior = 'arrow'
   } = props;
   let {selectionManager: manager} = state;
 
@@ -172,7 +180,8 @@ export function useGrid<T>(
   gridMap.set(state, {
     keyboardDelegate: delegate,
     actions: {onRowAction, onCellAction},
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    keyboardNavigationBehavior
   });
 
   let descriptionProps = useHighlightSelectionDescription({

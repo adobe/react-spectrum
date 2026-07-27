@@ -70,6 +70,7 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
   // If focused, don't hide the element.
   let combinedStyles = useMemo(() => {
     if (isFocused) {
+      // oxlint-disable-next-line react/react-compiler
       return style;
     } else if (style) {
       return {...styles, ...style};

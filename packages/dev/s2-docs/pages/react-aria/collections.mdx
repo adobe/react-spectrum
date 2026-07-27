@@ -232,6 +232,10 @@ function MyItem(props: MyItemProps) {
 
 Note that adding dependencies will result in the _entire_ list being invalidated when a dependency changes. To avoid this and invalidate only an individual item, update the item object itself rather than accessing external state.
 
+### Updating the collection structure
+
+The `dependencies` prop covers cases where external state affects _how_ an item renders. A separate rule applies when state controls _which_ items exist: the state that adds, removes, or reorders items must live **above** the collection component, not inside its children. State updated from below the collection only re-renders the visible content and won't change its structure. This includes children rendered in a deferred subtree like a `Select` or `ComboBox` popover, so reading from a context such as `SelectStateContext` inside a `Menu` or `ListBox` can't add or remove items. Lift that state above the collection and pass the resulting items down.
+
 ### Combining collections
 
 To combine multiple sources of data, or mix static and dynamic items, use the `<Collection>` component.

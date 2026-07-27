@@ -521,6 +521,57 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 </MenuTrigger>
 ```
 
+### Context menu
+
+Use `trigger="contextMenu"` to open the menu when right clicking with a mouse, long pressing on touch, or via OS and screen reader specific keyboard shortcuts. The menu is positioned at the point the user clicked.
+
+```tsx render hideImports
+"use client";
+import {Menu, MenuTrigger, MenuItem, SubmenuTrigger} from '@react-spectrum/s2/Menu';
+import {Button} from 'react-aria-components';
+import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+/*- begin collapse -*/
+const styles = style({
+  ...focusRing(),
+  width: 256,
+  height: 144,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderWidth: 2,
+  borderStyle: 'dashed',
+  borderColor: 'gray-400',
+  borderRadius: 'lg',
+  backgroundColor: 'transparent',
+  font: 'ui',
+  color: 'neutral',
+  cursor: 'default'
+});
+/*- end collapse -*/
+
+/*- begin highlight -*/
+<MenuTrigger trigger="contextMenu">
+  {/*- end highlight -*/}
+  <Button className={styles}>Right click here</Button>
+  <Menu>
+    <MenuItem>Open</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem>Open with</MenuItem>
+      <Menu>
+        <MenuItem>Preview</MenuItem>
+        <MenuItem>Photoshop</MenuItem>
+        <MenuItem>Safari</MenuItem>
+      </Menu>
+    </SubmenuTrigger>
+    <MenuItem>Get Info</MenuItem>
+    <MenuItem>Rename</MenuItem>
+    <MenuItem>Duplicate</MenuItem>
+    <MenuItem>Move to Trash</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
 ## API
 
 ```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Menu: '#menu', MenuItem: '#menuitem', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', UnavailableMenuItemTrigger: '#unavailablemenuitemtrigger', Popover: 'Popover', Icon: 'icons', Image: 'Image', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Keyboard: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/kbd', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements'}}

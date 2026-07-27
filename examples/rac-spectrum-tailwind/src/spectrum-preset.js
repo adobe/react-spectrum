@@ -547,5 +547,5 @@ module.exports = {
       4: 'var(--spectrum-global-color-opacity-4)'
     }
   },
-  plugins: [require('tailwindcss-animate')]
+  plugins: []
 };

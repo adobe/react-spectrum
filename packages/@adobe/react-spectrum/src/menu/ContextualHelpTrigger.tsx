@@ -58,6 +58,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     {triggerKey: targetKey},
     {...rootMenuTriggerState!, ...state}
   );
+  // oxlint-disable-next-line react/react-compiler
   let submenuRef = unwrapDOMRef(popoverRef);
   let {submenuTriggerProps, popoverProps} = useSubmenuTrigger(
     {
@@ -73,6 +74,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
   useEffect(() => {
     if (submenuTriggerState.isOpen) {
+      // oxlint-disable-next-line react/react-compiler
       setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
     }
   }, [submenuTriggerState.isOpen]);
@@ -125,8 +127,11 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   };
 
   if (isMobile) {
+    // oxlint-disable-next-line react/react-compiler
     delete submenuTriggerProps.onBlur;
+    // oxlint-disable-next-line react/react-compiler
     delete submenuTriggerProps.onHoverChange;
+    // oxlint-disable-next-line react/react-compiler
     if (trayContainerRef.current && submenuTriggerState.isOpen) {
       let subDialogKeyDown: KeyboardEventHandler = e => {
         switch (e.key) {
@@ -148,6 +153,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         </TrayHeaderWrapper>
       );
 
+      // oxlint-disable-next-line react/react-compiler
       overlay = ReactDOM.createPortal(tray, trayContainerRef.current);
     }
   } else {

@@ -144,6 +144,7 @@ export function useFormattedTextField(
     selectionEnd: number | null;
   } | null>(null);
   return {
+    // oxlint-disable-next-line react/react-compiler
     inputProps: mergeProps(textFieldProps, {
       onBeforeInput,
       onCompositionStart() {

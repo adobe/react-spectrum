@@ -16,17 +16,18 @@ import {forwardRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SlotProps} from 'react-aria-components/slots';
-import {StyleString} from './types';
+import {StylesPropWithHeight} from '@react-spectrum/s2';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
-import {ToggleButtonGroup} from '@react-spectrum/s2/ToggleButtonGroup';
+import {ToggleButtonGroup, ToggleButtonGroupProps} from '@react-spectrum/s2/ToggleButtonGroup';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export type MessageFeedbackValue = 'up' | 'down' | null;
 
-export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotProps {
+export interface MessageFeedbackProps
+  extends DOMProps, AriaLabelingProps, SlotProps, Pick<ToggleButtonGroupProps, 'size'> {
   /** The selected feedback value (controlled). */
   value?: MessageFeedbackValue;
   /** The default feedback value (uncontrolled). */
@@ -39,10 +40,8 @@ export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotP
   thumbUpLabel?: string;
   /** Accessible label for the thumbs down button. */
   thumbDownLabel?: string;
-  /**
-   * Spectrum-defined styles, returned by the `style()` macro.
-   */
-  styles?: StyleString;
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight;
 }
 
 function selectionToValue(selection: Selection): MessageFeedbackValue {
@@ -59,7 +58,16 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let domRef = useDOMRef(ref);
-  let {value, defaultValue, onChange, isDisabled, thumbUpLabel, thumbDownLabel, styles} = props;
+  let {
+    value,
+    defaultValue,
+    onChange,
+    isDisabled,
+    thumbUpLabel,
+    thumbDownLabel,
+    styles,
+    size = 'M'
+  } = props;
 
   let handleSelectionChange = (selection: Selection): void => {
     onChange?.(selectionToValue(selection));
@@ -78,14 +86,13 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
     <ToggleButtonGroup
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
+      size={size}
       selectionMode="single"
       selectedKeys={selectedKeys}
       defaultSelectedKeys={defaultSelectedKeys}
       onSelectionChange={handleSelectionChange}
       isDisabled={isDisabled}
-      // Pass styles to UNSAFE because S2 ToggleButtonGroup styles have type StylesPropWithHeight which restrict what can be overridden
-      //@ts-ignore
-      UNSAFE_className={styles}>
+      styles={styles}>
       <ToggleButton
         id="up"
         isQuiet

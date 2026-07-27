@@ -244,6 +244,7 @@ export function useAutocomplete<T>(
 
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef(
+    // oxlint-disable-next-line react/react-compiler
     useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef])
   );
 
@@ -381,7 +382,7 @@ export function useAutocomplete<T>(
         // to the wrapped collection if there is a focused node so that a user can continue moving the
         // virtual focus. However, if the user doesn't have a focus in the collection, just move the text
         // cursor instead. They can move focus down into the collection via down/up arrow if need be
-        if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && state.inputValue.length > 0) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
           if (focusedNodeId == null) {
             if (!e.isPropagationStopped()) {
               e.stopPropagation();

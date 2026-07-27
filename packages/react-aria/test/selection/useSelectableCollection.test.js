@@ -80,6 +80,42 @@ describe('useSelectableCollection', () => {
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('wraps focus with ArrowUp and ArrowDown when shouldFocusWrap is set', async () => {
+    let {getAllByRole} = render(
+      <List selectionMode="single" shouldFocusWrap>
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
+    );
+    let options = getAllByRole('option');
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);
+    // ArrowUp from the first item wraps to the last.
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(options[2]);
+    // ArrowDown from the last item wraps back to the first.
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(options[0]);
+  });
+
+  it('navigates by page with PageDown and PageUp', async () => {
+    let {getAllByRole} = render(
+      <List selectionMode="single">
+        <Item>Paco de Lucia</Item>
+        <Item>Vicente Amigo</Item>
+        <Item>Gerardo Nunez</Item>
+      </List>
+    );
+    let options = getAllByRole('option');
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);
+    await user.keyboard('{PageDown}');
+    expect(document.activeElement).toBe(options[2]);
+    await user.keyboard('{PageUp}');
+    expect(document.activeElement).toBe(options[0]);
+  });
+
   describe.each`
     type | prepare | actions
     ${'VO Events'} | ${installPointerEvent} | ${[el => fireEvent.pointerDown(el, {button: 0, pointerType: 'virtual'}), el => {

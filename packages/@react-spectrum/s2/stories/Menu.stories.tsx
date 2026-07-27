@@ -29,6 +29,7 @@ import CropRotate from '../s2wf-icons/S2_Icon_CropRotate_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
+import {focusRing, style} from '../style' with {type: 'macro'};
 import {Image} from '../src/Image';
 import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
@@ -46,6 +47,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
+import {Button as RACButton} from 'react-aria-components';
 import {ReactElement, useState} from 'react';
 import {Selection} from '@react-types/shared';
 import StampClone from '../s2wf-icons/S2_Icon_StampClone_20_N.svg';
@@ -400,6 +402,50 @@ export const UnavailableMenuItem: Story = {
       </MenuTrigger>
     );
   }
+};
+
+export const ContextMenu: Story = {
+  render: args => (
+    <MenuTrigger trigger="contextMenu" {...args}>
+      <RACButton
+        className={style({
+          ...focusRing(),
+          width: 256,
+          height: 144,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderWidth: 2,
+          borderStyle: 'dashed',
+          borderColor: {
+            default: 'gray-400',
+            forcedColors: 'ButtonBorder'
+          },
+          borderRadius: 'lg',
+          backgroundColor: 'transparent',
+          font: 'ui',
+          color: 'neutral',
+          cursor: 'default'
+        })}>
+        Right click here
+      </RACButton>
+      <Menu {...args}>
+        <MenuItem>Open</MenuItem>
+        <SubmenuTrigger>
+          <MenuItem>Open with</MenuItem>
+          <Menu>
+            <MenuItem>Preview</MenuItem>
+            <MenuItem>Photoshop</MenuItem>
+            <MenuItem>Safari</MenuItem>
+          </Menu>
+        </SubmenuTrigger>
+        <MenuItem>Get Info</MenuItem>
+        <MenuItem>Rename</MenuItem>
+        <MenuItem>Duplicate</MenuItem>
+        <MenuItem>Move to Trash</MenuItem>
+      </Menu>
+    </MenuTrigger>
+  )
 };
 
 export const HoldAffordance: Story = {

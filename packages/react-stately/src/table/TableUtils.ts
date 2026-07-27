@@ -113,6 +113,10 @@ export function calculateColumnSizes(
   getDefaultWidth?: (index: number) => ColumnSize | null | undefined,
   getDefaultMinWidth?: (index: number) => ColumnSize | null | undefined
 ): number[] {
+  let originalWidth = availableWidth;
+  let flooredWidth = Math.floor(availableWidth);
+  let hasFractionalWidth = availableWidth - flooredWidth > 0;
+  availableWidth = flooredWidth;
   let hasNonFrozenItems = false;
   let flexItems: FlexItem[] = columns.map((column, index) => {
     let width: ColumnSize = (
@@ -254,7 +258,17 @@ export function calculateColumnSizes(
     });
   }
 
-  return cascadeRounding(flexItems);
+  let columnSizes = cascadeRounding(flexItems);
+
+  // Give the leftover sub-pixel width to the last column so the columns sum
+  // exactly to the (possibly fractional) available width.
+  if (hasFractionalWidth && columnSizes.length > 0) {
+    let tableFractionalWidth = originalWidth.toString().split('.')[1];
+    let columnWidth = columnSizes[columnSizes.length - 1].toString();
+    columnSizes[columnSizes.length - 1] = Number(columnWidth + '.' + tableFractionalWidth);
+  }
+
+  return columnSizes;
 }
 
 function cascadeRounding(flexItems: FlexItem[]): number[] {

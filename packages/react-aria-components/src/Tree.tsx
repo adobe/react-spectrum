@@ -484,11 +484,13 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (hasDragHooks && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
+    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
@@ -499,6 +501,7 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
 
   let [treeDropTargetDelegate] = useState(() => new TreeDropTargetDelegate());
   if (hasDropHooks && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager
@@ -519,6 +522,7 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
       layoutDelegate
     });
 
+    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -728,7 +732,7 @@ export interface TreeItemProps<T = object>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
-    Pick<AriaTreeItemOptions, 'hasChildItems'>,
+    Pick<AriaTreeItemOptions, 'hasChildItems' | 'focusMode' | 'allowsArrowNavigation'>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -783,7 +787,9 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem(
       {
         node: item,
-        shouldSelectOnPressUp: !!dragState
+        shouldSelectOnPressUp: !!dragState,
+        focusMode: props.focusMode,
+        allowsArrowNavigation: props.allowsArrowNavigation
       },
       state,
       ref
@@ -1000,6 +1006,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
                   CheckboxContext,
                   {
                     slots: {
+                      [DEFAULT_SLOT]: {},
                       selection: checkboxProps
                     }
                   }
@@ -1008,6 +1015,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
                   CheckboxFieldContext,
                   {
                     slots: {
+                      [DEFAULT_SLOT]: {},
                       selection: checkboxProps
                     }
                   }
@@ -1158,6 +1166,7 @@ function TreeDropIndicatorWrapper(
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
@@ -1227,6 +1236,7 @@ const TreeDropIndicatorForwardRef = forwardRef(TreeDropIndicator);
 function RootDropIndicator() {
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
     {
       target: {type: 'root'}
@@ -1250,19 +1260,14 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListSectionProps<T>
-  extends SectionProps<T>, DOMRenderProps<'div', undefined> {}
+export interface TreeSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined> {}
 
 /**
  * A TreeSection represents a section within a Tree.
  */
 export const TreeSection = /*#__PURE__*/ createBranchComponent(
   SectionNode,
-  <T extends any>(
-    props: GridListSectionProps<T>,
-    ref: ForwardedRef<HTMLDivElement>,
-    item: Node<T>
-  ) => {
+  <T extends any>(props: TreeSectionProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
     let state = useContext(TreeStateContext)!;
     let {CollectionBranch} = useContext(CollectionRendererContext);
     let headingRef = useRef(null);
@@ -1299,7 +1304,9 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(
   }
 );
 
-export const TreeHeader = (props: GridListHeaderProps): ReactNode => {
+export interface TreeHeaderProps extends GridListHeaderProps {}
+
+export const TreeHeader = (props: TreeHeaderProps): ReactNode => {
   return (
     <GridListHeader className="react-aria-TreeHeader" {...props}>
       {props.children}

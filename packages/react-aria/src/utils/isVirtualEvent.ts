@@ -48,7 +48,8 @@ export function isVirtualPointerEvent(event: PointerEvent): boolean {
   // Talkback double tap from Windows Firefox touch screen press
   return (
     (!isAndroid() && event.width === 0 && event.height === 0) ||
-    (event.width === 1 &&
+    (isAndroid() &&
+      event.width === 1 &&
       event.height === 1 &&
       event.pressure === 0 &&
       event.detail === 0 &&

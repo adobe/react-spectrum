@@ -56,6 +56,7 @@ export const ClearButton = React.forwardRef(function ClearButton(
   // iOS 14 with VoiceOver doesn't focus the button and hide the keyboard when
   // moving the cursor over the clear button.
   if (preventFocus) {
+    // oxlint-disable-next-line react/react-compiler
     delete buttonProps.tabIndex;
   }
 

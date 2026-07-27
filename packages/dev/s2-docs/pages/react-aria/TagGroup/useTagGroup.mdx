@@ -1,0 +1,88 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/tag';
+import statelyDocs from 'docs:@react-stately/list';
+import Anatomy from '/packages/react-aria/docs/tag/anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a tag group component.';
+export const isSubpage = true;
+
+# useTagGroup
+
+<PageDescription>{docs.exports.useTagGroup.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/TagGroup.tsx", "starters/hooks/src/TagGroup.css"]}
+"use client";
+import {Tag, TagGroup} from 'hooks-starter/TagGroup';
+
+<TagGroup
+  label="Music genres"
+  ///- begin highlight -///
+  onAction={key => alert(`Clicked ${key}`)}
+  ///- end highlight -///
+>
+  <Tag id="rock">Rock</Tag>
+  <Tag id="jazz">Jazz</Tag>
+  <Tag id="pop">Pop</Tag>
+  <Tag id="classical">Classical</Tag>
+  <Tag id="edm">EDM</Tag>
+</TagGroup>
+```
+
+## API
+
+<Anatomy />
+
+```tsx
+<TagGroup>
+  <Label />
+  <TagList>
+    <Tag>
+      <SelectionIndicator />
+      <Button slot="remove" />
+    </Tag>
+  </TagList>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</TagGroup>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useListState, links: statelyDocs.links},
+    {function: docs.exports.useTagGroup, links: docs.links},
+    {function: docs.exports.useTag, links: docs.links},
+  ]}
+/>
+
+### ListState
+
+<InterfaceType {...statelyDocs.exports.ListState} links={statelyDocs.links} />
+
+### AriaTagGroupProps
+
+<InterfaceType {...docs.exports.AriaTagGroupProps} links={docs.links} />
+
+### TagGroupAria
+
+<InterfaceType {...docs.exports.TagGroupAria} links={docs.links} grouped={false} />
+
+### AriaTagProps
+
+<InterfaceType {...docs.exports.AriaTagProps} links={docs.links} />
+
+### TagAria
+
+<InterfaceType {...docs.exports.TagAria} links={docs.links} grouped={false} />

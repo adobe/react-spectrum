@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CardPreview, HorizontalCard, type HorizontalCardProps} from '@react-spectrum/ai';
+import {CardPreview, HorizontalCard, type HorizontalCardProps} from '../src/HorizontalCard';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
 import {Image} from '@react-spectrum/s2/Image';

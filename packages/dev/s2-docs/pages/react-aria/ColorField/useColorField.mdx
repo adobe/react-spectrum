@@ -1,0 +1,63 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
+import Anatomy from '/packages/react-aria/docs/color/ColorFieldAnatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a color field.';
+export const isSubpage = true;
+
+# useColorField
+
+<PageDescription>{docs.exports.useColorField.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/ColorField.tsx", "starters/hooks/src/ColorField.css", "starters/hooks/src/TextField.css", "starters/hooks/src/Form.css"]}
+"use client";
+import {ColorField} from 'hooks-starter/ColorField';
+
+<ColorField label="Primary Color" defaultValue="#ff0000" />
+```
+
+## API
+
+<Anatomy />
+
+```tsx
+<ColorField>
+  <Label />
+  <Input />
+  <Text slot="description" />
+  <FieldError />
+</ColorField>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useColorFieldState, links: statelyDocs.links},
+    {function: docs.exports.useColorField, links: docs.links},
+  ]}
+/>
+
+### ColorFieldState
+
+<InterfaceType {...statelyDocs.exports.ColorFieldState} links={statelyDocs.links} />
+
+### AriaColorFieldProps
+
+<InterfaceType {...docs.exports.AriaColorFieldProps} />
+
+### ColorFieldAria
+
+<InterfaceType {...docs.exports.ColorFieldAria} />

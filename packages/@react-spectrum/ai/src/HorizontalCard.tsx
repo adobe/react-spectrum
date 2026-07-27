@@ -36,7 +36,7 @@ import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
 interface HorizontalCardRenderProps {
@@ -89,6 +89,8 @@ export interface BasicCardProps extends Omit<HorizontalCardProps, 'variant'> {
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  /** Whether the card is in an error state. */
+  isInvalid?: boolean;
 }
 
 const borderRadius = {
@@ -115,45 +117,14 @@ let card = style({
   flexDirection: 'row',
   position: 'relative',
   borderRadius,
-  '--s2-container-bg': {
-    type: 'backgroundColor',
-    value: {
-      variant: {
-        primary: 'elevated',
-        secondary: 'layer-1',
-        tertiary: 'layer-2'
-      },
-      isBasic: {
-        variant: {
-          primary: 'layer-2',
-          secondary: 'layer-1',
-          tertiary: 'layer-2',
-          quiet: 'layer-2'
-        }
-      },
-      forcedColors: 'ButtonFace'
-    }
+  backgroundColor: {
+    default: lightDark('transparent-white-300', 'transparent-black-300'),
+    forcedColors: 'ButtonFace'
   },
-  backgroundColor: '--s2-container-bg',
-  // TODO: No box shadow for basic, secondary, dark
-  // also none for basic tertiary
+  // TODO: waiting for design to investigate thumbnail card/attachement error state
   boxShadow: {
-    default: 'emphasized',
-    isHovered: 'elevated',
-    isFocusVisible: 'elevated',
-    isSelected: 'elevated',
-    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
-    variant: {
-      tertiary: {
-        // Render border with box-shadow to avoid affecting layout.
-        default: `[0 0 0 2px ${color('gray-100')}]`,
-        isHovered: `[0 0 0 2px ${color('gray-200')}]`,
-        isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
-        isSelected: 'none',
-        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
-      },
-      quiet: 'none'
-    }
+    default: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
+    isInvalid: `[inset 0 0 0 1px ${color('negative-900')}]`
   },
   forcedColorAdjust: 'none',
   transition: 'default',
@@ -457,6 +428,7 @@ const actionButtonSize = {
 const Card = forwardRef(function Card(
   props: Omit<HorizontalCardProps, 'variant'> & {
     isBasic?: boolean;
+    isInvalid?: boolean;
     variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
   },
   ref: DOMRef<HTMLDivElement>
@@ -465,6 +437,7 @@ const Card = forwardRef(function Card(
   let domRef = useDOMRef(ref);
   let {
     isBasic = false,
+    isInvalid = false,
     density = 'regular',
     size = 'M',
     variant = 'primary',
@@ -516,6 +489,7 @@ const Card = forwardRef(function Card(
     </Provider>
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let press = pressScale(domRef);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
@@ -532,6 +506,7 @@ const Card = forwardRef(function Card(
               density,
               variant,
               isBasic,
+              isInvalid,
               isCardView: false,
               isLink: true
             }),
@@ -557,11 +532,12 @@ const Card = forwardRef(function Card(
       <div
         {...filterDOMProps(otherProps)}
         id={id != null ? String(id) : undefined}
+        aria-invalid={isInvalid || undefined}
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
         ref={domRef}
         className={mergeStyles(
-          card({size, density, variant, isBasic, isCardView: ElementType !== 'div'}),
+          card({size, density, variant, isBasic, isInvalid, isCardView: ElementType !== 'div'}),
           styles
         )}>
         <InternalCardContext.Provider
@@ -584,6 +560,7 @@ const Card = forwardRef(function Card(
     <ElementType
       {...props}
       ref={domRef}
+      aria-invalid={isInvalid || undefined}
       className={renderProps =>
         mergeStyles(
           card({
@@ -593,7 +570,8 @@ const Card = forwardRef(function Card(
             size,
             density,
             variant,
-            isBasic
+            isBasic,
+            isInvalid
           }),
           styles
         )
@@ -676,6 +654,7 @@ export const CardPreview = forwardRef(function CardPreview(
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
     useContext(InternalCardContext);
   let domRef = useDOMRef(ref);
+  // oxlint-disable react/react-compiler
   return (
     <div
       {...filterDOMProps(props)}
@@ -690,6 +669,7 @@ export const CardPreview = forwardRef(function CardPreview(
       </div>
     </div>
   );
+  // oxlint-enable react/react-compiler
 });
 
 const collection = style({
@@ -841,6 +821,7 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                     styles: style({
                       position: 'relative',
                       alignSelf: 'center',
+                      flexShrink: 0,
                       pointerEvents: 'none',
                       userSelect: 'none',
                       size: '--basic-thumb-size',

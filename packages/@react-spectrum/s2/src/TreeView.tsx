@@ -104,7 +104,6 @@ export interface TreeViewProps<T>
       | 'selectionBehavior'
       | 'onScroll'
       | 'onCellAction'
-      | 'keyboardNavigationBehavior'
       | keyof GlobalDOMAttributes
     >,
     UnsafeStyles,

@@ -166,6 +166,7 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(
   props: ProgressCircleProps,
   ref: DOMRef<HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ProgressCircleContext);
   let {size = 'M', staticColor, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);

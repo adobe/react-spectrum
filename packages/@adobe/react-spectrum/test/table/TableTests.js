@@ -3493,6 +3493,11 @@ export let tableTests = () => {
       describe('needs pointerEvents', function () {
         installPointerEvent();
         it("should support single tap to perform row selection with screen reader if onAction isn't provided", function () {
+          // oxlint-disable-next-line no-unused-vars
+          using uaMock = jest
+            .spyOn(navigator, 'userAgent', 'get')
+            .mockImplementation(() => 'Android');
+
           let onSelectionChange = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
@@ -3561,6 +3566,11 @@ export let tableTests = () => {
         });
 
         it('should support single tap to perform onAction with screen reader', function () {
+          // oxlint-disable-next-line no-unused-vars
+          using uaMock = jest
+            .spyOn(navigator, 'userAgent', 'get')
+            .mockImplementation(() => 'Android');
+
           let onSelectionChange = jest.fn();
           let onAction = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});

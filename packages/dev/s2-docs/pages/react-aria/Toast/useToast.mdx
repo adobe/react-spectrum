@@ -1,0 +1,81 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/toast';
+import statelyDocs from 'docs:@react-stately/toast';
+import Anatomy from '/packages/react-aria/docs/toast/toast-anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a toast notification.';
+export const isSubpage = true;
+
+# useToast
+
+<PageDescription>{docs.exports.useToast.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Toast.tsx", "starters/hooks/src/Toast.css", "starters/docs/src/Button.tsx", "starters/docs/src/Button.css"]}
+"use client";
+import {ToastProvider, Button} from 'hooks-starter/Toast';
+
+<ToastProvider>
+  {state => (
+    <Button onPress={() => state.add('Toast is done!')}>Show toast</Button>
+  )}
+</ToastProvider>
+```
+
+## API
+
+<Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
+
+```tsx
+<ToastRegion>
+  {({toast}) => (
+    <Toast toast={toast}>
+      <ToastContent>
+        <Text slot="title" />
+        <Text slot="description" />
+      </ToastContent>
+      <Button slot="close" />
+    </Toast>
+  )}
+</ToastRegion>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useToastState, links: statelyDocs.links},
+    {function: docs.exports.useToastRegion, links: docs.links},
+    {function: docs.exports.useToast, links: docs.links},
+  ]}
+/>
+
+### ToastState
+
+<InterfaceType {...statelyDocs.exports.ToastState} links={statelyDocs.links} />
+
+### AriaToastRegionProps
+
+<InterfaceType {...docs.exports.AriaToastRegionProps} />
+
+### ToastRegionAria
+
+<InterfaceType {...docs.exports.ToastRegionAria} />
+
+### AriaToastProps
+
+<InterfaceType {...docs.exports.AriaToastProps} />
+
+### ToastAria
+
+<InterfaceType {...docs.exports.ToastAria} />

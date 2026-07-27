@@ -90,6 +90,7 @@ export function useRangeCalendar<T extends DateValue>(
 
   // Also execute method corresponding to `commitBehavior` on blur,
   // e.g. tabbing away from the calendar.
+  // oxlint-disable-next-line react/react-compiler
   res.calendarProps.onBlur = e => {
     if (!ref.current) {
       return;

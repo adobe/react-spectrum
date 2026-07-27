@@ -1,14 +1,11 @@
 import {createTestingSheet} from './createExcelSheet.mjs';
 import {generateData} from './getCommitsForTesting.mjs';
 import {parseArgs} from 'node:util';
+import {writeFile} from 'node:fs/promises';
+import path from 'node:path';
 
 const SLACK_TESTING_BOT_TOKEN = process.env.SLACK_TESTING_BOT_TOKEN;
 const SLACK_CHANNEL_ID = process.env.SLACK_CHANNEL_ID;
-
-if (!SLACK_TESTING_BOT_TOKEN || !SLACK_CHANNEL_ID) {
-  console.error('Missing required env vars: SLACK_BOT_TOKEN, SLACK_CHANNEL_ID');
-  process.exit(1);
-}
 
 function getPreviousWeekRange() {
   let today = new Date();
@@ -84,7 +81,19 @@ async function uploadToSlack(buffer, filename, message) {
 }
 
 async function main() {
-  let args = parseArgs({allowPositionals: true});
+  let args = parseArgs({
+    allowPositionals: true,
+    options: {
+      local: {type: 'boolean', short: 'l', default: false}
+    }
+  });
+  let isLocal = args.values.local;
+
+  if (!isLocal && (!SLACK_TESTING_BOT_TOKEN || !SLACK_CHANNEL_ID)) {
+    console.error('Missing required env vars: SLACK_TESTING_BOT_TOKEN, SLACK_CHANNEL_ID');
+    process.exit(1);
+  }
+
   let {startDate, endDate} = (() => {
     if (args.positionals.length === 0) {
       return getPreviousWeekRange();
@@ -115,6 +124,13 @@ async function main() {
   let total = counts.v3 + counts.s2 + counts.rac + counts.other;
   let filename = `${endLabel}.xlsx`;
   let message = `*Testing sheet for ${startLabel} – ${endLabel}*\nV3: ${counts.v3} | S2: ${counts.s2} | RAC: ${counts.rac} | Other: ${counts.other} | Off PR: ${counts.offPRs} | Total: ${total}`;
+
+  if (isLocal) {
+    let outPath = path.resolve(process.cwd(), filename);
+    await writeFile(outPath, buffer);
+    console.log(`Saved testing sheet to ${outPath}`);
+    return;
+  }
 
   await uploadToSlack(buffer, filename, message);
   console.log('Posted to Slack successfully.');

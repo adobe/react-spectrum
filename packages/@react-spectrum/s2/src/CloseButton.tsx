@@ -107,10 +107,12 @@ export const CloseButton = forwardRef(function CloseButton(
   props: CloseButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, CloseButtonContext);
   let {UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useFocusableRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  // oxlint-disable react/react-compiler
   return (
     <Button
       {...props}
@@ -128,4 +130,5 @@ export const CloseButton = forwardRef(function CloseButton(
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );
+  // oxlint-enable react/react-compiler
 });

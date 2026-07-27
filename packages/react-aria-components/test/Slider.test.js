@@ -349,6 +349,21 @@ describe('Slider', () => {
     expect(sliders[1]).toHaveValue('97');
   });
 
+  it('should support repeat keydown events when holding Page Up/Page Down', async () => {
+    // Default pageSize for a 0-100 slider is 10.
+    let {getByRole} = renderSlider({defaultValue: 20});
+
+    let slider = getByRole('slider');
+    await user.tab();
+    expect(document.activeElement).toBe(slider);
+
+    await user.keyboard('{PageUp>3/}');
+    expect(slider).toHaveValue('50');
+
+    await user.keyboard('{PageDown>3/}');
+    expect(slider).toHaveValue('20');
+  });
+
   it('should support clicking on the track to move the thumb', async () => {
     let onChange = jest.fn();
     let {getByRole} = renderSlider({onChange});

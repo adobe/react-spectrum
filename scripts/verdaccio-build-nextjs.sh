@@ -37,15 +37,14 @@ yarn config set npmRegistryServer $registry
 yarn install --no-immutable
 yarn up @adobe/react-spectrum
 yarn up @react-aria/optimize-locales-plugin
-yarn up @react-spectrum/provider
 yarn up @spectrum-icons/illustrations
 yarn up @spectrum-icons/workflow
 yarn up react-aria-components
 yarn test
 
 # Build NextJS test app and move to dist folder. Store the size of the build in a text file.
+# `next build` produces the static `out/` directory directly via `output: 'export'` in next.config.mjs.
 VERDACCIO=true yarn build | tee next-build-stats.txt
-yarn export
 du -ka out/ | tee -a next-build-stats.txt
 mkdir -p ../../$verdaccio_path/next/publish-stats
 mv next-build-stats.txt ../../$verdaccio_path/next/publish-stats
