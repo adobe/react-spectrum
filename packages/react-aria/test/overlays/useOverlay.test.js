@@ -45,7 +45,8 @@ function StatefulExample({defaultIsOpen, onClose, ...props}) {
       onClose={() => {
         setIsOpen(false);
         onClose?.();
-      }} />
+      }}
+    />
   );
 }
 

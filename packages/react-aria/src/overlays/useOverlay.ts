@@ -220,33 +220,35 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
 
   // Handle the escape key.
   let {keyboardProps} = useKeyboard({
-    shortcuts: supportsCloseWatcher() ? undefined : {
-      Escape: e => {
-        if (e.nativeEvent.cancelBubble) {
-          return false;
-        }
+    shortcuts: supportsCloseWatcher()
+      ? undefined
+      : {
+          Escape: e => {
+            if (e.nativeEvent.cancelBubble) {
+              return false;
+            }
 
-        let topMostOverlay = getTopMostOverlay();
-        if (!topMostOverlay) {
-          return false;
-        }
+            let topMostOverlay = getTopMostOverlay();
+            if (!topMostOverlay) {
+              return false;
+            }
 
-        let overlay = topMostOverlay.ref === ref ? visibleOverlay.current : topMostOverlay;
-        if (!overlay) {
-          return false;
-        }
+            let overlay = topMostOverlay.ref === ref ? visibleOverlay.current : topMostOverlay;
+            if (!overlay) {
+              return false;
+            }
 
-        if (overlay.data.isKeyboardDismissDisabled) {
-          if (overlay !== visibleOverlay.current) {
+            if (overlay.data.isKeyboardDismissDisabled) {
+              if (overlay !== visibleOverlay.current) {
+                return;
+              }
+              return false;
+            }
+
+            overlay.data.onClose();
             return;
           }
-          return false;
         }
-
-        overlay.data.onClose();
-        return;
-      }
-    }
   });
 
   // Handle clicking outside the overlay to close it
