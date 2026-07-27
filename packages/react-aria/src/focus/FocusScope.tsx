@@ -190,6 +190,7 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
     };
   }, [scopeRef]);
 
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
   let value = useMemo(
     () => ({
@@ -409,7 +410,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
-          focusedNode.current.focus();
+          focusElement(focusedNode.current);
         } else if (activeScope && activeScope.current) {
           focusFirstInScope(activeScope.current);
         }
@@ -443,7 +444,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
           let target = getEventTarget(e) as FocusableElement;
           if (target && target.isConnected) {
             focusedNode.current = target;
-            focusedNode.current?.focus();
+            focusElement(focusedNode.current);
           } else if (activeScope.current) {
             focusFirstInScope(activeScope.current);
           }
@@ -632,6 +633,7 @@ function useRestoreFocus(
   const nodeToRestoreRef = useRef(
     typeof document !== 'undefined'
       ? (getActiveElement(
+          // oxlint-disable-next-line react/react-compiler
           getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined)
         ) as FocusableElement)
       : null

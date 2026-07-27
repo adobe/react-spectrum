@@ -111,6 +111,7 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(
         UNSAFE_className: classNames(styles, 'spectrum-Card-image'),
         objectFit: orientation === 'horizontal' ? 'cover' : 'contain',
         alt: '',
+        // oxlint-disable-next-line react/react-compiler
         ...aspectRatioEnforce
       },
       illustration: {

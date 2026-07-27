@@ -1,13 +1,13 @@
 {
   "ascending": "növekvő",
   "ascendingSort": "rendezve a(z) {columnName} oszlop szerint, növekvő sorrendben",
+  "collapse": "Összecsukás",
   "columnSize": "{value} képpont",
   "descending": "csökkenő",
   "descendingSort": "rendezve a(z) {columnName} oszlop szerint, csökkenő sorrendben",
+  "expand": "Kibontás",
   "resizerDescription": "Nyomja le az Enter billentyűt az átméretezés megkezdéséhez",
   "select": "Kijelölés",
   "selectAll": "Összes kijelölése",
-  "sortable": "rendezendő oszlop",
-  "collapse": "Összecsukás",
-  "expand": "Kibontás"
+  "sortable": "rendezendő oszlop"
 }

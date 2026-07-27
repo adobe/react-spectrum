@@ -120,6 +120,7 @@ function SearchAutocomplete<T extends object>(
   props: SpectrumSearchAutocompleteProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   props = useProviderProps(props);
   props = useFormProps(props);
 

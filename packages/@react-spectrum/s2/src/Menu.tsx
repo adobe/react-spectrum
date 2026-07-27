@@ -590,6 +590,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let isUnavailable = useContext(UnavailableContext);
   let infoIconId = useId();
 
+  // oxlint-disable react/react-compiler
   return (
     <AriaMenuItem
       {...props}
@@ -701,6 +702,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
       }}
     </AriaMenuItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
 /**
@@ -759,7 +761,13 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
           shouldFlip: props.shouldFlip
         }}>
         <PopoverContext.Provider
-          value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
+          value={{
+            hideArrow: true,
+            offset: props.trigger === 'contextMenu' ? 0 : 8,
+            crossOffset: 0,
+            placement,
+            shouldFlip
+          }}>
           <InPopoverContext.Provider value={false}>
             <AriaMenuTrigger {...props}>
               <PressResponder onPressStart={onPressStart} isPressed={isPressed}>

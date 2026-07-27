@@ -1,0 +1,153 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/datepicker';
+import statelyDocs from 'docs:@react-stately/datepicker';
+import Anatomy from '/packages/react-aria/docs/datepicker/daterangepicker-anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a date range picker component.';
+export const isSubpage = true;
+
+# useDateRangePicker
+
+<PageDescription>{docs.exports.useDateRangePicker.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/DateRangePicker.tsx", "starters/hooks/src/DateRangePicker.css", "starters/hooks/src/DateField.css", "starters/hooks/src/RangeCalendar.css", "starters/hooks/src/Button.css", "starters/hooks/src/Form.css", "starters/hooks/src/Popover.css"]}
+"use client";
+import {DateRangePicker} from 'hooks-starter/DateRangePicker';
+
+<DateRangePicker label="Trip dates" />
+```
+
+<details>
+<summary>View implementation</summary>
+
+```tsx
+"use client";
+import React from 'react';
+import {useDateRangePicker, type AriaDateRangePickerProps} from 'react-aria/useDateRangePicker';
+import {useDateRangePickerState} from 'react-stately/useDateRangePickerState';
+import type {DateValue} from '@internationalized/date';
+import {Provider} from 'react-aria-components/slots';
+import {Group, GroupContext} from 'react-aria-components/Group';
+import {DateFieldContext} from 'react-aria-components/DateField';
+import {ButtonContext} from 'react-aria-components/Button';
+import {LabelContext} from 'react-aria-components/Label';
+import {RangeCalendarContext} from 'react-aria-components/RangeCalendar';
+import {DialogContext, OverlayTriggerStateContext} from 'react-aria-components/Dialog';
+import {PopoverContext} from 'react-aria-components/Popover';
+import {DateInput, DateSegment} from 'vanilla-starter/DateField';
+import {Label, FieldButton} from 'vanilla-starter/Form';
+import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
+import {Popover} from 'vanilla-starter/Popover';
+import {ChevronDown} from 'lucide-react';
+import 'vanilla-starter/DateRangePicker.css';
+
+function DateRangePicker(props: AriaDateRangePickerProps<DateValue>) {
+  // Create state based on the incoming props.
+  let state = useDateRangePickerState(props);
+
+  // Get props for the child elements from useDateRangePicker.
+  let groupRef = React.useRef<HTMLDivElement>(null);
+  let {
+    groupProps,
+    labelProps,
+    startFieldProps,
+    endFieldProps,
+    buttonProps,
+    dialogProps,
+    calendarProps
+  } = useDateRangePicker(props, state, groupRef);
+
+  // Provide the values returned by the hook to the reused components via context.
+  return (
+    <Provider
+      values={[
+        [GroupContext, {...groupProps, ref: groupRef}],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+        [LabelContext, {...labelProps, elementType: 'span'}],
+        [RangeCalendarContext, calendarProps],
+        [DialogContext, dialogProps],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {trigger: 'DateRangePicker', triggerRef: groupRef, placement: 'bottom start'}],
+        // Each DateInput builds its own field state from the start/end slots.
+        [DateFieldContext, {slots: {start: startFieldProps, end: endFieldProps}}]
+      ]}>
+      <div className="react-aria-DateRangePicker">
+        <Label>{props.label}</Label>
+        <Group className="react-aria-Group inset">
+          <div className="date-fields">
+            <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
+            <span aria-hidden="true">–</span>
+            <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
+          </div>
+          <FieldButton>
+            <ChevronDown />
+          </FieldButton>
+        </Group>
+        <Popover hideArrow>
+          {/* Rendered from calendarProps, provided via RangeCalendarContext. */}
+          <RangeCalendar />
+        </Popover>
+      </div>
+    </Provider>
+  );
+}
+
+<DateRangePicker label="Trip dates" />
+```
+
+</details>
+
+## API
+
+<Anatomy />
+
+```tsx links={{DateInput: '../DateField', DateSegment: '../DateField', Button: '../Button', Popover: '../Popover', RangeCalendar: '../RangeCalendar'}}
+<DateRangePicker>
+  <Label />
+  <Group>
+    <DateInput slot="start">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <span aria-hidden="true">–</span>
+    <DateInput slot="end">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Popover>
+    <RangeCalendar />
+  </Popover>
+</DateRangePicker>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useDateRangePickerState, links: statelyDocs.links},
+    {function: docs.exports.useDateRangePicker, links: docs.links},
+  ]}
+/>
+
+### DateRangePickerState
+
+<InterfaceType {...statelyDocs.exports.DateRangePickerState} links={statelyDocs.links} />
+
+### AriaDateRangePickerProps
+
+<InterfaceType {...docs.exports.AriaDateRangePickerProps} />
+
+### DateRangePickerAria
+
+<InterfaceType {...docs.exports.DateRangePickerAria} />

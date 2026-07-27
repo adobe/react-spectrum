@@ -1,0 +1,62 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/checkbox';
+import statelyDocs from 'docs:@react-stately/toggle';
+import Anatomy from '/packages/react-aria/docs/checkbox/checkbox-anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a checkbox.';
+export const isSubpage = true;
+
+# useCheckbox
+
+<PageDescription>{docs.exports.useCheckbox.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Checkbox.tsx", "starters/hooks/src/Checkbox.css"]}
+"use client";
+import {Checkbox} from 'hooks-starter/Checkbox';
+
+<Checkbox>Unsubscribe</Checkbox>
+```
+
+## API
+
+<Anatomy />
+
+```tsx
+<CheckboxField>
+  <CheckboxButton>Label</CheckboxButton>
+  <Text slot="description" />
+  <FieldError />
+</CheckboxField>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useToggleState, links: statelyDocs.links},
+    {function: docs.exports.useCheckbox, links: docs.links},
+  ]}
+/>
+
+### ToggleState
+
+<InterfaceType {...statelyDocs.exports.ToggleState} links={statelyDocs.links} />
+
+### AriaCheckboxProps
+
+<InterfaceType {...docs.exports.AriaCheckboxProps} />
+
+### CheckboxAria
+
+<InterfaceType {...docs.exports.CheckboxAria} />

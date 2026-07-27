@@ -181,12 +181,14 @@ export const ExampleRender = (args: CardViewProps<any> & {interactive?: React.Re
           {() => (
             <PhotoCard
               item={{
+                // oxlint-disable-next-line react/react-compiler
                 id: Math.random(),
                 user: {name: 'Devon Govett', profile_image: {small: ''}},
                 urls: {regular: ''},
                 description: 'This is a fake description. Kinda long so it wraps to a new line.',
                 alt_description: '',
                 width: 400,
+                // oxlint-disable-next-line react/react-compiler
                 height: 200 + Math.max(0, Math.round(Math.random() * 400))
               }}
               layout={args.layout || 'grid'}
@@ -281,6 +283,7 @@ const CollectionCardsRender = (args: CardViewProps<any>) => {
           {() => (
             <TopicCard
               topic={{
+                // oxlint-disable-next-line react/react-compiler
                 id: Math.random().toString(36),
                 title: 'Topic title',
                 total_photos: 80,

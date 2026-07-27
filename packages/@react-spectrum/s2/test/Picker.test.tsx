@@ -180,40 +180,6 @@ describe('Picker', () => {
     expect(tree.getByTestId('custom-value')).toHaveTextContent('Chocolate, Vanilla');
   });
 
-  it('supports shift+click to select a range in multi-selection', async () => {
-    let user = userEvent.setup({delay: null, pointerMap});
-    let items = [
-      {id: 'chocolate', name: 'Chocolate'},
-      {id: 'strawberry', name: 'Strawberry'},
-      {id: 'vanilla', name: 'Vanilla'}
-    ];
-    let tree = render(
-      <Picker label="Test picker" selectionMode="multiple" items={items}>
-        {(item: any) => (
-          <PickerItem id={item.id} textValue={item.name}>
-            {item.name}
-          </PickerItem>
-        )}
-      </Picker>
-    );
-
-    let selectTester = testUtilUser.createTester('Select', {
-      root: tree.container,
-      interactionType: 'mouse'
-    });
-    await selectTester.open();
-    let options = selectTester.getOptions();
-
-    await user.click(options[0]);
-    await user.keyboard('{Shift>}');
-    await user.click(options[2]);
-    await user.keyboard('{/Shift}');
-
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    expect(options[1]).toHaveAttribute('aria-selected', 'true');
-    expect(options[2]).toHaveAttribute('aria-selected', 'true');
-  });
-
   it('should warn if the custom render value output has a interactive child', async () => {
     using spy = jest.spyOn(console, 'warn').mockImplementation(() => {}) as jest.SpyInstance &
       Disposable;

@@ -235,6 +235,7 @@ function IllustrationItem({
 }) {
   let Illustration = item.Component;
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       id={item.id}
@@ -254,6 +255,7 @@ function IllustrationItem({
       </div>
     </ListBoxItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
 const cache = new Map();

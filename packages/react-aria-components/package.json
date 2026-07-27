@@ -1,12 +1,29 @@
 {
   "name": "react-aria-components",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "description": "A library of styleable components built using React Aria",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "source": "exports/index.ts",
+  "files": [
+    "*",
+    "!docs/**",
+    "!example/**",
+    "!exports/**",
+    "!intl/**",
+    "!src/**",
+    "!stories/**",
+    "!test/**"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "./dist/exports/index.cjs",
   "module": "./dist/exports/index.js",
   "types": "./dist/types/exports/index.d.ts",
-  "source": "exports/index.ts",
   "exports": {
     ".": {
       "source": "./exports/index.ts",
@@ -33,40 +50,24 @@
     },
     "./private/*": null
   },
-  "files": [
-    "*",
-    "!docs/**",
-    "!example/**",
-    "!exports/**",
-    "!intl/**",
-    "!src/**",
-    "!stories/**",
-    "!test/**"
-  ],
-  "sideEffects": [
-    "*.css"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
-  },
-  "dependencies": {
-    "@internationalized/date": "^3.12.2",
-    "@react-types/shared": "^3.35.0",
-    "@swc/helpers": "^0.5.0",
-    "client-only": "^0.0.1",
-    "react-aria": "3.49.0",
-    "react-stately": "3.47.0"
-  },
-  "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-  },
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@internationalized/date": "^3.12.2",
+    "@internationalized/string": "^3.2.9",
+    "@react-types/shared": "^3.36.0",
+    "@swc/helpers": "^0.5.0",
+    "client-only": "^0.0.1",
+    "react-aria": "3.50.0",
+    "react-stately": "3.48.0"
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  },
+  "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },

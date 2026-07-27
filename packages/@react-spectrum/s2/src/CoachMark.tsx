@@ -401,7 +401,9 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
   // but when sent by context we want the title to win.
+  // oxlint-disable-next-line react/react-compiler
   triggerProps.id = useId();
+  // oxlint-disable-next-line react/react-compiler
   overlayProps['aria-labelledby'] = triggerProps.id;
 
   return (

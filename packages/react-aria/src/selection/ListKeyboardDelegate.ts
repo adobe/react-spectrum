@@ -312,8 +312,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
     } else {
       let visibleRect = this.layoutDelegate.getVisibleRect();
-      // TODO: column reverse makes y negative for items so we need to instead do current pos - height instead
-      // will need to revist for virtualized reverse layouts?
+      // column reverse makes y negative for items so we need to instead do current pos - height instead
       let pageY = reversed
         ? itemRect.y - visibleRect.height
         : Math.max(0, itemRect.y + itemRect.height - visibleRect.height);
@@ -324,7 +323,6 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    // TODO: in column reverse, the top most key is the last key
     return nextKey ?? (reversed ? this.getLastKey() : this.getFirstKey());
   }
 
@@ -363,7 +361,6 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    // TODO: in column reverse, the bottom most key is the first key
     return nextKey ?? (reversed ? this.getFirstKey() : this.getLastKey());
   }
 

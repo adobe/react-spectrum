@@ -61,8 +61,13 @@ describe('useSearchField hook', () => {
       let onKeyDown = jest.fn();
       let event = key => ({
         key,
+        nativeEvent: {
+          isComposing: false
+        },
         preventDefault,
-        stopPropagation
+        stopPropagation,
+        target: {},
+        currentTarget: {contains: () => true}
       });
 
       afterEach(() => {

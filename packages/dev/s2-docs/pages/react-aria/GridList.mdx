@@ -5,13 +5,13 @@ import docs from 'docs:react-aria-components';
 import {GridList as VanillaGridList, GridListItem} from 'vanilla-starter/GridList';
 import vanillaDocs from 'docs:vanilla-starter/GridList';
 import '../../tailwind/tailwind.css';
-import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
+import Anatomy from './GridListAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 import {VersionBadge} from '../../src/VersionBadge';
 
 export const tags = ['list view'];
 export const relatedPages = [
-  {title: 'useGridList', url: 'GridList/useGridList.html'},
+  {title: 'useGridList', url: './GridList/useGridList'},
   {title: 'Testing GridList', url: './GridList/testing'}
 ];
 export const description = 'Displays a list of interactive items, with support for keyboard navigation, selection, and actions.';
@@ -712,9 +712,8 @@ Use this when rows contain interactive elements such as text fields, where arrow
 ```tsx render
 "use client";
 import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
-import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {TextField} from 'vanilla-starter/TextField';
 
-///- begin collapse -///
 ///- begin collapse -///
 let photos = [
   {id: 1, title: 'Desert Sunset', description: 'PNG • 2/3/2024', src: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop'},
@@ -724,16 +723,6 @@ let photos = [
   {id: 5, title: 'Giraffe tongue', description: 'PNG • 11/27/2019', src: 'https://images.unsplash.com/photo-1574870111867-089730e5a72b?q=80&w=600&auto=format&fit=crop'},
   {id: 6, title: 'Golden Hour', description: 'WEBP • 7/24/2024', src: 'https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop'},
 ];
-
-function PermissionPicker({label}) {
-  return (
-    <ComboBox style={{paddingInlineStart: 12, width: '80%'}} aria-label={label} defaultSelectedKey="view" placeholder="Permission">
-      <ComboBoxItem id="view">Can view</ComboBoxItem>
-      <ComboBoxItem id="comment">Can comment</ComboBoxItem>
-      <ComboBoxItem id="edit">Can edit</ComboBoxItem>
-    </ComboBox>
-  );
-}
 ///- end collapse -///
 
 <GridList
@@ -743,12 +732,13 @@ function PermissionPicker({label}) {
   items={photos}
   selectionMode="multiple"
   aria-label="Shared files">
-    {item => (
+  {item => (
     <GridListItem textValue={item.title}>
       <img src={item.src} alt="" />
-      <Text>{item.title}</Text>
+      <Text>
+        <TextField style={{paddingTop: 2, paddingBottom: 2}} aria-label="title" defaultValue={item.title} placeholder="Enter a title" />
+      </Text>
       <Text slot="description">{item.description}</Text>
-      <PermissionPicker label={`${item.title} permission`} />
     </GridListItem>
   )}
 </GridList>

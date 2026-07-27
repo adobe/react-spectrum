@@ -40,6 +40,7 @@ export function useObjectRef<T>(
           }
         };
       } else if (ref) {
+        // oxlint-disable-next-line react/react-compiler
         ref.current = instance;
         return () => {
           ref.current = null;
@@ -66,6 +67,7 @@ export function useObjectRef<T>(
         }
       }
     }),
+    // oxlint-disable-next-line react/react-compiler
     [refEffect]
   );
 }

@@ -51,7 +51,6 @@ import {fontSizeToken} from '../../../../../@react-spectrum/s2/style/tokens' wit
 // @ts-ignore
 import {letters} from '../../../src/textWidth';
 import HomeHeader from './Header';
-import {ReleaseLink} from './ReleaseLink';
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -183,7 +182,6 @@ export function Home({currentPage}: {currentPage: Page}) {
           maxWidth: 1024,
           isolation: 'isolate'
         })}>
-        <ReleaseLink />
         <HomeH1 id={headingId}>
           <span className={swapWrapper}>Build apps with&nbsp;</span>
           <span className={swapWrapper}>

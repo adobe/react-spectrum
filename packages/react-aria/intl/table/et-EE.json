@@ -1,13 +1,13 @@
 {
   "ascending": "tõusev järjestus",
   "ascendingSort": "sorditud veeru järgi {columnName} tõusvas järjestuses",
+  "collapse": "Ahenda",
   "columnSize": "{value} pikslit",
   "descending": "laskuv järjestus",
   "descendingSort": "sorditud veeru järgi {columnName} laskuvas järjestuses",
+  "expand": "Laienda",
   "resizerDescription": "Suuruse muutmise alustamiseks vajutage klahvi Enter",
   "select": "Vali",
   "selectAll": "Vali kõik",
-  "sortable": "sorditav veerg",
-  "collapse": "Ahenda",
-  "expand": "Laienda"
+  "sortable": "sorditav veerg"
 }

@@ -1,0 +1,89 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/tabs';
+import statelyDocs from 'docs:@react-stately/tabs';
+import Anatomy from '/packages/react-aria/docs/tabs/anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a tabs component.';
+export const isSubpage = true;
+
+# useTabList
+
+<PageDescription>{docs.exports.useTabList.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/Tabs.tsx", "starters/hooks/src/Tabs.css"]}
+"use client";
+import {Tab, Tabs} from 'hooks-starter/Tabs';
+
+<Tabs aria-label="History of Ancient Rome">
+  <Tab id="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Tab>
+  <Tab id="MaR" title="Monarchy and Republic">Senatus Populusque Romanus.</Tab>
+  <Tab id="Emp" title="Empire">Alea jacta est.</Tab>
+</Tabs>
+```
+
+## API
+
+<Anatomy />
+
+```tsx
+<Tabs>
+  <TabList>
+    <Tab>
+      <SelectionIndicator />
+    </Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel />
+  </TabPanels>
+</Tabs>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useTabListState, links: statelyDocs.links},
+    {function: docs.exports.useTabList, links: docs.links},
+    {function: docs.exports.useTab, links: docs.links},
+    {function: docs.exports.useTabPanel, links: docs.links},
+  ]}
+/>
+
+### TabListState
+
+<InterfaceType {...statelyDocs.exports.TabListState} links={statelyDocs.links} />
+
+### AriaTabListOptions
+
+<InterfaceType {...docs.exports.AriaTabListOptions} />
+
+### TabListAria
+
+<InterfaceType {...docs.exports.TabListAria} />
+
+### AriaTabProps
+
+<InterfaceType {...docs.exports.AriaTabProps} />
+
+### TabAria
+
+<InterfaceType {...docs.exports.TabAria} />
+
+### AriaTabPanelProps
+
+<InterfaceType {...docs.exports.AriaTabPanelProps} />
+
+### TabPanelAria
+
+<InterfaceType {...docs.exports.TabPanelAria} />

@@ -29,7 +29,7 @@ import {FormValidationState, useFormValidationState} from '../form/useFormValida
 import {ListState, useListState} from '../list/useListState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export type SelectionMode = 'single' | 'multiple';
 export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
@@ -196,27 +196,13 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
     }
   };
 
-  // Preserve the selection's anchor (anchorKey/currentKey) across renders. The
-  // multiple-selection `value` is a plain Key[], so without this the listbox
-  // would rebuild an anchorless Selection on every render and range selection
-  // (shift+click / shift+arrow) would collapse to just the clicked item. We keep
-  // the last Selection produced internally and feed it back while its membership
-  // still matches `value`.
-  let lastSelection = useRef<Set<Key> | null>(null);
-
+  // oxlint-disable-next-line react/react-compiler
   let listState = useListState({
     ...props,
     selectionMode,
     disallowEmptySelection: selectionMode === 'single',
     allowDuplicateSelectionEvents: true,
-    selectedKeys: useMemo(() => {
-      let selectedKeys = convertValue(displayValue);
-      let last = lastSelection.current;
-      if (last != null && Array.isArray(selectedKeys) && isSameSelection(last, selectedKeys)) {
-        return last;
-      }
-      return selectedKeys;
-    }, [displayValue]),
+    selectedKeys: useMemo(() => convertValue(displayValue), [displayValue]),
     onSelectionChange: (keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
@@ -227,9 +213,6 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
         let key = keys.values().next().value ?? null;
         setValue(key);
       } else {
-        // Remember the Selection (with its anchor) so it survives the round-trip
-        // through the plain `value` array on the next render.
-        lastSelection.current = keys;
         setValue([...keys]);
       }
       if (shouldCloseOnSelect) {
@@ -295,16 +278,4 @@ function convertValue(value: Key | Key[] | null | undefined) {
     return [];
   }
   return Array.isArray(value) ? value : [value];
-}
-
-function isSameSelection(selection: Set<Key>, keys: Key[]): boolean {
-  if (selection.size !== keys.length) {
-    return false;
-  }
-  for (let key of keys) {
-    if (!selection.has(key)) {
-      return false;
-    }
-  }
-  return true;
 }

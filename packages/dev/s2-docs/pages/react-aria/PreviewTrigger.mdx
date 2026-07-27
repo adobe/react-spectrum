@@ -1,0 +1,224 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Popover';
+import '../../tailwind/tailwind.css';
+import Anatomy from '/packages/react-aria/docs/overlays/preview-trigger-anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['popup', 'overlay', 'preview', 'link', 'hover', 'tooltip'];
+export const description = 'Displays a non-modal preview of content on hover, focus, or long press.';
+
+# PreviewTrigger
+
+<PageDescription>{docs.exports.PreviewTrigger.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render type="vanilla" docs={vanillaDocs.exports.Popover} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']}
+  "use client";
+  import {PreviewTrigger} from 'react-aria-components';
+  import {Popover} from 'vanilla-starter/Popover';
+  import {Link} from 'vanilla-starter/Link';
+  import {Button} from 'vanilla-starter/Button';
+
+  function ProfilePreview({handle, name, bio, avatar, href, ...popoverProps}) {
+    return (
+      <PreviewTrigger>
+        <Link href={href}>@{handle}</Link>
+        <Popover style={{width: 280}} {...popoverProps}>
+          <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+            <img alt="" src={avatar} style={{width: 40, height: 40, borderRadius: '50%'}} />
+            <div style={{minWidth: 0}}>
+              <div style={{fontWeight: 600, fontSize: 'var(--font-size)'}}>{name}</div>
+              <div style={{fontSize: 'var(--font-size-sm)'}}>@{handle}</div>
+            </div>
+            <Button style={{marginLeft: 'auto'}} variant="secondary">Follow</Button>
+          </div>
+          <div style={{fontSize: 'var(--font-size)', marginTop: 12}}>{bio}</div>
+        </Popover>
+      </PreviewTrigger>
+    );
+  }
+
+  function Example(props) {
+    return (
+      <p style={{maxWidth: 480}}>
+        Just shipped a new release with help from{' '}
+        <ProfilePreview
+          handle="mayachen"
+          name="Maya Chen"
+          bio="UI engineer, accessibility advocate, and component library enthusiast."
+          avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+          href="#"
+          {...props} />
+        {' '}and{' '}
+        <ProfilePreview
+          handle="cwebb"
+          name="Charles Webb"
+          bio="Design systems, docs, and developer experience."
+          avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+          href="#"
+          {...props} />
+        !
+      </p>
+    );
+  }
+  ```
+
+   ```tsx render type="tailwind" docs={vanillaDocs.exports.Popover} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']}
+  "use client";
+  import {PreviewTrigger} from 'react-aria-components';
+  import {Popover} from 'tailwind-starter/Popover';
+  import {Link} from 'tailwind-starter/Link';
+  import {Button} from 'tailwind-starter/Button';
+
+  function ProfilePreview({handle, name, bio, avatar, href, ...popoverProps}) {
+    return (
+      <PreviewTrigger>
+        <Link href={href}>@{handle}</Link>
+        <Popover className="w-[280px] p-2" {...popoverProps}>
+          <div className="flex gap-2 items-center">
+            <img alt="" src={avatar} className="size-10 rounded-full shrink-0" />
+            <div className="min-w-0">
+              <div className="text-sm font-semibold">{name}</div>
+              <div className="text-xs">@{handle}</div>
+            </div>
+            <Button className="ml-auto" variant="secondary" onPress={() => alert(`Followed @${handle}`)}>Follow</Button>
+          </div>
+          <div className="text-sm mt-3">{bio}</div>
+        </Popover>
+      </PreviewTrigger>
+    );
+  }
+
+  function Example(props) {
+    return (
+      <p className="max-w-[480px]">
+        {'Just shipped a new release with help from '}
+        <ProfilePreview
+          handle="mayachen"
+          name="Maya Chen"
+          bio="UI engineer, accessibility advocate, and component library enthusiast."
+          avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+          href="#"
+          {...props} />
+        {' and '}
+        <ProfilePreview
+          handle="cwebb"
+          name="Charles Webb"
+          bio="Design systems, docs, and developer experience."
+          avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+          href="#"
+          {...props} />
+        !
+      </p>
+    );
+  }
+  ```
+
+</ExampleSwitcher>
+
+## Interactions
+
+Previews appear after a warmup delay when hovering with a pointer or receiving keyboard focus. Once a preview is displayed, other previews display immediately. If the user waits for the cooldown period before hovering another element, the warmup timer restarts. On touch devices, previews open on long press.
+
+When a preview is open, pressing <Keyboard>Tab</Keyboard> moves focus into the preview so users can interact with its contents. Press <Keyboard>Escape</Keyboard> to close the preview and return focus to the trigger.
+
+```tsx render type="vanilla" docs={docs.exports.PreviewTrigger} links={docs.links} props={['delay', 'closeDelay', 'isDisabled']}
+"use client";
+import {PreviewTrigger} from 'react-aria-components';
+import {Popover} from 'vanilla-starter/Popover';
+import {Link} from 'vanilla-starter/Link';
+import {Button} from 'vanilla-starter/Button';
+
+function IssuePreview({number, title, status, author, href, ...props}) {
+  return (
+    /*- begin highlight -*/
+    <PreviewTrigger {...props}/* PROPS */>
+      {/*- end highlight -*/}
+      <Link href={href}>#{number}</Link>
+      <Popover style={{width: 280}}>
+        <div style={{fontWeight: 600, fontSize: 'var(--font-size)'}}>{title}</div>
+        <div style={{fontSize: 'var(--font-size-sm)', marginTop: 4}}>#{number} · {status}</div>
+        <div style={{fontSize: 'var(--font-size-sm)', marginTop: 4}}>Opened by {author}</div>
+        <Button style={{marginTop: 12}} variant="secondary">View issue</Button>
+      </Popover>
+    </PreviewTrigger>
+  );
+}
+
+function Example(props) {
+  return (
+    <p style={{maxWidth: 480}}>
+      {'Merged fixes for '}
+      {/*- begin highlight -*/}
+      <IssuePreview
+        {...props}/* PROPS */
+        number={1234}
+        title="Add PreviewTrigger component"
+        status="Open"
+        author="mayachen"
+        href="#" />
+      {/*- end highlight -*/}
+      {' and '}
+      <IssuePreview
+        {...props}/* PROPS */
+        number={5678}
+        title="Improve Popover safe area behavior"
+        status="Closed"
+        author="cwebb"
+        href="#" />
+      .
+    </p>
+  );
+}
+```
+
+## Custom trigger
+
+`PreviewTrigger` works with any focusable React Aria component (e.g. [Link](Link), [Button](Button), etc.). Use the `<Focusable>` component to wrap a custom trigger element such as a third party component or DOM element.
+
+```tsx render
+"use client"
+import {PreviewTrigger} from 'react-aria-components';
+import {Focusable} from 'react-aria-components/Tooltip';
+import {Popover} from 'vanilla-starter/Popover';
+
+<PreviewTrigger>
+  {/*- begin highlight -*/}
+  <Focusable>
+    <span role="link">Custom trigger</span>
+  </Focusable>
+  {/*- end highlight -*/}
+  <Popover style={{padding: 16}}>
+    This preview was triggered by a custom element.
+  </Popover>
+</PreviewTrigger>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Any `<Focusable>` child must have an ARIA role or use an appropriate semantic HTML element so that screen readers can announce the preview. Trigger components must forward their `ref` and spread all props to a DOM element.</Content>
+</InlineAlert>
+
+```tsx
+const CustomTrigger = React.forwardRef((props, ref) => (
+  <a {...props} ref={ref} />
+));
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{PreviewTrigger: '#previewtrigger', Link: 'Link', Button: 'Button', Popover: 'Popover'}}
+<PreviewTrigger>
+  <Link />, <Button />, or <Focusable />
+  <Popover />
+</PreviewTrigger>
+```
+
+### PreviewTrigger
+
+<PropTable component={docs.exports.PreviewTrigger} links={docs.links} />

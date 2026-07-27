@@ -1,26 +1,28 @@
 export {Attachment, AttachmentList} from '../src/AttachmentList';
-export {BasicHorizontalCard, CardPreview, HorizontalCard} from '../src/HorizontalCard';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
+  AutoLinkingTokenFieldValue,
   PromptField,
   PromptFieldSubmitButton,
   PromptTokenField,
   AttachFileMenuItem,
+  CommandMenuItem,
   InsertMenuButton,
+  InsertTextMenuItem,
   InsertTokenMenuItem,
   PromptFieldAttachmentList,
   PromptFieldToolbar,
-  PromptToken
+  PromptToken,
+  PromptFieldVoiceButton
 } from '../src/PromptField';
 export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
-export {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
-export {TokenSegmentList} from '../src/TokenSegmentList';
+export {Chat, Thread, ThreadItem, ThreadScrollButton, PromptFocusContext} from '../src/Chat';
+export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';
 
 export type {AttachmentProps, AttachmentListProps} from '../src/AttachmentList';
-export type {HorizontalCardProps, BasicCardProps} from '../src/HorizontalCard';
 export type {
   PromptFieldProps,
   PromptFieldSubmitButtonProps,
@@ -30,7 +32,8 @@ export type {
   PromptFieldAttachmentListProps,
   PromptTokenFieldPopoverProps,
   PromptFieldToolbarProps,
-  InsertMenuItemProps
+  InsertMenuItemProps,
+  PromptFieldVoiceButtonProps
 } from '../src/PromptField';
 export type {MessageFeedbackProps} from '../src/MessageFeedback';
 export type {MessageSourceProps, SourceListProps, SourceListItemProps} from '../src/MessageSource';
@@ -41,5 +44,5 @@ export type {
   ResponseStatusPanelProps
 } from '../src/ResponseStatus';
 export type {ChatProps, ThreadProps, ThreadItemProps, ThreadScrollButtonProps} from '../src/Chat';
-export type {TokenSegmentListOptions} from '../src/TokenSegmentList';
+export type {TokenFieldValueOptions} from 'react-aria-components/TokenField';
 export type {UserMessageProps} from '../src/UserMessage';

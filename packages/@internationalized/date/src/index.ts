@@ -28,6 +28,7 @@ export type {
   CycleTimeOptions
 } from './types';
 export type {DateValue} from './CalendarDate';
+export type {DayOfWeek} from './queries';
 
 export {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 export {GregorianCalendar} from './calendars/GregorianCalendar';

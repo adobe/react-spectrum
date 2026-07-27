@@ -164,7 +164,8 @@ describe('Tabs', function () {
       direction: 'rtl'
     });
     let tabs = tabsTester.getTabs();
-    window.addEventListener('keydown', onKeyDown);
+    // Use a capture listener so we observe the key before the collection handler stops propagation.
+    window.addEventListener('keydown', onKeyDown, true);
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
 
@@ -183,7 +184,7 @@ describe('Tabs', function () {
     expect(tabs[2]).not.toHaveAttribute('aria-selected', 'true');
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
     expect(onKeyDown.mock.calls[2][0].key).toBe('ArrowRight');
-    window.removeEventListener('keydown', onKeyDown);
+    window.removeEventListener('keydown', onKeyDown, true);
   });
 
   it('allows user to change tab item select via arrow keys with vertical tabs', function () {

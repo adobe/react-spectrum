@@ -15,6 +15,7 @@ import {dragAndDrop} from './utils/dragAndDrop';
 import {DropZone} from '../src/DropZone';
 import {FileTrigger} from 'react-aria-components/FileTrigger';
 import {IllustratedMessage} from '../src/IllustratedMessage';
+import {isMac} from 'react-aria/private/utils/platform';
 import {page} from 'vitest/browser';
 import React from 'react';
 import {render} from './utils/render';
@@ -39,7 +40,10 @@ function Draggable({type}: {type: string}) {
   );
 }
 
-describe('DropZone browser interactions', () => {
+// These tests are flaky on Windows / Linux.
+const describeOrSkip = isMac() ? describe : describe.skip;
+
+describeOrSkip('DropZone browser interactions', () => {
   it('should handle drag and drop of valid drop types', async () => {
     let onDrop = vi.fn();
 

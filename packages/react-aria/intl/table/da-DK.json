@@ -1,13 +1,13 @@
 {
   "ascending": "stigende",
   "ascendingSort": "sorteret efter kolonne {columnName} i stigende rækkefølge",
+  "collapse": "Skjul",
   "columnSize": "{value} pixels",
   "descending": "faldende",
   "descendingSort": "sorteret efter kolonne {columnName} i faldende rækkefølge",
+  "expand": "Udvid",
   "resizerDescription": "Tryk på Enter for at ændre størrelse",
   "select": "Vælg",
   "selectAll": "Vælg alle",
-  "sortable": "sorterbar kolonne",
-  "collapse": "Skjul",
-  "expand": "Udvid"
+  "sortable": "sorterbar kolonne"
 }

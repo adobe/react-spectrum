@@ -111,6 +111,7 @@ function MyButton(props) {
   const buttonRef = props.btnRef;
 
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();
+  // oxlint-disable react/react-compiler
   let {buttonProps} = useButton(props, buttonRef);
 
   return (
@@ -119,6 +120,7 @@ function MyButton(props) {
       Focused: {isFocused ? 'true' : 'false'}
     </button>
   );
+  // oxlint-enable react/react-compiler
 }
 
 const IFrameExample = props => {

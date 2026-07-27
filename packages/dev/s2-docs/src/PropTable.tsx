@@ -7,7 +7,7 @@ import {renderHTMLfromMarkdown, setLinks, TComponent, TInterface, TType, Type} f
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
-const GROUPS = {
+export const PROP_GROUPS = {
   Content: [
     'children',
     'items',
@@ -116,7 +116,9 @@ const GROUPS = {
   Advanced: ['UNSAFE_className', 'UNSAFE_style', 'slot', 'render']
 };
 
-const DEFAULT_EXPANDED = new Set(['Content', 'Selection', 'Value']);
+export const DEFAULT_EXPANDED = new Set(['Content', 'Selection', 'Value']);
+
+const GROUPS = PROP_GROUPS;
 
 const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}, wordBreak: 'break-word'});
 
@@ -316,7 +318,7 @@ function Rows({
   ));
 }
 
-function groupProps(
+export function groupProps(
   props: TInterface['properties'],
   propGroups: {[name: string]: (string | RegExp)[]} = GROUPS
 ): [TInterface['properties'], {[name: string]: TInterface['properties']}] {

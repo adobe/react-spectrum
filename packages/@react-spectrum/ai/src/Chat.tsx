@@ -23,9 +23,9 @@ import {
   useRef,
   useState
 } from 'react';
-import type {CSSProperties} from 'react';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {DOMRef, forwardRefType} from '@react-types/shared';
+import {focusRing, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   GridList,
   GridListItem,
@@ -34,7 +34,7 @@ import {
 } from 'react-aria-components/GridList';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
@@ -83,17 +83,24 @@ const InternalChatContext = createContext<InternalChatContextValue>({
 interface ThreadScrollButtonContextValue {
   isNearBottom: boolean;
   scrollToBottom: () => void;
+  'aria-label': string;
 }
 
 const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>({
   isNearBottom: true,
-  scrollToBottom: () => {}
+  scrollToBottom: () => {},
+  'aria-label': ''
 });
 
 // TODO: make this more RAC like (aka default class name and other RAC prop)
 export interface ChatProps {
-  className?: string;
-  style?: CSSProperties;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+  /**
+   * Children of the chat, such as Thread, PromptField, and ThreadScrollButton.
+   */
   children?: ReactNode;
 }
 
@@ -101,7 +108,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   props: ChatProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, className, style} = props;
+  let {children, styles} = props;
   let domRef = useDOMRef(ref);
   let isFieldFocusedRef = useRef(false);
   let isChatFocusWithinRef = useRef(false);
@@ -118,6 +125,10 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
     // TODO: will need some kind of api to programatically set the focused item to
     // the newest item in the gridlist in the virtualizer case. this works for
     // non-virtualized for now though
+    // 'scrollend' does not compose across shadow DOM boundaries, but this listener is intentionally
+    // scoped to this specific scroll container element (not a global target), so shadow root
+    // propagation does not apply here.
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     el.addEventListener(
       'scrollend',
       () => {
@@ -180,7 +191,14 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
     <Provider
       values={[
         [InternalChatContext, {announceItem, setIsNearBottom, setScrollElement}],
-        [ThreadScrollButtonContext, {isNearBottom, scrollToBottom}],
+        [
+          ThreadScrollButtonContext,
+          {
+            isNearBottom,
+            scrollToBottom,
+            'aria-label': stringFormatter.format('chat.scrollToBottom')
+          }
+        ],
         [
           PromptFocusContext,
           {
@@ -190,24 +208,28 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
           }
         ]
       ]}>
-      <div ref={domRef} className={className} style={style} {...focusWithinProps}>
+      <div ref={domRef} className={styles} {...focusWithinProps}>
         {children}
       </div>
     </Provider>
   );
 });
 
-// TODO: update the items/className/children/etc type to reflect a thread specific classname once we finalize API
 export interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
-  'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby' | 'className'
-> {}
+  'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby'
+> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
   let {
     items,
     children,
-    className,
+    styles,
     UNSTABLE_focusOnEntry,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
@@ -267,7 +289,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
         boxSizing: 'border-box',
         minWidth: 0
       }}
-      className={className}>
+      className={styles}>
       {children}
     </GridList>
   );
@@ -280,7 +302,7 @@ export interface ThreadScrollButtonProps {
 // TODO: wrapper so we can do the "if isNearBottom then hide" logic, could do this via inline styles perhaps
 // and ditch the wrapper?
 export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
-  let {isNearBottom, scrollToBottom} = useContext(ThreadScrollButtonContext);
+  let {isNearBottom, scrollToBottom, ...buttonProps} = useContext(ThreadScrollButtonContext);
   let ref = useRef<HTMLDivElement>(null);
   let isVisible = !isNearBottom;
   let isExiting = useExitAnimation(ref, isVisible);
@@ -291,7 +313,7 @@ export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
 
   return (
     <ButtonContext.Provider
-      value={{slots: {[DEFAULT_SLOT]: {}, scroll: {onPress: scrollToBottom}}}}>
+      value={{slots: {[DEFAULT_SLOT]: {}, scroll: {onPress: scrollToBottom, ...buttonProps}}}}>
       <ThreadScrollButtonInner domRef={ref} isExiting={isExiting}>
         {children}
       </ThreadScrollButtonInner>
@@ -314,11 +336,19 @@ function ThreadScrollButtonInner({domRef, isExiting, children}: ThreadScrollButt
   );
 }
 
-// TODO: update the className type to reflect a thread specific classname once we finalize API
+const threadItemBase = style({
+  ...focusRing(),
+  borderRadius: 'default'
+});
+
 export interface ThreadItemProps extends Pick<
   GridListItemProps,
-  'className' | 'children' | 'textValue'
+  'children' | 'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'
 > {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
   /** Whether or not the item's content is currently being streamed in. */
   isStreaming?: boolean;
   /** Announce textValue on mount even when isStreaming is provided. */
@@ -326,7 +356,15 @@ export interface ThreadItemProps extends Pick<
 }
 
 export function ThreadItem(props: ThreadItemProps) {
-  let {className, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
+  let {
+    styles,
+    children,
+    textValue = ' ',
+    isStreaming,
+    shouldAnnounceOnMount,
+    focusMode,
+    allowsArrowNavigation
+  } = props;
   let {announceItem} = useContext(InternalChatContext);
 
   // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
@@ -354,7 +392,11 @@ export function ThreadItem(props: ThreadItemProps) {
   }, [isStreaming, isStreamingNow, textValue, announceItem]);
 
   return (
-    <GridListItem textValue={textValue} className={className}>
+    <GridListItem
+      textValue={textValue}
+      focusMode={focusMode}
+      allowsArrowNavigation={allowsArrowNavigation}
+      className={renderProps => mergeStyles(threadItemBase({...renderProps}), styles)}>
       {children}
     </GridListItem>
   );

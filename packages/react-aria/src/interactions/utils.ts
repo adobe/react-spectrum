@@ -124,8 +124,8 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
     target = target.parentElement;
   }
 
-  let window = getOwnerWindow(target);
-  let activeElement = window.document.activeElement as FocusableElement | null;
+  let ownerWindow = getOwnerWindow(target);
+  let activeElement = ownerWindow.document.activeElement as FocusableElement | null;
   if (!activeElement || activeElement === target) {
     return;
   }
@@ -170,17 +170,17 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
     }
   };
 
-  window.addEventListener('blur', onBlur, true);
-  window.addEventListener('focusout', onFocusOut, true);
-  window.addEventListener('focusin', onFocusIn, true);
-  window.addEventListener('focus', onFocus, true);
+  ownerWindow.addEventListener('blur', onBlur, true);
+  ownerWindow.addEventListener('focusout', onFocusOut, true);
+  ownerWindow.addEventListener('focusin', onFocusIn, true);
+  ownerWindow.addEventListener('focus', onFocus, true);
 
   let cleanup = () => {
     cancelAnimationFrame(raf);
-    window.removeEventListener('blur', onBlur, true);
-    window.removeEventListener('focusout', onFocusOut, true);
-    window.removeEventListener('focusin', onFocusIn, true);
-    window.removeEventListener('focus', onFocus, true);
+    ownerWindow.removeEventListener('blur', onBlur, true);
+    ownerWindow.removeEventListener('focusout', onFocusOut, true);
+    ownerWindow.removeEventListener('focusin', onFocusIn, true);
+    ownerWindow.removeEventListener('focus', onFocus, true);
     ignoreFocusEvent = false;
     isRefocusing = false;
   };

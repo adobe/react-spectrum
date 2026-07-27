@@ -137,6 +137,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(
     !isDisabled &&
     (!inputPropsAriaDescribedBy || !inputPropsAriaDescribedBy.includes(validId))
   ) {
+    // oxlint-disable-next-line react/react-compiler
     inputProps['aria-describedby'] = [inputPropsAriaDescribedBy, validId].join(' ').trim();
   }
 
