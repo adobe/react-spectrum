@@ -18,20 +18,14 @@ import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
-import {Rect, RectCorner} from './Rect';
-import {ScrollAnchorTracker} from './ScrollAnchor';
+import {Rect} from './Rect';
+import {ScrollAnchor, ScrollAnchorTracker} from './ScrollAnchor';
 import {Size} from './Size';
 
 interface VirtualizerOptions<T extends object, V> {
   delegate: VirtualizerDelegate<T, V>;
   collection: Collection<T>;
   layout: Layout<T>;
-}
-
-interface ScrollAnchor {
-  key: Key;
-  corner: RectCorner;
-  offset: number;
 }
 
 /**

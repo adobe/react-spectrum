@@ -49,7 +49,6 @@
     "@internationalized/number": "^3.6.7",
     "@react-aria/utils": "^3.8.0",
     "@react-spectrum/s2": "1.5.1",
-    "@react-stately/virtualizer": "^4.5.1",
     "@react-types/shared": "^3.36.0",
     "react-aria": "3.50.0",
     "react-aria-components": "1.19.0",

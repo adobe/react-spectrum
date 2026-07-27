@@ -19,9 +19,14 @@ import {
   Node,
   Orientation
 } from '@react-types/shared';
-
 import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
-import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {
+  InvalidationContext,
+  Layout,
+  LayoutInfo,
+  Rect,
+  Size
+} from 'react-stately/useVirtualizerState';
 
 const isLoaderAnchorable = (layoutInfo: LayoutInfo): boolean => layoutInfo.type !== 'loader';
 

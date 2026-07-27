@@ -853,8 +853,8 @@ export const GridListLoadMoreItem = createLeafComponent(
 
     let sentinelRef = useRef(null);
     let memoedLoadMoreProps = useMemo(
-      () => ({onLoadMore, collection: state?.collection, scrollOffset}),
-      [onLoadMore, scrollOffset, state?.collection]
+      () => ({onLoadMore, collection: state?.collection, sentinelRef, scrollOffset}),
+      [onLoadMore, scrollOffset, sentinelRef, state?.collection]
     );
     useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 

@@ -14,6 +14,7 @@ import {InvalidationContext} from './types';
 import {ItemDropTarget, Key, LayoutDelegate, Node} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
+import {ScrollAnchorInfo} from './ScrollAnchor';
 import {Size} from './Size';
 import {Virtualizer} from './Virtualizer';
 
@@ -107,18 +108,4 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   getVisibleRect(): Rect {
     return this.virtualizer!.visibleRect;
   }
-}
-
-interface ScrollAnchorInfo {
-  /** Which edge of the content the viewport should stay anchored to. */
-  edge: 'start' | 'end';
-  /** Which axis `edge` refers to — 'y' for vertical lists, 'x' for horizontal. */
-  axis: 'x' | 'y';
-  /** Distance (px) from `edge` within which the viewport is considered "following" it. */
-  threshold: number;
-  /**
-   * Optional classifier excluding structural/ephemeral layout infos (e.g. loaders) from being
-   * selected as the anchor. Defaults to allowing any layoutInfo.
-   */
-  isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
 }

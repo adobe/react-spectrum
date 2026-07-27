@@ -45,17 +45,18 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
     }
   }, [virtualizer, key, ref]);
 
+  let updateSizeEvent = useEffectEvent(updateSize);
+
   useLayoutEffect(() => {
     if (layoutInfo?.estimatedSize) {
-      updateSize();
+      updateSizeEvent();
     }
-  }, [layoutInfo?.estimatedSize, updateSize]);
+  }, [layoutInfo?.estimatedSize]);
 
   // TODO: Consider using a MutationObserver in addition to ResizeObserver to detect
   // when inner DOM structure changes cause an item's height to change.
   // The current ResizeObserver only observes direct children,
   // so mutations deeper in the tree won't trigger a remeasure, leading to stale cached heights and overlapping items.
-  let updateSizeEvent = useEffectEvent(updateSize);
   // useResizeObserver observes one element via ref, but the wrapper height is fixed by layout
   // and won't change when content grows. Observe direct children instead, then remeasure the
   // wrapper in updateSize.
@@ -69,7 +70,10 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
       return;
     }
 
-    let resizeObserver = new ResizeObserver(() => {
+    let resizeObserver = new ResizeObserver(entries => {
+      if (!entries.length) {
+        return;
+      }
       updateSizeEvent();
     });
 
