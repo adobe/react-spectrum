@@ -38,6 +38,13 @@ function Example(props) {
 
 function StatefulExample({defaultIsOpen, onClose, ...props}) {
   let [isOpen, setIsOpen] = useState(defaultIsOpen);
+  // Unmount on close the way a real consumer does. Example renders its node
+  // unconditionally, so leaving it mounted would keep both the element and the
+  // overlay's CloseWatcher alive and make the nested-dismiss assertions
+  // unobservable.
+  if (!isOpen) {
+    return null;
+  }
   return (
     <Example
       {...props}
