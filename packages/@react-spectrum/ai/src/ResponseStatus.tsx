@@ -414,24 +414,25 @@ function DetailTrigger(props: DetailTriggerProps) {
 }
 
 export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
-  /** Allows detail content to render but prevents the row from being collapsible. */
-  isDetailNotCollapsible?: boolean;
   /**
    * The label describing the step.
    */
   children: ReactNode;
-  /**
-   * An icon shown at the leading edge of the row. If omitted, a checkmark is rendered by default.
-   */
-  icon?: ReactNode;
-  /**
-   * Additional detail revealed when the step is expanded, such as tool call input or output.
-   * If omitted, the row is static and cannot be expanded.
-   */
   detail?: ReactNode;
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
+  /**
+   * An icon shown at the leading edge of the row. If omitted, a checkmark is rendered by default.
+   */
+  icon?: ReactNode;
+  /** Allows detail content to render but prevents the row from being collapsible. */
+  isAlwaysOpen?: boolean;
+  /**
+   * Additional detail revealed when the step is expanded, such as tool call input or output.
+   * If omitted, the row is static and cannot be expanded.
+   */
+
   styles?: StyleString;
 }
 
@@ -486,7 +487,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   ref: DOMRef<HTMLLIElement>
 ) {
   let {
-    isDetailNotCollapsible,
+    isAlwaysOpen,
     detail,
     icon = <CheckmarkCircle aria-hidden="true" />,
     children,
@@ -505,7 +506,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
         </Provider>
         <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
-      {hasDetail && !isDetailNotCollapsible ? (
+      {hasDetail && !isAlwaysOpen ? (
         <RACDisclosure>
           <DetailTrigger>{children}</DetailTrigger>
           <RACDisclosurePanel className={mergeStyles(panelStyles, executionTraceDetailPanelStyles)}>
@@ -515,7 +516,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
       ) : (
         <div className={executionTraceWithoutDisclosureStyles}>
           <span>{children}</span>
-          {hasDetail && isDetailNotCollapsible ? <div>{detail}</div> : null}
+          {hasDetail && isAlwaysOpen ? <div>{detail}</div> : null}
         </div>
       )}
     </li>

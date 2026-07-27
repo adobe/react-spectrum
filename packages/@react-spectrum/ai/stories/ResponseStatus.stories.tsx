@@ -109,15 +109,14 @@ export const WithExecutionTrace: Story = {
           <ExecutionTrace>
             {/** Rendered detail that doesn't offer user the option to collapse. */}
             <ExecutionTraceItem
-              isDetailNotCollapsible
+              detail="The user wants to 'parse the data' with their existing audiences. This is a bit vague - they want to create a new audience based on/combining their existing audiences. Let me search for their existing audiences first to see what we have to work with, then we can brainstorm something creative."
               icon={<MagicWand />}
-              detail="The user wants to 'parse the data' with their existing audiences. This is a bit vague - they want to create a new audience based on/combining their existing audiences. Let me search for their existing audiences first to see what we have to work with, then we can brainstorm something creative.">
+              isAlwaysOpen>
               Thought
             </ExecutionTraceItem>
 
             {/** Custom icon and text, complex detail content. */}
             <ExecutionTraceItem
-              icon={<Plugin />}
               detail={
                 <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
                   <div>
@@ -131,7 +130,8 @@ export const WithExecutionTrace: Story = {
                     </div>
                   </div>
                 </div>
-              }>
+              }
+              icon={<Plugin />}>
               Loaded skill Operational Insights
             </ExecutionTraceItem>
 
@@ -142,7 +142,6 @@ export const WithExecutionTrace: Story = {
 
             {/** Custom icon and text, complex detail content and error. */}
             <ExecutionTraceItem
-              icon={<AlertTriangle />}
               detail={
                 <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
                   <div>
@@ -184,7 +183,8 @@ export const WithExecutionTrace: Story = {
                     </InlineAlert>
                   </div>
                 </div>
-              }>
+              }
+              icon={<AlertTriangle />}>
               Attempted running SQL – Querying top 10 largest audiences.
             </ExecutionTraceItem>
 
