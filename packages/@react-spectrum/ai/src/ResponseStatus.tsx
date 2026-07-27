@@ -185,7 +185,7 @@ const buttonStyles = style({
   disableTapHighlight: true
 });
 
-const chevronStyles = style({
+const chevronStyles = {
   rotate: {
     isRTL: 180,
     isExpanded: 90
@@ -196,7 +196,7 @@ const chevronStyles = style({
     value: 'currentColor'
   },
   flexShrink: 0
-});
+} as const;
 
 const progressCircleStyles = style({
   width: 18,
@@ -263,7 +263,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
       )}
       {props.children}
       {isInteractive ? (
-        <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
+        <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
           <Chevron size="M" />
         </CenterBaseline>
       ) : null}
@@ -386,13 +386,9 @@ const detailTriggerStyles = style({
 });
 
 const detailTriggerChevronStyles = style({
+  ...chevronStyles,
   display: 'inline-flex',
-  marginStart: 8,
-  rotate: {
-    isRTL: 180,
-    isExpanded: 90
-  },
-  transition: 'default'
+  marginStart: 8
 });
 
 function DetailTrigger(props: DetailTriggerProps) {
