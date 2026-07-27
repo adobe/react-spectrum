@@ -11,13 +11,42 @@
  */
 
 import {getChildNodes, getFirstItem} from 'react-stately/private/collections/getChildNodes';
-import {GridKeyboardDelegate} from '../grid/GridKeyboardDelegate';
+import {GridKeyboardDelegate, GridKeyboardDelegateOptions} from '../grid/GridKeyboardDelegate';
 import {ITableCollection} from 'react-stately/private/table/TableCollection';
 import {Key, Node} from '@react-types/shared';
 
+export interface TableKeyboardDelegateOptions<T> extends GridKeyboardDelegateOptions<
+  ITableCollection<T>
+> {
+  /**
+   * Whether the first row or the first column header should be focused when the user tabs into the
+   * table.
+   *
+   * @default 'row'
+   */
+  initialFocus?: 'row' | 'columnheader';
+}
+
 export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableCollection<T>> {
+  private initialFocus: 'row' | 'columnheader';
+
+  constructor(options: TableKeyboardDelegateOptions<T>) {
+    super(options);
+    this.initialFocus = options.initialFocus ?? 'row';
+  }
+
   protected isCell(node: Node<T>): boolean {
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
+  }
+
+  getFirstKey(fromKey?: Key, global?: boolean): Key | null {
+    if (fromKey == null && this.initialFocus === 'columnheader') {
+      let firstColumn = this.collection.columns[0];
+      if (firstColumn) {
+        return firstColumn.key;
+      }
+    }
+    return super.getFirstKey(fromKey, global);
   }
 
   getKeyBelow(key: Key, options?: {includeDisabled?: boolean}): Key | null {

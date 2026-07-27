@@ -55,6 +55,12 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    */
   focusMode?: 'row' | 'cell';
   /**
+   * Which item in the grid should be focused when the user tabs into it for the first time.
+   *
+   * @default 'row'
+   */
+  initialFocus?: 'row' | 'columnheader';
+  /**
    * A function that returns the text that should be announced by assistive technology when a row is
    * added or removed from selection.
    *
@@ -108,6 +114,7 @@ export function useGrid<T>(
     disallowTypeAhead,
     keyboardDelegate,
     focusMode,
+    initialFocus,
     scrollRef,
     getRowText,
     onRowAction,
@@ -157,7 +164,8 @@ export function useGrid<T>(
     isVirtualized,
     scrollRef,
     disallowTypeAhead,
-    escapeKeyBehavior
+    escapeKeyBehavior,
+    UNSTABLE_ignoreSelectionOnEntry: initialFocus === 'columnheader'
   });
 
   let id = useId(props.id);

@@ -732,6 +732,28 @@ describe('Table', () => {
     expect(column).toHaveClass('focus');
   });
 
+  it('should focus the first column header when tabbing in with initialFocus="columnheader"', async () => {
+    let {getAllByRole} = renderTable({tableProps: {initialFocus: 'columnheader'}});
+
+    await user.tab();
+    expect(document.activeElement).toBe(getAllByRole('columnheader')[0]);
+  });
+
+  it('should focus the first column header when tabbing in with initialFocus="columnheader" even if a row is already selected', async () => {
+    let {getAllByRole} = renderTable({
+      tableProps: {
+        initialFocus: 'columnheader',
+        selectionMode: 'single',
+        defaultSelectedKeys: ['1']
+      }
+    });
+
+    expect(getAllByRole('row')[1]).toHaveAttribute('aria-selected', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(getAllByRole('columnheader')[0]);
+  });
+
   it('should support press state', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},

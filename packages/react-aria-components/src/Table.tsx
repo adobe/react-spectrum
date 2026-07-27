@@ -614,6 +614,13 @@ export interface TableProps
    * the Table.
    */
   dragAndDropHooks?: DragAndDropHooks;
+  /**
+   * Whether the first row or the first column header should be focused when the user tabs into the
+   * table.
+   *
+   * @default 'row'
+   */
+  initialFocus?: 'row' | 'columnheader';
 }
 
 /**
