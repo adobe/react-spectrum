@@ -40,10 +40,6 @@ const meta: Meta<typeof ResponseStatus> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', events),
-    density: {
-      control: 'radio',
-      options: ['compact', 'regular', 'spacious']
-    },
     status: {
       control: 'radio',
       options: ['loading', 'failed', 'success']
