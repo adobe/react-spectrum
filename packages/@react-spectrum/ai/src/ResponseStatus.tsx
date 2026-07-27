@@ -264,7 +264,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
       {props.children}
       {isInteractive ? (
         <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
-          <ChevronRight styles={iconStyle({size: 'M'})} />
+          <Chevron size="M" />
         </CenterBaseline>
       ) : null}
     </>
@@ -387,7 +387,7 @@ const detailTriggerStyles = style({
 
 const detailTriggerChevronStyles = style({
   display: 'inline-flex',
-  marginStart: 4,
+  marginStart: 8,
   rotate: {
     isRTL: 180,
     isExpanded: 90
@@ -407,7 +407,7 @@ function DetailTrigger(props: DetailTriggerProps) {
       slot="trigger">
       {children}
       <CenterBaseline styles={detailTriggerChevronStyles({isExpanded, isRTL})}>
-        <ChevronRight styles={iconStyle({size: 'S'})} />
+        <Chevron size="M" />
       </CenterBaseline>
     </Button>
   );
