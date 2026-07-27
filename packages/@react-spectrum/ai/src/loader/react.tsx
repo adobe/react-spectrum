@@ -139,7 +139,7 @@ function keyframesFor(cells: Cell[]): string {
   return css;
 }
 
-interface PixelLoaderProps {
+export interface PixelLoaderProps {
   /**
    * Size of the loader in pixels. Multiples of 7 render evenly on the pixel grid.
    */

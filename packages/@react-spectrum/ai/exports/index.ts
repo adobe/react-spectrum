@@ -68,3 +68,4 @@ export type {
 } from '../src/Chat';
 export type {TokenFieldValueOptions} from 'react-aria-components/TokenField';
 export type {UserMessageProps} from '../src/UserMessage';
+export type {PixelLoaderProps} from '../src/loader/react';
