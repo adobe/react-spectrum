@@ -34,7 +34,8 @@ export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>];
   /**
-   * An explicit id to use for the select all checkbox so it remains stable across renders and refreshes.
+   * An explicit id to use for the select all checkbox so it remains stable across renders and
+   * refreshes.
    */
   rowHeaderCustomColumnId?: string;
   /** A list of row keys to disable. */
@@ -113,7 +114,8 @@ export interface TableStateProps<T> extends MultipleSelectionStateProps, Expanda
   /** @private - Do not use unless you know what you're doing. */
   UNSAFE_selectionState?: MultipleSelectionState;
   /**
-   * An explicit id to use for the select all checkbox so it remains stable across renders and refreshes.
+   * An explicit id to use for the select all checkbox so it remains stable across renders and
+   * refreshes.
    */
   rowHeaderCustomColumnId?: string;
   /** The id of the column that displays hierarchical data. */
@@ -143,7 +145,13 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-    [props.children, showSelectionCheckboxes, selectionMode, showDragButtons, props.rowHeaderCustomColumnId]
+    [
+      props.children,
+      showSelectionCheckboxes,
+      selectionMode,
+      showDragButtons,
+      props.rowHeaderCustomColumnId
+    ]
   );
 
   let collection = useCollection<T, ITableCollection<T>>(
