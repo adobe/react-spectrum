@@ -143,15 +143,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
       columns: [],
       rowHeaderCustomColumnId: props.rowHeaderCustomColumnId
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-    [
-      props.children,
-      showSelectionCheckboxes,
-      selectionMode,
-      showDragButtons,
-      props.rowHeaderCustomColumnId
-    ]
+    [props.children, showSelectionCheckboxes, selectionMode, showDragButtons, props.rowHeaderCustomColumnId]
   );
 
   let collection = useCollection<T, ITableCollection<T>>(
