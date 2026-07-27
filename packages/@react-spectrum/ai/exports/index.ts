@@ -17,7 +17,13 @@ export {
   PromptToken,
   PromptFieldVoiceButton
 } from '../src/PromptField';
-export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
+export {
+  ExecutionTrace,
+  ExecutionTraceItem,
+  ResponseStatus,
+  ResponseStatusTitle,
+  ResponseStatusPanel
+} from '../src/ResponseStatus';
 export {
   Chat,
   Thread,
@@ -46,6 +52,8 @@ export type {MessageFeedbackProps} from '../src/MessageFeedback';
 export type {MessageSourceProps, SourceListProps, SourceListItemProps} from '../src/MessageSource';
 export type {MessageSuggestionProps, MessageSuggestionListProps} from '../src/MessageSuggestion';
 export type {
+  ExecutionTraceProps,
+  ExecutionTraceItemProps,
   ResponseStatusProps,
   ResponseStatusTitleProps,
   ResponseStatusPanelProps
