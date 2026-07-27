@@ -57,12 +57,6 @@ export interface ResponseStatusProps extends Omit<
   'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
 > {
   /**
-   * The amount of space between stacked response statuses.
-   *
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular' | 'spacious';
-  /**
    * The current status of the response.
    *
    * @default 'loading'
@@ -80,7 +74,6 @@ export interface ResponseStatusProps extends Omit<
 }
 
 const ResponseStatusContext = createContext<{
-  density?: 'compact' | 'regular' | 'spacious';
   status: 'loading' | 'failed' | 'success';
   hasPanelContent: boolean;
   registerPanel: (mounted: boolean) => void;
@@ -104,7 +97,7 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   props: ResponseStatusProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {density = 'regular', status = 'loading', styles} = props;
+  let {status = 'loading', styles} = props;
   let domRef = useDOMRef(ref);
   let [hasPanelContent, setHasPanelContent] = useState(false);
   let registerPanel = useCallback((mounted: boolean) => setHasPanelContent(mounted), []);
@@ -116,7 +109,7 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   }
 
   return (
-    <Provider values={[[ResponseStatusContext, {density, status, hasPanelContent, registerPanel}]]}>
+    <Provider values={[[ResponseStatusContext, {status, hasPanelContent, registerPanel}]]}>
       <RACDisclosure
         {...props}
         {...disclosureProps}
@@ -169,13 +162,7 @@ const buttonStyles = style({
   alignItems: 'center',
   paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
   gap: 'calc(self(minHeight) * 3/8 - 1px)',
-  minHeight: {
-    density: {
-      compact: 24,
-      regular: 32,
-      spacious: 40
-    }
-  },
+  minHeight: 32,
   width: 'full',
   backgroundColor: 'transparent',
   transition: 'default',
@@ -185,7 +172,7 @@ const buttonStyles = style({
   disableTapHighlight: true
 });
 
-const chevronStyles = style({
+const chevronStyles = {
   rotate: {
     isRTL: 180,
     isExpanded: 90
@@ -196,7 +183,7 @@ const chevronStyles = style({
     value: 'currentColor'
   },
   flexShrink: 0
-});
+} as const;
 
 const progressCircleStyles = style({
   width: 18,
@@ -217,7 +204,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {density, status, hasPanelContent} = useContext(ResponseStatusContext)!;
+  let {status, hasPanelContent} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
@@ -263,7 +250,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
       )}
       {props.children}
       {isInteractive ? (
-        <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
+        <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
           <Chevron size="M" />
         </CenterBaseline>
       ) : null}
@@ -274,7 +261,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
       <Button
         className={renderProps =>
-          buttonStyles({...renderProps, density, isLoading, isOnlyText: !isInteractive})
+          buttonStyles({...renderProps, isLoading, isOnlyText: !isInteractive})
         }
         slot={isInteractive ? 'trigger' : undefined}>
         {rowContent}
@@ -386,13 +373,9 @@ const detailTriggerStyles = style({
 });
 
 const detailTriggerChevronStyles = style({
+  ...chevronStyles,
   display: 'inline-flex',
-  marginStart: 8,
-  rotate: {
-    isRTL: 180,
-    isExpanded: 90
-  },
-  transition: 'default'
+  marginStart: 8
 });
 
 function DetailTrigger(props: DetailTriggerProps) {
