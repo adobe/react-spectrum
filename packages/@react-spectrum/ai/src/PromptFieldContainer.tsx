@@ -160,6 +160,7 @@ const containerBackground = css(`
 
   &[data-state=generating] {
     box-shadow:
+      var(--prominent-outline-glow)
       inset 0 0 0 1px var(--border-color),
       inset 0 6px 15px 0 var(--inset-shadow-color),
       inset 0 -32px 100px -50px ${token('container.color.inner-shadow.generating')},
