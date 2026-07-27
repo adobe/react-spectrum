@@ -1260,19 +1260,14 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListSectionProps<T>
-  extends SectionProps<T>, DOMRenderProps<'div', undefined> {}
+export interface TreeSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined> {}
 
 /**
  * A TreeSection represents a section within a Tree.
  */
 export const TreeSection = /*#__PURE__*/ createBranchComponent(
   SectionNode,
-  <T extends any>(
-    props: GridListSectionProps<T>,
-    ref: ForwardedRef<HTMLDivElement>,
-    item: Node<T>
-  ) => {
+  <T extends any>(props: TreeSectionProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
     let state = useContext(TreeStateContext)!;
     let {CollectionBranch} = useContext(CollectionRendererContext);
     let headingRef = useRef(null);
@@ -1309,7 +1304,9 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(
   }
 );
 
-export const TreeHeader = (props: GridListHeaderProps): ReactNode => {
+export interface TreeHeaderProps extends GridListHeaderProps {}
+
+export const TreeHeader = (props: TreeHeaderProps): ReactNode => {
   return (
     <GridListHeader className="react-aria-TreeHeader" {...props}>
       {props.children}

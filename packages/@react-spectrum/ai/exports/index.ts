@@ -14,7 +14,8 @@ export {
   InsertTokenMenuItem,
   PromptFieldAttachmentList,
   PromptFieldToolbar,
-  PromptToken
+  PromptToken,
+  PromptFieldVoiceButton
 } from '../src/PromptField';
 export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
 export {Chat, Thread, ThreadItem, ThreadScrollButton, PromptFocusContext} from '../src/Chat';
@@ -31,7 +32,8 @@ export type {
   PromptFieldAttachmentListProps,
   PromptTokenFieldPopoverProps,
   PromptFieldToolbarProps,
-  InsertMenuItemProps
+  InsertMenuItemProps,
+  PromptFieldVoiceButtonProps
 } from '../src/PromptField';
 export type {MessageFeedbackProps} from '../src/MessageFeedback';
 export type {MessageSourceProps, SourceListProps, SourceListItemProps} from '../src/MessageSource';
