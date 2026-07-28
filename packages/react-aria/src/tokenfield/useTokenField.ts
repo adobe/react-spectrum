@@ -56,6 +56,10 @@ export interface AriaTokenFieldProps<T extends TokenFieldValue = TokenFieldValue
   isDisabled?: boolean;
   /** A function that is called when the user presses the Enter key. */
   onSubmit?: () => void;
+  /** Handler that is called when a key is pressed. */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  /** Handler that is called when a key is released. */
+  onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   /**
    * Handler that is called when the user copies text. See
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
@@ -533,6 +537,8 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
     }
   };
 
+  // TODO: user provided onKeyDown currently relies on user provided preventDefault to stop submit
+  // maybe can have them specify a format like shortcuts and merge into above?
   let {keyboardProps} = useKeyboard({
     isDisabled: isDisabled || isReadOnly,
     onKeyDown: props.onKeyDown,

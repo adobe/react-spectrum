@@ -160,6 +160,7 @@ const containerBackground = css(`
 
   &[data-state=generating] {
     box-shadow:
+      var(--prominent-outline-glow)
       inset 0 0 0 1px var(--border-color),
       inset 0 6px 15px 0 var(--inset-shadow-color),
       inset 0 -32px 100px -50px ${token('container.color.inner-shadow.generating')},
@@ -255,12 +256,13 @@ interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
   variant: 'balanced' | 'prominent' | 'subtle';
   isGenerating: boolean;
   isDropTarget: boolean;
+  brandColor?: string;
   styles?: StyleString;
   inputRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export function PromptFieldContainer(props: PropFieldContainerProps) {
-  let {variant, isGenerating, isDropTarget, styles, inputRef, ...otherProps} = props;
+  let {variant, isGenerating, isDropTarget, styles, inputRef, brandColor, ...otherProps} = props;
   let [isFocused, setFocused] = useState(false);
 
   return (
@@ -271,6 +273,11 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
       className={outerBorder}
+      style={{
+        ...props.style,
+        // @ts-ignore
+        '--brand': brandColor
+      }}
       onFocus={e => {
         if (e.isTrusted) {
           setFocused(true);

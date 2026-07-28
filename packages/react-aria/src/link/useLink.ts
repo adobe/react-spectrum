@@ -59,6 +59,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement 
     onPress,
     onPressStart,
     onPressEnd,
+    onPressChange,
     onClick,
     isDisabled,
     ...otherProps
@@ -76,6 +77,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement 
     onPress,
     onPressStart,
     onPressEnd,
+    onPressChange,
     onClick,
     isDisabled,
     ref

@@ -84,6 +84,50 @@ export function getEventTarget<T extends Event | SyntheticEvent>(event: T): Even
 }
 
 /**
+ * Returns the set of event targets a listener must be attached to in order to
+ * globally observe an event.
+ *
+ * @param from - The target element to start from.
+ * @param to - The element to stop at when bubbling. @default getOwnerWindow(from)
+ *   `to` is generally going to be either `document` or `window`, but
+ *   it can be any intermediate node.
+ * @returns [global, ...shadowRoots]
+ */
+export function getPropagationTargets(
+  from: Element | null | undefined,
+  to?: Document | Window | Element | null
+): EventTarget[] {
+  // If `to` is coming from a ref, its type technically allows `null`.
+  // In practice, this function will generally be called from within a useEffect.
+  // If the ref has not resolved by that point, then a coding error has been made.
+  // Better to return an empty array than `[window]`, which may appear to work
+  // in the light DOM, but fail in the shadow DOM.
+  if (to === null) {
+    return [];
+  }
+  to = to ?? getOwnerWindow(from);
+  let targets: EventTarget[] = [to];
+  if (!shadowDOM() || !from || from === to) {
+    return targets;
+  }
+
+  // The root `to` itself lives in. The event already reaches `to` once
+  // it is inside this root, so we must NOT collect this root or anything above
+  // it — only the shadow roots strictly between `refNode` and `to`.
+  // `window` has no getRootNode; its boundary is the document, which the walk
+  // reaches naturally (the document is not a ShadowRoot, so the loop exits).
+  let toRoot = 'getRootNode' in to ? to.getRootNode() : null;
+  let current: Node | null = from.getRootNode() ?? null;
+  while (isShadowRoot(current) && current !== toRoot) {
+    // order shouldn't matter
+    targets.push(current);
+    current = current.host.getRootNode();
+  }
+
+  return targets;
+}
+
+/**
  * ShadowDOM safe fast version of node.contains(document.activeElement).
  *
  * @param node

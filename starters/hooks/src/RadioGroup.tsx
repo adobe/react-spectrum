@@ -48,7 +48,7 @@ export function Radio(props: AriaRadioProps) {
   let state = React.useContext(RadioContext)!;
   let ref = useRef<HTMLInputElement>(null);
   /*- begin highlight -*/
-  let {inputProps, isSelected, isPressed, isDisabled} = useRadio(props, state, ref);
+  let {labelProps, inputProps, isSelected, isPressed, isDisabled} = useRadio(props, state, ref);
   /*- end highlight -*/
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || state.isReadOnly});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
@@ -60,7 +60,7 @@ export function Radio(props: AriaRadioProps) {
       data-disabled={isDisabled || undefined}>
       {/* The label wraps a visually hidden native radio input plus the styled indicator. */}
       <label
-        {...hoverProps}
+        {...mergeProps(labelProps, hoverProps)}
         className="react-aria-RadioButton"
         data-selected={isSelected || undefined}
         data-pressed={isPressed || undefined}

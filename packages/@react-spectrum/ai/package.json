@@ -47,6 +47,7 @@
   "dependencies": {
     "@internationalized/date": "^3.12.2",
     "@internationalized/number": "^3.6.7",
+    "@react-aria/utils": "^3.8.0",
     "@react-spectrum/s2": "1.5.1",
     "@react-types/shared": "^3.36.0",
     "react-aria": "3.50.0",

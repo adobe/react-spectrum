@@ -2,5 +2,17 @@
   "chat.newMessage": "Mensaje nuevo",
   "messagefeedback.thumbDown": "Respuesta incorrecta",
   "messagefeedback.thumbUp": "Respuesta correcta",
-  "responsestatus.loading": "Cargando"
+  "responsestatus.loading": "Cargando",
+  "chat.scrollToBottom": "Scroll to bottom",
+  "voicebutton.stopListening": "Stop recording",
+  "voicebutton.startListening": "Start recording",
+  "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
+  "promptfield.aiDisclaimer": "Las respuestas se generan mediante IA y pueden ser imprecisas. Compruebe antes de utilizar.",
+  "promptfield.aiUserGuidlines": "Directrices de usuario de AI",
+  "promptfield.attachments": "Attachments",
+  "promptfield.label": "Prompt",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
+  "promptfield.insertButton": "Add",
+  "promptfield.uploading": "Uploading"
 }
