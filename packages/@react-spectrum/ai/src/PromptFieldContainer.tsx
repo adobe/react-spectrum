@@ -2,6 +2,7 @@ import {
   brand,
   defaultBrand,
   defineProperties,
+  keyframes,
   outerBorderStops,
   stops,
   token
@@ -29,58 +30,38 @@ defineProperties(`
   @property --con-hue-opacity {
     syntax: '<percentage>';
     initial-value: 0%;
-    inherits: false;
+    inherits: true;
   }
 
   @property --bg-stop-1 {
     syntax: '<color>';
     initial-value: #0000;
-    inherits: false;
+    inherits: true;
   }
 
   @property --bg-stop-2 {
     syntax: '<color>';
     initial-value: #0000;
-    inherits: false;  
+    inherits: true;  
   }
 
   @property --bg-stop-3 {
     syntax: '<color>';
     initial-value: #0000;
-    inherits: false;
+    inherits: true;
   }
 
   @property --bg-stop-4 {
     syntax: '<color>';
     initial-value: #0000;
-    inherits: false;
+    inherits: true;
   }
 `);
 
 const containerBackground = css(`
   transition: --con-hue-opacity ${STATE_TRANSITION}, --bg-stop-1 ${STATE_TRANSITION}, --bg-stop-2 ${STATE_TRANSITION}, --bg-stop-3 ${STATE_TRANSITION}, --bg-stop-4 ${STATE_TRANSITION}, box-shadow ${STATE_TRANSITION};
-  
+
   background:
-    linear-gradient(
-      to bottom,
-      light-dark(rgb(255 255 255 / 75%), rgb(0 0 0 / 40%)) 0% 37%,
-      light-dark(rgb(255 255 255 / 15%), rgb(0 0 0 / 12%)) 83% 100%
-    ),
-    radial-gradient(
-      50% 50% at -20% 100%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-3')} r g b / var(--con-hue-opacity)),
-      transparent
-    ),
-    radial-gradient(
-      70% 60% at 5% 80%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-2')} r g b / var(--con-hue-opacity)),
-      transparent
-    ),
-    radial-gradient(
-      70% 50% at 40% 80%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-1')} r g b / var(--con-hue-opacity)),
-      transparent
-    ),
     radial-gradient(
       circle at right bottom,
       var(--bg-stop-1) 0%,
@@ -92,24 +73,23 @@ const containerBackground = css(`
   --border-color: ${token(`container.border.default`)};
   --inset-shadow-color: ${color('transparent-white-50')};
   --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
-  --prominent-outline-glow: ;
+  --prominent-outer-glow: ;
+  --prominent-inset-glow: ;
 
+  /* Only the non-inset (outward) shadows live here: the inset shadows are painted
+     on top of the background layers by a separate element (insetShadow below), since
+     this element's overflow:clip must stay on this box to clip the outward shadows. */
   box-shadow:
-    var(--prominent-outline-glow)
-    inset 0 0 0 1px var(--border-color),
-    inset 0 6px 15px 0 var(--inset-shadow-color),
-    inset 0 0 0 0 transparent, /* placeholder for generating state so transition is smooth */
-    inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
-    inset 0 24px 32px 0 ${color('transparent-white-50')},
+    var(--prominent-outer-glow)
     0 -3px 10px 1px var(--drop-shadow-color);
 
   &[data-variant=prominent] {
     /* trailing comma is intentional so it can be interpolated above */
-    --prominent-outline-glow:
-      0 20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},
-      inset 0 -20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
+    --prominent-outer-glow: 0 20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
+    --prominent-inset-glow: inset 0 -20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
     &[data-focused] {
-      --prominent-outline-glow: 0 20px 20px -24px transparent, inset 0 -20px 20px -24px transparent,;
+      --prominent-outer-glow: 0 20px 20px -24px transparent,;
+      --prominent-inset-glow: inset 0 -20px 20px -24px transparent,;
     }
   }
 
@@ -160,12 +140,7 @@ const containerBackground = css(`
 
   &[data-state=generating] {
     box-shadow:
-      var(--prominent-outline-glow)
-      inset 0 0 0 1px var(--border-color),
-      inset 0 6px 15px 0 var(--inset-shadow-color),
-      inset 0 -32px 100px -50px ${token('container.color.inner-shadow.generating')},
-      inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
-      inset 0 24px 32px 0 ${color('transparent-white-50')},
+      var(--prominent-outer-glow)
       0 -3px 10px 1px var(--drop-shadow-color),
       0 6px 83px rgb(from ${token('outer-border.gradient.ob-spread-shadow.generating.stop-3')} r g b / var(--spread-shadow-opacity));
 
@@ -195,6 +170,82 @@ const containerBackground = css(`
         ${stops('generating', 'hover', 'subtle')}
       }
     }
+  }
+`);
+
+const insetShadow = css(`
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transition: box-shadow ${STATE_TRANSITION};
+
+  box-shadow:
+    var(--prominent-inset-glow)
+    inset 0 0 0 1px var(--border-color),
+    inset 0 6px 15px 0 var(--inset-shadow-color),
+    inset 0 0 0 0 transparent, /* placeholder for generating state so transition is smooth */
+    inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
+    inset 0 24px 32px 0 ${color('transparent-white-50')};
+
+  &[data-state=generating] {
+    box-shadow:
+      var(--prominent-inset-glow)
+      inset 0 0 0 1px var(--border-color),
+      inset 0 6px 15px 0 var(--inset-shadow-color),
+      inset 0 -32px 100px -50px ${token('container.color.inner-shadow.generating')},
+      inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
+      inset 0 24px 32px 0 ${color('transparent-white-50')};
+  }
+`);
+
+const containerHue = css(`
+  background:
+    radial-gradient(
+      50% 50% at -20% 100%,
+      rgb(from ${token('container.gradient.con-hue.generating.stop-3')} r g b / var(--con-hue-opacity)),
+      transparent
+    ),
+    radial-gradient(
+      70% 60% at 5% 80%,
+      rgb(from ${token('container.gradient.con-hue.generating.stop-2')} r g b / var(--con-hue-opacity)),
+      transparent
+    ),
+    radial-gradient(
+      70% 50% at 40% 80%,
+      rgb(from ${token('container.gradient.con-hue.generating.stop-1')} r g b / var(--con-hue-opacity)),
+      transparent
+    );
+`);
+
+const overlay = css(`
+  background: 
+    linear-gradient(
+      to bottom,
+      light-dark(rgb(255 255 255 / 75%), rgb(0 0 0 / 40%)) 0% 37%,
+      light-dark(rgb(255 255 255 / 15%), rgb(0 0 0 / 12%)) 83% 100%
+    );
+`);
+
+const animation = keyframes(`
+  0% {
+    transform: rotate(0rad) translate(0px, 0px) scale(1);
+  }
+
+  25% {
+    transform: rotate(0.122rad) translate(0px, 22px) scale(1.125);
+  }
+
+  50% {
+    transform: rotate(0rad) translate(0px, 44px) scale(1.25);
+  }
+
+  75% {
+    transform: rotate(-0.122rad) translate(0px, 22px) scale(1.125);
+  }
+
+  100% {
+    transform: rotate(0rad) translate(0px, 0px) scale(1);
   }
 `);
 
@@ -307,22 +358,43 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
           data-variant={variant}
           data-state={isGenerating ? 'generating' : 'idle'}
           className={
-            (props.className || '') +
             ' ' +
             containerBackground +
             mergeStyles(
               style({
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 16,
-                padding: 16,
-                cursor: 'text',
                 borderRadius: '[24px]',
-                position: 'relative'
+                position: 'relative',
+                overflow: 'clip'
               }),
               styles
             )
           }>
+          <div
+            className={
+              containerHue +
+              style({
+                pointerEvents: 'none',
+                position: 'absolute',
+                inset: 0,
+                top: '[-44px]',
+                bottom: '[-44px]'
+              })
+            }
+            style={{
+              animation: isGenerating ? `${animation} 2s infinite linear` : undefined
+            }}
+          />
+          <div
+            className={
+              overlay +
+              style({
+                pointerEvents: 'none',
+                position: 'absolute',
+                inset: 0
+              })
+            }
+          />
+          <div data-state={isGenerating ? 'generating' : 'idle'} className={insetShadow} />
           {isDropTarget && (
             <div
               className={style({
@@ -341,7 +413,19 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
               })}
             />
           )}
-          {props.children}
+          <div
+            className={
+              style({
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                padding: 16,
+                cursor: 'text'
+              }) + (props.className || '')
+            }>
+            {props.children}
+          </div>
         </div>
       )}
     </Group>
