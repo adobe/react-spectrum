@@ -256,12 +256,13 @@ interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
   variant: 'balanced' | 'prominent' | 'subtle';
   isGenerating: boolean;
   isDropTarget: boolean;
+  brandColor?: string;
   styles?: StyleString;
   inputRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export function PromptFieldContainer(props: PropFieldContainerProps) {
-  let {variant, isGenerating, isDropTarget, styles, inputRef, ...otherProps} = props;
+  let {variant, isGenerating, isDropTarget, styles, inputRef, brandColor, ...otherProps} = props;
   let [isFocused, setFocused] = useState(false);
 
   return (
@@ -272,6 +273,11 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
       className={outerBorder}
+      style={{
+        ...props.style,
+        // @ts-ignore
+        '--brand': brandColor
+      }}
       onFocus={e => {
         if (e.isTrusted) {
           setFocused(true);
