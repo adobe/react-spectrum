@@ -17,7 +17,7 @@ import docs from 'docs:@react-spectrum/s2';
 export const hideNav = true;
 export const section = 'Releases';
 export const tags = ['release', 'React Aria'];
-export const date = 'July 27, 2026';
+export const date = 'July 30, 2026';
 export const title = 'v1.21.0';
 export const description = 'This release adds three new components — PreviewTrigger, TokenField, and useContextMenu — along with keyboard shortcut support via useKeyboard and context menu support for MenuTrigger, plus numerous bug fixes across Table, ComboBox, DatePicker, and more.';
 export const isSubpage = true;
@@ -26,140 +26,76 @@ export const isSubpage = true;
 
 This release introduces [PreviewTrigger](../PreviewTrigger), a new component for showing a non-modal preview popover when hovering or focusing a link. It also adds [TokenField](../TokenField) to React Aria Components for building tag inputs, mention inputs, and AI prompt fields with inline tokens, and [useContextMenu](../useContextMenu), a new hook for native and keyboard-accessible context menus, which MenuTrigger can now use via `trigger="contextMenu"`. We've also added keyboard shortcut support through [useKeyboard](../useKeyboard), along with support for interactive components like textfields inside Table and GridList rows. As always, this release includes many bug fixes across Table, ComboBox, DatePicker, and other components — thanks to all our contributors!
 
-{/* Commits: 67 */}
 ## Changelog
 
 ### General Changes
-- Add dependency on `@internationalized/string` to react-aria-components so it installs correctly under strict package managers - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10226)
-
-{/* dropped: chore: Yarn upgrade [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9817) — internal tooling */}
-{/* dropped: chore: Format with oxfmt [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10030) — internal tooling */}
-{/* dropped: chore: Migrate from eslint to oxlint [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10049) — internal tooling */}
-{/* dropped: use caret ranges in individual packages - Devon Govett (no PR link available) — internal tooling */}
-{/* dropped: update yarn lock - Devon Govett (no PR link available) — internal tooling */}
-{/* dropped: chore: remove orphaned intl ts-ignore comments [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/10148) — internal tooling */}
-{/* dropped: chore: Expose keyboardNavigationBehavior="tab" in S2 [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10206) — follow-up refinement of [PR](https://github.com/adobe/react-spectrum/pull/10195) */}
-{/* dropped: chore: make sure Tree keyboard navigation docs example renders fully on small screens [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10214) — internal tooling */}
-{/* dropped: chore: fix React Aria home page "bring your styles" button in light mode [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10242) — internal tooling */}
-{/* dropped: docs: clean up launch CTAs [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10240) — internal tooling */}
-{/* dropped: chore: upgrade oxlint to 1.71.0 and enable react/react-compiler rule [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10203) — internal tooling */}
-{/* dropped: chore: Tw animate update [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10201) — internal tooling */}
-{/* dropped: Latest translations [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/10271) — internal tooling */}
-{/* dropped: fix: stale merge [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10282) — internal tooling */}
-{/* dropped: chore: Improve type detection and node contains logic for shadow dom [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10287) — internal tooling */}
-{/* dropped: chore: Remove old react-aria-components docs [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10311) — internal tooling */}
-{/* dropped: fix: run optimize-locales-plugin early in Vite [@wojtekmaj](https://github.com/wojtekmaj) - [PR](https://github.com/adobe/react-spectrum/pull/10304) — internal tooling */}
-{/* dropped: fix: ios platform user agents [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/10312) — internal tooling */}
-{/* dropped: chore: simplifying keyboard navigation docs copy [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10338) — follow-up refinement of [PR](https://github.com/adobe/react-spectrum/pull/10159) */}
-{/* dropped: chore: document useKeyboard shortcuts [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10192) — merged into above */}
-{/* dropped: docs: New hook docs follow-up fixes [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10355) — follow-up refinement of [PR](https://github.com/adobe/react-spectrum/pull/10153) */}
-{/* dropped: chore: update useKeyboard docs [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10346) — merged into above */}
-
+- Add new React Aria hooks documentation - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10153), [PR](https://github.com/adobe/react-spectrum/pull/10355) 
 ### Autocomplete
 - Add inline completions example to Autocomplete documentation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10205)
-
 ### Breadcrumbs
-- Avoid passing an empty string to the `href` attribute when it is undefined - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10286)
-
+- Prevent passing an empty string to the `href` attribute when undefined - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10286)
 ### Checkbox
-- Delegate label `keydown` handling to the native input for checkboxes so key events behave consistently - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9972)
-
+- Fix Enter key presses on Checkbox inputs so they no longer block native implicit form submission  - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9972)
 ### Collections
 - Add guide explaining how to update collection structure to documentation - [@patrickwehbe](https://github.com/patrickwehbe) - [PR](https://github.com/adobe/react-spectrum/pull/10232)
 - Support collections in React canary and Next.js 16's app router - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/10323)
-
 ### ComboBox
-- Document `defaultFilter`'s default contains filter behavior - [@patrickwehbe](https://github.com/patrickwehbe) - [PR](https://github.com/adobe/react-spectrum/pull/10222)
-- Accept a readonly array for controlled multiple ComboBox `value` - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/10290)
-
+- Document `defaultFilter`'s default `contains` filter behavior - [@patrickwehbe](https://github.com/patrickwehbe) - [PR](https://github.com/adobe/react-spectrum/pull/10222)
+- Accept a readonly array for controlled multiple ComboBox `value` - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/10290
 ### Date and Time
 - Export `DayOfWeek` type from `@internationalized/date` - [@patrickwehbe](https://github.com/patrickwehbe) - [PR](https://github.com/adobe/react-spectrum/pull/10234)
-- Clamp `Time` millisecond to a valid maximum of 999 - [@spokodev](https://github.com/spokodev) - [PR](https://github.com/adobe/react-spectrum/pull/10289)
+- Clamp milliseconds to a valid maximum of 999 - [@spokodev](https://github.com/spokodev) - [PR](https://github.com/adobe/react-spectrum/pull/10289)
 - Resolve locales with an explicit script to language-script strings - [@stas-m2muchcoffee](https://github.com/stas-m2muchcoffee) - [PR](https://github.com/adobe/react-spectrum/pull/10268)
-
 ### DatePicker
 - Avoid stealing focus into a date segment from a `selectionchange` event in Firefox - [@doolse](https://github.com/doolse) - [PR](https://github.com/adobe/react-spectrum/pull/10260)
-
 ### Dialog
 - Add `aria-describedby` support for the `alertdialog` role - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/9924)
 - Pass the overlay id to `PopoverContext` in Dialog - [@albertdugba](https://github.com/albertdugba) - [PR](https://github.com/adobe/react-spectrum/pull/9807)
-
 ### DragAndDrop
 - Prefer the ancestor drop target over the nearest-by-distance target in DragManager - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10170)
 - Prevent Android Chrome taps from being detected as a drag event - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10332)
-
 ### DropZone
-- Prevent focus from moving to DropZone when clicking its hidden file input - [@pradeep-ramola](https://github.com/pradeep-ramola) - [PR](https://github.com/adobe/react-spectrum/pull/10173)
-- Fix hidden DropZone behavior so a new prop isn't required to work around it - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10336)
-
+- Prevent focus from moving to DropZone when clicking its hidden file input - [@pradeep-ramola](https://github.com/pradeep-ramola) - [PR](https://github.com/adobe/react-spectrum/pull/10173), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10336)
 ### GridList
-- Support textfields and other interactive components inside GridList rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195)
-- Support arrow key navigation into a row's children when `keyboardNavigationBehavior="tab"` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
-
+- Support TextFields and other interactive components inside GridList rows using `keyboardNavigationBehavior="tab"` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195), [PR](https://github.com/adobe/react-spectrum/pull/10206), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
 ### Link
 - Add `onPressChange` prop to `useLink` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
-
 ### Menu
-- Add `useContextMenu`, a new hook for native and keyboard-accessible context menus - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10237)
-
-### MenuTrigger
-- Add `trigger="contextMenu"` support to MenuTrigger - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10237)
-
+- Add `useContextMenu` and `trigger="contextMenu"` to MenuTrigger - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10237)
 ### Meter
 - Guard the percentage calculation against `NaN` when `min` equals `max` - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10169)
-
 ### Overlays
 - Fix `ariaHideOutside` behavior inside a shadow DOM - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10288)
 - Restore focus in `FocusScope` containment without scrolling the dialog into view - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10339)
 - Add an `addGlobalScrollListener` utility and close overlays on scroll events inside a shadow DOM - [@pzaczkiewicz-athenahealth](https://github.com/pzaczkiewicz-athenahealth) - [PR](https://github.com/adobe/react-spectrum/pull/10188)
-
 ### PreviewTrigger
-- Add PreviewTrigger, a new component that composes a Link or other focusable element with a non-modal Popover that opens on hover, keyboard focus, and long press - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10243)
-
+- Add PreviewTrigger component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10243)
 ### ProgressBar
 - Guard the percentage calculation against `NaN` when `min` equals `max` - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10169)
-
 ### RadioGroup
-- Delegate label `keydown` handling to the native input for radios so key events behave consistently - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9972)
-
-### react-aria-components
-- Re-export `RenderProps`-related types from react-aria-components so downstream `.d.ts` builds can name them - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9955)
-
+- Fix Enter key presses on Radio inputs so they no longer block native implicit form submission  - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9972)
 ### Select
 - Restore the default `type` for Select - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10361)
-
 ### Switch
 - Delegate label `keydown` handling to the native input for switches so key events behave consistently - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9972)
-
 ### Table
-- Support textfields and other interactive components inside Table rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10159)
+- Support TextFields and other interactive components inside Table rows using `keyboardNavigationBehavior="tab"` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10159), [PR](https://github.com/adobe/react-spectrum/pull/10206)
 - Floor fractional table column widths so columns don't overflow - [@ardittirana](https://github.com/ardittirana) - [PR](https://github.com/adobe/react-spectrum/pull/10238)
 - Fix column resizing getting stuck after a press and hold - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10040)
-- Fix table press and hold navigation - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10285)
 - Restore focus without an infinite loop when no focusable row remains in `useGridState` - [@RobHannay](https://github.com/RobHannay) - [PR](https://github.com/adobe/react-spectrum/pull/10241)
-
 ### TokenField
-- Add TokenField to React Aria Components for building tag inputs, mention inputs, and AI prompt fields with inline tokens - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10318)
-- Add `onKeyDown` and `onKeyUp` props to `useTokenField` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10335)
-
-{/* dropped: fix: TokenField RTL, IME composition, and range selection [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10273) — follow-up refinement of [PR](https://github.com/adobe/react-spectrum/pull/10318) */}
-
+- Add TokenField component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10318)
 ### Tree
-- Add `DEFAULT_SLOT` to `TreeItem`'s `CheckboxContext` so unslotted Checkboxes render - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10274)
+- Add `DEFAULT_SLOT` to `TreeItem`'s `CheckboxContext` - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10274)
 - Prevent virtualized grid layouts from disappearing when hidden via `display: none` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10190)
 - Export `TreeSectionProps` and `TreeHeaderProps` types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
-
 ### useId
 - Prevent `FinalizationRegistry` entries from accumulating on every re-render - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9853)
-
 ### useKeyboard
-- Add keyboard shortcut support to `useKeyboard` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10200)
-- Add new React Aria hooks documentation - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10153)
-- Fix keyboard repeat events for navigation - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10322)
-
+- Adds support for chaining multiple keyboard shortcut handlers - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10200), [PR](https://github.com/adobe/react-spectrum/pull/10322), [PR](https://github.com/adobe/react-spectrum/pull/10285)
 ### Virtualizer
-- Make trackpad taps fire press events consistently - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10225)
-- Add support for reversed virtualization, useful for chat-style scrolling views - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10258)
+- Fix press events not firing consistently for trackpad taps  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10225)
+
 
 ## Released packages
 
