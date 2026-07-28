@@ -331,7 +331,6 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
 
   let hasLink = href != null && href.length > 0;
   let [isLinkPressed, setLinkPressed] = useState(false);
-  console.log('isLinkPressed', isLinkPressed);
   let rowRef = useRef<HTMLDivElement | null>(null);
   // oxlint-disable-next-line react-compiler
   let scaling = pressScale(rowRef);
