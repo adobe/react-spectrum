@@ -22,6 +22,10 @@ v3:
           - all-globs-to-any-file: ['**/@react-spectrum/**', '!**/*.stories.*', '!**/*.test.*']
           - all-globs-to-all-files: ['!**/@react-spectrum/s2/**', '!**/@react-spectrum/ai/**']
 
+AI:
+  - changed-files:
+      - all-globs-to-any-file: ['**/ai/**', '!**/*.stories.*', '!**/*.test.*']
+
 Accordion:
   - changed-files:
       - any-glob-to-any-file: '**/Accordion.tsx'
