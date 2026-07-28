@@ -42,6 +42,10 @@ ActionMenu:
   - changed-files:
       - any-glob-to-any-file: '**/ActionMenu.tsx'
 
+AttachmentList:
+  - changed-files:
+      - any-glob-to-any-file: '**/AttachmentList.tsx'
+
 Autocomplete:
   - changed-files:
       - any-glob-to-any-file: '**/Autocomplete.tsx'
@@ -81,6 +85,10 @@ Card:
 CardView:
   - changed-files:
       - any-glob-to-any-file: '**/CardView.tsx'
+
+Chat:
+  - changed-files:
+      - any-glob-to-any-file: '**/Chat.tsx'
 
 Checkbox:
   - changed-files:
@@ -174,6 +182,10 @@ Group:
   - changed-files:
       - any-glob-to-any-file: '**/Group.tsx'
 
+HorizontalCard:
+  - changed-files:
+      - any-glob-to-any-file: '**/HorizontalCard.tsx'
+
 I18nProvider:
   - changed-files:
       - any-glob-to-any-file: '**/I18nProvider.tsx'
@@ -210,6 +222,18 @@ Menu:
   - changed-files:
       - any-glob-to-any-file: '**/Menu.tsx'
 
+MessageFeedback:
+  - changed-files:
+      - any-glob-to-any-file: '**/MessageFeedback.tsx'
+
+MessageSource:
+  - changed-files:
+      - any-glob-to-any-file: '**/MessageSource.tsx'
+
+MessageSuggestionList:
+  - changed-files:
+      - any-glob-to-any-file: '**/MessageSuggestionList.tsx'
+
 Meter:
   - changed-files:
       - any-glob-to-any-file: '**/Meter.tsx'
@@ -238,6 +262,14 @@ ProgressCircle:
   - changed-files:
       - any-glob-to-any-file: '**/ProgressCircle.tsx'
 
+PromptField:
+  - changed-files:
+      - any-glob-to-any-file: '**/PromptField.tsx'
+
+Prose:
+  - changed-files:
+      - any-glob-to-any-file: '**/Prose.tsx'
+
 RadioGroup:
   - changed-files:
       - any-glob-to-any-file: '**/RadioGroup.tsx'
@@ -249,6 +281,10 @@ RangeCalendar:
 RangeSlider:
   - changed-files:
       - any-glob-to-any-file: '**/RangeSlider.tsx'
+
+ResponseStatus:
+  - changed-files:
+      - any-glob-to-any-file: '**/ResponseStatus.tsx'
 
 SearchField:
   - changed-files:
@@ -322,6 +358,10 @@ ToggleButtonGroup:
   - changed-files:
       - any-glob-to-any-file: '**/ToggleButtonGroup.tsx'
 
+TokenField:
+  - changed-files:
+      - any-glob-to-any-file: '**/TokenField.tsx'
+
 Toolbar:
   - changed-files:
       - any-glob-to-any-file: '**/Toolbar.tsx'
@@ -337,3 +377,7 @@ Tree:
 TreeView:
   - changed-files:
       - any-glob-to-any-file: '**/TreeView.tsx'
+
+UserMessage:
+  - changed-files:
+      - any-glob-to-any-file: '**/UserMessage.tsx'
