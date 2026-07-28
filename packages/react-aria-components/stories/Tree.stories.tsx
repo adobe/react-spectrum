@@ -2049,14 +2049,14 @@ export const VirtualizedTreeInShadowDOMStory: StoryObj<typeof VirtualizedTreeInS
 const animatedTreeStyles = `
   .animated-tree .react-aria-TreeItem {
     box-sizing: border-box;
-    height: 30px;
+    height: var(--tree-item-height, auto);
     overflow: clip;
-    transition: height 250ms, opacity 250ms;
+    transition: height 250ms, padding 250ms, opacity 250ms;
   }
 
   .animated-tree .react-aria-TreeItem[data-entering],
   .animated-tree .react-aria-TreeItem[data-exiting] {
-    height: 0;
+    padding-block: 0;
     opacity: 0;
   }
 

@@ -378,13 +378,13 @@ so they are excluded from keyboard navigation and hidden from assistive technolo
 
 ```css render=false
 .react-aria-TreeItem {
-  height: 30px;
+  height: var(--tree-item-height, auto);
   overflow: clip;
-  transition: height 200ms, opacity 200ms;
+  transition: height 200ms, padding 200ms, opacity 200ms;
 
   &[data-entering],
   &[data-exiting] {
-    height: 0;
+    padding-block: 0;
     opacity: 0;
   }
 
@@ -394,7 +394,11 @@ so they are excluded from keyboard navigation and hidden from assistive technolo
 }
 ```
 
-Animating a row's height requires a definite height to animate from, so give rows a fixed height as above.
+`height: auto` can't be animated, so while a row is entering or exiting the Tree sets
+`--tree-item-height` to its measured height in pixels, and back to `auto` once the animation finishes.
+This is only measured when the row declares a transition on `height`. A row can't shrink below its own
+padding, so animate that alongside the height.
+
 In a [virtualized](Virtualizer) Tree, the layout does not re-measure rows while they animate; animate
 `opacity` or `transform` instead of `height` there.
 
@@ -512,7 +516,8 @@ function Example() {
   links={docs.links}
   showDescription
   cssVariables={{
-    '--tree-item-level': "The depth of the item within the tree. Useful to calculate indentation."
+    '--tree-item-level': "The depth of the item within the tree. Useful to calculate indentation.",
+    '--tree-item-height': "The item's intrinsic height in pixels while it is entering or exiting, and auto otherwise. Useful for animations. Set when height, block-size, or all is used in the CSS transition."
   }} />
 
 ### TreeItemContent

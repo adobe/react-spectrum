@@ -912,6 +912,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     // Captured once so that defaultExpandedKeys doesn't animate the initial rows in.
     let [didEnterViaExpansion] = useState(() => enteringKeysRef.current.has(item.key));
     let isEntering = useEnterAnimation(ref, didEnterViaExpansion) && !isExiting;
+    useTreeItemHeight(ref, isEntering, isExiting);
     useAnimation(
       ref,
       isExiting,
@@ -1444,6 +1445,65 @@ export const TreeHeader = (props: TreeHeaderProps): ReactNode => {
     </GridListHeader>
   );
 };
+
+/**
+ * Publishes a row's intrinsic height as `--tree-item-height` while it animates in or out, so CSS
+ * can interpolate between zero and a real height. `height: auto` isn't animatable, and requiring a
+ * fixed row height would rule out rows that size to their content, so the value is measured here —
+ * the same polyfill `useDisclosure` applies to its panel.
+ *
+ * Only runs when the row actually declares a height transition, since measuring forces a layout.
+ */
+function useTreeItemHeight(
+  ref: RefObject<HTMLElement | null>,
+  isEntering: boolean,
+  isExiting: boolean
+) {
+  let hasHeightTransition = useRef<boolean | null>(null);
+  let isSized = useRef(false);
+
+  useLayoutEffect(() => {
+    let element = ref.current;
+    if (!element || typeof element.getAnimations !== 'function') {
+      return;
+    }
+
+    if (hasHeightTransition.current == null) {
+      hasHeightTransition.current = /height|block-size|all/.test(
+        window.getComputedStyle(element).transition
+      );
+    }
+
+    // `isSized` keeps this running for one more pass after an interrupted collapse, which leaves the row
+    // holding a pixel height it needs to grow back out of.
+    if (!hasHeightTransition.current || (!isEntering && !isExiting && !isSized.current)) {
+      return;
+    }
+
+    let height = element.scrollHeight + 'px';
+    // An interrupted collapse animates from wherever it got to, so it doesn't get a starting value.
+    let from = isExiting ? height : isEntering ? '0px' : null;
+    if (from != null) {
+      element.style.setProperty('--tree-item-height', from);
+
+      // Force style re-calculation to trigger animations.
+      window.getComputedStyle(element).height;
+    }
+
+    element.style.setProperty('--tree-item-height', isExiting ? '0px' : height);
+    isSized.current = true;
+
+    if (!isExiting) {
+      // After the animations complete, switch back to auto so the row can resize with its content.
+      Promise.all(element.getAnimations().map(a => a.finished))
+        .then(() => {
+          element.style.setProperty('--tree-item-height', 'auto');
+          isSized.current = false;
+        })
+        .catch(() => {});
+    }
+  }, [ref, isEntering, isExiting]);
+}
 
 function areSetsEqual<T>(a: Set<T>, b: Set<T>) {
   if (a.size !== b.size) {

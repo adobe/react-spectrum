@@ -26,18 +26,16 @@ import {Tree, TreeItem, TreeItemContent} from '../src/Tree';
 const DURATION = 5000;
 const ROW_HEIGHT = 30;
 
+// Exercises the --tree-item-height polyfill rather than a hard-coded height: the row sizes to its
+// content, and the Tree publishes that height so it can be animated to and from zero.
 const css = `
 .animated-tree-item {
   display: block;
   box-sizing: border-box;
-  height: ${ROW_HEIGHT}px;
   overflow: clip;
+  height: var(--tree-item-height, auto);
+  line-height: ${ROW_HEIGHT}px;
   transition: height ${DURATION}ms linear;
-}
-
-.animated-tree-item[data-entering],
-.animated-tree-item[data-exiting] {
-  height: 0;
 }
 `;
 
@@ -132,6 +130,8 @@ it('keeps collapsed rows mounted until their exit transition finishes', async ()
 
   // The rows are still mounted and collapsing, but the tree already reports itself collapsed.
   let exiting = exitingRows();
+  // The row sizes to its content, so it can only animate because the Tree published a height for it.
+  expect(exiting.every(row => row.style.getPropertyValue('--tree-item-height') !== '')).toBe(true);
   seekToMiddle(exiting);
   expect(exiting.every(row => height(row) > 0 && height(row) < ROW_HEIGHT)).toBe(true);
   expect(rows()[0]).toHaveAttribute('aria-expanded', 'false');
