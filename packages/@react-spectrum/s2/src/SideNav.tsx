@@ -351,10 +351,7 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
         <TreeItem
           {...rest}
           ref={rowRef}
-          style={({isPressed}) => {
-            console.log('isPressed', isPressed, 'isLinkPressed', isLinkPressed);
-            return scaling({isPressed: isLinkPressed || isPressed});
-          }}
+          style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
           href={href}
           focusMode={hasLink ? 'child' : undefined}
           allowsArrowNavigation
