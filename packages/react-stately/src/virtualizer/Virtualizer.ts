@@ -198,7 +198,6 @@ export class Virtualizer<T extends object, V> {
     let target = this._scrollAnchor.resolveAfterLayout({
       anchorInfo,
       anchor,
-      postLayoutInfos: anchorInfo ? this.getVisibleLayoutInfos() : new Map(),
       previousVisibleRect,
       previousContentSize,
       contentSize: this.contentSize,
