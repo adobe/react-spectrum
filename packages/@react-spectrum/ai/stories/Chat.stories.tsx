@@ -59,7 +59,7 @@ const meta: Meta<typeof Chat> = {
   title: 'AI/Chat',
   decorators: [
     Story => (
-      <div style={{width: '800px', height: '600px'}}>
+      <div style={{width: '80vw', height: '600px'}}>
         <Story />
       </div>
     )
