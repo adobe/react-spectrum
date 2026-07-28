@@ -178,6 +178,8 @@ export function prose(this: MacroContext | void) {
       borderStartEndRadius: getToken('corner-radius-medium-default')
     },
     th: {
+      // height behaves like minHeight in a table
+      height: 32,
       paddingInline: '16px',
       paddingBlock: '4px',
       textAlign: 'start',
@@ -189,6 +191,7 @@ export function prose(this: MacroContext | void) {
       boxSizing: 'border-box'
     },
     td: {
+      height: 32,
       paddingInline: '16px',
       paddingBlock: '4px',
       borderWidth: 0,
