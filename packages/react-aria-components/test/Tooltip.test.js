@@ -228,6 +228,25 @@ describe('Tooltip', () => {
     expect(tooltip).not.toBeVisible();
   });
 
+  it('should still hide tooltip on scroll when an unrelated element is scrolled into view elsewhere', async () => {
+    let {getByRole} = renderTooltip();
+
+    await user.tab();
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+
+    // An unrelated part of the page (e.g. a Table doing keyboard navigation) scrolls its own,
+    // unrelated container into view. This should not affect this tooltip at all.
+    let unrelatedContainer = document.createElement('div');
+    let unrelatedChild = document.createElement('div');
+    unrelatedContainer.appendChild(unrelatedChild);
+    document.body.appendChild(unrelatedContainer);
+    scrollIntoView(unrelatedContainer, unrelatedChild);
+
+    fireEvent.scroll(document.body);
+    expect(tooltip).not.toBeVisible();
+  });
+
   describe('portalProvider', () => {
     function InfoTooltip(props) {
       return (
