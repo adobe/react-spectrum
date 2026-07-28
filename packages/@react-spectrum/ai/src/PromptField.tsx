@@ -100,6 +100,7 @@ export interface PromptFieldProps {
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   styles?: StyleString;
   variant?: 'balanced' | 'prominent' | 'subtle';
+  brandColor?: string;
   hideDisclaimer?: boolean;
 }
 
@@ -193,7 +194,8 @@ export const PromptField = forwardRef(function PromptField(
     onAddAttachments,
     onRemoveAttachments,
     hideDisclaimer,
-    variant = 'balanced'
+    variant = 'balanced',
+    brandColor
   } = props;
   let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
@@ -277,6 +279,7 @@ export const PromptField = forwardRef(function PromptField(
           {...dropProps}
           role="group"
           variant={variant}
+          brandColor={brandColor}
           isGenerating={isGenerating ?? false}
           isDropTarget={isDropTarget}
           styles={styles}
@@ -404,7 +407,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         width: 'full'
       })({isFocused: isFocused || prompt.segments.length > 0})}>
       <CenterBaseline>
-        <PixelLoader playing={isGenerating} icon={pixelLoader} />
+        <PixelLoader isPlaying={isGenerating} icon={pixelLoader} />
       </CenterBaseline>
       <Autocomplete>
         <TokenField
