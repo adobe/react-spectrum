@@ -179,13 +179,13 @@ export function prose(this: MacroContext | void) {
     },
     th: {
       paddingInline: '16px',
+      paddingBlock: '4px',
       textAlign: 'start',
       fontWeight: 'bold',
       borderColor: colorTokenToString(resolveColorToken(colorToken('gray-300'))),
       borderWidth: 0,
       borderBottomWidth: getToken('border-width-100'),
       borderStyle: 'solid',
-      height: '32px',
       boxSizing: 'border-box'
     },
     td: {
@@ -193,7 +193,7 @@ export function prose(this: MacroContext | void) {
       paddingBlock: '4px',
       borderWidth: 0,
       borderBottomWidth: {
-        default: '1px',
+        default: getToken('border-width-100'),
         ':is(tbody:last-child > tr:last-child > *)': 0
       },
       borderStyle: 'solid',
