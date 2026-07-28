@@ -100,7 +100,6 @@ export interface PromptFieldProps {
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   styles?: StyleString;
   variant?: 'balanced' | 'prominent' | 'subtle';
-  hideDisclaimer?: boolean;
 }
 
 interface PromptFieldState {
@@ -192,7 +191,6 @@ export const PromptField = forwardRef(function PromptField(
     styles,
     onAddAttachments,
     onRemoveAttachments,
-    hideDisclaimer,
     variant = 'balanced'
   } = props;
   let domRef = useDOMRef(ref);
@@ -283,17 +281,15 @@ export const PromptField = forwardRef(function PromptField(
           inputRef={inputRef}>
           {children}
         </PromptFieldContainer>
-        {!hideDisclaimer && (
-          <p className={style({font: 'ui-sm', textAlign: 'center'})}>
-            {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
-            <Link
-              variant="secondary"
-              href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-              target="_blank">
-              {stringFormatter.format('promptfield.aiUserGuidlines')}
-            </Link>
-          </p>
-        )}
+        <p className={style({font: 'ui-sm', textAlign: 'center'})}>
+          {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
+          <Link
+            variant="secondary"
+            href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
+            target="_blank">
+            {stringFormatter.format('promptfield.aiUserGuidlines')}
+          </Link>
+        </p>
       </div>
     </PromptFieldContext.Provider>
   );
