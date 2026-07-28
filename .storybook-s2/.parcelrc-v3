@@ -1,0 +1,24 @@
+{
+  "extends": ["../parcel-v3/.parcelrc-icons", "@parcel/config-default"],
+  "resolvers": ["@parcel/resolver-glob", "..."],
+  "transformers": {
+    "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
+    "*.css": ["@parcel/transformer-css"],
+    "raw:*": ["@parcel/transformer-raw"]
+  },
+  "bundler": {
+    "plugin": "@parcel/bundler-default",
+    "config": {
+      "manualSharedBundles": [
+        {
+          "assets": [
+            "packages/@react-spectrum/s2/**",
+            "packages/dev/s2-docs/src/**",
+            "packages/dev/s2-docs/pages/s2/**/*.{mdx,tsx,ts,js}"
+          ],
+          "types": ["css"]
+        }
+      ]
+    }
+  }
+}
