@@ -57,7 +57,7 @@ function buildBugsNotesSheet(workbook) {
   }
 }
 
-function buildReleaseNotesSheet(workbook, {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs}) {
+function buildReleaseNotesSheet(workbook, {v3PRs, s2PRs, racPRs, otherPRs, offPRs}) {
   let sheet = workbook.addWorksheet('Release Notes');
 
   sheet.columns = [{width: 25}, {width: 70}, {width: 50}, {width: 50}];
@@ -67,7 +67,6 @@ function buildReleaseNotesSheet(workbook, {v3PRs, s2PRs, racPRs, aiPRs, otherPRs
   let groups = [
     ['RAC', racPRs],
     ['S2', s2PRs],
-    ['AI', aiPRs],
     ['V3', v3PRs],
     ['Other', otherPRs],
     ['Off PRs', offPRs]
@@ -100,7 +99,7 @@ function buildReleaseNotesSheet(workbook, {v3PRs, s2PRs, racPRs, aiPRs, otherPRs
   }
 }
 
-function buildPassFailSheet(workbook, {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs}) {
+function buildPassFailSheet(workbook, {v3PRs, s2PRs, racPRs, otherPRs, offPRs}) {
   let sheet = workbook.addWorksheet('Pass-Fail');
 
   sheet.columns = [
@@ -150,8 +149,7 @@ function buildPassFailSheet(workbook, {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, of
     {row: 2, label: 'Next'},
     {row: 3, label: 'S2 Parcel'},
     {row: 4, label: 'S2 Webpack'},
-    {row: 5, label: 'S2 Next'},
-    {row: 6, label: 'S2 Vite'}
+    {row: 5, label: 'RAC Tailwind'}
   ];
   for (let {row, label} of categoryE) {
     sheet.getCell(`E${row}`).value = label;
@@ -178,10 +176,8 @@ function buildPassFailSheet(workbook, {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, of
     ['RAC', racPRs],
     ['S2', s2PRs],
     ['V3', v3PRs],
-    ['AI', aiPRs],
     ['Other', otherPRs],
-    ['Off PRs', offPRs],
-    ['Test Apps', [['Next'], ['S2 Parcel'], ['S2 Webpack'], ['S2 Next'], ['S2 Vite']]]
+    ['Off PRs', offPRs]
   ];
   let nextRow = 11;
   let first = true;
@@ -259,13 +255,13 @@ function buildScreenshotsSheet(workbook) {
   header.height = 50;
 }
 
-export async function createTestingSheet({v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs}) {
+export async function createTestingSheet({v3PRs, s2PRs, racPRs, otherPRs, offPRs}) {
   let workbook = new ExcelJS.Workbook();
 
-  buildPassFailSheet(workbook, {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs});
+  buildPassFailSheet(workbook, {v3PRs, s2PRs, racPRs, otherPRs, offPRs});
   buildScreenshotsSheet(workbook);
   buildBugsNotesSheet(workbook);
-  buildReleaseNotesSheet(workbook, {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs});
+  buildReleaseNotesSheet(workbook, {v3PRs, s2PRs, racPRs, otherPRs, offPRs});
 
   return workbook.xlsx.writeBuffer();
 }
