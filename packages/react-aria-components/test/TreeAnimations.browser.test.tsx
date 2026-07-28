@@ -24,18 +24,28 @@ import React from 'react';
 import {Tree, TreeItem, TreeItemContent} from '../src/Tree';
 
 const DURATION = 5000;
-const ROW_HEIGHT = 30;
+const LINE_HEIGHT = 30;
+const PADDING = 5;
+const ROW_HEIGHT = LINE_HEIGHT + PADDING * 2;
 
-// Exercises the --tree-item-height polyfill rather than a hard-coded height: the row sizes to its
-// content, and the Tree publishes that height so it can be animated to and from zero.
+// Exercises the --tree-item-height polyfill rather than a hard-coded height: the row sizes to its content,
+// and the Tree publishes that height so it can be animated to and from zero. The padding is deliberate — a
+// row can't shrink below it, so it has to animate too, which in turn means a naive measurement taken while
+// the row is entering or exiting reads the wrong height.
 const css = `
 .animated-tree-item {
   display: block;
   box-sizing: border-box;
   overflow: clip;
   height: var(--tree-item-height, auto);
-  line-height: ${ROW_HEIGHT}px;
-  transition: height ${DURATION}ms linear;
+  line-height: ${LINE_HEIGHT}px;
+  padding-block: ${PADDING}px;
+  transition: height ${DURATION}ms linear, padding ${DURATION}ms linear;
+}
+
+.animated-tree-item[data-entering],
+.animated-tree-item[data-exiting] {
+  padding-block: 0;
 }
 `;
 
@@ -174,8 +184,13 @@ it('animates rows in when they are revealed by an expansion', async () => {
     'the revealed children are animating in'
   );
 
-  // The new rows grow to their full height rather than appearing at it.
+  // The published height must be the row's resting height. Measuring it naively reads the row mid-animation
+  // — with its padding already zeroed — and lands short, leaving the row to jump the difference at the end.
   let revealed = rows().slice(1);
+  expect(revealed.map(row => row.style.getPropertyValue('--tree-item-height'))).toEqual(
+    revealed.map(() => `${ROW_HEIGHT}px`)
+  );
+
   seekToMiddle(revealed);
   expect(revealed.every(row => height(row) > 0 && height(row) < ROW_HEIGHT)).toBe(true);
 

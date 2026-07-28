@@ -1447,6 +1447,53 @@ export const TreeHeader = (props: TreeHeaderProps): ReactNode => {
 };
 
 /**
+ * The row's height as if it weren't animating. The entering and exiting states commonly override
+ * the padding — a row can't shrink below it — and any height already applied here would clamp the
+ * result, so both are lifted for the duration of the read. Transitions are suppressed alongside
+ * them, or lifting an override would just start it animating and the read would return where it had
+ * got to rather than where it was heading. This runs inside a layout effect, so nothing is painted
+ * in between.
+ *
+ * Suppressing transitions cancels any that are in flight, so this must only be called while the row
+ * is at rest.
+ */
+function measureRestingHeight(element: HTMLElement) {
+  let entering = element.getAttribute('data-entering');
+  let exiting = element.getAttribute('data-exiting');
+  let height = element.style.getPropertyValue('--tree-item-height');
+  let transition = element.style.transition;
+
+  element.style.transition = 'none';
+  if (entering != null) {
+    element.removeAttribute('data-entering');
+  }
+  if (exiting != null) {
+    element.removeAttribute('data-exiting');
+  }
+  if (height) {
+    element.style.removeProperty('--tree-item-height');
+  }
+
+  let restingHeight = element.offsetHeight;
+
+  if (entering != null) {
+    element.setAttribute('data-entering', entering);
+  }
+  if (exiting != null) {
+    element.setAttribute('data-exiting', exiting);
+  }
+  if (height) {
+    element.style.setProperty('--tree-item-height', height);
+  }
+
+  // Settle the restored styles before transitions come back, so none of this animates.
+  element.offsetHeight;
+  element.style.transition = transition;
+
+  return restingHeight;
+}
+
+/**
  * Publishes a row's intrinsic height as `--tree-item-height` while it animates in or out, so CSS
  * can interpolate between zero and a real height. `height: auto` isn't animatable, and requiring a
  * fixed row height would rule out rows that size to their content, so the value is measured here —
@@ -1460,6 +1507,7 @@ function useTreeItemHeight(
   isExiting: boolean
 ) {
   let hasHeightTransition = useRef<boolean | null>(null);
+  let restingHeight = useRef<number | null>(null);
   let isSized = useRef(false);
 
   useLayoutEffect(() => {
@@ -1474,13 +1522,26 @@ function useTreeItemHeight(
       );
     }
 
-    // `isSized` keeps this running for one more pass after an interrupted collapse, which leaves the row
-    // holding a pixel height it needs to grow back out of.
-    if (!hasHeightTransition.current || (!isEntering && !isExiting && !isSized.current)) {
+    if (!hasHeightTransition.current) {
       return;
     }
 
-    let height = element.scrollHeight + 'px';
+    // `isSized` keeps this running for one more pass after an interrupted collapse, which leaves the row
+    // holding a pixel height it needs to grow back out of.
+    let isAtRest = !isEntering && !isExiting && !isSized.current;
+
+    // At rest nothing is in flight, so this is the only point the row can be measured honestly. The first
+    // pass of an entering row also qualifies: it has only just mounted, so its styles are its initial ones
+    // and no transition has started from them yet.
+    if (isAtRest || restingHeight.current == null) {
+      restingHeight.current = measureRestingHeight(element);
+    }
+
+    if (isAtRest) {
+      return;
+    }
+
+    let height = restingHeight.current + 'px';
     // An interrupted collapse animates from wherever it got to, so it doesn't get a starting value.
     let from = isExiting ? height : isEntering ? '0px' : null;
     if (from != null) {
