@@ -96,10 +96,3 @@ motion(RAC.Text);
 motion(RAC.TextField);
 motion(RAC.ToggleButton);
 motion(RAC.Tooltip);
-
-// Types that appear structurally in public props must be nameable from the package root,
-// otherwise consumers emitting declarations cannot write a portable import for them.
-type _FocusableElement = RAC.FocusableElement;
-type _HoverEvent = RAC.HoverEvent;
-type _KeyboardEvent = RAC.KeyboardEvent;
-type _PressEvent = RAC.PressEvent;
