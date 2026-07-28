@@ -9,10 +9,10 @@
   "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
   "promptfield.aiDisclaimer": "响应使用人工智能生成，可能不准确。使用前检查。",
   "promptfield.aiUserGuidlines": "AI用户准则",
-  "promptfield.attachments": "Attachments",
+  "promptfield.attachments": "附件",
   "promptfield.label": "Prompt",
-  "promptfield.stopButton": "Stop",
-  "promptfield.submitButton": "Send",
+  "promptfield.stopButton": "停止",
+  "promptfield.submitButton": "提交消息",
   "promptfield.insertButton": "Add",
-  "promptfield.uploading": "Uploading"
+  "promptfield.uploading": "正在上传"
 }

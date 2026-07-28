@@ -9,10 +9,10 @@
   "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
   "promptfield.aiDisclaimer": "Les réponses sont générées à l'aide de l'IA et peuvent être inexactes. Vérifiez avant d'utiliser.",
   "promptfield.aiUserGuidlines": "Instructions d'utilisation IA",
-  "promptfield.attachments": "Attachments",
+  "promptfield.attachments": "Pièces jointes",
   "promptfield.label": "Prompt",
-  "promptfield.stopButton": "Stop",
-  "promptfield.submitButton": "Send",
+  "promptfield.stopButton": "Arrêter",
+  "promptfield.submitButton": "Envoyer le message",
   "promptfield.insertButton": "Add",
-  "promptfield.uploading": "Uploading"
+  "promptfield.uploading": "Téléchargement"
 }

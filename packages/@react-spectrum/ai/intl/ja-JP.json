@@ -9,10 +9,10 @@
   "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
   "promptfield.aiDisclaimer": "回答は AI を使用して生成されますが、不正確になる場合があります。使用する前に確認してください。",
   "promptfield.aiUserGuidlines": "AI ユーザーガイドライン",
-  "promptfield.attachments": "Attachments",
+  "promptfield.attachments": "添付",
   "promptfield.label": "Prompt",
-  "promptfield.stopButton": "Stop",
-  "promptfield.submitButton": "Send",
+  "promptfield.stopButton": "停止",
+  "promptfield.submitButton": "メッセージを送信",
   "promptfield.insertButton": "Add",
-  "promptfield.uploading": "Uploading"
+  "promptfield.uploading": "アップロード中"
 }

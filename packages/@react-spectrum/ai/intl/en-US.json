@@ -12,7 +12,7 @@
   "promptfield.attachments": "Attachments",
   "promptfield.label": "Prompt",
   "promptfield.stopButton": "Stop",
-  "promptfield.submitButton": "Send",
+  "promptfield.submitButton": "Submit message",
   "promptfield.insertButton": "Add",
   "promptfield.uploading": "Uploading"
 }
