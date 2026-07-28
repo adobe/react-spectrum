@@ -15,14 +15,13 @@ import {
   baseColor,
   focusRing,
   iconStyle,
-  lightDark,
   space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
+import Chevron from '../ui-icons/Chevron';
 import CloseCircle from '@react-spectrum/s2/icons/CloseCircle';
 import {
   DisclosureStateContext,
@@ -58,18 +57,6 @@ export interface ResponseStatusProps extends Omit<
   'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
 > {
   /**
-   * The size of the response status.
-   *
-   * @default 'M'
-   */
-  size?: 'S' | 'M' | 'L' | 'XL';
-  /**
-   * The amount of space between stacked response statuses.
-   *
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular' | 'spacious';
-  /**
    * The current status of the response.
    *
    * @default 'loading'
@@ -87,8 +74,6 @@ export interface ResponseStatusProps extends Omit<
 }
 
 const ResponseStatusContext = createContext<{
-  size?: 'S' | 'M' | 'L' | 'XL';
-  density?: 'compact' | 'regular' | 'spacious';
   status: 'loading' | 'failed' | 'success';
   hasPanelContent: boolean;
   registerPanel: (mounted: boolean) => void;
@@ -112,7 +97,7 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   props: ResponseStatusProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {size = 'M', density = 'regular', status = 'loading', styles} = props;
+  let {status = 'loading', styles} = props;
   let domRef = useDOMRef(ref);
   let [hasPanelContent, setHasPanelContent] = useState(false);
   let registerPanel = useCallback((mounted: boolean) => setHasPanelContent(mounted), []);
@@ -124,8 +109,7 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   }
 
   return (
-    <Provider
-      values={[[ResponseStatusContext, {size, density, status, hasPanelContent, registerPanel}]]}>
+    <Provider values={[[ResponseStatusContext, {status, hasPanelContent, registerPanel}]]}>
       <RACDisclosure
         {...props}
         {...disclosureProps}
@@ -163,14 +147,7 @@ const headingStyle = style({
 const buttonStyles = style({
   ...focusRing(),
   outlineOffset: -2,
-  font: {
-    size: {
-      S: 'body-sm',
-      M: 'body',
-      L: 'body-lg',
-      XL: 'body-xl'
-    }
-  },
+  font: 'body',
   color: {
     default: baseColor('neutral'),
     isLoading: 'neutral',
@@ -185,47 +162,9 @@ const buttonStyles = style({
   alignItems: 'center',
   paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
   gap: 'calc(self(minHeight) * 3/8 - 1px)',
-  minHeight: {
-    size: {
-      S: {
-        density: {
-          compact: 18,
-          regular: 24,
-          spacious: 32
-        }
-      },
-      M: {
-        density: {
-          compact: 24,
-          regular: 32,
-          spacious: 40
-        }
-      },
-      L: {
-        density: {
-          compact: 32,
-          regular: 40,
-          spacious: 48
-        }
-      },
-      XL: {
-        density: {
-          compact: 40,
-          regular: 48,
-          spacious: 56
-        }
-      }
-    }
-  },
+  minHeight: 32,
   width: 'full',
-  backgroundColor: {
-    default: 'transparent',
-    isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
-    isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
-    isPressed: lightDark('transparent-black-300', 'transparent-white-300'),
-    isLoading: 'transparent',
-    isOnlyText: 'transparent'
-  },
+  backgroundColor: 'transparent',
   transition: 'default',
   borderWidth: 0,
   borderRadius: 'default',
@@ -233,7 +172,7 @@ const buttonStyles = style({
   disableTapHighlight: true
 });
 
-const chevronStyles = style({
+const chevronStyles = {
   rotate: {
     isRTL: 180,
     isExpanded: 90
@@ -244,25 +183,11 @@ const chevronStyles = style({
     value: 'currentColor'
   },
   flexShrink: 0
-});
+} as const;
 
 const progressCircleStyles = style({
-  width: {
-    size: {
-      S: 16,
-      M: 18,
-      L: 20,
-      XL: 22
-    }
-  },
-  height: {
-    size: {
-      S: 16,
-      M: 18,
-      L: 20,
-      XL: 22
-    }
-  }
+  width: 18,
+  height: 18
 });
 
 /**
@@ -279,7 +204,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {size = 'M', density, status, hasPanelContent} = useContext(ResponseStatusContext)!;
+  let {status, hasPanelContent} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
@@ -291,18 +216,12 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
       {isLoading ? (
         <CenterBaseline>
           <ProgressCircle
-            styles={progressCircleStyles({size})}
+            styles={progressCircleStyles}
             isIndeterminate
             aria-label={stringFormatter.format('responsestatus.loading')}
           />
         </CenterBaseline>
-      ) : isInteractive ? (
-        <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
-          <Chevron size={size} />
-        </CenterBaseline>
-      ) : null}
-      {props.children}
-      {!isLoading && (
+      ) : (
         <Provider
           values={[
             [
@@ -311,19 +230,12 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
                 styles: style({
                   marginStart: 'auto',
                   flexShrink: 0,
-                  size: {
-                    size: {
-                      S: 16,
-                      M: 20,
-                      L: 24,
-                      XL: 28
-                    }
-                  },
+                  size: 20,
                   '--iconPrimary': {
                     type: 'fill',
                     value: 'currentColor'
                   }
-                })({size})
+                })
               }
             ]
           ]}>
@@ -336,6 +248,12 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
           </CenterBaseline>
         </Provider>
       )}
+      {props.children}
+      {isInteractive ? (
+        <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
+          <Chevron size="M" />
+        </CenterBaseline>
+      ) : null}
     </>
   );
 
@@ -343,7 +261,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
       <Button
         className={renderProps =>
-          buttonStyles({...renderProps, size, density, isLoading, isOnlyText: !isInteractive})
+          buttonStyles({...renderProps, isLoading, isOnlyText: !isInteractive})
         }
         slot={isInteractive ? 'trigger' : undefined}>
         {rowContent}
@@ -377,14 +295,7 @@ const panelStyles = style({
 const panelInner = style({
   paddingTop: 8,
   paddingBottom: 16,
-  paddingX: {
-    size: {
-      S: 8,
-      M: space(9),
-      L: 12,
-      XL: space(15)
-    }
-  }
+  paddingX: space(9)
 });
 
 /**
@@ -396,7 +307,7 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   ref: DOMRef<HTMLDivElement>
 ) {
   let {styles} = props;
-  let {size = 'M', registerPanel} = useContext(ResponseStatusContext)!;
+  let {registerPanel} = useContext(ResponseStatusContext)!;
   const domProps = filterDOMProps(props);
   let panelRef = useDOMRef(ref);
 
@@ -407,22 +318,190 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
 
   return (
     <RACDisclosurePanel {...domProps} ref={panelRef} className={mergeStyles(panelStyles, styles)}>
-      <div className={panelInner({size})}>{props.children}</div>
+      <div className={panelInner}>{props.children}</div>
     </RACDisclosurePanel>
   );
 });
 
-// Ideally I would use iconStyle but since it must be fully evaluated at compile time — passing a runtime variable (size prop) to it is not allowed.
-// TODO: Should iconStyle also return a runtime function?
-function Chevron({size}) {
-  switch (size) {
-    case 'S':
-      return <ChevronRight styles={iconStyle({size: 'S'})} />;
-    case 'M':
-      return <ChevronRight styles={iconStyle({size: 'M'})} />;
-    case 'L':
-      return <ChevronRight styles={iconStyle({size: 'L'})} />;
-    case 'XL':
-      return <ChevronRight styles={iconStyle({size: 'XL'})} />;
-  }
+export interface ExecutionTraceProps extends DOMProps, AriaLabelingProps {
+  /**
+   * The ExecutionTraceItem elements to render as a timeline. Typically placed inside a
+   * ResponseStatusPanel.
+   */
+  children: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
+
+const executionTraceStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  margin: 0,
+  padding: 0,
+  paddingStart: 4,
+  listStyleType: 'none'
+});
+
+/**
+ * An ExecutionTrace displays a timeline of the steps taken while generating a
+ * response, such as tool calls or searches.
+ */
+export const ExecutionTrace = forwardRef(function ExecutionTrace(
+  props: ExecutionTraceProps,
+  ref: DOMRef<HTMLOListElement>
+) {
+  let {styles, children, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let domProps = filterDOMProps(otherProps);
+
+  return (
+    <ol {...domProps} ref={domRef} className={mergeStyles(executionTraceStyles, styles)}>
+      {children}
+    </ol>
+  );
+});
+
+interface DetailTriggerProps {
+  children: ReactNode;
+}
+
+const detailTriggerStyles = style({
+  display: 'block',
+  paddingStart: 8
+});
+
+const detailTriggerChevronStyles = style({
+  ...chevronStyles,
+  display: 'inline-flex',
+  marginStart: 8
+});
+
+function DetailTrigger(props: DetailTriggerProps) {
+  let {children} = props;
+  let {direction} = useLocale();
+  let isRTL = direction === 'rtl';
+  let {isExpanded} = useContext(DisclosureStateContext)!;
+
+  return (
+    <Button
+      className={renderProps => mergeStyles(buttonStyles({...renderProps}), detailTriggerStyles)}
+      slot="trigger">
+      {children}
+      <CenterBaseline styles={detailTriggerChevronStyles({isExpanded, isRTL})}>
+        <Chevron size="M" />
+      </CenterBaseline>
+    </Button>
+  );
+}
+
+export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
+  /**
+   * The label describing the step.
+   */
+  children: ReactNode;
+  detail?: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  /**
+   * An icon shown at the leading edge of the row. If omitted, a checkmark is rendered by default.
+   */
+  icon?: ReactNode;
+  /** Allows detail content to render but prevents the row from being collapsible. */
+  isAlwaysOpen?: boolean;
+  /**
+   * Additional detail revealed when the step is expanded, such as tool call input or output.
+   * If omitted, the row is static and cannot be expanded.
+   */
+
+  styles?: StyleString;
+}
+
+const executionTraceItemStyles = style({
+  display: 'flex',
+  font: 'body',
+  gap: 4,
+  '--divider-display': {
+    type: 'display',
+    value: {
+      default: 'block',
+      ':last-child': 'none'
+    }
+  }
+});
+
+const executionTraceItemIconContainerStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  flexShrink: 0
+});
+
+const executionTraceItemDividerStyles = style({
+  width: 1,
+  flexGrow: 1,
+  marginY: 2,
+  backgroundColor: 'gray-500',
+  display: 'var(--divider-display, flex)'
+});
+
+const executionTraceItemBaseStyles = {
+  paddingBottom: 12,
+  paddingStart: 8
+} as const;
+
+const executionTraceWithoutDisclosureStyles = style({
+  ...executionTraceItemBaseStyles,
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: 24
+});
+
+const executionTraceDetailPanelStyles = style(executionTraceItemBaseStyles);
+
+/**
+ * An ExecutionTraceItem represents a single step within an ExecutionTrace, such as
+ * a tool call or search. When a `detail` is provided, the row can be expanded to reveal it.
+ */
+export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
+  props: ExecutionTraceItemProps,
+  ref: DOMRef<HTMLLIElement>
+) {
+  let {
+    isAlwaysOpen,
+    detail,
+    icon = <CheckmarkCircle aria-hidden="true" />,
+    children,
+    styles,
+    ...otherProps
+  } = props;
+  let domRef = useDOMRef(ref);
+  let domProps = filterDOMProps(otherProps);
+  let hasDetail = detail != null;
+
+  return (
+    <li {...domProps} ref={domRef} className={mergeStyles(executionTraceItemStyles, styles)}>
+      <div className={executionTraceItemIconContainerStyles}>
+        <Provider values={[[IconContext, {styles: iconStyle({size: 'M'})}]]}>
+          <CenterBaseline>{icon}</CenterBaseline>
+        </Provider>
+        <div role="presentation" className={executionTraceItemDividerStyles} />
+      </div>
+      {hasDetail && !isAlwaysOpen ? (
+        <RACDisclosure>
+          <DetailTrigger>{children}</DetailTrigger>
+          <RACDisclosurePanel className={mergeStyles(panelStyles, executionTraceDetailPanelStyles)}>
+            {detail}
+          </RACDisclosurePanel>
+        </RACDisclosure>
+      ) : (
+        <div className={executionTraceWithoutDisclosureStyles}>
+          <span>{children}</span>
+          {hasDetail && isAlwaysOpen ? <div>{detail}</div> : null}
+        </div>
+      )}
+    </li>
+  );
+});

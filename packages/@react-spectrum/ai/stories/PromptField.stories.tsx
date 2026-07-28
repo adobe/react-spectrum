@@ -66,7 +66,7 @@ const meta: Meta<typeof PromptField> = {
   argTypes: {
     ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}},
-    brand: {
+    brandColor: {
       control: 'color',
       description:
         'Sets the --brand custom property to retheme the PromptField. Only the hue is used; lightness and chroma come from the design tokens.',
@@ -92,7 +92,7 @@ const meta: Meta<typeof PromptField> = {
     }
   },
   args: {
-    brand: 'rgb(236, 105, 255)',
+    brandColor: 'rgb(236, 105, 255)',
     pixelLoader: 'aiLogo',
     attachmentVariant: 'thumbnail',
     attachmentInvalid: false,
@@ -101,14 +101,12 @@ const meta: Meta<typeof PromptField> = {
   },
   title: 'AI/PromptField',
   decorators: [
-    (Story, {args}) => (
+    Story => (
       <div
         style={{
           width: '800px',
           maxWidth: '90vw',
-          margin: '0 auto',
-          // @ts-ignore
-          '--brand': args.brand
+          margin: '0 auto'
         }}>
         <Story />
       </div>
@@ -351,7 +349,7 @@ function EverythingRender(args) {
   };
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+    <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
       <MessageSuggestionList title="Suggestions">
         {prompts.map((prompt, i) => (
           <MessageSuggestion key={i} onPress={() => setValue(prompt)}>
