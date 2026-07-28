@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '../src/Button';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {expect, it} from 'vitest';
 import {GridLayout} from '../src/GridLayout';
 import {GridList, GridListItem} from '../src/GridList';
@@ -17,6 +19,7 @@ import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {Size} from 'react-stately/useVirtualizerState';
 import {User} from '@react-aria/test-utils';
+import {userEvent} from 'vitest/browser';
 import {Virtualizer} from '../src/Virtualizer';
 
 function Grid() {
@@ -70,6 +73,28 @@ function VirtualizedDisplayNone() {
   );
 }
 
+function DraggableGridList() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys => [...keys].map(key => ({'text/plain': key.toString()})),
+    onReorder: () => {},
+    renderDropIndicator: target => <DropIndicator target={target} />
+  });
+
+  return (
+    <GridList
+      aria-label="Test"
+      dragAndDropHooks={dragAndDropHooks}
+      style={{height: 120, overflow: 'auto', width: 200}}>
+      {Array.from({length: 8}, (_, i) => (
+        <GridListItem key={i} id={i} textValue={`Item ${i}`} style={{height: 40}}>
+          <Button slot="drag">≡</Button>
+          Item {i}
+        </GridListItem>
+      ))}
+    </GridList>
+  );
+}
+
 it.each`
   interactionType
   ${'mouse'}
@@ -119,4 +144,50 @@ it('virtualizer renders items after toggling display:none', async () => {
   await button.click();
   await button.click();
   await expect(tester.getRows().length).toBeGreaterThan(0);
+});
+
+it('scrolls to keyboard drop indicators in a fixed-height GridList', async () => {
+  let {container} = await render(<DraggableGridList />);
+  let gridlist = container.querySelector('[role=grid]') as HTMLElement;
+
+  await userEvent.tab();
+  await userEvent.keyboard('{ArrowRight}{Enter}');
+
+  let activeIndicator = container.querySelector('[data-drop-target=true]') as HTMLElement;
+  expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Item 0 and Item 1');
+  expect(activeIndicator).toContainElement(document.activeElement as HTMLElement);
+  expect(gridlist.scrollTop).toBe(0);
+
+  await userEvent.keyboard('{ArrowDown}');
+
+  activeIndicator = container.querySelector('[data-drop-target=true]') as HTMLElement;
+  expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Item 1 and Item 2');
+  expect(activeIndicator).toContainElement(document.activeElement as HTMLElement);
+
+  await userEvent.keyboard('{ArrowDown>3}');
+
+  activeIndicator = container.querySelector('[data-drop-target=true]') as HTMLElement;
+  expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Item 4 and Item 5');
+  expect(activeIndicator).toContainElement(document.activeElement as HTMLElement);
+  expect(gridlist.scrollTop).toBeGreaterThan(0);
+
+  let gridRect = gridlist.getBoundingClientRect();
+  let indicatorRect = activeIndicator.getBoundingClientRect();
+  expect(indicatorRect.top).toBeGreaterThanOrEqual(gridRect.top);
+  expect(indicatorRect.bottom).toBeLessThanOrEqual(gridRect.bottom);
+
+  await userEvent.keyboard('{ArrowDown>3}');
+
+  activeIndicator = container.querySelector('[data-drop-target=true]') as HTMLElement;
+  expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Item 7');
+  expect(activeIndicator).toContainElement(document.activeElement as HTMLElement);
+
+  await userEvent.keyboard('{Escape}');
+
+  let scrollTop = gridlist.scrollTop;
+  expect(container.querySelector('[data-drop-target=true]')).toBeNull();
+  expect(container.querySelector('.react-aria-DropIndicator')).toBeNull();
+  expect(gridlist.contains(document.activeElement)).toBe(true);
+  await new Promise(resolve => requestAnimationFrame(resolve));
+  expect(gridlist.scrollTop).toBe(scrollTop);
 });
