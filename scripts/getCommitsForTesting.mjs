@@ -63,6 +63,7 @@ export async function generateData(startDate, endDate) {
   let s2PRs = [];
   let racPRs = [];
   let v3PRs = [];
+  let aiPRs = [];
   let otherPRs = [];
 
   // Off PRs are currently open PRs with the 'test off PR' label
@@ -126,7 +127,7 @@ export async function generateData(startDate, endDate) {
     row.push(info.data.html_url);
     row.push(removePRNumber(title));
 
-    if (!labels.has('S2') && !labels.has('RAC') && !labels.has('v3')) {
+    if (!labels.has('S2') && !labels.has('RAC') && !labels.has('v3') && !labels.has('AI')) {
       otherPRs.push(row);
     } else {
       if (labels.has('S2')) {
@@ -138,6 +139,9 @@ export async function generateData(startDate, endDate) {
       if (labels.has('v3')) {
         v3PRs.push(row);
       }
+      if (labels.has('AI')) {
+        aiPRs.push(row);
+      }
     }
   }
 
@@ -145,12 +149,14 @@ export async function generateData(startDate, endDate) {
     v3PRs,
     s2PRs,
     racPRs,
+    aiPRs,
     otherPRs,
     offPRs,
     counts: {
       v3: v3PRs.length,
       s2: s2PRs.length,
       rac: racPRs.length,
+      ai: aiPRs.length,
       offPRs: offPRs.length,
       other: otherPRs.length
     }
@@ -158,7 +164,7 @@ export async function generateData(startDate, endDate) {
 }
 
 export async function generateCSV(startDate, endDate) {
-  let {v3PRs, s2PRs, racPRs, otherPRs, offPRs, counts} = await generateData(startDate, endDate);
+  let {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs, counts} = await generateData(startDate, endDate);
 
   function formatRows(rows) {
     return rows
@@ -168,7 +174,7 @@ export async function generateCSV(startDate, endDate) {
       .join('\n');
   }
 
-  let csv = `V3 \n${formatRows(v3PRs)}\n\nRainbow \n${formatRows(s2PRs)}\n\nRAC \n${formatRows(racPRs)}\n\nOff PR \n${formatRows(offPRs)}\n\nOther \n${formatRows(otherPRs)}\n`;
+  let csv = `V3 \n${formatRows(v3PRs)}\n\nRainbow \n${formatRows(s2PRs)}\n\nRAC \n${formatRows(racPRs)}\n\nAI \n${formatRows(aiPRs)}\n\nOff PR \n${formatRows(offPRs)}\n\nOther \n${formatRows(otherPRs)}\n`;
 
   return {csv, counts};
 }
