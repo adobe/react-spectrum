@@ -11,6 +11,11 @@
  */
 
 // JSDOM has no getAnimations, so the exit hold can only be verified end to end in a real browser.
+//
+// Nothing here is timed against the wall clock. A concurrent root commits asynchronously and CI
+// machines are slow, so the transition is deliberately far longer than any plausible scheduling
+// delay, every observation polls for the state it is about to assert, and animations are finished
+// explicitly rather than waited out.
 
 import {afterEach, beforeEach, expect, it} from 'vitest';
 import {Button} from '../src/Button';
@@ -18,7 +23,7 @@ import {createRoot, Root} from 'react-dom/client';
 import React from 'react';
 import {Tree, TreeItem, TreeItemContent} from '../src/Tree';
 
-const DURATION = 150;
+const DURATION = 5000;
 const ROW_HEIGHT = 30;
 
 const css = `
@@ -27,13 +32,12 @@ const css = `
   box-sizing: border-box;
   height: ${ROW_HEIGHT}px;
   overflow: clip;
-  transition: height ${DURATION}ms linear, opacity ${DURATION}ms linear;
+  transition: height ${DURATION}ms linear;
 }
 
 .animated-tree-item[data-entering],
 .animated-tree-item[data-exiting] {
   height: 0;
-  opacity: 0;
 }
 `;
 
@@ -61,15 +65,45 @@ let style: HTMLStyleElement;
 let root: Root;
 
 let rows = () => Array.from(container.querySelectorAll<HTMLElement>('.animated-tree-item'));
+let exitingRows = () => rows().filter(row => row.hasAttribute('data-exiting'));
+let isAnimating = (row: HTMLElement) => row.getAnimations().length > 0;
+let height = (row: HTMLElement) => row.getBoundingClientRect().height;
 let wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
-// The collection renders over two passes, and a cold browser start can take a while to get there.
-let waitForRows = async (count: number) => {
-  for (let i = 0; i < 100 && rows().length !== count; i++) {
+/**
+ * Waits for a state and then for the browser to actually render it. A transition is only generated
+ * when the property has a before-change style from a completed style pass, so mutating the tree in
+ * the same frame the rows first appeared would silently produce no animation at all.
+ */
+async function waitFor(condition: () => boolean, description: string) {
+  for (let i = 0; i < 250 && !condition(); i++) {
     await wait(20);
   }
-  expect(rows()).toHaveLength(count);
-};
+
+  expect(condition(), description).toBe(true);
+  await new Promise<void>(resolve =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  );
+}
+
+/** Seeks to the midpoint so the intermediate state can be asserted without racing the clock. */
+function seekToMiddle(elements: HTMLElement[]) {
+  for (let animation of elements.flatMap(el => el.getAnimations())) {
+    animation.pause();
+    animation.currentTime = DURATION / 2;
+  }
+}
+
+/** Jumps the elements' animations to their end rather than waiting out DURATION. */
+async function finishAnimations(elements: HTMLElement[]) {
+  let animations = elements.flatMap(el => el.getAnimations());
+  for (let animation of animations) {
+    animation.play();
+    animation.finish();
+  }
+
+  await Promise.all(animations.map(a => a.finished.catch(() => {})));
+}
 
 beforeEach(() => {
   style = document.createElement('style');
@@ -88,57 +122,66 @@ afterEach(() => {
 
 it('keeps collapsed rows mounted until their exit transition finishes', async () => {
   root.render(<AnimatedTree expandedKeys={['root']} />);
-  await waitForRows(3);
+  await waitFor(() => rows().length === 3, 'three rows render while expanded');
 
   root.render(<AnimatedTree expandedKeys={[]} />);
-  await wait(0);
+  await waitFor(
+    () => exitingRows().length === 2 && exitingRows().every(isAnimating),
+    'both children are held in the DOM and animating out'
+  );
 
-  // The rows are still mounted and animating, but the tree already reports itself as collapsed.
-  let exiting = rows().filter(row => row.hasAttribute('data-exiting'));
-  expect(exiting).toHaveLength(2);
-  expect(exiting.every(row => row.getAnimations().length > 0)).toBe(true);
+  // The rows are still mounted and collapsing, but the tree already reports itself collapsed.
+  let exiting = exitingRows();
+  seekToMiddle(exiting);
+  expect(exiting.every(row => height(row) > 0 && height(row) < ROW_HEIGHT)).toBe(true);
   expect(rows()[0]).toHaveAttribute('aria-expanded', 'false');
   expect(exiting.every(row => row.hasAttribute('inert'))).toBe(true);
 
-  // Halfway through, they should be partway collapsed rather than gone.
-  await wait(DURATION / 2);
-  let height = exiting[0].getBoundingClientRect().height;
-  expect(height).toBeGreaterThan(0);
-  expect(height).toBeLessThan(ROW_HEIGHT);
-
-  await wait(DURATION);
-  expect(rows()).toHaveLength(1);
+  await finishAnimations(exiting);
+  await waitFor(() => rows().length === 1, 'the held rows are released once they finish animating');
 });
 
 it('restores rows when a collapse is interrupted by re-expanding', async () => {
   root.render(<AnimatedTree expandedKeys={['root']} />);
-  await waitForRows(3);
+  await waitFor(() => rows().length === 3, 'three rows render while expanded');
 
   root.render(<AnimatedTree expandedKeys={[]} />);
-  await wait(DURATION / 2);
-  expect(rows().filter(row => row.hasAttribute('data-exiting'))).toHaveLength(2);
+  await waitFor(
+    () => exitingRows().length === 2 && exitingRows().every(isAnimating),
+    'both children are held in the DOM and animating out'
+  );
 
   root.render(<AnimatedTree expandedKeys={['root']} />);
-  await wait(DURATION * 2);
+  await waitFor(() => exitingRows().length === 0, 'the exiting state is cleared');
 
   expect(rows()).toHaveLength(3);
-  expect(container.querySelectorAll('[data-exiting]')).toHaveLength(0);
-  expect(rows()[1].getBoundingClientRect().height).toBeCloseTo(ROW_HEIGHT, 0);
+  expect(container.querySelectorAll('[inert]')).toHaveLength(0);
+
+  await finishAnimations(rows());
+  await waitFor(
+    () => rows().length === 3 && rows().every(row => height(row) === ROW_HEIGHT),
+    'the restored rows animate back to full height'
+  );
 });
 
 it('animates rows in when they are revealed by an expansion', async () => {
   root.render(<AnimatedTree expandedKeys={[]} />);
-  await waitForRows(1);
+  await waitFor(() => rows().length === 1, 'only the root renders while collapsed');
 
   root.render(<AnimatedTree expandedKeys={['root']} />);
-  await wait(DURATION / 2);
+  await waitFor(
+    () => rows().length === 3 && rows().slice(1).every(isAnimating),
+    'the revealed children are animating in'
+  );
 
-  // Mid-transition the new rows exist but have not reached their full height yet.
-  expect(rows()).toHaveLength(3);
-  let height = rows()[1].getBoundingClientRect().height;
-  expect(height).toBeGreaterThan(0);
-  expect(height).toBeLessThan(ROW_HEIGHT);
+  // The new rows grow to their full height rather than appearing at it.
+  let revealed = rows().slice(1);
+  seekToMiddle(revealed);
+  expect(revealed.every(row => height(row) > 0 && height(row) < ROW_HEIGHT)).toBe(true);
 
-  await wait(DURATION);
-  expect(rows()[1].getBoundingClientRect().height).toBeCloseTo(ROW_HEIGHT, 0);
+  await finishAnimations(rows());
+  await waitFor(
+    () => rows().every(row => height(row) === ROW_HEIGHT),
+    'the revealed rows reach full height'
+  );
 });
