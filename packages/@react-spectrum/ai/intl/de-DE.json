@@ -9,10 +9,10 @@
   "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
   "promptfield.aiDisclaimer": "Antworten werden mit KI generiert und sind möglicherweise ungenau. Vor der Verwendung prüfen.",
   "promptfield.aiUserGuidlines": "AI-Benutzerrichtlinien",
-  "promptfield.attachments": "Anhänge",
+  "promptfield.attachments": "Attachments",
   "promptfield.label": "Prompt",
-  "promptfield.stopButton": "Anhalten",
-  "promptfield.submitButton": "Nachricht senden",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
   "promptfield.insertButton": "Add",
-  "promptfield.uploading": "Hochladen"
+  "promptfield.uploading": "Uploading"
 }

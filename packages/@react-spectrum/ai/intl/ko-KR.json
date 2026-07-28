@@ -9,10 +9,10 @@
   "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
   "promptfield.aiDisclaimer": "응답은 AI를 이용하여 생성되며, 부정확할 수 있다. 사용하기 전에 확인하십시오.",
   "promptfield.aiUserGuidlines": "AI 사용자 지침",
-  "promptfield.attachments": "첨부 파일",
+  "promptfield.attachments": "Attachments",
   "promptfield.label": "Prompt",
-  "promptfield.stopButton": "중지",
-  "promptfield.submitButton": "메시지 제출",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
   "promptfield.insertButton": "Add",
-  "promptfield.uploading": "업로드 중"
+  "promptfield.uploading": "Uploading"
 }
