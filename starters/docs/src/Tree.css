@@ -69,6 +69,9 @@
   align-items: center;
   gap: var(--spacing-2);
   min-height: var(--spacing-8);
+  /* A definite height lets rows collapse to zero as they animate out. */
+  height: var(--spacing-8);
+  overflow: clip;
   padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-2);
   box-sizing: border-box;
   --padding: var(--spacing-4);
@@ -79,10 +82,23 @@
   font: var(--font-size) system-ui;
   position: relative;
   transform: translateZ(0);
-  transition-property: background, color, border-radius;
+  transition-property: background, color, border-radius, height, min-height, padding, opacity;
   transition-duration: 200ms;
   -webkit-tap-highlight-color: transparent;
   --chevron-width: var(--spacing-5);
+
+  /* Rows stay mounted while their parent expands or collapses, so they can animate in and out. */
+  &[data-entering],
+  &[data-exiting] {
+    height: 0;
+    min-height: 0;
+    padding-block: 0;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   &[data-has-child-items] {
     --chevron-width: 0px;
