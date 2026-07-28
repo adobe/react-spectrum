@@ -479,7 +479,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   );
 }
 
-export interface PromptTokenFieldPopoverProps extends PopoverProps {
+export interface PromptTokenFieldPopoverProps extends Omit<PopoverProps, 'shouldSkipAnimation'> {
   filterAnchor?: Position | null;
   items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   isFocused?: boolean;
@@ -800,27 +800,84 @@ function useInsertPromptSegment(buildSegments: (item: any) => TokenFieldSegment[
   };
 }
 
-export function InsertTokenMenuItem(props: MenuItemProps) {
+export interface InsertTokenMenuItemProps extends Omit<
+  MenuItemProps,
+  | 'UNSAFE_className'
+  | 'UNSAFE_style'
+  | 'download'
+  | 'href'
+  | 'hrefLang'
+  | 'ping'
+  | 'referrerPolicy'
+  | 'rel'
+  | 'routerOptions'
+  | 'target'
+> {}
+
+export function InsertTokenMenuItem(props: InsertTokenMenuItemProps) {
   let insert = useInsertPromptSegment(item => [
     {type: 'token', text: 'command' in item ? item.command : item.title, value: item},
     {type: 'text', text: ' '}
   ]);
 
-  return <MenuItem {...props} onAction={() => insert(props.value)} />;
+  return (
+    <MenuItem
+      {...props}
+      onAction={() => {
+        insert(props.value);
+        props.onAction?.();
+      }}
+    />
+  );
 }
 
-export function InsertTextMenuItem(props: MenuItemProps) {
+export interface InsertTextMenuItemProps extends Omit<
+  MenuItemProps,
+  | 'UNSAFE_className'
+  | 'UNSAFE_style'
+  | 'download'
+  | 'href'
+  | 'hrefLang'
+  | 'ping'
+  | 'referrerPolicy'
+  | 'rel'
+  | 'routerOptions'
+  | 'target'
+> {}
+
+export function InsertTextMenuItem(props: InsertTextMenuItemProps) {
   let insert = useInsertPromptSegment(item => [
     {type: 'text', text: `${'command' in item ? item.command : item.title} `}
   ]);
 
-  return <MenuItem {...props} onAction={() => insert(props.value)} />;
+  return (
+    <MenuItem
+      {...props}
+      onAction={() => {
+        insert(props.value);
+        props.onAction?.();
+      }}
+    />
+  );
 }
 
+export interface CommandMenuItemProps extends Omit<
+  MenuItemProps,
+  | 'UNSAFE_className'
+  | 'UNSAFE_style'
+  | 'download'
+  | 'href'
+  | 'hrefLang'
+  | 'ping'
+  | 'referrerPolicy'
+  | 'rel'
+  | 'routerOptions'
+  | 'target'
+> {}
 // specifically for menu items that only trigger a callback in the autocomplete menu
 // since they dont end up inserting a token or text, we need to clear the partial text that the user used
 // to filter the menu
-export function CommandMenuItem(props: MenuItemProps) {
+export function CommandMenuItem(props: CommandMenuItemProps) {
   let insert = useInsertPromptSegment(() => []);
   return (
     <MenuItem

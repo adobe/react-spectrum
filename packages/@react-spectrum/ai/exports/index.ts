@@ -47,7 +47,10 @@ export type {
   PromptTokenFieldPopoverProps,
   PromptFieldToolbarProps,
   InsertMenuItemProps,
-  PromptFieldVoiceButtonProps
+  PromptFieldVoiceButtonProps,
+  InsertTokenMenuItemProps,
+  InsertTextMenuItemProps,
+  CommandMenuItemProps
 } from '../src/PromptField';
 export type {MessageFeedbackProps} from '../src/MessageFeedback';
 export type {MessageSourceProps, SourceListProps, SourceListItemProps} from '../src/MessageSource';
