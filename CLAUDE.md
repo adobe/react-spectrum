@@ -43,17 +43,18 @@ This repo does **not** use the conventional JS toolchain — reach for these, an
 - **Move to browser tests when needed.** If a test requires mocking specific browser behavior, consider moving it to the browser run (`yarn test:browser`).
 - **Cover the reported issue.** When fixing a reported issue, add a test that reproduces the specific example given in the issue.
 - **Check whether the test already exists.** Find a home for it near other similar tests.
-- **Check code coverage** to decide whether a new test adds value — this is subjective.
-- **In unit tests, prefer** fake timers, our test utils, and user event.
-- **Keep comments minimal** — let the code speak for itself.
+- **Check code coverage** to help decide whether a new test adds value — this is subjective.
+- **In unit tests, prefer** fake timers, our test utils, and user event. Aside from those, prefer not mocking other modules, instead, move the test to a higher level.
 - **Combine tests** that share the same setup before an assertion.
 - **Ground test titles in the goal**, not the implementation — double-check they are accurate.
 
 ## Contributing
 
 - **Match the surrounding code** — follow the naming, structure, and patterns of neighboring files.
+- **Limit comments** — let the code speak for itself. Provide a holistic summary of how the changes work and why this approach was used in the description. If a particular section of code is complex, then prefer a higher level description of multiple lines over explaining a single line.
 - **Commit format** — use conventional-commit prefixes (`fix:`, `feat:`, `chore:`, `docs:`) as seen in the git history.
-- **Storybook** is the main way to develop and view components: `yarn start` (v3) and `yarn start:s2` (S2).
-- **S2 styling** — style with the `style` macro (`import {style} from '../style' with {type: 'macro'};` — the `with {type: 'macro'}` attribute is load-bearing). Pass typed style objects to it; don't write CSS files or hand-rolled className strings for S2.
+- **Opening a PR** — use `.github/PULL_REQUEST_TEMPLATE.md` as the PR body (e.g. `gh pr create --body-file .github/PULL_REQUEST_TEMPLATE.md`), don't hand-write a body. Fill out the checklist honestly and disclose AI use.
+- **Storybook** is the main way to develop and view components: `yarn start` (v3/RAC) and `yarn start:s2` (S2).
+- **S2 styling** — style with the `style` macro (`import {style} from '../style' with {type: 'macro'};` — the `with {type: 'macro'}` attribute is required). Pass typed style objects to it; don't write CSS files or hand-rolled className strings for S2.
 - **User-facing strings** — add the key to the package's `intl/en-US.json` (ICU MessageFormat) and read it via the localized string hook. Never hardcode UI text, and don't hand-edit the other locale files (translators own those).
-- **Generated code** — icon components are generated (`yarn build:icons`), not hand-written, and `postinstall` runs `patch-package`, so run install on a fresh clone.
+- **Generated code** — v3 icon components are generated (`yarn build:icons`) and s2 are handled through a parcel transformer, not hand-written, and `postinstall` runs `patch-package`, so run install on a fresh clone.
