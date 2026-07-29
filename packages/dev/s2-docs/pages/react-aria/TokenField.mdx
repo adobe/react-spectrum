@@ -99,14 +99,14 @@ import {TokenizingFieldValue} from './TokenizingFieldValue';
 
 ## Autocomplete
 
-Combine `TokenField` with [Autocomplete](Autocomplete) to provide inline completions such as @mentions and slash commands. Use `TokenFieldValue.findText` to locate the anchor character, and `positionToDOMRange` to position a [Popover](Popover) relative to the filter text.
+Combine `TokenField` with [Autocomplete](Autocomplete) to provide inline completions such as @mentions and slash commands. Use `TokenFieldValue.findText` to locate the anchor character, and `tokenFieldPositionToDOMRange` to position a [Popover](Popover) relative to the filter text.
 
 ```tsx render
 "use client";
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Text} from 'react-aria-components/Text';
 import {Token, TokenField} from 'vanilla-starter/TokenField';
-import {positionToDOMRange} from 'react-aria/useTokenField';
+import {tokenFieldPositionToDOMRange} from 'react-aria/useTokenField';
 import {Direction, TokenFieldValue} from 'react-aria-components/TokenField';
 import {Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Popover} from 'vanilla-starter/Popover';
@@ -195,7 +195,7 @@ function Example() {
         placement="bottom start"
         trigger="MenuTrigger"
         getTargetRect={target => {
-          return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
+          return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
         }}>
         <Menu items={items} dependencies={[filterAnchor]}>
           {item => (
