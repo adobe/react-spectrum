@@ -725,6 +725,77 @@ for (let i = 0; i < 1000; i++) {
 
 <ExampleList tag="virtualizer" pages={props.pages} />
 
+## Items that change size
+
+When using a `Virtualizer` with content that can change size, you can tell the `Virtualizer` to observe
+the items so that it updates the layout accordingly. This is done by setting the `shouldObserveItemSize` prop.
+
+```tsx render links={docs.links} wide
+"use client";
+import {Virtualizer, ListLayout} from 'react-aria-components/Virtualizer';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+let items: {
+  id: string;
+  name: string;
+}[] = [];
+for (let i = 0; i < 10; i++) {
+  items.push({id: `item_${i}`, name: `Item ${i}`});
+}
+
+function ExpandableItem({item}) {
+  let [expanded, setExpanded] = useState(false);
+  return (
+    <div className="expandable-item">
+      <Text>{item.name}</Text>
+      <Button onPress={() => setExpanded(!expanded)}>{expanded ? 'Collapse' : 'Expand'}</Button>
+      <Text slot="description" style={{display: expanded ? 'block' : 'none'}}>This is an expanded item.</Text>
+    </div>
+  );
+}
+
+<Virtualizer
+  layout={ListLayout}
+  layoutOptions={{
+    estimatedRowHeight: 25,
+    gap: 4,
+  }}
+  /*- begin highlight -*/
+  shouldObserveItemSize>
+  {/*- end highlight -*/}
+  <GridList
+    style={{display: 'block', padding: 0, height: 400, width: '100%'}}
+    aria-label="virtualized with expandable rows"
+    items={items}>
+    {item => 
+    <GridListItem textValue={item.name} style={{padding: 0}}><ExpandableItem item={item} /></GridListItem>}
+  </GridList>
+</Virtualizer>
+```
+
+```css render hidden
+.expandable-item {
+  display: grid;
+  padding: 4px;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+
+  .react-aria-Text {
+    grid-column: 1 / 1;
+  }
+  .react-aria-Button {
+    grid-column: 2 / 2;
+  }
+  .react-aria-Text[slot="description"] {
+    grid-column: 1 / span 2;
+    padding-top: 4px;
+  }
+}
+```
+
 ## API
 
 ### Virtualizer
