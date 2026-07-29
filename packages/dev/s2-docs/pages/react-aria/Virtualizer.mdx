@@ -736,6 +736,7 @@ import {Virtualizer, ListLayout} from 'react-aria-components/Virtualizer';
 import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
+import {ChevronRight, ChevronDown} from 'lucide-react';
 
 let items: {
   id: string;
@@ -750,7 +751,9 @@ function ExpandableItem({item}) {
   return (
     <div className="expandable-item">
       <Text>{item.name}</Text>
-      <Button onPress={() => setExpanded(!expanded)}>{expanded ? 'Collapse' : 'Expand'}</Button>
+      <Button onPress={() => setExpanded(!expanded)} aria-label={expanded ? 'Collapse' : 'Expand'}>
+        {expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+      </Button>
       <Text slot="description" style={{display: expanded ? 'block' : 'none'}}>This is an expanded item.</Text>
     </div>
   );
@@ -779,7 +782,7 @@ function ExpandableItem({item}) {
 .expandable-item {
   display: grid;
   padding: 4px;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr auto;
   grid-template-rows: auto auto;
   align-items: center;
 
