@@ -158,12 +158,11 @@ const buttonStyles = style({
     }
   },
   display: 'flex',
-  flexGrow: 1,
+  flexGrow: 0,
   alignItems: 'center',
   paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
   gap: 'calc(self(minHeight) * 3/8 - 1px)',
   minHeight: 32,
-  width: 'full',
   backgroundColor: 'transparent',
   transition: 'default',
   borderWidth: 0,
