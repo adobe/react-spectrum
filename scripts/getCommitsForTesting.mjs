@@ -164,7 +164,10 @@ export async function generateData(startDate, endDate) {
 }
 
 export async function generateCSV(startDate, endDate) {
-  let {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs, counts} = await generateData(startDate, endDate);
+  let {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs, counts} = await generateData(
+    startDate,
+    endDate
+  );
 
   function formatRows(rows) {
     return rows

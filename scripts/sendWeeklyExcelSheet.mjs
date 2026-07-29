@@ -112,7 +112,10 @@ async function main() {
   })();
   console.log(`Generating testing sheet for ${startDate} – ${endDate}...`);
 
-  let {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs, counts} = await generateData(startDate, endDate);
+  let {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs, counts} = await generateData(
+    startDate,
+    endDate
+  );
   console.log(
     `Found: V3=${counts.v3}, S2=${counts.s2}, RAC=${counts.rac}, AI=${counts.ai}, Other=${counts.other}, Off PRs=${counts.offPRs}`
   );
