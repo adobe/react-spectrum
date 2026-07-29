@@ -281,7 +281,7 @@ export interface ResponseStatusPanelProps
   styles?: StyleString;
 }
 
-const panelStyles = style({
+const panelStyle = {
   font: 'body',
   height: '--disclosure-panel-height',
   overflow: 'clip',
@@ -289,7 +289,7 @@ const panelStyles = style({
     default: '[height]',
     '@media (prefers-reduced-motion: reduce)': 'none'
   }
-});
+} as const;
 
 const panelInner = style({
   paddingTop: 8,
@@ -316,7 +316,10 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   }, [registerPanel]);
 
   return (
-    <RACDisclosurePanel {...domProps} ref={panelRef} className={mergeStyles(panelStyles, styles)}>
+    <RACDisclosurePanel
+      {...domProps}
+      ref={panelRef}
+      className={mergeStyles(style(panelStyle), styles)}>
       <div className={panelInner}>{props.children}</div>
     </RACDisclosurePanel>
   );
@@ -446,19 +449,22 @@ const executionTraceItemDividerStyles = style({
   display: 'var(--divider-display, flex)'
 });
 
-const executionTraceItemBaseStyles = {
-  paddingBottom: 12,
+const executionTraceDisclosurePanelStyles = style({
+  ...panelStyle,
   paddingStart: 8
-} as const;
+});
+
+const executionTraceDisclosureContainerStyles = style({
+  paddingBottom: 12,
+  marginTop: -4
+});
 
 const executionTraceWithoutDisclosureStyles = style({
-  ...executionTraceItemBaseStyles,
+  paddingStart: 8,
   display: 'flex',
   flexDirection: 'column',
   minHeight: 24
 });
-
-const executionTraceDetailPanelStyles = style(executionTraceItemBaseStyles);
 
 /**
  * An ExecutionTraceItem represents a single step within an ExecutionTrace, such as
@@ -489,12 +495,14 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
         <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
       {hasDetail && !isAlwaysOpen ? (
-        <RACDisclosure>
-          <DetailTrigger>{children}</DetailTrigger>
-          <RACDisclosurePanel className={mergeStyles(panelStyles, executionTraceDetailPanelStyles)}>
-            {detail}
-          </RACDisclosurePanel>
-        </RACDisclosure>
+        <div className={executionTraceDisclosureContainerStyles}>
+          <RACDisclosure>
+            <DetailTrigger>{children}</DetailTrigger>
+            <RACDisclosurePanel className={executionTraceDisclosurePanelStyles}>
+              {detail}
+            </RACDisclosurePanel>
+          </RACDisclosure>
+        </div>
       ) : (
         <div className={executionTraceWithoutDisclosureStyles}>
           <span>{children}</span>
