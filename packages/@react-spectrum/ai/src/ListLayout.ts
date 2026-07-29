@@ -230,7 +230,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
   }
 
-  getScrollAnchorInfo(layoutOptions?: O): ScrollAnchorInfo | null {
+  UNSTABLE_getScrollAnchorInfo(layoutOptions?: O): ScrollAnchorInfo | null {
     let anchorTo = layoutOptions?.anchorTo ?? this.anchorTo;
     let orientation = layoutOptions?.orientation ?? this.orientation;
     // TODO: Reversed (anchorTo: 'end') layouts are only supported in vertical orientations (for now).
