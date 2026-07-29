@@ -75,13 +75,6 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   }
 
   /**
-   * Describes the edge-anchoring this layout wants, if any. Returning null (or omitting this
-   * method) disables scroll-anchoring entirely — the virtualizer's generic anchor-tracking logic
-   * is skipped.
-   */
-  UNSTABLE_getScrollAnchorInfo?(_layoutOptions?: O): ScrollAnchorInfo | null;
-
-  /**
    * This method allows the layout to perform any pre-computation
    * it needs to in order to prepare LayoutInfos for retrieval.
    * Called by the virtualizer before `getVisibleLayoutInfos`
