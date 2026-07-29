@@ -1,0 +1,50 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-stately/data';
+
+export const section = 'Utilities';
+export const description = 'Manages asynchronous list data, including loading, pagination, sorting, and filtering.';
+
+# useAsyncList
+
+<PageDescription>{docs.exports.useAsyncList.description}</PageDescription>
+
+`useAsyncList` extends [useListData](useListData), adding support for asynchronous loading, pagination, sorting, and filtering. It manages loading and error states, supports abortable requests, and works with any data fetching library or the browser [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API.
+
+## Example
+
+Pass a `load` function that returns the items to render. The provided abort signal should be passed to your request so it is canceled when a new load starts.
+
+```tsx
+import {useAsyncList} from 'react-stately/useAsyncList';
+
+let list = useAsyncList({
+  async load({signal}) {
+    let response = await fetch('https://pokeapi.co/api/v2/pokemon', {signal});
+    let json = await response.json();
+    return {items: json.results};
+  }
+});
+
+<ListBox
+  items={list.items}
+  loadingState={list.loadingState}>
+  {item => <ListBoxItem>{item.name}</ListBoxItem>}
+</ListBox>
+```
+
+For paginated APIs, return a `cursor` from `load` and call `list.loadMore` when the collection requests more data.
+
+## API
+
+<FunctionAPI function={docs.exports.useAsyncList} links={docs.links} />

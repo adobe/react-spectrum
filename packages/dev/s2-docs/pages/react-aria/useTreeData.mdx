@@ -1,0 +1,55 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-stately/data';
+
+export const section = 'Utilities';
+export const description = 'Manages an immutable tree of items and its selection state.';
+
+# useTreeData
+
+<PageDescription>{docs.exports.useTreeData.description}</PageDescription>
+
+`useTreeData` manages an immutable tree with helper methods to efficiently insert, move, update, and remove items. Updating the tree automatically causes the component to re-render.
+
+It also manages selection based on unique item keys, and updates the selection automatically when items are removed.
+
+## Example
+
+```tsx
+import {useTreeData} from 'react-stately/useTreeData';
+
+let tree = useTreeData({
+  initialItems: [
+    {
+      id: 'people',
+      name: 'People',
+      children: [
+        {id: 'david', name: 'David'},
+        {id: 'sam', name: 'Sam'}
+      ]
+    }
+  ],
+  getChildren: item => item.children || []
+});
+
+<Tree
+  items={tree.items}
+  selectedKeys={tree.selectedKeys}
+  onSelectionChange={tree.setSelectedKeys}>
+  {item => <TreeItem title={item.value.name} />}
+</Tree>
+```
+
+## API
+
+<FunctionAPI function={docs.exports.useTreeData} links={docs.links} />

@@ -1,0 +1,50 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-stately/data';
+
+export const section = 'Utilities';
+export const description = 'Manages an immutable list of items and its selection state.';
+
+# useListData
+
+<PageDescription>{docs.exports.useListData.description}</PageDescription>
+
+`useListData` manages an immutable list with helper methods to efficiently insert, move, update, and remove items. Updating the list automatically causes the component to re-render.
+
+It also manages selection based on unique item keys, and updates the selection automatically when items are removed.
+
+## Example
+
+```tsx
+import {useListData} from 'react-stately/useListData';
+
+let list = useListData({
+  initialItems: [
+    {id: 1, name: 'Aardvark'},
+    {id: 2, name: 'Kangaroo'},
+    {id: 3, name: 'Snake'}
+  ],
+  initialSelectedKeys: [2]
+});
+
+<ListBox
+  items={list.items}
+  selectedKeys={list.selectedKeys}
+  onSelectionChange={list.setSelectedKeys}>
+  {item => <ListBoxItem>{item.name}</ListBoxItem>}
+</ListBox>
+```
+
+## API
+
+<FunctionAPI function={docs.exports.useListData} links={docs.links} />
