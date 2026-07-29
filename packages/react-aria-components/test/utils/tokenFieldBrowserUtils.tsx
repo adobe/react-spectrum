@@ -11,7 +11,7 @@
  */
 
 import {expect} from 'vitest';
-import {getSelection, setSelection} from '../../../react-aria/src/tokenfield/useTokenField';
+import {getSelection, setTokenFieldSelection} from '../../../react-aria/src/tokenfield/useTokenField';
 import {type Locator, userEvent} from 'vitest/browser';
 import {Position, TokenFieldSegment, TokenFieldValue} from 'react-stately/useTokenFieldState';
 import React, {useEffect, useState} from 'react';
@@ -99,7 +99,7 @@ export async function focusField(locator: Locator) {
 }
 
 export function setFieldSelection(textboxEl: Element, start: Position, end: Position): void {
-  setSelection(textboxEl, start, end);
+  setTokenFieldSelection(textboxEl, start, end);
 }
 
 /**

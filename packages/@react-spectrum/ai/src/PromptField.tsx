@@ -56,25 +56,26 @@ import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {PixelLoader} from './loader/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
-import {
-  positionToDOMRange,
-  Token,
-  TokenField,
-  TokenInput,
-  TokenProps
-} from 'react-aria-components/TokenField';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
-import {setSelection} from 'react-aria/useTokenField';
+import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
+import {
+  Token,
+  TokenField,
+  tokenFieldPositionToDOMRange,
+  TokenInput,
+  TokenProps
+} from 'react-aria-components/TokenField';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useKeyboard} from 'react-aria/useKeyboard';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
 
@@ -507,7 +508,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       hideArrow
       placement="bottom start"
       getTargetRect={target => {
-        return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
+        return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
       <PromptCompletionAnchorContext.Provider value={filterAnchor ?? null}>
         <Menu>{menuItems}</Menu>
@@ -614,7 +615,9 @@ export interface PromptFieldVoiceButtonProps {
 }
 
 export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
-  let {lang, isDisabled: isDisabledProp, onError} = props;
+  let {lang: langProp, isDisabled: isDisabledProp, onError} = props;
+  let {locale} = useLocale();
+  let lang = langProp ?? locale;
   let {prompt, setPrompt, inputRef, setListening} = useContext(PromptFieldContext);
   let isDisabled = isDisabledProp;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
@@ -640,7 +643,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     // to be inaccurate
     let finalPrompt = buildVoicePrompt(basePromptRef.current, transcript);
     inputRef.current.focus();
-    setSelection(inputRef.current, finalPrompt.caretPosition, finalPrompt.caretPosition);
+    setTokenFieldSelection(inputRef.current, finalPrompt.caretPosition, finalPrompt.caretPosition);
     setPrompt(finalPrompt);
   });
 
@@ -788,7 +791,7 @@ function useInsertPromptSegment(buildSegments: (item: any) => TokenFieldSegment[
           inputRef.current.focus();
           // we need to update the position manually since TokenField's update caret logic only happens if the field is focused
           // but this insert can happen from the + menu aka the field isn't focused until this gets called which is too late
-          setSelection(inputRef.current, position, position);
+          setTokenFieldSelection(inputRef.current, position, position);
           // the above focus and setCursor call can cause the internally tracked caret position to be reset incorrectly
           // seemingly due to TokenField's isProgrammaticSelectionChange being flipped to false by setCursor and thus reset to 0 by the .focus
           // fix this by resetting to proper position below

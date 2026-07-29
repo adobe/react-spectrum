@@ -23,6 +23,18 @@ import {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 export interface PreviewTriggerProps extends AriaPreviewTriggerProps {
   /** The trigger and Popover that make up the preview trigger. */
   children: ReactNode;
+  /**
+   * The delay time in milliseconds before the preview opens.
+   *
+   * @default 600
+   */
+  delay?: number;
+  /**
+   * The delay time in milliseconds before the preview closes after the pointer leaves.
+   *
+   * @default 200
+   */
+  closeDelay?: number;
 }
 
 /**

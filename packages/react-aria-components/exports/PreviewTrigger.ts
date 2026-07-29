@@ -7,10 +7,12 @@
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
- * governing
+ * governing permissions and limitations under the License.
  */
 
-export {useTokenField, tokenFieldPositionToDOMRange, setTokenFieldSelection} from '../src/tokenfield/useTokenField';
-export {useToken} from '../src/tokenfield/useToken';
-export type {TokenFieldAria, AriaTokenFieldProps} from '../src/tokenfield/useTokenField';
-export type {TokenAria, TokenProps} from '../src/tokenfield/useToken';
+// Mark as a client only package. This will cause a build time error if you try
+// to import it from a React Server Component in a framework like Next.js.
+import 'client-only';
+
+export {PreviewTrigger} from '../src/PreviewTrigger';
+export type {PreviewTriggerProps} from '../src/PreviewTrigger';

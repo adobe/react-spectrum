@@ -165,7 +165,12 @@ export {useId} from '../src/utils/useId';
 export {useObjectRef} from '../src/utils/useObjectRef';
 export {RouterProvider} from '../src/utils/openLink';
 export {VisuallyHidden, useVisuallyHidden} from '../src/visually-hidden/VisuallyHidden';
-export {useTokenField} from '../src/tokenfield/useTokenField';
+export {
+  useTokenField,
+  tokenFieldPositionToDOMRange,
+  setTokenFieldSelection,
+  getSelection
+} from '../src/tokenfield/useTokenField';
 export {useToken} from '../src/tokenfield/useToken';
 
 export type {
