@@ -104,7 +104,8 @@ export function CodeBlock({
   }
 
   let resolveFrom = path.resolve(
-    'pages',
+    __dirname,
+    '../pages',
     dir || (props.type === 's2' ? 's2' : 'react-aria'),
     'index.tsx'
   );
@@ -261,6 +262,7 @@ export function Files({
 }
 
 const readFile = cache((file: string) => fs.readFileSync(file, 'utf8'));
+const baseDir = process.env.PARCEL_V3 ? __dirname + '/../../../../' : '../../../';
 
 export function File({
   filename,
@@ -272,7 +274,7 @@ export function File({
   type?: 'vanilla' | 'tailwind' | 's2';
 }) {
   let contents = readFile(
-    path.isAbsolute(filename) ? filename : path.resolve('../../../', filename)
+    path.resolve(baseDir, filename),
   ).replace(STARTER_ALIAS_RE, './');
   return (
     <CodePlatter type={type}>
@@ -302,7 +304,7 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
 
   if (type === 'tailwind' && !fileContents['index.css']) {
     fileContents['index.css'] = readFileReplace(
-      path.resolve('../../../starters/tailwind/src/index.css')
+      path.resolve(baseDir, 'starters/tailwind/src/index.css')
     );
   }
 
@@ -310,7 +312,7 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
 }
 
 function findAllFiles(files: string[], npmDeps = {}) {
-  files = files.map(file => (path.isAbsolute(file) ? file : path.resolve('../../../', file)));
+  files = files.map(file => (path.isAbsolute(file) ? file : path.resolve(baseDir, file)));
 
   let queue: string[] = [...files];
   let allFiles = new Set<string>();
@@ -354,7 +356,7 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
 
     let resolved = specifier.startsWith('.')
       ? path.resolve(path.dirname(file), specifier)
-      : path.resolve('../../../' + specifier);
+      : path.resolve(baseDir, specifier);
     if (path.extname(resolved) === '') {
       if (fs.existsSync(resolved + '.tsx')) {
         resolved += '.tsx';
