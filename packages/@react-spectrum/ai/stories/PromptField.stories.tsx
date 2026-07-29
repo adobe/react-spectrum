@@ -51,6 +51,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
+import type {FocusableRefValue} from '@react-types/shared';
 import {TokenFieldValue} from 'react-aria-components';
 import {useRef, useState} from 'react';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
@@ -268,12 +269,13 @@ let prompts = [
       value: {type: 'campaign', title: 'Spring Launch 2026'}
     }
   ]),
-  prompt3Base.replaceRange(prompt3End, prompt3End, ' journey performance from test.com ')
+  prompt3Base.replaceRange(prompt3End, prompt3End, ' journey performance from test.com /')
 ];
 
 function EverythingRender(args) {
   let {placeholder, ...otherArgs} = args;
   let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+  let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
   let historyRef = useRef<TokenFieldValue[]>([]);
@@ -352,13 +354,19 @@ function EverythingRender(args) {
     <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
       <MessageSuggestionList title="Suggestions">
         {prompts.map((prompt, i) => (
-          <MessageSuggestion key={i} onPress={() => setValue(prompt)}>
+          <MessageSuggestion
+            key={i}
+            onPress={() => {
+              setValue(prompt);
+              promptFieldRef.current?.focus();
+            }}>
             {prompt.toString()}
           </MessageSuggestion>
         ))}
       </MessageSuggestionList>
       <PromptField
         {...otherArgs}
+        ref={promptFieldRef}
         value={value}
         onChange={handleChange}
         attachments={attachments}

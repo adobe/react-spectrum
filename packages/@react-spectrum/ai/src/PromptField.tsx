@@ -44,7 +44,7 @@ import {
   TokenFieldValue,
   TokenSegment
 } from 'react-stately/useTokenFieldState';
-import {DOMRef} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
@@ -71,7 +71,7 @@ import {
 } from 'react-aria-components/TokenField';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import {useControlledState} from 'react-stately/useControlledState';
-import {useDOMRef} from './useDOMRef';
+import {useFocusableRef} from './useDOMRef';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useKeyboard} from 'react-aria/useKeyboard';
@@ -183,7 +183,7 @@ function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
 
 export const PromptField = forwardRef(function PromptField(
   props: PromptFieldProps,
-  ref: DOMRef<HTMLDivElement>
+  ref: FocusableRef<HTMLDivElement>
 ) {
   let {
     children,
@@ -196,7 +196,10 @@ export const PromptField = forwardRef(function PromptField(
     variant = 'balanced',
     brandColor
   } = props;
-  let domRef = useDOMRef(ref);
+  // Not using RAC DropZone because it adds its own focusable button,
+  // and we want to avoid an extra tab. We support pasting files directly into the input.
+  let inputRef = useRef<HTMLDivElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [prompt, setPrompt] = useControlledState(
     props.value,
@@ -208,10 +211,6 @@ export const PromptField = forwardRef(function PromptField(
     props.defaultAttachments ?? [],
     props.onAttachmentsChange
   );
-
-  // Not using RAC DropZone because it adds its own focusable button,
-  // and we want to avoid an extra tab. We support pasting files directly into the input.
-  let inputRef = useRef<HTMLDivElement>(null);
   let {dropProps, isDropTarget} = useDrop({
     ref: inputRef,
     hasDropButton: true,
