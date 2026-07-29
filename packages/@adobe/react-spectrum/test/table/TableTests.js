@@ -1830,25 +1830,35 @@ export let tableTests = () => {
         expect(document.activeElement).toBe(within(table).getAllByRole('row')[1]);
       });
 
-      it('should move focus to the first column header when tabbing into the table from the start with initialFocus="columnheader"', function () {
+      it('should move focus to the first column header when tabbing into the table from the start with initialFocus="columnheader"', async function () {
         let tree = renderFocusable({initialFocus: 'columnheader', selectionMode: 'none'});
 
         let table = tree.getByRole('grid');
         expect(table).toHaveAttribute('tabIndex', '0');
 
-        let before = tree.getByTestId('before');
-        act(() => before.focus());
+        await user.tab();
+        expect(document.activeElement).toBe(tree.getByTestId('before'));
 
-        fireEvent.keyDown(before, {key: 'Tab'});
-        act(() => {
-          within(table).getAllByRole('switch')[0].focus();
-        });
-        fireEvent.keyUp(before, {key: 'Tab'});
-
+        await user.tab();
         expect(document.activeElement).toBe(within(table).getAllByRole('columnheader')[0]);
       });
 
-      it('should move focus to the first column header when tabbing into the table with initialFocus="columnheader" even if a row is already selected', function () {
+      it('should focus the first real column header, not the selection checkbox column, when tabbing in with initialFocus="columnheader"', async function () {
+        let tree = renderFocusable({initialFocus: 'columnheader', selectionMode: 'multiple'});
+
+        let table = tree.getByRole('grid');
+        let columnHeaders = within(table).getAllByRole('columnheader');
+        // The auto-generated selection checkbox column is inserted before the "Foo" column.
+        expect(within(columnHeaders[0]).queryByRole('checkbox')).not.toBeNull();
+
+        await user.tab();
+        await user.tab();
+
+        expect(document.activeElement).toBe(columnHeaders[1]);
+        expect(document.activeElement).toHaveTextContent('Foo');
+      });
+
+      it('should focus the selected row rather than the first column header when tabbing into the table with initialFocus="columnheader" if a row is already selected', async function () {
         let tree = render(
           <>
             <input data-testid="before" />
@@ -1881,18 +1891,14 @@ export let tableTests = () => {
         );
 
         let table = tree.getByRole('grid');
-        expect(within(table).getAllByRole('row')[1]).toHaveAttribute('aria-selected', 'true');
+        let selectedRow = within(table).getAllByRole('row')[1];
+        expect(selectedRow).toHaveAttribute('aria-selected', 'true');
 
-        let before = tree.getByTestId('before');
-        act(() => before.focus());
+        await user.tab();
+        expect(document.activeElement).toBe(tree.getByTestId('before'));
 
-        fireEvent.keyDown(before, {key: 'Tab'});
-        act(() => {
-          table.focus();
-        });
-        fireEvent.keyUp(before, {key: 'Tab'});
-
-        expect(document.activeElement).toBe(within(table).getAllByRole('columnheader')[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(selectedRow);
       });
 
       it('should move focus to the last row when tabbing into the table from the end', function () {

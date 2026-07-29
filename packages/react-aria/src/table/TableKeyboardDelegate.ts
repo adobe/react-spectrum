@@ -41,7 +41,9 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
 
   getFirstKey(fromKey?: Key, global?: boolean): Key | null {
     if (fromKey == null && this.initialFocus === 'columnheader') {
-      let firstColumn = this.collection.columns[0];
+      let firstColumn = this.collection.columns.find(
+        column => !column.props?.isDragButtonCell && !column.props?.isSelectionCell
+      );
       if (firstColumn) {
         return firstColumn.key;
       }

@@ -136,13 +136,6 @@ export interface AriaSelectableCollectionOptions {
    * @private
    */
   UNSTABLE_focusOnEntry?: 'first' | 'last';
-  /**
-   * Whether the delegate's first/last key should be used instead of the current selection when the
-   * collection receives focus for the first time (i.e. before the user has interacted with it).
-   *
-   * @private
-   */
-  UNSTABLE_ignoreSelectionOnEntry?: boolean;
 }
 
 export interface SelectableCollectionAria {
@@ -172,8 +165,7 @@ export function useSelectableCollection(
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
     linkBehavior = 'action',
-    UNSTABLE_focusOnEntry,
-    UNSTABLE_ignoreSelectionOnEntry = false
+    UNSTABLE_focusOnEntry
   } = options;
   let {direction} = useLocale();
   let router = useRouter();
@@ -499,17 +491,9 @@ export function useSelectableCollection(
         relatedTarget &&
         e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING
       ) {
-        navigateToKey(
-          UNSTABLE_ignoreSelectionOnEntry
-            ? delegate.getLastKey?.()
-            : (manager.lastSelectedKey ?? delegate.getLastKey?.())
-        );
+        navigateToKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
       } else {
-        navigateToKey(
-          UNSTABLE_ignoreSelectionOnEntry
-            ? delegate.getFirstKey?.()
-            : (manager.firstSelectedKey ?? delegate.getFirstKey?.())
-        );
+        navigateToKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
       }
     } else if (scrollRef.current) {
       // Restore the scroll position to what it was before.
