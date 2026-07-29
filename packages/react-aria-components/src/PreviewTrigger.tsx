@@ -30,7 +30,7 @@ export interface PreviewTriggerProps extends AriaPreviewTriggerProps {
    */
   delay?: number;
   /**
-   * The delay time in milliseconds before the preview closes after the pointer leaves.
+   * The delay time in milliseconds before the preview closes.
    *
    * @default 200
    */

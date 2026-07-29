@@ -147,7 +147,7 @@ function tokenizeURLs(text: string): TokenFieldSegment[] {
   return segments;
 }
 
-export class AutoLinkingTokenFieldValue extends TokenFieldValue {
+export class PromptFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
     return tokenizeURLs(text);
   }
@@ -156,7 +156,7 @@ export class AutoLinkingTokenFieldValue extends TokenFieldValue {
 const PromptFieldContext = createContext<PromptFieldState>({
   attachments: [],
   setAttachments: () => {},
-  prompt: new AutoLinkingTokenFieldValue([]),
+  prompt: new PromptFieldValue([]),
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false,
@@ -200,7 +200,7 @@ export const PromptField = forwardRef(function PromptField(
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [prompt, setPrompt] = useControlledState(
     props.value,
-    props.defaultValue ?? new AutoLinkingTokenFieldValue([]),
+    props.defaultValue ?? new PromptFieldValue([]),
     props.onChange
   );
   let [attachments, setAttachments] = useControlledState(
@@ -248,7 +248,7 @@ export const PromptField = forwardRef(function PromptField(
 
     props.onSubmit?.(prompt, attachments);
     if (!isPromptControlled) {
-      setPrompt(new AutoLinkingTokenFieldValue([]));
+      setPrompt(new PromptFieldValue([]));
     }
     if (!isAttachmentsControlled) {
       setAttachments([]);
@@ -699,15 +699,11 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   );
 }
 
-function buildVoicePrompt(base: TokenFieldValue, voiceText: string): AutoLinkingTokenFieldValue {
+function buildVoicePrompt(base: TokenFieldValue, voiceText: string): PromptFieldValue {
   if (!voiceText) {
-    return base as AutoLinkingTokenFieldValue;
+    return base as PromptFieldValue;
   }
-  return base.replaceRange(
-    base.caretPosition,
-    base.caretPosition,
-    voiceText
-  ) as AutoLinkingTokenFieldValue;
+  return base.replaceRange(base.caretPosition, base.caretPosition, voiceText) as PromptFieldValue;
 }
 
 export interface InsertMenuItemProps {
