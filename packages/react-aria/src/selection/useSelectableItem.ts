@@ -297,7 +297,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       // oxlint-disable-next-line react/react-compiler
       itemPressProps.onPress = e => {
         if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
-          if (e.pointerType === 'keyboard' && !isActionKey(e.key)) {
+          if (e.pointerType === 'keyboard' && !isActionKey(e.key) && !(!allowsSelection && isSelectionKey(e.key))) {
             return;
           }
 
@@ -353,7 +353,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         e.pointerType === 'touch' ||
         e.pointerType === 'pen' ||
         e.pointerType === 'virtual' ||
-        (e.pointerType === 'keyboard' && hasAction && isActionKey(e.key)) ||
+        (e.pointerType === 'keyboard' && hasAction && (isActionKey(e.key) || (!allowsSelection && isSelectionKey(e.key)))) ||
         (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
       ) {
         if (hasAction) {
