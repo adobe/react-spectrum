@@ -322,10 +322,19 @@ const SideNavItemLinkContext = createContext<{
   onPressChange?: (isPressed: boolean) => void;
 }>({});
 
+const SideNavInternalItemContext = createContext<{setLinkPressed?: (isPressed: boolean) => void}>(
+  {}
+);
+
 export const SideNavItem = (props: SideNavItemProps): ReactNode => {
   let {href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions, ...rest} = props;
 
   let hasLink = href != null && href.length > 0;
+  let [isLinkPressed, setLinkPressed] = useState(false);
+  let rowRef = useRef<HTMLDivElement | null>(null);
+  // oxlint-disable-next-line react-compiler
+  let scaling = pressScale(rowRef);
+
   return (
     <SideNavItemLinkContext.Provider
       value={{
@@ -338,13 +347,17 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
         referrerPolicy,
         routerOptions
       }}>
-      <TreeItem
-        {...rest}
-        href={href}
-        focusMode={hasLink ? 'child' : undefined}
-        allowsArrowNavigation
-        className={renderProps => treeRow(renderProps)}
-      />
+      <SideNavInternalItemContext.Provider value={{setLinkPressed}}>
+        <TreeItem
+          {...rest}
+          ref={rowRef}
+          style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
+          href={href}
+          focusMode={hasLink ? 'child' : undefined}
+          allowsArrowNavigation
+          className={renderProps => treeRow(renderProps)}
+        />
+      </SideNavInternalItemContext.Provider>
     </SideNavItemLinkContext.Provider>
   );
 };
@@ -415,6 +428,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
   let {children} = props;
   let scale = useScale();
   let linkProps = useContext(SideNavItemLinkContext);
+  let {setLinkPressed} = useContext(SideNavInternalItemContext);
   let {selectedRoute} = useContext(InternalSideNavContext);
 
   return (
@@ -437,6 +451,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
             hasChildItems={hasChildItems}
             isDisabled={isDisabled}
             isSelected={isSelected}
+            setLinkPressed={setLinkPressed}
             linkProps={linkProps}
             scale={scale}
             id={id}
@@ -460,13 +475,13 @@ const SideNavItemContentInner = props => {
     hasChildItems,
     isDisabled,
     isSelected,
+    setLinkPressed,
     linkProps,
     scale,
     id,
     state,
     selectedRoute,
     isHovered,
-    isPressed,
     isFocusVisible,
     isFocusVisibleWithin,
     children
@@ -478,36 +493,29 @@ const SideNavItemContentInner = props => {
   // keyboard-only isFocusVisibleWithin below, this lets the row focus ring follow the link
   // specifically and not other focusable children (e.g. an ActionMenu trigger).
   let [isLinkFocused, setLinkFocused] = useState(false);
-  let [isLinkPressed, setLinkPressed] = useState(false);
-  let cellRef = useRef<HTMLDivElement | null>(null);
 
   let hasLink = linkProps.href != null && linkProps.href.length > 0;
-
-  // oxlint-disable-next-line react-compiler
-  let itemScaling = pressScale(cellRef)({isPressed: isLinkPressed || isPressed});
 
   return (
     <>
       <div
-        ref={cellRef}
+        className={treeRowFocusRing({
+          isFocusVisible: isFocusVisible || (isFocusVisibleWithin && isLinkFocused),
+          isSelected
+        })}
+      />
+      <div
         className={treeCellGrid({
           isDisabled,
           isSelected: linkProps.href === selectedRoute,
           isDescendantSelected:
             !isExpanded && hasChildItems && hasSelectedDescendant(id, state, selectedRoute)
-        })}
-        style={itemScaling}>
+        })}>
         <div
           className={indicator({
             isDisabled,
             isSelected: linkProps.href === selectedRoute,
             isHovered: isHovered && hasLink
-          })}
-        />
-        <div
-          className={treeRowFocusRing({
-            isFocusVisible: isFocusVisible || (isFocusVisibleWithin && isLinkFocused),
-            isSelected
           })}
         />
         <div
