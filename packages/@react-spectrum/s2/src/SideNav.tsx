@@ -153,7 +153,7 @@ const tree = style<TreeRenderProps>({
 
 interface InternalSideNavContextValue {
   /** The route that is currently selected. */
-  selectedRoute?: string;
+  selectedRoute?: string | null;
   /** The last route the focused key was synced to; dedupes the focus sync across items. */
   syncedRouteRef?: RefObject<string | undefined>;
 }
