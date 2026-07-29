@@ -14,7 +14,6 @@ import {InvalidationContext} from './types';
 import {ItemDropTarget, Key, LayoutDelegate, Node} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
-import {ScrollAnchorInfo} from './ScrollAnchor';
 import {Size} from './Size';
 import {Virtualizer} from './Virtualizer';
 
