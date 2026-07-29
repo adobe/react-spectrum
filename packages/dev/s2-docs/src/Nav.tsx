@@ -1,11 +1,20 @@
 'use client';
 
 import {BaseLink} from './Link';
-import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
-import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {getLibraryFromPage} from './library';
+import {
+  Collection,
+  SideNav as S2SideNav,
+  SideNavItem as S2SideNavItem,
+  SideNavSection as S2SideNavSection,
+  SideNavHeader,
+  SideNavItemContent,
+  SideNavItemLink
+} from '@react-spectrum/s2/SideNav';
+import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getLibraryFromPage, getLibraryLabel} from './library';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import type {Page} from '@parcel/rsc';
+import {Picker, pressScale} from '@react-spectrum/s2';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 import {usePendingPage, useRouter} from './Router';
 
@@ -20,13 +29,27 @@ export function Nav() {
   let [maskSize, setMaskSize] = useState(0);
   let displayPage = usePendingPage();
 
+  // Scroll the selected item into view once on initial load (not on in-app navigations),
+  // matching the old nav's behavior. Reads the aria-current="page" link the SideNav renders.
+  let navRef = useRef<HTMLElement>(null);
+  let didScroll = useRef(false);
+  useEffect(() => {
+    if (didScroll.current) {
+      return;
+    }
+    let selected = navRef.current?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (selected && selected.offsetParent !== null) {
+      selected.scrollIntoView({block: 'center'});
+      didScroll.current = true;
+    }
+  }, [displayPage.url]);
+
   if (currentPage.exports?.hideNav) {
     return null;
   }
 
   let currentLibrary = getLibraryFromPage(displayPage);
   let sections = new Map<string, SectionValue>();
-  let sectionLibrary = new Map();
   for (let page of pages) {
     if (page.exports?.hideNav || page.exports?.omitFromNav) {
       continue;
@@ -67,8 +90,6 @@ export function Nav() {
       sectionPages.push(page);
       sections.set(section, sectionPages);
     }
-
-    sectionLibrary.set(section, library);
   }
 
   let sortedSections = [...sections].sort((a, b) => {
@@ -82,8 +103,31 @@ export function Nav() {
     return a[0].localeCompare(b[0]);
   });
 
+  let libraryLabel = getLibraryLabel(currentLibrary);
+
+  let overviewNodes: NavNode[] = [];
+  let sectionNodes: NavNode[] = [];
+  for (let [name, pages] of sortedSections) {
+    if (name === 'Overview' && Array.isArray(pages)) {
+      overviewNodes = sortOverview(pages).map(leafNode);
+    } else if (isSectionMap(pages)) {
+      sectionNodes.push({
+        id: name,
+        title: name,
+        children: [...pages.entries()].map(([sub, subPages]) => ({
+          id: sub,
+          title: sub,
+          children: sortSectionPages(subPages).map(leafNode)
+        }))
+      });
+    } else {
+      sectionNodes.push({id: name, title: name, children: sortSectionPages(pages).map(leafNode)});
+    }
+  }
+
   return (
     <nav
+      ref={navRef}
       onScroll={e => setMaskSize(Math.min(e.currentTarget.scrollTop, 32))}
       style={{
         maskImage:
@@ -102,120 +146,30 @@ export function Nav() {
           lg: 'block'
         }
       })}>
-      {sortedSections.map(([name, pages]) => {
-        let nav = <></>;
-        if (isSectionMap(pages)) {
-          nav = (
-            <>
-              {Array.from(pages.entries()).map(([section, items]) => (
-                <SideNavSection title={section} key={section}>
-                  <SideNav>
-                    {items
-                      .sort((a, b) => {
-                        const aIntro = isIntroduction(a);
-                        const bIntro = isIntroduction(b);
-                        if (aIntro && !bIntro) {
-                          return -1;
-                        }
-                        if (!aIntro && bIntro) {
-                          return 1;
-                        }
-                        return title(a).localeCompare(title(b));
-                      })
-                      .filter(page => !page.exports?.isSubpage)
-                      .map(page => (
-                        <SideNavItem key={page.url}>
-                          <SideNavLink
-                            href={page.url}
-                            page={page}
-                            isSelected={page.url === displayPage.url}>
-                            {title(page)}
-                          </SideNavLink>
-                        </SideNavItem>
-                      ))}
-                  </SideNav>
-                </SideNavSection>
-              ))}
-            </>
-          );
-        } else {
-          nav = (
-            <SideNav>
-              {pages
-                .sort((a, b) => {
-                  let aIntro = isIntroduction(a);
-                  let bIntro = isIntroduction(b);
-                  if (aIntro && !bIntro) {
-                    return -1;
-                  }
-                  if (!aIntro && bIntro) {
-                    return 1;
-                  }
-                  return title(a).localeCompare(title(b));
-                })
-                .filter(page => !page.exports?.isSubpage)
-                .map(page => (
-                  <SideNavItem key={page.url}>
-                    <SideNavLink href={page.url} isSelected={page.url === displayPage.url}>
-                      {title(page)}
-                    </SideNavLink>
-                  </SideNavItem>
-                ))}
-            </SideNav>
-          );
-        }
-
-        if (name === 'Overview' && Array.isArray(pages)) {
-          return (
-            <div className={style({paddingStart: space(26)})} key={name}>
-              <SideNavSection title={name}>
-                <SideNav>
-                  {pages
-                    .sort((a, b) => {
-                      const aIntro = a.url.endsWith('getting-started');
-                      const bIntro = b.url.endsWith('getting-started');
-                      if (aIntro && !bIntro) {
-                        return -1;
-                      }
-                      if (!aIntro && bIntro) {
-                        return 1;
-                      }
-                      return title(a).localeCompare(title(b));
-                    })
-                    .filter(page => !page.exports?.isSubpage)
-                    .map(page => (
-                      <SideNavItem key={page.url}>
-                        <SideNavLink href={page.url} isSelected={page.url === displayPage.url}>
-                          {title(page)}
-                        </SideNavLink>
-                      </SideNavItem>
-                    ))}
-                </SideNav>
-              </SideNavSection>
-            </div>
-          );
-        }
-        return (
-          <Disclosure
-            id={name}
-            key={name}
-            isQuiet
-            density="spacious"
-            defaultExpanded={
-              name === 'Components' ||
-              name === currentPage.exports?.section ||
-              name === currentPage.exports?.group
-            }
-            styles={style({minWidth: 185})}>
-            <DisclosureTitle>{name}</DisclosureTitle>
-            <DisclosurePanel>
-              <div className={style({paddingStart: space(18)})}>{nav}</div>
-            </DisclosurePanel>
-          </Disclosure>
-        );
-      })}
+      <S2SideNav
+        aria-label={libraryLabel}
+        selectedRoute={displayPage.url}
+        defaultExpandedKeys={getDefaultExpandedKeys(currentPage)}
+        styles={style({width: 'full', height: 'fit'})}>
+        {overviewNodes.length > 0 && (
+          <S2SideNavSection>
+            <SideNavHeader>Overview</SideNavHeader>
+            <Collection items={overviewNodes}>{renderNode}</Collection>
+          </S2SideNavSection>
+        )}
+        <S2SideNavSection aria-label={libraryLabel}>
+          <Collection items={sectionNodes}>{renderNode}</Collection>
+        </S2SideNavSection>
+      </S2SideNav>
     </nav>
   );
+}
+
+interface NavNode {
+  id: string;
+  title: string;
+  href?: string;
+  children?: NavNode[];
 }
 
 function title(page) {
@@ -226,27 +180,69 @@ function isIntroduction(page) {
   return page.url.endsWith('/');
 }
 
-function SideNavSection({title, children}) {
+function leafNode(page: Page): NavNode {
+  return {id: page.url, title: title(page), href: page.url};
+}
+
+function renderNode(node: NavNode) {
   return (
-    <section className={style({marginBottom: 16})}>
-      <div
-        className={style({
-          font: 'ui-sm',
-          color: 'gray-600',
-          minHeight: 32,
-          paddingX: 12,
-          display: 'flex',
-          alignItems: 'center'
-        })}>
-        {title}
-      </div>
-      {children}
-    </section>
+    <S2SideNavItem id={node.id} textValue={node.title} href={node.href}>
+      <SideNavItemContent>
+        {node.href ? <SideNavItemLink>{node.title}</SideNavItemLink> : node.title}
+      </SideNavItemContent>
+      {node.children && <Collection items={node.children}>{renderNode}</Collection>}
+    </S2SideNavItem>
   );
+}
+
+function sortSectionPages(pages: Page[]): Page[] {
+  return [...pages]
+    .filter(page => !page.exports?.isSubpage)
+    .sort((a, b) => {
+      let aIntro = isIntroduction(a);
+      let bIntro = isIntroduction(b);
+      if (aIntro && !bIntro) {
+        return -1;
+      }
+      if (!aIntro && bIntro) {
+        return 1;
+      }
+      return title(a).localeCompare(title(b));
+    });
+}
+
+function sortOverview(pages: Page[]): Page[] {
+  return [...pages]
+    .filter(page => !page.exports?.isSubpage)
+    .sort((a, b) => {
+      let aIntro = a.url.endsWith('getting-started');
+      let bIntro = b.url.endsWith('getting-started');
+      if (aIntro && !bIntro) {
+        return -1;
+      }
+      if (!aIntro && bIntro) {
+        return 1;
+      }
+      return title(a).localeCompare(title(b));
+    });
+}
+
+function getDefaultExpandedKeys(currentPage: Page): string[] {
+  let keys = new Set<string>();
+  let section = currentPage.exports?.section ?? 'Components';
+  let group = currentPage.exports?.group;
+  if (group) {
+    keys.add(group);
+    keys.add(section);
+  } else {
+    keys.add(section);
+  }
+  return [...keys];
 }
 
 const SideNavContext = createContext('');
 
+// Used by the ToC
 export function SideNav({children, isNested = false}) {
   return (
     <ul
