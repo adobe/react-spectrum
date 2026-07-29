@@ -28,16 +28,16 @@ interface MacroContext {
 
 const marginTop = {
   body: getToken('body-margin-multiplier') + 'em',
-  heading: getToken('heading-margin-top-multiplier') + 'em',
-  title: getToken('title-margin-top-multiplier') + 'em',
-  detail: getToken('detail-margin-top-multiplier') + 'em'
+  heading: 1 + 'em',
+  title: 1 + 'em',
+  detail: 1 + 'em'
 } as const;
 
 const marginBottom = {
   body: getToken('body-margin-multiplier') + 'em',
   heading: getToken('heading-margin-bottom-multiplier') + 'em',
   title: getToken('title-margin-bottom-multiplier') + 'em',
-  detail: getToken('detail-margin-bottom-multiplier') + 'em'
+  detail: 1 + 'em'
 } as const;
 
 export function prose(this: MacroContext | void) {
@@ -99,6 +99,10 @@ export function prose(this: MacroContext | void) {
     ol: {
       listStyleType: 'decimal'
     },
+    li: {
+      marginTop: '.25em',
+      marginBottom: '.25em'
+    },
     'li > p:last-child:not(:first-child)': {
       marginBottom: marginBottom.body
     },
@@ -109,8 +113,8 @@ export function prose(this: MacroContext | void) {
       borderColor: colorTokenToString(resolveColorToken(colorToken('gray-200'))),
       borderInlineStartWidth: getToken('border-width-200'),
       // Padding uses px, spacing (margin) uses rem — matching the style macro's maps.
-      paddingInlineStart: '12px',
-      marginInlineStart: space(4)
+      paddingInlineStart: '14px',
+      marginInlineStart: space(8)
     },
     hr: {
       marginBlock: '32px',
@@ -174,22 +178,25 @@ export function prose(this: MacroContext | void) {
       borderStartEndRadius: getToken('corner-radius-medium-default')
     },
     th: {
+      // height behaves like minHeight in a table
+      height: 32,
       paddingInline: '16px',
+      paddingBlock: '4px',
       textAlign: 'start',
       fontWeight: 'bold',
       borderColor: colorTokenToString(resolveColorToken(colorToken('gray-300'))),
       borderWidth: 0,
       borderBottomWidth: getToken('border-width-100'),
       borderStyle: 'solid',
-      height: '32px',
       boxSizing: 'border-box'
     },
     td: {
+      height: 32,
       paddingInline: '16px',
       paddingBlock: '4px',
       borderWidth: 0,
       borderBottomWidth: {
-        default: '1px',
+        default: getToken('border-width-100'),
         ':is(tbody:last-child > tr:last-child > *)': 0
       },
       borderStyle: 'solid',
