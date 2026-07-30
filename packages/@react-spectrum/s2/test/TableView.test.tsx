@@ -21,6 +21,7 @@ import {pointerMap, User} from '@react-aria/test-utils';
 import React, {useState} from 'react';
 import {Tab, TabList, Tabs} from '../src/Tabs';
 import {Text} from '../src/Content';
+import {useDragAndDrop} from '../src/useDragAndDrop';
 import userEvent from '@testing-library/user-event';
 
 // @ts-ignore
@@ -291,5 +292,131 @@ describe('TableView', () => {
 
     await user.click(tableTester.getRows()[0]);
     expect(onSelectionChange).toHaveBeenCalled();
+  });
+
+  describe('tab keyboard navigation', () => {
+    function TabNavTable(props) {
+      let {dragAndDropHooks} = useDragAndDrop({
+        getItems: keys => [...keys].map(key => ({'text/plain': `${key}`}))
+      });
+      return (
+        <TableView
+          aria-label="Tab mode table"
+          keyboardNavigationBehavior="tab"
+          selectionMode="multiple"
+          dragAndDropHooks={dragAndDropHooks}
+          {...props}>
+          <TableHeader>
+            <Column
+              isRowHeader
+              menuItems={
+                <MenuSection>
+                  <MenuItem>
+                    <Text slot="label">Filter</Text>
+                  </MenuItem>
+                </MenuSection>
+              }>
+              Name
+            </Column>
+            <Column
+              menuItems={
+                <MenuSection>
+                  <MenuItem>
+                    <Text slot="label">Filter</Text>
+                  </MenuItem>
+                </MenuSection>
+              }>
+              Type
+            </Column>
+            <Column>Notes</Column>
+          </TableHeader>
+          <TableBody>
+            <Row id="1" textValue="Foo 1">
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>
+                <input type="text" aria-label="Foo 1 notes" />
+              </Cell>
+            </Row>
+            <Row id="2" textValue="Foo 2">
+              <Cell>Foo 2</Cell>
+              <Cell>Bar 2</Cell>
+              <Cell>
+                <input type="text" aria-label="Foo 2 notes" />
+              </Cell>
+            </Row>
+            <Row id="3" textValue="Foo 3">
+              <Cell>Foo 3</Cell>
+              <Cell>Bar 3</Cell>
+              <Cell>
+                <input type="text" aria-label="Foo 3 notes" />
+              </Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      );
+    }
+
+    it('row drag cell and checkbox cell auto focuses drag handle button/checkbox and allows arrow key nav', async () => {
+      let {getByRole, getAllByRole} = render(<TabNavTable />);
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let checkboxes = getAllByRole('checkbox');
+      let dragButton1 = getByRole('button', {name: 'Drag Foo 1'});
+
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(dragButton1);
+
+      await user.keyboard('{ArrowRight}');
+      let row1 = tableTester.getRows()[0];
+      let cells = tableTester.getCells({element: row1});
+      expect(cells[1].contains(document.activeElement)).toBe(true);
+      expect(document.activeElement).toBe(checkboxes[1]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(checkboxes[2]);
+    });
+
+    it('column headers and selectAll header auto focuses their menu trigger/checkbox and allows arrow key nav', async () => {
+      let {getByRole, getAllByRole} = render(<TabNavTable />);
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let checkboxes = getAllByRole('checkbox');
+      let columns = tableTester.getColumns();
+
+      await user.tab();
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(columns[0]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(checkboxes[0]);
+      expect(columns[1].contains(document.activeElement)).toBe(true);
+
+      await user.keyboard('{ArrowRight}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement?.tagName.toLowerCase()).toBe('button');
+      expect(columns[2].contains(document.activeElement)).toBe(true);
+    });
+
+    it('textfield in cell works with tab mode', async () => {
+      let {getByRole} = render(<TabNavTable />);
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let cells = tableTester.getCells({element: tableTester.getRows()[0]});
+      let notesCell = cells[cells.length - 1];
+
+      await user.tab();
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(notesCell);
+
+      await user.tab();
+      let input = getByRole('textbox', {name: 'Foo 1 notes'});
+      expect(document.activeElement).toBe(input);
+
+      await user.type(input, 'Foo');
+      expect(input).toHaveValue('Foo');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(input);
+
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(notesCell);
+    });
   });
 });

@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
-import {type BasicCardProps, BasicHorizontalCard} from '@react-spectrum/ai';
+import {type BasicCardProps, BasicHorizontalCard} from '../src/HorizontalCard';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Content} from '@react-spectrum/s2/Content';

@@ -49,6 +49,7 @@ exports[`DocsTransformer - API components writes export entry for React componen
   "exports": {
     "App1": {
       "description": null,
+      "examples": null,
       "id": "/test/src/index.tsx:App1",
       "name": "App1",
       "props": null,
@@ -66,6 +67,7 @@ exports[`DocsTransformer - API components writes export entry for localName Reac
   "exports": {
     "AppReal": {
       "description": null,
+      "examples": null,
       "id": "/test/src/index.tsx:App2",
       "name": "AppReal",
       "props": null,

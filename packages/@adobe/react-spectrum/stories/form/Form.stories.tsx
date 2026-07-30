@@ -752,6 +752,7 @@ function FormWithSubmit() {
 
     if (isSubmitted) {
       if (formDirty) {
+        // oxlint-disable-next-line react/react-compiler
         setFormStatus('fixing');
       } else {
         setFormStatus(validate() ? 'valid' : 'invalid');
@@ -762,8 +763,10 @@ function FormWithSubmit() {
   }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, email, emailDirty, isSubmitted]);
 
   let Status = ({formStatus}) => {
+    // oxlint-disable-next-line react/react-compiler
     let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
 
+    // oxlint-disable-next-line react/react-compiler
     useEffect(() => {
       switch (formStatus) {
         case 'invalid':
@@ -892,6 +895,7 @@ function FormWithSubmit() {
       <Button variant="secondary" type="reset" onPress={reset}>
         Reset
       </Button>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <Status formStatus={formStatus} />
     </Form>
   );

@@ -31,19 +31,15 @@ import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef, useContext} from 'react';
 import {SlotProps} from 'react-aria-components/slots';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 
 export interface MessageSourceProps extends Omit<
   DisclosureProps,
-  'isQuiet' | 'styles' | 'UNSAFE_className' | 'UNSAFE_style'
+  'isQuiet' | 'UNSAFE_className' | 'UNSAFE_style'
 > {
   label: string;
-  /**
-   * Spectrum-defined styles, returned by the `style()` macro.
-   */
-  styles?: StyleString;
 }
 
 const MessageSourceInternalContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
@@ -62,13 +58,7 @@ export const MessageSource = (forwardRef as forwardRefType)(function MessageSour
   return (
     <MessageSourceInternalContext.Provider value={{size}}>
       <NumberBadgeContext.Provider value={{size}}>
-        <Disclosure
-          {...otherProps}
-          //@ts-ignore
-          UNSAFE_className={styles}
-          size={size}
-          ref={ref}
-          isQuiet>
+        <Disclosure {...otherProps} styles={styles} size={size} ref={ref} isQuiet>
           <DisclosureTitle>{label}</DisclosureTitle>
           {children}
         </Disclosure>
@@ -96,15 +86,7 @@ const itemStyles = style({
   gap: 8
 });
 
-export interface SourceListProps extends Omit<
-  DisclosurePanelProps,
-  'styles' | 'UNSAFE_className' | 'UNSAFE_style'
-> {
-  /**
-   * Spectrum-defined styles, returned by the `style()` macro.
-   */
-  styles?: StyleString;
-}
+export interface SourceListProps extends DisclosurePanelProps {}
 
 /**
  * A SourceList displays an ordered list of sources inside a MessageSource.
@@ -114,18 +96,14 @@ export const SourceList = (forwardRef as forwardRefType)(function SourceList(
   props: SourceListProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, styles, ...otherProps} = props;
+  let {children, ...otherProps} = props;
 
   let numberedChildren = React.Children.map(children, (child, i) => (
     <SourceListIndexContext.Provider value={i + 1}>{child}</SourceListIndexContext.Provider>
   ));
 
   return (
-    <DisclosurePanel
-      {...otherProps}
-      // @ts-ignore
-      UNSAFE_className={styles}
-      ref={ref}>
+    <DisclosurePanel {...otherProps} ref={ref}>
       <ol className={listStyles}>{numberedChildren}</ol>
     </DisclosurePanel>
   );
@@ -147,7 +125,7 @@ const linkStyles = style({
 });
 
 export interface SourceListItemProps
-  extends Omit<LinkProps, 'className' | 'style' | keyof GlobalDOMAttributes>, DOMProps {
+  extends Omit<LinkProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, DOMProps {
   /** The content of the source list item. */
   children: React.ReactNode;
   /**

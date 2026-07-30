@@ -178,6 +178,7 @@ export function useToggle(
       // @ts-expect-error
       let {[privateValidationStateProp]: groupValidationState} = props;
 
+      // oxlint-disable-next-line react/react-compiler
       let {commitValidation} = groupValidationState ? groupValidationState : validationState;
 
       commitValidation();

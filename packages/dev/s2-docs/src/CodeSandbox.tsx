@@ -57,7 +57,7 @@ const devDependencies = {
     '@tailwindcss/postcss': '^4',
     postcss: '^8',
     'tailwindcss-react-aria-components': '^2',
-    'tailwindcss-animate': '^1'
+    'tw-animate-css': '^1'
   },
   s2: {
     '@types/react': '^19',

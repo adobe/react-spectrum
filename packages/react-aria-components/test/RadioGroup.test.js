@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
@@ -380,6 +380,23 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(label).not.toHaveClass('selected');
   });
 
+  it('should support repeat keydown events when holding an arrow key', async () => {
+    let onChange = jest.fn();
+    let {getAllByRole} = renderGroup({onChange});
+    let radios = getAllByRole('radio');
+
+    await user.tab();
+    expect(radios[0]).toHaveFocus();
+
+    // user-event implements its own radio-group arrow navigation, which bypasses our own code
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', repeat: true});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+    expect(radios[2]).toBeChecked();
+    expect(onChange).toHaveBeenLastCalledWith('c');
+  });
+
   it('should support read only state', () => {
     let className = ({isReadOnly}) => (isReadOnly ? 'readonly' : '');
     let {getByRole, getAllByRole} = renderGroup({isReadOnly: true, className}, {className});
@@ -524,6 +541,7 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
                     buttonClassName: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')
                   }}
                 />
+                <Text slot="description">Alert description</Text>
                 <Button onPress={close}>Close</Button>
               </>
             )}
@@ -847,5 +865,25 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     await user.click(labelB);
     expect(onFocusB).toHaveBeenCalledTimes(1);
     expect(onBlurA).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support implicit form submission from a focused radio on Enter', async () => {
+    let onSubmit = jest.fn(e => e.preventDefault());
+    let {getAllByRole} = render(
+      <form onSubmit={onSubmit}>
+        <RadioGroup defaultValue="a">
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <Radio value="b">B</Radio>
+        </RadioGroup>
+        <button type="submit">Submit</button>
+      </form>
+    );
+
+    let radio = getAllByRole('radio')[0];
+    await user.click(radio);
+    await user.keyboard('{Enter}');
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });

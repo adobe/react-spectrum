@@ -11,7 +11,7 @@
  */
 
 import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
-import {isIOS} from './platform';
+import {isIOS, isWebKit} from './platform';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
 import {willOpenKeyboard} from './keyboard';
@@ -47,7 +47,7 @@ export function useViewportSize(): ViewportSize {
       updateSize(getViewportSize());
     };
 
-    // When closing the keyboard, iOS does not fire the visual viewport resize event until the animation is complete.
+    // When closing the keyboard, WebKit on iOS does not fire the visual viewport resize event until the animation is complete.
     // We can anticipate this and resize early by handling the blur event and using the layout size.
     let frame: number;
     let onBlur = (e: FocusEvent) => {
@@ -71,7 +71,7 @@ export function useViewportSize(): ViewportSize {
 
     updateSize(getViewportSize());
 
-    if (isIOS()) {
+    if (isIOS() && isWebKit()) {
       window.addEventListener('blur', onBlur, true);
     }
 
@@ -83,7 +83,7 @@ export function useViewportSize(): ViewportSize {
 
     return () => {
       cancelAnimationFrame(frame);
-      if (isIOS()) {
+      if (isIOS() && isWebKit()) {
         window.removeEventListener('blur', onBlur, true);
       }
       if (!visualViewport) {

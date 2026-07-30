@@ -528,6 +528,47 @@ export const VirtualizedExample: MenuStory = () => {
   );
 };
 
+export const ContextMenuExample: MenuStory = () => (
+  <MenuTrigger trigger="contextMenu">
+    <Button
+      style={{
+        width: 250,
+        height: 150,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '2px dashed gray',
+        borderRadius: 10,
+        background: 'transparent',
+        font: 'inherit',
+        color: 'inherit',
+        cursor: 'default'
+      }}>
+      Right click here
+    </Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem>Open</MyMenuItem>
+        <SubmenuTrigger>
+          <MyMenuItem>Open with</MyMenuItem>
+          <Popover className={styles.popover}>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem>Preview</MyMenuItem>
+              <MyMenuItem>Photoshop</MyMenuItem>
+              <MyMenuItem>Safari</MyMenuItem>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+        <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+        <MyMenuItem>Get Info</MyMenuItem>
+        <MyMenuItem>Rename</MyMenuItem>
+        <MyMenuItem>Duplicate</MyMenuItem>
+        <MyMenuItem>Move to Trash</MyMenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
 let UnavailableContext = createContext(false);
 
 function UnavailableMenuItemTrigger(props: {isUnavailable?: boolean; children: ReactElement[]}) {

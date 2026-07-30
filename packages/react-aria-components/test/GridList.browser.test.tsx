@@ -11,10 +11,13 @@
  */
 
 import {expect, it} from 'vitest';
+import {GridLayout} from '../src/GridLayout';
 import {GridList, GridListItem} from '../src/GridList';
-import React from 'react';
+import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
+import {Size} from 'react-stately/useVirtualizerState';
 import {User} from '@react-aria/test-utils';
+import {Virtualizer} from '../src/Virtualizer';
 
 function Grid() {
   return (
@@ -33,6 +36,37 @@ function Grid() {
       <GridListItem>2,1</GridListItem>
       <GridListItem>2,2</GridListItem>
     </GridList>
+  );
+}
+
+function VirtualizedDisplayNone() {
+  let [visible, setVisible] = useState(true);
+  let items = Array.from({length: 100}, (_, i) => ({id: i, name: `Item ${i}`}));
+  return (
+    <div>
+      <button data-testid="toggle" onClick={() => setVisible(v => !v)}>
+        Toggle
+      </button>
+      <div style={{display: visible ? undefined : 'none'}}>
+        <Virtualizer
+          layout={GridLayout}
+          layoutOptions={{
+            minItemSize: new Size(80, 40),
+            maxItemSize: new Size(200, 40),
+            minSpace: new Size(8, 8)
+          }}>
+          <GridList
+            layout="grid"
+            aria-label="virtualized list"
+            style={{height: 200, width: 400}}
+            items={items}>
+            {(item: {id: number; name: string}) => (
+              <GridListItem id={item.id}>{item.name}</GridListItem>
+            )}
+          </GridList>
+        </Virtualizer>
+      </div>
+    </div>
   );
 }
 
@@ -63,4 +97,26 @@ it.each`
   await tester.toggleRowSelection({row: rows[8]});
   expect(rows[8].getAttribute('aria-selected')).toBe('true');
   expect(document.activeElement).toBe(rows[8]);
+});
+
+it('virtualizer renders items after toggling display:none', async () => {
+  let testUtilUser = new User();
+  let {container} = await render(<VirtualizedDisplayNone />);
+
+  let gridlist = container.querySelector('[role=grid]') as HTMLElement;
+  let tester = testUtilUser.createTester('GridList', {
+    root: gridlist,
+    layout: 'grid'
+  });
+
+  await expect(tester.getRows().length).toBeGreaterThan(0);
+  let button = container.querySelector('[data-testid=toggle]') as HTMLElement;
+
+  await button.click();
+  await button.click();
+  await expect(tester.getRows().length).toBeGreaterThan(0);
+
+  await button.click();
+  await button.click();
+  await expect(tester.getRows().length).toBeGreaterThan(0);
 });

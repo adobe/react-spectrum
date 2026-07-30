@@ -64,7 +64,7 @@ export function CollectionBuilder<C extends BaseCollection<any>>(
   // This should always come before the real DOM content so we have built the collection by the time it renders during SSR.
 
   // This is fine. CollectionDocumentContext never changes after mounting.
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
   let {collection, document} = useCollectionDocument(props.createCollection);
   return (
     <>
@@ -100,6 +100,7 @@ function useSyncExternalStoreFallback<C>(
   // We just need a ref to avoid invalidating the callback itself, which
   // would cause React to re-run the callback more than necessary.
   // eslint-disable-next-line rsp-rules/pure-render
+  // oxlint-disable-next-line react/react-compiler, rsp-rules/pure-render
   isSSRRef.current = isSSR;
 
   let getSnapshotWrapper = useCallback(() => {
@@ -133,6 +134,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(
     return collection;
   }, [document]);
   let getServerSnapshot = useCallback(() => {
+    // oxlint-disable-next-line react/react-compiler
     document.isSSR = true;
     return document.getCollection();
   }, [document]);
@@ -164,6 +166,7 @@ function useSSRCollectionNode<T extends Element>(
 ) {
   // To prevent breaking change, if CollectionNodeClass is a string, create a CollectionNodeClass using the string as the type
   if (typeof CollectionNodeClass === 'string') {
+    // oxlint-disable-next-line react/react-compiler
     CollectionNodeClass = createCollectionNodeClass(CollectionNodeClass);
   }
 
@@ -286,10 +289,12 @@ export function Collection<T>(props: CollectionProps<T>): JSX.Element {
   // Propagate dependencies and idScope to child collections.
   ctx = useMemo(
     () => ({
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       dependencies,
       idScope
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
     [idScope, ...dependencies]
   );
 

@@ -26,7 +26,7 @@ import {IconContext} from '@react-spectrum/s2/Icon';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2';
 import {Provider, SlotProps} from 'react-aria-components/slots';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 
@@ -42,15 +42,17 @@ const controlSizeM = {
 
 export interface MessageSuggestionProps extends Omit<
   ButtonProps,
-  'style' | 'className' | 'isPending' | 'isDisabled' | keyof GlobalDOMAttributes
+  'style' | 'className' | 'isPending' | 'isDisabled' | 'render' | keyof GlobalDOMAttributes
 > {
   /** The text content of the suggestion. */
   children: ReactNode;
-  /** The size of the MessageSuggestion. */
-  size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * Spectrum-defined styles, returned by the `style()` macro.
+   * The size of the MessageSuggestion.
+   *
+   * @default 'M'
    */
+  size?: 'S' | 'M' | 'L' | 'XL';
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString;
 }
 
@@ -89,6 +91,7 @@ const suggestionStyles = style<{
   borderStyle: 'none',
   disableTapHighlight: true,
   transition: 'default',
+  textAlign: 'start',
   ...focusRing()
 });
 
@@ -107,6 +110,7 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
   let {groupSize} = useContext(MessageSuggestionContext);
   size = groupSize ? groupSize : size;
 
+  // oxlint-disable react/react-compiler
   return (
     <RACButton
       {...filterDOMProps(props, {labelable: true})}
@@ -136,6 +140,7 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
       </Provider>
     </RACButton>
   );
+  // oxlint-enable react/react-compiler
 });
 
 export interface MessageSuggestionListProps extends DOMProps, AriaLabelingProps, SlotProps {

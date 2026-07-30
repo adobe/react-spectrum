@@ -92,7 +92,8 @@ export const ProgressCircle = React.forwardRef(function ProgressCircle(
   let subMask1Style: CSSProperties = {};
   let subMask2Style: CSSProperties = {};
   if (!isIndeterminate) {
-    let percentage = ((value - minValue) / (maxValue - minValue)) * 100;
+    let range = maxValue - minValue;
+    let percentage = range === 0 ? 0 : ((value - minValue) / range) * 100;
     let angle;
     if (percentage > 0 && percentage <= 50) {
       angle = -180 + (percentage / 50) * 180;

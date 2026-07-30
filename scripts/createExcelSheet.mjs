@@ -147,10 +147,9 @@ function buildPassFailSheet(workbook, {v3PRs, s2PRs, racPRs, otherPRs, offPRs}) 
   let categoryE = [
     {row: 1, label: 'Test Apps'},
     {row: 2, label: 'Next'},
-    {row: 3, label: 'CRA'},
-    {row: 4, label: 'S2 Parcel'},
-    {row: 5, label: 'S2 Webpack'},
-    {row: 6, label: 'RAC Tailwind'}
+    {row: 3, label: 'S2 Parcel'},
+    {row: 4, label: 'S2 Webpack'},
+    {row: 5, label: 'RAC Tailwind'}
   ];
   for (let {row, label} of categoryE) {
     sheet.getCell(`E${row}`).value = label;

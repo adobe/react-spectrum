@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Uus sõnum",
+  "chat.scrollToBottom": "Kerige alla",
+  "messagefeedback.thumbDown": "Halb vastus",
+  "messagefeedback.thumbUp": "Hea vastus",
+  "promptfield.aiDisclaimer": "Vastused genereeritakse tehisintellekti abil ja võivad olla ebatäpsed. Kontrolli enne kasutamist.",
+  "promptfield.aiUserGuidlines": "Tehisintellekti kasutajajuhised",
+  "promptfield.attachments": "Lisad",
+  "promptfield.insertButton": "Add",
+  "promptfield.label": "Ülesanne",
+  "promptfield.placeholder": "Kas te olete valmis alustama? Esitage küsimus, jagage ideed või lisage ülesanne.",
+  "promptfield.stopButton": "Peatu",
+  "promptfield.submitButton": "Saada",
+  "promptfield.uploading": "Üleslaadimine",
+  "responsestatus.loading": "Laadimine",
+  "voicebutton.startListening": "Alusta salvestamist",
+  "voicebutton.stopListening": "Lõpeta salvestamine"
+}

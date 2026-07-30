@@ -92,7 +92,6 @@ export interface ListViewProps<T>
       | 'selectionBehavior'
       | 'layout'
       | 'render'
-      | 'keyboardNavigationBehavior'
       | 'orientation'
       | keyof GlobalDOMAttributes
     >,

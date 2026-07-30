@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Ново съобщение",
+  "chat.scrollToBottom": "Превъртете надолу",
+  "messagefeedback.thumbDown": "Лош отговор",
+  "messagefeedback.thumbUp": "Добър отговор",
+  "promptfield.aiDisclaimer": "Отговорите се генерират с помощта на изкуствен интелект и може да са неточни. Проверете преди употреба.",
+  "promptfield.aiUserGuidlines": "Насоки за използване на AI",
+  "promptfield.attachments": "Прикачени материали",
+  "promptfield.insertButton": "Добави",
+  "promptfield.label": "Подсказка",
+  "promptfield.placeholder": "Готови ли сте да започнете? Задайте въпрос, споделете идея или добавете задача.",
+  "promptfield.stopButton": "Спри",
+  "promptfield.submitButton": "Изпрати",
+  "promptfield.uploading": "Качване",
+  "responsestatus.loading": "Зареждане",
+  "voicebutton.startListening": "Започнете запис",
+  "voicebutton.stopListening": "Спри записа"
+}

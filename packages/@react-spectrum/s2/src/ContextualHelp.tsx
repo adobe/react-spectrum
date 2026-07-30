@@ -26,7 +26,7 @@ import {useLabels} from 'react-aria/private/utils/useLabels';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ContextualHelpPopoverProps extends PopoverDialogProps {
+export interface ContextualHelpPopoverProps extends Omit<PopoverDialogProps, 'isNonModal'> {
   /**
    * The children of the contextual help popover. Supports Heading, Content, and Footer elements.
    */
@@ -185,6 +185,7 @@ export const ContextualHelp = forwardRef(function ContextualHelp(
   // then ContextualHelp variant
   let labelProps = useLabels(props);
   let label = stringFormatter.format(`contextualhelp.${variant}`);
+  // oxlint-disable-next-line react/react-compiler
   labelProps['aria-label'] = labelProps['aria-label']
     ? labelProps['aria-label'] + ' ' + label
     : label;

@@ -12,7 +12,7 @@
 'use client';
 
 // @ts-ignore
-import {animate} from '../../../../docs/pages/react-aria/home/utils';
+import {animate} from '../home/utils';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};

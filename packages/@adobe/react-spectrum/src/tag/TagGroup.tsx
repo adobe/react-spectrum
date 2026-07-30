@@ -130,6 +130,7 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
     tagsRef
   ]) as ListKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
+  // oxlint-disable-next-line react/react-compiler
   delete props.onAction;
   let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup(
     {...props, keyboardDelegate},
@@ -213,6 +214,7 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
         yield computeVisibleTagCount();
       });
     }
+    // oxlint-disable-next-line react/react-compiler
   }, [maxRows, setTagState, direction, scale, state.collection.size]);
 
   useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});

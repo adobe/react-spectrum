@@ -175,6 +175,19 @@ describe('ColorArea', () => {
     expect(wrapper).toHaveClass('disabled');
   });
 
+  it('should support repeat keydown events when holding Page Up/Page Down', async () => {
+    // Page Up/Down adjust the Y (green) channel; the arrow keys are handled by useMove instead. The page step is 17.
+    let {getAllByRole} = renderColorArea();
+    let greenSlider = getAllByRole('slider', {hidden: true})[1];
+
+    await user.tab();
+    await user.keyboard('{PageUp>3/}');
+    expect(greenSlider).toHaveValue('51');
+
+    await user.keyboard('{PageDown>3/}');
+    expect(greenSlider).toHaveValue('0');
+  });
+
   it('should support form prop', () => {
     let {getByRole} = renderColorArea({form: 'test'});
     let input = getByRole('slider');

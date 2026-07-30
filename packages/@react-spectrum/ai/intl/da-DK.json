@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Ny besked",
+  "chat.scrollToBottom": "Scroll ned til bunden",
+  "messagefeedback.thumbDown": "Dårligt svar",
+  "messagefeedback.thumbUp": "Godt svar",
+  "promptfield.aiDisclaimer": "Svar genereres med AI og kan være unøjagtige. Tjek før brug.",
+  "promptfield.aiUserGuidlines": "AI-brugerretningslinjer",
+  "promptfield.attachments": "Vedhæftninger",
+  "promptfield.insertButton": "Tilføj",
+  "promptfield.label": "Prompt",
+  "promptfield.placeholder": "Er du klar til at komme i gang? Stil et spørgsmål, del en idé, eller tilføj en opgave.",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
+  "promptfield.uploading": "Upload",
+  "responsestatus.loading": "Indlæser",
+  "voicebutton.startListening": "Start optagelsen",
+  "voicebutton.stopListening": "Stop optagelsen"
+}

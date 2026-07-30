@@ -17,7 +17,7 @@ import {forwardRef, ReactNode} from 'react';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 
 export interface UserMessageProps extends DOMProps, AriaLabelingProps, SlotProps {

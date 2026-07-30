@@ -79,7 +79,7 @@ const DAY_MAP = {
   sat: 6
 };
 
-type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
+export type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 
 /**
  * Returns the day of week for the given date and locale. Days are numbered from zero to six,

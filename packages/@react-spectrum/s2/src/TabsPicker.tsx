@@ -343,6 +343,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   const size = 'M';
+  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       {...props}
@@ -385,6 +386,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
+  // oxlint-enable react/react-compiler
 }
 // A Context.Provider that only sets a value if not inside SelectValue.
 function DefaultProvider({

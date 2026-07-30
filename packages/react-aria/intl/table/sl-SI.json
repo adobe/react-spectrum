@@ -1,13 +1,13 @@
 {
   "ascending": "naraščajoče",
   "ascendingSort": "razvrščeno po stolpcu {columnName} v naraščajočem vrstnem redu",
+  "collapse": "Strni",
   "columnSize": "{value} slikovnih pik",
   "descending": "padajoče",
   "descendingSort": "razvrščeno po stolpcu {columnName} v padajočem vrstnem redu",
+  "expand": "Razširi",
   "resizerDescription": "Pritisnite tipko Enter da začnete spreminjati velikost",
   "select": "Izberite",
   "selectAll": "Izberite vse",
-  "sortable": "razvrstljivi stolpec",
-  "collapse": "Strni",
-  "expand": "Razširi"
+  "sortable": "razvrstljivi stolpec"
 }
