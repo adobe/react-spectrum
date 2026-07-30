@@ -10,22 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-export {TokenField, TokenInput, Token} from '../src/TokenField';
-export type {
-  TokenFieldProps,
-  TokenFieldRenderProps,
-  TokenInputProps,
-  TokenInputRenderProps,
-  TokenProps,
-  TokenRenderProps,
-  TokenFieldContext
-} from '../src/TokenField';
-export {tokenFieldPositionToDOMRange, setTokenFieldSelection} from 'react-aria/useTokenField';
-export {TokenFieldValue, Direction} from 'react-stately/useTokenFieldState';
-export type {
-  TokenFieldSegment,
-  TokenSegment,
-  TextSegment,
-  Position,
-  TokenFieldValueOptions
-} from 'react-stately/useTokenFieldState';
+// Mark as a client only package. This will cause a build time error if you try
+// to import it from a React Server Component in a framework like Next.js.
+import 'client-only';
+
+export {PreviewTrigger} from '../src/PreviewTrigger';
+export type {PreviewTriggerProps} from '../src/PreviewTrigger';

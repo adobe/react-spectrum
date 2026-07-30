@@ -51,7 +51,7 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
     if (layoutInfo?.estimatedSize) {
       updateSizeEvent();
     }
-  }, [layoutInfo?.estimatedSize]);
+  });
 
   // TODO: Consider using a MutationObserver in addition to ResizeObserver to detect
   // when inner DOM structure changes cause an item's height to change.
