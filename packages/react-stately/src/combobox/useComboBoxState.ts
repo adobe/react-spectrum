@@ -26,13 +26,13 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import { FormValidationState, useFormValidationState } from '../form/useFormValidationState';
-import { getChildNodes } from '../collections/getChildNodes';
-import { ListCollection } from '../list/ListCollection';
-import { ListState, useListState } from '../list/useListState';
-import { OverlayTriggerState, useOverlayTriggerState } from '../overlays/useOverlayTriggerState';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useControlledState } from '../utils/useControlledState';
+import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
+import {getChildNodes} from '../collections/getChildNodes';
+import {ListCollection} from '../list/ListCollection';
+import {ListState, useListState} from '../list/useListState';
+import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useControlledState} from '../utils/useControlledState';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 export type SelectionMode = 'single' | 'multiple';
@@ -55,14 +55,14 @@ export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
 
 export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
   extends
-  CollectionBase<T>,
-  InputBase,
-  ValueBase<ValueType<M>, ChangeValueType<M>>,
-  TextInputBase,
-  Validation<ComboBoxValidationValue<M>>,
-  FocusableProps<HTMLInputElement>,
-  LabelableProps,
-  HelpTextProps {
+    CollectionBase<T>,
+    InputBase,
+    ValueBase<ValueType<M>, ChangeValueType<M>>,
+    TextInputBase,
+    Validation<ComboBoxValidationValue<M>>,
+    FocusableProps<HTMLInputElement>,
+    LabelableProps,
+    HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>;
   /** The list of ComboBox items (controlled). */
@@ -255,7 +255,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     }
   };
 
-  let { collection, selectionManager, disabledKeys } = useListState({
+  let {collection, selectionManager, disabledKeys} = useListState({
     ...props,
     items: props.items ?? props.defaultItems,
     selectionMode,
@@ -512,7 +512,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       () =>
         Array.isArray(displayValue) && displayValue.length === 0
           ? null
-          : { inputValue, value: displayValue as any, selectedKey },
+          : {inputValue, value: displayValue as any, selectedKey},
       [inputValue, selectedKey, displayValue]
     )
   });
@@ -671,12 +671,12 @@ function filterNodes<T>(
     if (node.type === 'section' && node.hasChildNodes) {
       let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
       if ([...filtered].some(node => node.type === 'item')) {
-        filteredNode.push({ ...node, childNodes: filtered });
+        filteredNode.push({...node, childNodes: filtered});
       }
     } else if (node.type === 'item' && filter(node.textValue, inputValue)) {
-      filteredNode.push({ ...node });
+      filteredNode.push({...node});
     } else if (node.type !== 'item') {
-      filteredNode.push({ ...node });
+      filteredNode.push({...node});
     }
   }
   return filteredNode;
