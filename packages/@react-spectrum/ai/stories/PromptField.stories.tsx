@@ -13,7 +13,6 @@
 import {action} from 'storybook/actions';
 import {
   AttachFileMenuItem,
-  AutoLinkingTokenFieldValue,
   CommandMenuItem,
   InsertMenuButton,
   InsertTextMenuItem,
@@ -23,6 +22,7 @@ import {
   PromptFieldAttachmentList,
   PromptFieldSubmitButton,
   PromptFieldToolbar,
+  PromptFieldValue,
   PromptFieldVoiceButton,
   PromptToken,
   PromptTokenField
@@ -245,7 +245,7 @@ interface UploadState {
   progress?: number;
 }
 
-let prompt3Base = new AutoLinkingTokenFieldValue([
+let prompt3Base = new PromptFieldValue([
   {type: 'text', text: 'Summarize the '},
   {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}}
 ]);
@@ -255,12 +255,12 @@ let prompt3End = {
 };
 
 let prompts = [
-  new AutoLinkingTokenFieldValue([
+  new PromptFieldValue([
     {type: 'text', text: 'Analyze '},
     {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
     {type: 'text', text: ' and suggest targeting strategies'}
   ]),
-  new AutoLinkingTokenFieldValue([
+  new PromptFieldValue([
     {type: 'text', text: 'Write a brief for '},
     {
       type: 'token',
@@ -273,7 +273,7 @@ let prompts = [
 
 function EverythingRender(args) {
   let {placeholder, ...otherArgs} = args;
-  let [value, setValue] = useState<TokenFieldValue>(() => new AutoLinkingTokenFieldValue([]));
+  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
   let historyRef = useRef<TokenFieldValue[]>([]);
@@ -330,7 +330,7 @@ function EverythingRender(args) {
       if (nextIndex >= history.length) {
         historyIndexRef.current = -1;
         isHistoryNavigating.current = true;
-        setValue(new AutoLinkingTokenFieldValue([]));
+        setValue(new PromptFieldValue([]));
       } else {
         historyIndexRef.current = nextIndex;
         isHistoryNavigating.current = true;
@@ -367,7 +367,7 @@ function EverythingRender(args) {
           action('onSubmit')(prompt.toString());
           historyRef.current = [...historyRef.current, prompt];
           historyIndexRef.current = -1;
-          setValue(new AutoLinkingTokenFieldValue([]));
+          setValue(new PromptFieldValue([]));
           setAttachments([]);
           setAttachmentState(new Map());
         }}
@@ -416,7 +416,7 @@ function EverythingRender(args) {
           renderCompletions={filterValue =>
             renderCompletions(filterValue, {
               onClear: () => {
-                setValue(new AutoLinkingTokenFieldValue([]));
+                setValue(new PromptFieldValue([]));
                 setAttachments([]);
               },
               onCompact: action('onCompact')
@@ -446,7 +446,7 @@ function EverythingRender(args) {
                     <MenuItem
                       id={item.command}
                       onAction={() => {
-                        setValue(new AutoLinkingTokenFieldValue([]));
+                        setValue(new PromptFieldValue([]));
                         setAttachments([]);
                       }}>
                       <Text slot="label">{item.command}</Text>

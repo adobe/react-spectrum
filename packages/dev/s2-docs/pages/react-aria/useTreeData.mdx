@@ -1,4 +1,4 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2026 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -7,25 +7,17 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '@react-spectrum/docs';
+import {Layout} from '../../src/Layout';
 export default Layout;
-
+import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-stately/data';
-import {HeaderInfo, TypeContext, ClassAPI, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-stately/data/package.json';
 
----
-category: Data
-keywords: [tree, insert, remove, update, state]
----
+export const section = 'Utilities';
+export const description = 'Manages an immutable tree of items and its selection state.';
 
 # useTreeData
 
 <PageDescription>{docs.exports.useTreeData.description}</PageDescription>
-
-<HeaderInfo
-  packageData={packageData}
-  componentNames={['useTreeData']} />
 
 ## Introduction
 
