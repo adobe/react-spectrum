@@ -181,7 +181,10 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
 
 export interface AttachmentProps
   extends
-    Omit<CardProps, 'styles' | 'UNSAFE_className' | 'UNSAFE_style'>,
+    Omit<
+      CardProps,
+      'styles' | 'UNSAFE_className' | 'UNSAFE_style' | 'allowsArrowNavigation' | 'focusMode'
+    >,
     AriaLabelingProps,
     Pick<TagProps, 'id' | 'textValue' | 'render'> {
   /** The children of the Attachment. */
