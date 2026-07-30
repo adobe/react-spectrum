@@ -721,14 +721,10 @@ for (let i = 0; i < 1000; i++) {
 </Virtualizer>
 ```
 
-## Examples
+## Dynamic item sizes
 
-<ExampleList tag="virtualizer" pages={props.pages} />
-
-## Items that change size
-
-When using a `Virtualizer` with content that can change size, you can tell the `Virtualizer` to observe
-the items so that it updates the layout accordingly. This is done by setting the `shouldObserveItemSize` prop.
+Use the `shouldObserveItemSize` prop to automatically re-layout when items change size.
+Note that this uses a `ResizeObserver` internally and may have performance overhead.
 
 ```tsx render links={docs.links} wide
 "use client";
@@ -751,7 +747,10 @@ function ExpandableItem({item}) {
   return (
     <div className="expandable-item">
       <Text>{item.name}</Text>
-      <Button onPress={() => setExpanded(!expanded)} aria-label={expanded ? 'Collapse' : 'Expand'}>
+      <Button
+        variant="quiet"
+        onPress={() => setExpanded(!expanded)} 
+        aria-label={expanded ? 'Collapse' : 'Expand'}>
         {expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
       </Button>
       <Text slot="description" style={{display: expanded ? 'block' : 'none'}}>This is an expanded item.</Text>
@@ -798,6 +797,10 @@ function ExpandableItem({item}) {
   }
 }
 ```
+
+## Examples
+
+<ExampleList tag="virtualizer" pages={props.pages} />
 
 ## API
 
