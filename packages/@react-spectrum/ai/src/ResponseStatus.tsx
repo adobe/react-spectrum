@@ -431,6 +431,20 @@ const executionTraceItemStyles = style({
       default: 'block',
       ':last-child': 'none'
     }
+  },
+  '--execution-trace-item-padding-bottom-disclosure': {
+    type: 'paddingBottom',
+    value: {
+      default: 12,
+      ':last-child': 0
+    }
+  },
+  '--execution-trace-item-padding-bottom-no-disclosure': {
+    type: 'paddingBottom',
+    value: {
+      default: 16,
+      ':last-child': 0
+    }
   }
 });
 
@@ -455,7 +469,7 @@ const executionTraceDisclosurePanelStyles = style({
 });
 
 const executionTraceDisclosureContainerStyles = style({
-  paddingBottom: 12,
+  paddingBottom: 'var(--execution-trace-item-padding-bottom-disclosure)',
   marginTop: -4
 });
 
@@ -463,7 +477,7 @@ const executionTraceWithoutDisclosureStyles = style({
   paddingStart: 8,
   display: 'flex',
   flexDirection: 'column',
-  minHeight: 24
+  paddingBottom: 'var(--execution-trace-item-padding-bottom-no-disclosure)'
 });
 
 /**
