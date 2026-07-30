@@ -90,6 +90,13 @@ export interface TokenFieldAria {
 
 const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
+/**
+ * Provides the behavior and accessibility implementation for a token field.
+ * A token field allows users to enter text with inline tokens.
+ *
+ * @param props - Props for the token field.
+ * @param state - State for the token field, as returned by `useTokenFieldState`.
+ */
 export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
   props: AriaTokenFieldProps<T>,
   state: TokenFieldState,
@@ -411,7 +418,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       let end = value.findLineBoundary(selection[1], Direction.Forward);
       if (start && end) {
         e.preventDefault();
-        setSelection(ref.current!, start, end, true);
+        setTokenFieldSelection(ref.current!, start, end, true);
       }
     }
   });
@@ -654,11 +661,15 @@ function getPosition(container: Element, node: Node, offset: number): Position {
 let isProgrammaticSelectionChange = Symbol('isProgrammaticSelectionChange');
 
 function setCursor(root: Element, pos: Position, fireEvent = false) {
-  setSelection(root, pos, pos, fireEvent);
+  setTokenFieldSelection(root, pos, pos, fireEvent);
 }
 
-// Exported for tests.
-export function setSelection(root: Element, start: Position, end: Position, fireEvent = false) {
+export function setTokenFieldSelection(
+  root: Element,
+  start: Position,
+  end: Position,
+  fireEvent = false
+) {
   let selection = window.getSelection();
   if (selection) {
     let range = createDOMRange(root, start, end);
@@ -668,7 +679,7 @@ export function setSelection(root: Element, start: Position, end: Position, fire
   }
 }
 
-export function positionToDOMRange(root: Element, pos: Position): Range {
+export function tokenFieldPositionToDOMRange(root: Element, pos: Position): Range {
   return createDOMRange(root, pos, pos);
 }
 

@@ -22,10 +22,10 @@ import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
 import {Key} from '@react-types/shared';
 import {Popover} from 'vanilla-starter/Popover';
-import {positionToDOMRange} from 'react-aria/useTokenField';
-import {Token, TokenField, TokenInput} from '../src/TokenField';
 import 'vanilla-starter/TagGroup.css';
 import {Text} from 'react-aria-components/Text';
+import {Token, TokenField, TokenInput} from '../src/TokenField';
+import {tokenFieldPositionToDOMRange} from 'react-aria/useTokenField';
 
 export default {
   title: 'React Aria Components/TokenField',
@@ -206,7 +206,7 @@ export const WithAutocomplete: TokenFieldStory = () => {
         placement="bottom start"
         trigger="MenuTrigger"
         getTargetRect={target => {
-          return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
+          return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
         }}>
         <Menu items={items} dependencies={[filterAnchor]}>
           {item => (

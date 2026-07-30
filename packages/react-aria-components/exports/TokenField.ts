@@ -20,7 +20,7 @@ export type {
   TokenRenderProps,
   TokenFieldContext
 } from '../src/TokenField';
-export {positionToDOMRange} from 'react-aria/useTokenField';
+export {tokenFieldPositionToDOMRange, setTokenFieldSelection} from 'react-aria/useTokenField';
 export {TokenFieldValue, Direction} from 'react-stately/useTokenFieldState';
 export type {
   TokenFieldSegment,
