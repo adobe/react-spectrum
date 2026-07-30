@@ -38,11 +38,12 @@
     display: grid;
     grid-template-areas: 'clear selected . actiongroup';
     grid-template-columns:
-      auto max-content minmax(var(--spectrum-global-dimension-size-300), 1fr)
-      auto;
+      auto minmax(0, max-content) minmax(0, 1fr)
+      minmax(0, max-content);
     align-items: center;
+    min-width: 0;
     isolation: isolate;
-    justify-content: space-between;
+    overflow: hidden;
     padding: var(--spectrum-global-dimension-size-100);
 
     position: absolute;
@@ -79,6 +80,9 @@
     padding: 0 var(--spectrum-global-dimension-size-50);
     user-select: none;
     cursor: default;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   .react-spectrum-ActionBar-actionGroup {
