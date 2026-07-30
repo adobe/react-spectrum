@@ -769,10 +769,10 @@ function ExpandableItem({item}) {
   shouldObserveItemSize>
   {/*- end highlight -*/}
   <GridList
-    style={{display: 'block', padding: 0, height: 400, width: '100%'}}
+    style={{display: 'block', padding: 4, height: 400, width: '100%'}}
     aria-label="virtualized with expandable rows"
     items={items}>
-    {item => 
+    {item =>
     <GridListItem textValue={item.name} style={{padding: 0}}><ExpandableItem item={item} /></GridListItem>}
   </GridList>
 </Virtualizer>
