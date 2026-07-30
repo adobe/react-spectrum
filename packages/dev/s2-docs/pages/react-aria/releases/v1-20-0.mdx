@@ -22,16 +22,24 @@ export const title = 'v1.20.0';
 export const description = 'This release adds three new components — PreviewTrigger, TokenField, and useContextMenu — along with keyboard shortcut support via useKeyboard and context menu support for MenuTrigger, plus numerous bug fixes across Table, ComboBox, DatePicker, and more.';
 export const isSubpage = true;
 
-# v1.21.0
+# v1.20.0
 
-This release introduces [PreviewTrigger](../PreviewTrigger), a new component for showing a non-modal preview popover when hovering or focusing a link. It also adds [TokenField](../TokenField) to React Aria Components for building tag inputs, mention inputs, and AI prompt fields with inline tokens, and [useContextMenu](../useContextMenu), a new hook for native and keyboard-accessible context menus, which MenuTrigger can now use via trigger="contextMenu". We've also added keyboard shortcut support through [useKeyboard](../useKeyboard), along with support for interactive components like textfields inside Table and GridList rows. 
+This release includes many new components and features!
+
+* The new [PreviewTrigger](../PreviewTrigger) component shows a Popover on hover, focus, or long press. Unlike Tooltip, it may include interactive content, useful for hoverable link previews.
+* [TokenField](../TokenField) (alpha) allows users to enter text with inline tokens. Use it to build AI prompt fields, tag inputs, structured search fields, mention inputs, and multi-select comboboxes.
+* [MenuTrigger](/Menu#context-menu) now supports trigger="contextMenu", enabling accessible context menus via mouse, keyboard, and touch input.
+* A simpler API to implement keyboard shortcuts to [useKeyboard](../useKeyboard).
+* Support for interactive components like textfields inside Table rows.
+
+Finally, the React Aria and React Stately hook documentation has been completely rewritten! The new docs use the same styles as our React Aria Components examples, and show how to use both components and hooks together.
+
+As always, thank you to all our contributors!
 
 ## Changelog
 
 ### General Changes
 - Add new React Aria hooks documentation - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10153), [PR](https://github.com/adobe/react-spectrum/pull/10355) 
-### Autocomplete
-- Add inline completions example to Autocomplete documentation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10205)
 ### Breadcrumbs
 - Prevent passing an empty string to the `href` attribute when undefined - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10286)
 ### Checkbox
@@ -51,13 +59,11 @@ This release introduces [PreviewTrigger](../PreviewTrigger), a new component for
 ### Dialog
 - Add `aria-describedby` support for the `alertdialog` role - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/9924)
 - Pass the overlay id to `PopoverContext` in Dialog - [@albertdugba](https://github.com/albertdugba) - [PR](https://github.com/adobe/react-spectrum/pull/9807)
-### DragAndDrop
+### Drag and drop
 - Prefer the ancestor drop target over the nearest-by-distance target in DragManager - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10170)
 - Prevent Android Chrome taps from being detected as a drag event - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10332)
 ### DropZone
 - Prevent focus from moving to DropZone when clicking its hidden file input - [@pradeep-ramola](https://github.com/pradeep-ramola) - [PR](https://github.com/adobe/react-spectrum/pull/10173), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10336)
-### GridList
-- Support TextFields and other interactive components inside GridList rows using `keyboardNavigationBehavior="tab"` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195), [PR](https://github.com/adobe/react-spectrum/pull/10206), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
 ### Link
 - Add `onPressChange` prop to `useLink` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
 ### Menu
@@ -65,8 +71,7 @@ This release introduces [PreviewTrigger](../PreviewTrigger), a new component for
 ### Meter
 - Guard the percentage calculation against `NaN` when `min` equals `max` - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10169)
 ### Overlays
-- Fix `ariaHideOutside` behavior inside a shadow DOM - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10288)
-- Restore focus in `FocusScope` containment without scrolling the dialog into view - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10339)
+- Restore focus in `FocusScope` containment without scrolling- [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10339)
 - Add an `addGlobalScrollListener` utility and close overlays on scroll events inside a shadow DOM - [@pzaczkiewicz-athenahealth](https://github.com/pzaczkiewicz-athenahealth) - [PR](https://github.com/adobe/react-spectrum/pull/10188)
 ### PreviewTrigger
 - Add PreviewTrigger component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10243)
@@ -86,17 +91,17 @@ This release introduces [PreviewTrigger](../PreviewTrigger), a new component for
 ### TokenField
 - Add TokenField component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10318)
 ### Tree
-- Add `DEFAULT_SLOT` to `TreeItem`'s `CheckboxContext` - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10274)
+- Fix non-selection checkboxes in Tree items - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10274)
 - Prevent virtualized grid layouts from disappearing when hidden via `display: none` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10190)
 - Export `TreeSectionProps` and `TreeHeaderProps` types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
 ### useId
 - Prevent `FinalizationRegistry` entries from accumulating on every re-render - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9853)
 ### useKeyboard
-- Adds support for chaining multiple keyboard shortcut handlers - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10200), [PR](https://github.com/adobe/react-spectrum/pull/10322), [PR](https://github.com/adobe/react-spectrum/pull/10285)
-### Virtualizer
+- Adds support for new shortcuts that allow control over stopping prpagation and preventing default - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10200), [PR](https://github.com/adobe/react-spectrum/pull/10322), [PR](https://github.com/adobe/react-spectrum/pull/10285)
+### usePress
 - Fix press events not firing consistently for trackpad taps  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10225)
-
-
+### Virtualizer
+- Add 'shouldObserveItemSize' to Virtualizer to force re-layout when items change size - [@yihuiliao](https://github.com/yihuiliao) -  [PR](https://github.com/adobe/react-spectrum/pull/10258)
 ## Released packages
 
 ```

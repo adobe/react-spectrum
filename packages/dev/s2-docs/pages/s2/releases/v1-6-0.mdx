@@ -18,43 +18,32 @@ export const hideNav = true;
 export const section = 'Releases';
 export const tags = ['release', 'S2'];
 export const date = 'July 30, 2026';
-export const title = 'v1.7.0';
+export const title = 'v1.6.0';
 export const description = 'Adds a new SideNav component, context menu support for MenuTrigger, and interactive cell content in Table, along with fixes for Switch, DropZone, Toast, and TextArea.';
 export const isSubpage = true;
 
-# v1.7.0
+# v1.6.0
 
-This release introduces the new [SideNav](SideNav) component for building app navigation sidebars, adds trigger="contextMenu" support to [Menu](Menu)'s MenuTrigger, and lets [Table](TableView) cells hold interactive content like TextFields. It also includes a prose style macro for rendering markdown-like content and other bug fixes!
+This release introduces the new [SideNav](../SideNav) component for building app navigation sidebars, adds trigger="contextMenu" support to [MenuTrigger](../Menu#context-menu), and lets [TableView](../TableView#keyboard-navigation) cells hold interactive content like TextFields. 
 
 ## Changelog
 
 ### General Changes
 - Adds support for chaining multiple keyboard shortcut handlers - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10200)
-
 ### Dialog
 - Adds `aria-describedby` support so AlertDialog content is announced to assistive technology - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/9924)
-
 ### Menu
 - Adds `trigger="contextMenu"` support to MenuTrigger for showing menus on right-click or long-press - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10237)
-
-### Prose
-- Adds a `prose` style macro for styling semantic HTML elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10161)
-
 ### SideNav
 - Adds SideNav component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
-
 ### Switch
 - Fixes Switch's hidden native input positioning so it doesn't shift layout  - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10336)
-
 ### Table
 - Adds support for TextField and other interactive components inside Table cells using `keyboardNavigationBehavior="tab"`- [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10159)
-
 ### TextArea
 - Fixes empty TextArea height jumping when an overlay is open - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9933)
-
 ### Toast
 - Allows an `id` prop to be passed through to the DOM on Toast - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10342)
-
 
 ## Released packages
 
