@@ -40,10 +40,6 @@ const meta: Meta<typeof ResponseStatus> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', events),
-    density: {
-      control: 'radio',
-      options: ['compact', 'regular', 'spacious']
-    },
     status: {
       control: 'radio',
       options: ['loading', 'failed', 'success']
@@ -101,8 +97,11 @@ export const WithExecutionTrace: Story = {
     defaultExpanded: true,
     status: 'success'
   },
+  parameters: {
+    layout: 'fullscreen'
+  },
   render: args => (
-    <div className={style({width: 800, minHeight: 240})}>
+    <div className={style({maxWidth: 600, minHeight: 240})}>
       <ResponseStatus {...args}>
         <ResponseStatusTitle>Used 6 tools</ResponseStatusTitle>
         <ResponseStatusPanel>
