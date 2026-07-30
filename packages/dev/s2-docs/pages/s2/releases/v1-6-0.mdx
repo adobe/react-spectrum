@@ -24,7 +24,102 @@ export const isSubpage = true;
 
 # v1.6.0
 
-This release introduces the new [SideNav](../SideNav) component (alpha) for building app navigation sidebars, adds `trigger="contextMenu"` support to [MenuTrigger](../Menu#context-menu), and lets [TableView](../TableView#keyboard-navigation) cells hold interactive content like TextFields. 
+This release introduces the new [SideNav](../SideNav) component for building app navigation sidebars, adds `trigger="contextMenu"` support to [MenuTrigger](../Menu#context-menu), and lets [TableView](../TableView#keyboard-navigation) cells hold interactive content like TextFields. 
+
+```tsx render hideCode
+"use client";
+import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNav';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import UserGroup from '@react-spectrum/s2/icons/UserGroup';
+import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
+import Files from '@react-spectrum/s2/icons/Files';
+import Images from '@react-spectrum/s2/icons/Images';
+import Animation from '@react-spectrum/s2/icons/Animation';
+import Download from '@react-spectrum/s2/icons/Download';
+import Apps from '@react-spectrum/s2/icons/Apps';
+import {RouterProvider} from 'react-aria-components';
+import React, {ReactNode, useState} from 'react';
+
+function RoutedSideNav(props) {
+  let {children} = props;
+  let [selectedRoute, setSelectedRoute] = useState<string>(props.defaultSelectedRoute);
+
+  let updateSelection = (href: string) => {
+    setSelectedRoute(href);
+  };
+
+  return <RouterProvider navigate={updateSelection}>{children({selectedRoute})}</RouterProvider>;
+}
+
+<RoutedSideNav defaultSelectedRoute="/files">
+  {({selectedRoute}) => (
+    <SideNav aria-label="Files" selectedRoute={selectedRoute} styles={style({width: 210})}>
+      <SideNavSection>
+        <SideNavHeader>Favorites</SideNavHeader>
+        <SideNavItem href="/applications" textValue="Applications">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Apps />
+              <Text>Applications</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem href="/downloads" textValue="Downloads">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Download />
+              <Text>Downloads</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavSection>
+      <SideNavSection>
+        <SideNavHeader>Workspaces</SideNavHeader>
+        <SideNavItem href="/files" textValue="Files">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Files />
+              <Text>Files</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem href="/your-libraries" textValue="Your Libraries">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <CCLibrary />
+              <Text>Your Libraries</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem href="/photos" textValue="Photos">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Images />
+                <Text>Photos</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+        <SideNavItem href="/shared-with-you" id="shared-with-you" textValue="Shared with You">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <UserGroup />
+              <Text>Shared with You</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem href="/animations" textValue="Animations">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Animation />
+                <Text>Animations</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+      </SideNavSection>
+    </SideNav>
+  )}
+</RoutedSideNav>
+```
 
 ## Changelog
 
