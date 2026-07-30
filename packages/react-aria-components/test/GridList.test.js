@@ -26,6 +26,7 @@ import {ComboBox} from '../src/ComboBox';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
+import {GridLayout, ListLayout, Size} from 'react-stately/useVirtualizerState';
 import {
   GridList,
   GridListContext,
@@ -39,7 +40,6 @@ import {Input} from '../src/Input';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
-import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Modal} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React from 'react';
@@ -1040,6 +1040,129 @@ describe('GridList', () => {
       'Item 14',
       'Item 49'
     ]);
+  });
+
+  describe('virtualized grid layout with sections', () => {
+    let sections = [];
+    for (let s = 0; s < 2; s++) {
+      let items = [];
+      for (let i = 0; i < 6; i++) {
+        let id = s * 6 + i;
+        items.push({id, name: `Item ${id}`});
+      }
+      sections.push({id: `section-${s}`, name: `Section ${s}`, children: items});
+    }
+
+    let renderSectionedGrid = () =>
+      render(
+        <Virtualizer
+          layout={GridLayout}
+          layoutOptions={{
+            minItemSize: new Size(100, 100),
+            maxItemSize: new Size(100, 100),
+            minSpace: new Size(10, 10),
+            // Use fixed sizes so items are not measured, since jsdom has no layout.
+            preserveAspectRatio: true,
+            headingSize: 20
+          }}>
+          <GridList layout="grid" aria-label="Test" items={sections}>
+            {section => (
+              <GridListSection>
+                <GridListHeader>{section.name}</GridListHeader>
+                <Collection items={section.children}>
+                  {item => <GridListItem>{item.name}</GridListItem>}
+                </Collection>
+              </GridListSection>
+            )}
+          </GridList>
+        </Virtualizer>
+      );
+
+    it('should render section headers as rows and virtualize offscreen sections', () => {
+      let clientWidth = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 330);
+      let clientHeight = jest
+        .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+        .mockImplementation(() => 200);
+
+      let {getByRole, getAllByRole} = renderSectionedGrid();
+
+      let groups = getAllByRole('rowgroup');
+      expect(groups).toHaveLength(2);
+
+      // With a 330x200 viewport and 100px items, section 1 (header + 2 rows of 3 items)
+      // is fully visible. Section 2 begins below the overscanned rect, so only its
+      // header is added (headers of visible sections are always included).
+      let rows = getAllByRole('row');
+      expect(rows.map(r => r.textContent)).toEqual([
+        'Section 0',
+        'Item 0',
+        'Item 1',
+        'Item 2',
+        'Item 3',
+        'Item 4',
+        'Item 5',
+        'Section 1'
+      ]);
+
+      // Items in the second section appear after scrolling, and the first
+      // section is virtualized out.
+      let grid = getByRole('grid');
+      grid.scrollTop = 300;
+      fireEvent.scroll(grid);
+
+      rows = getAllByRole('row');
+      expect(rows.map(r => r.textContent)).toEqual([
+        'Section 1',
+        'Item 6',
+        'Item 7',
+        'Item 8',
+        'Item 9',
+        'Item 10',
+        'Item 11'
+      ]);
+
+      clientWidth.mockRestore();
+      clientHeight.mockRestore();
+    });
+
+    it('should support keyboard navigation across section boundaries', async () => {
+      let clientWidth = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 330);
+      let clientHeight = jest
+        .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+        .mockImplementation(() => 200);
+
+      renderSectionedGrid();
+
+      await user.tab();
+      expect(document.activeElement).toHaveTextContent('Item 0');
+
+      // Down within the first section.
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveTextContent('Item 3');
+
+      // Down across the section boundary keeps the same column,
+      // skipping the section header.
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveTextContent('Item 6');
+
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toHaveTextContent('Item 7');
+
+      // Back up across the section boundary.
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toHaveTextContent('Item 4');
+
+      // Jump to the last item, which is outside the visible rect.
+      await user.keyboard('{End}');
+      expect(document.activeElement).toHaveTextContent('Item 11');
+
+      clientWidth.mockRestore();
+      clientHeight.mockRestore();
+    });
   });
 
   it('should support rendering a TagGroup inside a GridListItem', async () => {
