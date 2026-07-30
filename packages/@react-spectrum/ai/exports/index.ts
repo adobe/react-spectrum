@@ -3,7 +3,7 @@ export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 export {
-  AutoLinkingTokenFieldValue,
+  PromptFieldValue,
   PromptField,
   PromptFieldSubmitButton,
   PromptTokenField,
@@ -47,7 +47,10 @@ export type {
   PromptTokenFieldPopoverProps,
   PromptFieldToolbarProps,
   InsertMenuItemProps,
-  PromptFieldVoiceButtonProps
+  PromptFieldVoiceButtonProps,
+  InsertTokenMenuItemProps,
+  InsertTextMenuItemProps,
+  CommandMenuItemProps
 } from '../src/PromptField';
 export type {MessageFeedbackProps} from '../src/MessageFeedback';
 export type {MessageSourceProps, SourceListProps, SourceListItemProps} from '../src/MessageSource';
