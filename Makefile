@@ -110,6 +110,18 @@ build:
 	node scripts/moveTypes.mjs
 	rm -rf types
 
+build-parcel-v3:
+	mkdir -p dist
+	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
+	~/dev/parcel/target/release/parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config parcel-v3/.parcelrc-build
+	yarn workspaces foreach --all -pt run prepublishOnly
+	node scripts/buildEsm.js
+	node scripts/buildI18n.js
+	node scripts/generateIconDts.js
+	node scripts/fixUseClient.js
+	node scripts/moveTypes.mjs
+	rm -rf types
+
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
 	cp packages/dev/docs/pages/disallow-robots.txt dist/$$(git rev-parse HEAD)/docs/robots.txt

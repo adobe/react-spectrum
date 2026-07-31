@@ -14,7 +14,8 @@
     "url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-raw"],
     "data-url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline"],
     "starters/tailwind/**/*.css": ["@parcel/transformer-tailwind", "..."],
-    "packages/dev/s2-docs/tailwind/*.css": ["@parcel/transformer-tailwind", "..."]
+    "packages/dev/s2-docs/tailwind/*.css": ["@parcel/transformer-tailwind", "..."],
+    "*.mdx": ["./MDXTransformer.mjs", "..."]
   },
   "bundler": {
     "plugin": "@parcel/bundler-default",

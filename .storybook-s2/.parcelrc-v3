@@ -2,6 +2,15 @@
   "extends": ["../parcel-v3/.parcelrc-icons", "@parcel/config-default"],
   "resolvers": ["@parcel/resolver-glob", "..."],
   "transformers": {
+    "*.stories.{ts,tsx,js,mjs,jsm,jsx,es6,cjs}": [
+      {
+        "plugin": "@parcel/transformer-native",
+        "config": {
+          "lib": "/Users/devongovett/dev/react-docgen-typescript/libdocgen.dylib"
+        }
+      },
+      "..."
+    ],
     "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
     "*.css": ["@parcel/transformer-css"],
     "raw:*": ["@parcel/transformer-raw"]
