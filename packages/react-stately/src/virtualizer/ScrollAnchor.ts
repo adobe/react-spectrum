@@ -88,22 +88,48 @@ export function captureScrollAnchor(
   isAnchorable: (layoutInfo: LayoutInfo) => boolean = () => true
 ): ScrollAnchor | null {
   let dimension = dimensionForAxis(axis);
+  // The corner on the item's leading edge - the side where content is added/removed. For 'end'
+  // that's the start of the axis (top/left); for 'start' it's the end of the axis (bottom/right).
+  let corner: RectCorner =
+    axis === 'x'
+      ? edge === 'end'
+        ? 'topLeft'
+        : 'topRight'
+      : edge === 'end'
+        ? 'topLeft'
+        : 'bottomLeft';
+  let viewportExtent = visibleRect[dimension];
   let best: ScrollAnchor | null = null;
+  // Fallback used only when every visible item is clipped past the edge where positions are constantly changing (e.g. a single item
+  // taller than the viewport): the least-clipped item still makes the most stable anchor available.
+  let fallback: ScrollAnchor | null = null;
   for (let [key, layoutInfo] of visibleLayoutInfos) {
     if (!layoutInfo || !isAnchorable(layoutInfo)) {
       continue;
     }
     let overlap = layoutInfo.rect.intersection(visibleRect)[dimension];
-    if (layoutInfo.rect.area > 0 && overlap >= MIN_ANCHOR_OVERLAP) {
-      let corner = layoutInfo.rect.getCornerInRect(visibleRect) ?? 'topLeft';
-      let offset = layoutInfo.rect[corner][axis] - visibleRect[axis];
+    if (layoutInfo.rect.area <= 0 || overlap < MIN_ANCHOR_OVERLAP) {
+      continue;
+    }
+    let offset = layoutInfo.rect[corner][axis] - visibleRect[axis];
+    // Is the leading edge within the viewport?
+    let leadingEdgeVisible = edge === 'end' ? offset >= 0 : offset <= viewportExtent;
+    if (leadingEdgeVisible) {
+      // Pick the item nearest the leading edge among those whose leading edge is visible.
       let isBetter = !best || (edge === 'end' ? offset < best.offset : offset > best.offset);
       if (isBetter) {
         best = {key, corner, offset};
       }
+    } else {
+      // Least-clipped = closest to the leading edge from the clipped side.
+      let isBetter =
+        !fallback || (edge === 'end' ? offset > fallback.offset : offset < fallback.offset);
+      if (isBetter) {
+        fallback = {key, corner, offset};
+      }
     }
   }
-  return best;
+  return best ?? fallback;
 }
 
 /** Returns the viewport coordinate (along `axis`) that pins the viewport to `edge` of the content. */
