@@ -495,6 +495,38 @@ describe('DateField', () => {
     expect(document.activeElement).toBe(segments[0]);
   });
 
+  it('should support repeat keydown events when holding backspace across empty segments', async () => {
+    // Backspace on an empty (placeholder) segment moves focus to the previous segment.
+    let {getAllByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[2]);
+    await user.keyboard('{Backspace>2/}');
+
+    expect(document.activeElement).toBe(segments[0]);
+  });
+
+  it('should support repeat keydown events when holding an arrow key to navigate segments', async () => {
+    // ArrowLeft/ArrowRight move between segments
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[0]);
+    await user.keyboard('{ArrowRight>2/}');
+
+    expect(document.activeElement).toBe(segments[2]);
+  });
+
   it('should do nothing when pressing enter', async () => {
     let {getAllByRole} = render(
       <DateField defaultValue={new CalendarDate(2024, 12, 31)}>

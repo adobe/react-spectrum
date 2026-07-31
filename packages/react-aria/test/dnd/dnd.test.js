@@ -2710,12 +2710,21 @@ describe('useDrag and useDrop', function () {
   });
 
   describe('screen reader', () => {
+    let platformGetter;
+    let userAgentGetter;
+
     beforeEach(async () => {
+      platformGetter = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'iPhone');
+      userAgentGetter = jest
+        .spyOn(navigator, 'userAgent', 'get')
+        .mockImplementation(() => 'AppleWebKit');
       // reset focus visible state
       fireEvent.click(document.body, {detail: 0, pointerType: null});
     });
 
     afterEach(async () => {
+      platformGetter.mockRestore();
+      userAgentGetter.mockRestore();
       await user.keyboard('{Escape}');
     });
 
@@ -2952,7 +2961,11 @@ describe('useDrag and useDrop', function () {
         draggable,
         pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0})
       );
-      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
+      await user.pointer({
+        target: draggable,
+        keys: '[MouseLeft]',
+        coords: {clientX: 50, clientY: 25, width: 1, height: 1}
+      });
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(draggable).toHaveAttribute('aria-describedby');
@@ -3017,7 +3030,11 @@ describe('useDrag and useDrop', function () {
         draggable,
         pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0})
       );
-      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
+      await user.pointer({
+        target: draggable,
+        keys: '[MouseLeft]',
+        coords: {clientX: 50, clientY: 25, width: 1, height: 1}
+      });
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 

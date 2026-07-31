@@ -7,5 +7,6 @@ export {
   isAppleDevice,
   isChrome,
   isAndroid,
-  isFirefox
+  isFirefox,
+  isSafari
 } from '../../../src/utils/platform';

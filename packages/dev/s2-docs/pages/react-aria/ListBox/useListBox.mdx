@@ -1,0 +1,91 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/listbox';
+import statelyDocs from 'docs:@react-stately/list';
+import Anatomy from '../ListBoxAnatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a listbox component.';
+export const isSubpage = true;
+
+# useListBox
+
+<PageDescription>{docs.exports.useListBox.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/ListBox.tsx", "starters/hooks/src/ListBox.css"]}
+"use client";
+import {ListBox, ListBoxItem} from 'hooks-starter/ListBox';
+
+<ListBox aria-label="Alignment" selectionMode="single">
+  <ListBoxItem id="left">Left</ListBoxItem>
+  <ListBoxItem id="middle">Middle</ListBoxItem>
+  <ListBoxItem id="right">Right</ListBoxItem>
+</ListBox>
+```
+
+## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
+
+```tsx
+<ListBox>
+  <ListBoxItem>
+    <Text slot="label" />
+    <Text slot="description" />
+    <SelectionIndicator />
+  </ListBoxItem>
+  <ListBoxSection>
+    <Header />
+    <ListBoxItem />
+  </ListBoxSection>
+  <ListBoxLoadMoreItem />
+</ListBox>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useListState, links: statelyDocs.links},
+    {function: docs.exports.useListBox, links: docs.links},
+    {function: docs.exports.useOption, links: docs.links},
+    {function: docs.exports.useListBoxSection, links: docs.links},
+  ]}
+/>
+
+### ListState
+
+<InterfaceType {...statelyDocs.exports.ListState} links={statelyDocs.links} />
+
+### AriaListBoxOptions
+
+<InterfaceType {...docs.exports.AriaListBoxOptions} links={docs.links} />
+
+### ListBoxAria
+
+<InterfaceType {...docs.exports.ListBoxAria} links={docs.links} grouped={false} />
+
+### AriaOptionProps
+
+<InterfaceType {...docs.exports.AriaOptionProps} links={docs.links} />
+
+### OptionAria
+
+<InterfaceType {...docs.exports.OptionAria} links={docs.links} grouped={false} />
+
+### AriaListBoxSectionProps
+
+<InterfaceType {...docs.exports.AriaListBoxSectionProps} links={docs.links} />
+
+### ListBoxSectionAria
+
+<InterfaceType {...docs.exports.ListBoxSectionAria} links={docs.links} grouped={false} />

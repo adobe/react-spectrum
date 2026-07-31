@@ -7,6 +7,6 @@
     "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
     // Disable PostCSS from running over style macro output
     "packages/@react-spectrum/s2/**/*.css": ["@parcel/transformer-css"],
-    "packages/@react-spectrum/s2/**/*.svg": ["@parcel/transformer-svg-react"]
+    "packages/@react-spectrum/{s2,ai}/**/*.svg": ["@parcel/transformer-svg-react"]
   }
 }

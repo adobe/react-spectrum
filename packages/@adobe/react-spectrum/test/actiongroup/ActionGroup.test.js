@@ -226,6 +226,28 @@ describe('ActionGroup', function () {
     }
   );
 
+  it('should support repeat keydown events when holding an arrow key', async function () {
+    // Arrow key navigation is handled by useActionGroup's useKeyboard (allowRepeats).
+    let tree = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup>
+          <Item key="1">Click me 1</Item>
+          <Item key="2">Click me 2</Item>
+          <Item key="3">Click me 3</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let buttons = tree.getAllByRole('button');
+    await user.tab();
+    expect(document.activeElement).toBe(buttons[0]);
+
+    // Hold the key down for two keydown events (the second is a repeat).
+    await user.keyboard('{ArrowRight>2/}');
+
+    expect(document.activeElement).toBe(buttons[2]);
+  });
+
   it.each`
     Name                     | props                | disabledKeys  | orders
     ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${['1']}      | ${[{action: tab, result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}

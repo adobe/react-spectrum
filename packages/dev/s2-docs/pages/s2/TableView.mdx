@@ -946,6 +946,51 @@ function subscribe(fn) {
 }
 ```
 
+## Keyboard navigation
+
+By default, TableView uses arrow key navigation to move focus into cells. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a cell.
+
+```tsx render type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+let files = [
+  {id: 'games', name: 'Games', type: 'Folder', date: '6/7/2023'},
+  {id: 'apps', name: 'Applications', type: 'Folder', date: '4/7/2025'},
+  {id: 'report', name: '2024 Financial Report', type: 'PDF Document', date: '12/30/2024'},
+  {id: 'job', name: 'Job Posting', type: 'Text Document', date: '1/18/2025'},
+];
+///- end collapse -///
+
+<TableView
+  /*- begin highlight -*/
+  keyboardNavigationBehavior="tab"
+  /*- end highlight -*/
+  selectionMode="multiple"
+  aria-label="Shared files"
+  styles={style({width: 'full'})}>
+  <TableHeader>
+    <Column id="name" isRowHeader>Name</Column>
+    <Column id="type">Type</Column>
+    <Column id="date">Date Modified</Column>
+    <Column id="notes">Notes</Column>
+  </TableHeader>
+  <TableBody items={files}>
+    {item => (
+      <Row id={item.id}>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.type}</Cell>
+        <Cell>{item.date}</Cell>
+        <Cell><TextField aria-label={`${item.name} notes`} placeholder="Enter notes" /></Cell>
+      </Row>
+    )}
+  </TableBody>
+</TableView>
+```
+
 ## Drag and drop
 
 Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. See the [drag and drop guide](dnd?component=TableView) to learn more.

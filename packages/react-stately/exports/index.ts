@@ -170,6 +170,14 @@ export type {WaterfallLayoutOptions} from '../src/layout/WaterfallLayout';
 export type {InvalidationContext} from '../src/virtualizer/types';
 export type {RectCorner} from '../src/virtualizer/Rect';
 export type {VirtualizerState} from '../src/virtualizer/useVirtualizerState';
+export type {TokenFieldProps, TokenFieldState} from '../src/tokenfield/useTokenFieldState';
+export type {
+  TokenFieldSegment,
+  TextSegment,
+  TokenSegment,
+  Position,
+  TokenFieldValueOptions
+} from '../src/tokenfield/TokenFieldValue';
 
 export {useCalendarState} from '../src/calendar/useCalendarState';
 export {useRangeCalendarState} from '../src/calendar/useRangeCalendarState';
@@ -232,3 +240,5 @@ export {GridLayout} from '../src/layout/GridLayout';
 export {ListLayout} from '../src/layout/ListLayout';
 export {TableLayout} from '../src/layout/TableLayout';
 export {WaterfallLayout} from '../src/layout/WaterfallLayout';
+export {useTokenFieldState} from '../src/tokenfield/useTokenFieldState';
+export {TokenFieldValue} from '../src/tokenfield/TokenFieldValue';

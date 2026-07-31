@@ -138,7 +138,8 @@ export function useDateSegment(
         // Firefox does not fire selectstart for Ctrl/Cmd + A
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
       }
-    }
+    },
+    allowRepeats: true
   });
 
   // Safari dayPeriod option doesn't work...
