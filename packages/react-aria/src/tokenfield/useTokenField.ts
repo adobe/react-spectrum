@@ -20,18 +20,17 @@ import {
   useMemo,
   useRef
 } from 'react';
+import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from '../utils/domHelpers';
+import {isMac} from '../utils/platform';
+import {mergeProps} from '../utils/mergeProps';
 import {
-  Direction,
   Position,
   TokenFieldProps,
   TokenFieldSegment,
   TokenFieldState,
   TokenFieldValue
 } from 'react-stately/useTokenFieldState';
-import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
-import {getOwnerDocument} from '../utils/domHelpers';
-import {isMac} from '../utils/platform';
-import {mergeProps} from '../utils/mergeProps';
 import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEvent} from '../utils/useEvent';
 import {useField} from '../label/useField';
@@ -285,26 +284,32 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
 
         switch (e.inputType) {
           case 'deleteContentBackward': {
-            apply(tokens => tokens.delete(start, graphemeSegmenter, Direction.Backward));
+            apply(tokens =>
+              tokens.delete(start, graphemeSegmenter, TokenFieldValue.Direction.Backward)
+            );
             break;
           }
           case 'deleteContentForward':
-            apply(tokens => tokens.delete(start, graphemeSegmenter, Direction.Forward));
+            apply(tokens =>
+              tokens.delete(start, graphemeSegmenter, TokenFieldValue.Direction.Forward)
+            );
             break;
           case 'deleteWordBackward': {
-            apply(tokens => tokens.delete(start, wordSegmenter, Direction.Backward));
+            apply(tokens =>
+              tokens.delete(start, wordSegmenter, TokenFieldValue.Direction.Backward)
+            );
             break;
           }
           case 'deleteWordForward':
-            apply(tokens => tokens.delete(start, wordSegmenter, Direction.Forward));
+            apply(tokens => tokens.delete(start, wordSegmenter, TokenFieldValue.Direction.Forward));
             break;
           case 'deleteHardLineForward':
           case 'deleteSoftLineForward': // TODO: this usually deletes to the nearest *visual* line break rather than a hard break
-            apply(tokens => tokens.deleteLine(start, Direction.Forward));
+            apply(tokens => tokens.deleteLine(start, TokenFieldValue.Direction.Forward));
             break;
           case 'deleteHardLineBackward':
           case 'deleteSoftLineBackward':
-            apply(tokens => tokens.deleteLine(start, Direction.Backward));
+            apply(tokens => tokens.deleteLine(start, TokenFieldValue.Direction.Backward));
             break;
         }
         break;
@@ -414,8 +419,8 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
         return;
       }
 
-      let start = value.findLineBoundary(selection[0], Direction.Backward);
-      let end = value.findLineBoundary(selection[1], Direction.Forward);
+      let start = value.findLineBoundary(selection[0], TokenFieldValue.Direction.Backward);
+      let end = value.findLineBoundary(selection[1], TokenFieldValue.Direction.Forward);
       if (start && end) {
         e.preventDefault();
         setTokenFieldSelection(ref.current!, start, end, true);
@@ -523,7 +528,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       if (!selection) {
         return false;
       }
-      let boundary = value.findLineBoundary(selection[0], Direction.Backward);
+      let boundary = value.findLineBoundary(selection[0], TokenFieldValue.Direction.Backward);
       if (boundary) {
         setCursor(ref.current!, boundary, true);
         return true;
@@ -535,7 +540,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       if (!selection) {
         return false;
       }
-      let boundary = value.findLineBoundary(selection[1], Direction.Forward);
+      let boundary = value.findLineBoundary(selection[1], TokenFieldValue.Direction.Forward);
       if (boundary) {
         setCursor(ref.current!, boundary, true);
         return true;
