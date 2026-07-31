@@ -43,6 +43,7 @@ import {
 import {Content} from '@react-spectrum/s2/Content';
 import Data from '@react-spectrum/s2/icons/Data';
 import * as data from '../src/loader/data';
+import type {FocusableRefValue} from '@react-types/shared';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -51,7 +52,6 @@ import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
-import type {FocusableRefValue} from '@react-types/shared';
 import {TokenFieldValue} from 'react-aria-components';
 import {useRef, useState} from 'react';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
@@ -259,7 +259,11 @@ let prompt1 = new PromptFieldValue([
 
 let prompt2 = new PromptFieldValue([
   {type: 'text', text: 'Write a brief for '},
-  {type: 'token', text: 'Spring Launch 2026', value: {type: 'campaign', title: 'Spring Launch 2026'}}
+  {
+    type: 'token',
+    text: 'Spring Launch 2026',
+    value: {type: 'campaign', title: 'Spring Launch 2026'}
+  }
 ]);
 
 let prompt3Base = new PromptFieldValue([
@@ -270,7 +274,11 @@ let prompt3Base = new PromptFieldValue([
 let prompts = [
   prompt1.withCaretPosition(atEnd(prompt1)),
   prompt2.withCaretPosition(atEnd(prompt2)),
-  prompt3Base.replaceRange(atEnd(prompt3Base), atEnd(prompt3Base), ' journey performance from test.com /')
+  prompt3Base.replaceRange(
+    atEnd(prompt3Base),
+    atEnd(prompt3Base),
+    ' journey performance from test.com /'
+  )
 ];
 
 function EverythingRender(args) {

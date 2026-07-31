@@ -28,6 +28,7 @@ import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
+import {IconContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -809,6 +810,15 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
   );
 });
 
+const iconThumbnailStyles = style({
+  position: 'relative',
+  alignSelf: 'center',
+  flexShrink: 0,
+  pointerEvents: 'none',
+  userSelect: 'none',
+  size: '--basic-thumb-size'
+});
+
 export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
   props: BasicCardProps,
   ref: DOMRef<HTMLDivElement>
@@ -843,6 +853,17 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                       },
                       outlineColor: '--s2-container-bg'
                     })({size})
+                  }
+                }
+              }
+            ],
+            [
+              IconContext,
+              {
+                slots: {
+                  icon: {},
+                  thumbnail: {
+                    styles: iconThumbnailStyles
                   }
                 }
               }

@@ -37,11 +37,11 @@ import {
   useRef,
   useState
 } from 'react';
-import {DOMRef} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
@@ -70,8 +70,8 @@ import {
 } from 'react-aria-components/TokenField';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import {useControlledState} from 'react-stately/useControlledState';
-import {useFocusableRef} from './useDOMRef';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useFocusableRef} from './useDOMRef';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
