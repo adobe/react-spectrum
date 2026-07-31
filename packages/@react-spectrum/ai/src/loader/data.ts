@@ -650,6 +650,156 @@ const adobeEPositions: number[][] = [
   [4, 2]
 ];
 
+const documentPositions: number[][] = [
+  [0, 6],
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [4, 6],
+  [5, 6],
+  [6, 6],
+  [0, 5],
+  [6, 5],
+  [0, 4],
+  [6, 4],
+  [0, 3],
+  [6, 3],
+  [0, 2],
+  [4, 2],
+  [5, 2],
+  [6, 2],
+  [0, 1],
+  [4, 1],
+  [5, 1],
+  [0, 0],
+  [1, 0],
+  [2, 0],
+  [3, 0],
+  [4, 0]
+];
+
+const graphPositions: number[][] = [
+  [0, 6],
+  [2, 6],
+  [4, 6],
+  [6, 6],
+  [0, 5],
+  [2, 5],
+  [4, 5],
+  [6, 5],
+  [2, 4],
+  [4, 4],
+  [6, 4],
+  [2, 3],
+  [6, 3],
+  [0, 2],
+  [4, 2],
+  [6, 2],
+  [1, 1],
+  [3, 1],
+  [5, 1],
+  [2, 0],
+  [6, 0]
+];
+
+const cartPositions: number[][] = [
+  [1, 6],
+  [4, 6],
+  [1, 4],
+  [2, 4],
+  [3, 4],
+  [4, 4],
+  [5, 4],
+  [1, 3],
+  [5, 3],
+  [1, 2],
+  [6, 2],
+  [1, 1],
+  [2, 1],
+  [3, 1],
+  [4, 1],
+  [5, 1],
+  [6, 1],
+  [0, 0],
+  [1, 0]
+];
+
+const shopPositions: number[][] = [
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [4, 6],
+  [5, 6],
+  [1, 5],
+  [2, 5],
+  [5, 5],
+  [1, 3],
+  [3, 3],
+  [5, 3],
+  [0, 2],
+  [2, 2],
+  [4, 2],
+  [6, 2],
+  [0, 1],
+  [2, 1],
+  [4, 1],
+  [6, 1],
+  [1, 0],
+  [2, 0],
+  [3, 0],
+  [4, 0],
+  [5, 0]
+];
+
+const journeyPositions: number[][] = [
+  [5, 6],
+  [4, 5],
+  [6, 5],
+  [3, 4],
+  [5, 4],
+  [1, 3],
+  [3, 3],
+  [0, 2],
+  [2, 2],
+  [3, 2],
+  [5, 2],
+  [1, 1],
+  [4, 1],
+  [6, 1],
+  [5, 0]
+];
+
+const floppyPositions: number[][] = [
+  [0, 6],
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [4, 6],
+  [5, 6],
+  [6, 6],
+  [0, 5],
+  [6, 5],
+  [0, 4],
+  [6, 4],
+  [0, 3],
+  [6, 3],
+  [0, 2],
+  [1, 2],
+  [2, 2],
+  [3, 2],
+  [4, 2],
+  [5, 2],
+  [6, 2],
+  [0, 1],
+  [1, 1],
+  [5, 1],
+  [6, 1],
+  [0, 0],
+  [1, 0],
+  [3, 0],
+  [5, 0]
+];
+
 // ─────────────────────────────────────────────────────────────
 // buildCells — turn a positions list ([col, row] coords on a 7×7 grid,
 // bottom-up/left-to-right within a row → stagger order) into a cells
@@ -838,6 +988,36 @@ export const adobeE = /* @__PURE__ */ buildCells(adobeEPositions, {
   rowOffset: -1
 });
 
+export const document = /* @__PURE__ */ buildCells(documentPositions, {
+  staggerInterval: 1,
+  stagger: 'grouped'
+});
+
+export const graph = /* @__PURE__ */ buildCells(graphPositions, {
+  staggerInterval: 2,
+  stagger: 'grouped'
+});
+
+export const cart = /* @__PURE__ */ buildCells(cartPositions, {
+  staggerInterval: 1,
+  stagger: 'grouped'
+});
+
+export const shop = /* @__PURE__ */ buildCells(shopPositions, {
+  staggerInterval: 1,
+  stagger: 'grouped'
+});
+
+export const journey = /* @__PURE__ */ buildCells(journeyPositions, {
+  staggerInterval: 2,
+  stagger: 'grouped'
+});
+
+export const floppy = /* @__PURE__ */ buildCells(floppyPositions, {
+  staggerInterval: 1,
+  stagger: 'grouped'
+});
+
 // ─────────────────────────────────────────────────────────────
 // Presets — sequences (`Cell[][]`) that loop through their icons.
 // Importing a preset pulls in only the icons it references.
@@ -888,6 +1068,26 @@ export const exp: Cell[][] = [
 ];
 
 export const analyze: Cell[][] = [flower, image, brush, eye, eyedrop, wand, lasso, crop];
+
+export const cxo: Cell[][] = [
+  aiLogo,
+  document,
+  graph,
+  cart,
+  shop,
+  dial,
+  image,
+  journey,
+  folder,
+  timeline,
+  comment,
+  floppy,
+  adobeA,
+  adobeD,
+  adobeO,
+  adobeB,
+  adobeE
+];
 
 export const mega: Cell[][] = [
   aiLogo,
