@@ -17,7 +17,7 @@ import docs from 'docs:@react-spectrum/s2';
 export const hideNav = true;
 export const section = 'Releases';
 export const tags = ['release', 'React Aria'];
-export const date = 'July 30, 2026';
+export const date = 'July 31, 2026';
 export const title = 'v1.20.0';
 export const description = 'This release introduces two new components, along with several new features including support for context menus, a simplified API for keyboard shortcuts, and the ability to use interactive components within Table rows. It also adds new documentation for hooks.'
 export const isSubpage = true;
@@ -26,7 +26,7 @@ export const isSubpage = true;
 
 This release includes many new components and features!
 
-The new [PreviewTrigger](../PreviewTrigger) component shows a Popover on hover, focus, or long press. Unlike Tooltip, it may include interactive content, useful for hoverable link previews.
+The new [PreviewTrigger](../PreviewTrigger) component shows a Popover on hover, focus, or long press. Unlike Tooltip, it may include interactive content, useful for hoverable link previews. Keyboard users can tab in and out of the popover, and it's accessible across devices. Includes open delay, safe area handling, and coordinated entry and exit animations.
 
 ```tsx render hideCode
 "use client";
@@ -79,7 +79,7 @@ function Example(props) {
 }
 ```
 
-[TokenField](../TokenField) (alpha) allows users to enter text with inline tokens. Use it to build AI prompt fields, tag inputs, structured search fields, mention inputs, and multi-select comboboxes.
+[TokenField](../TokenField) (alpha) allows users to enter text with inline tokens, supporting autocomplete and auto-tokenization. Use it to build AI prompt fields, tag inputs, structured search fields, mention inputs, and multi-select comboboxes.
 
 ```tsx render hideCode
 "use client";
@@ -332,8 +332,15 @@ As always, thank you to all our contributors!
 - Fix press events not firing consistently for trackpad taps  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10225)
 ### Virtualizer
 - Add `shouldObserveItemSize` to Virtualizer to force re-layout when items change size - [@yihuiliao](https://github.com/yihuiliao) -  [PR](https://github.com/adobe/react-spectrum/pull/10258)
+
 ## Released packages
 
 ```
-[TODO: paste output of yarn bumpVersions here]
+ - @internationalized/date@3.12.3
+ - @internationalized/string@3.2.10
+ - @react-types/shared@3.36.1
+ - @react-aria/optimize-locales-plugin@2.0.1
+ - react-aria@3.51.0
+ - react-aria-components@1.20.0
+ - react-stately@3.49.0
 ```
