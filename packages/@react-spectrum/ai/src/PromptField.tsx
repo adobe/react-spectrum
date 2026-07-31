@@ -610,10 +610,11 @@ export interface PromptFieldVoiceButtonProps {
   lang?: string;
   isDisabled?: boolean;
   onError?: (code: VoiceInputErrorCode) => void;
+  onToggle?: (isListening: boolean) => void;
 }
 
 export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
-  let {lang: langProp, isDisabled: isDisabledProp, onError} = props;
+  let {lang: langProp, isDisabled: isDisabledProp, onError, onToggle} = props;
   let {locale} = useLocale();
   let lang = langProp ?? locale;
   let {prompt, setPrompt, inputRef, setListening} = useContext(PromptFieldContext);
@@ -645,14 +646,20 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     setPrompt(finalPrompt);
   });
 
+  let onToggleEvent = useEffectEvent((isListening: boolean) => {
+    onToggle?.(isListening);
+  });
+
   let wasListeningRef = useRef(false);
   useEffect(() => {
     if (isVoiceListening) {
       updateBasePrompt();
       wasListeningRef.current = true;
+      onToggleEvent(true);
     } else if (wasListeningRef.current) {
       wasListeningRef.current = false;
       restoreFocus();
+      onToggleEvent(false);
     }
   }, [isVoiceListening]);
 

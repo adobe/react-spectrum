@@ -312,7 +312,7 @@ const image = style({
   pointerEvents: 'none'
 });
 
-let title = style({
+let title = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isBasic?: boolean}>({
   font: 'title',
   fontSize: {
     size: {
@@ -323,11 +323,14 @@ let title = style({
       XL: 'title-lg'
     }
   },
-  lineClamp: 3,
+  lineClamp: {
+    default: 3,
+    isBasic: 1
+  },
   gridArea: 'title'
 });
 
-let description = style({
+let description = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isBasic?: boolean}>({
   font: 'body',
   fontSize: {
     size: {
@@ -338,7 +341,10 @@ let description = style({
       XL: 'body'
     }
   },
-  lineClamp: 3,
+  lineClamp: {
+    default: 3,
+    isBasic: 1
+  },
   gridArea: 'description'
 });
 
@@ -347,7 +353,7 @@ let content = style({
   // By default, all elements are displayed in a stack.
   // If an action menu is present, place it next to the title.
   gridTemplateColumns: {
-    default: ['1fr'],
+    default: ['minmax(0, 1fr)'],
     ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
   },
   gridTemplateAreas: {
@@ -356,6 +362,7 @@ let content = style({
   },
   columnGap: 4,
   flexGrow: 1,
+  minWidth: 0,
   alignItems: 'baseline',
   alignContent: 'start',
   rowGap: {
@@ -456,8 +463,8 @@ const Card = forwardRef(function Card(
           {
             slots: {
               [DEFAULT_SLOT]: {},
-              title: {styles: title({size})},
-              description: {styles: description({size})}
+              title: {styles: title({size, isBasic})},
+              description: {styles: description({size, isBasic})}
             }
           }
         ],

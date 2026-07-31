@@ -246,30 +246,31 @@ interface UploadState {
   progress?: number;
 }
 
+function atEnd(v: PromptFieldValue) {
+  let segs = v.segments;
+  return {index: segs.length - 1, offset: segs[segs.length - 1].text.length};
+}
+
+let prompt1 = new PromptFieldValue([
+  {type: 'text', text: 'Analyze '},
+  {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
+  {type: 'text', text: ' and suggest targeting strategies'}
+]);
+
+let prompt2 = new PromptFieldValue([
+  {type: 'text', text: 'Write a brief for '},
+  {type: 'token', text: 'Spring Launch 2026', value: {type: 'campaign', title: 'Spring Launch 2026'}}
+]);
+
 let prompt3Base = new PromptFieldValue([
   {type: 'text', text: 'Summarize the '},
   {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}}
 ]);
-let prompt3End = {
-  index: 1,
-  offset: prompt3Base.segments[1].text.length
-};
 
 let prompts = [
-  new PromptFieldValue([
-    {type: 'text', text: 'Analyze '},
-    {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
-    {type: 'text', text: ' and suggest targeting strategies'}
-  ]),
-  new PromptFieldValue([
-    {type: 'text', text: 'Write a brief for '},
-    {
-      type: 'token',
-      text: 'Spring Launch 2026',
-      value: {type: 'campaign', title: 'Spring Launch 2026'}
-    }
-  ]),
-  prompt3Base.replaceRange(prompt3End, prompt3End, ' journey performance from test.com /')
+  prompt1.withCaretPosition(atEnd(prompt1)),
+  prompt2.withCaretPosition(atEnd(prompt2)),
+  prompt3Base.replaceRange(atEnd(prompt3Base), atEnd(prompt3Base), ' journey performance from test.com /')
 ];
 
 function EverythingRender(args) {
@@ -516,7 +517,7 @@ function EverythingRender(args) {
           </InsertMenuButton>
           {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
           <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
-            <PromptFieldVoiceButton />
+            <PromptFieldVoiceButton onToggle={action('onToggle')} />
             <PromptFieldSubmitButton />
           </div>
         </PromptFieldToolbar>

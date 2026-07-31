@@ -7377,13 +7377,8 @@ __metadata:
     "@internationalized/date": "npm:^3.12.3"
     "@internationalized/number": "npm:^3.6.7"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
-<<<<<<< HEAD
-    "@react-spectrum/s2": "npm:1.5.1"
-    "@react-types/shared": "npm:^3.36.0"
-=======
     "@react-spectrum/s2": "npm:1.6.0"
     "@react-types/shared": "npm:^3.36.1"
->>>>>>> 0b5220fa728ce71e36515783bc96334a0da30505
     "@storybook/jest": "npm:^0.2.3"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/react": "npm:^16.0.0"

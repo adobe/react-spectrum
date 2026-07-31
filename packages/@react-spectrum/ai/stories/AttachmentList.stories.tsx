@@ -99,3 +99,26 @@ function AttachmentListRender(args) {
 export const AIAttachmentList: Story = {
   render: args => <AttachmentListRender {...args} />
 };
+
+export const LongContents: Story = {
+  name: 'Long contents',
+  render: (args: any) => (
+    <AttachmentList>
+      <AttachmentComponent
+        size={args.size}
+        styles={style({maxWidth: 300})}
+        aria-label="Very long file name that exceeds the container width.pdf">
+        <Image
+          slot="thumbnail"
+          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+        />
+        <Content>
+          <Text slot="title">Very long file name that exceeds the container width.pdf</Text>
+          <Text slot="description">
+            Long long long long long long long long long long description.
+          </Text>
+        </Content>
+      </AttachmentComponent>
+    </AttachmentList>
+  )
+};
