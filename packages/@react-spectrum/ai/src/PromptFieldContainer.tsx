@@ -323,7 +323,11 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
-      className={outerBorder}
+      className={
+        outerBorder +
+        // outline for WHCM
+        style({outlineStyle: 'solid', outlineColor: 'transparent', outlineWidth: 1})
+      }
       style={{
         ...props.style,
         // @ts-ignore

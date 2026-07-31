@@ -230,7 +230,8 @@ export function PixelLoader(props: PixelLoaderProps) {
         width: size,
         height: size,
         lineHeight: 0,
-        position: 'relative'
+        position: 'relative',
+        forcedColorAdjust: 'none'
       }}
       {...rest}>
       {isPlaying ? <style>{css}</style> : null}

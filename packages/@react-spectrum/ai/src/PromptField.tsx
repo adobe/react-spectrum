@@ -395,7 +395,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         alignItems: 'baseline',
         color: {
           default: 'transparent-overlay-600',
-          isFocused: 'body'
+          isFocused: 'body',
+          forcedColors: 'ButtonText'
         },
         transition: 'default',
         transitionDuration: 350,
