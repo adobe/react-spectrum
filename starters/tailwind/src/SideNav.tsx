@@ -100,8 +100,9 @@ export interface SideNavItemProps extends Partial<AriaSideNavItemProps> {
 }
 
 export function SideNavItem(props: SideNavItemProps) {
+  let textValue = typeof props.title === 'string' ? props.title : '';
   return (
-    <AriaSideNavItem className={itemStyles} textValue={props.title} {...props}>
+    <AriaSideNavItem className={itemStyles} textValue={textValue} {...props}>
       <SideNavItemContent>{props.title}</SideNavItemContent>
       {props.children}
     </AriaSideNavItem>
