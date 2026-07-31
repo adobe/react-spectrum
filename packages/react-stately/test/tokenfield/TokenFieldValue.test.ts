@@ -10,12 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Direction,
-  Position,
-  TokenFieldSegment,
-  TokenFieldValue
-} from '../../src/tokenfield/TokenFieldValue';
+import {Position, TokenFieldSegment, TokenFieldValue} from '../../src/tokenfield/TokenFieldValue';
 import React from 'react';
 
 function text(s: string): TokenFieldSegment {
@@ -436,7 +431,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 3},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('ab')]);
       expect(caret).toEqual({index: 0, offset: 2});
@@ -447,7 +442,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('ac')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -458,7 +453,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('bc')]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -470,7 +465,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1 + 2},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('ab')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -482,7 +477,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('ab')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -493,7 +488,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 2, offset: 0},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('x')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -504,7 +499,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('ab')]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -515,7 +510,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('xab')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -526,7 +521,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 2},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('ab')]);
       expect(caret).toEqual({index: 0, offset: 2});
@@ -537,7 +532,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('a'), token('T')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -548,7 +543,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 1},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('ab')]);
       expect(caret).toEqual({index: 0, offset: 2});
@@ -559,7 +554,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('a')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -570,7 +565,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([token('T'), text('b')]);
       expect(caret).toEqual({index: 1, offset: 0});
@@ -581,7 +576,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([token('B')]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -592,7 +587,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([token('A')]);
       expect(caret).toEqual({index: 1, offset: 0});
@@ -603,7 +598,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([token('B')]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -614,7 +609,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 1},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([token('A')]);
       expect(caret).toEqual({index: 1, offset: 0});
@@ -625,7 +620,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('ab')]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -636,7 +631,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 2},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('ab')]);
       expect(caret).toEqual({index: 0, offset: 2});
@@ -647,7 +642,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 11},
         wordSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('hello ')]);
       expect(caret).toEqual({index: 0, offset: 6});
@@ -658,7 +653,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 6},
         wordSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('hello ')]);
       expect(caret).toEqual({index: 0, offset: 6});
@@ -669,7 +664,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 2},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('abd')]);
       expect(caret).toEqual({index: 0, offset: 2});
@@ -680,7 +675,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -691,7 +686,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([token('T')]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -702,7 +697,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 0},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -714,7 +709,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 0, offset: 2},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -725,7 +720,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 1},
         graphemeSegmenter,
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([token('L'), token('R')]);
       expect(caret).toEqual({index: 1, offset: 0});
@@ -736,7 +731,7 @@ describeOrSkip('TokenFieldValue', () => {
       let {segments: value, caretPosition: caret} = list.delete(
         {index: 1, offset: 0},
         graphemeSegmenter,
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([token('L'), token('R')]);
       expect(caret).toEqual({index: 1, offset: 0});
@@ -747,7 +742,9 @@ describeOrSkip('TokenFieldValue', () => {
     describe('string search', () => {
       it('finds text forward in same segment', () => {
         let list = new TokenFieldValue([text('hello world')]);
-        expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'world')).toEqual({
+        expect(
+          list.findText({index: 0, offset: 0}, TokenFieldValue.Direction.Forward, 'world')
+        ).toEqual({
           index: 0,
           offset: 6
         });
@@ -755,7 +752,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds text forward starting at caret offset', () => {
         let list = new TokenFieldValue([text('hello hello')]);
-        expect(list.findText({index: 0, offset: 6}, Direction.Forward, 'hello')).toEqual({
+        expect(
+          list.findText({index: 0, offset: 6}, TokenFieldValue.Direction.Forward, 'hello')
+        ).toEqual({
           index: 0,
           offset: 6
         });
@@ -763,7 +762,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds text backward in same segment', () => {
         let list = new TokenFieldValue([text('hello world')]);
-        expect(list.findText({index: 0, offset: 11}, Direction.Backward, 'hello')).toEqual({
+        expect(
+          list.findText({index: 0, offset: 11}, TokenFieldValue.Direction.Backward, 'hello')
+        ).toEqual({
           index: 0,
           offset: 0
         });
@@ -771,7 +772,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds text backward before caret offset', () => {
         let list = new TokenFieldValue([text('hello hello')]);
-        expect(list.findText({index: 0, offset: 6}, Direction.Backward, 'hello')).toEqual({
+        expect(
+          list.findText({index: 0, offset: 6}, TokenFieldValue.Direction.Backward, 'hello')
+        ).toEqual({
           index: 0,
           offset: 0
         });
@@ -779,7 +782,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds text in a later segment when searching forward', () => {
         let list = new TokenFieldValue([text('ab'), token('T'), text('cd')]);
-        expect(list.findText({index: 0, offset: 2}, Direction.Forward, 'cd')).toEqual({
+        expect(
+          list.findText({index: 0, offset: 2}, TokenFieldValue.Direction.Forward, 'cd')
+        ).toEqual({
           index: 2,
           offset: 0
         });
@@ -787,7 +792,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds text in an earlier segment when searching backward', () => {
         let list = new TokenFieldValue([text('ab'), token('T'), text('cd')]);
-        expect(list.findText({index: 2, offset: 0}, Direction.Backward, 'ab')).toEqual({
+        expect(
+          list.findText({index: 2, offset: 0}, TokenFieldValue.Direction.Backward, 'ab')
+        ).toEqual({
           index: 0,
           offset: 0
         });
@@ -795,19 +802,25 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('returns null when not found', () => {
         let list = new TokenFieldValue([text('hello')]);
-        expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'x')).toBeNull();
+        expect(
+          list.findText({index: 0, offset: 0}, TokenFieldValue.Direction.Forward, 'x')
+        ).toBeNull();
       });
 
       it('returns null for empty list', () => {
         let list = new TokenFieldValue([]);
-        expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'a')).toBeNull();
+        expect(
+          list.findText({index: 0, offset: 0}, TokenFieldValue.Direction.Forward, 'a')
+        ).toBeNull();
       });
     });
 
     describe('regex search', () => {
       it('finds regex forward in same segment', () => {
         let list = new TokenFieldValue([text('hello @alice world')]);
-        expect(list.findText({index: 0, offset: 0}, Direction.Forward, / @/)).toEqual({
+        expect(
+          list.findText({index: 0, offset: 0}, TokenFieldValue.Direction.Forward, / @/)
+        ).toEqual({
           index: 0,
           offset: 5
         });
@@ -815,7 +828,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds regex backward for mention anchor', () => {
         let list = new TokenFieldValue([text('hello @alice')]);
-        expect(list.findText({index: 0, offset: 13}, Direction.Backward, / @/)).toEqual({
+        expect(
+          list.findText({index: 0, offset: 13}, TokenFieldValue.Direction.Backward, / @/)
+        ).toEqual({
           index: 0,
           offset: 5
         });
@@ -823,7 +838,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds regex forward starting at caret offset', () => {
         let list = new TokenFieldValue([text('a @b @c')]);
-        expect(list.findText({index: 0, offset: 4}, Direction.Forward, / @\w/)).toEqual({
+        expect(
+          list.findText({index: 0, offset: 4}, TokenFieldValue.Direction.Forward, / @\w/)
+        ).toEqual({
           index: 0,
           offset: 4
         });
@@ -831,7 +848,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds last regex match backward before caret', () => {
         let list = new TokenFieldValue([text('a @b @c')]);
-        expect(list.findText({index: 0, offset: 7}, Direction.Backward, / @\w/)).toEqual({
+        expect(
+          list.findText({index: 0, offset: 7}, TokenFieldValue.Direction.Backward, / @\w/)
+        ).toEqual({
           index: 0,
           offset: 4
         });
@@ -839,7 +858,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('finds regex in a later segment when searching forward', () => {
         let list = new TokenFieldValue([text('no match '), text('@here')]);
-        expect(list.findText({index: 0, offset: 9}, Direction.Forward, /@\w+/)).toEqual({
+        expect(
+          list.findText({index: 0, offset: 9}, TokenFieldValue.Direction.Forward, /@\w+/)
+        ).toEqual({
           index: 1,
           offset: 0
         });
@@ -848,20 +869,24 @@ describeOrSkip('TokenFieldValue', () => {
       it('does not mutate global regex lastIndex', () => {
         let re = / @/g;
         let list = new TokenFieldValue([text(' @ @')]);
-        list.findText({index: 0, offset: 4}, Direction.Backward, re);
+        list.findText({index: 0, offset: 4}, TokenFieldValue.Direction.Backward, re);
         expect(re.lastIndex).toBe(0);
       });
 
       it('returns null when regex does not match', () => {
         let list = new TokenFieldValue([text('hello')]);
-        expect(list.findText({index: 0, offset: 5}, Direction.Backward, / @/)).toBeNull();
+        expect(
+          list.findText({index: 0, offset: 5}, TokenFieldValue.Direction.Backward, / @/)
+        ).toBeNull();
       });
     });
 
     describe('findLineBoundary', () => {
       it('finds newline via findText when searching backward', () => {
         let list = new TokenFieldValue([text('hello\nworld')]);
-        expect(list.findLineBoundary({index: 0, offset: 8}, Direction.Backward)).toEqual({
+        expect(
+          list.findLineBoundary({index: 0, offset: 8}, TokenFieldValue.Direction.Backward)
+        ).toEqual({
           index: 0,
           offset: 5
         });
@@ -869,7 +894,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('falls back to document start when no newline before caret', () => {
         let list = new TokenFieldValue([text('hello')]);
-        expect(list.findLineBoundary({index: 0, offset: 3}, Direction.Backward)).toEqual({
+        expect(
+          list.findLineBoundary({index: 0, offset: 3}, TokenFieldValue.Direction.Backward)
+        ).toEqual({
           index: 0,
           offset: 0
         });
@@ -877,7 +904,9 @@ describeOrSkip('TokenFieldValue', () => {
 
       it('falls back to document end when no newline after caret', () => {
         let list = new TokenFieldValue([text('hello')]);
-        expect(list.findLineBoundary({index: 0, offset: 3}, Direction.Forward)).toEqual({
+        expect(
+          list.findLineBoundary({index: 0, offset: 3}, TokenFieldValue.Direction.Forward)
+        ).toEqual({
           index: 0,
           offset: 5
         });
@@ -890,7 +919,7 @@ describeOrSkip('TokenFieldValue', () => {
       let list = new TokenFieldValue([text('hello\nworld')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 2},
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('he\nworld')]);
       expect(caret).toEqual({index: 0, offset: 2});
@@ -900,7 +929,7 @@ describeOrSkip('TokenFieldValue', () => {
       let list = new TokenFieldValue([text('ab'), text('cd\nef')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 1},
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('a\nef')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -910,7 +939,7 @@ describeOrSkip('TokenFieldValue', () => {
       let list = new TokenFieldValue([text('ab'), text('cd')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 1},
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('a')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -920,7 +949,7 @@ describeOrSkip('TokenFieldValue', () => {
       let list = new TokenFieldValue([text('a\nb\nc')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 2},
-        Direction.Forward
+        TokenFieldValue.Direction.Forward
       );
       expect(value).toEqual([text('a\n\nc')]);
       expect(caret).toEqual({index: 0, offset: 2});
@@ -932,7 +961,7 @@ describeOrSkip('TokenFieldValue', () => {
       let list = new TokenFieldValue([text('hello\nworld')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 10},
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('hellod')]);
       expect(caret).toEqual({index: 0, offset: 5});
@@ -942,7 +971,7 @@ describeOrSkip('TokenFieldValue', () => {
       let list = new TokenFieldValue([text('a\nb'), text('cd')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 1, offset: 1},
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('ad')]);
       expect(caret).toEqual({index: 0, offset: 1});
@@ -952,7 +981,7 @@ describeOrSkip('TokenFieldValue', () => {
       let list = new TokenFieldValue([text('hello')]);
       let {segments: value, caretPosition: caret} = list.deleteLine(
         {index: 0, offset: 3},
-        Direction.Backward
+        TokenFieldValue.Direction.Backward
       );
       expect(value).toEqual([text('lo')]);
       expect(caret).toEqual({index: 0, offset: 0});
@@ -962,8 +991,12 @@ describeOrSkip('TokenFieldValue', () => {
   describe('deleteLine empty list', () => {
     it('returns unchanged for empty segments', () => {
       let list = new TokenFieldValue([]);
-      expect(list.deleteLine({index: 0, offset: 0}, Direction.Forward)).toEqual(list);
-      expect(list.deleteLine({index: 0, offset: 0}, Direction.Backward)).toEqual(list);
+      expect(list.deleteLine({index: 0, offset: 0}, TokenFieldValue.Direction.Forward)).toEqual(
+        list
+      );
+      expect(list.deleteLine({index: 0, offset: 0}, TokenFieldValue.Direction.Backward)).toEqual(
+        list
+      );
     });
   });
 
@@ -1069,8 +1102,16 @@ describeOrSkip('TokenFieldValue', () => {
 
     it('coalesces consecutive delete operations into one undo step', () => {
       let list = new TokenFieldValue([text('abc')]);
-      let afterC = list.delete({index: 0, offset: 3}, graphemeSegmenter, Direction.Backward);
-      let afterB = afterC.delete({index: 0, offset: 2}, graphemeSegmenter, Direction.Backward);
+      let afterC = list.delete(
+        {index: 0, offset: 3},
+        graphemeSegmenter,
+        TokenFieldValue.Direction.Backward
+      );
+      let afterB = afterC.delete(
+        {index: 0, offset: 2},
+        graphemeSegmenter,
+        TokenFieldValue.Direction.Backward
+      );
       expect(afterB.toString()).toBe('a');
       expect(afterB.undo()).toBe(list);
       expect(list.redo()).toBe(afterB);
