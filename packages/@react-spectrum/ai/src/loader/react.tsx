@@ -139,21 +139,37 @@ function keyframesFor(cells: Cell[]): string {
   return css;
 }
 
-interface PixelLoaderProps {
+export interface PixelLoaderProps {
+  /**
+   * Size of the loader in pixels. Multiples of 7 render evenly on the pixel grid.
+   */
   size?: number;
-  playing?: boolean;
+  /**
+   * Whether the animation is playing.
+   */
+  isPlaying?: boolean;
+  /**
+   * The icon or sequence of icons to display. These should be imported from
+   * '@react-spectrum/ai/loader'.
+   */
   icon?: Cell[] | Cell[][];
-  speed?: number;
+  /**
+   * The color of the icon.
+   *
+   * @default 'currentColor'
+   */
   color?: string;
+  /**
+   * A custom CSS class to apply.
+   */
   className?: string;
 }
 
 export function PixelLoader(props: PixelLoaderProps) {
   const {
     size = 21,
-    playing = true,
+    isPlaying = true,
     icon = aiLogo,
-    speed = 1,
     color = 'currentColor',
     className,
     ...rest
@@ -165,7 +181,7 @@ export function PixelLoader(props: PixelLoaderProps) {
     [icon]
   );
   const isSequence = sequence.length > 1;
-  const duration = DURATION_MS / (speed || 1);
+  const duration = DURATION_MS;
 
   // `tick` increments once per cycle; the current icon is `tick % len`.
   const [tick, setTick] = React.useState(0);
@@ -180,12 +196,12 @@ export function PixelLoader(props: PixelLoaderProps) {
   // Advance the sequence one icon per cycle while playing. Single-icon
   // loaders never start a timer — they're a pure infinite CSS loop.
   React.useEffect(() => {
-    if (!playing || !isSequence) {
+    if (!isPlaying || !isSequence) {
       return undefined;
     }
     const id = setInterval(() => setTick(t => t + 1), duration);
     return () => clearInterval(id);
-  }, [playing, isSequence, duration, sequence]);
+  }, [isPlaying, isSequence, duration, sequence]);
 
   const cells = sequence[isSequence ? tick % sequence.length : 0];
   const animId = iconId(cells);
@@ -217,7 +233,7 @@ export function PixelLoader(props: PixelLoaderProps) {
         position: 'relative'
       }}
       {...rest}>
-      {playing ? <style>{css}</style> : null}
+      {isPlaying ? <style>{css}</style> : null}
       {cells.map((c, i) => {
         let x = (c.cx - 120) / CELL;
         let y = (c.cy - 120) / CELL;
@@ -250,7 +266,7 @@ export function PixelLoader(props: PixelLoaderProps) {
               height: cellSize + (isHighDPI && c.outer ? 0.5 : 0),
               borderRadius: `${corner(left, top)} ${corner(right, top)} ${corner(right, bottom)} ${corner(left, bottom)}`,
               backgroundColor: color,
-              ...(playing && {
+              ...(isPlaying && {
                 animation:
                   `${animId}-${i}-y ${duration}ms linear ${iteration}, ` +
                   `${animId}-${i}-o ${duration}ms linear ${iteration}`,

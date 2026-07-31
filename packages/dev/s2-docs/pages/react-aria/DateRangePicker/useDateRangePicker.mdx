@@ -13,7 +13,7 @@ import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/datepicker';
 import statelyDocs from 'docs:@react-stately/datepicker';
-import Anatomy from '/packages/react-aria/docs/datepicker/daterangepicker-anatomy.svg';
+import Anatomy from '/packages/dev/s2-docs/pages/react-aria/DateRangePickerAnatomy2.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a date range picker component.';
@@ -29,86 +29,6 @@ import {DateRangePicker} from 'hooks-starter/DateRangePicker';
 
 <DateRangePicker label="Trip dates" />
 ```
-
-<details>
-<summary>View implementation</summary>
-
-```tsx
-"use client";
-import React from 'react';
-import {useDateRangePicker, type AriaDateRangePickerProps} from 'react-aria/useDateRangePicker';
-import {useDateRangePickerState} from 'react-stately/useDateRangePickerState';
-import type {DateValue} from '@internationalized/date';
-import {Provider} from 'react-aria-components/slots';
-import {Group, GroupContext} from 'react-aria-components/Group';
-import {DateFieldContext} from 'react-aria-components/DateField';
-import {ButtonContext} from 'react-aria-components/Button';
-import {LabelContext} from 'react-aria-components/Label';
-import {RangeCalendarContext} from 'react-aria-components/RangeCalendar';
-import {DialogContext, OverlayTriggerStateContext} from 'react-aria-components/Dialog';
-import {PopoverContext} from 'react-aria-components/Popover';
-import {DateInput, DateSegment} from 'vanilla-starter/DateField';
-import {Label, FieldButton} from 'vanilla-starter/Form';
-import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
-import {Popover} from 'vanilla-starter/Popover';
-import {ChevronDown} from 'lucide-react';
-import 'vanilla-starter/DateRangePicker.css';
-
-function DateRangePicker(props: AriaDateRangePickerProps<DateValue>) {
-  // Create state based on the incoming props.
-  let state = useDateRangePickerState(props);
-
-  // Get props for the child elements from useDateRangePicker.
-  let groupRef = React.useRef<HTMLDivElement>(null);
-  let {
-    groupProps,
-    labelProps,
-    startFieldProps,
-    endFieldProps,
-    buttonProps,
-    dialogProps,
-    calendarProps
-  } = useDateRangePicker(props, state, groupRef);
-
-  // Provide the values returned by the hook to the reused components via context.
-  return (
-    <Provider
-      values={[
-        [GroupContext, {...groupProps, ref: groupRef}],
-        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
-        [LabelContext, {...labelProps, elementType: 'span'}],
-        [RangeCalendarContext, calendarProps],
-        [DialogContext, dialogProps],
-        [OverlayTriggerStateContext, state],
-        [PopoverContext, {trigger: 'DateRangePicker', triggerRef: groupRef, placement: 'bottom start'}],
-        // Each DateInput builds its own field state from the start/end slots.
-        [DateFieldContext, {slots: {start: startFieldProps, end: endFieldProps}}]
-      ]}>
-      <div className="react-aria-DateRangePicker">
-        <Label>{props.label}</Label>
-        <Group className="react-aria-Group inset">
-          <div className="date-fields">
-            <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
-            <span aria-hidden="true">–</span>
-            <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
-          </div>
-          <FieldButton>
-            <ChevronDown />
-          </FieldButton>
-        </Group>
-        <Popover hideArrow>
-          {/* Rendered from calendarProps, provided via RangeCalendarContext. */}
-          <RangeCalendar />
-        </Popover>
-      </div>
-    </Provider>
-  );
-}
-
-<DateRangePicker label="Trip dates" />
-```
-
-</details>
 
 ## API
 

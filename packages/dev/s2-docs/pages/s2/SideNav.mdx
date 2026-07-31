@@ -71,7 +71,7 @@ interface Item {
 let items: Item[] = [
   {id: 1, title: 'Documents', type: 'directory', children: [
     {id: 2, title: 'Project', type: 'directory', children: [
-      {id: 3, title: 'Weekly Report', type: 'file', href: '/weekly-report'},
+      {id: 3, title: 'Notes', type: 'file', href: '/notes'},
       {id: 4, title: 'Budget', type: 'file', href: '/budget'}
     ]}
   ]},
@@ -82,7 +82,7 @@ let items: Item[] = [
 ];
 ///- end collapse -///
 
-<RoutedSideNav defaultSelectedRoute="/weekly-report">
+<RoutedSideNav defaultSelectedRoute="/notes">
   {({selectedRoute}) => (
     <SideNav
       aria-label="Files"
@@ -110,7 +110,7 @@ let items: Item[] = [
 
 ### Slots
 
-`SideNavItemContent` supports icons, `Text`, [ActionMenu](ActionMenu), and [ActionButtonGroup](ActionButtonGroup) as children.
+`SideNavItemContent` supports icons, `Text`, [SideNavItemLink](#sidenavitemlink), [ActionMenu](ActionMenu), and [ActionButtonGroup](ActionButtonGroup) as children.
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
 "use client";
@@ -134,7 +134,7 @@ interface Item {
 let items: Item[] = [
   {id: 1, title: 'Documents', type: 'directory', children: [
     {id: 2, title: 'Project', type: 'directory', children: [
-      {id: 3, title: 'Weekly Report', type: 'file', href: '/weekly-report'},
+      {id: 3, title: 'Notes', type: 'file', href: '/notes'},
       {id: 4, title: 'Budget', type: 'file', href: '/budget'}
     ]}
   ]},
@@ -145,7 +145,7 @@ let items: Item[] = [
 ];
 ///- end collapse -///
 
-<RoutedSideNav defaultSelectedRoute="/weekly-report">
+<RoutedSideNav defaultSelectedRoute="/notes">
   {({selectedRoute}) => (
     <SideNav
       aria-label="Files"

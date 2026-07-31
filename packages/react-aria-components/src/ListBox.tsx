@@ -718,7 +718,7 @@ const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
 export interface ListBoxLoadMoreItemProps
   extends
-    Omit<LoadMoreSentinelProps, 'collection'>,
+    Omit<LoadMoreSentinelProps, 'collection' | 'direction'>,
     StyleProps,
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {

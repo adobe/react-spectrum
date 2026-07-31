@@ -31,7 +31,7 @@ export interface Position {
   offset: number;
 }
 
-export enum Direction {
+enum Direction {
   Forward = 1,
   Backward = -1
 }
@@ -44,6 +44,8 @@ export interface TokenFieldValueOptions {
  * A list of segments containing editable text and non-editable tokens.
  */
 export class TokenFieldValue<T = any> {
+  static readonly Direction = Direction;
+
   /** The text and token segments in the list. */
   readonly segments: readonly TokenFieldSegment<T>[];
   /** The caret position. */
