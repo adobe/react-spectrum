@@ -92,7 +92,7 @@ export interface SideNavProps<T>
     >,
     UnsafeStyles {
   /** The route that is currently selected. */
-  selectedRoute: string;
+  selectedRoute?: string | null;
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
 }
@@ -153,7 +153,7 @@ const tree = style<TreeRenderProps>({
 
 interface InternalSideNavContextValue {
   /** The route that is currently selected. */
-  selectedRoute?: string;
+  selectedRoute?: string | null;
   /** The last route the focused key was synced to; dedupes the focus sync across items. */
   syncedRouteRef?: RefObject<string | undefined>;
 }
@@ -216,7 +216,8 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean}>({
   '--centerPadding': {
     type: 'paddingTop',
     value: centerPadding()
-  }
+  },
+  transition: 'default'
 });
 
 const treeCellGrid = style({
