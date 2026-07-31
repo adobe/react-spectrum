@@ -170,6 +170,7 @@ export class Virtualizer<T extends object, V> {
   }
 
   private relayout(context: InvalidationContext = {}) {
+    // @ts-ignore
     let anchorInfo = this.layout.UNSTABLE_getScrollAnchorInfo?.(context.layoutOptions) ?? null;
 
     // Capture scroll anchor from current (pre-layout) view positions.

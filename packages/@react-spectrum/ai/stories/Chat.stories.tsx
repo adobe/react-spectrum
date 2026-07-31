@@ -14,14 +14,22 @@ import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
+import {Chat} from '../src/Chat';
+import ChatIcon from '@react-spectrum/s2/icons/Chat';
+import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
+import {Collection} from 'react-aria-components';
+import {Content} from '@react-spectrum/s2/Content';
+import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
+import {Image} from '@react-spectrum/s2/Image';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
-  AutoLinkingTokenFieldValue,
   MessageFeedback,
   MessageSource,
   MessageSuggestion,
   MessageSuggestionList,
   PromptField,
   PromptFieldSubmitButton,
+  PromptFieldValue,
   PromptTokenField,
   ResponseStatus,
   ResponseStatusPanel,
@@ -35,14 +43,6 @@ import {
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
-import {Chat} from '../src/Chat';
-import ChatIcon from '@react-spectrum/s2/icons/Chat';
-import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
-import {Collection} from 'react-aria-components';
-import {Content} from '@react-spectrum/s2/Content';
-import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
-import {Image} from '@react-spectrum/s2/Image';
-import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta} from '@storybook/react';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {prose} from '../src/style/prose' with {type: 'macro'};
@@ -215,7 +215,7 @@ export function VirtualizedStreamingChat() {
   let nextId = useRef(initialResponses.length);
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
-  let [promptValue, setPromptValue] = useState<TokenFieldValue>(new AutoLinkingTokenFieldValue([]));
+  let [promptValue, setPromptValue] = useState<TokenFieldValue>(new PromptFieldValue([]));
   let followUpMessage = useRef<TokenFieldValue | null>(null);
 
   function handleSend(prompt: TokenFieldValue) {
@@ -561,7 +561,7 @@ export function VirtualizedStreamingChat() {
           value={promptValue}
           onChange={setPromptValue}
           onSubmit={prompt => {
-            setPromptValue(new AutoLinkingTokenFieldValue([]));
+            setPromptValue(new PromptFieldValue([]));
             handleSend(prompt);
           }}
           isGenerating={isGenerating}
@@ -584,14 +584,14 @@ export function VirtualizedStreamingChat() {
                   e.preventDefault();
                   if (promptValue.segments.length > 0) {
                     action('onSteer')(promptValue.toString());
-                    setPromptValue(new AutoLinkingTokenFieldValue([]));
+                    setPromptValue(new PromptFieldValue([]));
                   }
                 } else if (e.key === 'Enter' && e.altKey) {
                   e.preventDefault();
                   if (promptValue.segments.length > 0) {
                     action('onFollowUp')(promptValue.toString());
                     followUpMessage.current = promptValue;
-                    setPromptValue(new AutoLinkingTokenFieldValue([]));
+                    setPromptValue(new PromptFieldValue([]));
                   }
                 } else if (e.key === 'Escape') {
                   e.preventDefault();

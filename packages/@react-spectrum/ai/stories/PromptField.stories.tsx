@@ -13,7 +13,6 @@
 import {action} from 'storybook/actions';
 import {
   AttachFileMenuItem,
-  AutoLinkingTokenFieldValue,
   CommandMenuItem,
   InsertMenuButton,
   InsertTextMenuItem,
@@ -23,6 +22,7 @@ import {
   PromptFieldAttachmentList,
   PromptFieldSubmitButton,
   PromptFieldToolbar,
+  PromptFieldValue,
   PromptFieldVoiceButton,
   PromptToken,
   PromptTokenField
@@ -66,7 +66,7 @@ const meta: Meta<typeof PromptField> = {
   argTypes: {
     ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}},
-    brand: {
+    brandColor: {
       control: 'color',
       description:
         'Sets the --brand custom property to retheme the PromptField. Only the hue is used; lightness and chroma come from the design tokens.',
@@ -92,7 +92,7 @@ const meta: Meta<typeof PromptField> = {
     }
   },
   args: {
-    brand: 'rgb(236, 105, 255)',
+    brandColor: 'rgb(236, 105, 255)',
     pixelLoader: 'aiLogo',
     attachmentVariant: 'thumbnail',
     attachmentInvalid: false,
@@ -101,14 +101,12 @@ const meta: Meta<typeof PromptField> = {
   },
   title: 'AI/PromptField',
   decorators: [
-    (Story, {args}) => (
+    Story => (
       <div
         style={{
           width: '800px',
           maxWidth: '90vw',
-          margin: '0 auto',
-          // @ts-ignore
-          '--brand': args.brand
+          margin: '0 auto'
         }}>
         <Story />
       </div>
@@ -247,7 +245,7 @@ interface UploadState {
   progress?: number;
 }
 
-let prompt3Base = new AutoLinkingTokenFieldValue([
+let prompt3Base = new PromptFieldValue([
   {type: 'text', text: 'Summarize the '},
   {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}}
 ]);
@@ -257,12 +255,12 @@ let prompt3End = {
 };
 
 let prompts = [
-  new AutoLinkingTokenFieldValue([
+  new PromptFieldValue([
     {type: 'text', text: 'Analyze '},
     {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
     {type: 'text', text: ' and suggest targeting strategies'}
   ]),
-  new AutoLinkingTokenFieldValue([
+  new PromptFieldValue([
     {type: 'text', text: 'Write a brief for '},
     {
       type: 'token',
@@ -275,7 +273,7 @@ let prompts = [
 
 function EverythingRender(args) {
   let {placeholder, ...otherArgs} = args;
-  let [value, setValue] = useState<TokenFieldValue>(() => new AutoLinkingTokenFieldValue([]));
+  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
   let historyRef = useRef<TokenFieldValue[]>([]);
@@ -332,7 +330,7 @@ function EverythingRender(args) {
       if (nextIndex >= history.length) {
         historyIndexRef.current = -1;
         isHistoryNavigating.current = true;
-        setValue(new AutoLinkingTokenFieldValue([]));
+        setValue(new PromptFieldValue([]));
       } else {
         historyIndexRef.current = nextIndex;
         isHistoryNavigating.current = true;
@@ -351,7 +349,7 @@ function EverythingRender(args) {
   };
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+    <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
       <MessageSuggestionList title="Suggestions">
         {prompts.map((prompt, i) => (
           <MessageSuggestion key={i} onPress={() => setValue(prompt)}>
@@ -369,7 +367,7 @@ function EverythingRender(args) {
           action('onSubmit')(prompt.toString());
           historyRef.current = [...historyRef.current, prompt];
           historyIndexRef.current = -1;
-          setValue(new AutoLinkingTokenFieldValue([]));
+          setValue(new PromptFieldValue([]));
           setAttachments([]);
           setAttachmentState(new Map());
         }}
@@ -418,7 +416,7 @@ function EverythingRender(args) {
           renderCompletions={filterValue =>
             renderCompletions(filterValue, {
               onClear: () => {
-                setValue(new AutoLinkingTokenFieldValue([]));
+                setValue(new PromptFieldValue([]));
                 setAttachments([]);
               },
               onCompact: action('onCompact')
@@ -448,7 +446,7 @@ function EverythingRender(args) {
                     <MenuItem
                       id={item.command}
                       onAction={() => {
-                        setValue(new AutoLinkingTokenFieldValue([]));
+                        setValue(new PromptFieldValue([]));
                         setAttachments([]);
                       }}>
                       <Text slot="label">{item.command}</Text>

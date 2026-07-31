@@ -48,7 +48,7 @@ import React, {
 } from 'react';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
@@ -56,12 +56,6 @@ export interface ResponseStatusProps extends Omit<
   RACDisclosureProps,
   'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
 > {
-  /**
-   * The amount of space between stacked response statuses.
-   *
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular' | 'spacious';
   /**
    * The current status of the response.
    *
@@ -80,7 +74,6 @@ export interface ResponseStatusProps extends Omit<
 }
 
 const ResponseStatusContext = createContext<{
-  density?: 'compact' | 'regular' | 'spacious';
   status: 'loading' | 'failed' | 'success';
   hasPanelContent: boolean;
   registerPanel: (mounted: boolean) => void;
@@ -104,7 +97,7 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   props: ResponseStatusProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {density = 'regular', status = 'loading', styles} = props;
+  let {status = 'loading', styles} = props;
   let domRef = useDOMRef(ref);
   let [hasPanelContent, setHasPanelContent] = useState(false);
   let registerPanel = useCallback((mounted: boolean) => setHasPanelContent(mounted), []);
@@ -116,7 +109,7 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   }
 
   return (
-    <Provider values={[[ResponseStatusContext, {density, status, hasPanelContent, registerPanel}]]}>
+    <Provider values={[[ResponseStatusContext, {status, hasPanelContent, registerPanel}]]}>
       <RACDisclosure
         {...props}
         {...disclosureProps}
@@ -165,18 +158,11 @@ const buttonStyles = style({
     }
   },
   display: 'flex',
-  flexGrow: 1,
+  flexGrow: 0,
   alignItems: 'center',
   paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
   gap: 'calc(self(minHeight) * 3/8 - 1px)',
-  minHeight: {
-    density: {
-      compact: 24,
-      regular: 32,
-      spacious: 40
-    }
-  },
-  width: 'full',
+  minHeight: 32,
   backgroundColor: 'transparent',
   transition: 'default',
   borderWidth: 0,
@@ -185,7 +171,7 @@ const buttonStyles = style({
   disableTapHighlight: true
 });
 
-const chevronStyles = style({
+const chevronStyles = {
   rotate: {
     isRTL: 180,
     isExpanded: 90
@@ -196,7 +182,7 @@ const chevronStyles = style({
     value: 'currentColor'
   },
   flexShrink: 0
-});
+} as const;
 
 const progressCircleStyles = style({
   width: 18,
@@ -217,7 +203,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {density, status, hasPanelContent} = useContext(ResponseStatusContext)!;
+  let {status, hasPanelContent} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
@@ -263,7 +249,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
       )}
       {props.children}
       {isInteractive ? (
-        <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
+        <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
           <Chevron size="M" />
         </CenterBaseline>
       ) : null}
@@ -274,7 +260,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
       <Button
         className={renderProps =>
-          buttonStyles({...renderProps, density, isLoading, isOnlyText: !isInteractive})
+          buttonStyles({...renderProps, isLoading, isOnlyText: !isInteractive})
         }
         slot={isInteractive ? 'trigger' : undefined}>
         {rowContent}
@@ -295,7 +281,7 @@ export interface ResponseStatusPanelProps
   styles?: StyleString;
 }
 
-const panelStyles = style({
+const panelStyle = {
   font: 'body',
   height: '--disclosure-panel-height',
   overflow: 'clip',
@@ -303,7 +289,7 @@ const panelStyles = style({
     default: '[height]',
     '@media (prefers-reduced-motion: reduce)': 'none'
   }
-});
+} as const;
 
 const panelInner = style({
   paddingTop: 8,
@@ -330,7 +316,10 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   }, [registerPanel]);
 
   return (
-    <RACDisclosurePanel {...domProps} ref={panelRef} className={mergeStyles(panelStyles, styles)}>
+    <RACDisclosurePanel
+      {...domProps}
+      ref={panelRef}
+      className={mergeStyles(style(panelStyle), styles)}>
       <div className={panelInner}>{props.children}</div>
     </RACDisclosurePanel>
   );
@@ -386,13 +375,9 @@ const detailTriggerStyles = style({
 });
 
 const detailTriggerChevronStyles = style({
+  ...chevronStyles,
   display: 'inline-flex',
-  marginStart: 8,
-  rotate: {
-    isRTL: 180,
-    isExpanded: 90
-  },
-  transition: 'default'
+  marginStart: 8
 });
 
 function DetailTrigger(props: DetailTriggerProps) {
@@ -446,6 +431,20 @@ const executionTraceItemStyles = style({
       default: 'block',
       ':last-child': 'none'
     }
+  },
+  '--execution-trace-item-padding-bottom-disclosure': {
+    type: 'paddingBottom',
+    value: {
+      default: 12,
+      ':last-child': 0
+    }
+  },
+  '--execution-trace-item-padding-bottom-no-disclosure': {
+    type: 'paddingBottom',
+    value: {
+      default: 16,
+      ':last-child': 0
+    }
   }
 });
 
@@ -464,19 +463,22 @@ const executionTraceItemDividerStyles = style({
   display: 'var(--divider-display, flex)'
 });
 
-const executionTraceItemBaseStyles = {
-  paddingBottom: 12,
+const executionTraceDisclosurePanelStyles = style({
+  ...panelStyle,
   paddingStart: 8
-} as const;
-
-const executionTraceWithoutDisclosureStyles = style({
-  ...executionTraceItemBaseStyles,
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: 24
 });
 
-const executionTraceDetailPanelStyles = style(executionTraceItemBaseStyles);
+const executionTraceDisclosureContainerStyles = style({
+  paddingBottom: 'var(--execution-trace-item-padding-bottom-disclosure)',
+  marginTop: -4
+});
+
+const executionTraceWithoutDisclosureStyles = style({
+  paddingStart: 8,
+  display: 'flex',
+  flexDirection: 'column',
+  paddingBottom: 'var(--execution-trace-item-padding-bottom-no-disclosure)'
+});
 
 /**
  * An ExecutionTraceItem represents a single step within an ExecutionTrace, such as
@@ -507,12 +509,14 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
         <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
       {hasDetail && !isAlwaysOpen ? (
-        <RACDisclosure>
-          <DetailTrigger>{children}</DetailTrigger>
-          <RACDisclosurePanel className={mergeStyles(panelStyles, executionTraceDetailPanelStyles)}>
-            {detail}
-          </RACDisclosurePanel>
-        </RACDisclosure>
+        <div className={executionTraceDisclosureContainerStyles}>
+          <RACDisclosure>
+            <DetailTrigger>{children}</DetailTrigger>
+            <RACDisclosurePanel className={executionTraceDisclosurePanelStyles}>
+              {detail}
+            </RACDisclosurePanel>
+          </RACDisclosure>
+        </div>
       ) : (
         <div className={executionTraceWithoutDisclosureStyles}>
           <span>{children}</span>
