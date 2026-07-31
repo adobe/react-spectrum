@@ -241,4 +241,4 @@ export {ListLayout} from '../src/layout/ListLayout';
 export {TableLayout} from '../src/layout/TableLayout';
 export {WaterfallLayout} from '../src/layout/WaterfallLayout';
 export {useTokenFieldState} from '../src/tokenfield/useTokenFieldState';
-export {TokenFieldValue, Direction} from '../src/tokenfield/TokenFieldValue';
+export {TokenFieldValue} from '../src/tokenfield/TokenFieldValue';

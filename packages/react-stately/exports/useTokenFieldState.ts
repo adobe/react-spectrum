@@ -11,7 +11,7 @@
  */
 
 export {useTokenFieldState} from '../src/tokenfield/useTokenFieldState';
-export {TokenFieldValue, Direction} from '../src/tokenfield/TokenFieldValue';
+export {TokenFieldValue} from '../src/tokenfield/TokenFieldValue';
 
 export type {TokenFieldProps, TokenFieldState} from '../src/tokenfield/useTokenFieldState';
 export type {
