@@ -216,7 +216,8 @@ const treeRow = style<TreeItemRenderProps & {isLink?: boolean}>({
   '--centerPadding': {
     type: 'paddingTop',
     value: centerPadding()
-  }
+  },
+  transition: 'default'
 });
 
 const treeCellGrid = style({
