@@ -158,12 +158,11 @@ const buttonStyles = style({
     }
   },
   display: 'flex',
-  flexGrow: 1,
+  flexGrow: 0,
   alignItems: 'center',
   paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
   gap: 'calc(self(minHeight) * 3/8 - 1px)',
   minHeight: 32,
-  width: 'full',
   backgroundColor: 'transparent',
   transition: 'default',
   borderWidth: 0,
@@ -282,7 +281,7 @@ export interface ResponseStatusPanelProps
   styles?: StyleString;
 }
 
-const panelStyles = style({
+const panelStyle = {
   font: 'body',
   height: '--disclosure-panel-height',
   overflow: 'clip',
@@ -290,7 +289,7 @@ const panelStyles = style({
     default: '[height]',
     '@media (prefers-reduced-motion: reduce)': 'none'
   }
-});
+} as const;
 
 const panelInner = style({
   paddingTop: 8,
@@ -317,7 +316,10 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   }, [registerPanel]);
 
   return (
-    <RACDisclosurePanel {...domProps} ref={panelRef} className={mergeStyles(panelStyles, styles)}>
+    <RACDisclosurePanel
+      {...domProps}
+      ref={panelRef}
+      className={mergeStyles(style(panelStyle), styles)}>
       <div className={panelInner}>{props.children}</div>
     </RACDisclosurePanel>
   );
@@ -429,6 +431,20 @@ const executionTraceItemStyles = style({
       default: 'block',
       ':last-child': 'none'
     }
+  },
+  '--execution-trace-item-padding-bottom-disclosure': {
+    type: 'paddingBottom',
+    value: {
+      default: 12,
+      ':last-child': 0
+    }
+  },
+  '--execution-trace-item-padding-bottom-no-disclosure': {
+    type: 'paddingBottom',
+    value: {
+      default: 16,
+      ':last-child': 0
+    }
   }
 });
 
@@ -447,19 +463,22 @@ const executionTraceItemDividerStyles = style({
   display: 'var(--divider-display, flex)'
 });
 
-const executionTraceItemBaseStyles = {
-  paddingBottom: 12,
+const executionTraceDisclosurePanelStyles = style({
+  ...panelStyle,
   paddingStart: 8
-} as const;
-
-const executionTraceWithoutDisclosureStyles = style({
-  ...executionTraceItemBaseStyles,
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: 24
 });
 
-const executionTraceDetailPanelStyles = style(executionTraceItemBaseStyles);
+const executionTraceDisclosureContainerStyles = style({
+  paddingBottom: 'var(--execution-trace-item-padding-bottom-disclosure)',
+  marginTop: -4
+});
+
+const executionTraceWithoutDisclosureStyles = style({
+  paddingStart: 8,
+  display: 'flex',
+  flexDirection: 'column',
+  paddingBottom: 'var(--execution-trace-item-padding-bottom-no-disclosure)'
+});
 
 /**
  * An ExecutionTraceItem represents a single step within an ExecutionTrace, such as
@@ -490,12 +509,14 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
         <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
       {hasDetail && !isAlwaysOpen ? (
-        <RACDisclosure>
-          <DetailTrigger>{children}</DetailTrigger>
-          <RACDisclosurePanel className={mergeStyles(panelStyles, executionTraceDetailPanelStyles)}>
-            {detail}
-          </RACDisclosurePanel>
-        </RACDisclosure>
+        <div className={executionTraceDisclosureContainerStyles}>
+          <RACDisclosure>
+            <DetailTrigger>{children}</DetailTrigger>
+            <RACDisclosurePanel className={executionTraceDisclosurePanelStyles}>
+              {detail}
+            </RACDisclosurePanel>
+          </RACDisclosure>
+        </div>
       ) : (
         <div className={executionTraceWithoutDisclosureStyles}>
           <span>{children}</span>
