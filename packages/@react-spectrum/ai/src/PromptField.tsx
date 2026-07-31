@@ -37,18 +37,11 @@ import {
   useRef,
   useState
 } from 'react';
-import {
-  Direction,
-  Position,
-  TokenFieldSegment,
-  TokenFieldValue,
-  TokenSegment
-} from 'react-stately/useTokenFieldState';
-import {FocusableRef} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+// @ts-ignore
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
@@ -56,6 +49,12 @@ import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {PixelLoader} from './loader/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
+import {
+  Position,
+  TokenFieldSegment,
+  TokenFieldValue,
+  TokenSegment
+} from 'react-stately/useTokenFieldState';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
@@ -372,7 +371,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     if (completionTrigger) {
       let filterAnchor = prompt.findText(
         prompt.caretPosition,
-        Direction.Backward,
+        TokenFieldValue.Direction.Backward,
         completionTrigger
       );
       if (filterAnchor != null) {

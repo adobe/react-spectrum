@@ -237,6 +237,15 @@ describe('SideNav', () => {
     expect(queryByRole('link', {name: 'Projects 1'})).toBeNull();
   });
 
+  it('marks nothing if the selectedRoute is null', () => {
+    let {getAllByRole} = render(<SideNavExample selectedRoute={null} />);
+
+    let links = getAllByRole('link');
+    for (let link of links) {
+      expect(link).not.toHaveAttribute('aria-current');
+    }
+  });
+
   it('marks the link matching selectedRoute with aria-current="page"', () => {
     let {getByRole, rerender} = render(<SideNavExample selectedRoute="/files" />);
 
