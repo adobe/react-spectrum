@@ -65,6 +65,70 @@ describe('captureScrollAnchor', () => {
 
     expect(anchor?.key).toBe('closer');
   });
+
+  it('does not anchor to a substantially-visible item clipped at the leading edge', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468); // viewport 1000-1468
+    let clipped = new LayoutInfo('item', 'clipped', new Rect(0, 962, 400, 76)); // top clipped, 38px visible
+    let fullyVisible = new LayoutInfo('item', 'fully-visible', new Rect(0, 1040, 400, 60));
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [
+      ['clipped', clipped],
+      ['fully-visible', fullyVisible]
+    ]);
+
+    expect(anchor?.key).toBe('fully-visible');
+    expect(anchor?.corner).toBe('topLeft');
+    expect(anchor?.offset).toBe(40);
+  });
+
+  it('anchors along the x axis by the left edge when anchoring to end', () => {
+    // Branch coverage for the horizontal corner branch (topLeft on the x axis).
+    let visibleRect = new Rect(1000, 0, 468, 400); // viewport x 1000-1468
+    let leftClipped = new LayoutInfo('item', 'left-clipped', new Rect(962, 0, 76, 400)); // left clipped
+    let fullyVisible = new LayoutInfo('item', 'fully-visible', new Rect(1040, 0, 60, 400));
+
+    let anchor = captureScrollAnchor('end', 'x', visibleRect, [
+      ['left-clipped', leftClipped],
+      ['fully-visible', fullyVisible]
+    ]);
+
+    expect(anchor?.key).toBe('fully-visible');
+    expect(anchor?.corner).toBe('topLeft');
+    expect(anchor?.offset).toBe(40);
+  });
+
+  it('falls back to a clipped item when it is the only substantial candidate', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468); // viewport 1000-1468
+    let taller = new LayoutInfo('item', 'taller', new Rect(0, 900, 400, 800)); // spans 900-1700
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [['taller', taller]]);
+
+    expect(anchor?.key).toBe('taller');
+  });
+
+  it('returns a substantial clipped item over a fully-visible sub-overlap sliver', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468); // viewport 1000-1468
+    // Fully visible (top at 1002) but only 2px tall -> overlap 2 < MIN_ANCHOR_OVERLAP.
+    let sliver = new LayoutInfo('item', 'sliver', new Rect(0, 1002, 400, 2));
+    // Top-clipped but 38px visible -> substantial overlap, reaches the fallback.
+    let clipped = new LayoutInfo('item', 'clipped', new Rect(0, 962, 400, 76));
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [
+      ['sliver', sliver],
+      ['clipped', clipped]
+    ]);
+
+    expect(anchor?.key).toBe('clipped');
+  });
+
+  it('excludes an item that is both clipped and sub-overlap at the overlap gate', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468);
+    let clippedSliver = new LayoutInfo('item', 'clipped-sliver', new Rect(0, 960, 400, 42)); // 2px visible at top
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [['clipped-sliver', clippedSliver]]);
+
+    expect(anchor).toBeNull();
+  });
 });
 
 describe('computeScrollAnchorTarget', () => {
@@ -255,6 +319,27 @@ describe('resolveScrollAdjustment', () => {
       false, // isScrolling
       true, // itemSizeChanged -- measurement settle
       50, // contentSizeDelta > 0
+      () => layoutInfo,
+      visibleRect,
+      contentSize
+    );
+
+    // Edge-snap target (2000 - 468 = 1532), not the anchor target (600).
+    expect(result?.y).toBe(2000 - 468);
+  });
+
+  it('follows the edge over the anchor while items settle smaller near the edge', () => {
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
+
+    let result = resolveScrollAdjustment(
+      'end',
+      'y',
+      anchor,
+      true, // wasNearAnchorEdge -- following the edge
+      false, // isScrolling
+      true, // itemSizeChanged -- measurement settle
+      -50, // contentSizeDelta < 0 (content shrank)
       () => layoutInfo,
       visibleRect,
       contentSize

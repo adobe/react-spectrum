@@ -100,7 +100,7 @@ export function captureScrollAnchor(
         : 'bottomLeft';
   let viewportExtent = visibleRect[dimension];
   let best: ScrollAnchor | null = null;
-  // Fallback used only when every visible item is clipped past the edge where positions are constantly changing (e.g. a single item
+  // Fallback used only when every visible item is clipped past the leading edge (e.g. a single item
   // taller than the viewport): the least-clipped item still makes the most stable anchor available.
   let fallback: ScrollAnchor | null = null;
   for (let [key, layoutInfo] of visibleLayoutInfos) {
@@ -197,9 +197,10 @@ export function resolveScrollAdjustment(
           previousVisibleRect.height
         );
 
-  // When the user is following the edge and items are settling (measuring bigger), pin to the
-  // edge rather than to the anchor.
-  let followEdge = wasNearAnchorEdge && !isScrolling && itemSizeChanged && contentSizeDelta > 0;
+  // When the user is following the edge and items are settling (their size changed), pin to the
+  // edge rather than to the anchor. Whether content grew or shrank, following the edge means
+  // staying at the new edge.
+  let followEdge = wasNearAnchorEdge && !isScrolling && itemSizeChanged && contentSizeDelta !== 0;
   if (anchor && !followEdge) {
     let target = computeScrollAnchorTarget(
       anchor,
@@ -213,7 +214,7 @@ export function resolveScrollAdjustment(
     }
   }
 
-  if (wasNearAnchorEdge && !isScrolling && (!itemSizeChanged || contentSizeDelta > 0)) {
+  if (wasNearAnchorEdge && !isScrolling && (!itemSizeChanged || contentSizeDelta !== 0)) {
     let target = withTarget(getEdgeSnapTarget(edge, axis, contentSize, previousVisibleRect));
     return target.equals(previousVisibleRect) ? null : target;
   }
