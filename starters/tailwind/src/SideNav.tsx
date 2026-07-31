@@ -96,7 +96,7 @@ export function SideNavItemContent(props: {children?: React.ReactNode}) {
 }
 
 export interface SideNavItemProps extends Partial<AriaSideNavItemProps> {
-  title?: string;
+  title?: React.ReactNode;
 }
 
 export function SideNavItem(props: SideNavItemProps) {
@@ -108,7 +108,7 @@ export function SideNavItem(props: SideNavItemProps) {
   );
 }
 
-export function SideNavSection<T>(props: SideNavSectionProps<T>) {
+export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) {
   return <AriaSideNavSection {...props} className="not-first:mt-4" />;
 }
 

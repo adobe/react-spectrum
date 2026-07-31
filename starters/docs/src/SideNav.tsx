@@ -61,7 +61,7 @@ export function SideNavItem(props: SideNavItemProps) {
   );
 }
 
-export function SideNavSection<T>(props: SideNavSectionProps<T>) {
+export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) {
   return <AriaSideNavSection {...props} />;
 }
 
