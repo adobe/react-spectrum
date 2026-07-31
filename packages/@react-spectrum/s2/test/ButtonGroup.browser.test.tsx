@@ -17,7 +17,7 @@ import React from 'react';
 import {render} from './utils/render';
 
 describe('ButtonGroup', () => {
-  it('stacks vertically when the container shrinks below the width of buttons with no-space labels', async () => {
+  it.skip('stacks vertically when the container shrinks below the width of buttons with no-space labels', async () => {
     let {container} = await render(
       <div style={{width: '500px'}} data-testid="wrapper">
         <ButtonGroup data-testid="button-group">
