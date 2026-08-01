@@ -145,38 +145,44 @@ export const NestedTabs: TabsStory = () => (
   </Tabs>
 );
 
-// With non-inheriting panel size variables, inner TabPanels size to their own content.
-// Without it, they inherit the outer TabPanels' pixel vars.
+// Switch the outer tabs and watch the inner panel. Each TabPanels should only ever
+// animate to its own content size. Without the reset on TabPanel, the inner TabPanels
+// inherits the outer one's transient pixel vars and jumps to the outer panel's size.
+// The wrapper pins the story to the top left; the storybook decorator otherwise
+// centers stories in a full-height flex container, which makes a size transition
+// hard to watch because the whole thing moves.
 export const NestedTabsSizeTransition: TabsStory = () => (
-  <Tabs>
-    <TabList aria-label="Outer tabs" style={{display: 'flex', gap: 8}}>
-      <CustomTab id="nested">Nested tabs</CustomTab>
-      <CustomTab id="large">Large panel</CustomTab>
-    </TabList>
-    <TabPanels className="animated-tabpanels">
-      <TabPanel id="nested">
-        <Tabs>
-          <TabList aria-label="Inner tabs" style={{display: 'flex', gap: 8}}>
-            <CustomTab id="one">One</CustomTab>
-            <CustomTab id="two">Two</CustomTab>
-          </TabList>
-          <TabPanels className="animated-tabpanels">
-            <TabPanel id="one">
-              <div style={{width: 140, padding: 8}}>One</div>
-            </TabPanel>
-            <TabPanel id="two">
-              <div style={{width: 180, padding: 8}}>
-                Two
-                <br />
-                Small inner panel
-              </div>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </TabPanel>
-      <TabPanel id="large">
-        <div style={{width: 480, height: 240, padding: 8}}>Large outer panel</div>
-      </TabPanel>
-    </TabPanels>
-  </Tabs>
+  <div style={{alignSelf: 'start', marginInlineEnd: 'auto', padding: 16}}>
+    <Tabs>
+      <TabList aria-label="Outer tabs" style={{display: 'flex', gap: 8}}>
+        <CustomTab id="nested">Nested tabs</CustomTab>
+        <CustomTab id="large">Large panel</CustomTab>
+      </TabList>
+      <TabPanels className="animated-tabpanels">
+        <TabPanel id="nested">
+          <Tabs>
+            <TabList aria-label="Inner tabs" style={{display: 'flex', gap: 8}}>
+              <CustomTab id="one">One</CustomTab>
+              <CustomTab id="two">Two</CustomTab>
+            </TabList>
+            <TabPanels className="animated-tabpanels">
+              <TabPanel id="one">
+                <div style={{width: 140, padding: 8}}>One</div>
+              </TabPanel>
+              <TabPanel id="two">
+                <div style={{width: 180, padding: 8}}>
+                  Two
+                  <br />
+                  Small inner panel
+                </div>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </TabPanel>
+        <TabPanel id="large">
+          <div style={{width: 480, height: 240, padding: 8}}>Large outer panel</div>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  </div>
 );

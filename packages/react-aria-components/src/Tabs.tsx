@@ -60,6 +60,7 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {Orientation} from '@react-types/shared';
 import React, {
   createContext,
+  CSSProperties,
   ForwardedRef,
   forwardRef,
   JSX,
@@ -251,43 +252,16 @@ export interface TabPanelRenderProps {
 export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
 export const TabListStateContext = createContext<TabListState<any> | null>(null);
 
-interface CSSPropertyDefinition {
-  name: string;
-  syntax: string;
-  inherits: boolean;
-  initialValue: string;
-}
-
-interface CSSWithRegisterProperty {
-  registerProperty: (definition: CSSPropertyDefinition) => void;
-}
-
-let supportsTabPanelSizePropertyRegistration = registerTabPanelSizeProperties();
-
-function registerTabPanelSizeProperties(): boolean {
-  if (
-    typeof CSS === 'undefined' ||
-    typeof (CSS as unknown as CSSWithRegisterProperty).registerProperty !== 'function'
-  ) {
-    return false;
-  }
-
-  let css = CSS as unknown as CSSWithRegisterProperty;
-  for (let name of ['--tab-panel-width', '--tab-panel-height']) {
-    try {
-      css.registerProperty({
-        name,
-        syntax: '*',
-        inherits: false,
-        initialValue: 'auto'
-      });
-    } catch {
-      continue;
-    }
-  }
-
-  return true;
-}
+// TabPanels writes --tab-panel-width/height on itself while it animates between
+// panel sizes. Custom properties inherit, so a TabPanels nested inside a TabPanel
+// would otherwise pick up the outer one's transient pixel values. Reset them on
+// every TabPanel so each TabPanels only ever sees its own.
+// 'auto' matches the value TabPanels settles on at rest. Note 'unset' does NOT
+// work here: custom properties are inherited, so unset computes to inherit.
+const tabPanelSizeReset = {
+  '--tab-panel-width': 'auto',
+  '--tab-panel-height': 'auto'
+} as CSSProperties;
 
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them.
@@ -665,20 +639,11 @@ function TabPanelInner(
   let domProps = isSelected
     ? mergeProps(DOMProps, tabPanelProps, focusProps, renderProps)
     : mergeProps(DOMProps, renderProps);
-  let style = renderProps.style;
-  if (!supportsTabPanelSizePropertyRegistration) {
-    style = {
-      '--tab-panel-width': 'unset',
-      '--tab-panel-height': 'unset',
-      ...renderProps.style
-    } as React.CSSProperties;
-  }
-
   return (
     <dom.div
       {...domProps}
       ref={ref}
-      style={style}
+      style={{...tabPanelSizeReset, ...renderProps.style}}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore

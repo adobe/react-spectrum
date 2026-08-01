@@ -695,52 +695,6 @@ describe('Tabs', () => {
     expect(innerTabs[1]).toHaveTextContent('Two');
   });
 
-  it('falls back to resetting tab panel transition variables for nested tabpanels', async () => {
-    let {getByTestId} = render(
-      <Tabs>
-        <TabList aria-label="Outer tabs">
-          <Tab id="foo">Foo</Tab>
-          <Tab id="bar">Bar</Tab>
-        </TabList>
-        <TabPanels
-          data-testid="outer-tabpanels"
-          style={{
-            '--tab-panel-width': '320px',
-            '--tab-panel-height': '240px'
-          }}>
-          <TabPanel id="foo" data-testid="outer-tabpanel">
-            <Tabs>
-              <TabList aria-label="Inner tabs">
-                <Tab id="one">One</Tab>
-                <Tab id="two">Two</Tab>
-              </TabList>
-              <TabPanels data-testid="inner-tabpanels">
-                <TabPanel id="one">One</TabPanel>
-                <TabPanel id="two">Two</TabPanel>
-              </TabPanels>
-            </Tabs>
-          </TabPanel>
-          <TabPanel id="bar">Bar</TabPanel>
-        </TabPanels>
-      </Tabs>
-    );
-
-    // Wait a tick for MutationObserver in useHasTabbableChild to fire.
-    // This avoids React's "update not wrapped in act" warning.
-    await waitFor(() => Promise.resolve());
-
-    let outerTabPanels = getByTestId('outer-tabpanels');
-    let outerTabPanel = getByTestId('outer-tabpanel');
-    let innerTabPanels = getByTestId('inner-tabpanels');
-
-    expect(outerTabPanels.style.getPropertyValue('--tab-panel-width')).toBe('320px');
-    expect(outerTabPanels.style.getPropertyValue('--tab-panel-height')).toBe('240px');
-    expect(outerTabPanel.style.getPropertyValue('--tab-panel-width')).toBe('unset');
-    expect(outerTabPanel.style.getPropertyValue('--tab-panel-height')).toBe('unset');
-    expect(innerTabPanels.style.getPropertyValue('--tab-panel-width')).toBe('');
-    expect(innerTabPanels.style.getPropertyValue('--tab-panel-height')).toBe('');
-  });
-
   it('can add tabs and keep the current selected key', async () => {
     let onSelectionChange = jest.fn();
     function Example(props) {
@@ -875,34 +829,42 @@ describe('Tabs', () => {
     expect(tabPanels).toHaveStyle({width: '100px'});
   });
 
-  it('should allow tab panel styles to override fallback transition variable resets', () => {
-    let {getByTestId} = render(
-      <Tabs>
-        <TabList aria-label="test">
-          <Tab id="a">A</Tab>
-          <Tab id="b">B</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel
-            id="a"
-            data-testid="tabpanel"
-            style={{
-              '--tab-panel-width': '50px',
-              '--tab-panel-height': '75px'
-            }}>
-            A
-          </TabPanel>
-          <TabPanel id="b">B</TabPanel>
-        </TabPanels>
-      </Tabs>
-    );
+  it('resets the TabPanels size variables on each TabPanel, and lets user styles win', () => {
+    // Only the selected panel renders, so each case needs its own tree.
+    let withPanel = (style, fn) => {
+      let {getByTestId, unmount} = render(
+        <Tabs>
+          <TabList aria-label="test">
+            <Tab id="a">A</Tab>
+            <Tab id="b">B</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel id="a" data-testid="tabpanel" style={style}>
+              A
+            </TabPanel>
+            <TabPanel id="b">B</TabPanel>
+          </TabPanels>
+        </Tabs>
+      );
+      fn(getByTestId('tabpanel'));
+      unmount();
+    };
 
-    let tabPanel = getByTestId('tabpanel');
-    expect(tabPanel.style.getPropertyValue('--tab-panel-width')).toBe('50px');
-    expect(tabPanel.style.getPropertyValue('--tab-panel-height')).toBe('75px');
+    // 'auto' is what TabPanels settles on at rest, so a nested TabPanels reading
+    // these inherits a no-op rather than the outer panel's transient pixel size.
+    // 'unset' would not work: custom properties inherit, so unset means inherit.
+    withPanel(undefined, panel => {
+      expect(panel.style.getPropertyValue('--tab-panel-width')).toBe('auto');
+      expect(panel.style.getPropertyValue('--tab-panel-height')).toBe('auto');
+    });
+
+    withPanel({'--tab-panel-width': '50px', '--tab-panel-height': '75px'}, panel => {
+      expect(panel.style.getPropertyValue('--tab-panel-width')).toBe('50px');
+      expect(panel.style.getPropertyValue('--tab-panel-height')).toBe('75px');
+    });
   });
 
-  it('should merge fallback transition variable resets with style render props', () => {
+  it('merges the size variable reset with style render props', () => {
     let {getByTestId} = render(
       <Tabs>
         <TabList aria-label="test">
@@ -914,9 +876,7 @@ describe('Tabs', () => {
             id="a"
             className={() => 'selected'}
             data-testid="tabpanel"
-            style={() => ({
-              opacity: 1
-            })}>
+            style={() => ({opacity: 1})}>
             A
           </TabPanel>
           <TabPanel id="b">B</TabPanel>
@@ -926,8 +886,7 @@ describe('Tabs', () => {
 
     let tabPanel = getByTestId('tabpanel');
     expect(tabPanel).toHaveAttribute('class', 'selected');
-    expect(tabPanel.style.getPropertyValue('--tab-panel-width')).toBe('unset');
-    expect(tabPanel.style.getPropertyValue('--tab-panel-height')).toBe('unset');
+    expect(tabPanel.style.getPropertyValue('--tab-panel-width')).toBe('auto');
     expect(tabPanel).toHaveStyle({opacity: '1'});
   });
 
