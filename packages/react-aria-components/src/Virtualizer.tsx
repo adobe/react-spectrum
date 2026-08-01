@@ -25,6 +25,8 @@ import {
   VirtualizerState
 } from 'react-stately/useVirtualizerState';
 import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
+import {setScrollLeft} from 'react-aria/private/virtualizer/utils';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
 import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 
@@ -103,6 +105,7 @@ function CollectionRoot({
   renderDropIndicator
 }: CollectionRootProps) {
   let {layout, layoutOptions, shouldObserveItemSize} = useContext(VirtualizerOptionsContext)!;
+  let {direction} = useLocale();
   // oxlint-disable-next-line react/react-compiler
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
@@ -115,8 +118,8 @@ function CollectionRoot({
     onVisibleRectChange(rect) {
       let element = scrollRef?.current;
       if (element) {
+        setScrollLeft(element, direction, rect.x);
         // oxlint-disable-next-line react/react-compiler
-        element.scrollLeft = rect.x;
         element.scrollTop = rect.y;
       }
     },

@@ -15,7 +15,9 @@ import {Layout, Rect, ReusableView, useVirtualizerState} from 'react-stately/use
 import {mergeProps} from '../utils/mergeProps';
 import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback} from 'react';
 import {ScrollView} from './ScrollView';
+import {setScrollLeft} from './utils';
 import {useLoadMore} from '../utils/useLoadMore';
+import {useLocale} from '../i18n/I18nProvider';
 import {useObjectRef} from '../utils/useObjectRef';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -63,6 +65,7 @@ export const Virtualizer = React.forwardRef(function Virtualizer<
   } = props;
 
   let ref = useObjectRef(forwardedRef);
+  let {direction} = useLocale();
 
   let state = useVirtualizerState({
     layout,
@@ -70,7 +73,7 @@ export const Virtualizer = React.forwardRef(function Virtualizer<
     renderView,
     onVisibleRectChange(rect) {
       if (ref.current) {
-        ref.current.scrollLeft = rect.x;
+        setScrollLeft(ref.current, direction, rect.x);
         ref.current.scrollTop = rect.y;
       }
     },
