@@ -17,7 +17,7 @@ describe('Tabs SSR', function () {
     await testSSR(
       __filename,
       `
-      import {Tabs, TabList, Tab, TabPanel, Label} from '../exports/index.ts';
+      import {Tabs, TabList, Tab, TabPanel, TabPanels, Label} from '../exports/index.ts';
 
       <React.StrictMode>
         <Tabs aria-label="Tabs">
@@ -26,9 +26,11 @@ describe('Tabs SSR', function () {
             <Tab id="2">Middle</Tab>
             <Tab id="3">Right</Tab>
           </TabList>
-          <TabPanel id="1">Left content</TabPanel>
-          <TabPanel id="2">Middle content</TabPanel>
-          <TabPanel id="3">Right content</TabPanel>
+          <TabPanels data-testid="tabpanels">
+            <TabPanel id="1">Left content</TabPanel>
+            <TabPanel id="2">Middle content</TabPanel>
+            <TabPanel id="3">Right content</TabPanel>
+          </TabPanels>
         </Tabs>
       </React.StrictMode>
     `,
@@ -39,6 +41,9 @@ describe('Tabs SSR', function () {
         let tabpanel = screen.getByRole('tabpanel');
         expect(tabpanel).toHaveTextContent('Left content');
         expect(tabpanel).toHaveAttribute('aria-labelledby', tabs[0].id);
+        let tabpanels = screen.getByTestId('tabpanels');
+        expect(tabpanels.style.getPropertyValue('--tab-panel-width')).toBe('auto');
+        expect(tabpanels.style.getPropertyValue('--tab-panel-height')).toBe('auto');
       }
     );
 
@@ -48,5 +53,8 @@ describe('Tabs SSR', function () {
     let tabpanel = screen.getByRole('tabpanel');
     expect(tabpanel).toHaveTextContent('Left content');
     expect(tabpanel).toHaveAttribute('aria-labelledby', tabs[0].id);
+    let tabpanels = screen.getByTestId('tabpanels');
+    expect(tabpanels.style.getPropertyValue('--tab-panel-width')).toBe('auto');
+    expect(tabpanels.style.getPropertyValue('--tab-panel-height')).toBe('auto');
   });
 });

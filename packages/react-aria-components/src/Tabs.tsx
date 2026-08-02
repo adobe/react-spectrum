@@ -253,12 +253,10 @@ export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>
 export const TabListStateContext = createContext<TabListState<any> | null>(null);
 
 // TabPanels writes --tab-panel-width/height on itself while it animates between
-// panel sizes. Custom properties inherit, so a TabPanels nested inside a TabPanel
-// would otherwise pick up the outer one's transient pixel values. Reset them on
-// every TabPanel so each TabPanels only ever sees its own.
-// 'auto' matches the value TabPanels settles on at rest. Note 'unset' does NOT
-// work here: custom properties are inherited, so unset computes to inherit.
-const tabPanelSizeReset = {
+// panel sizes. Initialize them on the element that owns them so a nested
+// TabPanels cannot inherit an outer instance's transient pixel values.
+// 'auto' matches the value TabPanels settles on at rest.
+const tabPanelsSize = {
   '--tab-panel-width': 'auto',
   '--tab-panel-height': 'auto'
 } as CSSProperties;
@@ -560,7 +558,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
       render={props.render}
       {...DOMProps}
       ref={ref}
-      style={props.style}
+      style={{...tabPanelsSize, ...props.style}}
       className={props.className || 'react-aria-TabPanels'}>
       <Collection {...props} />
     </dom.div>
@@ -643,7 +641,6 @@ function TabPanelInner(
     <dom.div
       {...domProps}
       ref={ref}
-      style={{...tabPanelSizeReset, ...renderProps.style}}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
