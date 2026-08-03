@@ -132,7 +132,6 @@ async function createParcel(options, isDev = false) {
       '--config', path.resolve(options.configDir, '.parcelrc-v3'),
       '-p', '3000',
       '--dist-dir', options.outputDir,
-      '--no-optimize',
       path.join(generatedEntries, 'iframe.html')
     ], { stdio: 'inherit' });
     return new Promise((resolve, reject) => {

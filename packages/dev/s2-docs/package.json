@@ -10,6 +10,7 @@
     "build": "yarn build:s2 --public-url $PUBLIC_URL && yarn build:react-aria --public-url $PUBLIC_URL && node scripts/generateAgentSkills.mjs",
     "build:s2": "LIBRARY=s2 parcel build 'pages/s2/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
     "build:react-aria": "LIBRARY=react-aria parcel build 'pages/react-aria/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/react-aria --cache-dir ../../../.parcel-cache/react-aria",
+    "build:parcel3": "PARCEL_V3=1 /Users/devongovett/dev/parcel/target/release/parcel build ssg.tsx --config .parcelrc-s2-docs-v3",
     "generate:og": "node scripts/generateOGImages.mjs",
     "generate:md": "node scripts/generateMarkdownDocs.mjs",
     "generate:mcpb": "node scripts/generateMcpb.mjs"
