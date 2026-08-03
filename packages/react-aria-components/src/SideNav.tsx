@@ -20,6 +20,7 @@ import {
   useContextProps
 } from './utils';
 import {Collection, forwardRefType, Key, Node, RouterOptions} from '@react-types/shared';
+import {getScrollParent} from 'react-aria/private/utils/getScrollParent';
 import {LinkContext} from './Link';
 import React, {
   createContext,
@@ -49,8 +50,7 @@ import {
   TreeSectionProps
 } from './Tree';
 import {TreeState} from 'react-stately/useTreeState';
-import {mergeRefs} from '/packages/react-aria/src/utils/mergeRefs';
-import {getScrollParent} from '/packages/react-aria/src/utils/getScrollParent';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 export const SideNavContext = createContext<ContextValue<SideNavProps<any>, HTMLDivElement>>(null);
 
@@ -224,14 +224,13 @@ export const SideNavItem = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       renderProps.isFocusVisible || (renderProps.isFocusVisibleWithin && isLinkFocused)
   });
 
-  let defaultRef = useRef<HTMLDivElement>(null);
-  let mergedRef = mergeRefs(ref, defaultRef);
+  let objRef = useObjectRef(ref);
   useEffect(() => {
-    if (isCurrent && defaultRef.current) {
-      let scrollParent = getScrollParent(defaultRef.current, true) as HTMLElement;
-      scrollIntoView(scrollParent, defaultRef.current, {block: 'center'});
+    if (isCurrent && objRef.current) {
+      let scrollParent = getScrollParent(objRef.current, true) as HTMLElement;
+      scrollIntoView(scrollParent, objRef.current, {block: 'center'});
     }
-  }, [isCurrent]);
+  }, [isCurrent, objRef]);
 
   return (
     <SideNavItemLinkContext.Provider
@@ -250,7 +249,7 @@ export const SideNavItem = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       }}>
       <TreeItem
         {...rest}
-        ref={mergedRef}
+        ref={objRef}
         href={href}
         focusMode={hasLink ? 'child' : undefined}
         allowsArrowNavigation
