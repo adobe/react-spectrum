@@ -68,7 +68,7 @@ export function brand(l: number, c: number, hueOffset: number, alpha = 1) {
 
 // Converts a single token color value to a brand-relative color, unless it's a
 // neutral (kept as-is) or not a color at all (e.g. an opacity number, kept as-is).
-function convertColor(value: any) {
+export function convertColor(value: any) {
   if (typeof value !== 'string') {
     return value;
   }
