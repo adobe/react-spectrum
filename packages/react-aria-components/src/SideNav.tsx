@@ -102,6 +102,7 @@ export interface SideNavProps<T>
       | 'escapeKeyBehavior'
       | 'shouldSelectOnPressUp'
       | 'dragAndDropHooks'
+      | 'renderEmptyState'
       | 'onAction'
       | 'className'
       | 'style'
