@@ -61,7 +61,6 @@ const meta: Meta<typeof TableView> = {
   component: TableView,
   parameters: {
     layout: 'centered',
-    controls: {exclude: ['onResize']}
   },
   tags: ['autodocs'],
   args: {...getActionArgs(events)},

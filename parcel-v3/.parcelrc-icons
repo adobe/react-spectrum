@@ -15,7 +15,7 @@
             "var(--iconPrimary,#292929)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))",
             "var(--spectrum-global-color-gray-800,#292929)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))"
           },
-          "template": "import {createIllustration} from '@react-spectrum/s2/Icon';\nexport default /*#__PURE__*/ createIllustration($ICON);"
+          "template": "'use client';\nimport {createIllustration} from '@react-spectrum/s2/Icon';\nexport default /*#__PURE__*/ createIllustration($ICON);"
         }
       }
     ],
@@ -34,7 +34,7 @@
             "var(--iconPrimary,#292929)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))",
             "var(--spectrum-global-color-gray-800,#292929)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))"
           },
-          "template": "import {createIcon} from '@react-spectrum/s2/Icon';\nexport default /*#__PURE__*/ createIcon($ICON);"
+          "template": "'use client';\nimport {createIcon} from '@react-spectrum/s2/Icon';\nexport default /*#__PURE__*/ createIcon($ICON);"
         }
       }
     ],

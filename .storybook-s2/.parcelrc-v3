@@ -2,13 +2,9 @@
   "extends": ["../parcel-v3/.parcelrc-icons", "@parcel/config-default"],
   "resolvers": ["@parcel/resolver-glob", "..."],
   "transformers": {
+   "docs:*": ["@parcel/transformer-ts-doc"],
     "*.stories.{ts,tsx,js,mjs,jsm,jsx,es6,cjs}": [
-      {
-        "plugin": "@parcel/transformer-native",
-        "config": {
-          "lib": "/Users/devongovett/dev/react-docgen-typescript/libdocgen.dylib"
-        }
-      },
+      "@parcel/transformer-storybook-v3",
       "..."
     ],
     "packages/**/intl/**/*.json": ["parcel-transformer-intl"],

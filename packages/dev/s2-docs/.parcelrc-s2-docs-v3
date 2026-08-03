@@ -2,14 +2,7 @@
   "extends": ["../../../parcel-v3/.parcelrc-icons", "@parcel/config-default"],
   "resolvers": ["@parcel/resolver-glob", "..."],
   "transformers": {
-    "docs:*": [
-      {
-        "plugin": "@parcel/transformer-native",
-        "config": {
-          "lib": "/Users/devongovett/dev/ts-doc-rs/target/release/libparcel_ts_doc.dylib"
-        }
-      }
-    ],
+    "docs:*": ["@parcel/transformer-ts-doc"],
     "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
     "url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-raw"],
     "data-url:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline"],

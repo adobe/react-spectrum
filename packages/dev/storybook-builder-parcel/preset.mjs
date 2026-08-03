@@ -90,7 +90,9 @@ export async function start({options, router}) {
 
 export async function build({options}) {
   const parcel = await createParcel(options);
-  await parcel.run();
+  if (!PARCEL_V3) {
+    await parcel.run();
+  }
 }
 
 // No core presets to register; previewAnnotations come transitively from
@@ -125,12 +127,23 @@ async function createParcel(options, isDev = false) {
   );
 
   if (PARCEL_V3) {
-    spawn('/Users/devongovett/dev/parcel/target/release/parcel', [
-      'serve',
+    let parcel = spawn('parcel-v3/parcel', [
+      isDev ? 'serve' : 'build',
       '--config', path.resolve(options.configDir, '.parcelrc-v3'),
       '-p', '3000',
+      '--dist-dir', options.outputDir,
+      '--no-optimize',
       path.join(generatedEntries, 'iframe.html')
     ], { stdio: 'inherit' });
+    return new Promise((resolve, reject) => {
+      parcel.on('close', code => {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject();
+        }
+      })
+    });
   } else {
     return new Parcel({
       entries: path.join(generatedEntries, 'iframe.html'),

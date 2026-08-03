@@ -38,7 +38,7 @@ clean_dist:
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/i18n
 	rm -rf packages/@adobe/react-spectrum/i18n
 	rm -rf packages/@react-aria/i18n/server
-	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
+	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
 	git clean -Xdf packages/{@adobe/react-spectrum,@react-spectrum/s2,react-aria,react-stately,react-aria-components}
 
 clean_parcel:
@@ -113,7 +113,7 @@ build:
 build-parcel-v3:
 	mkdir -p dist
 	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
-	~/dev/parcel/target/release/parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config parcel-v3/.parcelrc-build
+	parcel-v3/parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config parcel-v3/.parcelrc-build
 	yarn workspaces foreach --all -pt run prepublishOnly
 	node scripts/buildEsm.js
 	node scripts/buildI18n.js
