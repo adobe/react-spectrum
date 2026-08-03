@@ -209,8 +209,11 @@ build-s2-docs: check-starter-css
 build-starters:
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
+	$(MAKE) hooks-starter
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
 	mv starters/docs/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter
 	mv starters/docs/react-aria-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter.$$(git rev-parse --short HEAD).zip
 	mv starters/tailwind/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
+	mv starters/hooks/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-hooks-starter
+	mv starters/hooks/react-aria-hooks-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-hooks-starter.$$(git rev-parse --short HEAD).zip
