@@ -157,7 +157,7 @@ tailwind-starter:
 
 hooks-starter: sync-starter-css
 	cp LICENSE starters/hooks/.
-	cd starters/hooks && yarn --no-immutable && yarn up react-aria react-stately @internationalized/date && yarn tsc
+	cd starters/hooks && yarn --no-immutable && yarn up react-aria react-stately react-aria-components @internationalized/date && yarn tsc
 	cd starters/hooks && zip -r react-aria-hooks-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	cd starters/hooks && yarn build-storybook
 
