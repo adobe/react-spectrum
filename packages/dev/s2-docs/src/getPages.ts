@@ -1,10 +1,10 @@
 import {cache} from 'react';
 import {getBaseUrl} from './pageUtils';
-import { glob, readFile } from 'fs/promises';
+import {glob, readFile} from 'fs/promises';
 import path from 'path';
 import type {Page} from '@parcel/rsc';
 // eslint-disable-next-line
-import { transformAsync } from '@parcel/rust/lib/index.js';
+import {transformAsync} from '@parcel/rust/lib/index.js';
 
 const cwd = process.env.PARCEL_V3 ? __dirname : './src';
 

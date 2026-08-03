@@ -273,9 +273,7 @@ export function File({
   maxLines?: number;
   type?: 'vanilla' | 'tailwind' | 's2';
 }) {
-  let contents = readFile(
-    path.resolve(baseDir, filename),
-  ).replace(STARTER_ALIAS_RE, './');
+  let contents = readFile(path.resolve(baseDir, filename)).replace(STARTER_ALIAS_RE, './');
   return (
     <CodePlatter type={type}>
       <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false} maxLines={maxLines}>

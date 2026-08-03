@@ -22,23 +22,23 @@
     --s2-font-size-base: 17;
   }
 
-  &[data-color-scheme=light] {
+  &[data-color-scheme='light'] {
     --s2-color-scheme: light;
     --lightningcss-light: initial;
     --lightningcss-dark: ;
   }
 
-  &[data-color-scheme=dark] {
+  &[data-color-scheme='dark'] {
     --s2-color-scheme: dark;
     --lightningcss-light: ;
     --lightningcss-dark: initial;
   }
 
-  &[data-background=layer-1] {
+  &[data-background='layer-1'] {
     --s2-container-bg: light-dark(rgb(248, 248, 248), rgb(27, 27, 27));
   }
 
-  &[data-background=layer-2] {
+  &[data-background='layer-2'] {
     --s2-container-bg: light-dark(rgb(255, 255, 255), rgb(34, 34, 34));
   }
 }

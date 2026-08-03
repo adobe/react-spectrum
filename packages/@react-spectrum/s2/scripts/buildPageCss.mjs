@@ -9,7 +9,9 @@ function weirdColorToken(token) {
   return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 
-fs.writeFileSync(import.meta.dirname + '/../page.css', `:where(:root, :host) {
+fs.writeFileSync(
+  import.meta.dirname + '/../page.css',
+  `:where(:root, :host) {
   --s2-color-scheme: light dark;
   color-scheme: var(--s2-color-scheme);
   --s2-container-bg: ${colorToken(tokens['background-base-color'])};
@@ -53,4 +55,5 @@ fs.writeFileSync(import.meta.dirname + '/../page.css', `:where(:root, :host) {
     --s2-container-bg: ${weirdColorToken(tokens['background-layer-2-color'])};
   }
 }
-`);
+`
+);

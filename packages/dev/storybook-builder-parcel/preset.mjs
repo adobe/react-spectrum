@@ -127,13 +127,20 @@ async function createParcel(options, isDev = false) {
   );
 
   if (PARCEL_V3) {
-    let parcel = spawn('parcel-v3/parcel', [
-      isDev ? 'serve' : 'build',
-      '--config', path.resolve(options.configDir, '.parcelrc-v3'),
-      '-p', '3000',
-      '--dist-dir', options.outputDir,
-      path.join(generatedEntries, 'iframe.html')
-    ], { stdio: 'inherit' });
+    let parcel = spawn(
+      'parcel-v3/parcel',
+      [
+        isDev ? 'serve' : 'build',
+        '--config',
+        path.resolve(options.configDir, '.parcelrc-v3'),
+        '-p',
+        '3000',
+        '--dist-dir',
+        options.outputDir,
+        path.join(generatedEntries, 'iframe.html')
+      ],
+      {stdio: 'inherit'}
+    );
     return new Promise((resolve, reject) => {
       parcel.on('close', code => {
         if (code === 0) {
@@ -141,7 +148,7 @@ async function createParcel(options, isDev = false) {
         } else {
           reject();
         }
-      })
+      });
     });
   } else {
     return new Parcel({

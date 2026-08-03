@@ -180,10 +180,14 @@ async function toImportFn(stories, generatedEntries) {
   for (let glob of stories) {
     if (PARCEL_V3) {
       let name = `entry_${imports.length}`;
-      imports.push(`import * as ${name} from ${JSON.stringify(relativePath(generatedEntries, glob) + '?async=true&flat=true')};`);
+      imports.push(
+        `import * as ${name} from ${JSON.stringify(relativePath(generatedEntries, glob) + '?async=true&flat=true')};`
+      );
       entries.push(`...${name}`);
     } else {
-      entries.push(`...import(${JSON.stringify('story:' + btoa(relativePath(generatedEntries, glob)))})`);
+      entries.push(
+        `...import(${JSON.stringify('story:' + btoa(relativePath(generatedEntries, glob)))})`
+      );
     }
   }
 

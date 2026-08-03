@@ -17,7 +17,7 @@ module.exports = new Transformer({
   async transform({asset}) {
     let code = await asset.getCode();
     let json = JSON.parse(code);
-    let format = !asset.target || asset.target.outputFormat === "commonjs" ? "cjs" : "esm";
+    let format = !asset.target || asset.target.outputFormat === 'commonjs' ? 'cjs' : 'esm';
     let res = compileStrings(json, {format});
     asset.type = 'js';
     asset.setCode(res);

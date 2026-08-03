@@ -1,12 +1,14 @@
 import {renderToReadableStream} from 'react-server-dom-parcel/server.edge';
 import {injectRSCPayload} from 'rsc-html-stream/server';
-import {createFromReadableStream} from 'react-server-dom-parcel/client.edge' with {env: 'react-client'};
+import {createFromReadableStream} from 'react-server-dom-parcel/client.edge' with {
+  env: 'react-client'
+};
 import {prerender} from 'react-dom/static.edge' with {env: 'react-client'};
-import { ComponentType, ReactNode } from 'react' with {env: 'react-client'};
+import {ComponentType, ReactNode} from 'react' with {env: 'react-client'};
 import {Readable} from 'stream';
-import { createWriteStream, mkdirSync } from 'fs';
-import { dirname } from 'path';
-import { finished } from 'node:stream/promises';
+import {createWriteStream, mkdirSync} from 'fs';
+import {dirname} from 'path';
+import {finished} from 'node:stream/promises';
 // @ts-ignore
 import routes from './pages/**/*.mdx?async=true&flat=true';
 
@@ -23,11 +25,12 @@ async function render() {
             url: '/' + url,
             name: url + '.html',
             tableOfContents: mod.tableOfContents
-          }} />,
+          }}
+        />,
         {component: Page}
       );
 
-      mkdirSync('dist/' + dirname(url), { recursive: true });
+      mkdirSync('dist/' + dirname(url), {recursive: true});
 
       let htmlStream = createWriteStream('dist/' + url + '.html');
       html.pipe(htmlStream);
@@ -43,17 +46,20 @@ async function render() {
 }
 
 interface RSCToHTMLOptions {
-  component?: ComponentType,
+  component?: ComponentType;
   identifierPrefix?: string;
   namespaceURI?: string;
   nonce?: string;
   progressiveChunkSize?: number;
   signal?: AbortSignal;
-  temporaryReferences?: any,
+  temporaryReferences?: any;
   onError?: (error: unknown, errorInfo?: any) => string | void;
 }
 
-async function prerenderHTML(root: any, options?: RSCToHTMLOptions): Promise<{html: Readable, rsc: Readable}> {
+async function prerenderHTML(
+  root: any,
+  options?: RSCToHTMLOptions
+): Promise<{html: Readable; rsc: Readable}> {
   let stream = renderToReadableStream(root, options);
 
   // Use client react to render the RSC payload to HTML.
@@ -67,7 +73,7 @@ async function prerenderHTML(root: any, options?: RSCToHTMLOptions): Promise<{ht
 
   let {prelude} = await prerender(<Content />, {
     ...options,
-    bootstrapScriptContent: (options?.component as any)?.bootstrapScript,
+    bootstrapScriptContent: (options?.component as any)?.bootstrapScript
   });
 
   return {

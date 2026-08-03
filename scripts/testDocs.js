@@ -114,7 +114,11 @@ async function testDocs() {
         msgUrl.startsWith(server.baseUrl) &&
         (msg.type() === 'error' || msg.type() === 'warning')
       ) {
-        if (/Connection to the HMR server|outdated JSX|PressResponder|Error during WebSocket handshake/.test(msg.text())) {
+        if (
+          /Connection to the HMR server|outdated JSX|PressResponder|Error during WebSocket handshake/.test(
+            msg.text()
+          )
+        ) {
           return;
         }
         console.log(`${msg.type().toUpperCase()} on ${currentPage}: ${msg.text()}`);
