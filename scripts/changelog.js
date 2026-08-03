@@ -43,6 +43,11 @@ function packageToLibrary(name) {
   if (name === '@react-spectrum/s2') {
     return 'Spectrum 2';
   }
+  // @react-spectrum/ai has no release doc set yet — collected into its own
+  // bucket and console-logged only (like v3), not written to a file.
+  if (name === '@react-spectrum/ai') {
+    return 'AI';
+  }
   // V3 has no LIBRARY_CONFIG entry. Its commits are collected but only printed
   // as a warning, never written to a file. See the v3Bucket handling at the end of run().
   if (name === '@adobe/react-spectrum' || name.startsWith('@react-spectrum/')) {
@@ -341,6 +346,19 @@ async function run() {
       `\nℹ ${v3Bucket.size} React Spectrum (v3) commit(s) were not written to a file. Review them manually if needed:\n`
     );
     let sorted = [...v3Bucket.values()].sort((a, b) => (a[1] < b[1] ? -1 : 1));
+    for (let commit of sorted) {
+      console.warn(`  ${commit[3]}`);
+    }
+    console.warn();
+  }
+
+  // Handle commits in @react-spectrum/ai
+  let aiBucket = commitsByLibrary.get('AI');
+  if (aiBucket && aiBucket.size > 0) {
+    console.warn(
+      `\nℹ ${aiBucket.size} @react-spectrum/ai commit(s) were not written to a file. Review them manually if needed:\n`
+    );
+    let sorted = [...aiBucket.values()].sort((a, b) => (a[1] < b[1] ? -1 : 1));
     for (let commit of sorted) {
       console.warn(`  ${commit[3]}`);
     }

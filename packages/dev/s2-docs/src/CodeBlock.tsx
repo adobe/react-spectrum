@@ -75,6 +75,7 @@ interface CodeBlockProps extends VisualExampleProps {
   files?: string[];
   expanded?: boolean;
   hidden?: boolean;
+  hideCode?: boolean;
   showCoachMark?: boolean;
 }
 
@@ -85,6 +86,7 @@ export function CodeBlock({
   files,
   expanded,
   hidden,
+  hideCode,
   ...props
 }: CodeBlockProps) {
   if (hidden) {
@@ -147,19 +149,21 @@ export function CodeBlock({
   return (
     <div role="group" aria-label="Example" className={example}>
       <ExampleOutput component={render} align={props.align} />
-      <div>
-        {files ? (
-          <Files
-            files={files}
-            downloadFiles={downloadFiles.files}
-            maxLines={expanded ? Infinity : 6}
-            type={props.type}>
-            {content}
-          </Files>
-        ) : (
-          content
-        )}
-      </div>
+      {!hideCode && (
+        <div>
+          {files ? (
+            <Files
+              files={files}
+              downloadFiles={downloadFiles.files}
+              maxLines={expanded ? Infinity : 6}
+              type={props.type}>
+              {content}
+            </Files>
+          ) : (
+            content
+          )}
+        </div>
+      )}
     </div>
   );
 }
