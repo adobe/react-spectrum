@@ -47,13 +47,8 @@ import {useScale} from './utils';
 
 export interface SideNavProps<T>
   extends
-    Omit<
-      RACSideNavProps<T>,
-      'style' | 'className' | 'render' | 'selectedRoute' | keyof GlobalDOMAttributes
-    >,
+    Omit<RACSideNavProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>,
     UnsafeStyles {
-  /** The route that is currently selected. */
-  selectedRoute?: string | null;
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
 }
