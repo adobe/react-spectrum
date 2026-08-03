@@ -341,6 +341,9 @@ export interface PromptTokenFieldProps {
   pixelLoader?: Cell[] | Cell[][];
   placeholder?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  // TODO: temp api for coworker so that the weird popover shrinking behavior
+  // doesn't appear when rendering near edge of page
+  menuWidth?: number;
 }
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
@@ -350,6 +353,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     children,
     pixelLoader,
     placeholder,
+    menuWidth,
     onKeyDown: onKeyDownProp
   } = props;
   let {keyboardProps} = useKeyboard({onKeyDown: onKeyDownProp});
@@ -472,6 +476,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           filterAnchor={filterAnchor}
           items={useDeferredValue(items)}
           isFocused={isFocused}
+          menuWidth={menuWidth}
         />
       </Autocomplete>
     </div>
@@ -482,10 +487,12 @@ export interface PromptTokenFieldPopoverProps extends Omit<PopoverProps, 'should
   filterAnchor?: Position | null;
   items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   isFocused?: boolean;
+  // TODO: temp for coworker see above comment
+  menuWidth?: number;
 }
 
 function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
-  let {filterAnchor, items, isFocused} = props;
+  let {filterAnchor, items, isFocused, menuWidth} = props;
   let {inputRef} = useContext(PromptFieldContext);
 
   let resolvedItems = items instanceof Promise ? use(items) : items;
@@ -505,6 +512,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       isNonModal
       hideArrow
       placement="bottom start"
+      UNSAFE_style={menuWidth != null ? {width: menuWidth} : undefined}
       getTargetRect={target => {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>

@@ -90,6 +90,10 @@ const meta: Meta<typeof PromptField> = {
     placeholder: {
       control: 'text',
       table: {category: 'PromptTokenField'}
+    },
+    menuWidth: {
+      control: 'number',
+      table: {category: 'PromptTokenField'}
     }
   },
   args: {
@@ -98,6 +102,7 @@ const meta: Meta<typeof PromptField> = {
     attachmentVariant: 'thumbnail',
     attachmentInvalid: false,
     placeholder: undefined,
+    menuWidth: undefined,
     ...getActionArgs(events)
   },
   title: 'AI/PromptField',
@@ -282,7 +287,7 @@ let prompts = [
 ];
 
 function EverythingRender(args) {
-  let {placeholder, ...otherArgs} = args;
+  let {placeholder, menuWidth, ...otherArgs} = args;
   let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
   let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
@@ -441,6 +446,7 @@ function EverythingRender(args) {
           }
           pixelLoader={data[args.pixelLoader]}
           placeholder={placeholder}
+          menuWidth={menuWidth}
           onKeyDown={onKeyDown}>
           {segment => (
             <PromptToken>
