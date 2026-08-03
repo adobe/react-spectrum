@@ -112,18 +112,21 @@ async function main() {
   })();
   console.log(`Generating testing sheet for ${startDate} – ${endDate}...`);
 
-  let {v3PRs, s2PRs, racPRs, otherPRs, offPRs, counts} = await generateData(startDate, endDate);
+  let {v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs, counts} = await generateData(
+    startDate,
+    endDate
+  );
   console.log(
-    `Found: V3=${counts.v3}, S2=${counts.s2}, RAC=${counts.rac}, Other=${counts.other}, Off PRs=${counts.offPRs}`
+    `Found: V3=${counts.v3}, S2=${counts.s2}, RAC=${counts.rac}, AI=${counts.ai}, Other=${counts.other}, Off PRs=${counts.offPRs}`
   );
 
-  let buffer = await createTestingSheet({v3PRs, s2PRs, racPRs, otherPRs, offPRs});
+  let buffer = await createTestingSheet({v3PRs, s2PRs, racPRs, aiPRs, otherPRs, offPRs});
 
   let startLabel = formatDateLabel(startDate);
   let endLabel = formatDateLabel(endDate);
-  let total = counts.v3 + counts.s2 + counts.rac + counts.other;
+  let total = counts.v3 + counts.s2 + counts.rac + counts.ai + counts.other;
   let filename = `${endLabel}.xlsx`;
-  let message = `*Testing sheet for ${startLabel} – ${endLabel}*\nV3: ${counts.v3} | S2: ${counts.s2} | RAC: ${counts.rac} | Other: ${counts.other} | Off PR: ${counts.offPRs} | Total: ${total}`;
+  let message = `*Testing sheet for ${startLabel} – ${endLabel}*\nV3: ${counts.v3} | S2: ${counts.s2} | RAC: ${counts.rac} | AI: ${counts.ai} | Other: ${counts.other} | Off PR: ${counts.offPRs} | Total: ${total}`;
 
   if (isLocal) {
     let outPath = path.resolve(process.cwd(), filename);
