@@ -231,6 +231,7 @@ export function PixelLoader(props: PixelLoaderProps) {
         height: size,
         lineHeight: 0,
         position: 'relative',
+        // @ts-ignore
         forcedColorAdjust: 'none'
       }}
       {...rest}>
@@ -239,22 +240,21 @@ export function PixelLoader(props: PixelLoaderProps) {
         let x = (c.cx - 120) / CELL;
         let y = (c.cy - 120) / CELL;
 
-        // Convex-corner rounding: round a corner only when both orthogonal neighbors toward it are absent.
+        // Convex-corner rounding: round a corner only when both orthogonal neighbors toward it,
+        // and the diagonal neighbor toward it, are all absent.
         let left = matrix[y][x - 1];
         let right = matrix[y][x + 1];
         let top = matrix[y - 1]?.[x];
         let bottom = matrix[y + 1]?.[x];
-        let corner = (a, b) => (!a && !b ? '1px' : '0px');
+        let topLeft = matrix[y - 1]?.[x - 1];
+        let topRight = matrix[y - 1]?.[x + 1];
+        let bottomLeft = matrix[y + 1]?.[x - 1];
+        let bottomRight = matrix[y + 1]?.[x + 1];
+        let corner = (a, b, diag) => (!a && !b && !diag ? '1px' : '0px');
 
         // Adjust position for outer cells on high DPI displays.
         let xPx = x * cellSize + offset;
         let yPx = y * cellSize + offset;
-        if (isHighDPI && c.outer && xPx > size / 2) {
-          xPx -= 0.5;
-        }
-        if (isHighDPI && c.outer && yPx > size / 2) {
-          yPx -= 0.5;
-        }
 
         return (
           <div
@@ -263,9 +263,9 @@ export function PixelLoader(props: PixelLoaderProps) {
               position: 'absolute',
               left: xPx,
               top: yPx,
-              width: cellSize + (isHighDPI && c.outer ? 0.5 : 0),
-              height: cellSize + (isHighDPI && c.outer ? 0.5 : 0),
-              borderRadius: `${corner(left, top)} ${corner(right, top)} ${corner(right, bottom)} ${corner(left, bottom)}`,
+              width: cellSize,
+              height: cellSize,
+              borderRadius: `${corner(left, top, topLeft)} ${corner(right, top, topRight)} ${corner(right, bottom, bottomRight)} ${corner(left, bottom, bottomLeft)}`,
               backgroundColor: color,
               ...(isPlaying && {
                 animation:
