@@ -1,0 +1,141 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'July 31, 2026';
+export const title = 'v1.6.0';
+export const description = 'This release adds the long-awaited SideNav component for app navigation sidebars, context menu support in MenuTrigger, and support for textfields and other interactive elements in TableView cells.';
+export const isSubpage = true;
+
+# v1.6.0
+
+This release introduces the new [SideNav](../SideNav) component for building app navigation sidebars, adds `trigger="contextMenu"` support to [MenuTrigger](../Menu#context-menu), and lets [TableView](../TableView#keyboard-navigation) cells hold interactive content like TextFields. 
+
+```tsx render hideCode
+"use client";
+import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNav';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import UserGroup from '@react-spectrum/s2/icons/UserGroup';
+import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
+import Files from '@react-spectrum/s2/icons/Files';
+import Images from '@react-spectrum/s2/icons/Images';
+import Animation from '@react-spectrum/s2/icons/Animation';
+import Download from '@react-spectrum/s2/icons/Download';
+import Apps from '@react-spectrum/s2/icons/Apps';
+import {RouterProvider} from 'react-aria-components';
+import React, {useState} from 'react';
+
+function RoutedSideNav(props) {
+  let {children} = props;
+  let [selectedRoute, setSelectedRoute] = useState<string>(props.defaultSelectedRoute);
+
+  let updateSelection = (href: string) => {
+    setSelectedRoute(href);
+  };
+
+  return <RouterProvider navigate={updateSelection}>{children({selectedRoute})}</RouterProvider>;
+}
+
+<RoutedSideNav defaultSelectedRoute="/files">
+  {({selectedRoute}) => (
+    <SideNav aria-label="Files" selectedRoute={selectedRoute} styles={style({width: 210})}>
+      <SideNavSection>
+        <SideNavHeader>Favorites</SideNavHeader>
+        <SideNavItem href="/applications" textValue="Applications">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Apps />
+              <Text>Applications</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem href="/downloads" textValue="Downloads">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Download />
+              <Text>Downloads</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavSection>
+      <SideNavSection>
+        <SideNavHeader>Workspaces</SideNavHeader>
+        <SideNavItem href="/files" textValue="Files">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Files />
+              <Text>Files</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem href="/your-libraries" textValue="Your Libraries">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <CCLibrary />
+              <Text>Your Libraries</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem href="/photos" textValue="Photos">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Images />
+                <Text>Photos</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+        <SideNavItem href="/shared-with-you" id="shared-with-you" textValue="Shared with You">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <UserGroup />
+              <Text>Shared with You</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem href="/animations" textValue="Animations">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Animation />
+                <Text>Animations</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+      </SideNavSection>
+    </SideNav>
+  )}
+</RoutedSideNav>
+```
+
+## Changelog
+
+### General Changes
+- Adds support for chaining multiple keyboard shortcut handlers - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10200)
+### Dialog
+- Adds `aria-describedby` support so AlertDialog content is announced to assistive technology - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/9924)
+### Menu
+- Adds `trigger="contextMenu"` support to MenuTrigger for showing menus on right-click or long-press - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10237)
+### SideNav
+- Adds SideNav component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
+### Switch
+- Fixes Switch's hidden native input positioning so it doesn't shift layout  - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10336)
+### Table
+- Adds support for TextField and other interactive components inside Table cells using `keyboardNavigationBehavior="tab"`- [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10159)
+### TextArea
+- Fixes empty TextArea height jumping when an overlay is open - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9933)
+### Toast
+- Allows an `id` prop to be passed through to the DOM on Toast - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10342)
