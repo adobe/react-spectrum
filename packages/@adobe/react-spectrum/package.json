@@ -1,6 +1,6 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.47.2",
+  "version": "3.47.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "./dist/exports/index.cjs",
@@ -52,16 +52,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.2",
-    "@react-types/shared": "^3.36.0",
+    "@internationalized/date": "^3.12.3",
+    "@react-types/shared": "^3.36.1",
     "@spectrum-icons/ui": "^3.7.1",
     "@spectrum-icons/workflow": "^4.3.1",
     "@swc/helpers": "^0.5.0",
     "client-only": "^0.0.1",
     "clsx": "^2.0.0",
-    "react-aria": "3.50.0",
-    "react-aria-components": "1.19.0",
-    "react-stately": "3.48.0",
+    "react-aria": "3.51.0",
+    "react-aria-components": "1.20.0",
+    "react-stately": "3.49.0",
     "react-transition-group": "^4.4.5",
     "use-sync-external-store": "^1.6.0"
   },
