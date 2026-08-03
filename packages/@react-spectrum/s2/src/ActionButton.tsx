@@ -280,7 +280,7 @@ export const btnStyles = style<
     },
     '--iconWidth': {
       type: 'width',
-      value: fontRelative(20)
+      value: fontRelative(18)
     },
     '--badgePosition': {
       type: 'width',
@@ -402,7 +402,7 @@ export const ActionButton = forwardRef(function ActionButton(
                 {
                   render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon'})}),
                   styles: style({
-                    size: fontRelative(20),
+                    size: fontRelative(18),
                     marginStart: '--iconMargin',
                     visibility: {
                       isProgressVisible: 'hidden'

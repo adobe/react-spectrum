@@ -163,7 +163,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(
                       })
                     }),
                     styles: style({
-                      size: fontRelative(20),
+                      size: fontRelative(18),
                       marginStart: '--iconMargin'
                     })
                   }

@@ -63,7 +63,7 @@ export let iconCenterWrapper = style({
 
 export let icon = style({
   display: 'block',
-  size: fontRelative(20),
+  size: fontRelative(18),
   marginEnd: 'text-to-visual',
   '--iconPrimary': {
     type: 'fill',
