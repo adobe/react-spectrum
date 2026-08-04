@@ -37,6 +37,7 @@ import {
   fontSizeToken,
   generateOverlayColorScale,
   getToken,
+  getSetToken,
   shadowToken,
   simpleColorScale,
   weirdColorToken
@@ -427,24 +428,80 @@ export function space(this: MacroContext | void, px: number): string {
 
 const relativeSpacing = {
   // font-size relative values
+  /**
+   * @deprecated Use `controlGap()` from `style-utils`, which selects a `base-gap-*` tier per
+   *   component size.
+   */
   'text-to-control': fontRelative(10),
+  /**
+   * @deprecated Use `controlGap()` from `style-utils`, which selects a `base-gap-*` tier per
+   *   component size.
+   */
   'text-to-visual': {
     default: fontRelative(6), // -> 5px, 5px, 6px, 7px, 8px
     touch: fontRelative(8, 17) // -> 6px, 7px, 8px, 9px, 10px, should be 7px, 7px, 8px, 9px, 11px
   },
   // height relative values
+  /**
+   * @deprecated Use `controlPadding()` from `style-utils`, which selects a
+   *   `base-padding-horizontal-*` tier per component size.
+   */
   'edge-to-text': 'calc(self(height, self(minHeight)) * 3 / 8)',
   pill: 'calc(self(height, self(minHeight)) / 2)'
 } as const;
 
+// Base gap/padding tiers, selected per component size at the call site
+// (see `controlGap`/`controlPadding` in `style-utils`). The token holds the
+// desktop value; the `--s2-scale` variable produces the touch value.
+const sizeSpacing = {
+  'base-gap-extra-small': size(parseFloat(getToken('base-gap-extra-small'))),
+  'base-gap-small': size(parseFloat(getToken('base-gap-small'))),
+  'base-gap-medium': size(parseFloat(getToken('base-gap-medium'))),
+  'base-gap-large': size(parseFloat(getToken('base-gap-large'))),
+  'base-gap-extra-large': size(parseFloat(getToken('base-gap-extra-large'))),
+  'base-padding-horizontal-extra-small': size(
+    parseFloat(getSetToken('base-padding-horizontal-extra-small'))
+  ),
+  'base-padding-horizontal-small': size(parseFloat(getSetToken('base-padding-horizontal-small'))),
+  'base-padding-horizontal-medium': size(parseFloat(getSetToken('base-padding-horizontal-medium'))),
+  'base-padding-horizontal-large': size(parseFloat(getSetToken('base-padding-horizontal-large'))),
+  'base-padding-horizontal-extra-large': size(
+    parseFloat(getSetToken('base-padding-horizontal-extra-large'))
+  ),
+  'base-padding-horizontal-2x-large': size(
+    parseFloat(getSetToken('base-padding-horizontal-2x-large'))
+  ),
+  'base-padding-vertical-extra-small': size(
+    parseFloat(getToken('base-padding-vertical-extra-small'))
+  ),
+  'base-padding-vertical-small': size(parseFloat(getToken('base-padding-vertical-small'))),
+  'base-padding-vertical-medium': size(parseFloat(getToken('base-padding-vertical-medium'))),
+  'base-padding-vertical-large': size(parseFloat(getToken('base-padding-vertical-large'))),
+  'base-padding-vertical-extra-large': size(
+    parseFloat(getToken('base-padding-vertical-extra-large'))
+  ),
+  'base-padding-vertical-2x-large': size(parseFloat(getToken('base-padding-vertical-2x-large'))),
+  'banner-gap-horizontal': size(parseFloat(getToken('banner-gap-horizontal'))),
+  'banner-gap-vertical': size(parseFloat(getToken('banner-gap-vertical'))),
+  'banner-padding-horizontal': size(parseFloat(getToken('banner-padding-horizontal'))),
+  'banner-padding-horizontal-compact': size(
+    parseFloat(getToken('banner-padding-horizontal-compact'))
+  ),
+  'banner-padding-vertical': size(parseFloat(getToken('banner-padding-vertical'))),
+  'popover-padding': size(parseFloat(getToken('popover-padding'))),
+  'popover-gap': size(parseFloat(getToken('popover-gap')))
+} as const;
+
 const spacing = {
   ...baseSpacing,
-  ...relativeSpacing
+  ...relativeSpacing,
+  ...sizeSpacing
 };
 
 const padding = {
   ...basePadding,
-  ...relativeSpacing
+  ...relativeSpacing,
+  ...sizeSpacing
 };
 
 /**

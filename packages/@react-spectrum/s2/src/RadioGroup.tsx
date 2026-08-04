@@ -23,6 +23,7 @@ import {CenterBaseline} from './CenterBaseline';
 import {ContextValue} from 'react-aria-components/slots';
 import {
   controlFont,
+  controlGap,
   controlSize,
   field,
   getAllowedOverrides,
@@ -232,7 +233,7 @@ const radioField = style(
       default: ['max-content', '1fr'],
       isNoVisibleLabel: ['max-content']
     },
-    columnGap: 'text-to-control',
+    columnGap: controlGap(),
     alignContent: 'start',
     font: controlFont(),
     '--field-height': {

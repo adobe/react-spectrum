@@ -317,7 +317,7 @@ const innerDivStyle = style(
   {
     padding: {
       padding: {
-        default: 8,
+        default: 'popover-padding',
         none: 0
       }
     },

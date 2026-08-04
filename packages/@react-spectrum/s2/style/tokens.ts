@@ -27,6 +27,14 @@ export function getToken(name: TokenName): string {
   return (tokens[name] as any).value;
 }
 
+// Some dimension tokens store their value under a responsive set (e.g. desktop/mobile)
+// rather than a top-level `value`. In S2 the touch scale is applied via the `--s2-scale`
+// CSS variable, so we read the desktop value and let that variable produce the touch value.
+export function getSetToken(name: TokenName, set: 'desktop' | 'mobile' = 'desktop'): string {
+  let token = tokens[name] as any;
+  return token.sets ? token.sets[set].value : token.value;
+}
+
 export interface ColorToken {
   type: 'color';
   light: string;
