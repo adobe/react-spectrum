@@ -216,6 +216,13 @@ const containerHue = css(`
       oklch(from ${token('container.gradient.con-hue.generating.stop-1')} l c h / var(--con-hue-opacity)),
       transparent
     );
+
+  --rotation: 7deg;
+  --translation: 44px;
+  @supports (rotate: atan(1px / 1cqw)) {
+    --rotation: atan(30px / 50cqw);
+    --translation: clamp(44px, 44px * (800px / 100cqw), 72px);
+  }
 `);
 
 const overlay = css(`
@@ -227,11 +234,16 @@ const overlay = css(`
     );
 `);
 
+/* The rotation and translation animations use the computed variables above, which adjust depending
+   on the container width (when division with units is supported - everywhere except Firefox).
+   The rotation is calculated based on the desired "lift" amount, which is (width / 2) * sin(angle).
+   The translation is based on a ratio with the full size reference width (800px). Both translation
+   and rotation increase at smaller widths to make the motion more visible in that space. */
 const rotation = keyframes(`
   0% { rotate: 0rad }
-  25% { rotate: 0.122rad }
+  25% { rotate: var(--rotation) }
   50% { rotate: 0rad }
-  75% { rotate: -0.122rad }
+  75% { rotate: calc(-1 * var(--rotation)) }
   100% { rotate: 0rad }
 `);
 
@@ -240,9 +252,9 @@ const translation = keyframes(`
     animation-timing-function: ease-in-out;
     translate: 0px 0px;
   }
-  
+
   50% {
-    translate: 0px 44px;
+    translate: 0px var(--translation);
   }
 
   100% {
@@ -256,7 +268,7 @@ const scale = keyframes(`
   }
 
   50% {
-    scale: 3 1.25;
+    scale: 3 1;
   }
 
   100% {
@@ -341,7 +353,12 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       className={
         outerBorder +
         // outline for WHCM
-        style({outlineStyle: 'solid', outlineColor: 'transparent', outlineWidth: 1})
+        style({
+          outlineStyle: 'solid',
+          outlineColor: 'transparent',
+          outlineWidth: 1,
+          containerType: 'inline-size'
+        })
       }
       style={{
         ...props.style,
@@ -394,8 +411,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
               style({
                 pointerEvents: 'none',
                 position: 'absolute',
-                inset: 0,
-                insetY: '[-44px]',
+                inset: '[-44px]',
                 animation: {
                   default: 'none',
                   isGenerating: `${translation}, ${rotation}, ${scale}`,
