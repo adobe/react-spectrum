@@ -145,7 +145,7 @@ export async function pressElement(
 ): Promise<void> {
   if (interactionType === 'mouse') {
     // Add coords with pressure so this isn't detected as a virtual click
-    await user.pointer({target: element, keys: '[MouseLeft]', coords: {pressure: 0.5}});
+    await user.pointer({target: element, keys: '[MouseLeft]'});
   } else if (interactionType === 'keyboard') {
     act(() => element.focus());
     await user.keyboard('[Space]');
