@@ -12,6 +12,7 @@
 
 import {ActionButtonGroup} from './ActionButtonGroup';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {banner, StyleProps} from './style-utils' with {type: 'macro'};
 import {CloseButton} from './CloseButton';
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {
@@ -31,7 +32,6 @@ import {DOMProps, DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../intl/*.json';
 import {lightDark, style} from '../style' with {type: 'macro'};
-import {StyleProps} from './style-utils' with {type: 'macro'};
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
@@ -42,6 +42,7 @@ import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 const actionBarStyles = style({
+  ...banner(),
   borderRadius: 'lg',
   '--s2-container-bg': {
     type: 'backgroundColor',
@@ -60,10 +61,7 @@ const actionBarStyles = style({
     isEmphasized: 'transparent',
     forcedColors: 'ButtonBorder'
   },
-  paddingX: 8,
-  paddingY: 12,
   display: 'flex',
-  gap: 16,
   alignItems: 'center',
   position: {
     isInContainer: 'absolute'
@@ -194,7 +192,14 @@ const ActionBarInner = forwardRef(function ActionBarInner(
         {...keyboardProps}
         className={
           (props.UNSAFE_className || '') +
-          actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})
+          actionBarStyles({
+            isEmphasized,
+            isInContainer: !!scrollRef,
+            isEntering,
+            isExiting,
+            orientation: 'horizontal',
+            density: 'compact'
+          })
         }
         style={{
           insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`,

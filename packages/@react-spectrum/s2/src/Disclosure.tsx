@@ -34,6 +34,16 @@ import Chevron from '../ui-icons/Chevron';
 
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
+  controlGap,
+  controlPadding,
+  verticalPadding,
+  getAllowedOverrides,
+  StyleProps,
+  StylesPropWithFont,
+  UnsafeStyles,
+  horizontalPadding
+} from './style-utils' with {type: 'macro'};
+import {
   DisclosureStateContext,
   Disclosure as RACDisclosure,
   DisclosurePanel as RACDisclosurePanel,
@@ -41,12 +51,6 @@ import {
   DisclosureProps as RACDisclosureProps
 } from 'react-aria-components/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {
-  getAllowedOverrides,
-  StyleProps,
-  StylesPropWithFont,
-  UnsafeStyles
-} from './style-utils' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from './useDOMRef';
@@ -189,9 +193,9 @@ const buttonStyles = style(
     display: 'flex',
     flexGrow: 1,
     alignItems: 'baseline',
-    paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
+    paddingX: controlPadding(),
     paddingY: centerPadding(),
-    gap: 'calc(self(minHeight) * 3/8 - 1px)',
+    gap: controlPadding(),
     minHeight: {
       // compact is equivalent to 'control', but other densities have more padding.
       size: {
@@ -359,16 +363,9 @@ const panelStyles = style({
 });
 
 const panelInner = style({
-  paddingTop: 8,
-  paddingBottom: 16,
-  paddingX: {
-    size: {
-      S: 8,
-      M: space(9),
-      L: 12,
-      XL: space(15)
-    }
-  }
+  paddingTop: verticalPadding('L'),
+  paddingBottom: verticalPadding('2XL'),
+  paddingX: controlPadding()
 });
 
 /**

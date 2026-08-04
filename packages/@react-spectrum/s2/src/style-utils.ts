@@ -236,6 +236,74 @@ const controlSizeS = {
   }
 } as const;
 
+// Base Gap
+export const controlGap = () =>
+  ({
+    default: 'base-gap-medium',
+    size: {
+      XS: 'base-gap-extra-small',
+      S: 'base-gap-small',
+      L: 'base-gap-large',
+      XL: 'base-gap-extra-large'
+    }
+  }) as const;
+
+// Base Horizontal Padding - dynamic
+export const controlPadding = () =>
+  ({
+    default: 'base-padding-horizontal-medium',
+    size: {
+      XS: 'base-padding-horizontal-extra-small',
+      S: 'base-padding-horizontal-small',
+      L: 'base-padding-horizontal-large',
+      XL: 'base-padding-horizontal-extra-large',
+      '2XL': 'base-padding-horizontal-2x-large'
+    }
+  }) as const;
+
+const verticalPaddingTokens = {
+  XS: 'base-padding-vertical-extra-small',
+  S: 'base-padding-vertical-small',
+  M: 'base-padding-vertical-medium',
+  L: 'base-padding-vertical-large',
+  XL: 'base-padding-vertical-extra-large',
+  '2XL': 'base-padding-vertical-2x-large'
+} as const;
+
+const horizontalPaddingTokens = {
+  XS: 'base-padding-horizontal-extra-small',
+  S: 'base-padding-horizontal-small',
+  M: 'base-padding-horizontal-medium',
+  L: 'base-padding-horizontal-large',
+  XL: 'base-padding-horizontal-extra-large',
+  '2XL': 'base-padding-horizontal-2x-large'
+} as const;
+
+// Base Vertical Padding - static
+export const verticalPadding = (size: keyof typeof verticalPaddingTokens = 'M') =>
+  verticalPaddingTokens[size];
+
+// Base Horizontal Padding - static
+export const horizontalPadding = (size: keyof typeof horizontalPaddingTokens = 'M') =>
+  horizontalPaddingTokens[size];
+
+export const banner = () =>
+  ({
+    paddingX: {
+      density: {
+        default: 'banner-padding-horizontal',
+        compact: 'banner-padding-horizontal-compact'
+      }
+    },
+    paddingY: 'banner-padding-vertical',
+    gap: {
+      orientation: {
+        horizontal: 'banner-gap-horizontal',
+        vertical: 'banner-gap-vertical'
+      }
+    }
+  }) as const;
+
 // This generates the border radius for t-shirt sizes using the
 // Major Second logarithmic scale.
 export const controlBorderRadius = (size: 'default' | 'sm' = 'default') =>
@@ -274,8 +342,11 @@ interface ControlResult {
   height?: ReturnType<typeof controlSize>;
   display?: 'flex';
   alignItems?: 'center' | {default: 'baseline'; [iconOnly]: 'center'};
-  columnGap?: 'text-to-visual';
-  paddingX?: 'pill' | 'edge-to-text' | {default: 'pill' | 'edge-to-text'; [iconOnly]: 0};
+  columnGap?: ReturnType<typeof controlGap>;
+  paddingX?:
+    | 'pill'
+    | ReturnType<typeof controlPadding>
+    | {default: 'pill' | ReturnType<typeof controlPadding>; [iconOnly]: 0};
   paddingY?: 0 | `[${string}]`;
 }
 
@@ -286,7 +357,7 @@ const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
  * The text can optionally wrap, aligning the icon with the first line of text.
  */
 export function control(options: ControlOptions): ControlResult {
-  let paddingX = options.shape === 'pill' ? ('pill' as const) : ('edge-to-text' as const);
+  let paddingX = options.shape === 'pill' ? ('pill' as const) : controlPadding();
   let result: ControlResult = {
     font: controlFont(),
     display: 'flex',
@@ -303,7 +374,7 @@ export function control(options: ControlOptions): ControlResult {
   }
 
   if (options.icon) {
-    result.columnGap = 'text-to-visual';
+    result.columnGap = controlGap();
     result.paddingX = {
       default: paddingX,
       [iconOnly]: 0
