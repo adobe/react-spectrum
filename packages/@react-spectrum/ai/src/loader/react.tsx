@@ -149,7 +149,7 @@ function cellScaleKeyframes(name, c, total) {
   return emitKeyframes(
     name,
     [
-      {f: 0, decl: sc(ENT_FLOOR)},
+      {f: 0, decl: sc(0)},
       {f: inStart, decl: sc(ENT_FLOOR), ease: EASE.scaleIn},
       {f: inEnd, decl: sc(1)},
       {f: outStart, decl: sc(1), ease: EASE.scaleOut},

@@ -63,7 +63,7 @@ const containerBackground = css(`
 
   background:
     radial-gradient(
-      circle at right bottom,
+      circle at right bottom in oklch,
       var(--bg-stop-1) 0%,
       var(--bg-stop-2) 35%,
       var(--bg-stop-3) 82%,
@@ -202,18 +202,18 @@ const insetShadow = css(`
 const containerHue = css(`
   background:
     radial-gradient(
-      50% 50% at -20% 100%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-3')} r g b / var(--con-hue-opacity)),
+      50% 50% at -20% 100% in oklch,
+      oklch(from ${token('container.gradient.con-hue.generating.stop-3')} l c h / var(--con-hue-opacity)),
       transparent
     ),
     radial-gradient(
-      70% 60% at 5% 80%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-2')} r g b / var(--con-hue-opacity)),
+      70% 60% at 5% 80% in oklch,
+      oklch(from ${token('container.gradient.con-hue.generating.stop-2')} l c h / var(--con-hue-opacity)),
       transparent
     ),
     radial-gradient(
-      70% 50% at 40% 80%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-1')} r g b / var(--con-hue-opacity)),
+      70% 50% at 40% 80% in oklch,
+      oklch(from ${token('container.gradient.con-hue.generating.stop-1')} l c h / var(--con-hue-opacity)),
       transparent
     );
 `);
@@ -221,31 +221,46 @@ const containerHue = css(`
 const overlay = css(`
   background: 
     linear-gradient(
-      to bottom,
-      light-dark(rgb(255 255 255 / 75%), rgb(0 0 0 / 40%)) 0% 37%,
-      light-dark(rgb(255 255 255 / 15%), rgb(0 0 0 / 12%)) 83% 100%
+      to bottom in oklch,
+      light-dark(oklch(from white l c h / 75%), oklch(from black l c h / 40%)) 0% 37%,
+      light-dark(oklch(from white l c h / 15%), oklch(from black l c h / 12%)) 83% 100%
     );
 `);
 
-const animation = keyframes(`
+const rotation = keyframes(`
+  0% { rotate: 0rad }
+  25% { rotate: 0.122rad }
+  50% { rotate: 0rad }
+  75% { rotate: -0.122rad }
+  100% { rotate: 0rad }
+`);
+
+const translation = keyframes(`
   0% {
-    transform: rotate(0rad) translate(0px, 0px) scale(1);
+    animation-timing-function: ease-in-out;
+    translate: 0px 0px;
   }
-
-  25% {
-    transform: rotate(0.122rad) translate(0px, 22px) scale(1.125);
-  }
-
+  
   50% {
-    transform: rotate(0rad) translate(0px, 44px) scale(1.25);
-  }
-
-  75% {
-    transform: rotate(-0.122rad) translate(0px, 22px) scale(1.125);
+    translate: 0px 44px;
   }
 
   100% {
-    transform: rotate(0rad) translate(0px, 0px) scale(1);
+    translate: 0px 0px;
+  }
+`);
+
+const scale = keyframes(`
+  0% {
+    scale: 1 1;
+  }
+
+  50% {
+    scale: 3 1.25;
+  }
+
+  100% {
+    scale: 1 1;
   }
 `);
 
@@ -256,7 +271,7 @@ const outerBorder = css(`
   border-radius: calc(24px + 6px);
   transition: --bg-stop-1 ${STATE_TRANSITION}, --bg-stop-2 ${STATE_TRANSITION}, --bg-stop-3 ${STATE_TRANSITION}, box-shadow ${STATE_TRANSITION};
   background: linear-gradient(
-    to right,
+    to right in oklch,
     var(--bg-stop-1) 0%,
     var(--bg-stop-2) 37%,
     var(--bg-stop-3) 77%
@@ -380,13 +395,17 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 pointerEvents: 'none',
                 position: 'absolute',
                 inset: 0,
-                top: '[-44px]',
-                bottom: '[-44px]'
-              })
+                insetY: '[-44px]',
+                animation: {
+                  default: 'none',
+                  isGenerating: `${translation}, ${rotation}, ${scale}`,
+                  '@media (prefers-reduced-motion: reduce)': 'none'
+                },
+                animationDuration: '2s, 3s, 4s',
+                animationTimingFunction: 'linear',
+                animationIterationCount: 'infinite'
+              })({isGenerating})
             }
-            style={{
-              animation: isGenerating ? `${animation} 2s infinite linear` : undefined
-            }}
           />
           <div
             className={

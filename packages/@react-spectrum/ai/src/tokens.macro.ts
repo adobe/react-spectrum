@@ -109,7 +109,7 @@ export function token(name: string) {
 export function mix(gray: string, stop: string, opacity: string) {
   let stopColor = token(stop);
   let stopOpacity = token(opacity);
-  return `color-mix(in srgb, ${gray}, ${stopColor} ${stopOpacity}%)`;
+  return `color-mix(in oklch, ${gray}, ${stopColor} ${stopOpacity}%)`;
 }
 
 export function stop(gray: string, stop: string, opacity: string) {
@@ -164,7 +164,7 @@ function outerBorderStop(stop: number, variant: string, colorScheme: string, div
   if (colorScheme === 'light') {
     opacity = opacity / div;
   }
-  return `rgb(from ${token(`outer-border.gradient.ob-hue.stop-${stop}.${colorScheme}`)} r g b / ${opacity}%)`;
+  return `oklch(from ${token(`outer-border.gradient.ob-hue.stop-${stop}.${colorScheme}`)} l c h / ${opacity}%)`;
 }
 
 export function keyframes(this: any | void, css: string): string {
