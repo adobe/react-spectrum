@@ -237,12 +237,14 @@ export interface PixelLoaderProps {
 export function PixelLoader(props: PixelLoaderProps) {
   const {
     size = 21,
-    isPlaying = true,
+    isPlaying: isPlayingProp = true,
     icon = aiLogo,
     color = 'currentColor',
     className,
     ...rest
   } = props;
+  let isReducedMotion = useReducedMotion();
+  let isPlaying = isReducedMotion ? false : isPlayingProp;
 
   // Normalize to a sequence.
   const sequence = React.useMemo(
@@ -357,4 +359,22 @@ export function PixelLoader(props: PixelLoaderProps) {
       })}
     </div>
   );
+}
+
+function useReducedMotion() {
+  const [isReducedMotion, setReducedMotion] = React.useState(false);
+  React.useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    let mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let update = () => {
+      setReducedMotion(mq.matches);
+    };
+
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+  return isReducedMotion;
 }
