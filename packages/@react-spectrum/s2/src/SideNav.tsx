@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from './ActionButton';
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
@@ -23,8 +24,10 @@ import {
 } from './style-utils' with {type: 'macro'};
 import Chevron from '../ui-icons/Chevron';
 import {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
+import {createIcon} from './Icon';
 import {DOMRef, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
+import intlMessages from '../intl/*.json';
 import {Link} from 'react-aria-components/Link';
 import {
   NavigationTree,
@@ -41,8 +44,11 @@ import {
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import {Text, TextContext} from './Content';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
+import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 
 export interface SideNavProps<T>
@@ -75,7 +81,10 @@ const sideNavWrapper = style(
   {
     minHeight: 0,
     height: 'full',
-    minWidth: 160,
+    minWidth: {
+      default: 160,
+      isInSidePanel: 'unset'
+    },
     display: 'flex',
     isolation: 'isolate',
     disableTapHighlight: true,
@@ -94,7 +103,10 @@ const tree = style({
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
-  width: 'full',
+  width: {
+    default: 'full',
+    isInSidePanel: 'unset'
+  },
   height: 'full',
   overflowY: 'auto',
   overflowX: 'hidden',
@@ -117,16 +129,17 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   let {children, UNSAFE_className, UNSAFE_style, selectedRoute, ...rest} = props;
 
   let domRef = useDOMRef(ref);
+  let isInSidePanel = !!useContext(SidePanelContext);
 
   return (
     <div
       ref={domRef}
-      className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
+      className={(UNSAFE_className ?? '') + sideNavWrapper({isInSidePanel}, props.styles)}
       style={UNSAFE_style}>
       <NavigationTree
         {...rest}
         selectedRoute={selectedRoute}
-        className={renderProps => tree(renderProps)}>
+        className={renderProps => tree({...renderProps, isInSidePanel})}>
         {children}
       </NavigationTree>
     </div>
@@ -168,7 +181,10 @@ const treeCellGrid = style({
   boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: [12, 'auto', 'auto', '1fr', 'auto', 'auto'],
+  gridTemplateColumns: {
+    default: [12, 'auto', 'auto', '1fr', 'auto', 'auto'],
+    isCollapsed: [12, 'auto', 'auto', '1fr', 0, 12]
+  },
   gridTemplateRows: '1fr',
   gridTemplateAreas: ['. level-padding icon content actions actionmenu'],
   paddingEnd: 4, // account for any focus rings on the last item in the cell
@@ -192,14 +208,21 @@ const treeCellGrid = style({
 
 const treeIcon = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual',
+  marginEnd: {
+    default: 'text-to-visual',
+    isCollapsed: 0
+  },
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
   }
 });
 
-const treeContent = style({
+const treeContent = style<{isCollapsed?: boolean}>({
+  display: {
+    default: 'block',
+    isCollapsed: 'none'
+  },
   gridArea: 'content',
   paddingY: `--centerPadding`
 });
@@ -326,6 +349,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
 };
 
 const SideNavItemContentInner = props => {
+  let {isCollapsed = false} = useContext(SidePanelContext);
   let {
     isExpanded,
     hasChildItems,
@@ -351,7 +375,8 @@ const SideNavItemContentInner = props => {
         className={treeCellGrid({
           isDisabled,
           isSelected: isCurrent,
-          isDescendantSelected: isCurrentAncestor && !isExpanded
+          isDescendantSelected: isCurrentAncestor && !isExpanded,
+          isCollapsed
         })}>
         <div
           className={indicator({
@@ -368,7 +393,7 @@ const SideNavItemContentInner = props => {
         />
         <Provider
           values={[
-            [TextContext, {styles: treeContent}],
+            [TextContext, {styles: treeContent({isCollapsed})}],
             [
               SideNavItemLinkContext,
               {
@@ -379,7 +404,7 @@ const SideNavItemContentInner = props => {
             [
               IconContext,
               {
-                render: centerBaseline({slot: 'icon', styles: treeIcon}),
+                render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
                 styles: style({size: fontRelative(20), flexShrink: 0})
               }
             ],
@@ -390,6 +415,7 @@ const SideNavItemContentInner = props => {
         </Provider>
       </div>
       <ExpandableRowChevron
+        isCollapsed={isCollapsed}
         isDisabled={isDisabled}
         isExpanded={isExpanded}
         scale={scale}
@@ -401,6 +427,7 @@ const SideNavItemContentInner = props => {
 
 interface ExpandableRowChevronProps {
   isExpanded?: boolean;
+  isCollapsed?: boolean;
   isDisabled?: boolean;
   isRTL?: boolean;
   scale: 'medium' | 'large';
@@ -408,6 +435,10 @@ interface ExpandableRowChevronProps {
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
+  display: {
+    default: 'flex',
+    isCollapsed: 'none'
+  },
   gridArea: 'expand-button',
   color: {
     default: 'inherit',
@@ -418,7 +449,6 @@ const expandButton = style<ExpandableRowChevronProps>({
   },
   height: 32,
   width: 32,
-  display: 'flex',
   flexWrap: 'wrap',
   alignContent: 'center',
   justifyContent: 'center',
@@ -447,7 +477,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     expandButtonRef,
     ButtonContext
   );
-  let {isExpanded, scale, isHidden} = fullProps;
+  let {isExpanded, scale, isHidden, isCollapsed} = fullProps;
   let {direction} = useLocale();
 
   return (
@@ -456,7 +486,14 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       ref={ref}
       slot="chevron"
       className={renderProps =>
-        expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})
+        expandButton({
+          ...renderProps,
+          isExpanded,
+          isCollapsed,
+          isRTL: direction === 'rtl',
+          scale,
+          isHidden
+        })
       }>
       <Chevron
         className={style({
@@ -519,16 +556,17 @@ export interface SideNavItemLinkProps {
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
+  let {isCollapsed = false} = useContext(SidePanelContext);
 
   return (
     <Link {...props} {...linkFocus} className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
       <Provider
         values={[
-          [TextContext, {styles: treeContent}],
+          [TextContext, {styles: treeContent({isCollapsed})}],
           [
             IconContext,
             {
-              render: centerBaseline({slot: 'icon', styles: treeIcon}),
+              render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
               styles: style({size: fontRelative(20), flexShrink: 0})
             }
           ]
@@ -538,3 +576,107 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
     </Link>
   );
 };
+
+interface SidePanelProps<T> extends Omit<SideNavProps<T>, 'children'> {
+  /** The content of the side panel. */
+  children?: ReactNode;
+  /** Whether the side panel is collapsed (controlled). */
+  isCollapsed?: boolean;
+  /** Whether the side panel is collapsed by default (uncontrolled). */
+  defaultCollapsed?: boolean;
+  /** Handler that is called when the collapsed state changes. */
+  onCollapsedChange?: (isCollapsed: boolean) => void;
+}
+
+const SidePanelContext = createContext<{
+  isCollapsed?: boolean;
+  setCollapsed?: (isCollapsed: boolean) => void;
+}>({});
+
+export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function SidePanelProps<T>(
+  props: SidePanelProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let domRef = useDOMRef(ref);
+  let [isCollapsed, setCollapsed] = useControlledState<boolean>(
+    props.isCollapsed,
+    props.defaultCollapsed ?? false,
+    props.onCollapsedChange
+  );
+
+  return (
+    <SidePanelContext.Provider value={{isCollapsed, setCollapsed}}>
+      <div
+        ref={domRef}
+        className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
+        <div className={style({flexGrow: 1, flexShrink: 1, minHeight: 0})}>{props.children}</div>
+        <div className={style({flexGrow: 0, flexShrink: 0})}>
+          <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
+        </div>
+      </div>
+    </SidePanelContext.Provider>
+  );
+});
+
+function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: boolean) => void}) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+
+  let label = stringFormatter.format(`sidepanel.${props.isCollapsed ? 'expand' : 'collapse'}`);
+
+  return (
+    <PanelToggleButton
+      isCollapsed={props.isCollapsed}
+      setCollapsed={props.setCollapsed}
+      aria-label={label}
+    />
+  );
+}
+
+function PanelToggleButton({isCollapsed, setCollapsed}: any) {
+  let [isHovered, setHovered] = useState(false);
+  let {hoverProps} = useHover({onHoverChange: setHovered});
+  return (
+    <div {...hoverProps} className={style({display: 'contents'})}>
+      <ActionButton
+        isQuiet
+        styles={style({alignSelf: 'start'})}
+        onPress={() => {
+          setCollapsed(!isCollapsed);
+          setHovered(false);
+        }}>
+        {/* @ts-ignore */}
+        <PanelIcon isCollapsed={isCollapsed} isHovered={isHovered} />
+      </ActionButton>
+    </div>
+  );
+}
+
+const PanelIcon = createIcon(props => {
+  let {isCollapsed, isHovered, ...otherProps} = props as any;
+  return (
+    <svg viewBox="0 0 20 20" fill="var(--iconPrimary)" {...otherProps}>
+      <path
+        d="M15.75 18H4.25C3.00977 18 2 16.9907 2 15.75V4.25C2 3.00928 3.00977 2 4.25 2H15.75C16.9902 2 18 3.00928 18 4.25V15.75C18 16.9907 16.9902 18 15.75 18ZM4.25 3.5C3.83691 3.5 3.5 3.83643 3.5 4.25V15.75C3.5 16.1636 3.83691 16.5 4.25 16.5H15.75C16.1631 16.5 16.5 16.1636 16.5 15.75V4.25C16.5 3.83643 16.1631 3.5 15.75 3.5H4.25Z"
+        fill="var(--iconPrimary)"
+      />
+      <rect
+        x={5}
+        y={5}
+        rx={0.5}
+        height={10}
+        className={style({
+          transition: '[width]',
+          transitionDuration: 300,
+          width: {
+            default: '[5px]',
+            isHovered: '[1.5px]',
+            isCollapsed: {
+              default: '[1.5px]',
+              isHovered: '[5px]'
+            }
+          }
+        })({isCollapsed, isHovered})}
+      />
+    </svg>
+  );
+});
