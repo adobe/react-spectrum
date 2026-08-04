@@ -48,7 +48,7 @@ Lastly, please follow the pull request template when submitting a pull request!
 ## AI-assisted contributions
 Setting expectations: the AI doesn't contribute to React Spectrum or Quarry, you do. The AI is a tool, but you are still the author, and you own every line, every decision, and every explanation.
 
-If you use an AI assistant, point it at our [CLAUDE.md](CLAUDE.md), which captures the repo conventions we expect it to follow.
+If you use an AI assistant, point it at our [CLAUDE.md](CLAUDE.md), which captures the repo conventions we expect it to follow. The detailed conventions are split across [`docs/contributing/`](docs/contributing/) — see testing, tooling, s2-styling, i18n-strings, codegen, and pull-requests.
 
 ### Aligning on a solution
 
@@ -80,7 +80,7 @@ When you iterate between reviews, be sure you can say what changed and why, one 
 
 #### Requirements of front end code
 
-These can be useful constraints or reminders as AI is not inherently good at these things.
+These can be useful constraints or reminders as AI is not inherently good at these things. For the toolchain that enforces some of this, see [`docs/contributing/tooling.md`](docs/contributing/tooling.md).
 
 * **Small** — everything you add ships across the network to the client, so more code means slower load times.
 * **Fast** — must run well on constrained CPU and memory, not just the latest MacBook Pro. Many users are on years-old, low-end Android devices.

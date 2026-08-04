@@ -11,50 +11,26 @@ The repo is layered. Changes flow up from the lowest level:
 - **`react-aria-components` (RAC)** and some **React Spectrum v3 (RSP)** — component layer built on the hooks.
 - **RSP S2 (`@react-spectrum/s2`)** — the Spectrum 2 design system, the highest level.
 
-Test suites are split by type:
+## Toolchain guardrails
 
-- **Jest tests** — `yarn test`
-- **SSR tests** — `yarn test:ssr`
-- **Browser tests** — `yarn test:browser`
-- **Visual regression tests (VRT)** — `yarn chromatic`
-- **High-contrast-mode VRT** — `yarn chromatic:forced-colors`
+This repo does **not** use the conventional JS toolchain — use these, don't swap in defaults:
 
-Maintainers run the Chromatic VRT suites themselves — don't run `yarn chromatic` / `yarn chromatic:forced-colors`. You can still start the VRT Storybooks locally to verify visual state: `yarn start:chromatic` and `yarn start:chromatic-fc`.
-
-All commonly used commands live in the root `package.json` scripts.
-
-Tests are **not** co-located with source — each package keeps them in a sibling `test/` directory. The file suffix routes the test to a runner: `*.ssr.test.*` → `yarn test:ssr`, `*.browser.test.*` → `yarn test:browser`, plain `*.test.*` → `yarn test` (Jest). Shared test helpers live in `@react-aria/test-utils` / `@react-spectrum/test-utils` (the `User` event abstraction and per-component testers).
-
-## Tooling
-
-This repo does **not** use the conventional JS toolchain — reach for these, and don't hand-format code or swap in defaults:
-
-- **Format** — `oxfmt` (`yarn format`), not Prettier. The style is opinionated (single quotes, no bracket spacing → `{foo}`, no trailing commas). Always run the tool rather than formatting by hand.
-- **Lint** — `oxlint` plus repo-local rules, not ESLint. `yarn lint` bundles format-check, type-check, `oxlint`, and Yarn `constraints` (which enforce cross-package dependency versions).
-- **Type-check** — `tsgo` (`yarn check-types`), the native TypeScript compiler — not `tsc`. A `tsc` fallback exists as `yarn check-types:tsc`.
-- **Build** — Parcel driven by `make` (`yarn build`), not plain `tsc`/rollup.
-- **Yarn 4 workspaces** monorepo; use `yarn workspaces foreach` for cross-package operations.
-
-## Writing tests
-
-- **Run the full suite before committing.** Do not write PR descriptions that list a subset of specific passing tests — run everything (`yarn test`, and `yarn test:browser` when relevant).
-- **Run lint and formatting before committing** (`yarn lint`, `yarn format`).
-- **Test at the right level.** For any change at the RAC level or below (including hooks), write the test at the RAC level ideally. If the change lives at a higher level, test at that level.
-- **Move to browser tests when needed.** If a test requires mocking specific browser behavior, consider moving it to the browser run (`yarn test:browser`).
-- **Cover the reported issue.** When fixing a reported issue, add a test that reproduces the specific example given in the issue.
-- **Check whether the test already exists.** Find a home for it near other similar tests.
-- **Check code coverage** to help decide whether a new test adds value — this is subjective.
-- **In unit tests, prefer** fake timers, our test utils, and user event. Aside from those, prefer not mocking other modules, instead, move the test to a higher level.
-- **Combine tests** that share the same setup before an assertion.
-- **Ground test titles in the goal**, not the implementation — double-check they are accurate.
+- Format with `yarn format` (oxfmt), **not** Prettier. Lint with `yarn lint` (oxlint), **not** ESLint. Type-check with `yarn check-types` (tsgo), **not** tsc. Build with `yarn build` (Parcel), **not** rollup/tsc.
+- **Don't run `yarn chromatic` / `yarn chromatic:forced-colors`** — maintainers run the VRT suites.
+- All commonly used commands live in the root `package.json` scripts.
 
 ## Contributing
 
 - **Match the surrounding code** — follow the naming, structure, and patterns of neighboring files.
-- **Limit comments** — let the code speak for itself. Provide a holistic summary of how the changes work and why this approach was used in the description. If a particular section of code is complex, then prefer a higher level description of multiple lines over explaining a single line.
 - **Commit format** — use conventional-commit prefixes (`fix:`, `feat:`, `chore:`, `docs:`) as seen in the git history.
-- **Opening a PR** — use `.github/PULL_REQUEST_TEMPLATE.md` as the PR body (e.g. `gh pr create --body-file .github/PULL_REQUEST_TEMPLATE.md`), don't hand-write a body. Fill out the checklist honestly and disclose AI use.
-- **Storybook** is the main way to develop and view components: `yarn start` (v3/RAC) and `yarn start:s2` (S2).
-- **S2 styling** — style with the `style` macro (`import {style} from '../style' with {type: 'macro'};` — the `with {type: 'macro'}` attribute is required). Pass typed style objects to it; don't write CSS files or hand-rolled className strings for S2.
-- **User-facing strings** — add the key to the package's `intl/en-US.json` (ICU MessageFormat) and read it via the localized string hook. Never hardcode UI text, and don't hand-edit the other locale files (translators own those).
-- **Generated code** — v3 icon components are generated (`yarn build:icons`) and s2 are handled through a parcel transformer, not hand-written, and `postinstall` runs `patch-package`, so run install on a fresh clone.
+
+## Task-specific workflows
+
+Read the relevant file before starting that kind of work (other agents: read the file directly; Claude will surface it):
+
+- Writing or running tests → [`docs/contributing/testing.md`](docs/contributing/testing.md)
+- Tooling details (format/lint/type-check/build, Storybook, workspaces) → [`docs/contributing/tooling.md`](docs/contributing/tooling.md)
+- Styling S2 components → [`docs/contributing/s2-styling.md`](docs/contributing/s2-styling.md)
+- Adding user-facing strings → [`docs/contributing/i18n-strings.md`](docs/contributing/i18n-strings.md)
+- Touching generated code (icons) → [`docs/contributing/codegen.md`](docs/contributing/codegen.md)
+- Comments and opening a PR → [`docs/contributing/pull-requests.md`](docs/contributing/pull-requests.md)
