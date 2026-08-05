@@ -277,8 +277,8 @@ let prompt3Base = new PromptFieldValue([
 ]);
 
 let prompts = [
-  prompt1.withCaretPosition(atEnd(prompt1)),
-  prompt2.withCaretPosition(atEnd(prompt2)),
+  prompt1.withSelectedRange(new PromptFieldValue.SelectedRange(atEnd(prompt1))),
+  prompt2.withSelectedRange(new PromptFieldValue.SelectedRange(atEnd(prompt2))),
   prompt3Base.replaceRange(
     atEnd(prompt3Base),
     atEnd(prompt3Base),

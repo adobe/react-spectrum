@@ -676,7 +676,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     // to be inaccurate
     let finalPrompt = buildVoicePrompt(basePromptRef.current, transcript);
     inputRef.current.focus();
-    setTokenFieldSelection(inputRef.current, finalPrompt.caretPosition, finalPrompt.caretPosition);
+    setTokenFieldSelection(inputRef.current, finalPrompt.selectedRange);
     setPrompt(finalPrompt);
   });
 
@@ -822,16 +822,17 @@ function useInsertPromptSegment(buildSegments: (item: any) => TokenFieldSegment[
       setTimeout(() => {
         if (inputRef.current && pendingCaret.current) {
           let position = pendingCaret.current;
+          let range = new TokenFieldValue.SelectedRange(position);
           pendingCaret.current = null;
           inputRef.current.focus();
           // we need to update the position manually since TokenField's update caret logic only happens if the field is focused
           // but this insert can happen from the + menu aka the field isn't focused until this gets called which is too late
-          setTokenFieldSelection(inputRef.current, position, position);
+          setTokenFieldSelection(inputRef.current, range);
           // the above focus and setCursor call can cause the internally tracked caret position to be reset incorrectly
           // seemingly due to TokenField's isProgrammaticSelectionChange being flipped to false by setCursor and thus reset to 0 by the .focus
           // fix this by resetting to proper position below
           // happens when injecting multiple tokens one after another via + menu
-          setPrompt(value => value.withCaretPosition(position));
+          setPrompt(value => value.withSelectedRange(range));
         }
       }, 400);
     }

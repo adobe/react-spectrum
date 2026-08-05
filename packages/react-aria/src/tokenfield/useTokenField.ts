@@ -26,6 +26,7 @@ import {isMac} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {
   Position,
+  SelectedRange,
   TokenFieldProps,
   TokenFieldSegment,
   TokenFieldState,
@@ -175,19 +176,19 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
     nextValue.current = value;
   });
 
-  let caretPosition = useRef<Position | null>(null);
+  let selectedRange = useRef<SelectedRange | null>(null);
   useLayoutEffect(() => {
     if (
       ref.current &&
-      value.caretPosition &&
+      value.selectedRange &&
       !state.isComposing &&
-      value.caretPosition !== caretPosition.current
+      value.selectedRange !== selectedRange.current
     ) {
       // Only move the caret when the field is already focused.
       if (ref.current === getActiveElement(getOwnerDocument(ref.current))) {
-        setCursor(ref.current, value.caretPosition);
+        setTokenFieldSelection(ref.current, value.selectedRange);
       }
-      caretPosition.current = value.caretPosition;
+      selectedRange.current = value.selectedRange;
     }
   });
 
@@ -393,21 +394,24 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
 
     // When the cursor moves next to a token, announce it.
     // Otherwise the screen reader will only announce the first/last character.
-    if (window.getSelection()?.isCollapsed) {
-      let [start, end] = getSelection(ref.current!)!;
-      if (start.offset === 0) {
-        let segment = value.segments[start.index];
+    let range = getSelectedRange(ref.current!)!;
+    if (range.isCollapsed) {
+      if (range.current.offset === 0) {
+        let segment = value.segments[range.current.index];
         if (segment?.type !== 'token') {
-          segment = value.segments[start.index - 1];
+          segment = value.segments[range.current.index - 1];
         }
         if (segment?.type === 'token') {
           announce(segment.text, 'assertive');
         }
-
-        // Update the caret position in the value.
-        state.setValue(value => value.withCaretPosition(end));
       }
     }
+
+    // Update the caret position in the value. Also update the ref so the layout
+    // effect does not re-apply this selection back to the DOM, which would clobber
+    // the browser's native selection direction (e.g. directionless double-click).
+    selectedRange.current = range;
+    state.setValue(value => value.withSelectedRange(range));
   });
 
   // Override the default triple click behavior to ensure that tokens get selected.
@@ -423,7 +427,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       let end = value.findLineBoundary(selection[1], TokenFieldValue.Direction.Forward);
       if (start && end) {
         e.preventDefault();
-        setTokenFieldSelection(ref.current!, start, end, true);
+        setTokenFieldSelection(ref.current!, new TokenFieldValue.SelectedRange(start, end), true);
       }
     }
   });
@@ -613,6 +617,16 @@ export function getSelection(container: Element): [Position, Position] | null {
   return rangeToPositions(container, range);
 }
 
+export function getSelectedRange(container: Element) {
+  let selection = window.getSelection();
+  if (!selection || !selection.anchorNode || !selection.focusNode) {
+    return null;
+  }
+  let anchor = getPosition(container, selection.anchorNode, selection.anchorOffset);
+  let current = getPosition(container, selection.focusNode, selection.focusOffset);
+  return new TokenFieldValue.SelectedRange(anchor, current);
+}
+
 function rangeToPositions(container: Element, range: Range | StaticRange): [Position, Position] {
   let start = getPosition(container, range.startContainer, range.startOffset);
   let end = getPosition(container, range.endContainer, range.endOffset);
@@ -666,21 +680,23 @@ function getPosition(container: Element, node: Node, offset: number): Position {
 let isProgrammaticSelectionChange = Symbol('isProgrammaticSelectionChange');
 
 function setCursor(root: Element, pos: Position, fireEvent = false) {
-  setTokenFieldSelection(root, pos, pos, fireEvent);
+  setTokenFieldSelection(root, new TokenFieldValue.SelectedRange(pos), fireEvent);
 }
 
 export function setTokenFieldSelection(
   root: Element,
-  start: Position,
-  end: Position,
+  selectedRange: SelectedRange,
   fireEvent = false
 ) {
   let selection = window.getSelection();
   if (selection) {
-    let range = createDOMRange(root, start, end);
+    // Use setBaseAndExtent to preserve the selection direction. A plain Range +
+    // addRange always produces a forward selection and collapses when the
+    // anchor comes after the current position (backward selections).
+    let [anchorNode, anchorOffset] = getDOMPosition(root, selectedRange.anchor);
+    let [focusNode, focusOffset] = getDOMPosition(root, selectedRange.current);
     root[isProgrammaticSelectionChange] = !fireEvent;
-    selection.removeAllRanges();
-    selection.addRange(range);
+    selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
   }
 }
 
@@ -690,33 +706,27 @@ export function tokenFieldPositionToDOMRange(root: Element, pos: Position): Rang
 
 function createDOMRange(root: Element, start: Position, end: Position): Range {
   let range = document.createRange();
-  let startChild = root.childNodes[start.index];
-  if (!startChild) {
-    range.setStart(root, Math.min(root.childNodes.length, start.index));
-  } else if (startChild.nodeType === Node.ELEMENT_NODE) {
-    // Place the cursor outside the token wrapper element.
-    if (start.offset > 0) {
-      range.setStartAfter(startChild);
-    } else {
-      range.setStartBefore(startChild);
-    }
-  } else {
-    range.setStart(startChild, start.offset);
-  }
-
-  let endChild = root.childNodes[end.index];
-  if (!endChild) {
-    range.setEnd(root, Math.min(root.childNodes.length, end.index));
-  } else if (endChild.nodeType === Node.ELEMENT_NODE) {
-    if (end.offset > 0) {
-      range.setEndAfter(endChild);
-    } else {
-      range.setEndBefore(endChild);
-    }
-  } else {
-    range.setEnd(endChild, end.offset);
-  }
+  let [startContainer, startOffset] = getDOMPosition(root, start);
+  let [endContainer, endOffset] = getDOMPosition(root, end);
+  range.setStart(startContainer, startOffset);
+  range.setEnd(endContainer, endOffset);
   return range;
+}
+
+function getDOMPosition(root: Element, pos: Position): [Node, number] {
+  let child = root.childNodes[pos.index];
+  if (!child) {
+    return [root, Math.min(root.childNodes.length, pos.index)];
+  } else if (child.nodeType === Node.ELEMENT_NODE) {
+    // Place the cursor outside the token wrapper element.
+    if (pos.offset > 0) {
+      return [root, pos.index + 1];
+    } else {
+      return [root, pos.index];
+    }
+  } else {
+    return [child, pos.offset];
+  }
 }
 
 function isSamePosition(a: Position, b: Position): boolean {
