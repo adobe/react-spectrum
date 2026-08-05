@@ -54,10 +54,6 @@
     "react-stately": "3.49.0"
   },
   "devDependencies": {
-    "@react-aria/test-utils": "^1.0.0-alpha.8",
-    "@storybook/jest": "^0.2.3",
-    "@testing-library/dom": "^10.1.0",
-    "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.0.0",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1"
