@@ -37,11 +37,11 @@ import {
   useRef,
   useState
 } from 'react';
-import {DOMRef} from '@react-types/shared';
+import {FocusableRef} from '@react-types/shared';
 import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
@@ -70,8 +70,8 @@ import {
 } from 'react-aria-components/TokenField';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
 import {useControlledState} from 'react-stately/useControlledState';
-import {useDOMRef} from './useDOMRef';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useFocusableRef} from './useDOMRef';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -182,7 +182,7 @@ function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
 
 export const PromptField = forwardRef(function PromptField(
   props: PromptFieldProps,
-  ref: DOMRef<HTMLDivElement>
+  ref: FocusableRef<HTMLDivElement>
 ) {
   let {
     children,
@@ -195,7 +195,10 @@ export const PromptField = forwardRef(function PromptField(
     variant = 'balanced',
     brandColor
   } = props;
-  let domRef = useDOMRef(ref);
+  // Not using RAC DropZone because it adds its own focusable button,
+  // and we want to avoid an extra tab. We support pasting files directly into the input.
+  let inputRef = useRef<HTMLDivElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [prompt, setPrompt] = useControlledState(
     props.value,
@@ -207,10 +210,6 @@ export const PromptField = forwardRef(function PromptField(
     props.defaultAttachments ?? [],
     props.onAttachmentsChange
   );
-
-  // Not using RAC DropZone because it adds its own focusable button,
-  // and we want to avoid an extra tab. We support pasting files directly into the input.
-  let inputRef = useRef<HTMLDivElement>(null);
   let {dropProps, isDropTarget} = useDrop({
     ref: inputRef,
     hasDropButton: true,
@@ -342,6 +341,9 @@ export interface PromptTokenFieldProps {
   pixelLoader?: Cell[] | Cell[][];
   placeholder?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  // TODO: temp api for coworker so that the weird popover shrinking behavior
+  // doesn't appear when rendering near edge of page
+  menuWidth?: number;
 }
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
@@ -351,6 +353,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     children,
     pixelLoader,
     placeholder,
+    menuWidth,
     onKeyDown: onKeyDownProp
   } = props;
   let {keyboardProps} = useKeyboard({onKeyDown: onKeyDownProp});
@@ -473,6 +476,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           filterAnchor={filterAnchor}
           items={useDeferredValue(items)}
           isFocused={isFocused}
+          menuWidth={menuWidth}
         />
       </Autocomplete>
     </div>
@@ -483,10 +487,12 @@ export interface PromptTokenFieldPopoverProps extends Omit<PopoverProps, 'should
   filterAnchor?: Position | null;
   items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   isFocused?: boolean;
+  // TODO: temp for coworker see above comment
+  menuWidth?: number;
 }
 
 function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
-  let {filterAnchor, items, isFocused} = props;
+  let {filterAnchor, items, isFocused, menuWidth} = props;
   let {inputRef} = useContext(PromptFieldContext);
 
   let resolvedItems = items instanceof Promise ? use(items) : items;
@@ -506,6 +512,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       isNonModal
       hideArrow
       placement="bottom start"
+      UNSAFE_style={menuWidth != null ? {width: menuWidth} : undefined}
       getTargetRect={target => {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
@@ -611,10 +618,11 @@ export interface PromptFieldVoiceButtonProps {
   lang?: string;
   isDisabled?: boolean;
   onError?: (code: VoiceInputErrorCode) => void;
+  onToggle?: (isListening: boolean) => void;
 }
 
 export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
-  let {lang: langProp, isDisabled: isDisabledProp, onError} = props;
+  let {lang: langProp, isDisabled: isDisabledProp, onError, onToggle} = props;
   let {locale} = useLocale();
   let lang = langProp ?? locale;
   let {prompt, setPrompt, inputRef, setListening} = useContext(PromptFieldContext);
@@ -646,14 +654,20 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     setPrompt(finalPrompt);
   });
 
+  let onToggleEvent = useEffectEvent((isListening: boolean) => {
+    onToggle?.(isListening);
+  });
+
   let wasListeningRef = useRef(false);
   useEffect(() => {
     if (isVoiceListening) {
       updateBasePrompt();
       wasListeningRef.current = true;
+      onToggleEvent(true);
     } else if (wasListeningRef.current) {
       wasListeningRef.current = false;
       restoreFocus();
+      onToggleEvent(false);
     }
   }, [isVoiceListening]);
 
