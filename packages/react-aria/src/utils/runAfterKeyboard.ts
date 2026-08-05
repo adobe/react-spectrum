@@ -80,26 +80,28 @@ export function runAfterKeyboard(fn: QueuedCallback): () => void {
     return (fn(false), () => {});
   }
 
-  // Wait one frame to see if focus lands on an input.
+  // Wait two frames to see if focus lands on an input.
   let frame = window.requestAnimationFrame(() => {
-    let activeElement = document.hasFocus() ? getActiveElement() : null;
-    let willKeyboardOpen = willOpenKeyboard(activeElement);
+    frame = window.requestAnimationFrame(() => {
+      let activeElement = document.hasFocus() ? getActiveElement() : null;
+      let willKeyboardOpen = willOpenKeyboard(activeElement);
 
-    // If keyboard won't change, call the function immediately.
-    if (isKeyboardOpen() === willKeyboardOpen) {
-      return fn(willKeyboardOpen);
-    }
+      // If keyboard won't change, call the function immediately.
+      if (isKeyboardOpen() === willKeyboardOpen) {
+        return fn(willKeyboardOpen);
+      }
 
-    // On close, fire immediately since consumers may assert the ICB.
-    if (isKeyboardOpen() && !willKeyboardOpen) {
-      return fn(willKeyboardOpen);
-    }
+      // On close, fire immediately since consumers may assert the ICB.
+      if (isKeyboardOpen() && !willKeyboardOpen) {
+        return fn(willKeyboardOpen);
+      }
 
-    resizeCallbacks.add(fn);
+      resizeCallbacks.add(fn);
 
-    if (!listenersByWindow.has(window)) {
-      listenersByWindow.set(window, setupGlobalListeners());
-    }
+      if (!listenersByWindow.has(window)) {
+        listenersByWindow.set(window, setupGlobalListeners());
+      }
+    });
   });
 
   return () => {
@@ -119,21 +121,23 @@ export function runAfterKeyboardTransition(fn: QueuedCallback): () => void {
     return (fn(false), () => {});
   }
 
-  // Wait one frame to see if focus lands on an input.
+  // Wait two frames to see if focus lands on an input.
   let frame = window.requestAnimationFrame(() => {
-    let activeElement = document.hasFocus() ? getActiveElement() : null;
-    let willKeyboardOpen = willOpenKeyboard(activeElement);
+    frame = window.requestAnimationFrame(() => {
+      let activeElement = document.hasFocus() ? getActiveElement() : null;
+      let willKeyboardOpen = willOpenKeyboard(activeElement);
 
-    // If keyboard won't transition, fire immediately.
-    if (isKeyboardOpen() === willKeyboardOpen) {
-      return fn(willKeyboardOpen);
-    }
+      // If keyboard won't transition, fire immediately.
+      if (isKeyboardOpen() === willKeyboardOpen) {
+        return fn(willKeyboardOpen);
+      }
 
-    transitionCallbacks.add(fn);
+      transitionCallbacks.add(fn);
 
-    if (!listenersByWindow.has(window)) {
-      listenersByWindow.set(window, setupGlobalListeners());
-    }
+      if (!listenersByWindow.has(window)) {
+        listenersByWindow.set(window, setupGlobalListeners());
+      }
+    });
   });
 
   return () => {

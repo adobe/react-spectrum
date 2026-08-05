@@ -11,7 +11,7 @@
  */
 
 import {addEvent} from './domHelpers';
-import {getEventTarget} from './shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
 import {getMetaValue} from './getMetaValue';
 import {isFocusable} from './isFocusable';
 import {isMac, isWebKit} from './platform';
@@ -116,16 +116,20 @@ function onResizeEnd(): void {
   }
 
   // Update the screen if a resize happens outside the capture timeframe. We debounce
-  // because WebKit may fire its single opening resize before the focus event, which
-  // will cancel this timeout. This fails only if the content is resized while the keyboard
-  // remains open, which is unlikely. Orientation changes are handled separately.
+  // because WebKit may fire its single opening resize before the focus event.
   if (elapsed > KEYBOARD_TIMEOUT) {
     window.clearTimeout(state.screenTimeout);
 
     state.screenTimeout = window.setTimeout(() => {
+      let activeElement = document.hasFocus() ? getActiveElement() : null;
+      let willKeyboardOpen = willOpenKeyboard(activeElement);
       let screen = getTouchScreen();
 
       if (Math.abs(state.screenAngle - screen.angle) % 180) {
+        return;
+      }
+
+      if (state.isOpen && willKeyboardOpen) {
         return;
       }
 
@@ -177,17 +181,17 @@ function onFocus(e: FocusEvent): void {
 
   let delta = state.screenHeight - screen.height;
 
-  // Update the screen and start the timer if we are about to open.
+  // Update the screen if we are about to open.
   if (delta < KEYBOARD_HEIGHT && willKeyboardOpen) {
     state.screenWidth = screen.width;
     state.screenHeight = screen.height;
     state.screenAngle = screen.angle;
-    state.startTimeStamp = time;
   }
 
-  // This focus will open a keyboard so cancel any buffered resizes.
+  // This focus will open a keyboard so reset the buffer and timer.
   if (willKeyboardOpen) {
     window.clearTimeout(state.screenTimeout);
+    state.startTimeStamp = time;
   }
 }
 

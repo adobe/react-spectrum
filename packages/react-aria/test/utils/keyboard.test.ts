@@ -14,29 +14,13 @@ import {act} from '@react-spectrum/test-utils-internal';
 import {isKeyboardOpen, supportsKeyboard, willOpenKeyboard} from '../../src/utils/keyboard';
 
 describe('keyboard', function () {
+  let input = document.createElement('input');
+  let button = document.createElement('button');
+
   let clock = Date.now();
 
   let width = window.innerWidth;
   let height = window.innerHeight;
-
-  function openKeyboard(): void {
-    let input = document.createElement('input');
-    document.body.appendChild(input);
-    input.focus();
-
-    window.requestAnimationFrame(() =>
-      window.requestAnimationFrame(() => {
-        document.body.removeChild(input);
-      })
-    );
-  }
-
-  function closeKeyboard(): void {
-    let button = document.createElement('button');
-    document.body.appendChild(button);
-    button.focus();
-    document.body.removeChild(button);
-  }
 
   function resize(rect: Pick<DOMRect, 'width' | 'height'>) {
     if (rect.width > rect.height !== window.innerWidth > window.innerHeight) {
@@ -54,6 +38,9 @@ describe('keyboard', function () {
   }
 
   beforeAll(() => {
+    document.body.appendChild(button);
+    document.body.appendChild(input);
+
     width = window.innerWidth;
     height = window.innerHeight;
 
@@ -73,17 +60,20 @@ describe('keyboard', function () {
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
+
+    act(() => button.focus());
     resize({width: 300, height: 800});
 
     jest.runOnlyPendingTimers();
-
     clock = Date.now() + 10000;
-
     jest.useRealTimers();
-    jest.restoreAllMocks();
   });
 
   afterAll(() => {
+    input.remove();
+    button.remove();
+
     window.innerWidth = width;
     window.innerHeight = height;
   });
@@ -128,52 +118,92 @@ describe('keyboard', function () {
 
   describe('isKeyboardOpen', function () {
     it('returns true when the keyboard is open', function () {
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
       expect(isKeyboardOpen()).toBe(true);
     });
 
     it('returns false when the keyboard is closed', function () {
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
-      closeKeyboard();
+      act(() => button.focus());
       resize({width: 300, height: 800});
 
       expect(isKeyboardOpen()).toBe(false);
     });
 
     it('ignores resizes below the threshold', function () {
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 750});
 
       expect(isKeyboardOpen()).toBe(false);
     });
 
     it('stays open on input-to-input focus', function () {
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
-      openKeyboard();
+      act(() => input.focus());
+
+      expect(isKeyboardOpen()).toBe(true);
+    });
+
+    it('stays open during focus marshalling', function () {
+      act(() => input.focus());
+      resize({width: 300, height: 450});
+
+      expect(isKeyboardOpen()).toBe(true);
+
+      act(() => jest.advanceTimersByTime(700));
+
+      act(() => button.focus());
+      resize({width: 300, height: 700});
+
+      expect(isKeyboardOpen()).toBe(true);
+
+      act(() => input.focus());
+      resize({width: 300, height: 450});
+
+      expect(isKeyboardOpen()).toBe(true);
+
+      act(() => jest.advanceTimersByTime(700));
+
+      expect(isKeyboardOpen()).toBe(true);
+    });
+
+    it('stays open when the content resizes', function () {
+      act(() => input.focus());
+      resize({width: 300, height: 450});
+
+      expect(isKeyboardOpen()).toBe(true);
+
+      act(() => jest.advanceTimersByTime(700));
+
+      resize({width: 300, height: 700});
+
+      expect(isKeyboardOpen()).toBe(true);
+
+      act(() => jest.advanceTimersByTime(700));
 
       expect(isKeyboardOpen()).toBe(true);
     });
 
     it('supports orientation changes', function () {
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 800, height: 150});
 
       expect(isKeyboardOpen()).toBe(true);
 
-      closeKeyboard();
+      act(() => button.focus());
       resize({width: 800, height: 300});
 
       expect(isKeyboardOpen()).toBe(false);
 
       resize({width: 300, height: 800});
 
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
       expect(isKeyboardOpen()).toBe(true);
@@ -182,73 +212,60 @@ describe('keyboard', function () {
 
       expect(isKeyboardOpen()).toBe(true);
 
-      closeKeyboard();
+      act(() => button.focus());
       resize({width: 800, height: 300});
 
       expect(isKeyboardOpen()).toBe(false);
     });
 
     it('supports resizes before focus', function () {
-      openKeyboard();
-      closeKeyboard();
-      act(() => jest.advanceTimersByTime(1000));
-
       resize({width: 300, height: 400});
-      openKeyboard();
+      act(() => input.focus());
 
       expect(isKeyboardOpen()).toBe(true);
-      expect(supportsKeyboard()).toBe(true);
-
-      closeKeyboard();
-      resize({width: 300, height: 800});
-      act(() => jest.advanceTimersByTime(1000));
-
-      openKeyboard();
-      act(() => jest.advanceTimersByTime(700));
-      expect(supportsKeyboard()).toBe(false);
     });
   });
 
   describe('supportsKeyboard', function () {
     it('returns the default while a transition is pending', function () {
-      openKeyboard();
+      act(() => input.focus());
 
       expect(supportsKeyboard()).toBe(true);
     });
 
     it('returns true when the keyboard opened in time', function () {
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
       expect(supportsKeyboard()).toBe(true);
     });
 
     it('returns false when the keyboard did not open in time', function () {
-      openKeyboard();
+      act(() => input.focus());
       act(() => jest.advanceTimersByTime(700));
 
       expect(supportsKeyboard()).toBe(false);
     });
 
     it('recovers when the keyboard opened in time', function () {
-      openKeyboard();
+      act(() => input.focus());
       act(() => jest.advanceTimersByTime(700));
 
       expect(supportsKeyboard()).toBe(false);
 
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
       expect(supportsKeyboard()).toBe(true);
     });
 
     it('does not consider non-text input types and non-inputs', function () {
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
       expect(supportsKeyboard()).toBe(true);
 
-      closeKeyboard();
+      act(() => button.focus());
       act(() => jest.advanceTimersByTime(700));
 
       expect(supportsKeyboard()).toBe(true);

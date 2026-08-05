@@ -19,29 +19,13 @@ jest.mock('../../src/utils/platform', () => ({
 }));
 
 describe('runAfterKeyboard', function () {
+  let input = document.createElement('input');
+  let button = document.createElement('button');
+
   let clock = Date.now();
 
   let width = window.innerWidth;
   let height = window.innerHeight;
-
-  function openKeyboard(): void {
-    let input = document.createElement('input');
-    document.body.appendChild(input);
-    input.focus();
-
-    window.requestAnimationFrame(() =>
-      window.requestAnimationFrame(() => {
-        document.body.removeChild(input);
-      })
-    );
-  }
-
-  function closeKeyboard(): void {
-    let button = document.createElement('button');
-    document.body.appendChild(button);
-    button.focus();
-    document.body.removeChild(button);
-  }
 
   function resize(rect: Pick<DOMRect, 'width' | 'height'>) {
     if (rect.width > rect.height !== window.innerWidth > window.innerHeight) {
@@ -58,6 +42,9 @@ describe('runAfterKeyboard', function () {
   }
 
   beforeAll(() => {
+    document.body.appendChild(button);
+    document.body.appendChild(input);
+
     width = window.innerWidth;
     height = window.innerHeight;
 
@@ -77,17 +64,20 @@ describe('runAfterKeyboard', function () {
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
+
+    act(() => button.focus());
     resize({width: 300, height: 800});
 
     jest.runOnlyPendingTimers();
-
     clock = Date.now() + 10000;
-
     jest.useRealTimers();
-    jest.restoreAllMocks();
   });
 
   afterAll(() => {
+    input.remove();
+    button.remove();
+
     window.innerWidth = width;
     window.innerHeight = height;
   });
@@ -96,8 +86,8 @@ describe('runAfterKeyboard', function () {
     it('flushes synchronously when akeyboard is unsupported', function () {
       let callback = jest.fn();
 
-      openKeyboard();
-      closeKeyboard();
+      act(() => input.focus());
+      act(() => button.focus());
 
       act(() => jest.advanceTimersByTime(700));
 
@@ -106,13 +96,13 @@ describe('runAfterKeyboard', function () {
       expect(callback).toHaveBeenCalledWith(false);
     });
 
-    it('flushes after a frame when no keyboard change is expected', function () {
+    it('flushes after two frames when no keyboard change is expected', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
-      closeKeyboard();
+      act(() => button.focus());
       resize({width: 300, height: 800});
 
       runAfterKeyboard(callback);
@@ -120,19 +110,21 @@ describe('runAfterKeyboard', function () {
       expect(callback).not.toHaveBeenCalled();
 
       act(() => jest.runOnlyPendingTimers());
+      act(() => jest.runOnlyPendingTimers());
 
       expect(callback).toHaveBeenCalledWith(false);
     });
 
-    it('flushes after a frame when the keyboard is closing', function () {
+    it('flushes after two frames when the keyboard is closing', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
-      closeKeyboard();
+      act(() => button.focus());
       runAfterKeyboard(callback);
 
+      act(() => jest.runOnlyPendingTimers());
       act(() => jest.runOnlyPendingTimers());
 
       expect(callback).toHaveBeenCalledWith(false);
@@ -141,9 +133,10 @@ describe('runAfterKeyboard', function () {
     it('flushes on resize end when the keyboard is opening', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       runAfterKeyboard(callback);
 
+      act(() => jest.runOnlyPendingTimers());
       act(() => jest.runOnlyPendingTimers());
 
       expect(callback).not.toHaveBeenCalled();
@@ -158,9 +151,10 @@ describe('runAfterKeyboard', function () {
     it('guarantees a flush when the keyboard did not open in time', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       runAfterKeyboard(callback);
 
+      act(() => jest.runOnlyPendingTimers());
       act(() => jest.runOnlyPendingTimers());
       act(() => jest.advanceTimersByTime(700));
 
@@ -170,10 +164,10 @@ describe('runAfterKeyboard', function () {
     it('does not flush when removed from the queue', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       runAfterKeyboard(callback)();
 
-      act(() => jest.advanceTimersByTime(1000));
+      act(() => jest.advanceTimersByTime(700));
 
       expect(callback).not.toHaveBeenCalled();
     });
@@ -183,7 +177,7 @@ describe('runAfterKeyboard', function () {
     it('flushes synchronously when a keyboard is unsupported', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
 
       act(() => jest.advanceTimersByTime(700));
 
@@ -195,16 +189,17 @@ describe('runAfterKeyboard', function () {
     it('flushes after a frame when no keyboard change is expected', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
-      closeKeyboard();
+      act(() => button.focus());
       resize({width: 300, height: 800});
 
       runAfterKeyboardTransition(callback);
 
       expect(callback).not.toHaveBeenCalled();
 
+      act(() => jest.runOnlyPendingTimers());
       act(() => jest.runOnlyPendingTimers());
 
       expect(callback).toHaveBeenCalledWith(false);
@@ -213,12 +208,13 @@ describe('runAfterKeyboard', function () {
     it('flushes on resize end when the keyboard is closing', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
-      closeKeyboard();
+      act(() => button.focus());
       runAfterKeyboardTransition(callback);
 
+      act(() => jest.runOnlyPendingTimers());
       act(() => jest.runOnlyPendingTimers());
 
       resize({width: 300, height: 800});
@@ -231,9 +227,10 @@ describe('runAfterKeyboard', function () {
     it('flushes on animation finish when the keyboard is opening', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       runAfterKeyboardTransition(callback);
 
+      act(() => jest.runOnlyPendingTimers());
       act(() => jest.runOnlyPendingTimers());
 
       resize({width: 300, height: 450});
@@ -250,9 +247,10 @@ describe('runAfterKeyboard', function () {
     it('guarantees a flush when the keyboard did not open in time', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       runAfterKeyboard(callback);
 
+      act(() => jest.runOnlyPendingTimers());
       act(() => jest.runOnlyPendingTimers());
       act(() => jest.advanceTimersByTime(700));
 
@@ -262,12 +260,13 @@ describe('runAfterKeyboard', function () {
     it('guarantees a flush when the keyboard did not close in time', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       resize({width: 300, height: 450});
 
-      closeKeyboard();
+      act(() => button.focus());
       runAfterKeyboardTransition(callback);
 
+      act(() => jest.runOnlyPendingTimers());
       act(() => jest.runOnlyPendingTimers());
       act(() => jest.advanceTimersByTime(700));
 
@@ -277,10 +276,10 @@ describe('runAfterKeyboard', function () {
     it('does not flush when removed from the queue', function () {
       let callback = jest.fn();
 
-      openKeyboard();
+      act(() => input.focus());
       runAfterKeyboardTransition(callback)();
 
-      act(() => jest.advanceTimersByTime(1000));
+      act(() => jest.advanceTimersByTime(700));
 
       expect(callback).not.toHaveBeenCalled();
     });
