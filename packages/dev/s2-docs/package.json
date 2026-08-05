@@ -6,11 +6,11 @@
     "start": "DOCS_ENV=dev parcel 'pages/**/*.mdx' --config .parcelrc-s2-docs",
     "start:s2": "DOCS_ENV=dev LIBRARY=s2 parcel 'pages/s2/**/*.mdx' -p 4321 --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
     "start:react-aria": "DOCS_ENV=dev LIBRARY=react-aria parcel 'pages/react-aria/**/*.mdx' -p 1234 --config .parcelrc-s2-docs --dist-dir dist/react-aria --cache-dir ../../../.parcel-cache/react-aria",
-    "start:parcel3": "PARCEL_V3=1 DOCS_ENV=dev ../../../parcel-v3/parcel run server.tsx --config .parcelrc-s2-docs-v3",
+    "start:parcel3": "PARCEL_V3=1 DOCS_ENV=dev parcel3 run server.tsx --config .parcelrc-s2-docs-v3",
     "build": "yarn build:s2 --public-url $PUBLIC_URL && yarn build:react-aria --public-url $PUBLIC_URL && node scripts/generateAgentSkills.mjs",
     "build:s2": "LIBRARY=s2 parcel build 'pages/s2/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
     "build:react-aria": "LIBRARY=react-aria parcel build 'pages/react-aria/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/react-aria --cache-dir ../../../.parcel-cache/react-aria",
-    "build:parcel3": "PARCEL_V3=1 /Users/devongovett/dev/parcel/target/release/parcel build ssg.tsx --config .parcelrc-s2-docs-v3",
+    "build:parcel3": "PARCEL_V3=1 parcel3 build ssg.tsx --config .parcelrc-s2-docs-v3",
     "generate:og": "node scripts/generateOGImages.mjs",
     "generate:md": "node scripts/generateMarkdownDocs.mjs",
     "generate:mcpb": "node scripts/generateMcpb.mjs"

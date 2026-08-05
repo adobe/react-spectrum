@@ -113,7 +113,7 @@ build:
 build-parcel-v3:
 	mkdir -p dist
 	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
-	parcel-v3/parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config parcel-v3/.parcelrc-build
+	parcel3 build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config parcel-v3/.parcelrc-build
 	yarn workspaces foreach --all -pt run prepublishOnly
 	node scripts/buildEsm.js
 	node scripts/buildI18n.js

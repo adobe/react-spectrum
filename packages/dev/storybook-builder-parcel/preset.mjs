@@ -128,7 +128,7 @@ async function createParcel(options, isDev = false) {
 
   if (PARCEL_V3) {
     let parcel = spawn(
-      'parcel-v3/parcel',
+      'parcel3',
       [
         isDev ? 'serve' : 'build',
         '--config',
@@ -141,15 +141,17 @@ async function createParcel(options, isDev = false) {
       ],
       {stdio: 'inherit'}
     );
-    return new Promise((resolve, reject) => {
-      parcel.on('close', code => {
-        if (code === 0) {
-          resolve();
-        } else {
-          reject();
-        }
+    if (!isDev) {
+      await new Promise((resolve, reject) => {
+        parcel.on('close', code => {
+          if (code === 0) {
+            resolve();
+          } else {
+            reject();
+          }
+        });
       });
-    });
+    }
   } else {
     return new Parcel({
       entries: path.join(generatedEntries, 'iframe.html'),
