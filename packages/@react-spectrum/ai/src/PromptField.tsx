@@ -398,15 +398,41 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         alignItems: 'baseline',
         color: {
           default: 'transparent-overlay-600',
-          isFocused: 'body'
+          isFocused: 'body',
+          forcedColors: 'ButtonText'
         },
         transition: 'default',
         transitionDuration: 350,
         paddingStart: 4,
-        width: 'full'
+        width: 'full',
+        '--loader-color': {
+          type: 'color',
+          value: {
+            default: 'gray-1000',
+            isFocused: 'body',
+            forcedColors: 'ButtonText'
+          }
+        },
+        '--loader-opacity': {
+          type: 'opacity',
+          value: {
+            default: 0.51,
+            isFocused: 1,
+            forcedColors: 1
+          }
+        }
       })({isFocused: isFocused || prompt.segments.length > 0})}>
       <CenterBaseline>
-        <PixelLoader isPlaying={isGenerating} icon={pixelLoader} />
+        <PixelLoader
+          isPlaying={isGenerating}
+          icon={pixelLoader}
+          color="var(--loader-color)"
+          className={style({
+            opacity: '--loader-opacity',
+            transition: 'opacity',
+            transitionDuration: 350
+          })}
+        />
       </CenterBaseline>
       <Autocomplete>
         <TokenField
