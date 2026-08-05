@@ -1,8 +1,8 @@
 import {cache} from 'react';
 import {getBaseUrl} from './pageUtils';
 import {glob, readFile} from 'fs/promises';
-import path from 'path';
 import type {Page} from '@parcel/rsc';
+import path from 'path';
 // eslint-disable-next-line
 import {transformAsync} from '@parcel/rust/lib/index.js';
 

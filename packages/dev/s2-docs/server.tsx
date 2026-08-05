@@ -1,7 +1,7 @@
+import {createReadStream, promises} from 'fs';
 import {createServer} from 'http';
 import path from 'path';
 import {renderRequest} from '@parcel/rsc/node';
-import {createReadStream, promises} from 'fs';
 // @ts-ignore
 import routes from './pages/**/*.mdx?async=true&flat=true';
 
