@@ -159,7 +159,7 @@ export const Select = /*#__PURE__*/ createHideableComponent(function Select<
   );
 
   return (
-    <CollectionBuilder content={content}>
+    <CollectionBuilder content={<TextContext.Provider value={undefined}>{content}</TextContext.Provider>}>
       {collection => <SelectInner props={props} collection={collection} selectRef={ref} />}
     </CollectionBuilder>
   );
