@@ -13,7 +13,7 @@ import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/overlays';
 import statelyDocs from 'docs:@react-stately/overlays';
-import Anatomy from '/packages/react-aria/docs/overlays/popover-anatomy.svg';
+import Anatomy from '/packages/dev/s2-docs/pages/react-aria/PopoverAnatomy2.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a popover overlay.';
@@ -23,7 +23,7 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.usePopover.description}</PageDescription>
 
-```tsx render files={["starters/hooks/src/Popover.tsx", "starters/hooks/src/Popover.css", "starters/hooks/src/Button.css", "starters/docs/src/Dialog.css"]}
+```tsx render files={["starters/hooks/src/Popover.tsx", "starters/hooks/src/Popover.css", "starters/hooks/src/Button.css", "starters/hooks/src/Dialog.css"]}
 "use client";
 import {Dialog, Heading} from 'react-aria-components/Dialog';
 import {PopoverTrigger} from 'hooks-starter/Popover';
@@ -54,6 +54,7 @@ import {PopoverTrigger} from 'hooks-starter/Popover';
 <FunctionAPIGroup
   functions={[
     {function: statelyDocs.exports.useOverlayTriggerState, links: statelyDocs.links},
+    {function: docs.exports.useOverlayTrigger, links: docs.links},
     {function: docs.exports.usePopover, links: docs.links},
   ]}
 />

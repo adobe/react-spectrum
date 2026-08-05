@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "הודעה חדשה",
+  "chat.scrollToBottom": "גלול למטה",
   "messagefeedback.thumbDown": "תגובה גרועה",
   "messagefeedback.thumbUp": "תגובה טובה",
-  "responsestatus.loading": "בטעינה…"
+  "promptfield.aiDisclaimer": "תגובות נוצרות באמצעות בינה מלאכותית, ועלולות להיות לא מדויקות. בדוק לפני השימוש.",
+  "promptfield.aiUserGuidlines": "הנחיות למשתמשים בבינה מלאכותית",
+  "promptfield.attachments": "תוספות",
+  "promptfield.insertButton": "הוסף",
+  "promptfield.label": "הנחיה",
+  "promptfield.placeholder": "מוכנים להתחיל? שאלו שאלה, שתפו רעיון או הוסיפו משימה.",
+  "promptfield.stopButton": "עצור",
+  "promptfield.submitButton": "שלח",
+  "promptfield.uploading": "העלאה",
+  "responsestatus.loading": "בטעינה…",
+  "voicebutton.startListening": "התחל להקליט",
+  "voicebutton.stopListening": "הפסק להקליט"
 }

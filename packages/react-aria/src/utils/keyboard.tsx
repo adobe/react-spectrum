@@ -196,6 +196,7 @@ function setupGlobalEvents(): void {
 
   // WebKit only fires a single event per resize.
   addEvent(window.visualViewport, 'resize', isWebKit() ? onResizeEnd : onResizeStart);
+  // oxlint-disable-next-line - looks like the lint for this is a little too aggressive
   addEvent(window.screen.orientation, 'change', onOrientationChange);
   addEvent(window, 'focus', onFocus, {capture: true, passive: true});
 

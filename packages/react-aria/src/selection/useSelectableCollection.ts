@@ -475,7 +475,7 @@ export function useSelectableCollection(
     };
 
     // we need the "virtual" modality case checks here because shift tabbing from the prompt field's attachment card back into the
-    // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the AttachementList aka TagGroup via a focus() call, hence the virtual modality)
+    // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the attachmentList aka TagGroup via a focus() call, hence the virtual modality)
     if (UNSTABLE_focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
       // always go to the first item in the Thread when tabbing forwards/backwards into the collection
       // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key

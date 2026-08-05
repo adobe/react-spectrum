@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Нове повідомлення",
+  "chat.scrollToBottom": "Прокрутіть вниз",
   "messagefeedback.thumbDown": "Погана відповідь",
   "messagefeedback.thumbUp": "Гарна відповідь",
-  "responsestatus.loading": "Завантаження"
+  "promptfield.aiDisclaimer": "Відповіді генеруються за допомогою ШІ і можуть бути неточними. Перевірте перед використанням.",
+  "promptfield.aiUserGuidlines": "Керівництва користувача ШІ",
+  "promptfield.attachments": "Додатки",
+  "promptfield.insertButton": "Додати",
+  "promptfield.label": "Підказка",
+  "promptfield.placeholder": "Готові розпочати? Задайте запитання, поділіться ідеєю або додайте завдання.",
+  "promptfield.stopButton": "Стоп",
+  "promptfield.submitButton": "Відправити",
+  "promptfield.uploading": "Завантаження",
+  "responsestatus.loading": "Завантаження",
+  "voicebutton.startListening": "Починайте запис",
+  "voicebutton.stopListening": "Припиніть запис"
 }

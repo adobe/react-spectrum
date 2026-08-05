@@ -156,6 +156,8 @@ import SelectBoxGroupDark from 'url:../assets/component-illustrations/dark/Selec
 import SelectBoxGroupLight from 'url:../assets/component-illustrations/light/SelectBoxGroup.avif';
 import SelectionDark from 'url:../assets/component-illustrations/dark/Selection.avif';
 import SelectionLight from 'url:../assets/component-illustrations/light/Selection.avif';
+import SideNavDark from 'url:../assets/component-illustrations/dark/SideNav.avif';
+import SideNavLight from 'url:../assets/component-illustrations/light/SideNav.avif';
 import SkeletonDark from 'url:../assets/component-illustrations/dark/Skeleton.avif';
 import SkeletonLight from 'url:../assets/component-illustrations/light/Skeleton.avif';
 import SliderDark from 'url:../assets/component-illustrations/dark/Slider.avif';
@@ -189,6 +191,8 @@ import ToggleButtonDark from 'url:../assets/component-illustrations/dark/ToggleB
 import ToggleButtonGroupDark from 'url:../assets/component-illustrations/dark/ToggleButtonGroup.avif';
 import ToggleButtonGroupLight from 'url:../assets/component-illustrations/light/ToggleButtonGroup.avif';
 import ToggleButtonLight from 'url:../assets/component-illustrations/light/ToggleButton.avif';
+import TokenFieldDark from 'url:../assets/component-illustrations/dark/TokenField.avif';
+import TokenFieldLight from 'url:../assets/component-illustrations/light/TokenField.avif';
 import TooltipDark from 'url:../assets/component-illustrations/dark/Tooltip.avif';
 import TooltipLight from 'url:../assets/component-illustrations/light/Tooltip.avif';
 import TreeDark from 'url:../assets/component-illustrations/dark/Tree.avif';
@@ -205,6 +209,9 @@ export interface ComponentCardItem {
 }
 
 // Mapping from component names to their illustration [light, dark] tuple
+// to add new illustrations run `node scripts/processComponentImages.mjs <source-dir>` where source dir needs the
+// "Light" and "Dark" folders containing the component illustrations (make sure they are the bluish gradient not gray)
+// then add imports above and entries below.
 const componentIllustrations: Record<string, [string, string] | undefined> = {
   // Components
   Accordion: [AccordionLight, AccordionDark],
@@ -276,6 +283,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Select: [PickerLight, PickerDark],
   SelectBoxGroup: [SelectBoxGroupLight, SelectBoxGroupDark],
   Separator: [DividerLight, DividerDark],
+  SideNav: [SideNavLight, SideNavDark],
   Skeleton: [SkeletonLight, SkeletonDark],
   Slider: [SliderLight, SliderDark],
   StatusLight: [StatusLightLight, StatusLightDark],
@@ -290,6 +298,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Toast: [ToastLight, ToastDark],
   ToggleButton: [ToggleButtonLight, ToggleButtonDark],
   ToggleButtonGroup: [ToggleButtonGroupLight, ToggleButtonGroupDark],
+  TokenField: [TokenFieldLight, TokenFieldDark],
   Toolbar: [ActionGroupLight, ActionGroupDark],
   Tooltip: [TooltipLight, TooltipDark],
   Tree: [TreeLight, TreeDark],

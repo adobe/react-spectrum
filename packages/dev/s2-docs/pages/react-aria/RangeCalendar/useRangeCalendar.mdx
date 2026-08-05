@@ -13,7 +13,7 @@ import {FunctionAPIGroup} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/calendar';
 import statelyDocs from 'docs:@react-stately/calendar';
-import Anatomy from '/packages/react-aria/docs/calendar/rangecalendar-anatomy.svg';
+import Anatomy from '/packages/dev/s2-docs/pages/react-aria/RangeCalendarAnatomy2.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a range calendar component.';
@@ -59,6 +59,8 @@ import {RangeCalendar} from 'hooks-starter/RangeCalendar';
     {function: docs.exports.useRangeCalendar, links: docs.links},
     {function: docs.exports.useCalendarGrid, links: docs.links},
     {function: docs.exports.useCalendarCell, links: docs.links},
+    {function: docs.exports.useCalendarMonthPicker, links: docs.links},
+    {function: docs.exports.useCalendarYearPicker, links: docs.links},
   ]}
 />
 
@@ -81,3 +83,19 @@ import {RangeCalendar} from 'hooks-starter/RangeCalendar';
 ### AriaCalendarCellProps
 
 <InterfaceType {...docs.exports.AriaCalendarCellProps} />
+
+### CalendarMonthPickerProps
+
+<InterfaceType {...docs.exports.CalendarMonthPickerProps} />
+
+### CalendarMonthPickerAria
+
+<InterfaceType {...docs.exports.CalendarMonthPickerAria} />
+
+### CalendarYearPickerProps
+
+<InterfaceType {...docs.exports.CalendarYearPickerProps} />
+
+### CalendarYearPickerAria
+
+<InterfaceType {...docs.exports.CalendarYearPickerAria} />

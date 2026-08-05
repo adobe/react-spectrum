@@ -30,6 +30,10 @@ export interface TokenFieldState<T extends TokenFieldValue = TokenFieldValue> {
   setComposing: (isComposing: boolean) => void;
 }
 
+/**
+ * Provides state management for a token field. Tracks the field value and the
+ * composition state.
+ */
 export function useTokenFieldState<T extends TokenFieldValue = TokenFieldValue>(
   props: TokenFieldProps<T>
 ): TokenFieldState<T> {

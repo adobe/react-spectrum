@@ -20,18 +20,17 @@ import {
   useMemo,
   useRef
 } from 'react';
+import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from '../utils/domHelpers';
+import {isMac} from '../utils/platform';
+import {mergeProps} from '../utils/mergeProps';
 import {
-  Direction,
   Position,
   TokenFieldProps,
   TokenFieldSegment,
   TokenFieldState,
   TokenFieldValue
 } from 'react-stately/useTokenFieldState';
-import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
-import {getOwnerDocument} from '../utils/domHelpers';
-import {isMac} from '../utils/platform';
-import {mergeProps} from '../utils/mergeProps';
 import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEvent} from '../utils/useEvent';
 import {useField} from '../label/useField';
@@ -56,6 +55,10 @@ export interface AriaTokenFieldProps<T extends TokenFieldValue = TokenFieldValue
   isDisabled?: boolean;
   /** A function that is called when the user presses the Enter key. */
   onSubmit?: () => void;
+  /** Handler that is called when a key is pressed. */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  /** Handler that is called when a key is released. */
+  onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   /**
    * Handler that is called when the user copies text. See
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
@@ -86,6 +89,13 @@ export interface TokenFieldAria {
 
 const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
+/**
+ * Provides the behavior and accessibility implementation for a token field.
+ * A token field allows users to enter text with inline tokens.
+ *
+ * @param props - Props for the token field.
+ * @param state - State for the token field, as returned by `useTokenFieldState`.
+ */
 export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
   props: AriaTokenFieldProps<T>,
   state: TokenFieldState,
@@ -274,26 +284,32 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
 
         switch (e.inputType) {
           case 'deleteContentBackward': {
-            apply(tokens => tokens.delete(start, graphemeSegmenter, Direction.Backward));
+            apply(tokens =>
+              tokens.delete(start, graphemeSegmenter, TokenFieldValue.Direction.Backward)
+            );
             break;
           }
           case 'deleteContentForward':
-            apply(tokens => tokens.delete(start, graphemeSegmenter, Direction.Forward));
+            apply(tokens =>
+              tokens.delete(start, graphemeSegmenter, TokenFieldValue.Direction.Forward)
+            );
             break;
           case 'deleteWordBackward': {
-            apply(tokens => tokens.delete(start, wordSegmenter, Direction.Backward));
+            apply(tokens =>
+              tokens.delete(start, wordSegmenter, TokenFieldValue.Direction.Backward)
+            );
             break;
           }
           case 'deleteWordForward':
-            apply(tokens => tokens.delete(start, wordSegmenter, Direction.Forward));
+            apply(tokens => tokens.delete(start, wordSegmenter, TokenFieldValue.Direction.Forward));
             break;
           case 'deleteHardLineForward':
           case 'deleteSoftLineForward': // TODO: this usually deletes to the nearest *visual* line break rather than a hard break
-            apply(tokens => tokens.deleteLine(start, Direction.Forward));
+            apply(tokens => tokens.deleteLine(start, TokenFieldValue.Direction.Forward));
             break;
           case 'deleteHardLineBackward':
           case 'deleteSoftLineBackward':
-            apply(tokens => tokens.deleteLine(start, Direction.Backward));
+            apply(tokens => tokens.deleteLine(start, TokenFieldValue.Direction.Backward));
             break;
         }
         break;
@@ -403,11 +419,11 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
         return;
       }
 
-      let start = value.findLineBoundary(selection[0], Direction.Backward);
-      let end = value.findLineBoundary(selection[1], Direction.Forward);
+      let start = value.findLineBoundary(selection[0], TokenFieldValue.Direction.Backward);
+      let end = value.findLineBoundary(selection[1], TokenFieldValue.Direction.Forward);
       if (start && end) {
         e.preventDefault();
-        setSelection(ref.current!, start, end, true);
+        setTokenFieldSelection(ref.current!, start, end, true);
       }
     }
   });
@@ -512,7 +528,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       if (!selection) {
         return false;
       }
-      let boundary = value.findLineBoundary(selection[0], Direction.Backward);
+      let boundary = value.findLineBoundary(selection[0], TokenFieldValue.Direction.Backward);
       if (boundary) {
         setCursor(ref.current!, boundary, true);
         return true;
@@ -524,7 +540,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       if (!selection) {
         return false;
       }
-      let boundary = value.findLineBoundary(selection[1], Direction.Forward);
+      let boundary = value.findLineBoundary(selection[1], TokenFieldValue.Direction.Forward);
       if (boundary) {
         setCursor(ref.current!, boundary, true);
         return true;
@@ -533,6 +549,8 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
     }
   };
 
+  // TODO: user provided onKeyDown currently relies on user provided preventDefault to stop submit
+  // maybe can have them specify a format like shortcuts and merge into above?
   let {keyboardProps} = useKeyboard({
     isDisabled: isDisabled || isReadOnly,
     onKeyDown: props.onKeyDown,
@@ -648,11 +666,15 @@ function getPosition(container: Element, node: Node, offset: number): Position {
 let isProgrammaticSelectionChange = Symbol('isProgrammaticSelectionChange');
 
 function setCursor(root: Element, pos: Position, fireEvent = false) {
-  setSelection(root, pos, pos, fireEvent);
+  setTokenFieldSelection(root, pos, pos, fireEvent);
 }
 
-// Exported for tests.
-export function setSelection(root: Element, start: Position, end: Position, fireEvent = false) {
+export function setTokenFieldSelection(
+  root: Element,
+  start: Position,
+  end: Position,
+  fireEvent = false
+) {
   let selection = window.getSelection();
   if (selection) {
     let range = createDOMRange(root, start, end);
@@ -662,7 +684,7 @@ export function setSelection(root: Element, start: Position, end: Position, fire
   }
 }
 
-export function positionToDOMRange(root: Element, pos: Position): Range {
+export function tokenFieldPositionToDOMRange(root: Element, pos: Position): Range {
   return createDOMRange(root, pos, pos);
 }
 

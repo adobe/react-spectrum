@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Nieuw bericht",
+  "chat.scrollToBottom": "Naar beneden schuiven",
   "messagefeedback.thumbDown": "Slecht antwoord",
   "messagefeedback.thumbUp": "Goed antwoord",
-  "responsestatus.loading": "Laden"
+  "promptfield.aiDisclaimer": "Reacties worden gegenereerd met behulp van AI en zijn mogelijk onjuist. Schakel deze optie in voordat u gaat gebruiken.",
+  "promptfield.aiUserGuidlines": "Richtlijnen voor AI-gebruikers",
+  "promptfield.attachments": "Bijlagen",
+  "promptfield.insertButton": "Toevoegen",
+  "promptfield.label": "Vragen",
+  "promptfield.placeholder": "Klaar om aan de slag te gaan? Stel een vraag, deel een idee of voeg een taak toe.",
+  "promptfield.stopButton": "Stoppen",
+  "promptfield.submitButton": "Verzenden",
+  "promptfield.uploading": "Uploaden",
+  "responsestatus.loading": "Laden",
+  "voicebutton.startListening": "Opname starten",
+  "voicebutton.stopListening": "Opname stoppen"
 }

@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {Chat} from '../src/Chat';
+import ChatIcon from '@react-spectrum/s2/icons/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
+import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/s2/Content';
-import {GridList} from 'react-aria-components';
+import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
 import {Image} from '@react-spectrum/s2/Image';
-import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
   MessageFeedback,
@@ -27,6 +29,7 @@ import {
   MessageSuggestionList,
   PromptField,
   PromptFieldSubmitButton,
+  PromptFieldValue,
   PromptTokenField,
   ResponseStatus,
   ResponseStatusPanel,
@@ -35,15 +38,17 @@ import {
   SourceListItem,
   Thread,
   ThreadItem,
+  ThreadLoadMoreItem,
   ThreadScrollButton,
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
-import {ReactNode, useRef, useState} from 'react';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {prose} from '../src/style/prose' with {type: 'macro'};
+import {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const meta: Meta<typeof Chat> = {
   component: Chat,
@@ -54,7 +59,7 @@ const meta: Meta<typeof Chat> = {
   title: 'AI/Chat',
   decorators: [
     Story => (
-      <div style={{width: '800px', height: '700px'}}>
+      <div style={{width: '800px', height: '600px'}}>
         <Story />
       </div>
     )
@@ -62,12 +67,6 @@ const meta: Meta<typeof Chat> = {
 };
 
 export default meta;
-
-let dummyResponses = [
-  "Sure! Here's a summary of the key points based on the assets you shared. The main themes revolve around brand consistency, audience engagement, and clear calls to action across all touchpoints.",
-  'Great question. Based on the context provided, I recommend focusing on the narrative arc first, then layering in supporting visuals and data to reinforce the core message.',
-  "I've analyzed the content and identified three main opportunities: improving visual hierarchy, strengthening the headline, and adding a clearer value proposition in the opening section."
-];
 
 type Message =
   | {id: number; type: 'user' | 'system'; content: string}
@@ -209,13 +208,15 @@ function CardMessage({
   );
 }
 
-export function StreamingChat() {
+export function VirtualizedStreamingChat() {
   let [messages, setMessages] = useState<StreamingMessage[]>(
     initialResponses as StreamingMessage[]
   );
   let nextId = useRef(initialResponses.length);
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
+  let [promptValue, setPromptValue] = useState<TokenFieldValue>(new PromptFieldValue([]));
+  let followUpMessage = useRef<TokenFieldValue | null>(null);
 
   function handleSend(prompt: TokenFieldValue) {
     setGenerating(true);
@@ -383,18 +384,13 @@ export function StreamingChat() {
         ]),
       (timestamp += 1000)
     );
-    addTimeout(
-      () =>
-        streamText(
-          'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
-            'layering in supporting visuals and data to reinforce the core message. The main themes ' +
-            'revolve around brand consistency, audience engagement, and clear calls to action.',
-          MOCK_SOURCES
-        ),
-      (timestamp += 500)
-    );
+    let secondStreamContent =
+      'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
+      'layering in supporting visuals and data to reinforce the core message. The main themes ' +
+      'revolve around brand consistency, audience engagement, and clear calls to action.';
+    addTimeout(() => streamText(secondStreamContent, MOCK_SOURCES), (timestamp += 500));
 
-    let streamEndTimestamp = timestamp + 500;
+    let streamEndTimestamp = timestamp + (secondStreamContent.split(' ').length - 1) * 80 + 500;
     addTimeout(() => {
       setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
     }, streamEndTimestamp);
@@ -410,6 +406,29 @@ export function StreamingChat() {
       ]);
       setGenerating(false);
     }, streamEndTimestamp + 1000);
+  }
+
+  useEffect(() => {
+    if (!isGenerating && followUpMessage.current) {
+      let followup = followUpMessage.current;
+      followUpMessage.current = null;
+      handleSend(followup);
+    }
+  }, [isGenerating]);
+
+  // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
+  function handleStop() {
+    followUpMessage.current = null;
+    timeouts.current.forEach(clearTimeout);
+    timeouts.current = [];
+    setMessages(prev =>
+      prev.map(m =>
+        (m.type === 'system' || m.type === 'status') && m.isStreaming
+          ? {...m, isStreaming: false}
+          : m
+      )
+    );
+    setGenerating(false);
   }
 
   return (
@@ -459,14 +478,12 @@ export function StreamingChat() {
             </ThreadScrollButton>
           </div>
           <Thread
-            items={[...messages].reverse()}
-            UNSTABLE_focusOnEntry="first"
+            items={messages}
             aria-label="Chat thread"
             styles={style({
               flexGrow: 1,
               overflowX: 'hidden',
               overflowY: 'auto',
-              padding: 8,
               scrollPadding: 8,
               rowGap: 16
             })}>
@@ -490,12 +507,10 @@ export function StreamingChat() {
                 // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
                 return (
                   <ThreadItem
-                    allowsArrowNavigation
-                    focusMode="child"
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
-                    <ResponseStatus isLoading={msg.isStreaming}>
+                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
                         {msg.details && (
@@ -543,6 +558,225 @@ export function StreamingChat() {
           </Thread>
         </div>
         <PromptField
+          value={promptValue}
+          onChange={setPromptValue}
+          onSubmit={prompt => {
+            setPromptValue(new PromptFieldValue([]));
+            handleSend(prompt);
+          }}
+          isGenerating={isGenerating}
+          onStop={handleStop}>
+          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+            <PromptTokenField
+              placeholder={
+                isGenerating
+                  ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+                  : undefined
+              }
+              onKeyDown={e => {
+                if (!isGenerating) {
+                  return;
+                }
+
+                // TODO: we could make this even more realistic but for now just fire storybook event
+                // and add follow up message to queue
+                if (e.key === 'Enter' && !e.altKey) {
+                  e.preventDefault();
+                  if (promptValue.segments.length > 0) {
+                    action('onSteer')(promptValue.toString());
+                    setPromptValue(new PromptFieldValue([]));
+                  }
+                } else if (e.key === 'Enter' && e.altKey) {
+                  e.preventDefault();
+                  if (promptValue.segments.length > 0) {
+                    action('onFollowUp')(promptValue.toString());
+                    followUpMessage.current = promptValue;
+                    setPromptValue(new PromptFieldValue([]));
+                  }
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  handleStop();
+                }
+              }}
+            />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
+      </Chat>
+    </div>
+  );
+}
+
+let DUMMY_RESPONSES = [
+  "That's a great question! I'm here to help. Could you give me a bit more context so I can provide a more tailored response?",
+  'Sure! Here is a quick summary: the key points are clarity, brevity, and relevance. Let me know if you want me to expand on any of these.',
+  "Interesting topic. Here's what I know: this area has been evolving rapidly, and there are a few different perspectives worth considering. Want me to dive deeper?",
+  "I've processed your message. Based on what you've shared, I'd suggest starting with a clear goal, then breaking it into smaller actionable steps. Does that help?",
+  'Great point! I think the best approach here depends on your specific situation. Can you tell me more about your constraints or priorities?'
+];
+
+export function EmptyChat() {
+  let [messages, setMessages] = useState<StreamingMessage[]>([]);
+  let nextId = useRef(0);
+  let [isGenerating, setGenerating] = useState(false);
+  let timeouts = useRef<NodeJS.Timeout[]>([]);
+
+  function handleSend(prompt: TokenFieldValue) {
+    setGenerating(true);
+    setMessages(prev => [
+      ...prev,
+      {id: nextId.current++, type: 'user', content: prompt.toString()}
+    ]);
+
+    let addTimeout = (callback: () => void, delay: number) => {
+      let timeout = setTimeout(callback, delay);
+      timeouts.current.push(timeout);
+      return timeout;
+    };
+
+    let response = DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
+
+    addTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+      ]);
+      let tokens = response.split(' ');
+      let accumulated = '';
+      tokens.forEach((token, i) => {
+        addTimeout(() => {
+          accumulated += (i === 0 ? '' : ' ') + token;
+          let isLastToken = i === tokens.length - 1;
+          setMessages(prev =>
+            prev.map(m =>
+              m.type === 'system' && m.isStreaming
+                ? {...m, content: accumulated, isStreaming: !isLastToken}
+                : m
+            )
+          );
+          if (isLastToken) {
+            setGenerating(false);
+          }
+        }, i * 60);
+      });
+    }, 600);
+  }
+
+  return (
+    <div
+      className={style({
+        margin: 0,
+        marginX: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 32,
+        height: '100%'
+      })}>
+      <Chat
+        styles={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1,
+          gap: 16,
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
+        })}>
+        <div
+          className={style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0
+          })}>
+          <div
+            className={style({
+              position: 'absolute',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            })}>
+            <ThreadScrollButton>
+              <ActionButton slot="scroll" aria-label="Scroll to bottom">
+                <ChevronDown />
+              </ActionButton>
+            </ThreadScrollButton>
+          </div>
+          <Thread
+            items={messages}
+            aria-label="Chat thread"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            {(msg: StreamingMessage) => {
+              if (msg.type === 'user') {
+                return (
+                  <ThreadItem
+                    textValue={msg.content}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{msg.content}</UserMessage>
+                  </ThreadItem>
+                );
+              }
+              if (msg.type === 'status') {
+                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
+                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
+                return (
+                  <ThreadItem
+                    textValue={announcement}
+                    isStreaming={msg.isStreaming}
+                    shouldAnnounceOnMount>
+                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
+                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
+                      <ResponseStatusPanel>
+                        {msg.details && (
+                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
+                        )}
+                      </ResponseStatusPanel>
+                    </ResponseStatus>
+                  </ThreadItem>
+                );
+              }
+              if (msg.type === 'card') {
+                return (
+                  <CardMessage
+                    title={msg.title}
+                    description={msg.description}
+                    imageUrl={msg.imageUrl}
+                  />
+                );
+              }
+              if (msg.type === 'suggestions') {
+                return (
+                  <ThreadItem textValue={msg.title}>
+                    <MessageSuggestionList title={msg.title}>
+                      {msg.suggestions.map((s, i) => (
+                        <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                      ))}
+                    </MessageSuggestionList>
+                  </ThreadItem>
+                );
+              }
+              return (
+                <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+                  <div role="document">
+                    <p className={style({font: 'body'})}>{msg.content || ''}</p>
+                  </div>
+                  {!msg.isStreaming && <MessageFeedback />}
+                </SystemMessage>
+              );
+            }}
+          </Thread>
+        </div>
+        <PromptField
           onSubmit={handleSend}
           isGenerating={isGenerating}
           onStop={() => {
@@ -560,94 +794,117 @@ export function StreamingChat() {
   );
 }
 
-// Ignore this story, just here for local testing
-export function VirtualizedChat() {
-  let [messages, setMessages] = useState<Message[]>(initialResponses);
-  let nextId = useRef(initialResponses.length);
-  let lastMessage = messages.at(-1);
-  let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
-  function handleSend(prompt: TokenFieldValue) {
-    setMessages(prev => [
-      ...prev,
-      {id: nextId.current++, type: 'user', content: prompt.toString()},
-      {id: nextId.current++, type: 'status', status: 'pending'}
-    ]);
-    setTimeout(() => {
-      let response = dummyResponses[Math.floor(Math.random() * dummyResponses.length)];
-      setMessages(prev => [
-        ...prev.slice(0, -1),
-        {id: nextId.current++, type: 'system', content: response}
-      ]);
-    }, 1500);
+// A system response rendered as prose, e.g. markdown returned from the server.
+// Uses the `prose` macro from S2 to style the semantic HTML elements.
+function ProseResponse() {
+  return (
+    <div role="document" className={prose()}>
+      <h3>Setting up a design token pipeline</h3>
+      <p>
+        A token pipeline turns brand decisions into typed, versioned values every component can
+        consume. At a high level there are three layers:
+      </p>
+      <ul>
+        <li>
+          <strong>Global palette</strong> — raw values like <code>gray-100</code> through{' '}
+          <code>gray-900</code>.
+        </li>
+        <li>
+          <strong>Semantic aliases</strong> — roles such as <code>text-primary</code> that point at
+          palette steps.
+        </li>
+        <li>
+          <strong>Component tokens</strong> — per-component overrides layered on top.
+        </li>
+      </ul>
+      <p>A minimal build step reads your tokens and emits platform files:</p>
+      <pre>
+        <code>{`import StyleDictionary from 'style-dictionary';
+
+StyleDictionary.extend({
+  source: ['tokens/**/*.json'],
+  platforms: {
+    css: {transformGroup: 'css', buildPath: 'dist/css/'}
   }
+}).buildAllPlatforms();`}</code>
+      </pre>
+      <p>
+        Run it after every change and components import semantic values instead of literals. See the{' '}
+        <a href="https://spectrum.adobe.com/page/design-tokens/">Spectrum design tokens docs</a> for
+        the full naming conventions.
+      </p>
+    </div>
+  );
+}
+
+type PopoverMessage = {id: number; type: 'user'; content: string} | {id: number; type: 'prose'};
+
+// A Chat rendered inside an S2 Popover, where the system response is prose
+// (markdown) styled with the `prose` macro.
+export function ChatPopover() {
+  let messages: PopoverMessage[] = [
+    {
+      id: 0,
+      type: 'user',
+      content: 'Can you explain how a design token pipeline works?'
+    },
+    {id: 1, type: 'prose'}
+  ];
 
   return (
-    <div
-      className={style({
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        flexGrow: 1,
-        boxSizing: 'border-box',
-        minWidth: 0
-      })}>
-      <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 100}}>
-        <GridList
-          aria-label="Chat thread"
-          keyboardNavigationBehavior="tab"
-          UNSTABLE_focusOnEntry="last"
-          items={messages}
-          className={style({
-            height: 400,
-            paddingX: 4,
-            overflowX: 'hidden',
-            overflowY: 'auto',
-            marginBottom: 8,
+    <DialogTrigger>
+      <ActionButton aria-label="Open assistant" styles={style({marginX: 'auto'})}>
+        <ChatIcon />
+      </ActionButton>
+      <Popover styles={style({width: 400, height: 520})}>
+        <Chat
+          styles={style({
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            height: 'full',
+            gap: 16,
             boxSizing: 'border-box',
-            minWidth: 0,
-            width: 'full'
+            minWidth: 0
           })}>
-          {msg => {
-            if (msg.type === 'user') {
+          <Thread
+            items={messages}
+            aria-label="Chat thread"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              padding: 8,
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            {(msg: PopoverMessage) => {
+              if (msg.type === 'user') {
+                return (
+                  <ThreadItem
+                    textValue={msg.content}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{msg.content}</UserMessage>
+                  </ThreadItem>
+                );
+              }
               return (
-                <ThreadItem
-                  textValue={msg.content}
-                  styles={style({borderRadius: 'lg', display: 'flex', justifyContent: 'end'})}>
-                  <UserMessage>{msg.content}</UserMessage>
-                </ThreadItem>
+                <SystemMessage textValue="Design token pipeline overview">
+                  <ProseResponse />
+                  <MessageFeedback />
+                </SystemMessage>
               );
-            }
-            if (msg.type === 'status') {
-              let isPending = msg.status === 'pending';
-              let message = isPending ? 'Generating response' : 'Response generated';
-
-              return (
-                <ThreadItem allowsArrowNavigation focusMode="child" textValue={message}>
-                  <ResponseStatus isLoading={isPending}>
-                    <ResponseStatusTitle>{message}</ResponseStatusTitle>
-                  </ResponseStatus>
-                </ThreadItem>
-              );
-            }
-            return (
-              <SystemMessage textValue={msg.content}>
-                <div role="document">
-                  <p className={style({font: 'body'})}>{msg.content}</p>
-                </div>
-                <MessageFeedback />
-              </SystemMessage>
-            );
-          }}
-        </GridList>
-      </Virtualizer>
-      <PromptField onSubmit={handleSend} isGenerating={isPending}>
-        <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-          <PromptTokenField />
-          <PromptFieldSubmitButton />
-        </div>
-      </PromptField>
-    </div>
+            }}
+          </Thread>
+          <PromptField onSubmit={() => {}}>
+            <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+              <PromptTokenField />
+              <PromptFieldSubmitButton />
+            </div>
+          </PromptField>
+        </Chat>
+      </Popover>
+    </DialogTrigger>
   );
 }
 
@@ -677,5 +934,359 @@ function SystemMessage({
         </MessageSource>
       )}
     </ThreadItem>
+  );
+}
+
+interface AsyncMessage {
+  id: number;
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+const ALL_HISTORY: AsyncMessage[] = [
+  {
+    id: 1,
+    role: 'user',
+    content: 'Hi, my laptop battery has been draining really quickly over the past few days.'
+  },
+  {
+    id: 2,
+    role: 'assistant',
+    content:
+      "I'm sorry to hear that. I can help troubleshoot. Could you tell me what model of laptop you have and approximately how old it is?"
+  },
+  {
+    id: 3,
+    role: 'user',
+    content: "It's a Dell XPS 13, about two years old."
+  },
+  {
+    id: 4,
+    role: 'assistant',
+    content:
+      "Thanks. Have you noticed whether the battery drains even when you're doing light tasks like browsing the web, or only during heavier workloads?"
+  },
+  {
+    id: 5,
+    role: 'user',
+    content: 'Mostly browsing, Slack, and Spotify. It used to last almost a full workday.'
+  },
+  {
+    id: 6,
+    role: 'assistant',
+    content:
+      'Understood. A sudden drop like that is worth investigating. Have you recently installed any new software or updated Windows?'
+  },
+  {
+    id: 7,
+    role: 'user',
+    content: 'Windows installed an update last week, and I also downloaded DaVinci Resolve.'
+  },
+  {
+    id: 8,
+    role: 'assistant',
+    content:
+      "Thanks. Sometimes Windows updates perform background tasks for a day or two, and creative software can install services that run in the background. Could you open Task Manager and tell me what's using the most CPU?"
+  },
+  {
+    id: 9,
+    role: 'user',
+    content:
+      "Chrome is around 7%, Windows Modules Installer is around 14%, and Resolve isn't running."
+  },
+  {
+    id: 10,
+    role: 'assistant',
+    content:
+      "That Windows process suggests update-related work is still happening. It should settle down once everything finishes. Let's also check your battery health."
+  },
+  {
+    id: 11,
+    role: 'user',
+    content: 'How do I do that?'
+  },
+  {
+    id: 12,
+    role: 'assistant',
+    content:
+      "Open Command Prompt and run `powercfg /batteryreport`. It will generate an HTML report showing your battery's design capacity and current full charge capacity."
+  },
+  {
+    id: 13,
+    role: 'user',
+    content:
+      'The report says the design capacity is 52,000 mWh and the full charge capacity is 39,100 mWh.'
+  },
+  {
+    id: 14,
+    role: 'assistant',
+    content:
+      "Thanks. That means your battery is retaining about 75% of its original capacity. That's fairly typical after two years, although it will reduce runtime."
+  },
+  {
+    id: 15,
+    role: 'user',
+    content: "Is that enough to explain why I'm only getting around 3 hours?"
+  },
+  {
+    id: 16,
+    role: 'assistant',
+    content:
+      "Probably not by itself. A 25% reduction in capacity shouldn't usually cut runtime by more than half, so it's likely that background activity is contributing as well."
+  },
+  {
+    id: 17,
+    role: 'user',
+    content: "What's the next thing I should check?"
+  },
+  {
+    id: 18,
+    role: 'assistant',
+    content:
+      "I'd recommend checking the Battery Usage page in Windows Settings. It can show which apps have been consuming the most power over the last 24 hours."
+  },
+  {
+    id: 19,
+    role: 'user',
+    content: 'Chrome is at 38%, Slack is 18%, and Screen is 22%.'
+  },
+  {
+    id: 20,
+    role: 'assistant',
+    content: 'Those numbers look fairly normal. How bright do you typically keep your display?'
+  },
+  {
+    id: 21,
+    role: 'user',
+    content: 'Usually around 90%. I work near a window.'
+  },
+  {
+    id: 22,
+    role: 'assistant',
+    content:
+      'Running at high brightness can have a noticeable impact on battery life. If possible, try lowering it to around 60–70% and see whether that improves things.'
+  },
+  {
+    id: 23,
+    role: 'user',
+    content: "I'll try that tomorrow."
+  },
+  {
+    id: 24,
+    role: 'assistant',
+    content:
+      "Great. I'd also suggest enabling Battery Saver when you're unplugged. It reduces background activity and can extend runtime."
+  },
+  {
+    id: 25,
+    role: 'user',
+    content: "I don't think I've ever used Battery Saver."
+  },
+  {
+    id: 26,
+    role: 'assistant',
+    content:
+      'You can enable it from Quick Settings or configure it to turn on automatically below a certain battery percentage in Settings > System > Power & Battery.'
+  },
+  {
+    id: 27,
+    role: 'user',
+    content: 'Would updating the BIOS help?'
+  },
+  {
+    id: 28,
+    role: 'assistant',
+    content:
+      "It can. Manufacturers sometimes release BIOS and firmware updates that improve power management or battery performance. Since you have a Dell XPS, it's worth checking Dell SupportAssist or Dell's support website."
+  },
+  {
+    id: 29,
+    role: 'user',
+    content: "I haven't updated the BIOS since I bought it."
+  },
+  {
+    id: 30,
+    role: 'assistant',
+    content:
+      "In that case, I'd recommend checking for updates. Just make sure the laptop is plugged into power during the update process."
+  },
+  {
+    id: 31,
+    role: 'user',
+    content: 'If none of this helps, should I replace the battery?'
+  },
+  {
+    id: 32,
+    role: 'assistant',
+    content:
+      "If you've ruled out software causes and battery health continues to decline, replacing the battery is a reasonable next step. It should restore battery life much closer to its original level."
+  },
+  {
+    id: 33,
+    role: 'user',
+    content: 'Does Dell usually sell replacement batteries?'
+  },
+  {
+    id: 34,
+    role: 'assistant',
+    content:
+      "Yes. Dell offers genuine replacement batteries for many models. I'd recommend purchasing directly from Dell or an authorized reseller to ensure compatibility and quality."
+  },
+  {
+    id: 35,
+    role: 'user',
+    content: 'Is replacing it something I can do myself?'
+  },
+  {
+    id: 36,
+    role: 'assistant',
+    content:
+      "For many XPS models, it's a relatively straightforward repair if you're comfortable removing the bottom cover. Dell also provides service manuals with step-by-step instructions."
+  },
+  {
+    id: 37,
+    role: 'user',
+    content: "Good to know. I'll try the software fixes first."
+  },
+  {
+    id: 38,
+    role: 'assistant',
+    content:
+      'That sounds like a good approach. Monitor battery life for a few days after the Windows background processes finish and after adjusting your settings.'
+  },
+  {
+    id: 39,
+    role: 'user',
+    content: 'Thanks for walking me through everything!'
+  },
+  {
+    id: 40,
+    role: 'assistant',
+    content:
+      "You're very welcome! If the battery life is still much lower than expected after trying these steps, feel free to come back with an updated battery report and I'd be happy to help you investigate further."
+  }
+];
+
+const PAGE_SIZE = 10;
+
+function renderAsyncMessage(msg: AsyncMessage) {
+  if (msg.role === 'user') {
+    return (
+      <ThreadItem textValue={msg.content} styles={style({display: 'flex', justifyContent: 'end'})}>
+        <UserMessage>{msg.content}</UserMessage>
+      </ThreadItem>
+    );
+  }
+  return (
+    <ThreadItem textValue={msg.content} styles={style({font: 'body'})}>
+      {msg.content}
+    </ThreadItem>
+  );
+}
+
+function useAsyncMessages() {
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [messages, setMessages] = useState<AsyncMessage[]>(ALL_HISTORY.slice(-PAGE_SIZE));
+  const [hasMore, setHasMore] = useState(ALL_HISTORY.length - PAGE_SIZE > 0);
+  const isLoadingRef = useRef(false);
+  const cursorRef = useRef(ALL_HISTORY.length - PAGE_SIZE);
+
+  const handleLoadMore = useCallback(async () => {
+    if (isLoadingRef.current || cursorRef.current <= 0) {
+      return;
+    }
+    isLoadingRef.current = true;
+    setIsLoadingMore(true);
+
+    await new Promise<void>(r => setTimeout(r, 2000));
+
+    const nextCursor = Math.max(0, cursorRef.current - PAGE_SIZE);
+    const older = ALL_HISTORY.slice(nextCursor, cursorRef.current);
+    cursorRef.current = nextCursor;
+    setHasMore(nextCursor > 0);
+
+    setMessages(prev => [...older, ...prev]);
+    setIsLoadingMore(false);
+    isLoadingRef.current = false;
+  }, []);
+
+  return {messages, isLoadingMore, handleLoadMore, hasMore};
+}
+
+export function AsyncLoadingChat() {
+  const {messages, isLoadingMore, handleLoadMore, hasMore} = useAsyncMessages();
+
+  return (
+    <div
+      className={style({
+        margin: 0,
+        marginX: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 32,
+        height: '100%'
+      })}>
+      <Chat
+        styles={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1,
+          gap: 16,
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
+        })}>
+        <div
+          className={style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0
+          })}>
+          <div
+            className={style({
+              position: 'absolute',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            })}>
+            <ThreadScrollButton>
+              <ActionButton slot="scroll" aria-label="Scroll to bottom">
+                <ChevronDown />
+              </ActionButton>
+            </ThreadScrollButton>
+          </div>
+          <Thread
+            aria-label="Chat"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              padding: 8,
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            <ThreadLoadMoreItem
+              isLoading={isLoadingMore}
+              onLoadMore={hasMore ? handleLoadMore : undefined}>
+              <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
+                <ProgressCircle aria-label="Loading older messages" isIndeterminate />
+              </div>
+            </ThreadLoadMoreItem>
+            <Collection items={messages}>{renderAsyncMessage}</Collection>
+          </Thread>
+        </div>
+        <PromptField>
+          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
+      </Chat>
+    </div>
   );
 }
