@@ -13,7 +13,6 @@
 import {action} from 'storybook/actions';
 import {
   AttachFileMenuItem,
-  AutoLinkingTokenFieldValue,
   CommandMenuItem,
   InsertMenuButton,
   InsertTextMenuItem,
@@ -23,6 +22,7 @@ import {
   PromptFieldAttachmentList,
   PromptFieldSubmitButton,
   PromptFieldToolbar,
+  PromptFieldValue,
   PromptFieldVoiceButton,
   PromptToken,
   PromptTokenField
@@ -43,6 +43,7 @@ import {
 import {Content} from '@react-spectrum/s2/Content';
 import Data from '@react-spectrum/s2/icons/Data';
 import * as data from '../src/loader/data';
+import type {FocusableRefValue} from '@react-types/shared';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -89,6 +90,10 @@ const meta: Meta<typeof PromptField> = {
     placeholder: {
       control: 'text',
       table: {category: 'PromptTokenField'}
+    },
+    menuWidth: {
+      control: 'number',
+      table: {category: 'PromptTokenField'}
     }
   },
   args: {
@@ -97,6 +102,7 @@ const meta: Meta<typeof PromptField> = {
     attachmentVariant: 'thumbnail',
     attachmentInvalid: false,
     placeholder: undefined,
+    menuWidth: undefined,
     ...getActionArgs(events)
   },
   title: 'AI/PromptField',
@@ -245,35 +251,45 @@ interface UploadState {
   progress?: number;
 }
 
-let prompt3Base = new AutoLinkingTokenFieldValue([
+function atEnd(v: PromptFieldValue) {
+  let segs = v.segments;
+  return {index: segs.length - 1, offset: segs[segs.length - 1].text.length};
+}
+
+let prompt1 = new PromptFieldValue([
+  {type: 'text', text: 'Analyze '},
+  {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
+  {type: 'text', text: ' and suggest targeting strategies'}
+]);
+
+let prompt2 = new PromptFieldValue([
+  {type: 'text', text: 'Write a brief for '},
+  {
+    type: 'token',
+    text: 'Spring Launch 2026',
+    value: {type: 'campaign', title: 'Spring Launch 2026'}
+  }
+]);
+
+let prompt3Base = new PromptFieldValue([
   {type: 'text', text: 'Summarize the '},
   {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}}
 ]);
-let prompt3End = {
-  index: 1,
-  offset: prompt3Base.segments[1].text.length
-};
 
 let prompts = [
-  new AutoLinkingTokenFieldValue([
-    {type: 'text', text: 'Analyze '},
-    {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
-    {type: 'text', text: ' and suggest targeting strategies'}
-  ]),
-  new AutoLinkingTokenFieldValue([
-    {type: 'text', text: 'Write a brief for '},
-    {
-      type: 'token',
-      text: 'Spring Launch 2026',
-      value: {type: 'campaign', title: 'Spring Launch 2026'}
-    }
-  ]),
-  prompt3Base.replaceRange(prompt3End, prompt3End, ' journey performance from test.com ')
+  prompt1.withCaretPosition(atEnd(prompt1)),
+  prompt2.withCaretPosition(atEnd(prompt2)),
+  prompt3Base.replaceRange(
+    atEnd(prompt3Base),
+    atEnd(prompt3Base),
+    ' journey performance from test.com /'
+  )
 ];
 
 function EverythingRender(args) {
-  let {placeholder, ...otherArgs} = args;
-  let [value, setValue] = useState<TokenFieldValue>(() => new AutoLinkingTokenFieldValue([]));
+  let {placeholder, menuWidth, ...otherArgs} = args;
+  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+  let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
   let historyRef = useRef<TokenFieldValue[]>([]);
@@ -330,7 +346,7 @@ function EverythingRender(args) {
       if (nextIndex >= history.length) {
         historyIndexRef.current = -1;
         isHistoryNavigating.current = true;
-        setValue(new AutoLinkingTokenFieldValue([]));
+        setValue(new PromptFieldValue([]));
       } else {
         historyIndexRef.current = nextIndex;
         isHistoryNavigating.current = true;
@@ -352,13 +368,19 @@ function EverythingRender(args) {
     <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
       <MessageSuggestionList title="Suggestions">
         {prompts.map((prompt, i) => (
-          <MessageSuggestion key={i} onPress={() => setValue(prompt)}>
+          <MessageSuggestion
+            key={i}
+            onPress={() => {
+              setValue(prompt);
+              promptFieldRef.current?.focus();
+            }}>
             {prompt.toString()}
           </MessageSuggestion>
         ))}
       </MessageSuggestionList>
       <PromptField
         {...otherArgs}
+        ref={promptFieldRef}
         value={value}
         onChange={handleChange}
         attachments={attachments}
@@ -367,7 +389,7 @@ function EverythingRender(args) {
           action('onSubmit')(prompt.toString());
           historyRef.current = [...historyRef.current, prompt];
           historyIndexRef.current = -1;
-          setValue(new AutoLinkingTokenFieldValue([]));
+          setValue(new PromptFieldValue([]));
           setAttachments([]);
           setAttachmentState(new Map());
         }}
@@ -416,7 +438,7 @@ function EverythingRender(args) {
           renderCompletions={filterValue =>
             renderCompletions(filterValue, {
               onClear: () => {
-                setValue(new AutoLinkingTokenFieldValue([]));
+                setValue(new PromptFieldValue([]));
                 setAttachments([]);
               },
               onCompact: action('onCompact')
@@ -424,6 +446,7 @@ function EverythingRender(args) {
           }
           pixelLoader={data[args.pixelLoader]}
           placeholder={placeholder}
+          menuWidth={menuWidth}
           onKeyDown={onKeyDown}>
           {segment => (
             <PromptToken>
@@ -446,7 +469,7 @@ function EverythingRender(args) {
                     <MenuItem
                       id={item.command}
                       onAction={() => {
-                        setValue(new AutoLinkingTokenFieldValue([]));
+                        setValue(new PromptFieldValue([]));
                         setAttachments([]);
                       }}>
                       <Text slot="label">{item.command}</Text>
@@ -508,7 +531,7 @@ function EverythingRender(args) {
           </InsertMenuButton>
           {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
           <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
-            <PromptFieldVoiceButton />
+            <PromptFieldVoiceButton onToggle={action('onToggle')} />
             <PromptFieldSubmitButton />
           </div>
         </PromptFieldToolbar>
