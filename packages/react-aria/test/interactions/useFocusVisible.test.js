@@ -29,6 +29,7 @@ import React from 'react';
 import {useButton} from '../../src/button/useButton';
 import {useFocusRing} from '../../src/focus/useFocusRing';
 import userEvent from '@testing-library/user-event';
+import {useShowFocusIndicator} from '../../exports/useShowFocusIndicator';
 
 function Example(props) {
   const {isFocusVisible} = useFocusVisible();
@@ -372,6 +373,20 @@ describe('useFocusVisible', function () {
 
       expect(el.textContent).toBe('example-focusVisible');
     });
+  });
+});
+
+describe('useShowFocusIndicator', function () {
+  it('shows the focus indicator after pointer interaction', function () {
+    fireEvent.mouseDown(document.body);
+    let {result} = renderHook(() => ({
+      isFocusVisible: useFocusVisible().isFocusVisible,
+      showFocusIndicator: useShowFocusIndicator()
+    }));
+
+    expect(result.current.isFocusVisible).toBe(false);
+    act(() => result.current.showFocusIndicator());
+    expect(result.current.isFocusVisible).toBe(true);
   });
 });
 
