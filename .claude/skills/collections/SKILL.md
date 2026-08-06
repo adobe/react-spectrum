@@ -194,11 +194,6 @@ reflective builder only remains for legacy RSP v3 components. Quick tell: if a c
 
 ## Common tasks & gotchas
 
-- **Add a new node type**: subclass `CollectionNode` with a `static readonly type` in
-  `BaseCollection.ts` (see `LoaderNode`/`HeaderNode`), export it from
-  `packages/@react-aria/collections/src/index.ts`, and create the component with
-  `createLeafComponent(MyNode, …)` / `createBranchComponent(MyNode, …)`. If it needs custom filtering,
-  override `filter()`.
 - **What triggers a rebuild (pass 1)**: any fake-DOM mutation (`appendChild`, `setProps`, `style.display`
   change) marks nodes dirty and calls `queueUpdate()`, which clones the collection so
   `useSyncExternalStore` sees a new snapshot and re-renders. `useCachedChildren` caches by item object
