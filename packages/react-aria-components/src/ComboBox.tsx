@@ -171,7 +171,8 @@ export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
   );
 
   return (
-    <CollectionBuilder content={<TextContext.Provider value={undefined}>{content}</TextContext.Provider>}>
+    <CollectionBuilder
+      content={<TextContext.Provider value={undefined}>{content}</TextContext.Provider>}>
       {collection => <ComboBoxInner props={props} collection={collection} comboBoxRef={ref} />}
     </CollectionBuilder>
   );

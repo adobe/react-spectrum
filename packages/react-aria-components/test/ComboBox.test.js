@@ -1065,18 +1065,22 @@ describe('ComboBox', () => {
   });
 
   it('should not throw when rendered inside a Dialog with a Text errorMessage slot', () => {
-    expect(() => render(
-      <Dialog aria-label="Dialog">
-        <TestComboBox isInvalid />
-      </Dialog>
-    )).not.toThrow();
+    expect(() =>
+      render(
+        <Dialog aria-label="Dialog">
+          <TestComboBox isInvalid />
+        </Dialog>
+      )
+    ).not.toThrow();
   });
 
   it('should not throw when rendered inside an alertdialog with a Text errorMessage slot', () => {
-    expect(() => render(
-      <Dialog role="alertdialog" aria-label="Dialog">
-        <TestComboBox isInvalid />
-      </Dialog>
-    )).not.toThrow();
+    expect(() =>
+      render(
+        <Dialog role="alertdialog" aria-label="Dialog">
+          <TestComboBox isInvalid />
+        </Dialog>
+      )
+    ).not.toThrow();
   });
 });
