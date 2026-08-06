@@ -379,20 +379,17 @@ describe('useFocusVisible', function () {
 describe('useShowFocusIndicator', function () {
   it('shows the focus indicator when validation programmatically focuses an invalid field', async function () {
     function Example() {
-      let ref = React.useRef(null);
       let {focusProps, isFocusVisible} = useFocusRing();
       let showFocusIndicator = useShowFocusIndicator();
 
       let onSubmit = e => {
         e.preventDefault();
-        // react-hook-form calls the invalid handler before focusing the first invalid field.
         showFocusIndicator();
-        ref.current.focus();
       };
 
       return (
         <form onSubmit={onSubmit}>
-          <input {...focusProps} data-focus-visible={isFocusVisible || undefined} ref={ref} />
+          <input {...focusProps} data-focus-visible={isFocusVisible || undefined} />
           <button type="submit">Submit</button>
         </form>
       );
@@ -403,6 +400,8 @@ describe('useShowFocusIndicator', function () {
     await user.click(screen.getByRole('button', {name: 'Submit'}));
 
     let input = screen.getByRole('textbox');
+    // react-hook-form focuses the first invalid field after the invalid handler returns.
+    act(() => input.focus());
     expect(input).toHaveFocus();
     expect(input).toHaveAttribute('data-focus-visible', 'true');
   });
