@@ -275,6 +275,14 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       overlay.style.maxHeight = (window.visualViewport?.height ?? window.innerHeight) + 'px';
     }
 
+    // Reset the horizontal insets before measuring as well. An auto-width overlay is otherwise
+    // clamped by the left/right position applied in a previous pass (shrink-to-fit against the
+    // containing block), so its natural width could never be measured after its content changes.
+    // Both insets must be reset together: leaving a stale `right` while setting `left: 0px`
+    // would stretch the overlay between them and over-measure it instead.
+    overlay.style.left = '0px';
+    overlay.style.right = '';
+
     let position = calculatePosition({
       placement: translateRTL(placement, direction),
       overlayNode: overlayRef.current,
