@@ -262,4 +262,50 @@ describe('TimeField', () => {
 
     expect(getDescription()).not.toContain('Constraints not satisfied');
   });
+
+  it('should surface the partial-value error after blur and clear it when refilled (Bug #9801)', async () => {
+    let {getByRole} = render(
+      <form data-testid="form">
+        <TimeField name="time" defaultValue={new Time(13, 30)}>
+          <Label>Time</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          <FieldError />
+        </TimeField>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let timefield = group.closest('.react-aria-TimeField');
+    let input = document.querySelector('input[name=time]');
+    let segments = within(group).getAllByRole('spinbutton');
+    let getDescription = () =>
+      (group.getAttribute('aria-describedby') || '')
+        .split(' ')
+        .map(d => document.getElementById(d)?.textContent || '')
+        .join(' ');
+
+    // Clear the hour segment. No error until blur, but the hidden input is already empty.
+    act(() => {
+      segments[0].focus();
+    });
+    await user.keyboard('{Backspace}');
+    expect(input).toHaveValue('');
+    expect(timefield).not.toHaveAttribute('data-invalid');
+
+    // Tab out of the field (hour -> minute -> dayPeriod -> out) -> the error appears.
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(timefield).toHaveAttribute('data-invalid');
+    expect(getDescription()).toContain('Please enter a value.');
+
+    // Refilling the hour completes the value and clears the error immediately.
+    act(() => {
+      segments[0].focus();
+    });
+    await user.keyboard('1');
+    expect(input).toHaveValue('13:30:00');
+    expect(timefield).not.toHaveAttribute('data-invalid');
+    expect(getDescription()).not.toContain('Please enter a value.');
+  });
 });

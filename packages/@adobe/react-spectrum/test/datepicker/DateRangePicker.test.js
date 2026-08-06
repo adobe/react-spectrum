@@ -1924,6 +1924,185 @@ describe('DateRangePicker', function () {
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
 
+        it('should signal validation when an endpoint date is made partial by clearing a segment (Bug #9958)', async () => {
+          // each endpoint has its own DateFieldState with isValuePartial. Clearing a segment of either endpoint should
+          // fire validation on blur.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateRangePicker
+                  label="Date"
+                  startName="start"
+                  endName="end"
+                  defaultValue={{
+                    start: new CalendarDate(2026, 4, 28),
+                    end: new CalendarDate(2026, 5, 15)
+                  }}
+                  isRequired
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // Tab past remaining start segments, end segments, and calendar trigger
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+          expect(getDescription()).toContain('Please enter a value.');
+
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('4');
+          expect(getDescription()).not.toContain('Please enter a value.');
+
+          // Same flow for the end date: clear a segment, blur -> error; refill -> error clears.
+          act(() => {
+            segments[3].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[3]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // Tab past the remaining end segments and onto the calendar trigger
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          act(() => {
+            segments[3].focus();
+          });
+          await user.keyboard('5');
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should keep the partial-value error until both endpoints are complete (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateRangePicker
+                  label="Date"
+                  startName="start"
+                  endName="end"
+                  defaultValue={{
+                    start: new CalendarDate(2026, 4, 28),
+                    end: new CalendarDate(2026, 5, 15)
+                  }}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Make both endpoints partial, then blur out of the field.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          act(() => {
+            segments[3].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Completing only the start date keeps the error (the end date is still partial).
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('4');
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Completing the end date as well clears it.
+          act(() => {
+            segments[3].focus();
+          });
+          await user.keyboard('5');
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it("should merge the incomplete message with the other endpoint's constraint error (Bug #9958)", async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateRangePicker
+                  label="Date"
+                  startName="start"
+                  endName="end"
+                  maxValue={new CalendarDate(2026, 5, 1)}
+                  defaultValue={{
+                    start: new CalendarDate(2026, 4, 28),
+                    end: new CalendarDate(2026, 5, 15)
+                  }}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Make the start date partial, then blur. The start endpoint reports the generic
+          // incomplete message (its constraints can't be evaluated), while the end endpoint
+          // is complete and reports its real max-violation alongside it.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+          expect(getDescription()).toContain('Value must be 5/1/2026 or earlier.');
+
+          // Completing the start date drops the incomplete message; the end violation stays.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('4');
+          expect(getDescription()).not.toContain('Please enter a value.');
+          expect(getDescription()).toContain('Value must be 5/1/2026 or earlier.');
+        });
+
         it('supports minValue and maxValue', async () => {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>
@@ -2214,6 +2393,62 @@ describe('DateRangePicker', function () {
           expect(input.validity.valid).toBe(true);
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
+
+        it('should clear the partial-value error on the first calendar selection that completes the range (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateRangePicker
+                  label="Date"
+                  startName="start"
+                  endName="end"
+                  defaultValue={{
+                    start: new CalendarDate(2019, 2, 3),
+                    end: new CalendarDate(2019, 5, 6)
+                  }}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let startInput = document.querySelector('input[name=start]');
+          let segments = within(group).getAllByRole('spinbutton');
+
+          // Clear the start month segment, then blur the field -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+          // Tab past remaining start segments, end segments, and calendar trigger button.
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Open the calendar and select a complete range with two clicks on the focused cell.
+          // The calendar opens with focus on the highlighted start date; clicking it sets the
+          // range start, clicking the same focused cell again sets the range end.
+          await user.click(getByRole('button'));
+          await user.click(document.activeElement);
+          await user.click(document.activeElement);
+
+          // The range is now complete and valid
+          expect(startInput.validity.valid).toBe(true);
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
       });
 
       describe('validationBehavior=aria', () => {
@@ -2312,6 +2547,106 @@ describe('DateRangePicker', function () {
 
           await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
           expect(getDescription()).not.toContain('Invalid start date. Invalid end date.');
+        });
+
+        it('should signal validation only after blur when an endpoint is made partial (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateRangePicker
+                  label="Date"
+                  defaultValue={{
+                    start: new CalendarDate(2026, 4, 28),
+                    end: new CalendarDate(2026, 5, 15)
+                  }}
+                  validationBehavior="aria"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the start month segment.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // No error while still editing — aria validation must not flash mid-edit.
+          expect(getDescription()).not.toContain('Please enter a value.');
+
+          // Tab past remaining start segments, end segments, and the calendar trigger.
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Refilling the start month completes the range and clears the error in realtime.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('4');
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should clear the partial-value error on the first calendar selection that completes the range (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateRangePicker
+                  label="Date"
+                  defaultValue={{
+                    start: new CalendarDate(2019, 2, 3),
+                    end: new CalendarDate(2019, 5, 6)
+                  }}
+                  validationBehavior="aria"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the start month segment, then blur the field -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Open the calendar and select a complete range with two clicks on the focused cell.
+          await user.click(getByRole('button'));
+          await user.click(document.activeElement);
+          await user.click(document.activeElement);
+
+          // The range is now complete and valid.
+          expect(getDescription()).not.toContain('Please enter a value.');
         });
       });
     });

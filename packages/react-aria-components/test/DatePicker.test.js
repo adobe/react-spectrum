@@ -283,6 +283,71 @@ describe('DatePicker', () => {
     expect(datepicker).not.toHaveAttribute('data-invalid');
   });
 
+  it('should surface the partial-value error and clear it on the first calendar selection (Bug #9958)', async () => {
+    let {getByRole, getAllByRole} = render(
+      <form data-testid="form">
+        <DatePicker name="date" defaultValue={new CalendarDate(2019, 2, 3)}>
+          <Label>Birth date</Label>
+          <Group>
+            <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+            <Button>▼</Button>
+          </Group>
+          <FieldError />
+          <Popover>
+            <Dialog>
+              <Calendar>
+                <header>
+                  <Button slot="previous">◀</Button>
+                  <Heading />
+                  <Button slot="next">▶</Button>
+                </header>
+                <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+              </Calendar>
+            </Dialog>
+          </Popover>
+        </DatePicker>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let datepicker = group.closest('.react-aria-DatePicker');
+    let input = document.querySelector('input[name=date]');
+    let segments = within(group).getAllByRole('spinbutton');
+    let button = within(group).getByRole('button');
+    let getDescription = () =>
+      (group.getAttribute('aria-describedby') || '')
+        .split(' ')
+        .map(d => document.getElementById(d)?.textContent || '')
+        .join(' ');
+
+    // Clear the month segment. No error is displayed until the field is blurred,
+    // but the hidden input is already empty so submission is blocked.
+    act(() => {
+      segments[0].focus();
+    });
+    await user.keyboard('{Backspace}');
+    expect(input).toHaveValue('');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
+
+    // Tab through the remaining segments onto the calendar button -> the field blurs
+    // and the partial error appears.
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(datepicker).toHaveAttribute('data-invalid');
+    expect(getDescription()).toContain('Please enter a value.');
+
+    // Selecting a date from the calendar completes the value and clears the error.
+    await user.click(button);
+    let cells = getAllByRole('gridcell');
+    let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+    await user.click(selected.nextSibling.children[0]);
+
+    expect(input).toHaveValue('2019-02-04');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
+    expect(getDescription()).not.toContain('Please enter a value.');
+  });
+
   it('should support close on select = true', async () => {
     let {getByRole, getAllByRole} = render(<TestDatePicker value={new CalendarDate(2019, 2, 3)} />);
 

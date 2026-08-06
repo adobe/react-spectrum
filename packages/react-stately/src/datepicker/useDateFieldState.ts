@@ -25,15 +25,16 @@ import {
   FormatterOptions,
   getFormatOptions,
   getValidationResult,
-  useDefaultProps
+  useDefaultProps,
+  usePartialFormValidationState
 } from './utils';
 import {DatePickerProps, DateValue, Granularity, MappedDateValue} from './types';
-import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
+import {FormValidationState} from '../form/useFormValidationState';
 import {getPlaceholder} from './placeholders';
 import {IncompleteDate} from './IncompleteDate';
 import {NumberFormatter} from '@internationalized/number';
+import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export type DateSegmentType =
@@ -100,6 +101,13 @@ export interface DateFieldState extends FormValidationState {
   isReadOnly: boolean;
   /** Whether the field is required. */
   isRequired: boolean;
+  /**
+   * Whether the display value is partially filled — some editable segments have values and
+   * some are still placeholders.
+   *
+   * @private
+   */
+  isValuePartial: boolean;
   /**
    * Increments the given segment. Upon reaching the minimum or maximum value, the value wraps
    * around to the opposite limit.
@@ -363,16 +371,27 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     setValue(displayValue.cycle(type, amount, placeholder, displaySegments));
   };
 
-  let builtinValidation = useMemo(
-    () => getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts),
+  let isValuePartial =
+    !displayValue.isComplete(displaySegments) && !displayValue.isCleared(displaySegments);
+
+  let getBuiltinValidation = useCallback(
+    (displayPartialError: boolean) =>
+      getValidationResult(
+        value,
+        minValue,
+        maxValue,
+        isDateUnavailable,
+        formatOpts,
+        displayPartialError
+      ),
     [value, minValue, maxValue, isDateUnavailable, formatOpts]
   );
 
-  let validation = useFormValidationState({
-    ...props,
-    value: value as MappedDateValue<T> | null,
-    builtinValidation
-  });
+  let validation = usePartialFormValidationState(
+    {...props, value: value as MappedDateValue<T> | null},
+    isValuePartial,
+    getBuiltinValidation
+  );
 
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState | null =
@@ -394,6 +413,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     isDisabled,
     isReadOnly,
     isRequired,
+    isValuePartial,
     increment(part) {
       adjustSegment(part, 1);
     },

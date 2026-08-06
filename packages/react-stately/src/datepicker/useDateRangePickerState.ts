@@ -25,13 +25,14 @@ import {
   getFormatOptions,
   getPlaceholderTime,
   getRangeValidationResult,
-  useDefaultProps
+  useDefaultProps,
+  usePartialFormValidationState
 } from './utils';
-import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
+import {FormValidationState, privateSetIsValuePartialProp} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {RangeValue, ValidationState} from '@react-types/shared';
+import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
 
 export interface DateRangePickerStateOptions<
   T extends DateValue = DateValue
@@ -127,7 +128,12 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
 
   let value = controlledValue || placeholderValue;
 
-  let setValue = (newValue: RangeValue<DateValue | null> | null) => {
+  // Partial-state hoisted before setValue so the wrapper can reference the setters.
+  // Lifted from the inner start/end DateFields via privateSetIsValuePartialProp.
+  let [startIsValuePartial, setStartIsValuePartial] = useState(false);
+  let [endIsValuePartial, setEndIsValuePartial] = useState(false);
+
+  let setValueInternal = (newValue: RangeValue<DateValue | null> | null) => {
     // oxlint-disable-next-line react/react-compiler
     value = newValue || {start: null, end: null};
     setPlaceholderValue(value);
@@ -136,6 +142,14 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
     } else {
       setControlledValue(null);
     }
+  };
+
+  // Wrap the setter so any committed range (complete or null) always resets both partial flags,
+  // preventing stale isValuePartial state when a consumer calls state.setValue() directly.
+  let setValue = (newValue: RangeValue<DateValue | null> | null) => {
+    setStartIsValuePartial(false);
+    setEndIsValuePartial(false);
+    setValueInternal(newValue);
   };
 
   let v = value?.start || value?.end || props.placeholderValue || null;
@@ -226,27 +240,44 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
   );
 
   let {minValue, maxValue, isDateUnavailable} = props;
-  let builtinValidation = useMemo(
-    () =>
+
+  // The display flag from usePartialFormValidationState is `(start || end) && armed`;
+  // `startIsValuePartial && displayPartialError` reduces to `startIsValuePartial && armed`,
+  // recovering the per-endpoint gating (same for end).
+  let getBuiltinValidation = useCallback(
+    (displayPartialError: boolean) =>
       getRangeValidationResult(
         value,
         minValue,
         maxValue,
         isDateUnavailable ? date => isDateUnavailable(date, null) : undefined,
-        formatOpts
+        formatOpts,
+        startIsValuePartial && displayPartialError,
+        endIsValuePartial && displayPartialError
       ),
-    [value, minValue, maxValue, isDateUnavailable, formatOpts]
+    [
+      value,
+      minValue,
+      maxValue,
+      isDateUnavailable,
+      formatOpts,
+      startIsValuePartial,
+      endIsValuePartial
+    ]
   );
 
-  let validation = useFormValidationState({
-    ...props,
-    value: controlledValue as RangeValue<MappedDateValue<T>> | null,
-    name: useMemo(
-      () => [props.startName, props.endName].filter(n => n != null),
-      [props.startName, props.endName]
-    ),
-    builtinValidation
-  });
+  let validation = usePartialFormValidationState(
+    {
+      ...props,
+      value: controlledValue as RangeValue<MappedDateValue<T>> | null,
+      name: useMemo(
+        () => [props.startName, props.endName].filter(n => n != null),
+        [props.startName, props.endName]
+      )
+    },
+    startIsValuePartial || endIsValuePartial,
+    getBuiltinValidation
+  );
 
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState | null =
@@ -254,6 +285,9 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
 
   return {
     ...validation,
+    // Two setters since the range has two independent fields with separate partial state.
+    [`${privateSetIsValuePartialProp}-start`]: setStartIsValuePartial,
+    [`${privateSetIsValuePartialProp}-end`]: setEndIsValuePartial,
     value,
     defaultValue: props.defaultValue ?? initialValue,
     setValue,

@@ -310,6 +310,78 @@ describe('DateRangePicker', () => {
     expect(datepicker).not.toHaveAttribute('data-invalid');
   });
 
+  it('should surface the partial-value error and clear it on the first range selection (Bug #9958)', async () => {
+    let {getByRole, getAllByRole} = render(
+      <form data-testid="form">
+        <DateRangePicker
+          startName="start"
+          endName="end"
+          defaultValue={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}}>
+          <Label>Trip dates</Label>
+          <Group>
+            <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
+            <span aria-hidden="true">–</span>
+            <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
+            <Button>▼</Button>
+          </Group>
+          <FieldError />
+          <Popover>
+            <Dialog>
+              <RangeCalendar>
+                <header>
+                  <Button slot="previous">◀</Button>
+                  <Heading />
+                  <Button slot="next">▶</Button>
+                </header>
+                <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+              </RangeCalendar>
+            </Dialog>
+          </Popover>
+        </DateRangePicker>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let datepicker = group.closest('.react-aria-DateRangePicker');
+    let startInput = document.querySelector('input[name=start]');
+    let segments = within(group).getAllByRole('spinbutton');
+    let button = within(group).getByRole('button');
+    let getDescription = () =>
+      (group.getAttribute('aria-describedby') || '')
+        .split(' ')
+        .map(d => document.getElementById(d)?.textContent || '')
+        .join(' ');
+
+    // Clear the start month segment. No error until the field is blurred.
+    act(() => {
+      segments[0].focus();
+    });
+    await user.keyboard('{Backspace}');
+    expect(startInput).toHaveValue('');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
+
+    // Tab through the remaining segments and onto the calendar button.
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(datepicker).toHaveAttribute('data-invalid');
+    expect(getDescription()).toContain('Please enter a value.');
+
+    // Selecting a complete range from the calendar clears the error on the first selection.
+    await user.click(button);
+    let cells = getAllByRole('gridcell');
+    let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+    await user.click(selected.children[0]);
+    await user.click(selected.children[0]);
+
+    expect(startInput.validity.valid).toBe(true);
+    expect(datepicker).not.toHaveAttribute('data-invalid');
+    expect(getDescription()).not.toContain('Please enter a value.');
+  });
+
   it('should support close on select = true', async () => {
     let {getByRole, getAllByRole} = render(
       <TestDateRangePicker
