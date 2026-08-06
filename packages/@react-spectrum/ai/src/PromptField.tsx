@@ -73,7 +73,6 @@ import {useControlledState} from 'react-stately/useControlledState';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusableRef} from './useDOMRef';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
-import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
@@ -354,9 +353,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     pixelLoader,
     placeholder,
     menuWidth,
-    onKeyDown: onKeyDownProp
+    onKeyDown
   } = props;
-  let {keyboardProps} = useKeyboard({onKeyDown: onKeyDownProp});
   let {
     prompt,
     setPrompt,
@@ -453,6 +451,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
               setFocused(false);
             }
           }}
+          onKeyDown={onKeyDown}
           onPaste={
             acceptedAttachmentTypes
               ? e => {
@@ -476,7 +475,6 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
               : undefined
           }>
           <TokenInput
-            {...keyboardProps}
             data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
             ref={inputRef}
             className={renderProps =>
