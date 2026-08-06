@@ -21,7 +21,8 @@ import {
 import {
   addWindowFocusTracking,
   useFocusVisible,
-  useFocusVisibleListener
+  useFocusVisibleListener,
+  useShowFocusIndicator
 } from '../../src/interactions/useFocusVisible';
 import {changeHandlers, hasSetupGlobalListeners} from '../../src/interactions/useFocusVisible';
 import {mergeProps} from '../../src/utils/mergeProps';
@@ -29,7 +30,6 @@ import React from 'react';
 import {useButton} from '../../src/button/useButton';
 import {useFocusRing} from '../../src/focus/useFocusRing';
 import userEvent from '@testing-library/user-event';
-import {useShowFocusIndicator} from '../../exports/useShowFocusIndicator';
 
 function Example(props) {
   const {isFocusVisible} = useFocusVisible();
@@ -377,16 +377,34 @@ describe('useFocusVisible', function () {
 });
 
 describe('useShowFocusIndicator', function () {
-  it('shows the focus indicator after pointer interaction', function () {
-    fireEvent.mouseDown(document.body);
-    let {result} = renderHook(() => ({
-      isFocusVisible: useFocusVisible().isFocusVisible,
-      showFocusIndicator: useShowFocusIndicator()
-    }));
+  it('shows the focus indicator when validation programmatically focuses an invalid field', async function () {
+    function Example() {
+      let ref = React.useRef(null);
+      let {focusProps, isFocusVisible} = useFocusRing();
+      let showFocusIndicator = useShowFocusIndicator();
 
-    expect(result.current.isFocusVisible).toBe(false);
-    act(() => result.current.showFocusIndicator());
-    expect(result.current.isFocusVisible).toBe(true);
+      let onSubmit = e => {
+        e.preventDefault();
+        // react-hook-form calls the invalid handler before focusing the first invalid field.
+        showFocusIndicator();
+        ref.current.focus();
+      };
+
+      return (
+        <form onSubmit={onSubmit}>
+          <input {...focusProps} data-focus-visible={isFocusVisible || undefined} ref={ref} />
+          <button type="submit">Submit</button>
+        </form>
+      );
+    }
+
+    let user = userEvent.setup({delay: null, pointerMap});
+    render(<Example />);
+    await user.click(screen.getByRole('button', {name: 'Submit'}));
+
+    let input = screen.getByRole('textbox');
+    expect(input).toHaveFocus();
+    expect(input).toHaveAttribute('data-focus-visible', 'true');
   });
 });
 
