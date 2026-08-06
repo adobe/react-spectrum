@@ -1066,10 +1066,10 @@ describe('ComboBox', () => {
 
   it('should not throw when rendered inside a Dialog with a Text errorMessage slot', () => {
     render(
-        <Dialog aria-label="Dialog">
-          <TestComboBox isInvalid />
-        </Dialog>
-      )
+      <Dialog aria-label="Dialog">
+        <TestComboBox isInvalid />
+      </Dialog>
+    );
   });
 
   it('should not throw when rendered inside an alertdialog with a Text errorMessage slot', () => {
@@ -1077,6 +1077,6 @@ describe('ComboBox', () => {
       <Dialog role="alertdialog" aria-label="Dialog">
         <TestComboBox isInvalid />
       </Dialog>
-    )
+    );
   });
 });

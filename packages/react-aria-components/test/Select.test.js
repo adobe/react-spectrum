@@ -921,7 +921,7 @@ describe('Select', () => {
       <Dialog aria-label="Dialog">
         <TestSelect isInvalid />
       </Dialog>
-    )
+    );
   });
 
   it('should not throw when rendered inside an alertdialog with a Text errorMessage slot', () => {
@@ -929,6 +929,6 @@ describe('Select', () => {
       <Dialog role="alertdialog" aria-label="Dialog">
         <TestSelect isInvalid />
       </Dialog>
-    )
+    );
   });
 });
