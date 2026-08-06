@@ -422,6 +422,52 @@ describe('Menu', () => {
     expect(menuitem).not.toHaveClass('focus');
   });
 
+  it('should support allowFocusWhenDisabled on a menu item (focusable but not actionable)', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <Menu aria-label="Animals" onAction={onAction}>
+        <MenuItem id="cat">Cat</MenuItem>
+        <MenuItem id="dog" isDisabled allowFocusWhenDisabled>
+          Dog
+        </MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+      </Menu>
+    );
+    let items = getAllByRole('menuitem');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    // The disabled item is reachable via keyboard navigation (not skipped).
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[1]);
+    // But it cannot be activated.
+    await user.keyboard('{Enter}');
+    expect(onAction).not.toHaveBeenCalled();
+  });
+
+  it('should support allowFocusWhenDisabled with collection-level disabledKeys', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <Menu aria-label="Animals" disabledKeys={['dog']} onAction={onAction}>
+        <MenuItem id="cat">Cat</MenuItem>
+        <MenuItem id="dog" allowFocusWhenDisabled>
+          Dog
+        </MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+      </Menu>
+    );
+    let items = getAllByRole('menuitem');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{Enter}');
+    expect(onAction).not.toHaveBeenCalled();
+  });
+
   it('should support press state', async () => {
     let {getAllByRole} = renderMenu({}, {className: ({isPressed}) => (isPressed ? 'pressed' : '')});
     let menuitem = getAllByRole('menuitem')[0];
