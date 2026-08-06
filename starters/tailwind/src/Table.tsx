@@ -69,7 +69,10 @@ export function Column(props: ColumnProps) {
       )}>
       {composeRenderProps(props.children, (children, {allowsSorting, sortDirection}) => (
         <div className="flex items-center">
-          <Group role="presentation" tabIndex={-1} className={columnStyles}>
+          <Group
+            role={allowsSorting ? 'button' : 'presentation'}
+            tabIndex={-1}
+            className={columnStyles}>
             <span className="truncate">{children}</span>
             {allowsSorting && (
               <span
