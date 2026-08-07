@@ -1,11 +1,11 @@
-import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Button from './Button';
 import Card from './Card';
 import Icon from './Icon';
 
 const Header = () => {
   return (
-    <header className={style({ fontSize: 'ui-xl', fontWeight: 'bold', gridArea: 'header' })}>
+    <header className={style({fontSize: 'ui-xl', fontWeight: 'bold', gridArea: 'header'})}>
       <h1>Header</h1>
     </header>
   );
@@ -32,7 +32,8 @@ const Main = () => {
 
 const Footer = () => {
   return (
-    <footer className={style({backgroundColor: 'cyan-400', color: 'magenta-400', gridArea: 'footer'})}>
+    <footer
+      className={style({backgroundColor: 'cyan-400', color: 'magenta-400', gridArea: 'footer'})}>
       <h1>Footer</h1>
     </footer>
   );
@@ -43,14 +44,14 @@ const appStyles = style({
   flexDirection: 'column',
   height: '100vh',
   gridTemplateAreas: {
-    default: ['header', 'nav main', 'footer'],
+    default: ['header', 'nav main', 'footer']
   },
   gridTemplateRows: ['auto', '1fr', 'auto'],
   gridTemplateColumns: ['1fr', '1fr'],
   gridGap: 8,
   gridAutoFlow: 'row',
   gridAutoColumns: '1fr',
-  gridAutoRows: 'auto',
+  gridAutoRows: 'auto'
 });
 
 const App = () => {

@@ -1,4 +1,4 @@
-import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const Card = () => {
   return (

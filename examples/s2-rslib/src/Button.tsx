@@ -1,32 +1,34 @@
 import './button.css';
-import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export interface ButtonProps {
   /**
-   * Whether the button is primary
+   * Whether the button is primary.
+   *
    * @default false
    */
   primary?: boolean;
   /**
-   * Background color of the button
+   * Background color of the button.
    */
   backgroundColor?: string;
   /**
-   * Size of Button
+   * Size of Button.
+   *
    * @default 'medium'
    */
   size?: 'small' | 'medium' | 'large';
   /**
-   * Label of the button
+   * Label of the button.
    */
   label: string;
   /**
-   * Optional click handler
+   * Optional click handler.
    */
   onClick?: () => void;
 }
 
-export const Button = ({
+const Button = ({
   primary = false,
   size = 'medium',
   backgroundColor,
@@ -39,11 +41,11 @@ export const Button = ({
       <button
         type="button"
         className={['demo-button', `demo-button--${size}`, mode].join(' ')}
-        style={{ backgroundColor }}
-        {...props}
-      >
+        {...props}>
         {label}
       </button>
     </div>
   );
 };
+
+export default Button;

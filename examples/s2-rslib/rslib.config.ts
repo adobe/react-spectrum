@@ -1,22 +1,22 @@
-import { pluginReact } from '@rsbuild/plugin-react';
-import { defineConfig } from '@rslib/core';
-import { rspack as macros } from 'unplugin-parcel-macros';
+import {pluginReact} from '@rsbuild/plugin-react';
+import {defineConfig} from '@rslib/core';
+import {rspack as macros} from 'unplugin-parcel-macros';
 
 export default defineConfig({
   source: {
     entry: {
-      index: ['./src/index.tsx'],
-    },
+      index: ['./src/index.tsx']
+    }
   },
   lib: [
     {
       bundle: true,
       dts: true,
-      format: 'esm',
-    },
+      format: 'esm'
+    }
   ],
   output: {
-    target: 'web',
+    target: 'web'
   },
   plugins: [pluginReact()],
   tools: {
@@ -26,9 +26,9 @@ export default defineConfig({
      * use the appendPlugins rather than appending it directly to the config, as
      * this is the recommended way to add plugins.
      */
-    rspack: (config, { appendPlugins }) => {
+    rspack: (config, {appendPlugins}) => {
       appendPlugins(macros());
       return config;
-    },
-  },
+    }
+  }
 });

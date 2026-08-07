@@ -1,14 +1,22 @@
-# s2-rslib-notworking
+# s2-rslib
 
-This is an example of Rslib with unplugin-parcel-macros, that reliably does not work and fails to build.
+With the patch, it should work. Maintaining the rest of this README for historical context.
+
+Patch is based on these PRs with assistance from Claude:
+https://github.com/unjs/unplugin/pull/510
+https://github.com/unjs/unplugin/pull/549
+https://github.com/unjs/unplugin/pull/538
+Because the newer version of unplugin works. We're currently unable to upgrade to the newer version though due to some old build tools we still support.
+
+This is an example of Rslib with unplugin-parcel-macros, that reliably does not work and fails to build if you turn off the unplugin patch.
+
 
 ## Reproduction steps
 
-1. `yarn install`
-2. `yarn build`
-3. Observe the error `Module not found: Can't resolve 'macro-xyz.css'`
-
-Note that ../s2-rslib-semiworking _does_ build. This is because it uses less complex, and fewer S2 macros, and therefore does not run into this race condition.
+1. turn off the patch (delete from resolutions)
+2. `yarn install`
+3. `yarn build`
+4. Observe the error `Module not found: Can't resolve 'macro-xyz.css'`
 
 ## Debugging notes from AI
 
