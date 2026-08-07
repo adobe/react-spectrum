@@ -24,6 +24,7 @@ import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
 import {isMac} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
+import {nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {
   Position,
   SelectedRange,
@@ -178,15 +179,11 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
 
   let selectedRange = useRef<SelectedRange | null>(null);
   useLayoutEffect(() => {
-    if (
-      ref.current &&
-      value.selectedRange &&
-      !state.isComposing &&
-      value.selectedRange !== selectedRange.current
-    ) {
+    if (ref.current && !state.isComposing && value.selectedRange !== selectedRange.current) {
       // Only move the caret when the field is already focused.
       if (ref.current === getActiveElement(getOwnerDocument(ref.current))) {
         setTokenFieldSelection(ref.current, value.selectedRange);
+        announceToken(value);
       }
       selectedRange.current = value.selectedRange;
     }
@@ -394,24 +391,33 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
 
     // When the cursor moves next to a token, announce it.
     // Otherwise the screen reader will only announce the first/last character.
-    let range = getSelectedRange(ref.current!)!;
-    if (range.isCollapsed) {
-      if (range.current.offset === 0) {
-        let segment = value.segments[range.current.index];
-        if (segment?.type !== 'token') {
-          segment = value.segments[range.current.index - 1];
-        }
-        if (segment?.type === 'token') {
-          announce(segment.text, 'assertive');
-        }
-      }
+    let range = getSelectedRange(ref.current!);
+    if (!range) {
+      return;
     }
+
+    announceToken(value, range);
 
     // Update the caret position in the value. Also update the ref so the layout
     // effect does not re-apply this selection back to the DOM, which would clobber
     // the browser's native selection direction (e.g. directionless double-click).
     selectedRange.current = range;
     state.setValue(value => value.withSelectedRange(range));
+  });
+
+  // Clear selection on blur.
+  useEvent(ref, 'blur', e => {
+    if (!e.isTrusted) {
+      return;
+    }
+
+    let selection = window.getSelection();
+    if (ref.current && selection && selection.containsNode(ref.current, true)) {
+      selection.removeAllRanges();
+      state.setValue(value =>
+        value.withSelectedRange(new TokenFieldValue.SelectedRange({index: 0, offset: 0}))
+      );
+    }
   });
 
   // Override the default triple click behavior to ensure that tokens get selected.
@@ -619,21 +625,27 @@ export function getSelection(container: Element): [Position, Position] | null {
 
 export function getSelectedRange(container: Element) {
   let selection = window.getSelection();
-  if (!selection || !selection.anchorNode || !selection.focusNode) {
+  if (
+    !selection ||
+    !selection.anchorNode ||
+    !selection.focusNode ||
+    !nodeContains(container, selection.anchorNode) ||
+    !nodeContains(container, selection.focusNode)
+  ) {
     return null;
   }
-  let anchor = getPosition(container, selection.anchorNode, selection.anchorOffset);
-  let current = getPosition(container, selection.focusNode, selection.focusOffset);
+  let anchor = getPosition(container, selection.anchorNode, selection.anchorOffset, false);
+  let current = getPosition(container, selection.focusNode, selection.focusOffset, true);
   return new TokenFieldValue.SelectedRange(anchor, current);
 }
 
 function rangeToPositions(container: Element, range: Range | StaticRange): [Position, Position] {
-  let start = getPosition(container, range.startContainer, range.startOffset);
-  let end = getPosition(container, range.endContainer, range.endOffset);
+  let start = getPosition(container, range.startContainer, range.startOffset, false);
+  let end = getPosition(container, range.endContainer, range.endOffset, true);
   return [start, end];
 }
 
-function getPosition(container: Element, node: Node, offset: number): Position {
+function getPosition(container: Element, node: Node, offset: number, isRangeEnd = false): Position {
   if (node === container) {
     return {index: offset, offset: 0};
   }
@@ -650,7 +662,7 @@ function getPosition(container: Element, node: Node, offset: number): Position {
     let endOffset = 0;
     if (originalNode === tokenNode) {
       // Cursor is inside the token.
-      atEnd = offset > 0;
+      atEnd = isRangeEnd || offset > 0;
     } else if (originalNode === node) {
       // Cursor is inside the wrapper element.
       atEnd = offset > 1;
@@ -841,4 +853,27 @@ function trackMutations(element: Element) {
       }
     }
   };
+}
+
+function announceToken(value: TokenFieldValue, range = value.selectedRange) {
+  if (range.isCollapsed) {
+    // Announce adjacent tokens.
+    let segment = value.segments[range.current.index];
+    if (segment && segment.type !== 'token') {
+      if (range.current.offset === 0) {
+        segment = value.segments[range.current.index - 1];
+      } else if (range.current.offset === segment.text.length) {
+        segment = value.segments[range.current.index + 1];
+      }
+    }
+    if (segment?.type === 'token') {
+      announce(segment.text, 'assertive');
+    }
+  } else {
+    // Announce token if it is the only thing selected.
+    let selected = value.slice(range.anchor, range.current).segments;
+    if (selected.length === 1 && selected[0].type === 'token') {
+      announce(selected[0].text, 'assertive');
+    }
+  }
 }
