@@ -159,7 +159,7 @@ describe('useOverlay with shadow dom', () => {
   `('$type', ({actions: [pressStart, pressEnd], prepare}) => {
     prepare();
 
-    it('should not close the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
+    it('should close the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
       const {shadowRoot, cleanup} = createShadowRoot();
 
       let onClose = jest.fn();

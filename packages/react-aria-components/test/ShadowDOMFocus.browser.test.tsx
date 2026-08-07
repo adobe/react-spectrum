@@ -19,14 +19,16 @@ import {Button} from '../src/Button';
 import {ComboBox} from '../src/ComboBox';
 import {createRoot} from 'react-dom/client';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
-import {expect, it} from 'vitest';
+import {expect, it, vi} from 'vitest';
 import {Group} from '../src/Group';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {NumberField} from '../src/NumberField';
 import {Popover} from '../src/Popover';
 import React from 'react';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {User} from '@react-aria/test-utils';
 import {userEvent} from 'vitest/browser';
 
@@ -135,4 +137,51 @@ it('NumberField keeps focus in the input while clicking the stepper inside a sha
   await expect.poll(() => shadowRoot.activeElement).toBe(input);
 
   cleanup();
+});
+
+it('Menu opens from its trigger and fires onAction with the overlay portaled into the same shadow root', async () => {
+  let host = document.createElement('div');
+  document.body.appendChild(host);
+  let shadowRoot = host.attachShadow({mode: 'open'});
+  let appContainer = document.createElement('div');
+  shadowRoot.appendChild(appContainer);
+  // The overlay portals into a container inside the same shadow root via UNSAFE_PortalProvider.
+  let portal = document.createElement('div');
+  shadowRoot.appendChild(portal);
+
+  let onAction = vi.fn();
+  function App() {
+    return (
+      <UNSAFE_PortalProvider getContainer={() => portal}>
+        <MenuTrigger>
+          <Button>Open</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <MenuItem id="new">New…</MenuItem>
+              <MenuItem id="open">Open…</MenuItem>
+              <MenuItem id="save">Save</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      </UNSAFE_PortalProvider>
+    );
+  }
+  let root = createRoot(appContainer);
+  root.render(<App />);
+  await expect.poll(() => appContainer.querySelector('button')).not.toBeNull();
+
+  // Opening via the trigger (preventFocusOnPress) must open the menu and keep it open so its
+  // items stay interactable inside the shadow root.
+  let button = appContainer.querySelector('button') as HTMLButtonElement;
+  await userEvent.click(button);
+  await expect.poll(() => shadowRoot.querySelector('[role="menu"]')).not.toBeNull();
+
+  let openItem = Array.from(shadowRoot.querySelectorAll('[role="menuitem"]')).find(
+    item => item.textContent?.trim() === 'Open…'
+  ) as HTMLElement;
+  await userEvent.click(openItem);
+  await expect(onAction).toHaveBeenCalledTimes(1);
+
+  root.unmount();
+  document.body.removeChild(host);
 });
