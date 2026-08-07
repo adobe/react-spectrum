@@ -414,7 +414,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
     if (ref.current && selection && selection.containsNode(ref.current, true)) {
       selection.removeAllRanges();
       state.setValue(value =>
-        value.withSelectedRange(new TokenFieldValue.SelectedRange({index: 0, offset: 0}))
+        value.withSelectedRange(new TokenFieldValue.SelectedRange(value.caretPosition))
       );
     }
   });
