@@ -24,7 +24,7 @@ function Example(props) {
   let ref = useRef();
   let {overlayProps, underlayProps} = useOverlay(props, ref);
   return (
-    <div {...mergeProps(underlayProps, props.underlayProps || {})} data-testid={'underlay'}>
+    <div {...mergeProps(underlayProps, props.underlayProps || {})}>
       <div ref={ref} {...overlayProps} data-testid={props['data-testid'] || 'test'}>
         {props.children}
       </div>
