@@ -377,31 +377,46 @@ describe('useFocusVisible', function () {
 });
 
 describe('useShowFocusIndicator', function () {
-  it('shows the focus indicator when validation programmatically focuses an invalid field', async function () {
-    function Example() {
-      let {focusProps, isFocusVisible} = useFocusRing();
-      let showFocusIndicator = useShowFocusIndicator();
+  // A form library that moves focus to the first invalid field does so by calling
+  // element.focus() from the submit handler. Clicking submit leaves the modality on
+  // 'pointer', so the programmatic focus lands without a visible indicator.
+  function FormExample(props) {
+    let {focusProps, isFocusVisible} = useFocusRing();
+    let showFocusIndicator = useShowFocusIndicator();
+    let ref = React.useRef(null);
 
-      let onSubmit = e => {
-        e.preventDefault();
+    let onSubmit = e => {
+      e.preventDefault();
+      if (props.showIndicator) {
         showFocusIndicator();
-      };
+      }
+      ref.current.focus();
+    };
 
-      return (
-        <form onSubmit={onSubmit}>
-          <input {...focusProps} data-focus-visible={isFocusVisible || undefined} />
-          <button type="submit">Submit</button>
-        </form>
-      );
-    }
+    return (
+      <form onSubmit={onSubmit}>
+        <input {...focusProps} ref={ref} data-focus-visible={isFocusVisible || undefined} />
+        <button type="submit">Submit</button>
+      </form>
+    );
+  }
 
+  it('does not show the focus indicator on programmatic focus after a pointer interaction', async function () {
     let user = userEvent.setup({delay: null, pointerMap});
-    render(<Example />);
+    render(<FormExample />);
     await user.click(screen.getByRole('button', {name: 'Submit'}));
 
     let input = screen.getByRole('textbox');
-    // react-hook-form focuses the first invalid field after the invalid handler returns.
-    act(() => input.focus());
+    expect(input).toHaveFocus();
+    expect(input).not.toHaveAttribute('data-focus-visible');
+  });
+
+  it('shows the focus indicator on programmatic focus after a pointer interaction', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
+    render(<FormExample showIndicator />);
+    await user.click(screen.getByRole('button', {name: 'Submit'}));
+
+    let input = screen.getByRole('textbox');
     expect(input).toHaveFocus();
     expect(input).toHaveAttribute('data-focus-visible', 'true');
   });
