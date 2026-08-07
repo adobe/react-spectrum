@@ -44,6 +44,52 @@ Read [GitHub's pull request documentation](https://help.github.com/articles/abou
 
 Lastly, please follow the pull request template when submitting a pull request!
 
+
+## AI-assisted contributions
+Setting expectations: the AI doesn't contribute to React Spectrum or Quarry, you do. The AI is a tool, but you are still the author, and you own every line, every decision, and every explanation.
+
+If you use an AI assistant, point it at our [CLAUDE.md](CLAUDE.md), which captures the repo conventions we expect it to follow. The detailed conventions are split across [`docs/contributing/`](docs/contributing/) — see testing, tooling, s2-styling, i18n-strings, codegen, and pull-requests.
+
+### Aligning on a solution
+
+Open an issue or discussion, or at minimum, describe the problem and intended solution in the PR description. Otherwise, we have to reverse-engineer both the problem and the intended solution before we can even begin reviewing. An issue with: "here's what I'm seeing, here's what I plan to do, does that sound right?" really helps.
+
+### Give us the intent, not just the fix
+
+Tell us what you want and why, separately from how you did it. Then if we need to make a change to the PR, we can be confident that we're satisfying the goal you had. This framing helps when prompting the AI as well.
+
+### Tell us what you tested
+
+* mouse / touch / keyboard / screen reader
+* LTR / RTL
+* light / dark / high-contrast
+* disabled / loading / error / empty
+* narrow / wide / truncated / very long / wrapping text
+* component sizes and zoom levels
+
+Even if you haven't tested all of these, it's hugely helpful to us to know where to focus efforts.
+
+### Beware false confidence
+
+One of the biggest issues we face with the rise of AI contributions is the wrong root cause but with a lot of details asserting why it is, in fact, the issue. Press the AI, and ask both it and yourself "is this the root cause, or a symptom?" and "what else could cause this?" before committing to a solution.
+
+### Keep a human in the loop of the conversation
+
+When you iterate between reviews, be sure you can say what changed and why, one sentence is enough. A PR that transforms completely between every review without explanation is exhausting to follow and makes us feel like we're arguing with a machine instead of collaborating with a person.
+
+
+#### Requirements of front end code
+
+These can be useful constraints or reminders as AI is not inherently good at these things. For the toolchain that enforces some of this, see [`docs/contributing/tooling.md`](docs/contributing/tooling.md).
+
+* **Small** — everything you add ships across the network to the client, so more code means slower load times.
+* **Fast** — must run well on constrained CPU and memory, not just the latest MacBook Pro. Many users are on years-old, low-end Android devices.
+* **Mindful of the shared environment** — keep the global namespace clean, don't hog resources or throw uncaught errors, avoid CSS that leaks across boundaries, and keep ids unique.
+* **Stable** — RSP and Quarry are libraries with many downstream dependents who upgrade on their own schedule, so avoid breaking them.
+* **Accessible** — accessibility is still a relatively new web requirement, so strong examples are scarce and bad ones are common. use other examples in the repo or the APG examples first.
+* **Cross-environment** — works across browsers, assistive technologies, and devices.
+
+
 ### Contributor License Agreement
 All third-party contributions to this project must be accompanied by a signed contributor license agreement. This gives Adobe permission to redistribute your contributions as part of the project. [Sign our CLA](https://opensource.adobe.com/cla.html). You only need to submit an Adobe CLA one time, so if you have submitted one previously, you are good to go!
 
