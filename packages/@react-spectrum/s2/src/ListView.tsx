@@ -235,7 +235,7 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean; isDropTarget?: 
     type: 'width',
     value: {
       default: 'auto',
-      [hasTrailingIconRows]: fontRelative(20)
+      [hasTrailingIconRows]: fontRelative(18)
     }
   }
 });

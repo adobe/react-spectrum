@@ -149,9 +149,9 @@ export interface IconStyle {
 const iconSizes = {
   XS: 14,
   S: 16,
-  M: 20,
-  L: 22,
-  XL: 26
+  M: 18,
+  L: 20,
+  XL: 22
 } as const;
 
 /**
