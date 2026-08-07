@@ -94,7 +94,7 @@
     "react-stately": "3.49.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "14.0.0",
+    "@adobe/spectrum-tokens": "14.15.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
