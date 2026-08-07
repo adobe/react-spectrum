@@ -14,11 +14,11 @@
 import React, {useContext} from 'react';
 
 export interface CardViewContextValue {
-  state: 'idle' | 'loading' | 'error',
-  isQuiet: boolean,
-  layout: 'grid' | 'gallery' | 'waterfall',
-  cardOrientation: 'horizontal' | 'vertical',
-  renderEmptyState: () => React.ReactNode
+  state: 'idle' | 'loading' | 'error';
+  isQuiet: boolean;
+  layout: 'grid' | 'gallery' | 'waterfall';
+  cardOrientation: 'horizontal' | 'vertical';
+  renderEmptyState: () => React.ReactNode;
 }
 export const CardViewContext = React.createContext<CardViewContextValue>(null);
 

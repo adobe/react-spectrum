@@ -33,7 +33,12 @@ export function ComboBox(props: AriaComboBoxProps<any>): JSX.Element {
   let listBoxRef = React.useRef(null);
   let popoverRef = React.useRef(null);
 
-  let {buttonProps: triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
+  let {
+    buttonProps: triggerProps,
+    inputProps,
+    listBoxProps,
+    labelProps
+  } = useComboBox(
     {
       ...props,
       inputRef,
@@ -61,7 +66,8 @@ export function ComboBox(props: AriaComboBoxProps<any>): JSX.Element {
             boxSizing: 'border-box',
             marginRight: 0,
             fontSize: 16
-          }} />
+          }}
+        />
         <button
           {...buttonProps}
           ref={buttonRef}
@@ -69,20 +75,15 @@ export function ComboBox(props: AriaComboBoxProps<any>): JSX.Element {
             height: 24,
             marginLeft: 0
           }}>
-          <span
-            aria-hidden="true"
-            style={{padding: '0 2px'}}>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>
             ▼
           </span>
         </button>
-        {state.isOpen &&
+        {state.isOpen && (
           <Popover popoverRef={popoverRef} isOpen={state.isOpen} onClose={state.close}>
-            <ListBox
-              {...listBoxProps}
-              listBoxRef={listBoxRef}
-              state={state} />
+            <ListBox {...listBoxProps} listBoxRef={listBoxRef} state={state} />
           </Popover>
-        }
+        )}
       </div>
     </div>
   );
@@ -90,21 +91,19 @@ export function ComboBox(props: AriaComboBoxProps<any>): JSX.Element {
 
 function Popover(props) {
   let ref = React.useRef(undefined);
-  let {
-    popoverRef = ref,
-    isOpen,
-    onClose,
-    children
-  } = props;
+  let {popoverRef = ref, isOpen, onClose, children} = props;
 
   // Handle events that should cause the popup to close,
   // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    isOpen,
-    onClose,
-    shouldCloseOnBlur: true,
-    isDismissable: true
-  }, popoverRef);
+  let {overlayProps} = useOverlay(
+    {
+      isOpen,
+      onClose,
+      shouldCloseOnBlur: true,
+      isDismissable: true
+    },
+    popoverRef
+  );
 
   // Add a hidden <DismissButton> component at the end of the popover
   // to allow screen reader users to dismiss the popup easily.
@@ -127,7 +126,6 @@ function Popover(props) {
   );
 }
 
-
 function ListBox(props) {
   let ref = React.useRef(undefined);
   let {listBoxRef = ref, state} = props;
@@ -145,10 +143,7 @@ function ListBox(props) {
         overflow: 'auto'
       }}>
       {[...state.collection].map(item => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state} />
+        <Option key={item.key} item={item} state={state} />
       ))}
     </ul>
   );

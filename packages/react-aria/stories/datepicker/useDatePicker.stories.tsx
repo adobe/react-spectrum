@@ -25,9 +25,13 @@ export function ProgrammaticSetValueExampleRender(): ReactElement {
   return (
     <div>
       <div {...fieldProps} ref={ref} data-testid="field">
-        {state.segments.map((seg, i) => <span key={i}>{seg.text}</span>)}
+        {state.segments.map((seg, i) => (
+          <span key={i}>{seg.text}</span>
+        ))}
       </div>
-      <button onClick={() => state.setValue(parseDate('2020-01-01'))} data-testid="set">Set</button>
+      <button onClick={() => state.setValue(parseDate('2020-01-01'))} data-testid="set">
+        Set
+      </button>
     </div>
   );
 }

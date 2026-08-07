@@ -132,7 +132,10 @@ const meta: Meta<any> = {
 
 export default meta;
 
-/** Clone document stylesheets into a new div; each shadow root needs its own copy (appendChild moves nodes). */
+/**
+ * Clone document stylesheets into a new div; each shadow root needs its own copy (appendChild moves
+ * nodes).
+ */
 function createClonedDocumentStyleRoot(): HTMLDivElement {
   const styleRoot = document.createElement('div');
   styleRoot.setAttribute('data-shadow-styles', '');
@@ -152,7 +155,10 @@ function createClonedDocumentStyleRoot(): HTMLDivElement {
   return styleRoot;
 }
 
-/** Nested `createRoot` must not unmount synchronously during Storybook/parent React commit — defer to avoid "unmount while already rendering". */
+/**
+ * Nested `createRoot` must not unmount synchronously during Storybook/parent React commit — defer
+ * to avoid "unmount while already rendering".
+ */
 function unmountRootDeferred(root: ReturnType<typeof createRoot>): void {
   queueMicrotask(() => {
     root.unmount();
@@ -286,7 +292,9 @@ function AllComponents() {
       <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Buttons &amp; actions</h2>
       <section className={style({display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'start'})}>
         <Button onPress={action('button')}>Button</Button>
-        <Link href="#" isStandalone>Link</Link>
+        <Link href="#" isStandalone>
+          Link
+        </Link>
         <ButtonGroup>
           <Button>One</Button>
           <Button>Two</Button>
@@ -331,14 +339,30 @@ function AllComponents() {
                 <Heading slot="title">Dialog title</Heading>
                 <Header>Header</Header>
                 <Content>
-                  {[...Array(3)].map((_, i) =>
-                    <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === 3 - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-                  )}
+                  {[...Array(3)].map((_, i) => (
+                    <p
+                      key={i}
+                      style={{
+                        marginTop: i === 0 ? 0 : undefined,
+                        marginBottom: i === 3 - 1 ? 0 : undefined
+                      }}>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                      nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                      Duis aute irure dolor in
+                    </p>
+                  ))}
                 </Content>
-                <Footer><Checkbox>Don't show this again</Checkbox></Footer>
+                <Footer>
+                  <Checkbox>Don't show this again</Checkbox>
+                </Footer>
                 <ButtonGroup>
-                  <Button onPress={close} variant="secondary">Cancel</Button>
-                  <Button onPress={close} variant="accent">Save</Button>
+                  <Button onPress={close} variant="secondary">
+                    Cancel
+                  </Button>
+                  <Button onPress={close} variant="accent">
+                    Save
+                  </Button>
                 </ButtonGroup>
               </>
             )}
@@ -346,14 +370,19 @@ function AllComponents() {
         </DialogTrigger>
         <DialogTrigger>
           <Button>Alert</Button>
-          <AlertDialog title="Confirm" primaryActionLabel="OK" cancelLabel="Cancel" onPrimaryAction={action('alert confirm')}>
+          <AlertDialog
+            title="Confirm"
+            primaryActionLabel="OK"
+            cancelLabel="Cancel"
+            onPrimaryAction={action('alert confirm')}>
             Are you sure?
           </AlertDialog>
         </DialogTrigger>
       </section>
       <Divider />
       <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Form controls</h2>
-      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+      <section
+        className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
         <TextField label="Name" placeholder="Enter name" />
         <SearchField label="Search" placeholder="Search" />
         <NumberField label="Quantity" defaultValue={5} />
@@ -411,7 +440,8 @@ function AllComponents() {
       </section>
       <Divider />
       <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Navigation &amp; layout</h2>
-      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+      <section
+        className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
         <Breadcrumbs onAction={action('breadcrumb')}>
           <Breadcrumb id="home">Home</Breadcrumb>
           <Breadcrumb id="docs">Docs</Breadcrumb>
@@ -422,8 +452,12 @@ function AllComponents() {
             <Tab id="1">Tab 1</Tab>
             <Tab id="2">Tab 2</Tab>
           </TabList>
-          <TabPanel id="1"><Text>Panel 1</Text></TabPanel>
-          <TabPanel id="2"><Text>Panel 2</Text></TabPanel>
+          <TabPanel id="1">
+            <Text>Panel 1</Text>
+          </TabPanel>
+          <TabPanel id="2">
+            <Text>Panel 2</Text>
+          </TabPanel>
         </Tabs>
         <Accordion>
           <AccordionItem id="item1">
@@ -440,7 +474,8 @@ function AllComponents() {
       </section>
       <Divider />
       <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Color</h2>
-      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+      <section
+        className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
         <ColorField label="Color" defaultValue="#7f00ff" />
         <ColorArea defaultValue="hsl(30, 100%, 50%)" />
         <ColorSlider label="Hue" defaultValue="hsl(30, 100%, 50%)" channel="hue" />
@@ -455,17 +490,22 @@ function AllComponents() {
       </section>
       <Divider />
       <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Status &amp; feedback</h2>
-      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+      <section
+        className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
         <Badge>Badge</Badge>
         <StatusLight variant="positive">Positive</StatusLight>
         <StatusLight variant="negative">Negative</StatusLight>
         <ProgressBar label="Progress" value={0.6} />
         <ProgressCircle aria-label="Loading" isIndeterminate />
         <Meter label="Meter" value={70} />
-        <Skeleton isLoading><span>Placeholder</span></Skeleton>
+        <Skeleton isLoading>
+          <span>Placeholder</span>
+        </Skeleton>
         <InlineAlert variant="neutral">
           <Heading>Alert title</Heading>
-          <Content>Inline alert body with more detail about what happened or what to do next.</Content>
+          <Content>
+            Inline alert body with more detail about what happened or what to do next.
+          </Content>
         </InlineAlert>
         <TooltipTrigger>
           <Button>Hover for tooltip</Button>
@@ -474,7 +514,8 @@ function AllComponents() {
       </section>
       <Divider />
       <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Content &amp; data</h2>
-      <section className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
+      <section
+        className={style({display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center'})}>
         <IllustratedMessage>
           <AlertNotice />
           <Heading>No results</Heading>
@@ -495,12 +536,26 @@ function AllComponents() {
         </DropZone>
       </section>
       <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Card view</h2>
-      <section className={style({display: 'flex', flexDirection: 'column', gap: 8, height: 600, width: 'full'})}>
+      <section
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          height: 600,
+          width: 'full'
+        })}>
         <ExampleRender />
       </section>
       <h2 className={style({font: 'heading', fontSize: 'heading-sm'})}>Table</h2>
       <section className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        <TableView aria-label="Table" selectionMode="single" renderActionBar={() => <ActionBar selectedItemCount={1} onClearSelection={action('clear')}><Button>Action</Button></ActionBar>}>
+        <TableView
+          aria-label="Table"
+          selectionMode="single"
+          renderActionBar={() => (
+            <ActionBar selectedItemCount={1} onClearSelection={action('clear')}>
+              <Button>Action</Button>
+            </ActionBar>
+          )}>
           <TableHeader>
             <Column id="col1">Name</Column>
             <Column id="col2">Value</Column>
@@ -534,16 +589,13 @@ function AllComponents() {
 
 export const AllIn1Shadow: StoryObj = {
   render: () => <ShadowDOMContained />,
-  parameters: {
-  }
+  parameters: {}
 };
 
 export const MultipleShadows: StoryObj = {
   render: () => <ShadowDOMPortalToBody />,
-  parameters: {
-  }
+  parameters: {}
 };
-
 
 const cardViewStyles = style({
   width: 'screen',
@@ -552,16 +604,16 @@ const cardViewStyles = style({
 });
 
 type Item = {
-  id: number,
+  id: number;
   user: {
-    name: string,
-    profile_image: { small: string }
-  },
-  urls: { regular: string },
-  description: string,
-  alt_description: string,
-  width: number,
-  height: number
+    name: string;
+    profile_image: {small: string};
+  };
+  urls: {regular: string};
+  description: string;
+  alt_description: string;
+  width: number;
+  height: number;
 };
 
 const avatarSize = {
@@ -572,39 +624,56 @@ const avatarSize = {
   XL: 32
 } as const;
 
-function PhotoCard({item, layout}: {item: Item, layout: string}) {
+function PhotoCard({item, layout}: {item: Item; layout: string}) {
   return (
     <Card id={item.id} textValue={item.description || item.alt_description}>
-      {({size}) => (<>
-        <CardPreview>
-          <Image
-            src={item.urls.regular}
-            styles={style({
-              width: 'full',
-              pointerEvents: 'none'
-            })}
-            // TODO - should we have a safe `dynamicStyles` or something for this?
-            UNSAFE_style={{
-              aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
-              objectFit: layout === 'waterfall' ? 'contain' : 'cover'
-            }}
-            renderError={() => (
-              <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', size: 'full'})}>
-                <AlertNotice size="S" />
-              </div>
-            )} />
-        </CardPreview>
-        <Content>
-          <Text slot="title">{item.description || item.alt_description}</Text>
-          {size !== 'XS' && <ActionMenu>
-            <MenuItem>Test</MenuItem>
-          </ActionMenu>}
-          <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
-            <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
-            <Text slot="description">{item.user.name}</Text>
-          </div>
-        </Content>
-      </>)}
+      {({size}) => (
+        <>
+          <CardPreview>
+            <Image
+              src={item.urls.regular}
+              styles={style({
+                width: 'full',
+                pointerEvents: 'none'
+              })}
+              // TODO - should we have a safe `dynamicStyles` or something for this?
+              UNSAFE_style={{
+                aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
+                objectFit: layout === 'waterfall' ? 'contain' : 'cover'
+              }}
+              renderError={() => (
+                <div
+                  className={style({
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    size: 'full'
+                  })}>
+                  <AlertNotice size="S" />
+                </div>
+              )}
+            />
+          </CardPreview>
+          <Content>
+            <Text slot="title">{item.description || item.alt_description}</Text>
+            {size !== 'XS' && (
+              <ActionMenu>
+                <MenuItem>Test</MenuItem>
+              </ActionMenu>
+            )}
+            <div
+              className={style({
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                gridArea: 'description'
+              })}>
+              <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
+              <Text slot="description">{item.user.name}</Text>
+            </div>
+          </Content>
+        </>
+      )}
     </Card>
   );
 }
@@ -620,7 +689,9 @@ const ExampleRender = (args: Omit<CardViewProps<any>, 'children' | 'layout'>) =>
       let nextItems = await res.json();
       // Filter duplicates which might be returned by the API.
       let existingKeys = new Set(items.map(i => i.id));
-      nextItems = nextItems.filter(i => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      nextItems = nextItems.filter(
+        i => !existingKeys.has(i.id) && (i.description || i.alt_description)
+      );
       return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
     }
   });
@@ -634,9 +705,7 @@ const ExampleRender = (args: Omit<CardViewProps<any>, 'children' | 'layout'>) =>
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
       styles={cardViewStyles}>
-      <Collection items={items}>
-        {item => <PhotoCard item={item} layout={'grid'} />}
-      </Collection>
+      <Collection items={items}>{item => <PhotoCard item={item} layout={'grid'} />}</Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         <SkeletonCollection>
           {() => (
@@ -650,7 +719,8 @@ const ExampleRender = (args: Omit<CardViewProps<any>, 'children' | 'layout'>) =>
                 width: 400,
                 height: 200 + Math.max(0, Math.round(Math.random() * 400))
               }}
-              layout={'grid'} />
+              layout={'grid'}
+            />
           )}
         </SkeletonCollection>
       )}

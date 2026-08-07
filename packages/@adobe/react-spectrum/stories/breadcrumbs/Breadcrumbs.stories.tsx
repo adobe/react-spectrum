@@ -20,7 +20,11 @@ import React from 'react';
 let styles = {
   width: '100vw'
 };
-const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
+const CenterDecorator = storyFn => (
+  <div style={styles}>
+    <div>{storyFn()}</div>
+  </div>
+);
 
 export type BreadcrumbsStory = StoryObj<typeof Breadcrumbs>;
 
@@ -57,22 +61,26 @@ export default {
 } as Meta<typeof Breadcrumbs>;
 
 export const Default: BreadcrumbsStory = {
-  render: (args) => render(args),
+  render: args => render(args),
   name: '3 items'
 };
 
 export const DefaultTruncated: BreadcrumbsStory = {
-  render: (args) => (
-    <div style={{width: '120px'}}>
-      {render(args)}
-    </div>
-  ),
+  render: args => <div style={{width: '120px'}}>{render(args)}</div>,
   name: 'truncated'
 };
 
 export const RenderMany: BreadcrumbsStory = {
-  render: (args) => (
-    <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+  render: args => (
+    <div
+      style={{
+        minWidth: '100px',
+        width: '300px',
+        padding: '10px',
+        resize: 'horizontal',
+        overflow: 'auto',
+        backgroundColor: 'var(--spectrum-global-color-gray-50)'
+      }}>
       {renderMany(args)}
     </div>
   ),
@@ -80,7 +88,7 @@ export const RenderMany: BreadcrumbsStory = {
 };
 
 export const OneItem: BreadcrumbsStory = {
-  render: (args) => (
+  render: args => (
     <Breadcrumbs {...args}>
       <Item>Root</Item>
     </Breadcrumbs>
@@ -89,7 +97,7 @@ export const OneItem: BreadcrumbsStory = {
 };
 
 export const Links: BreadcrumbsStory = {
-  render: (args) => (
+  render: args => (
     <Breadcrumbs {...args}>
       <Item href="https://example.com">Example.com</Item>
       <Item href="https://example.com/foo">Foo</Item>

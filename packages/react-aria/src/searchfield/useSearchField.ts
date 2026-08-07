@@ -12,41 +12,47 @@
 
 import {AriaButtonProps} from '../button/useButton';
 import {AriaTextFieldProps, useTextField} from '../textfield/useTextField';
-import {chain} from '../utils/chain';
 import {DOMAttributes, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/searchfield/*.json';
+// @ts-ignore
+import {mergeProps} from '../utils/mergeProps';
 import {SearchFieldProps, SearchFieldState} from 'react-stately/useSearchFieldState';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaSearchFieldProps extends SearchFieldProps, Omit<AriaTextFieldProps, 'type'> {
   /**
-   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on
+   * virtual keyboards. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
-  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send',
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
   /**
-   * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   * The type of input to render. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   *
    * @default 'search'
    */
-  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {})
+  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {});
 }
 
 export interface SearchFieldAria extends ValidationResult {
   /** Props for the text field's visible label element (if any). */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the clear button. */
-  clearButtonProps: AriaButtonProps,
+  clearButtonProps: AriaButtonProps;
   /** Props for the searchfield's description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the searchfield's error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a search field.
+ *
  * @param props - Props for the search field.
  * @param state - State for the search field, as returned by `useSearchFieldState`.
  * @param inputRef - A ref to the input element.
@@ -57,46 +63,31 @@ export function useSearchField(
   inputRef: RefObject<HTMLInputElement | null>
 ): SearchFieldAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/searchfield');
-  let {
-    isDisabled,
-    isReadOnly,
-    onSubmit,
-    onClear,
-    type = 'search'
-  } = props;
+  let {isDisabled, isReadOnly, onSubmit, onClear, type = 'search'} = props;
 
-  let onKeyDown = (e) => {
-    const key = e.key;
-
-    if (key === 'Enter' && (isDisabled || isReadOnly)) {
-      e.preventDefault();
-    }
-
-    if (isDisabled || isReadOnly) {
-      return;
-    }
-
-    // for backward compatibility;
-    // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
-    if (key === 'Enter' && onSubmit) {
-      e.preventDefault();
-      onSubmit(state.value);
-    }
-
-    if (key === 'Escape') {
-      // Also check the inputRef value for the case where the value was set directly on the input element instead of going through
-      // the hook
-      if (state.value === '' && (!inputRef.current || inputRef.current.value === '')) {
-        e.continuePropagation();
-      } else {
-        e.preventDefault();
-        state.setValue('');
-        if (onClear) {
-          onClear();
+  let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
+    shortcuts: {
+      Enter: () => {
+        if (onSubmit) {
+          // for backward compatibility;
+          // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
+          onSubmit(state.value);
+          return;
         }
+        return false;
+      },
+      Escape: () => {
+        // Also check the inputRef value for the case where the value was set directly on the input element instead of going through
+        // the hook
+        if (state.value === '' && (!inputRef.current || inputRef.current.value === '')) {
+          return false;
+        }
+        state.setValue('');
+        onClear?.();
       }
     }
-  };
+  });
 
   let onClearButtonClick = () => {
     state.setValue('');
@@ -112,21 +103,28 @@ export function useSearchField(
     inputRef.current?.focus();
   };
 
-  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField({
-    ...props,
-    value: state.value,
-    onChange: state.setValue,
-    onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
-    type
-  }, inputRef);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField(
+    {
+      ...props,
+      value: state.value,
+      onChange: state.setValue,
+      onKeyDown: props.onKeyDown,
+      onKeyUp: props.onKeyUp,
+      type
+    },
+    inputRef
+  );
 
   return {
     labelProps,
-    inputProps: {
+    // An edge case, in Autocomplete, if the keyboard hanlders are not in this order, then
+    // Escape runs autocomplete/listbox first, then the search-field shortcut returns false and
+    // continues propagation, leaking Escape to a parent Dialog.
+    inputProps: mergeProps(keyboardProps, {
       ...inputProps,
       // already handled by useSearchFieldState
       defaultValue: undefined
-    },
+    }),
     clearButtonProps: {
       'aria-label': stringFormatter.format('Clear search'),
       excludeFromTabOrder: true,

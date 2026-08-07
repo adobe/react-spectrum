@@ -30,81 +30,90 @@ interface ButtonGroupStyleProps {
    *
    * @default 'horizontal'
    */
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: 'horizontal' | 'vertical';
   /**
    * The alignment of the Buttons within the ButtonGroup.
    *
    * @default 'start'
    */
-  align?: 'start' | 'end' | 'center',
+  align?: 'start' | 'end' | 'center';
   /**
    * The size of the Buttons within the ButtonGroup.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
 export interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps, StyleProps, DOMProps {
   /** The Buttons contained within the ButtonGroup. */
-  children: ReactNode,
+  children: ReactNode;
   /** Whether the Buttons in the ButtonGroup are all disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 interface ButtonGroupContextValue extends Partial<ButtonGroupProps> {
   /** Whether the ButtonGroup shouldn't be rendered. */
-  isHidden?: boolean
+  isHidden?: boolean;
 }
 
-export const ButtonGroupContext = createContext<ContextValue<Partial<ButtonGroupContextValue>, DOMRefValue<HTMLDivElement>>>({});
+export const ButtonGroupContext = createContext<
+  ContextValue<Partial<ButtonGroupContextValue>, DOMRefValue<HTMLDivElement>>
+>({});
 
-const buttongroup = style<ButtonGroupStyleProps>({
-  display: 'inline-flex',
-  position: 'relative',
-  gap: {
-    size: {
-      S: 8,
-      M: 12,
-      L: 12,
-      XL: 12
-    }
-  },
-  flexDirection: {
-    default: 'row',
-    orientation: {
-      vertical: 'column'
-    }
-  },
-  alignItems: {
-    default: 'center',
-    orientation: {
-      vertical: {
-        default: 'start',
-        align: {
-          end: 'end',
-          center: 'center'
+const buttongroup = style<ButtonGroupStyleProps>(
+  {
+    display: 'inline-flex',
+    position: 'relative',
+    maxWidth: 'full',
+    gap: {
+      size: {
+        S: 8,
+        M: 12,
+        L: 12,
+        XL: 12
+      }
+    },
+    flexDirection: {
+      default: 'row',
+      orientation: {
+        vertical: 'column'
+      }
+    },
+    alignItems: {
+      default: 'center',
+      orientation: {
+        vertical: {
+          default: 'start',
+          align: {
+            end: 'end',
+            center: 'center'
+          }
+        }
+      }
+    },
+    justifyContent: {
+      orientation: {
+        vertical: {
+          default: 'start',
+          align: {
+            end: 'end',
+            center: 'center'
+          }
         }
       }
     }
   },
-  justifyContent: {
-    orientation: {
-      vertical: {
-        default: 'start',
-        align: {
-          end: 'end',
-          center: 'center'
-        }
-      }
-    }
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 /**
  * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
  */
-export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const ButtonGroup = forwardRef(function ButtonGroup(
+  props: ButtonGroupProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonGroupContext);
   let domRef = useDOMRef(ref);
   let {
@@ -118,6 +127,7 @@ export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupPro
 
   let [hasOverflow, setHasOverflow] = useValueEffect(false);
 
+  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
   let checkForOverflow = useCallback(() => {
     let computeHasOverflow = () => {
       if (domRef.current && orientation === 'horizontal') {
@@ -125,7 +135,11 @@ export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupPro
         let maxX = domRef.current.offsetWidth + 1; // + 1 to account for rounding errors
         // If any buttons have negative X positions (align="end") or extend beyond
         // the width of the button group (align="start"), then switch to vertical.
-        if (buttonGroupChildren.some(child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX)) {
+        if (
+          buttonGroupChildren.some(
+            child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX
+          )
+        ) {
           return true;
         }
         return false;
@@ -140,8 +154,8 @@ export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupPro
         yield computeHasOverflow();
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domRef, orientation, setHasOverflow, children]);
+  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
 
   // There are two main reasons we need to remeasure:
   // 1. Internal changes: Check for initial overflow or when orientation/scale/children change (from checkForOverflow dep array)
@@ -151,12 +165,13 @@ export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupPro
 
   // 2. External changes: buttongroup won't change size due to any parents changing size, so listen to its container for size changes to figure out if we should remeasure
   let parent = useRef<HTMLElement | null>(null);
+  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (domRef.current) {
       parent.current = domRef.current.parentElement as HTMLElement;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domRef.current]);
+  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 
   if ((props as ButtonGroupContextValue).isHidden) {
@@ -169,11 +184,17 @@ export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupPro
       {...filterDOMProps(otherProps)}
       ref={domRef}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + buttongroup({
-        align,
-        orientation: orientation === 'vertical' || hasOverflow ? 'vertical' : 'horizontal',
-        size
-      }, props.styles)}>
+      className={
+        (props.UNSAFE_className || '') +
+        buttongroup(
+          {
+            align,
+            orientation: orientation === 'vertical' || hasOverflow ? 'vertical' : 'horizontal',
+            size
+          },
+          props.styles
+        )
+      }>
       <Provider
         values={[
           [ButtonContext, context],

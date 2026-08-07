@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, LongPressEvent} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {mergeProps} from '../utils/mergeProps';
@@ -21,45 +21,49 @@ import {useRef} from 'react';
 
 export interface LongPressProps {
   /** Whether long press events should be disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
+  /** Which pointer type to listen for. By default, both mouse and touch are listened for. */
+  pointerType?: 'mouse' | 'touch';
   /** Handler that is called when a long press interaction starts. */
-  onLongPressStart?: (e: LongPressEvent) => void,
+  onLongPressStart?: (e: LongPressEvent) => void;
   /**
    * Handler that is called when a long press interaction ends, either
    * over the target or when the pointer leaves the target.
    */
-  onLongPressEnd?: (e: LongPressEvent) => void,
+  onLongPressEnd?: (e: LongPressEvent) => void;
   /**
    * Handler that is called when the threshold time is met while
    * the press is over the target.
    */
-  onLongPress?: (e: LongPressEvent) => void,
+  onLongPress?: (e: LongPressEvent) => void;
   /**
    * The amount of time in milliseconds to wait before triggering a long press.
+   *
    * @default 500ms
    */
-  threshold?: number,
+  threshold?: number;
   /**
    * A description for assistive techology users indicating that a long press
    * action is available, e.g. "Long press to open menu".
    */
-  accessibilityDescription?: string
+  accessibilityDescription?: string;
 }
 
 export interface LongPressResult {
   /** Props to spread on the target element. */
-  longPressProps: DOMAttributes
+  longPressProps: DOMAttributes;
 }
 
 const DEFAULT_THRESHOLD = 500;
 
 /**
- * Handles long press interactions across mouse and touch devices. Supports a customizable time threshold,
- * accessibility description, and normalizes behavior across browsers and devices.
+ * Handles long press interactions across mouse and touch devices. Supports a customizable time
+ * threshold, accessibility description, and normalizes behavior across browsers and devices.
  */
 export function useLongPress(props: LongPressProps): LongPressResult {
   let {
     isDisabled,
+    pointerType,
     onLongPressStart,
     onLongPressEnd,
     onLongPress,
@@ -68,13 +72,17 @@ export function useLongPress(props: LongPressProps): LongPressResult {
   } = props;
 
   const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
+  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
+  let isAcceptedPointerType = (e: PressEvent) =>
+    pointerType
+      ? e.pointerType === pointerType
+      : e.pointerType === 'mouse' || e.pointerType === 'touch';
 
   let {pressProps} = usePress({
     isDisabled,
     onPressStart(e) {
       e.continuePropagation();
-      if (e.pointerType === 'mouse' || e.pointerType === 'touch') {
+      if (isAcceptedPointerType(e)) {
         if (onLongPressStart) {
           onLongPressStart({
             ...e,
@@ -85,6 +93,9 @@ export function useLongPress(props: LongPressProps): LongPressResult {
         timeRef.current = setTimeout(() => {
           // Prevent other usePress handlers from also handling this event.
           e.target.dispatchEvent(new PointerEvent('pointercancel', {bubbles: true}));
+
+          // Prevent default click action (e.g. opening a link) after a long press.
+          addGlobalListener(e.target, 'click', e => e.preventDefault(), {once: true});
 
           // Ensure target is focused. On touch devices, browsers typically focus on pointer up.
           if (getOwnerDocument(e.target).activeElement !== e.target) {
@@ -102,20 +113,22 @@ export function useLongPress(props: LongPressProps): LongPressResult {
 
         // Prevent context menu, which may be opened on long press on touch devices
         if (e.pointerType === 'touch') {
-          let onContextMenu = e => {
-            e.preventDefault();
-          };
-
-          let ownerWindow = getOwnerWindow(e.target);
-          addGlobalListener(e.target, 'contextmenu', onContextMenu, {once: true});
-          addGlobalListener(ownerWindow, 'pointerup', () => {
-            // If no contextmenu event is fired quickly after pointerup, remove the handler
-            // so future context menu events outside a long press are not prevented.
-            setTimeout(() => {
-              removeGlobalListener(e.target, 'contextmenu', onContextMenu);
-            }, 30);
-          }, {once: true});
+          addGlobalListener(e.target, 'contextmenu', e => e.preventDefault(), {once: true});
         }
+
+        let ownerWindow = getOwnerWindow(e.target);
+        addGlobalListener(
+          ownerWindow,
+          'pointerup',
+          () => {
+            // If no contextmenu/click event is fired quickly after pointerup, remove the handler
+            // so future events outside a long press are not prevented.
+            setTimeout(() => {
+              removeAllGlobalListeners();
+            }, 100);
+          },
+          {once: true}
+        );
       }
     },
     onPressEnd(e) {
@@ -123,7 +136,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
         clearTimeout(timeRef.current);
       }
 
-      if (onLongPressEnd && (e.pointerType === 'mouse' || e.pointerType === 'touch')) {
+      if (onLongPressEnd && isAcceptedPointerType(e)) {
         onLongPressEnd({
           ...e,
           type: 'longpressend'
@@ -132,7 +145,9 @@ export function useLongPress(props: LongPressProps): LongPressResult {
     }
   });
 
-  let descriptionProps = useDescription(onLongPress && !isDisabled ? accessibilityDescription : undefined);
+  let descriptionProps = useDescription(
+    onLongPress && !isDisabled ? accessibilityDescription : undefined
+  );
 
   return {
     longPressProps: mergeProps(pressProps, descriptionProps)

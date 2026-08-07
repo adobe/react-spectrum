@@ -12,8 +12,11 @@
 
 import React, {Component, ReactNode} from 'react';
 
-export class ErrorBoundary extends Component<{message: string, children: ReactNode}, {hasError: boolean}> {
-  constructor(props: {message: string, children: ReactNode}) {
+export class ErrorBoundary extends Component<
+  {message: string; children: ReactNode},
+  {hasError: boolean}
+> {
+  constructor(props: {message: string; children: ReactNode}) {
     super(props);
     this.state = {hasError: false};
   }

@@ -15,13 +15,16 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Provider SSR', function () {
   it('should render without errors', async function () {
     jest.spyOn(navigator, 'language', 'get').mockImplementation(() => 'fr');
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Provider} from '../../exports/index.ts';
       import {theme} from '@react-spectrum/theme-default';
 
       <Provider theme={theme}>
         <div />
       </Provider>
-    `);
+    `
+    );
   });
 });

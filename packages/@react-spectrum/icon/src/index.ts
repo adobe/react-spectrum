@@ -18,5 +18,11 @@ export {UIIcon} from '@adobe/react-spectrum/private/icon/UIIcon';
 export {Illustration} from '@adobe/react-spectrum/private/icon/Illustration';
 export type {IconProps} from '@adobe/react-spectrum/Icon';
 export type {IconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/Icon';
-export type {IllustrationProps, IllustrationPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/Illustration';
-export type {UIIconProps, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';
+export type {
+  IllustrationProps,
+  IllustrationPropsWithoutChildren
+} from '@adobe/react-spectrum/private/icon/Illustration';
+export type {
+  UIIconProps,
+  UIIconPropsWithoutChildren
+} from '@adobe/react-spectrum/private/icon/UIIcon';

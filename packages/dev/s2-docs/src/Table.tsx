@@ -1,6 +1,11 @@
 'use client';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
-import React, {HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes} from 'react';
+import React, {
+  HTMLAttributes,
+  TableHTMLAttributes,
+  TdHTMLAttributes,
+  ThHTMLAttributes
+} from 'react';
 import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const table = style({
@@ -112,8 +117,8 @@ export function TableRow(props: HTMLAttributes<HTMLTableRowElement>) {
 }
 
 interface TableCellProps extends TdHTMLAttributes<HTMLTableCellElement> {
-  hideBorder?: boolean,
-  styles?: StyleString
+  hideBorder?: boolean;
+  styles?: StyleString;
 }
 
 export function TableCell({hideBorder, styles, ...props}: TableCellProps) {
@@ -123,5 +128,10 @@ export function TableCell({hideBorder, styles, ...props}: TableCellProps) {
   } else if (props.colSpan) {
     align = 'top';
   }
-  return <td {...props} className={mergeStyles(tableCell({isBorderHidden: hideBorder, align}), styles)} />;
+  return (
+    <td
+      {...props}
+      className={mergeStyles(tableCell({isBorderHidden: hideBorder, align}), styles)}
+    />
+  );
 }

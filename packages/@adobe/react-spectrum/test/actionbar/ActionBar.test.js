@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
@@ -35,8 +34,14 @@ describe('ActionBar', () => {
   });
 
   it('should open when there are selected items', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -59,8 +64,14 @@ describe('ActionBar', () => {
   });
 
   it('should update the selected count when selecting more items', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -74,8 +85,14 @@ describe('ActionBar', () => {
   });
 
   it('should work with select all', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let selectAll = tree.getByLabelText('Select All');
     await user.click(selectAll);
@@ -84,8 +101,14 @@ describe('ActionBar', () => {
   });
 
   it('should close and restore focus when pressing the clear button', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -107,8 +130,14 @@ describe('ActionBar', () => {
   });
 
   it('should close when pressing the escape key', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -130,8 +159,14 @@ describe('ActionBar', () => {
   });
 
   it('should restore focus where it came from after being closed via escape if no elements are removed', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -151,7 +186,9 @@ describe('ActionBar', () => {
     fireEvent.keyDown(document.activeElement, {key: 'Tab'});
     let walker = getFocusableTreeWalker(document.body, {tabbable: true});
     walker.currentNode = document.activeElement;
-    act(() => {walker.nextNode().focus();});
+    act(() => {
+      walker.nextNode().focus();
+    });
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
@@ -167,8 +204,14 @@ describe('ActionBar', () => {
   });
 
   it('should restore focus to the the new first row if the row we wanted to restore to was removed', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -189,7 +232,9 @@ describe('ActionBar', () => {
     fireEvent.keyDown(document.activeElement, {key: 'Tab'});
     let walker = getFocusableTreeWalker(document.body, {tabbable: true});
     walker.currentNode = document.activeElement;
-    act(() => {walker.nextNode().focus();});
+    act(() => {
+      walker.nextNode().focus();
+    });
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
@@ -212,8 +257,14 @@ describe('ActionBar', () => {
   });
 
   it('should restore focus to the new first row if the row we wanted to restore to was removed via actiongroup menu', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -229,9 +280,13 @@ describe('ActionBar', () => {
     expect(toolbar).toBeVisible();
     expect(document.activeElement).toBe(rows[1]);
 
-    jest.spyOn(toolbar.parentNode, 'getBoundingClientRect').mockImplementation(() => ({width: 200, height: 0, top: 0, left: 0, bottom: 0, right: 0}));
+    jest
+      .spyOn(toolbar.parentNode, 'getBoundingClientRect')
+      .mockImplementation(() => ({width: 200, height: 0, top: 0, left: 0, bottom: 0, right: 0}));
     for (let action of toolbar.childNodes) {
-      jest.spyOn(action, 'getBoundingClientRect').mockImplementation(() => ({width: 75, height: 0, top: 0, left: 0, bottom: 0, right: 0}));
+      jest
+        .spyOn(action, 'getBoundingClientRect')
+        .mockImplementation(() => ({width: 75, height: 0, top: 0, left: 0, bottom: 0, right: 0}));
     }
     fireEvent(window, new Event('resize'));
 
@@ -239,7 +294,9 @@ describe('ActionBar', () => {
     fireEvent.keyDown(document.activeElement, {key: 'Tab'});
     let walker = getFocusableTreeWalker(document.body, {tabbable: true});
     walker.currentNode = document.activeElement;
-    act(() => {walker.nextNode().focus();});
+    act(() => {
+      walker.nextNode().focus();
+    });
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
@@ -272,8 +329,14 @@ describe('ActionBar', () => {
 
   it('should fire onAction when clicking on an action', async () => {
     let onAction = jest.fn();
-    let tree = render(<Provider theme={theme}><Example onAction={onAction} /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example onAction={onAction} />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -287,8 +350,14 @@ describe('ActionBar', () => {
   });
 
   it('should respect disabledKeys when passed in', async () => {
-    let tree = render(<Provider theme={theme}><Example disabledKeys={['edit']} /></Provider>);
-    act(() => {jest.runAllTimers();});
+    let tree = render(
+      <Provider theme={theme}>
+        <Example disabledKeys={['edit']} />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');

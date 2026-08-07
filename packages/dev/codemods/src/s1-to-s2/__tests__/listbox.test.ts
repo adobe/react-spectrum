@@ -7,7 +7,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('No changes', `
+test(
+  'No changes',
+  `
 import {ListBox, Item} from '@adobe/react-spectrum';
 <div>
   <ListBox width="size-2400" aria-label="Alignment">
@@ -16,4 +18,5 @@ import {ListBox, Item} from '@adobe/react-spectrum';
     <Item>Right</Item>
   </ListBox>
 </div>
-`);
+`
+);

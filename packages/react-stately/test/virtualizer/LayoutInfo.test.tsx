@@ -28,6 +28,5 @@ describe('LayoutInfo', () => {
 
     let copy = layoutInfo.copy();
     expect(copy).toEqual(layoutInfo);
-
   });
 });

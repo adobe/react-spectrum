@@ -102,5 +102,4 @@ describe('FileTrigger', () => {
     let input = document.querySelector('input[type="file"]');
     expect(input).toHaveAttribute('webkitdirectory');
   });
-
 });

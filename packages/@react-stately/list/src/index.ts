@@ -15,4 +15,7 @@ export {useListState, UNSTABLE_useFilteredListState} from 'react-stately/useList
 export {useSingleSelectListState} from 'react-stately/useSingleSelectListState';
 export {ListCollection} from 'react-stately/private/list/ListCollection';
 export type {ListProps, ListState} from 'react-stately/useListState';
-export type {SingleSelectListProps, SingleSelectListState} from 'react-stately/useSingleSelectListState';
+export type {
+  SingleSelectListProps,
+  SingleSelectListState
+} from 'react-stately/useSingleSelectListState';

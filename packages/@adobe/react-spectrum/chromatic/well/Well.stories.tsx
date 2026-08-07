@@ -22,5 +22,5 @@ const meta: Meta<SpectrumWellProps> = {
 export default meta;
 
 export const Default: StoryObj<typeof Well> = {
-  render: (args) => <Well {...args}>This is a React Spectrum Well</Well>
+  render: args => <Well {...args}>This is a React Spectrum Well</Well>
 };

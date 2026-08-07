@@ -1,1 +1,5 @@
-export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from '../../../src/utils/BreakpointProvider';
+export {
+  BreakpointProvider,
+  useMatchedBreakpoints,
+  useBreakpoint
+} from '../../../src/utils/BreakpointProvider';

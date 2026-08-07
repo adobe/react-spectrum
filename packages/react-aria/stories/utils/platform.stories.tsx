@@ -14,10 +14,12 @@ import {
   isAndroid,
   isAppleDevice,
   isChrome,
+  isFirefox,
   isIOS,
   isIPad,
   isIPhone,
   isMac,
+  isSafari,
   isWebKit
 } from '../../src/utils/platform';
 import {Meta, StoryObj} from '@storybook/react';
@@ -33,14 +35,46 @@ const Template = (args: any): JSX.Element => (
       <th>Platform</th>
       <th>Current</th>
     </tr>
-    <tr><td>isAndroid: </td><td>{isAndroid().toString()}</td></tr>
-    <tr><td>isAppleDevice: </td><td>{isAppleDevice().toString()}</td></tr>
-    <tr><td>isChrome: </td><td>{isChrome().toString()}</td></tr>
-    <tr><td>isIOS: </td><td>{isIOS().toString()}</td></tr>
-    <tr><td>isIPad: </td><td>{isIPad().toString()}</td></tr>
-    <tr><td>isIPhone: </td><td>{isIPhone().toString()}</td></tr>
-    <tr><td>isMac: </td><td>{isMac().toString()}</td></tr>
-    <tr><td>isWebKit: </td><td>{isWebKit().toString()}</td></tr>
+    <tr>
+      <td>isAndroid: </td>
+      <td>{isAndroid().toString()}</td>
+    </tr>
+    <tr>
+      <td>isAppleDevice: </td>
+      <td>{isAppleDevice().toString()}</td>
+    </tr>
+    <tr>
+      <td>isChrome: </td>
+      <td>{isChrome().toString()}</td>
+    </tr>
+    <tr>
+      <td>isIOS: </td>
+      <td>{isIOS().toString()}</td>
+    </tr>
+    <tr>
+      <td>isIPad: </td>
+      <td>{isIPad().toString()}</td>
+    </tr>
+    <tr>
+      <td>isIPhone: </td>
+      <td>{isIPhone().toString()}</td>
+    </tr>
+    <tr>
+      <td>isMac: </td>
+      <td>{isMac().toString()}</td>
+    </tr>
+    <tr>
+      <td>isWebKit: </td>
+      <td>{isWebKit().toString()}</td>
+    </tr>
+    <tr>
+      <td>isSafari: </td>
+      <td>{isSafari().toString()}</td>
+    </tr>
+    <tr>
+      <td>isFirefox: </td>
+      <td>{isFirefox().toString()}</td>
+    </tr>
   </table>
 );
 

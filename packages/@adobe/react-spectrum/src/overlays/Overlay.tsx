@@ -17,22 +17,25 @@ import React, {MutableRefObject, ReactNode, useCallback, useState} from 'react';
 import {Overlay as ReactAriaOverlay} from 'react-aria/Overlay';
 
 export interface OverlayProps {
-  children: ReactNode,
-  isOpen?: boolean,
-  container?: Element,
-  isKeyboardDismissDisabled?: boolean,
-  onEnter?: () => void,
-  onEntering?: () => void,
-  onEntered?: () => void,
-  onExit?: () => void,
-  onExiting?: () => void,
-  onExited?: () => void,
-  nodeRef: MutableRefObject<HTMLElement | null>,
-  disableFocusManagement?: boolean,
-  shouldContainFocus?: boolean
+  children: ReactNode;
+  isOpen?: boolean;
+  container?: Element;
+  isKeyboardDismissDisabled?: boolean;
+  onEnter?: () => void;
+  onEntering?: () => void;
+  onEntered?: () => void;
+  onExit?: () => void;
+  onExiting?: () => void;
+  onExited?: () => void;
+  nodeRef: MutableRefObject<HTMLElement | null>;
+  disableFocusManagement?: boolean;
+  shouldContainFocus?: boolean;
 }
 
-export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
+export const Overlay = React.forwardRef(function Overlay(
+  props: OverlayProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     children,
     isOpen,
@@ -72,8 +75,15 @@ export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, re
   }
 
   return (
-    <ReactAriaOverlay portalContainer={container} disableFocusManagement={disableFocusManagement} shouldContainFocus={shouldContainFocus} isExiting={!isOpen}>
-      <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}} isDisabled={false}>
+    <ReactAriaOverlay
+      portalContainer={container}
+      disableFocusManagement={disableFocusManagement}
+      shouldContainFocus={shouldContainFocus}
+      isExiting={!isOpen}>
+      <Provider
+        ref={ref}
+        UNSAFE_style={{background: 'transparent', isolation: 'isolate'}}
+        isDisabled={false}>
         <OpenTransition
           in={isOpen}
           appear

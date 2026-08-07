@@ -21,106 +21,102 @@ const ruleTester = new RuleTester({
 });
 
 // Throws error if the tests in ruleTester.run() do not pass
-ruleTester.run(
-  'no-non-shadow-contains',
-  noNonShadowContainsRule,
-  {
-    // 'valid' checks cases that should pass
-    valid: [
-      {
-        code: `
+ruleTester.run('no-non-shadow-contains', noNonShadowContainsRule, {
+  // 'valid' checks cases that should pass
+  valid: [
+    {
+      code: `
 import {nodeContains} from '@react-aria/utils';
 if (nodeContains(element, other)) {
   console.log('contained');
 }`
-      },
-      {
-        code: `
+    },
+    {
+      code: `
 import {nodeContains} from '@react-aria/utils';
 const result = nodeContains(node1, node2);`
-      }
-    ],
-    // 'invalid' checks cases that should not pass
-    invalid: [
-      {
-        code: `
+    }
+  ],
+  // 'invalid' checks cases that should not pass
+  invalid: [
+    {
+      code: `
 if (element.contains(other)) {
   console.log('contained');
 }`,
-        output: `
+      output: `
 import {nodeContains} from '@react-aria/utils';
 if (nodeContains(element, other)) {
   console.log('contained');
 }`,
-        errors: 1
-      },
-      {
-        code: `
+      errors: 1
+    },
+    {
+      code: `
 import {something} from '@react-aria/utils';
 if (element.contains(other)) {
   console.log('contained');
 }`,
-        output: `
+      output: `
 import {nodeContains, something} from '@react-aria/utils';
 if (nodeContains(element, other)) {
   console.log('contained');
 }`,
-        errors: 1
-      },
-      {
-        code: `
+      errors: 1
+    },
+    {
+      code: `
 const result = node.contains(child);`,
-        output: `
+      output: `
 import {nodeContains} from '@react-aria/utils';
 const result = nodeContains(node, child);`,
-        errors: 1
-      },
-      {
-        code: `
+      errors: 1
+    },
+    {
+      code: `
 import {nodeContains} from '@react-aria/utils';
 if (element.contains(other)) {
   console.log('contained');
 }`,
-        output: `
+      output: `
 import {nodeContains} from '@react-aria/utils';
 if (nodeContains(element, other)) {
   console.log('contained');
 }`,
-        errors: 1
-      },
-      {
-        code: `
+      errors: 1
+    },
+    {
+      code: `
 import React from 'react';
 const isContained = ref.current.contains(target);`,
-        output: `
+      output: `
 import React from 'react';
 import {nodeContains} from '@react-aria/utils';
 const isContained = nodeContains(ref.current, target);`,
-        errors: 1
-      },
-      {
-        code: `
+      errors: 1
+    },
+    {
+      code: `
 import {nodeContains} from '@react-aria/utils';
 const a = element1.contains(child1);
 const b = element2.contains(child2);`,
-        output: `
+      output: `
 import {nodeContains} from '@react-aria/utils';
 const a = nodeContains(element1, child1);
 const b = nodeContains(element2, child2);`,
-        errors: 2
-      },
-      {
-        code: `
+      errors: 2
+    },
+    {
+      code: `
 if (document.body.contains(element)) {
   console.log('in body');
 }`,
-        output: `
+      output: `
 import {nodeContains} from '@react-aria/utils';
 if (nodeContains(document.body, element)) {
   console.log('in body');
 }`,
-        errors: 1
-      }
-    ]
-  }
-);
+      errors: 1
+    }
+  ]
+});

@@ -15,15 +15,15 @@ import {useId} from './useId';
 
 /**
  * Merges aria-label and aria-labelledby into aria-labelledby when both exist.
+ *
  * @param props - Aria label props.
  * @param defaultLabel - Default value for aria-label when not present.
  */
-export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: string): DOMProps & AriaLabelingProps {
-  let {
-    id,
-    'aria-label': label,
-    'aria-labelledby': labelledBy
-  } = props;
+export function useLabels(
+  props: DOMProps & AriaLabelingProps,
+  defaultLabel?: string
+): DOMProps & AriaLabelingProps {
+  let {id, 'aria-label': label, 'aria-labelledby': labelledBy} = props;
 
   // If there is both an aria-label and aria-labelledby,
   // combine them by pointing to the element itself.

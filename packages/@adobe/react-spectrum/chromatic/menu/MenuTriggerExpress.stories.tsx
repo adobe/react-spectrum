@@ -17,11 +17,23 @@ import React from 'react';
 const meta: Meta = {
   title: 'MenuTriggerExpress',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true,
+      express: true
+    },
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {pauseAnimationAtEnd: true}
   },
-  decorators: [Story => <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}><Story /></div>]
+  decorators: [
+    Story => (
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export default meta;

@@ -12,8 +12,8 @@
 
 declare module 'react' {
   interface CSSProperties {
-    viewTransitionName?: string,
-    viewTransitionClass?: string
+    viewTransitionName?: string;
+    viewTransitionClass?: string;
   }
 }
 

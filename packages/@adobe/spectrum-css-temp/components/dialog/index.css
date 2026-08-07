@@ -45,7 +45,6 @@ governing permissions and limitations under the License.
   --spectrum-dialog-gap-size: var(--spectrum-global-dimension-size-200);
 }
 
-
 .spectrum-Dialog {
   /* Be a flexbox to allow a full sized content area that scrolls */
   display: flex;
@@ -95,16 +94,20 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
-  grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
-  grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto 1fr auto var(--spectrum-dialog-padding-y);
+  grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(
+      --spectrum-dialog-padding-x
+    );
+  grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto 1fr auto var(
+      --spectrum-dialog-padding-y
+    );
   grid-template-areas:
-    "hero hero    hero    hero        hero        hero"
-    ".    .       .       .           .           ."
-    ".    heading header  header      typeIcon    ."
-    ".    divider divider divider     divider     ."
-    ".    content content content     content     ."
-    ".    footer  footer  buttonGroup buttonGroup ."
-    ".    .       .       .           .           .";
+    'hero hero    hero    hero        hero        hero'
+    '.    .       .       .           .           .'
+    '.    heading header  header      typeIcon    .'
+    '.    divider divider divider     divider     .'
+    '.    content content content     content     .'
+    '.    footer  footer  buttonGroup buttonGroup .'
+    '.    .       .       .           .           .';
   width: 100%;
 }
 
@@ -196,7 +199,6 @@ governing permissions and limitations under the License.
   min-height: var(--spectrum-dialog-content-min-height);
 }
 
-
 .spectrum-Dialog-footer {
   grid-area: footer;
   /* this padding isn't built into the grid because it disappears with this footer */
@@ -231,16 +233,23 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
-  grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding-x);
-  grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto 1fr auto var(--spectrum-dialog-padding-y);
+  grid-template-columns:
+    var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) minmax(
+      0,
+      var(--spectrum-dialog-close-button-size)
+    )
+    var(--spectrum-dialog-padding-x);
+  grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto 1fr auto var(
+      --spectrum-dialog-padding-y
+    );
   grid-template-areas:
-    "hero hero    hero    hero        hero        hero        hero"
-    ".    .       .       .           .           closeButton closeButton"
-    ".    heading header  header      typeIcon    closeButton closeButton"
-    ".    divider divider divider     divider     divider     ."
-    ".    content content content     content     content     ."
-    ".    footer  footer  buttonGroup buttonGroup buttonGroup ."
-    ".    .       .       .           .           .           .";
+    'hero hero    hero    hero        hero        hero        hero'
+    '.    .       .       .           .           closeButton closeButton'
+    '.    heading header  header      typeIcon    closeButton closeButton'
+    '.    divider divider divider     divider     divider     .'
+    '.    content content content     content     content     .'
+    '.    footer  footer  buttonGroup buttonGroup buttonGroup .'
+    '.    .       .       .           .           .           .';
 
   .spectrum-Dialog-buttonGroup {
     display: none;
@@ -284,14 +293,18 @@ governing permissions and limitations under the License.
 
   &.spectrum-Dialog .spectrum-Dialog-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-dialog-padding-x) 1fr auto auto var(--spectrum-dialog-padding-x);
-    grid-template-rows: var(--spectrum-dialog-padding-y) auto auto 1fr var(--spectrum-dialog-padding-y);
+    grid-template-columns: var(--spectrum-dialog-padding-x) 1fr auto auto var(
+        --spectrum-dialog-padding-x
+      );
+    grid-template-rows: var(--spectrum-dialog-padding-y) auto auto 1fr var(
+        --spectrum-dialog-padding-y
+      );
     grid-template-areas:
-      ".    .       .       .            ."
-      ".    heading header  buttonGroup  ."
-      ".    divider divider divider      ."
-      ".    content content content      ."
-      ".    .       .       .            .";
+      '.    .       .       .            .'
+      '.    heading header  buttonGroup  .'
+      '.    divider divider divider      .'
+      '.    content content content      .'
+      '.    .       .       .            .';
   }
 
   .spectrum-Dialog-heading {
@@ -324,7 +337,9 @@ governing permissions and limitations under the License.
     padding-block-start: 0px;
   }
 
-  .spectrum-Dialog-footer, .spectrum-Dialog-typeIcon, .spectrum-Dialog-closeButton {
+  .spectrum-Dialog-footer,
+  .spectrum-Dialog-typeIcon,
+  .spectrum-Dialog-closeButton {
     display: none;
   }
 
@@ -340,17 +355,21 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Dialog .spectrum-Dialog-grid {
-    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
-    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
+    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(
+        --spectrum-dialog-padding-x
+      );
+    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(
+        --spectrum-dialog-padding-y
+      );
     grid-template-areas:
-      "hero hero    hero    hero        hero        hero"
-      ".    .       .       .           .           ."
-      ".    heading heading heading     typeIcon    ."
-      ".    header  header  header      header      ."
-      ".    divider divider divider     divider     ."
-      ".    content content content     content     ."
-      ".    footer  footer  buttonGroup buttonGroup ."
-      ".    .       .       .           .           .";
+      'hero hero    hero    hero        hero        hero'
+      '.    .       .       .           .           .'
+      '.    heading heading heading     typeIcon    .'
+      '.    header  header  header      header      .'
+      '.    divider divider divider     divider     .'
+      '.    content content content     content     .'
+      '.    footer  footer  buttonGroup buttonGroup .'
+      '.    .       .       .           .           .';
   }
   .spectrum-Dialog-heading {
     &.spectrum-Dialog-heading--noHeader {
@@ -369,17 +388,24 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
-    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding-x);
-    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
+    grid-template-columns:
+      var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) minmax(
+        0,
+        var(--spectrum-dialog-close-button-size)
+      )
+      var(--spectrum-dialog-padding-x);
+    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(
+        --spectrum-dialog-padding-y
+      );
     grid-template-areas:
-      "hero hero    hero    hero        hero        hero        hero"
-      ".    .       .       .           .           closeButton closeButton"
-      ".    heading heading heading     typeIcon    closeButton closeButton"
-      ".    header  header  header      header      header      ."
-      ".    divider divider divider     divider     divider     ."
-      ".    content content content     content     content     ."
-      ".    footer  footer  buttonGroup buttonGroup buttonGroup ."
-      ".    .       .       .           .           .           .";
+      'hero hero    hero    hero        hero        hero        hero'
+      '.    .       .       .           .           closeButton closeButton'
+      '.    heading heading heading     typeIcon    closeButton closeButton'
+      '.    header  header  header      header      header      .'
+      '.    divider divider divider     divider     divider     .'
+      '.    content content content     content     content     .'
+      '.    footer  footer  buttonGroup buttonGroup buttonGroup .'
+      '.    .       .       .           .           .           .';
   }
 
   .spectrum-Dialog .spectrum-Dialog-header {
@@ -396,19 +422,20 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog--fullscreen,
   .spectrum-Dialog--fullscreenTakeover {
-
     &.spectrum-Dialog .spectrum-Dialog-grid {
-       display: grid;
-       grid-template-columns: var(--spectrum-dialog-padding-x) 1fr var(--spectrum-dialog-padding-x);
-       grid-template-rows: var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
-       grid-template-areas:
-         ".    .            ."
-         ".    heading      ."
-         ".    header       ."
-         ".    divider      ."
-         ".    content      ."
-         ".    buttonGroup  ."
-         ".    .            .";
+      display: grid;
+      grid-template-columns: var(--spectrum-dialog-padding-x) 1fr var(--spectrum-dialog-padding-x);
+      grid-template-rows: var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(
+          --spectrum-dialog-padding-y
+        );
+      grid-template-areas:
+        '.    .            .'
+        '.    heading      .'
+        '.    header       .'
+        '.    divider      .'
+        '.    content      .'
+        '.    buttonGroup  .'
+        '.    .            .';
     }
     .spectrum-Dialog-heading {
       &.spectrum-Dialog-heading--noHeader,
@@ -444,18 +471,22 @@ governing permissions and limitations under the License.
     border-top-right-radius: var(--spectrum-dialog-border-radius);
     overflow-y: auto;
 
-    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
-    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto auto var(--spectrum-dialog-padding-y);
+    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(
+        --spectrum-dialog-padding-x
+      );
+    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto auto var(
+        --spectrum-dialog-padding-y
+      );
     grid-template-areas:
-      "hero hero        hero        hero        hero        hero"
-      ".    .           .           .           .           ."
-      ".    heading     heading     heading     typeIcon    ."
-      ".    header      header      header      header      ."
-      ".    divider     divider     divider     divider     ."
-      ".    content     content     content     content     ."
-      ".    footer      footer      footer      footer      ."
-      ".    buttonGroup buttonGroup buttonGroup buttonGroup ."
-      ".    .           .           .           .           .";
+      'hero hero        hero        hero        hero        hero'
+      '.    .           .           .           .           .'
+      '.    heading     heading     heading     typeIcon    .'
+      '.    header      header      header      header      .'
+      '.    divider     divider     divider     divider     .'
+      '.    content     content     content     content     .'
+      '.    footer      footer      footer      footer      .'
+      '.    buttonGroup buttonGroup buttonGroup buttonGroup .'
+      '.    .           .           .           .           .';
   }
 
   .spectrum-Dialog-heading {
@@ -492,19 +523,20 @@ governing permissions and limitations under the License.
 @media screen and (max-height: 400px) and (max-width: 700px) {
   .spectrum-Dialog--fullscreen,
   .spectrum-Dialog--fullscreenTakeover {
-
     &.spectrum-Dialog .spectrum-Dialog-grid {
       display: grid;
       grid-template-columns: var(--spectrum-dialog-padding-x) 1fr var(--spectrum-dialog-padding-x);
-      grid-template-rows: var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
+      grid-template-rows: var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(
+          --spectrum-dialog-padding-y
+        );
       grid-template-areas:
-         ".    .            ."
-         ".    heading      ."
-         ".    header       ."
-         ".    divider      ."
-         ".    content      ."
-         ".    buttonGroup  ."
-         ".    .            .";
+        '.    .            .'
+        '.    heading      .'
+        '.    header       .'
+        '.    divider      .'
+        '.    content      .'
+        '.    buttonGroup  .'
+        '.    .            .';
     }
     .spectrum-Dialog-heading {
       &.spectrum-Dialog-heading--noHeader,

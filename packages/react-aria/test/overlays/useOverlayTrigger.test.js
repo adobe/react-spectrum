@@ -27,7 +27,11 @@ function Example(props) {
     containerRef,
     overlayRef
   });
-  return <div ref={ref} data-testid={props['data-testid'] || 'test'}>{props.children}</div>;
+  return (
+    <div ref={ref} data-testid={props['data-testid'] || 'test'}>
+      {props.children}
+    </div>
+  );
 }
 
 describe('useOverlayTrigger', function () {

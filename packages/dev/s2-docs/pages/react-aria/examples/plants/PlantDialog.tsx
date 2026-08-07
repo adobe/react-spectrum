@@ -12,7 +12,7 @@ import {TextField} from 'tailwind-starter/TextField';
 import {cycleIcon, getSunlight, sunIcons, wateringIcons} from './Labels';
 import {useState} from 'react';
 
-export function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant) => void}) {
+export function PlantDialog({item, onSave}: {item?: Plant | null; onSave: (item: Plant) => void}) {
   let [droppedImage, setDroppedImage] = useState(item?.default_image?.thumbnail);
   return (
     <Dialog>
@@ -36,42 +36,91 @@ export function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item:
             className="mt-6">
             <div className="flex gap-4">
               <DropZone
-                getDropOperation={types => types.has('image/jpeg') || types.has('image/png') ? 'copy' : 'cancel'}
+                getDropOperation={types =>
+                  types.has('image/jpeg') || types.has('image/png') ? 'copy' : 'cancel'
+                }
                 onDrop={async e => {
-                  let item = e.items.filter(isFileDropItem).find(item => (item.type === 'image/jpeg' || item.type === 'image/png'));
+                  let item = e.items
+                    .filter(isFileDropItem)
+                    .find(item => item.type === 'image/jpeg' || item.type === 'image/png');
                   if (item) {
                     setDroppedImage(URL.createObjectURL(await item.getFile()));
                   }
                 }}
                 className="w-24 sm:w-32 p-2">
-                {droppedImage
-                  ? <img alt="" src={droppedImage} className="w-full h-full object-contain aspect-square" />
-                  : <Text slot="label" className="italic text-sm text-center">Drop or paste image here</Text>
-                }
+                {droppedImage ? (
+                  <img
+                    alt=""
+                    src={droppedImage}
+                    className="w-full h-full object-contain aspect-square"
+                  />
+                ) : (
+                  <Text slot="label" className="italic text-sm text-center">
+                    Drop or paste image here
+                  </Text>
+                )}
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
               <div className="flex flex-col gap-3 flex-1 min-w-0">
-                <ComboBox label="Common Name" placeholder="Enter plant name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
+                <ComboBox
+                  label="Common Name"
+                  placeholder="Enter plant name"
+                  name="common_name"
+                  isRequired
+                  items={plants}
+                  defaultInputValue={item?.common_name}
+                  allowsCustomValue
+                  autoFocus={navigator.maxTouchPoints === 0}>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
-                <TextField label="Scientific Name" placeholder="Enter scientific name" name="scientific_name" isRequired defaultValue={item?.scientific_name?.join('')} />
+                <TextField
+                  label="Scientific Name"
+                  placeholder="Enter scientific name"
+                  name="scientific_name"
+                  isRequired
+                  defaultValue={item?.scientific_name?.join('')}
+                />
               </div>
             </div>
             <Select label="Cycle" name="cycle" isRequired defaultSelectedKey={item?.cycle}>
-              <SelectItem id="Perennial" textValue="Perennial">{cycleIcon} Perennial</SelectItem>
-              <SelectItem id="Annual" textValue="Annual">{cycleIcon} Annual</SelectItem>
+              <SelectItem id="Perennial" textValue="Perennial">
+                {cycleIcon} Perennial
+              </SelectItem>
+              <SelectItem id="Annual" textValue="Annual">
+                {cycleIcon} Annual
+              </SelectItem>
             </Select>
-            <Select label="Sunlight" name="sunlight" isRequired defaultSelectedKey={item ? getSunlight(item) : undefined}>
-              <SelectItem id="full sun" textValue="Full Sun">{sunIcons['full sun']} Full Sun</SelectItem>
-              <SelectItem id="part sun" textValue="Part Sun">{sunIcons['part sun']} Part Sun</SelectItem>
-              <SelectItem id="part shade" textValue="Part Shade">{sunIcons['part shade']} Part Shade</SelectItem>
+            <Select
+              label="Sunlight"
+              name="sunlight"
+              isRequired
+              defaultSelectedKey={item ? getSunlight(item) : undefined}>
+              <SelectItem id="full sun" textValue="Full Sun">
+                {sunIcons['full sun']} Full Sun
+              </SelectItem>
+              <SelectItem id="part sun" textValue="Part Sun">
+                {sunIcons['part sun']} Part Sun
+              </SelectItem>
+              <SelectItem id="part shade" textValue="Part Shade">
+                {sunIcons['part shade']} Part Shade
+              </SelectItem>
             </Select>
             <Select label="Watering" name="watering" isRequired defaultSelectedKey={item?.watering}>
-              <SelectItem id="Frequent" textValue="Frequent">{wateringIcons['Frequent']} Frequent</SelectItem>
-              <SelectItem id="Average" textValue="Average">{wateringIcons['Average']} Average</SelectItem>
-              <SelectItem id="Minimum" textValue="Minimum">{wateringIcons['Minimum']} Minimum</SelectItem>
+              <SelectItem id="Frequent" textValue="Frequent">
+                {wateringIcons['Frequent']} Frequent
+              </SelectItem>
+              <SelectItem id="Average" textValue="Average">
+                {wateringIcons['Average']} Average
+              </SelectItem>
+              <SelectItem id="Minimum" textValue="Minimum">
+                {wateringIcons['Minimum']} Minimum
+              </SelectItem>
             </Select>
-            <DatePicker label="Date Planted" isRequired defaultValue={item ? today(getLocalTimeZone()) : null} />
+            <DatePicker
+              label="Date Planted"
+              isRequired
+              defaultValue={item ? today(getLocalTimeZone()) : null}
+            />
             <div className="mt-6 flex justify-end gap-2">
               <Button variant="secondary" onPress={close}>
                 Cancel

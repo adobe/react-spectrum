@@ -14,7 +14,9 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Dialog SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Button, Dialog, DialogTrigger, Heading, Input, Label, Modal, TextField} from '../exports/index.ts';
 
       <React.StrictMode>
@@ -42,11 +44,13 @@ describe('Dialog SSR', function () {
           </Modal>
         </DialogTrigger>
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let dialog = screen.queryByRole('dialog');
-      expect(dialog).toBeNull();
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let dialog = screen.queryByRole('dialog');
+        expect(dialog).toBeNull();
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let dialog = screen.getByRole('dialog');

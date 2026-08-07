@@ -37,7 +37,9 @@ governing permissions and limitations under the License.
   --spectrum-stepper-width: var(--spectrum-stepper-default-width-desktop);
   inline-size: var(--spectrum-stepper-width);
   line-height: 0;
-  transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition:
+    border-color var(--spectrum-global-animation-duration-100) ease-in-out,
+    box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
   /**
    * There are only two layouts, so we don't need to repeat them down below.
@@ -48,15 +50,15 @@ governing permissions and limitations under the License.
     grid-template-rows: auto auto;
     grid-template-columns: 1fr auto;
     grid-template-areas:
-    'field increment'
-    'field decrement';
+      'field increment'
+      'field decrement';
     .spectrum-Stepper-button--stepUp {
       padding-block-start: calc(var(--spectrum-button-padding-y) + 1px);
-      padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
+      padding-block-end: calc(var(--spectrum-button-padding-y) - 0.5px);
     }
     .spectrum-Stepper-button--stepDown {
-      padding-block-end: calc(var(--spectrum-button-padding-y) + .5px);
-      padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
+      padding-block-end: calc(var(--spectrum-button-padding-y) + 0.5px);
+      padding-block-start: calc(var(--spectrum-button-padding-y) - 0.5px);
     }
   }
   &.spectrum-Stepper--isMobile {
@@ -65,8 +67,10 @@ governing permissions and limitations under the License.
     grid-template-rows: auto;
     grid-template-columns: auto 1fr auto;
     grid-template-areas: 'decrement field increment';
-    .spectrum-Stepper-button--stepUp {}
-    .spectrum-Stepper-button--stepDown {}
+    .spectrum-Stepper-button--stepUp {
+    }
+    .spectrum-Stepper-button--stepDown {
+    }
   }
 
   .spectrum-Stepper-field {
@@ -94,22 +98,28 @@ governing permissions and limitations under the License.
 
     &:not(.spectrum-Stepper--showStepper) {
       &:not(.spectrum-Stepper--isMobile) {
-        .spectrum-Stepper-input {}
+        .spectrum-Stepper-input {
+        }
         .spectrum-Stepper-button {
           block-size: var(--spectrum-stepper-button-height);
           inline-size: var(--spectrum-stepper-button-width);
         }
-        .spectrum-Stepper-button--stepDown {}
-        .spectrum-Stepper-button--stepUp {}
+        .spectrum-Stepper-button--stepDown {
+        }
+        .spectrum-Stepper-button--stepUp {
+        }
       }
       &.spectrum-Stepper--isMobile {
-        .spectrum-Stepper-input {}
+        .spectrum-Stepper-input {
+        }
         .spectrum-Stepper-button {
           block-size: var(--spectrum-textfield-height);
           inline-size: var(--spectrum-actionbutton-min-width);
         }
-        .spectrum-Stepper-button--stepDown {}
-        .spectrum-Stepper-button--stepUp {}
+        .spectrum-Stepper-button--stepDown {
+        }
+        .spectrum-Stepper-button--stepUp {
+        }
       }
     }
     &.spectrum-Stepper--showStepper {
@@ -167,7 +177,8 @@ governing permissions and limitations under the License.
 
     &:not(.spectrum-Stepper--showStepper) {
       &:not(.spectrum-Stepper--isMobile) {
-        .spectrum-Stepper-input {}
+        .spectrum-Stepper-input {
+        }
         .spectrum-Stepper-button {
           block-size: var(--spectrum-stepper-button-height);
           inline-size: var(--spectrum-stepper-button-width);
@@ -175,22 +186,27 @@ governing permissions and limitations under the License.
         .spectrum-Stepper-button--stepDown {
           border-block-end-width: var(--spectrum-alias-input-border-size);
         }
-        .spectrum-Stepper-button--stepUp {}
+        .spectrum-Stepper-button--stepUp {
+        }
       }
       &.spectrum-Stepper--isMobile {
-        .spectrum-Stepper-input {}
+        .spectrum-Stepper-input {
+        }
         .spectrum-Stepper-button {
           block-size: var(--spectrum-textfield-height);
           inline-size: var(--spectrum-actionbutton-min-width);
           border-block-end-width: var(--spectrum-alias-input-border-size);
         }
-        .spectrum-Stepper-button--stepDown {}
-        .spectrum-Stepper-button--stepUp {}
+        .spectrum-Stepper-button--stepDown {
+        }
+        .spectrum-Stepper-button--stepUp {
+        }
       }
     }
     &.spectrum-Stepper--showStepper {
       &:not(.spectrum-Stepper--isMobile) {
-        .spectrum-Stepper-input {}
+        .spectrum-Stepper-input {
+        }
         .spectrum-Stepper-button {
           block-size: var(--spectrum-stepper-button-height);
           inline-size: var(--spectrum-stepper-button-width);
@@ -198,17 +214,21 @@ governing permissions and limitations under the License.
         .spectrum-Stepper-button--stepDown {
           border-block-end-width: var(--spectrum-alias-input-border-size);
         }
-        .spectrum-Stepper-button--stepUp {}
+        .spectrum-Stepper-button--stepUp {
+        }
       }
       &.spectrum-Stepper--isMobile {
-        .spectrum-Stepper-input {}
+        .spectrum-Stepper-input {
+        }
         .spectrum-Stepper-button {
           block-size: var(--spectrum-textfield-height);
           inline-size: var(--spectrum-actionbutton-min-width);
           border-block-end-width: var(--spectrum-alias-input-border-size);
         }
-        .spectrum-Stepper-button--stepDown {}
-        .spectrum-Stepper-button--stepUp {}
+        .spectrum-Stepper-button--stepDown {
+        }
+        .spectrum-Stepper-button--stepUp {
+        }
       }
     }
   }
@@ -245,8 +265,9 @@ governing permissions and limitations under the License.
     max-block-size: 100%;
     flex-shrink: 0;
 
-    transition: background var(--spectrum-global-animation-duration-100) ease-out,
-                fill var(--spectrum-global-animation-duration-100) ease-out;
+    transition:
+      background var(--spectrum-global-animation-duration-100) ease-out,
+      fill var(--spectrum-global-animation-duration-100) ease-out;
     box-sizing: initial;
   }
 }

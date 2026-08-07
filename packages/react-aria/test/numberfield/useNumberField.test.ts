@@ -13,14 +13,18 @@ describe('useNumberField hook', () => {
   });
 
   let renderNumberFieldHook = (props: AriaNumberFieldProps) => {
-    let {result: stateResult} = renderHook(() => useNumberFieldState({...props, locale: useLocale().locale}));
+    let {result: stateResult} = renderHook(() =>
+      useNumberFieldState({...props, locale: useLocale().locale})
+    );
     let {result} = renderHook(() => useNumberField(props, stateResult.current, ref));
     return result.current;
   };
 
   describe('should return numberFieldProps', () => {
     it('with default numberField props if no props are provided', () => {
-      let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      using consoleWarnSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {}) as jest.SpyInstance & Disposable;
       let {inputProps} = renderNumberFieldHook({});
       expect(inputProps.type).toBe('text');
       expect(inputProps.disabled).toBeFalsy();
@@ -33,11 +37,16 @@ describe('useNumberField hook', () => {
       expect(inputProps['aria-valuemax']).toBeNull();
       expect(typeof inputProps.onChange).toBe('function');
       expect(inputProps.autoFocus).toBeFalsy();
-      expect(consoleWarnSpy).toHaveBeenLastCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
+      expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+        'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
+      );
     });
 
     it('with appropriate props if placeholder is defined', () => {
-      let {inputProps} = renderNumberFieldHook({placeholder: 'Enter value', 'aria-label': 'mandatory label'});
+      let {inputProps} = renderNumberFieldHook({
+        placeholder: 'Enter value',
+        'aria-label': 'mandatory label'
+      });
       expect(inputProps['placeholder']).toBe('Enter value');
     });
 

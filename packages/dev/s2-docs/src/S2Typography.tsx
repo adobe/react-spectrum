@@ -1,22 +1,37 @@
 import {ReactNode} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-
-const Strong = ({children}: {children: ReactNode}) => <strong className={style({fontWeight: 'bold'})}>{children}</strong>;
+const Strong = ({children}: {children: ReactNode}) => (
+  <strong className={style({fontWeight: 'bold'})}>{children}</strong>
+);
 
 export function S2Typography() {
   return (
     <>
       <p className={style({font: 'body'})}>There are several different type scales.</p>
       <ul>
-        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>UI</Strong> – use within interactive UI components.</li>
-        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Body</Strong> – use for the content of pages that are primarily text.</li>
-        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Heading</Strong> – use for headings in content pages.</li>
-        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Title</Strong> – use for titles within UI components such as cards or panels.</li>
-        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Detail</Strong> – use for less important metadata.</li>
-        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Code</Strong> – use for source code.</li>
+        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}>
+          <Strong>UI</Strong> – use within interactive UI components.
+        </li>
+        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}>
+          <Strong>Body</Strong> – use for the content of pages that are primarily text.
+        </li>
+        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}>
+          <Strong>Heading</Strong> – use for headings in content pages.
+        </li>
+        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}>
+          <Strong>Title</Strong> – use for titles within UI components such as cards or panels.
+        </li>
+        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}>
+          <Strong>Detail</Strong> – use for less important metadata.
+        </li>
+        <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}>
+          <Strong>Code</Strong> – use for source code.
+        </li>
       </ul>
-      <p className={style({font: 'body'})}>Each type scale has a default size, and several t-shirt size modifiers for additional sizes.</p>
+      <p className={style({font: 'body'})}>
+        Each type scale has a default size, and several t-shirt size modifiers for additional sizes.
+      </p>
       <div
         className={style({
           display: 'grid',

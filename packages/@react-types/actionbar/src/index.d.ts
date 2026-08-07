@@ -10,4 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export {SpectrumActionBarProps as ActionBarProps, SpectrumActionBarProps, SpectrumActionBarContainerProps} from '@react-spectrum/actionbar';
+export {
+  SpectrumActionBarProps as ActionBarProps,
+  SpectrumActionBarProps,
+  SpectrumActionBarContainerProps
+} from '@react-spectrum/actionbar';

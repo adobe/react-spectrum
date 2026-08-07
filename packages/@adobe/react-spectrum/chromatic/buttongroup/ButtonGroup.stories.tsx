@@ -53,7 +53,8 @@ OrientationVerticalAlignCenter.story = {
   name: 'orientation: vertical, align: center'
 };
 
-export const OrientationVerticalAlignEnd: ButtonGroupStory = () => render({orientation: 'vertical', align: 'end'});
+export const OrientationVerticalAlignEnd: ButtonGroupStory = () =>
+  render({orientation: 'vertical', align: 'end'});
 
 OrientationVerticalAlignEnd.story = {
   name: 'orientation: vertical, align: end'

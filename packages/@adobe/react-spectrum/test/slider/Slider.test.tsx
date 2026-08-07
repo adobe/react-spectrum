@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installMouseEvent,
+  pointerMap,
+  render
+} from '@react-spectrum/test-utils-internal';
 import {press, testKeypresses} from './utils';
 import {Provider} from '../../src/provider/Provider';
 import React, {useCallback, useState} from 'react';
@@ -71,11 +77,13 @@ describe('Slider', function () {
   });
 
   it('supports disabled', async function () {
-    let {getByRole, getAllByRole} = render(<div>
-      <button>A</button>
-      <Slider label="The Label" defaultValue={20} isDisabled />
-      <button>B</button>
-    </div>);
+    let {getByRole, getAllByRole} = render(
+      <div>
+        <button>A</button>
+        <Slider label="The Label" defaultValue={20} isDisabled />
+        <button>B</button>
+      </div>
+    );
 
     let slider = getByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
@@ -88,11 +96,13 @@ describe('Slider', function () {
   });
 
   it('can be focused', async function () {
-    let {getByRole, getAllByRole} = render(<div>
-      <button>A</button>
-      <Slider label="The Label" defaultValue={20} />
-      <button>B</button>
-    </div>);
+    let {getByRole, getAllByRole} = render(
+      <div>
+        <button>A</button>
+        <Slider label="The Label" defaultValue={20} />
+        <button>B</button>
+      </div>
+    );
 
     let slider = getByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
@@ -124,15 +134,15 @@ describe('Slider', function () {
   });
 
   it.each`
-  Name                            | props                                        | expected
-  ${'defaultValue minValue'}      | ${{defaultValue: 20, minValue: 50}}          | ${'50'}
-  ${'defaultValue maxValue'}      | ${{defaultValue: 20, maxValue: 10}}          | ${'10'}
-  ${'defaultValue minValue step'} | ${{defaultValue: 20, minValue: 50, step: 3}} | ${'50'}
-  ${'defaultValue maxValue step'} | ${{defaultValue: 20, maxValue: 10, step: 3}} | ${'9'}
-  ${'value minValue'}             | ${{value: 20, minValue: 50}}                 | ${'50'}
-  ${'value maxValue'}             | ${{value: 20, maxValue: 10}}                 | ${'10'}
-  ${'value minValue step'}        | ${{value: 20, minValue: 50, step: 3}}        | ${'50'}
-  ${'value maxValue step'}        | ${{value: 20, maxValue: 10, step: 3}}        | ${'9'}
+    Name                            | props                                        | expected
+    ${'defaultValue minValue'}      | ${{defaultValue: 20, minValue: 50}}          | ${'50'}
+    ${'defaultValue maxValue'}      | ${{defaultValue: 20, maxValue: 10}}          | ${'10'}
+    ${'defaultValue minValue step'} | ${{defaultValue: 20, minValue: 50, step: 3}} | ${'50'}
+    ${'defaultValue maxValue step'} | ${{defaultValue: 20, maxValue: 10, step: 3}} | ${'9'}
+    ${'value minValue'}             | ${{value: 20, minValue: 50}}                 | ${'50'}
+    ${'value maxValue'}             | ${{value: 20, maxValue: 10}}                 | ${'10'}
+    ${'value minValue step'}        | ${{value: 20, minValue: 50, step: 3}}        | ${'50'}
+    ${'value maxValue step'}        | ${{value: 20, maxValue: 10, step: 3}}        | ${'9'}
   `('clamps value & defaultValue to the allowed range $Name', function ({props, expected}) {
     let {getByRole} = render(<Slider label="The Label" {...props} />);
 
@@ -149,12 +159,15 @@ describe('Slider', function () {
 
     function Test() {
       let [value, _setValue] = useState(50);
-      let setValue = useCallback((val) => {
-        setValues.push(val);
-        _setValue(val);
-      }, [_setValue]);
+      let setValue = useCallback(
+        val => {
+          setValues.push(val);
+          _setValue(val);
+        },
+        [_setValue]
+      );
 
-      return (<Slider label="The Label" value={value} onChange={setValue} />);
+      return <Slider label="The Label" value={value} onChange={setValue} />;
     }
 
     let {getByRole} = render(<Test />);
@@ -176,7 +189,14 @@ describe('Slider', function () {
   it('supports a custom getValueLabel', function () {
     function Test() {
       let [value, setValue] = useState(50);
-      return (<Slider label="The Label" value={value} onChange={setValue} getValueLabel={value => `A${value}B`} />);
+      return (
+        <Slider
+          label="The Label"
+          value={value}
+          onChange={setValue}
+          getValueLabel={value => `A${value}B`}
+        />
+      );
     }
 
     let {getByRole} = render(<Test />);
@@ -227,9 +247,9 @@ describe('Slider', function () {
 
   if (parseInt(React.version, 10) >= 19) {
     it('resets to defaultValue when submitting form action', async () => {
-      function Test() {        
+      function Test() {
         const [value, formAction] = React.useActionState(() => 50, 10);
-        
+
         return (
           <form action={formAction}>
             <Slider label="Value" defaultValue={value} />
@@ -251,11 +271,7 @@ describe('Slider', function () {
   describe('formatOptions', () => {
     it('prefixes the value with a plus sign if needed', function () {
       let {getByRole} = render(
-        <Slider
-          label="The Label"
-          minValue={-50}
-          maxValue={50}
-          defaultValue={10} />
+        <Slider label="The Label" minValue={-50} maxValue={50} defaultValue={10} />
       );
 
       let output = getByRole('status');
@@ -276,7 +292,8 @@ describe('Slider', function () {
           maxValue={1}
           step={0.01}
           defaultValue={0.2}
-          formatOptions={{style: 'percent'}} />
+          formatOptions={{style: 'percent'}}
+        />
       );
 
       let output = getByRole('status');
@@ -292,16 +309,16 @@ describe('Slider', function () {
 
   describe('keyboard interactions', () => {
     it.each`
-      Name                                 | props                                 | commands
-      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
-      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
-      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
-      ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
-      ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
-      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
-      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
-      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
-      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+      Name                                 | props                                  | commands
+      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                   | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
+      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                   | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
+      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}} | ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
+      ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                   | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                   | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                   | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                   | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                   | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                   | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -313,32 +330,41 @@ describe('Slider', function () {
     });
 
     it.each`
-      Name                                 | props                                 | commands
-      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
-      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
-      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
-      ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
-      ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
-      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
-      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
-      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
-      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
-    `('$Name moves the slider in the correct direction orientation vertical', function ({props, commands}) {
-      let tree = render(
-        <Provider theme={theme} {...props}>
-          <Slider label="Label" defaultValue={50} minValue={0} maxValue={100} orientation="vertical" />
-        </Provider>
-      );
-      let slider = tree.getByRole('slider') as HTMLInputElement;
-      testKeypresses([slider, slider], commands);
-    });
+      Name                                 | props                                  | commands
+      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                   | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
+      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                   | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
+      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}} | ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
+      ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                   | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                   | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                   | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                   | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                   | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                   | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+    `(
+      '$Name moves the slider in the correct direction orientation vertical',
+      function ({props, commands}) {
+        let tree = render(
+          <Provider theme={theme} {...props}>
+            <Slider
+              label="Label"
+              defaultValue={50}
+              minValue={0}
+              maxValue={100}
+              orientation="vertical"
+            />
+          </Provider>
+        );
+        let slider = tree.getByRole('slider') as HTMLInputElement;
+        testKeypresses([slider, slider], commands);
+      }
+    );
 
     it.each`
-      Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +20}, {left: press.ArrowLeft, result: -20}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -20}, {left: press.ArrowLeft, result: +20}]}
-      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
-      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      Name                          | props                | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}} | ${[{left: press.ArrowRight, result: +20}, {left: press.ArrowLeft, result: -20}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}} | ${[{left: press.ArrowRight, result: -20}, {left: press.ArrowLeft, result: +20}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}} | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}} | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
     `('$Name respects the step size', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -350,11 +376,11 @@ describe('Slider', function () {
     });
 
     it.each`
-      Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}]}
-      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
-      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      Name                          | props                | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}} | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}} | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}} | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}} | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
     `('$Name sets page size to a multiple of step', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -367,43 +393,49 @@ describe('Slider', function () {
     });
 
     it.each`
-      Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +2}, {left: press.ArrowLeft, result: -2}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -2}, {left: press.ArrowLeft, result: +2}]}
-      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +2}, {left: press.PageDown, result: -2}]}
-      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +2}, {left: press.PageDown, result: -2}]}
-    `('$Name sets page size to a multiple of step (scenario: step is less than min)', function ({props, commands}) {
-      let tree = render(
-        <Provider theme={theme} {...props}>
-          <Slider label="Label" minValue={50} maxValue={75} defaultValue={60} step={2} />
-        </Provider>
-      );
-      // The slider page size should be initially calulated as 25/10 = 2.5, snaps to 2
-      let slider = tree.getByRole('slider') as HTMLInputElement;
-      testKeypresses([slider, slider], commands);
-    });
+      Name                          | props                | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}} | ${[{left: press.ArrowRight, result: +2}, {left: press.ArrowLeft, result: -2}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}} | ${[{left: press.ArrowRight, result: -2}, {left: press.ArrowLeft, result: +2}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}} | ${[{left: press.PageUp, result: +2}, {left: press.PageDown, result: -2}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}} | ${[{left: press.PageUp, result: +2}, {left: press.PageDown, result: -2}]}
+    `(
+      '$Name sets page size to a multiple of step (scenario: step is less than min)',
+      function ({props, commands}) {
+        let tree = render(
+          <Provider theme={theme} {...props}>
+            <Slider label="Label" minValue={50} maxValue={75} defaultValue={60} step={2} />
+          </Provider>
+        );
+        // The slider page size should be initially calulated as 25/10 = 2.5, snaps to 2
+        let slider = tree.getByRole('slider') as HTMLInputElement;
+        testKeypresses([slider, slider], commands);
+      }
+    );
 
     it.each`
-    Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +2}, {left: press.ArrowLeft, result: -2}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -2}, {left: press.ArrowLeft, result: +2}]}
-      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +4}, {left: press.PageDown, result: -4}]}
-      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +4}, {left: press.PageDown, result: -4}]}
-    `('$Name sets page size to a multiple of step (scenario: step is greater than max)', function ({props, commands}) {
-      let tree = render(
-        <Provider theme={theme} {...props}>
-          <Slider label="Label" minValue={-50} maxValue={-15} defaultValue={-40} step={2} />
-        </Provider>
-      );
-      // The slider page size should be initially calulated as 35/10 = 3.5, snaps to 4
-      let slider = tree.getByRole('slider') as HTMLInputElement;
-      testKeypresses([slider, slider], commands);
-    });
+      Name                          | props                | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}} | ${[{left: press.ArrowRight, result: +2}, {left: press.ArrowLeft, result: -2}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}} | ${[{left: press.ArrowRight, result: -2}, {left: press.ArrowLeft, result: +2}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}} | ${[{left: press.PageUp, result: +4}, {left: press.PageDown, result: -4}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}} | ${[{left: press.PageUp, result: +4}, {left: press.PageDown, result: -4}]}
+    `(
+      '$Name sets page size to a multiple of step (scenario: step is greater than max)',
+      function ({props, commands}) {
+        let tree = render(
+          <Provider theme={theme} {...props}>
+            <Slider label="Label" minValue={-50} maxValue={-15} defaultValue={-40} step={2} />
+          </Provider>
+        );
+        // The slider page size should be initially calulated as 35/10 = 3.5, snaps to 4
+        let slider = tree.getByRole('slider') as HTMLInputElement;
+        testKeypresses([slider, slider], commands);
+      }
+    );
 
     it.each`
-      Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowLeft, result: -1}, {left: press.ArrowLeft, result: 0}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowRight, result: 0}]}
+      Name                          | props                | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}} | ${[{left: press.ArrowLeft, result: -1}, {left: press.ArrowLeft, result: 0}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}} | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowRight, result: 0}]}
     `('$Name is clamped by min/max', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -418,10 +450,12 @@ describe('Slider', function () {
   describe('mouse interactions', () => {
     beforeAll(() => {
       let originalGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
-      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-        let rect = originalGetBoundingClientRect.call(this);
-        return {...rect, top: 0, left: 0, width: 100, height: 100};
-      });
+      jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(function (this: HTMLElement) {
+          let rect = originalGetBoundingClientRect.call(this);
+          return {...rect, top: 0, left: 0, width: 100, height: 100};
+        });
     });
 
     installMouseEvent();
@@ -429,10 +463,7 @@ describe('Slider', function () {
     it('can click and drag handle', () => {
       let onChangeSpy = jest.fn();
       let {getByRole} = render(
-        <Slider
-          label="The Label"
-          onChange={onChangeSpy}
-          defaultValue={50} />
+        <Slider label="The Label" onChange={onChangeSpy} defaultValue={50} />
       );
 
       let slider = getByRole('slider');
@@ -457,11 +488,7 @@ describe('Slider', function () {
     it('cannot click and drag handle when disabled', () => {
       let onChangeSpy = jest.fn();
       let {getByRole} = render(
-        <Slider
-          label="The Label"
-          onChange={onChangeSpy}
-          defaultValue={50}
-          isDisabled />
+        <Slider label="The Label" onChange={onChangeSpy} defaultValue={50} isDisabled />
       );
 
       let slider = getByRole('slider');
@@ -478,10 +505,7 @@ describe('Slider', function () {
     it('can click on track to move handle', () => {
       let onChangeSpy = jest.fn();
       let {getByRole} = render(
-        <Slider
-          label="The Label"
-          onChange={onChangeSpy}
-          defaultValue={50} />
+        <Slider label="The Label" onChange={onChangeSpy} defaultValue={50} />
       );
 
       let slider = getByRole('slider');
@@ -509,11 +533,7 @@ describe('Slider', function () {
     it('cannot click on track to move handle when disabled', () => {
       let onChangeSpy = jest.fn();
       let {getByRole} = render(
-        <Slider
-          label="The Label"
-          onChange={onChangeSpy}
-          defaultValue={50}
-          isDisabled />
+        <Slider label="The Label" onChange={onChangeSpy} defaultValue={50} isDisabled />
       );
 
       let slider = getByRole('slider');
@@ -537,9 +557,7 @@ describe('Slider', function () {
     });
 
     it('clicking on the label should focus the first thumb', () => {
-      let {getByText, getByRole} = render(
-        <Slider label="The Label" />
-      );
+      let {getByText, getByRole} = render(<Slider label="The Label" />);
 
       let label = getByText('The Label');
       let thumb = getByRole('slider');
@@ -551,17 +569,16 @@ describe('Slider', function () {
 
   describe('touch interactions', () => {
     beforeAll(() => {
-      // @ts-ignore
-      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+      jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        // @ts-ignore
+        .mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
 
-    it('doesn\'t jump to second touch on track while already dragging', () => {
+    it("doesn't jump to second touch on track while already dragging", () => {
       let onChangeSpy = jest.fn();
       let {getByRole} = render(
-        <Slider
-          label="The Label"
-          onChange={onChangeSpy}
-          defaultValue={50} />
+        <Slider label="The Label" onChange={onChangeSpy} defaultValue={50} />
       );
 
       let slider = getByRole('slider');

@@ -24,8 +24,9 @@ import {Virtualizer} from './Virtualizer';
  * such as its position and size. The Virtualizer is then responsible for creating the actual
  * views as needed, based on this layout information.
  *
- * Every layout extends from the Layout abstract base class. Layouts must implement the `getVisibleLayoutInfos`,
- * `getLayoutInfo`, and `getContentSize` methods. All other methods can be optionally overridden to implement custom behavior.
+ * Every layout extends from the Layout abstract base class. Layouts must implement the
+ * `getVisibleLayoutInfos`, `getLayoutInfo`, and `getContentSize` methods. All other methods can be
+ * optionally overridden to implement custom behavior.
  */
 export abstract class Layout<T extends object = Node<any>, O = any> implements LayoutDelegate {
   /** The Virtualizer the layout is currently attached to. */
@@ -34,6 +35,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   /**
    * Returns an array of `LayoutInfo` objects which are inside the given rectangle.
    * Should be implemented by subclasses.
+   *
    * @param rect The rectangle that should contain the returned LayoutInfo objects.
    */
   abstract getVisibleLayoutInfos(rect: Rect): LayoutInfo[];
@@ -41,6 +43,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   /**
    * Returns a `LayoutInfo` for the given key.
    * Should be implemented by subclasses.
+   *
    * @param key The key of the LayoutInfo to retrieve.
    */
   abstract getLayoutInfo(key: Key): LayoutInfo | null;
@@ -48,7 +51,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   /**
    * Returns size of the content. By default, it returns virtualizer's size.
    */
-  abstract getContentSize(): Size;  
+  abstract getContentSize(): Size;
 
   /**
    * Returns whether the layout should invalidate in response to
@@ -58,8 +61,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
    */
   shouldInvalidate(newRect: Rect, oldRect: Rect): boolean {
     // By default, invalidate when the size changes
-    return newRect.width !== oldRect.width
-        || newRect.height !== oldRect.height;
+    return newRect.width !== oldRect.width || newRect.height !== oldRect.height;
   }
 
   /**

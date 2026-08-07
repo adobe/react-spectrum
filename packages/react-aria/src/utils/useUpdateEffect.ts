@@ -34,6 +34,6 @@ export function useUpdateEffect(cb: EffectCallback, dependencies: any[]): void {
       cbEvent();
     }
     lastDeps.current = dependencies;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 }

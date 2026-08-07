@@ -13,7 +13,10 @@
 import {Key} from '@react-types/shared';
 import {TableState} from 'react-stately/useTableState';
 
-export const gridIds: WeakMap<TableState<unknown>, string> = new WeakMap<TableState<unknown>, string>();
+export const gridIds: WeakMap<TableState<unknown>, string> = new WeakMap<
+  TableState<unknown>,
+  string
+>();
 
 function normalizeKey(key: Key): string {
   if (typeof key === 'string') {
@@ -43,7 +46,7 @@ export function getCellId<T>(state: TableState<T>, rowKey: Key, columnKey: Key):
 
 export function getRowLabelledBy<T>(state: TableState<T>, rowKey: Key): string {
   // A row is labelled by it's row headers.
-  return [...state.collection.rowHeaderColumnKeys].map(columnKey =>
-    getCellId(state, rowKey, columnKey)
-  ).join(' ');
+  return [...state.collection.rowHeaderColumnKeys]
+    .map(columnKey => getCellId(state, rowKey, columnKey))
+    .join(' ');
 }

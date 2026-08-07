@@ -21,6 +21,7 @@ import {chain} from 'react-aria/chain';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
+import {DragPreview} from '../src/DragPreview';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
@@ -34,6 +35,8 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList} from 'react-stately/useAsyncList';
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+import {useListData} from 'react-stately/useListData';
 
 const meta: Meta<typeof ListView> = {
   component: ListView,
@@ -43,18 +46,26 @@ const meta: Meta<typeof ListView> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onSelectionChange']),
-    children: {table: {disable: true}}
+    children: {table: {disable: true}},
+    dragAndDropHooks: {table: {disable: true}}
   },
   title: 'ListView',
   args: {
     styles: style({height: 320})
   },
   decorators: [
-    (Story) => (
-      <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
-        <Story />
-      </div>
-    )
+    (Story, context) => {
+      let {disableDecorator} = context.parameters;
+      if (disableDecorator) {
+        return <Story />;
+      }
+
+      return (
+        <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
+          <Story />
+        </div>
+      );
+    }
   ]
 };
 
@@ -66,39 +77,36 @@ export const Example: Story = {
     'aria-label': 'Files',
     children: (
       <>
-        <ListViewItem>
-          Item 1
-        </ListViewItem>
-        <ListViewItem>
-          Item 2
-        </ListViewItem>
-        <ListViewItem>
-          Item 3
-        </ListViewItem>
+        <ListViewItem>Item 1</ListViewItem>
+        <ListViewItem>Item 2</ListViewItem>
+        <ListViewItem>Item 3</ListViewItem>
       </>
     )
   }
 };
 
 interface Item {
-  id: Key,
-  name: string,
-  type?: 'file' | 'folder',
-  children?: Item[]
+  id: Key;
+  name: string;
+  type?: 'file' | 'folder';
+  children?: Item[];
 }
 
 const items: Item[] = [
   {id: 'a', name: 'Adobe Photoshop', type: 'file'},
   {id: 'b', name: 'Adobe XD', type: 'file'},
-  {id: 'c', name: 'Documents', type: 'folder', children: [
-    {id: 1, name: 'Sales Pitch'},
-    {id: 2, name: 'Demo'},
-    {id: 3, name: 'Taxes'}
-  ]},
+  {
+    id: 'c',
+    name: 'Documents',
+    type: 'folder',
+    children: [
+      {id: 1, name: 'Sales Pitch'},
+      {id: 2, name: 'Demo'},
+      {id: 3, name: 'Taxes'}
+    ]
+  },
   {id: 'd', name: 'Adobe InDesign', type: 'file'},
-  {id: 'e', name: 'Utilities', type: 'folder', children: [
-    {id: 1, name: 'Activity Monitor'}
-  ]},
+  {id: 'e', name: 'Utilities', type: 'folder', children: [{id: 1, name: 'Activity Monitor'}]},
   {id: 'f', name: 'Adobe AfterEffects', type: 'file'},
   {id: 'g', name: 'Adobe Illustrator', type: 'file'},
   {id: 'h', name: 'Adobe Lightroom', type: 'file'},
@@ -106,20 +114,23 @@ const items: Item[] = [
   {id: 'j', name: 'Adobe Fresco', type: 'file'},
   {id: 'k', name: 'Adobe Dreamweaver', type: 'file'},
   {id: 'l', name: 'Adobe Connect', type: 'file'},
-  {id: 'm', name: 'Pictures', type: 'folder', children: [
-    {id: 1, name: 'Yosemite'},
-    {id: 2, name: 'Jackson Hole'},
-    {id: 3, name: 'Crater Lake'}
-  ]},
+  {
+    id: 'm',
+    name: 'Pictures',
+    type: 'folder',
+    children: [
+      {id: 1, name: 'Yosemite'},
+      {id: 2, name: 'Jackson Hole'},
+      {id: 3, name: 'Crater Lake'}
+    ]
+  },
   {id: 'n', name: 'Adobe Acrobat', type: 'file'}
 ];
 
 export const Dynamic: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={items}>
-      {(item) => (
-        <ListViewItem>{item.name}</ListViewItem>
-      )}
+      {item => <ListViewItem>{item.name}</ListViewItem>}
     </ListView>
   ),
   args: {
@@ -128,11 +139,15 @@ export const Dynamic: Story = {
 };
 
 // taken from https://random.dog/
-const itemsWithImages: Array<{id: string, title: string, url: string}> = [
+const itemsWithImages: Array<{id: string; title: string; url: string}> = [
   {id: '1', title: 'swimmer', url: 'https://random.dog/b2fe2172-cf11-43f4-9c7f-29bd19601712.jpg'},
   {id: '2', title: 'chocolate', url: 'https://random.dog/2032518a-eec8-4102-9d48-3dca5a26eb23.png'},
   {id: '3', title: 'good boi', url: 'https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg'},
-  {id: '4', title: 'polar bear', url: 'https://random.dog/c22c077e-a009-486f-834c-a19edcc36a17.jpg'},
+  {
+    id: '4',
+    title: 'polar bear',
+    url: 'https://random.dog/c22c077e-a009-486f-834c-a19edcc36a17.jpg'
+  },
   {id: '5', title: 'cold boi', url: 'https://random.dog/093a41da-e2c0-4535-a366-9ef3f2013f73.jpg'},
   {id: '6', title: 'pilot', url: 'https://random.dog/09f8ecf4-c22b-49f4-af24-29fb5c8dbb2d.jpg'},
   {id: '7', title: 'nerd', url: 'https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg'},
@@ -140,7 +155,7 @@ const itemsWithImages: Array<{id: string, title: string, url: string}> = [
 ];
 
 export const WithImages: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={itemsWithImages}>
       {item => (
         <ListViewItem textValue={item.title}>
@@ -155,7 +170,7 @@ export const WithImages: Story = {
   }
 };
 
-const itemsWithIcons: Array<{id: string, title: string, icons: ReactNode}> = [
+const itemsWithIcons: Array<{id: string; title: string; icons: ReactNode}> = [
   {id: '0', title: 'folder of good bois', icons: <Folder />},
   {id: '1', title: 'swimmer', icons: <File />},
   {id: '2', title: 'chocolate', icons: <File />},
@@ -175,15 +190,19 @@ const itemsWithIcons: Array<{id: string, title: string, icons: ReactNode}> = [
 ];
 
 export const WithIcons: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={itemsWithIcons}>
       {item => (
         <ListViewItem textValue={item.title}>
           <Text>{item.title}</Text>
           {item.icons ? item.icons : null}
           <ActionButtonGroup>
-            <ActionButton aria-label="Edit"><Edit /></ActionButton>
-            <ActionButton aria-label="Delete"><Delete /></ActionButton>
+            <ActionButton aria-label="Edit">
+              <Edit />
+            </ActionButton>
+            <ActionButton aria-label="Delete">
+              <Delete />
+            </ActionButton>
           </ActionButtonGroup>
         </ListViewItem>
       )}
@@ -195,9 +214,9 @@ export const WithIcons: Story = {
 };
 
 export const Selection: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={items} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+      {item => (
         <ListViewItem textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
           <Text>{item.name}</Text>
@@ -213,9 +232,9 @@ export const Selection: Story = {
 };
 
 export const HighlightSelection: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={items} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+      {item => (
         <ListViewItem textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
           <Text>{item.name}</Text>
@@ -231,9 +250,13 @@ export const HighlightSelection: Story = {
 };
 
 export const DisabledItems: Story = {
-  render: (args) => (
-    <ListView {...args} items={items} disabledKeys={['a', 'c']} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+  render: args => (
+    <ListView
+      {...args}
+      items={items}
+      disabledKeys={['a', 'c']}
+      onSelectionChange={action('onSelectionChange')}>
+      {item => (
         <ListViewItem textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
           <Text>{item.name}</Text>
@@ -248,12 +271,20 @@ export const DisabledItems: Story = {
 };
 
 export const Links: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args}>
-      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">Adobe</ListViewItem>
-      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">Google</ListViewItem>
-      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">Apple</ListViewItem>
-      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">New York Times</ListViewItem>
+      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">
+        Adobe
+      </ListViewItem>
+      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">
+        Google
+      </ListViewItem>
+      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">
+        Apple
+      </ListViewItem>
+      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">
+        New York Times
+      </ListViewItem>
     </ListView>
   ),
   args: {
@@ -263,31 +294,52 @@ export const Links: Story = {
 };
 
 export const WithActionMenu: Story = {
-  render: (args) => (
-    <ListView {...args} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')}>
+  render: args => (
+    <ListView
+      {...args}
+      onAction={action('onAction')}
+      onSelectionChange={action('onSelectionChange')}>
       <ListViewItem id="a" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
         <Text slot="description">16 items</Text>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
       <ListViewItem id="b" textValue="Adobe Photoshop">
         <Text>Adobe Photoshop</Text>
         <Text slot="description">Application</Text>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
       <ListViewItem id="c" textValue="Adobe Illustrator">
         <Text>Adobe Illustrator</Text>
         <Text slot="description">Application</Text>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
     </ListView>
@@ -299,29 +351,48 @@ export const WithActionMenu: Story = {
 };
 
 export const WithActionButtonGroupAndMenu: Story = {
-  render: (args) => (
-    <ListView {...args} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')}>
+  render: args => (
+    <ListView
+      {...args}
+      onAction={action('onAction')}
+      onSelectionChange={action('onSelectionChange')}>
       <ListViewItem id="a" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
         <Text slot="description">16 items</Text>
         <ActionButtonGroup>
-          <ActionButton aria-label="Edit" onPress={action('editPress')}><Edit /></ActionButton>
+          <ActionButton aria-label="Edit" onPress={action('editPress')}>
+            <Edit />
+          </ActionButton>
         </ActionButtonGroup>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
       <ListViewItem id="b" textValue="Adobe Photoshop">
         <Text>Adobe Photoshop</Text>
         <Text slot="description">Application</Text>
         <ActionButtonGroup>
-          <ActionButton aria-label="Edit" onPress={action('editPress')}><Edit /></ActionButton>
+          <ActionButton aria-label="Edit" onPress={action('editPress')}>
+            <Edit />
+          </ActionButton>
         </ActionButtonGroup>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
     </ListView>
@@ -334,7 +405,7 @@ export const WithActionButtonGroupAndMenu: Story = {
 };
 
 export const EmptyState: Story = {
-  render: (args) => (
+  render: args => (
     <ListView
       {...args}
       renderEmptyState={() => (
@@ -353,11 +424,7 @@ export const EmptyState: Story = {
 };
 
 export const Loading: Story = {
-  render: (args) => (
-    <ListView {...args}>
-      {[]}
-    </ListView>
-  ),
+  render: args => <ListView {...args}>{[]}</ListView>,
   args: {
     'aria-label': 'Loading list',
     loadingState: 'loading'
@@ -365,7 +432,7 @@ export const Loading: Story = {
 };
 
 export const LoadingMore: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args}>
       <ListViewItem id="a">Adobe Photoshop</ListViewItem>
       <ListViewItem id="b">Adobe Illustrator</ListViewItem>
@@ -381,8 +448,8 @@ export const LoadingMore: Story = {
 
 function AsyncListExample(props) {
   interface StarWarsChar {
-    name: string,
-    url: string
+    name: string;
+    url: string;
   }
 
   let list = useAsyncList<StarWarsChar>({
@@ -408,30 +475,32 @@ function AsyncListExample(props) {
       onLoadMore={list.loadMore}
       selectionMode="multiple"
       {...props}>
-      {(item: StarWarsChar) => (
-        <ListViewItem id={item.name}>{item.name}</ListViewItem>
-      )}
+      {(item: StarWarsChar) => <ListViewItem id={item.name}>{item.name}</ListViewItem>}
     </ListView>
   );
 }
 
 export const AsyncLoading: Story = {
-  render: (args) => <AsyncListExample {...args} />
+  render: args => <AsyncListExample {...args} />
 };
 
 export const LongText: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args}>
       <ListViewItem id="a">
         This is a very very very very very very very very long title.
       </ListViewItem>
       <ListViewItem id="b" textValue="Short title, long description">
         <Text>Short title</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
       <ListViewItem id="c" textValue="Long title, long description">
         <Text>This is a very very very very very very very very long title.</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
     </ListView>
   ),
@@ -468,9 +537,20 @@ function NavigationExample(props) {
   };
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 8, width: 'full', height: 'full'})}>
+    <div
+      className={style({
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+        width: 'full',
+        height: 'full'
+      })}>
       <Breadcrumbs onAction={onBreadcrumbAction}>
-        {breadcrumbs.map(item => <Breadcrumb key={item.id} id={item.id}>{item.name}</Breadcrumb>)}
+        {breadcrumbs.map(item => (
+          <Breadcrumb key={item.id} id={item.id}>
+            {item.name}
+          </Breadcrumb>
+        ))}
       </Breadcrumbs>
       <ListView
         aria-label={name}
@@ -494,7 +574,7 @@ function NavigationExample(props) {
 }
 
 export const Navigation: Story = {
-  render: (args) => <NavigationExample {...args} />,
+  render: args => <NavigationExample {...args} />,
   name: 'hasChildItems navigation'
 };
 
@@ -509,7 +589,7 @@ function ActionBarExample(props) {
       selectedKeys={selectedKeys}
       onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
       items={items}
-      renderActionBar={(keys) => {
+      renderActionBar={keys => {
         let selection = keys === 'all' ? 'all' : [...keys].join(', ');
         return (
           <ActionBar>
@@ -538,7 +618,7 @@ function ActionBarExample(props) {
 }
 
 export const WithActionBar: Story = {
-  render: (args) => <ActionBarExample {...args} />,
+  render: args => <ActionBarExample {...args} />,
   args: {
     'aria-label': 'Files with action bar'
   },
@@ -556,7 +636,7 @@ function ActionBarEmphasizedExample(props) {
       selectedKeys={selectedKeys}
       onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
       items={items}
-      renderActionBar={(keys) => {
+      renderActionBar={keys => {
         let selection = keys === 'all' ? 'all' : [...keys].join(', ');
         return (
           <ActionBar isEmphasized>
@@ -585,9 +665,352 @@ function ActionBarEmphasizedExample(props) {
 }
 
 export const WithActionBarEmphasized: Story = {
-  render: (args) => <ActionBarEmphasizedExample {...args} />,
+  render: args => <ActionBarEmphasizedExample {...args} />,
   args: {
     'aria-label': 'Files with emphasized action bar'
   },
   name: 'with ActionBar (emphasized)'
+};
+
+let reorderItems: Item[] = [
+  {id: 'a', name: 'Adobe Photoshop', type: 'file'},
+  {id: 'b', name: 'Adobe XD', type: 'file'},
+  {id: 'c', name: 'Documents', type: 'folder'},
+  {id: 'd', name: 'Adobe InDesign', type: 'file'},
+  {id: 'e', name: 'Utilities', type: 'folder'},
+  {id: 'f', name: 'Adobe AfterEffects', type: 'file'},
+  {id: 'g', name: 'Adobe Illustrator', type: 'file'},
+  {id: 'h', name: 'Adobe Lightroom', type: 'file'},
+  {id: 'i', name: 'Adobe Premiere Pro', type: 'file'},
+  {id: 'j', name: 'Adobe Fresco', type: 'file'},
+  {id: 'k', name: 'Adobe Dreamweaver', type: 'file'},
+  {id: 'l', name: 'Adobe Connect', type: 'file'},
+  {id: 'm', name: 'Pictures', type: 'folder'},
+  {id: 'n', name: 'Adobe Acrobat', type: 'file'},
+  {id: 'o', name: 'Really really really really really long name', type: 'file'}
+];
+
+function CustomDragPreview(props) {
+  let {items, parentList} = props;
+  let id = items[0].id;
+  let item = parentList.getItem(id);
+  return (
+    <DragPreview {...props}>
+      <Text>{item.name}</Text>
+      {item.type === 'folder' && (
+        <>
+          <Folder />
+          {item.childNodes && (
+            <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+          )}
+        </>
+      )}
+      {item.type === 'file' && <File />}
+    </DragPreview>
+  );
+}
+
+function ReorderExample(props) {
+  let list = useListData({
+    initialItems: reorderItems
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list.getItem(key)!;
+        return {
+          id: item.id.toString(),
+          'text/plain': item?.name ?? ''
+        };
+      }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDragPreview: items => (
+      <CustomDragPreview parentList={list} items={items} overflowMode={props.overflowMode} />
+    )
+  });
+
+  return (
+    <ListView
+      aria-label="reorderable gridlist"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}
+      disabledKeys={['d']}
+      {...props}>
+      {(item: any) => (
+        <ListViewItem textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : <File />}
+          <Text>{item.name}</Text>
+        </ListViewItem>
+      )}
+    </ListView>
+  );
+}
+
+export const Reorderable: Story = {
+  render: args => <ReorderExample {...args} />,
+  name: 'Drag and drop reordering'
+};
+
+let folderList1 = [
+  {id: '1', type: 'file', name: 'Adobe Photoshop'},
+  {id: '2', type: 'file', name: 'Adobe XD'},
+  {id: '3', type: 'folder', name: 'Documents', childNodes: [] as any[]},
+  {id: '4', type: 'file', name: 'Adobe InDesign'},
+  {id: '5', type: 'folder', name: 'Utilities', childNodes: []},
+  {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+];
+
+let folderList2 = [
+  {id: '7', type: 'folder', name: 'Pictures', childNodes: [] as any[]},
+  {id: '8', type: 'file', name: 'Adobe Fresco'},
+  {id: '9', type: 'folder', name: 'Apps', childNodes: []},
+  {id: '10', type: 'file', name: 'Adobe Illustrator'},
+  {id: '11', type: 'file', name: 'Adobe Lightroom'},
+  {id: '12', type: 'file', name: 'Adobe Dreamweaver'},
+  {id: '13', type: 'unique_type', name: 'invalid drag item'}
+];
+
+let itemProcessor = async (items, acceptedDragTypes) => {
+  let processedItems: any[] = [];
+  let text = '';
+  for (let item of items) {
+    for (let type of acceptedDragTypes) {
+      if (item.kind === 'text' && item.types.has(type)) {
+        text = await item.getText(type);
+        processedItems.push(JSON.parse(text));
+        break;
+      } else if (item.types.size === 1 && item.types.has('text/plain')) {
+        // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+        // Multiple drag items are contained in a single string so we need to split them out
+        text = await item.getText('text/plain');
+        processedItems = text.split('\n').map(val => JSON.parse(val));
+        break;
+      }
+    }
+  }
+  return processedItems;
+};
+
+function BetweenLists(props) {
+  let list1 = useListData({
+    initialItems: folderList1
+  });
+
+  let list2 = useListData({
+    initialItems: folderList2
+  });
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+
+  // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
+  let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list1.getItem(key)!;
+        return {
+          id: item.id,
+          [`${item.type}`]: JSON.stringify(item),
+          'text/plain': item.name
+        };
+      }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list1.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list1.moveAfter(e.target.key, e.keys);
+      }
+    },
+    onInsert: async e => {
+      let {items, target} = e;
+      action('onInsertList1')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list1.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list1.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async e => {
+      action('onRootDropList1')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list1.append(...processedItems);
+    },
+    onItemDrop: async e => {
+      let {items, target, isInternal, dropOperation} = e;
+      action('onItemDropList1')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let targetItem = list1.getItem(target.key)!;
+      list1.update(target.key, {
+        ...targetItem,
+        childNodes: [...(targetItem.childNodes || []), ...processedItems]
+      });
+
+      if (isInternal && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.id);
+        list1.remove(...keysToRemove);
+      }
+    },
+    acceptedDragTypes,
+    onDragEnd: e => {
+      let {dropOperation, isInternal, keys} = e;
+      action('onDragEndList1')(e);
+      if (dropOperation === 'move' && !isInternal) {
+        list1.remove(...keys);
+      }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: target => !!list1.getItem(target.key)!.childNodes,
+    renderDragPreview: items => (
+      <CustomDragPreview parentList={list1} items={items} overflowMode={props.overflowMode} />
+    )
+  });
+
+  // List 2 should allow reordering, on folder drops, and on root drops
+  let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list2.getItem(key)!;
+        let dragItem = {};
+        let itemString = JSON.stringify(item);
+        dragItem['id'] = item.id;
+        dragItem[`${item.type}`] = itemString;
+        if (item.type !== 'unique_type') {
+          dragItem['text/plain'] = item.name;
+        }
+
+        return dragItem;
+      }),
+    onInsert: async e => {
+      let {items, target} = e;
+      action('onInsertList2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list2.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list2.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onReorder: async e => {
+      let {keys, target, dropOperation} = e;
+      action('onReorderList2')(e);
+
+      let itemsToCopy: typeof folderList2 = [];
+      if (dropOperation === 'copy') {
+        for (let key of keys) {
+          let item: (typeof folderList2)[0] = {...list2.getItem(key)!};
+          item.id = Math.random().toString(36).slice(2);
+          itemsToCopy.push(item);
+        }
+      }
+
+      if (target.dropPosition === 'before') {
+        if (dropOperation === 'move') {
+          list2.moveBefore(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertBefore(target.key, ...itemsToCopy);
+        }
+      } else if (target.dropPosition === 'after') {
+        if (dropOperation === 'move') {
+          list2.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertAfter(target.key, ...itemsToCopy);
+        }
+      }
+    },
+    onRootDrop: async e => {
+      action('onRootDropList2')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list2.prepend(...processedItems);
+    },
+    onItemDrop: async e => {
+      let {items, target, isInternal, dropOperation} = e;
+      action('onItemDropList2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let targetItem = list2.getItem(target.key)!;
+      list2.update(target.key, {
+        ...targetItem,
+        childNodes: [...(targetItem.childNodes || []), ...processedItems]
+      });
+
+      if (isInternal && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.id);
+        list2.remove(...keysToRemove);
+      }
+    },
+    acceptedDragTypes,
+    onDragEnd: e => {
+      let {dropOperation, isInternal, keys} = e;
+      action('onDragEndList2')(e);
+      if (dropOperation === 'move' && !isInternal) {
+        let keysToRemove = [...keys].filter(key => list2.getItem(key)!.type !== 'unique_type');
+        list2.remove(...keysToRemove);
+      }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: target => !!list2.getItem(target.key)!.childNodes,
+    renderDragPreview: items => (
+      <CustomDragPreview parentList={list2} items={items} overflowMode={props.overflowMode} />
+    )
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 16}}>
+      <ListView
+        aria-label="First ListView in drag between list example"
+        items={list1.items}
+        dragAndDropHooks={dragAndDropHooksList1}
+        disabledKeys={['4']}
+        {...props}
+        styles={style({height: 320, width: 320})}>
+        {(item: any) => (
+          <ListViewItem id={item.id} textValue={item.name}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' && (
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            )}
+            {item.type === 'file' && <File />}
+          </ListViewItem>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Second ListView in drag between list example"
+        items={list2.items}
+        dragAndDropHooks={dragAndDropHooksList2}
+        disabledKeys={['8']}
+        {...props}
+        styles={style({height: 320, width: 320})}>
+        {(item: any) => (
+          <ListViewItem id={item.id} textValue={item.name}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' && (
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            )}
+            {item.type === 'file' && <File />}
+          </ListViewItem>
+        )}
+      </ListView>
+    </div>
+  );
+}
+
+export const DragBetweenLists: Story = {
+  render: args => <BetweenLists {...args} />,
+  name: 'Drag between lists',
+  parameters: {
+    disableDecorator: true
+  }
 };

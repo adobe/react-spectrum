@@ -1,8 +1,4 @@
-import {
-  addCommentToElement,
-  commentOutProp,
-  removeProp
-} from '../../shared/transforms';
+import {addCommentToElement, commentOutProp, removeProp} from '../../shared/transforms';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
@@ -29,6 +25,7 @@ export default function transformBreadcrumbs(path: NodePath<t.JSXElement>): void
 
   // Add comment to wrap in nav element if needed
   addCommentToElement(path, {
-    comment: 'S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.'
+    comment:
+      'S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.'
   });
 }

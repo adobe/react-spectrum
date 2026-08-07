@@ -41,14 +41,16 @@ Value.story = {
   parameters: {info}
 };
 
-export const IsDisabled: SearchFieldStory = () => renderSearchLandmark(render({value: 'React', isDisabled: true}));
+export const IsDisabled: SearchFieldStory = () =>
+  renderSearchLandmark(render({value: 'React', isDisabled: true}));
 
 IsDisabled.story = {
   name: 'isDisabled',
   parameters: {info}
 };
 
-export const IsReadOnly: SearchFieldStory = () => renderSearchLandmark(render({value: 'React', isReadOnly: true}));
+export const IsReadOnly: SearchFieldStory = () =>
+  renderSearchLandmark(render({value: 'React', isReadOnly: true}));
 
 IsReadOnly.story = {
   name: 'isReadOnly',
@@ -63,7 +65,8 @@ IconRefresh.story = {
   parameters: {info}
 };
 
-export const IconNull: SearchFieldStory = () => renderSearchLandmark(render({defaultValue: 'React', icon: null}));
+export const IconNull: SearchFieldStory = () =>
+  renderSearchLandmark(render({defaultValue: 'React', icon: null}));
 
 IconNull.story = {
   name: 'icon: null',
@@ -76,7 +79,7 @@ CustomWidth.story = {
   name: 'custom width'
 };
 
-export const _ContextualHelp: SearchFieldStory = (args) =>
+export const _ContextualHelp: SearchFieldStory = args =>
   render({
     ...args,
     contextualHelp: (

@@ -1,1 +1,6 @@
-export {useSelectableItem, type SelectableItemOptions, type SelectableItemStates, type SelectableItemAria} from '../../../src/selection/useSelectableItem';
+export {
+  useSelectableItem,
+  type SelectableItemOptions,
+  type SelectableItemStates,
+  type SelectableItemAria
+} from '../../../src/selection/useSelectableItem';

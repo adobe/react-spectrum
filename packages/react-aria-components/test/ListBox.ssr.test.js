@@ -14,7 +14,9 @@ import {fireEvent, screen, testSSR, within} from '@react-spectrum/test-utils-int
 
 describe('ListBox SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {ListBox, ListBoxItem} from '../exports/index.ts';
 
       function Test() {
@@ -35,11 +37,13 @@ describe('ListBox SSR', function () {
       <React.StrictMode>
         <Test />
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let options = screen.getAllByRole('option');
-      expect(options.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let options = screen.getAllByRole('option');
+        expect(options.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let button = screen.getByRole('button');
@@ -53,7 +57,9 @@ describe('ListBox SSR', function () {
   });
 
   it('should render with sections', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {ListBox, ListBoxSection, ListBoxItem, Header} from '../exports/index.ts';
 
       <React.StrictMode>
@@ -72,19 +78,25 @@ describe('ListBox SSR', function () {
           </ListBoxSection>
         </ListBox>
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let groups = screen.getAllByRole('group');
-      expect(groups.map(g => document.getElementById(g.getAttribute('aria-labelledby')).textContent)).toEqual(['Veggies', 'Protein']);
-      let options = within(groups[0]).getAllByRole('option');
-      expect(options.map(o => o.textContent)).toEqual(['Lettuce', 'Tomato', 'Onion']);
-      options = within(groups[1]).getAllByRole('option');
-      expect(options.map(o => o.textContent)).toEqual(['Ham', 'Tuna', 'Tofu']);
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let groups = screen.getAllByRole('group');
+        expect(
+          groups.map(g => document.getElementById(g.getAttribute('aria-labelledby')).textContent)
+        ).toEqual(['Veggies', 'Protein']);
+        let options = within(groups[0]).getAllByRole('option');
+        expect(options.map(o => o.textContent)).toEqual(['Lettuce', 'Tomato', 'Onion']);
+        options = within(groups[1]).getAllByRole('option');
+        expect(options.map(o => o.textContent)).toEqual(['Ham', 'Tuna', 'Tofu']);
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let groups = screen.getAllByRole('group');
-    expect(groups.map(g => document.getElementById(g.getAttribute('aria-labelledby')).textContent)).toEqual(['Veggies', 'Protein']);
+    expect(
+      groups.map(g => document.getElementById(g.getAttribute('aria-labelledby')).textContent)
+    ).toEqual(['Veggies', 'Protein']);
     let options = within(groups[0]).getAllByRole('option');
     expect(options.map(o => o.textContent)).toEqual(['Lettuce', 'Tomato', 'Onion']);
     options = within(groups[1]).getAllByRole('option');

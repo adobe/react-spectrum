@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Dynamic - Renames Item to PickerItem 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";
@@ -147,6 +147,25 @@ exports[`handles sections 1`] = `
     <PickerItem>Item two</PickerItem>
   </PickerSection>
 </Picker>"
+`;
+
+exports[`renames deprecated selection props 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+let selectedKey = 'cat';
+<div>
+  <Picker label="Pets" onChange={console.log} value="dog">
+    <PickerItem id="dog">Dog</PickerItem>
+    <PickerItem id="cat">Cat</PickerItem>
+  </Picker>
+  <Picker label="Pets" onChange={(key) => console.log(key)} value={selectedKey}>
+    <PickerItem id="dog">Dog</PickerItem>
+    <PickerItem id="cat">Cat</PickerItem>
+  </Picker>
+  <Picker label="Pets" defaultValue="cat">
+    <PickerItem id="dog">Dog</PickerItem>
+    <PickerItem id="cat">Cat</PickerItem>
+  </Picker>
+</div>"
 `;
 
 exports[`replaces isLoading with loadingState and keeps onLoadMore 1`] = `

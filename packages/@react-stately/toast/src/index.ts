@@ -11,4 +11,9 @@
  */
 export {useToastState, ToastQueue, useToastQueue} from 'react-stately/useToastState';
 
-export type {ToastState, QueuedToast, ToastStateProps, ToastOptions} from 'react-stately/useToastState';
+export type {
+  ToastState,
+  QueuedToast,
+  ToastStateProps,
+  ToastOptions
+} from 'react-stately/useToastState';

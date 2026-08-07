@@ -26,7 +26,7 @@ import React, {ReactNode, useState} from 'react';
 
 export default {
   title: 'NumberField',
-  decorators: [(story) => <ErrorBoundary>{story()}</ErrorBoundary>],
+  decorators: [story => <ErrorBoundary>{story()}</ErrorBoundary>],
   providerSwitcher: {status: 'notice'}
 } as Meta<SpectrumNumberFieldProps>;
 
@@ -50,7 +50,8 @@ Value10.story = {
   name: 'value: 10'
 };
 
-export const MaximumFractionDigits0: NumberFieldStory = () => render({formatOptions: {maximumFractionDigits: 0}});
+export const MaximumFractionDigits0: NumberFieldStory = () =>
+  render({formatOptions: {maximumFractionDigits: 0}});
 
 MaximumFractionDigits0.story = {
   name: 'maximumFractionDigits = 0'
@@ -63,7 +64,8 @@ Currency.story = {
   name: 'currency'
 };
 
-export const Percent: NumberFieldStory = () => render({formatOptions: {style: 'percent'}, label: 'Tax'});
+export const Percent: NumberFieldStory = () =>
+  render({formatOptions: {style: 'percent'}, label: 'Tax'});
 
 Percent.story = {
   name: 'percent'
@@ -128,13 +130,15 @@ IsQuiet.story = {
   name: 'isQuiet'
 };
 
-export const QuietDisabled: NumberFieldStory = () => render({isQuiet: true, isDisabled: true, defaultValue: 10});
+export const QuietDisabled: NumberFieldStory = () =>
+  render({isQuiet: true, isDisabled: true, defaultValue: 10});
 
 QuietDisabled.story = {
   name: 'quiet disabled'
 };
 
-export const QuietReadonly: NumberFieldStory = () => render({isQuiet: true, isReadOnly: true, defaultValue: 10});
+export const QuietReadonly: NumberFieldStory = () =>
+  render({isQuiet: true, isReadOnly: true, defaultValue: 10});
 
 QuietReadonly.story = {
   name: 'quiet readonly'
@@ -172,7 +176,8 @@ MinValue0MaxValue20.story = {
   name: 'minValue = 0, maxValue = 20'
 };
 
-export const MinValue0MaxValue20Quiet: NumberFieldStory = () => render({isQuiet: true, minValue: 0, maxValue: 20});
+export const MinValue0MaxValue20Quiet: NumberFieldStory = () =>
+  render({isQuiet: true, minValue: 0, maxValue: 20});
 
 MinValue0MaxValue20Quiet.story = {
   name: 'minValue = 0, maxValue = 20, quiet'
@@ -190,7 +195,8 @@ MinValue20MaxValue50.story = {
   name: 'minValue = 20, maxValue = 50'
 };
 
-export const MinValue0DefaultValue0: NumberFieldStory = () => render({minValue: 0, defaultValue: 0});
+export const MinValue0DefaultValue0: NumberFieldStory = () =>
+  render({minValue: 0, defaultValue: 0});
 
 MinValue0DefaultValue0.story = {
   name: 'minValue = 0, defaultValue = 0'
@@ -202,13 +208,15 @@ Step5.story = {
   name: 'step = 5'
 };
 
-export const Step3WithMin2Max21: NumberFieldStory = () => render({step: 3, minValue: 2, maxValue: 21});
+export const Step3WithMin2Max21: NumberFieldStory = () =>
+  render({step: 3, minValue: 2, maxValue: 21});
 
 Step3WithMin2Max21.story = {
   name: 'step = 3 with min = 2, max = 21'
 };
 
-export const InteractOutsideBehaviorNone: NumberFieldStory = () => render({step: 3, minValue: 2, maxValue: 21, commitBehavior: 'validate'});
+export const InteractOutsideBehaviorNone: NumberFieldStory = () =>
+  render({step: 3, minValue: 2, maxValue: 21, commitBehavior: 'validate'});
 
 InteractOutsideBehaviorNone.story = {
   name: 'commitBehavior = validate'
@@ -226,7 +234,8 @@ HideStepper.story = {
   name: 'hideStepper'
 };
 
-export const IsQuietHideStepper: NumberFieldStory = () => render({isQuiet: true, hideStepper: true});
+export const IsQuietHideStepper: NumberFieldStory = () =>
+  render({isQuiet: true, hideStepper: true});
 
 IsQuietHideStepper.story = {
   name: 'isQuiet, hideStepper'
@@ -244,7 +253,8 @@ Optional.story = {
   name: 'optional'
 };
 
-export const RequiredWithLabel: NumberFieldStory = () => render({isRequired: true, necessityIndicator: 'label'});
+export const RequiredWithLabel: NumberFieldStory = () =>
+  render({isRequired: true, necessityIndicator: 'label'});
 
 RequiredWithLabel.story = {
   name: 'required with label'
@@ -263,7 +273,8 @@ LabelSide.story = {
   name: 'label side'
 };
 
-export const NoVisibleLabel: NumberFieldStory = () => renderNoLabel({isRequired: true, 'aria-label': 'Width'});
+export const NoVisibleLabel: NumberFieldStory = () =>
+  renderNoLabel({isRequired: true, 'aria-label': 'Width'});
 
 NoVisibleLabel.story = {
   name: 'no visible label'
@@ -411,7 +422,9 @@ InputDomEvents.story = {
   name: 'input dom events'
 };
 
-export const ResetControlledStateToBlankWithNull: NumberFieldStory = () => <NumberFieldControlledStateReset />;
+export const ResetControlledStateToBlankWithNull: NumberFieldStory = () => (
+  <NumberFieldControlledStateReset />
+);
 
 ResetControlledStateToBlankWithNull.story = {
   name: 'reset controlled state to blank with null'
@@ -419,7 +432,12 @@ ResetControlledStateToBlankWithNull.story = {
 
 function render(props: any = {}) {
   return (
-    <NumberField onChange={action('onChange')} UNSAFE_className="custom_classname" label="Width" {...props} />
+    <NumberField
+      onChange={action('onChange')}
+      UNSAFE_className="custom_classname"
+      label="Width"
+      {...props}
+    />
   );
 }
 
@@ -442,7 +460,15 @@ function renderSet() {
 
 function NumberFieldControlled(props) {
   let [value, setValue] = useState(10);
-  return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={chain(setValue, action('onChange'))} label="Price" />;
+  return (
+    <NumberField
+      {...props}
+      formatOptions={{style: 'currency', currency: 'EUR'}}
+      value={value}
+      onChange={chain(setValue, action('onChange'))}
+      label="Price"
+    />
+  );
 }
 
 function NumberFieldWithCurrencySelect(props) {
@@ -452,26 +478,45 @@ function NumberFieldWithCurrencySelect(props) {
   let [currencyDisplay, setCurrencyDisplay] = useState('symbol');
   return (
     <Form>
-      <NumberField label="Price" {...props} formatOptions={{style: 'currency', currency, currencySign, currencyDisplay}} value={value} onChange={chain(setValue, action('onChange'))} />
+      <NumberField
+        label="Price"
+        {...props}
+        formatOptions={{style: 'currency', currency, currencySign, currencyDisplay}}
+        value={value}
+        onChange={chain(setValue, action('onChange'))}
+      />
       <Picker
         onSelectionChange={item => setCurrency(String(item))}
         label="Choose Currency"
         selectedKey={currency}
-        items={[{label: 'Euro', value: 'EUR'}, {label: 'US Dollar', value: 'USD'}, {label: 'Japanese Yen', value: 'JPY'}, {label: 'Saudi Riyal', value: 'SAR'}]}>
+        items={[
+          {label: 'Euro', value: 'EUR'},
+          {label: 'US Dollar', value: 'USD'},
+          {label: 'Japanese Yen', value: 'JPY'},
+          {label: 'Saudi Riyal', value: 'SAR'}
+        ]}>
         {item => <Item key={item.value}>{item.label}</Item>}
       </Picker>
       <Picker
         onSelectionChange={item => setCurrencySign(String(item))}
         label="Currency Sign"
         selectedKey={currencySign}
-        items={[{label: 'Standard', value: 'standard'}, {label: 'Accounting', value: 'accounting'}]}>
+        items={[
+          {label: 'Standard', value: 'standard'},
+          {label: 'Accounting', value: 'accounting'}
+        ]}>
         {item => <Item key={item.value}>{item.label}</Item>}
       </Picker>
       <Picker
         onSelectionChange={item => setCurrencyDisplay(String(item))}
         label="Currency Display"
         selectedKey={currencyDisplay}
-        items={[{label: 'Symbol', value: 'symbol'}, {label: 'Narrow Symbol', value: 'narrowSymbol'}, {label: 'Code', value: 'code'}, {label: 'Name', value: 'name'}]}>
+        items={[
+          {label: 'Symbol', value: 'symbol'},
+          {label: 'Narrow Symbol', value: 'narrowSymbol'},
+          {label: 'Code', value: 'code'},
+          {label: 'Name', value: 'name'}
+        ]}>
         {item => <Item key={item.value}>{item.label}</Item>}
       </Picker>
     </Form>
@@ -485,10 +530,9 @@ function NumberFieldControlledStateReset() {
       <NumberField
         aria-label="numberfield to reset"
         value={controlledValue}
-        onChange={(value) => setControlledValue(value)} />
-      <Button
-        variant={'primary'}
-        onPress={() => setControlledValue(NaN)}>
+        onChange={value => setControlledValue(value)}
+      />
+      <Button variant={'primary'} onPress={() => setControlledValue(NaN)}>
         Reset
       </Button>
     </>

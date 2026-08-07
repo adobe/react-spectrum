@@ -1,7 +1,13 @@
 'use client';
 
 import {ActionButton, SearchField, TextFieldRef} from '@react-spectrum/s2';
-import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
+import {
+  Autocomplete,
+  Dialog,
+  Key,
+  OverlayTriggerStateContext,
+  Provider
+} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ColorSearchSkeleton} from './colorSearchData';
 import {ComponentCardView} from './ComponentCardView';
@@ -17,7 +23,7 @@ import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
 import React, {CSSProperties, Suspense, useCallback, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TypographySearchView} from './TypographySearchView';
 import './SearchMenu.css';
@@ -40,13 +46,12 @@ export const divider = style({
   width: '[3px]'
 });
 
-
 interface SearchMenuProps {
-  onClose: () => void,
-  overlayId?: string,
-  initialSearchValue: string,
-  initialTag?: string,
-  isSearchOpen: boolean
+  onClose: () => void;
+  overlayId?: string;
+  initialSearchValue: string;
+  initialTag?: string;
+  isSearchOpen: boolean;
 }
 
 function CloseButton({onClose}: {onClose: () => void}) {
@@ -103,18 +108,24 @@ export function SearchMenu(props: SearchMenuProps) {
     }
   }, [isSearchOpen]);
 
-  const handleTabSelectionChange = useCallback((key: Key) => {
-    setSelectedLibrary(key as Library);
-    // Focus main search field of the newly selected tab
-    setTimeout(() => {
-      const lib = key as Library;
-      const expectedLabel = `Search ${TAB_DEFS[lib].label}`;
-      if (searchRef.current && searchRef.current.getInputElement()?.getAttribute('aria-label') === expectedLabel) {
-        searchRef.current.focus();
-      }
-    }, 10);
-  }, [setSelectedLibrary]);
-  
+  const handleTabSelectionChange = useCallback(
+    (key: Key) => {
+      setSelectedLibrary(key as Library);
+      // Focus main search field of the newly selected tab
+      setTimeout(() => {
+        const lib = key as Library;
+        const expectedLabel = `Search ${TAB_DEFS[lib].label}`;
+        if (
+          searchRef.current &&
+          searchRef.current.getInputElement()?.getAttribute('aria-label') === expectedLabel
+        ) {
+          searchRef.current.focus();
+        }
+      }, 10);
+    },
+    [setSelectedLibrary]
+  );
+
   // Delay closing until the page updates (or the skeleton shows).
   let lastPage = useRef(currentPage);
   useEffect(() => {
@@ -142,11 +153,34 @@ export function SearchMenu(props: SearchMenuProps) {
           {orderedTabs.map((tab, i) => (
             <Tab key={tab.id} id={tab.id}>
               <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
-                <div className={style({width: 26, flexShrink: 0, display: 'flex', justifyContent: 'center'})} style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-icon' : undefined} as CSSProperties}>
+                <div
+                  className={style({
+                    width: 26,
+                    flexShrink: 0,
+                    display: 'flex',
+                    justifyContent: 'center'
+                  })}
+                  style={
+                    {
+                      viewTransitionName:
+                        i === 0 && isSearchOpen && window.scrollY === 0
+                          ? 'search-menu-icon'
+                          : undefined
+                    } as CSSProperties
+                  }>
                   {tab.icon}
                 </div>
                 <div>
-                  <span style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-label' : undefined} as CSSProperties} className={style({font: 'heading-sm', fontWeight: 'bold'})}>
+                  <span
+                    style={
+                      {
+                        viewTransitionName:
+                          i === 0 && isSearchOpen && window.scrollY === 0
+                            ? 'search-menu-label'
+                            : undefined
+                      } as CSSProperties
+                    }
+                    className={style({font: 'heading-sm', fontWeight: 'bold'})}>
                     {tab.label}
                   </span>
                   <div className={style({fontSize: 'ui', marginTop: 2})}>{tab.description}</div>
@@ -173,8 +207,17 @@ export function SearchMenu(props: SearchMenuProps) {
                       size="L"
                       aria-label={`Search ${tab.label}`}
                       placeholder={placeholderText}
-                      UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-search-field' : undefined} as CSSProperties}
-                      styles={style({width: 500})} />
+                      UNSAFE_style={
+                        {
+                          marginInlineEnd: 296,
+                          viewTransitionName:
+                            i === 0 && isSearchOpen && window.scrollY === 0
+                              ? 'search-menu-search-field'
+                              : undefined
+                        } as CSSProperties
+                      }
+                      styles={style({width: 500})}
+                    />
                   </div>
 
                   <CloseButton onClose={onClose} />
@@ -186,54 +229,98 @@ export function SearchMenu(props: SearchMenuProps) {
                       onSectionSelectionChange={handleTagSelectionChange}
                       onResourceSelectionChange={handleTagSelectionChange}
                       wrapperClassName={style({paddingTop: 16, flexShrink: 0, zIndex: 1})}
-                      contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 16})}
+                      contentClassName={style({
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 8,
+                        marginX: 16
+                      })}
                       onHover={tag => {
-                        preloadComponentImages(sections.find(s => s.id === tag)?.children?.map(c => c.name) || []);
-                      }} />
+                        preloadComponentImages(
+                          sections.find(s => s.id === tag)?.children?.map(c => c.name) || []
+                        );
+                      }}
+                    />
                   </div>
                   {isIconsSelected ? (
-                    <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
+                    <div
+                      className={style({
+                        flexGrow: 1,
+                        overflow: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column'
+                      })}>
                       <Suspense fallback={<IconSearchSkeleton />}>
-                        <LazyIconSearchView 
-                          filteredItems={filteredIcons} 
-                          listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
+                        <LazyIconSearchView
+                          filteredItems={filteredIcons}
+                          listBoxClassName={style({
+                            flexGrow: 1,
+                            overflow: 'auto',
+                            width: '100%',
+                            scrollPaddingY: 4
+                          })}
+                        />
                       </Suspense>
                     </div>
                   ) : null}
                   {selectedTagId === 'colors' && (
-                    <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
+                    <div
+                      className={style({
+                        flexGrow: 1,
+                        overflow: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column'
+                      })}>
                       <Suspense fallback={<ColorSearchSkeleton />}>
-                        <LazyColorSearchView 
-                          filteredItems={filteredColors.sections} 
-                          exactMatches={filteredColors.exactMatches} 
+                        <LazyColorSearchView
+                          filteredItems={filteredColors.sections}
+                          exactMatches={filteredColors.exactMatches}
                           closestMatches={filteredColors.closestMatches}
-                          listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
+                          listBoxClassName={style({
+                            flexGrow: 1,
+                            overflow: 'auto',
+                            width: '100%',
+                            scrollPaddingY: 4
+                          })}
+                        />
                       </Suspense>
                     </div>
                   )}
                   {selectedTagId === 'typography' && (
-                    <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
+                    <div
+                      className={style({
+                        flexGrow: 1,
+                        overflow: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column'
+                      })}>
                       <TypographySearchView searchValue={searchValue} />
                     </div>
                   )}
-                  {selectedTagId !== 'icons' && selectedTagId !== 'colors' && selectedTagId !== 'typography' && (
-                    <ComponentCardView
-                      key={selectedLibrary + selectedTagId}
-                      currentUrl={currentUrl}
-                      onAction={(key) => {
-                        if (key === currentPage.url) {
-                          onClose();
-                        }
-                      }}
-                      items={selectedItems.map(item => ({
-                        id: item.href,
-                        name: item.name,
-                        href: item.href ?? `/${tab.id}/${item.name}`,
-                        description: item.description
-                      }))}
-                      ariaLabel={selectedSectionName}
-                      renderEmptyState={() => <SearchEmptyState searchValue={searchValue} libraryLabel={tab.label} />} />
-                  )}
+                  {selectedTagId !== 'icons' &&
+                    selectedTagId !== 'colors' &&
+                    selectedTagId !== 'typography' && (
+                      <ComponentCardView
+                        key={selectedLibrary + selectedTagId}
+                        currentUrl={currentUrl}
+                        onAction={key => {
+                          if (key === currentPage.url) {
+                            onClose();
+                          }
+                        }}
+                        items={selectedItems.map(item => ({
+                          id: item.href,
+                          name: item.name,
+                          href: item.href ?? `/${tab.id}/${item.name}`,
+                          description: item.description
+                        }))}
+                        ariaLabel={selectedSectionName}
+                        renderEmptyState={() => (
+                          <SearchEmptyState searchValue={searchValue} libraryLabel={tab.label} />
+                        )}
+                      />
+                    )}
                 </div>
               </Autocomplete>
             </TabPanel>

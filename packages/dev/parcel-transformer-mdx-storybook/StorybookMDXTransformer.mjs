@@ -1,7 +1,7 @@
 import {compile} from '@mdx-js/mdx';
 import {Transformer} from '@parcel/plugin';
 
-export default (new Transformer({
+export default new Transformer({
   async transform({asset}) {
     let code = await asset.getCode();
     let compiled = await compile(code, {
@@ -14,4 +14,4 @@ export default (new Transformer({
 
     return [asset];
   }
-}));
+});

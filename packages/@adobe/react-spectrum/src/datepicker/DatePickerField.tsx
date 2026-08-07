@@ -22,18 +22,13 @@ import {useDateFieldState} from 'react-stately/useDateFieldState';
 import {useLocale} from 'react-aria/I18nProvider';
 
 interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
-  inputClassName?: string,
-  hideValidationIcon?: boolean,
-  maxGranularity?: SpectrumDatePickerProps<T>['granularity']
+  inputClassName?: string;
+  hideValidationIcon?: boolean;
+  maxGranularity?: SpectrumDatePickerProps<T>['granularity'];
 }
 
 export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps<T>): JSX.Element {
-  let {
-    isDisabled,
-    isReadOnly,
-    isRequired,
-    inputClassName
-  } = props;
+  let {isDisabled, isReadOnly, isRequired, inputClassName} = props;
   let ref = useRef<HTMLDivElement | null>(null);
   let {locale} = useLocale();
   let state = useDateFieldState({
@@ -46,16 +41,21 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
   return (
-    <span {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
-      {state.segments.map((segment, i) =>
-        (<DatePickerSegment
+    <span
+      {...fieldProps}
+      data-testid={props['data-testid']}
+      className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)}
+      ref={ref}>
+      {state.segments.map((segment, i) => (
+        <DatePickerSegment
           key={i}
           segment={segment}
           state={state}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
-          isRequired={isRequired} />)
-      )}
+          isRequired={isRequired}
+        />
+      ))}
       <input {...inputProps} ref={inputRef} />
     </span>
   );

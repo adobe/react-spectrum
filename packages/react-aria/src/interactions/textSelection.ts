@@ -11,11 +11,10 @@
  */
 
 import {getOwnerDocument} from '../utils/domHelpers';
-
-import {isIOS} from '../utils/platform';
+import {isIOS, isWebKit} from '../utils/platform';
 import {runAfterTransition} from '../utils/runAfterTransition';
 
-// Safari on iOS starts selecting text on long press. The only way to avoid this, it seems,
+// WebKit on iOS starts selecting text on long press. The only way to avoid this, it seems,
 // is to add user-select: none to the entire page. Adding it to the pressable element prevents
 // that element from being selected, but nearby elements may still receive selection. We add
 // user-select: none on touch start, and remove it again on touch end to prevent this.
@@ -37,9 +36,8 @@ let savedUserSelect = '';
 let modifiedElementMap = new WeakMap<Element, string>();
 
 export function disableTextSelection(target?: Element): void {
-  if (isIOS()) {
+  if (isIOS() && isWebKit()) {
     if (state === 'default') {
-
       const documentObject = getOwnerDocument(target);
       savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
       documentObject.documentElement.style.webkitUserSelect = 'none';
@@ -56,7 +54,7 @@ export function disableTextSelection(target?: Element): void {
 }
 
 export function restoreTextSelection(target?: Element): void {
-  if (isIOS()) {
+  if (isIOS() && isWebKit()) {
     // If the state is already default, there's nothing to do.
     // If it is restoring, then there's no need to queue a second restore.
     if (state !== 'disabled') {
@@ -73,7 +71,6 @@ export function restoreTextSelection(target?: Element): void {
       runAfterTransition(() => {
         // Avoid race conditions
         if (state === 'restoring') {
-
           const documentObject = getOwnerDocument(target);
           if (documentObject.documentElement.style.webkitUserSelect === 'none') {
             documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';

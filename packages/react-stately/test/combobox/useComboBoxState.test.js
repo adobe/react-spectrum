@@ -23,11 +23,17 @@ describe('useComboBoxState tests', function () {
     beforeEach(() => {
       onOpenChange = jest.fn();
       let collator = {compare: jest.fn().mockReturnValue(true)};
-      defaultProps = {isFocused: true, items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onOpenChange, collator};
+      defaultProps = {
+        isFocused: true,
+        items: [{id: 1, name: 'one'}],
+        children: props => <Item>{props.name}</Item>,
+        onOpenChange,
+        collator
+      };
     });
     it('should be closed by default', function () {
       let initialProps = defaultProps;
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.isOpen).toBe(false);
 
       act(() => {
@@ -43,7 +49,7 @@ describe('useComboBoxState tests', function () {
 
     it('onOpenChange should return the reason that open was called', function () {
       let initialProps = defaultProps;
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
 
       act(() => {
         result.current.open(undefined, 'focus');
@@ -72,7 +78,7 @@ describe('useComboBoxState tests', function () {
 
     it('onOpenChange should return the reason that toggle was called when opening', function () {
       let initialProps = defaultProps;
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
 
       act(() => {
         result.current.toggle(undefined, 'focus');
@@ -106,18 +112,23 @@ describe('useComboBoxState tests', function () {
     beforeEach(() => {
       onInputChange = jest.fn();
       let collator = {compare: jest.fn().mockReturnValue(true)};
-      defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onInputChange, collator};
+      defaultProps = {
+        items: [{id: 1, name: 'one'}],
+        children: props => <Item>{props.name}</Item>,
+        onInputChange,
+        collator
+      };
     });
 
     it('can have a default value', function () {
       let initialProps = {...defaultProps, defaultInputValue: 'hello'};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.inputValue).toBe('hello');
     });
 
     it('fires an event when the value is changed and updates if uncontrolled', function () {
       let initialProps = {...defaultProps, defaultInputValue: 'hello'};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.inputValue).toBe('hello');
       expect(onInputChange).not.toHaveBeenCalled();
       act(() => result.current.setInputValue('hellow'));
@@ -127,7 +138,7 @@ describe('useComboBoxState tests', function () {
 
     it('does not change selection on close', () => {
       let initialProps = defaultProps;
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
 
       act(() => {
         result.current.open();
@@ -143,7 +154,7 @@ describe('useComboBoxState tests', function () {
 
     it('starts blank if no (default) value', function () {
       let initialProps = {...defaultProps};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.inputValue).toBe('');
       expect(onInputChange).not.toHaveBeenCalled();
       act(() => result.current.setInputValue('h'));
@@ -153,7 +164,7 @@ describe('useComboBoxState tests', function () {
 
     it('can be controlled', function () {
       let initialProps = {...defaultProps, inputValue: 'hello'};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.inputValue).toBe('hello');
       expect(onInputChange).not.toHaveBeenCalled();
       act(() => result.current.setInputValue('hellow'));
@@ -168,12 +179,20 @@ describe('useComboBoxState tests', function () {
     beforeEach(() => {
       onSelectionChange = jest.fn();
       let collator = {compare: jest.fn().mockReturnValue(true)};
-      defaultProps = {items: [{id: '0', name: 'one'}, {id: '1', name: 'onomatopoeia'}], children: (props) => <Item {...props}>{props.name}</Item>, onSelectionChange, collator};
+      defaultProps = {
+        items: [
+          {id: '0', name: 'one'},
+          {id: '1', name: 'onomatopoeia'}
+        ],
+        children: props => <Item {...props}>{props.name}</Item>,
+        onSelectionChange,
+        collator
+      };
     });
 
     it('support selectedKey', function () {
       let initialProps = {...defaultProps, selectedKey: '0'};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.selectionManager.selectionMode).toBe('single');
       expect(result.current.selectionManager.selectedKeys).toContain('0');
       expect(result.current.selectionManager.selectedKeys).not.toContain('1');
@@ -186,7 +205,7 @@ describe('useComboBoxState tests', function () {
 
     it('support defaultSelectedKey', function () {
       let initialProps = {...defaultProps, defaultSelectedKey: '0'};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.selectionManager.selectionMode).toBe('single');
       expect(result.current.selectionManager.selectedKeys).toContain('0');
       expect(result.current.selectionManager.selectedKeys).not.toContain('1');
@@ -199,7 +218,7 @@ describe('useComboBoxState tests', function () {
 
     it('supports default no selection', function () {
       let initialProps = {...defaultProps};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.selectionManager.selectionMode).toBe('single');
       expect(result.current.selectionManager.selectedKeys.size).toBe(0);
 
@@ -211,72 +230,101 @@ describe('useComboBoxState tests', function () {
 
     it('does not fire onSelectionChange on blur when fully controlled values are already synced', function () {
       let initialProps = {...defaultProps, selectedKey: '1', inputValue: 'onomatopoeia'};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
 
-      act(() => {result.current.setFocused(false);});
+      act(() => {
+        result.current.setFocused(false);
+      });
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
     it('fires onSelectionChange on blur when fully controlled inputValue is out of sync', function () {
       let initialProps = {...defaultProps, selectedKey: '1', inputValue: 'onom'};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
 
-      act(() => {result.current.setFocused(false);});
+      act(() => {
+        result.current.setFocused(false);
+      });
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith('1');
     });
 
-    it('won\'t update the returned collection if the combobox is closed (uncontrolled items)', function () {
-      let filter = renderHook((props) => useFilter(props), {sensitivity: 'base'});
-      let initialProps = {...defaultProps, items: null, defaultItems: [{id: '0', name: 'one'}, {id: '1', name: 'onomatopoeia'}], defaultInputValue: '', defaultFilter: filter.result.current.contains};
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+    it("won't update the returned collection if the combobox is closed (uncontrolled items)", function () {
+      let filter = renderHook(props => useFilter(props), {sensitivity: 'base'});
+      let initialProps = {
+        ...defaultProps,
+        items: null,
+        defaultItems: [
+          {id: '0', name: 'one'},
+          {id: '1', name: 'onomatopoeia'}
+        ],
+        defaultInputValue: '',
+        defaultFilter: filter.result.current.contains
+      };
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.collection.size).toEqual(2);
       expect(result.current.inputValue).toBe('');
 
-      act(() => {result.current.open();});
+      act(() => {
+        result.current.open();
+      });
       act(() => result.current.setInputValue('onom'));
       expect(result.current.inputValue).toBe('onom');
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
       // The input value updates, but the returned collection still only contains onomatopoeia
-      act(() => {result.current.setFocused(false);});
+      act(() => {
+        result.current.setFocused(false);
+      });
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
       // Subsequent calls that would close the menu don't update the tracked lastCollection
-      act(() => {result.current.commit();});
+      act(() => {
+        result.current.commit();
+      });
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
-      act(() => {result.current.close();});
+      act(() => {
+        result.current.close();
+      });
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
-      act(() => {result.current.revert();});
+      act(() => {
+        result.current.revert();
+      });
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
-      act(() => {result.current.open();});
+      act(() => {
+        result.current.open();
+      });
       expect(result.current.collection.size).toEqual(2);
     });
 
-    it('won\'t update the returned collection if the combobox is closed (controlled items)', function () {
+    it("won't update the returned collection if the combobox is closed (controlled items)", function () {
       let initialProps = {...defaultProps};
-      let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result, rerender} = renderHook(props => useComboBoxState(props), {initialProps});
       expect(result.current.collection.size).toEqual(2);
 
-      act(() => {result.current.open();});
+      act(() => {
+        result.current.open();
+      });
       rerender({...initialProps, items: [{id: '1', name: 'onomatopoeia'}]});
       // Returned collection reflects the items provided by the user since the combobox is open
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
-      act(() => {result.current.setFocused(false);});
+      act(() => {
+        result.current.setFocused(false);
+      });
       // Returned collection reflects the old items provided by the user when the combobox is closed
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
@@ -285,23 +333,31 @@ describe('useComboBoxState tests', function () {
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
       // Subsequent calls that would close the menu don't update the tracked lastCollection
-      act(() => {result.current.commit();});
+      act(() => {
+        result.current.commit();
+      });
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
-      act(() => {result.current.close();});
+      act(() => {
+        result.current.close();
+      });
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
-      act(() => {result.current.revert();});
+      act(() => {
+        result.current.revert();
+      });
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
       // When the combobox is opened again, the returned collection of items updates to reflect the items provided by the user
-      act(() => {result.current.open();});
+      act(() => {
+        result.current.open();
+      });
       expect(result.current.collection.size).toEqual(2);
     });
   });

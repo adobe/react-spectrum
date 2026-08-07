@@ -14,7 +14,7 @@ import {Badge} from '../src/Badge';
 
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
 const meta: Meta<typeof Badge> = {
@@ -34,11 +34,9 @@ export default meta;
 type Story = StoryObj<typeof Badge>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-      <Badge {...args}>
-        Licensed
-      </Badge>
+      <Badge {...args}>Licensed</Badge>
       <Badge {...args}>
         <CheckmarkCircle aria-label="done" />
         <Text>Licensed</Text>

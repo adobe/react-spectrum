@@ -10,8 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-export {useTable, useTableColumnHeader, useTableRow, useTableHeaderRow, useTableCell, useTableSelectionCheckbox, useTableSelectAllCheckbox, useTableColumnResize, useTableRowGroup} from 'react-aria/useTable';
+export {
+  useTable,
+  useTableColumnHeader,
+  useTableRow,
+  useTableHeaderRow,
+  useTableCell,
+  useTableSelectionCheckbox,
+  useTableSelectAllCheckbox,
+  useTableColumnResize,
+  useTableRowGroup
+} from 'react-aria/useTable';
 
-export type {AriaTableProps, AriaTableColumnHeaderProps, TableColumnHeaderAria, AriaTableCellProps, TableCellAria, TableHeaderRowAria, AriaTableSelectionCheckboxProps, TableSelectionCheckboxAria, TableSelectAllCheckboxAria, AriaTableColumnResizeProps, TableColumnResizeAria} from 'react-aria/useTable';
+export type {
+  AriaTableProps,
+  AriaTableColumnHeaderProps,
+  TableColumnHeaderAria,
+  AriaTableCellProps,
+  TableCellAria,
+  TableHeaderRowAria,
+  AriaTableSelectionCheckboxProps,
+  TableSelectionCheckboxAria,
+  TableSelectAllCheckboxAria,
+  AriaTableColumnResizeProps,
+  TableColumnResizeAria
+} from 'react-aria/useTable';
 export type {GridAria} from 'react-aria/private/grid/useGrid';
 export type {GridRowAria, GridRowProps} from 'react-aria/private/grid/useGridRow';

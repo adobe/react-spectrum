@@ -10,8 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-
-import {docItems, editItems, Render, viewItems} from '../../chromatic/actiongroup/ActionGroup.stories';
+import {
+  docItems,
+  editItems,
+  Render,
+  viewItems
+} from '../../chromatic/actiongroup/ActionGroup.stories';
 import {Flex} from '../../src/layout/Flex';
 import React from 'react';
 import {StoryFn} from '@storybook/react';

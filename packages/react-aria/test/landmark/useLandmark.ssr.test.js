@@ -14,7 +14,9 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('useLandmark SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {useLandmark} from '../../exports/index.ts';
 
       function Main(props) {
@@ -24,6 +26,7 @@ describe('useLandmark SSR', function () {
       }
 
       <Main />
-    `);
+    `
+    );
   });
 });

@@ -1,11 +1,10 @@
-
 if (window.__macrosLoaded) {
   return;
 }
 window.__macrosLoaded = true;
 
-let debugLog = (...args) => {
-  // console.log('[Content Script]', ...args);
+let debugLog = () => {
+  // console.log('[Content Script]', ...arguments);
 };
 
 window.addEventListener('message', function (event) {
@@ -41,4 +40,3 @@ window.addEventListener('message', function (event) {
 
 // No longer need to listen for get-macro requests or manage cleanup
 // since macro data is stored directly in DevTools
-

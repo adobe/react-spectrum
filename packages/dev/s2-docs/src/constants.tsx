@@ -5,9 +5,9 @@ import {ReactNode} from 'react';
 export type Library = 'react-spectrum' | 'react-aria';
 
 type TabDef = {
-  label: string,
-  description: string,
-  icon: ReactNode
+  label: string;
+  description: string;
+  icon: ReactNode;
 };
 
 export const TAB_DEFS: Record<Library, TabDef> = {
@@ -22,4 +22,3 @@ export const TAB_DEFS: Record<Library, TabDef> = {
     icon: <ReactAriaLogo />
   }
 };
-

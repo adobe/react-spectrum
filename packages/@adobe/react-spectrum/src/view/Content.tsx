@@ -22,7 +22,7 @@ export interface ContentProps extends DOMProps, StyleProps {
   /**
    * Content content.
    */
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
@@ -30,18 +30,13 @@ export interface ContentProps extends DOMProps, StyleProps {
  */
 export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef) {
   props = useSlotProps(props, 'content');
-  let {
-    children,
-    ...otherProps
-  } = props;
+  let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
   return (
     <section {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
-      <ClearSlots>
-        {children}
-      </ClearSlots>
+      <ClearSlots>{children}</ClearSlots>
     </section>
   );
 });

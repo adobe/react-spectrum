@@ -20,13 +20,16 @@ import React, {Fragment, JSX, ReactNode, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from 'react-aria/useListBox';
 import {useLocale} from 'react-aria/I18nProvider';
-import {useVirtualizerItem, VirtualizerItemOptions} from 'react-aria/private/virtualizer/useVirtualizerItem';
+import {
+  useVirtualizerItem,
+  VirtualizerItemOptions
+} from 'react-aria/private/virtualizer/useVirtualizerItem';
 
 interface ListBoxSectionProps<T> extends Omit<VirtualizerItemOptions, 'ref' | 'layoutInfo'> {
-  layoutInfo: LayoutInfo,
-  headerLayoutInfo: LayoutInfo | null,
-  item: Node<T>,
-  children?: ReactNode
+  layoutInfo: LayoutInfo;
+  headerLayoutInfo: LayoutInfo | null;
+  item: Node<T>;
+  children?: ReactNode;
 }
 
 /** @private */
@@ -49,37 +52,25 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>): JSX.Element {
 
   return (
     <Fragment>
-      {headerLayoutInfo && <div role="presentation" ref={headerRef} style={layoutInfoToStyle(headerLayoutInfo, direction)}>
-        {item.key !== state.collection.getFirstKey() &&
-          <div
-            role="presentation"
-            className={classNames(
-              styles,
-              'spectrum-Menu-divider'
-            )} />
-        }
-        {item.rendered &&
-          <div
-            {...headingProps}
-            className={
-              classNames(
-                styles,
-                'spectrum-Menu-sectionHeading'
-              )
-            }>
-            {item.rendered}
-          </div>
-        }
-      </div>}
+      {headerLayoutInfo && (
+        <div
+          role="presentation"
+          ref={headerRef}
+          style={layoutInfoToStyle(headerLayoutInfo, direction)}>
+          {item.key !== state.collection.getFirstKey() && (
+            <div role="presentation" className={classNames(styles, 'spectrum-Menu-divider')} />
+          )}
+          {item.rendered && (
+            <div {...headingProps} className={classNames(styles, 'spectrum-Menu-sectionHeading')}>
+              {item.rendered}
+            </div>
+          )}
+        </div>
+      )}
       <div
         {...groupProps}
         style={layoutInfoToStyle(layoutInfo, direction)}
-        className={
-          classNames(
-            styles,
-            'spectrum-Menu'
-          )
-        }>
+        className={classNames(styles, 'spectrum-Menu')}>
         {children}
       </div>
     </Fragment>

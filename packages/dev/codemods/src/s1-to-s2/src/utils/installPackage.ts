@@ -23,27 +23,42 @@ function hasPackageJson() {
   return fs.existsSync(path.join(process.cwd(), 'package.json'));
 }
 
-export default async function installPackage(packageName: string, options?: {dev?: boolean}): Promise<boolean> {
+export default async function installPackage(
+  packageName: string,
+  options?: {dev?: boolean}
+): Promise<boolean> {
   logger.info('Checking for package.json...');
   if (!hasPackageJson()) {
-    logger.warn(`Could not find package.json in the current directory. Please install ${chalk.bold(packageName)} manually.\n`);
+    logger.warn(
+      `Could not find package.json in the current directory. Please install ${chalk.bold(packageName)} manually.\n`
+    );
     return false;
   }
 
   let packageManager = detectPackageManager();
 
   if (!packageManager) {
-    logger.warn(`Could not detect package manager. Please install ${chalk.bold(packageName)} manually.\n`);
+    logger.warn(
+      `Could not detect package manager. Please install ${chalk.bold(packageName)} manually.\n`
+    );
     return false;
   }
   try {
-    logger.info(`Installing ${chalk.bold(packageName)} using ${chalk.bold(packageManager.name)}...`);
+    logger.info(
+      `Installing ${chalk.bold(packageName)} using ${chalk.bold(packageManager.name)}...`
+    );
     const devFlag = options?.dev ? ['-D'] : [];
-    await execa(packageManager.name, [packageManager.installCommand, `${packageName}@latest`, ...devFlag]);
+    await execa(packageManager.name, [
+      packageManager.installCommand,
+      `${packageName}@latest`,
+      ...devFlag
+    ]);
     logger.success(`Successfully installed ${chalk.bold(packageName)}!\n`);
     return true;
   } catch (e: any) {
-    logger.warn(`Failed to install ${chalk.bold(packageName)} with ${chalk.bold(packageManager.name)}.\n\nReceived error: ${e.message}.\n\nPlease install ${chalk.bold(packageName)} manually.\n`);
+    logger.warn(
+      `Failed to install ${chalk.bold(packageName)} with ${chalk.bold(packageManager.name)}.\n\nReceived error: ${e.message}.\n\nPlease install ${chalk.bold(packageName)} manually.\n`
+    );
     return false;
   }
 }

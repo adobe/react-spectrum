@@ -16,13 +16,20 @@ import {Link} from '../src/Link';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
-let renderBreadcrumbs = (breadcrumbsProps, itemProps) => render(
-  <Breadcrumbs {...breadcrumbsProps}>
-    <Breadcrumb {...itemProps}><Link href="/">Home</Link></Breadcrumb>
-    <Breadcrumb {...itemProps}><Link href="/react-aria">React Aria</Link></Breadcrumb>
-    <Breadcrumb {...itemProps}><Link>useBreadcrumbs</Link></Breadcrumb>
-  </Breadcrumbs>
-);
+let renderBreadcrumbs = (breadcrumbsProps, itemProps) =>
+  render(
+    <Breadcrumbs {...breadcrumbsProps}>
+      <Breadcrumb {...itemProps}>
+        <Link href="/">Home</Link>
+      </Breadcrumb>
+      <Breadcrumb {...itemProps}>
+        <Link href="/react-aria">React Aria</Link>
+      </Breadcrumb>
+      <Breadcrumb {...itemProps}>
+        <Link>useBreadcrumbs</Link>
+      </Breadcrumb>
+    </Breadcrumbs>
+  );
 
 describe('Breadcrumbs', () => {
   it('should render with default class', () => {
@@ -41,7 +48,10 @@ describe('Breadcrumbs', () => {
   });
 
   it('should render with custom class', () => {
-    let {getByRole, getAllByRole} = renderBreadcrumbs({className: 'breadcrumbs'}, {className: 'item'});
+    let {getByRole, getAllByRole} = renderBreadcrumbs(
+      {className: 'breadcrumbs'},
+      {className: 'item'}
+    );
     let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveClass('breadcrumbs');
 
@@ -51,7 +61,10 @@ describe('Breadcrumbs', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderBreadcrumbs({'data-foo': 'bar', 'aria-label': 'test group'}, {'data-bar': 'foo', 'aria-label': 'test item'});
+    let {getByRole, getAllByRole} = renderBreadcrumbs(
+      {'data-foo': 'bar', 'aria-label': 'test group'},
+      {'data-bar': 'foo', 'aria-label': 'test item'}
+    );
     let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveAttribute('data-foo', 'bar');
     expect(breadcrumbs).toHaveAttribute('aria-label', 'test group');
@@ -63,7 +76,10 @@ describe('Breadcrumbs', () => {
   });
 
   it('should support custom render function', () => {
-    let {getAllByRole, getByRole} = renderBreadcrumbs({render: props => <ol {...props} data-custom="bar" />}, {render: props => <li {...props} data-custom="true" />});
+    let {getAllByRole, getByRole} = renderBreadcrumbs(
+      {render: props => <ol {...props} data-custom="bar" />},
+      {render: props => <li {...props} data-custom="true" />}
+    );
     let list = getByRole('list');
     expect(list).toHaveAttribute('data-custom', 'bar');
     for (let item of getAllByRole('listitem')) {
@@ -75,7 +91,9 @@ describe('Breadcrumbs', () => {
     let {getByRole} = render(
       <BreadcrumbsContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <Breadcrumbs slot="test">
-          <Breadcrumb><Link>Test</Link></Breadcrumb>
+          <Breadcrumb>
+            <Link>Test</Link>
+          </Breadcrumb>
         </Breadcrumbs>
       </BreadcrumbsContext.Provider>
     );
@@ -93,12 +111,14 @@ describe('Breadcrumbs', () => {
     ];
 
     let {getAllByRole} = render(
-      <Breadcrumbs items={items}>
-        {(item) => <Breadcrumb>{item.name}</Breadcrumb>}
-      </Breadcrumbs>
+      <Breadcrumbs items={items}>{item => <Breadcrumb>{item.name}</Breadcrumb>}</Breadcrumbs>
     );
 
-    expect(getAllByRole('listitem').map((it) => it.textContent)).toEqual(['Item 1', 'Item 2', 'Item 3']);
+    expect(getAllByRole('listitem').map(it => it.textContent)).toEqual([
+      'Item 1',
+      'Item 2',
+      'Item 3'
+    ]);
   });
 
   it('should support refs', () => {
@@ -106,7 +126,9 @@ describe('Breadcrumbs', () => {
     let breadcrumbRef = React.createRef();
     let {getByRole} = render(
       <Breadcrumbs ref={breadcrumbsRef}>
-        <Breadcrumb ref={breadcrumbRef}><Link>Test</Link></Breadcrumb>
+        <Breadcrumb ref={breadcrumbRef}>
+          <Link>Test</Link>
+        </Breadcrumb>
       </Breadcrumbs>
     );
 
@@ -126,10 +148,14 @@ describe('Breadcrumbs', () => {
 
     let {getAllByRole} = render(
       <Breadcrumbs items={items}>
-        {(item) => <Breadcrumb>{({isCurrent}) => isCurrent ? 'Current' : item.name}</Breadcrumb>}
+        {item => <Breadcrumb>{({isCurrent}) => (isCurrent ? 'Current' : item.name)}</Breadcrumb>}
       </Breadcrumbs>
     );
 
-    expect(getAllByRole('listitem').map((it) => it.textContent)).toEqual(['Item 1', 'Item 2', 'Current']);
+    expect(getAllByRole('listitem').map(it => it.textContent)).toEqual([
+      'Item 1',
+      'Item 2',
+      'Current'
+    ]);
   });
 });

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Converts dynamic TabList Item to Tab 1`] = `
 "import { Tab, Collection, TabPanel, Tabs, TabList } from "@react-spectrum/s2";

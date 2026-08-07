@@ -16,14 +16,16 @@ import React, {JSX} from 'react';
 import underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.css';
 
 interface UnderlayProps {
-  isOpen?: boolean,
-  isTransparent?: boolean
+  isOpen?: boolean;
+  isTransparent?: boolean;
 }
 
 export function Underlay({isOpen, isTransparent, ...otherProps}: UnderlayProps): JSX.Element {
   let pageHeight: number | undefined = undefined;
   if (typeof document !== 'undefined') {
-    let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
+    let scrollingElement = isScrollable(document.body)
+      ? document.body
+      : document.scrollingElement || document.documentElement;
     // Prevent Firefox from adding scrollbars when the page has a fractional height.
     let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
     pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
@@ -38,6 +40,7 @@ export function Underlay({isOpen, isTransparent, ...otherProps}: UnderlayProps):
       className={classNames(underlayStyles, 'spectrum-Underlay', {
         'is-open': isOpen,
         'spectrum-Underlay--transparent': isTransparent
-      })} />
+      })}
+    />
   );
 }

@@ -53,20 +53,14 @@ export default {
 } as Meta<typeof LogicButton>;
 
 export const Default: LogicButtonStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 function render(props: any = {}) {
   return (
     <div>
-      <LogicButton
-        {...props}>
-        Default
-      </LogicButton>
-      <LogicButton
-        marginStart="10px"
-        isDisabled
-        {...props}>
+      <LogicButton {...props}>Default</LogicButton>
+      <LogicButton marginStart="10px" isDisabled {...props}>
         Disabled
       </LogicButton>
     </div>

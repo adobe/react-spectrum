@@ -36,6 +36,8 @@ export default function Arrow(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'XX
     case 'M':
       return <Arrow_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XXL':
-      return <Arrow_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Arrow_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
   }
 }

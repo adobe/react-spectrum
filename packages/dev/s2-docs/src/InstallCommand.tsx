@@ -47,13 +47,13 @@ type PkgManager = 'yarn' | 'npm' | 'pnpm';
 
 export interface InstallCommandProps {
   /** The package name(s) to install, e.g. "@react-spectrum/s2" or multiple separated by spaces. */
-  pkg: string,
+  pkg: string;
   /** Optional flags appended after the package name(s), e.g. "--dev". */
-  flags?: string,
+  flags?: string;
   /** Optional label preceding the code block. */
-  label?: string,
+  label?: string;
   /** If true, renders an npx command instead of install (hides manager switcher). */
-  isCommand?: boolean
+  isCommand?: boolean;
 }
 
 export function InstallCommand({pkg, flags, label, isCommand}: InstallCommandProps) {
@@ -91,14 +91,19 @@ export function InstallCommand({pkg, flags, label, isCommand}: InstallCommandPro
   return (
     <div className={container} data-example-switcher>
       {!isCommand && (
-        <SegmentedControl selectedKey={manager} onSelectionChange={onSelectionChange} styles={switcher}>
+        <SegmentedControl
+          selectedKey={manager}
+          onSelectionChange={onSelectionChange}
+          styles={switcher}>
           <SegmentedControlItem id="npm">npm</SegmentedControlItem>
           <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
           <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>
         </SegmentedControl>
       )}
       <div className={codeWrap}>
-        {label && <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>}
+        {label && (
+          <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>
+        )}
         <div className={style({display: 'flex', alignItems: 'center', gap: 12, padding: 8})}>
           <Prompt styles={iconStyle({size: 'L'})} />
           <pre className={preStyle}>{command}</pre>

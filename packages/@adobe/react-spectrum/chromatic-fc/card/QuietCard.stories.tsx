@@ -12,11 +12,7 @@
  */
 
 import {Card} from '../../src/card/Card';
-import {
-  CardStory,
-  Default,
-  Selected
-} from '../../chromatic/card/Card.stories';
+import {CardStory, Default, Selected} from '../../chromatic/card/Card.stories';
 import {Meta} from '@storybook/react';
 
 export default {

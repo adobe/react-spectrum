@@ -9,11 +9,18 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {InvalidationContext, LayoutInfo, LayoutNode, ListLayout, ListLayoutOptions, Rect} from 'react-stately/useVirtualizerState';
+import {
+  InvalidationContext,
+  LayoutInfo,
+  LayoutNode,
+  ListLayout,
+  ListLayoutOptions,
+  Rect
+} from 'react-stately/useVirtualizerState';
 import {Node} from '@react-types/shared';
 
 interface ListViewLayoutProps extends ListLayoutOptions {
-  isLoading?: boolean
+  isLoading?: boolean;
 }
 
 export class ListViewLayout<T> extends ListLayout<T, ListViewLayoutProps> {
@@ -29,7 +36,12 @@ export class ListViewLayout<T> extends ListLayout<T, ListViewLayoutProps> {
     let y = this.contentSize.height;
 
     if (this.isLoading) {
-      let rect = new Rect(0, y, this.virtualizer!.visibleRect.width, nodes.length === 0 ? this.virtualizer!.visibleRect.height : this.estimatedRowHeight ?? 48);
+      let rect = new Rect(
+        0,
+        y,
+        this.virtualizer!.visibleRect.width,
+        nodes.length === 0 ? this.virtualizer!.visibleRect.height : (this.estimatedRowHeight ?? 48)
+      );
       let loader = new LayoutInfo('loader', 'loader', rect);
       let node = {
         layoutInfo: loader,
@@ -41,7 +53,12 @@ export class ListViewLayout<T> extends ListLayout<T, ListViewLayoutProps> {
     }
 
     if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer!.visibleRect.width, this.virtualizer!.visibleRect.height);
+      let rect = new Rect(
+        0,
+        y,
+        this.virtualizer!.visibleRect.width,
+        this.virtualizer!.visibleRect.height
+      );
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       let node = {
         layoutInfo: placeholder,

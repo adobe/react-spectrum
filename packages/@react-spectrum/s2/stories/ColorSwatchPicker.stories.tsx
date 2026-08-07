@@ -31,7 +31,7 @@ export default meta;
 type Story = StoryObj<typeof ColorSwatchPicker>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <ColorSwatchPicker defaultValue="#f00" {...args}>
       <ColorSwatch color="#f00" />
       <ColorSwatch color="#0f0" />
@@ -42,10 +42,12 @@ export const Example: Story = {
 };
 
 export const ManySwatches: Story = {
-  render: (args) => (
+  render: args => (
     <ColorSwatchPicker {...args} styles={style({maxWidth: 192})}>
       {Array.from(Array(24)).map(() => {
-        let color = `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+        let color = `#${Math.floor(Math.random() * 0xffffff)
+          .toString(16)
+          .padStart(6, '0')}`;
         return <ColorSwatch key={color} color={color} />;
       })}
     </ColorSwatchPicker>

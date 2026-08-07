@@ -1,23 +1,19 @@
-import {Flex, Divider} from '@adobe/react-spectrum'
+import {Flex, Divider} from '@adobe/react-spectrum';
 
-function JournalEntries(props){
+function JournalEntries(props) {
+  const element = props.list.map(item => (
+    <li key={item.id}>
+      <Divider size="M" marginTop="size-200" marginBottom="size-300" />
+      <p>Your day was: {item.rate} </p>
+      <p>{item.description}</p>
+    </li>
+  ));
 
-    const element = props.list.map(item => (
-        <li key={item.id}>
-            <Divider size="M" marginTop="size-200" marginBottom="size-300" />
-            <p>Your day was: {item.rate} </p>
-            <p>{item.description}</p>
-        </li>
-
-    ))
-
-    return (
-        <Flex direction="column">
-            <ul className="no-bullets">
-                {element}
-            </ul>
-        </Flex>
-    )
+  return (
+    <Flex direction="column">
+      <ul className="no-bullets">{element}</ul>
+    </Flex>
+  );
 }
 
 export default JournalEntries;

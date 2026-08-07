@@ -1,7 +1,7 @@
 'use client';
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { ExampleApp2 } from './ExampleApp2';
-import { createContext } from "react";
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ExampleApp2} from './ExampleApp2';
+import {createContext} from 'react';
 
 const hcm = {
   '--hcm-highlight': 'rgb(26, 235, 255)',
@@ -46,11 +46,16 @@ export function HCM() {
         },
         forcedColorAdjust: 'none'
       })}>
-      <div className={style({flexShrink: 0, width: {default: '100%', sm: '200%'}, containerType: 'inline-size'})}>
+      <div
+        className={style({
+          flexShrink: 0,
+          width: {default: '100%', sm: '200%'},
+          containerType: 'inline-size'
+        })}>
         <HCMContext value={{'data-hcm': true, style: hcm}}>
           <ExampleApp2 showPanel />
         </HCMContext>
       </div>
     </div>
-  )
+  );
 }

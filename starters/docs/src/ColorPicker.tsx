@@ -1,6 +1,9 @@
 'use client';
-import { Button } from 'react-aria-components/Button';
-import { ColorPicker as AriaColorPicker, type ColorPickerProps as AriaColorPickerProps } from 'react-aria-components/ColorPicker';
+import {Button} from 'react-aria-components/Button';
+import {
+  ColorPicker as AriaColorPicker,
+  type ColorPickerProps as AriaColorPickerProps
+} from 'react-aria-components/ColorPicker';
 import {DialogTrigger} from './Dialog';
 import {ColorSwatch} from './ColorSwatch';
 import {ColorSlider} from './ColorSlider';
@@ -14,30 +17,24 @@ export interface ColorPickerProps extends Omit<AriaColorPickerProps, 'children'>
   children?: React.ReactNode;
 }
 
-export function ColorPicker({ label, children, ...props }: ColorPickerProps) {
+export function ColorPicker({label, children, ...props}: ColorPickerProps) {
   return (
-    (
-      <AriaColorPicker {...props}>
-        <DialogTrigger>
-          <Button className="color-picker">
-            <ColorSwatch />
-            <span>{label}</span>
-          </Button>
-          <Popover hideArrow placement="bottom start" className="color-picker-dialog">
-            {children || (
-              <>
-                <ColorArea
-                  colorSpace="hsb"
-                  xChannel="saturation"
-                  yChannel="brightness"
-                />
-                <ColorSlider colorSpace="hsb" channel="hue" />
-                <ColorField label="Hex" />
-              </>
-            )}
-          </Popover>
-        </DialogTrigger>
-      </AriaColorPicker>
-    )
+    <AriaColorPicker {...props}>
+      <DialogTrigger>
+        <Button className="color-picker">
+          <ColorSwatch />
+          <span>{label}</span>
+        </Button>
+        <Popover hideArrow placement="bottom start" className="color-picker-dialog">
+          {children || (
+            <>
+              <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
+              <ColorSlider colorSpace="hsb" channel="hue" />
+              <ColorField label="Hex" />
+            </>
+          )}
+        </Popover>
+      </DialogTrigger>
+    </AriaColorPicker>
   );
 }

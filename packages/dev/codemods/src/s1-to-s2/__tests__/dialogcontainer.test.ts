@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Does nothing', `
+test(
+  'Does nothing',
+  `
 import {ActionButton, Text, AlertDialog, DialogContainer} from '@adobe/react-spectrum';
 
 function Example(props) {
@@ -30,4 +32,5 @@ function Example(props) {
     </>
   );
 }
-`);
+`
+);

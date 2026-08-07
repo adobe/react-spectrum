@@ -14,7 +14,6 @@ import {DismissButton} from '../../src/overlays/DismissButton';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
-
 describe('DismissButton', function () {
   it('should have a default aria-label', function () {
     let {getByRole} = render(<DismissButton />);
@@ -47,5 +46,4 @@ describe('DismissButton', function () {
     expect(getByRole('button', {hidden: true})).toHaveAttribute('aria-labelledby', 'self span-id');
     expect(getByRole('button', {hidden: true})).toHaveAttribute('aria-label', 'foo');
   });
-
 });

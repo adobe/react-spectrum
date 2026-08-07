@@ -15,27 +15,28 @@ import Alert from '@spectrum-icons/workflow/Alert';
 import React from 'react';
 import {Flex} from '@react-spectrum/layout';
 import * as AllIcons from '../src';
-import { Meta, StoryFn } from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 
 let allIcons = Object.keys(AllIcons);
 let alphabet = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
 alphabet = ['_', ...alphabet];
 let alphabetizedIcons = alphabet.reduce((acc, char) => {
-  acc[char] = allIcons.filter((iconName) => iconName[0] === char).sort();
+  acc[char] = allIcons.filter(iconName => iconName[0] === char).sort();
   return acc;
 }, {});
 
 export default {
   title: 'Icons/Workflow',
   parameters: {
-    chromaticProvider: {express: false},
+    chromaticProvider: {express: false}
   }
 } as Meta<typeof Add>;
 
-export const IconAddWithSizes: StoryFn<typeof Add> = () => renderIconSizes(Add, { 'aria-label': 'Add' });
+export const IconAddWithSizes: StoryFn<typeof Add> = () =>
+  renderIconSizes(Add, {'aria-label': 'Add'});
 
 IconAddWithSizes.story = {
-  name: 'icon: Add with sizes',
+  name: 'icon: Add with sizes'
 };
 
 export const Colors: StoryFn<typeof Alert> = () => (
@@ -50,11 +51,11 @@ export const Colors: StoryFn<typeof Alert> = () => (
 
 export const AllWorkflow: StoryFn<typeof Add> = () => (
   <Flex direction="column">
-    {Object.keys(alphabetizedIcons).map((char) => (
-      <div style={{ height: 'calc(12 * var(--spectrum-global-dimension-size-300))' }}>
+    {Object.keys(alphabetizedIcons).map(char => (
+      <div style={{height: 'calc(12 * var(--spectrum-global-dimension-size-300))'}}>
         <div>{char}</div>
         <Flex direction="row" gap="size-50" wrap>
-          {alphabetizedIcons[char].map((iconName) => {
+          {alphabetizedIcons[char].map(iconName => {
             let Icon = AllIcons[iconName].default;
             return <Icon key={iconName} id={iconName} />;
           })}
@@ -70,7 +71,7 @@ AllWorkflow.story = {
       colorSchemes: ['light'],
       locales: ['en-US'],
       scales: ['medium', 'large'],
-      disableAnimations: true,
+      disableAnimations: true
     }
   }
 };
@@ -79,7 +80,7 @@ function renderIconSizes(Component, props) {
   let sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
   return (
     <div>
-      {sizes.map((size) => {
+      {sizes.map(size => {
         return <Component margin="15px" size={size} {...props} />;
       })}
     </div>

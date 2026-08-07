@@ -28,16 +28,18 @@ describe('Link', function () {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     jest.clearAllMocks();
   });
 
   it.each`
-    Name        | Component | props
-    ${'Link'}   | ${Link}   | ${{onPress: onPressSpy}}
+    Name      | Component | props
+    ${'Link'} | ${Link}   | ${{onPress: onPressSpy}}
   `('$Name handles defaults', async function ({Component, props}) {
     let user = userEvent.setup({delay: null, pointerMap});
-    let {getByText} = render(<Component {...props} >Click me</Component>);
+    let {getByText} = render(<Component {...props}>Click me</Component>);
 
     let link = getByText('Click me');
     expect(link).not.toBeNull();
@@ -47,16 +49,16 @@ describe('Link', function () {
   });
 
   it.each`
-    Name        | Component | props
-    ${'Link'}   | ${Link}   | ${{UNSAFE_className: 'test-class'}}
+    Name      | Component | props
+    ${'Link'} | ${Link}   | ${{UNSAFE_className: 'test-class'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
-    let {getByText} = render(<Component {...props} >Click me</Component>);
+    let {getByText} = render(<Component {...props}>Click me</Component>);
     let link = getByText('Click me');
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
   it('Wraps string to span', () => {
-    let {getByRole} = render(<Link >Click me</Link>);
+    let {getByRole} = render(<Link>Click me</Link>);
     let link = getByRole('link');
     expect(link).toBeDefined();
     expect(link.nodeName).toBe('SPAN');
@@ -75,8 +77,10 @@ describe('Link', function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let ref = React.createRef();
     let {getByRole} = render(
-      <Link UNSAFE_className="test-class" onPress={onPressSpy} >
-        <a href="#only-hash-in-jsdom" ref={ref}>Click me </a>
+      <Link UNSAFE_className="test-class" onPress={onPressSpy}>
+        <a href="#only-hash-in-jsdom" ref={ref}>
+          Click me{' '}
+        </a>
       </Link>
     );
     let link = getByRole('link');
@@ -97,7 +101,9 @@ describe('Link', function () {
 
   it('supports autofocus', () => {
     let {getByRole} = render(<Link autoFocus>Click me</Link>);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     let link = getByRole('link');
     expect(document.activeElement).toBe(link);
   });
@@ -134,7 +140,9 @@ describe('Link', function () {
     let useHref = href => '/base' + href;
     let {getByRole} = render(
       <Provider theme={theme} router={{navigate, useHref}}>
-        <Link href="/foo" routerOptions={{foo: 'bar'}}>Click me</Link>
+        <Link href="/foo" routerOptions={{foo: 'bar'}}>
+          Click me
+        </Link>
       </Provider>
     );
     let link = getByRole('link');

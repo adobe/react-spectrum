@@ -27,34 +27,40 @@ export function Grid(props: any): JSX.Element {
   let gridState = useGridState({
     ...props,
     selectionMode: 'multiple',
-    collection: React.useMemo(() => new GridCollection({
-      columnCount: 1,
-      items: [...state.collection].map(item => ({
-        type: 'item',
-        childNodes: [{
-          ...item,
-          index: 0,
-          type: 'cell'
-        }]
-      }))
-    }), [state.collection])
+    collection: React.useMemo(
+      () =>
+        new GridCollection({
+          columnCount: 1,
+          items: [...state.collection].map(item => ({
+            type: 'item',
+            childNodes: [
+              {
+                ...item,
+                index: 0,
+                type: 'cell'
+              }
+            ]
+          }))
+        }),
+      [state.collection]
+    )
   });
 
   let ref = React.useRef(null);
-  let {gridProps} = useGrid({
-    'aria-label': 'Grid',
-    focusMode: gridFocusMode
-  }, gridState, ref);
+  let {gridProps} = useGrid(
+    {
+      'aria-label': 'Grid',
+      focusMode: gridFocusMode
+    },
+    gridState,
+    ref
+  );
 
   return (
     <div {...gridProps} ref={ref}>
-      {[...gridState.collection].map(item =>
-        (<Row
-          key={item.key}
-          state={gridState}
-          item={item}
-          focusMode={cellFocusMode} />)
-      )}
+      {[...gridState.collection].map(item => (
+        <Row key={item.key} state={gridState} item={item} focusMode={cellFocusMode} />
+      ))}
     </div>
   );
 }
@@ -64,10 +70,14 @@ function Row({state, item, focusMode}) {
   let cellRef = React.useRef(null);
   let cellNode = [...item.childNodes][0];
   let {rowProps} = useGridRow({node: item}, state, rowRef);
-  let {gridCellProps} = useGridCell({
-    node: cellNode,
-    focusMode
-  }, state, cellRef);
+  let {gridCellProps} = useGridCell(
+    {
+      node: cellNode,
+      focusMode
+    },
+    state,
+    cellRef
+  );
 
   let [isRowFocused, setRowFocused] = React.useState(false);
   let {focusProps: rowFocusProps} = useFocus({
@@ -80,8 +90,14 @@ function Row({state, item, focusMode}) {
   });
 
   return (
-    <div {...mergeProps(rowProps, rowFocusProps)} ref={rowRef} style={{outline: isRowFocused ? '2px solid red' : undefined}}>
-      <div {...mergeProps(gridCellProps, cellFocusProps)} ref={cellRef} style={{outline: isCellFocused ? '2px solid green' : undefined}}>
+    <div
+      {...mergeProps(rowProps, rowFocusProps)}
+      ref={rowRef}
+      style={{outline: isRowFocused ? '2px solid red' : undefined}}>
+      <div
+        {...mergeProps(gridCellProps, cellFocusProps)}
+        ref={cellRef}
+        style={{outline: isCellFocused ? '2px solid green' : undefined}}>
         {cellNode.rendered}
       </div>
     </div>

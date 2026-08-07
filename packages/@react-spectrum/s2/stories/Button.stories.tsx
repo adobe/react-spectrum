@@ -15,7 +15,7 @@ import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text} from '../src/Content';
 import {useEffect, useRef, useState} from 'react';
 
@@ -40,14 +40,24 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
         <Button {...args}>Press me</Button>
-        <Button {...args}><NewIcon /><Text>Test</Text></Button>
-        <Button {...args}><Text>Test</Text><NewIcon /></Button>
-        <Button aria-label="Press me" {...args}><NewIcon /></Button>
-        <Button {...args} styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>
+        <Button {...args}>
+          <NewIcon />
+          <Text>Test</Text>
+        </Button>
+        <Button {...args}>
+          <Text>Test</Text>
+          <NewIcon />
+        </Button>
+        <Button aria-label="Press me" {...args}>
+          <NewIcon />
+        </Button>
+        <Button {...args} styles={style({maxWidth: 128})}>
+          Very long button with wrapping text to see what happens
+        </Button>
         <Button {...args} styles={style({maxWidth: 128})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
@@ -57,19 +67,33 @@ export const Example: Story = {
   }
 };
 
-
 export const PendingButton: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
         <PendingButtonExample {...args}>Press me</PendingButtonExample>
-        <PendingButtonExample aria-label="Aria label supercedes" {...args}>Press me</PendingButtonExample>
+        <PendingButtonExample aria-label="Aria label supercedes" {...args}>
+          Press me
+        </PendingButtonExample>
         <div id="foo">external label</div>
-        <PendingButtonExample aria-label="Aria label is included" aria-labelledby="foo" {...args}><NewIcon /></PendingButtonExample>
-        <PendingButtonExample {...args}><NewIcon /><Text>Test</Text></PendingButtonExample>
-        <PendingButtonExample {...args}><Text>Test</Text><NewIcon /></PendingButtonExample>
-        <PendingButtonExample {...args}><Text>Test</Text><NewIcon aria-label="New email" /></PendingButtonExample>
-        <PendingButtonExample {...args}><NewIcon aria-label="New email" /></PendingButtonExample>
+        <PendingButtonExample aria-label="Aria label is included" aria-labelledby="foo" {...args}>
+          <NewIcon />
+        </PendingButtonExample>
+        <PendingButtonExample {...args}>
+          <NewIcon />
+          <Text>Test</Text>
+        </PendingButtonExample>
+        <PendingButtonExample {...args}>
+          <Text>Test</Text>
+          <NewIcon />
+        </PendingButtonExample>
+        <PendingButtonExample {...args}>
+          <Text>Test</Text>
+          <NewIcon aria-label="New email" />
+        </PendingButtonExample>
+        <PendingButtonExample {...args}>
+          <NewIcon aria-label="New email" />
+        </PendingButtonExample>
         <PendingButtonExample {...args} styles={style({maxWidth: 128})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
@@ -88,7 +112,7 @@ function PendingButtonExample(props) {
   let [isPending, setPending] = useState(false);
 
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  let handlePress = (e) => {
+  let handlePress = e => {
     action('pressed')(e);
     setPending(true);
     timeout.current = setTimeout(() => {
@@ -103,10 +127,5 @@ function PendingButtonExample(props) {
     };
   }, []);
 
-  return (
-    <Button
-      {...props}
-      isPending={isPending}
-      onPress={handlePress} />
-  );
+  return <Button {...props} isPending={isPending} onPress={handlePress} />;
 }

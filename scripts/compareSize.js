@@ -33,13 +33,15 @@ async function compareBuildAppSize() {
       // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
       await download(
         `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentAppStatsFile}`,
-        lastAppStatPath);
+        lastAppStatPath
+      );
     }
 
     if (!fs.existsSync(lastPublishStatPath)) {
       await download(
         `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentPublishStatsFile}`,
-        lastPublishStatPath);
+        lastPublishStatPath
+      );
     }
 
     // Extract the built example app size from the current commit and the last publish commit data
@@ -48,13 +50,18 @@ async function compareBuildAppSize() {
     let regex = /(.*)\tbuild\/\n$/;
     let lastAppSize = lastAppStats.match(regex)[1];
     let currentAppSize = currentAppStats.match(regex)[1];
-    fs.writeFileSync('size-diff.txt', `Built app size diff from last publish: ${(currentAppSize - lastAppSize).toFixed(2)} kB`);
+    fs.writeFileSync(
+      'size-diff.txt',
+      `Built app size diff from last publish: ${(currentAppSize - lastAppSize).toFixed(2)} kB`
+    );
 
     let lastPackageStats = JSON.parse(fs.readFileSync(lastPublishStatsFile));
     let currentPackageStats = JSON.parse(fs.readFileSync(currentPublishStatsFile));
     let stream = fs.createWriteStream('size-diff.txt', {flags: 'a'});
     stream.write('\n');
-    stream.write('\nPublished package size differences from last publish in kB (old, new, diff). Packages with size differences less than .01kB are omitted.');
+    stream.write(
+      '\nPublished package size differences from last publish in kB (old, new, diff). Packages with size differences less than .01kB are omitted.'
+    );
     for (let pkg of Object.keys(currentPackageStats)) {
       // For each package grab the size from the last and current package stats data
       let currentSize = pkg in currentPackageStats && currentPackageStats[pkg];
@@ -80,7 +87,7 @@ async function compareBuildAppSize() {
 function download(url, dest) {
   return new Promise((resolve, reject) => {
     // Check file does not exist yet before hitting network
-    fs.access(dest, fs.constants.F_OK, (err) => {
+    fs.access(dest, fs.constants.F_OK, err => {
       if (err === null) {
         console.error(`File already exists at ${dest}`);
         resolve();

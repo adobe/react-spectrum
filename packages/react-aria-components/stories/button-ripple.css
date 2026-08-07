@@ -16,7 +16,7 @@
   position: absolute;
   background: #63a4ff;
   display: block;
-  content: "";
+  content: '';
   border-radius: 9999px;
   opacity: 1;
   animation: 0.9s ease 1 forwards ripple-effect;

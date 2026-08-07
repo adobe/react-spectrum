@@ -16,12 +16,13 @@ import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
 export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
-  calendar?: string
+  calendar?: string;
 }
 
 /**
- * Provides localized date formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the date formatter for performance.
+ * Provides localized date formatting for the current locale. Automatically updates when the locale
+ * changes, and handles caching of the date formatter for performance.
+ *
  * @param options - Formatting options.
  */
 export function useDateFormatter(options?: DateFormatterOptions): DateFormatter {

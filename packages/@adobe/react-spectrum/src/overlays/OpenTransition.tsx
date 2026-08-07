@@ -36,12 +36,20 @@ export function OpenTransition(
 ): JSX.Element | ReactElement<any, string | JSXElementConstructor<any>>[] {
   // Do not apply any transition if in chromatic.
   if (typeof process !== 'undefined' && process.env.CHROMATIC) {
-    return React.Children.map(props.children, child => child && React.cloneElement(child, {isOpen: props.in}));
+    return React.Children.map(
+      props.children,
+      child => child && React.cloneElement(child, {isOpen: props.in})
+    );
   }
 
   return (
     <Transition timeout={{enter: 0, exit: 350}} {...props}>
-      {(state) => React.Children.map(props.children, child => child && React.cloneElement(child, {isOpen: !!OPEN_STATES[state]}))}
+      {state =>
+        React.Children.map(
+          props.children,
+          child => child && React.cloneElement(child, {isOpen: !!OPEN_STATES[state]})
+        )
+      }
     </Transition>
   );
 }

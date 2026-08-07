@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createShadowRoot, fireEvent, installPointerEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  createShadowRoot,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render,
+  waitFor
+} from '@react-spectrum/test-utils-internal';
 import {enableShadowDOM} from '@react-stately/flags';
 import React, {useEffect, useRef} from 'react';
 import ReactDOM, {createPortal} from 'react-dom';
@@ -21,7 +29,11 @@ import userEvent from '@testing-library/user-event';
 function Example(props) {
   let ref = useRef();
   useInteractOutside({ref, ...props});
-  return <div ref={ref} data-testid="example">test</div>;
+  return (
+    <div ref={ref} data-testid="example">
+      test
+    </div>
+  );
 }
 
 function pointerEvent(type, opts) {
@@ -38,9 +50,7 @@ describe('useInteractOutside', function () {
 
     it('should fire interact outside events based on pointer events', function () {
       let onInteractOutside = jest.fn();
-      let res = render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      let res = render(<Example onInteractOutside={onInteractOutside} />);
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown'));
@@ -56,9 +66,7 @@ describe('useInteractOutside', function () {
 
     it('should only listen for the left mouse button', function () {
       let onInteractOutside = jest.fn();
-      render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      render(<Example onInteractOutside={onInteractOutside} />);
 
       fireEvent(document.body, pointerEvent('pointerdown', {button: 1}));
       fireEvent(document.body, pointerEvent('pointerup', {button: 1}));
@@ -76,9 +84,7 @@ describe('useInteractOutside', function () {
       fireEvent(document.body, pointerEvent('pointerdown'));
 
       let onInteractOutside = jest.fn();
-      render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      render(<Example onInteractOutside={onInteractOutside} />);
 
       fireEvent(document.body, pointerEvent('pointerup'));
       fireEvent.click(document.body);
@@ -89,9 +95,7 @@ describe('useInteractOutside', function () {
   describe('mouse events', function () {
     it('should fire interact outside events based on mouse events', function () {
       let onInteractOutside = jest.fn();
-      let res = render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      let res = render(<Example onInteractOutside={onInteractOutside} />);
 
       let el = res.getByText('test');
       fireEvent.mouseDown(el);
@@ -105,9 +109,7 @@ describe('useInteractOutside', function () {
 
     it('should only listen for the left mouse button', function () {
       let onInteractOutside = jest.fn();
-      render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      render(<Example onInteractOutside={onInteractOutside} />);
 
       fireEvent.mouseDown(document.body, {button: 1});
       fireEvent.mouseUp(document.body, {button: 1});
@@ -123,9 +125,7 @@ describe('useInteractOutside', function () {
       fireEvent.mouseDown(document.body);
 
       let onInteractOutside = jest.fn();
-      render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      render(<Example onInteractOutside={onInteractOutside} />);
 
       fireEvent.mouseUp(document.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
@@ -135,9 +135,7 @@ describe('useInteractOutside', function () {
   describe('touch events', function () {
     it('should fire interact outside events based on mouse events', function () {
       let onInteractOutside = jest.fn();
-      let res = render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      let res = render(<Example onInteractOutside={onInteractOutside} />);
 
       let el = res.getByText('test');
       fireEvent.touchStart(el);
@@ -151,9 +149,7 @@ describe('useInteractOutside', function () {
 
     it('should ignore emulated mouse events', function () {
       let onInteractOutside = jest.fn();
-      let res = render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      let res = render(<Example onInteractOutside={onInteractOutside} />);
 
       let el = res.getByText('test');
       fireEvent.touchStart(el);
@@ -172,9 +168,7 @@ describe('useInteractOutside', function () {
       fireEvent.touchStart(document.body);
 
       let onInteractOutside = jest.fn();
-      render(
-        <Example onInteractOutside={onInteractOutside} />
-      );
+      render(<Example onInteractOutside={onInteractOutside} />);
 
       fireEvent.touchEnd(document.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
@@ -183,9 +177,7 @@ describe('useInteractOutside', function () {
   describe('disable interact outside events', function () {
     it('does not handle pointer events if disabled', function () {
       let onInteractOutside = jest.fn();
-      render(
-        <Example isDisabled onInteractOutside={onInteractOutside} />
-      );
+      render(<Example isDisabled onInteractOutside={onInteractOutside} />);
 
       fireEvent(document.body, pointerEvent('mousedown'));
       fireEvent(document.body, pointerEvent('mouseup'));
@@ -194,9 +186,7 @@ describe('useInteractOutside', function () {
 
     it('does not handle touch events if disabled', function () {
       let onInteractOutside = jest.fn();
-      render(
-        <Example isDisabled onInteractOutside={onInteractOutside} />
-      );
+      render(<Example isDisabled onInteractOutside={onInteractOutside} />);
 
       fireEvent.touchStart(document.body);
       fireEvent.touchEnd(document.body);
@@ -205,9 +195,7 @@ describe('useInteractOutside', function () {
 
     it('does not handle mouse events if disabled', function () {
       let onInteractOutside = jest.fn();
-      render(
-        <Example isDisabled onInteractOutside={onInteractOutside} />
-      );
+      render(<Example isDisabled onInteractOutside={onInteractOutside} />);
 
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
@@ -232,7 +220,7 @@ describe('useInteractOutside (iframes)', function () {
     iframe.remove();
   });
 
-  const IframeExample = (props) => {
+  const IframeExample = props => {
     return createPortal(<Example {...props} />, iframeRoot);
   };
 
@@ -243,15 +231,19 @@ describe('useInteractOutside (iframes)', function () {
 
     it('should fire interact outside events based on pointer events', async function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="example"]')
+        ).toBeTruthy();
       });
 
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+      const el = document
+        .querySelector('iframe')
+        .contentWindow.document.body.querySelector('div[data-testid="example"]');
       fireEvent(el, pointerEvent('pointerdown'));
       fireEvent(el, pointerEvent('pointerup'));
       fireEvent.click(el);
@@ -265,12 +257,14 @@ describe('useInteractOutside (iframes)', function () {
 
     it('should only listen for the left mouse button', async function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="example"]')
+        ).toBeTruthy();
       });
 
       fireEvent(iframeDocument.body, pointerEvent('pointerdown', {button: 1}));
@@ -289,12 +283,14 @@ describe('useInteractOutside (iframes)', function () {
       fireEvent(iframeDocument.body, pointerEvent('pointerdown'));
 
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="example"]')
+        ).toBeTruthy();
       });
       fireEvent(iframeDocument.body, pointerEvent('pointerup'));
       fireEvent.click(iframeDocument.body);
@@ -305,15 +301,19 @@ describe('useInteractOutside (iframes)', function () {
   describe('mouse events', function () {
     it('should fire interact outside events based on mouse events', async function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="example"]')
+        ).toBeTruthy();
       });
 
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+      const el = document
+        .querySelector('iframe')
+        .contentWindow.document.body.querySelector('div[data-testid="example"]');
       fireEvent.mouseDown(el);
       fireEvent.mouseUp(el);
       expect(onInteractOutside).not.toHaveBeenCalled();
@@ -325,12 +325,14 @@ describe('useInteractOutside (iframes)', function () {
 
     it('should only listen for the left mouse button', async function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="example"]')
+        ).toBeTruthy();
       });
 
       fireEvent.mouseDown(iframeDocument.body, {button: 1});
@@ -347,12 +349,14 @@ describe('useInteractOutside (iframes)', function () {
       fireEvent.mouseDown(iframeDocument.body);
 
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="example"]')
+        ).toBeTruthy();
       });
       fireEvent.mouseUp(iframeDocument.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
@@ -362,15 +366,19 @@ describe('useInteractOutside (iframes)', function () {
   describe('touch events', function () {
     it('should fire interact outside events based on mouse events', async function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="example"]')
+        ).toBeTruthy();
       });
 
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+      const el = document
+        .querySelector('iframe')
+        .contentWindow.document.body.querySelector('div[data-testid="example"]');
       fireEvent.touchStart(el);
       fireEvent.touchEnd(el);
       expect(onInteractOutside).not.toHaveBeenCalled();
@@ -382,15 +390,19 @@ describe('useInteractOutside (iframes)', function () {
 
     it('should ignore emulated mouse events', async function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="example"]')
+        ).toBeTruthy();
       });
 
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
+      const el = document
+        .querySelector('iframe')
+        .contentWindow.document.body.querySelector('div[data-testid="example"]');
       fireEvent.touchStart(el);
       fireEvent.touchEnd(el);
       fireEvent.mouseUp(el);
@@ -407,9 +419,7 @@ describe('useInteractOutside (iframes)', function () {
       fireEvent.touchStart(iframeDocument.body);
 
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample onInteractOutside={onInteractOutside} />);
 
       fireEvent.touchEnd(iframeDocument.body);
       expect(onInteractOutside).not.toHaveBeenCalled();
@@ -419,9 +429,7 @@ describe('useInteractOutside (iframes)', function () {
   describe('disable interact outside events', function () {
     it('does not handle pointer events if disabled', function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample isDisabled onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample isDisabled onInteractOutside={onInteractOutside} />);
 
       fireEvent(iframeDocument.body, pointerEvent('mousedown'));
       fireEvent(iframeDocument.body, pointerEvent('mouseup'));
@@ -430,9 +438,7 @@ describe('useInteractOutside (iframes)', function () {
 
     it('does not handle touch events if disabled', function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample isDisabled onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample isDisabled onInteractOutside={onInteractOutside} />);
 
       fireEvent.touchStart(iframeDocument.body);
       fireEvent.touchEnd(iframeDocument.body);
@@ -441,9 +447,7 @@ describe('useInteractOutside (iframes)', function () {
 
     it('does not handle mouse events if disabled', function () {
       let onInteractOutside = jest.fn();
-      render(
-        <IframeExample isDisabled onInteractOutside={onInteractOutside} />
-      );
+      render(<IframeExample isDisabled onInteractOutside={onInteractOutside} />);
 
       fireEvent.mouseDown(iframeDocument.body);
       fireEvent.mouseUp(iframeDocument.body);
@@ -511,9 +515,7 @@ describe('useInteractOutside shadow DOM', function () {
 
   it('triggers when clicking outside the popover', function () {
     const onInteractOutside = jest.fn();
-    const  {cleanup} = createShadowRootAndRender(
-      <App onInteractOutside={onInteractOutside} />
-    );
+    const {cleanup} = createShadowRootAndRender(<App onInteractOutside={onInteractOutside} />);
 
     // Clicking on the document body outside the shadow DOM
     fireEvent.mouseDown(document.body);
@@ -525,9 +527,7 @@ describe('useInteractOutside shadow DOM', function () {
 
   it('triggers when clicking a button outside the shadow dom altogether', function () {
     const onInteractOutside = jest.fn();
-    const {cleanup} = createShadowRootAndRender(
-      <App onInteractOutside={onInteractOutside} />
-    );
+    const {cleanup} = createShadowRootAndRender(<App onInteractOutside={onInteractOutside} />);
     // Button outside shadow DOM and component
     const button = document.createElement('button');
     document.body.appendChild(button);
@@ -657,12 +657,8 @@ describe('useInteractOutside with Shadow DOM and UNSAFE_PortalProvider', () => {
     const {unmount} = render(<ShadowInteractOutsideExample />);
 
     const target = shadowRoot.querySelector('[data-testid="target"]');
-    const innerButton = shadowRoot.querySelector(
-      '[data-testid="inner-button"]'
-    );
-    const outsideButton = shadowRoot.querySelector(
-      '[data-testid="outside-button"]'
-    );
+    const innerButton = shadowRoot.querySelector('[data-testid="inner-button"]');
+    const outsideButton = shadowRoot.querySelector('[data-testid="outside-button"]');
 
     // Click inside the target - should NOT trigger interact outside
     await user.click(innerButton);

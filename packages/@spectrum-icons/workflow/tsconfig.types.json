@@ -9,9 +9,6 @@
     "allowJs": false,
     "emitDeclarationOnly": true
   },
-  "include": [
-    "src",
-    "../../@react-types/shared/src/css.d.ts",
-  ],
+  "include": ["src", "../../@react-types/shared/src/css.d.ts"],
   "exclude": ["scripts", "node_modules", "stories", "chromatic"]
 }

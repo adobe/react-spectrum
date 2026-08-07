@@ -29,11 +29,7 @@
     // Import non-ES modules as default imports.
     "esModuleInterop": true,
     // if 'target' is updated, this should be updated as well
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "skipLibCheck": false,
     "strict": true,
     "plugins": [
@@ -47,12 +43,7 @@
       "/*": ["./*"]
     }
   },
-  "include": [
-    "packages",
-    "lib/svg.d.ts",
-    "lib/viewTransitions.d.ts",
-    "lib/css.d.ts"
-  ],
+  "include": ["packages", "lib/svg.d.ts", "lib/viewTransitions.d.ts", "lib/css.d.ts"],
   "exclude": [
     "**/node_modules",
     "packages/dev/optimize-locales-plugin",

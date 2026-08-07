@@ -17,7 +17,11 @@ export {MenuTrigger} from '@adobe/react-spectrum/MenuTrigger';
 export {SubmenuTrigger, Menu, ContextualHelpTrigger} from '@adobe/react-spectrum/Menu';
 export {ActionMenu} from '@adobe/react-spectrum/ActionMenu';
 export type {SpectrumActionMenuProps} from '@adobe/react-spectrum/ActionMenu';
-export type {SpectrumMenuProps, SpectrumMenuDialogTriggerProps, SpectrumSubmenuTriggerProps} from '@adobe/react-spectrum/Menu';
+export type {
+  SpectrumMenuProps,
+  SpectrumMenuDialogTriggerProps,
+  SpectrumSubmenuTriggerProps
+} from '@adobe/react-spectrum/Menu';
 export type {SpectrumMenuTriggerProps} from '@adobe/react-spectrum/MenuTrigger';
 export {Item} from 'react-stately/Item';
 export {Section} from 'react-stately/Section';

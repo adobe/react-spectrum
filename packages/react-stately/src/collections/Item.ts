@@ -14,19 +14,26 @@ import {ItemElement, ItemProps} from '@react-types/shared';
 import {PartialNode} from './types';
 import React, {JSX, ReactElement} from 'react';
 
-function Item<T>(props: ItemProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function Item<T>(props: ItemProps<T>): ReactElement | null {
   return null;
 }
 
-Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>, context: any): Generator<PartialNode<T>> {
+Item.getCollectionNode = function* getCollectionNode<T>(
+  props: ItemProps<T>,
+  context: any
+): Generator<PartialNode<T>> {
   let {childItems, title, children} = props;
 
   let rendered = props.title || props.children;
-  let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'] || '';
+  let textValue =
+    props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'] || '';
 
   // suppressTextValueWarning is used in components like Tabs, which don't have type to select support.
   if (!textValue && !context?.suppressTextValueWarning && process.env.NODE_ENV !== 'production') {
-    console.warn('<Item> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
+    console.warn(
+      '<Item> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.'
+    );
   }
 
   yield {

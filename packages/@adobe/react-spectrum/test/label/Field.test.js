@@ -43,7 +43,10 @@ let ExampleField = React.forwardRef((props = {}, ref) => {
 let contextualHelp = (
   <ContextualHelp>
     <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    <Content>
+      Segments identify who your visitors are, what devices and services they use, where they
+      navigated from, and much more.
+    </Content>
   </ContextualHelp>
 );
 
@@ -79,14 +82,21 @@ describe('Field', function () {
     expect(button).toHaveAttribute('aria-label', 'Help');
     expect(button).toHaveAttribute('id');
     expect(button).toHaveAttribute('aria-labelledby');
-    expect(button.getAttribute('aria-labelledby').split(/\s+/)[0]).toBe(getByText('Field label').id);
+    expect(button.getAttribute('aria-labelledby').split(/\s+/)[0]).toBe(
+      getByText('Field label').id
+    );
   });
 
   it('does not render contextual help if there is no label', function () {
     let {queryByRole} = renderField({label: null, 'aria-label': 'Test', contextualHelp});
     expect(queryByRole('button')).toBeNull();
 
-    ({queryByRole} = renderField({label: null, 'aria-label': 'Test', contextualHelp, description: 'test'}));
+    ({queryByRole} = renderField({
+      label: null,
+      'aria-label': 'Test',
+      contextualHelp,
+      description: 'test'
+    }));
     expect(queryByRole('button')).toBeNull();
   });
 
@@ -111,7 +121,10 @@ describe('Field', function () {
       });
 
       it('renders when description and error message are provided but validationState is not invalid', function () {
-        let {getByRole, getByText} = renderField({description: 'Help text', errorMessage: 'Error message'});
+        let {getByRole, getByText} = renderField({
+          description: 'Help text',
+          errorMessage: 'Error message'
+        });
 
         let helpText = getByText('Help text');
         expect(helpText).toBeInTheDocument();
@@ -120,7 +133,10 @@ describe('Field', function () {
       });
 
       it('renders when description is provided and validationState is invalid but no error message is provided', function () {
-        let {getByRole, getByText} = renderField({description: 'Help text', validationState: 'invalid'});
+        let {getByRole, getByText} = renderField({
+          description: 'Help text',
+          validationState: 'invalid'
+        });
 
         let helpText = getByText('Help text');
         expect(helpText).toBeInTheDocument();
@@ -136,7 +152,11 @@ describe('Field', function () {
       });
 
       it('renders when no visible label is provided', () => {
-        let {getByRole, getByText} = renderField({label: null, 'aria-label': 'Field label', description: 'Help text'});
+        let {getByRole, getByText} = renderField({
+          label: null,
+          'aria-label': 'Field label',
+          description: 'Help text'
+        });
 
         let helpText = getByText('Help text');
         expect(helpText).toBeInTheDocument();
@@ -147,7 +167,10 @@ describe('Field', function () {
 
     describe('error message', function () {
       it('renders when error message is provided and validationState is invalid', function () {
-        let {getByRole, getByText} = renderField({errorMessage: 'Error message', validationState: 'invalid'});
+        let {getByRole, getByText} = renderField({
+          errorMessage: 'Error message',
+          validationState: 'invalid'
+        });
 
         let errorMessage = getByText('Error message');
         expect(errorMessage).toBeInTheDocument();

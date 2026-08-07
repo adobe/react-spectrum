@@ -32,12 +32,12 @@ const meta: Meta<typeof FullscreenDialog> = {
 
 export default meta;
 type ExampleRenderProps = FullscreenDialogProps & {
-  paragraphs: number
+  paragraphs: number;
 };
 type Story = StoryObj<ExampleRenderProps>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <DialogTrigger {...args}>
       <Button variant="primary">Open dialog</Button>
       <FullscreenDialog {...args}>
@@ -46,13 +46,27 @@ export const Example: Story = {
             <Heading slot="title">Dialog title</Heading>
             <Header>Header</Header>
             <Content>
-              {[...Array(5)].map((_, i) =>
-                <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-              )}
+              {[...Array(5)].map((_, i) => (
+                <p
+                  key={i}
+                  style={{
+                    marginTop: i === 0 ? 0 : undefined,
+                    marginBottom: i === args.paragraphs - 1 ? 0 : undefined
+                  }}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                  irure dolor in
+                </p>
+              ))}
             </Content>
             <ButtonGroup>
-              <Button onPress={close} variant="secondary">Cancel</Button>
-              <Button onPress={close} variant="accent">Save</Button>
+              <Button onPress={close} variant="secondary">
+                Cancel
+              </Button>
+              <Button onPress={close} variant="accent">
+                Save
+              </Button>
             </ButtonGroup>
           </>
         )}

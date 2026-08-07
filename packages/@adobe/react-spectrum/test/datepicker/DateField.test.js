@@ -24,11 +24,7 @@ function render(el) {
   if (el.type === Provider) {
     return render_(el);
   }
-  let res = render_(
-    <Provider theme={theme}>
-      {el}
-    </Provider>
-  );
+  let res = render_(<Provider theme={theme}>{el}</Provider>);
   return {
     ...res,
     rerender(el) {
@@ -100,7 +96,10 @@ describe('DateField', function () {
       expect(description).toHaveTextContent('Help text');
 
       let segments = getAllByRole('spinbutton');
-      expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      expect(segments[0]).toHaveAttribute(
+        'aria-describedby',
+        group.getAttribute('aria-describedby')
+      );
 
       for (let segment of segments.slice(1)) {
         expect(segment).not.toHaveAttribute('aria-describedby');
@@ -108,7 +107,9 @@ describe('DateField', function () {
     });
 
     it('should support error message', function () {
-      let {getByRole, getAllByRole} = render(<DateField label="Date" errorMessage="Error message" validationState="invalid" />);
+      let {getByRole, getAllByRole} = render(
+        <DateField label="Date" errorMessage="Error message" validationState="invalid" />
+      );
 
       let group = getByRole('group');
       expect(group).toHaveAttribute('aria-describedby');
@@ -123,7 +124,9 @@ describe('DateField', function () {
     });
 
     it('should not display error message if not invalid', function () {
-      let {getByRole, getAllByRole} = render(<DateField label="Date" errorMessage="Error message" />);
+      let {getByRole, getAllByRole} = render(
+        <DateField label="Date" errorMessage="Error message" />
+      );
 
       let group = getByRole('group');
       expect(group).not.toHaveAttribute('aria-describedby');
@@ -135,16 +138,25 @@ describe('DateField', function () {
     });
 
     it('should support help text with a value', function () {
-      let {getByRole, getAllByRole} = render(<DateField label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />);
+      let {getByRole, getAllByRole} = render(
+        <DateField label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />
+      );
 
       let group = getByRole('group');
       expect(group).toHaveAttribute('aria-describedby');
 
-      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      let description = group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(d => document.getElementById(d).textContent)
+        .join(' ');
       expect(description).toBe('Selected Date: February 3, 2020 Help text');
 
       let segments = getAllByRole('spinbutton');
-      expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      expect(segments[0]).toHaveAttribute(
+        'aria-describedby',
+        group.getAttribute('aria-describedby')
+      );
 
       for (let segment of segments.slice(1)) {
         expect(segment).not.toHaveAttribute('aria-describedby');
@@ -152,12 +164,23 @@ describe('DateField', function () {
     });
 
     it('should support error message with a value', function () {
-      let {getByRole, getAllByRole} = render(<DateField label="Date" errorMessage="Error message" validationState="invalid" value={new CalendarDate(2020, 2, 3)} />);
+      let {getByRole, getAllByRole} = render(
+        <DateField
+          label="Date"
+          errorMessage="Error message"
+          validationState="invalid"
+          value={new CalendarDate(2020, 2, 3)}
+        />
+      );
 
       let group = getByRole('group');
       expect(group).toHaveAttribute('aria-describedby');
 
-      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      let description = group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(d => document.getElementById(d).textContent)
+        .join(' ');
       expect(description).toBe('Selected Date: February 3, 2020 Error message');
 
       let segments = getAllByRole('spinbutton');
@@ -228,11 +251,14 @@ describe('DateField', function () {
       let tree = render(
         <DateField
           aria-label="Enter date between jan 1 and jan 8, 1980"
-          isDateUnavailable={(date) => {
-            return date.compare(new CalendarDate(1980, 1, 1)) >= 0
-              && date.compare(new CalendarDate(1980, 1, 8)) <= 0;
+          isDateUnavailable={date => {
+            return (
+              date.compare(new CalendarDate(1980, 1, 1)) >= 0 &&
+              date.compare(new CalendarDate(1980, 1, 8)) <= 0
+            );
           }}
-          errorMessage="Date unavailable." />
+          errorMessage="Date unavailable."
+        />
       );
       await user.tab();
       await user.keyboard('01011980');
@@ -245,7 +271,7 @@ describe('DateField', function () {
           <DateField label="Date" showFormatHelpText />
         </Provider>
       );
-  
+
       let segments = Array.from(getByRole('group').querySelectorAll('[data-testid]'));
       let segmentTypes = segments.map(s => s.getAttribute('data-testid'));
       expect(segmentTypes).toEqual(['year', 'month', 'day']);
@@ -268,7 +294,14 @@ describe('DateField', function () {
     });
 
     it('should focus field and switching segments via tab does not change focus', async function () {
-      let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let {getAllByRole} = render(
+        <DateField
+          label="Date"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+        />
+      );
       let segments = getAllByRole('spinbutton');
 
       expect(onBlurSpy).not.toHaveBeenCalled();
@@ -290,7 +323,14 @@ describe('DateField', function () {
     });
 
     it('should call blur when focus leaves', async function () {
-      let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let {getAllByRole} = render(
+        <DateField
+          label="Date"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+        />
+      );
       let segments = getAllByRole('spinbutton');
       // workaround bug in userEvent.tab(). hidden inputs aren't focusable.
       document.querySelector('input[type=hidden]').tabIndex = -1;
@@ -316,7 +356,9 @@ describe('DateField', function () {
     });
 
     it('should trigger right arrow key event for segment navigation', async function () {
-      let {getAllByRole} = render(<DateField label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
+      let {getAllByRole} = render(
+        <DateField label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />
+      );
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
@@ -336,14 +378,24 @@ describe('DateField', function () {
 
   describe('forms', () => {
     it('supports form values', () => {
-      let {rerender} = render(<DateField name="date" label="Date" value={new CalendarDate(2020, 2, 3)} />);
+      let {rerender} = render(
+        <DateField name="date" label="Date" value={new CalendarDate(2020, 2, 3)} />
+      );
       let input = document.querySelector('input[name=date]');
       expect(input).toHaveValue('2020-02-03');
 
-      rerender(<DateField name="date" label="Date" value={new CalendarDateTime(2020, 2, 3, 8, 30)} />);
+      rerender(
+        <DateField name="date" label="Date" value={new CalendarDateTime(2020, 2, 3, 8, 30)} />
+      );
       expect(input).toHaveValue('2020-02-03T08:30:00');
 
-      rerender(<DateField name="date" label="Date" value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45)} />);
+      rerender(
+        <DateField
+          name="date"
+          label="Date"
+          value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45)}
+        />
+      );
       expect(input).toHaveValue('2020-02-03T12:24:45-08:00[America/Los_Angeles]');
     });
 
@@ -362,7 +414,12 @@ describe('DateField', function () {
       let group = getByRole('group');
       let input = document.querySelector('input[name=date]');
 
-      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      let getDescription = () =>
+        group
+          .getAttribute('aria-describedby')
+          .split(' ')
+          .map(d => document.getElementById(d).textContent)
+          .join(' ');
       expect(getDescription()).toBe('Selected Date: February 3, 2020');
 
       expect(input).toHaveValue('2020-02-03');
@@ -381,8 +438,11 @@ describe('DateField', function () {
     if (parseInt(React.version, 10) >= 19) {
       it('resets to defaultValue when submitting form action', async () => {
         function Test() {
-          const [value, formAction] = React.useActionState(() => new CalendarDate(2025, 2, 3), new CalendarDate(2020, 2, 3));
-          
+          const [value, formAction] = React.useActionState(
+            () => new CalendarDate(2025, 2, 3),
+            new CalendarDate(2020, 2, 3)
+          );
+
           return (
             <form action={formAction}>
               <DateField label="Value" name="date" defaultValue={value} />
@@ -390,11 +450,11 @@ describe('DateField', function () {
             </form>
           );
         }
-  
+
         let {getByTestId} = render(<Test />);
         let input = document.querySelector('input[name=date]');
         expect(input).toHaveValue('2020-02-03');
-  
+
         let button = getByTestId('submit');
         await user.click(button);
         expect(input).toHaveValue('2025-02-03');
@@ -418,10 +478,17 @@ describe('DateField', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
@@ -439,18 +506,32 @@ describe('DateField', function () {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DateField label="Date" name="date" minValue={new CalendarDate(2020, 2, 3)} maxValue={new CalendarDate(2024, 2, 3)} defaultValue={new CalendarDate(2019, 2, 3)} validationBehavior="native" />
+                <DateField
+                  label="Date"
+                  name="date"
+                  minValue={new CalendarDate(2020, 2, 3)}
+                  maxValue={new CalendarDate(2024, 2, 3)}
+                  defaultValue={new CalendarDate(2019, 2, 3)}
+                  validationBehavior="native"
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           let input = document.querySelector('input[name=date]');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(input.validity.valid).toBe(false);
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
@@ -471,7 +552,9 @@ describe('DateField', function () {
           expect(input.validity.valid).toBe(false);
           await user.tab();
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
@@ -487,18 +570,31 @@ describe('DateField', function () {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DateField name="date" label="Value" defaultValue={new CalendarDate(2020, 2, 3)} validationBehavior="native" validate={v => v.year < 2022 ? 'Invalid value' : null} />
+                <DateField
+                  name="date"
+                  label="Value"
+                  defaultValue={new CalendarDate(2020, 2, 3)}
+                  validationBehavior="native"
+                  validate={v => (v.year < 2022 ? 'Invalid value' : null)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           let input = document.querySelector('input[name=date]');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).not.toContain('Invalid value');
           expect(input.validity.valid).toBe(false);
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Invalid value');
@@ -529,7 +625,9 @@ describe('DateField', function () {
               <Provider theme={theme}>
                 <Form onSubmit={onSubmit} validationErrors={serverErrors}>
                   <DateField name="date" label="Value" validationBehavior="native" />
-                  <Button type="submit" data-testid="submit">Submit</Button>
+                  <Button type="submit" data-testid="submit">
+                    Submit
+                  </Button>
                 </Form>
               </Provider>
             );
@@ -543,7 +641,12 @@ describe('DateField', function () {
 
           await user.click(getByTestId('submit'));
 
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Invalid value');
           expect(input.validity.valid).toBe(false);
 
@@ -559,7 +662,15 @@ describe('DateField', function () {
           let {getByTestId, getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DateField name="date" label="Value" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+                <DateField
+                  name="date"
+                  label="Value"
+                  isRequired
+                  validationBehavior="native"
+                  errorMessage={e =>
+                    e.validationDetails.valueMissing ? 'Please enter a value' : null
+                  }
+                />
               </Form>
             </Provider>
           );
@@ -567,9 +678,13 @@ describe('DateField', function () {
           let group = getByRole('group');
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
           expect(group).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+            'Please enter a value'
+          );
         });
 
         it('clears validation on form reset', async () => {
@@ -577,7 +692,9 @@ describe('DateField', function () {
             <Provider theme={theme}>
               <Form data-testid="form">
                 <DateField label="Date" name="date" isRequired validationBehavior="native" />
-                <Button type="reset" data-testid="reset">Reset</Button>
+                <Button type="reset" data-testid="reset">
+                  Reset
+                </Button>
               </Form>
             </Provider>
           );
@@ -588,10 +705,17 @@ describe('DateField', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
 
           await user.click(getByTestId('reset'));
@@ -618,10 +742,17 @@ describe('DateField', function () {
           await user.tab({shift: true});
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
@@ -640,13 +771,24 @@ describe('DateField', function () {
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DateField label="Date" name="date" minValue={new CalendarDate(2020, 2, 3)} maxValue={new CalendarDate(2024, 2, 3)} defaultValue={new CalendarDate(2019, 2, 3)} />
+                <DateField
+                  label="Date"
+                  name="date"
+                  minValue={new CalendarDate(2020, 2, 3)}
+                  maxValue={new CalendarDate(2024, 2, 3)}
+                  defaultValue={new CalendarDate(2019, 2, 3)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
 
           await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
@@ -663,14 +805,23 @@ describe('DateField', function () {
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DateField label="Value" defaultValue={new CalendarDate(2020, 2, 3)} validate={v => v.year < 2022 ? 'Invalid value' : null} />
+                <DateField
+                  label="Value"
+                  defaultValue={new CalendarDate(2020, 2, 3)}
+                  validate={v => (v.year < 2022 ? 'Invalid value' : null)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Invalid value');
 
           await user.keyboard('[Tab][ArrowRight][ArrowRight]2024');
@@ -688,7 +839,12 @@ describe('DateField', function () {
 
           let group = getByRole('group');
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Invalid value');
 
           await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');

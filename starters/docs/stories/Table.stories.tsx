@@ -13,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof Table>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <Table aria-label="Files" {...args}>
     <TableHeader>
       <Column isRowHeader>Name</Column>

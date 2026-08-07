@@ -20,7 +20,7 @@ export function getImage(index: number): string {
   return images[index % images.length].src;
 }
 
-export function getImageFullData(index: number): {width: number, height: number, src: string} {
+export function getImageFullData(index: number): {width: number; height: number; src: string} {
   return images[index % images.length];
 }
 

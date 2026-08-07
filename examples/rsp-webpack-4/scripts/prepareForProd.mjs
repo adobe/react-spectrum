@@ -1,4 +1,3 @@
-
 import fs from 'node:fs';
 
 let pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));

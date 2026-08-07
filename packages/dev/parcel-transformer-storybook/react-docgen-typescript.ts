@@ -10,7 +10,9 @@ export function getCacheDir(options: PluginOptions) {
 }
 
 function getSocketPath(options: PluginOptions) {
-  return process.platform === 'win32' ? path.join('\\\\?\\pipe', getCacheDir(options), options.instanceId) : path.join(getCacheDir(options), options.instanceId);
+  return process.platform === 'win32'
+    ? path.join('\\\\?\\pipe', getCacheDir(options), options.instanceId)
+    : path.join(getCacheDir(options), options.instanceId);
 }
 
 // TypeScript is single threaded, but Parcel is multi-threaded.
@@ -20,7 +22,7 @@ async function createService(options: PluginOptions) {
   fs.mkdirSync(dir, {recursive: true});
 
   let requested = new Map();
-  let server = net.createServer((socket) => {
+  let server = net.createServer(socket => {
     // Protocol is newline delimited JSON.
     let buf = '';
     socket.on('data', data => {
@@ -82,7 +84,7 @@ async function createService(options: PluginOptions) {
 
     // Write a sentinel file when TypeScript updates.
     // This will cause Parcel to update everything that depends on it.
-    host.afterProgramCreate = (p) => {
+    host.afterProgramCreate = p => {
       program = p.getProgram();
       let changed = false;
       for (let [path, docs] of requested) {
@@ -138,7 +140,7 @@ function parseStory(program: ts.Program, filePath: string) {
   let parser = new Parser(program, {
     shouldExtractLiteralValuesFromEnum: true,
     shouldRemoveUndefinedFromOptional: true,
-    propFilter: (prop) => !prop.name.startsWith('aria-') && !excludedProps.has(prop.name)
+    propFilter: prop => !prop.name.startsWith('aria-') && !excludedProps.has(prop.name)
   });
 
   let checker = program.getTypeChecker();
@@ -179,7 +181,9 @@ function parseStory(program: ts.Program, filePath: string) {
 
   if (decl && ts.isObjectLiteralExpression(decl)) {
     // Find the component property, and follow it to the original definition.
-    let component = decl.properties.find(p => p.name && ts.isIdentifier(p.name) && p.name.text === 'component');
+    let component = decl.properties.find(
+      p => p.name && ts.isIdentifier(p.name) && p.name.text === 'component'
+    );
     if (component && ts.isPropertyAssignment(component)) {
       symbol = checker.getSymbolAtLocation(component.initializer);
       if (symbol) {
@@ -197,26 +201,30 @@ function parseStory(program: ts.Program, filePath: string) {
 
 function sortProps(doc: ComponentDoc) {
   // Sort props
-  doc.props = Object.fromEntries(Object.entries(doc.props).sort(([, a], [, b]) => {
-    // Required props first
-    if (a.required !== b.required) {
-      return a.required ? -1 : 1;
-    }
-    // Props from node_modules last.
-    if (a.parent?.fileName.includes('node_modules') !== b.parent?.fileName.includes('node_modules')) {
-      return a.parent?.fileName.includes('node_modules') ? 1 : -1;
-    }
-    // Events last.
-    if (/^on[A-Z]/.test(a.name) !== /^on[A-Z]/.test(b.name)) {
-      return /^on[A-Z]/.test(a.name) ? 1 : -1;
-    }
-    // Alphabetical.
-    return a.name.localeCompare(b.name);
-  }));
+  doc.props = Object.fromEntries(
+    Object.entries(doc.props).sort(([, a], [, b]) => {
+      // Required props first
+      if (a.required !== b.required) {
+        return a.required ? -1 : 1;
+      }
+      // Props from node_modules last.
+      if (
+        a.parent?.fileName.includes('node_modules') !== b.parent?.fileName.includes('node_modules')
+      ) {
+        return a.parent?.fileName.includes('node_modules') ? 1 : -1;
+      }
+      // Events last.
+      if (/^on[A-Z]/.test(a.name) !== /^on[A-Z]/.test(b.name)) {
+        return /^on[A-Z]/.test(a.name) ? 1 : -1;
+      }
+      // Alphabetical.
+      return a.name.localeCompare(b.name);
+    })
+  );
 }
 
 export interface Client {
-  getDocs(path: string): Promise<ComponentDoc | null>
+  getDocs(path: string): Promise<ComponentDoc | null>;
 }
 
 function createClient(options: PluginOptions): Promise<Client> {
@@ -290,13 +298,7 @@ function getTSConfigFile(tsconfigPath: string): ts.ParsedCommandLine {
     const basePath = path.dirname(tsconfigPath);
     const configFile = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
 
-    return ts.parseJsonConfigFileContent(
-      configFile.config,
-      ts.sys,
-      basePath,
-      {},
-      tsconfigPath
-    );
+    return ts.parseJsonConfigFileContent(configFile.config, ts.sys, basePath, {}, tsconfigPath);
   } catch {
     return {} as ts.ParsedCommandLine;
   }

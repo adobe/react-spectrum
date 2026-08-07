@@ -15,31 +15,38 @@ import {ListState, useListState} from './useListState';
 import {useControlledState} from '../utils/useControlledState';
 import {useMemo} from 'react';
 
-export interface SingleSelectListProps<T> extends CollectionStateBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
+export interface SingleSelectListProps<T>
+  extends CollectionStateBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
   /** Filter function to generate a filtered list of nodes. */
-  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
+  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>;
   /** @private */
-  suppressTextValueWarning?: boolean
+  suppressTextValueWarning?: boolean;
 }
 
 export interface SingleSelectListState<T> extends ListState<T> {
   /** The key for the currently selected item. */
-  readonly selectedKey: Key | null,
+  readonly selectedKey: Key | null;
 
   /** Sets the selected key. */
-  setSelectedKey(key: Key | null): void,
+  setSelectedKey(key: Key | null): void;
 
   /** The value of the currently selected item. */
-  readonly selectedItem: Node<T> | null
+  readonly selectedItem: Node<T> | null;
 }
 
 /**
  * Provides state management for list-like components with single selection.
  * Handles building a collection of items from props, and manages selection state.
  */
-export function useSingleSelectListState<T extends object>(props: SingleSelectListProps<T>): SingleSelectListState<T>  {
-  let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null, props.onSelectionChange);
-  let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
+export function useSingleSelectListState<T extends object>(
+  props: SingleSelectListProps<T>
+): SingleSelectListState<T> {
+  let [selectedKey, setSelectedKey] = useControlledState(
+    props.selectedKey,
+    props.defaultSelectedKey ?? null,
+    props.onSelectionChange
+  );
+  let selectedKeys = useMemo(() => (selectedKey != null ? [selectedKey] : []), [selectedKey]);
   let {collection, disabledKeys, selectionManager} = useListState({
     ...props,
     selectionMode: 'single',
@@ -63,9 +70,7 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
     }
   });
 
-  let selectedItem = selectedKey != null
-    ? collection.getItem(selectedKey)
-    : null;
+  let selectedItem = selectedKey != null ? collection.getItem(selectedKey) : null;
 
   return {
     collection,

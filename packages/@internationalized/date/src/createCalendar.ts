@@ -12,11 +12,19 @@
 
 import {BuddhistCalendar} from './calendars/BuddhistCalendar';
 import {Calendar, CalendarIdentifier} from './types';
-import {CopticCalendar, EthiopicAmeteAlemCalendar, EthiopicCalendar} from './calendars/EthiopicCalendar';
+import {
+  CopticCalendar,
+  EthiopicAmeteAlemCalendar,
+  EthiopicCalendar
+} from './calendars/EthiopicCalendar';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {HebrewCalendar} from './calendars/HebrewCalendar';
 import {IndianCalendar} from './calendars/IndianCalendar';
-import {IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar} from './calendars/IslamicCalendar';
+import {
+  IslamicCivilCalendar,
+  IslamicTabularCalendar,
+  IslamicUmalquraCalendar
+} from './calendars/IslamicCalendar';
 import {JapaneseCalendar} from './calendars/JapaneseCalendar';
 import {PersianCalendar} from './calendars/PersianCalendar';
 import {TaiwanCalendar} from './calendars/TaiwanCalendar';

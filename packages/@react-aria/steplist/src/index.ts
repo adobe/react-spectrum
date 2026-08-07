@@ -14,4 +14,7 @@ export {useStepList} from 'react-aria/private/steplist/useStepList';
 
 export {useStepListItem} from 'react-aria/private/steplist/useStepListItem';
 export type {AriaStepListProps, StepListAria} from 'react-aria/private/steplist/useStepList';
-export type {AriaStepListItemProps, StepListItemAria} from 'react-aria/private/steplist/useStepListItem';
+export type {
+  AriaStepListItemProps,
+  StepListItemAria
+} from 'react-aria/private/steplist/useStepListItem';

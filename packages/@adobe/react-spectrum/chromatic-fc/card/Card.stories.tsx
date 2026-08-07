@@ -17,10 +17,7 @@ import {
   WithColorfulIllustration as WithColorfulIllustrationStory,
   WithIllustration as WithIllustrationStory
 } from '../../chromatic/card/Card.stories';
-import {
-  Default as DefaultCard,
-  Selected as SelectedStory
-} from '../../stories/card/Card.stories';
+import {Default as DefaultCard, Selected as SelectedStory} from '../../stories/card/Card.stories';
 import {Meta} from '@storybook/react';
 
 export default {

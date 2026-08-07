@@ -16,9 +16,7 @@ import {usePreventScroll} from '../../src/overlays/usePreventScroll';
 
 function Example(props) {
   usePreventScroll(props);
-  return (
-    <div />
-  );
+  return <div />;
 }
 
 describe('usePreventScroll', function () {

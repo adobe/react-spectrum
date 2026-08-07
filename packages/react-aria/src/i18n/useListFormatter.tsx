@@ -14,8 +14,9 @@ import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
 /**
- * Provides localized list formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the list formatter for performance.
+ * Provides localized list formatting for the current locale. Automatically updates when the locale
+ * changes, and handles caching of the list formatter for performance.
+ *
  * @param options - Formatting options.
  */
 export function useListFormatter(options: Intl.ListFormatOptions = {}): Intl.ListFormat {

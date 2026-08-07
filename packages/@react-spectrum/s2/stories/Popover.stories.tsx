@@ -63,7 +63,7 @@ export default meta;
 type Story = StoryObj<typeof Popover>;
 
 export const HelpCenter: Story = {
-  render: (args) => (
+  render: args => (
     <DialogTrigger {...args}>
       <ActionButton aria-label="Help" styles={style({marginX: 'auto'})}>
         <Help />
@@ -76,7 +76,8 @@ export const HelpCenter: Story = {
             <Tab id="feedback">Feedback</Tab>
           </TabList>
           <TabPanel id="help">
-            <div className={style({marginTop: 12, display: 'flex', flexDirection: 'column', gap: 12})}>
+            <div
+              className={style({marginTop: 12, display: 'flex', flexDirection: 'column', gap: 12})}>
               <SearchField label="Search" styles={style({marginX: 12})} />
               <Menu aria-label="Help">
                 <MenuSection>
@@ -124,7 +125,9 @@ export const HelpCenter: Story = {
             </Card>
           </TabPanel>
           <TabPanel id="feedback" styles={style({margin: 12})}>
-            <p className={style({font: 'body', marginTop: 0})}>How are we doing? Share your feedback here.</p>
+            <p className={style({font: 'body', marginTop: 0})}>
+              How are we doing? Share your feedback here.
+            </p>
             <Form>
               <TextField label="Subject" placeholder="Enter a summary" />
               <TextField label="Description" isRequired placeholder="Enter your feedback" />
@@ -145,7 +148,7 @@ export const HelpCenter: Story = {
 };
 
 export const AccountMenu: Story = {
-  render: (args) => (
+  render: args => (
     <DialogTrigger {...args}>
       <ActionButton aria-label="Account" styles={style({marginX: 'auto'})}>
         <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
@@ -195,16 +198,13 @@ export const AccountMenu: Story = {
   }
 };
 
-
 function Autocomplete(props) {
   let {contains} = useFilter({sensitivity: 'base'});
-  return (
-    <RACAutocomplete filter={contains} {...props} />
-  );
+  return <RACAutocomplete filter={contains} {...props} />;
 }
 
 export const AutocompletePopover: Story = {
-  render: (args) => (
+  render: args => (
     <>
       <DialogTrigger {...args}>
         <ActionButton aria-label="Help" styles={style({marginX: 'auto'})}>
@@ -238,7 +238,9 @@ const CustomTriggerRender = (): ReactElement => {
   return (
     <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
       <Button onPress={() => setOpen(!open)}>Open Popover</Button>
-      <div className={style({font: 'ui'})} ref={triggerRef}>Popover appears here</div>
+      <div className={style({font: 'ui'})} ref={triggerRef}>
+        Popover appears here
+      </div>
       <Popover isOpen={open} onOpenChange={handleOpenChange} triggerRef={triggerRef}>
         <span className={style({font: 'ui'})}>Popover with trigger on button</span>
       </Popover>
@@ -251,27 +253,55 @@ export const CustomTrigger: StoryObj<typeof CustomTriggerRender> = {
 };
 
 export const MenuTrigger: Story = {
-  render: (args) => (
+  render: args => (
     <DialogTrigger {...args}>
       <ActionButton aria-label="Account" styles={style({marginX: 'auto'})}>
         <Comment />
       </ActionButton>
       <Popover {...args} hideArrow placement="bottom end" styles={style({width: 400})}>
-        <div className={style({paddingTop: 4, paddingX: 8, display: 'flex', flexDirection: 'column', gap: 12})}>
-          <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'})}>
+        <div
+          className={style({
+            paddingTop: 4,
+            paddingX: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12
+          })}>
+          <div
+            className={style({
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            })}>
             <div className={style({display: 'flex', gap: 8})}>
               <Avatar src="https://i.imgur.com/xIe7Wlb.png" size={56} />
               <h2 className={style({font: 'heading'})}>Author Name</h2>
             </div>
             <ActionMenu>
-              <MenuItem><Copy /><Text>Copy body text</Text></MenuItem>
-              <MenuItem><Paste /><Text>Paste</Text></MenuItem>
+              <MenuItem>
+                <Copy />
+                <Text>Copy body text</Text>
+              </MenuItem>
+              <MenuItem>
+                <Paste />
+                <Text>Paste</Text>
+              </MenuItem>
             </ActionMenu>
           </div>
-          <p className={style({font: 'body', margin: 0})}>The experience is smooth and well thought out, though there’s room to refine some details for clarity and efficiency.</p>
+          <p className={style({font: 'body', margin: 0})}>
+            The experience is smooth and well thought out, though there’s room to refine some
+            details for clarity and efficiency.
+          </p>
           <div className={style({display: 'flex', flexDirection: 'row', gap: 12})}>
-            <ActionButton isQuiet><ThumbUp /><Text>Like</Text></ActionButton>
-            <ActionButton isQuiet><CommentText /><Text>Reply</Text></ActionButton>
+            <ActionButton isQuiet>
+              <ThumbUp />
+              <Text>Like</Text>
+            </ActionButton>
+            <ActionButton isQuiet>
+              <CommentText />
+              <Text>Reply</Text>
+            </ActionButton>
           </div>
         </div>
       </Popover>

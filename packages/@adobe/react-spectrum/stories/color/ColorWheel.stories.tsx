@@ -50,11 +50,11 @@ export default {
 
 export const Default: ColorWheelStory = {
   args: {defaultValue: 'hsl(0, 100%, 50%)'},
-  render: (args) => <ColorWheel {...args} />
+  render: args => <ColorWheel {...args} />
 };
 
 export const Controlled: ColorWheelStory = {
-  render: (args) => (
+  render: args => (
     <Flex gap={'size-500'} direction="row" alignItems="center">
       <ControlledHSLRender {...args} />
     </Flex>
@@ -64,11 +64,11 @@ export const Controlled: ColorWheelStory = {
 export const ControlledHSLRender = (props: SpectrumColorWheelProps): JSX.Element => {
   let {locale} = useLocale();
   let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
-  let onChangeEnd = (color) => {
+  let onChangeEnd = color => {
     props.onChangeEnd && props.onChangeEnd(color);
     setColor(color);
   };
-  let onChange = (color) => {
+  let onChange = color => {
     props.onChange && props.onChange(color);
     setColor(color);
   };
@@ -81,4 +81,6 @@ export const ControlledHSLRender = (props: SpectrumColorWheelProps): JSX.Element
   );
 };
 
-export const ControlledHSL: StoryFn<typeof ColorWheel> = (props) => <ControlledHSLRender {...props} />;
+export const ControlledHSL: StoryFn<typeof ColorWheel> = props => (
+  <ControlledHSLRender {...props} />
+);

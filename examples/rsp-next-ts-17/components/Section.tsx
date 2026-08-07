@@ -1,5 +1,5 @@
-import { View, Heading, Divider } from "@adobe/react-spectrum";
-import React, {JSX} from "react";
+import {View, Heading, Divider} from '@adobe/react-spectrum';
+import React, {JSX} from 'react';
 
 interface SectionProps {
   title: string;
@@ -7,7 +7,7 @@ interface SectionProps {
 }
 
 export default function Section(props: SectionProps) {
-  let { title, children } = props;
+  let {title, children} = props;
   return (
     <View marginBottom="size-200">
       <Heading id={title.toLowerCase()} level={2}>

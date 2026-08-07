@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Jauns ziņojums",
+  "chat.scrollToBottom": "Ritiniet uz leju",
+  "messagefeedback.thumbDown": "Slikta atbilde",
+  "messagefeedback.thumbUp": "Laba atbilde",
+  "promptfield.aiDisclaimer": "Atbildes tiek ģenerētas, izmantojot mākslīgo intelektu, un tās var būt neprecīzas. Pārbaudiet pirms lietošanas.",
+  "promptfield.aiUserGuidlines": "AI lietotāja vadlīnijas",
+  "promptfield.attachments": "Pielikumi",
+  "promptfield.insertButton": "Pievienot",
+  "promptfield.label": "Uzvedne",
+  "promptfield.placeholder": "Vai esat gatavs sākt? Uzdodiet jautājumu, dalieties pārdomās vai pievienojiet jaunu uzdevumu.",
+  "promptfield.stopButton": "Apstājies",
+  "promptfield.submitButton": "Sūtīt",
+  "promptfield.uploading": "Augšupielāde",
+  "responsestatus.loading": "Notiek ielāde",
+  "voicebutton.startListening": "Sāciet ierakstīt",
+  "voicebutton.stopListening": "Pārtraukt ierakstu"
+}

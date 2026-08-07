@@ -27,7 +27,7 @@ export default meta;
 
 type Story = StoryObj<typeof NotificationBadge>;
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div style={{display: 'flex', flexWrap: 'wrap', gap: 8, maxWidth: '600px'}}>
         <NotificationBadge {...args} />

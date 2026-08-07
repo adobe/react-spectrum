@@ -18,14 +18,14 @@ import userEvent from '@testing-library/user-event';
 // v3 component
 describe('BreadcrumbItem', function () {
   it('Handles defaults', () => {
-    let {getByText} = render(<BreadcrumbItem >Breadcrumb item</BreadcrumbItem>);
+    let {getByText} = render(<BreadcrumbItem>Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');
     expect(breadcrumbItem.id).toBeDefined();
     expect(breadcrumbItem.tabIndex).toBe(0);
   });
 
   it('Handles current', () => {
-    let {getByText} = render(<BreadcrumbItem isCurrent >Breadcrumb item</BreadcrumbItem>);
+    let {getByText} = render(<BreadcrumbItem isCurrent>Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');
     expect(breadcrumbItem.tabIndex).toBe(-1);
     expect(breadcrumbItem).toHaveAttribute('aria-current', 'page');
@@ -34,7 +34,11 @@ describe('BreadcrumbItem', function () {
   it('Handles disabled', async () => {
     let user = userEvent.setup({delay: null, pointerMap});
     let onPressSpy = jest.fn();
-    let {getByText} = render(<BreadcrumbItem onPress={onPressSpy} isDisabled >Breadcrumb item</BreadcrumbItem>);
+    let {getByText} = render(
+      <BreadcrumbItem onPress={onPressSpy} isDisabled>
+        Breadcrumb item
+      </BreadcrumbItem>
+    );
     let breadcrumbItem = getByText('Breadcrumb item');
     expect(breadcrumbItem.tabIndex).toBe(-1);
     expect(breadcrumbItem).toHaveAttribute('aria-disabled', 'true');
@@ -45,7 +49,7 @@ describe('BreadcrumbItem', function () {
   it('Handles onPress', async () => {
     let user = userEvent.setup({delay: null, pointerMap});
     let onPressSpy = jest.fn();
-    let {getByText} = render(<BreadcrumbItem onPress={onPressSpy} >Breadcrumb item</BreadcrumbItem>);
+    let {getByText} = render(<BreadcrumbItem onPress={onPressSpy}>Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');
     await user.click(breadcrumbItem);
     expect(onPressSpy).toHaveBeenCalledTimes(1);

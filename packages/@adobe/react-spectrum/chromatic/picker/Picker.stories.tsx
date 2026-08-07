@@ -31,11 +31,22 @@ const meta: Meta<SpectrumPickerProps<object>> = {
   title: 'Picker',
   component: Picker,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true
+    },
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {delay: 1200}
   },
-  decorators: [Story => <div style={{height: '400px'}}><Story /></div>]
+  decorators: [
+    Story => (
+      <div style={{height: '400px'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export default meta;
@@ -95,32 +106,32 @@ const ComplexItemsTemplate = (args: SpectrumPickerProps<object>): JSX.Element =>
   </Picker>
 );
 export const Default: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {label: 'Pick your favorite', isOpen: true}
 };
 
 export const Disabled: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, isDisabled: true}
 };
 
 export const LabelAlignEnd: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, labelAlign: 'end'}
 };
 
 export const LabelPositionSide: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, labelPosition: 'side'}
 };
 
 export const ValidationStateInvalid: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, isInvalid: true}
 };
 
 export const ComplexItems: PickerStory = {
-  render: (args) => <ComplexItemsTemplate {...args} />,
+  render: args => <ComplexItemsTemplate {...args} />,
   args: {...Default.args},
   parameters: {
     chromaticProvider: {
@@ -130,7 +141,7 @@ export const ComplexItems: PickerStory = {
 };
 
 export const ComplexItemsExpress: PickerStory = {
-  render: (args) => <ComplexItemsTemplate {...args} />,
+  render: args => <ComplexItemsTemplate {...args} />,
   args: {...Default.args},
   parameters: {
     chromaticProvider: {
@@ -150,11 +161,11 @@ let contextualHelp = (
 );
 
 export const _ContextualHelp: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, contextualHelp}
 };
 
 export const ContextualHelpSideLabel: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, contextualHelp, labelPosition: 'side'}
 };

@@ -1,7 +1,18 @@
-
 import {action} from 'storybook/actions';
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
-import {DIRECTORY_DRAG_TYPE, DragAndDropOptions, useDragAndDrop} from '../../exports/useDragAndDrop';
+import {
+  Cell,
+  Column,
+  Row,
+  SpectrumTableProps,
+  TableBody,
+  TableHeader,
+  TableView
+} from '../../src/table/TableView';
+import {
+  DIRECTORY_DRAG_TYPE,
+  DragAndDropOptions,
+  useDragAndDrop
+} from '../../exports/useDragAndDrop';
 import {Flex} from '../../src/layout/Flex';
 import React, {JSX} from 'react';
 import {Text} from '../../src/text/Text';
@@ -33,16 +44,16 @@ let itemProcessor = async (items, acceptedDragTypes) => {
 let folderList1 = [
   {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
   {identifier: '2', type: 'file', name: 'Adobe XD'},
-  {identifier: '3', type: 'folder', name: 'Documents',  childNodes: [] as any[]},
+  {identifier: '3', type: 'folder', name: 'Documents', childNodes: [] as any[]},
   {identifier: '4', type: 'file', name: 'Adobe InDesign'},
-  {identifier: '5', type: 'folder', name: 'Utilities',  childNodes: [] as any[]},
+  {identifier: '5', type: 'folder', name: 'Utilities', childNodes: [] as any[]},
   {identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
 ];
 
 let folderList2 = [
-  {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: [] as any[]},
+  {identifier: '7', type: 'folder', name: 'Pictures', childNodes: [] as any[]},
   {identifier: '8', type: 'file', name: 'Adobe Fresco'},
-  {identifier: '9', type: 'folder', name: 'Apps',  childNodes: [] as any[]},
+  {identifier: '9', type: 'folder', name: 'Apps', childNodes: [] as any[]},
   {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
   {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
   {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
@@ -50,76 +61,84 @@ let folderList2 = [
 ];
 
 let columns = [
-    {name: 'ID', key: 'identifier'},
-    {name: 'Name', key: 'name'},
-    {name: 'Type', key: 'type'}
+  {name: 'ID', key: 'identifier'},
+  {name: 'Name', key: 'name'},
+  {name: 'Type', key: 'type'}
 ];
 
-export function DragExampleUtilHandlers(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, dndOptions?: DragAndDropOptions} = {}): JSX.Element {
+export function DragExampleUtilHandlers(
+  props: {
+    tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+    dndOptions?: DragAndDropOptions;
+  } = {}
+): JSX.Element {
   let {tableViewProps, dndOptions} = props;
   let list = useListData({
     initialItems: folderList1,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list.getItem(key)!;
-      return {
-        [`${item.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
-    }),
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list.getItem(key)!;
+        return {
+          [`${item.type}`]: JSON.stringify(item),
+          'text/plain': JSON.stringify(item)
+        };
+      }),
     acceptedDragTypes,
     ...dndOptions
   });
 
   return (
-    <TableView aria-label="TableView with dnd util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView
+      aria-label="TableView with dnd util handlers"
+      selectionMode="multiple"
+      width={400}
+      height={200}
+      onSelectionChange={s => onSelectionChange([...s])}
+      dragAndDropHooks={dragAndDropHooks}
+      {...tableViewProps}>
       <TableHeader columns={columns}>
         {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
-        {item => (
-          <Row key={item.identifier}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>
-        )}
+        {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   );
 }
 
-export function ReorderExampleUtilHandlers(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, dndOptions?: DragAndDropOptions}): JSX.Element {
+export function ReorderExampleUtilHandlers(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  dndOptions?: DragAndDropOptions;
+}): JSX.Element {
   let {tableViewProps, dndOptions} = props;
   let list = useListData({
     initialItems: folderList1,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
-
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list.getItem(key)!;
-      return {
-        [`${item.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
-    }),
-    onReorder: async (e) => {
-      let {
-        keys,
-        target,
-        dropOperation
-      } = e;
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list.getItem(key)!;
+        return {
+          [`${item.type}`]: JSON.stringify(item),
+          'text/plain': JSON.stringify(item)
+        };
+      }),
+    onReorder: async e => {
+      let {keys, target, dropOperation} = e;
       action('onReorder')(e);
 
       let itemsToCopy: typeof folderList1 = [];
       if (dropOperation === 'copy') {
         for (let key of keys) {
-          let item: typeof folderList1[0] = {...list.getItem(key)!};
+          let item: (typeof folderList1)[0] = {...list.getItem(key)!};
           item.identifier = Math.random().toString(36).slice(2);
           itemsToCopy.push(item);
         }
@@ -144,51 +163,55 @@ export function ReorderExampleUtilHandlers(props: {tableViewProps?: Omit<Spectru
   });
 
   return (
-    <TableView aria-label="Reorderable TableView with util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView
+      aria-label="Reorderable TableView with util handlers"
+      selectionMode="multiple"
+      width={400}
+      height={200}
+      onSelectionChange={s => onSelectionChange([...s])}
+      dragAndDropHooks={dragAndDropHooks}
+      {...tableViewProps}>
       <TableHeader columns={columns}>
         {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
-        {item => (
-          <Row key={item.identifier}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>
-        )}
+        {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
-
   );
 }
 
-export function ItemDropExampleUtilHandlers(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, dndOptions?: DragAndDropOptions}): JSX.Element {
+export function ItemDropExampleUtilHandlers(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  dndOptions?: DragAndDropOptions;
+}): JSX.Element {
   let {tableViewProps, dndOptions} = props;
   let list = useListData({
     initialItems: folderList1,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list.getItem(key)!;
-      return {
-        [`${item.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
-    }),
-    onItemDrop: async (e) => {
-      let {
-        items,
-        target,
-        isInternal,
-        dropOperation
-      } = e;
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list.getItem(key)!;
+        return {
+          [`${item.type}`]: JSON.stringify(item),
+          'text/plain': JSON.stringify(item)
+        };
+      }),
+    onItemDrop: async e => {
+      let {items, target, isInternal, dropOperation} = e;
       action('onItemDrop')(e);
       if (isInternal) {
         let processedItems = await itemProcessor(items, acceptedDragTypes);
         let targetItem = list.getItem(target.key);
         if (targetItem?.childNodes != null) {
-          list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+          list.update(target.key, {
+            ...targetItem,
+            childNodes: [...targetItem.childNodes, ...processedItems]
+          });
           if (isInternal && dropOperation === 'move') {
             let keysToRemove = processedItems.map(item => item.identifier);
             list.remove(...keysToRemove);
@@ -201,47 +224,51 @@ export function ItemDropExampleUtilHandlers(props: {tableViewProps?: Omit<Spectr
   });
 
   return (
-    <TableView aria-label="Row droppable TableView from dnd hook util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView
+      aria-label="Row droppable TableView from dnd hook util handlers"
+      selectionMode="multiple"
+      width={400}
+      height={200}
+      onSelectionChange={s => onSelectionChange([...s])}
+      dragAndDropHooks={dragAndDropHooks}
+      {...tableViewProps}>
       <TableHeader columns={columns}>
         {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
-        {item => (
-          <Row key={item.identifier}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>
-        )}
+        {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   );
 }
 
-export function RootDropExampleUtilHandlers(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, firstTableDnDOptions?: DragAndDropOptions, secondTableDnDOptions?: DragAndDropOptions}): JSX.Element {
+export function RootDropExampleUtilHandlers(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  firstTableDnDOptions?: DragAndDropOptions;
+  secondTableDnDOptions?: DragAndDropOptions;
+}): JSX.Element {
   let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
   let list2 = useListData({
     initialItems: folderList2,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks: table1Hooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key)!;
-      return {
-        [`${item.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
-    }),
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        isInternal,
-        keys
-      } = e;
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list1.getItem(key)!;
+        return {
+          [`${item.type}`]: JSON.stringify(item),
+          'text/plain': JSON.stringify(item)
+        };
+      }),
+    onDragEnd: e => {
+      let {dropOperation, isInternal, keys} = e;
       action('onDragEnd')(e);
       if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
@@ -252,7 +279,7 @@ export function RootDropExampleUtilHandlers(props: {tableViewProps?: Omit<Spectr
   });
 
   let {dragAndDropHooks: table2Hooks} = useDragAndDrop({
-    onRootDrop: async (e) => {
+    onRootDrop: async e => {
       action('onRootDropTable1')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list2.append(...processedItems);
@@ -265,31 +292,33 @@ export function RootDropExampleUtilHandlers(props: {tableViewProps?: Omit<Spectr
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView" selectionMode="multiple" width={300} dragAndDropHooks={table1Hooks} {...tableViewProps}>
+        <TableView
+          aria-label="First TableView"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={table1Hooks}
+          {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView" selectionMode="multiple" width={300} dragAndDropHooks={table2Hooks} {...tableViewProps}>
+        <TableView
+          aria-label="Second TableView"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={table2Hooks}
+          {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
@@ -297,32 +326,33 @@ export function RootDropExampleUtilHandlers(props: {tableViewProps?: Omit<Spectr
   );
 }
 
-export function InsertExampleUtilHandlers(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, firstTableDnDOptions?: DragAndDropOptions, secondTableDnDOptions?: DragAndDropOptions}): JSX.Element {
+export function InsertExampleUtilHandlers(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  firstTableDnDOptions?: DragAndDropOptions;
+  secondTableDnDOptions?: DragAndDropOptions;
+}): JSX.Element {
   let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
   let list2 = useListData({
     initialItems: folderList2,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks: table1Hooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key)!;
-      return {
-        [`${item.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
-    }),
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        isInternal,
-        keys
-      } = e;
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list1.getItem(key)!;
+        return {
+          [`${item.type}`]: JSON.stringify(item),
+          'text/plain': JSON.stringify(item)
+        };
+      }),
+    onDragEnd: e => {
+      let {dropOperation, isInternal, keys} = e;
       action('onDragEnd')(e);
       if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
@@ -333,11 +363,8 @@ export function InsertExampleUtilHandlers(props: {tableViewProps?: Omit<Spectrum
   });
 
   let {dragAndDropHooks: table2Hooks} = useDragAndDrop({
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
+    onInsert: async e => {
+      let {items, target} = e;
       action('onInsertTable2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
@@ -355,31 +382,33 @@ export function InsertExampleUtilHandlers(props: {tableViewProps?: Omit<Spectrum
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView" selectionMode="multiple" width={300} dragAndDropHooks={table1Hooks} {...tableViewProps}>
+        <TableView
+          aria-label="First TableView"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={table1Hooks}
+          {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView" selectionMode="multiple" width={300} dragAndDropHooks={table2Hooks} {...tableViewProps}>
+        <TableView
+          aria-label="Second TableView"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={table2Hooks}
+          {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
@@ -387,33 +416,37 @@ export function InsertExampleUtilHandlers(props: {tableViewProps?: Omit<Spectrum
   );
 }
 
-export function FinderDropUtilHandlers(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, firstTableDnDOptions?: DragAndDropOptions, secondTableDnDOptions?: DragAndDropOptions}): JSX.Element {
+export function FinderDropUtilHandlers(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  firstTableDnDOptions?: DragAndDropOptions;
+  secondTableDnDOptions?: DragAndDropOptions;
+}): JSX.Element {
   let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
   let list2 = useListData({
     initialItems: folderList2,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
 
   let {dragAndDropHooks: table1Hooks} = useDragAndDrop({
     acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
-    onInsert: async (e) => {
+    onInsert: async e => {
       action('onInsertTable1')(e);
     },
-    onItemDrop: async (e) => {
+    onItemDrop: async e => {
       action('onItemDropTable1')(e);
     },
     ...firstTableDnDOptions
   });
 
   let {dragAndDropHooks: table2Hooks} = useDragAndDrop({
-    onInsert: async (e) => {
+    onInsert: async e => {
       action('onInsertTable2')(e);
     },
-    onItemDrop: async (e) => {
+    onItemDrop: async e => {
       action('onItemDropTable2')(e);
     },
     acceptedDragTypes: 'all',
@@ -424,31 +457,33 @@ export function FinderDropUtilHandlers(props: {tableViewProps?: Omit<SpectrumTab
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="TableView that accepts directory drops only" selectionMode="multiple" width={300} dragAndDropHooks={table1Hooks} {...tableViewProps}>
+        <TableView
+          aria-label="TableView that accepts directory drops only"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={table1Hooks}
+          {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="TableView that accepts all drag types" selectionMode="multiple" width={300} dragAndDropHooks={table2Hooks} {...tableViewProps}>
+        <TableView
+          aria-label="TableView that accepts all drag types"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={table2Hooks}
+          {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
@@ -456,33 +491,35 @@ export function FinderDropUtilHandlers(props: {tableViewProps?: Omit<SpectrumTab
   );
 }
 
-export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, firstTableDnDOptions?: DragAndDropOptions, secondTableDnDOptions?: DragAndDropOptions}): JSX.Element {
+export function DragBetweenTablesComplex(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  firstTableDnDOptions?: DragAndDropOptions;
+  secondTableDnDOptions?: DragAndDropOptions;
+}): JSX.Element {
   let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
 
   let list2 = useListData({
     initialItems: folderList2,
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
   // table 1 should allow on item drops and external drops, but disallow reordering/internal drops
   let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key)!;
-      return {
-        [`${item.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
-    }),
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list1.getItem(key)!;
+        return {
+          [`${item.type}`]: JSON.stringify(item),
+          'text/plain': JSON.stringify(item)
+        };
+      }),
+    onInsert: async e => {
+      let {items, target} = e;
       action('onInsertTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
@@ -491,24 +528,21 @@ export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumT
       } else if (target.dropPosition === 'after') {
         list1.insertAfter(target.key, ...processedItems);
       }
-
     },
-    onRootDrop: async (e) => {
+    onRootDrop: async e => {
       action('onRootDropTable1')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list1.append(...processedItems);
     },
-    onItemDrop: async (e) => {
-      let {
-        items,
-        target,
-        isInternal,
-        dropOperation
-      } = e;
+    onItemDrop: async e => {
+      let {items, target, isInternal, dropOperation} = e;
       action('onItemDropTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list1.getItem(target.key)!;
-      list1.update(target.key, {...targetItem, childNodes: [...(targetItem.childNodes || []), ...processedItems]});
+      list1.update(target.key, {
+        ...targetItem,
+        childNodes: [...(targetItem.childNodes || []), ...processedItems]
+      });
 
       if (isInternal && dropOperation === 'move') {
         // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
@@ -518,40 +552,34 @@ export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumT
       }
     },
     acceptedDragTypes,
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        isInternal,
-        keys
-      } = e;
+    onDragEnd: e => {
+      let {dropOperation, isInternal, keys} = e;
       action('onDragEndTable1')(e);
       if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.childNodes,
+    shouldAcceptItemDrop: target => !!list1.getItem(target.key)?.childNodes,
     ...firstTableDnDOptions
   });
 
   // table 2 should allow reordering, on folder drops, and on root drops
   let {dragAndDropHooks: dragAndDropHooksTable2} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list2.getItem(key)!;
-      let dragItem = {};
-      let itemString = JSON.stringify(item);
-      dragItem[`${item.type}`] = itemString;
-      if (item.type !== 'unique_type') {
-        dragItem['text/plain'] = itemString;
-      }
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list2.getItem(key)!;
+        let dragItem = {};
+        let itemString = JSON.stringify(item);
+        dragItem[`${item.type}`] = itemString;
+        if (item.type !== 'unique_type') {
+          dragItem['text/plain'] = itemString;
+        }
 
-      return dragItem;
-    }),
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
+        return dragItem;
+      }),
+    onInsert: async e => {
+      let {items, target} = e;
       action('onInsertTable2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
@@ -561,18 +589,14 @@ export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumT
         list2.insertAfter(target.key, ...processedItems);
       }
     },
-    onReorder: async (e) => {
-      let {
-        keys,
-        target,
-        dropOperation
-      } = e;
+    onReorder: async e => {
+      let {keys, target, dropOperation} = e;
       action('onReorderTable2')(e);
 
       let itemsToCopy: typeof folderList1 = [];
       if (dropOperation === 'copy') {
         for (let key of keys) {
-          let item: typeof folderList1[0] = {...list2.getItem(key)!};
+          let item: (typeof folderList1)[0] = {...list2.getItem(key)!};
           item.identifier = Math.random().toString(36).slice(2);
           itemsToCopy.push(item);
         }
@@ -592,22 +616,20 @@ export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumT
         }
       }
     },
-    onRootDrop: async (e) => {
+    onRootDrop: async e => {
       action('onRootDropTable2')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list2.prepend(...processedItems);
     },
-    onItemDrop: async (e) => {
-      let {
-        items,
-        target,
-        isInternal,
-        dropOperation
-      } = e;
+    onItemDrop: async e => {
+      let {items, target, isInternal, dropOperation} = e;
       action('onItemDropTable2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list2.getItem(target.key)!;
-      list2.update(target.key, {...targetItem, childNodes: [...(targetItem.childNodes || []), ...processedItems]});
+      list2.update(target.key, {
+        ...targetItem,
+        childNodes: [...(targetItem.childNodes || []), ...processedItems]
+      });
 
       if (isInternal && dropOperation === 'move') {
         let keysToRemove = processedItems.map(item => item.identifier);
@@ -615,12 +637,8 @@ export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumT
       }
     },
     acceptedDragTypes,
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        isInternal,
-        keys
-      } = e;
+    onDragEnd: e => {
+      let {dropOperation, isInternal, keys} = e;
       action('onDragEndTable2')(e);
       if (dropOperation === 'move' && !isInternal) {
         let keysToRemove = [...keys].filter(key => list2.getItem(key)!.type !== 'unique_type');
@@ -628,7 +646,7 @@ export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumT
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.childNodes,
+    shouldAcceptItemDrop: target => !!list2.getItem(target.key)?.childNodes,
     ...secondTableDnDOptions
   });
 
@@ -636,31 +654,33 @@ export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumT
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...tableViewProps}>
+        <TableView
+          aria-label="First TableView in drag between table example"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={dragAndDropHooksTable1}
+          {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable2} {...tableViewProps}>
+        <TableView
+          aria-label="Second TableView in drag between table example"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={dragAndDropHooksTable2}
+          {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
@@ -668,7 +688,11 @@ export function DragBetweenTablesComplex(props: {tableViewProps?: Omit<SpectrumT
   );
 }
 
-export function DragBetweenTablesOverride(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, firstTableDnDOptions?: DragAndDropOptions, secondTableDnDOptions?: DragAndDropOptions}): JSX.Element {
+export function DragBetweenTablesOverride(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  firstTableDnDOptions?: DragAndDropOptions;
+  secondTableDnDOptions?: DragAndDropOptions;
+}): JSX.Element {
   let list1 = useListData({
     initialItems: [
       {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -676,31 +700,32 @@ export function DragBetweenTablesOverride(props: {tableViewProps?: Omit<Spectrum
       {identifier: '3', type: 'file', name: 'Adobe InDesign'},
       {identifier: '4', type: 'file', name: 'Adobe AfterEffects'}
     ],
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
 
   let list2 = useListData({
     initialItems: [
-      {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: [] as any},
+      {identifier: '7', type: 'folder', name: 'Pictures', childNodes: [] as any},
       {identifier: '8', type: 'file', name: 'Adobe Fresco'},
-      {identifier: '9', type: 'folder', name: 'Apps',  childNodes: [] as any},
+      {identifier: '9', type: 'folder', name: 'Apps', childNodes: [] as any},
       {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
       {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
       {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'}
     ],
-    getKey: (item) => item.identifier
+    getKey: item => item.identifier
   });
 
   let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key)!;
-      let dragType = `table-1-adobe-${item.type}`;
-      return {
-        [`${dragType}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
-    }),
-    onDragEnd: (e) => {
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list1.getItem(key)!;
+        let dragType = `table-1-adobe-${item.type}`;
+        return {
+          [`${dragType}`]: JSON.stringify(item),
+          'text/plain': JSON.stringify(item)
+        };
+      }),
+    onDragEnd: e => {
       action('onDragEnd')(e);
       if (e.dropOperation === 'move') {
         list1.remove(...e.keys);
@@ -716,11 +741,9 @@ export function DragBetweenTablesOverride(props: {tableViewProps?: Omit<Spectrum
 
       return 'move';
     },
-    onDrop: async (e) => {
+    onDrop: async e => {
       action('onDrop')(e);
-      let {
-        items
-      } = e;
+      let {items} = e;
       let itemsToAdd: typeof folderList1 = [];
       let text;
       for (let item of items) {
@@ -743,40 +766,41 @@ export function DragBetweenTablesOverride(props: {tableViewProps?: Omit<Spectrum
     onReorder: () => action('onReorder'),
     onRootDrop: () => action('onRootDrop'),
     onItemDrop: () => action('onItemDrop'),
-    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.childNodes,
+    shouldAcceptItemDrop: target => !!list2.getItem(target.key)?.childNodes,
     acceptedDragTypes: 'all'
   });
-
 
   return (
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="TableView that accepts directory drops only" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...props}>
+        <TableView
+          aria-label="TableView that accepts directory drops only"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={dragAndDropHooksTable1}
+          {...props}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="TableView that accepts all drag types" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable2} {...props}>
+        <TableView
+          aria-label="TableView that accepts all drag types"
+          selectionMode="multiple"
+          width={300}
+          dragAndDropHooks={dragAndDropHooksTable2}
+          {...props}>
           <TableHeader columns={columns}>
             {column => <Column isRowHeader={column.key === 'name'}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
-            {(item) => (
-              <Row key={item.identifier}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {item => <Row key={item.identifier}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>

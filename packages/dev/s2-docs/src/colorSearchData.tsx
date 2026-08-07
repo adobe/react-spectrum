@@ -10,70 +10,151 @@ import React, {useMemo, useRef} from 'react';
 export const colorHexMaps = getColorHexMap();
 
 const backgroundColors = [
-  'black', 'white',
-  'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated',
-  'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
-  'negative', 'negative-subtle', 'informative', 'informative-subtle',
-  'positive', 'positive-subtle', 'notice', 'notice-subtle',
-  'gray', 'gray-subtle', 'red', 'red-subtle', 'orange', 'orange-subtle',
-  'yellow', 'yellow-subtle', 'chartreuse', 'chartreuse-subtle',
-  'celery', 'celery-subtle', 'green', 'green-subtle', 'seafoam', 'seafoam-subtle',
-  'cyan', 'cyan-subtle', 'blue', 'blue-subtle', 'indigo', 'indigo-subtle',
-  'purple', 'purple-subtle', 'fuchsia', 'fuchsia-subtle', 'magenta', 'magenta-subtle',
-  'pink', 'pink-subtle', 'turquoise', 'turquoise-subtle',
-  'cinnamon', 'cinnamon-subtle', 'brown', 'brown-subtle',
-  'silver', 'silver-subtle', 'disabled'
+  'black',
+  'white',
+  'base',
+  'layer-1',
+  'layer-2',
+  'pasteboard',
+  'elevated',
+  'accent',
+  'accent-subtle',
+  'neutral',
+  'neutral-subdued',
+  'neutral-subtle',
+  'negative',
+  'negative-subtle',
+  'informative',
+  'informative-subtle',
+  'positive',
+  'positive-subtle',
+  'notice',
+  'notice-subtle',
+  'gray',
+  'gray-subtle',
+  'red',
+  'red-subtle',
+  'orange',
+  'orange-subtle',
+  'yellow',
+  'yellow-subtle',
+  'chartreuse',
+  'chartreuse-subtle',
+  'celery',
+  'celery-subtle',
+  'green',
+  'green-subtle',
+  'seafoam',
+  'seafoam-subtle',
+  'cyan',
+  'cyan-subtle',
+  'blue',
+  'blue-subtle',
+  'indigo',
+  'indigo-subtle',
+  'purple',
+  'purple-subtle',
+  'fuchsia',
+  'fuchsia-subtle',
+  'magenta',
+  'magenta-subtle',
+  'pink',
+  'pink-subtle',
+  'turquoise',
+  'turquoise-subtle',
+  'cinnamon',
+  'cinnamon-subtle',
+  'brown',
+  'brown-subtle',
+  'silver',
+  'silver-subtle',
+  'disabled'
 ];
 
 const textColors = [
-  'black', 'white',
-  'accent', 'neutral', 'neutral-subdued', 'negative', 'disabled',
-  'heading', 'title', 'body', 'detail', 'code'
+  'black',
+  'white',
+  'accent',
+  'neutral',
+  'neutral-subdued',
+  'negative',
+  'disabled',
+  'heading',
+  'title',
+  'body',
+  'detail',
+  'code'
 ];
 
 const semanticColorRanges: Record<string, number[]> = {
-  'accent-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'informative-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'negative-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'notice-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'positive-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600]
+  'accent-color': [
+    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600
+  ],
+  'informative-color': [
+    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600
+  ],
+  'negative-color': [
+    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600
+  ],
+  'notice-color': [
+    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600
+  ],
+  'positive-color': [
+    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600
+  ]
 };
 
 const globalColorRanges: Record<string, number[]> = {
-  'gray': [25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
-  'blue': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'red': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'orange': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'yellow': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'chartreuse': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'celery': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'green': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'seafoam': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'cyan': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'indigo': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'purple': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'fuchsia': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'magenta': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'pink': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'turquoise': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'brown': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'silver': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'cinnamon': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600]
+  gray: [25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
+  blue: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  red: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  orange: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  yellow: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  chartreuse: [
+    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600
+  ],
+  celery: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  green: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  seafoam: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  cyan: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  indigo: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  purple: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  fuchsia: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  magenta: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  pink: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  turquoise: [
+    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600
+  ],
+  brown: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  silver: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
+  cinnamon: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600]
 };
 
 const semanticColors = Object.entries(semanticColorRanges).flatMap(([scale, ranges]) =>
-  ranges.map(value => ({name: `${scale.replace('-color', '')}-${value}`, section: 'Semantic colors', type: 'backgroundColor'}))
+  ranges.map(value => ({
+    name: `${scale.replace('-color', '')}-${value}`,
+    section: 'Semantic colors',
+    type: 'backgroundColor'
+  }))
 );
 
 const globalColors = Object.entries(globalColorRanges).flatMap(([scale, ranges]) =>
-  ranges.map(value => ({name: `${scale}-${value}`, section: 'Global colors', type: 'backgroundColor'}))
+  ranges.map(value => ({
+    name: `${scale}-${value}`,
+    section: 'Global colors',
+    type: 'backgroundColor'
+  }))
 );
 
 export const colorSections = [
   {
     id: 'background',
     name: 'Background colors',
-    items: backgroundColors.map(name => ({name, section: 'Background colors', type: 'backgroundColor'}))
+    items: backgroundColors.map(name => ({
+      name,
+      section: 'Background colors',
+      type: 'backgroundColor'
+    }))
   },
   {
     id: 'text',
@@ -150,16 +231,14 @@ const headerStyle = style({
 
 interface InfoMessageProps {
   /** The content to display in the message. */
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function InfoMessage({children}: InfoMessageProps) {
   return (
     <div className={style({display: 'flex', gap: 4, padding: 8, alignItems: 'center'})}>
       <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>
-        {children}
-      </span>
+      <span className={style({font: 'ui'})}>{children}</span>
     </div>
   );
 }
@@ -167,19 +246,22 @@ export function InfoMessage({children}: InfoMessageProps) {
 function SkeletonColorItem({item}: {item: {id: string}}) {
   const ref = useRef(null);
   return (
-    <ListBoxItem 
-      id={item.id} 
-      value={item} 
-      textValue="skeleton" 
-      className={skeletonItemStyle} 
+    <ListBoxItem
+      id={item.id}
+      value={item}
+      textValue="skeleton"
+      className={skeletonItemStyle}
       ref={ref}>
       <div
         className={skeletonSwatchStyle}
-        style={{
-          width: '48px',
-          height: '48px',
-          backgroundColor: 'var(--s2-gray-200)'
-        } as React.CSSProperties} />
+        style={
+          {
+            width: '48px',
+            height: '48px',
+            backgroundColor: 'var(--s2-gray-200)'
+          } as React.CSSProperties
+        }
+      />
       <div
         className={style({
           maxWidth: 'full',
@@ -195,32 +277,38 @@ function SkeletonColorItem({item}: {item: {id: string}}) {
 }
 
 export function ColorSearchSkeleton() {
-  const mockSections = useMemo(() => [
-    {
-      id: 'background',
-      name: 'Background colors',
-      items: Array.from({length: 59}, (_, i) => ({id: `skeleton-background-${i}`}))
-    },
-    {
-      id: 'text',
-      name: 'Text colors',
-      items: Array.from({length: 12}, (_, i) => ({id: `skeleton-text-${i}`}))
-    },
-    {
-      id: 'semantic',
-      name: 'Semantic colors',
-      items: Array.from({length: 80}, (_, i) => ({id: `skeleton-semantic-${i}`}))
-    },
-    {
-      id: 'global',
-      name: 'Global colors',
-      items: Array.from({length: 301}, (_, i) => ({id: `skeleton-global-${i}`}))
-    }
-  ], []);
+  const mockSections = useMemo(
+    () => [
+      {
+        id: 'background',
+        name: 'Background colors',
+        items: Array.from({length: 59}, (_, i) => ({id: `skeleton-background-${i}`}))
+      },
+      {
+        id: 'text',
+        name: 'Text colors',
+        items: Array.from({length: 12}, (_, i) => ({id: `skeleton-text-${i}`}))
+      },
+      {
+        id: 'semantic',
+        name: 'Semantic colors',
+        items: Array.from({length: 80}, (_, i) => ({id: `skeleton-semantic-${i}`}))
+      },
+      {
+        id: 'global',
+        name: 'Global colors',
+        items: Array.from({length: 301}, (_, i) => ({id: `skeleton-global-${i}`}))
+      }
+    ],
+    []
+  );
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-      <InfoMessage>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</InfoMessage>
+      <InfoMessage>
+        Press a color to copy its name. See <Link href="styling">styling</Link> for more
+        information.
+      </InfoMessage>
       <Skeleton isLoading>
         <ListBox
           aria-label="Colors loading"

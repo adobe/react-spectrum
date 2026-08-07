@@ -28,7 +28,13 @@ export function TypeLink({links, type}) {
   return (
     <TypeContext.Provider value={links}>
       <code className={`${typographyStyles['spectrum-Code4']}`}>
-        <a href={'#' + type.id} data-link={type.id} className={`${styles.colorLink} token hljs-name`} data-hover={styles['is-hovered']}>{type.name}</a>
+        <a
+          href={'#' + type.id}
+          data-link={type.id}
+          className={`${styles.colorLink} token hljs-name`}
+          data-hover={styles['is-hovered']}>
+          {type.name}
+        </a>
       </code>
     </TypeContext.Provider>
   );

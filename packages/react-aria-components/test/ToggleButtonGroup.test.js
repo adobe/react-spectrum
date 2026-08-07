@@ -57,7 +57,10 @@ describe('ToggleButtonGroup', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole, getAllByRole} = renderGroup({isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : 'enabled'});
+    let {getByRole, getAllByRole} = renderGroup({
+      isDisabled: true,
+      className: ({isDisabled}) => (isDisabled ? 'disabled' : 'enabled')
+    });
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('class', 'disabled');
     expect(group).toHaveAttribute('data-disabled', 'true');
@@ -68,7 +71,10 @@ describe('ToggleButtonGroup', () => {
   });
 
   it('should not show hover state when disabled', async () => {
-    let {getAllByRole} = renderGroup({isDisabled: true, className: ({isHovered}) => (isHovered ? 'hover' : '')});
+    let {getAllByRole} = renderGroup({
+      isDisabled: true,
+      className: ({isHovered}) => (isHovered ? 'hover' : '')
+    });
     let radios = getAllByRole('radio');
     await user.hover(radios[0]);
     expect(radios[0]).not.toHaveAttribute('data-hovered');
@@ -107,7 +113,11 @@ describe('ToggleButtonGroup', () => {
 
   it('should support controlled single selection', async () => {
     let onSelectionChange = jest.fn();
-    let {getByRole, getAllByRole} = renderGroup({selectionMode: 'single', selectedKeys: [], onSelectionChange});
+    let {getByRole, getAllByRole} = renderGroup({
+      selectionMode: 'single',
+      selectedKeys: [],
+      onSelectionChange
+    });
     expect(getByRole('radiogroup')).toBeInTheDocument();
     let radios = getAllByRole('radio');
     for (let radio of radios) {
@@ -148,7 +158,11 @@ describe('ToggleButtonGroup', () => {
 
   it('should support controlled multiple selection', async () => {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderGroup({selectionMode: 'multiple', selectedKeys: ['foo'], onSelectionChange});
+    let {getAllByRole} = renderGroup({
+      selectionMode: 'multiple',
+      selectedKeys: ['foo'],
+      onSelectionChange
+    });
     let buttons = getAllByRole('button');
     expect(buttons[0]).toHaveAttribute('aria-pressed', 'true');
     expect(buttons[1]).toHaveAttribute('aria-pressed', 'false');

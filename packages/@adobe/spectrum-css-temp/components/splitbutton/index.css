@@ -40,7 +40,8 @@ governing permissions and limitations under the License.
 .spectrum-SplitButton-action {
   margin-left: 0;
 
-  border-radius: var(--spectrum-button-primary-border-radius) 0 0 var(--spectrum-button-primary-border-radius);
+  border-radius: var(--spectrum-button-primary-border-radius) 0 0
+    var(--spectrum-button-primary-border-radius);
 
   /* CTA is special and doesn't have a border between the buttons */
   &.spectrum-Button--cta {
@@ -57,7 +58,8 @@ governing permissions and limitations under the License.
 .spectrum-SplitButton-trigger {
   margin-left: 0;
 
-  border-radius: 0 var(--spectrum-button-primary-border-radius) var(--spectrum-button-primary-border-radius) 0;
+  border-radius: 0 var(--spectrum-button-primary-border-radius)
+    var(--spectrum-button-primary-border-radius) 0;
   border-left-width: var(--spectrum-splitbutton-trigger-border-left);
 
   padding-left: calc(var(--spectrum-padding) * calc(2 / 3));
@@ -93,7 +95,8 @@ governing permissions and limitations under the License.
 
 .spectrum-SplitButton--left {
   .spectrum-SplitButton-action {
-    border-radius: 0 var(--spectrum-button-primary-border-radius) var(--spectrum-button-primary-border-radius) 0;
+    border-radius: 0 var(--spectrum-button-primary-border-radius)
+      var(--spectrum-button-primary-border-radius) 0;
     margin-right: 0;
     margin-left: var(--spectrum-spltibutton-margin-left);
 
@@ -107,7 +110,8 @@ governing permissions and limitations under the License.
   .spectrum-SplitButton-trigger {
     margin-right: 0;
 
-    border-radius: var(--spectrum-button-primary-border-radius) 0 0 var(--spectrum-button-primary-border-radius);
+    border-radius: var(--spectrum-button-primary-border-radius) 0 0
+      var(--spectrum-button-primary-border-radius);
 
     border-left-width: var(--spectrum-button-primary-border-size);
     border-right-width: var(--spectrum-splitbutton-trigger-border-left);

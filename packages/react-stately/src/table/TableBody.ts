@@ -17,18 +17,21 @@ import {RowElement} from './Row';
 
 export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   /** The contents of the table body. Supports static items or a function for dynamic rendering. */
-  children: RowElement<T> | RowElement<T>[] | ((item: T) => RowElement<T>),
+  children: RowElement<T> | RowElement<T>[] | ((item: T) => RowElement<T>);
   /** A list of row objects in the table body used when dynamically rendering rows. */
-  items?: Iterable<T>,
+  items?: Iterable<T>;
   /** The current loading state of the table. */
-  loadingState?: LoadingState
+  loadingState?: LoadingState;
 }
 
-function TableBody<T>(props: TableBodyProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TableBody<T>(props: TableBodyProps<T>): ReactElement | null {
   return null;
 }
 
-TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyProps<T>): Generator<PartialNode<T>> {
+TableBody.getCollectionNode = function* getCollectionNode<T>(
+  props: TableBodyProps<T>
+): Generator<PartialNode<T>> {
   let {children, items} = props;
   yield {
     type: 'body',
@@ -63,8 +66,9 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
 };
 
 /**
- * A TableBody is a container for the Row elements of a Table. Rows can be statically defined
- * as children, or generated dynamically using a function based on the data passed to the `items` prop.
+ * A TableBody is a container for the Row elements of a Table. Rows can be statically defined as
+ * children, or generated dynamically using a function based on the data passed to the `items`
+ * prop.
  */
 // We don't want getCollectionNode to show up in the type definition
 let _TableBody = TableBody as <T>(props: TableBodyProps<T>) => JSX.Element;

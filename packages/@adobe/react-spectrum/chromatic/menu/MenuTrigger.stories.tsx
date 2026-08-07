@@ -33,11 +33,23 @@ const meta: Meta<SpectrumMenuTriggerProps> = {
   title: 'MenuTrigger',
   component: MenuTrigger,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true,
+      express: false
+    },
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {pauseAnimationAtEnd: true}
   },
-  decorators: [Story => <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}><Story /></div>]
+  decorators: [
+    Story => (
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export default meta;
@@ -54,45 +66,43 @@ let iconMap = {
 };
 
 let hardModeProgrammatic = [
-  {name: 'Section 1', children: [
-    {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
-    {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
-    {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
-  ]},
-  {name: 'Section 2', children: [
-    {name: 'Puppy', icon: 'AlignLeft', shortcut: '⌘P'},
-    {name: 'Doggo', icon: 'AlignCenter', shortcut: '⌘D'},
-    {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'},
-    {name: 'hasChildren', children: [
-      {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
-      {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
-    ]}
-  ]}
+  {
+    name: 'Section 1',
+    children: [
+      {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
+      {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
+      {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
+    ]
+  },
+  {
+    name: 'Section 2',
+    children: [
+      {name: 'Puppy', icon: 'AlignLeft', shortcut: '⌘P'},
+      {name: 'Doggo', icon: 'AlignCenter', shortcut: '⌘D'},
+      {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'},
+      {
+        name: 'hasChildren',
+        children: [
+          {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
+          {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
+        ]
+      }
+    ]
+  }
 ];
 
-let flatMenu = [
-  {name: 'One'},
-  {name: 'Two'},
-  {name: 'Three'},
-  {name: 'Four'},
-  {name: 'Five'}
-];
+let flatMenu = [{name: 'One'}, {name: 'Two'}, {name: 'Three'}, {name: 'Four'}, {name: 'Five'}];
 
 let withSection = [
-  {name: 'Animals', children: [
-    {name: 'Aardvark'},
-    {name: 'Kangaroo'},
-    {name: 'Snake'}
-  ]},
-  {name: 'People', children: [
-    {name: 'Danni'},
-    {name: 'Devon'},
-    {name: 'Ross', children: [
-      {name: 'Tests', children: [
-        {name: 'blah'}
-      ]}
-    ]}
-  ]}
+  {name: 'Animals', children: [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]},
+  {
+    name: 'People',
+    children: [
+      {name: 'Danni'},
+      {name: 'Devon'},
+      {name: 'Ross', children: [{name: 'Tests', children: [{name: 'blah'}]}]}
+    ]
+  }
 ];
 
 let withArabic = [
@@ -103,10 +113,12 @@ let withArabic = [
 
 const Template = (args: SpectrumMenuTriggerProps): JSX.Element => (
   <MenuTrigger {...args} isOpen>
-    <ActionButton>
-      Menu Button
-    </ActionButton>
-    <Menu items={flatMenu} disabledKeys={['One', 'Three']} selectedKeys={['Two', 'Five']} selectionMode="multiple">
+    <ActionButton>Menu Button</ActionButton>
+    <Menu
+      items={flatMenu}
+      disabledKeys={['One', 'Three']}
+      selectedKeys={['Two', 'Five']}
+      selectionMode="multiple">
       {item => <Item key={item.name}>{item.name}</Item>}
     </Menu>
   </MenuTrigger>
@@ -114,13 +126,19 @@ const Template = (args: SpectrumMenuTriggerProps): JSX.Element => (
 
 const TemplateWithSections = (args: SpectrumMenuTriggerProps): JSX.Element => (
   <MenuTrigger {...args} isOpen>
-    <ActionButton>
-      Menu Button
-    </ActionButton>
-    <Menu items={withSection} disabledKeys={['Snake', 'Ross']} selectedKeys={['Aardvark', 'Devon']} selectionMode="multiple">
+    <ActionButton>Menu Button</ActionButton>
+    <Menu
+      items={withSection}
+      disabledKeys={['Snake', 'Ross']}
+      selectedKeys={['Aardvark', 'Devon']}
+      selectionMode="multiple">
       {(item: any) => (
         <Section key={item.name} items={item.children} title={item.name}>
-          {(item: any) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+          {(item: any) => (
+            <Item key={item.name} childItems={item.children}>
+              {item.name}
+            </Item>
+          )}
         </Section>
       )}
     </Menu>
@@ -140,10 +158,12 @@ const customMenuItem = (item): JSX.Element => {
 
 const TemplateWithIcons = (args: SpectrumMenuTriggerProps): JSX.Element => (
   <MenuTrigger {...args} isOpen>
-    <ActionButton>
-      Menu Button
-    </ActionButton>
-    <Menu items={hardModeProgrammatic} disabledKeys={['Cut', 'Doggo']} selectedKeys={['Floof', 'Copy']} selectionMode="multiple">
+    <ActionButton>Menu Button</ActionButton>
+    <Menu
+      items={hardModeProgrammatic}
+      disabledKeys={['Cut', 'Doggo']}
+      selectedKeys={['Floof', 'Copy']}
+      selectionMode="multiple">
       {item => (
         <Section key={item.name} items={item.children} title={item.name}>
           {item => customMenuItem(item)}
@@ -155,99 +175,95 @@ const TemplateWithIcons = (args: SpectrumMenuTriggerProps): JSX.Element => (
 
 const TemplateArabicWithIcons = (args: SpectrumMenuTriggerProps): JSX.Element => (
   <MenuTrigger {...args} isOpen>
-    <ActionButton>
-      Menu Button
-    </ActionButton>
-    <Menu items={withArabic}>
-      {item => customMenuItem(item)}
-    </Menu>
+    <ActionButton>Menu Button</ActionButton>
+    <Menu items={withArabic}>{item => customMenuItem(item)}</Menu>
   </MenuTrigger>
 );
 
 export type MenuTriggerStory = StoryObj<typeof Template>;
 
 export const Default: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'flat list'
 };
 
 export const WithSections: MenuTriggerStory = {
-  render: (args) => <TemplateWithSections {...args} />,
+  render: args => <TemplateWithSections {...args} />,
   name: 'with sections'
 };
 
 export const Complex: MenuTriggerStory = {
-  render: (args) => <TemplateWithIcons {...args} />,
+  render: args => <TemplateWithIcons {...args} />,
   name: 'complex items'
 };
 
 export const AlignEnd: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'align="end"',
   args: {align: 'end'}
 };
 
 export const DirectionTop: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="top"',
   args: {direction: 'top'}
 };
 
 export const DirectionBottom: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="bottom"',
   args: {direction: 'bottom'}
 };
 
 export const DirectionStart: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="start"',
   args: {direction: 'start'}
 };
 
 export const DirectionStartEnd: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="start", align="end"',
   args: {direction: 'start', align: 'end'}
 };
 
 export const DirectionEnd: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="end"',
   args: {direction: 'end'}
 };
 
 export const DirectionEndEnd: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="end" align="end"',
   args: {direction: 'end', align: 'end'}
 };
 
 export const DirectionLeft: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="left"',
   args: {direction: 'left'}
 };
 
 export const DirectionLeftEnd: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="left", align="end"',
   args: {direction: 'left', align: 'end'}
 };
 
 export const DirectionRight: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="right"',
   args: {direction: 'right'}
 };
 
 export const DirectionRightEnd: MenuTriggerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'direction="right", align="end"',
   args: {direction: 'right', align: 'end'}
 };
 
 export const ArabicComplex: MenuTriggerStory = {
-  render: (args) => <TemplateArabicWithIcons {...args} />,
+  render: args => <TemplateArabicWithIcons {...args} />,
   name: 'Arabic complex items'
 };

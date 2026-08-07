@@ -24,7 +24,10 @@ export type {SpectrumColorFieldProps} from '@adobe/react-spectrum/ColorField';
 export type {SpectrumColorSliderProps} from '@adobe/react-spectrum/ColorSlider';
 export type {SpectrumColorWheelProps} from '@adobe/react-spectrum/ColorWheel';
 export type {SpectrumColorSwatchProps} from '@adobe/react-spectrum/ColorSwatch';
-export type {SpectrumColorPickerProps, SpectrumColorEditorProps} from '@adobe/react-spectrum/ColorPicker';
+export type {
+  SpectrumColorPickerProps,
+  SpectrumColorEditorProps
+} from '@adobe/react-spectrum/ColorPicker';
 export type {SpectrumColorSwatchPickerProps} from '@adobe/react-spectrum/ColorSwatchPicker';
 export {parseColor, getColorChannels} from 'react-stately/Color';
 export type {Color, ColorSpace, ColorFormat} from 'react-stately/Color';

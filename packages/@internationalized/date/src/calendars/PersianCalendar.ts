@@ -32,7 +32,7 @@ const MONTH_START = [
   246, // Azar
   276, // Dey
   306, // Bahman
-  336  // Esfand
+  336 // Esfand
 ];
 
 /**
@@ -49,9 +49,7 @@ export class PersianCalendar implements Calendar {
     let year = 1 + Math.floor((33 * daysSinceEpoch + 3) / 12053);
     let farvardin1 = 365 * (year - 1) + Math.floor((8 * year + 21) / 33);
     let dayOfYear = daysSinceEpoch - farvardin1;
-    let month = dayOfYear < 216
-      ? Math.floor(dayOfYear / 31)
-      : Math.floor((dayOfYear - 6) / 30);
+    let month = dayOfYear < 216 ? Math.floor(dayOfYear / 31) : Math.floor((dayOfYear - 6) / 30);
     let day = dayOfYear - MONTH_START[month] + 1;
     return new CalendarDate(this, year, month + 1, day);
   }

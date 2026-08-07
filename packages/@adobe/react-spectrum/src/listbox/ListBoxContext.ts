@@ -14,10 +14,10 @@ import {ListState} from 'react-stately/useListState';
 import React, {ReactNode} from 'react';
 
 interface ListBoxContextValue {
-  state: ListState<unknown>,
-  renderEmptyState?: () => ReactNode,
-  shouldFocusOnHover: boolean,
-  shouldUseVirtualFocus: boolean
+  state: ListState<unknown>;
+  renderEmptyState?: () => ReactNode;
+  shouldFocusOnHover: boolean;
+  shouldUseVirtualFocus: boolean;
 }
 
 export const ListBoxContext = React.createContext<ListBoxContextValue | null>(null);

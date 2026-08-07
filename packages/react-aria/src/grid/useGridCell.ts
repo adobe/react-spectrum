@@ -12,10 +12,19 @@
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
-import {getActiveElement, getEventTarget, isFocusWithin, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {
+  getActiveElement,
+  getEventTarget,
+  isFocusWithin,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {getScrollParent} from '../utils/getScrollParent';
-import {IGridCollection as GridCollection, GridNode} from 'react-stately/private/grid/GridCollection';
+import {
+  IGridCollection as GridCollection,
+  GridNode
+} from 'react-stately/private/grid/GridCollection';
 import {gridMap} from './utils';
 import {GridState} from 'react-stately/private/grid/useGridState';
 import {isFocusVisible} from '../interactions/useFocusVisible';
@@ -26,47 +35,72 @@ import {useLocale} from '../i18n/I18nProvider';
 import {useSelectableItem} from '../selection/useSelectableItem';
 
 export interface GridCellProps {
-  /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
-  node: GridNode<unknown>,
+  /**
+   * An object representing the grid cell. Contains all the relevant information that makes up the
+   * grid cell.
+   */
+  node: GridNode<unknown>;
   /** Whether the grid cell is contained in a virtual scroller. */
-  isVirtualized?: boolean,
-  /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
-  focusMode?: 'child' | 'cell',
+  isVirtualized?: boolean;
+  /**
+   * Whether the cell or its first focusable child element should be focused when the grid cell is
+   * focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in
+   * tab keyboard navigation mode.
+   */
+  focusMode?: 'child' | 'cell';
+  /**
+   * Whether the cell should support arrow key navigation even when the containing collection uses
+   * tab keyboard navigation. Allows users to navigate between rows and cells with arrow keys while
+   * focus is on an interactive child element within the cell.
+   */
+  allowsArrowNavigation?: boolean;
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean;
   /** Indicates how many columns the data cell spans. */
-  colSpan?: number,
+  colSpan?: number;
   /**
    * Handler that is called when a user performs an action on the cell.
    * Please use onCellAction at the collection level instead.
+   *
    * @deprecated
-   **/
-  onAction?: () => void
+   */
+  onAction?: () => void;
 }
 
 export interface GridCellAria {
   /** Props for the grid cell element. */
-  gridCellProps: DOMAttributes,
+  gridCellProps: DOMAttributes;
   /** Whether the cell is currently in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a cell in a grid.
+ *
  * @param props - Props for the cell.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */
-export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>, ref: RefObject<FocusableElement | null>): GridCellAria {
+export function useGridCell<T, C extends GridCollection<T>>(
+  props: GridCellProps,
+  state: GridState<T, C>,
+  ref: RefObject<FocusableElement | null>
+): GridCellAria {
   let {
     node,
     isVirtualized,
-    focusMode = 'child',
+    focusMode: focusModeProp,
+    allowsArrowNavigation,
     shouldSelectOnPressUp,
     onAction
   } = props;
 
   let {direction} = useLocale();
-  let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state)!;
+  let {
+    keyboardDelegate,
+    actions: {onCellAction},
+    keyboardNavigationBehavior
+  } = gridMap.get(state)!;
+  let focusMode = focusModeProp ?? (keyboardNavigationBehavior === 'tab' ? 'cell' : 'child');
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
@@ -79,13 +113,17 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       let treeWalker = getFocusableTreeWalker(ref.current);
       if (focusMode === 'child') {
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
-        if (isFocusWithin(ref.current) && ref.current !== getActiveElement()) {
+        if (
+          isFocusWithin(ref.current) &&
+          ref.current !== getActiveElement(getOwnerDocument(ref.current))
+        ) {
           return;
         }
 
-        let focusable = state.selectionManager.childFocusStrategy === 'last'
-          ? last(treeWalker)
-          : treeWalker.firstChild() as FocusableElement;
+        let focusable =
+          state.selectionManager.childFocusStrategy === 'last'
+            ? last(treeWalker)
+            : (treeWalker.firstChild() as FocusableElement);
         if (focusable) {
           focusSafely(focusable);
           return;
@@ -113,8 +151,13 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
-    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || state.isKeyboardNavigationDisabled || !ref.current || !activeElement) {
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
+    if (
+      !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
+      state.isKeyboardNavigationDisabled ||
+      !ref.current ||
+      !activeElement
+    ) {
       return;
     }
 
@@ -124,9 +167,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     switch (e.key) {
       case 'ArrowLeft': {
         // Find the next focusable element within the cell.
-        let focusable: FocusableElement | null = direction === 'rtl'
-          ? walker.nextNode() as FocusableElement
-          : walker.previousNode() as FocusableElement;
+        let focusable: FocusableElement | null =
+          direction === 'rtl'
+            ? (walker.nextNode() as FocusableElement)
+            : (walker.previousNode() as FocusableElement);
 
         // Don't focus the cell itself if focusMode is "child"
         if (focusMode === 'child' && focusable === ref.current) {
@@ -160,9 +204,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
             scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
-            focusable = direction === 'rtl'
-              ? walker.firstChild() as FocusableElement
-              : last(walker);
+            focusable =
+              direction === 'rtl' ? (walker.firstChild() as FocusableElement) : last(walker);
             if (focusable) {
               focusSafely(focusable);
               scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
@@ -172,9 +215,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         break;
       }
       case 'ArrowRight': {
-        let focusable: FocusableElement | null = direction === 'rtl'
-          ? walker.previousNode() as FocusableElement
-          : walker.nextNode() as FocusableElement;
+        let focusable: FocusableElement | null =
+          direction === 'rtl'
+            ? (walker.previousNode() as FocusableElement)
+            : (walker.nextNode() as FocusableElement);
 
         if (focusMode === 'child' && focusable === ref.current) {
           focusable = null;
@@ -202,9 +246,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
             scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
-            focusable = direction === 'rtl'
-              ? last(walker)
-              : walker.firstChild() as FocusableElement;
+            focusable =
+              direction === 'rtl' ? last(walker) : (walker.firstChild() as FocusableElement);
             if (focusable) {
               focusSafely(focusable);
               scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
@@ -229,9 +272,44 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     }
   };
 
+  let onKeyDown = (e: ReactKeyboardEvent) => {
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
+    if (
+      !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
+      state.isKeyboardNavigationDisabled ||
+      !ref.current ||
+      !activeElement
+    ) {
+      return;
+    }
+
+    if (keyboardNavigationBehavior === 'tab') {
+      if (getEventTarget(e) !== ref.current && e.key !== 'Tab') {
+        e.stopPropagation();
+        return;
+      }
+    }
+
+    switch (e.key) {
+      case 'Tab': {
+        if (keyboardNavigationBehavior === 'tab') {
+          // If there is another focusable element within this item, stop propagation so the tab key
+          // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+          walker.currentNode = activeElement;
+          let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
+
+          if (next) {
+            e.stopPropagation();
+          }
+        }
+      }
+    }
+  };
+
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
-  let onFocus = (e) => {
+  let onFocus = e => {
     keyWhenFocused.current = node.key;
     if (getEventTarget(e) !== ref.current) {
       // useSelectableItem only handles setting the focused key when
@@ -246,22 +324,41 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       return;
     }
 
-    // If the cell itself is focused, wait a frame so that focus finishes propagatating
+    // if focus goes back to cell from child, make sure we don't refocus the cell if we are in focusMode=child
+    // since that would be a focus trap
+    if (
+      focusMode === 'child' &&
+      e.relatedTarget &&
+      nodeContains(ref.current, e.relatedTarget as Element)
+    ) {
+      return;
+    }
+
+    // If the cell itself is focused, wait a frame so that focus finishes propagating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (focusMode === 'child' && getActiveElement() === ref.current) {
+      if (
+        focusMode === 'child' &&
+        getActiveElement(getOwnerDocument(ref.current)) === ref.current
+      ) {
         focus();
       }
     });
   };
 
+  // oxlint-disable-next-line react/react-compiler
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
-    onKeyDownCapture,
+    onKeyDownCapture:
+      keyboardNavigationBehavior !== 'tab' || allowsArrowNavigation ? onKeyDownCapture : undefined,
+    onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
     'aria-colspan': node.colSpan,
     'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
     colSpan: isVirtualized ? undefined : node.colSpan,
-    onFocus
+    onFocus,
+    // make sure shift tabbing from a child of a cell doesnt move focus back to cell if focusMode="child" and in tab nav
+    // consistent with arrow nav and focusMode="child" since you can't go back to the cell there either
+    ...(focusMode === 'child' && keyboardNavigationBehavior === 'tab' ? {tabIndex: -1} : {})
   });
 
   if (isVirtualized) {
@@ -272,8 +369,12 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault
   // on pointer down, so the browser will try to focus the cell which has a tabIndex applied.
   // To avoid this, remove the tabIndex from the cell briefly on pointer down.
-  if (shouldSelectOnPressUp && gridCellProps.tabIndex != null && gridCellProps.onPointerDown == null) {
-    gridCellProps.onPointerDown = (e) => {
+  if (
+    shouldSelectOnPressUp &&
+    gridCellProps.tabIndex != null &&
+    gridCellProps.onPointerDown == null
+  ) {
+    gridCellProps.onPointerDown = e => {
       let el = e.currentTarget;
       let tabindex = el.getAttribute('tabindex');
       el.removeAttribute('tabindex');

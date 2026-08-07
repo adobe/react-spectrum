@@ -3,15 +3,15 @@ import {Table, TableHeader, Column, TableBody, Row, Cell} from 'vanilla-starter/
 import {DragAndDropHooks} from 'react-aria-components';
 
 export interface Pokemon {
-  id: number,
-  name: string,
-  type: string,
-  level?: number
+  id: number;
+  name: string;
+  type: string;
+  level?: number;
 }
 
 interface PokemonTableProps {
-  items?: Pokemon[],
-  dragAndDropHooks?: DragAndDropHooks<Pokemon>
+  items?: Pokemon[];
+  dragAndDropHooks?: DragAndDropHooks<Pokemon>;
 }
 
 ///- begin collapse -///
@@ -27,10 +27,7 @@ export function PokemonTable(props: PokemonTableProps) {
   let {items = defaultItems, dragAndDropHooks} = props;
 
   return (
-    <Table
-      aria-label="Pokemon table"
-      selectionMode="multiple"
-      dragAndDropHooks={dragAndDropHooks}>
+    <Table aria-label="Pokemon table" selectionMode="multiple" dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>

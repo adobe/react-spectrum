@@ -14,7 +14,9 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('DatePicker SSR', function () {
   it('should render a DatePicker without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {DatePicker} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
@@ -22,11 +24,14 @@ describe('DatePicker SSR', function () {
       <Provider theme={theme}>
         <DatePicker label="Date" />
       </Provider>
-    `);
+    `
+    );
   });
 
   it('should render a DateRangePicker without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {DateRangePicker} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
@@ -34,11 +39,14 @@ describe('DatePicker SSR', function () {
       <Provider theme={theme}>
         <DateRangePicker label="Date range" />
       </Provider>
-    `);
+    `
+    );
   });
 
   it('should render a DateField without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {DateField} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
@@ -46,11 +54,14 @@ describe('DatePicker SSR', function () {
       <Provider theme={theme}>
         <DateField label="Date" />
       </Provider>
-    `);
+    `
+    );
   });
 
   it('should render a TimeField without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {TimeField} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
@@ -58,6 +69,7 @@ describe('DatePicker SSR', function () {
       <Provider theme={theme}>
         <TimeField label="Time" />
       </Provider>
-    `);
+    `
+    );
   });
 });

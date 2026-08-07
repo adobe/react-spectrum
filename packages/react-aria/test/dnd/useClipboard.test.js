@@ -27,7 +27,9 @@ function Copyable(props) {
   });
 
   return (
-    <div tabIndex="0" role="button" {...clipboardProps}>Copy</div>
+    <div tabIndex="0" role="button" {...clipboardProps}>
+      Copy
+    </div>
   );
 }
 
@@ -204,9 +206,11 @@ describe('useClipboard', () => {
 
   describe('data', () => {
     it('should work with custom data types', async () => {
-      let getItems = () => [{
-        test: 'test data'
-      }];
+      let getItems = () => [
+        {
+          test: 'test data'
+        }
+      ];
 
       let onPaste = jest.fn();
       let tree = render(<Copyable getItems={getItems} onPaste={onPaste} />);
@@ -233,11 +237,14 @@ describe('useClipboard', () => {
     });
 
     it('should work with multiple items of the same custom type', async () => {
-      let getItems = () => [{
-        test: 'item 1'
-      }, {
-        test: 'item 2'
-      }];
+      let getItems = () => [
+        {
+          test: 'item 1'
+        },
+        {
+          test: 'item 2'
+        }
+      ];
 
       let onPaste = jest.fn();
       let tree = render(<Copyable getItems={getItems} onPaste={onPaste} />);
@@ -252,8 +259,8 @@ describe('useClipboard', () => {
         new DataTransferItem('test', 'item 1'),
         new DataTransferItem(
           'application/vnd.react-aria.items+json',
-          JSON.stringify([{test: 'item 1'}, {test: 'item 2'}]
-        ))
+          JSON.stringify([{test: 'item 1'}, {test: 'item 2'}])
+        )
       ]);
 
       fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
@@ -276,10 +283,12 @@ describe('useClipboard', () => {
     });
 
     it('should work with items of multiple types', async () => {
-      let getItems = () => [{
-        test: 'test data',
-        'text/plain': 'test data'
-      }];
+      let getItems = () => [
+        {
+          test: 'test data',
+          'text/plain': 'test data'
+        }
+      ];
 
       let onPaste = jest.fn();
       let tree = render(<Copyable getItems={getItems} onPaste={onPaste} />);
@@ -295,8 +304,8 @@ describe('useClipboard', () => {
         new DataTransferItem('text/plain', 'test data'),
         new DataTransferItem(
           'application/vnd.react-aria.items+json',
-          JSON.stringify([{test: 'test data', 'text/plain': 'test data'}]
-        ))
+          JSON.stringify([{test: 'test data', 'text/plain': 'test data'}])
+        )
       ]);
 
       fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
@@ -314,13 +323,16 @@ describe('useClipboard', () => {
     });
 
     it('should work with multiple items of multiple types', async () => {
-      let getItems = () => [{
-        test: 'item 1',
-        'text/plain': 'item 1'
-      }, {
-        test: 'item 2',
-        'text/plain': 'item 2'
-      }];
+      let getItems = () => [
+        {
+          test: 'item 1',
+          'text/plain': 'item 1'
+        },
+        {
+          test: 'item 2',
+          'text/plain': 'item 2'
+        }
+      ];
 
       let onPaste = jest.fn();
       let tree = render(<Copyable getItems={getItems} onPaste={onPaste} />);
@@ -339,8 +351,8 @@ describe('useClipboard', () => {
           JSON.stringify([
             {test: 'item 1', 'text/plain': 'item 1'},
             {test: 'item 2', 'text/plain': 'item 2'}
-          ]
-        ))
+          ])
+        )
       ]);
 
       fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
@@ -365,9 +377,11 @@ describe('useClipboard', () => {
     });
 
     it('should show the action type of the clipboard event if cutting', async () => {
-      let getItems = (details) => [{
-        [details.action]: 'test data'
-      }];
+      let getItems = details => [
+        {
+          [details.action]: 'test data'
+        }
+      ];
 
       let onCut = jest.fn();
       let tree = render(<Copyable getItems={getItems} onCut={onCut} />);
@@ -383,9 +397,11 @@ describe('useClipboard', () => {
     });
 
     it('should show the action type of the clipboard event if copying', async () => {
-      let getItems = (details) => [{
-        [details.action]: 'test data'
-      }];
+      let getItems = details => [
+        {
+          [details.action]: 'test data'
+        }
+      ];
 
       let onCopy = jest.fn();
       let tree = render(<Copyable getItems={getItems} onCopy={onCopy} />);
@@ -401,4 +417,3 @@ describe('useClipboard', () => {
     });
   });
 });
-

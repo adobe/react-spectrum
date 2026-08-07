@@ -62,7 +62,10 @@ export const TrackGradient: SliderStory = {
 let contextualHelp = (
   <ContextualHelp>
     <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    <Content>
+      Segments identify who your visitors are, what devices and services they use, where they
+      navigated from, and much more.
+    </Content>
   </ContextualHelp>
 );
 

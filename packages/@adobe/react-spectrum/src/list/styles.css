@@ -15,43 +15,86 @@
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
   --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-85);
   --spectrum-listview-item-spacious-padding-y: var(--spectrum-global-dimension-size-100);
-  --spectrum-listview-border-width: var(--spectrum-table-border-size, var(--spectrum-alias-border-size-thin));
-  --spectrum-listview-border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
-  --spectrum-listview-item-border-radius: calc(var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width));
+  --spectrum-listview-border-width: var(
+    --spectrum-table-border-size,
+    var(--spectrum-alias-border-size-thin)
+  );
+  --spectrum-listview-border-radius: var(
+    --spectrum-table-border-radius,
+    var(--spectrum-alias-border-radius-regular)
+  );
+  --spectrum-listview-item-border-radius: calc(
+    var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width)
+  );
   --spectrum-listview-row-sticky-focus-indicator-width: 3px;
-  --spectrum-listview-item-line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
+  --spectrum-listview-item-line-height: calc(
+    var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) *
+      var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px
+  );
   --spectrum-listview-item-title-text-color: var(--spectrum-global-color-gray-800);
   --spectrum-listview-item-title-text-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-listview-item-description-text-color: var(--spectrum-global-color-gray-700);
   --spectrum-listview-item-description-text-size: var(--spectrum-global-dimension-font-size-75);
 
-  --spectrum-listview-border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
-  --spectrum-listview-border-color-key-focus: var(--spectrum-table-cell-border-color-key-focus, var(--spectrum-alias-focus-color));
-  --spectrum-listview-background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+  --spectrum-listview-border-color: var(
+    --spectrum-table-border-color,
+    var(--spectrum-alias-border-color-mid)
+  );
+  --spectrum-listview-border-color-key-focus: var(
+    --spectrum-table-cell-border-color-key-focus,
+    var(--spectrum-alias-focus-color)
+  );
+  --spectrum-listview-background-color: var(
+    --spectrum-table-background-color,
+    var(--spectrum-global-color-gray-50)
+  );
   --spectrum-listview-item-background-color-hover: var(--spectrum-table-row-background-color-hover);
   --spectrum-listview-item-background-color-down: var(--spectrum-table-row-background-color-down);
-  --spectrum-listview-item-background-color-selected: var(--spectrum-table-row-background-color-selected);
-  --spectrum-listview-item-background-color-selected-hover: var(--spectrum-table-row-background-color-selected);
-  --spectrum-listview-item-background-color-selected-key-focus: var(--spectrum-table-row-background-color-selected-key-focus);
-  --spectrum-listview-item-border-color: var(--spectrum-table-cell-border-color, var(--spectrum-alias-border-color-mid));
+  --spectrum-listview-item-background-color-selected: var(
+    --spectrum-table-row-background-color-selected
+  );
+  --spectrum-listview-item-background-color-selected-hover: var(
+    --spectrum-table-row-background-color-selected
+  );
+  --spectrum-listview-item-background-color-selected-key-focus: var(
+    --spectrum-table-row-background-color-selected-key-focus
+  );
+  --spectrum-listview-item-border-color: var(
+    --spectrum-table-cell-border-color,
+    var(--spectrum-alias-border-color-mid)
+  );
   --spectrum-listview-item-border-color-selected: var(--spectrum-global-color-blue-500);
-  --spectrum-listview-item-border-color-key-focus: var(--spectrum-table-cell-border-color-key-focus, var(--spectrum-alias-focus-color));
-  --spectrum-listview-row-sticky-focus-indicator-color: var(--spectrum-selectlist-option-focus-indicator-color);
+  --spectrum-listview-item-border-color-key-focus: var(
+    --spectrum-table-cell-border-color-key-focus,
+    var(--spectrum-alias-focus-color)
+  );
+  --spectrum-listview-row-sticky-focus-indicator-color: var(
+    --spectrum-selectlist-option-focus-indicator-color
+  );
   --spectrum-listview-quiet-background-color: var(--spectrum-alias-background-color-transparent);
-  --spectrum-listview-item-text-color: var(--spectrum-table-cell-text-color, var(--spectrum-alias-text-color));
+  --spectrum-listview-item-text-color: var(
+    --spectrum-table-cell-text-color,
+    var(--spectrum-alias-text-color)
+  );
   --spectrum-listview-item-text-color-disabled: var(--spectrum-alias-text-color-disabled);
   --spectrum-listview-droptarget-background-color: var(--spectrum-alias-highlight-selected);
   --spectrum-listview-dropindicator-border-color: var(--spectrum-dropindicator-border-color);
-  --spectrum-listview-dropindicator-circle-border-color: var(--spectrum-dropindicator-circle-border-color);
+  --spectrum-listview-dropindicator-circle-border-color: var(
+    --spectrum-dropindicator-circle-border-color
+  );
 
   --spectrum-listview-dropindicator-circle-size: var(--spectrum-dropindicator-circle-size);
   --spectrum-listview-dropindicator-border-size: var(--spectrum-dropindicator-border-size);
 
-  --spectrum-listview-dropzone-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
+  --spectrum-listview-dropzone-border-color-selected-hover: var(
+    --spectrum-dropzone-border-color-selected-hover
+  );
   --spectrum-listview-item-badge-text-color: var(--spectrum-global-color-static-white);
   --spectrum-listview-item-badge-background-color: var(--spectrum-global-color-blue-400);
 
-  --spectrum-listview-item-draghandle-border-color-key-focus: var(--spectrum-listview-item-border-color-key-focus);
+  --spectrum-listview-item-draghandle-border-color-key-focus: var(
+    --spectrum-listview-item-border-color-key-focus
+  );
 }
 
 .react-spectrum-ListView {
@@ -138,7 +181,9 @@
       .react-spectrum-ListViewItem {
         /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row (grey border bottom). */
         /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
-        &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
+        &:not(.is-selected):not(.is-next-selected):not(
+            .react-spectrum-ListViewItem--isFlushBottom
+          ) {
           &:after {
             box-shadow: inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
           }
@@ -270,7 +315,10 @@
   display: grid; /* TODO: define grid areas */
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
-  font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
+  font-weight: var(
+    --spectrum-table-cell-text-font-weight,
+    var(--spectrum-global-font-weight-regular)
+  );
   line-height: var(--spectrum-listview-item-line-height);
   padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-160);
   position: relative;
@@ -306,7 +354,9 @@
   }
 
   &.is-disabled {
-    &, .react-spectrum-ListViewItem-content, .react-spectrum-ListViewItem-description {
+    &,
+    .react-spectrum-ListViewItem-content,
+    .react-spectrum-ListViewItem-description {
       color: var(--spectrum-listview-item-text-color-disabled);
     }
   }
@@ -322,8 +372,8 @@
     grid-template-columns: auto auto auto 1fr auto auto auto;
     grid-template-rows: 1fr auto;
     grid-template-areas:
-      "draghandle checkbox thumbnail content actions actionmenu chevron"
-      "draghandle checkbox thumbnail description actions actionmenu chevron";
+      'draghandle checkbox thumbnail content actions actionmenu chevron'
+      'draghandle checkbox thumbnail description actions actionmenu chevron';
     align-items: center;
   }
 
@@ -336,7 +386,6 @@
     justify-content: center;
     padding: var(--spectrum-global-dimension-size-25);
     padding-inline-start: var(--spectrum-global-dimension-size-40);
-
 
     .react-spectrum-ListViewItem-draghandle-button {
       width: var(--spectrum-global-dimension-size-200);
@@ -461,8 +510,8 @@
 
     .react-spectrum-ListViewItem-grid {
       grid-template-areas:
-        "thumbnail content     . badge"
-        "thumbnail description . badge";
+        'thumbnail content     . badge'
+        'thumbnail description . badge';
       grid-template-columns: auto auto 1fr auto;
     }
 
@@ -589,7 +638,9 @@
 
   /* Add border to quiet ListView only when it is a drop target */
   &.react-spectrum-ListView--quiet {
-    box-shadow: inset 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus), 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus);
+    box-shadow:
+      inset 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus),
+      0 0 0 1px var(--spectrum-listview-item-border-color-key-focus);
   }
 }
 
@@ -630,7 +681,10 @@
     &:after {
       content: '';
       position: absolute;
-      top: calc(var(--spectrum-listview-dropindicator-circle-size) * -1 / 2 + var(--spectrum-listview-dropindicator-border-size) / 2);
+      top: calc(
+        var(--spectrum-listview-dropindicator-circle-size) * -1 / 2 +
+          var(--spectrum-listview-dropindicator-border-size) / 2
+      );
       width: var(--spectrum-listview-dropindicator-circle-size);
       height: var(--spectrum-listview-dropindicator-circle-size);
       border-radius: 50%;
@@ -698,7 +752,8 @@
         the selected, not selected, selected + focused and selected + not focused
         states without using a background color on the row in forced-colors: active mode. */
         &:after {
-          outline: var(--spectrum-listview-row-sticky-focus-indicator-width) solid var(--spectrum-listview-row-sticky-focus-indicator-color);
+          outline: var(--spectrum-listview-row-sticky-focus-indicator-width) solid
+            var(--spectrum-listview-row-sticky-focus-indicator-color);
           outline-offset: calc(-1 * var(--spectrum-listview-row-sticky-focus-indicator-width));
           top: calc(-1 * var(--spectrum-listview-border-width));
           height: calc(100% + var(--spectrum-listview-border-width));
@@ -716,5 +771,4 @@
       --spectrum-listview-item-draghandle-border-color-key-focus: CanvasText;
     }
   }
-
 }

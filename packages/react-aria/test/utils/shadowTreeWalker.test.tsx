@@ -58,7 +58,7 @@ describe('ShadowTreeWalker', () => {
           <div id="div-four" />
         </>
       );
-      let filterFn = (node) => {
+      let filterFn = node => {
         if (node.tagName === 'INPUT') {
           return NodeFilter.FILTER_ACCEPT;
         }
@@ -91,19 +91,23 @@ describe('ShadowTreeWalker', () => {
           </div>
         </>
       );
-      let realFilterFn = jest.fn((node) => {
+      let realFilterFn = jest.fn(node => {
         if (node.tagName === 'INPUT') {
           return NodeFilter.FILTER_ACCEPT;
         }
         return NodeFilter.FILTER_SKIP;
       });
-      let filterFn = jest.fn((node) => {
+      let filterFn = jest.fn(node => {
         if (node.tagName === 'INPUT') {
           return NodeFilter.FILTER_ACCEPT;
         }
         return NodeFilter.FILTER_SKIP;
       });
-      let realTreeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, realFilterFn);
+      let realTreeWalker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_ALL,
+        realFilterFn
+      );
       let walker = createShadowTreeWalker(document, document.body, undefined, filterFn);
       expect(walker.currentNode).toBe(realTreeWalker.currentNode);
       expect(walker.firstChild()).toBe(realTreeWalker.firstChild());
@@ -125,19 +129,21 @@ describe('ShadowTreeWalker', () => {
   describe('Shadow dom at root', () => {
     it('walks through the dom with shadow dom', () => {
       let {shadowRoot, cleanup} = createShadowRoot();
-      let Contents = () => ReactDOM.createPortal(
-        <>
-          <div id="div-one" />
-          <input id="input-one" />
-          <div id="div-two" />
-          <input id="input-two" />
-          <div id="div-three" />
-          <input id="input-three" />
-          <div id="div-four" />
-        </>
-      , shadowRoot);
+      let Contents = () =>
+        ReactDOM.createPortal(
+          <>
+            <div id="div-one" />
+            <input id="input-one" />
+            <div id="div-two" />
+            <input id="input-two" />
+            <div id="div-three" />
+            <input id="input-three" />
+            <div id="div-four" />
+          </>,
+          shadowRoot
+        );
       let {unmount} = render(<Contents />);
-      let filterFn = (node) => {
+      let filterFn = node => {
         if (node.tagName === 'INPUT') {
           return NodeFilter.FILTER_ACCEPT;
         }
@@ -165,32 +171,45 @@ describe('ShadowTreeWalker', () => {
     it('walks through the dom with multiple peer level shadow doms', () => {
       let {shadowRoot, shadowHost, cleanup} = createShadowRoot();
       shadowHost.setAttribute('id', 'num-1');
-      let {shadowRoot: shadowRoot2, shadowHost: shadowHost2, cleanup: cleanup2} = createShadowRoot();
+      let {
+        shadowRoot: shadowRoot2,
+        shadowHost: shadowHost2,
+        cleanup: cleanup2
+      } = createShadowRoot();
       shadowHost2.setAttribute('id', 'num-2');
-      let Contents = () => ReactDOM.createPortal(
+      let Contents = () =>
+        ReactDOM.createPortal(
+          <>
+            <div id="div-one" />
+            <input id="input-one" />
+            <div id="div-two" />
+            <input id="input-two" />
+            <div id="div-three" />
+            <input id="input-three" />
+            <div id="div-four" />
+          </>,
+          shadowRoot
+        );
+      let Contents2 = () =>
+        ReactDOM.createPortal(
+          <>
+            <div id="div-five" />
+            <input id="input-four" />
+            <div id="div-six" />
+            <input id="input-five" />
+            <div id="div-seven" />
+            <input id="input-six" />
+            <div id="div-eight" />
+          </>,
+          shadowRoot2
+        );
+      let {unmount} = render(
         <>
-          <div id="div-one" />
-          <input id="input-one" />
-          <div id="div-two" />
-          <input id="input-two" />
-          <div id="div-three" />
-          <input id="input-three" />
-          <div id="div-four" />
+          <Contents />
+          <Contents2 />
         </>
-      , shadowRoot);
-      let Contents2 = () => ReactDOM.createPortal(
-        <>
-          <div id="div-five" />
-          <input id="input-four" />
-          <div id="div-six" />
-          <input id="input-five" />
-          <div id="div-seven" />
-          <input id="input-six" />
-          <div id="div-eight" />
-        </>
-      , shadowRoot2);
-      let {unmount} = render(<><Contents /><Contents2 /></>);
-      let filterFn = (node) => {
+      );
+      let filterFn = node => {
         if (node.tagName === 'INPUT') {
           return NodeFilter.FILTER_ACCEPT;
         }
@@ -220,34 +239,51 @@ describe('ShadowTreeWalker', () => {
     it('walks through the dom with multiple nested shadow doms', () => {
       let {shadowHost, cleanup} = createShadowRoot();
       shadowHost.setAttribute('id', 'parent');
-      let {shadowRoot: shadowRoot1, shadowHost: shadowHost1, cleanup: cleanup2} = createShadowRoot(shadowHost);
+      let {
+        shadowRoot: shadowRoot1,
+        shadowHost: shadowHost1,
+        cleanup: cleanup2
+      } = createShadowRoot(shadowHost);
       shadowHost1.setAttribute('id', 'num-1');
-      let {shadowRoot: shadowRoot2, shadowHost: shadowHost2, cleanup: cleanup3} = createShadowRoot(shadowHost);
+      let {
+        shadowRoot: shadowRoot2,
+        shadowHost: shadowHost2,
+        cleanup: cleanup3
+      } = createShadowRoot(shadowHost);
       shadowHost2.setAttribute('id', 'num-2');
-      let Contents = () => ReactDOM.createPortal(
+      let Contents = () =>
+        ReactDOM.createPortal(
+          <>
+            <div id="div-one" />
+            <input id="input-one" />
+            <div id="div-two" />
+            <input id="input-two" />
+            <div id="div-three" />
+            <input id="input-three" />
+            <div id="div-four" />
+          </>,
+          shadowRoot1
+        );
+      let Contents2 = () =>
+        ReactDOM.createPortal(
+          <>
+            <div id="div-five" />
+            <input id="input-four" />
+            <div id="div-six" />
+            <input id="input-five" />
+            <div id="div-seven" />
+            <input id="input-six" />
+            <div id="div-eight" />
+          </>,
+          shadowRoot2
+        );
+      let {unmount} = render(
         <>
-          <div id="div-one" />
-          <input id="input-one" />
-          <div id="div-two" />
-          <input id="input-two" />
-          <div id="div-three" />
-          <input id="input-three" />
-          <div id="div-four" />
+          <Contents />
+          <Contents2 />
         </>
-      , shadowRoot1);
-      let Contents2 = () => ReactDOM.createPortal(
-        <>
-          <div id="div-five" />
-          <input id="input-four" />
-          <div id="div-six" />
-          <input id="input-five" />
-          <div id="div-seven" />
-          <input id="input-six" />
-          <div id="div-eight" />
-        </>
-      , shadowRoot2);
-      let {unmount} = render(<><Contents /><Contents2 /></>);
-      let filterFn = (node) => {
+      );
+      let filterFn = node => {
         if (node.tagName === 'INPUT') {
           return NodeFilter.FILTER_ACCEPT;
         }
@@ -278,16 +314,20 @@ describe('ShadowTreeWalker', () => {
 });
 
 describe.skip('speed test', () => {
-  let Component = (props) => {
+  let Component = props => {
     if (props.depth === 0) {
       return <div data-testid="hello">hello</div>;
     }
-    return <div><Component depth={props.depth - 1} /></div>;
+    return (
+      <div>
+        <Component depth={props.depth - 1} />
+      </div>
+    );
   };
   it.each`
-  Name | createTreeWalker
-  ${'native'} | ${() => document.createTreeWalker(document.body, NodeFilter.SHOW_ALL)}
-  ${'shadow'} | ${() => createShadowTreeWalker(document, document.body)}
+    Name        | createTreeWalker
+    ${'native'} | ${() => document.createTreeWalker(document.body, NodeFilter.SHOW_ALL)}
+    ${'shadow'} | ${() => createShadowTreeWalker(document, document.body)}
   `('$Name', ({createTreeWalker}) => {
     render(
       <>
@@ -316,7 +356,6 @@ describe.skip('speed test', () => {
     console.log(`Time taken for 10000 iterations: ${end - start}ms`);
   });
 });
-
 
 // describe('checking if node is contained', () => {
 //   let user;

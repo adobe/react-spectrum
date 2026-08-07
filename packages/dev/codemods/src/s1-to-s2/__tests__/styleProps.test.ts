@@ -18,37 +18,54 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Handles dimensions', `
+test(
+  'Handles dimensions',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 <Button marginX="size-200" marginY={20} width="100%" minWidth="fit-content">Test</Button>
-`);
+`
+);
 
-test('Should keep import aliases', `
+test(
+  'Should keep import aliases',
+  `
 import {Button as RSPButton} from '@adobe/react-spectrum';
 
 <RSPButton marginX="size-200" marginY={20} width="100%">Test</RSPButton>
-`);
+`
+);
 
-test('Adds a comment when a variable is used', `
+test(
+  'Adds a comment when a variable is used',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 <Button marginX={margin}>Test</Button>
-`);
+`
+);
 
-test('Adds a comment when a spread is used', `
+test(
+  'Adds a comment when a spread is used',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 <Button marginX="size-200" {...otherProps}>Test</Button>
-`);
+`
+);
 
-test('Handles Flex', `
+test(
+  'Handles Flex',
+  `
 import {Flex} from '@adobe/react-spectrum';
 
 <Flex direction="column" alignItems="center" gap="size-200" wrap>Test</Flex>
-`);
+`
+);
 
-test('Handles Grid', `
+test(
+  'Handles Grid',
+  `
 import {Grid} from '@adobe/react-spectrum';
 
 <Grid
@@ -63,9 +80,12 @@ import {Grid} from '@adobe/react-spectrum';
   gap="size-100">
   Test
 </Grid>
-`);
+`
+);
 
-test('Handles View', `
+test(
+  'Handles View',
+  `
 import {View} from '@adobe/react-spectrum';
 
 <View
@@ -77,9 +97,12 @@ import {View} from '@adobe/react-spectrum';
   flex>
   Test
 </View>
-`);
+`
+);
 
-test('Handles View colorVersion={5}', `
+test(
+  'Handles View colorVersion={5}',
+  `
 import {View} from '@adobe/react-spectrum';
 
 <View
@@ -91,9 +114,12 @@ import {View} from '@adobe/react-spectrum';
   colorVersion={5}>
   Test
 </View>
-`);
+`
+);
 
-test('Handles View colorVersion={6}', `
+test(
+  'Handles View colorVersion={6}',
+  `
 import {View} from '@adobe/react-spectrum';
 
 <View
@@ -105,15 +131,21 @@ import {View} from '@adobe/react-spectrum';
   colorVersion={6}>
   Test
 </View>
-`);
+`
+);
 
-test('Handles responsive style props', `
+test(
+  'Handles responsive style props',
+  `
 import {TextField} from '@adobe/react-spectrum';
 
 <TextField label="Name" width={{ base: 'size-2000', L: 'size-5000' }} />
-`);
+`
+);
 
-test('Handles UNSAFE_style', `
+test(
+  'Handles UNSAFE_style',
+  `
 import {View} from '@adobe/react-spectrum';
 
 <View
@@ -130,9 +162,12 @@ import {View} from '@adobe/react-spectrum';
   }}>
   Test
 </View>
-`);
+`
+);
 
-test('Bails on UNSAFE_style if it contains a spread', `
+test(
+  'Bails on UNSAFE_style if it contains a spread',
+  `
 import {View} from '@adobe/react-spectrum';
 
 <View
@@ -142,45 +177,63 @@ import {View} from '@adobe/react-spectrum';
   }}>
   Test
 </View>
-`);
+`
+);
 
-test('Adds a comment to UNSAFE_className', `
+test(
+  'Adds a comment to UNSAFE_className',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 <Button UNSAFE_className="hi">
   Test
 </Button>
-`);
+`
+);
 
-test('Converts UNSAFE_className to className on View', `
+test(
+  'Converts UNSAFE_className to className on View',
+  `
 import {View} from '@adobe/react-spectrum';
 
 <View UNSAFE_className="hi">
   Test
 </View>
-`);
+`
+);
 
-test('Merges UNSAFE_className with macro className', `
+test(
+  'Merges UNSAFE_className with macro className',
+  `
 import {View} from '@adobe/react-spectrum';
 
 <View UNSAFE_className="hi" marginX="size-200">
   Test
 </View>
-`);
+`
+);
 
-test('Handles responsive style props', `
+test(
+  'Handles responsive style props',
+  `
 import {TextField} from '@adobe/react-spectrum';
 
 <TextField label="Name" width={{ base: 'size-2000', L: 'size-5000' }} />
-`);
+`
+);
 
-test('Leaves comment for invalid style props', `
+test(
+  'Leaves comment for invalid style props',
+  `
 import {TextField} from '@adobe/react-spectrum';
 
 <TextField label="Name" width="250" />
-`);
+`
+);
 
-test('Updates left/right layout values to be start/end', `
+test(
+  'Updates left/right layout values to be start/end',
+  `
 import {Button, Flex} from '@adobe/react-spectrum';
 
 <>
@@ -198,16 +251,22 @@ import {Button, Flex} from '@adobe/react-spectrum';
   <Button alignSelf="right">Test</Button>
   <Button justifySelf="right">Test</Button>
 </>
-`);
+`
+);
 
-test('Should leave existing style macros unaffected', `  
+test(
+  'Should leave existing style macros unaffected',
+  `  
 import { TextField } from "@react-spectrum/s2";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <TextField label="Name" styles={style({width: 160})} />
-`);
+`
+);
 
-test('Handles multi-value margin/padding shorthands', `
+test(
+  'Handles multi-value margin/padding shorthands',
+  `
 import {View} from '@adobe/react-spectrum';
 
 <>
@@ -227,4 +286,5 @@ import {View} from '@adobe/react-spectrum';
 
   <View padding="10px 16px 20px 24px">Four Value Padding</View>
 </>
-`);
+`
+);

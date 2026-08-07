@@ -39,7 +39,8 @@ LabelPositionSide.story = {
   name: 'labelPosition: side'
 };
 
-export const LabelAlignEnd: TimeFieldStory = () => render({labelPosition: 'top', labelAlign: 'end'});
+export const LabelAlignEnd: TimeFieldStory = () =>
+  render({labelPosition: 'top', labelAlign: 'end'});
 
 LabelAlignEnd.story = {
   name: 'labelAlign: end'
@@ -51,7 +52,8 @@ Required.story = {
   name: 'required'
 };
 
-export const RequiredWithLabel: TimeFieldStory = () => render({isRequired: true, necessityIndicator: 'label'});
+export const RequiredWithLabel: TimeFieldStory = () =>
+  render({isRequired: true, necessityIndicator: 'label'});
 
 RequiredWithLabel.story = {
   name: 'required with label'
@@ -69,7 +71,8 @@ NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const QuietNoVisibleLabel: TimeFieldStory = () => render({isQuiet: true, 'aria-label': 'Time', label: null});
+export const QuietNoVisibleLabel: TimeFieldStory = () =>
+  render({isQuiet: true, 'aria-label': 'Time', label: null});
 
 QuietNoVisibleLabel.story = {
   name: 'quiet no visible label'
@@ -87,13 +90,15 @@ QuietCustomWidth.story = {
   name: 'quiet custom width'
 };
 
-export const CustomWidthNoVisibleLabel: TimeFieldStory = () => render({width: 'size-3000', label: null, 'aria-label': 'Time'});
+export const CustomWidthNoVisibleLabel: TimeFieldStory = () =>
+  render({width: 'size-3000', label: null, 'aria-label': 'Time'});
 
 CustomWidthNoVisibleLabel.story = {
   name: 'custom width no visible label'
 };
 
-export const CustomWidthLabelPositionSide: TimeFieldStory = () => render({width: 'size-3000', labelPosition: 'side'});
+export const CustomWidthLabelPositionSide: TimeFieldStory = () =>
+  render({width: 'size-3000', labelPosition: 'side'});
 
 CustomWidthLabelPositionSide.story = {
   name: 'custom width, labelPosition=side'
@@ -105,18 +110,25 @@ Description.story = {
   name: 'description'
 };
 
-export const ErrorMessage: TimeFieldStory = () => render({errorMessage: 'Time must be between 9 AM and 5 PM', validationState: 'invalid'});
+export const ErrorMessage: TimeFieldStory = () =>
+  render({errorMessage: 'Time must be between 9 AM and 5 PM', validationState: 'invalid'});
 
 ErrorMessage.story = {
   name: 'errorMessage'
 };
 
-export const _ContextualHelp: TimeFieldStory = () => render({contextualHelp: (
-  <ContextualHelp>
-    <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-  </ContextualHelp>
-)});
+export const _ContextualHelp: TimeFieldStory = () =>
+  render({
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  });
 
 _ContextualHelp.story = {
   name: 'contextual help'

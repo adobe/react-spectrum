@@ -16,8 +16,8 @@ import React from 'react';
 // TODO: testing :)
 describe('Grid', function () {
   it.each`
-    Name      | Component  | props
-    ${'Grid'} | ${Grid}    | ${{}}
+    Name      | Component | props
+    ${'Grid'} | ${Grid}   | ${{}}
   `('$Name handles defaults', function ({Component, props}) {
     expect(true).toBeTruthy();
   });

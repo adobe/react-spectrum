@@ -31,7 +31,9 @@ export const _NotFound: IllustratedMessageStory = {
       <>
         <NotFound />
         <Heading>Error 404: Page not found</Heading>
-        <Content>This page isn’t available. Try checking the URL or visit a different page.</Content>
+        <Content>
+          This page isn’t available. Try checking the URL or visit a different page.
+        </Content>
       </>
     )
   },
@@ -40,6 +42,6 @@ export const _NotFound: IllustratedMessageStory = {
 
 export const NoHeadingOrDescription: IllustratedMessageStory = {
   args: {
-    children: (<NotFound aria-label="No Results" />)
+    children: <NotFound aria-label="No Results" />
   }
 };

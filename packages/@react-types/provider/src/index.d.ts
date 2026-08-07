@@ -10,4 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-export {ColorScheme, Scale, Breakpoints, CSSModule, Theme, ProviderProps, ProviderContext} from '@react-spectrum/provider';
+export {
+  ColorScheme,
+  Scale,
+  Breakpoints,
+  CSSModule,
+  Theme,
+  ProviderProps,
+  ProviderContext
+} from '@react-spectrum/provider';

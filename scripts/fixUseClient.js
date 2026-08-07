@@ -7,7 +7,10 @@ for (let f of iconFiles) {
   fs.writeFileSync(f, contents);
 }
 
-for (let f of fs.globSync(['packages/@react-spectrum/s2/dist/**/*.mjs', 'packages/@react-spectrum/s2/dist/**/*.cjs'])) {
+for (let f of fs.globSync([
+  'packages/@react-spectrum/s2/dist/**/*.mjs',
+  'packages/@react-spectrum/s2/dist/**/*.cjs'
+])) {
   let contents = fs.readFileSync(f, 'utf8');
   contents = contents.replace(/['"]use client['"];?/g, '');
   fs.writeFileSync(f, contents);

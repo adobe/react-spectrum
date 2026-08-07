@@ -30,13 +30,13 @@ export default meta;
 type Story = StoryObj<typeof AlertDialog>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <DialogTrigger>
         <ActionButton>Save</ActionButton>
-        <AlertDialog {...args} >
-          You have not saved your profile information
-          for this account. Would you like to register now?
+        <AlertDialog {...args}>
+          You have not saved your profile information for this account. Would you like to register
+          now?
         </AlertDialog>
       </DialogTrigger>
     );

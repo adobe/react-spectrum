@@ -14,7 +14,9 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Accordion SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '../../exports/index.ts';
       <Accordion>
         <Disclosure id="files">
@@ -34,6 +36,7 @@ describe('Accordion SSR', function () {
           </DisclosurePanel>
         </Disclosure>
       </Accordion>
-    `);
+    `
+    );
   });
 });

@@ -16,9 +16,9 @@ import {RefObject} from 'react';
 import {useId} from '../utils/useId';
 
 interface Event {
-  altKey: boolean,
-  ctrlKey: boolean,
-  metaKey: boolean
+  altKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
 }
 
 export function isNonContiguousSelectionModifier(e: Event): boolean {
@@ -27,7 +27,10 @@ export function isNonContiguousSelectionModifier(e: Event): boolean {
   return isAppleDevice() ? e.altKey : e.ctrlKey;
 }
 
-export function getItemElement(collectionRef: RefObject<HTMLElement | null>, key: Key): Element | null | undefined {
+export function getItemElement(
+  collectionRef: RefObject<HTMLElement | null>,
+  key: Key
+): Element | null | undefined {
   let selector = `[data-key="${CSS.escape(String(key))}"]`;
   let collection = collectionRef.current?.dataset.collection;
   if (collection) {

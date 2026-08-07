@@ -39,7 +39,7 @@ describe('Group', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} =  render(<Group render={props => <div {...props} data-custom="true" />} />);
+    let {getByRole} = render(<Group render={props => <div {...props} data-custom="true" />} />);
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-custom', 'true');
   });
@@ -60,11 +60,15 @@ describe('Group', () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
     let hoverEndSpy = jest.fn();
-    let {getByRole} = render(<Group
-      className={({isHovered}) => isHovered ? 'hover' : ''}
-      onHoverStart={hoverStartSpy}
-      onHoverChange={hoverChangeSpy}
-      onHoverEnd={hoverEndSpy}>Test</Group>);
+    let {getByRole} = render(
+      <Group
+        className={({isHovered}) => (isHovered ? 'hover' : '')}
+        onHoverStart={hoverStartSpy}
+        onHoverChange={hoverChangeSpy}
+        onHoverEnd={hoverEndSpy}>
+        Test
+      </Group>
+    );
     let group = getByRole('group');
 
     expect(group).not.toHaveAttribute('data-hovered');
@@ -84,9 +88,11 @@ describe('Group', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = render(<Group className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-      <input type="text" />
-    </Group>);
+    let {getByRole} = render(
+      <Group className={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}>
+        <input type="text" />
+      </Group>
+    );
     let group = getByRole('group');
     let input = getByRole('textbox');
 
@@ -104,9 +110,11 @@ describe('Group', () => {
   });
 
   it('should not show focus ring when typing in pointer modality', async () => {
-    let {getByRole} = render(<Group className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-      <input type="text" />
-    </Group>);
+    let {getByRole} = render(
+      <Group className={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}>
+        <input type="text" />
+      </Group>
+    );
     let group = getByRole('group');
     let input = getByRole('textbox');
 
@@ -123,7 +131,11 @@ describe('Group', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = render(<Group isDisabled className={({isDisabled}) => isDisabled ? 'disabled' : ''}>Test</Group>);
+    let {getByRole} = render(
+      <Group isDisabled className={({isDisabled}) => (isDisabled ? 'disabled' : '')}>
+        Test
+      </Group>
+    );
     let group = getByRole('group');
 
     expect(group).toHaveAttribute('data-disabled', 'true');
@@ -131,7 +143,7 @@ describe('Group', () => {
   });
 
   it('should support render props', async () => {
-    let {getByRole} = render(<Group>{({isHovered}) => isHovered ? 'Hovered' : 'Group'}</Group>);
+    let {getByRole} = render(<Group>{({isHovered}) => (isHovered ? 'Hovered' : 'Group')}</Group>);
     let group = getByRole('group');
 
     expect(group).toHaveTextContent('Group');

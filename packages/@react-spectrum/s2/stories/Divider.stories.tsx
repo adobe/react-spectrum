@@ -30,7 +30,7 @@ export default meta;
 type Story = StoryObj<typeof Divider>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <section
       className={style({
         display: 'flex',
@@ -40,7 +40,7 @@ export const Example: Story = {
         flexDirection: {
           default: 'column',
           orientation: {
-            'vertical': 'row'
+            vertical: 'row'
           }
         },
         font: 'body',

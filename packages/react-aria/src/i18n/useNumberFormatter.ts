@@ -15,8 +15,9 @@ import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
 /**
- * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the number formatter for performance.
+ * Provides localized number formatting for the current locale. Automatically updates when the
+ * locale changes, and handles caching of the number formatter for performance.
+ *
  * @param options - Formatting options.
  */
 export function useNumberFormatter(options: NumberFormatOptions = {}): Intl.NumberFormat {

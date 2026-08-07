@@ -25,18 +25,15 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useUNSAFE_PortalContext} from 'react-aria/PortalProvider';
 
 interface ToastContainerProps extends AriaToastRegionProps {
-  children: ReactNode,
-  state: ToastState<unknown>,
-  placement?: ToastPlacement
+  children: ReactNode;
+  state: ToastState<unknown>;
+  placement?: ToastPlacement;
 }
 
 export const ToasterContext = createContext(false);
 
 export function Toaster(props: ToastContainerProps): ReactElement {
-  let {
-    children,
-    state
-  } = props;
+  let {children, state} = props;
 
   let ref = useRef(null);
   let {regionProps} = useToastRegion(props, state, ref);
@@ -57,11 +54,9 @@ export function Toaster(props: ToastContainerProps): ReactElement {
             ref={ref}
             data-position={position}
             data-placement={placement}
-            className={classNames(
-              toastContainerStyles,
-              'react-spectrum-ToastContainer',
-              {'focus-ring': isFocusVisible}
-            )}>
+            className={classNames(toastContainerStyles, 'react-spectrum-ToastContainer', {
+              'focus-ring': isFocusVisible
+            })}>
             {children}
           </div>
         </ToasterContext.Provider>

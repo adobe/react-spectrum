@@ -15,5 +15,11 @@ export {useAsyncList} from 'react-stately/useAsyncList';
 export {useTreeData} from 'react-stately/useTreeData';
 export {useListData} from 'react-stately/useListData';
 export type {ListOptions, ListData} from 'react-stately/useListData';
-export type {AsyncListOptions, AsyncListData, AsyncListLoadFunction, AsyncListLoadOptions, AsyncListStateUpdate} from 'react-stately/useAsyncList';
+export type {
+  AsyncListOptions,
+  AsyncListData,
+  AsyncListLoadFunction,
+  AsyncListLoadOptions,
+  AsyncListStateUpdate
+} from 'react-stately/useAsyncList';
 export type {TreeOptions, TreeData} from 'react-stately/useTreeData';

@@ -26,7 +26,7 @@ export default meta;
 type Story = StoryObj<typeof ColorArea>;
 
 export const Default: Story = {
-  render: (args) => <ColorArea {...args} />,
+  render: args => <ColorArea {...args} />,
   args: {
     defaultValue: 'hsl(30, 100%, 50%)'
   }

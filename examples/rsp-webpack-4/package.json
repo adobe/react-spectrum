@@ -1,9 +1,12 @@
 {
   "name": "rsp-cra-18-webpack-4",
   "version": "1.0.0",
+  "private": true,
   "description": "test esm with webpack 4",
+  "workspaces": [
+    "../../packages/*/*"
+  ],
   "main": "src/index.jsx",
-  "packageManager": "yarn@4.2.2",
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack-dev-server --mode development --open",
@@ -12,10 +15,6 @@
     "postinstall": "patch-package",
     "prepareForProd": "node ./scripts/prepareForProd.mjs"
   },
-  "private": true,
-  "workspaces": [
-    "../../packages/*/*"
-  ],
   "dependencies": {
     "@adobe/react-spectrum": "latest",
     "@react-spectrum/provider": "latest",
@@ -23,7 +22,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "NOTE": "Do not update Jest. The old version is used for testing.",
   "devDependencies": {
     "@babel/cli": "^7.24.3",
     "@babel/core": "^7.24.3",
@@ -40,5 +38,7 @@
   },
   "resolutions": {
     "terser-webpack-plugin": "4.2.3"
-  }
+  },
+  "packageManager": "yarn@4.2.2",
+  "NOTE": "Do not update Jest. The old version is used for testing."
 }

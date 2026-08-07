@@ -10,10 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Avatar, Card, CardPreview, CardView, CardViewProps, Collection, CollectionCardPreview, Content, Image, MenuItem, SkeletonCollection, Text} from '@react-spectrum/s2';
+import {
+  ActionMenu,
+  Avatar,
+  Card,
+  CardPreview,
+  CardView,
+  CardViewProps,
+  Collection,
+  CollectionCardPreview,
+  Content,
+  Image,
+  MenuItem,
+  SkeletonCollection,
+  Text
+} from '@react-spectrum/s2';
 import ErrorIcon from '@react-spectrum/s2/illustrations/linear/AlertNotice';
 import Folder from '@react-spectrum/s2/icons/Folder';
-import {iconStyle, style} from "@react-spectrum/s2/style" with { type: "macro" };
+import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useAsyncList} from 'react-stately';
 
 const cardViewStyles = style({
@@ -32,51 +46,68 @@ const avatarSize = {
 };
 
 type Item = {
-  id: number,
+  id: number;
   user: {
-    name: string,
-    profile_image: { small: string }
-  },
-  urls: { regular: string },
-  description: string,
-  alt_description: string,
-  width: number,
-  height: number
+    name: string;
+    profile_image: {small: string};
+  };
+  urls: {regular: string};
+  description: string;
+  alt_description: string;
+  width: number;
+  height: number;
 };
 
-function PhotoCard({item, layout}: {item: Item, layout: string}) {
+function PhotoCard({item, layout}: {item: Item; layout: string}) {
   return (
     <Card id={item.id} textValue={item.description || item.alt_description}>
-      {({size}) => (<>
-        <CardPreview>
-          <Image
-            src={item.urls.regular}
-            styles={style({
-              width: 'full',
-              pointerEvents: 'none'
-            })}
-            // TODO - should we have a safe `dynamicStyles` or something for this?
-            UNSAFE_style={{
-              aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
-              objectFit: layout === 'waterfall' ? 'contain' : 'cover'
-            }}
-            renderError={() => (
-              <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', size: 'full'})}>
-                <ErrorIcon styles={iconStyle({size: 'L'})} />
-              </div>
-            )} />
-        </CardPreview>
-        <Content>
-          <Text slot="title">{item.description || item.alt_description}</Text>
-          {size !== 'XS' && <ActionMenu>
-            <MenuItem>Test</MenuItem>
-          </ActionMenu>}
-          <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
-            <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
-            <Text slot="description">{item.user.name}</Text>
-          </div>
-        </Content>
-      </>)}
+      {({size}) => (
+        <>
+          <CardPreview>
+            <Image
+              src={item.urls.regular}
+              styles={style({
+                width: 'full',
+                pointerEvents: 'none'
+              })}
+              // TODO - should we have a safe `dynamicStyles` or something for this?
+              UNSAFE_style={{
+                aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
+                objectFit: layout === 'waterfall' ? 'contain' : 'cover'
+              }}
+              renderError={() => (
+                <div
+                  className={style({
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    size: 'full'
+                  })}>
+                  <ErrorIcon styles={iconStyle({size: 'L'})} />
+                </div>
+              )}
+            />
+          </CardPreview>
+          <Content>
+            <Text slot="title">{item.description || item.alt_description}</Text>
+            {size !== 'XS' && (
+              <ActionMenu>
+                <MenuItem>Test</MenuItem>
+              </ActionMenu>
+            )}
+            <div
+              className={style({
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                gridArea: 'description'
+              })}>
+              <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
+              <Text slot="description">{item.user.name}</Text>
+            </div>
+          </Content>
+        </>
+      )}
     </Card>
   );
 }
@@ -92,7 +123,9 @@ export const CardViewExample = (props: CardViewProps<any>) => {
       let nextItems = await res.json();
       // Filter duplicates which might be returned by the API.
       let existingKeys = new Set(items.map(i => i.id));
-      nextItems = nextItems.filter((i: Item) => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      nextItems = nextItems.filter(
+        (i: Item) => !existingKeys.has(i.id) && (i.description || i.alt_description)
+      );
       return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
     }
   });
@@ -123,7 +156,8 @@ export const CardViewExample = (props: CardViewProps<any>) => {
                 width: 400,
                 height: 200 + Math.max(0, Math.round(Math.random() * 400))
               }}
-              layout={props.layout || 'grid'} />
+              layout={props.layout || 'grid'}
+            />
           )}
         </SkeletonCollection>
       )}
@@ -132,11 +166,11 @@ export const CardViewExample = (props: CardViewProps<any>) => {
 };
 
 interface Topic {
-  id: string,
-  title: string,
-  total_photos: number,
-  links: {html: string},
-  preview_photos: {id: string, urls: {small: string}}[]
+  id: string;
+  title: string;
+  total_photos: number;
+  links: {html: string};
+  preview_photos: {id: string; urls: {small: string}}[];
 }
 
 function TopicCard({topic}: {topic: Topic}) {
@@ -181,9 +215,7 @@ export const CollectionCardsExample = (props: CardViewProps<any>) => {
       loadingState={loadingState}
       onLoadMore={props.loadingState === 'idle' ? list.loadMore : undefined}
       styles={cardViewStyles}>
-      <Collection items={items}>
-        {topic => <TopicCard topic={topic} />}
-      </Collection>
+      <Collection items={items}>{topic => <TopicCard topic={topic} />}</Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         <SkeletonCollection>
           {() => (
@@ -199,7 +231,8 @@ export const CollectionCardsExample = (props: CardViewProps<any>) => {
                   {id: 'c', urls: {small: ''}},
                   {id: 'd', urls: {small: ''}}
                 ]
-              }} />
+              }}
+            />
           )}
         </SkeletonCollection>
       )}

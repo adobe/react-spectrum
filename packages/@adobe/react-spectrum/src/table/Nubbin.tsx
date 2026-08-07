@@ -12,17 +12,33 @@
 
 import React, {ReactNode} from 'react';
 
-
 // TODO resize with scale? colors should be variables
 export function Nubbin(): ReactNode {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-      <g fill="var(--spectrum-global-color-blue-600)" stroke="var(--spectrum-global-color-blue-600)" strokeWidth="2">
+      <g
+        fill="var(--spectrum-global-color-blue-600)"
+        stroke="var(--spectrum-global-color-blue-600)"
+        strokeWidth="2">
         <circle cx="8" cy="8" r="8" stroke="none" />
         <circle cx="8" cy="8" r="7" fill="none" />
       </g>
-      <path d="M-2106-7380.263v5l2.5-2.551Z" transform="translate(2116 7385.763)" fill="#fff" stroke="#fff" strokeLinejoin="round" strokeWidth="2" />
-      <path d="M-2106-7380.263v5l2.5-2.551Z" transform="translate(-2100 -7369.763) rotate(180)" fill="#fff" stroke="#fff" strokeLinejoin="round" strokeWidth="2" />
+      <path
+        d="M-2106-7380.263v5l2.5-2.551Z"
+        transform="translate(2116 7385.763)"
+        fill="#fff"
+        stroke="#fff"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+      <path
+        d="M-2106-7380.263v5l2.5-2.551Z"
+        transform="translate(-2100 -7369.763) rotate(180)"
+        fill="#fff"
+        stroke="#fff"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
     </svg>
   );
 }

@@ -1,6 +1,6 @@
-import { type Meta } from '@storybook/react';
-import { GridList, GridListHeader, GridListItem} from '../src/GridList';
-import { GridListSection } from 'react-aria-components/GridList';
+import {type Meta} from '@storybook/react';
+import {GridList, GridListHeader, GridListItem} from '../src/GridList';
+import {GridListSection} from 'react-aria-components/GridList';
 import React from 'react';
 
 const meta: Meta<typeof GridList> = {

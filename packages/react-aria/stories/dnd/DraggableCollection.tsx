@@ -34,9 +34,9 @@ import {useListData} from 'react-stately/useListData';
 import {useListState} from 'react-stately/useListState';
 
 interface ItemValue {
-  id: string,
-  type: string,
-  text: string
+  id: string;
+  type: string;
+  text: string;
 }
 
 export function DraggableCollectionExample(props: any): JSX.Element {
@@ -48,14 +48,19 @@ export function DraggableCollectionExample(props: any): JSX.Element {
     ]
   });
 
-  let onDragEnd = (e) => {
+  let onDragEnd = e => {
     if (e.dropOperation === 'move') {
       list.remove(...e.keys);
     }
   };
 
   return (
-    <DraggableCollection {...props} items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={chain(onDragEnd, props.onDragEnd)}>
+    <DraggableCollection
+      {...props}
+      items={list.items}
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      onDragEnd={chain(onDragEnd, props.onDragEnd)}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -71,23 +76,29 @@ function DraggableCollection(props) {
   let state = useListState<ItemValue>(props);
   let gridState = useGridState({
     selectionMode: 'multiple',
-    collection: React.useMemo(() => new GridCollection<ItemValue>({
-      columnCount: 1,
-      items: [...state.collection].map(item => ({
-        ...item,
-        childNodes: [{
-          key: `cell-${item.key}`,
-          type: 'cell',
-          index: 0,
-          value: null,
-          level: 0,
-          rendered: null,
-          textValue: item.textValue,
-          hasChildNodes: false,
-          childNodes: []
-        }]
-      }))
-    }), [state.collection])
+    collection: React.useMemo(
+      () =>
+        new GridCollection<ItemValue>({
+          columnCount: 1,
+          items: [...state.collection].map(item => ({
+            ...item,
+            childNodes: [
+              {
+                key: `cell-${item.key}`,
+                type: 'cell',
+                index: 0,
+                value: null,
+                level: 0,
+                rendered: null,
+                textValue: item.textValue,
+                hasChildNodes: false,
+                childNodes: []
+              }
+            ]
+          }))
+        }),
+      [state.collection]
+    )
   });
 
   let preview = useRef(null);
@@ -95,14 +106,16 @@ function DraggableCollection(props) {
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
     getItems(keys) {
-      return [...keys].map(key => {
-        let item = gridState.collection.getItem(key)!;
+      return [...keys]
+        .map(key => {
+          let item = gridState.collection.getItem(key)!;
 
-        return {
-          [item.value!.type]: item.textValue,
-          'text/plain': item.textValue
-        };
-      }).filter(item => item != null);
+          return {
+            [item.value!.type]: item.textValue,
+            'text/plain': item.textValue
+          };
+        })
+        .filter(item => item != null);
     },
     preview,
     onDragStart: props.onDragStart,
@@ -111,11 +124,15 @@ function DraggableCollection(props) {
   });
   useDraggableCollection({}, dragState, ref);
 
-  let {gridProps} = useGrid({
-    ...props,
-    'aria-label': 'Draggable list',
-    focusMode: 'cell'
-  }, gridState, ref);
+  let {gridProps} = useGrid(
+    {
+      ...props,
+      'aria-label': 'Draggable list',
+      focusMode: 'cell'
+    },
+    gridState,
+    ref
+  );
 
   return (
     <div
@@ -130,20 +147,25 @@ function DraggableCollection(props) {
           key={item.key}
           item={item}
           state={gridState}
-          dragState={dragState} />
+          dragState={dragState}
+        />
       ))}
       <DragPreview ref={preview}>
         {() => {
-          let item = dragState.draggedKey == null ? null : state.collection.getItem(dragState.draggedKey);
+          let item =
+            dragState.draggedKey == null ? null : state.collection.getItem(dragState.draggedKey);
           return (
-            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': dragState.draggingKeys.size > 1})}>
+            <div
+              className={classNames(dndStyles, 'draggable', 'is-drag-preview', {
+                'is-dragging-multiple': dragState.draggingKeys.size > 1
+              })}>
               <div className={classNames(dndStyles, 'drag-handle')}>
                 <ShowMenu size="XS" />
               </div>
               {item && <span>{item.rendered}</span>}
-              {dragState.draggingKeys.size > 1 &&
+              {dragState.draggingKeys.size > 1 && (
                 <div className={classNames(dndStyles, 'badge')}>{dragState.draggingKeys.size}</div>
-              }
+              )}
             </div>
           );
         }}
@@ -159,19 +181,29 @@ function DraggableCollectionItem({item, state, dragState}) {
   let isSelected = state.selectionManager.isSelected(item.key);
 
   let {rowProps} = useGridRow({node: item}, state, rowRef);
-  let {gridCellProps} = useGridCell({
-    node: cellNode,
-    focusMode: 'cell',
-    shouldSelectOnPressUp: true
-  }, state, cellRef);
+  let {gridCellProps} = useGridCell(
+    {
+      node: cellNode,
+      focusMode: 'cell',
+      shouldSelectOnPressUp: true
+    },
+    state,
+    cellRef
+  );
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem(
+    {key: item.key, hasDragButton: true},
+    dragState
+  );
 
   let buttonRef = React.useRef<HTMLDivElement | null>(null);
-  let {buttonProps} = useButton({
-    ...dragButtonProps,
-    elementType: 'div'
-  }, buttonRef);
+  let {buttonProps} = useButton(
+    {
+      ...dragButtonProps,
+      elementType: 'div'
+    },
+    buttonRef
+  );
   let id = useId();
 
   return (
@@ -186,10 +218,7 @@ function DraggableCollectionItem({item, state, dragState}) {
             'is-selected': isSelected
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
-            <div
-              {...buttonProps}
-              ref={buttonRef}
-              className={classNames(dndStyles, 'drag-handle')}>
+            <div {...buttonProps} ref={buttonRef} className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />
             </div>
           </FocusRing>

@@ -69,7 +69,11 @@ export const CalendarDateTimeType: LabeledValueStory = {
 };
 
 export const CalendarDateTimeTypeFormatOptions: LabeledValueStory = {
-  args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'short', timeStyle: 'short'}},
+  args: {
+    label: 'Test',
+    value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120),
+    formatOptions: {dateStyle: 'short', timeStyle: 'short'}
+  },
   name: 'CalendarDateTime with formatOptions'
 };
 
@@ -89,17 +93,32 @@ export const TimeType: LabeledValueStory = {
 };
 
 export const CalendarDateRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}},
+  args: {
+    label: 'Test',
+    value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}
+  },
   name: 'RangeValue<CalendarDate>'
 };
 
 export const CalendarDateTimeRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}},
+  args: {
+    label: 'Test',
+    value: {
+      start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120),
+      end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)
+    }
+  },
   name: 'RangeValue<CalendarDateTime>'
 };
 
 export const ZonedDateTimeRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}},
+  args: {
+    label: 'Test',
+    value: {
+      start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000),
+      end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)
+    }
+  },
   name: 'RangeValue<ZonedDateTime>'
 };
 
@@ -123,7 +142,6 @@ export const NumberRange: LabeledValueStory = {
   name: 'RangeValue<Number>'
 };
 
-
 export const CustomComponent: LabeledValueStory = {
   args: {
     label: 'Test',
@@ -139,7 +157,10 @@ export const WithContextualHelp: LabeledValueStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },

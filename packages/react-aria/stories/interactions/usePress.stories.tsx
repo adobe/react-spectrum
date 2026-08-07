@@ -89,11 +89,7 @@ function OnPress(props) {
   });
 
   return (
-    <div
-      {...pressProps}
-      role="button"
-      tabIndex={0}
-      className={`OnPress ${className || ''}`}>
+    <div {...pressProps} role="button" tabIndex={0} className={`OnPress ${className || ''}`}>
       {children}
     </div>
   );
@@ -141,8 +137,8 @@ function ClickOutsideIssueRender(): JSX.Element {
   return (
     <div style={{alignSelf: 'start'}}>
       <h2 style={{fontSize: 16}}>
-        before clicking the button please make sure 'desktop(touch)' mode is
-        active in the responsive dev tools
+        before clicking the button please make sure 'desktop(touch)' mode is active in the
+        responsive dev tools
       </h2>
       <div
         style={{
@@ -238,14 +234,10 @@ function SoftwareKeyboardIssueRender(): JSX.Element {
         </a>
 
         <div style={{display: 'flex', gap: '8px', marginTop: '110px'}}>
-          <Button
-            style={{height: '36px'}}
-            onPress={() => alert('Hello world, Aria!')}>
+          <Button style={{height: '36px'}} onPress={() => alert('Hello world, Aria!')}>
             Aria press me
           </Button>
-          <button
-            style={{height: '36px'}}
-            onClick={() => alert('Hello world, native!')}>
+          <button style={{height: '36px'}} onClick={() => alert('Hello world, native!')}>
             native press me
           </button>
         </div>
@@ -266,7 +258,10 @@ function AndroidUnmountIssueRender(): JSX.Element {
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-      <p>This story tests an Android issue where tapping a button that unmounts causes the element behind it to receive onClick.</p>
+      <p>
+        This story tests an Android issue where tapping a button that unmounts causes the element
+        behind it to receive onClick.
+      </p>
       <div style={{position: 'relative', width: 100, height: 100}}>
         <button
           type="button"
@@ -302,7 +297,10 @@ export const IOSScrollIssue: IOSScrollIssueStory = {
 function IOSScrollIssueRender(): JSX.Element {
   return (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-      <p>This story tests an iOS Safari issue that causes onPointerCancel not to be fired with touch-action: manipulation. Scrolling the list should not trigger onPress.</p>
+      <p>
+        This story tests an iOS Safari issue that causes onPointerCancel not to be fired with
+        touch-action: manipulation. Scrolling the list should not trigger onPress.
+      </p>
       <div
         style={{
           marginTop: 10,

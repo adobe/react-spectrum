@@ -12,7 +12,15 @@
 
 import {ActionButton} from '../../src/button/ActionButton';
 
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  SpectrumTableProps,
+  TableBody,
+  TableHeader,
+  TableView
+} from '../../src/table/TableView';
 import {Content} from '../../src/view/Content';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {enableTableNestedRows} from 'react-stately/private/flags/flags';
@@ -63,7 +71,12 @@ const meta: Meta<SpectrumTableProps<object>> = {
   title: 'TableView/Expandable rows',
   component: TableView,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true
+    },
     // large delay with the layout since there are so many tables
     chromatic: {delay: 4000}
   }
@@ -102,52 +115,92 @@ let hiddenColumns = [
 ];
 
 let nestedColumns = [
-  {name: 'Tiered One Header', key: 'tier1', children: [
-    {name: 'Tier Two Header A', key: 'tier2a', children: [
-      {name: 'Foo', key: 'foo'},
-      {name: 'Bar', key: 'bar'}
-    ]},
-    {name: 'Tier Two Header B', key: 'tier2b', children: [
-      {name: 'Baz', key: 'baz'}
-    ]}
-  ]}
+  {
+    name: 'Tiered One Header',
+    key: 'tier1',
+    children: [
+      {
+        name: 'Tier Two Header A',
+        key: 'tier2a',
+        children: [
+          {name: 'Foo', key: 'foo'},
+          {name: 'Bar', key: 'bar'}
+        ]
+      },
+      {name: 'Tier Two Header B', key: 'tier2b', children: [{name: 'Baz', key: 'baz'}]}
+    ]
+  }
 ];
 
 let nestedItems = [
-  {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
-    {foo: 'Lvl 2 Foo 1', bar: 'Lvl 2 Bar 1', baz: 'Lvl 2 Baz 1', childRows: [
-      {foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', baz: 'Lvl 3 Baz 1'}
-    ]},
-    {foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', baz: 'Lvl 2 Baz 2'}
-  ]}
+  {
+    foo: 'Lvl 1 Foo 1',
+    bar: 'Lvl 1 Bar 1',
+    baz: 'Lvl 1 Baz 1',
+    childRows: [
+      {
+        foo: 'Lvl 2 Foo 1',
+        bar: 'Lvl 2 Bar 1',
+        baz: 'Lvl 2 Baz 1',
+        childRows: [{foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', baz: 'Lvl 3 Baz 1'}]
+      },
+      {foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', baz: 'Lvl 2 Baz 2'}
+    ]
+  }
 ];
 
-const Template = ({combos, columns, items, ...args}: SpectrumTableProps<object> & {combos: any[], columns: any[], items: any[]}): JSX.Element => (
+const Template = ({
+  combos,
+  columns,
+  items,
+  ...args
+}: SpectrumTableProps<object> & {combos: any[]; columns: any[]; items: any[]}): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combos.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Lvl 1 Foo 1', 'Lvl 3 Foo 1']} disabledKeys={['Lvl 2 Foo 1', 'Lvl 2 Foo 2']} UNSTABLE_allowsExpandableRows>
+          <TableView
+            {...args}
+            {...c}
+            width="100%"
+            height="100%"
+            key={key}
+            aria-label={key}
+            selectedKeys={['Lvl 1 Foo 1', 'Lvl 3 Foo 1']}
+            disabledKeys={['Lvl 2 Foo 1', 'Lvl 2 Foo 2']}
+            UNSTABLE_allowsExpandableRows>
             <TableHeader columns={columns}>
               {(column: any) => (
-                <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>
+                <Column
+                  key={column.key}
+                  width={column.width}
+                  showDivider={column.showDivider}
+                  align={column.align}
+                  hideHeader={column.hideHeader}
+                  childColumns={column.children}>
                   {column.name}
                 </Column>
               )}
             </TableHeader>
             <TableBody items={items}>
-              {(item: any) =>
-                (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
+              {(item: any) => (
+                <Row key={item.foo} UNSTABLE_childItems={item.childRows}>
                   {key => {
-                    let button = <ActionButton isQuiet><Delete /></ActionButton>;
+                    let button = (
+                      <ActionButton isQuiet>
+                        <Delete />
+                      </ActionButton>
+                    );
                     return <Cell>{key === 'baz' ? button : item[key]}</Cell>;
                   }}
-                </Row>)
-              }
+                </Row>
+              )}
             </TableBody>
           </TableView>
         </View>
@@ -168,134 +221,137 @@ function renderEmptyState() {
   );
 }
 
-const EmptyTemplate = (args: SpectrumTableProps<object>): JSX.Element =>
-  (
-    <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState} UNSTABLE_allowsExpandableRows>
-      <TableHeader columns={columns}>
-        {(column: any) => (
-          <Column
-            key={column.key}
-            width={column.width}
-            showDivider={column.showDivider}
-            align={column.align}>
-            {column.name}
-          </Column>
-        )}
-      </TableHeader>
-      <TableBody>{[]}</TableBody>
-    </TableView>
-  );
+const EmptyTemplate = (args: SpectrumTableProps<object>): JSX.Element => (
+  <TableView
+    {...args}
+    maxWidth={700}
+    height={400}
+    renderEmptyState={renderEmptyState}
+    UNSTABLE_allowsExpandableRows>
+    <TableHeader columns={columns}>
+      {(column: any) => (
+        <Column
+          key={column.key}
+          width={column.width}
+          showDivider={column.showDivider}
+          align={column.align}>
+          {column.name}
+        </Column>
+      )}
+    </TableHeader>
+    <TableBody>{[]}</TableBody>
+  </TableView>
+);
 
 export type TreeGridTableStory = StoryObj<typeof Template>;
 
 export const Default: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default items and columns 1 of 3',
   args: {combos: combo1, columns, items: nestedItems}
 };
 
 export const DefaultPt2: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default items and columns 2 of 3',
   args: {combos: combo2, columns, items: nestedItems}
 };
 
 export const DefaultPt3: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default items and columns 3 of 3',
   args: {combos: combo3, columns, items: nestedItems}
 };
 
 export const ColumnAlign: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'column alignment 1 of 3',
   args: {combos: combo1, columns: alignColumns, items: nestedItems}
 };
 
 export const ColumnAlignPt2: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'column alignment 2 of 3',
   args: {combos: combo2, columns: alignColumns, items: nestedItems}
 };
 
 export const ColumnAlignPt3: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'column alignment 3 of 3',
   args: {combos: combo3, columns: alignColumns, items: nestedItems}
 };
 
 export const ColumnDividers: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'columns dividers 1 of 3',
   args: {combos: combo1, columns: dividerColumns, items: nestedItems}
 };
 
 export const ColumnDividersPt2: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'columns dividers 2 of 3',
   args: {combos: combo2, columns: dividerColumns, items: nestedItems}
 };
 
 export const ColumnDividersPt3: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'columns dividers 3 of 3',
   args: {combos: combo3, columns: dividerColumns, items: nestedItems}
 };
 
 export const ColumnWidth: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'columns widths 1 of 3',
   args: {combos: combo1, columns: customWidth, items: nestedItems}
 };
 
 export const ColumnWidthPt2: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'columns widths 2 of 3',
   args: {combos: combo2, columns: customWidth, items: nestedItems}
 };
 
 export const ColumnWidthPt3: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'columns widths 3 of 3',
   args: {combos: combo3, columns: customWidth, items: nestedItems}
 };
 
 export const HiddenColumns: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'hidden columns 1 of 3',
   args: {combos: combo1, columns: hiddenColumns, items: nestedItems}
 };
 
 export const HiddenColumnsPt2: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'hidden columns 2 of 3',
   args: {combos: combo2, columns: hiddenColumns, items: nestedItems}
 };
 
 export const HiddenColumnsPt3: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'hidden columns 3 of 3',
   args: {combos: combo3, columns: hiddenColumns, items: nestedItems}
 };
 
 export const NestedColumns: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'nested columns 1 of 3',
   args: {combos: combo1, columns: nestedColumns, items: nestedItems}
 };
 
 export const NestedColumnsPt2: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'nested columns 2 of 3',
   args: {combos: combo2, columns: nestedColumns, items: nestedItems}
 };
 
 export const NestedColumnsPt3: TreeGridTableStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'nested columns 3 of 3',
   args: {combos: combo3, columns: nestedColumns, items: nestedItems}
 };
-
 
 export const MaxHeight: StoryFn<SpectrumTableProps<object>> = () => (
   <TableView maxHeight="size-1200" UNSTABLE_allowsExpandableRows>
@@ -303,13 +359,17 @@ export const MaxHeight: StoryFn<SpectrumTableProps<object>> = () => (
       {(column: any) => <Column key={column.key}>{column.name}</Column>}
     </TableHeader>
     <TableBody items={nestedItems}>
-      {(item: any) => <Row key={item.foo} UNSTABLE_childItems={item.childRows}>{(key) => <Cell>{item[key]}</Cell>}</Row>}
+      {(item: any) => (
+        <Row key={item.foo} UNSTABLE_childItems={item.childRows}>
+          {key => <Cell>{item[key]}</Cell>}
+        </Row>
+      )}
     </TableBody>
   </TableView>
 );
 
 export const Empty: TreeGridTableStory = {
-  render: (args) => <EmptyTemplate {...args} />,
+  render: args => <EmptyTemplate {...args} />,
   name: 'empty table',
   args: {}
 };

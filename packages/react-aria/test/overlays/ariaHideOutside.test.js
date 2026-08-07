@@ -175,9 +175,7 @@ describe('ariaHideOutside', function () {
   it('should handle when a new element is added to an already hidden container', async function () {
     let Test = props => (
       <>
-        <div data-testid="test">
-          {props.show && <input type="checkbox" />}
-        </div>
+        <div data-testid="test">{props.show && <input type="checkbox" />}</div>
         <button>Button</button>
         {props.show && <input type="checkbox" />}
       </>
@@ -213,10 +211,14 @@ describe('ariaHideOutside', function () {
     let Test = props => (
       <>
         <button>Button</button>
-        {props.show && <div>
-          <div role="alert" data-react-aria-top-layer="true">Top layer</div>
-          <input type="checkbox" />
-        </div>}
+        {props.show && (
+          <div>
+            <div role="alert" data-react-aria-top-layer="true">
+              Top layer
+            </div>
+            <input type="checkbox" />
+          </div>
+        )}
       </>
     );
 
@@ -245,7 +247,9 @@ describe('ariaHideOutside', function () {
         <button>Button</button>
         {props.show && (
           <>
-            <div role="status" data-react-aria-top-layer="">Top layer (empty attr)</div>
+            <div role="status" data-react-aria-top-layer="">
+              Top layer (empty attr)
+            </div>
             <input type="checkbox" />
           </>
         )}
@@ -308,7 +312,6 @@ describe('ariaHideOutside', function () {
   });
 
   it('should handle when a new element is added and then reparented', async function () {
-
     let Test = () => {
       const ref = useRef(null);
       const mutate = () => {
@@ -333,16 +336,17 @@ describe('ariaHideOutside', function () {
 
     let {queryByRole, getAllByRole, getByTestId} = render(<Test />);
 
-    ariaHideOutside([getByTestId('test')]);
+    let revert = ariaHideOutside([getByTestId('test')]);
 
     queryByRole('button').click();
     await Promise.resolve(); // Wait for mutation observer tick
 
     expect(getAllByRole('listitem')).toHaveLength(1);
+
+    revert();
   });
 
   it('should handle when a new element is added and then reparented to a hidden container', async function () {
-
     let Test = () => {
       const ref = useRef(null);
       const mutate = () => {
@@ -368,14 +372,15 @@ describe('ariaHideOutside', function () {
 
     let {queryByRole, queryAllByRole, getByTestId} = render(<Test />);
 
-    ariaHideOutside([getByTestId('test')]);
+    let revert = ariaHideOutside([getByTestId('test')]);
 
     queryByRole('button').click();
     await Promise.resolve(); // Wait for mutation observer tick
 
     expect(queryAllByRole('listitem')).toHaveLength(0);
-  });
 
+    revert();
+  });
 
   it('work when called multiple times', function () {
     let {getByRole, getAllByRole} = render(
@@ -460,9 +465,8 @@ describe('ariaHideOutside', function () {
       <div role="grid">
         <div role="row">
           <div role="gridcell">
-            <span data-testid="test-span">
-              Cell 1
-            </span></div>
+            <span data-testid="test-span">Cell 1</span>
+          </div>
         </div>
         <div role="row">
           <div role="gridcell">Cell 2</div>
@@ -515,16 +519,15 @@ describe('ariaHideOutside', function () {
 
       return (
         <>
-          <button onClick={() => setCount((old) => old + 1)}>press</button>
-          {items.map((item) => <Item testid={item} key={item} />)}
+          <button onClick={() => setCount(old => old + 1)}>press</button>
+          {items.map(item => (
+            <Item testid={item} key={item} />
+          ))}
         </>
-
       );
     }
 
-    let {getByRole, getByTestId} = render(
-      <Test />
-    );
+    let {getByRole, getByTestId} = render(<Test />);
 
     let button = getByRole('button');
     let row = getByTestId('row1');
@@ -546,14 +549,15 @@ describe('ariaHideOutside with shadow DOM', function () {
 
   it('should hide everything except the provided element [button]', function () {
     const {shadowRoot, shadowHost, cleanup} = createShadowRoot();
-    let Wrapper = () => ReactDOM.createPortal(
-      <div>
-        <input type="checkbox" />
-        <button>Button</button>
-        <input type="checkbox" />
-      </div>,
-      shadowRoot
-    );
+    let Wrapper = () =>
+      ReactDOM.createPortal(
+        <div>
+          <input type="checkbox" />
+          <button>Button</button>
+          <input type="checkbox" />
+        </div>,
+        shadowRoot
+      );
     render(<Wrapper />);
 
     let button = screen.getByShadowRole('button');
@@ -585,12 +589,16 @@ describe('ariaHideOutside with shadow DOM', function () {
 
   describe('ariaHideOutside with Shadow DOM', () => {
     let cleanup;
-    afterEach(() => {
-      cleanup();
-      // iterate over anything leftover in the body and remove it
-      for (let element of document.body.children) {
-        document.body.removeChild(element);
+    afterEach(async () => {
+      cleanup?.();
+      cleanup = undefined;
+      // Remove anything leftover in the body. Use firstChild rather than iterating
+      // the live `children` collection, which skips elements as it mutates.
+      while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
       }
+      // Close out any pending observers
+      await act(async () => Promise.resolve());
     });
 
     it('should not apply aria-hidden to direct parents of the shadow root', () => {
@@ -602,12 +610,15 @@ describe('ariaHideOutside with shadow DOM', function () {
       document.body.appendChild(div1);
 
       const shadowRoot = div2.attachShadow({mode: 'open'});
-      const ExampleModal = () => ReactDOM.createPortal(
-        <>
-          <div id="modal" role="dialog">Modal Content</div>
-        </>,
-        shadowRoot
-      );
+      const ExampleModal = () =>
+        ReactDOM.createPortal(
+          <>
+            <div id="modal" role="dialog">
+              Modal Content
+            </div>
+          </>,
+          shadowRoot
+        );
       render(<ExampleModal />);
 
       cleanup = ariaHideOutside([shadowRoot.getElementById('modal')], shadowRoot);
@@ -704,7 +715,7 @@ describe('ariaHideOutside with shadow DOM', function () {
       siblingContent.textContent = 'Sibling Content';
       outerShadowRoot.appendChild(siblingContent);
 
-      ariaHideOutside([modal], innerShadowRoot);
+      cleanup = ariaHideOutside([modal], innerShadowRoot);
 
       expect(isEffectivelyHidden(modal)).toBe(false);
 
@@ -733,7 +744,7 @@ describe('ariaHideOutside with shadow DOM', function () {
       document.body.appendChild(nestedShadowRootContainer);
 
       // Get the deepest shadow root
-      const getDeepestShadowRoot = (node) => {
+      const getDeepestShadowRoot = node => {
         while (node.shadowRoot) {
           node = node.shadowRoot.childNodes[0];
         }
@@ -760,13 +771,16 @@ describe('ariaHideOutside with shadow DOM', function () {
       document.body.appendChild(div1);
 
       const shadowRoot = div1.attachShadow({mode: 'open'});
-      let ExampleDynamicContent = ({showExtraContent}) => ReactDOM.createPortal(
-        <>
-          <div id="modal" role="dialog">Modal Content</div>
-          {showExtraContent && <div id="extraContent">Extra Content</div>}
-        </>,
-        shadowRoot
-      );
+      let ExampleDynamicContent = ({showExtraContent}) =>
+        ReactDOM.createPortal(
+          <>
+            <div id="modal" role="dialog">
+              Modal Content
+            </div>
+            {showExtraContent && <div id="extraContent">Extra Content</div>}
+          </>,
+          shadowRoot
+        );
 
       render(<ExampleDynamicContent showExtraContent={false} />);
 
@@ -791,10 +805,12 @@ describe('ariaHideOutside with shadow DOM', function () {
   describe('ariaHideOutside with nested Shadow DOMs', () => {
     let cleanup;
     afterEach(() => {
-      cleanup();
-      // iterate over anything leftover in the body and remove it
-      for (let element of document.body.children) {
-        document.body.removeChild(element);
+      cleanup?.();
+      cleanup = undefined;
+      // Remove anything leftover in the body. Use firstChild rather than iterating
+      // the live `children` collection, which skips elements as it mutates.
+      while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
       }
     });
 
@@ -892,11 +908,15 @@ describe('ariaHideOutside with shadow DOM', function () {
       expect(popupElement.getAttribute('aria-hidden')).toBeNull();
 
       // Their direct containers should remain visible
-      expect(shadowRootC4.querySelector('.content-container').getAttribute('aria-hidden')).toBeNull();
+      expect(
+        shadowRootC4.querySelector('.content-container').getAttribute('aria-hidden')
+      ).toBeNull();
       expect(shadowRootC4.querySelector('.overlay-portal').getAttribute('aria-hidden')).toBeNull();
 
       // The unrelated container should be hidden
-      expect(shadowRootC4.querySelector('.content-container-2').getAttribute('aria-hidden')).toBe('true');
+      expect(shadowRootC4.querySelector('.content-container-2').getAttribute('aria-hidden')).toBe(
+        'true'
+      );
 
       // Shadow host and its parent should be visible since they contain our targets
       expect(shadowHostC4.getAttribute('aria-hidden')).toBeNull();

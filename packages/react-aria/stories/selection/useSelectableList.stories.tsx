@@ -21,10 +21,12 @@ import styles from './styles.css';
 import {useSelectableItem} from '../../src/selection/useSelectableItem';
 import {useSelectableList} from '../../src/selection/useSelectableList';
 
-function SelectableList(props: CollectionBase<any> & {
-  isSubUlRelativelyPositioned: boolean,
-  isUlRelativelyPositioned: boolean
-}): JSX.Element {
+function SelectableList(
+  props: CollectionBase<any> & {
+    isSubUlRelativelyPositioned: boolean;
+    isUlRelativelyPositioned: boolean;
+  }
+): JSX.Element {
   const state = useListState(props);
   const listRef = React.useRef<HTMLUListElement>(null);
   const {listProps} = useSelectableList({
@@ -43,17 +45,21 @@ function SelectableList(props: CollectionBase<any> & {
       {...listProps}
       className={styles.list}
       style={{
-        height: 200, overflow: 'auto', padding: 10, margin: 0, listStyle: 'none',
+        height: 200,
+        overflow: 'auto',
+        padding: 10,
+        margin: 0,
+        listStyle: 'none',
         position: props.isUlRelativelyPositioned ? 'relative' : 'static',
-        borderTopWidth: '10px', borderBottomWidth: '20px'
+        borderTopWidth: '10px',
+        borderBottomWidth: '20px'
       }}
       ref={listRef}>
       {Array.from(state.collection).map(node => {
         if (node.hasChildNodes) {
           return (
             <>
-              <div
-                style={{textTransform: 'uppercase'}}>{node.rendered}</div>
+              <div style={{textTransform: 'uppercase'}}>{node.rendered}</div>
               <ul
                 key={node.key}
                 style={{
@@ -74,10 +80,7 @@ function SelectableList(props: CollectionBase<any> & {
   );
 }
 
-function SelectableItem(props: {
-  state: ListState<any>,
-  node: Node<any>
-}) {
+function SelectableItem(props: {state: ListState<any>; node: Node<any>}) {
   const {state, node} = props;
   const ref = React.useRef<HTMLLIElement>(null);
   const {itemProps} = useSelectableItem({

@@ -39,10 +39,7 @@ describe('CustomDialog', () => {
       <DialogTrigger>
         <ActionButton>Open dialog</ActionButton>
         <CustomDialog isDismissible>
-          <TagGroup
-            label="Ice cream categories"
-            maxRows={1}
-            onRemove={() => {}}>
+          <TagGroup label="Ice cream categories" maxRows={1} onRemove={() => {}}>
             <Tag>Chocolate</Tag>
             <Tag>Mint</Tag>
             <Tag>Strawberry</Tag>
@@ -54,7 +51,9 @@ describe('CustomDialog', () => {
 
     let trigger = getByRole('button');
     await user.click(trigger);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(getByRole('dialog')).toBeVisible();
   });
 });

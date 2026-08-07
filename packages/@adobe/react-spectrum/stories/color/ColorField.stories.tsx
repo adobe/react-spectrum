@@ -104,7 +104,7 @@ export default {
 } as Meta<typeof ColorField>;
 
 export const Default: ColorFieldStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const DefaultValue: ColorFieldStory = {
@@ -113,13 +113,15 @@ export const DefaultValue: ColorFieldStory = {
 };
 
 export const ControlledValue: ColorFieldStory = {
-  render: (args) => <ControlledColorField {...args} value={parseColor('#FF00AA')} />
+  render: args => <ControlledColorField {...args} value={parseColor('#FF00AA')} />
 };
 
 export const AriaLabelledBy: ColorFieldStory = {
-  render: (args) => (
+  render: args => (
     <>
-      <label htmlFor="colorfield" id="label">Primary Color</label>
+      <label htmlFor="colorfield" id="label">
+        Primary Color
+      </label>
       {render({...args, id: 'colorfield', 'aria-labelledby': 'label'})}
     </>
   ),
@@ -127,12 +129,10 @@ export const AriaLabelledBy: ColorFieldStory = {
 };
 
 export const MinWidth: ColorFieldStory = {
-  render: (args) => (
+  render: args => (
     <Flex direction="column" gap="size-100">
       {render({...args, width: '10px'})}
-      <div style={{width: '10px'}}>
-        {render(args)}
-      </div>
+      <div style={{width: '10px'}}>{render(args)}</div>
     </Flex>
   ),
   name: 'custom width, 10px for min-width'
@@ -144,7 +144,10 @@ export const ContextualHelpStory: ColorFieldStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },
@@ -155,17 +158,15 @@ function ControlledColorField(props: SpectrumColorFieldProps) {
   let [color, setColor] = useState<string | Color | null | undefined>(props.value || '#000000');
   let onChange = (color: Color | null) => {
     setColor(color);
-    if (props.onChange) { props.onChange(color); }
+    if (props.onChange) {
+      props.onChange(color);
+    }
   };
   let style = color ? {backgroundColor: color.toString('rgb')} : {};
   let id = useId();
   return (
     <Flex direction="row" gap="size-100" alignItems="end">
-      <ColorField
-        id={id}
-        label="Primary Color"
-        onChange={onChange}
-        value={color} />
+      <ColorField id={id} label="Primary Color" onChange={onChange} value={color} />
       <View width="size-400" height="size-400" UNSAFE_style={style}>
         <VisuallyHidden>
           <output htmlFor={id} aria-live="off">
@@ -178,7 +179,5 @@ function ControlledColorField(props: SpectrumColorFieldProps) {
 }
 
 function render(props: any = {}) {
-  return (
-    <ColorField {...props} />
-  );
+  return <ColorField {...props} />;
 }

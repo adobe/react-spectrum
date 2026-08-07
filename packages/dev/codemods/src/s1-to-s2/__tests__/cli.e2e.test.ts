@@ -1,4 +1,14 @@
-import {chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync} from 'fs';
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync
+} from 'fs';
 import os from 'os';
 import path from 'path';
 import {spawn, spawnSync} from 'child_process';
@@ -25,16 +35,18 @@ function normalizeFixtureRelativePath(relativePath: string) {
 }
 
 function listFiles(root: string, currentDir = root): string[] {
-  return readdirSync(currentDir).sort().flatMap((entry) => {
-    let fullPath = path.join(currentDir, entry);
-    let stats = statSync(fullPath);
-    if (stats.isDirectory()) {
-      return listFiles(root, fullPath);
-    }
+  return readdirSync(currentDir)
+    .sort()
+    .flatMap(entry => {
+      let fullPath = path.join(currentDir, entry);
+      let stats = statSync(fullPath);
+      if (stats.isDirectory()) {
+        return listFiles(root, fullPath);
+      }
 
-    let relativePath = path.relative(root, fullPath).split(path.sep).join('/');
-    return [normalizeFixtureRelativePath(relativePath)];
-  });
+      let relativePath = path.relative(root, fullPath).split(path.sep).join('/');
+      return [normalizeFixtureRelativePath(relativePath)];
+    });
 }
 
 function expectProjectToMatchFixture(projectDir: string, fixtureName: string) {
@@ -47,7 +59,9 @@ function expectProjectToMatchFixture(projectDir: string, fixtureName: string) {
   for (let relativePath of expectedFiles) {
     let actualContent = normalizeText(readFileSync(path.join(projectDir, relativePath), 'utf8'));
     let fixtureRelativePath = relativePath.replace(/package\.json$/, 'package.fixture.json');
-    let expectedContent = normalizeText(readFileSync(path.join(expectedDir, fixtureRelativePath), 'utf8'));
+    let expectedContent = normalizeText(
+      readFileSync(path.join(expectedDir, fixtureRelativePath), 'utf8')
+    );
     expect(actualContent).toBe(expectedContent);
   }
 }
@@ -85,15 +99,11 @@ function createFakeYarn(tempRoot: string) {
 }
 
 async function runFixtureCLI(options: {
-  fixtureName: string,
-  args?: string[],
-  interactive?: boolean
+  fixtureName: string;
+  args?: string[];
+  interactive?: boolean;
 }) {
-  let {
-    fixtureName,
-    args = [],
-    interactive = false
-  } = options;
+  let {fixtureName, args = [], interactive = false} = options;
 
   let tempRoot = mkdtempSync(path.join(os.tmpdir(), 's1-to-s2-cli-'));
   tempDirs.push(tempRoot);
@@ -138,12 +148,12 @@ async function runFixtureCLI(options: {
     }
   };
 
-  child.stdout.on('data', (chunk) => {
+  child.stdout.on('data', chunk => {
     stdout += chunk.toString();
     maybeRespondToPrompt();
   });
 
-  child.stderr.on('data', (chunk) => {
+  child.stderr.on('data', chunk => {
     stderr += chunk.toString();
   });
 
@@ -157,12 +167,12 @@ async function runFixtureCLI(options: {
       reject(new Error(`CLI test timed out for fixture ${fixtureName}.`));
     }, 15000);
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       clearTimeout(timeout);
       reject(error);
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       clearTimeout(timeout);
       resolve(code ?? -1);
     });
@@ -184,19 +194,23 @@ async function runFixtureCLI(options: {
 beforeAll(() => {
   rmSync(CODEMODS_DIST_DIR, {recursive: true, force: true});
 
-  let buildResult = spawnSync(process.execPath, [require.resolve('typescript/bin/tsc'), '-p', CODEMODS_TSCONFIG], {
-    cwd: REPO_ROOT,
-    env: {
-      ...process.env,
-      FORCE_COLOR: '0'
-    },
-    encoding: 'utf8'
-  });
+  let buildResult = spawnSync(
+    process.execPath,
+    [require.resolve('typescript/bin/tsc'), '-p', CODEMODS_TSCONFIG],
+    {
+      cwd: REPO_ROOT,
+      env: {
+        ...process.env,
+        FORCE_COLOR: '0'
+      },
+      encoding: 'utf8'
+    }
+  );
 
   if (buildResult.status !== 0) {
     throw new Error(
       'Failed to build @react-spectrum/codemods for CLI e2e tests.\n' +
-      `${buildResult.stdout}\n${buildResult.stderr}`
+        `${buildResult.stdout}\n${buildResult.stderr}`
     );
   }
 });
@@ -217,7 +231,9 @@ test('runs the shipped assistant in agent mode', async () => {
 
   expect(result.exitCode).toBe(0);
   expect(result.stderr).toBe('');
-  expect(result.stdout).toContain('Running s1-to-s2 in agent mode (non-interactive, transform-only).');
+  expect(result.stdout).toContain(
+    'Running s1-to-s2 in agent mode (non-interactive, transform-only).'
+  );
   expect(result.stdout).toContain('Upgrade complete!');
   expect(result.stdout).toContain('Next steps:');
   expect(result.stdout).not.toContain(PROMPT_TO_START);
@@ -234,7 +250,9 @@ test('respects --components in agent mode', async () => {
 
   expect(result.exitCode).toBe(0);
   expect(result.stderr).toBe('');
-  expect(result.stdout).toContain('Running s1-to-s2 in agent mode (non-interactive, transform-only).');
+  expect(result.stdout).toContain(
+    'Running s1-to-s2 in agent mode (non-interactive, transform-only).'
+  );
   expect(result.stdout).toContain('Upgrade complete!');
   expect(result.stdout).not.toContain(PROMPT_TO_START);
   expect(result.stdout).not.toContain(PROMPT_TO_UPGRADE);
@@ -250,11 +268,15 @@ test('runs the interactive assistant flow against a real project fixture', async
 
   expect(result.exitCode).toBe(0);
   expect(result.stderr).toBe('');
-  expect(result.stdout).toContain('Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!');
+  expect(result.stdout).toContain(
+    'Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!'
+  );
   expect(result.stdout).toContain(PROMPT_TO_START);
   expect(result.stdout).toContain('Installing @react-spectrum/s2 using yarn...');
   expect(result.stdout).toContain('Successfully installed @react-spectrum/s2!');
-  expect(result.stdout).toContain('Parcel detected in package.json. Macros are supported by default in v2.12.0 and newer.');
+  expect(result.stdout).toContain(
+    'Parcel detected in package.json. Macros are supported by default in v2.12.0 and newer.'
+  );
   expect(result.stdout).toContain(PROMPT_TO_UPGRADE);
   expect(result.stdout).toContain('Upgrade complete!');
   expect(result.stdout).toContain('Next steps:');

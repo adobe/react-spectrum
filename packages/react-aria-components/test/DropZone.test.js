@@ -30,9 +30,7 @@ describe('DropZone', () => {
   it('should render a dropzone', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo">
-        <Text slot="label">
-          Test
-        </Text>
+        <Text slot="label">Test</Text>
       </DropZone>
     );
     let dropzone = getByTestId('foo');
@@ -42,10 +40,9 @@ describe('DropZone', () => {
   it('should render a dropzone with custom class', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" className="test">
-        <Text slot="label">
-          Test
-        </Text>
-      </DropZone>);
+        <Text slot="label">Test</Text>
+      </DropZone>
+    );
     let dropzone = getByTestId('foo');
     expect(dropzone).toHaveAttribute('class', 'test');
   });
@@ -53,10 +50,9 @@ describe('DropZone', () => {
   it('should support DOM props', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" data-foo="bar">
-        <Text slot="label">
-          Test
-        </Text>
-      </DropZone>);
+        <Text slot="label">Test</Text>
+      </DropZone>
+    );
     let dropzone = getByTestId('foo');
     expect(dropzone).toHaveAttribute('data-foo', 'bar');
   });
@@ -76,9 +72,7 @@ describe('DropZone', () => {
   it('should support custom render function', () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo" render={props => <div {...props} data-custom="true" />}>
-        <Text slot="label">
-          Test
-        </Text>
+        <Text slot="label">Test</Text>
       </DropZone>
     );
     let dropzone = getByTestId('foo');
@@ -89,7 +83,15 @@ describe('DropZone', () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
     let hoverEndSpy = jest.fn();
-    let {getByText} = render(<DropZone className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</DropZone>);
+    let {getByText} = render(
+      <DropZone
+        className={({isHovered}) => (isHovered ? 'hover' : '')}
+        onHoverStart={hoverStartSpy}
+        onHoverChange={hoverChangeSpy}
+        onHoverEnd={hoverEndSpy}>
+        Test
+      </DropZone>
+    );
     let dropzone = getByText('Test');
 
     expect(dropzone).not.toHaveAttribute('data-hovered');
@@ -110,11 +112,10 @@ describe('DropZone', () => {
 
   it('should support focus ring', async () => {
     let {getByTestId, getByRole} = render(
-      <DropZone data-testid="foo" className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-        <Text slot="label">
-          Test
-        </Text>
-      </DropZone>);
+      <DropZone data-testid="foo" className={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}>
+        <Text slot="label">Test</Text>
+      </DropZone>
+    );
     let dropzone = getByTestId('foo');
     let button = getByRole('button');
 
@@ -134,10 +135,9 @@ describe('DropZone', () => {
   it('should apply correct default aria-labelledby', () => {
     let {getByRole, getByText} = render(
       <DropZone className="test">
-        <Text slot="label">
-          Test
-        </Text>
-      </DropZone>);
+        <Text slot="label">Test</Text>
+      </DropZone>
+    );
     let text = getByText('Test');
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${text.id}`);
@@ -145,13 +145,12 @@ describe('DropZone', () => {
 
   it('should allow custom aria-label', () => {
     let {getByRole} = render(
-      <DropZone
-        data-testid="foo"
-        aria-label="test aria-label">
+      <DropZone data-testid="foo" aria-label="test aria-label">
         <FileTrigger>
           <Link>Upload</Link>
         </FileTrigger>
-      </DropZone>);
+      </DropZone>
+    );
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'test aria-label');
   });
@@ -159,7 +158,7 @@ describe('DropZone', () => {
   it('should support render props', async () => {
     let {getByTestId} = render(
       <DropZone data-testid="foo">
-        {({isFocused}) => isFocused ? 'Focused' : 'Not Focused'}
+        {({isFocused}) => (isFocused ? 'Focused' : 'Not Focused')}
       </DropZone>
     );
     let dropzone = getByTestId('foo');
@@ -227,10 +226,12 @@ describe('DropZone', () => {
         let tree = render(
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-            <DropZone data-testid="foo" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
-              <Text slot="label">
-                Test
-              </Text>
+            <DropZone
+              data-testid="foo"
+              onDropEnter={onDropEnter}
+              onDrop={onDrop}
+              onDropMove={onDropMove}>
+              <Text slot="label">Test</Text>
             </DropZone>
           </>
         );
@@ -245,7 +246,9 @@ describe('DropZone', () => {
         fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect(dataTransfer.dropEffect).toBe('none');
         expect(dataTransfer.effectAllowed).toBe('all');
-        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'hello world')]);
+        expect([...dataTransfer.items]).toEqual([
+          new DataTransferItem('text/plain', 'hello world')
+        ]);
         expect(dataTransfer._dragImage).toBeUndefined();
 
         act(() => jest.runAllTimers());
@@ -303,7 +306,6 @@ describe('DropZone', () => {
               getText: expect.any(Function)
             }
           ]
-
         });
 
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
@@ -318,17 +320,19 @@ describe('DropZone', () => {
         });
 
         expect(dropzone).not.toHaveAttribute('data-drop-target');
-
       });
 
       it('should not trigger drag events if disabled', async () => {
         let tree = render(
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-            <DropZone isDisabled data-testid="disabled" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove}>
-              <Text slot="label">
-                Test
-              </Text>
+            <DropZone
+              isDisabled
+              data-testid="disabled"
+              onDropEnter={onDropEnter}
+              onDrop={onDrop}
+              onDropMove={onDropMove}>
+              <Text slot="label">Test</Text>
             </DropZone>
           </>
         );
@@ -345,7 +349,9 @@ describe('DropZone', () => {
         fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect(dataTransfer.dropEffect).toBe('none');
         expect(dataTransfer.effectAllowed).toBe('all');
-        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'hello world')]);
+        expect([...dataTransfer.items]).toEqual([
+          new DataTransferItem('text/plain', 'hello world')
+        ]);
         expect(dataTransfer._dragImage).toBeUndefined();
 
         act(() => jest.runAllTimers());
@@ -426,10 +432,12 @@ describe('DropZone', () => {
         let tree = render(
           <>
             <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-            <DropZone data-testid="foo" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
-              <Text slot="label">
-                Test
-              </Text>
+            <DropZone
+              data-testid="foo"
+              onDropEnter={onDropEnter}
+              onDrop={onDrop}
+              onDropMove={onDropMove}>
+              <Text slot="label">Test</Text>
             </DropZone>
           </>
         );
@@ -475,10 +483,13 @@ describe('DropZone', () => {
         let tree = render(
           <>
             <Draggable onDragStart={onDragStart} onDragEnd={onDragEnd} />
-            <DropZone isDisabled data-testid="disabled" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove}>
-              <Text slot="label">
-                Test
-              </Text>
+            <DropZone
+              isDisabled
+              data-testid="disabled"
+              onDropEnter={onDropEnter}
+              onDrop={onDrop}
+              onDropMove={onDropMove}>
+              <Text slot="label">Test</Text>
             </DropZone>
           </>
         );
@@ -520,14 +531,11 @@ describe('DropZone', () => {
   describe('useClipboard', () => {
     let onDrop = jest.fn();
     it('should be able to paste items into the dropzone', async () => {
-
       let tree = render(
         <>
           <DropZone onDrop={onDrop}>
-            <Text slot="label">
-              Test
-            </Text>
-          </DropZone >
+            <Text slot="label">Test</Text>
+          </DropZone>
         </>
       );
       let button = tree.getByRole('button');
@@ -544,15 +552,13 @@ describe('DropZone', () => {
       fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
 
       expect(onDrop).toHaveBeenCalledTimes(1);
-      expect(onDrop).toHaveBeenCalledWith(
-        {
-          type: 'drop',
-          x: 0,
-          y: 0,
-          dropOperation: 'copy',
-          items: expect.any(Array)
-        }
-      );
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 0,
+        y: 0,
+        dropOperation: 'copy',
+        items: expect.any(Array)
+      });
 
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
     });
@@ -561,9 +567,7 @@ describe('DropZone', () => {
       let {rerender, getByRole} = render(
         <>
           <DropZone isDisabled onDrop={onDrop}>
-            <Text slot="label">
-              Cannot paste here
-            </Text>
+            <Text slot="label">Cannot paste here</Text>
           </DropZone>
         </>
       );
@@ -574,9 +578,7 @@ describe('DropZone', () => {
 
       rerender(
         <DropZone onDrop={onDrop}>
-          <Text slot="label">
-            Can paste here now
-          </Text>
+          <Text slot="label">Can paste here now</Text>
         </DropZone>
       );
 
@@ -594,15 +596,13 @@ describe('DropZone', () => {
       fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
 
       expect(onDrop).toHaveBeenCalledTimes(1);
-      expect(onDrop).toHaveBeenCalledWith(
-        {
-          type: 'drop',
-          x: 0,
-          y: 0,
-          dropOperation: 'copy',
-          items: expect.any(Array)
-        }
-      );
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 0,
+        y: 0,
+        dropOperation: 'copy',
+        items: expect.any(Array)
+      });
 
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
     });

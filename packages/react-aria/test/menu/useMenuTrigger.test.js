@@ -20,7 +20,9 @@ describe('useMenuTrigger', function () {
   let setFocusStrategy = jest.fn();
 
   let renderMenuTriggerHook = (menuTriggerProps, menuTriggerState, ref) => {
-    let {result} = renderHook(() => useMenuTrigger(menuTriggerProps, menuTriggerState, ref || React.createRef()));
+    let {result} = renderHook(() =>
+      useMenuTrigger(menuTriggerProps, menuTriggerState, ref || React.createRef())
+    );
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     return result.current;
   };
@@ -28,7 +30,7 @@ describe('useMenuTrigger', function () {
   beforeEach(() => {
     state.isOpen = false;
     state.setOpen = setOpen;
-    state.open = (focusStrategy) => {
+    state.open = focusStrategy => {
       state.setFocusStrategy(focusStrategy);
       state.setOpen(true);
     };
@@ -60,7 +62,7 @@ describe('useMenuTrigger', function () {
     expect(menuProps.id).toBeTruthy();
   });
 
-  it('returns the proper aria-haspopup based on the menu\'s type', function () {
+  it("returns the proper aria-haspopup based on the menu's type", function () {
     let props = {
       type: 'menu'
     };
@@ -84,7 +86,7 @@ describe('useMenuTrigger', function () {
     expect(setFocusStrategy).toHaveBeenCalledWith(null);
   });
 
-  it('doesn\'t toggle the menu if isDisabled', function () {
+  it("doesn't toggle the menu if isDisabled", function () {
     let {menuTriggerProps} = renderMenuTriggerHook({isDisabled: true}, state);
     expect(typeof menuTriggerProps.onPressStart).toBe('function');
     menuTriggerProps.onPressStart({pointerType: 'mouse'});

@@ -21,46 +21,51 @@ import {useNumberFormatter} from '../i18n/useNumberFormatter';
 export interface ProgressBarBaseProps {
   /**
    * The current value (controlled).
+   *
    * @default 0
    */
-  value?: number,
+  value?: number;
   /**
    * The smallest value allowed for the input.
+   *
    * @default 0
    */
-  minValue?: number,
+  minValue?: number;
   /**
    * The largest value allowed for the input.
+   *
    * @default 100
    */
-  maxValue?: number,
+  maxValue?: number;
   /** The content to display as the label. */
-  label?: ReactNode,
+  label?: ReactNode;
   /**
    * The display format of the value label.
-   * @default {style: 'percent'}
+   *
+   * @default { style: 'percent' }
    */
-  formatOptions?: Intl.NumberFormatOptions,
+  formatOptions?: Intl.NumberFormatOptions;
   /** The content to display as the value's label (e.g. 1 of 4). */
-  valueLabel?: ReactNode
+  valueLabel?: ReactNode;
 }
 
-export interface AriaProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, AriaLabelingProps {}
+export interface AriaProgressBarBaseProps
+  extends ProgressBarBaseProps, DOMProps, AriaLabelingProps {}
 
 export interface ProgressBarProps extends ProgressBarBaseProps {
   /**
    * Whether presentation is indeterminate when progress isn't known.
    */
-  isIndeterminate?: boolean
+  isIndeterminate?: boolean;
 }
 
 export interface AriaProgressBarProps extends ProgressBarProps, DOMProps, AriaLabelingProps {}
 
 export interface ProgressBarAria {
   /** Props for the progress bar container element. */
-  progressBarProps: DOMAttributes,
+  progressBarProps: DOMAttributes;
   /** Props for the progress bar's visual label element (if any). */
-  labelProps: DOMAttributes
+  labelProps: DOMAttributes;
 }
 
 /**
@@ -89,7 +94,8 @@ export function useProgressBar(props: AriaProgressBarProps): ProgressBarAria {
   });
 
   value = clamp(value, minValue, maxValue);
-  let percentage = (value - minValue) / (maxValue - minValue);
+  let range = maxValue - minValue;
+  let percentage = range === 0 ? 0 : (value - minValue) / range;
   let formatter = useNumberFormatter(formatOptions);
 
   if (!isIndeterminate && !valueLabel) {
@@ -103,7 +109,7 @@ export function useProgressBar(props: AriaProgressBarProps): ProgressBarAria {
       'aria-valuenow': isIndeterminate ? undefined : value,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,
-      'aria-valuetext': isIndeterminate ? undefined : valueLabel as string,
+      'aria-valuetext': isIndeterminate ? undefined : (valueLabel as string),
       role: 'progressbar'
     }),
     labelProps

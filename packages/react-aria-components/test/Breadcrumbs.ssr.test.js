@@ -14,7 +14,9 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Breadcrumbs SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Breadcrumbs, Breadcrumb} from '../exports/index.ts';
 
       <React.StrictMode>
@@ -24,11 +26,13 @@ describe('Breadcrumbs SSR', function () {
           <Breadcrumb>Three</Breadcrumb>
         </Breadcrumbs>
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let options = screen.getAllByRole('listitem');
-      expect(options.map(o => o.textContent)).toEqual(['One', 'Two', 'Three']);
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let options = screen.getAllByRole('listitem');
+        expect(options.map(o => o.textContent)).toEqual(['One', 'Two', 'Three']);
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let options = screen.getAllByRole('listitem');

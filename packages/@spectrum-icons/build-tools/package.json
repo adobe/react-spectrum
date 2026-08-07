@@ -1,6 +1,7 @@
 {
   "name": "@spectrum-icons/build-tools",
   "version": "3.0.0-alpha.1",
+  "private": true,
   "description": "Unpublished build tools to help our monorepo",
   "license": "Apache-2.0",
   "repository": {
@@ -8,15 +9,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "main": "generateIcons.js",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@svgr/core": "^8.1.0",
     "prettier": "^3.6.2"
   },
   "devDependencies": {
     "prettier": "^3.3.3"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

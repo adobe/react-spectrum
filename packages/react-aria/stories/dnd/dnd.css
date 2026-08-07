@@ -3,10 +3,16 @@
   --spectrum-dnd-draggable-background-color-selected: var(--spectrum-alias-highlight-selected);
   --spectrum-dnd-draggable-background-color-dragging: var(--spectrum-global-color-gray-75);
   --spectrum-dnd-draggable-border-color: var(--spectrum-global-color-gray-300);
-  --spectrum-dnd-draggable-border-color-selected: var(--spectrum-table-row-background-color-selected);
+  --spectrum-dnd-draggable-border-color-selected: var(
+    --spectrum-table-row-background-color-selected
+  );
   --spectrum-dnd-draggable-border-color-dragging: var(--spectrum-global-color-gray-200);
-  --spectrum-dnd-draggable-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
-  --spectrum-dnd-draggable-border-color-focus: var(--spectrum-dnd-draggable-border-color-selected-hover);
+  --spectrum-dnd-draggable-border-color-selected-hover: var(
+    --spectrum-dropzone-border-color-selected-hover
+  );
+  --spectrum-dnd-draggable-border-color-focus: var(
+    --spectrum-dnd-draggable-border-color-selected-hover
+  );
   --spectrum-dnd-draggable-badge-text-color: var(--spectrum-global-color-static-white);
   --spectrum-dnd-draggable-badge-background-color: var(--spectrum-global-color-blue-400);
 }
@@ -15,9 +21,15 @@
   --spectrum-dnd-droppable-background-color: var(--spectrum-global-color-gray-50);
   --spectrum-dnd-droppable-background-color-selected: var(--spectrum-alias-highlight-selected);
   --spectrum-dnd-droppable-border-color: var(--spectrum-global-color-gray-300);
-  --spectrum-dnd-droppable-border-color-selected: var(--spectrum-table-row-background-color-selected);
-  --spectrum-dnd-droppable-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
-  --spectrum-dnd-droppable-border-color-focus: var(--spectrum-dnd-droppable-border-color-selected-hover);
+  --spectrum-dnd-droppable-border-color-selected: var(
+    --spectrum-table-row-background-color-selected
+  );
+  --spectrum-dnd-droppable-border-color-selected-hover: var(
+    --spectrum-dropzone-border-color-selected-hover
+  );
+  --spectrum-dnd-droppable-border-color-focus: var(
+    --spectrum-dnd-droppable-border-color-selected-hover
+  );
 }
 
 .draggable {
@@ -199,7 +211,7 @@
   background: var(--spectrum-global-color-gray-200);
 }
 
-.option[aria-selected=true] {
+.option[aria-selected='true'] {
   background: blueviolet;
   color: white;
 }
@@ -287,7 +299,7 @@
     }
   }
 
-  .option[aria-selected=true] {
+  .option[aria-selected='true'] {
     background: Highlight;
     color: HighlightText;
     forced-color-adjust: none;

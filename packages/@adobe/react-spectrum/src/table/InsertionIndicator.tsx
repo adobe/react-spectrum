@@ -18,8 +18,8 @@ import {useTableContext} from './TableViewBase';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface InsertionIndicatorProps {
-  target: ItemDropTarget,
-  rowProps: HTMLAttributes<HTMLElement> & DOMAttributes<FocusableElement>
+  target: ItemDropTarget;
+  rowProps: HTMLAttributes<HTMLElement> & DOMAttributes<FocusableElement>;
 }
 
 export function InsertionIndicator(props: InsertionIndicatorProps): ReactNode | null {
@@ -27,6 +27,7 @@ export function InsertionIndicator(props: InsertionIndicatorProps): ReactNode | 
   const {target, rowProps} = props;
 
   let ref = useRef<HTMLDivElement | null>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(props, dropState!, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -40,21 +41,19 @@ export function InsertionIndicator(props: InsertionIndicatorProps): ReactNode | 
     <div
       style={{
         position: 'absolute',
-        top: typeof rowProps.style?.top === 'number' && typeof rowProps.style?.height === 'number' ? rowProps.style.top + (target.dropPosition === 'after' ? rowProps.style.height : 0) : 0,
+        top:
+          typeof rowProps.style?.top === 'number' && typeof rowProps.style?.height === 'number'
+            ? rowProps.style.top + (target.dropPosition === 'after' ? rowProps.style.height : 0)
+            : 0,
         width: rowProps.style?.width
       }}
       role="row"
       aria-hidden={dropIndicatorProps['aria-hidden']}>
       <div
         role="gridcell"
-        className={
-          classNames(
-            styles,
-            'react-spectrum-Table-InsertionIndicator',
-            {
-              'react-spectrum-Table-InsertionIndicator--dropTarget': isDropTarget
-            }
-        )}>
+        className={classNames(styles, 'react-spectrum-Table-InsertionIndicator', {
+          'react-spectrum-Table-InsertionIndicator--dropTarget': isDropTarget
+        })}>
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
       </div>
     </div>

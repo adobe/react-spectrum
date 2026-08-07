@@ -13,7 +13,7 @@ const meta: Meta<typeof Breadcrumbs> = {
 export default meta;
 type Story = StoryFn<typeof Breadcrumbs>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <Breadcrumbs {...args}>
     <Breadcrumb href="/">Home</Breadcrumb>
     <Breadcrumb href="/react-aria/">React Aria</Breadcrumb>

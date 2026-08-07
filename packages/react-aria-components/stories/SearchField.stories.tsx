@@ -30,7 +30,9 @@ export type SearchFieldStory = StoryFn<typeof SearchField>;
 
 export const SearchFieldExample: SearchFieldStory = () => {
   return (
-    <SearchField className={classNames(styles, 'searchFieldExample')} data-testid="search-field-example">
+    <SearchField
+      className={classNames(styles, 'searchFieldExample')}
+      data-testid="search-field-example">
       <Label>Search</Label>
       <Input />
       <Button>✕</Button>

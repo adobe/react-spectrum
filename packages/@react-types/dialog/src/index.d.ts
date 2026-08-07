@@ -11,4 +11,10 @@
  */
 
 export {AriaDialogProps} from '@react-aria/dialog';
-export {SpectrumDialogClose, SpectrumDialogTriggerProps, SpectrumDialogContainerProps, SpectrumDialogProps, SpectrumAlertDialogProps} from '@react-spectrum/dialog';
+export {
+  SpectrumDialogClose,
+  SpectrumDialogTriggerProps,
+  SpectrumDialogContainerProps,
+  SpectrumDialogProps,
+  SpectrumAlertDialogProps
+} from '@react-spectrum/dialog';

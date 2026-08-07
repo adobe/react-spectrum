@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "رسالة جديدة",
+  "chat.scrollToBottom": "التمرير إلى الأسفل",
+  "messagefeedback.thumbDown": "استجابة  سيئة",
+  "messagefeedback.thumbUp": "استجابة جيدة",
+  "promptfield.aiDisclaimer": "يتم توليد الردود باستخدام الذكاء الاصطناعي، وقد تكون غير دقيقة. تحقق قبل الاستخدام.",
+  "promptfield.aiUserGuidlines": "إرشادات مستخدمي الذكاء الاصطناعي",
+  "promptfield.attachments": "الملحقات",
+  "promptfield.insertButton": "جمع",
+  "promptfield.label": "الموضوع",
+  "promptfield.placeholder": "هل أنت مستعد للبدء؟ اطرح سؤالًا، أو شارك فكرة، أو أضف مهمة.",
+  "promptfield.stopButton": "توقف",
+  "promptfield.submitButton": "أرسلني",
+  "promptfield.uploading": "التحميل",
+  "responsestatus.loading": "جارٍ التحميل",
+  "voicebutton.startListening": "ابدأ التسجيل",
+  "voicebutton.stopListening": "أوقف التسجيل"
+}

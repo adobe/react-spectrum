@@ -63,14 +63,15 @@ export function ColorSliderExampleRender(args: ColorSliderProps): JSX.Element {
             borderRadius: '50%',
             boxSizing: 'border-box',
             background: color.toString()
-          })} />
+          })}
+        />
       </SliderTrack>
     </ColorSlider>
   );
 }
 
 export const ColorSliderExample: ColorSliderStory = {
-  render: (args) => <ColorSliderExampleRender {...args} />,
+  render: args => <ColorSliderExampleRender {...args} />,
   args: {
     channel: 'hue',
     defaultValue: 'hsl(0, 100%, 50%)'

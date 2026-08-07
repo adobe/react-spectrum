@@ -57,22 +57,22 @@ describe('InlineAlert', function () {
   });
 
   it.each`
-      variant
-      ${'neutral'}
-      ${'info'}
-      ${'positive'}
-      ${'notice'}
-      ${'negative'}
-    `('$variant variant renders correctly', function ({variant}) {
-      let {getByTestId} = render(
-        <InlineAlert variant={variant} data-testid="testid1">
-          <Header>Title</Header>
-          <Content>Content</Content>
-        </InlineAlert>
-      );
-      let alert = getByTestId('testid1');
-      expect(alert).toHaveClass(`spectrum-InLineAlert--${variant}`);
-    });
+    variant
+    ${'neutral'}
+    ${'info'}
+    ${'positive'}
+    ${'notice'}
+    ${'negative'}
+  `('$variant variant renders correctly', function ({variant}) {
+    let {getByTestId} = render(
+      <InlineAlert variant={variant} data-testid="testid1">
+        <Header>Title</Header>
+        <Content>Content</Content>
+      </InlineAlert>
+    );
+    let alert = getByTestId('testid1');
+    expect(alert).toHaveClass(`spectrum-InLineAlert--${variant}`);
+  });
 
   it('supports autoFocus', () => {
     let {getByRole} = render(

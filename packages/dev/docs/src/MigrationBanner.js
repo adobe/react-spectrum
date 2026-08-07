@@ -33,7 +33,11 @@ export function MigrationBanner({currentPage}) {
   let isIndexPage = /^(?:[^/]+\/)?index\.html$/.test(currentPage.name);
 
   // only have banner on react-stately index page, not other index pages. Also skip releases
-  if ((isIndexPage && section !== 'react-stately') || currentPage.name.startsWith('v3/releases/') || currentPage.name === 'v3/Support.html') {
+  if (
+    (isIndexPage && section !== 'react-stately') ||
+    currentPage.name.startsWith('v3/releases/') ||
+    currentPage.name === 'v3/Support.html'
+  ) {
     return null;
   }
 
@@ -45,7 +49,8 @@ export function MigrationBanner({currentPage}) {
 
     if (section === 'react-aria') {
       // logic from docsnamer, these are aria pages that arent subpages on new site
-      let topLevelHooks = /^use(Clipboard|Collator|.*Formatter|Drag.*|Drop.*|Field|Filter|Focus.*|Hover|Id|IsSSR|Keyboard|Label|Landmark|Locale|.*Press|Move|ObjectRef)$/;
+      let topLevelHooks =
+        /^use(Clipboard|Collator|.*Formatter|Drag.*|Drop.*|Field|Filter|Focus.*|Hover|Id|IsSSR|Keyboard|Label|Landmark|Locale|.*Press|Move|ObjectRef)$/;
 
       if (topLevelHooks.test(pageName)) {
         targetLink = '.';
@@ -64,7 +69,8 @@ export function MigrationBanner({currentPage}) {
       }
     } else if (section === 'react-stately') {
       // logic from docsnamer, these are stately pages that arent subpages on new site
-      let topLevelStateHooks = /^(use(MultipleSelection|List|SingleSelectList|Drag.*|Drop.*|Overlay.*|Toggle)State)|(useListData|useAsyncList|useTreeData)$/;
+      let topLevelStateHooks =
+        /^(use(MultipleSelection|List|SingleSelectList|Drag.*|Drop.*|Overlay.*|Toggle)State)|(useListData|useAsyncList|useTreeData)$/;
 
       if (topLevelStateHooks.test(pageName)) {
         targetLink = '.';
@@ -82,7 +88,8 @@ export function MigrationBanner({currentPage}) {
       <>
         <Heading>Migration in progress</Heading>
         <Content>
-          This page is still being migrated to our new website. In the meantime, you can explore the new React Aria Components docs{' '}
+          This page is still being migrated to our new website. In the meantime, you can explore the
+          new React Aria Components docs{' '}
           <Link>
             <a href={targetLink}>here</a>
           </Link>
@@ -121,12 +128,12 @@ export function MigrationBanner({currentPage}) {
     ]);
 
     const specialMappings = {
-      'MenuTrigger': 'Menu',
-      'AlertDialog': 'Dialog#alert-dialog',
+      MenuTrigger: 'Menu',
+      AlertDialog: 'Dialog#alert-dialog',
       'workflow-icons': 'icons',
       'custom-icons': 'icons',
-      'DialogTrigger': 'Dialog',
-      'ActionGroup': 'ActionButtonGroup'
+      DialogTrigger: 'Dialog',
+      ActionGroup: 'ActionButtonGroup'
     };
 
     let nameMatch = currentPage.name.match(/^v3\/([^/]+)\.html$/);
@@ -156,13 +163,14 @@ export function MigrationBanner({currentPage}) {
           color: 'white',
           lineHeight: 1.3
         }}>
-        Spectrum 2 is now available! {componentName && (
+        Spectrum 2 is now available!{' '}
+        {componentName && (
           <>
             Check out the S2{' '}
             <Link variant="overBackground">
               <a href={s2Link}>{componentName}</a>
-            </Link>
-            {' '}docs and the{' '}
+            </Link>{' '}
+            docs and the{' '}
           </>
         )}
         {!componentName && 'Check out the '}

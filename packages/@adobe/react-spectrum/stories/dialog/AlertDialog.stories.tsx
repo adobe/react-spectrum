@@ -23,161 +23,171 @@ export default {
 
 export type AlertDialogStory = StoryFn<typeof AlertDialog>;
 
-export const Destructive: AlertDialogStory = () => renderAlert({
-  variant: 'destructive',
-  title: 'Warning Destructive',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel')
-});
+export const Destructive: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'destructive',
+    title: 'Warning Destructive',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel')
+  });
 
 Destructive.story = {
   name: 'destructive'
 };
 
-export const Confirmation: AlertDialogStory = () => renderAlert({
-  variant: 'confirmation',
-  title: 'Confirmation Required',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel')
-});
+export const Confirmation: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'confirmation',
+    title: 'Confirmation Required',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel')
+  });
 
 Confirmation.story = {
   name: 'confirmation'
 };
 
-export const Information: AlertDialogStory = () => renderAlert({
-  variant: 'information',
-  title: 'Informative Alert',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel')
-});
+export const Information: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'information',
+    title: 'Informative Alert',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel')
+  });
 
 Information.story = {
   name: 'information'
 };
 
-export const Error: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel')
-});
+export const Error: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel')
+  });
 
 Error.story = {
   name: 'error'
 };
 
-export const Warning: AlertDialogStory = () => renderAlert({
-  variant: 'warning',
-  title: 'This is a warning',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel')
-});
+export const Warning: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'warning',
+    title: 'This is a warning',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel')
+  });
 
 Warning.story = {
   name: 'warning'
 };
 
-export const PrimaryDisabled: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel'),
-  isPrimaryActionDisabled: true
-});
+export const PrimaryDisabled: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel'),
+    isPrimaryActionDisabled: true
+  });
 
 PrimaryDisabled.story = {
   name: 'primary disabled'
 };
 
-export const AutoFocusPrimary: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  secondaryActionLabel: 'Secondary button',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel'),
-  autoFocusButton: 'primary'
-});
+export const AutoFocusPrimary: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    secondaryActionLabel: 'Secondary button',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel'),
+    autoFocusButton: 'primary'
+  });
 
 AutoFocusPrimary.story = {
   name: 'autoFocus primary'
 };
 
-export const SecondaryDisabled: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  secondaryActionLabel: 'Secondary button',
-  cancelLabel: 'Cancel',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel'),
-  isSecondaryActionDisabled: true
-});
+export const SecondaryDisabled: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    secondaryActionLabel: 'Secondary button',
+    cancelLabel: 'Cancel',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel'),
+    isSecondaryActionDisabled: true
+  });
 
 SecondaryDisabled.story = {
   name: 'secondary disabled'
 };
 
-export const AutoFocusSecondary: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  secondaryActionLabel: 'Secondary button',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel'),
-  autoFocusButton: 'secondary'
-});
+export const AutoFocusSecondary: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    secondaryActionLabel: 'Secondary button',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel'),
+    autoFocusButton: 'secondary'
+  });
 
 AutoFocusSecondary.story = {
   name: 'autoFocus secondary'
 };
 
-export const AutoFocusCancel: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  secondaryActionLabel: 'Secondary button',
-  onPrimaryAction: action('primary'),
-  onSecondaryAction: action('secondary'),
-  onCancel: action('cancel'),
-  autoFocusButton: 'cancel',
-  'data-testid': 'alert-dialog'
-} as SpectrumAlertDialogProps);
+export const AutoFocusCancel: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    secondaryActionLabel: 'Secondary button',
+    onPrimaryAction: action('primary'),
+    onSecondaryAction: action('secondary'),
+    onCancel: action('cancel'),
+    autoFocusButton: 'cancel',
+    'data-testid': 'alert-dialog'
+  } as SpectrumAlertDialogProps);
 
 AutoFocusCancel.story = {
   name: 'autoFocus cancel'
@@ -188,7 +198,12 @@ function renderAlert({...props}: SpectrumAlertDialogProps) {
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <AlertDialog {...props} onPrimaryAction={action('primary')} onSecondaryAction={action('secondary')} onCancel={props.onCancel} />
+        <AlertDialog
+          {...props}
+          onPrimaryAction={action('primary')}
+          onSecondaryAction={action('secondary')}
+          onCancel={props.onCancel}
+        />
       </DialogTrigger>
     </div>
   );

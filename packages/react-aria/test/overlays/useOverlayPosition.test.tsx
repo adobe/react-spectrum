@@ -14,16 +14,29 @@ import {fireEvent, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../../src/overlays/useOverlayPosition';
 
-
-function Example({triggerTop = 250, containerStyle = {width: 600, height: 600} as React.CSSProperties, ...props}) {
+function Example({
+  triggerTop = 250,
+  containerStyle = {width: 600, height: 600} as React.CSSProperties,
+  ...props
+}) {
   let targetRef = useRef(null);
   let containerRef = useRef(null);
   let overlayRef = useRef(null);
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, overlayRef, arrowSize: 8, ...props});
+  let {overlayProps, placement, arrowProps} = useOverlayPosition({
+    targetRef,
+    overlayRef,
+    arrowSize: 8,
+    ...props
+  });
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
     <React.Fragment>
-      <div ref={targetRef} data-testid="trigger" style={{left: 10, top: triggerTop, width: 100, height: 100}}>Trigger</div>
+      <div
+        ref={targetRef}
+        data-testid="trigger"
+        style={{left: 10, top: triggerTop, width: 100, height: 100}}>
+        Trigger
+      </div>
       <div ref={containerRef} data-testid="container" style={containerStyle}>
         <div ref={overlayRef} data-testid="overlay" style={style}>
           <div data-testid="arrow" {...arrowProps} />
@@ -75,12 +88,16 @@ describe('useOverlayPosition', function () {
     Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
 
-    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
-      return parseInt(this.style.width, 10) || 0;
-    });
-    jest.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
-      return parseInt(this.style.height, 10) || 0;
-    });
+    jest
+      .spyOn(HTMLElement.prototype, 'offsetWidth', 'get')
+      .mockImplementation(function (this: HTMLElement) {
+        return parseInt(this.style.width, 10) || 0;
+      });
+    jest
+      .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
+      .mockImplementation(function (this: HTMLElement) {
+        return parseInt(this.style.height, 10) || 0;
+      });
   });
 
   it('should position the overlay relative to the trigger', function () {
@@ -166,7 +183,7 @@ describe('useOverlayPosition', function () {
     `);
   });
 
-  it('should update the overlay\'s maxHeight by the given one if it\'s smaller than available viewport height.', function () {
+  it("should update the overlay's maxHeight by the given one if it's smaller than available viewport height.", function () {
     let res = render(<Example maxHeight={450} />);
     let overlay = res.getByTestId('overlay');
 
@@ -268,17 +285,21 @@ describe('useOverlayPosition with positioned container', () => {
     Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
     stubs.push(
-      jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(function (this: HTMLElement) {
-        // Make sure container is is the offsetParent of overlay
-        if (this.attributes.getNamedItem('data-testid')?.value === 'overlay') {
-          return document.querySelector('[data-testid="container"]');
-        } else {
-          return null;
-        }
-      }),
-      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-        return realGetBoundingClientRect.apply(this);
-      }),
+      jest
+        .spyOn(window.HTMLElement.prototype, 'offsetParent', 'get')
+        .mockImplementation(function (this: HTMLElement) {
+          // Make sure container is is the offsetParent of overlay
+          if (this.attributes.getNamedItem('data-testid')?.value === 'overlay') {
+            return document.querySelector('[data-testid="container"]');
+          } else {
+            return null;
+          }
+        }),
+      jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(function (this: HTMLElement) {
+          return realGetBoundingClientRect.apply(this);
+        }),
       jest.spyOn(window, 'getComputedStyle').mockImplementation(element => {
         if (element.attributes.getNamedItem('data-testid')?.value === 'container') {
           const sty = realGetComputedStyle(element);
@@ -288,12 +309,16 @@ describe('useOverlayPosition with positioned container', () => {
           return realGetComputedStyle(element);
         }
       }),
-      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
-        return parseInt(this.style.width, 10) || 0;
-      }),
-      jest.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
-        return parseInt(this.style.height, 10) || 0;
-      })
+      jest
+        .spyOn(HTMLElement.prototype, 'offsetWidth', 'get')
+        .mockImplementation(function (this: HTMLElement) {
+          return parseInt(this.style.width, 10) || 0;
+        }),
+      jest
+        .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
+        .mockImplementation(function (this: HTMLElement) {
+          return parseInt(this.style.height, 10) || 0;
+        })
     );
   });
 
@@ -324,7 +349,9 @@ describe('useOverlayPosition with positioned container', () => {
   });
 
   it('should position the overlay relative to the trigger at top', function () {
-    let res = render(<Example placement="top" containerStyle={{top: 150, left: 0, width: 400, height: 400}} />);
+    let res = render(
+      <Example placement="top" containerStyle={{top: 150, left: 0, width: 400, height: 400}} />
+    );
     let overlay = res.getByTestId('overlay');
     let arrow = res.getByTestId('arrow');
 

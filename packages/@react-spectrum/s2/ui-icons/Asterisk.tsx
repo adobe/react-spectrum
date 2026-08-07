@@ -33,14 +33,22 @@ let styles = style({
   }
 });
 
-export default function Asterisk(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL'}): ReactNode {
+export default function Asterisk(
+  props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL'}
+): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Asterisk_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Asterisk_M {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'L':
-      return <Asterisk_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Asterisk_L {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'XL':
-      return <Asterisk_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Asterisk_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
   }
 }

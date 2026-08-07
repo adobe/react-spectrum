@@ -6,10 +6,13 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Does nothing', `
+test(
+  'Does nothing',
+  `
 import {Provider, defaultTheme} from '@adobe/react-spectrum';
 
 <Provider theme={defaultTheme} locale="en-US">
   Test
 </Provider>
-`);
+`
+);

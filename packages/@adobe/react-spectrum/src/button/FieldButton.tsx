@@ -24,15 +24,18 @@ import {useHover} from 'react-aria/useHover';
 import {useStyleProps} from '../utils/styleProps';
 
 interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
-  isQuiet?: boolean,
-  isActive?: boolean,
-  validationState?: 'valid' | 'invalid',
-  isInvalid?: boolean,
-  focusRingClass?: string
+  isQuiet?: boolean;
+  isActive?: boolean;
+  validationState?: 'valid' | 'invalid';
+  isInvalid?: boolean;
+  focusRingClass?: string;
 }
 
 // @private
-export const FieldButton = React.forwardRef(function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
+export const FieldButton = React.forwardRef(function FieldButton(
+  props: FieldButtonProps,
+  ref: FocusableRef
+) {
   props = useSlotProps(props, 'button');
   let {
     isQuiet,
@@ -51,24 +54,24 @@ export const FieldButton = React.forwardRef(function FieldButton(props: FieldBut
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusRingClass)} autoFocus={autoFocus}>
+    <FocusRing
+      focusRingClass={classNames(styles, 'focus-ring', focusRingClass)}
+      autoFocus={autoFocus}>
       <button
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-FieldButton',
-            {
-              'spectrum-FieldButton--quiet': isQuiet,
-              'is-active': isActive || isPressed,
-              'is-disabled': isDisabled,
-              'spectrum-FieldButton--invalid': isInvalid || validationState === 'invalid',
-              'is-hovered': isHovered
-            },
-            styleProps.className
-          )
-        }>
+        className={classNames(
+          styles,
+          'spectrum-FieldButton',
+          {
+            'spectrum-FieldButton--quiet': isQuiet,
+            'is-active': isActive || isPressed,
+            'is-disabled': isDisabled,
+            'spectrum-FieldButton--invalid': isInvalid || validationState === 'invalid',
+            'is-hovered': isHovered
+          },
+          styleProps.className
+        )}>
         <SlotProvider
           slots={{
             icon: {

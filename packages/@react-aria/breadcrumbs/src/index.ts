@@ -11,4 +11,10 @@
  */
 export {useBreadcrumbItem, useBreadcrumbs} from 'react-aria/useBreadcrumbs';
 
-export type {BreadcrumbItemProps, AriaBreadcrumbItemProps, BreadcrumbItemAria, AriaBreadcrumbsProps, BreadcrumbsAria} from 'react-aria/useBreadcrumbs';
+export type {
+  BreadcrumbItemProps,
+  AriaBreadcrumbItemProps,
+  BreadcrumbItemAria,
+  AriaBreadcrumbsProps,
+  BreadcrumbsAria
+} from 'react-aria/useBreadcrumbs';

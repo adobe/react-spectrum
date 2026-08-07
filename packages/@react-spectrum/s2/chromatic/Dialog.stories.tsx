@@ -11,14 +11,24 @@
  */
 
 import {Dialog} from '../src/Dialog';
-import {DialogContainerExample, DialogTriggerExample, Example, ExampleStoryType} from '../stories/Dialog.stories';
+import {
+  DialogContainerExample,
+  DialogTriggerExample,
+  Example,
+  ExampleStoryType
+} from '../stories/Dialog.stories';
 import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Dialog'
@@ -29,7 +39,7 @@ type Story = StoryObj<ExampleStoryType>;
 
 export const Default: Story = {
   ...Example,
-// TODO: maybe render dialogs with different args instead (showHero/showHeader, etc)
+  // TODO: maybe render dialogs with different args instead (showHero/showHeader, etc)
   play: async ({canvasElement}) => {
     await userEvent.tab();
     await userEvent.keyboard('{Enter}');
@@ -40,10 +50,10 @@ export const Default: Story = {
 
 export const WithDialogTrigger: Story = {
   ...DialogTriggerExample,
-  play: async (context) => await Default.play!(context)
+  play: async context => await Default.play!(context)
 };
 
 export const DialogContainer: Story = {
   ...DialogContainerExample,
-  play: async (context) => await Default.play!(context)
+  play: async context => await Default.play!(context)
 };

@@ -31,9 +31,7 @@ type Story = StoryObj<typeof SelectBoxGroup>;
 export const VerticalOrientation: Story = {
   render: () => (
     <div style={{width: 600}}>
-      <SelectBoxGroup
-        aria-label="Vertical"
-        orientation="vertical">
+      <SelectBoxGroup aria-label="Vertical" orientation="vertical">
         <SelectBox id="text-only" textValue="V: Text Only">
           <Text slot="label">V: Text Only</Text>
         </SelectBox>
@@ -52,10 +50,7 @@ export const VerticalOrientation: Story = {
 export const VerticalOrientationMultiSelect: Story = {
   render: () => (
     <div style={{width: 600}}>
-      <SelectBoxGroup
-        selectionMode="multiple"
-        aria-label="Vertical"
-        orientation="vertical">
+      <SelectBoxGroup selectionMode="multiple" aria-label="Vertical" orientation="vertical">
         <SelectBox id="text-only" textValue="V: Text Only">
           <Text slot="label">V: Text Only</Text>
         </SelectBox>
@@ -74,9 +69,7 @@ export const VerticalOrientationMultiSelect: Story = {
 export const HorizontalOrientation: Story = {
   render: () => (
     <div style={{width: 800}}>
-      <SelectBoxGroup
-        aria-label="Horizontal"
-        orientation="horizontal">
+      <SelectBoxGroup aria-label="Horizontal" orientation="horizontal">
         <SelectBox id="text-only" textValue="Title Only">
           <Text slot="label">Title Only</Text>
         </SelectBox>
@@ -101,10 +94,7 @@ export const HorizontalOrientation: Story = {
 export const HorizontalOrientationMultSelect: Story = {
   render: () => (
     <div style={{width: 800}}>
-      <SelectBoxGroup
-        selectionMode="multiple"
-        aria-label="Horizontal"
-        orientation="horizontal">
+      <SelectBoxGroup selectionMode="multiple" aria-label="Horizontal" orientation="horizontal">
         <SelectBox id="text-only" textValue="Title Only">
           <Text slot="label">Title Only</Text>
         </SelectBox>

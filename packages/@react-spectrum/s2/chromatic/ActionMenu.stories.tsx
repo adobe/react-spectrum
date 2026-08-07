@@ -18,7 +18,12 @@ import {userEvent, within} from 'storybook/test';
 const meta: Meta<typeof ActionMenu<any>> = {
   component: ActionMenu,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
   },
   title: 'S2 Chromatic/ActionMenu'
 };

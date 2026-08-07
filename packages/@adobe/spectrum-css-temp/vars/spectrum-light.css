@@ -206,49 +206,57 @@
   --spectrum-magenta-1200: rgb(112, 0, 55);
   --spectrum-magenta-1300: rgb(84, 3, 42);
   --spectrum-magenta-1400: rgb(60, 6, 29);
-  --spectrum-alias-background-color-modal-overlay: rgba(0,0,0,0.4);
-  --spectrum-alias-dropshadow-color: rgba(0,0,0,0.15);
-  --spectrum-alias-background-color-hover-overlay: rgba(0,0,0,0.04);
-  --spectrum-alias-highlight-hover: rgba(0,0,0,0.06);
-  --spectrum-alias-highlight-active: rgba(44,44,44,0.1);
-  --spectrum-alias-highlight-selected: rgba(2,101,220,0.1);
-  --spectrum-alias-highlight-selected-hover: rgba(2,101,220,0.2);
+  --spectrum-alias-background-color-modal-overlay: rgba(0, 0, 0, 0.4);
+  --spectrum-alias-dropshadow-color: rgba(0, 0, 0, 0.15);
+  --spectrum-alias-background-color-hover-overlay: rgba(0, 0, 0, 0.04);
+  --spectrum-alias-highlight-hover: rgba(0, 0, 0, 0.06);
+  --spectrum-alias-highlight-active: rgba(44, 44, 44, 0.1);
+  --spectrum-alias-highlight-selected: rgba(2, 101, 220, 0.1);
+  --spectrum-alias-highlight-selected-hover: rgba(2, 101, 220, 0.2);
   --spectrum-alias-highlight-invalid: rgba(211, 21, 16, 0.15); /* matches red-900 */
-  --spectrum-alias-text-highlight-color: rgba(2,101,220,0.2);
-  --spectrum-alias-background-color-quickactions: rgba(248,248,248,0.9);
-  --spectrum-alias-radial-reaction-color-default: rgba(34,34,34,0.6);
+  --spectrum-alias-text-highlight-color: rgba(2, 101, 220, 0.2);
+  --spectrum-alias-background-color-quickactions: rgba(248, 248, 248, 0.9);
+  --spectrum-alias-radial-reaction-color-default: rgba(34, 34, 34, 0.6);
   --spectrum-alias-pasteboard-background-color: var(--spectrum-global-color-gray-300);
   --spectrum-alias-appframe-border-color: var(--spectrum-global-color-gray-300);
   --spectrum-alias-appframe-separator-color: var(--spectrum-global-color-gray-300);
-  --spectrum-colorarea-border-color: rgba(44,44,44,0.1);
-  --spectrum-colorarea-border-color-hover: rgba(44,44,44,0.1);
-  --spectrum-colorarea-border-color-down: rgba(44,44,44,0.1);
-  --spectrum-colorarea-border-color-key-focus: rgba(44,44,44,0.1);
-  --spectrum-colorslider-border-color: rgba(44,44,44,0.1);
-  --spectrum-colorslider-border-color-hover: rgba(44,44,44,0.1);
-  --spectrum-colorslider-border-color-down: rgba(44,44,44,0.1);
-  --spectrum-colorslider-border-color-key-focus: rgba(44,44,44,0.1);
-  --spectrum-colorslider-vertical-border-color: rgba(44,44,44,0.1);
-  --spectrum-colorslider-vertical-border-color-hover: rgba(44,44,44,0.1);
-  --spectrum-colorslider-vertical-border-color-down: rgba(44,44,44,0.1);
-  --spectrum-colorslider-vertical-border-color-key-focus: rgba(44,44,44,0.1);
-  --spectrum-colorwheel-border-color: rgba(44,44,44,0.1);
-  --spectrum-colorwheel-border-color-hover: rgba(44,44,44,0.1);
-  --spectrum-colorwheel-border-color-down: rgba(44,44,44,0.1);
-  --spectrum-colorwheel-border-color-key-focus: rgba(44,44,44,0.1);
-  --spectrum-miller-column-item-background-color-selected: rgba(20,115,230,0.1);
-  --spectrum-miller-column-item-background-color-selected-hover: rgba(20,115,230,0.2);
+  --spectrum-colorarea-border-color: rgba(44, 44, 44, 0.1);
+  --spectrum-colorarea-border-color-hover: rgba(44, 44, 44, 0.1);
+  --spectrum-colorarea-border-color-down: rgba(44, 44, 44, 0.1);
+  --spectrum-colorarea-border-color-key-focus: rgba(44, 44, 44, 0.1);
+  --spectrum-colorslider-border-color: rgba(44, 44, 44, 0.1);
+  --spectrum-colorslider-border-color-hover: rgba(44, 44, 44, 0.1);
+  --spectrum-colorslider-border-color-down: rgba(44, 44, 44, 0.1);
+  --spectrum-colorslider-border-color-key-focus: rgba(44, 44, 44, 0.1);
+  --spectrum-colorslider-vertical-border-color: rgba(44, 44, 44, 0.1);
+  --spectrum-colorslider-vertical-border-color-hover: rgba(44, 44, 44, 0.1);
+  --spectrum-colorslider-vertical-border-color-down: rgba(44, 44, 44, 0.1);
+  --spectrum-colorslider-vertical-border-color-key-focus: rgba(44, 44, 44, 0.1);
+  --spectrum-colorwheel-border-color: rgba(44, 44, 44, 0.1);
+  --spectrum-colorwheel-border-color-hover: rgba(44, 44, 44, 0.1);
+  --spectrum-colorwheel-border-color-down: rgba(44, 44, 44, 0.1);
+  --spectrum-colorwheel-border-color-key-focus: rgba(44, 44, 44, 0.1);
+  --spectrum-miller-column-item-background-color-selected: rgba(20, 115, 230, 0.1);
+  --spectrum-miller-column-item-background-color-selected-hover: rgba(20, 115, 230, 0.2);
   --spectrum-tabs-compact-selection-indicator-color: var(--spectrum-global-color-blue-500);
   --spectrum-tabs-compact-vertical-rule-color: var(--spectrum-global-color-gray-200);
-  --spectrum-tabs-compact-vertical-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
+  --spectrum-tabs-compact-vertical-emphasized-selection-indicator-color: var(
+    --spectrum-global-color-blue-500
+  );
   --spectrum-tabs-compact-vertical-emphasized-rule-color: var(--spectrum-global-color-gray-200);
   --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
-  --spectrum-tabs-quiet-compact-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
-  --spectrum-tabs-quiet-compact-vertical-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
+  --spectrum-tabs-quiet-compact-emphasized-selection-indicator-color: var(
+    --spectrum-global-color-blue-500
+  );
+  --spectrum-tabs-quiet-compact-vertical-emphasized-selection-indicator-color: var(
+    --spectrum-global-color-blue-500
+  );
   --spectrum-tabs-quiet-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
-  --spectrum-tabs-quiet-vertical-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
-  --spectrum-well-background-color: rgba(34,34,34,0.02);
-  --spectrum-well-border-color: rgba(0,0,0,0.05);
+  --spectrum-tabs-quiet-vertical-emphasized-selection-indicator-color: var(
+    --spectrum-global-color-blue-500
+  );
+  --spectrum-well-background-color: rgba(34, 34, 34, 0.02);
+  --spectrum-well-border-color: rgba(0, 0, 0, 0.05);
   --spectrum-tray-background-color: var(--spectrum-global-color-gray-50);
   /* react spectrum additions */
 

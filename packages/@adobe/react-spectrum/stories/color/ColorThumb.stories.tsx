@@ -40,7 +40,7 @@ export default {
 
 export const Default: ColorThumbStory = {
   args: {value: parseColor('#f00')},
-  render: (args) => <ColorThumb {...args} />
+  render: args => <ColorThumb {...args} />
 };
 
 export const Alpha: ColorThumbStory = {

@@ -18,14 +18,17 @@ import styles from './toc.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function ToC(props) {
-  let {
-    toc
-  } = props;
+  let {toc} = props;
 
   return (
     <nav className={styles['toc']} id="toc" aria-labelledby="toc-heading">
       <div className={styles['tocContainer']}>
-        <h3 aria-label="Table of contents" id="toc-heading" className={typographyStyles['spectrum-Heading4']}>Contents</h3>
+        <h3
+          aria-label="Table of contents"
+          id="toc-heading"
+          className={typographyStyles['spectrum-Heading4']}>
+          Contents
+        </h3>
         <SideNav node={toc} />
       </div>
     </nav>
@@ -36,24 +39,48 @@ function SideNav(props) {
   let {node} = props;
   if (!node.children) {
     return (
-      <ul className={clsx(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])}>
-        {node.map(child => <SideNav key={child.id} node={child} />)}
+      <ul
+        className={clsx(
+          sidenavstyles['spectrum-SideNav'],
+          sidenavstyles['spectrum-SideNav--multiLevel']
+        )}>
+        {node.map(child => (
+          <SideNav key={child.id} node={child} />
+        ))}
       </ul>
     );
   }
   if (node.children.length > 0) {
     return (
       <li className={clsx(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} data-hover={sidenavstyles['is-hovered']} href={`#${node.id}`} id={`toc-${node.id}-heading`}>{node.textContent}</a>
-        <ul className={clsx(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])} aria-labelledby={`toc-${node.id}-heading`}>
-          {node.children.map(child => <SideNav key={child.id} node={child} />)}
+        <a
+          className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
+          data-hover={sidenavstyles['is-hovered']}
+          href={`#${node.id}`}
+          id={`toc-${node.id}-heading`}>
+          {node.textContent}
+        </a>
+        <ul
+          className={clsx(
+            sidenavstyles['spectrum-SideNav'],
+            sidenavstyles['spectrum-SideNav--multiLevel']
+          )}
+          aria-labelledby={`toc-${node.id}-heading`}>
+          {node.children.map(child => (
+            <SideNav key={child.id} node={child} />
+          ))}
         </ul>
       </li>
     );
   } else {
     return (
       <li className={clsx(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} data-hover={sidenavstyles['is-hovered']} href={`#${node.id}`}>{node.textContent}</a>
+        <a
+          className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
+          data-hover={sidenavstyles['is-hovered']}
+          href={`#${node.id}`}>
+          {node.textContent}
+        </a>
       </li>
     );
   }

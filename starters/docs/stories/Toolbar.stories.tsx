@@ -1,6 +1,6 @@
 import {Toolbar} from '../src/Toolbar';
 import {Separator} from '../src/Separator';
-import { Group } from 'react-aria-components/Group';
+import {Group} from 'react-aria-components/Group';
 import {Button} from '../src/Button';
 import {ToggleButton} from '../src/ToggleButton';
 import {Checkbox} from '../src/Checkbox';
@@ -18,7 +18,7 @@ export default meta;
 
 type Story = StoryFn<typeof Toolbar>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <Toolbar aria-label="Text formatting" {...args}>
     <Group aria-label="Style">
       <ToggleButton aria-label="Bold">
@@ -38,8 +38,6 @@ export const Example: Story = (args) => (
       <Button>Cut</Button>
     </Group>
     <Separator />
-    <Checkbox>
-      Night Mode
-    </Checkbox>
+    <Checkbox>Night Mode</Checkbox>
   </Toolbar>
 );

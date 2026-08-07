@@ -11,37 +11,43 @@
  */
 
 import {OverlayTriggerProps, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
-import {useEffect, useMemo, useRef} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface TooltipTriggerProps extends OverlayTriggerProps {
   /**
    * Whether the tooltip should be disabled, independent from the trigger.
    */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
 
   /**
-   * The delay time for the tooltip to show up. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   * The delay time for the tooltip to show up. [See
+   * guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   *
    * @default 1500
    */
-  delay?: number,
+  delay?: number;
 
   /**
-   * The delay time for the tooltip to close. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Warmup-and-cooldown).
+   * The delay time for the tooltip to close. [See
+   * guidelines](https://spectrum.adobe.com/page/tooltip/#Warmup-and-cooldown).
+   *
    * @default 500
    */
-  closeDelay?: number,
+  closeDelay?: number;
 
   /**
    * By default, opens for both focus and hover. Can be made to open only for focus.
+   *
    * @default 'hover'
    */
-  trigger?: 'hover' | 'focus',
+  trigger?: 'hover' | 'focus';
 
   /**
    * Whether the tooltip should close when the trigger is pressed.
+   *
    * @default true
    */
-  shouldCloseOnPress?: boolean
+  shouldCloseOnPress?: boolean;
 }
 
 const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
@@ -49,15 +55,20 @@ const TOOLTIP_COOLDOWN = 500;
 
 export interface TooltipTriggerState {
   /** Whether the tooltip is currently showing. */
-  isOpen: boolean,
+  isOpen: boolean;
+  /**
+   * Whether the tooltip is being shown or hidden without an animation. This is true while the
+   * global warmup timer is active, i.e. when quickly moving between tooltips.
+   */
+  shouldSkipAnimation: boolean;
   /**
    * Shows the tooltip. By default, the tooltip becomes visible after a delay
    * depending on a global warmup timer. The `immediate` option shows the
    * tooltip immediately instead.
    */
-  open(immediate?: boolean): void,
+  open(immediate?: boolean): void;
   /** Hides the tooltip. */
-  close(immediate?: boolean): void
+  close(immediate?: boolean): void;
 }
 
 let tooltips = {};
@@ -74,6 +85,9 @@ let globalCooldownTimeout: ReturnType<typeof setTimeout> | null = null;
 export function useTooltipTriggerState(props: TooltipTriggerProps = {}): TooltipTriggerState {
   let {delay = TOOLTIP_DELAY, closeDelay = TOOLTIP_COOLDOWN} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);
+  // Whether the current open/close transition should skip its animation. Set when swapping
+  // between tooltips during the global warmup period.
+  let [shouldSkipAnimation, setIsInstant] = useState(false);
   let id = useMemo(() => `${++tooltipId}`, []);
   let closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let closeCallback = useRef<() => void>(close);
@@ -85,19 +99,22 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   let closeOpenTooltips = () => {
     for (let hideTooltipId in tooltips) {
       if (hideTooltipId !== id) {
-        tooltips[hideTooltipId](true);
+        // Close other open tooltips instantly (no exit animation), since they are being
+        // replaced by this one during the warmup period.
+        tooltips[hideTooltipId](true, true);
         delete tooltips[hideTooltipId];
       }
     }
   };
 
-  let showTooltip = () => {
+  let showTooltip = (instant?: boolean) => {
     if (closeTimeout.current) {
       clearTimeout(closeTimeout.current);
     }
     closeTimeout.current = null;
     closeOpenTooltips();
     ensureTooltipEntry();
+    setIsInstant(!!instant);
     globalWarmedUp = true;
     open();
     if (globalWarmUpTimeout) {
@@ -110,7 +127,8 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
     }
   };
 
-  let hideTooltip = (immediate?: boolean) => {
+  let hideTooltip = (immediate?: boolean, instant?: boolean) => {
+    setIsInstant(!!instant);
     if (immediate || closeDelay <= 0) {
       if (closeTimeout.current) {
         clearTimeout(closeTimeout.current);
@@ -132,11 +150,14 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
       if (globalCooldownTimeout) {
         clearTimeout(globalCooldownTimeout);
       }
-      globalCooldownTimeout = setTimeout(() => {
-        delete tooltips[id];
-        globalCooldownTimeout = null;
-        globalWarmedUp = false;
-      }, Math.max(TOOLTIP_COOLDOWN, closeDelay));
+      globalCooldownTimeout = setTimeout(
+        () => {
+          delete tooltips[id];
+          globalCooldownTimeout = null;
+          globalWarmedUp = false;
+        },
+        Math.max(TOOLTIP_COOLDOWN, closeDelay)
+      );
     }
   };
 
@@ -151,17 +172,18 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
       globalWarmUpTimeout = setTimeout(() => {
         globalWarmUpTimeout = null;
         globalWarmedUp = true;
-        showTooltip();
+        // First tooltip in a sequence: animate in.
+        showTooltip(false);
       }, delay);
     } else if (!isOpen) {
-      showTooltip();
+      // Already warmed up: appear instantly without an animation.
+      showTooltip(true);
     }
   };
 
   useEffect(() => {
     closeCallback.current = close;
   }, [close]);
-
 
   useEffect(() => {
     return () => {
@@ -177,11 +199,14 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
 
   return {
     isOpen,
-    open: (immediate) => {
+    shouldSkipAnimation,
+    open: immediate => {
       if (!immediate && delay > 0 && !closeTimeout.current) {
         warmupTooltip();
       } else {
-        showTooltip();
+        // Immediate opens (e.g. focus, or delay of 0) appear instantly without an animation
+        // only if another tooltip is already warmed up.
+        showTooltip(globalWarmedUp);
       }
     },
     close: hideTooltip

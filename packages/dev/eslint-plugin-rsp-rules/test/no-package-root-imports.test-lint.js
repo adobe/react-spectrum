@@ -13,7 +13,6 @@
 import noPackageRootImportsRule from '../rules/no-package-root-imports.js';
 import {RuleTester} from 'eslint';
 
-
 const ruleTester = new RuleTester({
   languageOptions: {
     ecmaVersion: 2015,
@@ -21,39 +20,57 @@ const ruleTester = new RuleTester({
   }
 });
 
-ruleTester.run(
-  'no-package-root-imports',
-  noPackageRootImportsRule,
-  {
-    valid: [{
+ruleTester.run('no-package-root-imports', noPackageRootImportsRule, {
+  valid: [
+    {
       code: "import {Button} from 'react-aria-components/Button';"
-    }, {
+    },
+    {
       code: "import {useButton} from 'react-aria/useButton';"
-    }, {
+    },
+    {
       code: "import {ListState} from 'react-stately/list';"
-    }, {
+    },
+    {
       code: "import {Button} from '@react-spectrum/button';"
-    }],
-    invalid: [{
+    }
+  ],
+  invalid: [
+    {
       code: "import {Button} from 'react-aria-components';",
-      errors: [{
-        message: "Import from a subpath instead of 'react-aria-components'. For example: 'react-aria-components/Button'."
-      }]
-    }, {
+      errors: [
+        {
+          message:
+            "Import from a subpath instead of 'react-aria-components'. For example: 'react-aria-components/Button'."
+        }
+      ]
+    },
+    {
       code: "import {useButton, useFocusRing} from 'react-aria';",
-      errors: [{
-        message: "Import from a subpath instead of 'react-aria'. For example: 'react-aria/useButton', 'react-aria/useFocusRing'."
-      }]
-    }, {
+      errors: [
+        {
+          message:
+            "Import from a subpath instead of 'react-aria'. For example: 'react-aria/useButton', 'react-aria/useFocusRing'."
+        }
+      ]
+    },
+    {
       code: "import {useListState} from 'react-stately';",
-      errors: [{
-        message: "Import from a subpath instead of 'react-stately'. For example: 'react-stately/useListState'."
-      }]
-    }, {
+      errors: [
+        {
+          message:
+            "Import from a subpath instead of 'react-stately'. For example: 'react-stately/useListState'."
+        }
+      ]
+    },
+    {
       code: "import * as RAC from 'react-aria-components';",
-      errors: [{
-        message: "Import from a subpath instead of 'react-aria-components'. For example: 'react-aria-components/<subpath>'."
-      }]
-    }]
-  }
-);
+      errors: [
+        {
+          message:
+            "Import from a subpath instead of 'react-aria-components'. For example: 'react-aria-components/<subpath>'."
+        }
+      ]
+    }
+  ]
+});

@@ -26,11 +26,12 @@ const AMETE_MIHRET_DELTA = 5500;
 
 function ceToJulianDay(epoch: number, year: number, month: number, day: number): number {
   return (
-    epoch                   // difference from Julian epoch to 1,1,1
-    + 365 * year            // number of days from years
-    + Math.floor(year / 4)  // extra day of leap year
-    + 30 * (month - 1)      // number of days from months (1 based)
-    + day - 1               // number of days for present month (1 based)
+    epoch + // difference from Julian epoch to 1,1,1
+    365 * year + // number of days from years
+    Math.floor(year / 4) + // extra day of leap year
+    30 * (month - 1) + // number of days from months (1 based)
+    day -
+    1 // number of days for present month (1 based)
   );
 }
 

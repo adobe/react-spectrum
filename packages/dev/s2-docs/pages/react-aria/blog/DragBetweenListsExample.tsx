@@ -32,11 +32,8 @@ function BidirectionalDnDListBox(props: BidirectionalDnDListBoxProps) {
         };
       });
     },
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
+    onInsert: async e => {
+      let {items, target} = e;
       let processedItems = await Promise.all(
         items
           .filter(isTextDropItem)
@@ -48,11 +45,8 @@ function BidirectionalDnDListBox(props: BidirectionalDnDListBoxProps) {
         list.insertAfter(target.key, ...processedItems);
       }
     },
-    onReorder: (e) => {
-      let {
-        keys,
-        target
-      } = e;
+    onReorder: e => {
+      let {keys, target} = e;
 
       if (target.dropPosition === 'before') {
         list.moveBefore(target.key, [...keys]);
@@ -60,10 +54,8 @@ function BidirectionalDnDListBox(props: BidirectionalDnDListBoxProps) {
         list.moveAfter(target.key, [...keys]);
       }
     },
-    onRootDrop: async (e) => {
-      let {
-        items
-      } = e;
+    onRootDrop: async e => {
+      let {items} = e;
       let processedItems = await Promise.all(
         items
           .filter(isTextDropItem)
@@ -72,12 +64,8 @@ function BidirectionalDnDListBox(props: BidirectionalDnDListBoxProps) {
       list.append(...processedItems);
     },
     /*- begin highlight -*/
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        keys,
-        isInternal
-      } = e;
+    onDragEnd: e => {
+      let {dropOperation, keys, isInternal} = e;
       // Only remove the dragged items if they aren't dropped inside the source list
       if (dropOperation === 'move' && !isInternal) {
         list.remove(...keys);
@@ -94,7 +82,15 @@ function BidirectionalDnDListBox(props: BidirectionalDnDListBoxProps) {
       dragAndDropHooks={dragAndDropHooks}
       style={{width: 300, height: 300, overflow: 'auto'}}>
       {item => (
-        <ListBoxItem textValue={item.name} style={{display: 'flex', alignItems: 'center', gap: 8, flexDirection: 'row', justifyContent: 'flex-start'}}>
+        <ListBoxItem
+          textValue={item.name}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            flexDirection: 'row',
+            justifyContent: 'flex-start'
+          }}>
           {item.type === 'folder' ? <Folder size={16} /> : <File size={16} />}
           <span>{item.name}</span>
         </ListBoxItem>
@@ -126,11 +122,16 @@ export default function DragBetweenListsExample() {
     ]
   });
 
-
   return (
     <div style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 8}}>
-      <BidirectionalDnDListBox list={list1} aria-label="First ListBox in drag between list example" />
-      <BidirectionalDnDListBox list={list2} aria-label="Second ListBox in drag between list example" />
+      <BidirectionalDnDListBox
+        list={list1}
+        aria-label="First ListBox in drag between list example"
+      />
+      <BidirectionalDnDListBox
+        list={list2}
+        aria-label="Second ListBox in drag between list example"
+      />
     </div>
-  );  
+  );
 }

@@ -41,12 +41,20 @@ export let CalendarDateType: LabeledValueStory = {
 };
 
 export let CalendarDateTimeType: LabeledValueStory = {
-  args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  args: {
+    label: 'Test',
+    value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120),
+    formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}
+  },
   name: 'CalendarDateTime'
 };
 
 export let ZonedDateTimeType: LabeledValueStory = {
-  args: {label: 'Test', value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'long', timeStyle: 'long'}},
+  args: {
+    label: 'Test',
+    value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000),
+    formatOptions: {dateStyle: 'long', timeStyle: 'long'}
+  },
   name: 'ZonedDateTime'
 };
 
@@ -61,27 +69,53 @@ export let TimeType: LabeledValueStory = {
 };
 
 export let CalendarDateRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}, formatOptions: {dateStyle: 'medium'}},
+  args: {
+    label: 'Test',
+    value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)},
+    formatOptions: {dateStyle: 'medium'}
+  },
   name: 'RangeValue<CalendarDate>'
 };
 
 export let CalendarDateTimeRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}, formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  args: {
+    label: 'Test',
+    value: {
+      start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120),
+      end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)
+    },
+    formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}
+  },
   name: 'RangeValue<CalendarDateTime>'
 };
 
 export let ZonedDateTimeRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}, formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  args: {
+    label: 'Test',
+    value: {
+      start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000),
+      end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)
+    },
+    formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}
+  },
   name: 'RangeValue<ZonedDateTime>'
 };
 
 export let DateRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}, formatOptions: {dateStyle: 'medium'}},
+  args: {
+    label: 'Test',
+    value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)},
+    formatOptions: {dateStyle: 'medium'}
+  },
   name: 'RangeValue<Date>'
 };
 
 export let TimeRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new Time(9, 45), end: new Time(10, 50)}, formatOptions: {timeStyle: 'short'}},
+  args: {
+    label: 'Test',
+    value: {start: new Time(9, 45), end: new Time(10, 50)},
+    formatOptions: {timeStyle: 'short'}
+  },
   name: 'RangeValue<Time>'
 };
 
@@ -127,7 +161,10 @@ export let WithContextualHelp: LabeledValueStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },
@@ -142,7 +179,10 @@ export let LabelPostionSideWithContextualHelp: LabeledValueStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },

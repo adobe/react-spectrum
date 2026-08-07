@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Change variant=overBackground to staticColor=white', `
+test(
+  'Change variant=overBackground to staticColor=white',
+  `
 import {Link} from '@adobe/react-spectrum';
 let variant = 'overBackground';
 let props = {variant: 'overBackground'};
@@ -24,9 +26,12 @@ let props = {variant: 'overBackground'};
     The missing link.
   </Link>
 </div>
-`);
+`
+);
 
-test('Remove inner anchor element (deprecated API)', `
+test(
+  'Remove inner anchor element (deprecated API)',
+  `
 import {Link} from '@adobe/react-spectrum';
 
 <div>
@@ -36,9 +41,12 @@ import {Link} from '@adobe/react-spectrum';
     </a>
   </Link>
 </div>
-`);
+`
+);
 
-test('Leaves comment if inner link element is a custom router link (deprecated API)', `
+test(
+  'Leaves comment if inner link element is a custom router link (deprecated API)',
+  `
 import {Link} from '@adobe/react-spectrum';
 import { Link as RouterLink } from "react-router-dom";
 
@@ -49,4 +57,5 @@ import { Link as RouterLink } from "react-router-dom";
     </RouterLink>
   </Link>
 </div>
-`);
+`
+);

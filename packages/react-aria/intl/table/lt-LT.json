@@ -1,13 +1,13 @@
 {
   "ascending": "didėjančia tvarka",
   "ascendingSort": "surikiuota pagal stulpelį {columnName} didėjančia tvarka",
+  "collapse": "Sutraukti",
   "columnSize": "{value} piks.",
   "descending": "mažėjančia tvarka",
   "descendingSort": "surikiuota pagal stulpelį {columnName} mažėjančia tvarka",
+  "expand": "Išskleisti",
   "resizerDescription": "Paspauskite „Enter“, kad pradėtumėte keisti dydį",
   "select": "Pasirinkti",
   "selectAll": "Pasirinkti viską",
-  "sortable": "rikiuojamas stulpelis",
-  "collapse": "Sutraukti",
-  "expand": "Išskleisti"
+  "sortable": "rikiuojamas stulpelis"
 }

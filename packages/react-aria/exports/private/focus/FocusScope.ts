@@ -1,1 +1,5 @@
-export {getFocusableTreeWalker, createFocusManager, isElementInChildOfActiveScope} from '../../../src/focus/FocusScope';
+export {
+  getFocusableTreeWalker,
+  createFocusManager,
+  isElementInChildOfActiveScope
+} from '../../../src/focus/FocusScope';

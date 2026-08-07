@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Nova mensagem",
+  "chat.scrollToBottom": "Rolar para o final",
+  "messagefeedback.thumbDown": "Resposta ruim",
+  "messagefeedback.thumbUp": "Resposta boa",
+  "promptfield.aiDisclaimer": "As respostas são geradas usando IA e podem ser imprecisas. Verifique antes de usar.",
+  "promptfield.aiUserGuidlines": "Diretrizes de usuário de IA",
+  "promptfield.attachments": "Anexos",
+  "promptfield.insertButton": "Adicionar",
+  "promptfield.label": "Solicitar",
+  "promptfield.placeholder": "Pronto para começar? Faça uma pergunta, compartilhe uma ideia ou adicione uma tarefa.",
+  "promptfield.stopButton": "Parar",
+  "promptfield.submitButton": "Enviar",
+  "promptfield.uploading": "Carregando",
+  "responsestatus.loading": "Carregando",
+  "voicebutton.startListening": "Iniciar gravação",
+  "voicebutton.stopListening": "Parar gravação"
+}

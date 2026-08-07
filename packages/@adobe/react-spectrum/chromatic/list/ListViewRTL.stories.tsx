@@ -15,16 +15,16 @@ import {Meta} from '@storybook/react';
 const meta: Meta = {
   title: 'ListViewRTL',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light', 'dark'], locales: ['ar-AE'], scales: ['medium', 'large'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark'],
+      locales: ['ar-AE'],
+      scales: ['medium', 'large'],
+      disableAnimations: true
+    },
     chromatic: {delay: 5000}
   }
 };
 
 export default meta;
 
-export {
-  Default,
-  ComboPt2,
-  ComboPt3,
-  Empty
-} from './ListView.stories';
+export {Default, ComboPt2, ComboPt3, Empty} from './ListView.stories';

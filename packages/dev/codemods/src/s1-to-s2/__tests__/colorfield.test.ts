@@ -6,13 +6,18 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes isQuiet', `
+test(
+  'Removes isQuiet',
+  `
 import {ColorField} from '@adobe/react-spectrum';
 
 <ColorField label="Primary Color" isQuiet />
-`);
+`
+);
 
-test('changes validationState to isInvalid or nothing', `
+test(
+  'changes validationState to isInvalid or nothing',
+  `
 import {ColorField} from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
@@ -23,4 +28,5 @@ let props = {validationState: 'invalid'};
   <ColorField label="Primary Color" validationState={validationState} />
   <ColorField label="Primary Color" {...props} />
 </div>
-`);
+`
+);

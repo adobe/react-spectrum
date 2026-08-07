@@ -33,7 +33,9 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>Trigger</button>
+          <button type="button" {...triggerProps}>
+            Trigger
+          </button>
           {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
@@ -60,7 +62,9 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>Trigger</button>
+          <button type="button" {...triggerProps}>
+            Trigger
+          </button>
           {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
@@ -88,7 +92,9 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>Trigger</button>
+          <button type="button" {...triggerProps}>
+            Trigger
+          </button>
           {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
@@ -105,7 +111,6 @@ describe('useTooltip', function () {
     fireEvent.mouseLeave(queryByRole('button'));
     act(jest.runAllTimers);
     expect(queryByRole('tooltip')).toBeNull();
-
   });
 
   it('keeps tooltip open when it gets hovered', function () {
@@ -120,7 +125,9 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>Trigger</button>
+          <button type="button" {...triggerProps}>
+            Trigger
+          </button>
           {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
@@ -154,7 +161,9 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>Trigger</button>
+          <button type="button" {...triggerProps}>
+            Trigger
+          </button>
           {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );
@@ -189,7 +198,9 @@ describe('useTooltip', function () {
 
       return (
         <div>
-          <button type="button" {...triggerProps}>Trigger</button>
+          <button type="button" {...triggerProps}>
+            Trigger
+          </button>
           {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
         </div>
       );

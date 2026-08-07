@@ -14,7 +14,9 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Table SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
       import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../../exports/index.ts';
@@ -39,13 +41,16 @@ describe('Table SSR', function () {
           </TableBody>
         </TableView>
       </Provider>
-    `);
+    `
+    );
   });
 });
 
 describe('Table Nested Rows SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
       import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../../exports/index.ts';
@@ -83,14 +88,17 @@ describe('Table Nested Rows SSR', function () {
           </TableBody>
         </TableView>
       </Provider>
-    `);
+    `
+    );
   });
 });
 
 // TODO: selectionMode="multiple" errors
 describe('Table Static SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
       import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../../exports/index.ts';
@@ -128,6 +136,7 @@ describe('Table Static SSR', function () {
           </TableBody>
         </TableView>
       </Provider>
-    `);
+    `
+    );
   });
 });

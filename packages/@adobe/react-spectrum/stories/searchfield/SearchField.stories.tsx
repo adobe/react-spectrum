@@ -70,13 +70,13 @@ export default {
 
 export type SearchFieldStory = StoryFn<typeof SearchField>;
 
-export const Default: SearchFieldStory = (args) => renderSearchLandmark(render(args));
+export const Default: SearchFieldStory = args => renderSearchLandmark(render(args));
 
 Default.story = {
   parameters: {info}
 };
 
-export const DefaultValueUncontrolled: SearchFieldStory = (args) =>
+export const DefaultValueUncontrolled: SearchFieldStory = args =>
   renderSearchLandmark(render({...args, defaultValue: 'React'}));
 
 DefaultValueUncontrolled.story = {
@@ -84,14 +84,15 @@ DefaultValueUncontrolled.story = {
   parameters: {info}
 };
 
-export const ValueControlled: SearchFieldStory = (args) => renderSearchLandmark(render({...args, value: 'React'}));
+export const ValueControlled: SearchFieldStory = args =>
+  renderSearchLandmark(render({...args, value: 'React'}));
 
 ValueControlled.story = {
   name: 'value (controlled)',
   parameters: {info}
 };
 
-export const IconRefresh: SearchFieldStory = (args) =>
+export const IconRefresh: SearchFieldStory = args =>
   renderSearchLandmark(render({...args, defaultValue: 'React', icon: <Refresh />}));
 
 IconRefresh.story = {
@@ -99,7 +100,7 @@ IconRefresh.story = {
   parameters: {info}
 };
 
-export const IconNull: SearchFieldStory = (args) =>
+export const IconNull: SearchFieldStory = args =>
   renderSearchLandmark(render({...args, defaultValue: 'React', icon: null}));
 
 IconNull.story = {
@@ -107,7 +108,7 @@ IconNull.story = {
   parameters: {info}
 };
 
-export const OnClear: SearchFieldStory = (args) =>
+export const OnClear: SearchFieldStory = args =>
   renderSearchLandmark(render({...args, onClear: action('clear')}));
 
 OnClear.story = {
@@ -115,34 +116,36 @@ OnClear.story = {
   parameters: {info}
 };
 
-export const AutoFocus: SearchFieldStory = (args) => renderSearchLandmark(render({...args, autoFocus: true}));
+export const AutoFocus: SearchFieldStory = args =>
+  renderSearchLandmark(render({...args, autoFocus: true}));
 
 AutoFocus.story = {
   name: 'autoFocus',
   parameters: {info}
 };
 
-export const NoVisibleLabel: SearchFieldStory = (args) =>
+export const NoVisibleLabel: SearchFieldStory = args =>
   render({...args, label: null, 'aria-label': 'Street address'});
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const WithDescription: SearchFieldStory = (args) => render({...args, description: 'Enter a search term.'});
+export const WithDescription: SearchFieldStory = args =>
+  render({...args, description: 'Enter a search term.'});
 
 WithDescription.story = {
   name: 'with description'
 };
 
-export const WithErrorMessage: SearchFieldStory = (args) =>
+export const WithErrorMessage: SearchFieldStory = args =>
   render({...args, errorMessage: 'Remove special characters.', validationState: 'invalid'});
 
 WithErrorMessage.story = {
   name: 'with error message'
 };
 
-export const _ContextualHelp: SearchFieldStory = (args) =>
+export const _ContextualHelp: SearchFieldStory = args =>
   render({
     ...args,
     contextualHelp: (
@@ -160,13 +163,13 @@ _ContextualHelp.story = {
   name: 'contextual help'
 };
 
-export const CustomWidth: SearchFieldStory = (args) => render({...args, width: 300});
+export const CustomWidth: SearchFieldStory = args => render({...args, width: 300});
 
 CustomWidth.story = {
   name: 'custom width'
 };
 
-export const CustomWidthAndNarrowContainer: SearchFieldStory = (args) => (
+export const CustomWidthAndNarrowContainer: SearchFieldStory = args => (
   <Flex direction="column" width="30px">
     {render({...args, defaultValue: 'React', validationState: 'valid'})}
     {render({...args, defaultValue: 'React', width: 30})}
@@ -178,7 +181,7 @@ CustomWidthAndNarrowContainer.story = {
   name: 'custom width and narrow container'
 };
 
-export const WithinAPopover: SearchFieldStory = (args) => (
+export const WithinAPopover: SearchFieldStory = args => (
   <DialogTrigger type="popover">
     <ActionButton>Trigger</ActionButton>
     <Dialog>
@@ -188,7 +191,8 @@ export const WithinAPopover: SearchFieldStory = (args) => (
           label="Search"
           {...args}
           onChange={action('change')}
-          onSubmit={action('submit')} />
+          onSubmit={action('submit')}
+        />
       </Content>
     </Dialog>
   </DialogTrigger>
@@ -209,6 +213,7 @@ function render(props = {}) {
       label="Search"
       {...props}
       onChange={action('change')}
-      onSubmit={action('submit')} />
+      onSubmit={action('submit')}
+    />
   );
 }

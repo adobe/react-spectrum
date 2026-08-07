@@ -27,13 +27,8 @@ function Example(props) {
   let ref = useRef();
   let {overlayProps, underlayProps} = useOverlay(props, ref);
   return (
-    <div
-      {...mergeProps(underlayProps, props.underlayProps || {})}
-      data-testid={'underlay'}>
-      <div
-        ref={ref}
-        {...overlayProps}
-        data-testid={props['data-testid'] || 'test'}>
+    <div {...mergeProps(underlayProps, props.underlayProps || {})} data-testid={'underlay'}>
+      <div ref={ref} {...overlayProps} data-testid={props['data-testid'] || 'test'}>
         {props.children}
       </div>
     </div>
@@ -42,19 +37,10 @@ function Example(props) {
 
 describe('useOverlay', function () {
   describe.each`
-    type                | prepare               | actions
-    ${'Mouse Events'}   | ${installMouseEvent}  | ${[
-      (el) => fireEvent.mouseDown(el, {button: 0}),
-      (el) => fireEvent.mouseUp(el, {button: 0})
-    ]}
-    ${'Pointer Events'} | ${installPointerEvent}| ${[
-      (el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}),
-      (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
-    ]}
-    ${'Touch Events'}   | ${() => {}}           | ${[
-      (el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}),
-      (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
-    ]}
+    type                | prepare                | actions
+    ${'Mouse Events'}   | ${installMouseEvent}   | ${[el => fireEvent.mouseDown(el, {button: 0}), el => fireEvent.mouseUp(el, {button: 0})]}
+    ${'Pointer Events'} | ${installPointerEvent} | ${[el => fireEvent.pointerDown(el, {button: 0, pointerId: 1}), el => fireEvent.pointerUp(el, {button: 0, pointerId: 1})]}
+    ${'Touch Events'}   | ${() => {}}            | ${[el => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}), el => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})]}
   `('$type', ({actions: [pressStart, pressEnd], prepare}) => {
     prepare();
 
@@ -80,7 +66,14 @@ describe('useOverlay', function () {
 
     it('should hide the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
       let onClose = jest.fn();
-      render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
+      render(
+        <Example
+          isOpen
+          onClose={onClose}
+          isDismissable
+          shouldCloseOnInteractOutside={target => target === document.body}
+        />
+      );
       pressStart(document.body);
       pressEnd(document.body);
       fireEvent.click(document.body);
@@ -89,7 +82,14 @@ describe('useOverlay', function () {
 
     it('should not hide the overlay when clicking outside if shouldCloseOnInteractOutside returns false', function () {
       let onClose = jest.fn();
-      render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target !== document.body} />);
+      render(
+        <Example
+          isOpen
+          onClose={onClose}
+          isDismissable
+          shouldCloseOnInteractOutside={target => target !== document.body}
+        />
+      );
       pressStart(document.body);
       pressEnd(document.body);
       fireEvent.click(document.body);
@@ -149,10 +149,13 @@ describe('useOverlay with shadow dom', () => {
   });
 
   describe.each`
-    type                | prepare                | actions
-    ${'Mouse Events'}   | ${installMouseEvent}   | ${[(el) => fireEvent.mouseDown(el, {button: 0}), (el) => fireEvent.mouseUp(el, {button: 0})]}
-    ${'Pointer Events'} | ${installPointerEvent} | ${[(el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}), (el) => {fireEvent.pointerUp(el, {button: 0, pointerId: 1}); fireEvent.click(el, {button: 0, pointerId: 1});}]}
-    ${'Touch Events'}   | ${() => {}}            | ${[(el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}), (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})]}
+    type              | prepare              | actions
+    ${'Mouse Events'} | ${installMouseEvent} | ${[el => fireEvent.mouseDown(el, {button: 0}), el => fireEvent.mouseUp(el, {button: 0})]}
+    ${'Pointer Events'} | ${installPointerEvent} | ${[el => fireEvent.pointerDown(el, {button: 0, pointerId: 1}), el => {
+    fireEvent.pointerUp(el, {button: 0, pointerId: 1});
+    fireEvent.click(el, {button: 0, pointerId: 1});
+  }]}
+    ${'Touch Events'} | ${() => {}}          | ${[el => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}), el => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})]}
   `('$type', ({actions: [pressStart, pressEnd], prepare}) => {
     prepare();
 
@@ -168,9 +171,10 @@ describe('useOverlay with shadow dom', () => {
             isOpen
             onClose={onClose}
             isDismissable
-            shouldCloseOnInteractOutside={(target) => {
+            shouldCloseOnInteractOutside={target => {
               return target === underlay;
-            }} />,
+            }}
+          />,
           shadowRoot
         );
 
@@ -199,7 +203,8 @@ describe('useOverlay with shadow dom', () => {
             isOpen
             onClose={onClose}
             isDismissable
-            shouldCloseOnInteractOutside={(target) => target !== underlay} />,
+            shouldCloseOnInteractOutside={target => target !== underlay}
+          />,
           shadowRoot
         );
 

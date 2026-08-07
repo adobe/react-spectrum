@@ -18,24 +18,26 @@ const initial = [
   {
     name: 'David',
     children: [
-      {name: 'John', children: [
-        {name: 'Suzie'}
-      ]},
-      {name: 'Sam', children: [
-        {name: 'Stacy'},
-        {name: 'Brad'}
-      ]},
+      {name: 'John', children: [{name: 'Suzie'}]},
+      {name: 'Sam', children: [{name: 'Stacy'}, {name: 'Brad'}]},
       {name: 'Jane'}
     ]
   }
 ];
 
-let getKey = (item) => item.name;
-let getChildren = (item) => item.children;
+let getKey = item => item.name;
+let getChildren = item => item.children;
 
 describe('useTreeData', function () {
   it('should construct a tree using initial data', function () {
-    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey, initialSelectedKeys: ['John', 'Stacy']}));
+    let {result} = renderHook(() =>
+      useTreeData({
+        initialItems: initial,
+        getChildren,
+        getKey,
+        initialSelectedKeys: ['John', 'Stacy']
+      })
+    );
     expect(result.current.items[0].value).toBe(initial[0]);
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0].value).toBe(initial[0].children[0]);
@@ -65,7 +67,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(2);
-    expect(result.current.items[0].children[0].children[0]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[0]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
@@ -105,7 +109,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(3);
-    expect(result.current.items[0].children[0].children[0]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[0]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[0].children[2].value).toEqual({name: 'Danni'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
@@ -177,7 +183,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(2);
     expect(result.current.items[0].children[0].children[0].value).toEqual({name: 'Devon'});
-    expect(result.current.items[0].children[0].children[1]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[1]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
@@ -198,7 +206,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0].children[0].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Danni'});
-    expect(result.current.items[0].children[0].children[2]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[2]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
@@ -246,7 +256,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(2);
-    expect(result.current.items[0].children[0].children[0]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[0]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
@@ -266,7 +278,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(3);
-    expect(result.current.items[0].children[0].children[0]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[0]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[0].children[2].value).toEqual({name: 'Danni'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
@@ -317,7 +331,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(2);
     expect(result.current.items[0].children[0].children[0].value).toEqual({name: 'Devon'});
-    expect(result.current.items[0].children[0].children[1]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[1]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
@@ -338,7 +354,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0].children[0].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Danni'});
-    expect(result.current.items[0].children[0].children[2]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[2]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
@@ -386,7 +404,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(2);
-    expect(result.current.items[0].children[0].children[0]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[0]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
@@ -406,7 +426,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(3);
-    expect(result.current.items[0].children[0].children[0]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[0]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[0].children[1].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[0].children[2].value).toEqual({name: 'Danni'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
@@ -443,7 +465,14 @@ describe('useTreeData', function () {
   });
 
   it('should remove an item', function () {
-    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey, initialSelectedKeys: ['Suzie', 'Sam']}));
+    let {result} = renderHook(() =>
+      useTreeData({
+        initialItems: initial,
+        getChildren,
+        getKey,
+        initialSelectedKeys: ['Suzie', 'Sam']
+      })
+    );
     let initialResult = result.current;
 
     act(() => {
@@ -463,7 +492,14 @@ describe('useTreeData', function () {
   });
 
   it('should remove multiple items', function () {
-    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey, initialSelectedKeys: ['Brad', 'Sam']}));
+    let {result} = renderHook(() =>
+      useTreeData({
+        initialItems: initial,
+        getChildren,
+        getKey,
+        initialSelectedKeys: ['Brad', 'Sam']
+      })
+    );
     let initialResult = result.current;
 
     act(() => {
@@ -478,14 +514,23 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0].children).toHaveLength(0);
     expect(result.current.items[0].children[1]).not.toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[1].children).toHaveLength(1);
-    expect(result.current.items[0].children[1].children[0]).toBe(initialResult.items[0].children[1].children[0]);
+    expect(result.current.items[0].children[1].children[0]).toBe(
+      initialResult.items[0].children[1].children[0]
+    );
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
     expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
     expect(result.current.selectedKeys).toEqual(new Set(['Sam']));
   });
 
   it('should remove an item from the root', function () {
-    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey, initialSelectedKeys: ['David', 'Suzie']}));
+    let {result} = renderHook(() =>
+      useTreeData({
+        initialItems: initial,
+        getChildren,
+        getKey,
+        initialSelectedKeys: ['David', 'Suzie']
+      })
+    );
     let initialResult = result.current;
 
     act(() => {
@@ -499,7 +544,14 @@ describe('useTreeData', function () {
   });
 
   it('should remove the selected items', function () {
-    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey, initialSelectedKeys: ['Suzie', 'Brad']}));
+    let {result} = renderHook(() =>
+      useTreeData({
+        initialItems: initial,
+        getChildren,
+        getKey,
+        initialSelectedKeys: ['Suzie', 'Brad']
+      })
+    );
     let initialResult = result.current;
 
     act(() => {
@@ -514,7 +566,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0].children).toHaveLength(0);
     expect(result.current.items[0].children[1]).not.toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[1].children).toHaveLength(1);
-    expect(result.current.items[0].children[1].children[0]).toBe(initialResult.items[0].children[1].children[0]);
+    expect(result.current.items[0].children[1].children[0]).toBe(
+      initialResult.items[0].children[1].children[0]
+    );
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
     expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
     expect(result.current.selectedKeys).toEqual(new Set());
@@ -548,7 +602,9 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(1);
-    expect(result.current.items[0].children[0].children[0]).not.toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[0]).not.toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[0].children[0].value).toEqual({name: 'Devon'});
     expect(result.current.items[0].children[1]).toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
@@ -569,8 +625,12 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[0]).toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[1]).not.toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[1].children).toHaveLength(2);
-    expect(result.current.items[0].children[1].children[0]).toEqual(initialResult.items[0].children[1].children[1]);
-    expect(result.current.items[0].children[1].children[1]).toBe(initialResult.items[0].children[1].children[0]);
+    expect(result.current.items[0].children[1].children[0]).toEqual(
+      initialResult.items[0].children[1].children[1]
+    );
+    expect(result.current.items[0].children[1].children[1]).toBe(
+      initialResult.items[0].children[1].children[0]
+    );
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
 
@@ -600,18 +660,22 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children).toHaveLength(3);
     expect(result.current.items[0].children[0]).not.toBe(initialResult.items[0].children[0]);
     expect(result.current.items[0].children[0].children).toHaveLength(2);
-    expect(result.current.items[0].children[0].children[0].value).toBe(initialResult.items[0].children[1].children[1].value);
-    expect(result.current.items[0].children[0].children[1]).toBe(initialResult.items[0].children[0].children[0]);
+    expect(result.current.items[0].children[0].children[0].value).toBe(
+      initialResult.items[0].children[1].children[1].value
+    );
+    expect(result.current.items[0].children[0].children[1]).toBe(
+      initialResult.items[0].children[0].children[0]
+    );
     expect(result.current.items[0].children[1]).not.toBe(initialResult.items[0].children[1]);
     expect(result.current.items[0].children[1].children).toHaveLength(1);
-    expect(result.current.items[0].children[1].children[0]).toBe(initialResult.items[0].children[1].children[0]);
+    expect(result.current.items[0].children[1].children[0]).toBe(
+      initialResult.items[0].children[1].children[0]
+    );
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
 
   it('should move all children of the moved target into the new map', function () {
-    let {result} = renderHook(() =>
-      useTreeData({initialItems: initial, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
     expect(result.current.getItem('Stacy')).toBe(result.current.items[0].children[1].children[0]);
 
     act(() => {
@@ -622,9 +686,7 @@ describe('useTreeData', function () {
   });
 
   it('should move an item to the root', function () {
-    let {result} = renderHook(() =>
-      useTreeData({initialItems: initial, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
     let initialResult = result.current;
 
     act(() => {
@@ -638,19 +700,13 @@ describe('useTreeData', function () {
     expect(result.current.items[0].value).toEqual({name: 'Stacy'});
     expect(result.current.items[1]).not.toBe(initialResult.items[0]);
     expect(result.current.items[1].children).toHaveLength(3);
-    expect(result.current.items[1].children[0]).toBe(
-      initialResult.items[0].children[0]
-    );
-    expect(result.current.items[1].children[1]).not.toBe(
-      initialResult.items[0].children[1]
-    );
+    expect(result.current.items[1].children[0]).toBe(initialResult.items[0].children[0]);
+    expect(result.current.items[1].children[1]).not.toBe(initialResult.items[0].children[1]);
     expect(result.current.items[1].children[1].children).toHaveLength(1);
     expect(result.current.items[1].children[1].children[0]).toEqual(
       initialResult.items[0].children[1].children[1]
     );
-    expect(result.current.items[1].children[2]).toBe(
-      initialResult.items[0].children[2]
-    );
+    expect(result.current.items[1].children[2]).toBe(initialResult.items[0].children[2]);
 
     /*
       Expected tree structure after moving 'Stacy' to root:
@@ -725,9 +781,7 @@ describe('useTreeData', function () {
   it('should move an item to a new index within the root', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     let initialResult = result.current;
 
     act(() => {
@@ -747,9 +801,7 @@ describe('useTreeData', function () {
   it('should move an item multiple times within the root', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     let initialResult = result.current;
 
     act(() => {
@@ -768,13 +820,10 @@ describe('useTreeData', function () {
     expect(result.current.items[2]).toEqual(initialResult.items[1]);
   });
 
-
   it('should move an item within its same level before the target', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.move('Eli', null, 0);
     });
@@ -787,9 +836,7 @@ describe('useTreeData', function () {
   it('should move an item within its same level before the target by key', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.moveBefore('David', ['Suzie']);
     });
@@ -805,9 +852,7 @@ describe('useTreeData', function () {
   it('should move an item within its same level before the target by keys', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.moveBefore('David', ['John', 'Eli']);
     });
@@ -824,9 +869,7 @@ describe('useTreeData', function () {
   it('should move an item within its same level before the target by keys with nested items and keep tree order', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.moveBefore('David', ['John', 'Eli', 'Suzie']);
     });
@@ -845,9 +888,7 @@ describe('useTreeData', function () {
   it('should move items down the tree', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.moveBefore('Suzie', ['Sam', 'Eli']);
     });
@@ -875,9 +916,7 @@ describe('useTreeData', function () {
     it('cannot move an item within itself', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-      let {result} = renderHook(() =>
-        useTreeData({initialItems, getChildren, getKey})
-      );
+      let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
       try {
         act(() => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli']));
       } catch (e) {
@@ -889,9 +928,7 @@ describe('useTreeData', function () {
   it('should move an item within its same level after the target by key', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.moveAfter('David', ['Suzie']);
     });
@@ -907,9 +944,7 @@ describe('useTreeData', function () {
   it('should move an item within its same level after the target by keys', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.moveAfter('David', ['John', 'Eli']);
     });
@@ -926,9 +961,7 @@ describe('useTreeData', function () {
   it('should move an item within its same level after the target by keys with nested items and keep tree order', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.moveAfter('David', ['John', 'Eli', 'Suzie']);
     });
@@ -947,9 +980,7 @@ describe('useTreeData', function () {
   it('should move an item to a different level before the target', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.move('Eli', 'David', 1);
     });
@@ -964,9 +995,7 @@ describe('useTreeData', function () {
   it('can move an item multiple times', function () {
     const initialItems = [...initial, {name: 'Eli'}];
 
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     act(() => {
       result.current.moveAfter('Eli', ['David']);
     });
@@ -1013,37 +1042,63 @@ describe('useTreeData', function () {
 
   it('can move an item within its same level', function () {
     const initialItems = [
-      {id: 'projects', name: 'Projects', childItems: [
-        {id: 'project-1', name: 'Project 1'},
-        {id: 'project-2', name: 'Project 2', childItems: [
-          {id: 'project-2A', name: 'Project 2A'},
-          {id: 'project-2B', name: 'Project 2B'},
-          {id: 'project-2C', name: 'Project 2C'}
-        ]},
-        {id: 'project-3', name: 'Project 3'},
-        {id: 'project-4', name: 'Project 4'},
-        {id: 'project-5', name: 'Project 5', childItems: [
-          {id: 'project-5A', name: 'Project 5A'},
-          {id: 'project-5B', name: 'Project 5B'},
-          {id: 'project-5C', name: 'Project 5C'}
-        ]}
-      ]},
-      {id: 'reports', name: 'Reports', childItems: [
-        {id: 'reports-1', name: 'Reports 1', childItems: [
-          {id: 'reports-1A', name: 'Reports 1A', childItems: [
-            {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
-              {id: 'reports-1ABC', name: 'Reports 1ABC'}
-            ]}
-          ]},
-          {id: 'reports-1B', name: 'Reports 1B'},
-          {id: 'reports-1C', name: 'Reports 1C'}
-        ]},
-        {id: 'reports-2', name: 'Reports 2'}
-      ]}
+      {
+        id: 'projects',
+        name: 'Projects',
+        childItems: [
+          {id: 'project-1', name: 'Project 1'},
+          {
+            id: 'project-2',
+            name: 'Project 2',
+            childItems: [
+              {id: 'project-2A', name: 'Project 2A'},
+              {id: 'project-2B', name: 'Project 2B'},
+              {id: 'project-2C', name: 'Project 2C'}
+            ]
+          },
+          {id: 'project-3', name: 'Project 3'},
+          {id: 'project-4', name: 'Project 4'},
+          {
+            id: 'project-5',
+            name: 'Project 5',
+            childItems: [
+              {id: 'project-5A', name: 'Project 5A'},
+              {id: 'project-5B', name: 'Project 5B'},
+              {id: 'project-5C', name: 'Project 5C'}
+            ]
+          }
+        ]
+      },
+      {
+        id: 'reports',
+        name: 'Reports',
+        childItems: [
+          {
+            id: 'reports-1',
+            name: 'Reports 1',
+            childItems: [
+              {
+                id: 'reports-1A',
+                name: 'Reports 1A',
+                childItems: [
+                  {
+                    id: 'reports-1AB',
+                    name: 'Reports 1AB',
+                    childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC'}]
+                  }
+                ]
+              },
+              {id: 'reports-1B', name: 'Reports 1B'},
+              {id: 'reports-1C', name: 'Reports 1C'}
+            ]
+          },
+          {id: 'reports-2', name: 'Reports 2'}
+        ]
+      }
     ];
 
     let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren: (item) => item.childItems, getKey: (item) => item.id})
+      useTreeData({initialItems, getChildren: item => item.childItems, getKey: item => item.id})
     );
     act(() => {
       result.current.moveAfter('project-3', ['project-2']);
@@ -1073,40 +1128,65 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[3].key).toEqual('project-2');
   });
 
-
   it('can move an item to a different level', function () {
     const initialItems = [
-      {id: 'projects', name: 'Projects', childItems: [
-        {id: 'project-1', name: 'Project 1'},
-        {id: 'project-2', name: 'Project 2', childItems: [
-          {id: 'project-2A', name: 'Project 2A'},
-          {id: 'project-2B', name: 'Project 2B'},
-          {id: 'project-2C', name: 'Project 2C'}
-        ]},
-        {id: 'project-3', name: 'Project 3'},
-        {id: 'project-4', name: 'Project 4'},
-        {id: 'project-5', name: 'Project 5', childItems: [
-          {id: 'project-5A', name: 'Project 5A'},
-          {id: 'project-5B', name: 'Project 5B'},
-          {id: 'project-5C', name: 'Project 5C'}
-        ]}
-      ]},
-      {id: 'reports', name: 'Reports', childItems: [
-        {id: 'reports-1', name: 'Reports 1', childItems: [
-          {id: 'reports-1A', name: 'Reports 1A', childItems: [
-            {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
-              {id: 'reports-1ABC', name: 'Reports 1ABC'}
-            ]}
-          ]},
-          {id: 'reports-1B', name: 'Reports 1B'},
-          {id: 'reports-1C', name: 'Reports 1C'}
-        ]},
-        {id: 'reports-2', name: 'Reports 2'}
-      ]}
+      {
+        id: 'projects',
+        name: 'Projects',
+        childItems: [
+          {id: 'project-1', name: 'Project 1'},
+          {
+            id: 'project-2',
+            name: 'Project 2',
+            childItems: [
+              {id: 'project-2A', name: 'Project 2A'},
+              {id: 'project-2B', name: 'Project 2B'},
+              {id: 'project-2C', name: 'Project 2C'}
+            ]
+          },
+          {id: 'project-3', name: 'Project 3'},
+          {id: 'project-4', name: 'Project 4'},
+          {
+            id: 'project-5',
+            name: 'Project 5',
+            childItems: [
+              {id: 'project-5A', name: 'Project 5A'},
+              {id: 'project-5B', name: 'Project 5B'},
+              {id: 'project-5C', name: 'Project 5C'}
+            ]
+          }
+        ]
+      },
+      {
+        id: 'reports',
+        name: 'Reports',
+        childItems: [
+          {
+            id: 'reports-1',
+            name: 'Reports 1',
+            childItems: [
+              {
+                id: 'reports-1A',
+                name: 'Reports 1A',
+                childItems: [
+                  {
+                    id: 'reports-1AB',
+                    name: 'Reports 1AB',
+                    childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC'}]
+                  }
+                ]
+              },
+              {id: 'reports-1B', name: 'Reports 1B'},
+              {id: 'reports-1C', name: 'Reports 1C'}
+            ]
+          },
+          {id: 'reports-2', name: 'Reports 2'}
+        ]
+      }
     ];
 
     let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren: (item) => item.childItems, getKey: (item) => item.id})
+      useTreeData({initialItems, getChildren: item => item.childItems, getKey: item => item.id})
     );
     act(() => {
       result.current.moveBefore('project-2B', ['project-3']);
@@ -1122,9 +1202,7 @@ describe('useTreeData', function () {
 
   it('should move an item to a different level after the target', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
 
     act(() => {
       result.current.move('Eli', 'David', 2);
@@ -1140,9 +1218,7 @@ describe('useTreeData', function () {
 
   it('should move an item to a different level at the end when the index is greater than the node list length', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-    let {result} = renderHook(() =>
-      useTreeData({initialItems, getChildren, getKey})
-    );
+    let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
 
     act(() => {
       result.current.move('Eli', 'David', 101);
@@ -1159,22 +1235,22 @@ describe('useTreeData', function () {
 
   it('should not move the item when moving it before itself', () => {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-  
+
     let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     let initialResult = result.current;
-  
+
     act(() => {
       result.current.moveBefore('David', ['David']);
     });
     expect(result.current.items).toEqual(initialResult.items);
-  
+
     act(() => {
       result.current.moveBefore('David', ['David', 'Eli']);
     });
     expect(result.current.items[0]).toEqual(initialResult.items[0]);
     expect(result.current.items[1]).toEqual(initialResult.items[2]);
     expect(result.current.items[2]).toEqual(initialResult.items[1]);
-  
+
     act(() => {
       result.current.moveBefore('John', ['John']);
     });
@@ -1182,7 +1258,7 @@ describe('useTreeData', function () {
     expect(result.current.items[1]).toEqual(initialResult.items[2]);
     expect(result.current.items[2]).toEqual(initialResult.items[1]);
     expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
-  
+
     act(() => {
       result.current.moveBefore('Jane', ['Sam', 'Jane']);
     });
@@ -1191,25 +1267,25 @@ describe('useTreeData', function () {
     expect(result.current.items[2]).toEqual(initialResult.items[1]);
     expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
   });
-  
+
   it('should not move the item when moving it after itself', () => {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-  
+
     let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
     let initialResult = result.current;
-  
+
     act(() => {
       result.current.moveAfter('David', ['David']);
     });
     expect(result.current.items).toEqual(initialResult.items);
-  
+
     act(() => {
       result.current.moveAfter('David', ['David', 'Eli']);
     });
     expect(result.current.items[0]).toEqual(initialResult.items[0]);
     expect(result.current.items[1]).toEqual(initialResult.items[2]);
     expect(result.current.items[2]).toEqual(initialResult.items[1]);
-  
+
     act(() => {
       result.current.moveAfter('John', ['John']);
     });
@@ -1217,7 +1293,7 @@ describe('useTreeData', function () {
     expect(result.current.items[1]).toEqual(initialResult.items[2]);
     expect(result.current.items[2]).toEqual(initialResult.items[1]);
     expect(result.current.items[0].children).toEqual(initialResult.items[0].children);
-  
+
     act(() => {
       result.current.moveAfter('Jane', ['Sam', 'Jane']);
     });

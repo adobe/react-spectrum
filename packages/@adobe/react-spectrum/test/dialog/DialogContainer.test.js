@@ -17,7 +17,11 @@ import {ButtonGroup} from '../../src/buttongroup/ButtonGroup';
 import {Content} from '../../src/view/Content';
 import {Dialog} from '../../src/dialog/Dialog';
 import {DialogContainer} from '../../src/dialog/DialogContainer';
-import {DialogContainerExample, MenuExample, NestedDialogContainerExample} from '../../stories/dialog/DialogContainerExamples';
+import {
+  DialogContainerExample,
+  MenuExample,
+  NestedDialogContainerExample
+} from '../../stories/dialog/DialogContainerExamples';
 import {Divider} from '../../src/divider/Divider';
 import {Header} from '../../src/view/Header';
 import {Heading} from '../../src/text/Heading';
@@ -35,7 +39,9 @@ describe('DialogContainer', function () {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('should open and close a dialog based on controlled state', async function () {
@@ -50,7 +56,9 @@ describe('DialogContainer', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     await user.click(button);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
@@ -58,7 +66,9 @@ describe('DialogContainer', function () {
     button = within(dialog).getByText('Confirm');
 
     await user.click(button);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(queryByRole('dialog')).toBeNull();
   });
@@ -75,14 +85,18 @@ describe('DialogContainer', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     await user.click(button);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
     fireEvent.keyUp(dialog, {key: 'Escape'});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(queryByRole('dialog')).toBeNull();
   });
@@ -99,14 +113,18 @@ describe('DialogContainer', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     await user.click(button);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
     fireEvent.keyUp(dialog, {key: 'Escape'});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(getByRole('dialog')).toBeVisible();
   });
@@ -123,12 +141,16 @@ describe('DialogContainer', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     await user.click(button);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(getByRole('dialog')).toBeVisible();
 
     await user.click(document.body);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(getByRole('dialog')).toBeVisible();
   });
@@ -145,12 +167,16 @@ describe('DialogContainer', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     await user.click(button);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(getByRole('dialog')).toBeVisible();
 
     await user.click(document.body);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(queryByRole('dialog')).toBeNull();
   });
@@ -167,7 +193,9 @@ describe('DialogContainer', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     await user.click(button);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(queryByRole('dialog')).toBeNull();
 
@@ -175,7 +203,9 @@ describe('DialogContainer', function () {
     let menuitem = within(menu).getByRole('menuitem');
 
     await user.click(menuitem);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(queryByRole('menu')).toBeNull();
     expect(queryByRole('menuitem')).toBeNull();
@@ -184,8 +214,12 @@ describe('DialogContainer', function () {
     button = within(dialog).getByText('Confirm');
 
     await user.click(button);
-    act(() => {jest.runAllTimers();});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(queryByRole('dialog')).toBeNull();
   });
@@ -200,19 +234,25 @@ describe('DialogContainer', function () {
 
     let button = getByRole('button');
     await user.click(button);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let menu = getByRole('menu');
     let menuitem = within(menu).getAllByRole('menuitem')[0];
 
     await user.click(menuitem);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     let confirmButton = within(dialog).getByText('Do that');
 
     await user.click(confirmButton);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     dialog = getByRole('dialog');
     confirmButton = within(dialog).getByRole('button', {name: 'Do this'});
@@ -222,8 +262,12 @@ describe('DialogContainer', function () {
     let closeButton = getByRole('button', {name: 'Dismiss'});
 
     await user.click(closeButton);
-    act(() => {jest.runAllTimers();});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(document.activeElement).toBe(button);
   });
@@ -242,13 +286,26 @@ describe('DialogContainer', function () {
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
           <Divider />
-          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
-          {!props.isDismissable &&
+          <Content>
+            <Text>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique
+              risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis
+              parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non
+              condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum
+              elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque
+              lectus commodo ornare.
+            </Text>
+          </Content>
+          {!props.isDismissable && (
             <ButtonGroup>
-              <Button variant="secondary" onPress={container.dismiss}>Cancel</Button>
-              <Button variant="cta" onPress={container.dismiss}>Confirm</Button>
+              <Button variant="secondary" onPress={container.dismiss}>
+                Cancel
+              </Button>
+              <Button variant="cta" onPress={container.dismiss}>
+                Confirm
+              </Button>
             </ButtonGroup>
-          }
+          )}
         </Dialog>
       );
     }
@@ -261,9 +318,7 @@ describe('DialogContainer', function () {
           <ActionButton onPress={() => setOpen(true)}>Open dialog</ActionButton>
           <UNSAFE_PortalProvider getContainer={() => container.current}>
             <DialogContainer onDismiss={() => setOpen(false)} {...props}>
-              {isOpen &&
-                <ExampleDialog {...props} />
-              }
+              {isOpen && <ExampleDialog {...props} />}
             </DialogContainer>
           </UNSAFE_PortalProvider>
           <div ref={container} data-testid="custom-container" />
@@ -272,14 +327,14 @@ describe('DialogContainer', function () {
     }
 
     it('should render the dialog in the portal container', async () => {
-      let {getByRole, getByTestId} = render(
-        <App />
-      );
+      let {getByRole, getByTestId} = render(<App />);
 
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
     });
   });
 });

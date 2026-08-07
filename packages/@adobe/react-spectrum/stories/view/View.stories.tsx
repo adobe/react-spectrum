@@ -24,10 +24,6 @@ let meta = {
 
 export default meta;
 
-export const Default: StoryFn<typeof View> = (args) => (
-  <View
-    {...args}
-    width="single-line-width"
-    height="size-500"
-    elementType="span" />
+export const Default: StoryFn<typeof View> = args => (
+  <View {...args} width="single-line-width" height="size-500" elementType="span" />
 );

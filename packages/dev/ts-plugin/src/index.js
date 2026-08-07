@@ -31,14 +31,20 @@ module.exports = function () {
           for (let textChange of change.textChanges) {
             if (change.fileName.includes('@react-spectrum/s2')) {
               // For files inside S2 itself, import specifier will be '../style', not '@react-spectrum/s2/style'.
-              textChange.newText = textChange.newText.replace(/(import\s*\{.*?\}\s*from\s*['"]\.\.\/style['"]);/g, '$1 with {type: \'macro\'};');
+              textChange.newText = textChange.newText.replace(
+                /(import\s*\{.*?\}\s*from\s*['"]\.\.\/style['"]);/g,
+                "$1 with {type: 'macro'};"
+              );
             } else {
-              textChange.newText = textChange.newText.replace(/(import\s*\{.*?\}\s*from\s*['"]@react-spectrum\/s2\/style['"]);/g, '$1 with {type: \'macro\'};');
+              textChange.newText = textChange.newText.replace(
+                /(import\s*\{.*?\}\s*from\s*['"]@react-spectrum\/s2\/style['"]);/g,
+                "$1 with {type: 'macro'};"
+              );
             }
           }
         }
       }
-      
+
       return result;
     };
 

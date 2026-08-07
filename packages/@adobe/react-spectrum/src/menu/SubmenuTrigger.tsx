@@ -29,26 +29,33 @@ interface SubmenuTriggerProps {
   /**
    * The contents of the SubmenuTrigger - an Item and a Menu.
    */
-  children: ReactElement<any>[],
-  targetKey: Key
+  children: ReactElement<any>[];
+  targetKey: Key;
 }
 
 export interface SpectrumSubmenuTriggerProps extends Omit<SubmenuTriggerProps, 'targetKey'> {}
 
 function SubmenuTrigger(props: SubmenuTriggerProps) {
   let triggerRef = useRef<HTMLDivElement>(null);
-  let {
-    children,
-    targetKey
-  } = props;
+  let {children, targetKey} = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState} = useMenuStateContext()!;
+  let {
+    popoverContainer,
+    trayContainerRef,
+    menu: parentMenuRef,
+    submenu: menuRef,
+    rootMenuTriggerState
+  } = useMenuStateContext()!;
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState!);
-  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
-    parentMenuRef,
-    submenuRef: menuRef
-  }, submenuTriggerState, triggerRef);
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger(
+    {
+      parentMenuRef,
+      submenuRef: menuRef
+    },
+    submenuTriggerState,
+    triggerRef
+  );
   let isMobile = useIsMobileDevice();
   let onBackButtonPress = () => {
     submenuTriggerState.close();
@@ -75,11 +82,15 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
 
   let overlay;
 
-  if (isMobile)  {
+  if (isMobile) {
+    // oxlint-disable-next-line react/react-compiler
     delete submenuTriggerProps.onBlur;
+    // oxlint-disable-next-line react/react-compiler
     delete submenuTriggerProps.onHoverChange;
     submenuProps.autoFocus ??= true;
+    // oxlint-disable-next-line react/react-compiler
     if (trayContainerRef.current && submenuTriggerState.isOpen) {
+      // oxlint-disable-next-line react/react-compiler
       overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
     }
   } else {
@@ -108,12 +119,15 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   }
 
   let menuContext = {
+    // oxlint-disable-next-line react/react-compiler
     ...mergeProps(submenuProps, {
       ref: menuRef,
-      UNSAFE_style: isMobile ? {
-        width: '100%',
-        maxHeight: 'inherit'
-      } : undefined,
+      UNSAFE_style: isMobile
+        ? {
+            width: '100%',
+            maxHeight: 'inherit'
+          }
+        : undefined,
       UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
       ...(isMobile && {
         onBackButtonPress,
@@ -124,10 +138,10 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
 
   return (
     <>
-      <SubmenuTriggerContext.Provider value={{triggerRef, ...submenuTriggerProps}}>{menuTrigger}</SubmenuTriggerContext.Provider>
-      <MenuContext.Provider value={menuContext}>
-        {overlay}
-      </MenuContext.Provider>
+      <SubmenuTriggerContext.Provider value={{triggerRef, ...submenuTriggerProps}}>
+        {menuTrigger}
+      </SubmenuTriggerContext.Provider>
+      <MenuContext.Provider value={menuContext}>{overlay}</MenuContext.Provider>
     </>
   );
 }
@@ -143,8 +157,12 @@ SubmenuTrigger.getCollectionNode = function* (props: SpectrumSubmenuTriggerProps
   let [, content] = props.children as [ReactElement, ReactElement];
 
   yield {
-    element: React.cloneElement(trigger, {...trigger.props as any, hasChildItems: true, isTrigger: true}),
-    wrapper: (element) => (
+    element: React.cloneElement(trigger, {
+      ...(trigger.props as any),
+      hasChildItems: true,
+      isTrigger: true
+    }),
+    wrapper: element => (
       <SubmenuTrigger key={element.key} targetKey={element.key} {...props}>
         {element}
         {content}
@@ -153,5 +171,7 @@ SubmenuTrigger.getCollectionNode = function* (props: SpectrumSubmenuTriggerProps
   };
 };
 
-let _SubmenuTrigger = SubmenuTrigger as unknown as (props: SpectrumSubmenuTriggerProps) => JSX.Element;
+let _SubmenuTrigger = SubmenuTrigger as unknown as (
+  props: SpectrumSubmenuTriggerProps
+) => JSX.Element;
 export {_SubmenuTrigger as SubmenuTrigger};

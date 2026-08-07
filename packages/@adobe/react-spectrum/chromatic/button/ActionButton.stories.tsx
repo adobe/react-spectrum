@@ -30,15 +30,9 @@ export type ActionButtonStory = StoryObj<typeof ActionButton>;
 export const _Text: ActionButtonStory = {
   render: () => (
     <Flex gap="size-100">
-      <ActionButton>
-        Default
-      </ActionButton>
-      <ActionButton isQuiet>
-        Quiet
-      </ActionButton>
-      <ActionButton isDisabled>
-        Disabled
-      </ActionButton>
+      <ActionButton>Default</ActionButton>
+      <ActionButton isQuiet>Quiet</ActionButton>
+      <ActionButton isDisabled>Disabled</ActionButton>
     </Flex>
   ),
   name: 'text'

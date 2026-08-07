@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; [[ -n \"$f\" ]] && oxfmt --no-error-on-unmatched-pattern \"$f\"; } 2>/dev/null || true",
+            "statusMessage": "oxfmt"
+          }
+        ]
+      }
+    ]
+  }
+}

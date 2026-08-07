@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Alerts users to isOpen change in wrapped tooltip 1`] = `
 "import { Tooltip } from "@react-spectrum/s2";

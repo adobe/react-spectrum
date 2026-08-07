@@ -14,7 +14,9 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Tree SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Button, Tree, TreeItem, TreeItemContent} from '../exports/index.ts';
 
       function MyTreeItemContent(props) {
@@ -77,20 +79,41 @@ describe('Tree SSR', function () {
       <React.StrictMode>
         <Test />
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let rows = screen.getAllByRole('row');
-      expect(rows.map(o => o.textContent)).toEqual(['Documents', 'Project', 'Photos', 'Image 1', 'Image 2']);
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let rows = screen.getAllByRole('row');
+        expect(rows.map(o => o.textContent)).toEqual([
+          'Documents',
+          'Project',
+          'Photos',
+          'Image 1',
+          'Image 2'
+        ]);
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let button = screen.getAllByRole('button', {name: 'Show'})[0];
     let rows = screen.getAllByRole('row');
-    expect(rows.map(o => o.textContent)).toEqual(['Documents', 'Project', 'Photos', 'Image 1', 'Image 2']);
+    expect(rows.map(o => o.textContent)).toEqual([
+      'Documents',
+      'Project',
+      'Photos',
+      'Image 1',
+      'Image 2'
+    ]);
 
     // And that it updates correctly.
     fireEvent.click(button);
     rows = screen.getAllByRole('row');
-    expect(rows.map(o => o.textContent)).toEqual(['Documents', 'Project', 'Weekly Report', 'Photos', 'Image 1', 'Image 2']);
+    expect(rows.map(o => o.textContent)).toEqual([
+      'Documents',
+      'Project',
+      'Weekly Report',
+      'Photos',
+      'Image 1',
+      'Image 2'
+    ]);
   });
 });

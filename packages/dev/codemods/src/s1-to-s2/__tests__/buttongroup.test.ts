@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Does nothing', `
+test(
+  'Does nothing',
+  `
 import {Button, ButtonGroup} from '@adobe/react-spectrum';
 
 <div>
@@ -14,4 +16,5 @@ import {Button, ButtonGroup} from '@adobe/react-spectrum';
     <Button variant="accent">Rate Now</Button>
   </ButtonGroup>
 </div>
-`);
+`
+);

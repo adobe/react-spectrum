@@ -22,6 +22,8 @@ describe('i18n server', () => {
       }
     });
 
-    expect(res).toBe("window[Symbol.for('react-aria.i18n.locale')]=\"en-US\";{let A=\"foo\";window[Symbol.for('react-aria.i18n.strings')]={'@react-aria/button':{test:A},'@react-aria/checkbox':{test:A}};}");
+    expect(res).toBe(
+      "window[Symbol.for('react-aria.i18n.locale')]=\"en-US\";{let A=\"foo\";window[Symbol.for('react-aria.i18n.strings')]={'@react-aria/button':{test:A},'@react-aria/checkbox':{test:A}};}"
+    );
   });
 });

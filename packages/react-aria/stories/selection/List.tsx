@@ -10,7 +10,7 @@ import React, {JSX, useRef} from 'react';
 import {useSelectableItem} from '../../src/selection/useSelectableItem';
 import {useSelectableList} from '../../src/selection/useSelectableList';
 
-function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
+function ListItem<T>({item, state}: {item: Node<T>; state: ListState<T>}) {
   const ref = useRef(null);
   const {itemProps} = useSelectableItem({
     key: item.key,
@@ -47,16 +47,13 @@ export function List<T extends object>(props: ListProps<T>): JSX.Element {
 
   return (
     <ul ref={ref} {...listProps} role="listbox" aria-label={props['aria-label'] ?? 'test listbox'}>
-      {[...state.collection].map((item) => (
+      {[...state.collection].map(item => (
         <ListItem key={item.key} item={item} state={state} />
       ))}
     </ul>
   );
 }
 
-export interface ListProps<T>
-  extends CollectionBase<T>,
-    AsyncLoadable,
-    MultipleSelection {
-      selectionBehavior?: SelectionBehavior
-    }
+export interface ListProps<T> extends CollectionBase<T>, AsyncLoadable, MultipleSelection {
+  selectionBehavior?: SelectionBehavior;
+}

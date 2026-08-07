@@ -14,7 +14,12 @@ import {classNames} from '../utils/classNames';
 
 import {DOMProps, DOMRef, FlexStyleProps} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {passthroughStyle, responsiveDimensionValue, StyleHandlers, useStyleProps} from '../utils/styleProps';
+import {
+  passthroughStyle,
+  responsiveDimensionValue,
+  StyleHandlers,
+  useStyleProps
+} from '../utils/styleProps';
 import React, {forwardRef, ReactNode} from 'react';
 import styles from './flex-gap.css';
 import {useBreakpoint} from '../utils/BreakpointProvider';
@@ -22,7 +27,7 @@ import {useDOMRef} from '../utils/useDOMRef';
 
 export interface FlexProps extends DOMProps, FlexStyleProps {
   /** Children of the flex container. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 const flexStyleProps: StyleHandlers = {
@@ -38,10 +43,7 @@ const flexStyleProps: StyleHandlers = {
  * property to define consistent spacing between items.
  */
 export const Flex = forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
-  let {
-    children,
-    ...otherProps
-  } = props;
+  let {children, ...otherProps} = props;
   let breakpointProvider = useBreakpoint();
   let matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base'];
   let {styleProps} = useStyleProps(otherProps);
@@ -66,7 +68,11 @@ export const Flex = forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLD
   }
 
   return (
-    <div {...filterDOMProps(otherProps)} className={classNames(styles, 'flex', styleProps.className)} style={style} ref={domRef}>
+    <div
+      {...filterDOMProps(otherProps)}
+      className={classNames(styles, 'flex', styleProps.className)}
+      style={style}
+      ref={domRef}>
       {children}
     </div>
   );

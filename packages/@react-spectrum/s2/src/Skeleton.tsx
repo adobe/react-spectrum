@@ -10,7 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
+import {
+  cloneElement,
+  createContext,
+  CSSProperties,
+  ReactElement,
+  ReactNode,
+  Ref,
+  useCallback,
+  useContext,
+  useRef
+} from 'react';
 import {color, style} from '../style' with {type: 'macro'};
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -22,34 +32,40 @@ import {useMediaQuery} from './useMediaQuery';
 export function useLoadingAnimation(isAnimating: boolean): (element: HTMLElement | null) => void {
   let animationRef = useRef<Animation | null>(null);
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
-  return useCallback((element: HTMLElement | null) => {
-    if (isAnimating && !animationRef.current && element && !reduceMotion && typeof element.animate === 'function') {
-      // Use web animation API instead of CSS animations so that we can
-      // synchronize it between all loading elements on the page (via startTime).
-      animationRef.current = element.animate(
-        [
-          {backgroundPosition: '100%'},
-          {backgroundPosition: '0%'}
-        ],
-        {
-          duration: 2000,
-          iterations: Infinity,
-          easing: 'ease-in-out'
-        }
-      );
-      animationRef.current.startTime = 0;
-    } else if (!isAnimating && animationRef.current) {
-      animationRef.current.cancel();
-      animationRef.current = null;
-    }
-  }, [isAnimating, reduceMotion]);
+  return useCallback(
+    (element: HTMLElement | null) => {
+      if (
+        isAnimating &&
+        !animationRef.current &&
+        element &&
+        !reduceMotion &&
+        typeof element.animate === 'function'
+      ) {
+        // Use web animation API instead of CSS animations so that we can
+        // synchronize it between all loading elements on the page (via startTime).
+        animationRef.current = element.animate(
+          [{backgroundPosition: '100%'}, {backgroundPosition: '0%'}],
+          {
+            duration: 2000,
+            iterations: Infinity,
+            easing: 'ease-in-out'
+          }
+        );
+        animationRef.current.startTime = 0;
+      } else if (!isAnimating && animationRef.current) {
+        animationRef.current.cancel();
+        animationRef.current = null;
+      }
+    },
+    [isAnimating, reduceMotion]
+  );
 }
 
 export type SkeletonElement = ReactElement<{
-  children: ReactNode,
-  className?: string,
-  ref?: Ref<HTMLElement>,
-  inert?: boolean | 'true'
+  children: ReactNode;
+  className?: string;
+  ref?: Ref<HTMLElement>;
+  inert?: boolean | 'true';
 }>;
 
 export const SkeletonContext = createContext<boolean | null>(null);
@@ -58,8 +74,8 @@ export function useIsSkeleton(): boolean {
 }
 
 export interface SkeletonProps {
-  children: ReactNode,
-  isLoading: boolean
+  children: ReactNode;
+  isLoading: boolean;
 }
 
 /**
@@ -67,22 +83,24 @@ export interface SkeletonProps {
  */
 export function Skeleton({children, isLoading}: SkeletonProps): ReactNode {
   // Disable all form components inside a skeleton.
-  return (
-    <SkeletonContext.Provider value={isLoading}>
-      {children}
-    </SkeletonContext.Provider>
-  );
+  return <SkeletonContext.Provider value={isLoading}>{children}</SkeletonContext.Provider>;
 }
 
-export const loadingStyle = css(`
+export const loadingStyle = css(
+  `
   background-image: linear-gradient(to right, ${color('gray-100')} 33%, light-dark(${color('gray-25')}, ${color('gray-300')}), ${color('gray-100')} 66%);
   background-size: 300%;
   * {
     visibility: hidden;
   }
-`, 'L'); // add to a separate layer so it overrides default style macro styles
+`,
+  'L'
+); // add to a separate layer so it overrides default style macro styles
 
-export function useSkeletonText(children: ReactNode, style: CSSProperties | undefined): [ReactNode, CSSProperties | undefined] {
+export function useSkeletonText(
+  children: ReactNode,
+  style: CSSProperties | undefined
+): [ReactNode, CSSProperties | undefined] {
   let isSkeleton = useContext(SkeletonContext);
   if (isSkeleton) {
     children = <SkeletonText>{children}</SkeletonText>;
@@ -103,11 +121,14 @@ export function SkeletonText({children}: {children: ReactNode}): ReactNode {
       // @ts-ignore - compatibility with React < 19
       inert={inertValue(true)}
       ref={useLoadingAnimation(true)}
-      className={loadingStyle + style({
-        color: 'transparent',
-        boxDecorationBreak: 'clone',
-        borderRadius: 'sm'
-      })}>
+      className={
+        loadingStyle +
+        style({
+          color: 'transparent',
+          boxDecorationBreak: 'clone',
+          borderRadius: 'sm'
+        })
+      }>
       {children}
     </span>
   );
@@ -121,15 +142,20 @@ export function SkeletonWrapper({children}: {children: SkeletonElement}): ReactN
     return children;
   }
 
-  let childRef = 'ref' in children && !Object.getOwnPropertyDescriptor(children, 'ref')?.get ? children.ref as any : children.props.ref;
+  let childRef =
+    'ref' in children && !Object.getOwnPropertyDescriptor(children, 'ref')?.get
+      ? (children.ref as any)
+      : children.props.ref;
   return (
     <SkeletonContext.Provider value={null}>
-      {isLoading ? cloneElement(children, {
-        ref: mergeRefs(childRef, animation),
-        className: (children.props.className || '') + ' ' + loadingStyle,
-        // @ts-ignore - compatibility with React < 19
-        inert: inertValue(true)
-      }) : children}
+      {isLoading
+        ? cloneElement(children, {
+            ref: mergeRefs(childRef, animation),
+            className: (children.props.className || '') + ' ' + loadingStyle,
+            // @ts-ignore - compatibility with React < 19
+            inert: inertValue(true)
+          })
+        : children}
     </SkeletonContext.Provider>
   );
 }
@@ -140,5 +166,5 @@ export function useSkeletonIcon(styles: StyleString): StyleString {
   if (isSkeleton) {
     return mergeStyles(style({borderRadius: 'sm'}), styles);
   }
-  return styles || '' as StyleString;
+  return styles || ('' as StyleString);
 }

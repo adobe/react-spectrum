@@ -13,22 +13,49 @@
 import {useCallback, useEffect, useRef} from 'react';
 
 interface GlobalListeners {
-  addGlobalListener<K extends keyof WindowEventMap>(el: Window, type: K, listener: (this: Document, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void,
-  addGlobalListener<K extends keyof DocumentEventMap>(el: EventTarget, type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void,
-  addGlobalListener(el: EventTarget, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void,
-  removeGlobalListener<K extends keyof DocumentEventMap>(el: EventTarget, type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void,
-  removeGlobalListener(el: EventTarget, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void,
-  removeAllGlobalListeners(): void
+  addGlobalListener<K extends keyof WindowEventMap>(
+    el: Window,
+    type: K,
+    listener: (this: Document, ev: WindowEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions
+  ): void;
+  addGlobalListener<K extends keyof DocumentEventMap>(
+    el: EventTarget,
+    type: K,
+    listener: (this: Document, ev: DocumentEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions
+  ): void;
+  addGlobalListener(
+    el: EventTarget,
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ): void;
+  removeGlobalListener<K extends keyof DocumentEventMap>(
+    el: EventTarget,
+    type: K,
+    listener: (this: Document, ev: DocumentEventMap[K]) => any,
+    options?: boolean | EventListenerOptions
+  ): void;
+  removeGlobalListener(
+    el: EventTarget,
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions
+  ): void;
+  removeAllGlobalListeners(): void;
 }
 
 export function useGlobalListeners(): GlobalListeners {
   let globalListeners = useRef(new Map());
   let addGlobalListener = useCallback((eventTarget, type, listener, options) => {
     // Make sure we remove the listener after it is called with the `once` option.
-    let fn = options?.once ? (...args) => {
-      globalListeners.current.delete(listener);
-      listener(...args);
-    } : listener;
+    let fn = options?.once
+      ? (...args) => {
+          globalListeners.current.delete(listener);
+          listener(...args);
+        }
+      : listener;
     globalListeners.current.set(listener, {type, eventTarget, fn, options});
     eventTarget.addEventListener(type, fn, options);
   }, []);
@@ -43,7 +70,6 @@ export function useGlobalListeners(): GlobalListeners {
     });
   }, [removeGlobalListener]);
 
-   
   useEffect(() => {
     return removeAllGlobalListeners;
   }, [removeAllGlobalListeners]);

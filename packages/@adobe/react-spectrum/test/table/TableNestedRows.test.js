@@ -31,8 +31,12 @@ describe('TableView with expandable rows flag on', function () {
     let offsetWidth, offsetHeight;
 
     beforeAll(function () {
-      offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+      offsetWidth = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 1000);
+      offsetHeight = jest
+        .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+        .mockImplementation(() => 1000);
       jest.useFakeTimers();
     });
 
@@ -42,7 +46,9 @@ describe('TableView with expandable rows flag on', function () {
     });
 
     afterEach(() => {
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
     });
     it('can render', function () {
       let columns = [
@@ -52,28 +58,34 @@ describe('TableView with expandable rows flag on', function () {
       ];
 
       let nestedItems = [
-        {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
-          {foo: 'Lvl 2 Foo 1', bar: 'Lvl 2 Bar 1', baz: 'Lvl 2 Baz 1', childRows: [
-            {foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', baz: 'Lvl 3 Baz 1'}
-          ]},
-          {foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', baz: 'Lvl 2 Baz 2'}
-        ]}
+        {
+          foo: 'Lvl 1 Foo 1',
+          bar: 'Lvl 1 Bar 1',
+          baz: 'Lvl 1 Baz 1',
+          childRows: [
+            {
+              foo: 'Lvl 2 Foo 1',
+              bar: 'Lvl 2 Bar 1',
+              baz: 'Lvl 2 Baz 1',
+              childRows: [{foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', baz: 'Lvl 3 Baz 1'}]
+            },
+            {foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', baz: 'Lvl 2 Baz 2'}
+          ]
+        }
       ];
 
       renderComponent(
         <Provider theme={theme}>
           <TableView aria-label="example table with nested rows" UNSTABLE_allowsExpandableRows>
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
+            <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
             <TableBody items={nestedItems}>
-              {(item) =>
-                (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
-                  {(key) => {
+              {item => (
+                <Row key={item.foo} UNSTABLE_childItems={item.childRows}>
+                  {key => {
                     return <Cell>{item[key]}</Cell>;
                   }}
-                </Row>)
-              }
+                </Row>
+              )}
             </TableBody>
           </TableView>
         </Provider>

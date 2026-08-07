@@ -20,7 +20,7 @@ import React from 'react';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-let TestColorField = (props) => (
+let TestColorField = props => (
   <ColorField defaultValue="#f00" minValue={0} data-foo="bar" {...props}>
     <Label>Color</Label>
     <Input />
@@ -48,7 +48,13 @@ describe('ColorField', () => {
     expect(label).toHaveTextContent('Color');
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      input
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
   });
 
   it('should support slot', () => {
@@ -81,7 +87,9 @@ describe('ColorField', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} =  render(<TestColorField render={props => <div {...props} data-custom="true" />} />);
+    let {getByRole} = render(
+      <TestColorField render={props => <div {...props} data-custom="true" />} />
+    );
     let field = getByRole('textbox').closest('.react-aria-ColorField');
     expect(field).toHaveAttribute('data-custom', 'true');
   });
@@ -96,9 +104,7 @@ describe('ColorField', () => {
   });
 
   it('should support read-only state', async () => {
-    let {getByRole, rerender} = render(
-      <TestColorField />
-    );
+    let {getByRole, rerender} = render(<TestColorField />);
 
     let input = getByRole('textbox');
 
@@ -108,9 +114,7 @@ describe('ColorField', () => {
   });
 
   it('should support required state', async () => {
-    let {getByRole, rerender} = render(
-      <TestColorField />
-    );
+    let {getByRole, rerender} = render(<TestColorField />);
 
     let input = getByRole('textbox');
 
@@ -120,9 +124,7 @@ describe('ColorField', () => {
   });
 
   it('should render data- attributes only on the outer element', () => {
-    let {getAllByTestId} = render(
-      <TestColorField data-testid="number-field" />
-    );
+    let {getAllByTestId} = render(<TestColorField data-testid="number-field" />);
     let outerEl = getAllByTestId('number-field');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-ColorField');
@@ -147,10 +149,14 @@ describe('ColorField', () => {
     expect(input.validity.valid).toBe(false);
     expect(numberfield).not.toHaveAttribute('data-invalid');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
     expect(numberfield).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(input);
 
@@ -166,7 +172,9 @@ describe('ColorField', () => {
 
   it('should support the channel prop', async function () {
     let onChange = jest.fn();
-    let {getByRole} = render(<TestColorField value="#abc" colorSpace="hsl" channel="hue" name="hue" onChange={onChange} />);
+    let {getByRole} = render(
+      <TestColorField value="#abc" colorSpace="hsl" channel="hue" name="hue" onChange={onChange} />
+    );
     let colorField = getByRole('textbox');
     expect(colorField.value).toBe('210°');
     expect(colorField.closest('.react-aria-ColorField')).toHaveAttribute('data-channel', 'hue');
@@ -182,9 +190,7 @@ describe('ColorField', () => {
   });
 
   it('should support form prop', () => {
-    let {getByRole} = render(
-      <TestColorField form="test" />
-    );
+    let {getByRole} = render(<TestColorField form="test" />);
 
     let input = getByRole('textbox');
     expect(input).toHaveAttribute('form', 'test');

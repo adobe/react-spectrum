@@ -28,10 +28,29 @@ export default {
   argTypes: {
     placement: {
       control: 'select',
-      options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
-        'top', 'top left', 'top right', 'top start', 'top end',
-        'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
-        'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
+      options: [
+        'bottom',
+        'bottom left',
+        'bottom right',
+        'bottom start',
+        'bottom end',
+        'top',
+        'top left',
+        'top right',
+        'top start',
+        'top end',
+        'left',
+        'left top',
+        'left bottom',
+        'start',
+        'start top',
+        'start bottom',
+        'right',
+        'right top',
+        'right bottom',
+        'end',
+        'end top',
+        'end bottom'
       ]
     },
     animation: {
@@ -44,7 +63,7 @@ export default {
 export type TooltipStory = StoryFn<typeof Tooltip>;
 export type TooltipStoryObj = StoryObj<typeof Tooltip>;
 
-export const TooltipExample: TooltipStory = (args) => (
+export const TooltipExample: TooltipStory = args => (
   <TooltipTrigger>
     <Button>Tooltip trigger</Button>
     <Tooltip
@@ -58,27 +77,30 @@ export const TooltipExample: TooltipStory = (args) => (
         padding: 5,
         borderRadius: 4
       }}>
-      {!(args as any).hideArrow && <OverlayArrow style={{transform: 'translateX(-50%)'}}>
-        <svg width="8" height="8" style={{display: 'block'}}>
-          <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
-        </svg>
-      </OverlayArrow>}
+      {!(args as any).hideArrow && (
+        <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+          <svg width="8" height="8" style={{display: 'block'}}>
+            <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+          </svg>
+        </OverlayArrow>
+      )}
       I am a tooltip
     </Tooltip>
   </TooltipTrigger>
 );
 
 function TooltipArrowBoundaryOffsetExampleRender(args: {
-  topLeft: number,
-  topRight: number,
-  leftTop: number,
-  leftBottom: number,
-  rightTop: number,
-  rightBottom: number,
-  bottomLeft: number,
-  bottomRight: number
+  topLeft: number;
+  topRight: number;
+  leftTop: number;
+  leftBottom: number;
+  rightTop: number;
+  rightBottom: number;
+  bottomLeft: number;
+  bottomRight: number;
 }): JSX.Element {
-  let {topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight} = args;
+  let {topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight} =
+    args;
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <div style={{display: 'flex'}}>
@@ -285,7 +307,9 @@ function TooltipArrowBoundaryOffsetExampleRender(args: {
   );
 }
 
-export const TooltipArrowBoundaryOffsetExample: StoryObj<typeof TooltipArrowBoundaryOffsetExampleRender> = {
+export const TooltipArrowBoundaryOffsetExample: StoryObj<
+  typeof TooltipArrowBoundaryOffsetExampleRender
+> = {
   args: {
     topLeft: 25,
     topRight: 25,
@@ -354,16 +378,14 @@ export const TooltipArrowBoundaryOffsetExample: StoryObj<typeof TooltipArrowBoun
       }
     }
   },
-  render: (args) => <TooltipArrowBoundaryOffsetExampleRender {...args} />
+  render: args => <TooltipArrowBoundaryOffsetExampleRender {...args} />
 };
 
 export const TooltipContainerPaddingExample: StoryObj<typeof Tooltip> = {
-  render: (args) => (
+  render: args => (
     <TooltipTrigger>
       <Button style={{position: 'absolute', top: 0, left: 0}}>Tooltip trigger</Button>
-      <Tooltip {...args}>
-        I am a tooltip
-      </Tooltip>
+      <Tooltip {...args}>I am a tooltip</Tooltip>
     </TooltipTrigger>
   ),
   args: {

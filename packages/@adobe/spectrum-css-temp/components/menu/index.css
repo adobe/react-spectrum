@@ -24,7 +24,10 @@ governing permissions and limitations under the License.
   /* Remove once https://git.corp.adobe.com/Spectrum/spectrum-dna/pull/409 is released. */
   --spectrum-selectlist-option-padding: var(--spectrum-global-dimension-size-150);
 
-  --spectrum-selectlist-option-selectable-padding-right: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-selectlist-option-icon-padding-x));
+  --spectrum-selectlist-option-selectable-padding-right: calc(
+    var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-checkmark-medium-width) +
+      var(--spectrum-selectlist-option-icon-padding-x)
+  );
 
   --spectrum-selectlist-option-icon-margin-top: var(--spectrum-global-dimension-size-50);
 
@@ -92,7 +95,10 @@ governing permissions and limitations under the License.
     Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
     (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).
   */
-  padding-block-start: calc(var(--spectrum-selectlist-option-icon-padding-y) - var(--spectrum-selectlist-option-padding-height));
+  padding-block-start: calc(
+    var(--spectrum-selectlist-option-icon-padding-y) -
+      var(--spectrum-selectlist-option-padding-height)
+  );
 }
 
 .spectrum-Menu-item {
@@ -130,7 +136,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Icon + .spectrum-Menu-itemLabel,
-  .spectrum-Menu-itemIcon  + .spectrum-Menu-itemLabel {
+  .spectrum-Menu-itemIcon + .spectrum-Menu-itemLabel {
     margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
   }
 }
@@ -162,7 +168,8 @@ governing permissions and limitations under the License.
   overflow: visible;
 
   block-size: var(--spectrum-selectlist-divider-size);
-  margin: calc(var(--spectrum-selectlist-divider-padding) / 2) var(--spectrum-selectlist-option-padding);
+  margin: calc(var(--spectrum-selectlist-divider-padding) / 2)
+    var(--spectrum-selectlist-option-padding);
   padding: 0 0;
   border: none;
 }
@@ -197,22 +204,36 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-itemGrid {
   display: grid;
-  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto auto auto var(--spectrum-selectlist-option-padding);
+  grid-template-columns:
+    calc(
+      var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)
+    )
+    auto 1fr auto auto auto auto var(--spectrum-selectlist-option-padding);
   /*
     Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
     (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).
   */
-  grid-template-rows: var(--spectrum-selectlist-option-padding-height) 1fr auto var(--spectrum-selectlist-option-padding-height);
+  grid-template-rows: var(--spectrum-selectlist-option-padding-height) 1fr auto var(
+      --spectrum-selectlist-option-padding-height
+    );
   grid-template-areas:
-    ". .    .            .         .     .         .        ."
-    ". icon text         checkmark end   keyboard  chevron  ."
-    ". icon description  checkmark end   keyboard  chevron  ."
-    ". .    .            .         .     .         .        .";
+    '. .    .            .         .     .         .        .'
+    '. icon text         checkmark end   keyboard  chevron  .'
+    '. icon description  checkmark end   keyboard  chevron  .'
+    '. .    .            .         .     .         .        .';
 }
 
 .spectrum-Menu-item.is-selectable {
   .spectrum-Menu-itemGrid {
-    grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-selectlist-option-icon-padding-x)) auto auto var(--spectrum-selectlist-option-padding);
+    grid-template-columns:
+      calc(
+        var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)
+      )
+      auto 1fr calc(
+        var(--spectrum-icon-checkmark-medium-width) +
+          var(--spectrum-selectlist-option-icon-padding-x)
+      )
+      auto auto var(--spectrum-selectlist-option-padding);
   }
 }
 
@@ -279,7 +300,8 @@ governing permissions and limitations under the License.
     border: none;
     background-color: unset;
     opacity: 1;
-    transition: opacity var(--spectrum-global-animation-duration-600) var(--spectrum-global-animation-ease-out);
+    transition: opacity var(--spectrum-global-animation-duration-600)
+      var(--spectrum-global-animation-ease-out);
 
     &.is-expanded {
       position: absolute;

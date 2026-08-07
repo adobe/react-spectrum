@@ -30,14 +30,16 @@ export const Default: ViewStory = {
         backgroundColor="negative"
         width="single-line-width"
         height="size-500"
-        elementType="span" />
+        elementType="span"
+      />
       <View
         backgroundColor="positive"
         width="size-500"
         height="size-500"
         marginStart="size-250"
         borderColor="default"
-        borderWidth="thin" />
+        borderWidth="thin"
+      />
       <Button variant="primary" marginStart="size-250">
         Test
       </Button>
@@ -63,15 +65,22 @@ export const OneOfEachPropGroup: ViewStory = {
     borderRadius: 'large',
     id: 'uniqueId9',
     children: (
-      <View height="size-150" width="size-150" backgroundColor="yellow-700" position="relative" start="size-300" />
+      <View
+        height="size-150"
+        width="size-150"
+        backgroundColor="yellow-700"
+        position="relative"
+        start="size-300"
+      />
     )
-
   },
-  decorators: [(Story) => (
-    <div style={{display: 'flex', border: '1px solid black', height: '50px'}}>
-      <Story />
-    </div>
-  )]
+  decorators: [
+    Story => (
+      <div style={{display: 'flex', border: '1px solid black', height: '50px'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export const ColorV6: ViewStory = {

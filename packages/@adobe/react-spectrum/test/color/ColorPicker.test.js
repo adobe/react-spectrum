@@ -34,7 +34,9 @@ describe('ColorPicker', function () {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('renders', async function () {
@@ -54,7 +56,9 @@ describe('ColorPicker', function () {
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(dialog.getAttribute('aria-labelledby'))).toHaveTextContent('Fill');
+    expect(document.getElementById(dialog.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Fill'
+    );
 
     let sliders = getAllByRole('slider');
     expect(sliders).toHaveLength(3);
@@ -74,7 +78,9 @@ describe('ColorPicker', function () {
 
     act(() => dialog.focus());
     await user.keyboard('{Escape}');
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(within(button).getByLabelText('dark vibrant blue')).toBeInTheDocument();
   });
 
@@ -95,7 +101,9 @@ describe('ColorPicker', function () {
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(dialog.getAttribute('aria-labelledby'))).toHaveTextContent('Fill');
+    expect(document.getElementById(dialog.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Fill'
+    );
 
     let sliders = getAllByRole('slider');
     expect(sliders).toHaveLength(3);
@@ -109,7 +117,6 @@ describe('ColorPicker', function () {
     let alpha = getAllByRole('textbox')[1];
     expect(alpha).toHaveAttribute('aria-label', 'Alpha');
   });
-
 
   it('allows switching color space', async function () {
     let {getByRole, getAllByRole} = render(
@@ -127,7 +134,9 @@ describe('ColorPicker', function () {
     expect(picker).toHaveTextContent('Hex');
     await user.click(picker);
     await user.click(getAllByRole('option')[1]);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(picker).toHaveTextContent('RGB');
 
     let colorFields = getAllByRole('textbox');
@@ -139,7 +148,9 @@ describe('ColorPicker', function () {
 
     act(() => getByRole('dialog').focus());
     await user.keyboard('{Escape}');
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(within(button).getByLabelText('vibrant orange')).toBeInTheDocument();
   });
 });

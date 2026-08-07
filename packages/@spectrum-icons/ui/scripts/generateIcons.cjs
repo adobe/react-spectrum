@@ -24,7 +24,7 @@ const EXPRESS_ICON_MAPPING = {
   SuccessMedium: 'SX_CheckmarkCircle_18_N',
   SuccessSmall: 'SX_CheckmarkCircle_14_S',
   FolderBreadcrumb: 'SX_More_18',
-  ChevronRightSmall: 'SX_ChevronRight_18',
+  ChevronRightSmall: 'SX_ChevronRight_18'
 };
 
 let displayNameRegex = /.*?\.displayName = '(?<name>.*?)';/;
@@ -35,8 +35,7 @@ function template(iconName) {
   if (expressName) {
     let jsx = compileSVG(path.join(expressDir, expressName + '.svg'), 'ExpressIcon');
 
-    return (
-`import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
+    return `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
 import {UIIcon, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';
 import {useProvider} from '@adobe/react-spectrum/Provider';
 import React, {JSX} from 'react';
@@ -54,21 +53,22 @@ export default function ${iconName}(props: UIIconPropsWithoutChildren): JSX.Elem
   }
   return <UIIcon {...props}>{express ? <ExpressIcon /> : <IconComponent />}</UIIcon>;
 }
-`
-  );
+`;
   }
 
-  return (
-`import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
+  return `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
 import {UIIcon, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';
 import React, {JSX} from 'react';
 
 export default function ${iconName}(props: UIIconPropsWithoutChildren): JSX.Element {
   return <UIIcon {...props}><IconComponent /></UIIcon>;
 }
-`
-  );
+`;
 }
 
-generateIcons(path.dirname(require.resolve('@adobe/react-spectrum-ui')), path.join(__dirname, '..', 'src'), displayNameRegex, template);
-
+generateIcons(
+  path.dirname(require.resolve('@adobe/react-spectrum-ui')),
+  path.join(__dirname, '..', 'src'),
+  displayNameRegex,
+  template
+);

@@ -20,7 +20,7 @@ export default {
   title: 'RangeCalendar',
   parameters: {
     chromaticProvider: {
-      locales: ['en-US'/* , 'ar-EG', 'ja-JP' */]
+      locales: ['en-US' /* , 'ar-EG', 'ja-JP' */]
     }
   }
 } as Meta<typeof RangeCalendar>;
@@ -37,28 +37,41 @@ export const Selected: RangeCalendarStory = () => <RangeCalendar value={value} /
 export const MinMax: RangeCalendarStory = () => (
   <RangeCalendar
     minValue={new CalendarDate(2022, 2, 10)}
-    maxValue={new CalendarDate(2022, 2, 20)} />
+    maxValue={new CalendarDate(2022, 2, 20)}
+  />
 );
 export const Disabled: RangeCalendarStory = () => <RangeCalendar isDisabled value={value} />;
 export const ReadOnly: RangeCalendarStory = () => <RangeCalendar isReadOnly value={value} />;
 export const Unavailable: RangeCalendarStory = () => (
   <RangeCalendar
     focusedValue={value.start}
-    isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
+    isDateUnavailable={date => date.day >= 10 && date.day <= 20}
+  />
 );
-export const VisibleMonths2: RangeCalendarStory = () => <RangeCalendar value={value} visibleMonths={2} />;
-export const VisibleMonths3: RangeCalendarStory = () => <RangeCalendar value={value} visibleMonths={3} />;
+export const VisibleMonths2: RangeCalendarStory = () => (
+  <RangeCalendar value={value} visibleMonths={2} />
+);
+export const VisibleMonths3: RangeCalendarStory = () => (
+  <RangeCalendar value={value} visibleMonths={3} />
+);
 export const Invalid: RangeCalendarStory = () => <RangeCalendar value={value} isInvalid />;
-export const ErrorMessage: RangeCalendarStory = () => <RangeCalendar value={value} isInvalid errorMessage="Selection invalid." />;
-export const UnavailableInvalid: RangeCalendarStory = () => <RangeCalendar value={value} isDateUnavailable={date => date.day >= 1 && date.day <= 5} />;
-export const DisabledInvalid: RangeCalendarStory = () => <RangeCalendar value={value} minValue={new CalendarDate(2022, 2, 5)} />;
+export const ErrorMessage: RangeCalendarStory = () => (
+  <RangeCalendar value={value} isInvalid errorMessage="Selection invalid." />
+);
+export const UnavailableInvalid: RangeCalendarStory = () => (
+  <RangeCalendar value={value} isDateUnavailable={date => date.day >= 1 && date.day <= 5} />
+);
+export const DisabledInvalid: RangeCalendarStory = () => (
+  <RangeCalendar value={value} minValue={new CalendarDate(2022, 2, 5)} />
+);
 export const NonContiguous: RangeCalendarStory = () => {
   let {locale} = useLocale();
   return (
     <RangeCalendar
       value={{start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 16)}}
       isDateUnavailable={date => isWeekend(date, locale)}
-      allowsNonContiguousRanges />
+      allowsNonContiguousRanges
+    />
   );
 };
 
@@ -68,9 +81,14 @@ export const NonContiguousInvalid: RangeCalendarStory = () => {
     <RangeCalendar
       value={{start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 20)}}
       isDateUnavailable={date => isWeekend(date, locale)}
-      allowsNonContiguousRanges />
+      allowsNonContiguousRanges
+    />
   );
 };
 
-export const CustomWeekStartMonday: RangeCalendarStory = () => <RangeCalendar value={value} firstDayOfWeek="mon" />;
-export const CustomWeekStartSaturday: RangeCalendarStory = () => <RangeCalendar value={value} firstDayOfWeek="sat" />;
+export const CustomWeekStartMonday: RangeCalendarStory = () => (
+  <RangeCalendar value={value} firstDayOfWeek="mon" />
+);
+export const CustomWeekStartSaturday: RangeCalendarStory = () => (
+  <RangeCalendar value={value} firstDayOfWeek="sat" />
+);

@@ -64,9 +64,10 @@ export class ReusableView<T extends object, V> {
     // The cells within a row are removed from their parent in order. If the row is reused, the cells
     // should be reused in the new row in the same order they were before.
     let reusable = this.reusableViews.get(reuseType);
-    let view = reusable && reusable.length > 0
-      ? reusable.shift()!
-      : new ChildView<T, V>(this.virtualizer, this, reuseType);
+    let view =
+      reusable && reusable.length > 0
+        ? reusable.shift()!
+        : new ChildView<T, V>(this.virtualizer, this, reuseType);
 
     return view;
   }

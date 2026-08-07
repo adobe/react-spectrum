@@ -23,20 +23,21 @@ let meta = {
 export default meta;
 
 export const Default: ImageStory = {
-  render: (args) => {
+  render: args => {
     return (
       <Image
         {...args}
         width={'500px'}
         height={'500px'}
         src="https://i.imgur.com/Z7AzH2c.png"
-        alt="Sky and roof" />
+        alt="Sky and roof"
+      />
     );
   },
   parameters: {description: {data: 'You should see a 500x500 image of the sky and a roof.'}}
 };
 
-let ImageErrorExample = (props) => {
+let ImageErrorExample = props => {
   const [isImageMissing, setIsImageMissing] = useState(false);
   const DEFAULT_IMAGE = 'https://i.imgur.com/DhygPot.jpg';
 
@@ -48,15 +49,18 @@ let ImageErrorExample = (props) => {
       {...props}
       width={'500px'}
       height={'500px'}
-      src={
-        isImageMissing ? DEFAULT_IMAGE : 'https://i.imgur.com/Z7AzH2332c.png'
-      }
+      src={isImageMissing ? DEFAULT_IMAGE : 'https://i.imgur.com/Z7AzH2332c.png'}
       alt="starry sky"
-      onError={onErrorHandler} />
+      onError={onErrorHandler}
+    />
   );
 };
 
 export const ImageOnError: ImageStory = {
-  render: (args) => <ImageErrorExample {...args} />,
-  parameters: {description: {data: 'You should see a picture of a starry night sky, that is the fallback image.'}}
+  render: args => <ImageErrorExample {...args} />,
+  parameters: {
+    description: {
+      data: 'You should see a picture of a starry night sky, that is the fallback image.'
+    }
+  }
 };

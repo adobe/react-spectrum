@@ -16,7 +16,12 @@ export {useDateSegment, useDateField} from 'react-aria/useDateField';
 export {useTimeField} from 'react-aria/useTimeField';
 export {useDateRangePicker} from 'react-aria/useDateRangePicker';
 export {useDisplayNames} from 'react-aria/private/datepicker/useDisplayNames';
-export type {AriaDateFieldProps, AriaDateFieldOptions, DateFieldAria, DateSegmentAria} from 'react-aria/useDateField';
+export type {
+  AriaDateFieldProps,
+  AriaDateFieldOptions,
+  DateFieldAria,
+  DateSegmentAria
+} from 'react-aria/useDateField';
 export type {AriaTimeFieldProps, AriaTimeFieldOptions} from 'react-aria/useTimeField';
 export type {AriaDatePickerProps, DatePickerAria} from 'react-aria/useDatePicker';
 export type {AriaDateRangePickerProps, DateRangePickerAria} from 'react-aria/useDateRangePicker';

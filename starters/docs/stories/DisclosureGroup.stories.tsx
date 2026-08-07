@@ -13,7 +13,7 @@ const meta: Meta<typeof DisclosureGroup> = {
 export default meta;
 type Story = StoryFn<typeof DisclosureGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <DisclosureGroup {...args}>
     <Disclosure id="personal">
       <DisclosureHeader>Personal Information</DisclosureHeader>

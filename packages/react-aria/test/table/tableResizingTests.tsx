@@ -31,23 +31,36 @@ let rows = [
 
 function getColumnWidths(tree) {
   let rows = tree.getAllByRole('row') as HTMLElement[];
-  return Array.from(rows[0].children).map(cell => Number((cell as HTMLElement).style.width.replace('px', '')));
+  return Array.from(rows[0].children).map(cell =>
+    Number((cell as HTMLElement).style.width.replace('px', ''))
+  );
 }
 
-export let resizingTests = (render: any, rerender: any, Table: any, ControlledTable: any, resizeCol: any, resizeTable: any): void => {
-// assumption with all these tests
-// 1. the controlling values we pass in aren't actually controlling
-// the sizes, they are instead more like the default values that the controlling logic uses
-// 2. defaultWidth function and minDefaultWidth passed must be the same in any implementation using
-// these tests, or the values will be wrong, if those functions were exposed we could generalize, but seems like a lot just for testing
+export let resizingTests = (
+  render: any,
+  rerender: any,
+  Table: any,
+  ControlledTable: any,
+  resizeCol: any,
+  resizeTable: any
+): void => {
+  // assumption with all these tests
+  // 1. the controlling values we pass in aren't actually controlling
+  // the sizes, they are instead more like the default values that the controlling logic uses
+  // 2. defaultWidth function and minDefaultWidth passed must be the same in any implementation using
+  // these tests, or the values will be wrong, if those functions were exposed we could generalize, but seems like a lot just for testing
   describe('Resizing', () => {
     installPointerEvent();
     let clientWidth, clientHeight;
     let onResize;
 
     beforeEach(function () {
-      clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 900);
-      clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+      clientWidth = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 900);
+      clientHeight = jest
+        .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+        .mockImplementation(() => 1000);
       jest.useFakeTimers();
       onResize = jest.fn();
     });
@@ -171,18 +184,19 @@ export let resizingTests = (render: any, rerender: any, Table: any, ControlledTa
       }
 
       it.each`
-      col         | delta  | expected                     | expectedOnResize
-      ${'Name'}   | ${-50} | ${[75, 103, 103, 103, 516]}  | ${[75, '1fr', '1fr', '1fr', '5fr']}
-      ${'Name'}   | ${50}  | ${[150, 94, 94, 93, 469]}    | ${[150, '1fr', '1fr', '1fr', '5fr']}
-      ${'Type'}   | ${-50} | ${[100, 75, 104, 103, 518]}  | ${[100, 75, '1fr', '1fr', '5fr']}
-      ${'Type'}   | ${50}  | ${[100, 150, 93, 93, 464]}   | ${[100, 150, '1fr', '1fr', '5fr']}
-      ${'Height'} | ${-50} | ${[100, 100, 75, 104, 521]}  | ${[100, 100, 75, '1fr', '5fr']}
-      ${'Height'} | ${50}  | ${[100, 100, 150, 92, 458]}  | ${[100, 100, 150, '1fr', '5fr']}
-      ${'Weight'} | ${-50} | ${[100, 100, 100, 75, 525]}  | ${[100, 100, 100, 75, '5fr']}
-      ${'Weight'} | ${50}  | ${[100, 100, 100, 150, 450]} | ${[100, 100, 100, 150, '5fr']}
-      ${'Level'}  | ${-50} | ${[100, 100, 100, 100, 450]} | ${[100, 100, 100, 100, 450]}
-      ${'Level'}  | ${50}  | ${[100, 100, 100, 100, 550]} | ${[100, 100, 100, 100, 550]}
-    `('can resize $col to be $delta px different',
+        col         | delta  | expected                     | expectedOnResize
+        ${'Name'}   | ${-50} | ${[75, 103, 103, 103, 516]}  | ${[75, '1fr', '1fr', '1fr', '5fr']}
+        ${'Name'}   | ${50}  | ${[150, 94, 94, 93, 469]}    | ${[150, '1fr', '1fr', '1fr', '5fr']}
+        ${'Type'}   | ${-50} | ${[100, 75, 104, 103, 518]}  | ${[100, 75, '1fr', '1fr', '5fr']}
+        ${'Type'}   | ${50}  | ${[100, 150, 93, 93, 464]}   | ${[100, 150, '1fr', '1fr', '5fr']}
+        ${'Height'} | ${-50} | ${[100, 100, 75, 104, 521]}  | ${[100, 100, 75, '1fr', '5fr']}
+        ${'Height'} | ${50}  | ${[100, 100, 150, 92, 458]}  | ${[100, 100, 150, '1fr', '5fr']}
+        ${'Weight'} | ${-50} | ${[100, 100, 100, 75, 525]}  | ${[100, 100, 100, 75, '5fr']}
+        ${'Weight'} | ${50}  | ${[100, 100, 100, 150, 450]} | ${[100, 100, 100, 150, '5fr']}
+        ${'Level'}  | ${-50} | ${[100, 100, 100, 100, 450]} | ${[100, 100, 100, 100, 450]}
+        ${'Level'}  | ${50}  | ${[100, 100, 100, 100, 550]} | ${[100, 100, 100, 100, 550]}
+      `(
+        'can resize $col to be $delta px different',
         function ({col, delta, expected, expectedOnResize}) {
           let columnNames = ['Name', 'Type', 'Height', 'Weight', 'Level'];
           let onResizeEnd = jest.fn();
@@ -202,7 +216,8 @@ export let resizingTests = (render: any, rerender: any, Table: any, ControlledTa
           });
           expect(onResizeEnd).toHaveBeenCalledTimes(1);
           expect(onResizeEnd).toHaveBeenCalledWith(mapFromWidths(columnNames, expectedOnResize));
-        });
+        }
+      );
 
       it('cannot resize to be less than a minWidth, from start to end', function () {
         let columns = [
@@ -218,23 +233,33 @@ export let resizingTests = (render: any, rerender: any, Table: any, ControlledTa
         resizeCol(tree, 'Name', -50); // first column
         expect(getColumnWidths(tree)).toStrictEqual([100, 114, 115, 114, 457]);
         expect(onResize).toHaveBeenCalledTimes(1);
-        expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, [100, '1fr', '1fr', '1fr', '4fr']));
+        expect(onResize).toHaveBeenCalledWith(
+          mapFromWidths(columnNames, [100, '1fr', '1fr', '1fr', '4fr'])
+        );
         resizeCol(tree, 'Type', -50);
         expect(getColumnWidths(tree)).toStrictEqual([100, 100, 117, 116, 467]);
         expect(onResize).toHaveBeenCalledTimes(2);
-        expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, [100, 100, '1fr', '1fr', '4fr']));
+        expect(onResize).toHaveBeenCalledWith(
+          mapFromWidths(columnNames, [100, 100, '1fr', '1fr', '4fr'])
+        );
         resizeCol(tree, 'Height', -100);
         expect(getColumnWidths(tree)).toStrictEqual([100, 100, 100, 120, 480]);
         expect(onResize).toHaveBeenCalledTimes(3);
-        expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, [100, 100, 100, '1fr', '4fr']));
+        expect(onResize).toHaveBeenCalledWith(
+          mapFromWidths(columnNames, [100, 100, 100, '1fr', '4fr'])
+        );
         resizeCol(tree, 'Weight', -100);
         expect(getColumnWidths(tree)).toStrictEqual([100, 100, 100, 100, 500]);
         expect(onResize).toHaveBeenCalledTimes(4);
-        expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, [100, 100, 100, 100, '4fr']));
+        expect(onResize).toHaveBeenCalledWith(
+          mapFromWidths(columnNames, [100, 100, 100, 100, '4fr'])
+        );
         resizeCol(tree, 'Level', -500); // last column
         expect(getColumnWidths(tree)).toStrictEqual([100, 100, 100, 100, 100]);
         expect(onResize).toHaveBeenCalledTimes(5);
-        expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, [100, 100, 100, 100, 100]));
+        expect(onResize).toHaveBeenCalledWith(
+          mapFromWidths(columnNames, [100, 100, 100, 100, 100])
+        );
         let resizers = tree.getAllByRole('slider');
         resizers.forEach(resizer => {
           expect(resizer).toHaveAttribute('min', `${100}`);
@@ -523,7 +548,9 @@ export let resizingTests = (render: any, rerender: any, Table: any, ControlledTa
         let tree = render(<ControlledTable columns={columns} onResizeEnd={onResizeEnd} />);
         expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
         resizeCol(tree, 'Type', 0);
-        expect(onResizeEnd).toHaveBeenCalledWith(mapFromWidths(columnNames, [113, 112, '1fr', '1fr', '4fr']));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          mapFromWidths(columnNames, [113, 112, '1fr', '1fr', '4fr'])
+        );
         expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
       });
 
@@ -541,7 +568,9 @@ export let resizingTests = (render: any, rerender: any, Table: any, ControlledTa
         expect(getColumnWidths(tree)).toStrictEqual([90, 270, 90, 450]);
         resizeCol(tree, 'Type', 0);
         expect(getColumnWidths(tree)).toStrictEqual([90, 270, 90, 450]);
-        expect(onResizeEnd).toHaveBeenCalledWith(mapFromWidths(columnNames, [90, 270, '1fr', '5fr']));
+        expect(onResizeEnd).toHaveBeenCalledWith(
+          mapFromWidths(columnNames, [90, 270, '1fr', '5fr'])
+        );
       });
 
       it('onResizeStart called with expected values', function () {
@@ -560,7 +589,9 @@ export let resizingTests = (render: any, rerender: any, Table: any, ControlledTa
         expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
         resizeCol(tree, 'Height', -50);
         expect(onResizeStart).toHaveBeenCalledTimes(1);
-        expect(onResizeStart).toHaveBeenCalledWith(mapFromWidths(columnNames, [113, 112, 113, '1fr', '4fr']));
+        expect(onResizeStart).toHaveBeenCalledWith(
+          mapFromWidths(columnNames, [113, 112, 113, '1fr', '4fr'])
+        );
       });
     });
 

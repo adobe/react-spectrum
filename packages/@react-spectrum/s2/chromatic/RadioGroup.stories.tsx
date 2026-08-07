@@ -34,7 +34,9 @@ export const Example: Story = {
     <RadioGroup {...args}>
       <Radio value="soccer">Soccer</Radio>
       <Radio value="baseball">Baseball</Radio>
-      <Radio value="football" isDisabled>Football</Radio>
+      <Radio value="football" isDisabled>
+        Football
+      </Radio>
       <Radio value="basketball">Basketball</Radio>
     </RadioGroup>
   ),
@@ -42,7 +44,6 @@ export const Example: Story = {
     label: 'Favorite sport'
   }
 };
-
 
 export const LongLabel: Story = {
   render: (args: any) => (
@@ -62,14 +63,17 @@ export const ErrorAndDescription: Story = {
     <RadioGroup {...args}>
       <Radio value="soccer">Soccer</Radio>
       <Radio value="baseball">Baseball</Radio>
-      <Radio value="football" isDisabled>Football</Radio>
+      <Radio value="football" isDisabled>
+        Football
+      </Radio>
       <Radio value="basketball">Basketball</Radio>
     </RadioGroup>
   ),
   args: {
     label: 'Favorite sport',
     description: 'A long description to test help text wrapping.',
-    errorMessage: 'A long error message to test help text wrapping. Only shows when invalid is set which makes it red too!'
+    errorMessage:
+      'A long error message to test help text wrapping. Only shows when invalid is set which makes it red too!'
   },
   parameters: {
     docs: {
@@ -81,7 +85,9 @@ export const ErrorAndDescription: Story = {
 export const ContextualHelpExample: Story = {
   render: (args: any) => (
     <RadioGroup {...args}>
-      <Radio isDisabled value="soccer">Soccer</Radio>
+      <Radio isDisabled value="soccer">
+        Soccer
+      </Radio>
       <Radio value="baseball">Baseball</Radio>
       <Radio value="football">Football</Radio>
       <Radio value="basketball">Basketball</Radio>
@@ -93,15 +99,12 @@ export const ContextualHelpExample: Story = {
       <ContextualHelp>
         <Heading>Sports</Heading>
         <Content>
-          <Text>
-            Social games we play to have fun and stay healthy.
-          </Text>
+          <Text>Social games we play to have fun and stay healthy.</Text>
         </Content>
         <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Sport"
-            target="_blank">Learn more about sports</Link>
+          <Link isStandalone href="https://en.wikipedia.org/wiki/Sport" target="_blank">
+            Learn more about sports
+          </Link>
         </Footer>
       </ContextualHelp>
     )

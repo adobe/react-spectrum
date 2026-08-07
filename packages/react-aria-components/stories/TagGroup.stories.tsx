@@ -79,7 +79,15 @@ export function MyTag(props: TagProps) {
   return (
     <Tag
       {...props}
-      style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />
+      style={({isSelected}) => ({
+        border: '1px solid gray',
+        borderRadius: 4,
+        padding: '0 4px',
+        background: isSelected ? 'black' : '',
+        color: isSelected ? 'white' : '',
+        cursor: props.href ? 'pointer' : 'default'
+      })}
+    />
   );
 }
 
@@ -88,11 +96,19 @@ export const TagGroupExampleWithRemove: Story = {
     <TagGroup {...props} onRemove={action('onRemove')}>
       <Label>Categories</Label>
       <TagList style={{display: 'flex', gap: 4}}>
-        <MyTag>Marsupial<Button slot="remove">X</Button></MyTag>
-        <MyTag>Animal<Button slot="remove">X</Button></MyTag>
-        <MyTag>Mammal<Button slot="remove">X</Button></MyTag>
+        <MyTag>
+          Marsupial<Button slot="remove">X</Button>
+        </MyTag>
+        <MyTag>
+          Animal<Button slot="remove">X</Button>
+        </MyTag>
+        <MyTag>
+          Mammal<Button slot="remove">X</Button>
+        </MyTag>
         <TooltipTrigger>
-          <MyTag>Chordate<Button slot="remove">X</Button></MyTag>
+          <MyTag>
+            Chordate<Button slot="remove">X</Button>
+          </MyTag>
           <Tooltip
             offset={5}
             style={{
@@ -117,10 +133,8 @@ export const TagGroupExampleWithRemove: Story = {
 
 export const EmptyTagGroup: Story = {
   render: (props: TagGroupProps) => (
-    <TagGroup {...props} aria-label="Categories" >
-      <TagList renderEmptyState={() => 'No categories.'}>
-        {[]}
-      </TagList>
+    <TagGroup {...props} aria-label="Categories">
+      <TagList renderEmptyState={() => 'No categories.'}>{[]}</TagList>
     </TagGroup>
   )
 };

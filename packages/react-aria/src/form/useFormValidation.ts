@@ -22,16 +22,27 @@ import {useLayoutEffect} from '../utils/useLayoutEffect';
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
 interface FormValidationProps<T> extends Validation<T> {
-  focus?: () => void
+  focus?: () => void;
 }
 
-export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined): void {
+export function useFormValidation<T>(
+  props: FormValidationProps<T>,
+  state: FormValidationState,
+  ref: RefObject<ValidatableElement | null> | undefined
+): void {
   let {validationBehavior, focus} = props;
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
-    if (validationBehavior === 'native' && ref?.current && !ref.current.disabled) {
-      let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.' : '';
+    if (
+      validationBehavior === 'native' &&
+      ref?.current &&
+      'setCustomValidity' in ref.current &&
+      !ref.current.disabled
+    ) {
+      let errorMessage = state.realtimeValidation.isInvalid
+        ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.'
+        : '';
       ref.current.setCustomValidity(errorMessage);
 
       // Prevent default tooltip for validation message.
@@ -95,16 +106,24 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
       // validation errors that are returned by server actions.
       // To do this, we ignore programmatic form resets that occur outside a user event.
       // This is best-effort. There may be false positives, e.g. setTimeout.
+      // oxlint-disable-next-line react/react-compiler
       form.reset = () => {
         // React uses MessageChannel for scheduling, so ignore 'message' events.
-        isIgnoredReset.current = !window.event || (window.event.type === 'message' && getEventTarget(window.event) instanceof MessagePort);
+        isIgnoredReset.current =
+          !window.event ||
+          (window.event.type === 'message' && getEventTarget(window.event) instanceof MessagePort);
         reset?.call(form);
         isIgnoredReset.current = false;
       };
     }
 
+    // 'change' and 'reset' do not compose across shadow DOM boundaries, but these listeners are
+    // intentionally scoped to this specific input/form element (not a global target), so shadow
+    // root propagation does not apply here.
     input.addEventListener('invalid', onInvalid);
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     input.addEventListener('change', onChange);
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     form?.addEventListener('reset', onReset);
     return () => {
       input!.removeEventListener('invalid', onInvalid);

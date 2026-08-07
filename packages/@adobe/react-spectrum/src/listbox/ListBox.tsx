@@ -19,20 +19,16 @@ import {useListState} from 'react-stately/useListState';
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 
-
 /**
  * A list of options that can allow selection of one or more.
  */
-export const ListBox = React.forwardRef(function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const ListBox = React.forwardRef(function ListBox<T extends object>(
+  props: SpectrumListBoxProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   let state = useListState(props);
   let layout = useListBoxLayout();
   let domRef = useDOMRef(ref);
 
-  return (
-    <ListBoxBase
-      {...props}
-      ref={domRef}
-      state={state}
-      layout={layout} />
-  );
+  return <ListBoxBase {...props} ref={domRef} state={state} layout={layout} />;
 }) as <T>(props: SpectrumListBoxProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;

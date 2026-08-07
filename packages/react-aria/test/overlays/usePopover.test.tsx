@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createShadowRoot, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  createShadowRoot,
+  fireEvent,
+  pointerMap,
+  render
+} from '@react-spectrum/test-utils-internal';
 import {enableShadowDOM} from '@react-stately/flags';
 import {OverlayTriggerProps, useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import React, {useRef} from 'react';
@@ -129,7 +135,6 @@ if (parseInt(React.version, 10) >= 17) {
                 </>,
                 popoverPortal
               )}
-
             </div>
           </UNSAFE_PortalProvider>
         );

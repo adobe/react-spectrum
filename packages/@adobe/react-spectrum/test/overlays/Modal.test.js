@@ -74,7 +74,7 @@ describe('Modal', function () {
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it('doesn\'t hide the modal when clicking outside by default', async function () {
+  it("doesn't hide the modal when clicking outside by default", async function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme}>

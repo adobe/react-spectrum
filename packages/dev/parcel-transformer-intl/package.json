@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "main": "IntlTransformer.js",
-  "engines": {
-    "parcel": "^2.0.0"
-  },
   "dependencies": {
     "@internationalized/string-compiler": "^3.0.0",
     "@parcel/plugin": "^2.16.3"
+  },
+  "engines": {
+    "parcel": "^2.0.0"
   }
 }

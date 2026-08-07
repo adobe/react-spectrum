@@ -11,5 +11,5 @@
  */
 
 module.exports = {
-  plugins: require("@spectrum-css/component-builder/css/processors").processors
+  plugins: require('@spectrum-css/component-builder/css/processors').processors
 };

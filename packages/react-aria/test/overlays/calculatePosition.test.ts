@@ -101,13 +101,25 @@ const overlaySize = {
 const PROVIDER_OFFSET = 50;
 
 describe('calculatePosition', function () {
-  function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0, arrowSize = 8, arrowBoundaryOffset = 0) {
+  function checkPositionCommon(
+    title,
+    expected,
+    placement,
+    targetDimension,
+    boundaryDimensions,
+    offset,
+    crossOffset,
+    flip,
+    providerOffset = 0,
+    arrowSize = 8,
+    arrowBoundaryOffset = 0
+  ) {
     let placementArray = placement.split(' ');
     const placementAxis = placementArray[0];
     const placementCrossAxis = placementArray[1];
 
     // The tests are all based on top/left positioning. Convert to bottom/right positioning if needed.
-    let pos: {right?: number, top?: number, left?: number, bottom?: number} = {};
+    let pos: {right?: number; top?: number; left?: number; bottom?: number} = {};
     if ((placementAxis === 'left' && !flip) || (placementAxis === 'right' && flip)) {
       pos.right = containerDimensions.width - (expected[0] + overlaySize.width);
       pos.top = expected[1];
@@ -124,7 +136,9 @@ describe('calculatePosition', function () {
 
     let calculatedPlacement = flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis;
     // Note that a crossAxis of 'bottom' indicates that the overlay grows towards the top since the bottom of the overlay aligns with the bottom of the trigger
-    let maxHeight = expected[4] - (placementAxis !== 'top' && placementCrossAxis !== 'bottom' ? providerOffset : 0);
+    let maxHeight =
+      expected[4] -
+      (placementAxis !== 'top' && placementCrossAxis !== 'bottom' ? providerOffset : 0);
     const expectedPosition = {
       position: pos,
       arrowOffsetLeft: expected[2],
@@ -133,7 +147,9 @@ describe('calculatePosition', function () {
       placement: calculatedPlacement,
       triggerAnchorPoint: {
         x: expected[2] ?? (calculatedPlacement === 'left' ? overlaySize.width : 0),
-        y: expected[3] ?? (calculatedPlacement === 'top' ? Math.min(overlaySize.height, maxHeight) : 0)
+        y:
+          expected[3] ??
+          (calculatedPlacement === 'top' ? Math.min(overlaySize.height, maxHeight) : 0)
       }
     };
 
@@ -157,7 +173,6 @@ describe('calculatePosition', function () {
     });
     parentElement.appendChild(boundariesElem);
 
-
     it(title, function () {
       const result = calculatePosition({
         placement,
@@ -178,7 +193,17 @@ describe('calculatePosition', function () {
     });
   }
 
-  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip?: boolean, providerOffset?: number, arrowSize?: number, arrowBoundaryOffset?: number) {
+  function checkPosition(
+    placement,
+    targetDimension,
+    expected,
+    offset = 0,
+    crossOffset = 0,
+    flip?: boolean,
+    providerOffset?: number,
+    arrowSize?: number,
+    arrowBoundaryOffset?: number
+  ) {
     checkPositionCommon(
       'Should calculate the correct position',
       expected,
@@ -194,7 +219,14 @@ describe('calculatePosition', function () {
     );
   }
 
-  function checkPositionForProvider(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false) {
+  function checkPositionForProvider(
+    placement,
+    targetDimension,
+    expected,
+    offset = 0,
+    crossOffset = 0,
+    flip = false
+  ) {
     checkPositionCommon(
       'Should calculate the correct position when provider does not start at top of screen',
       expected,
@@ -352,50 +384,68 @@ describe('calculatePosition', function () {
 
     describe(`placement = ${placement}`, function () {
       describe('no viewport offset', function () {
-        checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.noOffset
-        );
+        checkPosition(placement, getTargetDimension({left: 250, top: 250}), testCase.noOffset);
         checkPositionForProvider(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.noOffset
+          placement,
+          getTargetDimension({left: 250, top: 250}),
+          testCase.noOffset
         );
       });
 
       describe('viewport offset before', function () {
-        checkPosition(
-          placement, getTargetDimension({left: 0, top: 0}), testCase.offsetBefore
-        );
+        checkPosition(placement, getTargetDimension({left: 0, top: 0}), testCase.offsetBefore);
         checkPositionForProvider(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.noOffset
+          placement,
+          getTargetDimension({left: 250, top: 250}),
+          testCase.noOffset
         );
       });
 
       describe('viewport offset after', function () {
-        checkPosition(
-          placement, getTargetDimension({left: 500, top: 500}), testCase.offsetAfter
-        );
+        checkPosition(placement, getTargetDimension({left: 500, top: 500}), testCase.offsetAfter);
       });
 
       describe('main axis offset', function () {
         checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.mainAxisOffset, 10, 0
+          placement,
+          getTargetDimension({left: 250, top: 250}),
+          testCase.mainAxisOffset,
+          10,
+          0
         );
       });
 
       describe('cross axis offset positive', function () {
         checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffsetPositive, 0, 10
+          placement,
+          getTargetDimension({left: 250, top: 250}),
+          testCase.crossAxisOffsetPositive,
+          0,
+          10
         );
       });
 
       describe('cross axis offset negative', function () {
         checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffsetNegative, 0, -10
+          placement,
+          getTargetDimension({left: 250, top: 250}),
+          testCase.crossAxisOffsetNegative,
+          0,
+          -10
         );
       });
 
       describe('minimum overlay arrow offset', function () {
         checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.arrowBoundaryOffset, 0, 1000, false, undefined, undefined, 20
+          placement,
+          getTargetDimension({left: 250, top: 250}),
+          testCase.arrowBoundaryOffset,
+          0,
+          1000,
+          false,
+          undefined,
+          undefined,
+          20
         );
       });
     });
@@ -404,19 +454,31 @@ describe('calculatePosition', function () {
   describe('flip from left to right', function () {
     checkPosition(
       // testCases[9] is for right placement
-      'left', getTargetDimension({left: 0, top: 0}), testCases[9].offsetBefore, 0, 0, true
+      'left',
+      getTargetDimension({left: 0, top: 0}),
+      testCases[9].offsetBefore,
+      0,
+      0,
+      true
     );
 
     describe('positive offset', function () {
       checkPosition(
-        'left', getTargetDimension({left: 0, top: 250}), [110, 200, undefined, 100, 350], 10, 0, true
+        'left',
+        getTargetDimension({left: 0, top: 250}),
+        [110, 200, undefined, 100, 350],
+        10,
+        0,
+        true
       );
     });
   });
 
   describe('overlay smaller than target aligns in center', function () {
     checkPosition(
-      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 100, 250]
+      'right',
+      getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100),
+      [550, 300, undefined, 100, 250]
     );
   });
 
@@ -429,7 +491,9 @@ describe('calculatePosition', function () {
       target.style.margin = '20px';
       document.body.appendChild(target);
 
-      let {position: {top: positionTop}} = calculatePosition({
+      let {
+        position: {top: positionTop}
+      } = calculatePosition({
         placement: 'bottom',
         overlayNode,
         targetNode: target,

@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {AriaMenuProps, useMenu} from '../../src/menu/useMenu';
 
 import {Item} from 'react-stately/Item';
@@ -31,7 +30,7 @@ function Menu<T extends object>(props: AriaMenuProps<T> & {onSelect: () => void}
 
   return (
     <ul {...menuProps} ref={ref}>
-      {[...state.collection].map((item) => (
+      {[...state.collection].map(item => (
         <MenuItem key={item.key} item={item} state={state} onAction={props.onSelect} />
       ))}
     </ul>
@@ -41,11 +40,7 @@ function Menu<T extends object>(props: AriaMenuProps<T> & {onSelect: () => void}
 function MenuItem({item, state, onAction}) {
   // Get props for the menu item element
   let ref = React.useRef(null);
-  let {menuItemProps, isSelected} = useMenuItem(
-    {key: item.key, onAction},
-    state,
-    ref
-  );
+  let {menuItemProps, isSelected} = useMenuItem({key: item.key, onAction}, state, ref);
 
   return (
     <li {...menuItemProps} ref={ref}>
@@ -56,18 +51,14 @@ function MenuItem({item, state, onAction}) {
 }
 
 interface VirtualizedMenuItemProps<T> {
-  item: {key: Key, rendered: React.ReactNode, index?: number},
-  state: TreeState<T>,
-  onAction?: (key: Key) => void
+  item: {key: Key; rendered: React.ReactNode; index?: number};
+  state: TreeState<T>;
+  onAction?: (key: Key) => void;
 }
 
 function VirtualizedMenuItem<T>({item, state, onAction}: VirtualizedMenuItemProps<T>) {
   let ref = React.useRef(null);
-  let {menuItemProps} = useMenuItem(
-    {key: item.key, onAction, isVirtualized: true},
-    state,
-    ref
-  );
+  let {menuItemProps} = useMenuItem({key: item.key, onAction, isVirtualized: true}, state, ref);
 
   return (
     <li {...menuItemProps} ref={ref}>
@@ -83,7 +74,7 @@ function VirtualizedMenu<T extends object>(props: AriaMenuProps<T>) {
 
   return (
     <ul {...menuProps} ref={ref}>
-      {[...state.collection].map((item) => (
+      {[...state.collection].map(item => (
         <VirtualizedMenuItem key={item.key} item={item} state={state} />
       ))}
     </ul>
@@ -97,8 +88,7 @@ describe('useMenuTrigger', function () {
     jest.useFakeTimers();
   });
 
-  afterEach(() => {
-  });
+  afterEach(() => {});
 
   it('calls an onAction passed directly to useMenuItem', async () => {
     let onSelect = jest.fn();

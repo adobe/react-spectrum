@@ -45,7 +45,9 @@ let styles = style({
   }
 });
 
-export default function Cross(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XXXL' | 'XXXXL' | 'S'}): ReactNode {
+export default function Cross(
+  props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XXXL' | 'XXXXL' | 'S'}
+): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
@@ -55,11 +57,17 @@ export default function Cross(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L'
     case 'XL':
       return <Cross_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XXL':
-      return <Cross_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Cross_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'XXXL':
-      return <Cross_XXXL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Cross_XXXL {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'XXXXL':
-      return <Cross_XXXXL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Cross_XXXXL {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'S':
       return <Cross_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }

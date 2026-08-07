@@ -68,53 +68,54 @@ export default {
 
 export type TextAreaStory = StoryFn<typeof TextArea>;
 
-export const Default: TextAreaStory = (args) => render(args);
-export const ValueTestControlled: TextAreaStory = (args) => render({...args, value: 'Test'});
+export const Default: TextAreaStory = args => render(args);
+export const ValueTestControlled: TextAreaStory = args => render({...args, value: 'Test'});
 
 ValueTestControlled.story = {
   name: 'value: Test (controlled)'
 };
 
-export const DefaultValueTestUncontrolled: TextAreaStory = (args) => render({...args, defaultValue: 'Test'});
+export const DefaultValueTestUncontrolled: TextAreaStory = args =>
+  render({...args, defaultValue: 'Test'});
 
 DefaultValueTestUncontrolled.story = {
   name: 'defaultValue: Test (uncontrolled)'
 };
 
-export const AutoFocusTrue: TextAreaStory = (args) => render({...args, autoFocus: true});
+export const AutoFocusTrue: TextAreaStory = args => render({...args, autoFocus: true});
 
 AutoFocusTrue.story = {
   name: 'autoFocus: true'
 };
 
-export const IconInfo: TextAreaStory = (args) => render({...args, icon: <Info />});
+export const IconInfo: TextAreaStory = args => render({...args, icon: <Info />});
 
 IconInfo.story = {
   name: 'icon: Info'
 };
 
-export const NoVisibleLabel: TextAreaStory = (args) =>
+export const NoVisibleLabel: TextAreaStory = args =>
   render({...args, label: null, 'aria-label': 'Street address'});
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const WithDescription: TextAreaStory = (args) =>
+export const WithDescription: TextAreaStory = args =>
   render({...args, description: 'Enter product feedback.'});
 
 WithDescription.story = {
   name: 'with description'
 };
 
-export const WithErrorMessage: TextAreaStory = (args) =>
+export const WithErrorMessage: TextAreaStory = args =>
   render({...args, errorMessage: 'Enter at least 250 characters.', validationState: 'invalid'});
 
 WithErrorMessage.story = {
   name: 'with error message'
 };
 
-export const WithContextualHelp: TextAreaStory = (args) =>
+export const WithContextualHelp: TextAreaStory = args =>
   render({
     ...args,
     contextualHelp: (
@@ -132,21 +133,21 @@ WithContextualHelp.story = {
   name: 'with contextual help'
 };
 
-export const CustomWidth: TextAreaStory = (args) =>
+export const CustomWidth: TextAreaStory = args =>
   render({...args, icon: <Info />, validationState: 'invalid', width: '300px'});
 
 CustomWidth.story = {
   name: 'custom width'
 };
 
-export const CustomWidthSmall: TextAreaStory = (args) =>
+export const CustomWidthSmall: TextAreaStory = args =>
   render({...args, icon: <Info />, validationState: 'invalid', width: '30px'});
 
 CustomWidthSmall.story = {
   name: 'custom width small'
 };
 
-export const CustomHeightWithLabel: TextAreaStory = (args) => (
+export const CustomHeightWithLabel: TextAreaStory = args => (
   <Form>
     <TextArea {...args} label="Custom height" description="height: size-2000" height="size-2000" />
     <TextArea
@@ -154,20 +155,23 @@ export const CustomHeightWithLabel: TextAreaStory = (args) => (
       label="Custom height"
       description="height: size-2000"
       height="size-2000"
-      isQuiet />
-    <TextArea
-      {...args}
-      labelPosition="side"
-      label="Custom height"
-      description="height: size-2000"
-      height="size-2000" />
+      isQuiet
+    />
     <TextArea
       {...args}
       labelPosition="side"
       label="Custom height"
       description="height: size-2000"
       height="size-2000"
-      isQuiet />
+    />
+    <TextArea
+      {...args}
+      labelPosition="side"
+      label="Custom height"
+      description="height: size-2000"
+      height="size-2000"
+      isQuiet
+    />
   </Form>
 );
 
@@ -175,7 +179,7 @@ CustomHeightWithLabel.story = {
   name: 'custom height with label'
 };
 
-export const ChangeableHelptext: TextAreaStory = (args) => <ValidationExample {...args} />;
+export const ChangeableHelptext: TextAreaStory = args => <ValidationExample {...args} />;
 
 ChangeableHelptext.story = {
   name: 'changeable helptext',
@@ -186,7 +190,7 @@ ChangeableHelptext.story = {
   }
 };
 
-export const ChangeableHelptextCustomHeight: TextAreaStory = (args) => (
+export const ChangeableHelptextCustomHeight: TextAreaStory = args => (
   <ValidationExample {...args} height="175px" minHeight="100px" maxHeight="50vh" />
 );
 
@@ -199,19 +203,19 @@ ChangeableHelptextCustomHeight.story = {
   }
 };
 
-export const ControlledInteractive: TextAreaStory = (args) => <ControlledTextArea {...args} />;
+export const ControlledInteractive: TextAreaStory = args => <ControlledTextArea {...args} />;
 
 ControlledInteractive.story = {
   name: 'controlled interactive'
 };
 
-export const InFlex: TextAreaStory = (args) => renderInFlexRowAndBlock(args);
+export const InFlex: TextAreaStory = args => renderInFlexRowAndBlock(args);
 
 InFlex.story = {
   name: 'in flex'
 };
 
-export const InFlexValidationState: TextAreaStory = (args) =>
+export const InFlexValidationState: TextAreaStory = args =>
   renderInFlexRowAndBlock({...args, validationState: 'invalid'});
 
 InFlexValidationState.story = {
@@ -226,7 +230,8 @@ function render(props = {}) {
       onFocus={action('focus')}
       onBlur={action('blur')}
       UNSAFE_className="custom_classname"
-      {...props} />
+      {...props}
+    />
   );
 }
 
@@ -235,7 +240,13 @@ function ControlledTextArea(props) {
   return (
     <>
       <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
-      <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
+      <Button
+        variant="primary"
+        onPress={() =>
+          setValue('decepticons are evil transformers and should be kicked out of earth')
+        }>
+        Set Text
+      </Button>
     </>
   );
 }
@@ -245,45 +256,21 @@ function renderInFlexRowAndBlock(props = {}) {
     <Flex direction="column" gap="size-300">
       Align stretch
       <Flex gap="size-100">
-        <TextArea
-          label="Default"
-          {...props} />
-        <TextArea
-          label="Quiet"
-          isQuiet
-          {...props} />
-        <TextArea
-          label="Quiet"
-          isQuiet
-          {...props} />
+        <TextArea label="Default" {...props} />
+        <TextArea label="Quiet" isQuiet {...props} />
+        <TextArea label="Quiet" isQuiet {...props} />
       </Flex>
       Align end
       <Flex gap="size-100" alignItems="end">
-        <TextArea
-          label="Default"
-          {...props} />
-        <TextArea
-          label="Quiet"
-          isQuiet
-          {...props} />
-        <TextArea
-          label="Quiet"
-          isQuiet
-          {...props} />
+        <TextArea label="Default" {...props} />
+        <TextArea label="Quiet" isQuiet {...props} />
+        <TextArea label="Quiet" isQuiet {...props} />
       </Flex>
       Display block
       <div>
-        <TextArea
-          label="Default"
-          {...props} />
-        <TextArea
-          label="Quiet"
-          isQuiet
-          {...props} />
-        <TextArea
-          label="Quiet"
-          isQuiet
-          {...props} />
+        <TextArea label="Default" {...props} />
+        <TextArea label="Quiet" isQuiet {...props} />
+        <TextArea label="Quiet" isQuiet {...props} />
       </div>
     </Flex>
   );
@@ -302,7 +289,12 @@ function ValidationExample(props) {
       label="Favorite number"
       maxLength={1}
       description="Enter a single digit number."
-      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9. Lorem ipsum dolor.'} />
+      errorMessage={
+        value === ''
+          ? 'Empty input not allowed.'
+          : 'Single digit numbers are 0-9. Lorem ipsum dolor.'
+      }
+    />
   );
 }
 
@@ -343,7 +335,7 @@ let localeStrings = {
   'zh-TW': '字母順序'
 };
 // https://lingojam.com/ZalgoText
-let zalgoString = 'i̶͖̊́̃̒̄͆̚͝t̶̢̢̧̺̻̘̖̗͉̟̞̭̀̀͒͂͐̐̄̇́͒̅̆́\'̶̯̳̑͑͛͐͋̈́̆̇̓͝͝s̵͙͇͉̪̉̈́̐̌̌̃̓͝ ̴̙̘̙̏̍̌̀̕͝m̶̰̥͇̄͒̃̊́͋̎́͆̍̓͑̅͜ȩ̵̛̪̜̯͓͈̰̰̱̠͆̾́́̎̊͌̒́͗̚̕͠ͅ,̷̫̱͖̖͊̉̒̎͊͝ ̵̡̧̛̝̳̦͙͚̣̩̜͙̈́̾̃̋͒̃̇̔̀͜ͅi̵̯̰̰͉̺͎̖̐ͅ\'̷͚̊͐͑͗́͒͌́͛̚̕͝m̴̨̧̯̞͇̤͎̥̫̩͔͖̮̖̲̽͆͗̌̈̇͋̍̕͘͠ ̸͚̞̠̦̑̌̍͋̃t̷̘̝̘̣̮͓̠̮̤͍͕̓͛̉h̶̛͔̳̟̩̦͍̤̥̥̦̗͍͖̓͆̐̽̒̈́͝͠ē̷̛͓̫̜͕͈͙̮͕̝͙̆͂̇̿̋̇̓̂̋͒̂͂͝ ̸̨͈̠̟̤͇̟̗̼̲̯̭̓̈̑́̇̈̀͐͌͂͛͌̅͘͜͝ͅp̴̧̧̛̛̺̩̩̘̲̜̰̩͚̻̬̠̎̅́̏̂́̐̾̓̓͌͝r̷̜̱̒̊̒͛̔ơ̷̼̝̥̺͎͚͚͇̝̫̓̈́̽̈̍̈̌̂̀̚͝͝ḇ̵̠̼͔͙̦̝̠̳̤̍͗͐͝l̷̛̰̲̺̫̭̳̹̬̳̤̱͎̋͛ȩ̷͒m̵̳̟͉̪̞̎̐̓̏̒͗,̶̨͍̥̗̺̮̰̬͍̓͋̄̋͛́̄̕͝ ̷̧̡̧̫̯̘̣̠̮͕̪͈̣̹͌̈̃̃̈́̃̍̊͝͝ͅį̸̲̠̤̳͗̽̋͊̍͛͂̊̓̑̅͋̿t̶̛̲͈͇͇͊̋͐̐͌͒̊̿̕͘\'̸̧͍̠̲̤̠̝̩̟̿͌ś̷̳͇̅̇͛͛̈́̅̑̇̔̌͆͝ ̵̛̱̺̙̪͒̇̔͗͘ͅm̶̢̧̤̟͙͉̠̣̺̥̫͙̹͉̬̉̏͑̕͝e̴̪̥̪̠̜̻̪͎͎̱̱̯̜͒́̑̃̕';
+let zalgoString = "i̶͖̊́̃̒̄͆̚͝t̶̢̢̧̺̻̘̖̗͉̟̞̭̀̀͒͂͐̐̄̇́͒̅̆́'̶̯̳̑͑͛͐͋̈́̆̇̓͝͝s̵͙͇͉̪̉̈́̐̌̌̃̓͝ ̴̙̘̙̏̍̌̀̕͝m̶̰̥͇̄͒̃̊́͋̎́͆̍̓͑̅͜ȩ̵̛̪̜̯͓͈̰̰̱̠͆̾́́̎̊͌̒́͗̚̕͠ͅ,̷̫̱͖̖͊̉̒̎͊͝ ̵̡̧̛̝̳̦͙͚̣̩̜͙̈́̾̃̋͒̃̇̔̀͜ͅi̵̯̰̰͉̺͎̖̐ͅ'̷͚̊͐͑͗́͒͌́͛̚̕͝m̴̨̧̯̞͇̤͎̥̫̩͔͖̮̖̲̽͆͗̌̈̇͋̍̕͘͠ ̸͚̞̠̦̑̌̍͋̃t̷̘̝̘̣̮͓̠̮̤͍͕̓͛̉h̶̛͔̳̟̩̦͍̤̥̥̦̗͍͖̓͆̐̽̒̈́͝͠ē̷̛͓̫̜͕͈͙̮͕̝͙̆͂̇̿̋̇̓̂̋͒̂͂͝ ̸̨͈̠̟̤͇̟̗̼̲̯̭̓̈̑́̇̈̀͐͌͂͛͌̅͘͜͝ͅp̴̧̧̛̛̺̩̩̘̲̜̰̩͚̻̬̠̎̅́̏̂́̐̾̓̓͌͝r̷̜̱̒̊̒͛̔ơ̷̼̝̥̺͎͚͚͇̝̫̓̈́̽̈̍̈̌̂̀̚͝͝ḇ̵̠̼͔͙̦̝̠̳̤̍͗͐͝l̷̛̰̲̺̫̭̳̹̬̳̤̱͎̋͛ȩ̷͒m̵̳̟͉̪̞̎̐̓̏̒͗,̶̨͍̥̗̺̮̰̬͍̓͋̄̋͛́̄̕͝ ̷̧̡̧̫̯̘̣̠̮͕̪͈̣̹͌̈̃̃̈́̃̍̊͝͝ͅį̸̲̠̤̳͗̽̋͊̍͛͂̊̓̑̅͋̿t̶̛̲͈͇͇͊̋͐̐͌͒̊̿̕͘'̸̧͍̠̲̤̠̝̩̟̿͌ś̷̳͇̅̇͛͛̈́̅̑̇̔̌͆͝ ̵̛̱̺̙̪͒̇̔͗͘ͅm̶̢̧̤̟͙͉̠̣̺̥̫͙̹͉̬̉̏͑̕͝e̴̪̥̪̠̜̻̪͎͎̱̱̯̜͒́̑̃̕";
 function DefaultLocaleStrings(props) {
   let locale = useLocale();
   let [isZalgo, setValue] = React.useState(false);
@@ -353,12 +345,13 @@ function DefaultLocaleStrings(props) {
         label="Sampling of diacritics"
         value={isZalgo ? zalgoString : localeStrings[locale.locale]}
         UNSAFE_className="custom_classname"
-        {...props} />
+        {...props}
+      />
       <ActionButton onPress={() => setValue(prev => !prev)}>Toggle Zalgo</ActionButton>
     </>
   );
 }
 
 export const WithDifferentLocaleText: StoryObj<typeof TextArea> = {
-  render: (args) => <DefaultLocaleStrings {...args} />
+  render: args => <DefaultLocaleStrings {...args} />
 };

@@ -11,15 +11,20 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaTagGroupProps, useTagGroup} from 'react-aria/useTagGroup';
 import {classNames} from '../utils/classNames';
-import {Collection, DOMRef, Node, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
+import {
+  Collection,
+  DOMRef,
+  Node,
+  SpectrumLabelableProps,
+  StyleProps,
+  Validation
+} from '@react-types/shared';
 import {Field} from '../label/Field';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../../intl/tag/*.json';
-// @ts-ignore
 import {ListCollection} from 'react-stately/private/list/ListCollection';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {Provider, useProvider, useProviderProps} from '../provider/Provider';
@@ -47,19 +52,42 @@ const TAG_STYLES = {
   }
 };
 
-export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'selectionMode' | 'disallowEmptySelection' | 'selectedKeys' | 'defaultSelectedKeys' | 'onSelectionChange' | 'selectionBehavior' | 'disabledKeys'>, StyleProps, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, Pick<Validation<any>, 'isInvalid' | 'validationState'> {
-  /** The label to display on the action button.  */
-  actionLabel?: string,
+export interface SpectrumTagGroupProps<T>
+  extends
+    Omit<
+      AriaTagGroupProps<T>,
+      | 'selectionMode'
+      | 'disallowEmptySelection'
+      | 'selectedKeys'
+      | 'defaultSelectedKeys'
+      | 'onSelectionChange'
+      | 'selectionBehavior'
+      | 'disabledKeys'
+    >,
+    StyleProps,
+    Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>,
+    Pick<Validation<any>, 'isInvalid' | 'validationState'> {
+  /** The label to display on the action button. */
+  actionLabel?: string;
   /** Handler that is called when the action button is pressed. */
-  onAction?: () => void,
+  onAction?: () => void;
   /** Sets what the TagGroup should render when there are no tags to display. */
-  renderEmptyState?: () => JSX.Element,
-  /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
-  maxRows?: number
+  renderEmptyState?: () => JSX.Element;
+  /**
+   * Limit the number of rows initially shown. This will render a button that allows the user to
+   * expand to show all tags.
+   */
+  maxRows?: number;
 }
 
-/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
-export const TagGroup = React.forwardRef(function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Tags allow users to categorize content. They can represent keywords or people, and are grouped to
+ * describe an item or a search request.
+ */
+export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
+  props: SpectrumTagGroupProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -78,21 +106,37 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/tag');
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let state = useListState(props);
-  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
+  let [tagState, setTagState] = useValueEffect({
+    visibleTagCount: state.collection.size,
+    showCollapseButton: false
+  });
   let keyboardDelegate = useMemo(() => {
-    let collection = (isCollapsed
-      ? new ListCollection([...state.collection].slice(0, tagState.visibleTagCount))
-      : new ListCollection([...state.collection])) as Collection<Node<T>>;
+    let collection = (
+      isCollapsed
+        ? new ListCollection([...state.collection].slice(0, tagState.visibleTagCount))
+        : new ListCollection([...state.collection])
+    ) as Collection<Node<T>>;
     return new ListKeyboardDelegate({
       collection,
       ref: tagsRef,
       direction,
       orientation: 'horizontal'
     });
-  }, [direction, isCollapsed, state.collection, tagState.visibleTagCount, tagsRef]) as ListKeyboardDelegate<T>;
+  }, [
+    direction,
+    isCollapsed,
+    state.collection,
+    tagState.visibleTagCount,
+    tagsRef
+  ]) as ListKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
+  // oxlint-disable-next-line react/react-compiler
   delete props.onAction;
-  let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
+  let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup(
+    {...props, keyboardDelegate},
+    state,
+    tagsRef
+  );
   let actionsId = useId();
   let actionsRef = useRef<HTMLDivElement>(null);
 
@@ -133,8 +177,16 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = [...currActionsRef.children];
-        if (maxRows && buttons.length > 0 && rowCount >= maxRows && currContainerRef.parentElement) {
-          let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
+        if (
+          maxRows &&
+          buttons.length > 0 &&
+          rowCount >= maxRows &&
+          currContainerRef.parentElement
+        ) {
+          let buttonsWidth = buttons.reduce(
+            (acc, curr) => (acc += curr.getBoundingClientRect().width),
+            0
+          );
           buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
           let end = direction === 'ltr' ? 'right' : 'left';
           let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
@@ -154,7 +206,7 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
         };
       };
 
-      setTagState(function *() {
+      setTagState(function* () {
         // Update to show all items.
         yield {visibleTagCount: state.collection.size, showCollapseButton: true};
 
@@ -162,6 +214,7 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
         yield computeVisibleTagCount();
       });
     }
+    // oxlint-disable-next-line react/react-compiler
   }, [maxRows, setTagState, direction, scale, state.collection.size]);
 
   useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
@@ -174,8 +227,12 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let visibleTags = useMemo(() =>
-    [...state.collection].slice(0, isCollapsed ? tagState.visibleTagCount : state.collection.size),
+  let visibleTags = useMemo(
+    () =>
+      [...state.collection].slice(
+        0,
+        isCollapsed ? tagState.visibleTagCount : state.collection.size
+      ),
     [isCollapsed, state.collection, tagState.visibleTagCount]
   );
 
@@ -192,7 +249,7 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
     if (maxRows == null || !isCollapsed || isEmpty) {
       return undefined;
     }
-    let maxHeight = (TAG_STYLES[scale].height + (TAG_STYLES[scale].margin * 2)) * maxRows;
+    let maxHeight = (TAG_STYLES[scale].height + TAG_STYLES[scale].margin * 2) * maxRows;
     return {maxHeight, overflow: 'hidden'};
   }, [isCollapsed, maxRows, isEmpty, scale]);
 
@@ -206,38 +263,19 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
         showErrorIcon
         ref={domRef}
         elementType="span"
-        wrapperClassName={
-          classNames(
-            styles,
-            'spectrum-Tags-fieldWrapper',
-            {
-              'spectrum-Tags-fieldWrapper--positionSide': labelPosition === 'side'
-            }
-          )
-        }>
+        wrapperClassName={classNames(styles, 'spectrum-Tags-fieldWrapper', {
+          'spectrum-Tags-fieldWrapper--positionSide': labelPosition === 'side'
+        })}>
         <div
           ref={containerRef}
           style={containerStyle}
-          className={
-            classNames(
-              styles,
-              'spectrum-Tags-container',
-              {
-                'spectrum-Tags-container--empty': isEmpty
-              }
-            )
-          }>
+          className={classNames(styles, 'spectrum-Tags-container', {
+            'spectrum-Tags-container--empty': isEmpty
+          })}>
           <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-            <div
-              ref={tagsRef}
-              {...gridProps}
-              className={classNames(styles, 'spectrum-Tags')}>
+            <div ref={tagsRef} {...gridProps} className={classNames(styles, 'spectrum-Tags')}>
               {visibleTags.map(item => (
-                <Tag
-                  {...item.props}
-                  key={item.key}
-                  item={item}
-                  state={state}>
+                <Tag {...item.props} key={item.key} item={item} state={state}>
                   {item.rendered}
                 </Tag>
               ))}
@@ -248,7 +286,7 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
               )}
             </div>
           </FocusRing>
-          {showActions && !isEmpty &&
+          {showActions && !isEmpty && (
             <Provider isDisabled={false}>
               <div
                 role="group"
@@ -257,28 +295,29 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(pro
                 aria-label={stringFormatter.format('actions')}
                 aria-labelledby={`${gridProps.id} ${actionsId}`}
                 className={classNames(styles, 'spectrum-Tags-actions')}>
-                {tagState.showCollapseButton &&
+                {tagState.showCollapseButton && (
                   <ActionButton
                     isQuiet
                     onPress={handlePressCollapse}
                     UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
-                    {isCollapsed ?
-                      stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) :
-                      stringFormatter.format('hideButtonLabel')
-                    }
+                    {isCollapsed
+                      ? stringFormatter.format('showAllButtonLabel', {
+                          tagCount: state.collection.size
+                        })
+                      : stringFormatter.format('hideButtonLabel')}
                   </ActionButton>
-                }
-                {actionLabel && onAction &&
+                )}
+                {actionLabel && onAction && (
                   <ActionButton
                     isQuiet
                     onPress={() => onAction?.()}
                     UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
                     {actionLabel}
                   </ActionButton>
-                }
+                )}
               </div>
             </Provider>
-          }
+          )}
         </div>
       </Field>
     </FocusScope>

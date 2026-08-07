@@ -20,10 +20,10 @@ import {useOverlayTrigger} from '../../src/overlays/useOverlayTrigger';
 import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 
 function Trigger(props: {
-  withPortal: boolean,
-  placement: Placement,
-  maxHeight?: number,
-  buttonWidth?: number
+  withPortal: boolean;
+  placement: Placement;
+  maxHeight?: number;
+  buttonWidth?: number;
 }): JSX.Element {
   const {withPortal, placement, maxHeight, buttonWidth} = props;
   const targetRef = React.useRef<HTMLButtonElement>(null);
@@ -31,9 +31,13 @@ function Trigger(props: {
   const state = useOverlayTriggerState({
     defaultOpen: false
   });
-  const {triggerProps, overlayProps} = useOverlayTrigger({
-    type: 'menu'
-  }, state, targetRef);
+  const {triggerProps, overlayProps} = useOverlayTrigger(
+    {
+      type: 'menu'
+    },
+    state,
+    targetRef
+  );
   const {overlayProps: overlayPositionProps} = useOverlayPosition({
     targetRef,
     overlayRef,
@@ -62,8 +66,7 @@ function Trigger(props: {
         }}>
         {maxHeight
           ? [...Array(20)].map((_, i) => <li>Hello {i}</li>)
-          : [...Array(5)].map((_, i) => <li>Hello {i}</li>)
-        }
+          : [...Array(5)].map((_, i) => <li>Hello {i}</li>)}
       </ul>
     </div>
   );
@@ -91,7 +94,9 @@ export default {
 
 export type TriggerStory = StoryFn<typeof Trigger>;
 
-export const DocumentBodyContainerBottom: TriggerStory = () => <Trigger withPortal placement="bottom" />;
+export const DocumentBodyContainerBottom: TriggerStory = () => (
+  <Trigger withPortal placement="bottom" />
+);
 
 DocumentBodyContainerBottom.story = {
   name: 'document.body container bottom'
@@ -103,13 +108,17 @@ DocumentBodyContainerTop.story = {
   name: 'document.body container top'
 };
 
-export const PositionedContainerBottom: TriggerStory = () => <Trigger withPortal={false} placement="bottom" />;
+export const PositionedContainerBottom: TriggerStory = () => (
+  <Trigger withPortal={false} placement="bottom" />
+);
 
 PositionedContainerBottom.story = {
   name: 'positioned container bottom'
 };
 
-export const PositionedContainerTop: TriggerStory = () => <Trigger withPortal={false} placement="top" />;
+export const PositionedContainerTop: TriggerStory = () => (
+  <Trigger withPortal={false} placement="top" />
+);
 
 PositionedContainerTop.story = {
   name: 'positioned container top'

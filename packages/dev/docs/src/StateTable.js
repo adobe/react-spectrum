@@ -28,25 +28,45 @@ export function StateTable({properties, showOptional, hideSelector}) {
     <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>
       <thead>
         <tr>
-          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>
-          {showSelector && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>CSS Selector</td>}
-          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Description</td>
+          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>
+            Name
+          </td>
+          {showSelector && (
+            <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>
+              CSS Selector
+            </td>
+          )}
+          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>
+            Description
+          </td>
         </tr>
       </thead>
       <tbody className={tableStyles['spectrum-Table-body']}>
         {props.map((prop, index) => (
           <tr key={index} className={clsx(tableStyles['spectrum-Table-row'], styles.tableRow)}>
-            <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
+            <td
+              role="rowheader"
+              className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}
+              data-column="Name">
               <code className={`${typographyStyles['spectrum-Code4']}`}>
                 <span className="token hljs-variable">{prop.name}</span>
               </code>
             </td>
-            {showSelector && <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="CSS Selector">
-              <code className={`${typographyStyles['spectrum-Code4']}`}>
-                <span className={prop.selector ? 'token hljs-string' : null}>{prop.selector || '—'}</span>
-              </code>
-            </td>}
-            <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>
+            {showSelector && (
+              <td
+                role="rowheader"
+                className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}
+                data-column="CSS Selector">
+                <code className={`${typographyStyles['spectrum-Code4']}`}>
+                  <span className={prop.selector ? 'token hljs-string' : null}>
+                    {prop.selector || '—'}
+                  </span>
+                </code>
+              </td>
+            )}
+            <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>
+              {renderHTMLfromMarkdown(prop.description, {forceInline: false})}
+            </td>
           </tr>
         ))}
       </tbody>

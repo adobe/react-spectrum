@@ -12,7 +12,7 @@
 
 import {Avatar} from '../src/Avatar';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Avatar> = {
   component: Avatar,
@@ -25,13 +25,12 @@ const meta: Meta<typeof Avatar> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  decorators: (children, {args}) => (
+  decorators: (children, {args}) =>
     args.isOverBackground ? (
-      <div className={style({backgroundColor: 'indigo-800', padding: 40})}>
-        {children(args)}
-      </div>
-    ) : children(args)
-  ),
+      <div className={style({backgroundColor: 'indigo-800', padding: 40})}>{children(args)}</div>
+    ) : (
+      children(args)
+    ),
   title: 'Avatar'
 };
 
@@ -39,7 +38,5 @@ export default meta;
 
 type Story = StoryObj<typeof Avatar>;
 export const Example: Story = {
-  render: (args) => (
-    <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" {...args} />
-  )
+  render: args => <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" {...args} />
 };

@@ -6,12 +6,14 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-
-test('Renames variants', `
+test(
+  'Renames variants',
+  `
 import {Meter} from '@adobe/react-spectrum';
 
 <div>
   <Meter label="Space used" variant="critical"/>
   <Meter label="Space used" variant="warning"/>
 </div>
-`);
+`
+);

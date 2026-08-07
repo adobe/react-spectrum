@@ -17,43 +17,42 @@ import {useDefaultLocale} from './useDefaultLocale';
 
 export interface Locale {
   /** The [BCP47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code for the locale. */
-  locale: string,
+  locale: string;
   /** The writing direction for the locale. */
-  direction: Direction
+  direction: Direction;
 }
 
 export interface I18nProviderProps {
   /** Contents that should have the locale applied. */
-  children: ReactNode,
+  children: ReactNode;
   /** The locale to apply to the children. */
-  locale?: string
+  locale?: string;
 }
 
 const I18nContext = React.createContext<Locale | null>(null);
 
 interface I18nProviderWithLocaleProps extends I18nProviderProps {
-  locale: string
+  locale: string;
 }
 
 /**
  * Internal component that handles the case when locale is provided.
  */
 function I18nProviderWithLocale(props: I18nProviderWithLocaleProps): JSX.Element {
-  let {locale, children} = props;  
-  let value: Locale = React.useMemo(() => ({
-    locale,
-    direction: isRTL(locale) ? 'rtl' : 'ltr'
-  }), [locale]);
-
-  return (
-    <I18nContext.Provider value={value}>
-      {children}
-    </I18nContext.Provider>
+  let {locale, children} = props;
+  let value: Locale = React.useMemo(
+    () => ({
+      locale,
+      direction: isRTL(locale) ? 'rtl' : 'ltr'
+    }),
+    [locale]
   );
+
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
 interface I18nProviderWithDefaultLocaleProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
@@ -63,11 +62,7 @@ function I18nProviderWithDefaultLocale(props: I18nProviderWithDefaultLocaleProps
   let {children} = props;
   let defaultLocale = useDefaultLocale();
 
-  return (
-    <I18nContext.Provider value={defaultLocale}>
-      {children}
-    </I18nContext.Provider>
-  );
+  return <I18nContext.Provider value={defaultLocale}>{children}</I18nContext.Provider>;
 }
 
 /**

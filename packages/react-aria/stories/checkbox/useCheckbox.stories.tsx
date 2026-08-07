@@ -39,7 +39,7 @@ function Checkbox(props: AriaCheckboxProps) {
 }
 
 export const Example: CheckboxStory = {
-  render: (args) => <Checkbox {...args}>Unsubscribe</Checkbox>,
+  render: args => <Checkbox {...args}>Unsubscribe</Checkbox>,
   args: {
     onFocus: action('onFocus'),
     onBlur: action('onBlur')

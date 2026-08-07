@@ -28,7 +28,7 @@ for (let i = 0; i < 50; i++) {
 
 const Template = (props: TabProps): JSX.Element => (
   <Tabs aria-label="example" items={lotsOfItems} {...props}>
-    {(item) => (
+    {item => (
       <Item key={item.name} title={item.name}>
         {item.contents}
       </Item>
@@ -37,10 +37,10 @@ const Template = (props: TabProps): JSX.Element => (
 );
 
 export const ScrollTesting: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />
+  render: args => <Template {...args} />
 };
 
 export const OnPressEndSelection: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {shouldSelectOnPressUp: true}
 };

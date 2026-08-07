@@ -10,4 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-export const pxToRem = (px: number): string => (px / 16) + 'rem';
+export const pxToRem = (px: number): string => px / 16 + 'rem';

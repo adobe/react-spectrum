@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Dynamic TableView 1`] = `
 "import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";

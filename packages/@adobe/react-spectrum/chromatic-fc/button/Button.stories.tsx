@@ -40,9 +40,7 @@ export const All: ButtonStory = () => (
         <Bell />
         <Text>Default</Text>
       </Button>
-      <Button
-        isDisabled
-        variant="primary">
+      <Button isDisabled variant="primary">
         <Text>Disabled</Text>
         <Bell />
       </Button>

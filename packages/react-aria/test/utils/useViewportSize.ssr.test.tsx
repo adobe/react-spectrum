@@ -14,7 +14,9 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('useViewportSize SSR', () => {
   it('should render without errors', async () => {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {useViewportSize} from '../../src/utils/useViewportSize.ts';
 
       function Viewport() {
@@ -23,11 +25,14 @@ describe('useViewportSize SSR', () => {
       }
 
       <Viewport />
-    `);
+    `
+    );
   });
 
   it('should update dimensions after hydration', async () => {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {useViewportSize} from '../../src/utils/useViewportSize.ts';
 
       function Viewport() {
@@ -36,9 +41,11 @@ describe('useViewportSize SSR', () => {
       }
 
       <Viewport />
-    `, () => {
-      expect(screen.getByTestId('viewport')).toHaveTextContent('0x0');
-    });
+    `,
+      () => {
+        expect(screen.getByTestId('viewport')).toHaveTextContent('0x0');
+      }
+    );
 
     expect(screen.getByTestId('viewport')).not.toHaveTextContent('0x0');
   });

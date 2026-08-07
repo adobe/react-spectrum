@@ -1,4 +1,10 @@
-import {AnyCalendarDate, Calendar, CalendarDate, CalendarIdentifier, GregorianCalendar} from '../src';
+import {
+  AnyCalendarDate,
+  Calendar,
+  CalendarDate,
+  CalendarIdentifier,
+  GregorianCalendar
+} from '../src';
 import {compareDate, startOfWeek} from '../src/queries';
 
 // This calendar gives each month a 4-5-4 week pattern, with February as the first month of the year.

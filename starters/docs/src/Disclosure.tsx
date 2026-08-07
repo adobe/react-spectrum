@@ -1,5 +1,5 @@
 'use client';
-import { Button } from 'react-aria-components/Button';
+import {Button} from 'react-aria-components/Button';
 import {
   Disclosure as AriaDisclosure,
   DisclosurePanel as AriaDisclosurePanel,

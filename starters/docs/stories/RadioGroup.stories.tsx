@@ -13,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof RadioGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <RadioGroup {...args}>
     <Radio value="soccer">Soccer</Radio>
     <Radio value="baseball">Baseball</Radio>

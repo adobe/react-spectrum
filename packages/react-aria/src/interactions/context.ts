@@ -15,9 +15,10 @@ import {PressProps} from './usePress';
 import React, {MutableRefObject} from 'react';
 
 interface IPressResponderContext extends PressProps {
-  register(): void,
-  ref?: MutableRefObject<FocusableElement>
+  register(): void;
+  ref?: MutableRefObject<FocusableElement>;
 }
 
-export const PressResponderContext: React.Context<IPressResponderContext> = React.createContext<IPressResponderContext>({register: () => {}});
+export const PressResponderContext: React.Context<IPressResponderContext> =
+  React.createContext<IPressResponderContext>({register: () => {}});
 PressResponderContext.displayName = 'PressResponderContext';

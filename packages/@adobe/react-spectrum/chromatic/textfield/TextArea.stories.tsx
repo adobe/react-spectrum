@@ -55,7 +55,8 @@ IsReadOnlyTrue.story = {
   name: 'isReadOnly: true'
 };
 
-export const IsReadOnlyTrueValueReadOnlyValue: TextAreaStory = () => render({value: 'Read only value', isReadOnly: true});
+export const IsReadOnlyTrueValueReadOnlyValue: TextAreaStory = () =>
+  render({value: 'Read only value', isReadOnly: true});
 
 IsReadOnlyTrueValueReadOnlyValue.story = {
   name: 'isReadOnly: true, value: read only value'
@@ -67,13 +68,15 @@ IsRequiredTrue.story = {
   name: 'isRequired: true'
 };
 
-export const IsRequiredTrueNecessityIndicatorLabel: TextAreaStory = () => render({isRequired: true, necessityIndicator: 'label'}, false);
+export const IsRequiredTrueNecessityIndicatorLabel: TextAreaStory = () =>
+  render({isRequired: true, necessityIndicator: 'label'}, false);
 
 IsRequiredTrueNecessityIndicatorLabel.story = {
   name: 'isRequired: true, necessityIndicator: label'
 };
 
-export const IsRequiredFalseNecessityIndicatorLabel: TextAreaStory = () => render({isRequired: false, necessityIndicator: 'label'}, false);
+export const IsRequiredFalseNecessityIndicatorLabel: TextAreaStory = () =>
+  render({isRequired: false, necessityIndicator: 'label'}, false);
 
 IsRequiredFalseNecessityIndicatorLabel.story = {
   name: 'isRequired: false, necessityIndicator: label'
@@ -85,7 +88,8 @@ IconInfo.story = {
   name: 'icon: Info'
 };
 
-export const IconInfoValidationStateInvalid: TextAreaStory = () => render({icon: <Info />, validationState: 'invalid'});
+export const IconInfoValidationStateInvalid: TextAreaStory = () =>
+  render({icon: <Info />, validationState: 'invalid'});
 
 IconInfoValidationStateInvalid.story = {
   name: 'icon: Info, validationState: invalid'
@@ -103,58 +107,94 @@ LabelPositionSide.story = {
   name: 'labelPosition: side'
 };
 
-export const LabelAlignEndLabelPositionSide: TextAreaStory = () => render({labelAlign: 'end', labelPosition: 'side'}, false);
+export const LabelAlignEndLabelPositionSide: TextAreaStory = () =>
+  render({labelAlign: 'end', labelPosition: 'side'}, false);
 
 LabelAlignEndLabelPositionSide.story = {
   name: 'labelAlign: end, labelPosition: side'
 };
 
-export const NoVisibleLabel: TextAreaStory = () => render({label: null, 'aria-label': 'Street address'}, false);
+export const NoVisibleLabel: TextAreaStory = () =>
+  render({label: null, 'aria-label': 'Street address'}, false);
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const CustomWidth: TextAreaStory = () => render({icon: <Info />, validationState: 'invalid', width: 275});
+export const CustomWidth: TextAreaStory = () =>
+  render({icon: <Info />, validationState: 'invalid', width: 275});
 
 CustomWidth.story = {
   name: 'custom width'
 };
 
-export const CustomHeight: TextAreaStory = () => render({icon: <Info />, validationState: 'invalid', height: 350});
+export const CustomHeight: TextAreaStory = () =>
+  render({icon: <Info />, validationState: 'invalid', height: 350});
 
 CustomHeight.story = {
   name: 'custom height'
 };
 
-export const _ContextualHelp: TextAreaStory = (args) => render({...args, contextualHelp: (
-  <ContextualHelp>
-    <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-  </ContextualHelp>
-)}, false);
+export const _ContextualHelp: TextAreaStory = args =>
+  render(
+    {
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    },
+    false
+  );
 
 _ContextualHelp.story = {
   name: 'contextual help'
 };
 
-export const ContextualHelpLabelAlignEnd: TextAreaStory = (args) => render({...args, labelAlign: 'end', contextualHelp: (
-  <ContextualHelp>
-    <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-  </ContextualHelp>
-)}, false);
+export const ContextualHelpLabelAlignEnd: TextAreaStory = args =>
+  render(
+    {
+      ...args,
+      labelAlign: 'end',
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    },
+    false
+  );
 
 ContextualHelpLabelAlignEnd.story = {
   name: 'contextual help, labelAlign: end'
 };
 
-export const ContextualHelpLabelPositionSide: TextAreaStory = (args) => render({...args, labelPosition: 'side', contextualHelp: (
-  <ContextualHelp>
-    <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-  </ContextualHelp>
-)}, false);
+export const ContextualHelpLabelPositionSide: TextAreaStory = args =>
+  render(
+    {
+      ...args,
+      labelPosition: 'side',
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    },
+    false
+  );
 
 ContextualHelpLabelPositionSide.story = {
   name: 'contextual help, labelPosition: side'
@@ -164,28 +204,12 @@ ContextualHelpLabelPositionSide.story = {
 export function render(props = {}, disabled = true): JSX.Element {
   return (
     <Flex gap="size-100" wrap>
-      <TextArea
-        label="Default"
-        placeholder="React"
-        {...props} />
-      <TextArea
-        label="Quiet"
-        placeholder="React"
-        isQuiet
-        {...props} />
+      <TextArea label="Default" placeholder="React" {...props} />
+      <TextArea label="Quiet" placeholder="React" isQuiet {...props} />
       {disabled && (
         <>
-          <TextArea
-            label="Disabled"
-            placeholder="React"
-            isDisabled
-            {...props} />
-          <TextArea
-            label="Quiet + Disabled"
-            placeholder="React"
-            isQuiet
-            isDisabled
-            {...props} />
+          <TextArea label="Disabled" placeholder="React" isDisabled {...props} />
+          <TextArea label="Quiet + Disabled" placeholder="React" isQuiet isDisabled {...props} />
         </>
       )}
     </Flex>

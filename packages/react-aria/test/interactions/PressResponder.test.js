@@ -23,7 +23,9 @@ describe('PressResponder', function () {
     let {getByRole} = render(
       <PressResponder onPress={onPress}>
         <div>
-          <Pressable><button>Button</button></Pressable>
+          <Pressable>
+            <button>Button</button>
+          </Pressable>
         </div>
       </PressResponder>
     );
@@ -39,7 +41,9 @@ describe('PressResponder', function () {
     let {getByRole} = render(
       <PressResponder ref={ref}>
         <div>
-          <Pressable><button>Button</button></Pressable>
+          <Pressable>
+            <button>Button</button>
+          </Pressable>
         </div>
       </PressResponder>
     );
@@ -49,7 +53,7 @@ describe('PressResponder', function () {
   });
 
   it('should warn if there is no pressable child', function () {
-    let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    using warn = jest.spyOn(global.console, 'warn').mockImplementation();
     render(
       <PressResponder>
         <div>
@@ -63,11 +67,13 @@ describe('PressResponder', function () {
   });
 
   it('should not warn if there is a pressable child', function () {
-    let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    using warn = jest.spyOn(global.console, 'warn').mockImplementation();
     render(
       <PressResponder>
         <div>
-          <Pressable><button>Button</button></Pressable>
+          <Pressable>
+            <button>Button</button>
+          </Pressable>
         </div>
       </PressResponder>
     );

@@ -14,7 +14,9 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('NumberField SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {NumberField} from '../../exports/index.ts';
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
@@ -22,6 +24,7 @@ describe('NumberField SSR', function () {
       <Provider theme={theme}>
         <NumberField aria-label="number" />
       </Provider>
-    `);
+    `
+    );
   });
 });

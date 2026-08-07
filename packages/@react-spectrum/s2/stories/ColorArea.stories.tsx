@@ -34,7 +34,7 @@ export default meta;
 type Story = StoryObj<typeof ColorArea>;
 
 export const Example: Story = {
-  render: (args) => <ColorArea {...args} onChange={undefined} />,
+  render: args => <ColorArea {...args} onChange={undefined} />,
   args: {
     defaultValue: 'hsl(30, 100%, 50%)'
   }

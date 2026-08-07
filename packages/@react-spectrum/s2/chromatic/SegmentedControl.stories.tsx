@@ -33,7 +33,7 @@ export default meta;
 type Story = StoryObj<typeof SegmentedControl>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <SegmentedControl {...args}>
       <SegmentedControlItem id="day">Day</SegmentedControlItem>
       <SegmentedControlItem id="week">Week</SegmentedControlItem>
@@ -47,11 +47,20 @@ export const Example: Story = {
 };
 
 export const WithIcons: Story = {
-  render: (args) => (
+  render: args => (
     <SegmentedControl {...args}>
-      <SegmentedControlItem id="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
-      <SegmentedControlItem id="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
-      <SegmentedControlItem id="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
+      <SegmentedControlItem id="unordered">
+        <ListBulleted />
+        <Text>Unordered</Text>
+      </SegmentedControlItem>
+      <SegmentedControlItem id="ordered">
+        <ListNumbered />
+        <Text>Ordered</Text>
+      </SegmentedControlItem>
+      <SegmentedControlItem id="task list">
+        <ListMultiSelect />
+        <Text>Task List</Text>
+      </SegmentedControlItem>
     </SegmentedControl>
   ),
   args: {
@@ -60,11 +69,17 @@ export const WithIcons: Story = {
 };
 
 export const OnlyIcons: Story = {
-  render: (args) => (
+  render: args => (
     <SegmentedControl {...args}>
-      <SegmentedControlItem id="align bottom"><AlignBottom /></SegmentedControlItem>
-      <SegmentedControlItem id="align center"><AlignCenter /></SegmentedControlItem>
-      <SegmentedControlItem id="align left"><AlignLeft /></SegmentedControlItem>
+      <SegmentedControlItem id="align bottom">
+        <AlignBottom />
+      </SegmentedControlItem>
+      <SegmentedControlItem id="align center">
+        <AlignCenter />
+      </SegmentedControlItem>
+      <SegmentedControlItem id="align left">
+        <AlignLeft />
+      </SegmentedControlItem>
     </SegmentedControl>
   ),
   args: {
@@ -73,7 +88,7 @@ export const OnlyIcons: Story = {
 };
 
 export const CustomWidthJustified: Story = {
-  render: (args) => (
+  render: args => (
     <SegmentedControl {...args} styles={style({width: 400})}>
       <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
       <SegmentedControlItem id="specs">Specs</SegmentedControlItem>

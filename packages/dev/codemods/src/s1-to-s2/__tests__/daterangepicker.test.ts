@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes isQuiet', `
+test(
+  'Removes isQuiet',
+  `
 
 import {DateRangePicker} from '@adobe/react-spectrum';
 let isQuiet = true;
@@ -19,10 +21,12 @@ let props = {isQuiet: true};
   <DateRangePicker isQuiet={'foo' === 'foo'} />
   <DateRangePicker {...props} />
 </div>
-`);
+`
+);
 
-
-test('changes validationState to isInvalid or nothing', `
+test(
+  'changes validationState to isInvalid or nothing',
+  `
   import {DateRangePicker} from '@adobe/react-spectrum';
   let validationState = 'invalid';
   let props = {validationState: 'invalid'};
@@ -32,4 +36,5 @@ test('changes validationState to isInvalid or nothing', `
     <DateRangePicker validationState={validationState} />
     <DateRangePicker {...props} />
   </div>
-`);
+`
+);

@@ -62,13 +62,18 @@ let itemsLowVariance = [
 function DynamicCardView(props: SpectrumCardViewProps<object>): JSX.Element {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
-  let {
-    layout = gridLayout,
-    items
-  } = props;
+  let {layout = gridLayout, items} = props;
 
   return (
-    <CardView {...props} items={items} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
+    <CardView
+      {...props}
+      items={items}
+      layout={layout}
+      width="800px"
+      height="800px"
+      UNSAFE_style={{background: 'white'}}
+      aria-label="Test CardView"
+      selectionMode="multiple">
       {(item: any) => (
         <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
           <Image src={item.src} data-chromatic="ignore" />
@@ -82,16 +87,16 @@ function DynamicCardView(props: SpectrumCardViewProps<object>): JSX.Element {
 }
 
 export const DefaultGrid: CardViewStory = {
-  render: (args) => <DynamicCardView {...args} />,
+  render: args => <DynamicCardView {...args} />,
   args: {items: itemsLowVariance}
 };
 
 export const DefaultGallery: CardViewStory = {
-  render: (args) => <DynamicCardView {...args} />,
+  render: args => <DynamicCardView {...args} />,
   args: {items: itemsLowVariance, layout: GalleryLayout}
 };
 
 export const DefaultWaterfall: CardViewStory = {
-  render: (args) => <DynamicCardView {...args} />,
+  render: args => <DynamicCardView {...args} />,
   args: {items: itemsLowVariance, layout: WaterfallLayout}
 };

@@ -2,10 +2,6 @@
   "name": "react-aria-starter-docs",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "yarn@4.2.2",
-  "browserslist": [
-    "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions"
-  ],
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -29,9 +25,13 @@
     "typescript": "^5.8.2"
   },
   "resolutions": {
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
     "@types/mime": "3.0.4",
-    "jackspeak": "2.1.1"
-  }
+    "jackspeak": "2.1.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "browserslist": [
+    "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions"
+  ],
+  "packageManager": "yarn@4.2.2"
 }

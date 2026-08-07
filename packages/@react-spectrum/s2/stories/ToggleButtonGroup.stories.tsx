@@ -54,21 +54,36 @@ let justifiedStyle = style({
 });
 
 export const Example: StoryObj<typeof ToggleButtonGroup> = {
-  render: (args) => (
+  render: args => (
     <ToggleButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-      <ToggleButton id={1}><Bold /><Text slot="label">Bold</Text></ToggleButton>
-      <ToggleButton id={2}><Italic /><Text slot="label">Italic</Text></ToggleButton>
-      <ToggleButton id={3}><Underline /><Text slot="label">Underline</Text></ToggleButton>
+      <ToggleButton id={1}>
+        <Bold />
+        <Text slot="label">Bold</Text>
+      </ToggleButton>
+      <ToggleButton id={2}>
+        <Italic />
+        <Text slot="label">Italic</Text>
+      </ToggleButton>
+      <ToggleButton id={3}>
+        <Underline />
+        <Text slot="label">Underline</Text>
+      </ToggleButton>
     </ToggleButtonGroup>
   )
 };
 
 export const IconOnly: StoryObj<typeof ToggleButtonGroup> = {
-  render: (args) => (
+  render: args => (
     <ToggleButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-      <ToggleButton id={1} aria-label="Bold"><Bold /></ToggleButton>
-      <ToggleButton id={2} aria-label="Italic"><Italic /></ToggleButton>
-      <ToggleButton id={3} aria-label="Underline"><Underline /></ToggleButton>
+      <ToggleButton id={1} aria-label="Bold">
+        <Bold />
+      </ToggleButton>
+      <ToggleButton id={2} aria-label="Italic">
+        <Italic />
+      </ToggleButton>
+      <ToggleButton id={3} aria-label="Underline">
+        <Underline />
+      </ToggleButton>
     </ToggleButtonGroup>
   )
 };

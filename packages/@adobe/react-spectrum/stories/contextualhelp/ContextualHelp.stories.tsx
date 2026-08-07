@@ -33,12 +33,28 @@ export default {
     placement: {
       control: 'select',
       options: [
-        'bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
-        'top', 'top left', 'top right', 'top start', 'top end',
-        'left', 'left top', 'left bottom',
-        'start', 'start top', 'start bottom',
-        'right', 'right top', 'right bottom',
-        'end', 'end top', 'end bottom'
+        'bottom',
+        'bottom left',
+        'bottom right',
+        'bottom start',
+        'bottom end',
+        'top',
+        'top left',
+        'top right',
+        'top start',
+        'top end',
+        'left',
+        'left top',
+        'left bottom',
+        'start',
+        'start top',
+        'start bottom',
+        'right',
+        'right top',
+        'right bottom',
+        'end',
+        'end top',
+        'end bottom'
       ]
     },
     variant: {
@@ -72,7 +88,12 @@ export default {
 
 export type ContextualHelpStory = StoryObj<typeof ContextualHelp>;
 
-const helpText = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem.</Text>;
+const helpText = () => (
+  <Text>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit
+    amet suscipit lorem.
+  </Text>
+);
 
 export const Default: ContextualHelpStory = {
   args: {
@@ -91,7 +112,9 @@ export const WithLink: ContextualHelpStory = {
       <>
         <Heading>Help title</Heading>
         <Content>{helpText()}</Content>
-        <Footer><Link>Learn more</Link></Footer>
+        <Footer>
+          <Link>Learn more</Link>
+        </Footer>
       </>
     )
   },
@@ -102,9 +125,11 @@ export const WithButton: ContextualHelpStory = {
   args: {
     marginStart: 'size-100'
   },
-  render: (args) => (
+  render: args => (
     <Flex alignItems="center">
-      <Button variant="primary" isDisabled>Create</Button>
+      <Button variant="primary" isDisabled>
+        Create
+      </Button>
       <ContextualHelp {...args} UNSAFE_className="foo">
         <Heading>Help title</Heading>
         <Content>{helpText()}</Content>
@@ -116,7 +141,7 @@ export const WithButton: ContextualHelpStory = {
 };
 
 export const AriaLabelledyBy: ContextualHelpStory = {
-  render: (args) => (
+  render: args => (
     <Flex alignItems="center">
       <div id="foo">I label the contextual help button</div>
       <ContextualHelp {...args} aria-labelledby="foo">

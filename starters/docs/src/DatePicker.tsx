@@ -4,7 +4,7 @@ import {
   type DatePickerProps as AriaDatePickerProps,
   type DateValue,
   Group,
-  type ValidationResult,
+  type ValidationResult
 } from 'react-aria-components/DatePicker';
 import {DateInput, DateSegment} from './DateField';
 import {Label, FieldError, Description} from './Form';
@@ -20,17 +20,20 @@ export interface DatePickerProps<T extends DateValue> extends AriaDatePickerProp
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function DatePicker<T extends DateValue>(
-  { label, description, errorMessage, ...props }: DatePickerProps<T>
-) {
+export function DatePicker<T extends DateValue>({
+  label,
+  description,
+  errorMessage,
+  ...props
+}: DatePickerProps<T>) {
   return (
     <AriaDatePicker {...props}>
       <Label>{label}</Label>
       <Group>
-        <DateInput>
-          {(segment) => <DateSegment segment={segment} />}
-        </DateInput>
-        <FieldButton><ChevronDown /></FieldButton>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        <FieldButton>
+          <ChevronDown />
+        </FieldButton>
       </Group>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>

@@ -13,7 +13,6 @@
 import {RuleTester} from 'eslint';
 import sortImportsRule from '../rules/sort-imports.js';
 
-
 const ruleTester = new RuleTester({
   // Must use at least ecmaVersion 2015 because
   // that's when `const` variables were introduced.
@@ -26,34 +25,39 @@ const ruleTester = new RuleTester({
 ruleTester.run(
   'no-react-key', // rule name
   sortImportsRule, // rule code
-  { // checks
+  {
+    // checks
     // 'valid' checks cases that should pass
-    valid: [{
-      code: "import {A, B} from 'foo';"
-    }, {
-      code: `
+    valid: [
+      {
+        code: "import {A, B} from 'foo';"
+      },
+      {
+        code: `
 import {A} from 'foo';
 import {B} from 'bar';
 `
-    }],
+      }
+    ],
     // 'invalid' checks cases that should not pass
-    invalid: [{
-      code: "import {B, A} from 'foo';",
-      output: "import {A, B} from 'foo';",
-      errors: 1
-    },
-    // we don't support this case yet
-    {
-      code: `
+    invalid: [
+      {
+        code: "import {B, A} from 'foo';",
+        output: "import {A, B} from 'foo';",
+        errors: 1
+      },
+      // we don't support this case yet
+      {
+        code: `
 import {B} from 'bar';
 import {A} from 'foo';
 `,
-      output: `
+        output: `
 import {A} from 'foo';
 import {B} from 'bar';
 `,
-      errors: 1
-    }
+        errors: 1
+      }
     ]
   }
 );

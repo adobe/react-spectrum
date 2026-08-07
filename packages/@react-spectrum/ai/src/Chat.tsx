@@ -1,0 +1,479 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {ButtonContext} from 'react-aria-components/Button';
+import {
+  CollectionRendererContext,
+  createLeafComponent
+} from 'react-aria-components/CollectionBuilder';
+import {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
+import {DOMRef, forwardRefType, Node} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {focusRing, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  GridList,
+  GridListItem,
+  GridListItemProps,
+  GridListLoadMoreItemProps,
+  GridListProps
+} from 'react-aria-components/GridList';
+import {inertValue} from 'react-aria/private/utils/inertValue';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {ListLayout} from './ListLayout';
+import {ListStateContext} from 'react-aria-components/ListBox';
+import {LoaderNode} from 'react-aria/private/collections/BaseCollection';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import {useDOMRef} from './useDOMRef';
+import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
+import {useFocusWithin} from 'react-aria/useFocusWithin';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useRenderProps} from 'react-aria-components/useRenderProps';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
+
+const scrollButtonWrapper = style({
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
+  },
+  translateY: {
+    isEntering: 4,
+    isExiting: 4
+  },
+  transition: '[opacity, translate]',
+  transitionDuration: 200,
+  transitionTimingFunction: {
+    isExiting: 'in'
+  },
+  pointerEvents: {
+    isExiting: 'none'
+  }
+});
+
+export interface PromptFocusContextValue {
+  onFocusChange: (isFocused: boolean) => void;
+}
+
+export const PromptFocusContext = createContext<PromptFocusContextValue>({
+  onFocusChange: () => {}
+});
+
+interface InternalChatContextValue {
+  announceItem: (text: string) => void;
+  setIsNearBottom: (isNear: boolean) => void;
+  setScrollElement: (element: HTMLElement | null) => void;
+}
+
+const InternalChatContext = createContext<InternalChatContextValue>({
+  announceItem: text => announce(text, 'polite'),
+  setIsNearBottom: () => {},
+  setScrollElement: () => {}
+});
+
+interface ThreadScrollButtonContextValue {
+  isNearBottom: boolean;
+  scrollToBottom: () => void;
+  'aria-label': string;
+}
+
+const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>({
+  isNearBottom: true,
+  scrollToBottom: () => {},
+  'aria-label': ''
+});
+
+// TODO: make this more RAC like (aka default class name and other RAC prop)
+export interface ChatProps {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+  /**
+   * Children of the chat, such as Thread, PromptField, and ThreadScrollButton.
+   */
+  children?: ReactNode;
+}
+
+export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
+  props: ChatProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {children, styles} = props;
+  let domRef = useDOMRef(ref);
+  let isFieldFocusedRef = useRef(false);
+  let isChatFocusWithinRef = useRef(false);
+  let hasNewMessagesRef = useRef(false);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+
+  let scrollRef = useRef<HTMLElement | null>(null);
+  let scrollToBottom = useCallback(() => {
+    let el = scrollRef.current;
+    if (!el) {
+      return;
+    }
+    // TODO: will need some kind of api to programatically set the focused item to
+    // the newest item in the gridlist in the virtualizer case. this works for
+    // non-virtualized for now though
+    // 'scrollend' does not compose across shadow DOM boundaries, but this listener is intentionally
+    // scoped to this specific scroll container element (not a global target), so shadow root
+    // propagation does not apply here.
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
+    el.addEventListener(
+      'scrollend',
+      () => {
+        let firstRow = el.querySelector<HTMLElement>('[role="row"]');
+        (firstRow ?? el).focus();
+      },
+      {once: true}
+    );
+    el.scrollTo({top: el.scrollHeight - el.clientHeight, behavior: 'smooth'});
+  }, []);
+  let [isNearBottom, setIsNearBottom] = useState(true);
+
+  // only announce new items if user is in the prompt field, otherwise if they
+  // are outside the field, only announce there are new responses. If not in chat at all, don't announce
+  let announceItem = useCallback(
+    (text: string) => {
+      if (isFieldFocusedRef.current) {
+        announce(text, 'polite');
+        return;
+      }
+
+      if (isChatFocusWithinRef.current) {
+        // TODO: ideally announce number of new messages, but only count system messages? maybe threaditem needs
+        // to have a "type" prop
+        if (!hasNewMessagesRef.current) {
+          hasNewMessagesRef.current = true;
+          announce(stringFormatter.format('chat.newMessage'), 'polite');
+          // TODO: arbirary amount of time to wait before announcing new message, maybe we don't clear until
+          // we detect they scroll down? Or maybe when we do the message count we do it after a certain number of messages?
+          // or maybe this is fine
+          timeout.current = setTimeout(() => {
+            hasNewMessagesRef.current = false;
+            timeout.current = null;
+          }, 5000);
+        }
+      }
+    },
+    [stringFormatter]
+  );
+
+  let setScrollElement = useCallback((el: HTMLElement | null) => {
+    scrollRef.current = el;
+  }, []);
+
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: isFocused => {
+      isChatFocusWithinRef.current = isFocused;
+    }
+  });
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current !== null) {
+        clearTimeout(timeout.current);
+      }
+    };
+  }, []);
+
+  return (
+    <Provider
+      values={[
+        [InternalChatContext, {announceItem, setIsNearBottom, setScrollElement}],
+        [
+          ThreadScrollButtonContext,
+          {
+            isNearBottom,
+            scrollToBottom,
+            'aria-label': stringFormatter.format('chat.scrollToBottom')
+          }
+        ],
+        [
+          PromptFocusContext,
+          {
+            onFocusChange: (focused: boolean) => {
+              isFieldFocusedRef.current = focused;
+            }
+          }
+        ]
+      ]}>
+      <div ref={domRef} className={styles} {...focusWithinProps}>
+        {children}
+      </div>
+    </Provider>
+  );
+});
+
+export interface ThreadProps<T extends object> extends Pick<
+  GridListProps<T>,
+  'items' | 'children' | 'aria-label' | 'aria-labelledby'
+> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+  /**
+   * The maximum distance in px from the bottom of the content for the
+   * viewport to be considered "near the end". While near the end, appended content and streaming
+   * size changes will keep the viewport pinned to the latest output.
+   *
+   * @default 100
+   */
+  scrollEndThreshold?: number;
+}
+
+export function Thread<T extends object>(props: ThreadProps<T>) {
+  let {
+    items,
+    children,
+    styles,
+    scrollEndThreshold = 100,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby
+  } = props;
+
+  let {setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
+  let isNearBottomRef = useRef(true);
+  let gridListRef = useRef<HTMLDivElement | null>(null);
+  let callbackRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      gridListRef.current = el;
+      setScrollElement(el);
+    },
+    [setScrollElement]
+  );
+
+  let handleScroll = useCallback(() => {
+    let el = gridListRef.current;
+    if (!el) {
+      return;
+    }
+
+    let nearBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold;
+    isNearBottomRef.current = nearBottom;
+    setIsNearBottom(nearBottom);
+  }, [setIsNearBottom, scrollEndThreshold]);
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        estimatedRowHeight: 100,
+        padding: 4,
+        gap: 8,
+        anchorTo: 'end',
+        loaderSize: 48,
+        scrollEndThreshold
+      }}
+      shouldObserveItemSize>
+      <GridList
+        ref={callbackRef}
+        disallowTypeAhead
+        onScroll={handleScroll}
+        keyboardNavigationBehavior="tab"
+        UNSTABLE_focusOnEntry="last"
+        items={items}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
+        // TODO: for now we enforce this, but to be configurable?
+        style={{
+          display: 'flex',
+          boxSizing: 'border-box',
+          minWidth: 0
+        }}
+        className={styles}>
+        {children}
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+export interface ThreadScrollButtonProps {
+  children?: ReactNode;
+}
+
+// TODO: wrapper so we can do the "if isNearBottom then hide" logic, could do this via inline styles perhaps
+// and ditch the wrapper?
+export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
+  let {isNearBottom, scrollToBottom, ...buttonProps} = useContext(ThreadScrollButtonContext);
+  let ref = useRef<HTMLDivElement>(null);
+  let isVisible = !isNearBottom;
+  let isExiting = useExitAnimation(ref, isVisible);
+
+  if (!isVisible && !isExiting) {
+    return null;
+  }
+
+  return (
+    <ButtonContext.Provider
+      value={{slots: {[DEFAULT_SLOT]: {}, scroll: {onPress: scrollToBottom, ...buttonProps}}}}>
+      <ThreadScrollButtonInner domRef={ref} isExiting={isExiting}>
+        {children}
+      </ThreadScrollButtonInner>
+    </ButtonContext.Provider>
+  );
+}
+
+interface ThreadScrollButtonInnerProps {
+  domRef: RefObject<HTMLDivElement | null>;
+  isExiting: boolean;
+  children?: ReactNode;
+}
+
+function ThreadScrollButtonInner({domRef, isExiting, children}: ThreadScrollButtonInnerProps) {
+  let isEntering = useEnterAnimation(domRef);
+  return (
+    <div ref={domRef} className={scrollButtonWrapper({isEntering, isExiting})}>
+      {children}
+    </div>
+  );
+}
+
+const threadItemBase = style({
+  ...focusRing(),
+  borderRadius: 'default'
+});
+
+export interface ThreadItemProps extends Pick<
+  GridListItemProps,
+  'children' | 'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'
+> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+  /** Whether or not the item's content is currently being streamed in. */
+  isStreaming?: boolean;
+  /** Announce textValue on mount even when isStreaming is provided. */
+  shouldAnnounceOnMount?: boolean;
+}
+
+export function ThreadItem(props: ThreadItemProps) {
+  let {
+    styles,
+    children,
+    textValue = ' ',
+    isStreaming,
+    shouldAnnounceOnMount,
+    focusMode,
+    allowsArrowNavigation
+  } = props;
+  let {announceItem} = useContext(InternalChatContext);
+
+  // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
+  // to constantly reset. If we used a live region and updated its contents when streaming finished that worked decently
+  // but still feels quite verbose. Stick with this and get feedback
+  useLayoutEffect(() => {
+    if ((isStreaming === undefined || shouldAnnounceOnMount) && textValue && textValue !== ' ') {
+      announceItem(textValue);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  let isStreamingNow = isStreaming ?? false;
+  let prevStreamingRef = useRef(isStreamingNow);
+  useLayoutEffect(() => {
+    if (isStreaming === undefined) {
+      return;
+    }
+    let wasStreaming = prevStreamingRef.current;
+    prevStreamingRef.current = isStreamingNow;
+    if (wasStreaming && !isStreamingNow && textValue && textValue !== ' ') {
+      announceItem(textValue);
+    }
+  }, [isStreaming, isStreamingNow, textValue, announceItem]);
+
+  return (
+    <GridListItem
+      textValue={textValue}
+      focusMode={focusMode}
+      allowsArrowNavigation={allowsArrowNavigation}
+      className={renderProps => mergeStyles(threadItemBase({...renderProps}), styles)}>
+      {children}
+    </GridListItem>
+  );
+}
+
+export interface ThreadLoadMoreItemProps extends GridListLoadMoreItemProps {}
+
+// TODO: Reuse GridListLoadMoreItem instead when Thread component moves into RAC.
+// Re-implementing here so we can avoid passing 'direction' to the LoadMore item
+export const ThreadLoadMoreItem = createLeafComponent(
+  LoaderNode,
+  function GridListLoadingIndicator(
+    props: GridListLoadMoreItemProps,
+    ref: ForwardedRef<HTMLDivElement>,
+    item: Node<object>
+  ) {
+    let state = useContext(ListStateContext)!;
+    let direction: 'start' | 'end' | undefined = 'start';
+    let {isVirtualized} = useContext(CollectionRendererContext);
+    let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+
+    let sentinelRef = useRef(null);
+    let memoedLoadMoreProps = useMemo(
+      () => ({onLoadMore, collection: state?.collection, scrollOffset, direction}),
+      [onLoadMore, scrollOffset, state?.collection, direction]
+    );
+    useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+
+    let renderProps = useRenderProps({
+      ...otherProps,
+      id: undefined,
+      children: item.rendered,
+      defaultClassName: 'react-aria-GridListLoadingIndicator',
+      values: undefined
+    });
+    // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
+    // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+    // item count
+
+    return (
+      <>
+        {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+        {/* @ts-ignore - compatibility with React < 19 */}
+        <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)}>
+          <div
+            data-testid="loadMoreSentinel"
+            ref={sentinelRef}
+            style={{position: 'absolute', height: 1, width: 1}}
+          />
+        </div>
+        {isLoading && renderProps.children && (
+          <div {...renderProps} {...filterDOMProps(props, {global: true})} role="row" ref={ref}>
+            <div aria-colindex={isVirtualized ? 1 : undefined} role="gridcell">
+              {renderProps.children}
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+);

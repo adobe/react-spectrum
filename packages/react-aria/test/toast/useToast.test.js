@@ -27,12 +27,17 @@ describe('useToast', () => {
   });
 
   let renderToastHook = (props, state, wrapper) => {
-    let {result} = renderHook(() => useToast(props, state, useRef(document.createElement('div'))), {wrapper});
+    let {result} = renderHook(() => useToast(props, state, useRef(document.createElement('div'))), {
+      wrapper
+    });
     return result.current;
   };
 
   it('handles defaults', function () {
-    let {closeButtonProps, toastProps, contentProps, titleProps} = renderToastHook({toast: {}}, {close});
+    let {closeButtonProps, toastProps, contentProps, titleProps} = renderToastHook(
+      {toast: {}},
+      {close}
+    );
 
     expect(toastProps.role).toBe('alertdialog');
     expect(contentProps.role).toBe('alert');

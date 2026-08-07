@@ -15,9 +15,11 @@ const meta: Meta<typeof CommandPalette> = {
 export default meta;
 type Story = StoryFn<typeof CommandPalette>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <DialogTrigger>
-    <Button>Open Command Palette <kbd>⌘ J</kbd></Button>
+    <Button>
+      Open Command Palette <kbd>⌘ J</kbd>
+    </Button>
     <CommandPalette {...args}>
       <MenuItem>Create new file...</MenuItem>
       <MenuItem>Create new folder...</MenuItem>

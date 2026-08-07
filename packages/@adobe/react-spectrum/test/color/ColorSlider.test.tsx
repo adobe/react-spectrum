@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, renderv3 as render} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installMouseEvent,
+  installPointerEvent,
+  pointerMap,
+  renderv3 as render
+} from '@react-spectrum/test-utils-internal';
 import {ColorSlider} from '../../src/color/ColorSlider';
 import {parseColor} from 'react-stately/Color';
 import React from 'react';
@@ -23,8 +30,10 @@ describe('ColorSlider', () => {
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
-    // @ts-ignore
-    jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+    jest
+      .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+      // @ts-ignore
+      .mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     jest.useFakeTimers();
   });
 
@@ -32,7 +41,9 @@ describe('ColorSlider', () => {
     onChangeSpy.mockClear();
     onChangeEndSpy.mockClear();
     // for restoreTextSelection
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('sets input props', () => {
@@ -102,7 +113,9 @@ describe('ColorSlider', () => {
     });
 
     it('allows a custom aria-label', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-label="Test" />);
+      let {getByRole} = render(
+        <ColorSlider defaultValue="#000000" channel="red" aria-label="Test" />
+      );
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -113,7 +126,9 @@ describe('ColorSlider', () => {
     });
 
     it('allows a custom aria-labelledby', () => {
-      let {getByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-labelledby="label-id" />);
+      let {getByRole} = render(
+        <ColorSlider defaultValue="#000000" channel="red" aria-labelledby="label-id" />
+      );
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -152,7 +167,9 @@ describe('ColorSlider', () => {
     });
 
     it('hides value label with showValueLabel=false', () => {
-      let {queryByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" showValueLabel={false} />);
+      let {queryByRole} = render(
+        <ColorSlider defaultValue="#7f0000" channel="red" showValueLabel={false} />
+      );
       expect(queryByRole('status')).toBeNull();
     });
 
@@ -162,17 +179,23 @@ describe('ColorSlider', () => {
     });
 
     it('hides value label when aria-label is specified', () => {
-      let {queryByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" aria-label="Test" />);
+      let {queryByRole} = render(
+        <ColorSlider defaultValue="#7f0000" channel="red" aria-label="Test" />
+      );
       expect(queryByRole('status')).toBeNull();
     });
 
     it('hides value label when aria-labelledby is specified', () => {
-      let {queryByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" aria-labelledby="label-id" />);
+      let {queryByRole} = render(
+        <ColorSlider defaultValue="#7f0000" channel="red" aria-labelledby="label-id" />
+      );
       expect(queryByRole('status')).toBeNull();
     });
 
     it('hides label and value label and has default aria-label when orientation=vertical', () => {
-      let {getByRole, queryByRole} = render(<ColorSlider defaultValue="#000000" channel="red" orientation="vertical" />);
+      let {getByRole, queryByRole} = render(
+        <ColorSlider defaultValue="#000000" channel="red" orientation="vertical" />
+      );
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -185,7 +208,9 @@ describe('ColorSlider', () => {
     });
 
     it('uses custom label as aria-label orientation=vertical', () => {
-      let {getByRole, queryByRole} = render(<ColorSlider defaultValue="#000000" channel="red" label="Test" orientation="vertical" />);
+      let {getByRole, queryByRole} = render(
+        <ColorSlider defaultValue="#000000" channel="red" label="Test" orientation="vertical" />
+      );
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -198,7 +223,14 @@ describe('ColorSlider', () => {
     });
 
     it('supports custom aria-label with orientation=vertical', () => {
-      let {getByRole, queryByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-label="Test" orientation="vertical" />);
+      let {getByRole, queryByRole} = render(
+        <ColorSlider
+          defaultValue="#000000"
+          channel="red"
+          aria-label="Test"
+          orientation="vertical"
+        />
+      );
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -211,7 +243,14 @@ describe('ColorSlider', () => {
     });
 
     it('supports custom aria-labelledby with orientation=vertical', () => {
-      let {getByRole, queryByRole} = render(<ColorSlider defaultValue="#000000" channel="red" aria-labelledby="label-id" orientation="vertical" />);
+      let {getByRole, queryByRole} = render(
+        <ColorSlider
+          defaultValue="#000000"
+          channel="red"
+          aria-labelledby="label-id"
+          orientation="vertical"
+        />
+      );
       let slider = getByRole('slider');
       let group = getByRole('group');
 
@@ -225,11 +264,13 @@ describe('ColorSlider', () => {
   });
 
   it('the slider is focusable', async () => {
-    let {getAllByRole, getByRole} = render(<div>
-      <button>A</button>
-      <ColorSlider defaultValue="#000000" channel="red" />
-      <button>B</button>
-    </div>);
+    let {getAllByRole, getByRole} = render(
+      <div>
+        <button>A</button>
+        <ColorSlider defaultValue="#000000" channel="red" />
+        <button>B</button>
+      </div>
+    );
     let slider = getByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
 
@@ -244,11 +285,13 @@ describe('ColorSlider', () => {
   });
 
   it('disabled', async () => {
-    let {getAllByRole, getByRole} = render(<div>
-      <button>A</button>
-      <ColorSlider defaultValue="#000000" channel="red" isDisabled />
-      <button>B</button>
-    </div>);
+    let {getAllByRole, getByRole} = render(
+      <div>
+        <button>A</button>
+        <ColorSlider defaultValue="#000000" channel="red" isDisabled />
+        <button>B</button>
+      </div>
+    );
     let slider = getByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
     expect(slider).toHaveAttribute('disabled');
@@ -293,9 +336,9 @@ describe('ColorSlider', () => {
 
   if (parseInt(React.version, 10) >= 19) {
     it('resets to defaultValue when submitting form action', async () => {
-      function Test() {        
+      function Test() {
         const [value, formAction] = React.useActionState(() => '#f00', '#000');
-        
+
         return (
           <form action={formAction}>
             <ColorSlider channel="red" defaultValue={value} />
@@ -317,72 +360,133 @@ describe('ColorSlider', () => {
   describe('keyboard events', () => {
     it('works', async () => {
       let defaultColor = parseColor('#000000');
-      let {getByRole} = render(<ColorSlider defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} channel="red" />);
+      let {getByRole} = render(
+        <ColorSlider
+          defaultValue={defaultColor}
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          channel="red"
+        />
+      );
       let slider = getByRole('slider');
-      act(() => {slider.focus();});
+      act(() => {
+        slider.focus();
+      });
 
       await user.keyboard('{ArrowRight}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
+      expect(onChangeSpy.mock.calls[0][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 1).toString('hexa')
+      );
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeEndSpy.mock.calls[0][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 1).toString('hexa')
+      );
 
       await user.keyboard('{ArrowLeft}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeSpy.mock.calls[1][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
+      expect(onChangeSpy.mock.calls[1][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 0).toString('hexa')
+      );
       expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeEndSpy.mock.calls[1][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 0).toString('hexa')
+      );
 
       await user.keyboard('{PageUp}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
-      expect(onChangeSpy.mock.calls[2][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 17).toString('hexa'));
+      expect(onChangeSpy.mock.calls[2][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 17).toString('hexa')
+      );
       expect(onChangeEndSpy).toHaveBeenCalledTimes(3);
-      expect(onChangeEndSpy.mock.calls[2][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 17).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[2][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 17).toString('hexa')
+      );
 
       await user.keyboard('{ArrowRight}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(onChangeSpy).toHaveBeenCalledTimes(4);
-      expect(onChangeSpy.mock.calls[3][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 18).toString('hexa'));
+      expect(onChangeSpy.mock.calls[3][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 18).toString('hexa')
+      );
       expect(onChangeEndSpy).toHaveBeenCalledTimes(4);
-      expect(onChangeEndSpy.mock.calls[3][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 18).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[3][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 18).toString('hexa')
+      );
 
       await user.keyboard('{PageDown}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(onChangeSpy).toHaveBeenCalledTimes(5);
-      expect(onChangeSpy.mock.calls[4][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
+      expect(onChangeSpy.mock.calls[4][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 1).toString('hexa')
+      );
       expect(onChangeEndSpy).toHaveBeenCalledTimes(5);
-      expect(onChangeEndSpy.mock.calls[4][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[4][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 1).toString('hexa')
+      );
 
       await user.keyboard('{End}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(onChangeSpy).toHaveBeenCalledTimes(6);
-      expect(onChangeSpy.mock.calls[5][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 255).toString('hexa'));
+      expect(onChangeSpy.mock.calls[5][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 255).toString('hexa')
+      );
       expect(onChangeEndSpy).toHaveBeenCalledTimes(6);
-      expect(onChangeEndSpy.mock.calls[5][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 255).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[5][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 255).toString('hexa')
+      );
 
       await user.keyboard('{PageDown}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(onChangeSpy).toHaveBeenCalledTimes(7);
-      expect(onChangeSpy.mock.calls[6][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 238).toString('hexa'));
+      expect(onChangeSpy.mock.calls[6][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 238).toString('hexa')
+      );
       expect(onChangeEndSpy).toHaveBeenCalledTimes(7);
-      expect(onChangeEndSpy.mock.calls[6][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 238).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[6][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 238).toString('hexa')
+      );
 
       await user.keyboard('{Home}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(onChangeSpy).toHaveBeenCalledTimes(8);
-      expect(onChangeSpy.mock.calls[7][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
+      expect(onChangeSpy.mock.calls[7][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 0).toString('hexa')
+      );
       expect(onChangeEndSpy).toHaveBeenCalledTimes(8);
-      expect(onChangeEndSpy.mock.calls[7][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[7][0].toString('hexa')).toBe(
+        defaultColor.withChannelValue('red', 0).toString('hexa')
+      );
     });
 
-    it('doesn\'t work when disabled', async () => {
+    it("doesn't work when disabled", async () => {
       let defaultColor = parseColor('#000000');
-      let {getByRole} = render(<ColorSlider defaultValue={defaultColor} onChange={onChangeSpy} channel="red" isDisabled />);
+      let {getByRole} = render(
+        <ColorSlider defaultValue={defaultColor} onChange={onChangeSpy} channel="red" isDisabled />
+      );
       let slider = getByRole('slider');
-      act(() => {slider.focus();});
+      act(() => {
+        slider.focus();
+      });
 
       await user.keyboard('{ArrowRight}');
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
@@ -392,28 +496,18 @@ describe('ColorSlider', () => {
   });
 
   describe.each`
-    type                | prepare               | actions
-    ${'Mouse Events'}   | ${installMouseEvent}  | ${[
-      (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, clientX: pageX, pageY, clientY: pageY}),
-      (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, clientX: pageX, pageY, clientY: pageY}),
-      (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, clientX: pageX, pageY, clientY: pageY})
-    ]}
-    ${'Pointer Events'} | ${installPointerEvent}| ${[
-      (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, clientX: pageX, pageY, clientY: pageY}),
-      (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, clientX: pageX, pageY, clientY: pageY}),
-      (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, clientX: pageX, pageY, clientY: pageY})
-    ]}
-    ${'Touch Events'}   | ${() => {}}           | ${[
-      (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, clientX: pageX, pageY, clientY: pageY}]}),
-      (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, clientX: pageX, pageY, clientY: pageY}]}),
-      (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, clientX: pageX, pageY, clientY: pageY}]})
-    ]}
+    type                | prepare                | actions
+    ${'Mouse Events'}   | ${installMouseEvent}   | ${[(el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, clientX: pageX, pageY, clientY: pageY}), (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, clientX: pageX, pageY, clientY: pageY}), (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, clientX: pageX, pageY, clientY: pageY})]}
+    ${'Pointer Events'} | ${installPointerEvent} | ${[(el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, clientX: pageX, pageY, clientY: pageY}), (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, clientX: pageX, pageY, clientY: pageY}), (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, clientX: pageX, pageY, clientY: pageY})]}
+    ${'Touch Events'}   | ${() => {}}            | ${[(el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, clientX: pageX, pageY, clientY: pageY}]}), (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, clientX: pageX, pageY, clientY: pageY}]}), (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, clientX: pageX, pageY, clientY: pageY}]})]}
   `('$type', ({actions: [start, move, end], prepare}) => {
     prepare();
 
     it('dragging the thumb works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let {getByRole} = render(
+        <ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} />
+      );
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
 
@@ -424,7 +518,9 @@ describe('ColorSlider', () => {
 
       move(thumb, {pageX: 40});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 144).toString('hsla'));
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(
+        defaultColor.withChannelValue('hue', 144).toString('hsla')
+      );
       expect(document.activeElement).toBe(slider);
 
       end(thumb, {pageX: 40});
@@ -434,7 +530,14 @@ describe('ColorSlider', () => {
 
     it('dragging the thumb works when vertical', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} orientation="vertical" />);
+      let {getByRole} = render(
+        <ColorSlider
+          channel="hue"
+          defaultValue={defaultColor}
+          onChange={onChangeSpy}
+          orientation="vertical"
+        />
+      );
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
 
@@ -445,7 +548,9 @@ describe('ColorSlider', () => {
 
       move(thumb, {pageY: 60});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 144).toString('hsla'));
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(
+        defaultColor.withChannelValue('hue', 144).toString('hsla')
+      );
       expect(document.activeElement).toBe(slider);
 
       end(thumb, {pageY: 60});
@@ -453,9 +558,11 @@ describe('ColorSlider', () => {
       expect(document.activeElement).toBe(slider);
     });
 
-    it('dragging the thumb doesn\'t works when disabled', () => {
+    it("dragging the thumb doesn't works when disabled", () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorSlider channel="hue" isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let {getByRole} = render(
+        <ColorSlider channel="hue" isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />
+      );
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
 
@@ -475,7 +582,9 @@ describe('ColorSlider', () => {
 
     it('clicking and dragging on the track works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} />);
+      let {getByRole} = render(
+        <ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} />
+      );
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
       let container = getByRole('group');
@@ -483,12 +592,16 @@ describe('ColorSlider', () => {
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageX: 50});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 180).toString('hsla'));
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(
+        defaultColor.withChannelValue('hue', 180).toString('hsla')
+      );
       expect(document.activeElement).toBe(slider);
 
       move(thumb, {pageX: 70});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 252).toString('hsla'));
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(
+        defaultColor.withChannelValue('hue', 252).toString('hsla')
+      );
       expect(document.activeElement).toBe(slider);
 
       end(thumb, {pageX: 70});
@@ -498,7 +611,14 @@ describe('ColorSlider', () => {
 
     it('clicking and dragging on the track works when vertical', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} orientation="vertical" />);
+      let {getByRole} = render(
+        <ColorSlider
+          channel="hue"
+          defaultValue={defaultColor}
+          onChange={onChangeSpy}
+          orientation="vertical"
+        />
+      );
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
       let container = getByRole('group');
@@ -506,12 +626,16 @@ describe('ColorSlider', () => {
       expect(document.activeElement).not.toBe(slider);
       start(container, {pageY: 50});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 180).toString('hsla'));
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(
+        defaultColor.withChannelValue('hue', 180).toString('hsla')
+      );
       expect(document.activeElement).toBe(slider);
 
       move(thumb, {pageY: 30});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 252).toString('hsla'));
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(
+        defaultColor.withChannelValue('hue', 252).toString('hsla')
+      );
       expect(document.activeElement).toBe(slider);
 
       end(thumb, {pageY: 30});
@@ -519,9 +643,11 @@ describe('ColorSlider', () => {
       expect(document.activeElement).toBe(slider);
     });
 
-    it('clicking and dragging on the track doesn\'t work when disabled', () => {
+    it("clicking and dragging on the track doesn't work when disabled", () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
+      let {getByRole} = render(
+        <ColorSlider channel="hue" defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />
+      );
       let slider = getByRole('slider');
       let container = getByRole('group');
 

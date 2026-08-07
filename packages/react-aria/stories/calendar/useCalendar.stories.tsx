@@ -47,12 +47,16 @@ export const Months2: ExampleStory = {
 };
 
 export const Days7SingleToday: ExampleStory = {
-  render: () => <Example defaultValue={today('UTC')} visibleDuration={{days: 7}} pageBehavior="single" />,
+  render: () => (
+    <Example defaultValue={today('UTC')} visibleDuration={{days: 7}} pageBehavior="single" />
+  ),
   name: 'days: 7, pageBehavior: single, defaultValue: today'
 };
 
 export const Weeks5SingleToday: ExampleStory = {
-  render: () => <Example defaultValue={today('UTC')} visibleDuration={{weeks: 5}} pageBehavior="single" />,
+  render: () => (
+    <Example defaultValue={today('UTC')} visibleDuration={{weeks: 5}} pageBehavior="single" />
+  ),
   name: 'weeks: 5, pageBehavior: single, defaultValue: today'
 };
 

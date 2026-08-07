@@ -10,37 +10,51 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback} from 'react';
+import {useCallback, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface OverlayTriggerProps {
   /** Whether the overlay is open by default (controlled). */
-  isOpen?: boolean,
+  isOpen?: boolean;
   /** Whether the overlay is open by default (uncontrolled). */
-  defaultOpen?: boolean,
+  defaultOpen?: boolean;
   /** Handler that is called when the overlay's open state changes. */
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void;
+}
+
+interface Point {
+  x: number;
+  y: number;
 }
 
 export interface OverlayTriggerState {
   /** Whether the overlay is currently open. */
-  readonly isOpen: boolean,
+  readonly isOpen: boolean;
   /** Sets whether the overlay is open. */
-  setOpen(isOpen: boolean): void,
+  setOpen(isOpen: boolean): void;
   /** Opens the overlay. */
-  open(): void,
+  open(): void;
   /** Closes the overlay. */
-  close(): void,
+  close(): void;
   /** Toggles the overlay's visibility. */
-  toggle(): void
+  toggle(): void;
+  /** The cursor position when the overlay was triggered, relative to the window viewport. */
+  readonly point: Point | null;
+  /** Sets the cursor position relative to the window viewport. */
+  setPoint(point: Point): void;
 }
 
 /**
  * Manages state for an overlay trigger. Tracks whether the overlay is open, and provides
  * methods to toggle this state.
  */
-export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTriggerState  {
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTriggerState {
+  let [isOpen, setOpen] = useControlledState(
+    props.isOpen,
+    props.defaultOpen || false,
+    props.onOpenChange
+  );
+  let [point, setPoint] = useState<Point | null>(null);
 
   const open = useCallback(() => {
     setOpen(true);
@@ -59,6 +73,8 @@ export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTrigg
     setOpen,
     open,
     close,
-    toggle
+    toggle,
+    point,
+    setPoint
   };
 }

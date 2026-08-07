@@ -296,7 +296,6 @@ describe('Breadcrumbs', function () {
     expect(getByText('Folder 5')).toBeTruthy();
   });
 
-
   it('can open the menu', async () => {
     let onAction = jest.fn();
     let {getAllByText, getByRole, getAllByRole} = render(
@@ -313,7 +312,9 @@ describe('Breadcrumbs', function () {
 
     let menuButton = getByRole('button');
     await user.click(menuButton);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let menu = getByRole('menu');
     expect(menu).toBeTruthy();
@@ -327,7 +328,9 @@ describe('Breadcrumbs', function () {
     expect(item1[0]).toHaveAttribute('role', 'link');
     await user.click(item1[0]);
     // first press closes the menu, second press
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     await user.click(item1[0]);
     expect(onAction).toHaveBeenCalledWith('Folder 1');
 
@@ -434,7 +437,9 @@ describe('Breadcrumbs', function () {
 
     let menuButton = getByRole('button');
     await user.click(menuButton);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let menu = getByRole('menu');
     let items = within(menu).getAllByRole('menuitemradio');
@@ -449,11 +454,21 @@ describe('Breadcrumbs', function () {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} router={{navigate, useHref}}>
         <Breadcrumbs>
-          <Item href="/" routerOptions={{foo: 'bar'}}>Example.com</Item>
-          <Item href="/foo" routerOptions={{foo: 'foo'}}>Foo</Item>
-          <Item href="/foo/bar" routerOptions={{foo: 'bar'}}>Bar</Item>
-          <Item href="/foo/bar/baz" routerOptions={{foo: 'bar'}}>Baz</Item>
-          <Item href="/foo/bar/baz/qux" routerOptions={{foo: 'bar'}}>Qux</Item>
+          <Item href="/" routerOptions={{foo: 'bar'}}>
+            Example.com
+          </Item>
+          <Item href="/foo" routerOptions={{foo: 'foo'}}>
+            Foo
+          </Item>
+          <Item href="/foo/bar" routerOptions={{foo: 'bar'}}>
+            Bar
+          </Item>
+          <Item href="/foo/bar/baz" routerOptions={{foo: 'bar'}}>
+            Baz
+          </Item>
+          <Item href="/foo/bar/baz/qux" routerOptions={{foo: 'bar'}}>
+            Qux
+          </Item>
         </Breadcrumbs>
       </Provider>
     );
@@ -466,7 +481,9 @@ describe('Breadcrumbs', function () {
 
     let menuButton = getByRole('button');
     await user.click(menuButton);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let menu = getByRole('menu');
     let items = within(menu).getAllByRole('menuitemradio');

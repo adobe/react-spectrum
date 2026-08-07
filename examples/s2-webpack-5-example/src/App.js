@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import React, { useState } from "react";
-import "@react-spectrum/s2/page.css";
+import React, {useState} from 'react';
+import '@react-spectrum/s2/page.css';
 import {
-  ActionBar,
   ActionButton,
   ActionButtonGroup,
   ActionMenu,
   Button,
   ButtonGroup,
   Cell,
+  Collection,
   Column,
   Content,
   ContextualHelpPopover,
@@ -46,30 +46,190 @@ import {
   TreeView,
   TreeViewItem,
   TreeViewItemContent,
-  UnavailableMenuItemTrigger
-} from "@react-spectrum/s2";
-import Edit from "@react-spectrum/s2/icons/Edit";
-import FileTxt from "@react-spectrum/s2/icons/FileText";
-import Folder from "@react-spectrum/s2/icons/Folder";
-import Section from "./components/Section";
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
-import { CardViewExample } from "./components/CardViewExample";
-import { CollectionCardsExample } from "./components/CollectionCardsExample";
+  UnavailableMenuItemTrigger,
+  useDragAndDrop,
+  useListData,
+  useTreeData
+} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import FileTxt from '@react-spectrum/s2/icons/FileText';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import Section from './components/Section';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {CardViewExample} from './components/CardViewExample';
+import {CollectionCardsExample} from './components/CollectionCardsExample';
 
 const Lazy = React.lazy(() => import('./Lazy'));
+
+let listItems = [
+  {id: 'photoshop', name: 'Adobe Photoshop'},
+  {id: 'xd', name: 'Adobe XD'},
+  {id: 'indesign', name: 'Adobe InDesign'},
+  {id: 'premiere', name: 'Adobe Premiere'},
+  {id: 'aftereffects', name: 'Adobe After Effects'}
+];
+
+let tableItems = [
+  {id: '1', name: 'Games', type: 'File folder', modified: '6/7/2020'},
+  {id: '2', name: 'Program Files', type: 'File folder', modified: '4/7/2021'},
+  {id: '3', name: 'bootmgr', type: 'System file', modified: '11/20/2010'},
+  {id: '4', name: 'log.txt', type: 'Text document', modified: '1/2/2022'},
+  {id: '5', name: 'readme.md', type: 'Text document', modified: '3/15/2023'}
+];
+
+let treeItems = [
+  {id: 'photos', name: 'Photos'},
+  {
+    id: 'projects',
+    name: 'Projects',
+    childItems: [
+      {
+        id: 'projects-1',
+        name: 'Projects-1',
+        childItems: [{id: 'projects-1A', name: 'Projects-1A'}]
+      },
+      {id: 'projects-2', name: 'Projects-2'},
+      {id: 'projects-3', name: 'Projects-3'}
+    ]
+  }
+];
+
+function ReorderableListView() {
+  let list = useListData({initialItems: listItems});
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list.getItem(key);
+        return {'text/plain': item.name};
+      }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  return (
+    <ListView
+      aria-label="Reorderable files"
+      selectionMode="multiple"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}
+      styles={style({width: 320, height: 320})}>
+      {item => (
+        <ListViewItem textValue={item.name}>
+          <Text>{item.name}</Text>
+        </ListViewItem>
+      )}
+    </ListView>
+  );
+}
+
+function ReorderableTableView() {
+  let list = useListData({initialItems: tableItems});
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list.getItem(key);
+        return {'text/plain': item.name};
+      }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  return (
+    <TableView
+      aria-label="Reorderable files"
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}
+      styles={style({width: 320, height: 320})}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row id={item.id}>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.modified}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+function TreeItem({id, name, childItems}) {
+  return (
+    <TreeViewItem id={id} textValue={name}>
+      <TreeViewItemContent>
+        <Text>{name}</Text>
+        {childItems?.length ? <Folder /> : <FileTxt />}
+      </TreeViewItemContent>
+      {childItems && childItems.length > 0 && (
+        <Collection items={childItems}>{item => <TreeItem {...item} />}</Collection>
+      )}
+    </TreeViewItem>
+  );
+}
+
+function ReorderableTreeView() {
+  let treeData = useTreeData({
+    initialItems: treeItems,
+    getKey: item => item.id,
+    getChildren: item => item.childItems ?? []
+  });
+  let processItem = node => ({
+    ...node.value,
+    id: node.key,
+    childItems: node.children ? [...node.children].map(processItem) : undefined
+  });
+  let items = treeData.items.map(processItem);
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = treeData.getItem(key);
+        return {'text/plain': item.value.name};
+      }),
+    getAllowedDropOperations: () => ['move'],
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        treeData.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        treeData.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  return (
+    <TreeView
+      aria-label="Reorderable tree"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
+      styles={style({width: 320, height: 320})}>
+      {item => <TreeItem {...item} />}
+    </TreeView>
+  );
+}
 
 function App() {
   let [isLazyLoaded, setLazyLoaded] = useState(false);
   let [cardViewState, setCardViewState] = useState({
     layout: 'grid',
-    loadingState: 'idle',
+    loadingState: 'idle'
   });
   let cardViewLoadingOptions = [
     {id: 'idle', label: 'Idle'},
     {id: 'loading', label: 'Loading'},
     {id: 'sorting', label: 'Sorting'},
     {id: 'loadingMore', label: 'Loading More'},
-    {id: 'error', label: 'Error'},
+    {id: 'error', label: 'Error'}
   ];
   let cardViewLayoutOptions = [
     {id: 'grid', label: 'Grid'},
@@ -77,43 +237,36 @@ function App() {
   ];
   return (
     <Provider elementType="main">
-      <Heading
-        styles={style({ font: "heading-xl", textAlign: "center" })}
-        level={1}
-      >
+      <Heading styles={style({font: 'heading-xl', textAlign: 'center'})} level={1}>
         Spectrum 2 + Webpack
       </Heading>
       <div
         className={style({
           maxWidth: 288,
-          margin: "auto",
-        })}
-      >
+          margin: 'auto'
+        })}>
         <Divider />
       </div>
       <div
         className={style({
-          display: "flex",
-          flexDirection: "column",
+          display: 'flex',
+          flexDirection: 'column',
           gap: 16,
-          alignItems: "center"
-        })}
-      >
+          alignItems: 'center'
+        })}>
         <Section title="Buttons">
           <ButtonGroup align="center" styles={style({maxWidth: '[100vw]'})}>
             <Button variant="primary">Primary</Button>
-            <Button variant="secondary"><Text>Secondary</Text></Button>
+            <Button variant="secondary">
+              <Text>Secondary</Text>
+            </Button>
             <ActionButton>
               <Edit />
               <Text>Action Button</Text>
               <NotificationBadge value={2} />
             </ActionButton>
             <ToggleButton>Toggle Button</ToggleButton>
-            <LinkButton
-              variant="primary"
-              href="https://adobe.com"
-              target="_blank"
-            >
+            <LinkButton variant="primary" href="https://adobe.com" target="_blank">
               Link Button
             </LinkButton>
             <ActionButtonGroup density="compact">
@@ -154,18 +307,18 @@ function App() {
           <CollectionCardsExample loadingState={cardViewState.loadingState} />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>
-            <Menu onAction={(key) => alert(key.toString())}>
+            <Menu onAction={key => alert(key.toString())}>
               <MenuItem id="cut">Cut</MenuItem>
               <MenuItem id="copy">Copy</MenuItem>
               <MenuItem id="paste">Paste</MenuItem>
               <MenuItem id="replace">Replace</MenuItem>
               <SubmenuTrigger>
                 <MenuItem id="share">Share</MenuItem>
-                <Menu onAction={(key) => alert(key.toString())}>
+                <Menu onAction={key => alert(key.toString())}>
                   <MenuItem id="copy-ink">Copy Link</MenuItem>
                   <SubmenuTrigger>
                     <MenuItem id="email">Email</MenuItem>
-                    <Menu onAction={(key) => alert(key.toString())}>
+                    <Menu onAction={key => alert(key.toString())}>
                       <MenuItem id="attachment">Email as Attachment</MenuItem>
                       <MenuItem id="link">Email as Link</MenuItem>
                     </Menu>
@@ -185,7 +338,7 @@ function App() {
           <MenuTrigger>
             <ActionButton>Menu Trigger</ActionButton>
             <Menu>
-              <MenuItem href="/foo" routerOptions={{ scroll: false }}>
+              <MenuItem href="/foo" routerOptions={{scroll: false}}>
                 Link to /foo
               </MenuItem>
               <MenuItem>Cut</MenuItem>
@@ -193,109 +346,19 @@ function App() {
               <MenuItem>Paste</MenuItem>
             </Menu>
           </MenuTrigger>
-          <ListView
-            aria-label="Files"
-            selectionMode="multiple"
-            styles={style({width: 320, height: 320})}>
-            <ListViewItem id="adobe-photoshop" textValue="Adobe Photoshop">
-              <Text>Adobe Photoshop</Text>
-              <Text slot="description">Image editing software</Text>
-            </ListViewItem>
-            <ListViewItem id="adobe-xd" textValue="Adobe XD">
-              <Text>Adobe XD</Text>
-              <Text slot="description">UI/UX design tool</Text>
-            </ListViewItem>
-            <ListViewItem id="adobe-indesign" textValue="Adobe InDesign">
-              <Text>Adobe InDesign</Text>
-              <Text slot="description">Desktop publishing</Text>
-            </ListViewItem>
-          </ListView>
-          <TableView
-            aria-label="Files"
-            styles={style({width: 320, height: 320})}
-            selectionMode="multiple"
-            renderActionBar={selectedKeys => (
-              <ActionBar>
-                <ActionButton onPress={() => console.log('edit', selectedKeys)}>Edit</ActionButton>
-                <ActionButton onPress={() => console.log('copy', selectedKeys)}>Copy</ActionButton>
-                <ActionButton onPress={() => console.log('delete', selectedKeys)}>Delete</ActionButton>
-              </ActionBar>
-            )}>
-            <TableHeader>
-              <Column isRowHeader>Name</Column>
-              <Column>Type</Column>
-              <Column>Date Modified</Column>
-              <Column>A</Column>
-              <Column>B</Column>
-            </TableHeader>
-            <TableBody>
-              <Row id="1">
-                <Cell>Games</Cell>
-                <Cell>File folder</Cell>
-                <Cell>6/7/2020</Cell>
-                <Cell>Dummy content</Cell>
-                <Cell>Long long long long long long long cell</Cell>
-              </Row>
-              <Row id="2">
-                <Cell>Program Files</Cell>
-                <Cell>File folder</Cell>
-                <Cell>4/7/2021</Cell>
-                <Cell>Dummy content</Cell>
-                <Cell>Long long long long long long long cell</Cell>
-              </Row>
-              <Row id="3">
-                <Cell>bootmgr</Cell>
-                <Cell>System file</Cell>
-                <Cell>11/20/2010</Cell>
-                <Cell>Dummy content</Cell>
-                <Cell>Long long long long long long long cell</Cell>
-              </Row>
-            </TableBody>
-          </TableView>
-          <TreeView disabledKeys={['projects-1']} aria-label="test static tree">
-            <TreeViewItem id="Photos" textValue="Photos">
-              <TreeViewItemContent>
-                <Text>Photos</Text>
-                <Folder />
-              </TreeViewItemContent>
-            </TreeViewItem>
-            <TreeViewItem id="projects" textValue="Projects">
-              <TreeViewItemContent>
-                <Text>Projects</Text>
-                <Folder />
-              </TreeViewItemContent>
-              <TreeViewItem id="projects-1" textValue="Projects-1">
-                <TreeViewItemContent>
-                  <Text>Projects-1</Text>
-                  <Folder />
-                </TreeViewItemContent>
-                <TreeViewItem id="projects-1A" textValue="Projects-1A">
-                  <TreeViewItemContent>
-                    <Text>Projects-1A</Text>
-                    <FileTxt />
-                  </TreeViewItemContent>
-                </TreeViewItem>
-              </TreeViewItem>
-              <TreeViewItem id="projects-2" textValue="Projects-2">
-                <TreeViewItemContent>
-                  <Text>Projects-2</Text>
-                  <FileTxt />
-                </TreeViewItemContent>
-              </TreeViewItem>
-              <TreeViewItem id="projects-3" textValue="Projects-3">
-                <TreeViewItemContent>
-                  <Text>Projects-3</Text>
-                  <FileTxt />
-                </TreeViewItemContent>
-              </TreeViewItem>
-            </TreeViewItem>
-          </TreeView>
+          <ReorderableListView />
+          <ReorderableTableView />
+          <ReorderableTreeView />
         </Section>
 
-        {!isLazyLoaded && <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>}
-        {isLazyLoaded && <React.Suspense fallback={<>Loading</>}>
-          <Lazy />
-        </React.Suspense>}
+        {!isLazyLoaded && (
+          <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>
+        )}
+        {isLazyLoaded && (
+          <React.Suspense fallback={<>Loading</>}>
+            <Lazy />
+          </React.Suspense>
+        )}
       </div>
     </Provider>
   );

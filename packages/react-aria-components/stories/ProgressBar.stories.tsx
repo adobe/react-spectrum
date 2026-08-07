@@ -32,7 +32,7 @@ export default {
 
 export type ProgressBarStory = StoryFn<typeof ProgressBar>;
 
-export const ProgressBarExample: ProgressBarStory = (args) => {
+export const ProgressBarExample: ProgressBarStory = args => {
   return (
     <ProgressBar {...args}>
       {({percentage, valueText}) => (

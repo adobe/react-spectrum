@@ -37,9 +37,12 @@ function Button(props: AriaButtonProps) {
 
   return (
     <button
-      className={classNames({}, {
-        isHovered
-      })}
+      className={classNames(
+        {},
+        {
+          isHovered
+        }
+      )}
       data-hover={isHovered || null}
       {...mergeProps(buttonProps, hoverProps)}
       ref={buttonRef}>

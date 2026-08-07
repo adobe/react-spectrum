@@ -1,6 +1,13 @@
 import {Cell, Column, Row, Table, TableHeader, TableBody} from 'tailwind-starter/Table';
 import {StarIcon} from 'lucide-react';
-import {ColumnProps, Key, SortDescriptor, ToggleButton, ToggleButtonProps, VisuallyHidden} from 'react-aria-components';
+import {
+  ColumnProps,
+  Key,
+  SortDescriptor,
+  ToggleButton,
+  ToggleButtonProps,
+  VisuallyHidden
+} from 'react-aria-components';
 import {focusRing} from 'tailwind-starter/utils';
 import {Plant} from './plants';
 import React, {useMemo} from 'react';
@@ -18,23 +25,24 @@ const allColumns: ColumnProps[] = [
 ];
 
 interface PlantTableProps {
-  sortDescriptor: SortDescriptor,
-  onSortChange: (sortDescriptor: SortDescriptor) => void,
-  visibleColumns: 'all' | Set<Key>,
-  items: Plant[],
-  onFavoriteChange: (id: number, isFavorite: boolean) => void,
-  onEdit: (item: Plant) => void,
-  onDelete: (item: Plant) => void
+  sortDescriptor: SortDescriptor;
+  onSortChange: (sortDescriptor: SortDescriptor) => void;
+  visibleColumns: 'all' | Set<Key>;
+  items: Plant[];
+  onFavoriteChange: (id: number, isFavorite: boolean) => void;
+  onEdit: (item: Plant) => void;
+  onDelete: (item: Plant) => void;
 }
 
 export function PlantTable(props: PlantTableProps): React.ReactNode {
-  let {sortDescriptor, onSortChange, visibleColumns, items, onFavoriteChange, onEdit, onDelete} = props;
+  let {sortDescriptor, onSortChange, visibleColumns, items, onFavoriteChange, onEdit, onDelete} =
+    props;
   let columns = useMemo(() => {
     let res = allColumns.filter(c => visibleColumns === 'all' || visibleColumns.has(c.id!));
     res[1] = {...res[1], isRowHeader: true};
     return res;
   }, [visibleColumns]);
-  
+
   return (
     <Table
       aria-label="My plants"
@@ -42,9 +50,7 @@ export function PlantTable(props: PlantTableProps): React.ReactNode {
       sortDescriptor={sortDescriptor}
       onSortChange={onSortChange}
       className="h-[320px] hidden md:block">
-      <TableHeader columns={columns}>
-        {column => <Column {...column} />}
-      </TableHeader>
+      <TableHeader columns={columns}>{column => <Column {...column} />}</TableHeader>
       <TableBody
         items={items}
         dependencies={[columns]}
@@ -56,25 +62,46 @@ export function PlantTable(props: PlantTableProps): React.ReactNode {
                 case 'favorite':
                   return (
                     <Cell>
-                      <FavoriteButton isSelected={item.isFavorite} onChange={v => onFavoriteChange(item.id, v)} />
+                      <FavoriteButton
+                        isSelected={item.isFavorite}
+                        onChange={v => onFavoriteChange(item.id, v)}
+                      />
                     </Cell>
                   );
                 case 'common_name':
                   return (
                     <Cell textValue={item.common_name}>
                       <div className="grid grid-cols-[40px_1fr] gap-x-2">
-                        <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-2 object-contain h-[40px] w-[40px]" />
+                        <img
+                          alt=""
+                          src={item.default_image?.thumbnail}
+                          className="inline rounded-sm row-span-2 object-contain h-[40px] w-[40px]"
+                        />
                         <span className="truncate capitalize">{item.common_name}</span>
-                        <span className="truncate text-xs text-gray-600 dark:text-zinc-400">{item.scientific_name}</span>
+                        <span className="truncate text-xs text-gray-600 dark:text-zinc-400">
+                          {item.scientific_name}
+                        </span>
                       </div>
                     </Cell>
                   );
                 case 'cycle':
-                  return <Cell><CycleLabel cycle={item.cycle} /></Cell>;
+                  return (
+                    <Cell>
+                      <CycleLabel cycle={item.cycle} />
+                    </Cell>
+                  );
                 case 'sunlight':
-                  return <Cell><SunLabel sun={getSunlight(item)} /></Cell>;
+                  return (
+                    <Cell>
+                      <SunLabel sun={getSunlight(item)} />
+                    </Cell>
+                  );
                 case 'watering':
-                  return <Cell><WateringLabel watering={item.watering} /></Cell>;
+                  return (
+                    <Cell>
+                      <WateringLabel watering={item.watering} />
+                    </Cell>
+                  );
                 case 'actions':
                   return (
                     <Cell>
@@ -82,13 +109,14 @@ export function PlantTable(props: PlantTableProps): React.ReactNode {
                         item={item}
                         onFavoriteChange={onFavoriteChange}
                         onEdit={onEdit}
-                        onDelete={onDelete} />
+                        onDelete={onDelete}
+                      />
                     </Cell>
                   );
                 default:
                   return <></>;
               }
-            } }
+            }}
           </Row>
         )}
       </TableBody>

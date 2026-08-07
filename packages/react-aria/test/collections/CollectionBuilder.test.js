@@ -1,4 +1,9 @@
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '../../src/collections/CollectionBuilder';
+import {
+  Collection,
+  CollectionBuilder,
+  createBranchComponent,
+  createLeafComponent
+} from '../../src/collections/CollectionBuilder';
 import {CollectionNode} from '../../src/collections/BaseCollection';
 import React from 'react';
 import {render} from '@testing-library/react';
@@ -15,12 +20,19 @@ const ItemsOld = createLeafComponent('item', () => {
   return <div />;
 });
 
-const SectionOld = createBranchComponent('section', () =>  {
+const SectionOld = createBranchComponent('section', () => {
   return <div />;
 });
 
 const renderItems = (items, spyCollection) => (
-  <CollectionBuilder content={<Collection>{items.map((item) => <Item key={item} />)}</Collection>}>
+  <CollectionBuilder
+    content={
+      <Collection>
+        {items.map(item => (
+          <Item key={item} />
+        ))}
+      </Collection>
+    }>
     {collection => {
       spyCollection.current = collection;
       return null;
@@ -33,7 +45,7 @@ const renderItemsOld = (items, spyCollection) => (
     content={
       <Collection>
         <SectionOld>
-          {items.map((item) => (
+          {items.map(item => (
             <ItemsOld key={item} />
           ))}
         </SectionOld>

@@ -26,9 +26,7 @@ describe('VisuallyHidden', function () {
       <>
         <button>This is button A</button>
         <VisuallyHidden>
-          <button>
-            With no isFocusable, I should not show my text on focus
-          </button>
+          <button>With no isFocusable, I should not show my text on focus</button>
         </VisuallyHidden>
         <button>This is button C</button>
       </>
@@ -51,9 +49,7 @@ describe('VisuallyHidden', function () {
       <>
         <button>This is button A</button>
         <VisuallyHidden isFocusable>
-          <button>
-            With isFocusable, I should show my text on focus
-          </button>
+          <button>With isFocusable, I should show my text on focus</button>
         </VisuallyHidden>
         <button>This is button C</button>
       </>

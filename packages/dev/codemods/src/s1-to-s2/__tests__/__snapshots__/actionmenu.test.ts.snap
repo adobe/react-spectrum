@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Dynamic - no change 1`] = `
 "import { MenuItem, ActionMenu } from "@react-spectrum/s2";
@@ -12,6 +12,18 @@ let actionMenuItems = [
 <div>
   <ActionMenu items={actionMenuItems}>
     {item => <MenuItem id={item.name}>{item.name}</MenuItem>}
+  </ActionMenu>
+</div>"
+`;
+
+exports[`Renames closeOnSelect to shouldCloseOnSelect 1`] = `
+"import { MenuItem, ActionMenu } from "@react-spectrum/s2";
+
+<div>
+  <ActionMenu shouldCloseOnSelect>
+    <MenuItem>Cut</MenuItem>
+    <MenuItem>Copy</MenuItem>
+    <MenuItem>Paste</MenuItem>
   </ActionMenu>
 </div>"
 `;

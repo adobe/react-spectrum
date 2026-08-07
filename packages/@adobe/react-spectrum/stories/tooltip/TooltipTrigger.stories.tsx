@@ -25,21 +25,44 @@ import {SpectrumTooltipTriggerProps, TooltipTrigger} from '../../src/tooltip/Too
 import {Tooltip} from '../../src/tooltip/Tooltip';
 
 interface TooltipTooltipTriggerProps {
-  variant?: 'neutral' | 'positive' | 'negative' | 'info',
-  isOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void
+  variant?: 'neutral' | 'positive' | 'negative' | 'info';
+  isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
 }
 
 interface MultipleTriggersProps extends SpectrumTooltipTriggerProps {
-   isControlled?: boolean
- }
+  isControlled?: boolean;
+}
 
 type TooltipTriggerStory = StoryObj<typeof TooltipTrigger>;
 
 const argTypes = {
   placement: {
     control: 'select',
-    options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end', 'top', 'top left', 'top right', 'top start', 'top end', 'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom', 'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom']
+    options: [
+      'bottom',
+      'bottom left',
+      'bottom right',
+      'bottom start',
+      'bottom end',
+      'top',
+      'top left',
+      'top right',
+      'top start',
+      'top end',
+      'left',
+      'left top',
+      'left bottom',
+      'start',
+      'start top',
+      'start bottom',
+      'right',
+      'right top',
+      'right bottom',
+      'end',
+      'end top',
+      'end bottom'
+    ]
   },
   delay: {
     control: 'number',
@@ -121,7 +144,9 @@ export default {
   component: TooltipTrigger,
   args: {
     children: [
-      <ActionButton aria-label="Edit Name"><Edit /></ActionButton>,
+      <ActionButton aria-label="Edit Name">
+        <Edit />
+      </ActionButton>,
       <Tooltip>Change Name</Tooltip>
     ],
     onOpenChange: action('openChange'),
@@ -145,14 +170,16 @@ export const IsOpen: TooltipTriggerStory = {
 export const TriggerDisabled: TooltipTriggerStory = {
   args: {
     children: [
-      <ActionButton aria-label="Edit Name" isDisabled><Edit /></ActionButton>,
+      <ActionButton aria-label="Edit Name" isDisabled>
+        <Edit />
+      </ActionButton>,
       <Tooltip>Change Name</Tooltip>
     ]
   },
   argTypes: disabledArgTypes
 };
 
-export const TooltipOnLink: TooltipTriggerStory  = {
+export const TooltipOnLink: TooltipTriggerStory = {
   args: {
     children: [
       <Link>
@@ -167,21 +194,27 @@ export const TooltipOnLink: TooltipTriggerStory  = {
 
 export const TooltripTriggerInsideActionGroup: TooltipTriggerStory = {
   args: {delay: 0},
-  render: (args) => (
+  render: args => (
     <ActionGroup
       selectionMode="single"
       disallowEmptySelection
-      onSelectionChange={action('onSelectionChange')} >
+      onSelectionChange={action('onSelectionChange')}>
       <TooltipTrigger {...args}>
-        <Item key="editKey" aria-label="Edit"><Edit /></Item>
+        <Item key="editKey" aria-label="Edit">
+          <Edit />
+        </Item>
         <Tooltip>Edit</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger {...args}>
-        <Item key="saveKey" aria-label="Save"><SaveTo /></Item>
+        <Item key="saveKey" aria-label="Save">
+          <SaveTo />
+        </Item>
         <Tooltip>Save</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger {...args}>
-        <Item key="deleteKey" aria-label="Delete"><Delete /></Item>
+        <Item key="deleteKey" aria-label="Delete">
+          <Delete />
+        </Item>
         <Tooltip>Delete</Tooltip>
       </TooltipTrigger>
     </ActionGroup>
@@ -195,11 +228,13 @@ export const ArrowPositioningAtEdge: TooltipTriggerStory = {
       <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
     ]
   },
-  decorators: [(Story) => (
-    <div style={{width: '100%'}}>
-      <Story />
-    </div>
-  )]
+  decorators: [
+    Story => (
+      <div style={{width: '100%'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export const TooltipWithOtherHoverables: TooltipTriggerStory = {
@@ -209,22 +244,24 @@ export const TooltipWithOtherHoverables: TooltipTriggerStory = {
       <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
     ]
   },
-  decorators: [(Story) => (
-    <Flex gap="size-100">
-      <Story />
-      <Button variant="secondary">No Tooltip</Button>
-    </Flex>
-  )]
+  decorators: [
+    Story => (
+      <Flex gap="size-100">
+        <Story />
+        <Button variant="secondary">No Tooltip</Button>
+      </Flex>
+    )
+  ]
 };
 
 export const MultipleTooltips: TooltipTriggerStory = {
   args: {placement: 'start'},
-  render: (props) => <MultipleTriggers {...props} />
+  render: props => <MultipleTriggers {...props} />
 };
 
 export const ControlledMultipleTooltips: TooltipTriggerStory = {
   args: {placement: 'start'},
-  render: (props) => <MultipleTriggers {...props} isControlled />
+  render: props => <MultipleTriggers {...props} isControlled />
 };
 
 let MultipleTriggers = (props: MultipleTriggersProps) => {
@@ -242,7 +279,7 @@ let MultipleTriggers = (props: MultipleTriggersProps) => {
 
   return (
     <Flex gap="size-100" direction="column">
-      {items.map((item) => (
+      {items.map(item => (
         <TooltipTrigger
           {...props}
           key={item.variant}

@@ -18,7 +18,6 @@ import React, {useCallback, useState} from 'react';
 import {defaultTheme as theme} from '../../src/theme-default/defaultTheme';
 import userEvent from '@testing-library/user-event';
 
-
 describe('RangeSlider', function () {
   let user;
   beforeAll(() => {
@@ -55,7 +54,12 @@ describe('RangeSlider', function () {
     // Shows value as well
     let output = getByRole('status');
     expect(output).toHaveTextContent('0 – 100');
-    expect(output).toHaveAttribute('for', getAllByRole('slider').map(s => s.id).join(' '));
+    expect(output).toHaveAttribute(
+      'for',
+      getAllByRole('slider')
+        .map(s => s.id)
+        .join(' ')
+    );
     expect(output).not.toHaveAttribute('aria-labelledby');
     expect(output).toHaveAttribute('aria-live', 'off');
   });
@@ -69,11 +73,13 @@ describe('RangeSlider', function () {
   });
 
   it('supports disabled', async function () {
-    let {getAllByRole} = render(<div>
-      <button>A</button>
-      <RangeSlider label="The Label" isDisabled />
-      <button>B</button>
-    </div>);
+    let {getAllByRole} = render(
+      <div>
+        <button>A</button>
+        <RangeSlider label="The Label" isDisabled />
+        <button>B</button>
+      </div>
+    );
 
     let [leftSlider, rightSlider] = getAllByRole('slider');
     expect(leftSlider).toBeDisabled();
@@ -87,11 +93,13 @@ describe('RangeSlider', function () {
   });
 
   it('can be focused', async function () {
-    let {getAllByRole} = render(<div>
-      <button>A</button>
-      <RangeSlider label="The Label" defaultValue={{start: 20, end: 50}} />
-      <button>B</button>
-    </div>);
+    let {getAllByRole} = render(
+      <div>
+        <button>A</button>
+        <RangeSlider label="The Label" defaultValue={{start: 20, end: 50}} />
+        <button>B</button>
+      </div>
+    );
 
     let [sliderLeft, sliderRight] = getAllByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
@@ -113,7 +121,9 @@ describe('RangeSlider', function () {
   });
 
   it('supports defaultValue', function () {
-    let {getAllByRole, getByRole} = render(<RangeSlider label="The Label" defaultValue={{start: 20, end: 40}} />);
+    let {getAllByRole, getByRole} = render(
+      <RangeSlider label="The Label" defaultValue={{start: 20, end: 40}} />
+    );
 
     let [sliderLeft, sliderRight] = getAllByRole('slider');
 
@@ -135,12 +145,15 @@ describe('RangeSlider', function () {
 
     function Test() {
       let [value, _setValue] = useState({start: 20, end: 40});
-      let setValue = useCallback((val) => {
-        setValues.push(val);
-        _setValue(val);
-      }, [_setValue]);
+      let setValue = useCallback(
+        val => {
+          setValues.push(val);
+          _setValue(val);
+        },
+        [_setValue]
+      );
 
-      return (<RangeSlider label="The Label" value={value} onChange={setValue} />);
+      return <RangeSlider label="The Label" value={value} onChange={setValue} />;
     }
 
     let {getAllByRole, getByRole} = render(<Test />);
@@ -162,13 +175,23 @@ describe('RangeSlider', function () {
     expect(sliderRight).toHaveAttribute('aria-valuetext', '50');
     expect(output).toHaveTextContent('30 – 50');
 
-    expect(setValues).toStrictEqual([{start: 30, end: 40}, {start: 30, end: 50}]);
+    expect(setValues).toStrictEqual([
+      {start: 30, end: 40},
+      {start: 30, end: 50}
+    ]);
   });
 
   it('supports a custom valueLabel', function () {
     function Test() {
       let [value, setValue] = useState({start: 10, end: 40});
-      return (<RangeSlider label="The Label" value={value} onChange={setValue} getValueLabel={value => `A${value.start}B${value.end}C`} />);
+      return (
+        <RangeSlider
+          label="The Label"
+          value={value}
+          onChange={setValue}
+          getValueLabel={value => `A${value.start}B${value.end}C`}
+        />
+      );
     }
 
     let {getAllByRole, getByRole} = render(<Test />);
@@ -189,7 +212,15 @@ describe('RangeSlider', function () {
   });
 
   it('supports form name', () => {
-    let {getAllByRole} = render(<RangeSlider label="Value" value={{start: 10, end: 40}} startName="minCookies" endName="maxCookies" form="test" />);
+    let {getAllByRole} = render(
+      <RangeSlider
+        label="Value"
+        value={{start: 10, end: 40}}
+        startName="minCookies"
+        endName="maxCookies"
+        form="test"
+      />
+    );
     let inputs = getAllByRole('slider');
     expect(inputs[0]).toHaveAttribute('name', 'minCookies');
     expect(inputs[0]).toHaveAttribute('form', 'test');
@@ -230,9 +261,12 @@ describe('RangeSlider', function () {
 
   if (parseInt(React.version, 10) >= 19) {
     it('resets to defaultValue when submitting form action', async () => {
-      function Test() {        
-        const [value, formAction] = React.useActionState(() => ({start: 0, end: 100}), {start: 10, end: 40});
-        
+      function Test() {
+        const [value, formAction] = React.useActionState(() => ({start: 0, end: 100}), {
+          start: 10,
+          end: 40
+        });
+
         return (
           <form action={formAction}>
             <RangeSlider label="Value" defaultValue={value} />
@@ -260,7 +294,8 @@ describe('RangeSlider', function () {
           label="The Label"
           minValue={-50}
           maxValue={50}
-          defaultValue={{start: 10, end: 20}} />
+          defaultValue={{start: 10, end: 20}}
+        />
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
@@ -286,7 +321,8 @@ describe('RangeSlider', function () {
           maxValue={1}
           step={0.01}
           defaultValue={{start: 0.2, end: 0.6}}
-          formatOptions={{style: 'percent'}} />
+          formatOptions={{style: 'percent'}}
+        />
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
@@ -309,14 +345,19 @@ describe('RangeSlider', function () {
     // Can't test arrow/page up/down, home/end arrows because they are handled by the browser and JSDOM doesn't feel like it.
 
     it.each`
-      Name                                 | props                                 | commands
-      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}, {right: press.ArrowRight, result: +1}, {right: press.ArrowLeft, result: -1}]}
-      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}, {right: press.ArrowRight, result: -1}, {right: press.ArrowLeft, result: +1}]}
-      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}, {right: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: 0}]}
+      Name                                 | props                                  | commands
+      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                   | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}, {right: press.ArrowRight, result: +1}, {right: press.ArrowLeft, result: -1}]}
+      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                   | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}, {right: press.ArrowRight, result: -1}, {right: press.ArrowLeft, result: +1}]}
+      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}} | ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}, {right: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: 0}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
-          <RangeSlider label="Label" defaultValue={{start: 20, end: 50}} minValue={0} maxValue={100} />
+          <RangeSlider
+            label="Label"
+            defaultValue={{start: 20, end: 50}}
+            minValue={0}
+            maxValue={100}
+          />
         </Provider>
       );
       let sliders = tree.getAllByRole('slider') as [HTMLInputElement, HTMLInputElement];
@@ -324,9 +365,9 @@ describe('RangeSlider', function () {
     });
 
     it.each`
-      Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}, {right: press.ArrowRight, result: +10}, {right: press.ArrowLeft, result: -10}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}, {right: press.ArrowRight, result: -10}, {right: press.ArrowLeft, result: +10}]}
+      Name                          | props                | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}} | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}, {right: press.ArrowRight, result: +10}, {right: press.ArrowLeft, result: -10}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}} | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}, {right: press.ArrowRight, result: -10}, {right: press.ArrowLeft, result: +10}]}
     `('$Name respects the step size', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -338,13 +379,18 @@ describe('RangeSlider', function () {
     });
 
     it.each`
-      Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowLeft, result: -1}, {left: press.ArrowLeft, result: 0}, {right: press.ArrowRight, result: +1}, {right: press.ArrowRight, result: 0}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: +1}, {right: press.ArrowLeft, result: 0}]}
+      Name                          | props                | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}} | ${[{left: press.ArrowLeft, result: -1}, {left: press.ArrowLeft, result: 0}, {right: press.ArrowRight, result: +1}, {right: press.ArrowRight, result: 0}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}} | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: +1}, {right: press.ArrowLeft, result: 0}]}
     `('$Name is clamped by min/max', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
-          <RangeSlider label="Label" minValue={-5} defaultValue={{start: -4, end: 4}} maxValue={5} />
+          <RangeSlider
+            label="Label"
+            minValue={-5}
+            defaultValue={{start: -4, end: 4}}
+            maxValue={5}
+          />
         </Provider>
       );
       let sliders = tree.getAllByRole('slider') as [HTMLInputElement, HTMLInputElement];
@@ -355,17 +401,19 @@ describe('RangeSlider', function () {
   describe('mouse interactions', () => {
     beforeAll(() => {
       let originalGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
-      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-        let rect = originalGetBoundingClientRect.call(this);
-        return {...rect, top: 0, left: 0, width: 100, height: 100};
-      });
+      jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(function (this: HTMLElement) {
+          let rect = originalGetBoundingClientRect.call(this);
+          return {...rect, top: 0, left: 0, width: 100, height: 100};
+        });
     });
 
     let oldMouseEvent = MouseEvent;
     beforeAll(() => {
       // @ts-ignore
       global.MouseEvent = class FakeMouseEvent extends MouseEvent {
-        _init: {pageX: number, pageY: number};
+        _init: {pageX: number; pageY: number};
         constructor(name, init) {
           super(name, init);
           this._init = init;
@@ -385,14 +433,14 @@ describe('RangeSlider', function () {
     it('can click and drag handle', () => {
       let onChangeSpy = jest.fn();
       let {getAllByRole} = render(
-        <RangeSlider
-          label="The Label"
-          onChange={onChangeSpy}
-          defaultValue={{start: 20, end: 50}} />
+        <RangeSlider label="The Label" onChange={onChangeSpy} defaultValue={{start: 20, end: 50}} />
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
-      let [thumbLeft, thumbRight] = [sliderLeft.parentElement!.parentElement!, sliderRight.parentElement!.parentElement!];
+      let [thumbLeft, thumbRight] = [
+        sliderLeft.parentElement!.parentElement!,
+        sliderRight.parentElement!.parentElement!
+      ];
 
       fireEvent.mouseDown(thumbLeft, {clientX: 20, pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
@@ -434,11 +482,15 @@ describe('RangeSlider', function () {
           label="The Label"
           onChange={onChangeSpy}
           defaultValue={{start: 20, end: 50}}
-          isDisabled />
+          isDisabled
+        />
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
-      let [thumbLeft, thumbRight] = [sliderLeft.parentElement!.parentElement!, sliderRight.parentElement!.parentElement!];
+      let [thumbLeft, thumbRight] = [
+        sliderLeft.parentElement!.parentElement!,
+        sliderRight.parentElement!.parentElement!
+      ];
 
       fireEvent.mouseDown(thumbLeft, {clientX: 20, pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
@@ -470,16 +522,18 @@ describe('RangeSlider', function () {
     it('can click on track to move nearest handle', () => {
       let onChangeSpy = jest.fn();
       let {getAllByRole} = render(
-        <RangeSlider
-          label="The Label"
-          onChange={onChangeSpy}
-          defaultValue={{start: 40, end: 70}} />
+        <RangeSlider label="The Label" onChange={onChangeSpy} defaultValue={{start: 40, end: 70}} />
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
-      let [thumbLeft, thumbRight] = [sliderLeft.parentElement!.parentElement!, sliderRight.parentElement!.parentElement!];
+      let [thumbLeft, thumbRight] = [
+        sliderLeft.parentElement!.parentElement!,
+        sliderRight.parentElement!.parentElement!
+      ];
 
-      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement!.children].filter(c => c !== thumbLeft && c !== thumbRight);
+      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement!.children].filter(
+        c => c !== thumbLeft && c !== thumbRight
+      );
 
       // left track
       fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
@@ -524,13 +578,19 @@ describe('RangeSlider', function () {
           label="The Label"
           onChange={onChangeSpy}
           defaultValue={{start: 40, end: 70}}
-          isDisabled />
+          isDisabled
+        />
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
-      let [thumbLeft, thumbRight] = [sliderLeft.parentElement!.parentElement!, sliderRight.parentElement!.parentElement!];
+      let [thumbLeft, thumbRight] = [
+        sliderLeft.parentElement!.parentElement!,
+        sliderRight.parentElement!.parentElement!
+      ];
 
-      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement!.children].filter(c => c !== thumbLeft && c !== thumbRight);
+      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement!.children].filter(
+        c => c !== thumbLeft && c !== thumbRight
+      );
 
       // left track
       fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
@@ -566,9 +626,7 @@ describe('RangeSlider', function () {
 
     it('clicking on the label should focus the first thumb', () => {
       let {getByText, getAllByRole} = render(
-        <RangeSlider
-          label="The Label"
-          defaultValue={{start: 40, end: 70}} />
+        <RangeSlider label="The Label" defaultValue={{start: 40, end: 70}} />
       );
 
       let label = getByText('The Label');

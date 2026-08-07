@@ -35,4 +35,3 @@ export const all: AvatarStory = () => (
     <Avatar src={SRC_URL_2} size={'avatar-size-700'} />
   </Flex>
 );
-

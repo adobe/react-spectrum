@@ -22,10 +22,11 @@ const localeSymbol = Symbol.for('react-aria.i18n.locale');
  * Gets the locale setting of the browser.
  */
 export function getDefaultLocale(): Locale {
-  let locale = typeof window !== 'undefined' && window[localeSymbol]
+  let locale =
+    (typeof window !== 'undefined' && window[localeSymbol]) ||
     // @ts-ignore
-    || (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage))
-    || 'en-US';
+    (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) ||
+    'en-US';
 
   try {
     Intl.DateTimeFormat.supportedLocalesOf([locale]);

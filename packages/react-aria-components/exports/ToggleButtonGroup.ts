@@ -14,7 +14,11 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {ToggleButtonGroup, ToggleButtonGroupContext, ToggleGroupStateContext} from '../src/ToggleButtonGroup';
+export {
+  ToggleButtonGroup,
+  ToggleButtonGroupContext,
+  ToggleGroupStateContext
+} from '../src/ToggleButtonGroup';
 export type {ToggleButtonGroupProps, ToggleButtonGroupRenderProps} from '../src/ToggleButtonGroup';
 export type {ToggleGroupState} from 'react-stately/useToggleGroupState';
 

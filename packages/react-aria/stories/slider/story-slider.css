@@ -13,7 +13,7 @@
 }
 
 .label,
-div[style='isolation: isolate; color-scheme: light;'] .label  {
+div[style='isolation: isolate; color-scheme: light;'] .label {
   color: #707070;
 }
 
@@ -35,7 +35,7 @@ div[style='isolation: isolate; color-scheme: dark;'] .value {
   div[style='isolation: isolate; color-scheme: light dark;'] .label {
     color: #707070;
   }
-  
+
   div[style='isolation: isolate; color-scheme: light dark;'] .value {
     color: #585858;
   }
@@ -45,7 +45,7 @@ div[style='isolation: isolate; color-scheme: dark;'] .value {
   div[style='isolation: isolate; color-scheme: light dark;'] .label {
     color: #b0b0b0;
   }
-  
+
   div[style='isolation: isolate; color-scheme: light dark;'] .value {
     color: #9a9a9a;
   }
@@ -78,7 +78,9 @@ div[style='isolation: isolate; color-scheme: dark;'] .value {
 }
 
 .thumbFocusVisible .thumbHandle {
-  box-shadow: 0 0 0 2px #f5f5f5, 0 0 0 4px #2c83eb;
+  box-shadow:
+    0 0 0 2px #f5f5f5,
+    0 0 0 4px #2c83eb;
 }
 
 .thumbFocused {

@@ -14,7 +14,9 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('TagGroup SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {TagGroup, TagList, Tag, Label} from '../exports/index.ts';
 
       function Test() {
@@ -38,12 +40,14 @@ describe('TagGroup SSR', function () {
       <React.StrictMode>
         <Test />
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let options = screen.getAllByRole('row');
-      expect(options.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
-      expect(screen.getByRole('grid')).toBeInTheDocument();
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let options = screen.getAllByRole('row');
+        expect(options.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
+        expect(screen.getByRole('grid')).toBeInTheDocument();
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let button = screen.getByRole('button');

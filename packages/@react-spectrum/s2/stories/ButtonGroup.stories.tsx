@@ -15,7 +15,7 @@ import {Button} from '../src/Button';
 import {ButtonGroup} from '../src/ButtonGroup';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
 const meta: Meta<typeof ButtonGroup> = {
@@ -34,13 +34,20 @@ export default meta;
 
 type Story = StoryObj<typeof ButtonGroup>;
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     let buttons = (
       <ButtonGroup {...args}>
         <Button>Press me</Button>
-        <Button variant="accent"><NewIcon /><Text>Test</Text></Button>
-        <Button aria-label="Press me"><NewIcon /></Button>
-        <Button variant="negative" styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>
+        <Button variant="accent">
+          <NewIcon />
+          <Text>Test</Text>
+        </Button>
+        <Button aria-label="Press me">
+          <NewIcon />
+        </Button>
+        <Button variant="negative" styles={style({maxWidth: 128})}>
+          Very long button with wrapping text to see what happens
+        </Button>
         <Button variant="secondary" styles={style({maxWidth: 128})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
@@ -49,5 +56,11 @@ export const Example: Story = {
     );
     return buttons;
   },
-  decorators: [(Story) => <div style={{minWidth: '100px', padding: '10px', resize: 'horizontal', overflow: 'auto'}}><Story /></div>]
+  decorators: [
+    Story => (
+      <div style={{minWidth: '100px', padding: '10px', resize: 'horizontal', overflow: 'auto'}}>
+        <Story />
+      </div>
+    )
+  ]
 };

@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  FocusableElement,
+  Key,
+  RefObject
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {generateId} from './utils';
 import {mergeProps} from '../utils/mergeProps';
@@ -21,22 +27,22 @@ import {useSelectableItem} from '../selection/useSelectableItem';
 
 export interface AriaTabProps extends AriaLabelingProps {
   /** The key of the tab. */
-  key: Key,
+  key: Key;
   /** Whether the tab should be disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether the tab selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean;
 }
 
 export interface TabAria {
   /** Props for the tab element. */
-  tabProps: DOMAttributes,
+  tabProps: DOMAttributes;
   /** Whether the tab is currently selected. */
-  isSelected: boolean,
+  isSelected: boolean;
   /** Whether the tab is disabled. */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /** Whether the tab is currently in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean;
 }
 
 /**
@@ -74,10 +80,13 @@ export function useTab<T>(
   let domProps = filterDOMProps(item?.props, {labelable: true});
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
-  let {focusableProps} = useFocusable({
-    ...item?.props,
-    isDisabled
-  }, ref);
+  let {focusableProps} = useFocusable(
+    {
+      ...item?.props,
+      isDisabled
+    },
+    ref
+  );
 
   return {
     tabProps: mergeProps(domProps, focusableProps, linkProps, itemProps, {

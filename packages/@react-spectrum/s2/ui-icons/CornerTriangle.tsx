@@ -36,16 +36,38 @@ let styles = style({
   }
 });
 
-export default function CornerTriangle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}): ReactNode {
+export default function CornerTriangle(
+  props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}
+): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <CornerTriangle_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <CornerTriangle_M
+          {...otherProps}
+          className={(otherProps.className || '') + styles({size})}
+        />
+      );
     case 'L':
-      return <CornerTriangle_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <CornerTriangle_L
+          {...otherProps}
+          className={(otherProps.className || '') + styles({size})}
+        />
+      );
     case 'XL':
-      return <CornerTriangle_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <CornerTriangle_XL
+          {...otherProps}
+          className={(otherProps.className || '') + styles({size})}
+        />
+      );
     case 'S':
-      return <CornerTriangle_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <CornerTriangle_S
+          {...otherProps}
+          className={(otherProps.className || '') + styles({size})}
+        />
+      );
   }
 }

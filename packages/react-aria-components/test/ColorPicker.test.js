@@ -33,9 +33,17 @@ describe('ColorPicker', function () {
     let {getByRole, getAllByRole} = render(
       <ColorPicker defaultValue="#f00">
         <ColorSwatch />
-        <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness"><ColorThumb /></ColorArea>
-        <ColorSlider colorSpace="hsb" channel="hue"><SliderTrack><ColorThumb /></SliderTrack></ColorSlider>
-        <ColorField aria-label="hex"><Input /></ColorField>
+        <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness">
+          <ColorThumb />
+        </ColorArea>
+        <ColorSlider colorSpace="hsb" channel="hue">
+          <SliderTrack>
+            <ColorThumb />
+          </SliderTrack>
+        </ColorSlider>
+        <ColorField aria-label="hex">
+          <Input />
+        </ColorField>
       </ColorPicker>
     );
 

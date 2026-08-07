@@ -17,7 +17,20 @@ export {useSelectableList} from 'react-aria/private/selection/useSelectableList'
 export {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 export {DOMLayoutDelegate} from 'react-aria/private/selection/DOMLayoutDelegate';
 export {useTypeSelect} from 'react-aria/private/selection/useTypeSelect';
-export type {AriaSelectableCollectionOptions, SelectableCollectionAria} from 'react-aria/private/selection/useSelectableCollection';
-export type {AriaSelectableListOptions, SelectableListAria} from 'react-aria/private/selection/useSelectableList';
-export type {SelectableItemOptions, SelectableItemStates, SelectableItemAria} from 'react-aria/private/selection/useSelectableItem';
-export type {AriaTypeSelectOptions, TypeSelectAria} from 'react-aria/private/selection/useTypeSelect';
+export type {
+  AriaSelectableCollectionOptions,
+  SelectableCollectionAria
+} from 'react-aria/private/selection/useSelectableCollection';
+export type {
+  AriaSelectableListOptions,
+  SelectableListAria
+} from 'react-aria/private/selection/useSelectableList';
+export type {
+  SelectableItemOptions,
+  SelectableItemStates,
+  SelectableItemAria
+} from 'react-aria/private/selection/useSelectableItem';
+export type {
+  AriaTypeSelectOptions,
+  TypeSelectAria
+} from 'react-aria/private/selection/useTypeSelect';

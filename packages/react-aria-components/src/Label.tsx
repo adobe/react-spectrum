@@ -14,13 +14,17 @@ import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import React, {createContext, ForwardedRef, LabelHTMLAttributes} from 'react';
 
-export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement>, DOMRenderProps<'label', undefined> {
-  elementType?: string
+export interface LabelProps
+  extends LabelHTMLAttributes<HTMLLabelElement>, DOMRenderProps<'label', undefined> {
+  elementType?: string;
 }
 
 export const LabelContext = createContext<ContextValue<LabelProps, HTMLLabelElement>>({});
 
-export const Label = /*#__PURE__*/ createHideableComponent(function Label(props: LabelProps, ref: ForwardedRef<HTMLLabelElement>) {
+export const Label = /*#__PURE__*/ createHideableComponent(function Label(
+  props: LabelProps,
+  ref: ForwardedRef<HTMLLabelElement>
+) {
   [props, ref] = useContextProps(props, ref, LabelContext);
   let {elementType = 'label', ...labelProps} = props;
   let ElementType = dom[elementType];

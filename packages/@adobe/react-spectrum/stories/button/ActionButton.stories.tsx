@@ -59,22 +59,21 @@ export default {
   }
 } as Meta<typeof ActionButton>;
 
-
 export const Default: ActionButtonStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const WithIcon: ActionButtonStory = {
-  render: (args) => renderWithIcon(args)
+  render: args => renderWithIcon(args)
 };
 
 export const IconOnly: ActionButtonStory = {
-  render: (args) => renderOnlyIcon(args)
+  render: args => renderOnlyIcon(args)
 };
 
 export const StaticWhite: ActionButtonStory = {
   args: {staticColor: 'white'},
-  render: (args) => (
+  render: args => (
     <View backgroundColor="static-blue-700" padding="size-1000">
       {renderWithIcon(args)}
     </View>
@@ -84,7 +83,7 @@ export const StaticWhite: ActionButtonStory = {
 
 export const StaticBlack: ActionButtonStory = {
   args: {staticColor: 'black'},
-  render: (args) => (
+  render: args => (
     <View backgroundColor="static-yellow-400" padding="size-1000">
       {renderWithIcon(args)}
     </View>
@@ -95,13 +94,8 @@ export const StaticBlack: ActionButtonStory = {
 function render(props = {}) {
   return (
     <Flex gap="size-100">
-      <ActionButton
-        {...props}>
-        Default
-      </ActionButton>
-      <ActionButton
-        isDisabled
-        {...props}>
+      <ActionButton {...props}>Default</ActionButton>
+      <ActionButton isDisabled {...props}>
         Disabled
       </ActionButton>
     </Flex>
@@ -111,14 +105,11 @@ function render(props = {}) {
 function renderWithIcon(props = {}) {
   return (
     <Flex gap="size-100">
-      <ActionButton
-        {...props}>
+      <ActionButton {...props}>
         <Add />
         <Text>Default</Text>
       </ActionButton>
-      <ActionButton
-        isDisabled
-        {...props}>
+      <ActionButton isDisabled {...props}>
         <Text>Disabled</Text>
         <Add />
       </ActionButton>
@@ -129,15 +120,10 @@ function renderWithIcon(props = {}) {
 function renderOnlyIcon(props = {}) {
   return (
     <Flex gap="size-100">
-      <ActionButton
-        {...props}
-        aria-label="Add button">
+      <ActionButton {...props} aria-label="Add button">
         <Add />
       </ActionButton>
-      <ActionButton
-        isDisabled
-        {...props}
-        aria-label="Disabled add button">
+      <ActionButton isDisabled {...props} aria-label="Disabled add button">
         <Add />
       </ActionButton>
     </Flex>

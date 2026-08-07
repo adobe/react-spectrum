@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -23,13 +22,12 @@ import {SearchAutocomplete} from '../../src/autocomplete/SearchAutocomplete';
 import {Text} from '../../src/text/Text';
 import {useAsyncList} from 'react-stately/useAsyncList';
 
-
 type SearchAutocompleteStory = StoryObj<typeof SearchAutocomplete>;
 
 export default {
   title: 'SearchAutocomplete',
   component: SearchAutocomplete,
-  render: (args) => (
+  render: args => (
     <SearchAutocomplete label="Search with Autocomplete" {...args}>
       <Item>Aerospace</Item>
       <Item>Mechanical</Item>
@@ -205,7 +203,7 @@ export const Default: SearchAutocompleteStory = {
 
 export const Dynamic: SearchAutocompleteStory = {
   args: {defaultItems: items},
-  render: (args) => (
+  render: args => (
     <SearchAutocomplete defaultItems={items} {...args}>
       {(item: any) => <Item>{item.name}</Item>}
     </SearchAutocomplete>
@@ -220,18 +218,15 @@ export const NoItems: SearchAutocompleteStory = {
 };
 
 export const MappedItems: SearchAutocompleteStory = {
-  render: (args) => (
+  render: args => (
     <SearchAutocomplete label="Search with Autocomplete" {...args}>
-      {items.map((item) => (
-        <Item key={item.id}>
-          {item.name}
-        </Item>
+      {items.map(item => (
+        <Item key={item.id}>{item.name}</Item>
       ))}
     </SearchAutocomplete>
   ),
   name: 'with mapped items'
 };
-
 
 function CustomOnSubmit(props) {
   let [searchTerm, setSearchTerm] = React.useState('');
@@ -247,12 +242,13 @@ function CustomOnSubmit(props) {
 
   return (
     <Flex direction="column">
-      <SearchAutocomplete defaultItems={items} label="Search with Autocomplete" {...mergeProps(props, {onSubmit})}>
+      <SearchAutocomplete
+        defaultItems={items}
+        label="Search with Autocomplete"
+        {...mergeProps(props, {onSubmit})}>
         {(item: any) => <Item>{item.name}</Item>}
       </SearchAutocomplete>
-      <div>
-        Search results for: {searchTerm}
-      </div>
+      <div>Search results for: {searchTerm}</div>
     </Flex>
   );
 }
@@ -263,7 +259,7 @@ export const noVisibleLabel: SearchAutocompleteStory = {
 };
 
 export const customOnSubmit: SearchAutocompleteStory = {
-  render: (args) => <CustomOnSubmit {...args} />,
+  render: args => <CustomOnSubmit {...args} />,
   name: 'custom onSubmit'
 };
 
@@ -279,7 +275,7 @@ export const iconNull: SearchAutocompleteStory = {
 
 export const WithAvatars: SearchAutocompleteStory = {
   args: {label: 'Search users'},
-  render: (args) => (
+  render: args => (
     <SearchAutocomplete {...args}>
       <Item textValue="User 1">
         <Avatar src="https://i.imgur.com/kJOwAdv.png" />
@@ -302,7 +298,7 @@ export const WithAvatars: SearchAutocompleteStory = {
 };
 
 interface Character {
-  name: string
+  name: string;
 }
 
 function AsyncLoadingExample() {
@@ -317,7 +313,9 @@ function AsyncLoadingExample() {
       // mirrors the SearchAutocomplete input text.
       // Otherwise, the cursor is the next URL to load,
       // as returned from the previous page.
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
 
       return {
@@ -341,7 +339,5 @@ function AsyncLoadingExample() {
 }
 
 export const AsyncList: SearchAutocompleteStory = {
-  render: (args) => (
-    <AsyncLoadingExample {...args} />
-  )
+  render: args => <AsyncLoadingExample {...args} />
 };

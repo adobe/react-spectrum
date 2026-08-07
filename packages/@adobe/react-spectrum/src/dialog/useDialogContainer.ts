@@ -14,8 +14,8 @@ import {DialogContext} from './context';
 import {useContext} from 'react';
 
 export interface DialogContainerValue {
-  type: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
-  dismiss(): void
+  type: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover';
+  dismiss(): void;
 }
 
 export function useDialogContainer(): DialogContainerValue {

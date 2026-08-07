@@ -17,14 +17,14 @@ function pressKeyOnButton(key, button) {
   fireEvent.keyUp(button, {key});
 }
 export const press: {
-  ArrowRight: (button: HTMLElement) => void,
-  ArrowLeft: (button: HTMLElement) => void,
-  ArrowUp: (button: HTMLElement) => void,
-  ArrowDown: (button: HTMLElement) => void,
-  Home: (button: HTMLElement) => void,
-  End: (button: HTMLElement) => void,
-  PageUp: (button: HTMLElement) => void,
-  PageDown: (button: HTMLElement) => void
+  ArrowRight: (button: HTMLElement) => void;
+  ArrowLeft: (button: HTMLElement) => void;
+  ArrowUp: (button: HTMLElement) => void;
+  ArrowDown: (button: HTMLElement) => void;
+  Home: (button: HTMLElement) => void;
+  End: (button: HTMLElement) => void;
+  PageUp: (button: HTMLElement) => void;
+  PageDown: (button: HTMLElement) => void;
 } = {
   ArrowRight: (button: HTMLElement) => pressKeyOnButton('ArrowRight', button),
   ArrowLeft: (button: HTMLElement) => pressKeyOnButton('ArrowLeft', button),
@@ -36,19 +36,24 @@ export const press: {
   PageDown: (button: HTMLElement) => pressKeyOnButton('PageDown', button)
 } as const;
 
-export function testKeypresses([sliderLeft, sliderRight]: [HTMLInputElement, HTMLInputElement], commands: any[]): void {
+export function testKeypresses(
+  [sliderLeft, sliderRight]: [HTMLInputElement, HTMLInputElement],
+  commands: any[]
+): void {
   for (let command of commands) {
     let c = command.left ?? command.right;
     let result = command.result;
     let slider = command.left ? sliderLeft : sliderRight;
     let oldValue = Number(slider.value);
-    act(() => {slider.focus();});
+    act(() => {
+      slider.focus();
+    });
     c(slider);
 
     if (typeof result === 'string') {
       // absolute
       expect(slider).toHaveProperty('value', result);
-    } else  {
+    } else {
       // number, relative
       expect(slider).toHaveProperty('value', String(oldValue + result));
     }

@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Update to use new API', `
+test(
+  'Update to use new API',
+  `
 import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
 
 <Tabs aria-label="History of Ancient Rome">
@@ -27,9 +29,12 @@ import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
     </Item>
   </TabPanels>
 </Tabs>
-`);
+`
+);
 
-test('Remove isEmphasized', `
+test(
+  'Remove isEmphasized',
+  `
 import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
 let isEmphasized = true;
 let props = {isEmphasized: true};
@@ -125,9 +130,12 @@ let props = {isEmphasized: true};
     </TabPanels>
   </Tabs>
 </div>
-`);
+`
+);
 
-test('Remove isQuiet', `
+test(
+  'Remove isQuiet',
+  `
 import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
@@ -223,9 +231,12 @@ let props = {isQuiet: true};
     </TabPanels>
   </Tabs>
 </div>
-`);
+`
+);
 
-test('Move items from Tabs to TabList', `
+test(
+  'Move items from Tabs to TabList',
+  `
 import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
 
 let items = [
@@ -253,9 +264,12 @@ let items = [
     )}
   </TabPanels>
 </Tabs>
-`);
+`
+);
 
-test('Converts dynamic TabList Item to Tab', `
+test(
+  'Converts dynamic TabList Item to Tab',
+  `
 import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
 
 let tabs = [{name: 'Tab 1', children: 'Tab Body 1'}];
@@ -276,9 +290,12 @@ let tabs = [{name: 'Tab 1', children: 'Tab Body 1'}];
     )}
   </TabPanels>
 </Tabs>
-`);
+`
+);
 
-test('Removes TabPanels from v3 import when s2 import exists first', `
+test(
+  'Removes TabPanels from v3 import when s2 import exists first',
+  `
 import {Tabs as S2Tabs} from '@react-spectrum/s2';
 import {Tabs as RSPTabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
 
@@ -293,4 +310,5 @@ import {Tabs as RSPTabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
     </TabPanels>
   </RSPTabs>
 </>
-`);
+`
+);

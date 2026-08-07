@@ -66,12 +66,14 @@ export default {
   component: DateField
 } as Meta<typeof DateField>;
 
-export type DateFieldStory = StoryFn<Omit<typeof DateField, 'minValue' | 'maxValue'> & {
-  minValue?: number,
-  maxValue?: number
-}>;
+export type DateFieldStory = StoryFn<
+  Omit<typeof DateField, 'minValue' | 'maxValue'> & {
+    minValue?: number;
+    maxValue?: number;
+  }
+>;
 
-export const DateFieldExample: DateFieldStory = (props) => (
+export const DateFieldExample: DateFieldStory = props => (
   <DateField
     {...props}
     minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
@@ -80,13 +82,18 @@ export const DateFieldExample: DateFieldStory = (props) => (
     defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
     <Label style={{display: 'block'}}>Date</Label>
     <DateInput className={styles.field} data-testid2="date-input">
-      {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+      {segment => (
+        <DateSegment
+          segment={segment}
+          className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+        />
+      )}
     </DateInput>
     <FieldError style={{display: 'block'}} />
   </DateField>
 );
 
-export const DateFieldAutoFill = (props) => (
+export const DateFieldAutoFill = props => (
   <Form
     onSubmit={e => {
       action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
@@ -104,7 +111,12 @@ export const DateFieldAutoFill = (props) => (
       data-testid="date-field-example">
       <Label style={{display: 'block'}}>Date</Label>
       <DateInput className={styles.field} data-testid2="date-input">
-        {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+        {segment => (
+          <DateSegment
+            segment={segment}
+            className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+          />
+        )}
       </DateInput>
       <FieldError style={{display: 'block'}} />
     </DateField>

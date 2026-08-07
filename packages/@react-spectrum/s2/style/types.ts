@@ -17,32 +17,35 @@ export type CustomValue = string | number | boolean;
 export type Value = CustomValue | readonly any[];
 export type PropertyValueDefinition<T> = T | {[condition: string]: PropertyValueDefinition<T>};
 export type PropertyValueMap<T extends CSSValue = CSSValue> = {
-  [name in T]: PropertyValueDefinition<CSSValue>
+  [name in T]: PropertyValueDefinition<CSSValue>;
 };
 
 export type CustomProperty = `--${string}`;
 export type CSSProperties = CSS.Properties & {
-  [k: CustomProperty]: CSSValue
+  [k: CustomProperty]: CSSValue;
 };
 
 export interface Property<T> {
-  cssProperties: string[],
-  toCSSValue(value: T): PropertyValueDefinition<Value>,
-  toCSSProperties(customProperty: string | null, value: PropertyValueDefinition<Value>): PropertyValueDefinition<[CSSProperties]>
+  cssProperties: string[];
+  toCSSValue(value: T): PropertyValueDefinition<Value>;
+  toCSSProperties(
+    customProperty: string | null,
+    value: PropertyValueDefinition<Value>
+  ): PropertyValueDefinition<[CSSProperties]>;
 }
 
 export type ShorthandProperty<T> = (value: T) => {[name: string]: Value};
 
 export interface Theme {
   properties: {
-    [name: string]: PropertyValueMap | Property<any> | string[]
-  },
+    [name: string]: PropertyValueMap | Property<any> | string[];
+  };
   conditions: {
-    [name: string]: string | string[]
-  },
+    [name: string]: string | string[];
+  };
   shorthands: {
-    [name: string]: string[] | ShorthandProperty<any>
-  }
+    [name: string]: string[] | ShorthandProperty<any>;
+  };
 }
 
 type PropertyValue<T> =
@@ -54,17 +57,42 @@ type PropertyValue<T> =
         ? T[number]
         : never;
 
-type FunctionName = 'var' | 'calc' | 'min' | 'max' | 'clamp' | 'round' | 'mod' | 'rem' | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan' | 'atan2' | 'pow' | 'sqrt' | 'hypot' | 'log' | 'exp' | 'abs' | 'sign';
+type FunctionName =
+  | 'var'
+  | 'calc'
+  | 'min'
+  | 'max'
+  | 'clamp'
+  | 'round'
+  | 'mod'
+  | 'rem'
+  | 'sin'
+  | 'cos'
+  | 'tan'
+  | 'asin'
+  | 'acos'
+  | 'atan'
+  | 'atan2'
+  | 'pow'
+  | 'sqrt'
+  | 'hypot'
+  | 'log'
+  | 'exp'
+  | 'abs'
+  | 'sign';
 type CSSWideKeyword = 'inherit' | 'initial' | 'unset';
-export type ArbitraryValue = CustomProperty | `[${string}]` | `${FunctionName}(${string})` | CSSWideKeyword;
+export type ArbitraryValue =
+  | CustomProperty
+  | `[${string}]`
+  | `${FunctionName}(${string})`
+  | CSSWideKeyword;
 type PropertyValue2<T> = PropertyValue<T> | ArbitraryValue;
 type Merge<T> = T extends any ? T : never;
-type ShorthandValue<T extends Theme, P> = 
-  P extends string[]
-    ? PropertyValue2<T['properties'][P[0]]>
-    : P extends ShorthandProperty<infer V>
-      ? V
-      : never;
+type ShorthandValue<T extends Theme, P> = P extends string[]
+  ? PropertyValue2<T['properties'][P[0]]>
+  : P extends ShorthandProperty<infer V>
+    ? V
+    : never;
 
 // Pre-compute value types for all theme properties ahead of time.
 export type ThemeProperties<T extends Theme> = Merge<{
@@ -72,62 +100,87 @@ export type ThemeProperties<T extends Theme> = Merge<{
     ? Merge<PropertyValue2<T['properties'][K]>>
     : K extends keyof T['shorthands']
       ? Merge<ShorthandValue<T, T['shorthands'][K]>>
-      : never
+      : never;
 }>;
 
-type Style<T extends ThemeProperties<Theme>, C extends string, R extends RenderProps<string>> =
-  StaticProperties<T, C, R> & CustomProperties<T, C, R>;
+type Style<
+  T extends ThemeProperties<Theme>,
+  C extends string,
+  R extends RenderProps<string>
+> = StaticProperties<T, C, R> & CustomProperties<T, C, R>;
 
-type StaticProperties<T extends ThemeProperties<Theme>, C extends string, R extends RenderProps<string>> = {
-  [Name in keyof T]?: StyleValue<T[Name], C, R>
+type StaticProperties<
+  T extends ThemeProperties<Theme>,
+  C extends string,
+  R extends RenderProps<string>
+> = {
+  [Name in keyof T]?: StyleValue<T[Name], C, R>;
 };
 
-type CustomProperties<T extends ThemeProperties<Theme>, C extends string, R extends RenderProps<string>> = {
-  [key: CustomProperty]: CustomPropertyValue<T, keyof T, C, R>
+type CustomProperties<
+  T extends ThemeProperties<Theme>,
+  C extends string,
+  R extends RenderProps<string>
+> = {
+  [key: CustomProperty]: CustomPropertyValue<T, keyof T, C, R>;
 };
 
 // Infer the value type of custom property values from the `type` key, which references a theme property.
-type CustomPropertyValue<T extends ThemeProperties<Theme>, P extends keyof T, C extends string, R extends RenderProps<string>> =
-  P extends any
-    ? {type: P, value: StyleValue<T[P], C, R>}
-    : never;
+type CustomPropertyValue<
+  T extends ThemeProperties<Theme>,
+  P extends keyof T,
+  C extends string,
+  R extends RenderProps<string>
+> = P extends any ? {type: P; value: StyleValue<T[P], C, R>} : never;
 
 export type RenderProps<K extends string> = {
-  [key in K]: any
+  [key in K]: any;
 };
 
-export type StyleValue<V extends Value, C extends string, R extends RenderProps<string>> = V | Conditional<V, C, R>;
+export type StyleValue<V extends Value, C extends string, R extends RenderProps<string>> =
+  | V
+  | Conditional<V, C, R>;
 export type Condition<T extends Theme> = 'default' | Extract<keyof T['conditions'], string>;
-type Conditional<V extends Value, C extends string, R extends RenderProps<string>> =
-  CSSConditions<V, C, R> & RuntimeConditions<V, C, R>
+type Conditional<V extends Value, C extends string, R extends RenderProps<string>> = CSSConditions<
+  V,
+  C,
+  R
+> &
+  RuntimeConditions<V, C, R>;
 
 type ArbitraryCondition = `:${string}` | `@${string}`;
 type CSSConditions<V extends Value, C extends string, R extends RenderProps<string>> = {
-  [name in C]?: StyleValue<V, C, R>
+  [name in C]?: StyleValue<V, C, R>;
 };
 
 // If render props are unknown, allow any custom conditions to be inferred.
 // Unfortunately this breaks "may only specify known properties" errors.
-type RuntimeConditions<V extends Value, C extends string, R extends RenderProps<string>> =
-  [R] extends [never]
-    ? UnknownConditions<V, C>
-    : RenderPropConditions<V, C, R>;
+type RuntimeConditions<V extends Value, C extends string, R extends RenderProps<string>> = [
+  R
+] extends [never]
+  ? UnknownConditions<V, C>
+  : RenderPropConditions<V, C, R>;
 
 type UnknownConditions<V extends Value, C extends string> = {
-  [name: string]: StyleValue<V, C, never> | VariantMap<string, V, C, never>
+  [name: string]: StyleValue<V, C, never> | VariantMap<string, V, C, never>;
 };
 
 type BooleanConditionName = `is${Capitalize<string>}` | `allows${Capitalize<string>}`;
 type RenderPropConditions<V extends Value, C extends string, R extends RenderProps<string>> = {
-  [K in keyof R]?: K extends BooleanConditionName ? StyleValue<V, C, R> : VariantMap<R[K], V, C, R>
+  [K in keyof R]?: K extends BooleanConditionName ? StyleValue<V, C, R> : VariantMap<R[K], V, C, R>;
 };
 
 type Values<T, K extends keyof T = keyof T> = {
-  [k in K]: T[k]
+  [k in K]: T[k];
 }[K];
 
-export type VariantMap<K extends CSSValue, V extends Value, C extends string, R extends RenderProps<string>> = {
-  [k in K]?: StyleValue<V, C, R>
+export type VariantMap<
+  K extends CSSValue,
+  V extends Value,
+  C extends string,
+  R extends RenderProps<string>
+> = {
+  [k in K]?: StyleValue<V, C, R>;
 };
 
 // These types are used to recursively extract all runtime conditions/variants in case an
@@ -135,32 +188,37 @@ export type VariantMap<K extends CSSValue, V extends Value, C extends string, R 
 // to automatically accept the correct arguments based on the style definition.
 type ExtractConditionalValue<C extends keyof any, V> = V extends Value
   ? never
-  // Add the keys from this level for boolean conditions not in the theme.
-  : RuntimeConditionObject<Extract<keyof V, BooleanConditionName>, boolean>
-    // Add variant values for non-boolean named keys.
-    | Variants<V, Exclude<keyof V, C | BooleanConditionName>>
-    // Recursively include conditions from the next level.
-    | ExtractConditionalValue<C,
-      | Values<V, Extract<keyof V, C | BooleanConditionName>>
-      // And skip over variants to get to the values.
-      | Values<Values<V, Exclude<keyof V, C | BooleanConditionName>>>
-    >;
+  :
+      // Add the keys from this level for boolean conditions not in the theme.
+      | RuntimeConditionObject<Extract<keyof V, BooleanConditionName>, boolean>
+      // Add variant values for non-boolean named keys.
+      | Variants<V, Exclude<keyof V, C | BooleanConditionName>>
+      // Recursively include conditions from the next level.
+      | ExtractConditionalValue<
+          C,
+          | Values<V, Extract<keyof V, C | BooleanConditionName>>
+          // And skip over variants to get to the values.
+          | Values<Values<V, Exclude<keyof V, C | BooleanConditionName>>>
+        >;
 
-type RuntimeConditionObject<K, V> = K extends keyof any ?  { [P in K]?: V } : never;
+type RuntimeConditionObject<K, V> = K extends keyof any ? {[P in K]?: V} : never;
 
-type Variants<T, K extends keyof T> = K extends any ? {
-  [k in K]?: keyof T[k]
-} : never;
+type Variants<T, K extends keyof T> = K extends any
+  ? {
+      [k in K]?: keyof T[k];
+    }
+  : never;
 
 type InferCustomPropertyValue<T> = T extends {value: infer V} ? V : never;
 
 // https://stackoverflow.com/questions/49401866/all-possible-keys-of-an-union-type
-type KeysOfUnion<T> = T extends T ? keyof T: never;
-type KeyValue<T, K extends KeysOfUnion<T>> =  T extends {[k in K]?: any} ? T[K] : never;
-type MergeUnion<T> = { [K in KeysOfUnion<T>]: KeyValue<T, K> };
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+type KeyValue<T, K extends KeysOfUnion<T>> = T extends {[k in K]?: any} ? T[K] : never;
+type MergeUnion<T> = {[K in KeysOfUnion<T>]: KeyValue<T, K>};
 
 type RuntimeConditionsObject<C extends keyof any, S extends Style<any, any, any>> = MergeUnion<
-  ExtractConditionalValue<C,
+  ExtractConditionalValue<
+    C,
     | Values<S, Exclude<keyof S, CustomProperty>>
     // Skip top-level object for custom properties and go straight to value.
     | InferCustomPropertyValue<Values<S, Extract<keyof S, CustomProperty>>>
@@ -170,15 +228,33 @@ type RuntimeConditionsObject<C extends keyof any, S extends Style<any, any, any>
 // Return an intersection between string and the used style props so we can prevent passing certain properties to components.
 export type StyleString<P = string> = string & {properties: P};
 type Keys<R> = [R] extends [never] ? never : keyof R;
-export type RuntimeStyleFunction<S extends string, R> = Keys<R> extends never ? () => StyleString<S> : (props: R) => StyleString<S>;
+export type RuntimeStyleFunction<S extends string, R> =
+  Keys<R> extends never ? () => StyleString<S> : (props: R) => StyleString<S>;
 
 // If a render prop type was provided, use that so that we get autocomplete for conditions.
 // Otherwise, fall back to inferring the render props from the style definition itself.
-type InferProps<R, C extends keyof any, S extends Style<any, any, any>> = [R] extends [never] ? AllowOthers<RuntimeConditionsObject<C, S>> : R;
+type InferProps<R, C extends keyof any, S extends Style<any, any, any>> = [R] extends [never]
+  ? AllowOthers<RuntimeConditionsObject<C, S>>
+  : R;
 type AllowOthers<R> = Keys<R> extends never ? never : R | {[x: string]: any};
-type StyleFunctionResult<S, R> = Keys<R> extends never ? StyleString<S> : (props: R) => StyleString<S>;
-type StyleFunctionResultWithOverrides<S, R> = (props: Keys<R> extends never ? null : R, overrides?: StyleString<string> | null) => StyleString<S>
+type StyleFunctionResult<S, R> =
+  Keys<R> extends never ? StyleString<S> : (props: R) => StyleString<S>;
+type StyleFunctionResultWithOverrides<S, R> = (
+  props: Keys<R> extends never ? null : R,
+  overrides?: StyleString<string> | null
+) => StyleString<S>;
 export type StyleFunction<T extends ThemeProperties<Theme>, C extends string> = {
-  <R extends RenderProps<string> = never, S extends Style<T, C, R> = Style<T, C | ArbitraryCondition, R>>(style: S): StyleFunctionResult<keyof S, InferProps<R, C | ArbitraryCondition, S>>,
-  <R extends RenderProps<string> = never, S extends Style<T, C, R> = Style<T, C | ArbitraryCondition, R>>(style: S, allowedProperties: readonly string[]): StyleFunctionResultWithOverrides<keyof S, InferProps<R, C | ArbitraryCondition, S>>
+  <
+    R extends RenderProps<string> = never,
+    S extends Style<T, C, R> = Style<T, C | ArbitraryCondition, R>
+  >(
+    style: S
+  ): StyleFunctionResult<keyof S, InferProps<R, C | ArbitraryCondition, S>>;
+  <
+    R extends RenderProps<string> = never,
+    S extends Style<T, C, R> = Style<T, C | ArbitraryCondition, R>
+  >(
+    style: S,
+    allowedProperties: readonly string[]
+  ): StyleFunctionResultWithOverrides<keyof S, InferProps<R, C | ArbitraryCondition, S>>;
 };

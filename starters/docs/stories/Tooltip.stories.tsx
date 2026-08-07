@@ -15,9 +15,11 @@ export default meta;
 
 type Story = StoryFn<typeof Tooltip>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <TooltipTrigger>
-    <Button><Save size={18} /></Button>
+    <Button>
+      <Save size={18} />
+    </Button>
     <Tooltip {...args}>Save</Tooltip>
   </TooltipTrigger>
 );

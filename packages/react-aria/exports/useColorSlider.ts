@@ -10,4 +10,8 @@
  * governing permissions and limitations under the License.
  */
 export {useColorSlider} from '../src/color/useColorSlider';
-export type {AriaColorSliderProps, AriaColorSliderOptions, ColorSliderAria} from '../src/color/useColorSlider';
+export type {
+  AriaColorSliderProps,
+  AriaColorSliderOptions,
+  ColorSliderAria
+} from '../src/color/useColorSlider';

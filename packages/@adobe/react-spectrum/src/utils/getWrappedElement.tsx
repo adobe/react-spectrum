@@ -12,7 +12,9 @@
 
 import React, {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
-export function getWrappedElement(children: string | ReactElement | ReactNode): ReactElement<any, JSXElementConstructor<any>> {
+export function getWrappedElement(
+  children: string | ReactElement | ReactNode
+): ReactElement<any, JSXElementConstructor<any>> {
   let element;
   if (typeof children === 'string') {
     element = <span>{children}</span>;

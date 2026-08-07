@@ -28,7 +28,6 @@ import styles from '../example/index.css';
 import {TextField} from '../src/TextField';
 import './styles.css';
 
-
 export default {
   title: 'React Aria Components/Modal',
   component: Modal
@@ -62,7 +61,9 @@ export const ModalExample: ModalStory = () => (
         <Dialog>
           {({close}) => (
             <form style={{display: 'flex', flexDirection: 'column'}}>
-              <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
+              <Heading slot="title" style={{marginTop: 0}}>
+                Sign up
+              </Heading>
               <label>
                 First Name: <input placeholder="John" />
               </label>
@@ -78,6 +79,65 @@ export const ModalExample: ModalStory = () => (
       </Modal>
     </ModalOverlay>
   </DialogTrigger>
+);
+
+export const SheetExample: ModalStory = () => (
+  <div style={{display: 'flex', flexDirection: 'column'}}>
+    <div style={{display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center'}}>
+      <DialogTrigger>
+        <Button>Open modal</Button>
+        <ModalOverlay
+          style={{
+            position: 'fixed',
+            zIndex: 100,
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background: 'rgba(0, 0, 0, 0.5)'
+          }}>
+          <Modal
+            style={{
+              position: 'sticky',
+              left: 0,
+              width: '300px',
+              /* Extra padding to account for iOS floating browser UI. */
+              top: '-100px',
+              height: 'calc(100dvh + 200px)',
+              padding: '100px 0',
+              marginLeft: 'auto',
+              background: 'white',
+              outline: 'none',
+              backgroundColor: 'lightgray',
+              borderLeft: '1px solid black',
+              boxShadow: '-8px 0 20px rgba(0, 0, 0, 0.1)',
+              fontFamily: 'system-ui',
+              fontSize: '0.875rem'
+            }}>
+            <Dialog>
+              {({close}) => (
+                <form style={{display: 'flex', flexDirection: 'column'}}>
+                  <Heading slot="title" style={{marginTop: 0}}>
+                    Sign up
+                  </Heading>
+                  <label>
+                    First Name: <input placeholder="John" />
+                  </label>
+                  <label>
+                    Last Name: <input placeholder="Smith" />
+                  </label>
+                  <Button onPress={close} style={{marginTop: 10}}>
+                    Submit
+                  </Button>
+                </form>
+              )}
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
+      </DialogTrigger>
+    </div>
+    <div style={{height: '100vh'}} />
+  </div>
 );
 
 function InertTest() {
@@ -127,11 +187,12 @@ function InertTest() {
                           <div style={{display: 'flex'}}>
                             <Input />
                             <Button>
-                              <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+                              <span aria-hidden="true" style={{padding: '0 2px'}}>
+                                ▼
+                              </span>
                             </Button>
                           </div>
-                          <ListBox
-                            className={styles.menu}>
+                          <ListBox className={styles.menu}>
                             <MyListBoxItem>Foo</MyListBoxItem>
                             <MyListBoxItem>Bar</MyListBoxItem>
                             <MyListBoxItem>Baz</MyListBoxItem>

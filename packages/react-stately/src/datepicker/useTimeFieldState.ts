@@ -12,18 +12,26 @@
 
 import {DateFieldState, useDateFieldState} from './useDateFieldState';
 import {DateValue, MappedTimeValue, TimePickerProps, TimeValue} from './types';
-import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime, toZoned} from '@internationalized/date';
+import {
+  getLocalTimeZone,
+  GregorianCalendar,
+  Time,
+  toCalendarDateTime,
+  today,
+  toTime,
+  toZoned
+} from '@internationalized/date';
 import {useCallback, useMemo} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface TimeFieldStateOptions<T extends TimeValue = TimeValue> extends TimePickerProps<T> {
   /** The locale to display and edit the value according to. */
-  locale: string
+  locale: string;
 }
 
 export interface TimeFieldState extends DateFieldState {
   /** The current time value. */
-  timeValue: Time
+  timeValue: Time;
 }
 
 /**
@@ -31,7 +39,9 @@ export interface TimeFieldState extends DateFieldState {
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFieldStateOptions<T>): TimeFieldState {
+export function useTimeFieldState<T extends TimeValue = TimeValue>(
+  props: TimeFieldStateOptions<T>
+): TimeFieldState {
   let {
     placeholderValue = new Time(),
     minValue,
@@ -49,18 +59,27 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
 
   let v = value || placeholderValue;
   let day = v && 'day' in v ? v : undefined;
-  let defaultValueTimeZone = defaultValue && 'timeZone' in defaultValue ? defaultValue.timeZone : undefined;
+  let defaultValueTimeZone =
+    defaultValue && 'timeZone' in defaultValue ? defaultValue.timeZone : undefined;
   let placeholderDate = useMemo(() => {
     let valueTimeZone = v && 'timeZone' in v ? v.timeZone : undefined;
 
-    return (valueTimeZone || defaultValueTimeZone) && placeholderValue ? toZoned(convertValue(placeholderValue)!, valueTimeZone || defaultValueTimeZone!) : convertValue(placeholderValue);
+    return (valueTimeZone || defaultValueTimeZone) && placeholderValue
+      ? toZoned(convertValue(placeholderValue)!, valueTimeZone || defaultValueTimeZone!)
+      : convertValue(placeholderValue);
   }, [placeholderValue, v, defaultValueTimeZone]);
   let minDate = useMemo(() => convertValue(minValue, day), [minValue, day]);
   let maxDate = useMemo(() => convertValue(maxValue, day), [maxValue, day]);
 
-  let timeValue = useMemo(() => value && 'day' in value ? toTime(value) : value as Time, [value]);
-  let dateTime = useMemo(() => value == null ? null : convertValue(value), [value]);
-  let defaultDateTime = useMemo(() => defaultValue == null ? null : convertValue(defaultValue), [defaultValue]);
+  let timeValue = useMemo(
+    () => (value && 'day' in value ? toTime(value) : (value as Time)),
+    [value]
+  );
+  let dateTime = useMemo(() => (value == null ? null : convertValue(value)), [value]);
+  let defaultDateTime = useMemo(
+    () => (defaultValue == null ? null : convertValue(defaultValue)),
+    [defaultValue]
+  );
   let onChange = newValue => {
     setValue(day || defaultValueTimeZone ? newValue : newValue && toTime(newValue));
   };
@@ -86,7 +105,10 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
   };
 }
 
-function convertValue(value: TimeValue | null | undefined, date: DateValue = today(getLocalTimeZone())) {
+function convertValue(
+  value: TimeValue | null | undefined,
+  date: DateValue = today(getLocalTimeZone())
+) {
   if (!value) {
     return null;
   }
