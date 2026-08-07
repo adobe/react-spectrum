@@ -52,6 +52,16 @@ export class SelectedRange {
     return this.anchor.index === this.current.index && this.anchor.offset === this.current.offset;
   }
 
+  /** The side of the selection closest to the start of the value. */
+  get start() {
+    return compare(this.anchor, this.current) < 0 ? this.anchor : this.current;
+  }
+
+  /** The side of the selection closest to the end of the value. */
+  get end() {
+    return compare(this.anchor, this.current) < 0 ? this.current : this.anchor;
+  }
+
   /** Returns whether this selection is equal to another. */
   isEqual(other: SelectedRange) {
     if (this === other) {
@@ -64,6 +74,14 @@ export class SelectedRange {
       this.current.offset === other.current.offset
     );
   }
+}
+
+function compare(a: Position, b: Position) {
+  if (a.index === b.index) {
+    return a.offset - b.offset;
+  }
+
+  return a.index - b.index;
 }
 
 enum Direction {

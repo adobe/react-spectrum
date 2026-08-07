@@ -438,13 +438,14 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
 
   let [filterAnchor, filterValue, filterType] = useMemo(() => {
     // If on a placeholder token, show suggestions.
-    let segment = prompt.segments[prompt.selectedRange.anchor.index];
+    let slice = prompt.slice(prompt.selectedRange.start, prompt.selectedRange.end);
+    let segment = slice.segments.length === 1 ? slice.segments[0] : null;
     if (
       segment?.type === 'token' &&
       segment.value?.type === 'placeholder' &&
       segment.value.placeholderType === 'token'
     ) {
-      return [prompt.selectedRange.anchor, '', segment.value.valueType ?? null];
+      return [prompt.selectedRange.start, '', segment.value.valueType ?? null];
     }
 
     if (completionTrigger) {

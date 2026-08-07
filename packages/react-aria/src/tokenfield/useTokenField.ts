@@ -870,7 +870,7 @@ function announceToken(value: TokenFieldValue, range = value.selectedRange) {
     }
   } else {
     // Announce token if it is the only thing selected.
-    let selected = value.slice(range.anchor, range.current).segments;
+    let selected = value.slice(range.start, range.end).segments;
     if (selected.length === 1 && selected[0].type === 'token') {
       announce(selected[0].text, 'assertive');
     }
