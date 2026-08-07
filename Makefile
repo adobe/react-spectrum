@@ -157,7 +157,7 @@ tailwind-starter:
 
 hooks-starter: sync-starter-css
 	cp LICENSE starters/hooks/.
-	cd starters/hooks && yarn --no-immutable && yarn up react-aria react-stately @internationalized/date && yarn tsc
+	cd starters/hooks && yarn --no-immutable && yarn up react-aria react-stately react-aria-components @internationalized/date && yarn tsc
 	cd starters/hooks && zip -r react-aria-hooks-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	cd starters/hooks && yarn build-storybook
 
@@ -205,13 +205,15 @@ build-s2-docs: check-starter-css
 	# Build old docs pages, which get inter-mixed with the new pages
 	# TODO: We probably don't need to build this on every PR
 	yarn parcel build 'packages/@adobe/react-spectrum/docs/**/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx' --dist-dir dist/s2-docs/s2/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
-	yarn parcel build 'packages/{react-aria,react-stately}/docs/**/*.mdx' --dist-dir dist/s2-docs/react-aria/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
 
 build-starters:
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
+	$(MAKE) hooks-starter
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
 	mv starters/docs/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter
 	mv starters/docs/react-aria-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter.$$(git rev-parse --short HEAD).zip
 	mv starters/tailwind/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
+	mv starters/hooks/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-hooks-starter
+	mv starters/hooks/react-aria-hooks-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-hooks-starter.$$(git rev-parse --short HEAD).zip

@@ -17,15 +17,16 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {ChevronDown} from 'lucide-react';
 import {Collection, ComboBox} from 'react-aria-components';
 import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
-import {Direction, type TokenFieldSegment, TokenFieldValue} from 'react-stately/useTokenFieldState';
 import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
 import {Key} from '@react-types/shared';
 import {Popover} from 'vanilla-starter/Popover';
-import {positionToDOMRange} from 'react-aria/useTokenField';
-import {Token, TokenField, TokenInput} from '../src/TokenField';
 import 'vanilla-starter/TagGroup.css';
 import {Text} from 'react-aria-components/Text';
+import {Token, TokenField, TokenInput} from '../src/TokenField';
+import {tokenFieldPositionToDOMRange} from 'react-aria/useTokenField';
+import {type TokenFieldSegment, TokenFieldValue} from 'react-stately/useTokenFieldState';
+import 'vanilla-starter/TagGroup.css';
 
 export default {
   title: 'React Aria Components/TokenField',
@@ -177,7 +178,11 @@ export const WithAutocomplete: TokenFieldStory = () => {
   );
 
   let [filterAnchor, filterValue] = useMemo(() => {
-    let filterAnchor = value.findText(value.caretPosition, Direction.Backward, /(?<=^|\s)[@/]/);
+    let filterAnchor = value.findText(
+      value.caretPosition,
+      TokenFieldValue.Direction.Backward,
+      /(?<=^|\s)[@/]/
+    );
     if (filterAnchor != null) {
       let filterValue = value.slice(filterAnchor, value.caretPosition).toString();
       return [filterAnchor, filterValue];
@@ -206,7 +211,7 @@ export const WithAutocomplete: TokenFieldStory = () => {
         placement="bottom start"
         trigger="MenuTrigger"
         getTargetRect={target => {
-          return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
+          return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
         }}>
         <Menu items={items} dependencies={[filterAnchor]}>
           {item => (

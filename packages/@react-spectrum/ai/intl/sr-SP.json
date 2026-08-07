@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Nova poruka",
+  "chat.scrollToBottom": "Scroll to bottom",
   "messagefeedback.thumbDown": "Loš odgovor",
   "messagefeedback.thumbUp": "Dobar odgovor",
-  "responsestatus.loading": "Učitavanje"
+  "promptfield.aiDisclaimer": "Responses are generated using AI, and may be inaccurate. Check before using.",
+  "promptfield.aiUserGuidlines": "AI User Guidelines",
+  "promptfield.attachments": "Attachments",
+  "promptfield.insertButton": "Add",
+  "promptfield.label": "Prompt",
+  "promptfield.placeholder": "Spremni za početak? Postavite pitanje, podelite ideju ili dodajte zadatak.",
+  "promptfield.stopButton": "Stop",
+  "promptfield.submitButton": "Send",
+  "promptfield.uploading": "Uploading",
+  "responsestatus.loading": "Učitavanje",
+  "voicebutton.startListening": "Start recording",
+  "voicebutton.stopListening": "Stop recording"
 }

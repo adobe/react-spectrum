@@ -1068,7 +1068,9 @@ export interface TreeLoadMoreItemRenderProps {
 }
 
 export interface TreeLoadMoreItemProps
-  extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
+  extends
+    Omit<LoadMoreSentinelProps, 'collection' | 'direction'>,
+    RenderProps<TreeLoadMoreItemRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
@@ -1260,19 +1262,14 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListSectionProps<T>
-  extends SectionProps<T>, DOMRenderProps<'div', undefined> {}
+export interface TreeSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined> {}
 
 /**
  * A TreeSection represents a section within a Tree.
  */
 export const TreeSection = /*#__PURE__*/ createBranchComponent(
   SectionNode,
-  <T extends any>(
-    props: GridListSectionProps<T>,
-    ref: ForwardedRef<HTMLDivElement>,
-    item: Node<T>
-  ) => {
+  <T extends any>(props: TreeSectionProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
     let state = useContext(TreeStateContext)!;
     let {CollectionBranch} = useContext(CollectionRendererContext);
     let headingRef = useRef(null);
@@ -1309,7 +1306,9 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(
   }
 );
 
-export const TreeHeader = (props: GridListHeaderProps): ReactNode => {
+export interface TreeHeaderProps extends GridListHeaderProps {}
+
+export const TreeHeader = (props: TreeHeaderProps): ReactNode => {
   return (
     <GridListHeader className="react-aria-TreeHeader" {...props}>
       {props.children}

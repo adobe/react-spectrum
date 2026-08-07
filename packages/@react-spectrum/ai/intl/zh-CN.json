@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "新消息",
+  "chat.scrollToBottom": "滚动到底部",
   "messagefeedback.thumbDown": "错误响应",
   "messagefeedback.thumbUp": "良好响应",
-  "responsestatus.loading": "加载"
+  "promptfield.aiDisclaimer": "回答是 AI 生成的，可能不准确。请检查后再使用。",
+  "promptfield.aiUserGuidlines": "AI 用户指南",
+  "promptfield.attachments": "附件",
+  "promptfield.insertButton": "添加",
+  "promptfield.label": "提示词",
+  "promptfield.placeholder": "准备好开始了吗？提出问题、分享想法或添加任务。",
+  "promptfield.stopButton": "停止",
+  "promptfield.submitButton": "发送",
+  "promptfield.uploading": "正在上载",
+  "responsestatus.loading": "加载",
+  "voicebutton.startListening": "开始录制",
+  "voicebutton.stopListening": "停止录制"
 }

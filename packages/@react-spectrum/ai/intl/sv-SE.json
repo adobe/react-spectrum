@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Nytt meddelande",
+  "chat.scrollToBottom": "Bläddra längst ned",
   "messagefeedback.thumbDown": "Dåligt svar",
   "messagefeedback.thumbUp": "Bra svar",
-  "responsestatus.loading": "Läser in"
+  "promptfield.aiDisclaimer": "Svar genereras med AI och kan vara felaktiga. Kontrollera före användning.",
+  "promptfield.aiUserGuidlines": "Riktlinjer för AI-användare",
+  "promptfield.attachments": "Bilagor",
+  "promptfield.insertButton": "Lägg till",
+  "promptfield.label": "Uppmaning",
+  "promptfield.placeholder": "Redo att komma igång? Ställ en fråga, dela en idé eller lägg till en uppgift.",
+  "promptfield.stopButton": "Stoppa",
+  "promptfield.submitButton": "Skicka",
+  "promptfield.uploading": "Överför",
+  "responsestatus.loading": "Läser in",
+  "voicebutton.startListening": "Starta inspelning",
+  "voicebutton.stopListening": "Stoppa inspelning"
 }

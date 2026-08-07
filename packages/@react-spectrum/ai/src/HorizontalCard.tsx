@@ -28,6 +28,7 @@ import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
+import {IconContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -89,6 +90,8 @@ export interface BasicCardProps extends Omit<HorizontalCardProps, 'variant'> {
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  /** Whether the card is in an error state. */
+  isInvalid?: boolean;
 }
 
 const borderRadius = {
@@ -119,7 +122,11 @@ let card = style({
     default: lightDark('transparent-white-300', 'transparent-black-300'),
     forcedColors: 'ButtonFace'
   },
-  boxShadow: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
+  // TODO: waiting for design to investigate thumbnail card/attachement error state
+  boxShadow: {
+    default: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
+    isInvalid: `[inset 0 0 0 1px ${color('negative-900')}]`
+  },
   forcedColorAdjust: 'none',
   transition: 'default',
   fontFamily: 'sans',
@@ -306,7 +313,7 @@ const image = style({
   pointerEvents: 'none'
 });
 
-let title = style({
+let title = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isBasic?: boolean}>({
   font: 'title',
   fontSize: {
     size: {
@@ -317,11 +324,14 @@ let title = style({
       XL: 'title-lg'
     }
   },
-  lineClamp: 3,
+  lineClamp: {
+    default: 3,
+    isBasic: 1
+  },
   gridArea: 'title'
 });
 
-let description = style({
+let description = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isBasic?: boolean}>({
   font: 'body',
   fontSize: {
     size: {
@@ -332,7 +342,10 @@ let description = style({
       XL: 'body'
     }
   },
-  lineClamp: 3,
+  lineClamp: {
+    default: 3,
+    isBasic: 1
+  },
   gridArea: 'description'
 });
 
@@ -341,7 +354,7 @@ let content = style({
   // By default, all elements are displayed in a stack.
   // If an action menu is present, place it next to the title.
   gridTemplateColumns: {
-    default: ['1fr'],
+    default: ['minmax(0, 1fr)'],
     ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
   },
   gridTemplateAreas: {
@@ -350,6 +363,7 @@ let content = style({
   },
   columnGap: 4,
   flexGrow: 1,
+  minWidth: 0,
   alignItems: 'baseline',
   alignContent: 'start',
   rowGap: {
@@ -422,6 +436,7 @@ const actionButtonSize = {
 const Card = forwardRef(function Card(
   props: Omit<HorizontalCardProps, 'variant'> & {
     isBasic?: boolean;
+    isInvalid?: boolean;
     variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
   },
   ref: DOMRef<HTMLDivElement>
@@ -430,6 +445,7 @@ const Card = forwardRef(function Card(
   let domRef = useDOMRef(ref);
   let {
     isBasic = false,
+    isInvalid = false,
     density = 'regular',
     size = 'M',
     variant = 'primary',
@@ -448,8 +464,8 @@ const Card = forwardRef(function Card(
           {
             slots: {
               [DEFAULT_SLOT]: {},
-              title: {styles: title({size})},
-              description: {styles: description({size})}
+              title: {styles: title({size, isBasic})},
+              description: {styles: description({size, isBasic})}
             }
           }
         ],
@@ -498,6 +514,7 @@ const Card = forwardRef(function Card(
               density,
               variant,
               isBasic,
+              isInvalid,
               isCardView: false,
               isLink: true
             }),
@@ -523,11 +540,12 @@ const Card = forwardRef(function Card(
       <div
         {...filterDOMProps(otherProps)}
         id={id != null ? String(id) : undefined}
+        aria-invalid={isInvalid || undefined}
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
         ref={domRef}
         className={mergeStyles(
-          card({size, density, variant, isBasic, isCardView: ElementType !== 'div'}),
+          card({size, density, variant, isBasic, isInvalid, isCardView: ElementType !== 'div'}),
           styles
         )}>
         <InternalCardContext.Provider
@@ -550,6 +568,7 @@ const Card = forwardRef(function Card(
     <ElementType
       {...props}
       ref={domRef}
+      aria-invalid={isInvalid || undefined}
       className={renderProps =>
         mergeStyles(
           card({
@@ -559,7 +578,8 @@ const Card = forwardRef(function Card(
             size,
             density,
             variant,
-            isBasic
+            isBasic,
+            isInvalid
           }),
           styles
         )
@@ -790,6 +810,15 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
   );
 });
 
+const iconThumbnailStyles = style({
+  position: 'relative',
+  alignSelf: 'center',
+  flexShrink: 0,
+  pointerEvents: 'none',
+  userSelect: 'none',
+  size: '--basic-thumb-size'
+});
+
 export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
   props: BasicCardProps,
   ref: DOMRef<HTMLDivElement>
@@ -809,6 +838,7 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                     styles: style({
                       position: 'relative',
                       alignSelf: 'center',
+                      flexShrink: 0,
                       pointerEvents: 'none',
                       userSelect: 'none',
                       size: '--basic-thumb-size',
@@ -823,6 +853,17 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                       },
                       outlineColor: '--s2-container-bg'
                     })({size})
+                  }
+                }
+              }
+            ],
+            [
+              IconContext,
+              {
+                slots: {
+                  icon: {},
+                  thumbnail: {
+                    styles: iconThumbnailStyles
                   }
                 }
               }

@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Új üzenet",
+  "chat.scrollToBottom": "Görgess le az alulra",
   "messagefeedback.thumbDown": "Rossz válasz",
   "messagefeedback.thumbUp": "Jó válasz",
-  "responsestatus.loading": "Betöltés folyamatban"
+  "promptfield.aiDisclaimer": "A válaszokat mesterséges intelligencia segítségével generálják, és előfordulhat, hogy pontatlanok. Ellenőrizd a használat előtt.",
+  "promptfield.aiUserGuidlines": "AI felhasználói irányelvek",
+  "promptfield.attachments": "Mellékletek",
+  "promptfield.insertButton": "Add",
+  "promptfield.label": "Prompt",
+  "promptfield.placeholder": "Készen áll a kezdésre? Tegyen fel egy kérdést, ossza meg az ötletét, vagy adjon hozzá egy feladatot.",
+  "promptfield.stopButton": "Állj meg",
+  "promptfield.submitButton": "Elküldöm",
+  "promptfield.uploading": "Feltöltés",
+  "responsestatus.loading": "Betöltés folyamatban",
+  "voicebutton.startListening": "Kezdj el felvételt",
+  "voicebutton.stopListening": "Felvétel abbahagyása"
 }

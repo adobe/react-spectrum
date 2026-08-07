@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Yeni mesaj",
+  "chat.scrollToBottom": "Aşağıya kaydırın",
   "messagefeedback.thumbDown": "Yanıt kötüydü",
   "messagefeedback.thumbUp": "Yanıt iyiydi",
-  "responsestatus.loading": "Yükleniyor"
+  "promptfield.aiDisclaimer": "Yanıtlar yapay zeka kullanılarak üretilir ve yanlış olabilir. Kullanmadan önce kontrol edin.",
+  "promptfield.aiUserGuidlines": "Yapay Zeka Kullanıcı Kılavuzları",
+  "promptfield.attachments": "Ekler",
+  "promptfield.insertButton": "Ekle",
+  "promptfield.label": "Prompt",
+  "promptfield.placeholder": "Başlamaya hazır mısınız? Soru sorun, fikir paylaşın veya görev ekleyin.",
+  "promptfield.stopButton": "Dur",
+  "promptfield.submitButton": "Gönder",
+  "promptfield.uploading": "Yükleme",
+  "responsestatus.loading": "Yükleniyor",
+  "voicebutton.startListening": "Kayıtlara başlayın",
+  "voicebutton.stopListening": "Kaydı durdur"
 }

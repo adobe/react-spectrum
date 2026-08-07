@@ -20,6 +20,7 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {ComboBox} from '../src/ComboBox';
+import {DialogTrigger} from '../src/Dialog';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
@@ -1078,5 +1079,38 @@ describe('Tabs', () => {
     await menu.open();
     expect(menu.getOptions()).toHaveLength(3);
     await menu.close();
+  });
+
+  it('supports DialogTrigger inside Tabs', async () => {
+    let tree = render(
+      <Tabs>
+        <div>
+          <TabList>
+            <Tab id="key1">First Tab</Tab>
+            <Tab id="key2">Second Tab</Tab>
+          </TabList>
+          <DialogTrigger>
+            <Button>Dialog button</Button>
+            <Popover aria-label="Filters">
+              <Menu aria-label="Filter options">
+                <MenuItem>Item 1</MenuItem>
+                <MenuItem>Item 2</MenuItem>
+              </Menu>
+            </Popover>
+          </DialogTrigger>
+        </div>
+        <TabPanel id="key1">First Tab content</TabPanel>
+        <TabPanel id="key2">Second Tab content</TabPanel>
+      </Tabs>
+    );
+
+    let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
+    expect(tester.getTabs().length).toBe(2);
+
+    let trigger = tree.getByRole('button');
+    await user.click(trigger);
+
+    let dialog = tree.getByRole('dialog');
+    expect(within(dialog).getAllByRole('menuitem')).toHaveLength(2);
   });
 });
