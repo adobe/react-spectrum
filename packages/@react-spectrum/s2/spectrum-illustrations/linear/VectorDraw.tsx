@@ -12,7 +12,7 @@
 'use client';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 import VectorDraw_L from 'illustration:./S2_lin_vectorDraw_160.svg';
 import VectorDraw_M from 'illustration:./S2_lin_vectorDraw_96.svg';
 import VectorDraw_S from 'illustration:./S2_lin_vectorDraw_48.svg';

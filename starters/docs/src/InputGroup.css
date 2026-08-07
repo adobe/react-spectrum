@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
 .input-group {
   .react-aria-Group {

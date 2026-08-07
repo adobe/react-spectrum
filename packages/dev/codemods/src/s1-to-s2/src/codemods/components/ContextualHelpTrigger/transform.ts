@@ -1,4 +1,4 @@
-import {addComponentImport, getName} from '../../shared/utils';
+import {addComponentImport, getName, removeComponentImportIfUnused} from '../../shared/utils';
 import {getComponents} from '../../../getComponents';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
@@ -11,7 +11,7 @@ let availableComponents = getComponents();
  * - Replace the old Dialog with ContextualHelpPopover.
  */
 export default function transformContextualHelpTrigger(path: NodePath<t.JSXElement>): void {
-  let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+  let program = path.findParent(p => t.isProgram(p.node)) as NodePath<t.Program>;
   let localName = addComponentImport(program, 'UnavailableMenuItemTrigger');
 
   // replace ContextualHelpTrigger with UnavailableMenuItemTrigger
@@ -34,4 +34,6 @@ export default function transformContextualHelpTrigger(path: NodePath<t.JSXEleme
       }
     }
   }
+
+  removeComponentImportIfUnused(program, 'Dialog');
 }

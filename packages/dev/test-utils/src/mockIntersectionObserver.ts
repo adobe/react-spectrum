@@ -11,7 +11,7 @@
  */
 
 interface IMockIntersectionObserver extends IntersectionObserver {
-  triggerCallback: (entries: any[]) => void
+  triggerCallback: (entries: any[]) => void;
 }
 
 export function setupIntersectionObserverMock({
@@ -20,10 +20,10 @@ export function setupIntersectionObserverMock({
   takeRecords = () => [],
   unobserve = () => null
 }: {
-  disconnect?: (() => null) | undefined,
-  observe?: (() => null) | undefined,
-  takeRecords?: (() => never[]) | undefined,
-  unobserve?: (() => null) | undefined
+  disconnect?: (() => null) | undefined;
+  observe?: (() => null) | undefined;
+  takeRecords?: (() => never[]) | undefined;
+  unobserve?: (() => null) | undefined;
 } = {}): typeof IntersectionObserver & {instance: IMockIntersectionObserver} {
   class MockIntersectionObserver implements IntersectionObserver {
     root;

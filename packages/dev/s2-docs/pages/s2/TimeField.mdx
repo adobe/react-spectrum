@@ -17,7 +17,7 @@ export const description = 'Allows a user to enter and edit time values using a 
   links={docs.links}
   props={['label', 'granularity', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{label: 'Event time'}}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/TimeField"
   type="s2" />
 
 ## Value
@@ -27,7 +27,7 @@ Use the `value` or `defaultValue` prop to set the time value, using objects in t
 ```tsx render
 "use client";
 import {Time} from '@internationalized/date';
-import {TimeField} from '@react-spectrum/s2';
+import {TimeField} from '@react-spectrum/s2/TimeField';
 import {useState} from 'react';
 
 function Example() {
@@ -53,7 +53,7 @@ The time format is automatically determined based on the user's locale. `TimeFie
 ```tsx render docs={docs.exports.TimeField} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Time'}} type="s2"
 "use client";
 import {parseZonedDateTime} from '@internationalized/date';
-import {TimeField} from '@react-spectrum/s2';
+import {TimeField} from '@react-spectrum/s2/TimeField';
 
 <TimeField
   /* PROPS */
@@ -67,7 +67,9 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 ```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2" wide
 "use client";
 import {Time} from '@internationalized/date';
-import {TimeField, Form, Button} from '@react-spectrum/s2';
+import {TimeField} from '@react-spectrum/s2/TimeField';
+import {Form} from '@react-spectrum/s2/Form';
+import {Button} from '@react-spectrum/s2/Button';
 
 function Example(props) {
   return (

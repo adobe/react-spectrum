@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Updates Well to be div with style macro', `
+test(
+  'Updates Well to be div with style macro',
+  `
 import {Well} from '@adobe/react-spectrum';
 
 <div>
@@ -18,4 +20,5 @@ import {Well} from '@adobe/react-spectrum';
     <p>601 Townsend Street<br /> San Francisco, CA 94103</p>
   </Well>
 </div>
-`);
+`
+);

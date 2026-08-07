@@ -12,7 +12,7 @@ import '../../tailwind/tailwind.css';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 
 export const tags = ['btn'];
-export const relatedPages = [{'title': 'useButton', 'url': 'Button/useButton.html'}];
+export const relatedPages = [{'title': 'useButton', 'url': './Button/useButton'}];
 export const description = 'Allows a user to perform an action, with mouse, touch, and keyboard interactions.';
 
 # Button
@@ -115,7 +115,7 @@ The `Button` component always represents a button semantically. To create a link
 
 ```tsx render
 "use client";
-import {Link} from 'react-aria-components';
+import {Link} from 'react-aria-components/Link';
 
 <Link className="react-aria-Button button-base" href="https://adobe.com/" target="_blank">
   Adobe

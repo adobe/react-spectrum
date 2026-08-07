@@ -3,10 +3,10 @@ description: Want to add a feature to react-spectrum?
 body:
   - type: markdown
     attributes:
-      value: "### Thanks for filing an issue! Before you submit, search open/closed issues before submitting since someone might have asked the same thing before!"
+      value: '### Thanks for filing an issue! Before you submit, search open/closed issues before submitting since someone might have asked the same thing before!'
   - type: markdown
     attributes:
-      value: "# 🙋 Feature Request"
+      value: '# 🙋 Feature Request'
   - type: textarea
     id: general-summary
     attributes:
@@ -31,14 +31,14 @@ body:
     id: possible-solution
     attributes:
       label: 💁 Possible Solution
-      description: Ideas how to implement this feature or a similar solution/workaround that already exists 
+      description: Ideas how to implement this feature or a similar solution/workaround that already exists
     validations:
       required: false
   - type: textarea
     id: context
     attributes:
       label: 🔦 Context
-      description: | 
+      description: |
         Providing context helps us come up with a solution that is most useful in the real world.
         How has this issue affected you? What are you trying to accomplish?
     validations:
@@ -50,7 +50,7 @@ body:
       description: Examples help us understand the requested feature better. Include design mocks here if possible.
   - type: markdown
     attributes:
-      value: "## 🦄 Other"
+      value: '## 🦄 Other'
   - type: input
     id: company-team
     attributes:

@@ -10,13 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionButtonGroup, Text} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {ActionButtonGroup} from '../src/ActionButtonGroup';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import type {Meta, StoryFn} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {StaticColorDecorator} from './utils';
 import {style} from '../style' with {type: 'macro'};
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof ActionButtonGroup> = {
   component: ActionButtonGroup,
@@ -47,18 +50,33 @@ let justifiedStyle = style({
   }
 });
 
-export const Example: StoryFn<typeof ActionButtonGroup> = (args) => (
+export const Example: StoryFn<typeof ActionButtonGroup> = args => (
   <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-    <ActionButton><Cut /><Text slot="label">Cut</Text></ActionButton>
-    <ActionButton><Copy /><Text slot="label">Copy</Text></ActionButton>
-    <ActionButton><Paste /><Text slot="label">Paste</Text></ActionButton>
+    <ActionButton>
+      <Cut />
+      <Text slot="label">Cut</Text>
+    </ActionButton>
+    <ActionButton>
+      <Copy />
+      <Text slot="label">Copy</Text>
+    </ActionButton>
+    <ActionButton>
+      <Paste />
+      <Text slot="label">Paste</Text>
+    </ActionButton>
   </ActionButtonGroup>
 );
 
-export const IconOnly: StoryFn<typeof ActionButtonGroup> = (args) => (
+export const IconOnly: StoryFn<typeof ActionButtonGroup> = args => (
   <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-    <ActionButton aria-label="Cut"><Cut /></ActionButton>
-    <ActionButton aria-label="Copy"><Copy /></ActionButton>
-    <ActionButton aria-label="Paste"><Paste /></ActionButton>
+    <ActionButton aria-label="Cut">
+      <Cut />
+    </ActionButton>
+    <ActionButton aria-label="Copy">
+      <Copy />
+    </ActionButton>
+    <ActionButton aria-label="Paste">
+      <Paste />
+    </ActionButton>
   </ActionButtonGroup>
 );

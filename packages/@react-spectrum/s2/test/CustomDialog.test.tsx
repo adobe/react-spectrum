@@ -11,8 +11,11 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {ActionButton, CustomDialog, DialogTrigger, Tag, TagGroup} from '../src';
+import {ActionButton} from '../src/ActionButton';
+import {CustomDialog} from '../src/CustomDialog';
+import {DialogTrigger} from '../src/DialogTrigger';
 import React from 'react';
+import {Tag, TagGroup} from '../src/TagGroup';
 import userEvent from '@testing-library/user-event';
 
 describe('CustomDialog', () => {
@@ -36,10 +39,7 @@ describe('CustomDialog', () => {
       <DialogTrigger>
         <ActionButton>Open dialog</ActionButton>
         <CustomDialog isDismissible>
-          <TagGroup
-            label="Ice cream categories"
-            maxRows={1}
-            onRemove={() => {}}>
+          <TagGroup label="Ice cream categories" maxRows={1} onRemove={() => {}}>
             <Tag>Chocolate</Tag>
             <Tag>Mint</Tag>
             <Tag>Strawberry</Tag>
@@ -51,7 +51,9 @@ describe('CustomDialog', () => {
 
     let trigger = getByRole('button');
     await user.click(trigger);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(getByRole('dialog')).toBeVisible();
   });
 });

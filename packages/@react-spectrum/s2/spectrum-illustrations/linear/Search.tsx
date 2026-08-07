@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Search_L from 'illustration:./S2_lin_search_160.svg';
 import Search_M from 'illustration:./S2_lin_search_96.svg';
 import Search_S from 'illustration:./S2_lin_search_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Search(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

@@ -11,23 +11,35 @@
  */
 
 import actEventsTest from './rules/act-events-test.js';
+import addEventNonComposing from './rules/add-event-non-composing.js';
 import fasterNodeContains from './rules/faster-node-contains.js';
+import imports from './rules/imports.js';
 import noGetByRoleToThrow from './rules/no-getByRole-toThrow.js';
+import noNonComposingEventListener from './rules/no-non-composing-event-listener.js';
 import noNonShadowContains from './rules/no-non-shadow-contains.js';
+import noPackageRootImports from './rules/no-package-root-imports.js';
 import noReactKey from './rules/no-react-key.js';
+import pureRender from './rules/pure-render.js';
 import safeEventTarget from './rules/safe-event-target.js';
 import shadowSafeActiveElement from './rules/shadow-safe-active-element.js';
 import sortImports from './rules/sort-imports.js';
+import useLayoutEffectRule from './rules/use-layout-effect-rule.js';
 
 const rules = {
   'act-events-test': actEventsTest,
+  'add-event-non-composing': addEventNonComposing,
   'no-getByRole-toThrow': noGetByRoleToThrow,
+  'no-non-composing-event-listener': noNonComposingEventListener,
+  'no-package-root-imports': noPackageRootImports,
   'no-react-key': noReactKey,
   'sort-imports': sortImports,
   'no-non-shadow-contains': noNonShadowContains,
   'safe-event-target': safeEventTarget,
   'shadow-safe-active-element': shadowSafeActiveElement,
-  'faster-node-contains': fasterNodeContains
+  'faster-node-contains': fasterNodeContains,
+  imports,
+  'use-layout-effect-rule': useLayoutEffectRule,
+  'pure-render': pureRender
 };
 
 const meta = {
@@ -35,8 +47,5 @@ const meta = {
   version: '1.0.0'
 };
 
-
-export {
-  meta,
-  rules
-};
+export {meta, rules};
+export default {meta, rules};

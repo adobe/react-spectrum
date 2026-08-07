@@ -11,42 +11,44 @@ export const getPages = cache(async () => {
     pages.push(page);
   }
 
-  return Promise.all(pages.map(async page => {
-    let code = await readFile(page);
-    let res: any = await transformAsync({
-      filename: page,
-      code,
-      module_id: '123',
-      project_root: process.cwd(),
-      inline_fs: false,
-      env: {},
-      type: 'mdx',
-      context: 'react-server',
-      automatic_jsx_runtime: true,
-      decorators: false,
-      use_define_for_class_fields: false,
-      is_development: false,
-      react_refresh: false,
-      source_maps: false,
-      scope_hoist: false,
-      source_type: 'Module',
-      supports_module_workers: true,
-      is_library: false,
-      is_esm_output: false,
-      trace_bailouts: false,
-      is_swc_helpers: false,
-      standalone: false,
-      inline_constants: false
-    });
+  return Promise.all(
+    pages.map(async page => {
+      let code = await readFile(page);
+      let res: any = await transformAsync({
+        filename: page,
+        code,
+        module_id: '123',
+        project_root: process.cwd(),
+        inline_fs: false,
+        env: {},
+        type: 'mdx',
+        context: 'react-server',
+        automatic_jsx_runtime: true,
+        decorators: false,
+        use_define_for_class_fields: false,
+        is_development: false,
+        react_refresh: false,
+        source_maps: false,
+        scope_hoist: false,
+        source_type: 'Module',
+        supports_module_workers: true,
+        is_library: false,
+        is_esm_output: false,
+        trace_bailouts: false,
+        is_swc_helpers: false,
+        standalone: false,
+        inline_constants: false
+      });
 
-    let name = page.slice(6, -4);    
-    return {
-      name,
-      url: getUrl(name),
-      exports: res.mdx_exports,
-      tableOfContents: res.mdx_toc
-    } satisfies Page;
-  }));
+      let name = page.slice(6, -4);
+      return {
+        name,
+        url: getUrl(name),
+        exports: res.mdx_exports,
+        tableOfContents: res.mdx_toc
+      } satisfies Page;
+    })
+  );
 });
 
 function getUrl(name: string) {

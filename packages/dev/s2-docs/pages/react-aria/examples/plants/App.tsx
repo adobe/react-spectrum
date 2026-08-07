@@ -1,9 +1,16 @@
-"use client";
+'use client';
 import {AlertDialog} from 'tailwind-starter/AlertDialog';
 import {Button} from 'tailwind-starter/Button';
 import {Checkbox} from 'tailwind-starter/Checkbox';
 import {FilterIcon, PlusIcon, RefreshCw, SlidersIcon} from 'lucide-react';
-import {DialogTrigger, Heading, Key, Selection, SortDescriptor, TooltipTrigger} from 'react-aria-components';
+import {
+  DialogTrigger,
+  Heading,
+  Key,
+  Selection,
+  SortDescriptor,
+  TooltipTrigger
+} from 'react-aria-components';
 import {Dialog} from 'tailwind-starter/Dialog';
 import {Menu, MenuItem, MenuTrigger} from 'tailwind-starter/Menu';
 import {Modal} from 'tailwind-starter/Modal';
@@ -20,13 +27,17 @@ import {PlantDialog} from './PlantDialog';
 import {PlantList} from './PlantList';
 
 export default function App(): React.ReactNode {
-  let [allItems, setAllItems] = useState<Plant[]>(() => plants.map(p => ({...p, isFavorite: false})));
+  let [allItems, setAllItems] = useState<Plant[]>(() =>
+    plants.map(p => ({...p, isFavorite: false}))
+  );
   let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'common_name',
     direction: 'ascending'
   });
 
-  let [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(['favorite', 'common_name', 'sunlight', 'watering', 'actions']));
+  let [visibleColumns, setVisibleColumns] = useState<Selection>(
+    new Set(['favorite', 'common_name', 'sunlight', 'watering', 'actions'])
+  );
 
   // Filter state.
   let [search, setSearch] = useState('');
@@ -40,14 +51,18 @@ export default function App(): React.ReactNode {
   let collator = useCollator();
   let dir = sortDescriptor.direction === 'descending' ? -1 : 1;
   let items = allItems
-    .filter(item =>
-      (contains(item.common_name, search) || contains(item.scientific_name.join(''), search))
-        && (!favorite || item.isFavorite)
-        && (cycles === 'all' || cycles.size === 0 || cycles.has(item.cycle))
-        && (sunlight === 'all' || sunlight.size === 0 || sunlight.has(getSunlight(item)))
-        && (watering === 'all' || watering.size === 0 || watering.has(item.watering))
+    .filter(
+      item =>
+        (contains(item.common_name, search) || contains(item.scientific_name.join(''), search)) &&
+        (!favorite || item.isFavorite) &&
+        (cycles === 'all' || cycles.size === 0 || cycles.has(item.cycle)) &&
+        (sunlight === 'all' || sunlight.size === 0 || sunlight.has(getSunlight(item))) &&
+        (watering === 'all' || watering.size === 0 || watering.has(item.watering))
     )
-    .sort((a: any, b: any) => collator.compare(a[sortDescriptor.column!], b[sortDescriptor.column!]) * dir);
+    .sort(
+      (a: any, b: any) =>
+        collator.compare(a[sortDescriptor.column!], b[sortDescriptor.column!]) * dir
+    );
 
   // Count applied filters for button badge.
   let filters = 0;
@@ -128,36 +143,86 @@ export default function App(): React.ReactNode {
           placeholder="Search plants"
           value={search}
           onChange={setSearch}
-          className="col-span-3 sm:col-span-1" />
+          className="col-span-3 sm:col-span-1"
+        />
 
         {/* Filters */}
         <DialogTrigger>
           <TooltipTrigger>
-            <Button aria-label="Filters" variant="secondary" className="!w-9 !h-9 shrink-0 relative">
+            <Button
+              aria-label="Filters"
+              variant="secondary"
+              className="!w-9 !h-9 shrink-0 relative">
               <FilterIcon aria-hidden className="block w-5 h-5 shrink-0" />
-              {filters > 0 && <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">{filters}</div>}
+              {filters > 0 && (
+                <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">
+                  {filters}
+                </div>
+              )}
             </Button>
             <Tooltip>Filters</Tooltip>
           </TooltipTrigger>
           <Popover showArrow>
             <Dialog className="outline outline-0 p-4 max-h-[inherit] overflow-auto w-[350px]">
-              <Heading slot="title" className="text-lg font-semibold m-0 mb-2">Filters</Heading>
-              {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 h-auto py-1 px-2 text-xs">Clear</Button>}
+              <Heading slot="title" className="text-lg font-semibold m-0 mb-2">
+                Filters
+              </Heading>
+              {filters > 0 && (
+                <Button
+                  onPress={clearFilters}
+                  variant="secondary"
+                  className="absolute top-4 right-4 h-auto py-1 px-2 text-xs">
+                  Clear
+                </Button>
+              )}
               <div className="flex flex-col gap-4">
-                <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
-                <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles} escapeKeyBehavior="none">
-                  <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="w-4 h-4 shrink-0" /> Annual</Tag>
-                  <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="w-4 h-4 shrink-0" /> Perennial</Tag>
+                <Checkbox isSelected={favorite} onChange={setFavorite}>
+                  Favorite
+                </Checkbox>
+                <TagGroup
+                  label="Cycle"
+                  selectionMode="multiple"
+                  selectedKeys={cycles}
+                  onSelectionChange={setCycles}
+                  escapeKeyBehavior="none">
+                  <Tag id="Annual" color="green" textValue="Annual">
+                    <RefreshCw className="w-4 h-4 shrink-0" /> Annual
+                  </Tag>
+                  <Tag id="Perennial" color="green" textValue="Perennial">
+                    <RefreshCw className="w-4 h-4 shrink-0" /> Perennial
+                  </Tag>
                 </TagGroup>
-                <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight} escapeKeyBehavior="none">
-                  <Tag id="full sun" color="yellow" textValue="Full Sun">{sunIcons['full sun']} Full Sun</Tag>
-                  <Tag id="part sun" color="yellow" textValue="Part Sun">{sunIcons['part sun']} Part Sun</Tag>
-                  <Tag id="part shade" color="yellow" textValue="Part Shade">{sunIcons['part shade']} Part Shade</Tag>
+                <TagGroup
+                  label="Sunlight"
+                  selectionMode="multiple"
+                  selectedKeys={sunlight}
+                  onSelectionChange={setSunlight}
+                  escapeKeyBehavior="none">
+                  <Tag id="full sun" color="yellow" textValue="Full Sun">
+                    {sunIcons['full sun']} Full Sun
+                  </Tag>
+                  <Tag id="part sun" color="yellow" textValue="Part Sun">
+                    {sunIcons['part sun']} Part Sun
+                  </Tag>
+                  <Tag id="part shade" color="yellow" textValue="Part Shade">
+                    {sunIcons['part shade']} Part Shade
+                  </Tag>
                 </TagGroup>
-                <TagGroup label="Watering" selectionMode="multiple" selectedKeys={watering} onSelectionChange={setWatering} escapeKeyBehavior="none">
-                  <Tag id="Frequent" color="blue" textValue="Frequent">{wateringIcons['Frequent']} Frequent</Tag>
-                  <Tag id="Average" color="blue" textValue="Average">{wateringIcons['Average']} Average</Tag>
-                  <Tag id="Minimum" color="blue" textValue="Minimum">{wateringIcons['Minimum']} Minimum</Tag>
+                <TagGroup
+                  label="Watering"
+                  selectionMode="multiple"
+                  selectedKeys={watering}
+                  onSelectionChange={setWatering}
+                  escapeKeyBehavior="none">
+                  <Tag id="Frequent" color="blue" textValue="Frequent">
+                    {wateringIcons['Frequent']} Frequent
+                  </Tag>
+                  <Tag id="Average" color="blue" textValue="Average">
+                    {wateringIcons['Average']} Average
+                  </Tag>
+                  <Tag id="Minimum" color="blue" textValue="Minimum">
+                    {wateringIcons['Minimum']} Minimum
+                  </Tag>
                 </TagGroup>
               </div>
             </Dialog>
@@ -167,12 +232,18 @@ export default function App(): React.ReactNode {
         {/* Columns */}
         <MenuTrigger>
           <TooltipTrigger>
-            <Button aria-label="Columns" variant="secondary" className="!w-9 !h-9 shrink-0 hidden sm:flex">
+            <Button
+              aria-label="Columns"
+              variant="secondary"
+              className="!w-9 !h-9 shrink-0 hidden sm:flex">
               <SlidersIcon aria-hidden className="block w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
           </TooltipTrigger>
-          <Menu selectionMode="multiple" selectedKeys={visibleColumns} onSelectionChange={setVisibleColumns}>
+          <Menu
+            selectionMode="multiple"
+            selectedKeys={visibleColumns}
+            onSelectionChange={setVisibleColumns}>
             <MenuItem id="common_name">Name</MenuItem>
             <MenuItem id="cycle">Cycle</MenuItem>
             <MenuItem id="sunlight">Sunlight</MenuItem>
@@ -181,7 +252,10 @@ export default function App(): React.ReactNode {
         </MenuTrigger>
 
         <DialogTrigger>
-          <Button aria-label="Add plant" variant="secondary" className="!w-9 !h-9 shrink-0 col-start-5">
+          <Button
+            aria-label="Add plant"
+            variant="secondary"
+            className="!w-9 !h-9 shrink-0 col-start-5">
             <PlusIcon aria-hidden className="block w-5 h-5" />
           </Button>
           <Modal>
@@ -194,7 +268,8 @@ export default function App(): React.ReactNode {
         items={items}
         onFavoriteChange={onFavoriteChange}
         onEdit={onEdit}
-        onDelete={onDelete} />
+        onDelete={onDelete}
+      />
       {/* Table view for desktop */}
       <PlantTable
         sortDescriptor={sortDescriptor}
@@ -203,9 +278,14 @@ export default function App(): React.ReactNode {
         items={items}
         onFavoriteChange={onFavoriteChange}
         onEdit={onEdit}
-        onDelete={onDelete} />
+        onDelete={onDelete}
+      />
       <Modal isOpen={dialog === 'delete'} onOpenChange={() => setDialog(null)}>
-        <AlertDialog title="Delete Plant" variant="destructive" actionLabel="Delete" onAction={deleteItem}>
+        <AlertDialog
+          title="Delete Plant"
+          variant="destructive"
+          actionLabel="Delete"
+          onAction={deleteItem}>
           Are you sure you want to delete "{actionItem?.common_name}"?
         </AlertDialog>
       </Modal>

@@ -11,7 +11,10 @@
  */
 
 import {act, pointerMap, render, User} from '@react-spectrum/test-utils-internal';
-import {Checkbox, CheckboxGroup, Form, Provider} from '../src';
+import {Checkbox} from '../src/Checkbox';
+import {CheckboxGroup} from '../src/CheckboxGroup';
+import {Form} from '../src/Form';
+import {Provider} from '../src/Provider';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -33,17 +36,20 @@ describe('CheckboxGroup', () => {
       </Form>
     );
 
-
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
 
     await user.click(checkbox);
-    act(() => {(getByTestId('form') as HTMLFormElement).checkValidity();});
+    act(() => {
+      (getByTestId('form') as HTMLFormElement).checkValidity();
+    });
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
 
     await user.click(checkbox);
-    act(() => {(getByTestId('form') as HTMLFormElement).checkValidity();});
+    act(() => {
+      (getByTestId('form') as HTMLFormElement).checkValidity();
+    });
     expect(group).toHaveAttribute('data-invalid');
     expect(group).toHaveAttribute('aria-describedby');
     let errorMsg = document.getElementById(group.getAttribute('aria-describedby')!);
@@ -51,47 +57,56 @@ describe('CheckboxGroup', () => {
   });
 
   it.each`
-    Name                    | props
-    ${'ltr + vertical'}     | ${{locale: 'de-DE', orientation: 'vertical'}}
-    ${'rtl + verfical'}     | ${{locale: 'ar-AE', orientation: 'vertical'}}
-    ${'ltr + horizontal'}   | ${{locale: 'de-DE', orientation: 'horizontal'}}
-    ${'rtl + horizontal'}   | ${{locale: 'ar-AE', orientation: 'horizontal'}}
-  `('$Name should select the correct checkbox regardless of orientation and disabled checkboxes', async function ({props}) {
-    let {getByRole} = render(
-      <Provider locale={props.locale}>
-        <CheckboxGroup label="Favorite sports">
-          <Checkbox value="soccer">Soccer</Checkbox>
-          <Checkbox value="baseball" isDisabled>Baseball</Checkbox>
-          <Checkbox value="basketball" isDisabled>Basketball</Checkbox>
-          <Checkbox value="tennis">Tennis</Checkbox>
-          <Checkbox value="Rugby">Rugby</Checkbox>
-        </CheckboxGroup>
-      </Provider>
-    );
+    Name                  | props
+    ${'ltr + vertical'}   | ${{locale: 'de-DE', orientation: 'vertical'}}
+    ${'rtl + verfical'}   | ${{locale: 'ar-AE', orientation: 'vertical'}}
+    ${'ltr + horizontal'} | ${{locale: 'de-DE', orientation: 'horizontal'}}
+    ${'rtl + horizontal'} | ${{locale: 'ar-AE', orientation: 'horizontal'}}
+  `(
+    '$Name should select the correct checkbox regardless of orientation and disabled checkboxes',
+    async function ({props}) {
+      let {getByRole} = render(
+        <Provider locale={props.locale}>
+          <CheckboxGroup label="Favorite sports">
+            <Checkbox value="soccer">Soccer</Checkbox>
+            <Checkbox value="baseball" isDisabled>
+              Baseball
+            </Checkbox>
+            <Checkbox value="basketball" isDisabled>
+              Basketball
+            </Checkbox>
+            <Checkbox value="tennis">Tennis</Checkbox>
+            <Checkbox value="Rugby">Rugby</Checkbox>
+          </CheckboxGroup>
+        </Provider>
+      );
 
-    let checkboxGroupTester = testUtilUser.createTester('CheckboxGroup', {root: getByRole('group')});
-    expect(checkboxGroupTester.checkboxgroup).toHaveAttribute('role');
-    let checkboxes = checkboxGroupTester.checkboxes;
-    await checkboxGroupTester.toggleCheckbox({checkbox: checkboxes[0]});
-    expect(checkboxes[0]).toBeChecked();
-    expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(1);
+      let checkboxGroupTester = testUtilUser.createTester('CheckboxGroup', {
+        root: getByRole('group')
+      });
+      expect(checkboxGroupTester.getCheckboxGroup()).toHaveAttribute('role');
+      let checkboxes = checkboxGroupTester.getCheckboxes();
+      await checkboxGroupTester.toggleCheckbox({checkbox: checkboxes[0]});
+      expect(checkboxes[0]).toBeChecked();
+      expect(checkboxGroupTester.getSelectedCheckboxes()).toHaveLength(1);
 
-    await checkboxGroupTester.toggleCheckbox({checkbox: 4, interactionType: 'keyboard'});
-    expect(checkboxes[4]).toBeChecked();
-    expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(2);
+      await checkboxGroupTester.toggleCheckbox({checkbox: 4, interactionType: 'keyboard'});
+      expect(checkboxes[4]).toBeChecked();
+      expect(checkboxGroupTester.getSelectedCheckboxes()).toHaveLength(2);
 
-    let checkbox4 = checkboxGroupTester.findCheckbox({checkboxIndexOrText: 3});
-    await checkboxGroupTester.toggleCheckbox({checkbox: checkbox4, interactionType: 'keyboard'});
-    expect(checkboxes[3]).toBeChecked();
-    expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(3);
+      let checkbox4 = checkboxGroupTester.findCheckbox({indexOrText: 3});
+      await checkboxGroupTester.toggleCheckbox({checkbox: checkbox4, interactionType: 'keyboard'});
+      expect(checkboxes[3]).toBeChecked();
+      expect(checkboxGroupTester.getSelectedCheckboxes()).toHaveLength(3);
 
-    await checkboxGroupTester.toggleCheckbox({checkbox: 'Soccer', interactionType: 'keyboard'});
-    expect(checkboxes[0]).not.toBeChecked();
-    expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(2);
+      await checkboxGroupTester.toggleCheckbox({checkbox: 'Soccer', interactionType: 'keyboard'});
+      expect(checkboxes[0]).not.toBeChecked();
+      expect(checkboxGroupTester.getSelectedCheckboxes()).toHaveLength(2);
 
-    let checkbox5 = checkboxGroupTester.findCheckbox({checkboxIndexOrText: 'Rugby'});
-    await checkboxGroupTester.toggleCheckbox({checkbox: checkbox5, interactionType: 'mouse'});
-    expect(checkboxes[4]).not.toBeChecked();
-    expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(1);
-  });
+      let checkbox5 = checkboxGroupTester.findCheckbox({indexOrText: 'Rugby'});
+      await checkboxGroupTester.toggleCheckbox({checkbox: checkbox5, interactionType: 'mouse'});
+      expect(checkboxes[4]).not.toBeChecked();
+      expect(checkboxGroupTester.getSelectedCheckboxes()).toHaveLength(1);
+    }
+  );
 });

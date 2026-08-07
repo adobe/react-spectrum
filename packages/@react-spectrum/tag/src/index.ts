@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {TagGroup} from './TagGroup';
-export {Item} from '@react-stately/collections';
-export type {SpectrumTagGroupProps} from './TagGroup';
+export {TagGroup} from '@adobe/react-spectrum/TagGroup';
+
+export type {SpectrumTagGroupProps} from '@adobe/react-spectrum/TagGroup';
+export {Item} from 'react-stately/Item';

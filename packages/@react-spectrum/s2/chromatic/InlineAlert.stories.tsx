@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Content, Heading, InlineAlert, InlineAlertProps} from '../src';
+import {Button} from '../src/Button';
+
+import {Content, Heading} from '../src/Content';
+import {InlineAlert, InlineAlertProps} from '../src/InlineAlert';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
 
@@ -26,11 +29,12 @@ export default meta;
 type Story = StoryObj<typeof InlineAlert>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <InlineAlert {...args}>
       <Heading>Payment Information</Heading>
       <Content>
-        There was an error processing your payment. Please check that your card information is correct, then try again.
+        There was an error processing your payment. Please check that your card information is
+        correct, then try again.
       </Content>
     </InlineAlert>
   )
@@ -41,28 +45,32 @@ const DynamicExampleRender = (args: InlineAlertProps): ReactElement => {
 
   return (
     <>
-      <Button variant="primary" onPress={() => setShown(!shown)}>{shown ? 'Hide Alert' : 'Show Alert'}</Button>
-      {shown &&
+      <Button variant="primary" onPress={() => setShown(!shown)}>
+        {shown ? 'Hide Alert' : 'Show Alert'}
+      </Button>
+      {shown && (
         <InlineAlert {...args} autoFocus>
           <Heading>Payment Information</Heading>
           <Content>
-            There was an error processing your payment. Please check that your card information is correct, then try again.
+            There was an error processing your payment. Please check that your card information is
+            correct, then try again.
           </Content>
         </InlineAlert>
-      }
+      )}
     </>
   );
 };
 
 export const DynamicExample: StoryObj<typeof DynamicExampleRender> = {
-  render: (args) => <DynamicExampleRender {...args} />
+  render: args => <DynamicExampleRender {...args} />
 };
 
 export const NoHeading: Story = {
   render: () => (
     <InlineAlert variant="informative">
       <Content>
-        There was an error processing your payment. Please check that your card information is correct, then try again.
+        There was an error processing your payment. Please check that your card information is
+        correct, then try again.
       </Content>
     </InlineAlert>
   )

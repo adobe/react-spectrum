@@ -10,17 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {CardView, Content, Heading, IllustratedMessage, SkeletonCollection} from '../src';
+import {CardView} from '../src/CardView';
+
+import {Content, Heading} from '../src/Content';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
+import {IllustratedMessage} from '../src/IllustratedMessage';
 import type {Meta, StoryObj} from '@storybook/react';
 import {PhotoCard} from '../stories/CardView.stories';
+import {SkeletonCollection} from '../src/SkeletonCollection';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof CardView> = {
   component: CardView,
   parameters: {
     layout: 'fullscreen',
-    chromaticProvider: {disableAnimations: true}
+    chromaticProvider: {disableAnimations: true},
+    chromatic: {prefersReducedMotion: 'reduce'}
   },
   title: 'S2 Chromatic/CardView'
 };
@@ -34,7 +39,7 @@ const cardViewStyles = style({
 });
 
 export const Empty: StoryObj<typeof CardView> = {
-  render: (args) => (
+  render: args => (
     <CardView
       aria-label="Assets"
       {...args}
@@ -52,7 +57,7 @@ export const Empty: StoryObj<typeof CardView> = {
 };
 
 export const Loading: StoryObj<typeof CardView> = {
-  render: (args) => (
+  render: args => (
     <CardView
       aria-label="Assets"
       loadingState="loading"
@@ -77,7 +82,8 @@ export const Loading: StoryObj<typeof CardView> = {
               alt_description: '',
               width: 400,
               height: 200 + Math.max(0, Math.round(Math.random() * 400))
-            }} />
+            }}
+          />
         )}
       </SkeletonCollection>
     </CardView>

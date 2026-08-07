@@ -12,7 +12,7 @@
 'use client';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 import Warning_L from 'illustration:./S2_lin_warning_160.svg';
 import Warning_M from 'illustration:./S2_lin_warning_96.svg';
 import Warning_S from 'illustration:./S2_lin_warning_48.svg';

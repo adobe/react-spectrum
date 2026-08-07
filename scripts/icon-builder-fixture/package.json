@@ -1,21 +1,21 @@
 {
-  "packageManager": "yarn@4.2.2",
-  "devDependencies": {
-    "parcel": "^2.13.0",
-    "process": "^0.11.10",
-    "typescript": "^5.7.3"
-  },
-  "dependencies": {
-    "@react-spectrum/s2": "latest",
-    "@react-spectrum/icon-library-test": "latest",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
   "scripts": {
     "tsc": "tsc",
     "dev": "parcel src/index.html",
     "build": "parcel build src/index.html"
   },
+  "dependencies": {
+    "@react-spectrum/icon-library-test": "latest",
+    "@react-spectrum/s2": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.13.0",
+    "process": "^0.11.10",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "yarn@4.2.2",
   "@parcel/bundler-default": {
     "manualSharedBundles": [
       {
@@ -24,7 +24,9 @@
           "**/@react-spectrum/s2/**",
           "src/**/*.{js,jsx,ts,tsx}"
         ],
-        "types": ["css"]
+        "types": [
+          "css"
+        ]
       }
     ]
   }

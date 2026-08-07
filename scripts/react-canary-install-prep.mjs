@@ -9,9 +9,8 @@ let pkg = JSON.parse(data);
 pkg.dependencies['react'] = version;
 pkg.dependencies['react-dom'] = version;
 
-let result =  JSON.stringify(pkg, false, 2);
+let result = JSON.stringify(pkg, false, 2);
 fs.writeFileSync('./packages/dev/docs/package.json', result);
-
 
 let content = fs.readFileSync('./package.json', 'utf8');
 let rootpkg = JSON.parse(content);
@@ -19,16 +18,15 @@ rootpkg.resolutions['react'] = version;
 rootpkg.resolutions['react-dom'] = version;
 fs.writeFileSync('./package.json', JSON.stringify(rootpkg, null, 2));
 
-
 function run(cmd, args, opts) {
   return new Promise((resolve, reject) => {
     let child = spawn(cmd, args, opts);
     let result = '';
-    child.stdout?.on('data', function(data) {
+    child.stdout?.on('data', function (data) {
       result += data.toString();
     });
     child.on('error', reject);
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (code !== 0) {
         reject(new Error('Child process failed'));
         return;

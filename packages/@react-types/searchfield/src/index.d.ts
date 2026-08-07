@@ -10,26 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
-import {SpectrumTextInputBase} from '@react-types/shared';
-
-export interface SearchFieldProps extends TextFieldProps {
-  /** Handler that is called when the SearchField is submitted. */
-  onSubmit?: (value: string) => void,
-
-  /** Handler that is called when the clear button is pressed. */
-  onClear?: () => void
-}
-
-export interface AriaSearchFieldProps extends SearchFieldProps, Omit<AriaTextFieldProps, 'type'> {
-  /**
-   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
-   */
-  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send',
-  /**
-   * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
-   * @default 'search'
-   */
-  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {})
-}
-export interface SpectrumSearchFieldProps extends SpectrumTextInputBase, Omit<AriaSearchFieldProps, 'isInvalid' | 'validationState'>, SpectrumTextFieldProps {}
+export {SearchFieldProps} from '@react-stately/searchfield';
+export {AriaSearchFieldProps} from '@react-aria/searchfield';
+export {SpectrumSearchFieldProps} from '@react-spectrum/searchfield';

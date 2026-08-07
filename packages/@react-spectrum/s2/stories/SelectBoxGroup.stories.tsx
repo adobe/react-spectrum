@@ -15,10 +15,11 @@ import AlertNotice from '../spectrum-illustrations/linear/AlertNotice';
 import type {Meta, StoryObj} from '@storybook/react';
 import PaperAirplane from '../spectrum-illustrations/linear/Paperairplane';
 import React from 'react';
-import {SelectBox, SelectBoxGroup, Text} from '../src';
+import {SelectBox, SelectBoxGroup} from '../src/SelectBoxGroup';
 import Server from '../spectrum-illustrations/linear/Server';
 import StarFilled1 from '../spectrum-illustrations/linear/Star';
 import {style} from '../style' with {type: 'macro'};
+import {Text} from '../src/Content';
 
 const headingStyles = style({
   font: 'heading',
@@ -68,7 +69,7 @@ export default meta;
 type Story = StoryObj<typeof SelectBoxGroup>;
 
 export const Default: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <SelectBoxGroup {...args} aria-label="Choose a cloud">
         <SelectBox id="aws" textValue="Amazon Web Services">
@@ -103,7 +104,6 @@ export const AllSlotCombinations: Story = {
       <div style={{marginBottom: 40}}>
         <h3 className={subheadingStyles}>Vertical Orientation</h3>
         <div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
-
           {/* Text Only */}
           <div>
             <h4 className={sectionHeadingStyles}>Text Only</h4>
@@ -173,7 +173,6 @@ export const AllSlotCombinations: Story = {
               </SelectBox>
             </SelectBoxGroup>
           </div>
-
         </div>
       </div>
 
@@ -181,7 +180,6 @@ export const AllSlotCombinations: Story = {
       <div>
         <h3 className={subheadingStyles}>Horizontal Orientation</h3>
         <div style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-
           {/* Text Only */}
           <div>
             <h4 className={sectionHeadingStyles}>Text Only</h4>
@@ -237,17 +235,13 @@ export const AllSlotCombinations: Story = {
               </SelectBox>
             </SelectBoxGroup>
           </div>
-
         </div>
       </div>
 
       {/* Comparison Grid */}
       <div style={{marginTop: 40}}>
         <h3 className={subheadingStyles}>Side-by-Side Comparison</h3>
-        <SelectBoxGroup
-          aria-label="Vertical"
-          onSelectionChange={action('onSelectionChange')}>
-
+        <SelectBoxGroup aria-label="Vertical" onSelectionChange={action('onSelectionChange')}>
           {/* Vertical examples */}
           <SelectBox id="v1" textValue="V: Text Only">
             <Text slot="label">V: Text Only</Text>
@@ -273,7 +267,6 @@ export const AllSlotCombinations: Story = {
             <Text slot="label">V: All Elements</Text>
             <Text slot="description">Complete vertical</Text>
           </SelectBox>
-
         </SelectBoxGroup>
 
         <div style={{marginTop: 20}}>
@@ -281,7 +274,6 @@ export const AllSlotCombinations: Story = {
             aria-label="Horizontal"
             orientation="horizontal"
             onSelectionChange={action('onSelectionChange')}>
-
             {/* Horizontal examples */}
             <SelectBox id="h1" textValue="H: Text Only">
               <Text slot="label">H: Text Only</Text>
@@ -307,11 +299,9 @@ export const AllSlotCombinations: Story = {
               <Text slot="label">H: All Elements</Text>
               <Text slot="description">Complete horizontal layout</Text>
             </SelectBox>
-
           </SelectBoxGroup>
         </div>
       </div>
-
     </div>
   ),
   tags: ['!autodocs']

@@ -5,12 +5,12 @@ import docs from 'docs:react-aria-components';
 import {ComboBox as VanillaComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import vanillaDocs from 'docs:vanilla-starter/ComboBox';
 import '../../tailwind/tailwind.css';
-import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
+import Anatomy from './ComboBoxAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['autocomplete', 'search', 'typeahead', 'input'];
 export const relatedPages = [
-  {title: 'useComboBox', url: 'ComboBox/useComboBox.html'},
+  {title: 'useComboBox', url: './ComboBox/useComboBox'},
   {title: 'Testing ComboBox', url: './ComboBox/testing'}
 ];
 export const description = 'Combines a text input with a listbox, allowing users to filter a list of options to items matching a query.';
@@ -50,6 +50,11 @@ export const description = 'Combines a text input with a listbox, allowing users
 
 </ExampleSwitcher>
 
+<InlineAlert variant="informative" UNSAFE_style={{maxWidth: 500}}>
+  <Heading>Autocomplete vs. ComboBox</Heading>
+  <Content>Use ComboBox to **select one or more values** from a pre-defined set of options. Use [Autocomplete](Autocomplete) to **filter a collection** or provide **text completions**.</Content>
+</InlineAlert>
+
 ## Content
 
 `ComboBox` reuses the `ListBox` component, following the [Collection Components API](collections?component=ComboBox). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox) for more details.
@@ -59,7 +64,8 @@ The following example shows a dynamic collection of items, grouped into sections
 ```tsx render
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
-import {ListBoxSection, Collection, Header} from 'react-aria-components';
+import {ListBoxSection, Header} from 'vanilla-starter/ListBox';
+import {Collection} from 'react-aria-components/Collection';
 
 function Example() {
   /*- begin collapse -*/
@@ -113,7 +119,7 @@ Use the `ComboBoxValue` render prop function to display the selected items as a 
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxValue, Input} from 'react-aria-components';
+import {ComboBox, ComboBoxValue, Input} from 'react-aria-components/ComboBox';
 import {ComboBoxListBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {Label, FieldButton} from 'vanilla-starter/Form';
 import {Popover} from 'vanilla-starter/Popover';
@@ -217,7 +223,7 @@ Use the `defaultValue` or `value` prop to set the selected item. The value corre
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
-import type {Key} from 'react-aria-components';
+import type {Key} from 'react-aria-components/ComboBox';
 
 function Example() {
   let [animal, setAnimal] = useState<Key | null>("bison");
@@ -286,7 +292,7 @@ Both `inputValue` and `value` can be controlled simultaneously. However, each in
 
 ```tsx render
 "use client";
-import type {Key} from 'react-aria-components';
+import type {Key} from 'react-aria-components/ComboBox';
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
 
@@ -444,11 +450,13 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
 <Anatomy />
 
-```tsx links={{ComboBox: '#combobox', ComboBoxValue: '#comboboxvalue', Button: 'Button', Popover: 'Popover', ListBox: 'ListBox'}}
+```tsx links={{ComboBox: '#combobox', ComboBoxValue: '#comboboxvalue', Group: 'Group', Button: 'Button', Popover: 'Popover', ListBox: 'ListBox'}}
 <ComboBox>
   <Label />
-  <Input />
-  <Button />
+  <Group>
+    <Input />
+    <Button />
+  </Group>
   <ComboBoxValue />
   <Text slot="description" />
   <FieldError />

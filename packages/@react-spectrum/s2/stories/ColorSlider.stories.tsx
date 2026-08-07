@@ -35,7 +35,7 @@ export default meta;
 type Story = StoryObj<typeof ColorSlider>;
 
 export const Example: Story = {
-  render: (args) => <ColorSlider {...args} onChange={undefined} />,
+  render: args => <ColorSlider {...args} onChange={undefined} />,
   args: {
     label: 'Red Opacity',
     defaultValue: '#f00',

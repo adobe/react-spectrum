@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "main": "DocsTransformer.js",
-  "engines": {
-    "parcel": "^2.0.0"
-  },
   "dependencies": {
     "@babel/parser": "^7.24.0",
     "@babel/traverse": "^7.24.0",
@@ -16,5 +13,8 @@
   "devDependencies": {
     "@parcel/core": "^2.16.3",
     "@parcel/fs": "^2.16.3"
+  },
+  "engines": {
+    "parcel": "^2.0.0"
   }
 }

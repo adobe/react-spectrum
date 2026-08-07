@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {DropZone} from './DropZone';
-export type {SpectrumDropZoneProps} from './DropZone';
+export {DropZone} from '@adobe/react-spectrum/DropZone';
+
+export type {SpectrumDropZoneProps} from '@adobe/react-spectrum/DropZone';

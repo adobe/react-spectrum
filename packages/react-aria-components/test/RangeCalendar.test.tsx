@@ -11,9 +11,29 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading, RangeCalendar, RangeCalendarContext} from 'react-aria-components';
-import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
-import {DateValue} from '@react-types/calendar';
+import {Button} from '../src/Button';
+
+import {
+  CalendarCell,
+  CalendarGrid,
+  CalendarGridBody,
+  CalendarGridHeader,
+  CalendarHeaderCell,
+  CalendarHeading,
+  CalendarMonthPicker,
+  CalendarYearPicker,
+  RangeCalendar,
+  RangeCalendarContext
+} from '../src/Calendar';
+
+import {
+  CalendarDate,
+  getLocalTimeZone,
+  startOfMonth,
+  startOfWeek,
+  today
+} from '@internationalized/date';
+import {DateValue} from 'react-stately/useRangeCalendarState';
 import {RangeValue} from '@react-types/shared';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -22,16 +42,17 @@ let TestCalendar = ({calendarProps = {}, gridProps = {}, cellProps = {}}) => (
   <RangeCalendar aria-label="Trip dates" {...calendarProps}>
     <header>
       <Button slot="previous">◀</Button>
-      <Heading />
+      <CalendarHeading />
       <Button slot="next">▶</Button>
     </header>
     <CalendarGrid {...gridProps}>
-      {(date) => <CalendarCell date={date} {...cellProps} />}
+      {date => <CalendarCell date={date} {...cellProps} />}
     </CalendarGrid>
   </RangeCalendar>
 );
 
-let renderCalendar = (calendarProps = {}, gridProps = {}, cellProps = {}) => render(<TestCalendar {...{calendarProps, gridProps, cellProps}} />);
+let renderCalendar = (calendarProps = {}, gridProps = {}, cellProps = {}) =>
+  render(<TestCalendar {...{calendarProps, gridProps, cellProps}} />);
 
 describe('RangeCalendar', () => {
   let user;
@@ -60,7 +81,11 @@ describe('RangeCalendar', () => {
   });
 
   it('should render with custom classes', () => {
-    let {getByRole} = renderCalendar({className: 'calendar'}, {className: 'grid'}, {className: 'cell'});
+    let {getByRole} = renderCalendar(
+      {className: 'calendar'},
+      {className: 'grid'},
+      {className: 'cell'}
+    );
     let group = getByRole('application');
     expect(group).toHaveAttribute('class', 'calendar');
 
@@ -90,19 +115,15 @@ describe('RangeCalendar', () => {
       <RangeCalendar aria-label="Trip dates">
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
+          <CalendarHeading />
           <Button slot="next">▶</Button>
         </header>
         <CalendarGrid>
           <CalendarGridHeader className="grid-header">
-            {(day) => (
-              <CalendarHeaderCell className="header-cell">
-                {day}
-              </CalendarHeaderCell>
-            )}
+            {day => <CalendarHeaderCell className="header-cell">{day}</CalendarHeaderCell>}
           </CalendarGridHeader>
           <CalendarGridBody className="grid-body">
-            {(date) => <CalendarCell date={date} />}
+            {date => <CalendarCell date={date} />}
           </CalendarGridBody>
         </CalendarGrid>
       </RangeCalendar>
@@ -159,11 +180,11 @@ describe('RangeCalendar', () => {
           <>
             <header>
               <Button slot="previous">◀</Button>
-              <Heading />
+              <CalendarHeading />
               <Button slot="next">▶</Button>
             </header>
             <CalendarGrid data-validation-state={isInvalid ? 'invalid' : null}>
-              {(date) => <CalendarCell date={date} />}
+              {date => <CalendarCell date={date} />}
             </CalendarGrid>
           </>
         )}
@@ -175,20 +196,20 @@ describe('RangeCalendar', () => {
   });
 
   it('should support multi-month calendars', () => {
-    let {getAllByRole} = render(
-      <RangeCalendar aria-label="Trip dates" visibleDuration={{months: 2}}>
+    let {getAllByRole, container} = render(
+      <RangeCalendar
+        aria-label="Trip dates"
+        defaultFocusedValue={new CalendarDate(2026, 4, 1)}
+        visibleDuration={{months: 2}}>
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
           <Button slot="next">▶</Button>
         </header>
         <div style={{display: 'flex', gap: 30}}>
-          <CalendarGrid>
-            {date => <CalendarCell date={date} />}
-          </CalendarGrid>
-          <CalendarGrid offset={{months: 1}}>
-            {date => <CalendarCell date={date} />}
-          </CalendarGrid>
+          <CalendarHeading />
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <CalendarHeading offset={{months: 1}} />
+          <CalendarGrid offset={{months: 1}}>{date => <CalendarCell date={date} />}</CalendarGrid>
         </div>
       </RangeCalendar>
     );
@@ -197,32 +218,54 @@ describe('RangeCalendar', () => {
     expect(grids).toHaveLength(2);
 
     let formatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});
-    expect(grids[0]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(new Date()));
-    expect(grids[1]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(today(getLocalTimeZone()).add({months: 1}).toDate(getLocalTimeZone())));
+    let firstMonth = new CalendarDate(2026, 4, 1);
+    let tz = getLocalTimeZone();
+    expect(grids[0]).toHaveAttribute(
+      'aria-label',
+      'Trip dates, ' + formatter.format(firstMonth.toDate(tz))
+    );
+    expect(grids[1]).toHaveAttribute(
+      'aria-label',
+      'Trip dates, ' + formatter.format(firstMonth.add({months: 1}).toDate(tz))
+    );
+
+    let headings = container.querySelectorAll('.react-aria-CalendarHeading');
+    expect(headings).toHaveLength(2);
+    expect(headings[0]).toHaveTextContent('April 2026');
+    expect(headings[1]).toHaveTextContent('May 2026');
   });
 
   it.each([
-    {name: 'at the start', alignment: 'start', expected: ['February 2020', 'March 2020', 'April 2020']},
-    {name: 'in the center', alignment: 'center', expected: ['January 2020', 'February 2020', 'March 2020']},
-    {name: 'at the end', alignment: 'end', expected: ['December 2019', 'January 2020', 'February 2020']}
+    {
+      name: 'at the start',
+      alignment: 'start',
+      expected: ['February 2020', 'March 2020', 'April 2020']
+    },
+    {
+      name: 'in the center',
+      alignment: 'center',
+      expected: ['January 2020', 'February 2020', 'March 2020']
+    },
+    {
+      name: 'at the end',
+      alignment: 'end',
+      expected: ['December 2019', 'January 2020', 'February 2020']
+    }
   ])('should align the initial value $name', async ({alignment, expected}) => {
     const {getAllByRole} = render(
-      <RangeCalendar visibleDuration={{months: 3}} defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 10)}} selectionAlignment={alignment as 'start' | 'center' | 'end'}>
+      <RangeCalendar
+        visibleDuration={{months: 3}}
+        defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 10)}}
+        selectionAlignment={alignment as 'start' | 'center' | 'end'}>
         <header>
           <Button slot="previous">◀</Button>
-          <Heading />
+          <CalendarHeading />
           <Button slot="next">▶</Button>
         </header>
         <div style={{display: 'flex', gap: 30}}>
-          <CalendarGrid>
-            {date => <CalendarCell date={date} />}
-          </CalendarGrid>
-          <CalendarGrid offset={{months: 1}}>
-            {date => <CalendarCell date={date} />}
-          </CalendarGrid>
-          <CalendarGrid offset={{months: 2}}>
-            {date => <CalendarCell date={date} />}
-          </CalendarGrid>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <CalendarGrid offset={{months: 1}}>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <CalendarGrid offset={{months: 2}}>{date => <CalendarCell date={date} />}</CalendarGrid>
         </div>
       </RangeCalendar>
     );
@@ -235,9 +278,12 @@ describe('RangeCalendar', () => {
     expect(grids[2]).toHaveAttribute('aria-label', expected[2]);
   });
 
-
   it('should support hover', async () => {
-    let {getByRole} = renderCalendar({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let {getByRole} = renderCalendar(
+      {},
+      {},
+      {className: ({isHovered}) => (isHovered ? 'hover' : '')}
+    );
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
@@ -254,7 +300,11 @@ describe('RangeCalendar', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = renderCalendar({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let {getByRole} = renderCalendar(
+      {},
+      {},
+      {className: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}
+    );
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
@@ -273,7 +323,11 @@ describe('RangeCalendar', () => {
   });
 
   it('should support press state', async () => {
-    let {getByRole} = renderCalendar({}, {}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let {getByRole} = renderCalendar(
+      {},
+      {},
+      {className: ({isPressed}) => (isPressed ? 'pressed' : '')}
+    );
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
@@ -290,7 +344,11 @@ describe('RangeCalendar', () => {
   });
 
   it('should support selected state', async () => {
-    let {getByRole} = renderCalendar({}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let {getByRole} = renderCalendar(
+      {},
+      {},
+      {className: ({isSelected}) => (isSelected ? 'selected' : '')}
+    );
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
@@ -303,7 +361,14 @@ describe('RangeCalendar', () => {
   });
 
   it('should support selected range states', async () => {
-    let {getByRole} = renderCalendar({}, {}, {className: ({isSelectionStart, isSelectionEnd}) => `${isSelectionStart ? 'start' : ''} ${isSelectionEnd ? 'end' : ''}`});
+    let {getByRole} = renderCalendar(
+      {},
+      {},
+      {
+        className: ({isSelectionStart, isSelectionEnd}) =>
+          `${isSelectionStart ? 'start' : ''} ${isSelectionEnd ? 'end' : ''}`
+      }
+    );
     let grid = getByRole('grid');
     let cells = within(grid).getAllByRole('button');
 
@@ -345,20 +410,25 @@ describe('RangeCalendar', () => {
           <RangeCalendar aria-label="Trip dates" value={value} onChange={setValue}>
             <header>
               <Button slot="previous">◀</Button>
-              <Heading />
+              <CalendarHeading />
               <Button slot="next">▶</Button>
             </header>
             <CalendarGrid>
-              {(date) => <CalendarCell date={date} className={({isSelectionStart, isSelectionEnd}) => `${isSelectionStart ? 'start' : ''} ${isSelectionEnd ? 'end' : ''}`} />}
+              {date => (
+                <CalendarCell
+                  date={date}
+                  className={({isSelectionStart, isSelectionEnd}) =>
+                    `${isSelectionStart ? 'start' : ''} ${isSelectionEnd ? 'end' : ''}`
+                  }
+                />
+              )}
             </CalendarGrid>
           </RangeCalendar>
           <Button onPress={() => setValue(null)}>Reset</Button>
         </>
       );
     }
-    let {getByRole} = render(
-      <ControlledCalendar />
-    );
+    let {getByRole} = render(<ControlledCalendar />);
 
     let resetBtn = getByRole('button', {name: 'Reset'});
     let grid = getByRole('grid');
@@ -399,11 +469,14 @@ describe('RangeCalendar', () => {
     expect(cells[7]).not.toHaveClass('end');
     expect(cells[10]).not.toHaveAttribute('data-selection-end');
     expect(cells[10]).not.toHaveClass('end');
-
   });
 
   it('should support unavailable state', () => {
-    let {getByRole} = renderCalendar({isDateUnavailable: () => true}, {}, {className: ({isUnavailable}) => isUnavailable ? 'unavailable' : ''});
+    let {getByRole} = renderCalendar(
+      {isDateUnavailable: () => true},
+      {},
+      {className: ({isUnavailable}) => (isUnavailable ? 'unavailable' : '')}
+    );
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
@@ -411,8 +484,54 @@ describe('RangeCalendar', () => {
     expect(cell).toHaveClass('unavailable');
   });
 
+  it('should allow changing the unavailable dates based on the anchor date', async () => {
+    let tree = render(
+      <TestCalendar
+        calendarProps={{
+          isDateUnavailable: (date, anchorDate) =>
+            anchorDate ? Math.abs(date.compare(anchorDate)) > 7 : false
+        }}
+      />
+    );
+
+    let grid = tree.getByRole('grid');
+    let cells = within(grid).getAllByRole('button');
+
+    for (let cell of cells) {
+      if (!cell.hasAttribute('data-outside-month')) {
+        expect(cell).not.toHaveAttribute('data-disabled');
+      }
+    }
+
+    await user.click(cells[14]);
+
+    for (let i = 0; i < 7; i++) {
+      expect(cells[i]).toHaveAttribute('data-disabled');
+    }
+
+    for (let i = 7; i < 22; i++) {
+      expect(cells[i]).not.toHaveAttribute('data-disabled');
+    }
+
+    for (let i = 22; i < cells.length; i++) {
+      expect(cells[i]).toHaveAttribute('data-disabled');
+    }
+
+    await user.click(cells[19]);
+
+    for (let cell of cells) {
+      if (!cell.hasAttribute('data-outside-month')) {
+        expect(cell).not.toHaveAttribute('data-disabled');
+      }
+    }
+  });
+
   it('should support disabled state', () => {
-    let {getByRole} = renderCalendar({isDisabled: true}, {}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getByRole} = renderCalendar(
+      {isDisabled: true},
+      {},
+      {className: ({isDisabled}) => (isDisabled ? 'disabled' : '')}
+    );
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
@@ -421,17 +540,130 @@ describe('RangeCalendar', () => {
   });
 
   it('should support invalid state', () => {
-    let {getByRole} = renderCalendar({
-      isInvalid: true,
-      value: {
-        start: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 7}),
-        end: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 10})
-      }
-    }, {}, {className: ({isInvalid}) => isInvalid ? 'invalid' : ''});
+    let {getByRole} = renderCalendar(
+      {
+        isInvalid: true,
+        value: {
+          start: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 7}),
+          end: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 10})
+        }
+      },
+      {},
+      {className: ({isInvalid}) => (isInvalid ? 'invalid' : '')}
+    );
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
     expect(cell).toHaveAttribute('aria-invalid', 'true');
     expect(cell).toHaveClass('invalid');
+  });
+
+  it('should support month and year dropdowns', async () => {
+    let tree = render(
+      <RangeCalendar
+        aria-label="Appointment date"
+        defaultFocusedValue={new CalendarDate(2026, 4, 1)}>
+        <header>
+          <Button slot="previous">◀</Button>
+          <CalendarMonthPicker>
+            {({items, value, onChange, 'aria-label': ariaLabel}) => (
+              <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+                {items.map(item => (
+                  <option key={item.id} value={item.id}>
+                    {item.formatted}
+                  </option>
+                ))}
+              </select>
+            )}
+          </CalendarMonthPicker>
+          <CalendarYearPicker>
+            {({items, value, onChange, 'aria-label': ariaLabel}) => (
+              <select aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}>
+                {items.map(item => (
+                  <option key={item.id} value={item.id}>
+                    {item.formatted}
+                  </option>
+                ))}
+              </select>
+            )}
+          </CalendarYearPicker>
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+      </RangeCalendar>
+    );
+
+    let monthPicker = tree.getByLabelText('month');
+    let yearPicker = tree.getByLabelText('year');
+    let grid = tree.getByRole('grid');
+    expect(grid).toHaveAttribute('aria-label', 'Appointment date, April 2026');
+
+    expect(monthPicker).toHaveValue('4');
+    expect(
+      within(monthPicker)
+        .getAllByRole('option')
+        .map(o => o.textContent)
+    ).toEqual(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
+
+    await user.selectOptions(monthPicker, 'Jun');
+    expect(monthPicker).toHaveValue('6');
+    expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2026');
+
+    expect(yearPicker).toHaveValue('10');
+    expect(
+      within(yearPicker)
+        .getAllByRole('option')
+        .map(o => o.textContent)
+    ).toEqual(Array.from({length: 20}, (_, i) => String(i + 2016)));
+
+    await user.selectOptions(yearPicker, '2030');
+    expect(yearPicker).toHaveValue('10');
+    expect(
+      within(yearPicker)
+        .getAllByRole('option')
+        .map(o => o.textContent)
+    ).toEqual(Array.from({length: 20}, (_, i) => String(i + 2020)));
+    expect(grid).toHaveAttribute('aria-label', 'Appointment date, June 2030');
+  });
+
+  it('should support weeksInMonth prop', async () => {
+    let tree = render(
+      <TestCalendar
+        calendarProps={{weeksInMonth: 6, defaultFocusedValue: new CalendarDate(2026, 4, 1)}}
+      />
+    );
+    let rows = tree.getAllByRole('row');
+    expect(rows).toHaveLength(6);
+  });
+
+  it('should support week view', async () => {
+    let tree = render(
+      <TestCalendar
+        calendarProps={{
+          visibleDuration: {weeks: 1},
+          defaultFocusedValue: new CalendarDate(2026, 4, 1)
+        }}
+      />
+    );
+    let rows = tree.getAllByRole('row');
+    expect(rows).toHaveLength(1);
+    let heading = tree.container.querySelector('.react-aria-CalendarHeading');
+    expect(heading).toHaveTextContent('March 29 – April 4, 2026');
+  });
+
+  it('should support day view', async () => {
+    let tree = render(
+      <TestCalendar
+        calendarProps={{
+          visibleDuration: {days: 2},
+          defaultFocusedValue: new CalendarDate(2026, 4, 1)
+        }}
+      />
+    );
+    let rows = tree.getAllByRole('row');
+    expect(rows).toHaveLength(1);
+    expect(tree.getAllByRole('gridcell')).toHaveLength(2);
+    let heading = tree.container.querySelector('.react-aria-CalendarHeading');
+    expect(heading).toHaveTextContent('April 1 – 2, 2026');
   });
 });

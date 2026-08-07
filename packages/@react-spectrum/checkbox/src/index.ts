@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {Checkbox} from './Checkbox';
-export {CheckboxGroup} from './CheckboxGroup';
-export type {SpectrumCheckboxProps, SpectrumCheckboxGroupProps} from '@react-types/checkbox';
+export {Checkbox} from '@adobe/react-spectrum/Checkbox';
+
+export {CheckboxGroup} from '@adobe/react-spectrum/CheckboxGroup';
+export type {SpectrumCheckboxProps} from '@adobe/react-spectrum/Checkbox';
+export type {SpectrumCheckboxGroupProps} from '@adobe/react-spectrum/CheckboxGroup';

@@ -10,71 +10,86 @@
  * governing permissions and limitations under the License.
  */
 
-import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
+
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
+
 import {forwardRef} from 'react';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Modal} from './Modal';
+import {
+  OverlayTriggerStateContext,
+  Dialog as RACDialog,
+  DialogProps as RACDialogProps
+} from 'react-aria-components/Dialog';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 
-export interface CustomDialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {
+export interface CustomDialogProps
+  extends
+    Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
+    StyleProps {
   /**
    * The size of the Dialog.
    */
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
+  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover';
   /**
    * Whether the Dialog is dismissible.
    */
-  isDismissible?: boolean,
+  isDismissible?: boolean;
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean,
+  isKeyboardDismissDisabled?: boolean;
   /**
    * The amount of padding around the contents of the dialog.
+   *
    * @default 'default'
    */
-  padding?: 'default' | 'none'
+  padding?: 'default' | 'none';
 }
 
-const dialogStyle = style({
-  padding: {
+const dialogStyle = style(
+  {
     padding: {
-      default: {
-        default: 24,
-        sm: 32
-      },
-      none: 0
-    }
+      padding: {
+        default: {
+          default: 24,
+          sm: 32
+        },
+        none: 0
+      }
+    },
+    boxSizing: 'border-box',
+    outlineStyle: 'none',
+    borderRadius: 'inherit',
+    overflow: 'auto',
+    position: 'relative',
+    size: 'full',
+    maxSize: 'inherit'
   },
-  boxSizing: 'border-box',
-  outlineStyle: 'none',
-  borderRadius: 'inherit',
-  overflow: 'auto',
-  position: 'relative',
-  size: 'full',
-  maxSize: 'inherit'
-}, getAllowedOverrides({height: true, width: true}));
+  getAllowedOverrides({height: true, width: true})
+);
 
 /**
  * A CustomDialog is a floating window with a custom layout.
  */
-export const CustomDialog = forwardRef(function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
-  let {
-    size,
-    isDismissible,
-    isKeyboardDismissDisabled,
-    padding = 'default'
-  } = props;
+export const CustomDialog = forwardRef(function CustomDialog(
+  props: CustomDialogProps,
+  ref: DOMRef
+) {
+  let {size, isDismissible, isKeyboardDismissDisabled, padding = 'default'} = props;
   let domRef = useDOMRef(ref);
 
   return (
-    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    <Modal
+      size={size}
+      isDismissable={isDismissible}
+      isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
         style={props.UNSAFE_style}
         className={(props.UNSAFE_className || '') + dialogStyle({padding}, props.styles)}>
-        {composeRenderProps(props.children, (children) => (
+        {composeRenderProps(props.children, children => (
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
           <OverlayTriggerStateContext.Provider value={null}>
             {children}

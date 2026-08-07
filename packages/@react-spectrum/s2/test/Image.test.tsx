@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Image, Provider} from '../src';
+import {Image} from '../src/Image';
+
+import {Provider} from '../src/Provider';
 import {render} from '@react-spectrum/test-utils-internal';
 
 describe('Image', () => {
@@ -22,7 +24,8 @@ describe('Image', () => {
           {srcSet: 'foo.png', type: 'image/png', colorScheme: 'light'},
           {srcSet: 'bar.png', colorScheme: 'dark', media: '(width >= 500px)'},
           {srcSet: 'default.png'}
-        ]} />
+        ]}
+      />
     );
 
     let img = getByRole('img');
@@ -35,7 +38,10 @@ describe('Image', () => {
     expect(sources[0]).toHaveAttribute('type', 'image/png');
     expect(sources[0]).toHaveAttribute('media', '(prefers-color-scheme: light)');
     expect(sources[1]).toHaveAttribute('srcset', 'bar.png');
-    expect(sources[1]).toHaveAttribute('media', '(width >= 500px) and (prefers-color-scheme: dark)');
+    expect(sources[1]).toHaveAttribute(
+      'media',
+      '(width >= 500px) and (prefers-color-scheme: dark)'
+    );
     expect(sources[2]).toHaveAttribute('srcset', 'default.png');
   });
 
@@ -48,7 +54,8 @@ describe('Image', () => {
             {srcSet: 'foo.png', type: 'image/png', colorScheme: 'light'},
             {srcSet: 'bar.png', colorScheme: 'dark', media: '(width >= 500px)'},
             {srcSet: 'default.png'}
-          ]} />
+          ]}
+        />
       </Provider>
     );
 

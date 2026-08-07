@@ -57,7 +57,9 @@
    * in and out. Fall back to the safe area inset to account for things like iOS home indicator.
      We also add an additional 100vh of padding (offset by the bottom position below) so the tray
      extends behind Safari's address bar and keyboard in iOS 26. */
-  padding-bottom: calc(max(calc(100dvh - var(--spectrum-visual-viewport-height)), env(safe-area-inset-bottom)) + 100vh);
+  padding-bottom: calc(
+    max(calc(100dvh - var(--spectrum-visual-viewport-height)), env(safe-area-inset-bottom)) + 100vh
+  );
   position: absolute;
   bottom: -100vh;
   outline: none;
@@ -67,14 +69,19 @@
   overflow-x: hidden;
   overflow-y: auto;
 
-  border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);
+  border-radius: var(--spectrum-tray-full-width-border-radius)
+    var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius)
+    var(--spectrum-tray-border-radius);
 
   /* Start offset by the animation distance */
   transform: translateY(calc(100% - 100vh));
 
   /* Exit animations */
-  transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
-    transform var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay);
+  transition:
+    opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1)
+      var(--spectrum-dialog-exit-animation-delay),
+    transform var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1)
+      var(--spectrum-dialog-exit-animation-delay);
 
   box-sizing: content-box;
 }
@@ -83,8 +90,11 @@
   composes: spectrum-overlay--open;
 
   /* Entry animations */
-  transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
-              opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
+  transition:
+    transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.4, 1)
+      var(--spectrum-dialog-entry-animation-delay),
+    opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.4, 1)
+      var(--spectrum-dialog-entry-animation-delay);
 
   transform: translateY(0);
 }

@@ -14,13 +14,13 @@ import {Key} from '@react-types/shared';
 
 export interface SingleSelection {
   /** Whether the collection allows empty selection. */
-  disallowEmptySelection?: boolean,
+  disallowEmptySelection?: boolean;
   /** The currently selected key in the collection (controlled). */
-  selectedKey?: Key | null,
+  selectedKey?: Key | null;
   /** The initial selected key in the collection (uncontrolled). */
-  defaultSelectedKey?: Key | null,
+  defaultSelectedKey?: Key | null;
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (key: Key | null) => void
+  onSelectionChange?: (key: Key | null) => void;
 }
 
 export type SelectionMode = 'none' | 'single' | 'multiple';
@@ -28,22 +28,22 @@ export type SelectionBehavior = 'toggle' | 'replace';
 export type Selection = 'all' | Set<Key>;
 export interface MultipleSelection {
   /** The type of selection that is allowed in the collection. */
-  selectionMode?: SelectionMode,
+  selectionMode?: SelectionMode;
   /** Whether the collection allows empty selection. */
-  disallowEmptySelection?: boolean,
+  disallowEmptySelection?: boolean;
   /** The currently selected keys in the collection (controlled). */
-  selectedKeys?: 'all' | Iterable<Key>,
+  selectedKeys?: 'all' | Iterable<Key>;
   /** The initial selected keys in the collection (uncontrolled). */
-  defaultSelectedKeys?: 'all' | Iterable<Key>,
+  defaultSelectedKeys?: 'all' | Iterable<Key>;
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (keys: Selection) => void,
+  onSelectionChange?: (keys: Selection) => void;
   /** The currently disabled keys in the collection (controlled). */
-  disabledKeys?: Iterable<Key>
+  disabledKeys?: Iterable<Key>;
 }
 
 export interface SpectrumSelectionProps {
   /** How selection should be displayed. */
-  selectionStyle?: 'checkbox' | 'highlight'
+  selectionStyle?: 'checkbox' | 'highlight';
 }
 
 export type FocusStrategy = 'first' | 'last';

@@ -12,7 +12,7 @@ export const description = 'A grouping of related disclosures.';
 
 ```tsx render docs={docs.exports.Accordion} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled', 'allowsMultipleExpanded']} type="s2"
 "use client";
-import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel} from '@react-spectrum/s2';
+import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel} from '@react-spectrum/s2/Accordion';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Accordion styles={style({width: 220})}/* PROPS */>
@@ -33,7 +33,7 @@ Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items, 
 
 ```tsx render
 "use client";
-import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel, type Key} from '@react-spectrum/s2';
+import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel, type Key} from '@react-spectrum/s2/Accordion';
 import {useState} from 'react';
 
 function Example() {
@@ -68,7 +68,8 @@ Use `AccordionItemHeader` to add additional elements alongside the title, such a
 
 ```tsx render
 "use client";
-import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel, AccordionItemHeader, ActionButton} from '@react-spectrum/s2';
+import {Accordion, AccordionItem, AccordionItemTitle, AccordionItemPanel, AccordionItemHeader} from '@react-spectrum/s2/Accordion';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Accordion>

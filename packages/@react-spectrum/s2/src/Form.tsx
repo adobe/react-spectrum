@@ -13,25 +13,30 @@
 import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DOMRef, GlobalDOMAttributes, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
+import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components/Form';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useIsSkeleton} from './Skeleton';
 
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
   /**
    * Size of the Form elements.
+   *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** Whether the Form elements are disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether the Form elements are rendered with their emphasized style. */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
-export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
-  children: ReactNode
+export interface FormProps
+  extends
+    FormStyleProps,
+    Omit<RACFormProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>,
+    StyleProps {
+  children: ReactNode;
 }
 
 export const FormContext = createContext<Partial<FormStyleProps | null>>(null);
@@ -48,6 +53,7 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
       // This is a subset of mergeProps. We just need to merge non-undefined values.
       for (let key in ctx) {
         if (result[key] === undefined) {
+          // oxlint-disable-next-line react/react-compiler
           result[key] = ctx[key];
         }
       }
@@ -55,6 +61,7 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
 
     // Skeleton always wins over local props.
     if (isSkeleton) {
+      // oxlint-disable-next-line react/react-compiler
       result.isDisabled = true;
     }
 
@@ -63,9 +70,13 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
 }
 
 /**
- * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for
+ * form fields.
  */
-export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
+export const Form = /*#__PURE__*/ forwardRef(function Form(
+  props: FormProps,
+  ref: DOMRef<HTMLFormElement>
+) {
   let {
     labelPosition = 'top',
     labelAlign,
@@ -85,26 +96,32 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref
       {...formProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style({
-        display: 'grid',
-        gridTemplateColumns: {
-          labelPosition: {
-            top: ['[field] 1fr'],
-            side: ['[label] auto', '[field] 1fr']
-          }
-        },
-        // TODO: confirm when we have tokens
-        rowGap: {
-          size: {
-            XS: 16,
-            S: 20,
-            M: 24,
-            L: 32,
-            XL: 40
-          }
-        },
-        columnGap: 'text-to-control'
-      }, getAllowedOverrides())({labelPosition, size}, props.styles)}>
+      className={
+        UNSAFE_className +
+        style(
+          {
+            display: 'grid',
+            gridTemplateColumns: {
+              labelPosition: {
+                top: ['[field] 1fr'],
+                side: ['[label] auto', '[field] 1fr']
+              }
+            },
+            // TODO: confirm when we have tokens
+            rowGap: {
+              size: {
+                XS: 16,
+                S: 20,
+                M: 24,
+                L: 32,
+                XL: 40
+              }
+            },
+            columnGap: 'text-to-control'
+          },
+          getAllowedOverrides()
+        )({labelPosition, size}, props.styles)
+      }>
       <FormContext.Provider
         value={{
           labelPosition,

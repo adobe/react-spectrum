@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import './App.css';
 import photos from './photos.json';
 import {useLayoutEffect, useMemo, useState} from 'react';
@@ -6,7 +6,7 @@ import {Sidebar} from './Sidebar';
 import {PhotoGrid} from './PhotoGrid';
 import {PhotoDetail} from './PhotoDetail';
 
-type Photo = typeof photos[0];
+type Photo = (typeof photos)[0];
 
 export default function App() {
   let [album, setAlbum] = useState('library');
@@ -14,7 +14,10 @@ export default function App() {
   let [isMobile, setMobile] = useState(false);
   let [sidebarVisible, setSidebarVisible] = useState(false);
   let [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
-  let visiblePhotos = useMemo(() => album === 'library' ? library : library.filter(p => p.album === album), [album, library]);
+  let visiblePhotos = useMemo(
+    () => (album === 'library' ? library : library.filter(p => p.album === album)),
+    [album, library]
+  );
 
   useLayoutEffect(() => {
     let media = matchMedia('(width >= 500px)');
@@ -35,17 +38,23 @@ export default function App() {
           setSidebarVisible(false);
         }}
         onDrop={(album, photoIds) => {
-          setLibrary(library.map(photo => photoIds.includes(photo.id) ? { ...photo, album } : photo));
+          setLibrary(
+            library.map(photo => (photoIds.includes(photo.id) ? {...photo, album} : photo))
+          );
           setAlbum(album);
-        }} />
+        }}
+      />
       <div style={{flex: 1, minWidth: 0}} inert={sidebarVisible}>
         <PhotoGrid
           key={album}
           photos={visiblePhotos}
           onAction={setSelectedPhoto}
           toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-          hidden={!!selectedPhoto} />
-        {selectedPhoto && <PhotoDetail photo={selectedPhoto} onBack={() => setSelectedPhoto(null)} />}
+          hidden={!!selectedPhoto}
+        />
+        {selectedPhoto && (
+          <PhotoDetail photo={selectedPhoto} onBack={() => setSelectedPhoto(null)} />
+        )}
       </div>
     </div>
   );

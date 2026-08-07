@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {Well} from './Well';
-export type {SpectrumWellProps} from '@react-types/well';
+export {Well} from '@adobe/react-spectrum/Well';
+
+export type {SpectrumWellProps} from '@adobe/react-spectrum/Well';

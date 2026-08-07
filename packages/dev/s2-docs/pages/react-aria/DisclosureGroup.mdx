@@ -4,7 +4,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/DisclosureGroup';
 import '../../tailwind/tailwind.css';
-import Anatomy from 'react-aria-components/docs/DisclosureGroupAnatomy.svg';
+import Anatomy from './DisclosureGroupAnatomy.svg';
 
 export const tags = ['accordion', 'collapsible', 'expandable', 'details'];
 export const description = 'A grouping of related disclosures, sometimes called an accordion.';
@@ -55,7 +55,7 @@ Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items, 
 
 ```tsx render
 "use client";
-import type {Key} from 'react-aria-components';
+import type {Key} from 'react-aria-components/DisclosureGroup';
 import {DisclosureGroup} from 'vanilla-starter/DisclosureGroup';
 import {Disclosure, DisclosureHeader, DisclosurePanel} from 'vanilla-starter/Disclosure';
 import {useState} from 'react';

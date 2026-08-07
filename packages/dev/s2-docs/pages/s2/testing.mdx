@@ -48,7 +48,7 @@ a particular instance of a component.
 
 ```tsx
 import {render} from '@testing-library/react';
-import {TextField} from '@react-spectrum/s2';
+import {TextField} from '@react-spectrum/s2/TextField';
 
 function LoginForm() {
   return (
@@ -159,7 +159,7 @@ fireEvent.mouseUp(thumb, {pageX: 50});
 
 
 ## React Spectrum test utils
-<VersionBadge version="beta" />
+<VersionBadge version="rc" />
 
 In addition to the test utilities mentioned above, [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) re-exports the same test utils available in `@react-aria/test-utils`, including
 the ARIA pattern testers. These testers are set of testing utilities that aims to make writing unit tests easier for consumers of React Spectrum.
@@ -170,7 +170,7 @@ the ARIA pattern testers. These testers are set of testing utilities that aims t
 
 <InlineAlert variant="notice">
   <Heading>Requirements</Heading>
-  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+  <Content>Please note that this library uses [@testing-library/dom@10](https://www.npmjs.com/package/@testing-library/dom) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
 </InlineAlert>
 
 

@@ -14,11 +14,11 @@ export const description = 'Allows a user to turn a setting on or off.';
 <VisualExample
   component={Switch}
   docs={docs.exports.Switch}
-  props={['children', 'size', 'isEmphasized']}
+  props={['children', 'size', 'description', 'isEmphasized', 'isDisabled']}
   initialProps={{
     children: 'Low power mode'
   }}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/Switch"
   type="s2" />
 
 ## Selection
@@ -27,7 +27,7 @@ Use the `isSelected` or `defaultSelected` prop to set the selection state, and `
 
 ```tsx render
 "use client";
-import {Switch} from '@react-spectrum/s2';
+import {Switch} from '@react-spectrum/s2/Switch';
 import {useState} from 'react';
 
 function Example(props) {
@@ -52,15 +52,22 @@ function Example(props) {
 
 ## Forms
 
-Use the `name` and `value` props to submit the switch to the server. See the [Forms](forms) guide to learn more.
+Use the `name` and `value` props to submit the switch to the server. Set the `isRequired` prop to validate the user selects the switch, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render
 "use client";
-import {Switch, Button, Form} from '@react-spectrum/s2';
+import {Switch} from '@react-spectrum/s2/Switch';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 <Form>
   {/*- begin highlight -*/}
-  <Switch name="wifi">Wi-Fi</Switch>
+  <Switch
+    name="two-factor"
+    isRequired
+    description="Your organization requires two-factor authentication.">
+    Two-factor authentication
+  </Switch>
   {/*- end highlight -*/}
   <Button type="submit">Submit</Button>
 </Form>

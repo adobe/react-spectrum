@@ -57,7 +57,7 @@ updateTitleFontSize();
 if (typeof ResizeObserver !== 'undefined') {
   let observer = new ResizeObserver(() => {
     if (!raf) {
-    // Avoid updating the layout during the resize event and creating circular notifications.
+      // Avoid updating the layout during the resize event and creating circular notifications.
       raf = requestAnimationFrame(() => {
         updateTitleFontSize();
         raf = null;
@@ -74,7 +74,7 @@ function Hamburger() {
   let hamburgerRef = useRef(null);
   let hamburgerButtonRef = useRef(null);
 
-  let onPress = (event) => {
+  let onPress = event => {
     let nav = document.querySelector(`.${docsStyle.nav}`);
     let main = document.querySelector('main');
     let themeSwitcher = document.querySelector(`header.${docsStyle.pageHeader} > div:last-of-type`);
@@ -122,14 +122,14 @@ function Hamburger() {
     let onClick = () => removeVisible();
 
     /* collapse expanded nav when esc key is pressed */
-    let onKeydownEsc = (event) => {
+    let onKeydownEsc = event => {
       if (event.keyCode === 27) {
         removeVisible();
       }
     };
 
     /* trap keyboard focus within expanded nav */
-    let onKeydownTab = (event) => {
+    let onKeydownTab = event => {
       if (event.keyCode === 9 && nav.classList.contains(docsStyle.visible)) {
         let tabbables = nav.querySelectorAll('button, a[href]');
         let first = tabbables[0];
@@ -146,7 +146,7 @@ function Hamburger() {
     };
 
     /* restore default behavior when responsive media query no longer matches */
-    let mediaQueryTest = (event) => {
+    let mediaQueryTest = event => {
       if (!event.matches) {
         removeVisible(true);
       }
@@ -179,8 +179,16 @@ function Hamburger() {
   let hamburgerButtonLabel = `${isPressed ? 'Close' : 'Open'} navigation panel`;
 
   return (
-    <div ref={hamburgerRef} className={docsStyle.hamburgerButton} title={hamburgerButtonLabel} role="presentation">
-      <ActionButton ref={hamburgerButtonRef} onPress={onPress} aria-label={hamburgerButtonLabel} aria-pressed={isPressed ? isPressed : undefined}>
+    <div
+      ref={hamburgerRef}
+      className={docsStyle.hamburgerButton}
+      title={hamburgerButtonLabel}
+      role="presentation">
+      <ActionButton
+        ref={hamburgerButtonRef}
+        onPress={onPress}
+        aria-label={hamburgerButtonLabel}
+        aria-pressed={isPressed ? isPressed : undefined}>
         <ShowMenu />
       </ActionButton>
     </div>
@@ -189,10 +197,12 @@ function Hamburger() {
 
 let pageHeader = document.querySelector('.' + docsStyle.pageHeader);
 if (pageHeader) {
-  ReactDOM.createRoot(pageHeader).render(<>
-    <Hamburger />
-    <ThemeSwitcher />
-  </>);
+  ReactDOM.createRoot(pageHeader).render(
+    <>
+      <Hamburger />
+      <ThemeSwitcher />
+    </>
+  );
 } else {
   let exampleHeader = document.querySelector('.' + docsStyle.exampleHeader);
   if (exampleHeader) {
@@ -206,17 +216,20 @@ if (pathToPage && editPage) {
   ReactDOM.createRoot(editPage).render(
     <Link>
       <a
-        href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
+        href={encodeURI(
+          `https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`
+        )}
         target="_blank">
         <Flex gap="size-100" alignItems="center">
-          <span>Edit this page</span><LinkOut size="S" />
+          <span>Edit this page</span>
+          <LinkOut size="S" />
         </Flex>
       </a>
     </Link>
   );
 }
 
-document.addEventListener('mousedown', (e) => {
+document.addEventListener('mousedown', e => {
   // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
   let link = e.target.closest('a');
   if (link && (link.host !== location.host || link.pathname !== location.pathname)) {
@@ -230,11 +243,15 @@ document.addEventListener('mousedown', (e) => {
 });
 
 // Remove mouse focus class on blur of a summary element.
-document.addEventListener('blur', (e) => {
-  if (e.target.tagName === 'SUMMARY') {
-    e.target.classList.remove(docsStyle.mouseFocus);
-  }
-}, true);
+document.addEventListener(
+  'blur',
+  e => {
+    if (e.target.tagName === 'SUMMARY') {
+      e.target.classList.remove(docsStyle.mouseFocus);
+    }
+  },
+  true
+);
 
 let sidebar = document.querySelector('.' + docsStyle.nav);
 let lastSelectedItem = sessionStorage.getItem('sidebarSelectedItem');
@@ -242,7 +259,12 @@ let lastScrollPosition = sessionStorage.getItem('sidebarScrollPosition');
 
 // If we have a recorded scroll position, and the last selected item is in the sidebar
 // (e.g. we're in the same category), then restore the scroll position.
-if (sidebar && lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
+if (
+  sidebar &&
+  lastSelectedItem &&
+  lastScrollPosition &&
+  [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)
+) {
   sidebar.scrollTop = parseInt(lastScrollPosition, 10);
 }
 
@@ -299,23 +321,35 @@ prefersReducedMotion.addEventListener('change', reducedMotionCheck);
 // For server rendered components, a data-hover attribute is added with the class
 // that should be applied on hover and we do that here using global listeners.
 let ignoreSimulatedMouseEvents = false;
-document.addEventListener('touchstart', () => {
-  ignoreSimulatedMouseEvents = true;
-}, true);
+document.addEventListener(
+  'touchstart',
+  () => {
+    ignoreSimulatedMouseEvents = true;
+  },
+  true
+);
 
-document.addEventListener('mouseenter', e => {
-  if (ignoreSimulatedMouseEvents) {
-    ignoreSimulatedMouseEvents = false;
-    return;
-  }
+document.addEventListener(
+  'mouseenter',
+  e => {
+    if (ignoreSimulatedMouseEvents) {
+      ignoreSimulatedMouseEvents = false;
+      return;
+    }
 
-  if (e.target instanceof Element && e.target.dataset.hover) {
-    e.target.classList.add(e.target.dataset.hover);
-  }
-}, true);
+    if (e.target instanceof Element && e.target.dataset.hover) {
+      e.target.classList.add(e.target.dataset.hover);
+    }
+  },
+  true
+);
 
-document.addEventListener('mouseleave', e => {
-  if (e.target instanceof Element && e.target.dataset.hover) {
-    e.target.classList.remove(e.target.dataset.hover);
-  }
-}, true);
+document.addEventListener(
+  'mouseleave',
+  e => {
+    if (e.target instanceof Element && e.target.dataset.hover) {
+      e.target.classList.remove(e.target.dataset.hover);
+    }
+  },
+  true
+);

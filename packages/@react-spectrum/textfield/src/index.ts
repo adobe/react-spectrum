@@ -12,7 +12,9 @@
 
 /// <reference types="css-module-types" />
 
-export {TextArea} from './TextArea';
-export {TextField} from './TextField';
-export {TextFieldBase} from './TextFieldBase';
-export type {SpectrumTextFieldProps, SpectrumTextAreaProps} from '@react-types/textfield';
+export {TextArea} from '@adobe/react-spectrum/TextArea';
+
+export {TextField} from '@adobe/react-spectrum/TextField';
+export {TextFieldBase} from '@adobe/react-spectrum/private/textfield/TextFieldBase';
+export type {SpectrumTextFieldProps, TextFieldRef} from '@adobe/react-spectrum/TextField';
+export type {SpectrumTextAreaProps} from '@adobe/react-spectrum/TextArea';

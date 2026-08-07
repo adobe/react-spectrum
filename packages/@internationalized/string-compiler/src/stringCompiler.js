@@ -13,7 +13,7 @@
 const {parse, TYPE} = require('@formatjs/icu-messageformat-parser');
 
 function compileStrings(messages, options) {
-  let res = options?.format  === 'esm' ? 'export default {' : 'module.exports = {';
+  let res = options?.format === 'esm' ? 'export default {' : 'module.exports = {';
   for (let key in messages) {
     res += '  ' + JSON.stringify(key) + ': ' + compileString(messages[key]) + ',\n';
   }
@@ -49,16 +49,23 @@ function compileParts(parts, inline = false, pluralValue = '') {
         break;
       case TYPE.plural: {
         let pluralValue = 'args.' + part.value + (part.offset ? ' - ' + part.offset : '');
-        res += '${formatter.plural('
-          + pluralValue
-          + ', ' + compileOptions(part.options, pluralValue)
-          + (part.pluralType !== 'cardinal' ? ', "ordinal"' : '')
-          + ')}';
+        res +=
+          '${formatter.plural(' +
+          pluralValue +
+          ', ' +
+          compileOptions(part.options, pluralValue) +
+          (part.pluralType !== 'cardinal' ? ', "ordinal"' : '') +
+          ')}';
         usesFormatter = true;
         break;
       }
       case TYPE.select:
-        res += '${formatter.select(' + compileOptions(part.options, pluralValue) + ', args.' + part.value + ')}';
+        res +=
+          '${formatter.select(' +
+          compileOptions(part.options, pluralValue) +
+          ', args.' +
+          part.value +
+          ')}';
         usesFormatter = true;
         break;
       case TYPE.pound:

@@ -14,9 +14,9 @@ import {action} from 'storybook/actions';
 import {ActionBar} from '../src/ActionBar';
 import {ActionButton} from '../src/ActionButton';
 import {ExampleRender as CardViewExample} from './CardView.stories';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../src';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../src/TableView';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ActionBar> = {
   component: ActionBar,
@@ -35,7 +35,7 @@ export default meta;
 type Story = StoryObj<typeof ActionBar>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <ActionBar {...args}>
         <ActionButton>Edit</ActionButton>
@@ -60,7 +60,8 @@ export const CardExample: Story = {
           <ActionButton onPress={() => action('copy')([...selectedKeys])}>Copy</ActionButton>
           <ActionButton onPress={() => action('delete')([...selectedKeys])}>Delete</ActionButton>
         </ActionBar>
-      )} />
+      )}
+    />
   ),
   parameters: {
     layout: 'fullscreen'

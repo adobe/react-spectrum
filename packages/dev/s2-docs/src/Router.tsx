@@ -11,7 +11,10 @@ const MIN_SKELETON_TIME = 300;
 let navigationPromise: Promise<void> | null = null;
 let targetPathname: string | null = null;
 let listeners = new Set<() => void>();
-let cachedSnapshot: {promise: Promise<void> | null, pathname: string | null} = {promise: null, pathname: null};
+let cachedSnapshot: {promise: Promise<void> | null; pathname: string | null} = {
+  promise: null,
+  pathname: null
+};
 
 export function subscribe(callback: () => void) {
   listeners.add(callback);
@@ -30,7 +33,7 @@ export function getSnapshot() {
 export function setNavigationPromise(promise: Promise<void> | null, pathname?: string) {
   targetPathname = pathname || null;
   navigationPromise = promise;
-  
+
   if (promise) {
     promise.finally(() => {
       if (navigationPromise === promise) {
@@ -39,7 +42,7 @@ export function setNavigationPromise(promise: Promise<void> | null, pathname?: s
       }
     });
   }
-  
+
   listeners.forEach(callback => callback());
 }
 
@@ -47,7 +50,7 @@ export function getPageFromPathname(pages: Page[], url: string | null): Page | n
   if (!url) {
     return null;
   }
-  
+
   return pages.find(p => p.url === url) ?? null;
 }
 
@@ -58,7 +61,7 @@ function useDelayedSnapshot() {
     let timeout;
     return subscribe(() => {
       clearTimeout(timeout);
-      
+
       let snapshot = getSnapshot();
       if (snapshot.promise) {
         // Delay skeleton slightly in case network is fast.
@@ -68,7 +71,7 @@ function useDelayedSnapshot() {
       } else {
         // Ensure that skeleton shows for a minimum amount of time
         // if it shows at all, to avoid a jarring flash.
-        let skeletonTimeout = (skeletonDisplayTime.current + MIN_SKELETON_TIME) - Date.now();
+        let skeletonTimeout = skeletonDisplayTime.current + MIN_SKELETON_TIME - Date.now();
         if (skeletonTimeout > 0) {
           timeout = setTimeout(() => {
             setDelayedSnapshot(snapshot);
@@ -99,15 +102,13 @@ export function NavigationSuspense({children}: {children: React.ReactNode}) {
     }
   }, [isLoading]);
 
-  return isLoading
-    ? <PageSkeleton />
-    : children;
+  return isLoading ? <PageSkeleton /> : children;
 }
 
 interface RouterContextValue {
-  currentPage: Page,
-  pages: Page[],
-  isLoading: boolean
+  currentPage: Page;
+  pages: Page[];
+  isLoading: boolean;
 }
 
 const RouterContext = createContext<RouterContextValue | null>(null);

@@ -41,7 +41,9 @@
     background: rgba(203, 56, 55, 0.1);
   }
 
-  .gitImage, .spectrumImage, .w3cImage {
+  .gitImage,
+  .spectrumImage,
+  .w3cImage {
     background-color: var(--spectrum-global-color-gray-200);
     fill: var(--spectrum-global-color-gray-900);
   }
@@ -62,12 +64,12 @@
   .cardType {
     color: var(--spectrum-global-color-gray-700);
     font-size: 12px;
-
   }
 }
 
 .resourceCard {
-  img, svg {
+  img,
+  svg {
     width: 64px;
     height: 64px;
   }

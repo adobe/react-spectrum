@@ -1,7 +1,7 @@
 'use client';
-import { ToggleButton, ToggleButtonGroup } from "@react-spectrum/s2";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { useState } from "react";
+import {ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
 
 export function ObjectStyles() {
   let [background, setBackground] = useState('elevated');
@@ -26,7 +26,9 @@ export function ObjectStyles() {
           alignItems: 'center',
           justifyContent: 'center'
         })}>
-        <span className={style({font: 'ui', color: 'neutral-subdued', justifySelf: {sm: 'end'}})}>Background</span>
+        <span className={style({font: 'ui', color: 'neutral-subdued', justifySelf: {sm: 'end'}})}>
+          Background
+        </span>
         <ToggleButtonGroup
           aria-label="Background"
           staticColor="auto"
@@ -40,7 +42,9 @@ export function ObjectStyles() {
           <ToggleButton id="layer-2">layer-2</ToggleButton>
           <ToggleButton id="elevated">elevated</ToggleButton>
         </ToggleButtonGroup>
-        <span className={style({font: 'ui', color: 'neutral-subdued', justifySelf: {sm: 'end'}})}>Border Radius</span>
+        <span className={style({font: 'ui', color: 'neutral-subdued', justifySelf: {sm: 'end'}})}>
+          Border Radius
+        </span>
         <ToggleButtonGroup
           aria-label="Border Radius"
           staticColor="auto"
@@ -55,7 +59,9 @@ export function ObjectStyles() {
           <ToggleButton id="xl">xl</ToggleButton>
           <ToggleButton id="full">full</ToggleButton>
         </ToggleButtonGroup>
-        <span className={style({font: 'ui', color: 'neutral-subdued', justifySelf: {sm: 'end'}})}>Box Shadow</span>
+        <span className={style({font: 'ui', color: 'neutral-subdued', justifySelf: {sm: 'end'}})}>
+          Box Shadow
+        </span>
         <ToggleButtonGroup
           aria-labe="Box Shadow"
           staticColor="auto"
@@ -67,7 +73,9 @@ export function ObjectStyles() {
           <ToggleButton id="emphasized">emphasized</ToggleButton>
           <ToggleButton id="elevated">elevated</ToggleButton>
         </ToggleButtonGroup>
-        <span className={style({font: 'ui', color: 'neutral-subdued', justifySelf: {sm: 'end'}})}>Border Width</span>
+        <span className={style({font: 'ui', color: 'neutral-subdued', justifySelf: {sm: 'end'}})}>
+          Border Width
+        </span>
         <ToggleButtonGroup
           aria-label="Border Width"
           staticColor="auto"
@@ -135,15 +143,41 @@ export function ObjectStyles() {
         })({background, rounding, shadow, border})}>
         <pre className={style({font: 'code-sm', marginY: 0})}>
           <code style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
-            <span className={styles.function}>style</span>{background || rounding || shadow || border ? '({\n  ' : '({})'}
-            {background && <><span className={styles.property}>backgroundColor</span>: <span className={styles.string}>'{background}'</span>{rounding || shadow || border ? ',\n  ' : null}</>}
-            {rounding && <><span className={styles.property}>borderRadius</span>: <span className={styles.string}>'{rounding}'</span>{shadow || border ? ',\n  ' : null}</>}
-            {shadow && <><span className={styles.property}>boxShadow</span>: <span className={styles.string}>'{shadow}'</span>{border ? ',\n  ' : null}</>}
-            {border && <>
-              <span className={styles.property}>borderWidth</span>: <span className={styles.number}>{border}</span>{',\n  '}
-              <span className={styles.property}>borderStyle</span>: <span className={styles.string}>'solid'</span>{',\n  '}
-              <span className={styles.property}>borderColor</span>: <span className={styles.string}>'gray-1000'</span>
-            </>}
+            <span className={styles.function}>style</span>
+            {background || rounding || shadow || border ? '({\n  ' : '({})'}
+            {background && (
+              <>
+                <span className={styles.property}>backgroundColor</span>:{' '}
+                <span className={styles.string}>'{background}'</span>
+                {rounding || shadow || border ? ',\n  ' : null}
+              </>
+            )}
+            {rounding && (
+              <>
+                <span className={styles.property}>borderRadius</span>:{' '}
+                <span className={styles.string}>'{rounding}'</span>
+                {shadow || border ? ',\n  ' : null}
+              </>
+            )}
+            {shadow && (
+              <>
+                <span className={styles.property}>boxShadow</span>:{' '}
+                <span className={styles.string}>'{shadow}'</span>
+                {border ? ',\n  ' : null}
+              </>
+            )}
+            {border && (
+              <>
+                <span className={styles.property}>borderWidth</span>:{' '}
+                <span className={styles.number}>{border}</span>
+                {',\n  '}
+                <span className={styles.property}>borderStyle</span>:{' '}
+                <span className={styles.string}>'solid'</span>
+                {',\n  '}
+                <span className={styles.property}>borderColor</span>:{' '}
+                <span className={styles.string}>'gray-1000'</span>
+              </>
+            )}
             {background || rounding || shadow || border ? '\n})' : null}
           </code>
         </pre>

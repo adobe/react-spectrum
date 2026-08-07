@@ -15,7 +15,9 @@ const fs = require('fs');
 const assert = require('assert');
 const chalk = require('chalk');
 let path = require('path');
-let packagePaths = glob.sync(path.dirname(__dirname) + '/packages/@{react,spectrum}-*/*/package.json');
+let packagePaths = glob.sync(
+  path.dirname(__dirname) + '/packages/@{react,spectrum}-*/*/package.json'
+);
 let errors = false;
 
 // soft assert won't fail the whole thing, allowing us to accumulate all errors at once
@@ -72,23 +74,14 @@ for (let pkgPath of packagePaths) {
 
 for (let pkg of packagePaths) {
   let json = packages[pkg];
-
-  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1') && json.rsp?.type !== 'cli') {
-    let topIndexExists = fs.existsSync(path.join(pkg, '..', 'index.ts'));
-    if (topIndexExists) {
-      let contents = fs.readFileSync(path.join(pkg, '..', 'index.ts'));
-      softAssert(/export \* from '.\/src';/.test(contents), `contents of ${path.join(pkg, '..', 'index.ts')} are not "export * from './src';"`);
-    }
-    softAssert(topIndexExists, `${pkg} is missing an index.ts`);
-    softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
-  }
-
   let readme = path.join(path.dirname(pkg), 'README.md');
   if (!fs.existsSync(readme)) {
-    fs.writeFileSync(readme, `# ${json.name}\n\nThis package is part of [react-spectrum](https://github.com/adobe/react-spectrum). See the repo for more details.`);
+    fs.writeFileSync(
+      readme,
+      `# ${json.name}\n\nThis package is part of [react-spectrum](https://github.com/adobe/react-spectrum). See the repo for more details.`
+    );
   }
 }
-
 
 for (let pkg of packagePaths) {
   let globSrc = pkg.replace('package.json', '**/*.{js,ts,tsx}');
@@ -104,15 +97,27 @@ for (let pkg of packagePaths) {
   let types = `@react-types/${basename}`;
 
   if (scope === '@react-spectrum' && isDepUsed(aria, globSrc)) {
-    softAssert(!pkgNames[aria] || json.dependencies[aria], `${pkg} is missing a dependency on ${aria}`);
+    softAssert(
+      !pkgNames[aria] || json.dependencies[aria],
+      `${pkg} is missing a dependency on ${aria}`
+    );
   }
 
   if ((scope === '@react-aria' || scope === '@react-spectrum') && isDepUsed(stately, globSrc)) {
-    softAssert(!pkgNames[stately] || json.dependencies[stately], `${pkg} is missing a dependency on ${stately}`);
+    softAssert(
+      !pkgNames[stately] || json.dependencies[stately],
+      `${pkg} is missing a dependency on ${stately}`
+    );
   }
 
-  if ((scope === '@react-aria' || scope === '@react-spectrum' || scope === '@react-stately') && isDepUsed(types, globSrc)) {
-    softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
+  if (
+    (scope === '@react-aria' || scope === '@react-spectrum' || scope === '@react-stately') &&
+    isDepUsed(types, globSrc)
+  ) {
+    softAssert(
+      !pkgNames[types] || json.dependencies[types],
+      `${pkg} is missing a dependency on ${types}`
+    );
   }
 }
 

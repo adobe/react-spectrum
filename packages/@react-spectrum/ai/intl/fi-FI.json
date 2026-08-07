@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Uusi viesti",
+  "chat.scrollToBottom": "Selaa alas",
+  "messagefeedback.thumbDown": "Huono vastaus",
+  "messagefeedback.thumbUp": "Hyvä vastaus",
+  "promptfield.aiDisclaimer": "Vastaukset tuotetaan tekoälyn avulla, ja ne voivat olla epätarkkoja. Tarkista ennen käyttöä.",
+  "promptfield.aiUserGuidlines": "Tekoälyn käyttäjäohjeet",
+  "promptfield.attachments": "Liitteet",
+  "promptfield.insertButton": "Add",
+  "promptfield.label": "Kehotus",
+  "promptfield.placeholder": "Oletko valmis aloittamaan? Esitä kysymys, jaa idea tai lisää tehtävä.",
+  "promptfield.stopButton": "Seis",
+  "promptfield.submitButton": "Lähetä",
+  "promptfield.uploading": "Lataaminen",
+  "responsestatus.loading": "Ladataan",
+  "voicebutton.startListening": "Aloita äänitys",
+  "voicebutton.stopListening": "Lopeta tallennus"
+}

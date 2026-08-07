@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Tablet_L from 'illustration:./S2_lin_tablet_160.svg';
 import Tablet_M from 'illustration:./S2_lin_tablet_96.svg';
 import Tablet_S from 'illustration:./S2_lin_tablet_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Tablet(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

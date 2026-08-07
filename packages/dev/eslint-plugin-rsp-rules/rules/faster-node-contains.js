@@ -14,16 +14,18 @@ const plugin = {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Optimize nodeContains calls by using faster alternatives like :focus-within and isConnected',
+      description:
+        'Optimize nodeContains calls by using faster alternatives like :focus-within and isConnected',
       recommended: true
     },
     fixable: 'code',
     messages: {
-      useFocusWithin: 'Use isFocusWithin(element) instead of nodeContains for activeElement checks.',
+      useFocusWithin:
+        'Use isFocusWithin(element) instead of nodeContains for activeElement checks.',
       useIsConnected: 'Use node.isConnected instead of nodeContains for document contains checks.'
     }
   },
-  create: (context) => {
+  create: context => {
     let existingReactAriaUtilsImport = null;
     let hasIsFocusWithinImport = false;
 
@@ -62,7 +64,7 @@ const plugin = {
               context.report({
                 node,
                 messageId: 'useFocusWithin',
-                fix: (fixer) => {
+                fix: fixer => {
                   const fixes = [fixer.replaceText(node, `isFocusWithin(${elementText})`)];
 
                   // Add import if not present
@@ -75,18 +77,13 @@ const plugin = {
                           token => token.value === '{'
                         );
                         if (openBrace) {
-                          fixes.push(
-                            fixer.insertTextAfter(openBrace, 'isFocusWithin, ')
-                          );
+                          fixes.push(fixer.insertTextAfter(openBrace, 'isFocusWithin, '));
                         }
                       }
                     } else {
                       const programNode = context.sourceCode.ast;
-                      const imports = programNode.body.filter(
-                        n => n.type === 'ImportDeclaration'
-                      );
-                      const importStatement =
-                        "\nimport {isFocusWithin} from '@react-aria/utils';";
+                      const imports = programNode.body.filter(n => n.type === 'ImportDeclaration');
+                      const importStatement = "\nimport {isFocusWithin} from '@react-aria/utils';";
 
                       if (imports.length > 0) {
                         const lastImport = imports[imports.length - 1];
@@ -112,7 +109,7 @@ const plugin = {
               context.report({
                 node,
                 messageId: 'useIsConnected',
-                fix: (fixer) => {
+                fix: fixer => {
                   return fixer.replaceText(node, `${nodeText}.isConnected`);
                 }
               });

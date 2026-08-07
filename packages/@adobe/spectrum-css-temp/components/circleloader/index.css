@@ -109,7 +109,7 @@ governing permissions and limitations under the License.
   .spectrum-CircleLoader-fills {
     will-change: transform;
     transform: translateZ(0);
-    animation: spectrum-fills-rotate 1s infinite cubic-bezier(.25,.78,.48,.89);
+    animation: spectrum-fills-rotate 1s infinite cubic-bezier(0.25, 0.78, 0.48, 0.89);
     transform-origin: center;
   }
   .spectrum-CircleLoader-fillSubMask1 {

@@ -14,14 +14,26 @@ export const description = 'Allows a user to select one or more items in a list 
 
 <PageDescription>{docs.exports.CheckboxGroup.description}</PageDescription>
 
-```tsx render docs={docs.exports.CheckboxGroup} links={docs.links} props={['label', 'size', 'orientation', 'labelPosition', 'description', 'contextualHelp', 'isEmphasized', 'isDisabled']} initialProps={{label: 'Favorite sports'}} type="s2"
+```tsx render docs={docs.exports.CheckboxGroup} links={docs.links} props={['label', 'size', 'orientation', 'labelPosition', 'description', 'contextualHelp', 'isEmphasized', 'isDisabled']} initialProps={{label: 'Email Notification Preferences'}} type="s2"
 "use client";
-import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
 
 <CheckboxGroup/* PROPS */>
-  <Checkbox value="soccer">Soccer</Checkbox>
-  <Checkbox value="baseball">Baseball</Checkbox>
-  <Checkbox value="basketball">Basketball</Checkbox>
+  <Checkbox
+    value="product"
+    description="Get notified about new features and improvements">
+    Product Updates
+  </Checkbox>
+  <Checkbox
+    value="security"
+    description="Important notifications about your account safety">
+    Security Alerts
+  </Checkbox>
+  <Checkbox
+    value="marketing"
+    description="Receive promotions, offers, and newsletters">
+    Marketing Emails
+  </Checkbox>
 </CheckboxGroup>
 ```
 
@@ -31,7 +43,7 @@ Use the `value` or `defaultValue` prop to set the selected items, and `onChange`
 
 ```tsx render
 "use client";
-import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
 import {useState} from 'react';
 
 function Example() {
@@ -61,7 +73,9 @@ Use the `name` prop to submit the selected checkboxes to the server. Set the `is
 
 ```tsx render
 "use client";
-import {CheckboxGroup, Checkbox, Button, Form} from '@react-spectrum/s2';
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form/* PROPS */>

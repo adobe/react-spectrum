@@ -1,10 +1,10 @@
-import { Checkbox } from '../src/Checkbox';
+import {Checkbox} from '../src/Checkbox';
 
 export default {
   title: 'Checkbox',
   component: Checkbox,
   parameters: {
-    layout: 'centered',
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {},
@@ -15,5 +15,5 @@ export default {
 };
 
 export const Default = {
-  args: {},
+  args: {}
 };

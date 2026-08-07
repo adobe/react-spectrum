@@ -13,7 +13,7 @@ export const description = 'Display a hierarchy of links to the current page or 
 
 ```tsx render docs={docs.exports.Breadcrumbs} links={docs.links} props={['size', 'isDisabled']} initialProps={{}} type="s2"
 "use client";
-import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2/Breadcrumbs';
 
 <Breadcrumbs/* PROPS */>
   <Breadcrumb href="#">Home</Breadcrumb>
@@ -28,7 +28,7 @@ import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
 
 ```tsx render
 "use client";
-import {Breadcrumbs, Breadcrumb, type Key} from '@react-spectrum/s2';
+import {Breadcrumbs, Breadcrumb, type Key} from '@react-spectrum/s2/Breadcrumbs';
 import {useState} from 'react';
 
 function Example() {
@@ -65,7 +65,7 @@ Breadcrumbs automatically collapse items into a menu when space is limited. A ma
 
 ```tsx render
 "use client";
-import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2/Breadcrumbs';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <div

@@ -12,7 +12,7 @@
 
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
-import {Switch} from '../src';
+import {Switch} from '../src/Switch';
 
 const meta: Meta<typeof Switch> = {
   component: Switch,
@@ -31,9 +31,30 @@ export default meta;
 type Story = StoryObj<typeof Switch>;
 
 export const Example: Story = {
-  render: (args) => <Switch {...args}>Wi-Fi</Switch>
+  render: args => <Switch {...args}>Wi-Fi</Switch>
 };
 
 export const LongLabel: Story = {
-  render: (args) => <Switch {...args} styles={style({maxWidth: 128})}>Switch with very long label so we can see wrapping</Switch>
+  render: args => (
+    <Switch {...args} styles={style({maxWidth: 128})}>
+      Switch with very long label so we can see wrapping
+    </Switch>
+  )
+};
+
+export const HelpText: Story = {
+  render: args => (
+    <Switch {...args} styles={style({width: 300})}>
+      Product updates
+    </Switch>
+  ),
+  args: {
+    description: 'Your organization requires two-factor authentication.',
+    errorMessage: 'You must enable two-factor authentication.'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };

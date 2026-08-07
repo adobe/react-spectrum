@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorArea} from '../src';
+import {ColorArea} from '../src/ColorArea';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorArea> = {
@@ -26,7 +26,7 @@ export default meta;
 type Story = StoryObj<typeof ColorArea>;
 
 export const Default: Story = {
-  render: (args) => <ColorArea {...args} />,
+  render: args => <ColorArea {...args} />,
   args: {
     defaultValue: 'hsl(30, 100%, 50%)'
   }

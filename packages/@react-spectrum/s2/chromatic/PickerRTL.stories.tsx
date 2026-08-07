@@ -11,15 +11,28 @@
  */
 
 import type {Meta} from '@storybook/react';
-import {Picker} from '../src';
+import {Picker} from '../src/Picker';
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
   parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['dark'],
+      backgrounds: ['base'],
+      locales: ['ar-AE'],
+      disableAnimations: true
+    }
   },
   title: 'S2 Chromatic/PickerRTL'
 };
 
 export default meta;
-export {Default, WithSections, DynamicExample, Icons, Avatars, WithCustomWidth, ContextualHelp} from './Picker.stories';
+export {
+  Default,
+  WithSections,
+  DynamicExample,
+  Icons,
+  Avatars,
+  WithCustomWidth,
+  ContextualHelp
+} from './Picker.stories';

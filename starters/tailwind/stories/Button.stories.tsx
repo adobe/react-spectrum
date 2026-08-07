@@ -1,10 +1,10 @@
-import { Button } from '../src/Button';
+import {Button} from '../src/Button';
 
 export default {
   title: 'Button',
   component: Button,
   parameters: {
-    layout: 'centered',
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {
@@ -22,17 +22,17 @@ export default {
 export const Primary = {
   args: {
     variant: 'primary'
-  },
+  }
 };
 
 export const Secondary = {
   args: {
     variant: 'secondary'
-  },
+  }
 };
 
 export const Destructive = {
   args: {
     variant: 'destructive'
-  },
+  }
 };

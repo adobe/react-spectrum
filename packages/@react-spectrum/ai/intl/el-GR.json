@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Νέο μήνυμα",
+  "chat.scrollToBottom": "Κύλιση προς τα κάτω",
+  "messagefeedback.thumbDown": "Κακή απάντηση",
+  "messagefeedback.thumbUp": "Καλή απάντηση",
+  "promptfield.aiDisclaimer": "Οι απαντήσεις δημιουργούνται με χρήση τεχνητής νοημοσύνης και ενδέχεται να είναι ανακριβείς. Ελέγξτε πριν από τη χρήση.",
+  "promptfield.aiUserGuidlines": "Οδηγίες χρήσης AI",
+  "promptfield.attachments": "Συνημμένα",
+  "promptfield.insertButton": "Προσθήκη",
+  "promptfield.label": "Προτροπή",
+  "promptfield.placeholder": "Είστε έτοιμοι να ξεκινήσετε; Υποβάλετε μια ερώτηση, μοιραστείτε μια ιδέα ή προσθέστε μια εργασία.",
+  "promptfield.stopButton": "Σταμάτα",
+  "promptfield.submitButton": "Αποστολή",
+  "promptfield.uploading": "Μεταφόρτωση",
+  "responsestatus.loading": "Φόρτωση",
+  "voicebutton.startListening": "Ξεκινήστε την εγγραφή",
+  "voicebutton.stopListening": "Διακοπή εγγραφής"
+}

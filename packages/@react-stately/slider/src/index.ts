@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {useSliderState} from './useSliderState';
+export {useSliderState} from 'react-stately/useSliderState';
 
-export type {SliderStateOptions} from './useSliderState';
-export type {SliderState} from './useSliderState';
+export type {SliderProps, SliderStateOptions, SliderState} from 'react-stately/useSliderState';

@@ -40,7 +40,6 @@ governing permissions and limitations under the License.
   margin: calc(var(--row-gap) / 2) calc(var(--column-gap) / 2);
 }
 
-
 .spectrum-ActionGroup {
   display: flex;
   flex-wrap: wrap;
@@ -112,8 +111,12 @@ governing permissions and limitations under the License.
 
         /* focus ring */
         &:after {
-          border-start-start-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
-          border-end-start-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
+          border-start-start-radius: calc(
+            var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap)
+          );
+          border-end-start-radius: calc(
+            var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap)
+          );
         }
       }
 
@@ -123,8 +126,12 @@ governing permissions and limitations under the License.
 
         /* focus ring */
         &:after {
-          border-start-end-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
-          border-end-end-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
+          border-start-end-radius: calc(
+            var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap)
+          );
+          border-end-end-radius: calc(
+            var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap)
+          );
         }
       }
 

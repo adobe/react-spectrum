@@ -1,5 +1,4 @@
 import {Tag, TagGroup} from '../src/TagGroup';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof TagGroup> = {
@@ -14,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof TagGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <TagGroup {...args}>
     <Tag>Chocolate</Tag>
     <Tag>Mint</Tag>

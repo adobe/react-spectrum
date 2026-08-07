@@ -9,5 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useVisuallyHidden, VisuallyHidden} from './VisuallyHidden';
-export type {VisuallyHiddenAria, VisuallyHiddenProps} from './VisuallyHidden';
+export {useVisuallyHidden, VisuallyHidden} from 'react-aria/VisuallyHidden';
+
+export type {VisuallyHiddenAria, VisuallyHiddenProps} from 'react-aria/VisuallyHidden';

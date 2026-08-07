@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, {ReactNode} from 'react';
 import type {TextDropItem} from '@react-aria/dnd';
@@ -17,7 +17,11 @@ export function DropTarget() {
     async onDrop(e) {
       let items = await Promise.all(
         (e.items as TextDropItem[])
-          .filter(item => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
+          .filter(
+            item =>
+              item.kind === 'text' &&
+              (item.types.has('text/plain') || item.types.has('my-app-custom-type'))
+          )
           .map(async (item: TextDropItem) => {
             if (item.types.has('my-app-custom-type')) {
               return JSON.parse(await item.getText('my-app-custom-type'));
@@ -44,7 +48,12 @@ export function DropTarget() {
   }
 
   return (
-    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+    <div
+      {...dropProps}
+      role="button"
+      tabIndex={0}
+      ref={ref}
+      className={`droppable ${isDropTarget ? 'target' : ''}`}>
       {message}
     </div>
   );

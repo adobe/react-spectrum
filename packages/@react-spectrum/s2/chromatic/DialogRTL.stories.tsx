@@ -10,13 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dialog} from '../src';
+import {Dialog} from '../src/Dialog';
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog,
   parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['dark'],
+      backgrounds: ['base'],
+      locales: ['ar-AE'],
+      disableAnimations: true
+    }
   },
   title: 'S2 Chromatic/DialogRTL'
 };

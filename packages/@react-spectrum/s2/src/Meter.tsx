@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Meter as AriaMeter,
-  MeterProps as AriaMeterProps,
-  ContextValue
-} from 'react-aria-components';
-import {bar, track} from './bar-utils'  with {type: 'macro'};
+import {Meter as AriaMeter, MeterProps as AriaMeterProps} from 'react-aria-components/Meter';
+
+import {bar, track} from './bar-utils' with {type: 'macro'};
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
@@ -23,41 +21,52 @@ import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface MeterStyleProps {
-  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter.
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter.
+   *
    * @default 'informative'
    */
-  variant?: 'informative' | 'positive' | 'notice' | 'negative',
+  variant?: 'informative' | 'positive' | 'notice' | 'negative';
   /**
    * The size of the Meter.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * The static color style to apply. Useful when the button appears over a color background.
    */
-  staticColor?: 'white' | 'black' | 'auto',
+  staticColor?: 'white' | 'black' | 'auto';
   /**
    * The label's overall position relative to the element it is labeling.
+   *
    * @default 'top'
    */
-  labelPosition?: LabelPosition
+  labelPosition?: LabelPosition;
 }
 
-export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, MeterStyleProps, StyleProps {
+export interface MeterProps
+  extends
+    Omit<AriaMeterProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
+    MeterStyleProps,
+    StyleProps {
   /** The content to display as the label. */
-  label?: ReactNode
+  label?: ReactNode;
 }
 
-export const MeterContext = createContext<ContextValue<Partial<MeterProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const MeterContext =
+  createContext<ContextValue<Partial<MeterProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-const wrapper = style({
-  ...bar()
-}, getAllowedOverrides());
+const wrapper = style(
+  {
+    ...bar()
+  },
+  getAllowedOverrides()
+);
 
 const valueStyles = style({
   ...fieldLabel(),
@@ -119,19 +128,38 @@ export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HT
       {...groupProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + wrapper({
-        size,
-        variant,
-        staticColor,
-        labelPosition
-      }, styles)}>
+      className={
+        UNSAFE_className +
+        wrapper(
+          {
+            size,
+            variant,
+            staticColor,
+            labelPosition
+          },
+          styles
+        )
+      }>
       {({percentage, valueText}) => (
         <>
-          {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
-          {label && <Text styles={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</Text>}
+          {label && (
+            <FieldLabel
+              size={size}
+              labelAlign="start"
+              labelPosition={labelPosition}
+              staticColor={staticColor}>
+              {label}
+            </FieldLabel>
+          )}
+          {label && (
+            <Text styles={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</Text>
+          )}
           <SkeletonWrapper>
             <div className={trackStyles({isStaticColor, size})}>
-              <div className={fillStyles({isStaticColor, variant})} style={{width: percentage + '%'}} />
+              <div
+                className={fillStyles({isStaticColor, variant})}
+                style={{width: percentage + '%'}}
+              />
             </div>
           </SkeletonWrapper>
         </>

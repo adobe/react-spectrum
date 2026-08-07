@@ -16,7 +16,9 @@ import {useRouter} from './Router';
 import {useSettings} from './SettingsContext';
 import './SearchMenu.css';
 
-const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
+const MobileSearchMenu = lazy(() =>
+  import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu}))
+);
 
 let fadeOut = keyframes(`
   0% {
@@ -101,6 +103,7 @@ function ColorSchemeToggle() {
   let ref = useRef(null);
   let isDark = colorScheme === 'dark';
 
+  // oxlint-disable react/react-compiler
   return (
     <Button
       ref={ref}
@@ -116,7 +119,8 @@ function ColorSchemeToggle() {
             opacity: isDark ? 0 : 1,
             transform: isDark ? 'rotate(-90deg) scale(0.5)' : 'rotate(0deg) scale(1)',
             transition: 'opacity 200ms ease-out, transform 200ms ease-out'
-          }} />
+          }}
+        />
         <Lighten
           UNSAFE_style={{
             position: 'absolute',
@@ -124,10 +128,12 @@ function ColorSchemeToggle() {
             opacity: isDark ? 1 : 0,
             transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
             transition: 'opacity 200ms ease-out, transform 200ms ease-out'
-          }} />
+          }}
+        />
       </span>
     </Button>
   );
+  // oxlint-enable react/react-compiler
 }
 
 export function MobileHeader({toc}) {
@@ -144,7 +150,7 @@ export function MobileHeader({toc}) {
       let animations = ref.current.getAnimations({subtree: true});
       let onScroll = () => {
         // Calculate animation time based on percentage of animationRange * duration.
-        let time = Math.max(0, Math.min(end, (window.scrollY - start)) / (end - start)) * 1000;
+        let time = Math.max(0, Math.min(end, window.scrollY - start) / (end - start)) * 1000;
         for (let animation of animations) {
           animation.currentTime = time;
         }
@@ -247,17 +253,20 @@ export function MobileHeader({toc}) {
         },
         ...animation
       })}
-      style={{
-        animationName: shadow,
-        animationTimeline: 'scroll()',
-        animationRange,
-        // Pause scroll animation during view transition to avoid flicker in Safari.
-        animationPlayState: isTransitioning ? 'paused' : undefined
-      } as CSSProperties}>
+      style={
+        {
+          animationName: shadow,
+          animationTimeline: 'scroll()',
+          animationRange,
+          // Pause scroll animation during view transition to avoid flicker in Safari.
+          animationPlayState: isTransitioning ? 'paused' : undefined
+        } as CSSProperties
+      }>
       <div className={style({flexGrow: 1})}>
         <Link
           href={homepage}
           ref={linkRef}
+          // oxlint-disable-next-line react/react-compiler
           style={pressScale(linkRef)}
           className={style({
             ...focusRing(),
@@ -270,7 +279,13 @@ export function MobileHeader({toc}) {
             transition: 'default',
             disableTapHighlight: true
           })}>
-          <span style={{viewTransitionName: 'search-menu-icon', display: isOpen ? 'none' : undefined} as CSSProperties}>
+          <span
+            style={
+              {
+                viewTransitionName: 'search-menu-icon',
+                display: isOpen ? 'none' : undefined
+              } as CSSProperties
+            }>
             {icon}
           </span>
           <span
@@ -280,13 +295,17 @@ export function MobileHeader({toc}) {
               whiteSpace: 'nowrap',
               ...animation
             })}
-            style={toc ? {
-              animationName: fadeOut,
-              animationTimeline: 'scroll()',
-              animationRange,
-              animationPlayState: isTransitioning ? 'paused' : undefined,
-              display: isOpen ? 'none' : undefined
-            } as CSSProperties : undefined}>
+            style={
+              toc
+                ? ({
+                    animationName: fadeOut,
+                    animationTimeline: 'scroll()',
+                    animationRange,
+                    animationPlayState: isTransitioning ? 'paused' : undefined,
+                    display: isOpen ? 'none' : undefined
+                  } as CSSProperties)
+                : undefined
+            }>
             {TAB_DEFS[library].label}
           </span>
         </Link>
@@ -299,19 +318,19 @@ export function MobileHeader({toc}) {
             left: '50%',
             translateX: '-50%'
           })}
-          style={{
-            animationName: fadeIn,
-            animationTimeline: 'scroll()',
-            animationRange,
-            animationPlayState: isTransitioning ? 'paused' : undefined
-          } as CSSProperties}>
+          style={
+            {
+              animationName: fadeIn,
+              animationTimeline: 'scroll()',
+              animationRange,
+              animationPlayState: isTransitioning ? 'paused' : undefined
+            } as CSSProperties
+          }>
           {toc}
         </div>
       )}
       {library !== 'react-aria' && <ColorSchemeToggle />}
-      <DialogTrigger
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}>
+      <DialogTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
         </ActionButton>
@@ -344,7 +363,10 @@ export function MobileHeader({toc}) {
               width: 'full',
               height: '--visual-viewport-height'
             })}>
-            <Provider colorScheme={colorScheme} background="layer-2" styles={style({height: 'full'})}>
+            <Provider
+              colorScheme={colorScheme}
+              background="layer-2"
+              styles={style({height: 'full'})}>
               <MobileSearchMenu />
             </Provider>
           </Modal>

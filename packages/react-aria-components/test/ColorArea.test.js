@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorArea, ColorAreaContext, ColorThumb} from '../';
+import {ColorArea, ColorAreaContext} from '../src/ColorArea';
+
+import {ColorThumb} from '../src/ColorThumb';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -21,7 +23,8 @@ let TestColorArea = ({sliderProps, thumbProps}) => (
   </ColorArea>
 );
 
-let renderColorArea = (sliderProps, thumbProps) => render(<TestColorArea {...{sliderProps, thumbProps}} />);
+let renderColorArea = (sliderProps, thumbProps) =>
+  render(<TestColorArea {...{sliderProps, thumbProps}} />);
 
 describe('ColorArea', () => {
   let user;
@@ -85,7 +88,10 @@ describe('ColorArea', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = renderColorArea({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
+    let {getByRole} = renderColorArea(
+      {},
+      {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`}
+    );
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
 
@@ -103,7 +109,10 @@ describe('ColorArea', () => {
   });
 
   it('should support dragging state', () => {
-    let {getByRole} = renderColorArea({}, {className: ({isDragging}) => `thumb ${isDragging ? 'dragging' : ''}`});
+    let {getByRole} = renderColorArea(
+      {},
+      {className: ({isDragging}) => `thumb ${isDragging ? 'dragging' : ''}`}
+    );
     let thumb = getByRole('slider').closest('.thumb');
 
     expect(thumb).not.toHaveAttribute('data-dragging');
@@ -122,7 +131,15 @@ describe('ColorArea', () => {
     let hoverStartThumbSpy = jest.fn();
     let hoverChangeThumbSpy = jest.fn();
     let hoverEndThumbSpy = jest.fn();
-    let {getByRole} = renderColorArea({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartThumbSpy, onHoverChange: hoverChangeThumbSpy, onHoverEnd: hoverEndThumbSpy});
+    let {getByRole} = renderColorArea(
+      {},
+      {
+        className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`,
+        onHoverStart: hoverStartThumbSpy,
+        onHoverChange: hoverChangeThumbSpy,
+        onHoverEnd: hoverEndThumbSpy
+      }
+    );
     let thumb = getByRole('slider').closest('.thumb');
 
     expect(thumb).not.toHaveAttribute('data-hovered');
@@ -142,7 +159,10 @@ describe('ColorArea', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = renderColorArea({isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''}, {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`});
+    let {getByRole} = renderColorArea(
+      {isDisabled: true, className: ({isDisabled}) => (isDisabled ? 'disabled' : '')},
+      {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`}
+    );
     let wrapper = getByRole('group');
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
@@ -153,6 +173,19 @@ describe('ColorArea', () => {
 
     expect(wrapper).toHaveAttribute('data-disabled', 'true');
     expect(wrapper).toHaveClass('disabled');
+  });
+
+  it('should support repeat keydown events when holding Page Up/Page Down', async () => {
+    // Page Up/Down adjust the Y (green) channel; the arrow keys are handled by useMove instead. The page step is 17.
+    let {getAllByRole} = renderColorArea();
+    let greenSlider = getAllByRole('slider', {hidden: true})[1];
+
+    await user.tab();
+    await user.keyboard('{PageUp>3/}');
+    expect(greenSlider).toHaveValue('51');
+
+    await user.keyboard('{PageDown>3/}');
+    expect(greenSlider).toHaveValue('0');
   });
 
   it('should support form prop', () => {

@@ -7,13 +7,13 @@ const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 export interface StaticTableProps {
   /** Column headers, e.g., ['Spectrum 1', 'Spectrum 2']. */
-  headers: ReactNode[],
+  headers: ReactNode[];
   /** Rows of data. Each row must have the same length as headers. */
-  rows: Array<Array<ReactNode | string | number>>,
+  rows: Array<Array<ReactNode | string | number>>;
   /** Zero-based column indices to render as inline code. */
-  codeColumns?: number[],
+  codeColumns?: number[];
   /** Optional language per code column index (e.g., {0: 'tsx', 1: 'css'}). */
-  langPerColumn?: Record<number, string>
+  langPerColumn?: Record<number, string>;
 }
 
 export function StaticTable({headers, rows, codeColumns = [], langPerColumn}: StaticTableProps) {
@@ -33,10 +33,13 @@ export function StaticTable({headers, rows, codeColumns = [], langPerColumn}: St
           <TableRow key={rowIndex}>
             {row.map((cell, colIndex) => (
               <TableCell key={colIndex}>
-                {codeColumnSet.has(colIndex)
-                  ? <span className={codeStyle}><Code lang={langPerColumn?.[colIndex]}>{String(cell)}</Code></span>
-                  : <>{cell}</>
-                }
+                {codeColumnSet.has(colIndex) ? (
+                  <span className={codeStyle}>
+                    <Code lang={langPerColumn?.[colIndex]}>{String(cell)}</Code>
+                  </span>
+                ) : (
+                  <>{cell}</>
+                )}
               </TableCell>
             ))}
           </TableRow>

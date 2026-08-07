@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {ButtonGroup} from './ButtonGroup';
-export type {SpectrumButtonGroupProps} from '@react-types/buttongroup';
+export {ButtonGroup} from '@adobe/react-spectrum/ButtonGroup';
+
+export type {SpectrumButtonGroupProps} from '@adobe/react-spectrum/ButtonGroup';

@@ -10,16 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ColorField,
-  Content,
-  ContextualHelp,
-  Footer,
-  Heading,
-  Link,
-  Text
-} from '../src/';
+import {Color} from 'react-aria-components/ColorField';
+import {ColorField, ColorFieldProps} from '../src/ColorField';
+import {ColorSwatch} from '../src/ColorSwatch';
+
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {useState} from 'react';
 
 const meta: Meta<typeof ColorField> = {
   component: ColorField,
@@ -45,33 +44,50 @@ export default meta;
 type Story = StoryObj<typeof ColorField>;
 
 export const Example: Story = {
-  render: (args) => <ColorField {...args} />,
+  render: args => <ColorField {...args} />,
   args: {
     label: 'Color'
   }
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <ColorField
       {...args}
       contextualHelp={
         <ContextualHelp>
           <Heading>Color</Heading>
           <Content>
-            <Text>
-              Pick your favorite color.
-            </Text>
+            <Text>Pick your favorite color.</Text>
           </Content>
           <Footer>
-            <Link
-              isStandalone
-              href="https://en.wikipedia.org/wiki/Color"
-              target="_blank">Learn more about color</Link>
+            <Link isStandalone href="https://en.wikipedia.org/wiki/Color" target="_blank">
+              Learn more about color
+            </Link>
           </Footer>
         </ContextualHelp>
-    } />
+      }
+    />
   ),
+  args: {
+    label: 'Color'
+  }
+};
+
+function ColorSwatchExample(props: ColorFieldProps) {
+  let [color, setColor] = useState<Color | null>(null);
+  return (
+    <ColorField
+      {...props}
+      value={color}
+      onChange={setColor}
+      prefix={<ColorSwatch size="XS" color={color ?? undefined} />}
+    />
+  );
+}
+
+export const WithPrefix: Story = {
+  render: args => <ColorSwatchExample {...args} />,
   args: {
     label: 'Color'
   }

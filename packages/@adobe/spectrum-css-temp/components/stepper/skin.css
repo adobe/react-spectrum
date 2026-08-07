@@ -52,7 +52,6 @@ governing permissions and limitations under the License.
  * var(disabled, var(button-disabled, var(active, var(hover, var(default))))
  */
 
-
 .spectrum-Stepper {
   .spectrum-Stepper-button-icon {
     fill: var(--spectrum-actionbutton-icon-color);
@@ -67,7 +66,8 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-textfield-border-color);
       color: var(--spectrum-actionbutton-text-color);
     }
-    &.is-hovered, &:hover {
+    &.is-hovered,
+    &:hover {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-border-color-hover);
       }
@@ -75,7 +75,8 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-border-color-hover);
       }
     }
-    &.is-active, &:active {
+    &.is-active,
+    &:active {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-border-color-key-focus);
       }
@@ -83,7 +84,8 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-border-color-key-focus);
       }
     }
-    &.is-focused, &:focus {
+    &.is-focused,
+    &:focus {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-border-color-key-focus);
       }
@@ -91,7 +93,8 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-border-color-key-focus);
       }
     }
-    &.is-disabled, &:disabled {
+    &.is-disabled,
+    &:disabled {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-border-color-disabled);
       }
@@ -119,7 +122,9 @@ governing permissions and limitations under the License.
         }
       }
 
-      &.focus-ring, &:focus-visible, &.is-focused {
+      &.focus-ring,
+      &:focus-visible,
+      &.is-focused {
         .spectrum-Stepper-input {
           border-color: var(--spectrum-textfield-border-color-key-focus);
         }
@@ -139,7 +144,8 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-textfield-quiet-border-color);
       color: var(--spectrum-actionbutton-text-color);
     }
-    &.is-hovered, &:hover {
+    &.is-hovered,
+    &:hover {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-quiet-border-color-hover);
       }
@@ -147,7 +153,8 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-hover);
       }
     }
-    &.is-active, &:active {
+    &.is-active,
+    &:active {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
@@ -155,7 +162,8 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
     }
-    &.is-focused, &:focus {
+    &.is-focused,
+    &:focus {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
@@ -163,7 +171,8 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
     }
-    &.focus-ring, &:focus-visible {
+    &.focus-ring,
+    &:focus-visible {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
@@ -171,7 +180,8 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
     }
-    &.is-disabled, &:disabled {
+    &.is-disabled,
+    &:disabled {
       .spectrum-Stepper-input {
         border-color: var(--spectrum-textfield-quiet-border-color-disabled);
       }
@@ -285,7 +295,8 @@ governing permissions and limitations under the License.
     --spectrum-textfield-quiet-text-color-disabled: GrayText;
     --spectrum-textfield-text-color-disabled: GrayText;
     &:not(.spectrum-Stepper--isQuiet) {
-      &.is-focused, &:focus {
+      &.is-focused,
+      &:focus {
         outline: 2px solid Highlight;
       }
     }

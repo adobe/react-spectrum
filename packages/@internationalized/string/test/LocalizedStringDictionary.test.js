@@ -13,21 +13,28 @@
 import {LocalizedStringDictionary} from '..';
 
 describe('LocalizedStringDictionary', function () {
-
   describe('getStringForLocale', function () {
     const messages = Object.freeze({
       'en-US': {
-        'hello': 'Hello',
-        'goodbye': 'Good bye'
+        hello: 'Hello',
+        goodbye: 'Good bye'
       },
       'ja-JP': undefined,
       'es-ES': {
-        'hello': 'Hola',
-        'goodbye': 'Adiós'
+        hello: 'Hola',
+        goodbye: 'Adiós'
       },
       'it-IT': {
-        'hello': 'Ciao',
-        'goodbye': 'Arrivederci'
+        hello: 'Ciao',
+        goodbye: 'Arrivederci'
+      },
+      sr: {
+        hello: 'Здраво',
+        goodbye: 'Збогом'
+      },
+      'sr-Latn': {
+        hello: 'Zdravo',
+        goodbye: 'Zbogom'
       }
     });
 
@@ -51,6 +58,14 @@ describe('LocalizedStringDictionary', function () {
     it('uses default locale when specified locale key exists, but the value is falsy', function () {
       const localizedStringDictionary = new LocalizedStringDictionary(messages, 'es-ES');
       expect(localizedStringDictionary.getStringForLocale('hello', 'ja-JP')).toBe('Hola');
+    });
+
+    it('prefers a language-script match if available over a language-only match', function () {
+      const localizedStringDictionary = new LocalizedStringDictionary(messages);
+      expect(localizedStringDictionary.getStringForLocale('hello', 'sr-Latn-RS')).toBe('Zdravo');
+      expect(localizedStringDictionary.getStringForLocale('hello', 'sr-Latn')).toBe('Zdravo');
+      expect(localizedStringDictionary.getStringForLocale('hello', 'sr')).toBe('Здраво');
+      expect(localizedStringDictionary.getStringForLocale('hello', 'sr-Cyrl-RS')).toBe('Здраво');
     });
   });
 });

@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Novo sporočilo",
+  "chat.scrollToBottom": "Pomakni se na dno",
+  "messagefeedback.thumbDown": "Slab odziv",
+  "messagefeedback.thumbUp": "Dober odziv",
+  "promptfield.aiDisclaimer": "Odgovori so ustvarjeni z uporabo umetne inteligence in so lahko netočni. Preverite pred uporabo.",
+  "promptfield.aiUserGuidlines": "Smernice za uporabnike umetne inteligence",
+  "promptfield.attachments": "Priloge",
+  "promptfield.insertButton": "Dodaj",
+  "promptfield.label": "Navodilo",
+  "promptfield.placeholder": "Ste pripravljeni začeti? Postavite vprašanje, delite idejo ali dodajte nalogo.",
+  "promptfield.stopButton": "Ustavi se",
+  "promptfield.submitButton": "Pošlji",
+  "promptfield.uploading": "Nalaganje",
+  "responsestatus.loading": "Nalaganje",
+  "voicebutton.startListening": "Začni snemati",
+  "voicebutton.stopListening": "Prenehajte snemati"
+}

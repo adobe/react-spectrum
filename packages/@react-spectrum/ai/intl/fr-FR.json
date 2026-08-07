@@ -1,0 +1,18 @@
+{
+  "chat.newMessage": "Nouveau message",
+  "chat.scrollToBottom": "Défilement vers le bas",
+  "messagefeedback.thumbDown": "Réponse incorrecte",
+  "messagefeedback.thumbUp": "Réponse correcte",
+  "promptfield.aiDisclaimer": "Les réponses sont générées à l’aide de l’IA et peuvent être inexactes. Vérifiez avant d’utiliser.",
+  "promptfield.aiUserGuidlines": "Instructions d’utilisation IA",
+  "promptfield.attachments": "Pièces jointes",
+  "promptfield.insertButton": "Ajouter",
+  "promptfield.label": "Demander",
+  "promptfield.placeholder": "Vous souhaitez commencer ? Posez une question, partagez une idée ou ajoutez une tâche.",
+  "promptfield.stopButton": "Arrêter",
+  "promptfield.submitButton": "Envoyer",
+  "promptfield.uploading": "Téléchargement",
+  "responsestatus.loading": "Chargement",
+  "voicebutton.startListening": "Démarrer l'enregistrement",
+  "voicebutton.stopListening": "Arrêter l'enregistrement"
+}

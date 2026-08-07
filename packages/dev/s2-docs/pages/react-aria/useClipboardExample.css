@@ -1,4 +1,4 @@
-[role=textbox] {
+[role='textbox'] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -10,13 +10,13 @@
   color: var(--text-color);
 }
 
-[role=textbox]:focus {
+[role='textbox']:focus {
   outline: none;
   border-color: var(--focus-ring-color);
   box-shadow: 0 0 0 1px var(--focus-ring-color);
 }
 
-[role=textbox] kbd {
+[role='textbox'] kbd {
   display: inline-block;
   margin-left: 10px;
   padding: 0 4px;
@@ -24,6 +24,6 @@
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: small;
-  letter-spacing: .2em;
+  letter-spacing: 0.2em;
   color: var(--text-color);
 }

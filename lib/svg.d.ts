@@ -22,6 +22,11 @@ declare module 'url:*' {
 
 declare module '*.svg' {
   import {FunctionComponent, SVGProps} from 'react';
-  const content: FunctionComponent<SVGProps<SVGSVGElement>> ;
+  const content: FunctionComponent<SVGProps<SVGSVGElement>>;
+  export default content;
+}
+
+declare module '*.json' {
+  const content: any;
   export default content;
 }

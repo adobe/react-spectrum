@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const {SwcMinifyWebpackPlugin} = require("swc-minify-webpack-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const {SwcMinifyWebpackPlugin} = require('swc-minify-webpack-plugin');
 const {browserslistToTargets} = require('lightningcss');
 const browserslist = require('browserslist');
-const macros = require("unplugin-parcel-macros");
+const macros = require('unplugin-parcel-macros');
 const webpack = require('webpack');
 
 // Adjust this to target the browsers your product supports.
@@ -25,61 +25,61 @@ const webpack = require('webpack');
 const BROWSERSLIST = 'last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions';
 
 module.exports = (env, argv) => ({
-  entry: path.join(__dirname, "src", "index.tsx"),
+  entry: path.join(__dirname, 'src', 'index.tsx'),
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, 'dist')
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
     alias: {
-      'browser': false
+      browser: false
     }
   },
-  mode: argv.mode || "development",
+  mode: argv.mode || 'development',
   module: {
     rules: [
       {
         test: /\.(ts|tsx|js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: "swc-loader",
+          loader: 'swc-loader',
           options: {
             env: {
               targets: BROWSERSLIST
             },
             jsc: {
               parser: {
-                syntax: "typescript",
+                syntax: 'typescript',
                 tsx: true
               }
             }
-          },
-        },
+          }
+        }
       },
       {
         // Use mini-css-extract-plugin instead of style-loader to that CSS is extracted
         // into a standalone .css bundle instead of inlined into JS via <style> tags.
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       }
-    ],
+    ]
   },
   plugins: [
     new webpack.ProvidePlugin({
       React: 'react'
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "index.html"),
+      template: path.join(__dirname, 'src', 'index.html')
     }),
     // Enable style macros.
     macros.webpack(),
     // Extract CSS bundles.
     new MiniCssExtractPlugin({
       // Use content hash in filename for long term cacheability.
-      filename: "[name].[contenthash].css",
+      filename: '[name].[contenthash].css',
       // Ignore warnings about CSS order. Style macros generate atomic CSS,
       // which is resiliant to ordering differences.
-      ignoreOrder: true,
+      ignoreOrder: true
     })
   ],
   optimization: {
@@ -88,9 +88,7 @@ module.exports = (env, argv) => ({
     minimizer: [
       // Minify JavaScript during the production build only.
       // (Used SWC here, but you can also use Terser if you prefer.)
-      argv.mode === 'production'
-        ? new SwcMinifyWebpackPlugin()
-        : null,
+      argv.mode === 'production' ? new SwcMinifyWebpackPlugin() : null,
       // Use lightningcss to compile CSS. This removes duplicate rules and outputs compatible CSS for your browserslist.
       // In production it also minifies.
       new CssMinimizerPlugin({
@@ -109,7 +107,11 @@ module.exports = (env, argv) => ({
         s2: {
           name: 's2-styles',
           test(module) {
-            return module.type === 'css/mini-extract' && (module.identifier().includes('@react-spectrum/s2') || /\.macro-(.*?)\.css/.test(module.identifier()));
+            return (
+              module.type === 'css/mini-extract' &&
+              (module.identifier().includes('@react-spectrum/s2') ||
+                /\.macro-(.*?)\.css/.test(module.identifier()))
+            );
           },
           chunks: 'all',
           enforce: true

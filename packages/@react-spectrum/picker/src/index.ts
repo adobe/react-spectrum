@@ -12,6 +12,8 @@
 
 /// <reference types="css-module-types" />
 
-export {Picker} from './Picker';
-export {Item, Section} from '@react-stately/collections';
-export type {SpectrumPickerProps} from '@react-types/select';
+export {Picker} from '@adobe/react-spectrum/Picker';
+
+export type {SpectrumPickerProps} from '@adobe/react-spectrum/Picker';
+export {Item} from 'react-stately/Item';
+export {Section} from 'react-stately/Section';

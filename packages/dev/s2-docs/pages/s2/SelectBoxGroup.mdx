@@ -13,7 +13,7 @@ export const description = 'Allows users to select one or more options from a li
 
 ```tsx render docs={docs.exports.SelectBoxGroup} links={docs.links} props={['selectionMode', 'orientation', 'isDisabled']}
 "use client";
-import {SelectBoxGroup, SelectBox, Text} from '@react-spectrum/s2'
+import {SelectBoxGroup, SelectBox, Text} from '@react-spectrum/s2/SelectBoxGroup';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Server from '@react-spectrum/s2/illustrations/linear/Server';
 import StarFilled1 from '@react-spectrum/s2/illustrations/linear/Star';
@@ -51,7 +51,7 @@ import PaperAirplane from '@react-spectrum/s2/illustrations/linear/Paperairplane
 
 ```tsx render
 "use client";
-import {SelectBoxGroup, SelectBox, Text} from '@react-spectrum/s2';
+import {SelectBoxGroup, SelectBox, Text} from '@react-spectrum/s2/SelectBoxGroup';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Home from '@react-spectrum/s2/illustrations/linear/Home';
 import Phone from '@react-spectrum/s2/illustrations/linear/Phone';
@@ -92,7 +92,7 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.SelectBoxGroup} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import {SelectBoxGroup, SelectBox, Text, type Selection} from '@react-spectrum/s2'
+import {SelectBoxGroup, SelectBox, Text, type Selection} from '@react-spectrum/s2/SelectBoxGroup';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 import Server from '@react-spectrum/s2/illustrations/linear/Server';

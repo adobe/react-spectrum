@@ -1,8 +1,5 @@
 import {NodePath} from '@babel/traverse';
-import {
-  removeProp,
-  updatePropNameAndValue
-} from '../../shared/transforms';
+import {removeProp, updatePropNameAndValue} from '../../shared/transforms';
 import * as t from '@babel/types';
 
 /**

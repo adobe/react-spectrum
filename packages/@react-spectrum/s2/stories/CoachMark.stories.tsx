@@ -9,23 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {
-  ActionButton,
-  ActionMenu,
-  Button,
-  CardPreview,
-  Checkbox,
-  Content,
-  Footer,
-  Image,
-  Keyboard,
-  MenuItem,
-  Slider,
-  Text
-} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {ActionMenu} from '../src/ActionMenu';
+import {Button} from '../src/Button';
+import {CardPreview} from '../src/Card';
+import {Checkbox} from '../src/Checkbox';
 import {CoachMark, CoachMarkTrigger} from '../src/CoachMark';
+import {Content, Footer, Keyboard, Text} from '../src/Content';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
+import {Image} from '../src/Image';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Slider} from '../src/Slider';
 import {style} from '../style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -47,7 +43,7 @@ export default meta;
 type Story = StoryObj<typeof CoachMark>;
 
 export const CoachMarkExample: Story = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
       <Button>Before</Button>
       <CoachMarkTrigger defaultOpen>
@@ -67,7 +63,9 @@ export const CoachMarkExample: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
             <Button variant="primary">Next</Button>
           </Footer>
         </CoachMark>
@@ -105,7 +103,9 @@ function ControlledCoachMark(args) {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
             <Button variant="primary">Next</Button>
           </Footer>
         </CoachMark>
@@ -116,9 +116,7 @@ function ControlledCoachMark(args) {
 }
 
 export const CoachMarkRestartable: Story = {
-  render: (args) => (
-    <ControlledCoachMark {...args} />
-  ),
+  render: args => <ControlledCoachMark {...args} />,
   parameters: {
     docs: {
       disable: true
@@ -127,7 +125,7 @@ export const CoachMarkRestartable: Story = {
 };
 
 export const CoachMarkSlider: Story = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
       <Button>Before</Button>
       <CoachMarkTrigger defaultOpen>
@@ -147,7 +145,9 @@ export const CoachMarkSlider: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
             <Button variant="primary">Next</Button>
           </Footer>
         </CoachMark>
@@ -163,7 +163,7 @@ export const CoachMarkSlider: Story = {
 };
 
 export const CoachMarkButton: Story = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
       <Button>Before</Button>
       <CoachMarkTrigger defaultOpen>
@@ -185,7 +185,9 @@ export const CoachMarkButton: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
             <Button variant="primary">Next</Button>
           </Footer>
         </CoachMark>

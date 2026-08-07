@@ -11,13 +11,15 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropzone {
-  --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(--spectrum-global-color-blue-500);
+  --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(
+    --spectrum-global-color-blue-500
+  );
 }
 
 .spectrum-Dropzone {
   border-color: var(--spectrum-dropzone-border-color);
 
-  &[data-focus-visible]{
+  &[data-focus-visible] {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
   }
 

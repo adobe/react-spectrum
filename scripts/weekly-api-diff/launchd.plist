@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Reference copy — the live file must be installed at:
+  ~/Library/LaunchAgents/com.<username>.weekly-tsdiffer.plist
+
+  To install:   cp scripts/weekly-api-diff/launchd.plist ~/Library/LaunchAgents/com.<username>.weekly-tsdiffer.plist
+  To load:      launchctl load ~/Library/LaunchAgents/com.<username>.weekly-tsdiffer.plist
+  To unload:    launchctl unload ~/Library/LaunchAgents/com.<username>.weekly-tsdiffer.plist
+  To test fire: launchctl kickstart -k gui/$(id -u)/com.<username>.weekly-tsdiffer
+  To check log: tail -f /tmp/weekly-tsdiffer.log
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.<username>.weekly-tsdiffer</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-c</string>
+        <string>source $HOME/.nvm/nvm.sh &amp;&amp; source $HOME/.secrets &amp;&amp; claude -p "$(cat $HOME/weekly-tsdiffer.md)" --allowedTools "Bash,Read" --dangerously-skip-permissions</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key><integer>1</integer>
+        <key>Hour</key><integer>9</integer>
+        <key>Minute</key><integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/tmp/weekly-tsdiffer.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/weekly-tsdiffer.log</string>
+</dict>
+</plist>

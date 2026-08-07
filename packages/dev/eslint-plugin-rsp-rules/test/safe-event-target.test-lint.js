@@ -21,177 +21,173 @@ const ruleTester = new RuleTester({
 });
 
 // Throws error if the tests in ruleTester.run() do not pass
-ruleTester.run(
-  'safe-event-target',
-  safeEventTargetRule,
-  {
-    // 'valid' checks cases that should pass
-    valid: [
-      {
-        code: `import {getEventTarget} from '@react-aria/utils';
+ruleTester.run('safe-event-target', safeEventTargetRule, {
+  // 'valid' checks cases that should pass
+  valid: [
+    {
+      code: `import {getEventTarget} from '@react-aria/utils';
 const target = getEventTarget(event);`
-      },
-      {
-        code: `import {getEventTarget} from '@react-aria/utils';
+    },
+    {
+      code: `import {getEventTarget} from '@react-aria/utils';
 function handleClick(e) {
   const target = getEventTarget(e);
   console.log(target);
 }`
-      },
-      {
-        code: `function checkTarget(props) {
+    },
+    {
+      code: `function checkTarget(props) {
   return props.target;
 }`
-      },
-      {
-        code: 'const value = target.target;'
-      },
-      {
-        code: `function focusTarget(ref) {
+    },
+    {
+      code: 'const value = target.target;'
+    },
+    {
+      code: `function focusTarget(ref) {
   ref.target.focus();
 }`
-      },
-      {
-        code: `const link = {target: '_blank'};
+    },
+    {
+      code: `const link = {target: '_blank'};
 console.log(link.target);`
-      },
-      {
-        code: `function onPress(event) {
+    },
+    {
+      code: `function onPress(event) {
   if (event.target instanceof HTMLElement) {
     event.target.focus();
   }
 }`
-      },
-      {
-        code: `function onPressStart(event) {
+    },
+    {
+      code: `function onPressStart(event) {
   if (event.target instanceof HTMLElement) {
     event.target.focus();
   }
 }`
-      },
-      {
-        code: `function onDropActivate(event) {
+    },
+    {
+      code: `function onDropActivate(event) {
   if (event.target instanceof HTMLElement) {
     event.target.focus();
   }
 }`
-      },
-      {
-        code: `function onDragStart(event) {
+    },
+    {
+      code: `function onDragStart(event) {
   const element = event.target;
   element.classList.add('dragging');
 }`
-      },
-      {
-        code: `function onDrop(e) {
+    },
+    {
+      code: `function onDrop(e) {
   e.target.appendChild(draggedItem);
 }`
-      },
-      {
-        code: `const handleDragEnd = (evt) => {
+    },
+    {
+      code: `const handleDragEnd = (evt) => {
   evt.target.style.opacity = '1';
 };`
-      }
-    ],
-    // 'invalid' checks cases that should not pass
-    invalid: [
-      {
-        code: `function handleClick(event) {
+    }
+  ],
+  // 'invalid' checks cases that should not pass
+  invalid: [
+    {
+      code: `function handleClick(event) {
   const target = event.target;
 }`,
-        output: `import {getEventTarget} from '@react-aria/utils';
+      output: `import {getEventTarget} from '@react-aria/utils';
 function handleClick(event) {
   const target = getEventTarget(event);
 }`,
-        errors: 1
-      },
-      {
-        code: 'const element = e.target;',
-        output: `import {getEventTarget} from '@react-aria/utils';
+      errors: 1
+    },
+    {
+      code: 'const element = e.target;',
+      output: `import {getEventTarget} from '@react-aria/utils';
 const element = getEventTarget(e);`,
-        errors: 1
-      },
-      {
-        code: `import {something} from '@react-aria/utils';
+      errors: 1
+    },
+    {
+      code: `import {something} from '@react-aria/utils';
 function handleEvent(evt) {
   console.log(evt.target);
 }`,
-        output: `import {getEventTarget, something} from '@react-aria/utils';
+      output: `import {getEventTarget, something} from '@react-aria/utils';
 function handleEvent(evt) {
   console.log(getEventTarget(evt));
 }`,
-        errors: 1
-      },
-      {
-        code: `import {getEventTarget} from '@react-aria/utils';
+      errors: 1
+    },
+    {
+      code: `import {getEventTarget} from '@react-aria/utils';
 function handleClick(event) {
   const target = event.target;
 }`,
-        output: `import {getEventTarget} from '@react-aria/utils';
+      output: `import {getEventTarget} from '@react-aria/utils';
 function handleClick(event) {
   const target = getEventTarget(event);
 }`,
-        errors: 1
-      },
-      {
-        code: `import React from 'react';
+      errors: 1
+    },
+    {
+      code: `import React from 'react';
 const onClick = (e) => {
   const target = e.target;
   const value = e.target.value;
 };`,
-        output: `import React from 'react';
+      output: `import React from 'react';
 import {getEventTarget} from '@react-aria/utils';
 const onClick = (e) => {
   const target = getEventTarget(e);
   const value = getEventTarget(e).value;
 };`,
-        errors: 2
-      },
-      {
-        code: `function onKeyDown(event) {
+      errors: 2
+    },
+    {
+      code: `function onKeyDown(event) {
   if (event.target instanceof HTMLElement) {
     event.target.focus();
   }
 }`,
-        output: `import {getEventTarget} from '@react-aria/utils';
+      output: `import {getEventTarget} from '@react-aria/utils';
 function onKeyDown(event) {
   if (getEventTarget(event) instanceof HTMLElement) {
     getEventTarget(event).focus();
   }
 }`,
-        errors: 2
-      },
-      {
-        code: `import {getEventTarget} from '@react-aria/utils';
+      errors: 2
+    },
+    {
+      code: `import {getEventTarget} from '@react-aria/utils';
 getEventTarget(event.nativeEvent)`,
-        output: `import {getEventTarget} from '@react-aria/utils';
+      output: `import {getEventTarget} from '@react-aria/utils';
 getEventTarget(event)`,
-        errors: 1
-      },
-      {
-        code: 'window.event.target;',
-        output: `import {getEventTarget} from '@react-aria/utils';
+      errors: 1
+    },
+    {
+      code: 'window.event.target;',
+      output: `import {getEventTarget} from '@react-aria/utils';
 getEventTarget(window.event);`,
-        errors: 1
-      },
-      {
-        code: 'window.event?.target;',
-        output: `import {getEventTarget} from '@react-aria/utils';
+      errors: 1
+    },
+    {
+      code: 'window.event?.target;',
+      output: `import {getEventTarget} from '@react-aria/utils';
 getEventTarget(window.event);`,
-        errors: 1
-      },
-      {
-        code: 'getOwnerWindow(foo).event.target;',
-        output: `import {getEventTarget} from '@react-aria/utils';
+      errors: 1
+    },
+    {
+      code: 'getOwnerWindow(foo).event.target;',
+      output: `import {getEventTarget} from '@react-aria/utils';
 getEventTarget(getOwnerWindow(foo).event);`,
-        errors: 1
-      },
-      {
-        code: 'getOwnerWindow(foo).event?.target;',
-        output: `import {getEventTarget} from '@react-aria/utils';
+      errors: 1
+    },
+    {
+      code: 'getOwnerWindow(foo).event?.target;',
+      output: `import {getEventTarget} from '@react-aria/utils';
 getEventTarget(getOwnerWindow(foo).event);`,
-        errors: 1
-      }
-    ]
-  }
-);
+      errors: 1
+    }
+  ]
+});

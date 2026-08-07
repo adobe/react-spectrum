@@ -11,7 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {ProgressCircle} from '../src';
+import {ProgressCircle} from '../src/ProgressCircle';
 import {StaticColorDecorator} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -29,7 +29,7 @@ export default meta;
 type Story = StoryObj<typeof ProgressCircle>;
 
 export const Example: Story = {
-  render: (args) => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
+  render: args => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
   args: {
     staticColor: undefined,
     value: 80
@@ -50,7 +50,15 @@ export const Example: Story = {
 };
 
 export const CustomSize: Story = {
-  render: (args) => <ProgressCircle aria-label="Test Progress Circle" value={40} size="S" {...args} styles={style({size: 20})} />,
+  render: args => (
+    <ProgressCircle
+      aria-label="Test Progress Circle"
+      value={40}
+      size="S"
+      {...args}
+      styles={style({size: 20})}
+    />
+  ),
   parameters: {
     docs: {
       disable: true

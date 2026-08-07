@@ -10,26 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, within} from '@testing-library/react';
+import {act} from './act';
 import {CheckboxGroupTesterOpts, UserOpts} from './types';
-import {pressElement} from './events';
+import {formatTargetNode, pressElement} from './utils';
+import {within} from '@testing-library/dom';
 
 interface TriggerCheckboxOptions {
   /**
-   * What interaction type to use when triggering a checkbox. Defaults to the interaction type set on the tester.
+   * What interaction type to use when triggering a checkbox. Defaults to the interaction type set
+   * on the tester.
    */
-  interactionType?: UserOpts['interactionType'],
+  interactionType?: UserOpts['interactionType'];
   /**
    * The index, text, or node of the checkbox to toggle selection for.
    */
-  checkbox: number | string | HTMLElement
+  checkbox: number | string | HTMLElement;
 }
 
 export class CheckboxGroupTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _checkboxgroup: HTMLElement;
-
 
   constructor(opts: CheckboxGroupTesterOpts) {
     let {root, user, interactionType} = opts;
@@ -53,16 +54,14 @@ export class CheckboxGroupTester {
   /**
    * Returns a checkbox matching the specified index or text content.
    */
-  findCheckbox(opts: {checkboxIndexOrText: number | string}): HTMLElement {
-    let {
-      checkboxIndexOrText
-    } = opts;
+  findCheckbox(opts: {indexOrText: number | string}): HTMLElement {
+    let {indexOrText} = opts;
 
     let checkbox;
-    if (typeof checkboxIndexOrText === 'number') {
-      checkbox = this.checkboxes[checkboxIndexOrText];
-    } else if (typeof checkboxIndexOrText === 'string') {
-      let label = within(this.checkboxgroup).getByText(checkboxIndexOrText);
+    if (typeof indexOrText === 'number') {
+      checkbox = this.getCheckboxes()[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      let label = within(this.getCheckboxGroup()).getByText(indexOrText);
 
       // Label may wrap the checkbox, or the actual label may be a sibling span, or the checkbox div could have the label within it
       if (label) {
@@ -83,10 +82,15 @@ export class CheckboxGroupTester {
 
   private async keyboardNavigateToCheckbox(opts: {checkbox: HTMLElement}) {
     let {checkbox} = opts;
-    let checkboxes = this.checkboxes;
-    checkboxes = checkboxes.filter(checkbox => !(checkbox.hasAttribute('disabled') || checkbox.getAttribute('aria-disabled') === 'true'));
+    let checkboxes = this.getCheckboxes();
+    checkboxes = checkboxes.filter(
+      checkbox =>
+        !(checkbox.hasAttribute('disabled') || checkbox.getAttribute('aria-disabled') === 'true')
+    );
     if (checkboxes.length === 0) {
-      throw new Error('Checkbox group doesnt have any non-disabled checkboxes. Please double check your checkbox group.');
+      throw new Error(
+        'Checkbox group doesnt have any non-disabled checkboxes. Please double check your checkbox group.'
+      );
     }
 
     let targetIndex = checkboxes.indexOf(checkbox);
@@ -94,7 +98,7 @@ export class CheckboxGroupTester {
       throw new Error('Checkbox provided is not in the checkbox group.');
     }
 
-    if (!this.checkboxgroup.contains(document.activeElement)) {
+    if (!this.getCheckboxGroup().contains(document.activeElement)) {
       act(() => checkboxes[0].focus());
     }
 
@@ -106,25 +110,25 @@ export class CheckboxGroupTester {
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.tab({shift: targetIndex < currIndex});
     }
-  };
+  }
 
   /**
-   * Toggles the specified checkbox. Defaults to using the interaction type set on the checkbox tester.
+   * Toggles the specified checkbox. Defaults to using the interaction type set on the checkbox
+   * tester.
    */
   async toggleCheckbox(opts: TriggerCheckboxOptions): Promise<void> {
-    let {
-      checkbox,
-      interactionType = this._interactionType
-    } = opts;
+    let {checkbox, interactionType = this._interactionType} = opts;
 
     if (typeof checkbox === 'string' || typeof checkbox === 'number') {
-      checkbox = this.findCheckbox({checkboxIndexOrText: checkbox});
+      checkbox = this.findCheckbox({indexOrText: checkbox});
     }
 
     if (!checkbox) {
-      throw new Error('Target checkbox not found in the checkboxgroup.');
+      throw new Error(
+        `Target checkbox "${formatTargetNode(opts.checkbox)}" not found in the checkboxgroup.`
+      );
     } else if (checkbox.hasAttribute('disabled')) {
-      throw new Error('Target checkbox is disabled.');
+      throw new Error(`Target checkbox "${formatTargetNode(opts.checkbox)}" is disabled.`);
     }
 
     if (interactionType === 'keyboard') {
@@ -138,21 +142,24 @@ export class CheckboxGroupTester {
   /**
    * Returns the checkboxgroup.
    */
-  get checkboxgroup(): HTMLElement {
+  getCheckboxGroup(): HTMLElement {
     return this._checkboxgroup;
   }
 
   /**
    * Returns the checkboxes.
    */
-  get checkboxes(): HTMLElement[] {
-    return within(this.checkboxgroup).queryAllByRole('checkbox');
+  getCheckboxes(): HTMLElement[] {
+    return within(this.getCheckboxGroup()).queryAllByRole('checkbox');
   }
 
   /**
    * Returns the currently selected checkboxes in the checkboxgroup if any.
    */
-  get selectedCheckboxes(): HTMLElement[] {
-    return this.checkboxes.filter(checkbox => (checkbox as HTMLInputElement).checked || checkbox.getAttribute('aria-checked') === 'true');
+  getSelectedCheckboxes(): HTMLElement[] {
+    return this.getCheckboxes().filter(
+      checkbox =>
+        (checkbox as HTMLInputElement).checked || checkbox.getAttribute('aria-checked') === 'true'
+    );
   }
 }

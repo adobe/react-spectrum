@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes isQuiet and isReadOnly', `
+test(
+  'Removes isQuiet and isReadOnly',
+  `
 import {Form, TextField, Checkbox} from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
@@ -37,9 +39,12 @@ let props = {isQuiet: true};
     <Checkbox>Remember me</Checkbox>
   </Form>
 </div>
-`);
+`
+);
 
-test('removes validationState and validationBehavior', `
+test(
+  'removes validationState and validationBehavior',
+  `
 import {TextArea} from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let validationBehavior = 'native';
@@ -66,4 +71,5 @@ let props = {validationState: 'invalid', validationBehavior: 'native'};
     <Checkbox>Remember me</Checkbox>
   </Form>
 </div>
-`);
+`
+);

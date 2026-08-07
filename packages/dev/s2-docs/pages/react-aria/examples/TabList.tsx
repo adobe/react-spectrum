@@ -15,9 +15,9 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   return (
     <RACTabList
       {...props}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => tabListStyles({...renderProps, className})
-      )} />
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        tabListStyles({...renderProps, className})
+      )}
+    />
   );
 }

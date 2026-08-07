@@ -22,7 +22,7 @@ const HEBREW_EPOCH = 347997;
 // Hebrew date calculations are performed in terms of days, hours, and
 // "parts" (or halakim), which are 1/1080 of an hour, or 3 1/3 seconds.
 const HOUR_PARTS = 1080;
-const DAY_PARTS  = 24 * HOUR_PARTS;
+const DAY_PARTS = 24 * HOUR_PARTS;
 
 // An approximate value for the length of a lunar month.
 // It is used to calculate the approximate year and month of a given
@@ -132,9 +132,9 @@ export class HebrewCalendar implements Calendar {
 
   fromJulianDay(jd: number): CalendarDate {
     let d = jd - HEBREW_EPOCH;
-    let m = (d * DAY_PARTS) / MONTH_PARTS;           // Months (approx)
+    let m = (d * DAY_PARTS) / MONTH_PARTS; // Months (approx)
     let year = Math.floor((19 * m + 234) / 235) + 1; // Years (approx)
-    let ys = startOfYear(year);                      // 1st day of year
+    let ys = startOfYear(year); // 1st day of year
     let dayOfYear = Math.floor(d - ys);
 
     // Because of the postponement rules, it's possible to guess wrong.  Fix it.
@@ -202,7 +202,11 @@ export class HebrewCalendar implements Calendar {
     if (previousDate.year !== date.year) {
       if (isLeapYear(previousDate.year) && !isLeapYear(date.year) && previousDate.month > 6) {
         date.month--;
-      } else if (!isLeapYear(previousDate.year) && isLeapYear(date.year) && previousDate.month > 6) {
+      } else if (
+        !isLeapYear(previousDate.year) &&
+        isLeapYear(date.year) &&
+        previousDate.month > 6
+      ) {
         date.month++;
       }
     }

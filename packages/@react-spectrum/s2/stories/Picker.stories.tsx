@@ -10,29 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Avatar,
-  Button,
-  Content,
-  ContextualHelp,
-  Footer,
-  Form,
-  Header,
-  Heading,
-  Link,
-  Picker,
-  PickerItem,
-  PickerProps,
-  PickerSection,
-  Text
-} from '../src';
+import {Avatar} from '../src/Avatar';
+
+import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
+import {Content, Footer, Header, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
+import {Form} from '../src/Form';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {Picker, PickerItem, PickerProps, PickerSection} from '../src/Picker';
 import {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList} from 'react-stately/useAsyncList';
 
 const events = ['onOpenChange', 'onChange', 'onLoadMore'];
 
@@ -61,7 +53,7 @@ export default meta;
 type Story = StoryObj<typeof Picker<any>>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <Picker {...args}>
       <PickerItem>Chocolate</PickerItem>
       <PickerItem>Mint</PickerItem>
@@ -76,7 +68,7 @@ export const Example: Story = {
 };
 
 export const Sections: Story = {
-  render: (args) => (
+  render: args => (
     <Picker {...args}>
       <PickerSection id="neopolitan">
         <Header>
@@ -103,8 +95,8 @@ export const Sections: Story = {
 };
 
 interface IExampleItem {
-  id: string,
-  label: string
+  id: string;
+  label: string;
 }
 let items: IExampleItem[] = [
   {id: 'chocolate', label: 'Chocolate'},
@@ -114,9 +106,13 @@ let items: IExampleItem[] = [
   {id: 'cookie-dough', label: 'Chocolate Chip Cookie Dough'}
 ];
 export const Dynamic: Story = {
-  render: (args) => (
+  render: args => (
     <Picker {...args}>
-      {(item) => <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</PickerItem>}
+      {item => (
+        <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>
+          {(item as IExampleItem).label}
+        </PickerItem>
+      )}
     </Picker>
   ),
   args: {
@@ -126,7 +122,7 @@ export const Dynamic: Story = {
 };
 
 export const WithIcons: Story = {
-  render: (args) => (
+  render: args => (
     <Picker {...args}>
       <PickerItem textValue="Illustrator for iPad">
         <DeviceTabletIcon />
@@ -146,10 +142,11 @@ export const WithIcons: Story = {
 };
 
 const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
-const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+const SRC_URL_2 =
+  'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 
 export const WithAvatars: Story = {
-  render: (args) => (
+  render: args => (
     <Picker {...args}>
       <PickerItem textValue="User One">
         <Avatar slot="avatar" src={SRC_URL_1} />
@@ -159,7 +156,11 @@ export const WithAvatars: Story = {
       <PickerItem textValue="User Two">
         <Avatar slot="avatar" src={SRC_URL_2} />
         <Text>User Two</Text>
-        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+        <Text slot="description">
+          user.two@example.com
+          <br />
+          123-456-7890
+        </Text>
       </PickerItem>
       <PickerItem textValue="User Three">
         <Avatar slot="avatar" src={SRC_URL_2} />
@@ -180,15 +181,17 @@ function VirtualizedPicker(props) {
 
   return (
     <Picker {...props} items={items}>
-      {(item) => <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</PickerItem>}
+      {item => (
+        <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>
+          {(item as IExampleItem).label}
+        </PickerItem>
+      )}
     </Picker>
   );
 }
 
 export const ManyItems: Story = {
-  render: (args) => (
-    <VirtualizedPicker {...args} />
-  ),
+  render: args => <VirtualizedPicker {...args} />,
   args: {
     label: 'Many items'
   }
@@ -197,14 +200,20 @@ export const ManyItems: Story = {
 const ValidationRender = (props: PickerProps<IExampleItem>): ReactElement => (
   <Form>
     <Picker {...props}>
-      {(item) => <PickerItem id={item.id} textValue={item.label}>{item.label}</PickerItem>}
+      {item => (
+        <PickerItem id={item.id} textValue={item.label}>
+          {item.label}
+        </PickerItem>
+      )}
     </Picker>
-    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="submit" variant="primary">
+      Submit
+    </Button>
   </Form>
 );
 
 export const Validation: StoryObj<typeof ValidationRender> = {
-  render: (args) => <ValidationRender {...args} />,
+  render: args => <ValidationRender {...args} />,
   args: {
     ...Dynamic.args,
     isRequired: true
@@ -212,7 +221,7 @@ export const Validation: StoryObj<typeof ValidationRender> = {
 };
 
 export const CustomWidth: StoryObj<typeof Picker<any>> = {
-  render: (args) => (
+  render: args => (
     <Picker {...args} styles={style({width: 384})}>
       <PickerItem>Chocolate</PickerItem>
       <PickerItem>Mint</PickerItem>
@@ -237,16 +246,15 @@ const ContextualHelpExampleRender = (props: PickerProps<any>): ReactElement => (
         <Heading>What is a ice cream?</Heading>
         <Content>
           <Text>
-            A combination of sugar, eggs, milk, and cream is cooked to make
-            a custard base. Then, flavorings are added, and this flavored
-            mixture is carefully churned and frozen to make ice cream.
+            A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then,
+            flavorings are added, and this flavored mixture is carefully churned and frozen to make
+            ice cream.
           </Text>
         </Content>
         <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Ice_cream"
-            target="_blank">Learn more about ice cream</Link>
+          <Link isStandalone href="https://en.wikipedia.org/wiki/Ice_cream" target="_blank">
+            Learn more about ice cream
+          </Link>
         </Footer>
       </ContextualHelp>
     }>
@@ -259,17 +267,17 @@ const ContextualHelpExampleRender = (props: PickerProps<any>): ReactElement => (
 );
 
 export const ContextualHelpExample: StoryObj<typeof ContextualHelpExampleRender> = {
-  render: (args) => <ContextualHelpExampleRender {...args} />,
+  render: args => <ContextualHelpExampleRender {...args} />,
   args: {
     label: 'Ice cream flavor'
   }
 };
 
 interface Character {
-  name: string,
-  height: number,
-  mass: number,
-  birth_year: number
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
 }
 
 const AsyncPicker = (args: PickerProps<Character> & {delay: number}): ReactElement => {
@@ -291,8 +299,16 @@ const AsyncPicker = (args: PickerProps<Character> & {delay: number}): ReactEleme
   });
 
   return (
-    <Picker {...args} loadingState={list.loadingState} onLoadMore={list.loadMore} items={list.items}>
-      {(item: Character) => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
+    <Picker
+      {...args}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      items={list.items}>
+      {(item: Character) => (
+        <PickerItem id={item.name} textValue={item.name}>
+          {item.name}
+        </PickerItem>
+      )}
     </Picker>
   );
 };
@@ -332,8 +348,7 @@ return (
   }
 };
 
-
-type ExampleIconItem = IExampleItem & { icon: string };
+type ExampleIconItem = IExampleItem & {icon: string};
 const exampleIconItems: ExampleIconItem[] = Array.from({length: 5}, (_, i) => ({
   id: `user${i + 1}`,
   label: `User ${i + 1}`,
@@ -358,7 +373,7 @@ export const CustomRenderValue: StoryObj<CustomRenderValuePickerStoryType> = {
     label: 'Pick users',
     selectionMode: 'multiple',
     items: exampleIconItems,
-    renderValue: (selectedItems) => (
+    renderValue: selectedItems => (
       <div style={{display: 'flex', gap: 4, height: '80%'}}>
         {selectedItems.map(item => (
           <img key={item.id} src={item.icon} alt={item.label} />

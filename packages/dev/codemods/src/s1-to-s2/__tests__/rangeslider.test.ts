@@ -18,20 +18,29 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes showValueLabel', `
+test(
+  'Removes showValueLabel',
+  `
 import {RangeSlider} from '@adobe/react-spectrum';
 
 <RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} showValueLabel={false}  />
-`);
+`
+);
 
-test('Comments out getValueLabel', `
+test(
+  'Comments out getValueLabel',
+  `
 import {RangeSlider} from '@adobe/react-spectrum';
 
 <RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} getValueLabel={cookies => "60 total cookies"}   />
-`);
+`
+);
 
-test('Comments out orientation', `
+test(
+  'Comments out orientation',
+  `
 import {RangeSlider} from '@adobe/react-spectrum';
 
 <RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} orientation="vertical"  />
-`);
+`
+);

@@ -10,22 +10,42 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChildrenOrFunction, Provider, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
-import {Color, ColorPickerState, ColorPickerProps as StatelyColorPickerProps, useColorPickerState} from 'react-stately';
-import {ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext} from './RSPContexts';
+import {
+  ChildrenOrFunction,
+  Provider,
+  SlotProps,
+  SlottedContextValue,
+  useRenderProps,
+  useSlottedContext
+} from './utils';
+import {Color} from 'react-stately/Color';
+
+import {ColorAreaContext} from './ColorArea';
+
+import {ColorFieldContext} from './ColorField';
+import {
+  ColorPickerState,
+  ColorPickerProps as StatelyColorPickerProps,
+  useColorPickerState
+} from 'react-stately/useColorPickerState';
+import {ColorSliderContext} from './ColorSlider';
 import {ColorSwatchContext} from './ColorSwatch';
 import {ColorSwatchPickerContext} from './ColorSwatchPicker';
-import {mergeProps} from 'react-aria';
+import {ColorWheelContext} from './ColorWheel';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, JSX} from 'react';
 
 export interface ColorPickerRenderProps {
   /** The currently selected color. */
-  color: Color
+  color: Color;
 }
 
 export interface ColorPickerProps extends StatelyColorPickerProps, SlotProps {
-  /** The children of the component. A function may be provided to alter the children based on component state. */
-  children: ChildrenOrFunction<ColorPickerRenderProps>
+  /**
+   * The children of the component. A function may be provided to alter the children based on
+   * component state.
+   */
+  children: ChildrenOrFunction<ColorPickerRenderProps>;
 }
 
 export const ColorPickerContext = createContext<SlottedContextValue<ColorPickerProps>>(null);

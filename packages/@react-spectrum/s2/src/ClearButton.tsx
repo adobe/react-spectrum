@@ -10,27 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Button,
-  ButtonProps,
-  ButtonRenderProps
-} from 'react-aria-components';
+import {Button, ButtonProps, ButtonRenderProps} from 'react-aria-components/Button';
 import {controlSize} from './style-utils' with {type: 'macro'};
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {forwardRef} from 'react';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 interface ClearButtonStyleProps {
   /**
    * The size of the ClearButton.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** Whether the ClearButton should be displayed with a static color. */
-  isStaticColor?: boolean
+  isStaticColor?: boolean;
 }
 
 interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
@@ -63,9 +59,13 @@ const visibleClearButton = style<ClearButtonRenderProps>({
   }
 });
 
-export const ClearButton = forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ClearButton = forwardRef(function ClearButton(
+  props: ClearButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   let {size = 'M', isStaticColor = false, ...rest} = props;
   let domRef = useFocusableRef(ref);
+  // oxlint-disable react/react-compiler
   return (
     <Button
       {...rest}
@@ -75,4 +75,5 @@ export const ClearButton = forwardRef(function ClearButton(props: ClearButtonPro
       <CrossIcon size={props.size} />
     </Button>
   );
+  // oxlint-enable react/react-compiler
 });

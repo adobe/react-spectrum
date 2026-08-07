@@ -9,6 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useComboBox} from './useComboBox';
-export type {AriaComboBoxOptions, ComboBoxAria} from './useComboBox';
-export type {AriaComboBoxProps} from '@react-types/combobox';
+export {useComboBox} from 'react-aria/useComboBox';
+
+export type {AriaComboBoxProps, AriaComboBoxOptions, ComboBoxAria} from 'react-aria/useComboBox';

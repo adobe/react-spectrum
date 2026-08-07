@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('No change', `
+test(
+  'No change',
+  `
 import {Content, ContextualHelp, Heading, TextField} from '@adobe/react-spectrum';
 <TextField
   label="Password"
@@ -21,5 +23,5 @@ import {Content, ContextualHelp, Heading, TextField} from '@adobe/react-spectrum
     </ContextualHelp>
   }
 />
-`);
-
+`
+);

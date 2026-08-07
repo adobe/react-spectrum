@@ -76,11 +76,15 @@ export function shortName(key: string, value: any): string {
   return returnVal;
 }
 
-export function generateComboChunks(opts: {states: Array<object>, exclude?: (merged: any) => boolean, numChunks: number}): any[] {
+export function generateComboChunks(opts: {
+  states: Array<object>;
+  exclude?: (merged: any) => boolean;
+  numChunks: number;
+}): any[] {
   let {states, exclude, numChunks} = opts;
   let combos = generatePowerset(states, exclude);
   let chunks: any[] = [];
-  let chunkSize =  Math.ceil(combos.length / numChunks);
+  let chunkSize = Math.ceil(combos.length / numChunks);
   for (let i = 0; i < numChunks; i++) {
     chunks.push(combos.slice(i * chunkSize, (i + 1) * chunkSize));
   }

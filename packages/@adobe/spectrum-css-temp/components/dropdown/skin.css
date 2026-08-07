@@ -14,7 +14,6 @@ governing permissions and limitations under the License.
   /* Override to gray-800 to meet WCAG */
   --spectrum-dropdown-placeholder-text-color: var(--spectrum-global-color-gray-800);
 
-
   .spectrum-Dropdown-trigger {
     &.is-selected {
       .is-placeholder {

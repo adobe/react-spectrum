@@ -21,9 +21,7 @@ import {Mutable} from '../utils';
 const TAIWAN_ERA_START = 1911;
 
 function gregorianYear(date: AnyCalendarDate) {
-  return date.era === 'minguo'
-    ? date.year + TAIWAN_ERA_START
-    : 1 - date.year + TAIWAN_ERA_START;
+  return date.era === 'minguo' ? date.year + TAIWAN_ERA_START : 1 - date.year + TAIWAN_ERA_START;
 }
 
 function gregorianToTaiwan(year: number): [string, number] {
@@ -79,10 +77,5 @@ export class TaiwanCalendar extends GregorianCalendar {
 
 function toGregorian(date: AnyCalendarDate) {
   let [era, year] = fromExtendedYear(gregorianYear(date));
-  return new CalendarDate(
-    era,
-    year,
-    date.month,
-    date.day
-  );
+  return new CalendarDate(era, year, date.month, date.day);
 }

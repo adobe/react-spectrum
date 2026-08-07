@@ -31,7 +31,10 @@ governing permissions and limitations under the License.
 
   &:before,
   &:after {
-    top: calc(var(--spectrum-dropindicator-circle-size) * -1 / 2 + var(--spectrum-dropindicator-border-size) / 2);
+    top: calc(
+      var(--spectrum-dropindicator-circle-size) * -1 / 2 +
+        var(--spectrum-dropindicator-border-size) / 2
+    );
   }
 
   &:before {
@@ -49,7 +52,10 @@ governing permissions and limitations under the License.
 
   &:before,
   &:after {
-    left: calc(var(--spectrum-dropindicator-circle-size) * -1 / 2 + var(--spectrum-dropindicator-border-size) / 2);
+    left: calc(
+      var(--spectrum-dropindicator-circle-size) * -1 / 2 +
+        var(--spectrum-dropindicator-border-size) / 2
+    );
   }
 
   &:before {

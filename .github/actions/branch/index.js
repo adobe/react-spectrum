@@ -49,7 +49,7 @@ async function run() {
           sha,
           ref: `heads/${branch}`,
           force: true
-        })
+        });
       }
     }
   } catch (error) {

@@ -11,11 +11,9 @@
  */
 
 import {AnyCalendarDate, AnyTime, Calendar} from './types';
-import {CalendarDate, CalendarDateTime, ZonedDateTime} from './CalendarDate';
+import {CalendarDate, CalendarDateTime, DateValue, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
 import {weekStartData} from './weekStartData';
-
-type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 
 /** Returns whether the given dates occur on the same day, regardless of the time or calendar system. */
 export function isSameDay(a: DateValue, b: DateValue): boolean {
@@ -23,7 +21,10 @@ export function isSameDay(a: DateValue, b: DateValue): boolean {
   return a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
-/** Returns whether the given dates occur in the same month, using the calendar system of the first date. */
+/**
+ * Returns whether the given dates occur in the same month, using the calendar system of the first
+ * date.
+ */
 export function isSameMonth(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
   // In the Japanese calendar, months can span multiple eras/years, so only compare the first of the month.
@@ -32,7 +33,10 @@ export function isSameMonth(a: DateValue, b: DateValue): boolean {
   return a.era === b.era && a.year === b.year && a.month === b.month;
 }
 
-/** Returns whether the given dates occur in the same year, using the calendar system of the first date. */
+/**
+ * Returns whether the given dates occur in the same year, using the calendar system of the first
+ * date.
+ */
 export function isSameYear(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
   a = startOfYear(a);
@@ -75,7 +79,7 @@ const DAY_MAP = {
   sat: 6
 };
 
-type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
+export type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 
 /**
  * Returns the day of week for the given date and locale. Days are numbered from zero to six,
@@ -212,19 +216,47 @@ export function getMinimumDayInMonth(date: AnyCalendarDate): number {
 }
 
 /** Returns the first date of the week for the given date and locale. */
-export function startOfWeek(date: ZonedDateTime, locale: string, firstDayOfWeek?: DayOfWeek): ZonedDateTime;
-export function startOfWeek(date: CalendarDateTime, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDateTime;
-export function startOfWeek(date: CalendarDate, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDate;
+export function startOfWeek(
+  date: ZonedDateTime,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+): ZonedDateTime;
+export function startOfWeek(
+  date: CalendarDateTime,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+): CalendarDateTime;
+export function startOfWeek(
+  date: CalendarDate,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+): CalendarDate;
 export function startOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue;
-export function startOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue {
+export function startOfWeek(
+  date: DateValue,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+): DateValue {
   let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);
   return date.subtract({days: dayOfWeek});
 }
 
 /** Returns the last date of the week for the given date and locale. */
-export function endOfWeek(date: ZonedDateTime, locale: string, firstDayOfWeek?: DayOfWeek): ZonedDateTime;
-export function endOfWeek(date: CalendarDateTime, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDateTime;
-export function endOfWeek(date: CalendarDate, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDate;
+export function endOfWeek(
+  date: ZonedDateTime,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+): ZonedDateTime;
+export function endOfWeek(
+  date: CalendarDateTime,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+): CalendarDateTime;
+export function endOfWeek(
+  date: CalendarDate,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+): CalendarDate;
 export function endOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue;
 export function endOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue {
   return startOfWeek(date, locale, firstDayOfWeek).add({days: 6});
@@ -306,13 +338,20 @@ function getWeekStart(locale: string): number {
 }
 
 /** Returns the number of weeks in the given month and locale. */
-export function getWeeksInMonth(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): number {
+export function getWeeksInMonth(
+  date: DateValue,
+  locale: string,
+  firstDayOfWeek?: DayOfWeek
+): number {
   let days = date.calendar.getDaysInMonth(date);
   return Math.ceil((getDayOfWeek(startOfMonth(date), locale, firstDayOfWeek) + days) / 7);
 }
 
 /** Returns the lesser of the two provider dates. */
-export function minDate<A extends DateValue, B extends DateValue>(a?: A | null, b?: B | null): A | B | null | undefined {
+export function minDate<A extends DateValue, B extends DateValue>(
+  a?: A | null,
+  b?: B | null
+): A | B | null | undefined {
   if (a && b) {
     return a.compare(b) <= 0 ? a : b;
   }
@@ -321,7 +360,10 @@ export function minDate<A extends DateValue, B extends DateValue>(a?: A | null, 
 }
 
 /** Returns the greater of the two provider dates. */
-export function maxDate<A extends DateValue, B extends DateValue>(a?: A | null, b?: B | null): A | B | null | undefined {
+export function maxDate<A extends DateValue, B extends DateValue>(
+  a?: A | null,
+  b?: B | null
+): A | B | null | undefined {
   if (a && b) {
     return a.compare(b) >= 0 ? a : b;
   }

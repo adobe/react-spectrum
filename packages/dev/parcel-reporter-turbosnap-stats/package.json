@@ -1,0 +1,21 @@
+{
+  "name": "parcel-reporter-turbosnap-stats",
+  "version": "0.0.0",
+  "private": true,
+  "source": "StatsReporter.ts",
+  "main": "dist/StatsReporter.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf dist && swc . -d dist --config-file ../../.swcrc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@parcel/plugin": "^2.16.3",
+    "@parcel/types": "^2.16.3"
+  },
+  "engines": {
+    "parcel": "^2.8.0"
+  }
+}

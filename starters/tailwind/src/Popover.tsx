@@ -2,19 +2,19 @@
 import {
   OverlayArrow,
   Popover as AriaPopover,
-  PopoverProps as AriaPopoverProps,
-  composeRenderProps
-} from 'react-aria-components';
+  type PopoverProps as AriaPopoverProps
+} from 'react-aria-components/Popover';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import React from 'react';
 import {tv} from 'tailwind-variants';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'children'> {
-  showArrow?: boolean,
-  children: React.ReactNode
+  showArrow?: boolean;
+  children: React.ReactNode;
 }
 
 const styles = tv({
-  base: 'font-sans bg-white dark:bg-neutral-900/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:bg-[Canvas] shadow-2xl rounded-xl bg-clip-padding border border-black/10 dark:border-white/10 text-neutral-700 dark:text-neutral-300 outline-0',
+  base: 'font-sans bg-white dark:bg-neutral-900/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:bg-[Canvas] shadow-2xl rounded-xl bg-clip-padding border border-black/10 dark:border-white/10 text-neutral-700 dark:text-neutral-300 outline-0 overflow-auto',
   variants: {
     isEntering: {
       true: 'animate-in fade-in placement-bottom:slide-in-from-top-1 placement-top:slide-in-from-bottom-1 placement-left:slide-in-from-right-1 placement-right:slide-in-from-left-1 ease-out duration-200'
@@ -25,20 +25,26 @@ const styles = tv({
   }
 });
 
-export function Popover({ children, showArrow, className, ...props }: PopoverProps) {
+export function Popover({children, showArrow, className, ...props}: PopoverProps) {
   let offset = showArrow ? 12 : 8;
   return (
     <AriaPopover
       offset={offset}
       {...props}
-      className={composeRenderProps(className, (className, renderProps) => styles({...renderProps, className}))}>
-      {showArrow &&
+      className={composeRenderProps(className, (className, renderProps) =>
+        styles({...renderProps, className})
+      )}>
+      {showArrow && (
         <OverlayArrow className="group">
-          <svg width={12} height={12} viewBox="0 0 12 12" className="block fill-white dark:fill-[#1f1f21] forced-colors:fill-[Canvas] stroke-1 stroke-black/10 dark:stroke-neutral-700 forced-colors:stroke-[ButtonBorder] group-placement-bottom:rotate-180 group-placement-left:-rotate-90 group-placement-right:rotate-90">
+          <svg
+            width={12}
+            height={12}
+            viewBox="0 0 12 12"
+            className="block fill-white dark:fill-[#1f1f21] forced-colors:fill-[Canvas] stroke-1 stroke-black/10 dark:stroke-neutral-700 forced-colors:stroke-[ButtonBorder] group-placement-bottom:rotate-180 group-placement-left:-rotate-90 group-placement-right:rotate-90">
             <path d="M0 0 L6 6 L12 0" />
           </svg>
         </OverlayArrow>
-      }
+      )}
       {children}
     </AriaPopover>
   );

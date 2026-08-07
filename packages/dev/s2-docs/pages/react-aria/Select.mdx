@@ -4,12 +4,12 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/Select';
 import '../../tailwind/tailwind.css';
-import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
+import Anatomy from './SelectAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['picker', 'dropdown', 'menu', 'input'];
 export const relatedPages = [
-  {title: 'useSelect', url: 'Select/useSelect.html'},
+  {title: 'useSelect', url: './Select/useSelect'},
   {title: 'Testing Select', url: './Select/testing'}
 ];
 export const description = 'Displays a collapsible list of options and allows a user to select one of them.';
@@ -58,7 +58,8 @@ The following example shows a dynamic collection of items, grouped into sections
 ```tsx render
 "use client";
 import {Select, SelectItem} from 'vanilla-starter/Select';
-import {ListBoxSection, Collection, Header} from 'react-aria-components';
+import {ListBoxSection, Header} from 'vanilla-starter/ListBox';
+import {Collection} from 'react-aria-components/Collection';
 
 function Example() {
   /*- begin collapse -*/
@@ -107,7 +108,8 @@ function Example() {
 
 ```tsx render
 "use client";
-import {Select, Label, SelectValue, Autocomplete, useFilter} from 'react-aria-components';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
+import {Select, Label, SelectValue} from 'react-aria-components/Select';
 import {Button} from 'vanilla-starter/Button';
 import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
 import {Popover} from 'vanilla-starter/Popover';
@@ -153,7 +155,9 @@ Use the `SelectValue` render prop function to display the selected items as a [T
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/MultiSelect.css']}
 "use client";
-import {Autocomplete, Select, SelectValue, Group, useFilter} from 'react-aria-components';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
+import {Select, SelectValue} from 'react-aria-components/Select';
+import {Group} from 'react-aria-components/Group';
 import {Button} from 'vanilla-starter/Button';
 import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
 import {Label} from 'vanilla-starter/Form';

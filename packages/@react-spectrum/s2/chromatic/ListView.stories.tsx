@@ -10,13 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionButtonGroup, ActionMenu, Content, Heading, IllustratedMessage, Image, ListView, ListViewItem, MenuItem, Text} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {ActionButtonGroup} from '../src/ActionButtonGroup';
+import {ActionMenu} from '../src/ActionMenu';
 import {checkers} from './check';
+import {Content, Heading, Text} from '../src/Content';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
+import {DragBetweenLists, Reorderable} from '../stories/ListView.stories';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import {expect, userEvent, within} from 'storybook/test';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {IllustratedMessage} from '../src/IllustratedMessage';
+import {Image} from '../src/Image';
+import {ListView, ListViewItem} from '../src/ListView';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -41,7 +51,7 @@ const items = [
 ];
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Files" styles={listViewStyles}>
       <ListViewItem id="utilities" textValue="Utilities" hasChildItems>
         <Folder />
@@ -77,9 +87,9 @@ export const Quiet: Story = {
 };
 
 export const WithImages: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Images" styles={listViewStyles} items={items}>
-      {(item) => (
+      {item => (
         <ListViewItem textValue={item.name}>
           <Text>{item.name}</Text>
           <Image src={checkers} alt={item.name} />
@@ -90,18 +100,22 @@ export const WithImages: Story = {
 };
 
 export const OverflowTruncate: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Long text examples" styles={listViewStyles}>
       <ListViewItem id="a">
         This is a very very very very very very very very long title.
       </ListViewItem>
       <ListViewItem id="b" textValue="Short title, long description">
         <Text>Short title</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
       <ListViewItem id="c" textValue="Long title, long description">
         <Text>This is a very very very very very very very very long title.</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
     </ListView>
   ),
@@ -112,18 +126,22 @@ export const OverflowTruncate: Story = {
 };
 
 export const OverflowWrap: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Long text examples" styles={listViewStyles}>
       <ListViewItem id="a">
         This is a very very very very very very very very long title.
       </ListViewItem>
       <ListViewItem id="b" textValue="Short title, long description">
         <Text>Short title</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
       <ListViewItem id="c" textValue="Long title, long description">
         <Text>This is a very very very very very very very very long title.</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
     </ListView>
   ),
@@ -134,9 +152,15 @@ export const OverflowWrap: Story = {
 };
 
 export const DisabledItems: Story = {
-  render: (args) => (
-    <ListView {...args} aria-label="Files" items={items} styles={listViewStyles} selectionMode="multiple" disabledKeys={['utilities', 'illustrator']}>
-      {(item) => (
+  render: args => (
+    <ListView
+      {...args}
+      aria-label="Files"
+      items={items}
+      styles={listViewStyles}
+      selectionMode="multiple"
+      disabledKeys={['utilities', 'illustrator']}>
+      {item => (
         <ListViewItem textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' ? <Folder /> : <File />}
           <Text>{item.name}</Text>
@@ -164,12 +188,20 @@ export const CheckboxSelection: Story = {
 };
 
 export const Links: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Bookmarks" styles={listViewStyles}>
-      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">Adobe</ListViewItem>
-      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">Google</ListViewItem>
-      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">Apple</ListViewItem>
-      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">New York Times</ListViewItem>
+      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">
+        Adobe
+      </ListViewItem>
+      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">
+        Google
+      </ListViewItem>
+      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">
+        Apple
+      </ListViewItem>
+      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">
+        New York Times
+      </ListViewItem>
     </ListView>
   ),
   args: {
@@ -178,29 +210,45 @@ export const Links: Story = {
 };
 
 export const WithActions: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Files" styles={listViewStyles}>
       <ListViewItem id="utilities" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
         <Text slot="description">16 items</Text>
         <ActionButtonGroup>
-          <ActionButton aria-label="Edit"><Edit /></ActionButton>
+          <ActionButton aria-label="Edit">
+            <Edit />
+          </ActionButton>
         </ActionButtonGroup>
         <ActionMenu>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
       <ListViewItem id="photoshop" textValue="Adobe Photoshop">
         <Text>Adobe Photoshop</Text>
         <Text slot="description">Application</Text>
         <ActionButtonGroup>
-          <ActionButton aria-label="Edit"><Edit /></ActionButton>
+          <ActionButton aria-label="Edit">
+            <Edit />
+          </ActionButton>
         </ActionButtonGroup>
         <ActionMenu>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
     </ListView>
@@ -211,7 +259,7 @@ export const WithActions: Story = {
 };
 
 export const Loading: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Loading list" styles={listViewStyles}>
       {[]}
     </ListView>
@@ -222,13 +270,14 @@ export const Loading: Story = {
 };
 
 export const LoadingMore: Story = {
-  render: (args) => (
-    <ListView {...args} aria-label="Loading more list" styles={listViewStyles} items={items} onLoadMore={() => {}}>
-      {(item) => (
-        <ListViewItem textValue={item.name}>
-          {item.name}
-        </ListViewItem>
-      )}
+  render: args => (
+    <ListView
+      {...args}
+      aria-label="Loading more list"
+      styles={listViewStyles}
+      items={items}
+      onLoadMore={() => {}}>
+      {item => <ListViewItem textValue={item.name}>{item.name}</ListViewItem>}
     </ListView>
   ),
   args: {
@@ -237,7 +286,7 @@ export const LoadingMore: Story = {
 };
 
 export const EmptyState: Story = {
-  render: (args) => (
+  render: args => (
     <ListView
       {...args}
       aria-label="Empty list"
@@ -252,4 +301,46 @@ export const EmptyState: Story = {
       {[]}
     </ListView>
   )
+};
+
+export const InsertionIndicator: Story = {
+  ...Reorderable,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Tab]');
+    // TODO: strangely enough tabbing via user event actually focuses the drag handle and not just the row
+    // can't reproduce manually
+    // await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByText('Insert between Adobe Photoshop and Adobe XD');
+  }
+};
+
+export const RootDrop: Story = {
+  ...DragBetweenLists,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Tab]');
+    // await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[Tab]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+  }
+};
+
+export const OnFolderDrop: Story = {
+  ...DragBetweenLists,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Tab]');
+    // await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[Tab]');
+    await userEvent.keyboard('[ArrowDown]');
+    await userEvent.keyboard('[ArrowDown]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
+  }
 };

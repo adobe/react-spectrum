@@ -16,7 +16,6 @@ import {Example} from '../stories/ColorSwatchPicker.stories';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
-
 const meta: Meta<typeof ColorSwatchPicker> = {
   component: ColorSwatchPicker,
   parameters: {
@@ -57,9 +56,9 @@ let colors = [
 ];
 
 export const ManySwatches: StoryObj<typeof ColorSwatchPicker> = {
-  render: (args) => (
+  render: args => (
     <ColorSwatchPicker {...args} styles={style({maxWidth: 192})}>
-      {colors.map((color) => {
+      {colors.map(color => {
         return <ColorSwatch key={color} color={color} />;
       })}
     </ColorSwatchPicker>

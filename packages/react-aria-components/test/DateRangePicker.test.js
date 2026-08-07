@@ -11,38 +11,28 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {
-  Button,
-  CalendarCell,
-  CalendarGrid,
-  DateInput,
-  DateRangePicker,
-  DateRangePickerContext,
-  DateSegment,
-  Dialog,
-  FieldError,
-  Group,
-  Heading,
-  Label,
-  Popover,
-  RangeCalendar,
-  Text
-} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {CalendarCell, CalendarGrid, RangeCalendar} from '../src/Calendar';
 import {CalendarDate} from '@internationalized/date';
+import {DateInput, DateSegment} from '../src/DateField';
+import {DateRangePicker, DateRangePickerContext} from '../src/DatePicker';
+import {Dialog} from '../src/Dialog';
+import {FieldError} from '../src/FieldError';
+import {Group} from '../src/Group';
+import {Heading} from '../src/Heading';
+import {Label} from '../src/Label';
+import {Popover} from '../src/Popover';
 import React from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-let TestDateRangePicker = (props) => (
+let TestDateRangePicker = props => (
   <DateRangePicker data-foo="bar" {...props}>
     <Label>Trip dates</Label>
     <Group>
-      <DateInput slot="start">
-        {(segment) => <DateSegment segment={segment} />}
-      </DateInput>
+      <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
       <span aria-hidden="true">–</span>
-      <DateInput slot="end">
-        {(segment) => <DateSegment segment={segment} />}
-      </DateInput>
+      <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
       <Button>▼</Button>
     </Group>
     <Text slot="description">Description</Text>
@@ -55,9 +45,7 @@ let TestDateRangePicker = (props) => (
             <Heading />
             <Button slot="next">▶</Button>
           </header>
-          <CalendarGrid>
-            {(date) => <CalendarCell date={date} />}
-          </CalendarGrid>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
         </RangeCalendar>
       </Dialog>
     </Popover>
@@ -88,7 +76,13 @@ describe('DateRangePicker', () => {
     expect(label).toHaveTextContent('Trip dates');
 
     expect(group).toHaveAttribute('aria-describedby');
-    expect(group.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     for (let segment of getAllByRole('spinbutton')) {
       expect(segment).toHaveAttribute('class', 'react-aria-DateSegment');
@@ -103,7 +97,10 @@ describe('DateRangePicker', () => {
     expect(dialog).toHaveAttribute('aria-labelledby');
     expect(dialog.getAttribute('aria-labelledby')).toContain(label.id);
     expect(dialog.closest('.react-aria-Popover')).toBeInTheDocument();
-    expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DateRangePicker');
+    expect(dialog.closest('.react-aria-Popover')).toHaveAttribute(
+      'data-trigger',
+      'DateRangePicker'
+    );
 
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
   });
@@ -121,7 +118,9 @@ describe('DateRangePicker', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} =  render(<TestDateRangePicker render={props => <div {...props} data-custom="true" />} />);
+    let {getByRole} = render(
+      <TestDateRangePicker render={props => <div {...props} data-custom="true" />} />
+    );
     let group = getByRole('group').closest('.react-aria-DateRangePicker');
     expect(group).toHaveAttribute('data-custom', 'true');
   });
@@ -147,18 +146,16 @@ describe('DateRangePicker', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <DateRangePicker defaultValue={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 1)}} validationBehavior="aria">
+      <DateRangePicker
+        defaultValue={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 1)}}
+        validationBehavior="aria">
         {({isInvalid}) => (
           <>
             <Label>Trip dates</Label>
             <Group data-validation-state={isInvalid ? 'invalid' : null}>
-              <DateInput slot="start">
-                {(segment) => <DateSegment segment={segment} />}
-              </DateInput>
+              <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
               <span aria-hidden="true">–</span>
-              <DateInput slot="end">
-                {(segment) => <DateSegment segment={segment} />}
-              </DateInput>
+              <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
               <Button>▼</Button>
             </Group>
             <Popover>
@@ -169,9 +166,7 @@ describe('DateRangePicker', () => {
                     <Heading />
                     <Button slot="next">▶</Button>
                   </header>
-                  <CalendarGrid>
-                    {(date) => <CalendarCell date={date} />}
-                  </CalendarGrid>
+                  <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
                 </RangeCalendar>
               </Dialog>
             </Popover>
@@ -191,13 +186,9 @@ describe('DateRangePicker', () => {
           <>
             <Label>Trip dates</Label>
             <Group data-required-state={isRequired ? 'required' : null}>
-              <DateInput slot="start">
-                {(segment) => <DateSegment segment={segment} />}
-              </DateInput>
+              <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
               <span aria-hidden="true">–</span>
-              <DateInput slot="end">
-                {(segment) => <DateSegment segment={segment} />}
-              </DateInput>
+              <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
               <Button>▼</Button>
             </Group>
             <Popover>
@@ -208,9 +199,7 @@ describe('DateRangePicker', () => {
                     <Heading />
                     <Button slot="next">▶</Button>
                   </header>
-                  <CalendarGrid>
-                    {(date) => <CalendarCell date={date} />}
-                  </CalendarGrid>
+                  <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
                 </RangeCalendar>
               </Dialog>
             </Popover>
@@ -232,7 +221,14 @@ describe('DateRangePicker', () => {
   });
 
   it('should support form value', () => {
-    render(<TestDateRangePicker startName="start" endName="end" form="test" value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
+    render(
+      <TestDateRangePicker
+        startName="start"
+        endName="end"
+        form="test"
+        value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}}
+      />
+    );
     let start = document.querySelector('input[name=start]');
     expect(start).toHaveValue('2023-01-10');
     expect(start).toHaveAttribute('form', 'test');
@@ -242,9 +238,7 @@ describe('DateRangePicker', () => {
   });
 
   it('should render data- attributes only on the outer element', () => {
-    let {getAllByTestId} = render(
-      <TestDateRangePicker data-testid="date-picker" />
-    );
+    let {getAllByTestId} = render(<TestDateRangePicker data-testid="date-picker" />);
     let outerEl = getAllByTestId('date-picker');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-DateRangePicker');
@@ -256,13 +250,9 @@ describe('DateRangePicker', () => {
         <DateRangePicker startName="start" endName="end" isRequired>
           <Label>Trip dates</Label>
           <Group>
-            <DateInput slot="start">
-              {(segment) => <DateSegment segment={segment} />}
-            </DateInput>
+            <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
             <span aria-hidden="true">–</span>
-            <DateInput slot="end">
-              {(segment) => <DateSegment segment={segment} />}
-            </DateInput>
+            <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
             <Button>▼</Button>
           </Group>
           <FieldError />
@@ -274,9 +264,7 @@ describe('DateRangePicker', () => {
                   <Heading />
                   <Button slot="next">▶</Button>
                 </header>
-                <CalendarGrid>
-                  {(date) => <CalendarCell date={date} />}
-                </CalendarGrid>
+                <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
               </RangeCalendar>
             </Dialog>
           </Popover>
@@ -295,10 +283,17 @@ describe('DateRangePicker', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(datepicker).not.toHaveAttribute('data-invalid');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(group).toHaveAttribute('aria-describedby');
-    let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    let getDescription = () =>
+      group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(d => document.getElementById(d).textContent)
+        .join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(datepicker).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
@@ -316,7 +311,11 @@ describe('DateRangePicker', () => {
   });
 
   it('should support close on select = true', async () => {
-    let {getByRole, getAllByRole} = render(<TestDateRangePicker value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
+    let {getByRole, getAllByRole} = render(
+      <TestDateRangePicker
+        value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}}
+      />
+    );
 
     let button = getByRole('button');
 
@@ -326,7 +325,10 @@ describe('DateRangePicker', () => {
 
     let cells = getAllByRole('gridcell');
     let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-    expect(selected.children[0]).toHaveAttribute('aria-label', 'Selected Range: Tuesday, January 10 to Friday, January 20, 2023, Tuesday, January 10, 2023 selected');
+    expect(selected.children[0]).toHaveAttribute(
+      'aria-label',
+      'Selected Range: Tuesday, January 10 to Friday, January 20, 2023, Tuesday, January 10, 2023 selected'
+    );
 
     await user.click(selected.nextSibling.children[0]);
     await user.click(selected.nextSibling.children[1]);
@@ -334,7 +336,12 @@ describe('DateRangePicker', () => {
   });
 
   it('should support close on select = false', async () => {
-    let {getByRole, getAllByRole} = render(<TestDateRangePicker value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} shouldCloseOnSelect={false} />);
+    let {getByRole, getAllByRole} = render(
+      <TestDateRangePicker
+        value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}}
+        shouldCloseOnSelect={false}
+      />
+    );
 
     let button = getByRole('button');
 
@@ -344,7 +351,10 @@ describe('DateRangePicker', () => {
 
     let cells = getAllByRole('gridcell');
     let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-    expect(selected.children[0]).toHaveAttribute('aria-label', 'Selected Range: Tuesday, January 10 to Friday, January 20, 2023, Tuesday, January 10, 2023 selected');
+    expect(selected.children[0]).toHaveAttribute(
+      'aria-label',
+      'Selected Range: Tuesday, January 10 to Friday, January 20, 2023, Tuesday, January 10, 2023 selected'
+    );
 
     await user.click(selected.nextSibling.children[0]);
     await user.click(selected.nextSibling.children[1]);
@@ -352,7 +362,9 @@ describe('DateRangePicker', () => {
   });
 
   it('should set a placeholder time when closing', async () => {
-    let {getByRole, getAllByRole} = render(<TestDateRangePicker granularity="second" focusedValue={new CalendarDate(2023, 1, 10)} />);
+    let {getByRole, getAllByRole} = render(
+      <TestDateRangePicker granularity="second" focusedValue={new CalendarDate(2023, 1, 10)} />
+    );
 
     let button = getByRole('button');
     await user.click(button);
@@ -366,9 +378,13 @@ describe('DateRangePicker', () => {
 
     let group = getByRole('group');
     let inputs = group.querySelectorAll('.react-aria-DateInput');
-    let normalize = (s) => s.replace(/\s/g, ' ').replace(/[\u2066\u2069]/g, '');
-    expect(normalize(inputs[0].textContent)).toBe(normalize(new Date(2023, 0, 6).toLocaleString('en-US')));
-    expect(normalize(inputs[1].textContent)).toBe(normalize(new Date(2023, 0, 11).toLocaleString('en-US')));
+    let normalize = s => s.replace(/\s/g, ' ').replace(/[\u2066\u2069]/g, '');
+    expect(normalize(inputs[0].textContent)).toBe(
+      normalize(new Date(2023, 0, 6).toLocaleString('en-US'))
+    );
+    expect(normalize(inputs[1].textContent)).toBe(
+      normalize(new Date(2023, 0, 11).toLocaleString('en-US'))
+    );
   });
 
   it('should disable button and date input when DatePicker is disabled', () => {
@@ -391,13 +407,9 @@ describe('DateRangePicker', () => {
       <DateRangePicker data-foo="bar">
         <Label>Birth date</Label>
         <Group>
-          <DateInput slot="start">
-            {(segment) => <DateSegment segment={segment} />}
-          </DateInput>
+          <DateInput slot="start">{segment => <DateSegment segment={segment} />}</DateInput>
           <span aria-hidden="true">–</span>
-          <DateInput slot="end">
-            {(segment) => <DateSegment segment={segment} />}
-          </DateInput>
+          <DateInput slot="end">{segment => <DateSegment segment={segment} />}</DateInput>
           <Button>▼</Button>
         </Group>
         <Text slot="description">Description</Text>
@@ -414,9 +426,7 @@ describe('DateRangePicker', () => {
                 <Heading />
                 <Button slot="next">▶</Button>
               </header>
-              <CalendarGrid>
-                {(date) => <CalendarCell date={date} />}
-              </CalendarGrid>
+              <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
             </RangeCalendar>
           </Dialog>
         </Popover>

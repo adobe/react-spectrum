@@ -10,55 +10,65 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
+
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {inertValue} from '@react-aria/utils';
+import {inertValue} from 'react-aria/private/utils/inertValue';
+import {Keyboard as KeyboardAria} from 'react-aria-components/Keyboard';
+import {Header as RACHeader} from 'react-aria-components/Header';
+import {Heading as RACHeading} from 'react-aria-components/Heading';
+import {TextContext as RACTextContext, Text as TextAria} from 'react-aria-components/Text';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useIsSkeleton, useSkeletonText} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ContentProps extends UnsafeStyles, SlotProps {
-  children: ReactNode,
-  styles?: StyleString,
-  isHidden?: boolean,
-  id?: string,
-  itemProp?: string,
-  itemScope?: boolean,
-  itemType?: string,
-  itemID?: string,
-  itemRef?: string
+  children: ReactNode;
+  styles?: StyleString;
+  isHidden?: boolean;
+  id?: string;
+  itemProp?: string;
+  itemScope?: boolean;
+  itemType?: string;
+  itemID?: string;
+  itemRef?: string;
 }
 
 interface HeadingProps extends Omit<ContentProps, 'children'> {
-  children: ReactNode,
-  level?: number
+  children: ReactNode;
+  level?: number;
 }
 
-export const HeadingContext = createContext<ContextValue<Partial<HeadingProps>, DOMRefValue<HTMLHeadingElement>>>(null);
+export const HeadingContext =
+  createContext<ContextValue<Partial<HeadingProps>, DOMRefValue<HTMLHeadingElement>>>(null);
 
-export const Heading = forwardRef(// Wrapper around RAC Heading to unmount when hidden.
-function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
-  [props, ref] = useSpectrumContextProps(props, ref, HeadingContext);
-  let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
-  if (isHidden) {
-    return null;
+export const Heading = forwardRef(
+  // Wrapper around RAC Heading to unmount when hidden.
+  function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+    [props, ref] = useSpectrumContextProps(props, ref, HeadingContext);
+    let domRef = useDOMRef(ref);
+    let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
+    if (isHidden) {
+      return null;
+    }
+
+    return (
+      <RACHeading
+        {...otherProps}
+        ref={domRef}
+        className={UNSAFE_className + styles}
+        style={UNSAFE_style}
+        slot={slot || undefined}
+      />
+    );
   }
+);
 
-  return (
-    <RACHeading
-      {...otherProps}
-      ref={domRef}
-      className={UNSAFE_className + styles}
-      style={UNSAFE_style}
-      slot={slot || undefined} />
-  );
-});
-
-export const HeaderContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLElement>>>(null);
+export const HeaderContext =
+  createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLElement>>>(null);
 
 export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, HeaderContext);
@@ -74,13 +84,18 @@ export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRe
       ref={domRef}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
-      slot={slot || undefined} />
+      slot={slot || undefined}
+    />
   );
 });
 
-export const ContentContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ContentContext =
+  createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef<HTMLDivElement>) {
+export const Content = forwardRef(function Content(
+  props: ContentProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ContentContext);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
@@ -93,7 +108,8 @@ export const Content = forwardRef(function Content(props: ContentProps, ref: DOM
       ref={domRef}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
-      slot={slot || undefined} />
+      slot={slot || undefined}
+    />
   );
 });
 
@@ -102,7 +118,15 @@ export const TextContext = createContext<ContextValue<Partial<ContentProps>, DOM
 export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, TextContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, children, ...otherProps} = props;
+  let {
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles = '',
+    isHidden,
+    slot,
+    children,
+    ...otherProps
+  } = props;
   let racContext = useContext(RACTextContext);
   let isSkeleton = useIsSkeleton();
   [children, UNSAFE_style] = useSkeletonText(children, UNSAFE_style);
@@ -146,7 +170,8 @@ export const Keyboard = forwardRef(function Keyboard(props: ContentProps, ref: D
       ref={domRef}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
-      slot={slot || undefined} />
+      slot={slot || undefined}
+    />
   );
 });
 
@@ -165,6 +190,7 @@ export const Footer = forwardRef(function Footer(props: ContentProps, ref: DOMRe
       ref={domRef}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
-      slot={slot || undefined} />
+      slot={slot || undefined}
+    />
   );
 });

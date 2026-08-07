@@ -11,8 +11,15 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {ColorArea, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorThumb, Input, SliderTrack} from '../src';
+import {ColorArea} from '../src/ColorArea';
+import {ColorField} from '../src/ColorField';
+import {ColorPicker} from '../src/ColorPicker';
+import {ColorSlider} from '../src/ColorSlider';
+import {ColorSwatch} from '../src/ColorSwatch';
+import {ColorThumb} from '../src/ColorThumb';
+import {Input} from '../src/Input';
 import React from 'react';
+import {SliderTrack} from '../src/Slider';
 import userEvent from '@testing-library/user-event';
 
 describe('ColorPicker', function () {
@@ -26,9 +33,17 @@ describe('ColorPicker', function () {
     let {getByRole, getAllByRole} = render(
       <ColorPicker defaultValue="#f00">
         <ColorSwatch />
-        <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness"><ColorThumb /></ColorArea>
-        <ColorSlider colorSpace="hsb" channel="hue"><SliderTrack><ColorThumb /></SliderTrack></ColorSlider>
-        <ColorField aria-label="hex"><Input /></ColorField>
+        <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness">
+          <ColorThumb />
+        </ColorArea>
+        <ColorSlider colorSpace="hsb" channel="hue">
+          <SliderTrack>
+            <ColorThumb />
+          </SliderTrack>
+        </ColorSlider>
+        <ColorField aria-label="hex">
+          <Input />
+        </ColorField>
       </ColorPicker>
     );
 

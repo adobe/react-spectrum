@@ -13,41 +13,55 @@
 import {
   TimeField as AriaTimeField,
   TimeFieldProps as AriaTimeFieldProps,
-  ContextValue,
-  FormContext,
   TimeValue
-} from 'react-aria-components';
+} from 'react-aria-components/TimeField';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, Ref, useContext} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  field,
+  fieldInput,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
-import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FormContext} from 'react-aria-components/Form';
+import {
+  forwardRefType,
+  GlobalDOMAttributes,
+  HelpTextProps,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-
-export interface TimeFieldProps<T extends TimeValue> extends
-  Omit<AriaTimeFieldProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
-  StyleProps,
-  SpectrumLabelableProps,
-  HelpTextProps {
-    /**
-     * The size of the TimeField.
-     *
-     * @default 'M'
-     */
-    size?: 'S' | 'M' | 'L' | 'XL'
+export interface TimeFieldProps<T extends TimeValue>
+  extends
+    Omit<
+      AriaTimeFieldProps<T>,
+      'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps {
+  /**
+   * The size of the TimeField.
+   *
+   * @default 'M'
+   */
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export const TimeFieldContext = createContext<ContextValue<Partial<TimeFieldProps<any>>, HTMLDivElement>>(null);
+export const TimeFieldContext =
+  createContext<ContextValue<Partial<TimeFieldProps<any>>, HTMLDivElement>>(null);
 
 /**
  * TimeFields allow users to enter and edit time values using a keyboard.
  * Each part of the time is displayed in an individually editable segment.
  */
-export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TimeField<T extends TimeValue>(
-  props: TimeFieldProps<T>, ref: Ref<HTMLDivElement>
-): ReactElement {
+export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TimeField<
+  T extends TimeValue
+>(props: TimeFieldProps<T>, ref: Ref<HTMLDivElement>): ReactElement {
   [props, ref] = useSpectrumContextProps(props, ref, TimeFieldContext);
   let {
     label,
@@ -72,11 +86,17 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
       isRequired={isRequired}
       {...timeFieldProps}
       style={UNSAFE_style}
-      className={(UNSAFE_className || '') + style(field(), getAllowedOverrides())({
-        isInForm: !!formContext,
-        labelPosition,
-        size
-      }, styles)}>
+      className={
+        (UNSAFE_className || '') +
+        style(field(), getAllowedOverrides())(
+          {
+            isInForm: !!formContext,
+            labelPosition,
+            size
+          },
+          styles
+        )
+      }>
       {({isDisabled, isInvalid}) => {
         return (
           <>

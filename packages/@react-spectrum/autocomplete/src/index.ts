@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {SearchAutocomplete} from './SearchAutocomplete';
-export {Item, Section} from '@react-stately/collections';
-export type {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
+export {SearchAutocomplete} from '@adobe/react-spectrum/private/autocomplete/SearchAutocomplete';
+
+export type {SpectrumSearchAutocompleteProps} from '@adobe/react-spectrum/private/autocomplete/SearchAutocomplete';
+export {Item} from 'react-stately/Item';
+export {Section} from 'react-stately/Section';

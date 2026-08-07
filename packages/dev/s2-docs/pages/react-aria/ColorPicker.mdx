@@ -39,7 +39,7 @@ Use the `value` or `defaultValue` prop to set the color value. This may be a str
 
 ```tsx render
 "use client";
-import {parseColor} from 'react-aria-components';
+import {parseColor} from 'react-aria-components/ColorPicker';
 import {ColorPicker} from 'vanilla-starter/ColorPicker';
 import {useState} from 'react';
 
@@ -68,8 +68,7 @@ This example uses [ColorSlider](ColorSlider) to allow a user to adjust each chan
 
 ```tsx render
 "use client";
-import type {ColorSpace} from 'react-aria-components';
-import {getColorChannels} from 'react-aria-components';
+import {getColorChannels, type ColorSpace} from 'react-aria-components/ColorPicker';
 import {ColorPicker} from 'vanilla-starter/ColorPicker';
 import {ColorSlider} from 'vanilla-starter/ColorSlider';
 import {Select, SelectItem} from 'vanilla-starter/Select';
@@ -128,9 +127,8 @@ This example uses [ColorField](ColorField) to allow a user to edit the value of 
 
 ```tsx render
 "use client";
-import type {ColorSpace} from 'react-aria-components';
+import {getColorChannels, type ColorSpace} from 'react-aria-components/ColorPicker';
 import {ColorPicker} from 'vanilla-starter/ColorPicker';
-import {getColorChannels} from 'react-aria-components';
 import {ColorArea} from 'vanilla-starter/ColorArea';
 import {ColorSlider} from 'vanilla-starter/ColorSlider';
 import {Select, SelectItem} from 'vanilla-starter/Select';

@@ -1,4 +1,4 @@
-import {addComponentImport, getName} from '../../shared/utils';
+import {addComponentImport, getName, removeComponentImportIfUnused} from '../../shared/utils';
 import {
   commentOutProp,
   moveRenderPropsToChild,
@@ -15,14 +15,20 @@ let availableComponents = getComponents();
  * Updates DialogTrigger and DialogContainer to the new API.
  *
  * Example:
+ *
  * - When `type="popover"`, replaces Dialog with `<Popover>`.
  * - When `type="fullscreen"`, replaces Dialog with `<FullscreenDialog>`.
- * - When `type="fullscreenTakeover"`, replaces Dialog with `<FullscreenDialog variant="fullscreenTakeover">`.
+ * - When `type="fullscreenTakeover"`, replaces Dialog with `<FullscreenDialog
+ *   variant="fullscreenTakeover">`.
  */
-export function updateDialogChild(
-  path: NodePath<t.JSXElement>
-): void {
-  let typePath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'type') as NodePath<t.JSXAttribute> | undefined;
+export function updateDialogChild(path: NodePath<t.JSXElement>): void {
+  let program = path.findParent(p => t.isProgram(p.node)) as NodePath<t.Program>;
+  let typePath = path
+    .get('openingElement')
+    .get('attributes')
+    .find(attr => t.isJSXAttribute(attr.node) && attr.node.name.name === 'type') as
+    | NodePath<t.JSXAttribute>
+    | undefined;
   let type = typePath?.node.value?.type === 'StringLiteral' ? typePath.node.value?.value : 'modal';
   let newComponentName = 'Dialog';
   let props: t.JSXAttribute[] = [];
@@ -35,8 +41,23 @@ export function updateDialogChild(
     }
   }
 
-  for (let prop of ['isDismissible', 'mobileType', 'hideArrow', 'placement', 'shouldFlip', 'isKeyboardDismissDisabled', 'containerPadding', 'offset', 'crossOffset']) {
-    let attr = path.get('openingElement').get('attributes').find(attr => attr.isJSXAttribute() && attr.node.name.name === prop) as NodePath<t.JSXAttribute> | undefined;
+  for (let prop of [
+    'isDismissible',
+    'mobileType',
+    'hideArrow',
+    'placement',
+    'shouldFlip',
+    'isKeyboardDismissDisabled',
+    'containerPadding',
+    'offset',
+    'crossOffset'
+  ]) {
+    let attr = path
+      .get('openingElement')
+      .get('attributes')
+      .find(attr => attr.isJSXAttribute() && attr.node.name.name === prop) as
+      | NodePath<t.JSXAttribute>
+      | undefined;
     if (attr) {
       props.push(attr.node);
       attr.remove();
@@ -47,13 +68,15 @@ export function updateDialogChild(
 
   let localName = newComponentName;
   if (newComponentName !== 'Dialog' && availableComponents.has(newComponentName)) {
-    let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
     localName = addComponentImport(program, newComponentName);
   }
 
   path.traverse({
     JSXElement(dialog) {
-      if (!t.isJSXIdentifier(dialog.node.openingElement.name) || getName(dialog, dialog.node.openingElement.name) !== 'Dialog') {
+      if (
+        !t.isJSXIdentifier(dialog.node.openingElement.name) ||
+        getName(dialog, dialog.node.openingElement.name) !== 'Dialog'
+      ) {
         return;
       }
 
@@ -65,6 +88,32 @@ export function updateDialogChild(
       dialog.node.openingElement.attributes.push(...props);
     }
   });
+
+  path.traverse({
+    JSXElement(childPath) {
+      if (
+        t.isJSXIdentifier(childPath.node.openingElement.name) &&
+        getName(childPath as NodePath<t.JSXElement>, childPath.node.openingElement.name) ===
+          'Divider' &&
+        t.isJSXElement(childPath.parentPath.node) &&
+        t.isJSXIdentifier(childPath.parentPath.node.openingElement.name)
+      ) {
+        let parentName = getName(
+          childPath as NodePath<t.JSXElement>,
+          childPath.parentPath.node.openingElement.name
+        );
+        if (
+          parentName === 'Dialog' ||
+          parentName === 'Popover' ||
+          parentName === 'FullscreenDialog'
+        ) {
+          childPath.remove();
+        }
+      }
+    }
+  });
+
+  removeComponentImportIfUnused(program, 'Divider');
 }
 
 /**

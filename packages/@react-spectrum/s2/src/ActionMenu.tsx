@@ -12,37 +12,48 @@
 
 import {ActionButton, ActionButtonProps} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {ContextValue} from 'react-aria-components';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType} from './types';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';
-import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {StyleProps} from './style-utils' with {type: 'macro'};
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ActionMenuProps<T> extends
-  Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
-  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction'>,
-  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
-  StyleProps, DOMProps, AriaLabelingProps {
+export interface ActionMenuProps<T>
+  extends
+    Pick<
+      MenuTriggerProps,
+      'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'
+    >,
+    Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'shouldCloseOnSelect'>,
+    Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
+    StyleProps,
+    DOMProps,
+    AriaLabelingProps {
   /**
    * The size of the Menu.
    *
    * @default 'M'
    */
-  menuSize?: 'S' | 'M' | 'L' | 'XL'
+  menuSize?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export const ActionMenuContext = createContext<ContextValue<Partial<ActionMenuProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ActionMenuContext =
+  createContext<ContextValue<Partial<ActionMenuProps<any>>, FocusableRefValue<HTMLButtonElement>>>(
+    null
+  );
 
 /**
  * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
  */
-export const ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionMenu = /*#__PURE__*/ (forwardRef as forwardRefType)(function ActionMenu<T>(
+  props: ActionMenuProps<T>,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ActionMenuContext);
   let buttonProps = filterDOMProps(props, {labelable: true});
@@ -72,7 +83,8 @@ export const ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(function A
         items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction}
-        size={props.menuSize}>
+        size={props.menuSize}
+        shouldCloseOnSelect={props.shouldCloseOnSelect}>
         {props.children}
       </Menu>
     </MenuTrigger>

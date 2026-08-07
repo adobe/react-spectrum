@@ -46,7 +46,9 @@ describe('DateFormatter', function () {
     let formatter = new DateFormatter('en-US');
     // Test fallback
     formatter.formatter.formatRange = null;
-    expect(formatter.formatRange(new Date(2020, 1, 3), new Date(2020, 1, 5))).toBe('2/3/2020 – 2/5/2020');
+    expect(formatter.formatRange(new Date(2020, 1, 3), new Date(2020, 1, 5))).toBe(
+      '2/3/2020 – 2/5/2020'
+    );
   });
 
   it('should format a range to parts', function () {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatch, ColorSwatchContext} from '../';
+import {ColorSwatch, ColorSwatchContext} from '../src/ColorSwatch';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
@@ -37,7 +37,9 @@ describe('ColorSwatch', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} = render(<ColorSwatch render={props => <div {...props} data-custom="true" />} />);
+    let {getByRole} = render(
+      <ColorSwatch render={props => <div {...props} data-custom="true" />} />
+    );
     let img = getByRole('img');
     expect(img).toHaveAttribute('data-custom', 'true');
   });
@@ -45,9 +47,7 @@ describe('ColorSwatch', () => {
   it('should support render props', () => {
     let {getByTestId} = render(
       <ColorSwatch color="#f00">
-        {({color}) => (
-          <div style={{background: color.toString()}} data-testid="wrapper" />
-        )}
+        {({color}) => <div style={{background: color.toString()}} data-testid="wrapper" />}
       </ColorSwatch>
     );
     expect(getByTestId('wrapper')).toHaveStyle({background: '#f00'});

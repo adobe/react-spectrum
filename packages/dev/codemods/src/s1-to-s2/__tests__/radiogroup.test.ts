@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes showErrorIcon', `
+test(
+  'Removes showErrorIcon',
+  `
 import {Radio, RadioGroup} from '@adobe/react-spectrum';
 let showErrorIcon = true;
 let props = {showErrorIcon: true};
@@ -27,9 +29,12 @@ let props = {showErrorIcon: true};
     <Radio value="soccer">Soccer</Radio>
   </RadioGroup>
 </div>
-`);
+`
+);
 
-test('changes validationState to isInvalid or nothing', `
+test(
+  'changes validationState to isInvalid or nothing',
+  `
 import {RadioGroup, Radio} from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
@@ -51,11 +56,10 @@ let foo;
     <Radio value="soccer">Soccer</Radio>
   </RadioGroup>
 </div>
-`);
-
+`
+);
 
 // Need a remapping change which can take a set of oldValues and maps to newValues.
 // <RadioGroup label="Favorite sports" validationState={foo ? 'valid' : 'invalid'}>
 //   <Radio value="soccer">Soccer</Radio>
 // </RadioGroup>
-

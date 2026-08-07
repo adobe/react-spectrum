@@ -1,7 +1,6 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader, ActionButton} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['accordion', 'collapsible', 'expandable'];
@@ -13,7 +12,7 @@ export const description = 'A collapsible section of content.';
 
 ```tsx render docs={docs.exports.Disclosure} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled']} type="s2"
 "use client";
-import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2/Disclosure';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Disclosure
@@ -30,7 +29,7 @@ Use the `isExpanded` or `defaultExpanded` prop to set the expanded state, and `o
 
 ```tsx render
 "use client";
-import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2/Disclosure';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -57,7 +56,8 @@ Use `DisclosureHeader` to add additional elements alongside the title, such as a
 
 ```tsx render
 "use client";
-import {Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader, ActionButton} from '@react-spectrum/s2';
+import {Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader} from '@react-spectrum/s2/Disclosure';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Disclosure styles={style({width: 250})}>

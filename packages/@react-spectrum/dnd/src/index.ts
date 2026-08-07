@@ -12,9 +12,9 @@
 
 /// <reference types="css-module-types" />
 
-export type {DragAndDropOptions, DragAndDropHooks} from './useDragAndDrop';
-export {useDragAndDrop} from './useDragAndDrop';
-export {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@adobe/react-spectrum/useDragAndDrop';
+
+export type {DragAndDropOptions, DragAndDropHooks} from '@adobe/react-spectrum/useDragAndDrop';
 
 export type {
   DirectoryDropItem,

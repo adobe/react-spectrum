@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Ruler_L from 'illustration:./S2_lin_ruler_160.svg';
 import Ruler_M from 'illustration:./S2_lin_ruler_96.svg';
 import Ruler_S from 'illustration:./S2_lin_ruler_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Ruler(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

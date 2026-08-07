@@ -6,16 +6,19 @@ export default new Transformer({
     let code = await asset.getCode();
 
     let replaced = false;
-    code = code.replace(/(<ExampleSwitcher type="component" examples={(\[.*?\])}>)((?:.|\n)*?)<\/ExampleSwitcher>/g, (m, start, examples, inner) => {
-      if (inner.includes('COMPONENT')) {
-        replaced = true;
-        let components = json5.parse(examples);
-        inner = components.map(component => inner.replace(/COMPONENT/g, component)).join('\n\n');
-        return start + inner + '</ExampleSwitcher>';
-      }
+    code = code.replace(
+      /(<ExampleSwitcher type="component" examples={(\[.*?\])}>)((?:.|\n)*?)<\/ExampleSwitcher>/g,
+      (m, start, examples, inner) => {
+        if (inner.includes('COMPONENT')) {
+          replaced = true;
+          let components = json5.parse(examples);
+          inner = components.map(component => inner.replace(/COMPONENT/g, component)).join('\n\n');
+          return start + inner + '</ExampleSwitcher>';
+        }
 
-      return m;
-    });
+        return m;
+      }
+    );
 
     if (replaced) {
       asset.setCode(code);

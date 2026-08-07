@@ -1,12 +1,16 @@
 'use client';
 import React from 'react';
-import { composeRenderProps, Button as RACButton, ButtonProps as RACButtonProps } from 'react-aria-components';
-import { tv } from 'tailwind-variants';
-import { focusRing } from './utils';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
+import {
+  Button as RACButton,
+  type ButtonProps as RACButtonProps
+} from 'react-aria-components/Button';
+import {tv} from 'tailwind-variants';
+import {focusRing} from './utils';
 
 export interface ButtonProps extends RACButtonProps {
   /** @default 'primary' */
-  variant?: 'primary' | 'secondary' | 'destructive' | 'icon'
+  variant?: 'primary' | 'secondary' | 'destructive' | 'icon';
 }
 
 let button = tv({
@@ -23,11 +27,9 @@ export function FieldButton(props: ButtonProps) {
   return (
     <RACButton
       {...props}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => button({...renderProps, className})
-      )}
-    >
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        button({...renderProps, className})
+      )}>
       {props.children}
     </RACButton>
   );

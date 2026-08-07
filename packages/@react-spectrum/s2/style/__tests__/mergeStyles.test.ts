@@ -14,7 +14,9 @@ import {mergeStyles} from '../runtime';
 import {style} from '../spectrum-theme';
 
 function stripMacro(css) {
-  return css.replaceAll(/ -macro-static-[0-9a-zA-Z]+/gi, '').replaceAll(/ -macro-dynamic-[0-9a-zA-Z]+/gi, '');
+  return css
+    .replaceAll(/ -macro-static-[0-9a-zA-Z]+/gi, '')
+    .replaceAll(/ -macro-dynamic-[0-9a-zA-Z]+/gi, '');
 }
 
 describe('mergeStyles', () => {
@@ -46,8 +48,14 @@ describe('mergeStyles', () => {
     });
 
     it('should not merge multiple dynamic macro classes', () => {
-      let a = style({backgroundColor: 'red-1000', color: {default: '[hotpink]', isDisabled: 'gray-400'}});
-      let b = style({fontSize: '[15px]', backgroundColor: {default: 'gray-50', isDisabled: 'gray-400'}});
+      let a = style({
+        backgroundColor: 'red-1000',
+        color: {default: '[hotpink]', isDisabled: 'gray-400'}
+      });
+      let b = style({
+        fontSize: '[15px]',
+        backgroundColor: {default: 'gray-50', isDisabled: 'gray-400'}
+      });
       let merged = mergeStyles(a({isDisabled: true}), b({isDisabled: false}));
       let macroClasses = merged.match(/-macro-dynamic-[0-9a-zA-Z]+/g);
       expect(macroClasses).toHaveLength(2);
@@ -55,7 +63,10 @@ describe('mergeStyles', () => {
     });
 
     it('should retain both static and dynamic macro classes', () => {
-      let a = style({backgroundColor: 'red-1000', color: {default: '[hotpink]', isDisabled: 'gray-400'}});
+      let a = style({
+        backgroundColor: 'red-1000',
+        color: {default: '[hotpink]', isDisabled: 'gray-400'}
+      });
       let b = style({fontSize: 'body-xs', backgroundColor: 'gray-50'});
       let merged = mergeStyles(a({isDisabled: true}), b);
       let staticMacroClasses = merged.match(/-macro-static-[0-9a-zA-Z]+/g);

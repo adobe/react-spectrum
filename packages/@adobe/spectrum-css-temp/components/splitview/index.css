@@ -39,10 +39,21 @@ governing permissions and limitations under the License.
   transform: translate(0, -50%);
 
   /* half of (width + horizontal border - handle width) * -1 (for negative opposite) */
-  left: calc(((var(--spectrum-rail-gripper-width) + (2 * var(--spectrum-rail-gripper-border-width-horizontal)) - var(--spectrum-rail-handle-width)) / 2) * -1);
+  left: calc(
+    (
+        (
+            var(--spectrum-rail-gripper-width) +
+              (2 * var(--spectrum-rail-gripper-border-width-horizontal)) -
+              var(--spectrum-rail-handle-width)
+          ) /
+          2
+      ) *
+      -1
+  );
   width: var(--spectrum-rail-gripper-width);
   height: var(--spectrum-rail-gripper-height);
-  border-width: var(--spectrum-rail-gripper-border-width-vertical) var(--spectrum-rail-gripper-border-width-horizontal);
+  border-width: var(--spectrum-rail-gripper-border-width-vertical)
+    var(--spectrum-rail-gripper-border-width-horizontal);
 
   touch-action: none;
 }
@@ -100,7 +111,17 @@ governing permissions and limitations under the License.
 
   .spectrum-SplitView-gripper {
     /* half of (height + vertical border - handle width) * -1 (for negative opposite) */
-    top: calc(((var(--spectrum-rail-gripper-width) + (2 * var(--spectrum-rail-gripper-border-width-horizontal)) - var(--spectrum-rail-handle-width)) / 2) * -1);
+    top: calc(
+      (
+          (
+              var(--spectrum-rail-gripper-width) +
+                (2 * var(--spectrum-rail-gripper-border-width-horizontal)) -
+                var(--spectrum-rail-handle-width)
+            ) /
+            2
+        ) *
+        -1
+    );
 
     transform: translate(calc(var(--spectrum-splitview-vertical-gripper-width) * -1), 0);
     left: var(--spectrum-splitview-vertical-gripper-width);
@@ -108,7 +129,8 @@ governing permissions and limitations under the License.
     height: var(--spectrum-rail-gripper-width); /* same as default width */
 
     /* opposite of default border-width */
-    border-width: var(--spectrum-rail-gripper-border-width-horizontal) var(--spectrum-rail-gripper-border-width-vertical);
+    border-width: var(--spectrum-rail-gripper-border-width-horizontal)
+      var(--spectrum-rail-gripper-border-width-vertical);
   }
 
   .spectrum-SplitView-splitter {
@@ -122,7 +144,10 @@ governing permissions and limitations under the License.
 
         /* make the center line of the gripper */
         &:before {
-          top: calc(var(--spectrum-splitview-vertical-gripper-width) - calc(var(--spectrum-rail-handle-width) / 2));
+          top: calc(
+            var(--spectrum-splitview-vertical-gripper-width) -
+              calc(var(--spectrum-rail-handle-width) / 2)
+          );
           left: var(--spectrum-splitview-vertical-gripper-reset);
           width: var(--spectrum-splitview-vertical-gripper-outer-width);
           height: var(--spectrum-rail-handle-width);

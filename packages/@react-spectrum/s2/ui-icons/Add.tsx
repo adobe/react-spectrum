@@ -39,7 +39,9 @@ let styles = style({
   }
 });
 
-export default function Add(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}): ReactNode {
+export default function Add(
+  props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}
+): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

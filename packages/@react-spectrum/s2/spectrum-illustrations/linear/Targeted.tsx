@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Targeted_L from 'illustration:./S2_lin_targeted_160.svg';
 import Targeted_M from 'illustration:./S2_lin_targeted_96.svg';
 import Targeted_S from 'illustration:./S2_lin_targeted_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Targeted(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

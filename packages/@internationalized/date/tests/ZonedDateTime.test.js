@@ -95,7 +95,11 @@ describe('ZonedDateTime', function () {
     describe('should handle backward timezone transitions', function () {
       it('should add hours across backward timezone transitions', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
-        let expected = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'later');
+        let expected = toZoned(
+          new CalendarDateTime(2021, 11, 7, 1),
+          'America/Los_Angeles',
+          'later'
+        );
         expect(zoned.add({hours: 1})).toEqual(expected);
 
         zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
@@ -105,7 +109,11 @@ describe('ZonedDateTime', function () {
 
       it('should subtract hours across backward timezone transitions', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'later');
-        let expected = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
+        let expected = toZoned(
+          new CalendarDateTime(2021, 11, 7, 1),
+          'America/Los_Angeles',
+          'earlier'
+        );
         expect(zoned.subtract({hours: 1})).toEqual(expected);
 
         zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'later');
@@ -125,7 +133,11 @@ describe('ZonedDateTime', function () {
 
       it('should subtract across backward timezone transitions at midnight', function () {
         let zoned = toZoned(new CalendarDateTime(2019, 2, 16, 23), 'America/Sao_Paulo', 'later');
-        let expected = toZoned(new CalendarDateTime(2019, 2, 16, 23), 'America/Sao_Paulo', 'earlier');
+        let expected = toZoned(
+          new CalendarDateTime(2019, 2, 16, 23),
+          'America/Sao_Paulo',
+          'earlier'
+        );
         expect(zoned.subtract({hours: 1})).toEqual(expected);
 
         zoned = toZoned(new CalendarDateTime(2019, 2, 17, 0), 'America/Sao_Paulo', 'later');
@@ -160,7 +172,11 @@ describe('ZonedDateTime', function () {
     describe('should handle backward timezone transitions', function () {
       it('forward', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
-        let expected = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'later');
+        let expected = toZoned(
+          new CalendarDateTime(2021, 11, 7, 1),
+          'America/Los_Angeles',
+          'later'
+        );
         expect(zoned.cycle('hour', 1)).toEqual(expected);
 
         zoned = toZoned(new CalendarDateTime(2021, 11, 6, 1), 'America/Los_Angeles');
@@ -170,7 +186,11 @@ describe('ZonedDateTime', function () {
 
       it('reverse', function () {
         let zoned = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'later');
-        let expected = toZoned(new CalendarDateTime(2021, 11, 7, 1), 'America/Los_Angeles', 'earlier');
+        let expected = toZoned(
+          new CalendarDateTime(2021, 11, 7, 1),
+          'America/Los_Angeles',
+          'earlier'
+        );
         expect(zoned.cycle('hour', -1)).toEqual(expected);
 
         zoned = toZoned(new CalendarDateTime(2021, 11, 8, 1), 'America/Los_Angeles');
@@ -218,7 +238,11 @@ describe('ZonedDateTime', function () {
 
       it('reverse', function () {
         let zoned = toZoned(new CalendarDateTime(2019, 2, 16, 23), 'America/Sao_Paulo', 'later');
-        let expected = toZoned(new CalendarDateTime(2019, 2, 16, 23), 'America/Sao_Paulo', 'earlier');
+        let expected = toZoned(
+          new CalendarDateTime(2019, 2, 16, 23),
+          'America/Sao_Paulo',
+          'earlier'
+        );
         expect(zoned.cycle('hour', -1)).toEqual(expected);
       });
     });

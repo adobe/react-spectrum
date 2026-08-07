@@ -27,7 +27,6 @@ governing permissions and limitations under the License.
   border-block-end-color: var(--spectrum-tabs-rule-color);
 
   &.spectrum-Tabs--isCollapsed {
-
     .spectrum-Tabs-picker {
       width: auto;
     }
@@ -63,14 +62,14 @@ governing permissions and limitations under the License.
   color: var(--spectrum-tabs-text-color);
 
   .spectrum-Icon {
-    fill: var(--spectrum-tabs-icon-color)
+    fill: var(--spectrum-tabs-icon-color);
   }
 
   &:hover {
     color: var(--spectrum-tabs-text-color-hover);
 
     .spectrum-Icon {
-      fill: var(--spectrum-tabs-icon-color-hover)
+      fill: var(--spectrum-tabs-icon-color-hover);
     }
   }
 
@@ -78,7 +77,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-tabs-text-color-selected);
 
     .spectrum-Icon {
-      fill: var(--spectrum-tabs-icon-color-selected)
+      fill: var(--spectrum-tabs-icon-color-selected);
     }
   }
 
@@ -90,7 +89,7 @@ governing permissions and limitations under the License.
     }
 
     .spectrum-Icon {
-      fill: var(--spectrum-tabs-icon-color-key-focus)
+      fill: var(--spectrum-tabs-icon-color-key-focus);
     }
   }
 
@@ -98,7 +97,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-tabs-text-color-disabled);
 
     .spectrum-Icon {
-      fill: var(--spectrum-tabs-icon-color-disabled)
+      fill: var(--spectrum-tabs-icon-color-disabled);
     }
   }
 }
@@ -227,7 +226,6 @@ governing permissions and limitations under the License.
         /* FieldButton Picker focus ring override */
         outline: none;
       }
-
     }
   }
 }
