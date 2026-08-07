@@ -13,6 +13,28 @@
 import {getScrollParents} from './getScrollParents';
 import {isIOS, isWebKit} from '../utils/platform';
 
+let recentlyScrolledElements = new WeakMap<Node, number>();
+function markScrolledIntoView(...elements: (Node | null | undefined)[]): void {
+  let time = Date.now();
+  for (let element of elements) {
+    if (element) {
+      recentlyScrolledElements.set(element, time);
+    }
+  }
+}
+
+/**
+ * Scroll events don't say what caused them, so useCloseOnScroll uses this to ignore ones it
+ * triggered itself, scoped to the specific element that was scrolled.
+ */
+export function wasScrolledIntoView(target: EventTarget | null): boolean {
+  if (!(target instanceof Node)) {
+    return false;
+  }
+  let time = recentlyScrolledElements.get(target);
+  return time != null && Date.now() - time < 100;
+}
+
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
   block?: ScrollLogicalPosition;
@@ -40,6 +62,8 @@ export function scrollIntoView(
   if (scrollView === element) {
     return;
   }
+
+  markScrolledIntoView(scrollView);
 
   let y = scrollView.scrollTop;
   let x = scrollView.scrollLeft;
@@ -149,6 +173,12 @@ export function scrollIntoViewport(
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
     if (!isScrollPrevented) {
       let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+
+      // Mark every scrollable ancestor since the native scrollIntoView calls below may scroll any of them.
+      markScrolledIntoView(...getScrollParents(targetElement, true));
+      if (containingElement) {
+        markScrolledIntoView(...getScrollParents(containingElement, true));
+      }
 
       // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
       // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically

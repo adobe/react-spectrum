@@ -16,6 +16,7 @@ import {Focusable} from 'react-aria/Focusable';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
+import {scrollIntoView} from '@react-aria/utils';
 import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
@@ -204,6 +205,46 @@ describe('Tooltip', () => {
     expect(scrollContainer).toBeInTheDocument();
     fireEvent.scroll(scrollContainer, {target: {top: 100}});
     expect(tooltip1).not.toBeVisible();
+  });
+
+  it('should not hide tooltip on scroll caused by scrollIntoView/scrollIntoViewport, but should hide on a later unrelated scroll', async () => {
+    let {getByRole, getByTestId} = render(
+      <div style={{overflow: 'scroll', height: '200px'}} data-testid="scroll-container">
+        <TestTooltip />
+      </div>
+    );
+
+    let scrollContainer = getByTestId('scroll-container');
+    await user.tab();
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+
+    scrollIntoView(scrollContainer, getByRole('button'));
+    fireEvent.scroll(scrollContainer);
+    expect(tooltip).toBeVisible();
+
+    act(() => jest.advanceTimersByTime(100));
+    fireEvent.scroll(scrollContainer);
+    expect(tooltip).not.toBeVisible();
+  });
+
+  it('should still hide tooltip on scroll when an unrelated element is scrolled into view elsewhere', async () => {
+    let {getByRole} = renderTooltip();
+
+    await user.tab();
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+
+    // An unrelated part of the page (e.g. a Table doing keyboard navigation) scrolls its own,
+    // unrelated container into view. This should not affect this tooltip at all.
+    let unrelatedContainer = document.createElement('div');
+    let unrelatedChild = document.createElement('div');
+    unrelatedContainer.appendChild(unrelatedChild);
+    document.body.appendChild(unrelatedContainer);
+    scrollIntoView(unrelatedContainer, unrelatedChild);
+
+    fireEvent.scroll(document.body);
+    expect(tooltip).not.toBeVisible();
   });
 
   describe('portalProvider', () => {
