@@ -47,6 +47,7 @@
     "start:s2-docs": "yarn workspace @react-spectrum/s2-docs start",
     "start:s2-docs-parcel3": "yarn workspace @react-spectrum/s2-docs start:parcel3",
     "build:s2-docs": "yarn workspace @react-spectrum/s2-docs build",
+    "build:s2-docs-parcel3": "yarn workspace @react-spectrum/s2-docs build:parcel3",
     "check:s2-docs-build": "node packages/dev/s2-docs/scripts/validateS2DocsBuild.mjs",
     "build:mcp": "yarn workspace @react-spectrum/mcp build && yarn workspace @react-aria/mcp build",
     "generate:skills": "node packages/dev/s2-docs/scripts/generateAgentSkills.mjs",

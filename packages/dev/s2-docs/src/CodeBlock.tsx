@@ -14,6 +14,8 @@ import path from 'path';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {VisualExample, VisualExampleProps} from './VisualExample';
 
+const baseDir = process.env.PARCEL_V3 ? __dirname + '/../../../../' : '../../../';
+
 const example = style({
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
@@ -106,8 +108,8 @@ export function CodeBlock({
   }
 
   let resolveFrom = path.resolve(
-    __dirname,
-    '../pages',
+    baseDir,
+    'packages/dev/s2-docs/pages',
     dir || (props.type === 's2' ? 's2' : 'react-aria'),
     'index.tsx'
   );
@@ -266,7 +268,6 @@ export function Files({
 }
 
 const readFile = cache((file: string) => fs.readFileSync(file, 'utf8'));
-const baseDir = process.env.PARCEL_V3 ? __dirname + '/../../../../' : '../../../';
 
 export function File({
   filename,
