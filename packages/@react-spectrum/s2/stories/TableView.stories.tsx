@@ -438,7 +438,7 @@ function renderEmptyState() {
 }
 
 const EmptyStateTable = (args: TableViewProps): ReactElement => (
-  <TableView aria-label="Empty state" {...args} styles={style({height: 320, width: 320})}>
+  <TableView aria-label="Empty state" {...args} styles={style({ width: 320})}>
     <TableHeader columns={columns}>
       {column => (
         <Column minWidth={200} width={200} isRowHeader={column.isRowHeader}>
@@ -457,6 +457,31 @@ export const EmptyState: StoryObj<typeof EmptyStateTable> = {
   args: {
     ...Example.args
   }
+};
+
+// No explicit height set at all: https://github.com/adobe/react-spectrum/issues/10235
+// The table should still auto-size to show the column headers and the empty state.
+const EmptyStateTableNoHeight = (args: TableViewProps): ReactElement => (
+  <TableView aria-label="Empty state, no height" {...args} styles={style({width: 320})}>
+    <TableHeader columns={columns}>
+      {column => (
+        <Column minWidth={200} width={200} isRowHeader={column.isRowHeader}>
+          {column.name}
+        </Column>
+      )}
+    </TableHeader>
+    <TableBody items={[]} renderEmptyState={renderEmptyState}>
+      {[]}
+    </TableBody>
+  </TableView>
+);
+
+export const EmptyStateNoHeight: StoryObj<typeof EmptyStateTableNoHeight> = {
+  render: EmptyStateTableNoHeight,
+  args: {
+    ...Example.args
+  },
+  name: 'empty state, no explicit height'
 };
 
 export const LoadingStateNoItems: StoryObj<typeof EmptyStateTable> = {
