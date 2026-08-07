@@ -634,13 +634,18 @@ export function getSelectedRange(container: Element) {
     return null;
   }
   let anchor = getPosition(container, selection.anchorNode, selection.anchorOffset, false);
-  let current = getPosition(container, selection.focusNode, selection.focusOffset, true);
+  let current = getPosition(
+    container,
+    selection.focusNode,
+    selection.focusOffset,
+    !selection.isCollapsed
+  );
   return new TokenFieldValue.SelectedRange(anchor, current);
 }
 
 function rangeToPositions(container: Element, range: Range | StaticRange): [Position, Position] {
   let start = getPosition(container, range.startContainer, range.startOffset, false);
-  let end = getPosition(container, range.endContainer, range.endOffset, true);
+  let end = getPosition(container, range.endContainer, range.endOffset, !range.collapsed);
   return [start, end];
 }
 
