@@ -12,11 +12,11 @@
 
 import {act, createShadowRoot, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {enableShadowDOM} from '@react-stately/flags';
-import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import React, {useRef} from 'react';
 import ReactDOM from 'react-dom';
 import {UNSAFE_PortalProvider} from '../../src/overlays/PortalProvider';
 import {useOverlayTrigger} from '../../src/overlays/useOverlayTrigger';
+import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {usePopover} from '../../src/overlays/usePopover';
 import userEvent from '@testing-library/user-event';
 
@@ -141,6 +141,13 @@ if (parseInt(React.version, 10) >= 17) {
       // Cleanup
       unmount();
       document.body.removeChild(shadowRoot.host);
+    });
+  });
+} else {
+  // Jest requires there be at least one test in the suite
+  describe('empty test', () => {
+    it('should pass', () => {
+      expect(true).toBe(true);
     });
   });
 }

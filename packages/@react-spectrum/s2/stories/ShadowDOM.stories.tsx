@@ -552,7 +552,7 @@ function AllComponents() {
           aria-label="Table"
           selectionMode="single"
           renderActionBar={selectedKeys => (
-            <ActionBar selectedItemCount={selectedKeys.size}>
+            <ActionBar selectedItemCount={selectedKeys === 'all' ? 2 : selectedKeys.size}>
               <Button>Action</Button>
             </ActionBar>
           )}>

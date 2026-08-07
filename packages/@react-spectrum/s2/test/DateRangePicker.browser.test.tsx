@@ -25,7 +25,10 @@ import {userEvent} from 'vitest/browser';
 // Must be enabled before mounting. This flag is one-way and cannot be turned off.
 enableShadowDOM();
 
-it('DateRangePicker opens and selects a range inside a shadow root', async () => {
+// Firefox has a bug that leaks a focus event and causes another test to fail.
+let isFirefox = /firefox/i.test(navigator.userAgent);
+
+it.skipIf(isFirefox)('DateRangePicker opens and selects a range inside a shadow root', async () => {
   let onChange = vi.fn();
 
   let host = document.createElement('div');
