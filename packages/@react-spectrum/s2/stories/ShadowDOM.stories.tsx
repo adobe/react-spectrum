@@ -551,8 +551,8 @@ function AllComponents() {
         <TableView
           aria-label="Table"
           selectionMode="single"
-          renderActionBar={() => (
-            <ActionBar selectedItemCount={1} onClearSelection={action('clear')}>
+          renderActionBar={selectedKeys => (
+            <ActionBar selectedItemCount={selectedKeys.size}>
               <Button>Action</Button>
             </ActionBar>
           )}>
