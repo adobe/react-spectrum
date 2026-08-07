@@ -11,6 +11,7 @@
  */
 
 import {
+  act,
   fireEvent,
   installPointerEvent,
   pointerMap,
@@ -114,6 +115,40 @@ describe('useSelectableCollection', () => {
     expect(document.activeElement).toBe(options[2]);
     await user.keyboard('{PageUp}');
     expect(document.activeElement).toBe(options[0]);
+  });
+
+  it('focuses the collection root on shift+tab from an internal tab stop', async () => {
+    let {getByRole} = render(
+      <>
+        <button>before</button>
+        <List aria-label="Test">
+          <Item key="i1" textValue="One">
+            <button>inner one</button>
+          </Item>
+          <Item key="i2" textValue="Two">
+            <button>inner two</button>
+          </Item>
+        </List>
+      </>
+    );
+    let listbox = getByRole('listbox');
+    let inner = within(listbox).getByRole('button', {name: 'inner one'});
+
+    await user.tab();
+    await user.tab();
+    act(() => {
+      inner.focus();
+    });
+    expect(document.activeElement).toBe(inner);
+
+    fireEvent.keyDown(document.activeElement, {
+      key: 'Tab',
+      shiftKey: true,
+      code: 'Tab',
+      bubbles: true
+    });
+
+    expect(document.activeElement).toBe(listbox);
   });
 
   describe.each`

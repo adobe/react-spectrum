@@ -15,7 +15,12 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {createSyntheticEvent, setEventTarget, useSyntheticBlurEvent} from './utils';
+import {
+  createSyntheticEvent,
+  setEventTarget,
+  shouldIgnoreTransientFocusChange,
+  useSyntheticBlurEvent
+} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {FocusEvent, useCallback, useRef} from 'react';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
@@ -63,6 +68,12 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
         state.current.isFocusWithin &&
         !nodeContains(e.currentTarget as Element, e.relatedTarget as Element)
       ) {
+        if (
+          shouldIgnoreTransientFocusChange(e.relatedTarget as Element, e.currentTarget as Element)
+        ) {
+          return;
+        }
+
         state.current.isFocusWithin = false;
         removeAllGlobalListeners();
 
@@ -92,8 +103,17 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       const ownerDocument = getOwnerDocument(eventTarget);
       const activeElement = getActiveElement(ownerDocument);
       if (!state.current.isFocusWithin && activeElement === eventTarget) {
+        let isTransientPivot = shouldIgnoreTransientFocusChange(
+          e.relatedTarget as Element,
+          e.currentTarget as Element
+        );
+
         if (onFocusWithin) {
           onFocusWithin(e);
+        }
+
+        if (isTransientPivot) {
+          return;
         }
 
         if (onFocusWithinChange) {
