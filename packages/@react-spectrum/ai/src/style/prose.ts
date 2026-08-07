@@ -100,8 +100,8 @@ export function prose(this: MacroContext | void) {
       listStyleType: 'decimal'
     },
     li: {
-      marginTop: '.25em',
-      marginBottom: '.25em'
+      marginTop: '.5em',
+      marginBottom: '.5em'
     },
     'li > p:last-child:not(:first-child)': {
       marginBottom: marginBottom.body
