@@ -14,22 +14,22 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
 import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
+import {Button} from '@react-spectrum/s2/Button';
+import {Cell} from './loader/data';
+import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
-  baseColor,
   color,
   css,
   iconStyle,
   style,
   StyleString
 } from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from '@react-spectrum/s2/Button';
-import {Cell} from './loader/data';
-import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
   createContext,
   createRef,
   forwardRef,
   use,
+  useCallback,
   useContext,
   useDeferredValue,
   useEffect,
@@ -38,9 +38,10 @@ import {
   useState
 } from 'react';
 import {FocusableRef} from '@react-types/shared';
+import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {IconContext} from '@react-spectrum/s2';
-import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
+import {Image, Text} from '@react-spectrum/s2/Card';
 import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
@@ -86,9 +87,9 @@ export interface PromptFieldAttachment {
 export interface PromptFieldProps {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
-  value?: TokenFieldValue;
-  defaultValue?: TokenFieldValue;
-  onChange?: (value: TokenFieldValue) => void;
+  value?: PromptFieldValue;
+  defaultValue?: PromptFieldValue;
+  onChange?: (value: PromptFieldValue) => void;
   attachments?: PromptFieldAttachment[];
   defaultAttachments?: PromptFieldAttachment[];
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
@@ -106,8 +107,8 @@ interface PromptFieldState {
   attachments: PromptFieldAttachment[];
   setAttachments: React.Dispatch<React.SetStateAction<PromptFieldAttachment[]>>;
   acceptedAttachmentTypes?: string[];
-  prompt: TokenFieldValue;
-  setPrompt: React.Dispatch<React.SetStateAction<TokenFieldValue>>;
+  prompt: PromptFieldValue;
+  setPrompt: React.Dispatch<React.SetStateAction<PromptFieldValue>>;
   inputRef: React.RefObject<HTMLDivElement | null>;
   onSubmit?: () => void;
   onStop?: () => void;
@@ -145,9 +146,74 @@ function tokenizeURLs(text: string): TokenFieldSegment[] {
   return segments;
 }
 
-export class PromptFieldValue extends TokenFieldValue {
+interface UrlTokenValue {
+  type: 'url';
+  url: string;
+}
+
+interface PlaceholderTokenValue {
+  type: 'placeholder';
+  placeholderType: 'token';
+  /** Anchor character to insert when the user starts typing (e.g. '@'). */
+  anchor: string;
+  /** Expected value type to filter completions by. */
+  valueType: string | null;
+}
+
+interface PlaceholderTextTokenValue {
+  type: 'placeholder';
+  placeholderType: 'text';
+}
+
+interface AnchorTokenValue {
+  type: 'anchor';
+  valueType: string;
+}
+
+interface CustomTokenValue {
+  type: 'custom';
+  [key: string]: any;
+}
+
+export type PromptFieldTokenValue =
+  | UrlTokenValue
+  | PlaceholderTokenValue
+  | PlaceholderTextTokenValue
+  | AnchorTokenValue
+  | CustomTokenValue;
+
+export class PromptFieldValue extends TokenFieldValue<PromptFieldTokenValue> {
   tokenize(text: string): TokenFieldSegment[] {
     return tokenizeURLs(text);
+  }
+
+  replaceRangeWithSegments(
+    start: Position,
+    end: Position,
+    segments: TokenFieldSegment[],
+    coalesce = true
+  ): this {
+    let slice = this.slice(start, end).segments;
+    let token = slice[0];
+    if (
+      slice.length === 1 &&
+      token.type === 'token' &&
+      token.value?.type === 'placeholder' &&
+      token.value.placeholderType === 'token' &&
+      segments.length === 1 &&
+      segments[0].type === 'text' &&
+      !segments[0].text.startsWith(token.value.anchor)
+    ) {
+      segments = [
+        {
+          type: 'token',
+          text: token.value.anchor,
+          value: {type: 'anchor', valueType: token.value.valueType}
+        },
+        ...segments
+      ];
+    }
+    return super.replaceRangeWithSegments(start, end, segments, coalesce);
   }
 }
 
@@ -334,9 +400,10 @@ export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps)
 export interface PromptTokenFieldProps {
   completionTrigger?: RegExp;
   renderCompletions?: (
-    filterValue: string
+    filterValue: string,
+    valueType: string | null
   ) => React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
-  children?: (segment: TokenSegment) => React.ReactElement;
+  children?: (segment: TokenSegment<PromptFieldTokenValue>) => React.ReactElement;
   pixelLoader?: Cell[] | Cell[][];
   placeholder?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
@@ -369,24 +436,81 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [isFocused, setFocused] = useState(false);
 
-  let [filterAnchor, filterValue] = useMemo(() => {
+  let [filterAnchor, filterValue, filterType] = useMemo(() => {
+    // If on a placeholder token, show suggestions.
+    let slice = prompt.slice(prompt.selectedRange.start, prompt.selectedRange.end);
+    let segment = slice.segments.length === 1 ? slice.segments[0] : null;
+    if (
+      segment?.type === 'token' &&
+      segment.value?.type === 'placeholder' &&
+      segment.value.placeholderType === 'token'
+    ) {
+      return [prompt.selectedRange.start, '', segment.value.valueType ?? null];
+    }
+
     if (completionTrigger) {
+      // Find a preceding anchor token. This tells us what kind of object to filter for.
+      let anchorTokenIndex = -1;
+      let filterType: string | null = null;
+      for (
+        let index = Math.min(prompt.selectedRange.anchor.index, prompt.segments.length - 1);
+        index >= 0;
+        index--
+      ) {
+        let segment = prompt.segments[index];
+        if (segment.type === 'token' && segment.value?.type === 'anchor') {
+          anchorTokenIndex = index;
+          filterType = segment.value?.valueType;
+          break;
+        }
+      }
+
       let filterAnchor = prompt.findText(
         prompt.caretPosition,
         TokenFieldValue.Direction.Backward,
         completionTrigger
       );
+
+      // If anchor token is after text anchor, use it.
+      if (anchorTokenIndex >= 0 && (!filterAnchor || anchorTokenIndex > filterAnchor.index)) {
+        filterAnchor = {index: anchorTokenIndex, offset: 0};
+      }
+
+      // Filter text is the text between the anchor and the caret position.
       if (filterAnchor != null) {
         let filterValue = prompt.slice(filterAnchor, prompt.caretPosition).toString();
-        return [filterAnchor, filterValue];
+        return [filterAnchor, filterValue, filterType];
       }
     }
-    return [null, null];
+    return [null, null, null];
   }, [completionTrigger, prompt]);
 
   let items = useMemo(() => {
-    return filterValue != null ? renderCompletions?.(filterValue) : null;
-  }, [filterValue, renderCompletions]);
+    return filterValue != null ? renderCompletions?.(filterValue, filterType) : null;
+  }, [filterValue, filterType, renderCompletions]);
+
+  let onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDownProp?.(e);
+    if (e.key === 'Tab') {
+      let index = prompt.caretPosition.index;
+      let dir = e.shiftKey ? -1 : 1;
+      for (let i = index + dir; i >= 0 && i < prompt.segments.length; i += dir) {
+        let segment = prompt.segments[i];
+        if (segment.type === 'token' && segment.value?.type === 'placeholder') {
+          e.preventDefault();
+          setPrompt(value =>
+            value.withSelectedRange(
+              new TokenFieldValue.SelectedRange(
+                {index: i, offset: 0},
+                {index: i, offset: segment.text.length}
+              )
+            )
+          );
+          break;
+        }
+      }
+    }
+  };
 
   return (
     <div
@@ -441,9 +565,32 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           aria-label={stringFormatter.format('promptfield.label')}
           isReadOnly={isListening}
           onSubmit={onSubmit}
+          onKeyDown={onKeyDown}
           onFocus={e => {
             if (e.isTrusted) {
               setFocused(true);
+
+              // If shift tabbing into the prompt field, select the last placeholder if any.
+              if (
+                e.relatedTarget &&
+                getInteractionModality() === 'keyboard' &&
+                e.currentTarget.compareDocumentPosition(e.relatedTarget) &
+                  Node.DOCUMENT_POSITION_FOLLOWING
+              ) {
+                let lastPlaceholder = prompt.segments.findLastIndex(
+                  s => s.type === 'token' && s.value?.type === 'placeholder'
+                );
+                if (lastPlaceholder >= 0) {
+                  setPrompt(value =>
+                    value.withSelectedRange(
+                      new TokenFieldValue.SelectedRange(
+                        {index: lastPlaceholder, offset: 0},
+                        {index: lastPlaceholder, offset: 1}
+                      )
+                    )
+                  );
+                }
+              }
             }
           }}
           onBlur={e => {
@@ -477,12 +624,12 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           <TokenInput
             data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
             ref={inputRef}
-            className={renderProps =>
+            className={
               css('&:empty::before { content: attr(data-placeholder); }') +
               style({
                 font: 'body',
                 color: {
-                  default: baseColor('neutral'),
+                  default: 'neutral',
                   ':empty': {
                     default: 'gray-600',
                     forcedColors: 'GrayText'
@@ -491,9 +638,22 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                 width: 'full',
                 outlineStyle: 'none',
                 cursor: 'text'
-              })(renderProps)
+              })
             }>
-            {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
+            {useCallback(
+              (token: TokenSegment<PromptFieldTokenValue>) => {
+                if (token.value?.type === 'anchor') {
+                  return <Token>{token.text}</Token>;
+                } else {
+                  return children ? (
+                    children(token)
+                  ) : (
+                    <PromptToken token={token}>{token.text}</PromptToken>
+                  );
+                }
+              },
+              [children]
+            )}
           </TokenInput>
         </TokenField>
         <PromptTokenFieldPopover
@@ -517,7 +677,7 @@ export interface PromptTokenFieldPopoverProps extends Omit<PopoverProps, 'should
 
 function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
   let {filterAnchor, items, isFocused, menuWidth} = props;
-  let {inputRef} = useContext(PromptFieldContext);
+  let {inputRef, prompt} = useContext(PromptFieldContext);
 
   let resolvedItems = items instanceof Promise ? use(items) : items;
   let isOpen =
@@ -529,6 +689,19 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
     setMenuItems(resolvedItems);
   }
 
+  let key = 'popover';
+  if (filterAnchor) {
+    // If on a token, anchor to the end of the previous text segment.
+    if (filterAnchor.index > 0 && filterAnchor.offset === 0) {
+      filterAnchor = {
+        index: filterAnchor.index - 1,
+        offset: prompt.segments[filterAnchor.index - 1].text.length
+      };
+    }
+    // Reposition the popover when the anchor changes.
+    key = `${filterAnchor.index}:${filterAnchor.offset}`;
+  }
+
   return (
     <Popover
       triggerRef={inputRef}
@@ -537,6 +710,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       hideArrow
       placement="bottom start"
       UNSAFE_style={menuWidth != null ? {width: menuWidth} : undefined}
+      key={key}
       getTargetRect={target => {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
@@ -548,6 +722,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
 }
 
 export interface PromptTokenProps extends Omit<TokenProps, 'children' | 'render'> {
+  token: TokenSegment<PromptFieldTokenValue>;
   children: React.ReactNode;
 }
 
@@ -555,36 +730,44 @@ export function PromptToken(props: PromptTokenProps) {
   return (
     <Token
       {...props}
-      className={style({
-        font: 'ui',
-        backgroundColor: {
-          default: 'transparent-overlay-1000/10',
-          isSelected: 'blue-800',
-          '::selection': 'transparent'
-        },
-        color: {
-          default: 'body',
-          isSelected: 'white'
-        },
-        outlineStyle: 'solid',
-        outlineWidth: 1,
-        outlineColor: 'transparent-overlay-1000/10',
-        outlineOffset: -1,
-        borderRadius: 'pill',
-        boxShadow: `[inset 0 24px 32px 0 ${color('transparent-white-50')}, 0 8px 32px 0 ${color('transparent-black-50')}]`,
-        paddingX: 8,
-        paddingY: 4,
-        lineHeight: '[1em]',
-        cursor: 'default',
-        '--iconPrimary': {
-          type: 'fill',
-          value: 'currentColor'
-        },
-        display: 'inline-flex',
-        alignItems: 'baseline',
-        gap: 4,
-        verticalAlign: 'baseline'
-      })}>
+      className={renderProps =>
+        style({
+          font: 'ui',
+          backgroundColor: {
+            default: 'transparent-overlay-1000/10',
+            isSelected: 'blue-800',
+            '::selection': 'transparent'
+          },
+          color: {
+            default: 'body',
+            isSelected: 'white'
+          },
+          outlineStyle: {
+            default: 'solid',
+            isPlaceholder: 'dashed'
+          },
+          outlineWidth: 1,
+          outlineColor: {
+            default: 'transparent-overlay-1000/10',
+            isPlaceholder: 'transparent-overlay-1000/40'
+          },
+          outlineOffset: -1,
+          borderRadius: 'pill',
+          boxShadow: `[inset 0 24px 32px 0 ${color('transparent-white-50')}, 0 8px 32px 0 ${color('transparent-black-50')}]`,
+          paddingX: 8,
+          paddingY: 4,
+          lineHeight: '[1em]',
+          cursor: 'default',
+          '--iconPrimary': {
+            type: 'fill',
+            value: 'currentColor'
+          },
+          display: 'inline-flex',
+          alignItems: 'baseline',
+          gap: 4,
+          verticalAlign: 'baseline'
+        })({...renderProps, isPlaceholder: props.token.value?.type === 'placeholder'})
+      }>
       <IconContext.Provider
         value={{
           styles: iconStyle({size: 'XS'}),
@@ -674,7 +857,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     // to be inaccurate
     let finalPrompt = buildVoicePrompt(basePromptRef.current, transcript);
     inputRef.current.focus();
-    setTokenFieldSelection(inputRef.current, finalPrompt.caretPosition, finalPrompt.caretPosition);
+    setTokenFieldSelection(inputRef.current, finalPrompt.selectedRange);
     setPrompt(finalPrompt);
   });
 
@@ -799,16 +982,26 @@ export function AttachFileMenuItem() {
 }
 
 // either replace the filter text (aka token replace) or insert value at current caret position (aka plain text inject)
-function useInsertPromptSegment(buildSegments: (item: any) => TokenFieldSegment[]) {
+function useInsertPromptSegment(segments: TokenFieldSegment[]) {
   let {setPrompt, inputRef} = useContext(PromptFieldContext);
   let anchor = useContext(PromptCompletionAnchorContext);
   let pendingCaret = useRef<Position | null>(null);
-  return (item: any) => {
+  return () => {
     setPrompt(value => {
+      // Add a space only if not already followed by one, but move the cursor past the space in any case.
+      let space = value.findText(value.caretPosition, TokenFieldValue.Direction.Forward, ' ');
+      let hasFollowingSpace =
+        space && value.slice(value.caretPosition, space).segments.length === 0;
+      let insert: TokenFieldSegment[] = [...segments, {type: 'text', text: ' '}];
+      let endPosition = value.caretPosition;
+      if (hasFollowingSpace && space) {
+        space.offset++;
+        endPosition = space;
+      }
       let newValue = value.replaceRangeWithSegments(
         anchor ?? value.caretPosition,
-        value.caretPosition,
-        buildSegments(item),
+        endPosition,
+        insert,
         false // Don't coalesce in undo/redo history.
       );
       pendingCaret.current = newValue.caretPosition;
@@ -820,16 +1013,17 @@ function useInsertPromptSegment(buildSegments: (item: any) => TokenFieldSegment[
       setTimeout(() => {
         if (inputRef.current && pendingCaret.current) {
           let position = pendingCaret.current;
+          let range = new TokenFieldValue.SelectedRange(position);
           pendingCaret.current = null;
           inputRef.current.focus();
           // we need to update the position manually since TokenField's update caret logic only happens if the field is focused
           // but this insert can happen from the + menu aka the field isn't focused until this gets called which is too late
-          setTokenFieldSelection(inputRef.current, position, position);
+          setTokenFieldSelection(inputRef.current, range);
           // the above focus and setCursor call can cause the internally tracked caret position to be reset incorrectly
           // seemingly due to TokenField's isProgrammaticSelectionChange being flipped to false by setCursor and thus reset to 0 by the .focus
           // fix this by resetting to proper position below
           // happens when injecting multiple tokens one after another via + menu
-          setPrompt(value => value.withCaretPosition(position));
+          setPrompt(value => value.withSelectedRange(range));
         }
       }, 400);
     }
@@ -848,19 +1042,19 @@ export interface InsertTokenMenuItemProps extends Omit<
   | 'rel'
   | 'routerOptions'
   | 'target'
-> {}
+  | 'value'
+> {
+  token: TokenSegment<PromptFieldTokenValue>;
+}
 
 export function InsertTokenMenuItem(props: InsertTokenMenuItemProps) {
-  let insert = useInsertPromptSegment(item => [
-    {type: 'token', text: 'command' in item ? item.command : item.title, value: item},
-    {type: 'text', text: ' '}
-  ]);
+  let insert = useInsertPromptSegment([props.token]);
 
   return (
     <MenuItem
       {...props}
       onAction={() => {
-        insert(props.value);
+        insert();
         props.onAction?.();
       }}
     />
@@ -879,18 +1073,19 @@ export interface InsertTextMenuItemProps extends Omit<
   | 'rel'
   | 'routerOptions'
   | 'target'
-> {}
+  | 'value'
+> {
+  text: string;
+}
 
 export function InsertTextMenuItem(props: InsertTextMenuItemProps) {
-  let insert = useInsertPromptSegment(item => [
-    {type: 'text', text: `${'command' in item ? item.command : item.title} `}
-  ]);
+  let insert = useInsertPromptSegment([{type: 'text', text: props.text}]);
 
   return (
     <MenuItem
       {...props}
       onAction={() => {
-        insert(props.value);
+        insert();
         props.onAction?.();
       }}
     />
@@ -914,12 +1109,12 @@ export interface CommandMenuItemProps extends Omit<
 // since they dont end up inserting a token or text, we need to clear the partial text that the user used
 // to filter the menu
 export function CommandMenuItem(props: CommandMenuItemProps) {
-  let insert = useInsertPromptSegment(() => []);
+  let insert = useInsertPromptSegment([]);
   return (
     <MenuItem
       {...props}
       onAction={() => {
-        insert(undefined);
+        insert();
         props.onAction?.();
       }}
     />
