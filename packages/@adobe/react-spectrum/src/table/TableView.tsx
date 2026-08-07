@@ -68,6 +68,13 @@ export interface SpectrumTableProps<T>
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void;
   /**
+   * Whether the first row or the first column header should be focused when the user tabs into the
+   * table.
+   *
+   * @default 'row'
+   */
+  initialFocus?: 'row' | 'columnheader';
+  /**
    * Handler that is called when a user starts a column resize.
    */
   onResizeStart?: (widths: Map<Key, ColumnSize>) => void;
