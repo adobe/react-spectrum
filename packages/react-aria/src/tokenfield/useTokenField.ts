@@ -20,11 +20,10 @@ import {
   useMemo,
   useRef
 } from 'react';
-import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
 import {isMac} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
-import {nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {
   Position,
   SelectedRange,
