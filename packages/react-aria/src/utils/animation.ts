@@ -80,7 +80,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
   return isExiting;
 }
 
-function useAnimation(
+export function useAnimation(
   ref: RefObject<HTMLElement | null>,
   isActive: boolean,
   onEnd: () => void

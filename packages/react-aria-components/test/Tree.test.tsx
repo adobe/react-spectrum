@@ -3130,6 +3130,146 @@ describe('Tree', () => {
       });
     });
   });
+
+  describe('expand/collapse animations', () => {
+    let resolveAnimations: () => void;
+    let animation: {finished: Promise<void>};
+
+    let mockAnimations = () => {
+      animation = {
+        finished: new Promise<void>(resolve => {
+          resolveAnimations = resolve;
+        })
+      };
+      // useEnterAnimation checks `animation instanceof CSSTransition`, which JSDOM doesn't define.
+      // @ts-ignore
+      window.CSSTransition = window.CSSTransition ?? class CSSTransition {};
+      Element.prototype.getAnimations = jest.fn().mockImplementation(() => [animation]);
+    };
+
+    let finishAnimations = async () => {
+      await act(async () => {
+        resolveAnimations();
+        await animation.finished;
+      });
+    };
+
+    let rowElements = () =>
+      Array.from(document.querySelectorAll<HTMLElement>('.react-aria-TreeItem'));
+
+    afterEach(() => {
+      // @ts-ignore
+      delete Element.prototype.getAnimations;
+    });
+
+    it('should remove collapsed rows immediately when nothing is animating', async () => {
+      // No getAnimations (the JSDOM default) means there is nothing to wait for, so collapsing behaves
+      // exactly as it did before: the rows are gone by the time the collapse has been committed.
+      let {getAllByRole} = render(<StaticTree />);
+      expect(rowElements()).toHaveLength(6);
+
+      await user.click(within(getAllByRole('row')[1]).getAllByRole('button')[0]);
+
+      expect(rowElements()).toHaveLength(2);
+      expect(document.querySelectorAll('[data-exiting]')).toHaveLength(0);
+    });
+
+    it('should keep collapsed rows mounted and inert until their animations finish', async () => {
+      mockAnimations();
+      let {getAllByRole} = render(<StaticTree />);
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(6);
+
+      await user.click(within(rows[1]).getAllByRole('button')[0]);
+
+      // The four descendants of "projects" are still in the DOM, but marked as exiting and inert.
+      let exiting = rowElements().filter(row => row.hasAttribute('data-exiting'));
+      expect(exiting).toHaveLength(4);
+      expect(exiting.map(row => row.textContent)).toEqual(
+        expect.arrayContaining([expect.stringContaining('Projects-1A')])
+      );
+      for (let row of exiting) {
+        expect(row).toHaveAttribute('inert');
+      }
+
+      await finishAnimations();
+
+      expect(rowElements()).toHaveLength(2);
+      expect(document.querySelectorAll('[data-exiting]')).toHaveLength(0);
+    });
+
+    it('should collapse semantically before the animation finishes', async () => {
+      mockAnimations();
+      let {getAllByRole} = render(<StaticTree />);
+      let rows = getAllByRole('row');
+
+      await user.click(within(rows[1]).getAllByRole('button')[0]);
+
+      // aria-expanded must not lie while the subtree animates away.
+      expect(rows[1]).toHaveAttribute('aria-expanded', 'false');
+      expect(rows[1]).not.toHaveAttribute('data-expanded');
+      expect(onExpandedChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['projects-1']));
+    });
+
+    it('should exclude exiting rows from keyboard navigation', async () => {
+      mockAnimations();
+      let {getAllByRole} = render(<StaticTree />);
+      let rows = getAllByRole('row');
+
+      await user.click(within(rows[1]).getAllByRole('button')[0]);
+      expect(rowElements().filter(row => row.hasAttribute('data-exiting'))).toHaveLength(4);
+
+      act(() => rows[0].focus());
+      expect(document.activeElement).toBe(rows[0]);
+
+      // "projects" is the last navigable row even though its descendants are still rendered.
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(rows[1]);
+    });
+
+    it('should clear the exiting state when a collapse is interrupted by re-expanding', async () => {
+      mockAnimations();
+      let {getAllByRole} = render(<StaticTree />);
+      let rows = getAllByRole('row');
+      let chevron = within(rows[1]).getAllByRole('button')[0];
+
+      await user.click(chevron);
+      expect(rowElements().filter(row => row.hasAttribute('data-exiting'))).toHaveLength(4);
+
+      await user.click(chevron);
+      expect(rowElements()).toHaveLength(6);
+      expect(document.querySelectorAll('[data-exiting]')).toHaveLength(0);
+      expect(document.querySelectorAll('[inert]')).toHaveLength(0);
+
+      // The now-stale animation completing must not remove the restored rows.
+      await finishAnimations();
+      expect(rowElements()).toHaveLength(6);
+    });
+
+    it('should mark rows as entering when revealed by an expansion, but not on mount', async () => {
+      mockAnimations();
+      let {getAllByRole} = render(
+        <StaticTree treeProps={{defaultExpandedKeys: new Set(['projects'])}} />
+      );
+      // defaultExpandedKeys must not animate the initial rows in.
+      expect(document.querySelectorAll('[data-entering]')).toHaveLength(0);
+
+      let rows = getAllByRole('row');
+      await user.click(within(rows[2]).getAllByRole('button')[0]);
+
+      let entering = rowElements().filter(row => row.hasAttribute('data-entering'));
+      expect(entering).toHaveLength(1);
+      expect(entering[0].textContent).toContain('Projects-1A');
+
+      await finishAnimations();
+      expect(document.querySelectorAll('[data-entering]')).toHaveLength(0);
+    });
+  });
 });
 
 AriaTreeTests({
