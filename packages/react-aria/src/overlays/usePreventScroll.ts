@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {setStyle} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
+import {setStyle} from '../utils/domHelpers';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {willOpenKeyboard} from '../utils/keyboard';
 
