@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {addEvent} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
@@ -226,22 +227,6 @@ function preventScrollMobileWebKit() {
       writable: true,
       value: focus
     });
-  };
-}
-
-// Adds an event listener to an element, and returns a function to remove it.
-function addEvent<K extends keyof GlobalEventHandlersEventMap>(
-  target: Document | Window,
-  event: K,
-  handler: (this: Document | Window, ev: GlobalEventHandlersEventMap[K]) => any,
-  options?: boolean | AddEventListenerOptions
-) {
-  // internal function, so it's ok to ignore the difficult to fix type error
-  // @ts-ignore
-  target.addEventListener(event, handler, options);
-  return () => {
-    // @ts-ignore
-    target.removeEventListener(event, handler, options);
   };
 }
 
