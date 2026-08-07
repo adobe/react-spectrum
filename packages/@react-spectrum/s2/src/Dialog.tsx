@@ -14,8 +14,8 @@ import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
-import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
-import {forwardRef} from 'react';
+import {DOMRef, FocusableElement, GlobalDOMAttributes} from '@react-types/shared';
+import {forwardRef, KeyboardEventHandler} from 'react';
 import {ImageContext} from './Image';
 import {Modal} from './Modal';
 import {
@@ -46,6 +46,8 @@ export interface DialogProps
   size?: 'S' | 'M' | 'L' | 'XL';
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean;
+  /** @private */
+  onKeyDown?: KeyboardEventHandler<FocusableElement>;
 }
 
 const image = style({
