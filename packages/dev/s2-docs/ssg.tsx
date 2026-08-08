@@ -9,16 +9,20 @@ import {injectRSCPayload} from 'rsc-html-stream/server';
 import {prerender} from 'react-dom/static.edge' with {env: 'react-client'};
 import {Readable} from 'stream';
 import {renderToReadableStream} from 'react-server-dom-parcel/server.edge';
-// @ts-ignore
-import routes from './pages/**/*.mdx?async=true&flat=true';
 
-async function render() {
+let base = './pages/';
+let baseDir = base;
+if (process.env.LIBRARY) {
+  base += process.env.LIBRARY + '/';
+}
+
+export async function render(routes) {
   for (let page in routes) {
     console.log('rendering ' + page);
     try {
       let mod = await routes[page]();
       let Page = mod.default;
-      let url = page.slice('./pages/'.length, -4);
+      let url = page.slice(base.length, -4);
       let {html, rsc} = await prerenderHTML(
         <Page
           currentPage={{
@@ -30,12 +34,13 @@ async function render() {
         {component: Page}
       );
 
-      mkdirSync('dist/' + dirname(url), {recursive: true});
+      let distPath = page.slice(baseDir.length, -4);
+      mkdirSync('dist/' + dirname(distPath), {recursive: true});
 
-      let htmlStream = createWriteStream('dist/' + url + '.html');
+      let htmlStream = createWriteStream('dist/' + distPath + '.html');
       html.pipe(htmlStream);
 
-      let rscStream = createWriteStream('dist/' + url + '.rsc');
+      let rscStream = createWriteStream('dist/' + distPath + '.rsc');
       rsc.pipe(rscStream);
 
       await Promise.all([finished(htmlStream), finished(rscStream)]);
@@ -81,5 +86,3 @@ async function prerenderHTML(
     rsc: Readable.fromWeb(rscStream)
   };
 }
-
-render();
