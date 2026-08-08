@@ -562,7 +562,7 @@ jobs:
 
       - run:
           name: build s2 storybook
-          command: yarn build:storybook-s2
+          command: make storybook-s2
 
       - persist_to_workspace:
           root: dist

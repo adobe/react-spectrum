@@ -5,6 +5,7 @@ PATH := ./node_modules/.bin:$(PATH)
 BRANCH := $(or $(CIRCLE_BRANCH),$(shell git rev-parse --abbrev-ref HEAD))
 BRANCH_TYPE := $(if $(filter $(BRANCH),main),main,pr)
 HASH := $(shell git rev-parse HEAD)
+BUILD_ENTRIES := packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum}
 
 all: node_modules
 
@@ -83,7 +84,18 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 	@$(MAKE) illustrations
 
 storybook:
-	NODE_ENV=production yarn build:storybook
+	if [ -n "$$PARCEL_V3" ]; then \
+		yarn build:storybook-parcel3; \
+	else \
+		NODE_ENV=production yarn build:storybook; \
+	fi
+
+storybook-s2:
+	if [ -n "$$PARCEL_V3" ]; then \
+		yarn build:storybook-s2-parcel3; \
+	else \
+		yarn build:storybook-s2; \
+	fi
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
@@ -101,19 +113,11 @@ publish-nightly: build
 build:
 	mkdir -p dist
 	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
-	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config .parcelrc-build
-	yarn workspaces foreach --all -pt run prepublishOnly
-	node scripts/buildEsm.js
-	node scripts/buildI18n.js
-	node scripts/generateIconDts.js
-	node scripts/fixUseClient.js
-	node scripts/moveTypes.mjs
-	rm -rf types
-
-build-parcel-v3:
-	mkdir -p dist
-	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
-	parcel3 build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config parcel-v3/.parcelrc-build
+	if [ -n "$$PARCEL_V3" ]; then \
+		parcel3 build $(BUILD_ENTRIES) --no-optimize --config parcel-v3/.parcelrc-build; \
+	else \
+		parcel build $(BUILD_ENTRIES) --no-optimize --config .parcelrc-build; \
+	fi
 	yarn workspaces foreach --all -pt run prepublishOnly
 	node scripts/buildEsm.js
 	node scripts/buildI18n.js
@@ -205,7 +209,7 @@ build-s2-docs: check-starter-css
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
 	LIBRARY=react-aria node scripts/buildRegistry.mjs
-	yarn build:s2-docs
+	if [ -n "$$PARCEL_V3" ]; then yarn build:s2-docs-parcel3; else yarn build:s2-docs; fi
 	LIBRARY=react-aria node scripts/createFeedS2.mjs
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
 	mkdir -p dist/s2-docs/s2/$(PUBLIC_URL)
