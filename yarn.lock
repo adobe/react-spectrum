@@ -8314,7 +8314,7 @@ __metadata:
     remark-mdx: "npm:^3.1.0"
     remark-parse: "npm:^11.0.0"
     remark-stringify: "npm:^11.0.0"
-    rsc-html-stream: "npm:^0.0.6"
+    rsc-html-stream: "npm:^0.0.8"
     satori: "npm:^0.16.1"
     sharp: "npm:^0.33.5"
     textarea-caret: "npm:^3.1.0"
@@ -27970,10 +27970,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rsc-html-stream@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "rsc-html-stream@npm:0.0.6"
-  checksum: 10c0/b405a90b2d0e017b0fdbe6209f925efc1690dd1074a4ac1171d7ee20297a31bcde375e275bd4a992f104b2de70744d7605b4f6c76addb4a50e2cad6521524742
+"rsc-html-stream@npm:0.0.8":
+  version: 0.0.8
+  resolution: "rsc-html-stream@npm:0.0.8"
+  checksum: 10c0/c65aa0b59dfebcc89dcc71510f3c9255be5d994b28e9cb69286453ef898159320f84984afb3d76751cdb636dd41655e33808a4864f825f59bb680e1c62d7ac20
   languageName: node
   linkType: hard
 

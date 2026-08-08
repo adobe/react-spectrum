@@ -251,6 +251,7 @@
     "recast": "0.23.6",
     "remark-mdx": "patch:remark-mdx@npm%3A2.0.0-rc.2#~/.yarn/patches/remark-mdx-npm-2.0.0-rc.2-7a71234e1f.patch",
     "remark-parse": "patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch",
+    "rsc-html-stream": "0.0.8",
     "svgo": "^3"
   },
   "packageManager": "yarn@4.13.0",
