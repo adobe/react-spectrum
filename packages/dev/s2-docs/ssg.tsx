@@ -4,7 +4,9 @@ import {createFromReadableStream} from 'react-server-dom-parcel/client.edge' wit
 };
 import {createWriteStream, mkdirSync} from 'fs';
 import {dirname} from 'path';
+import {availableParallelism} from 'node:os';
 import {finished} from 'node:stream/promises';
+import {isMainThread, Worker, workerData} from 'node:worker_threads';
 import {injectRSCPayload} from 'rsc-html-stream/server';
 import {prerender} from 'react-dom/static.edge' with {env: 'react-client'};
 import {Readable} from 'stream';
@@ -17,7 +19,43 @@ if (process.env.LIBRARY) {
 }
 
 export async function render(routes) {
-  for (let page in routes) {
+  let pages = Object.keys(routes);
+  if (isMainThread) {
+    let workerCount = Math.min(availableParallelism(), pages.length);
+    if (workerCount > 1) {
+      let routesPerWorker = Math.floor(pages.length / workerCount);
+      let remainder = pages.length % workerCount;
+      let offset = 0;
+      let workers: Promise<void>[] = [];
+
+      for (let i = 0; i < workerCount; i++) {
+        let routeCount = routesPerWorker + (i < remainder ? 1 : 0);
+        let workerRoutes = pages.slice(offset, offset + routeCount);
+        offset += routeCount;
+
+        workers.push(
+          new Promise((resolve, reject) => {
+            let worker = new Worker(process.argv[1], {workerData: workerRoutes});
+            worker.once('error', reject);
+            worker.once('exit', code => {
+              if (code === 0) {
+                resolve();
+              } else {
+                reject(new Error(`Rendering worker exited with code ${code}`));
+              }
+            });
+          })
+        );
+      }
+
+      await Promise.all(workers);
+      return;
+    }
+  } else {
+    pages = workerData;
+  }
+
+  for (let page of pages) {
     console.log('rendering ' + page);
     try {
       let mod = await routes[page]();
