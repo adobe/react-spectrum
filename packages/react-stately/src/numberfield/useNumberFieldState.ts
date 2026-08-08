@@ -24,7 +24,7 @@ import {
 } from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
-import {useCallback, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
 export interface NumberFieldProps
@@ -184,6 +184,14 @@ export function useNumberFieldState(props: NumberFieldStateOptions): NumberField
     ...props,
     value: numberValue
   });
+
+  let prevControlledValue = useRef(value);
+  useEffect(() => {
+    if (value !== undefined && !Object.is(value, prevControlledValue.current)) {
+      validation.commitValidation();
+    }
+    prevControlledValue.current = value;
+  }, [value]);
 
   let clampStep = step !== undefined && !isNaN(step) ? step : 1;
   if (intlOptions.style === 'percent' && (step === undefined || isNaN(step))) {
