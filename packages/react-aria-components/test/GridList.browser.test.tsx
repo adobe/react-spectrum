@@ -27,7 +27,7 @@ const reorderableItems = Array.from({length: 10}, (_, i) => ({id: i, name: `Item
 function ReorderableGridList() {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
-    onReorder() {},
+    onReorder: () => undefined,
     renderDropIndicator: target => (
       <DropIndicator target={target} style={{backgroundColor: 'rgb(255, 0, 0)'}} />
     )
@@ -164,7 +164,7 @@ it('scrolls focused drop indicators into view during keyboard reordering', async
     let dropIndicator = document.activeElement as HTMLElement;
     let indicatorRow = dropIndicator.closest('[role=row]') as HTMLElement;
     let gridRect = gridlist.getBoundingClientRect();
-    let indicatorRect = dropIndicator.getBoundingClientRect();
+    let indicatorRect = indicatorRow.getBoundingClientRect();
 
     expect(dropIndicator).toHaveAttribute(
       'aria-label',
