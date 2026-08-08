@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '../src/Button';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {expect, it} from 'vitest';
 import {GridLayout} from '../src/GridLayout';
 import {GridList, GridListItem} from '../src/GridList';
@@ -17,7 +19,35 @@ import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {Size} from 'react-stately/useVirtualizerState';
 import {User} from '@react-aria/test-utils';
+import {userEvent} from 'vitest/browser';
 import {Virtualizer} from '../src/Virtualizer';
+
+const reorderableItems = Array.from({length: 10}, (_, i) => ({id: i, name: `Item ${i}`}));
+
+function ReorderableGridList() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
+    onReorder: () => undefined,
+    renderDropIndicator: target => (
+      <DropIndicator target={target} style={{backgroundColor: 'rgb(255, 0, 0)'}} />
+    )
+  });
+
+  return (
+    <GridList
+      aria-label="Reorderable list"
+      dragAndDropHooks={dragAndDropHooks}
+      items={reorderableItems}
+      style={{display: 'flex', flexDirection: 'column', height: 120, overflow: 'auto'}}>
+      {item => (
+        <GridListItem style={{flex: '0 0 40px'}} textValue={item.name}>
+          <Button slot="drag">Drag</Button>
+          {item.name}
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
 
 function Grid() {
   return (
@@ -119,4 +149,35 @@ it('virtualizer renders items after toggling display:none', async () => {
   await button.click();
   await button.click();
   await expect(tester.getRows().length).toBeGreaterThan(0);
+});
+
+it('scrolls focused drop indicators into view during keyboard reordering', async () => {
+  let {container} = await render(<ReorderableGridList />);
+  let gridlist = container.querySelector('[role=grid]') as HTMLElement;
+  let dragButton = container.querySelector('[aria-label="Drag Item 0"]') as HTMLElement;
+  dragButton.focus();
+
+  await userEvent.keyboard('{Enter}');
+
+  for (let i = 1; i <= 4; i++) {
+    await userEvent.keyboard('{ArrowDown}');
+    let dropIndicator = document.activeElement as HTMLElement;
+    let indicatorRow = dropIndicator.closest('[role=row]') as HTMLElement;
+    let gridRect = gridlist.getBoundingClientRect();
+    let indicatorRect = indicatorRow.getBoundingClientRect();
+
+    expect(dropIndicator).toHaveAttribute(
+      'aria-label',
+      `Insert between Item ${i} and Item ${i + 1}`
+    );
+    expect(dropIndicator).toHaveAttribute('role', 'button');
+    expect(indicatorRow).toHaveStyle({
+      backgroundColor: 'rgb(255, 0, 0)',
+      position: 'relative'
+    });
+    expect(indicatorRect.top).toBeGreaterThanOrEqual(gridRect.top);
+    expect(indicatorRect.bottom).toBeLessThanOrEqual(gridRect.bottom);
+  }
+
+  expect(gridlist.scrollTop).toBeGreaterThan(0);
 });
