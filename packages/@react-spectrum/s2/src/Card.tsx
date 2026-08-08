@@ -29,10 +29,14 @@ import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Link} from 'react-aria-components/Link';
+import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
 import {useDOMRef} from './useDOMRef';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {usePress} from 'react-aria/usePress';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CardRenderProps {
@@ -139,10 +143,12 @@ let card = style(
     contain: 'layout',
     disableTapHighlight: true,
     userSelect: {
-      isCardView: 'none'
+      isCardView: 'none',
+      isInteractive: 'none'
     },
     cursor: {
-      isLink: 'pointer'
+      isLink: 'pointer',
+      isInteractive: 'pointer'
     },
     width: {
       size: {
@@ -420,10 +426,46 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     UNSAFE_style,
     styles,
     id,
+    onPress,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    onAction,
+    isDisabled,
     ...otherProps
   } = props;
   let isQuiet = variant === 'quiet';
   let isSkeleton = useIsSkeleton();
+
+  // True when the card is used standalone (not inside CardView) and the caller
+  // has provided at least one press/action callback.
+  let isInteractiveStandalone =
+    ElementType === 'div' &&
+    !isSkeleton &&
+    !props.href &&
+    !!(onPress || onPressStart || onPressEnd || onPressChange || onPressUp || onAction);
+
+  // Hooks must be called unconditionally (React rules of hooks).
+  // isDisabled is set to true when not in interactive standalone mode so the
+  // hooks are effectively no-ops in those code paths.
+  let {pressProps, isPressed: isInteractivePressed} = usePress({
+    ref: domRef,
+    onPress: e => {
+      onPress?.(e);
+      onAction?.();
+    },
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    isDisabled: isDisabled || !isInteractiveStandalone
+  });
+  let {hoverProps, isHovered: isInteractiveHovered} = useHover({
+    isDisabled: isDisabled || !isInteractiveStandalone
+  });
+  let {focusProps, isFocusVisible: isInteractiveFocusVisible} = useFocusRing();
+
   let children = (
     <Provider
       values={[
@@ -488,6 +530,48 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   }
 
   if (ElementType === 'div' || isSkeleton) {
+    if (isInteractiveStandalone) {
+      return (
+        <div
+          {...mergeProps(filterDOMProps(otherProps), pressProps, hoverProps, focusProps)}
+          id={id != null ? String(id) : undefined}
+          ref={domRef}
+          role="button"
+          tabIndex={isDisabled ? undefined : 0}
+          aria-disabled={isDisabled ? true : undefined}
+          className={
+            UNSAFE_className +
+            card(
+              {
+                size,
+                density,
+                variant,
+                isCardView: false,
+                isInteractive: true,
+                isHovered: isInteractiveHovered,
+                isFocusVisible: isInteractiveFocusVisible,
+                isSelected: false
+              },
+              styles
+            )
+          }
+          style={variant === 'quiet' ? UNSAFE_style : press({isPressed: isInteractivePressed})}>
+          <InternalCardContext.Provider
+            value={{
+              size,
+              isQuiet,
+              isCheckboxSelection: false,
+              isHovered: isInteractiveHovered,
+              isFocusVisible: isInteractiveFocusVisible,
+              isSelected: false,
+              isPressed: isInteractivePressed
+            }}>
+            {children}
+          </InternalCardContext.Provider>
+        </div>
+      );
+    }
+
     return (
       <div
         {...filterDOMProps(otherProps)}
