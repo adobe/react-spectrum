@@ -11,7 +11,11 @@
       {
         "plugin": "@parcel/transformer-css",
         "config": {
-          "cssModules": true
+          "cssModules": true,
+          "pseudoClasses": {
+            "focusVisible": "focus-ring",
+            "hover": "is-hovered"
+          }
         }
       }
     ]

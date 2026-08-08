@@ -2,7 +2,7 @@
   "extends": "@parcel/config-default",
   "resolvers": ["@parcel/resolver-glob", "..."],
   "transformers": {
-   "docs:*": ["@parcel/transformer-ts-doc"],
+    "docs:*": ["@parcel/transformer-ts-doc"],
     "*.stories.{ts,tsx,js,mjs,jsm,jsx,es6,cjs}": [
       "@parcel/transformer-storybook-v3",
       "..."
@@ -13,7 +13,11 @@
       {
         "plugin": "@parcel/transformer-css",
         "config": {
-          "cssModules": true
+          "cssModules": true,
+          "pseudoClasses": {
+            "focusVisible": "focus-ring",
+            "hover": "is-hovered"
+          }
         }
       }
     ],

@@ -8,7 +8,19 @@
       "..."
     ],
     "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
-    "*.css": ["@parcel/transformer-css"],
+    "packages/@adobe/**/*.css": [
+      "../parcel-v3/PostCSSTransformer.mjs",
+      {
+        "plugin": "@parcel/transformer-css",
+        "config": {
+          "cssModules": true,
+          "pseudoClasses": {
+            "focusVisible": "focus-ring",
+            "hover": "is-hovered"
+          }
+        }
+      }
+    ],
     "raw:*": ["@parcel/transformer-raw"]
   },
   "bundler": {
