@@ -447,7 +447,7 @@ function renderProp(name: string, value: any, control?: PropControl, indent = ''
       </>
     );
   } else if (typeof value === 'boolean') {
-    if (value === false && control?.optional) {
+    if (value === false && control?.optional && !control?.default) {
       return null;
     }
     if (name === 'contextualHelp') {
