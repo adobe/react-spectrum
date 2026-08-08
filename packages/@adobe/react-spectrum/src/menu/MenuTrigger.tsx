@@ -116,6 +116,7 @@ export const MenuTrigger = forwardRef(function MenuTrigger(
 
   // Close when clicking outside the root menu when a submenu is open.
   let rootOverlayRef = useRef(null);
+  // oxlint-disable-next-line react/react-compiler
   let rootOverlayDomRef = unwrapDOMRef(rootOverlayRef);
   useInteractOutside({
     ref: rootOverlayDomRef,

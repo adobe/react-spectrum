@@ -40,7 +40,9 @@ import React, {
   useRef
 } from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
+import {TextContext} from './Text';
 import {useId} from 'react-aria/useId';
+import {useIsHidden} from 'react-aria/private/collections/Hidden';
 import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
 
@@ -76,7 +78,7 @@ export const OverlayTriggerStateContext = createContext<OverlayTriggerState | nu
 /**
  * A DialogTrigger opens a dialog when a trigger element is pressed.
  */
-export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
+export function DialogTrigger(props: DialogTriggerProps): JSX.Element | null {
   // Use useMenuTriggerState instead of useOverlayTriggerState in case a menu is embedded in the dialog.
   // This is needed to handle submenus.
   let state = useMenuTriggerState(props);
@@ -88,8 +90,17 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
   // but when sent by context we want the title to win.
+  // oxlint-disable-next-line react/react-compiler
   triggerProps.id = useId();
+  // oxlint-disable-next-line react/react-compiler
   overlayProps['aria-labelledby'] = triggerProps.id;
+
+  // If within a collection (e.g. Tabs), render nothing.
+  // Not using createHideableComponent for this because that also creates a forwardRef.
+  let isHidden = useIsHidden();
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <Provider
@@ -102,6 +113,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           {
             trigger: 'DialogTrigger',
             triggerRef: buttonRef,
+            id: overlayProps.id,
             'aria-labelledby': overlayProps['aria-labelledby']
           }
         ]
@@ -122,7 +134,7 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
 ) {
   let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
-  let {dialogProps, titleProps} = useDialog(
+  let {dialogProps, titleProps, contentProps} = useDialog(
     {
       ...props,
       // Only pass aria-labelledby from props, not context.
@@ -171,6 +183,15 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
               slots: {
                 [DEFAULT_SLOT]: {},
                 title: {...titleProps, level: 2}
+              }
+            }
+          ],
+          [
+            TextContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                description: contentProps
               }
             }
           ],

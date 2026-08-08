@@ -331,6 +331,23 @@ describe('NumberField', () => {
     expect(onChange).toHaveBeenLastCalledWith(2);
   });
 
+  it('should support repeat keydown events when holding an arrow key', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(<TestNumberField onChange={onChange} />);
+    let input = getByRole('textbox');
+
+    await user.tab();
+    expect(input).toHaveFocus();
+
+    await user.keyboard('{ArrowUp>3/}');
+    expect(input).toHaveValue('1,027');
+    expect(onChange).toHaveBeenLastCalledWith(1027);
+
+    await user.keyboard('{ArrowDown>3/}');
+    expect(input).toHaveValue('1,024');
+    expect(onChange).toHaveBeenLastCalledWith(1024);
+  });
+
   it('should not type the grouping characters when useGrouping is false', async () => {
     let {getByRole} = render(<TestNumberField formatOptions={{useGrouping: false}} />);
     let input = getByRole('textbox');

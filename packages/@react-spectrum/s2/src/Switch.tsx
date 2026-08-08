@@ -83,6 +83,7 @@ export const SwitchContext =
 const field = style(
   {
     display: 'grid',
+    position: 'relative',
     gridTemplateColumns: {
       default: ['max-content', '1fr'],
       isNoVisibleLabel: ['max-content']
@@ -215,6 +216,7 @@ export const Switch = /*#__PURE__*/ forwardRef(function Switch(
   props: SwitchProps,
   ref: FocusableRef<HTMLInputElement, HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, SwitchContext);
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let inputRef = useRef<HTMLInputElement | null>(null);

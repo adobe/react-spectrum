@@ -337,6 +337,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
   const ref = useRef<HTMLDivElement>(null);
   let {isFocusVisible} = useFocusVisible();
 
+  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       isDisabled={isDisabled}
@@ -409,6 +410,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
       }}
     </ListBoxItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
 /**

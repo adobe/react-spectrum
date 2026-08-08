@@ -1,13 +1,13 @@
 {
   "ascending": "aufsteigend",
   "ascendingSort": "sortiert nach Spalte {columnName} in aufsteigender Reihenfolge",
+  "collapse": "Reduzieren",
   "columnSize": "{value} Pixel",
   "descending": "absteigend",
   "descendingSort": "sortiert nach Spalte {columnName} in absteigender Reihenfolge",
+  "expand": "Erweitern",
   "resizerDescription": "Eingabetaste zum Starten der Größenänderung drücken",
   "select": "Auswählen",
   "selectAll": "Alles auswählen",
-  "sortable": "sortierbare Spalte",
-  "collapse": "Reduzieren",
-  "expand": "Erweitern"
+  "sortable": "sortierbare Spalte"
 }

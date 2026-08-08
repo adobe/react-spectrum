@@ -264,7 +264,6 @@ export class ElementNode<T> extends BaseNode<T> {
   node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
-  private _attributesByNameMap = new Map<string, string>();
   isHidden = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
@@ -345,7 +344,7 @@ export class ElementNode<T> extends BaseNode<T> {
     let node;
     let {value, textValue, id, ...props} = obj;
     if (this.node == null) {
-      node = new CollectionNodeClass(id ?? makeId(this));
+      node = new CollectionNodeClass(id ?? `react-aria-${++this.ownerDocument.nodeId}`);
       this.node = node;
     } else {
       node = this.getMutableNode();
@@ -417,20 +416,9 @@ export class ElementNode<T> extends BaseNode<T> {
   }
 
   hasAttribute(): void {}
-
-  setAttribute(qualifiedName: string, value: string): void {
-    this._attributesByNameMap.set(qualifiedName, '' + value);
-  }
-
-  getAttribute(qualifiedName: string): string | null {
-    return this._attributesByNameMap.get(qualifiedName) ?? null;
-  }
-
+  setAttribute(): void {}
   setAttributeNS(): void {}
-
-  removeAttribute(qualifiedName: string): void {
-    this._attributesByNameMap.delete(qualifiedName);
-  }
+  removeAttribute(): void {}
 }
 
 /**
@@ -589,6 +577,12 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   subscribe(fn: () => void) {
     this.subscriptions.add(fn);
+    // Ensure that React reads the collection if we re-subscribe after updates were
+    // already queued. When a hidden Activity is revealed, child nodes re-attach and call
+    // queueUpdate before we can re-subscribe, so the notification is lost.
+    if (this.queuedRender) {
+      fn();
+    }
     return (): boolean => this.subscriptions.delete(fn);
   }
 
@@ -600,16 +594,4 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       this.nodeId = 0;
     }
   }
-}
-
-function makeId(node: ElementNode<unknown>, identifierPrefix = 'react-aria') {
-  if (node.parentNode instanceof ElementNode) {
-    const parentKey = node.parentNode.getAttribute('data-key');
-    if (parentKey != null) {
-      // If parentNode specifies a key, generate a stable id based on parentKey
-      // so that useDroppableCollection can keep track of each child even if it is recreated
-      return identifierPrefix + '-' + parentKey + '-' + node.index.toString(32);
-    }
-  }
-  return identifierPrefix + '-' + (++node.ownerDocument.nodeId).toString(32);
 }

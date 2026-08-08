@@ -87,7 +87,7 @@ let ExpandingSibling = (props = {}) => {
 let Component = props => {
   let [show, setShow] = useState(false);
   return (
-    <ButtonGroup maxWidth="100vw" {...props}>
+    <ButtonGroup {...props}>
       <Button variant="primary" onPress={action('press')}>
         Button 1
       </Button>

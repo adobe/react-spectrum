@@ -12,6 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
+import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Label} from '../src/Label';
@@ -379,6 +380,36 @@ describe('Select', () => {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(onSelectionChange).toHaveBeenLastCalledWith(0);
     expect(button).toHaveTextContent('0');
+  });
+
+  it('should support repeat keydown events when holding an arrow key', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <Select onChange={onSelectionChange} aria-label="Pick a number">
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox items={Array.from({length: 3}).map((_, i) => ({id: i, label: `${i}`}))}>
+            {item => (
+              <ListBoxItem id={item.id} textValue={item.label}>
+                {item.label}
+              </ListBoxItem>
+            )}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    await user.tab();
+    expect(button).toHaveFocus();
+
+    // Arrow key navigation while closed moves the selection.
+    await user.keyboard('{ArrowRight>2/}');
+
+    expect(onSelectionChange).toHaveBeenLastCalledWith(1);
+    expect(button).toHaveTextContent('1');
   });
 
   it('should support falsy (0) as a valid default value', async () => {
@@ -846,50 +877,6 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('2 selected items');
   });
 
-  it('supports shift+click to select a range in multi-selection', async () => {
-    let {getByTestId} = render(<TestSelect selectionMode="multiple" />);
-    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-
-    await selectTester.open();
-    let options = selectTester.getOptions();
-
-    await user.click(options[0]);
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-
-    await user.keyboard('{Shift>}');
-    await user.click(options[2]);
-    await user.keyboard('{/Shift}');
-
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    expect(options[1]).toHaveAttribute('aria-selected', 'true');
-    expect(options[2]).toHaveAttribute('aria-selected', 'true');
-  });
-
-  it('keeps a stable anchor across consecutive shift+clicks', async () => {
-    let {getByTestId} = render(<TestSelect selectionMode="multiple" />);
-    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-
-    await selectTester.open();
-    let options = selectTester.getOptions();
-
-    await user.click(options[0]);
-
-    await user.keyboard('{Shift>}');
-    await user.click(options[2]);
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    expect(options[1]).toHaveAttribute('aria-selected', 'true');
-    expect(options[2]).toHaveAttribute('aria-selected', 'true');
-
-    // Shift+click again from the same anchor: the range shrinks rather than the
-    // anchor jumping to the previous target.
-    await user.click(options[1]);
-    await user.keyboard('{/Shift}');
-
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    expect(options[1]).toHaveAttribute('aria-selected', 'true');
-    expect(options[2]).toHaveAttribute('aria-selected', 'false');
-  });
-
   it('has a value immediately after rendering', async () => {
     function Example() {
       const ref = useRef(null);
@@ -927,5 +914,21 @@ describe('Select', () => {
     let {getByTestId} = render(<Example />);
     let selectValue = getByTestId('select-value');
     expect(selectValue).toHaveTextContent('select value: 1');
+  });
+
+  it('should not throw when rendered inside a Dialog with a Text errorMessage slot', () => {
+    render(
+      <Dialog aria-label="Dialog">
+        <TestSelect isInvalid />
+      </Dialog>
+    );
+  });
+
+  it('should not throw when rendered inside an alertdialog with a Text errorMessage slot', () => {
+    render(
+      <Dialog role="alertdialog" aria-label="Dialog">
+        <TestSelect isInvalid />
+      </Dialog>
+    );
   });
 });

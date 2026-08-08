@@ -1,13 +1,13 @@
 {
   "ascending": "crescente",
   "ascendingSort": "classificado pela coluna {columnName} em ordem crescente",
+  "collapse": "Recolher",
   "columnSize": "{value} pixels",
   "descending": "decrescente",
   "descendingSort": "classificado pela coluna {columnName} em ordem decrescente",
+  "expand": "Expandir",
   "resizerDescription": "Pressione Enter para começar a redimensionar",
   "select": "Selecionar",
   "selectAll": "Selecionar tudo",
-  "sortable": "coluna classificável",
-  "collapse": "Recolher",
-  "expand": "Expandir"
+  "sortable": "coluna classificável"
 }

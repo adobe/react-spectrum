@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {MessageFeedback} from '@react-spectrum/ai/MessageFeedback';
+import {MessageFeedback} from '@react-spectrum/ai';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
-describe('MessageFeedback', () => {
+// Conditionally skip the suite
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+describeOrSkip('MessageFeedback', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});

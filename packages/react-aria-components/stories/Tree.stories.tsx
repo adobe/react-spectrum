@@ -15,18 +15,22 @@ import {Button} from '../src/Button';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Collection} from 'react-aria/Collection';
+import {ComboBox} from '../src/ComboBox';
+import {createPortal} from 'react-dom';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
+import {Input} from '../src/Input';
 import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
+import {ListBox} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
-import {Menu, MenuTrigger} from '../src/Menu';
-
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-
-import {MyMenuItem} from './utils';
+import {MyListBoxItem, MyMenuItem} from './utils';
 import {Popover} from '../src/Popover';
-import React, {JSX, ReactNode, useCallback, useState} from 'react';
+import React, {JSX, ReactNode, useCallback, useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {Toolbar} from '../src/Toolbar';
 import {
   Tree,
   TreeHeader,
@@ -46,7 +50,7 @@ import './styles.css';
 export default {
   title: 'React Aria Components/Tree',
   component: Tree,
-  excludeStories: ['TreeExampleStaticRender']
+  excludeStories: ['TreeExampleStaticRender', 'TreeWithTextField', 'VirtualizedTreeInShadowDOM']
 } as Meta<typeof Tree>;
 
 export type TreeStory = StoryFn<typeof Tree>;
@@ -54,6 +58,7 @@ export type TreeStory = StoryFn<typeof Tree>;
 interface StaticTreeItemProps extends TreeItemProps {
   title?: string;
   children: ReactNode;
+  interactive?: ReactNode;
 }
 
 interface MyCheckboxProps extends CheckboxProps {
@@ -117,6 +122,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
                 </Button>
               )}
               <Text className={styles.title}>{props.title || props.children}</Text>
+              {props.interactive}
               <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>
                 ⓘ
               </Button>
@@ -1800,4 +1806,242 @@ export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
     items: treeData
   },
   render: args => <HugeVirtualizedTreeRender {...args} />
+};
+
+let comboboxEmptyState = () => {
+  return <div style={{height: 30, width: '100%'}}>No results</div>;
+};
+
+export function TreeWithTextField<T>(props: TreeProps<T>) {
+  return (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <input aria-label="Before tree" />
+      <Tree
+        className={styles.tree}
+        style={{width: 400}}
+        aria-label="tree with textfields"
+        disabledKeys={['rawinput']}
+        keyboardNavigationBehavior="tab"
+        {...props}>
+        <StaticTreeItem
+          id="textfield"
+          textValue="RAC TextField"
+          interactive={
+            <TextField aria-label="Name">
+              <Input />
+            </TextField>
+          }>
+          RAC TextField
+        </StaticTreeItem>
+        <StaticTreeItem
+          id="rawinput"
+          textValue="Raw input"
+          interactive={<input aria-label="Raw text input" />}>
+          Raw input
+        </StaticTreeItem>
+        <StaticTreeItem
+          id="row1"
+          textValue="row 1"
+          title="row 1"
+          interactive={
+            <TextField aria-label="row 1 input">
+              <Input />
+            </TextField>
+          }>
+          <StaticTreeItem
+            id="group1-textfield-button"
+            textValue="TextField and Button"
+            interactive={
+              <>
+                <TextField aria-label="Search">
+                  <Input />
+                </TextField>
+                <Button>Go</Button>
+              </>
+            }>
+            TextField + Button
+          </StaticTreeItem>
+          <StaticTreeItem
+            id="group1-toolbar"
+            textValue="Toolbar"
+            interactive={
+              <Toolbar aria-label="Text formatting" style={{gap: 4}}>
+                <Button onPress={action('Bold press')}>Bold</Button>
+                <Button onPress={action('Italics press')}>Italic</Button>
+                <Button onPress={action('Underline press')}>Underline</Button>
+              </Toolbar>
+            }>
+            Toolbar
+          </StaticTreeItem>
+          <StaticTreeItem
+            id="group1-nested"
+            textValue="Nested Group"
+            title="Nested Group"
+            interactive={<input aria-label="Nested group input" />}>
+            <StaticTreeItem
+              id="group1-nested-1"
+              textValue="Nested child 1"
+              interactive={
+                <ComboBox aria-label="combobox" allowsEmptyCollection>
+                  <div style={{display: 'flex'}}>
+                    <Input />
+                    <Button>
+                      <span aria-hidden="true" style={{padding: '0 2px'}}>
+                        ▼
+                      </span>
+                    </Button>
+                  </div>
+                  <Popover>
+                    <ListBox
+                      renderEmptyState={comboboxEmptyState}
+                      data-testid="combo-box-list-box"
+                      className={styles.menu}
+                      style={{width: 'var(--trigger-width)'}}>
+                      <MyListBoxItem>Foo</MyListBoxItem>
+                      <MyListBoxItem>Bar</MyListBoxItem>
+                      <MyListBoxItem>Baz</MyListBoxItem>
+                      <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                    </ListBox>
+                  </Popover>
+                </ComboBox>
+              }>
+              Nested child 1
+            </StaticTreeItem>
+            <StaticTreeItem
+              id="group1-nested-2"
+              textValue="Nested child 2"
+              interactive={
+                <MenuTrigger>
+                  <Button aria-label="Options">▾</Button>
+                  <Popover>
+                    <Menu className={styles.menu}>
+                      <MenuItem>Cut</MenuItem>
+                      <MenuItem>Copy</MenuItem>
+                      <MenuItem>Paste</MenuItem>
+                    </Menu>
+                  </Popover>
+                </MenuTrigger>
+              }>
+              Nested child 2
+            </StaticTreeItem>
+          </StaticTreeItem>
+        </StaticTreeItem>
+      </Tree>
+      <input aria-label="After tree" />
+    </div>
+  );
+}
+
+export const TreeWithTextFieldStory: StoryObj<typeof TreeWithTextField> = {
+  render: args => <TreeWithTextField {...args} />,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection'
+  },
+  argTypes: {
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  },
+  name: 'Tree with Textfield'
+};
+
+export function VirtualizedTreeInShadowDOM(props: TreeProps<ITreeItem>) {
+  const [portalNode] = useState<HTMLElement>(() => document.createElement('div'));
+  const onMountCleanup = useRef<null | (() => void)>(null);
+  const onMount = useCallback(
+    (mountPoint: HTMLDivElement | null) => {
+      onMountCleanup.current?.();
+      onMountCleanup.current = null;
+      if (mountPoint) {
+        /** ShadowRoot may already exist if React strict mode has run this callback twice. */
+        const shadowRoot = mountPoint.shadowRoot || mountPoint.attachShadow({mode: 'open'});
+
+        /**
+         * CSS does not cross the shadow boundary, so the styles Parcel injects into the
+         * document head never reach the portaled content. Copy the already-processed
+         * style nodes (with their hashed CSS-module selectors intact) into the shadow root
+         * so the tree renders with the same styling as the light-DOM stories.
+         */
+        const styleClones = Array.from(
+          document.head.querySelectorAll('style, link[rel="stylesheet"]')
+        ).map(node => node.cloneNode(true) as HTMLElement);
+        styleClones.forEach(clone => shadowRoot.appendChild(clone));
+
+        shadowRoot.appendChild(portalNode);
+
+        onMountCleanup.current = () => {
+          styleClones.forEach(clone => shadowRoot.removeChild(clone));
+          shadowRoot.removeChild(portalNode);
+        };
+      }
+    },
+    [portalNode]
+  );
+  return (
+    <>
+      <div ref={onMount} />
+      {createPortal(
+        <div
+          style={{
+            fontFamily: 'sans-serif',
+            padding: 16,
+            display: 'grid',
+            gap: 16
+          }}>
+          <p style={{margin: 0, fontSize: 13, color: '#c00'}}>Rendered inside a shadow root.</p>
+
+          <div>
+            <strong>+Tree + Virtualizer</strong>
+            <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+              <TreeExampleDynamicRender {...props} />
+            </Virtualizer>
+          </div>
+        </div>,
+        portalNode
+      )}
+    </>
+  );
+}
+export const VirtualizedTreeInShadowDOMStory: StoryObj<typeof VirtualizedTreeInShadowDOM> = {
+  render: args => <VirtualizedTreeInShadowDOM {...args} />,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection',
+    items: treeData
+  },
+  argTypes: {
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  },
+  name: 'Virtualized Tree in Shadow DOM'
 };

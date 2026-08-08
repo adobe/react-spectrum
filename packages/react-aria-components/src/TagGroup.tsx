@@ -172,6 +172,7 @@ function TagGroupInner<T>({props, forwardedRef: ref, collection}: TagGroupInnerP
     collection
   });
 
+  // oxlint-disable-next-line react/react-compiler
   let filteredState = UNSTABLE_useFilteredListState(tagGroupState as ListState<T>, filter);
 
   // Prevent DOM props from going to two places.

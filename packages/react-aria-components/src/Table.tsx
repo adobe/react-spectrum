@@ -524,6 +524,7 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
       tableRef,
       scrollRef,
       tableWidth: width,
+      // oxlint-disable-next-line react/react-compiler
       useTableColumnResizeState,
       onResizeStart: props.onResizeStart,
       onResize: props.onResize,
@@ -624,6 +625,7 @@ export const Table = forwardRef(function Table(
   props: TableProps,
   ref: ForwardedRef<HTMLTableElement | HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
@@ -690,6 +692,7 @@ const EXPANSION_KEYS = {
 };
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, filter, ...DOMCollectionProps} = props;
@@ -705,6 +708,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
     props.onExpandedChange
   );
+  // oxlint-disable-next-line react/react-compiler
   collection = useMemo(() => collection.withExpandedKeys(expandedKeys), [collection, expandedKeys]);
 
   let tableState = useTableState({
@@ -716,6 +720,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     onExpandedChange: setExpandedKeys
   });
 
+  // oxlint-disable-next-line react/react-compiler
   let filteredState = UNSTABLE_useFilteredTableState(tableState, filter);
   let {
     isVirtualized,
@@ -764,11 +769,13 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let [treeDropTargetDelegate] = useState(() => new TreeDropTargetDelegate());
 
   if (hasDragHooks && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: filteredState.collection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
+    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
@@ -778,6 +785,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   }
 
   if (hasDropHooks && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: filteredState.collection,
       selectionManager
@@ -795,6 +803,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       ctxDropTargetDelegate ||
       new dragAndDropHooks.ListDropTargetDelegate(collection.rows, ref);
     treeDropTargetDelegate.setup(dropTargetDelegate, tableState, direction);
+    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -859,6 +868,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let style = renderProps.style;
   let layoutState: TableColumnResizeState<unknown> | null = null;
   if (tableContainerContext) {
+    // oxlint-disable-next-line react/react-compiler
     layoutState = tableContainerContext.useTableColumnResizeState(
       {
         tableWidth: tableContainerContext.tableWidth
@@ -1181,6 +1191,18 @@ export interface ColumnProps
    * `<ResizableTableContainer>`.
    */
   maxWidth?: ColumnStaticSize | null;
+  /**
+   * Whether the column header or its first focusable child element should be focused when the
+   * column header is focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in
+   * tab keyboard navigation mode.
+   */
+  focusMode?: 'child' | 'cell';
+  /**
+   * Whether the column should support arrow key navigation even when the containing table uses tab
+   * keyboard navigation. Allows users to navigate between columns and rows with arrow keys while
+   * focus is on an interactive child element within the column header.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 class TableColumnNode extends CollectionNode<unknown> {
@@ -1212,7 +1234,12 @@ export const Column = /*#__PURE__*/ createLeafComponent(
     let state = useContext(TableStateContext)!;
     let {isVirtualized} = useContext(CollectionRendererContext);
     let {columnHeaderProps, isPressed} = useTableColumnHeader(
-      {node: column, isVirtualized},
+      {
+        node: column,
+        isVirtualized,
+        focusMode: props.focusMode,
+        allowsArrowNavigation: props.allowsArrowNavigation
+      },
       state,
       ref
     );
@@ -1364,7 +1391,7 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
   let {onResizeStart, onResize, onResizeEnd} = useContext(ResizableTableContainerContext)!;
   let {column, triggerRef} = useContext(ColumnResizerContext)!;
   let inputRef = useRef<HTMLInputElement>(null);
-  let {resizerProps, inputProps, isResizing} = useTableColumnResize(
+  let {resizerProps, inputProps, isResizing, isMouseResizing} = useTableColumnResize(
     {
       column,
       'aria-label': props['aria-label'] || stringFormatter.format('tableResizer'),
@@ -1415,24 +1442,15 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
     }
   });
 
-  let [isMouseDown, setMouseDown] = useState(false);
-  let onPointerDown = (e: PointerEvent) => {
-    if (e.pointerType === 'mouse') {
-      setMouseDown(true);
-    }
-  };
-
-  if (!isResizing && isMouseDown) {
-    setMouseDown(false);
-  }
-
   let DOMProps = filterDOMProps(props, {global: true});
 
+  // Cursor overlay is used to style the cursor against the entire screen.
+  // Do not turn off pointer events or the cursor will no longer be styled.
   return (
     <dom.div
       ref={objectRef}
       role="presentation"
-      {...mergeProps(DOMProps, renderProps, resizerProps, {onPointerDown}, hoverProps)}
+      {...mergeProps(DOMProps, renderProps, resizerProps, hoverProps)}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
@@ -1441,9 +1459,12 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
       {renderProps.children}
       <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       {isResizing &&
-        isMouseDown &&
+        isMouseResizing &&
         ReactDOM.createPortal(
-          <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />,
+          <div
+            style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}}
+            data-testid="cursor-overlay"
+          />,
           document.body
         )}
     </dom.div>
@@ -2062,6 +2083,18 @@ export interface CellProps
   textValue?: string;
   /** Indicates how many columns the data cell spans. */
   colSpan?: number;
+  /**
+   * Whether the cell or its first focusable child element should be focused when the cell is
+   * focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in tab keyboard
+   * navigation mode.
+   */
+  focusMode?: 'child' | 'cell';
+  /**
+   * Whether the cell should support arrow key navigation even when the containing table uses
+   * tab keyboard navigation. Allows users to navigate between cells and rows with arrow keys while
+   * focus is on an interactive child element within the cell.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 class TableCellNode extends CollectionNode<unknown> {
@@ -2100,7 +2133,9 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
       {
         node: cell,
         shouldSelectOnPressUp: !!dragState,
-        isVirtualized
+        isVirtualized,
+        focusMode: props.focusMode,
+        allowsArrowNavigation: props.allowsArrowNavigation
       },
       state,
       ref
@@ -2169,6 +2204,7 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
@@ -2266,6 +2302,7 @@ function RootDropIndicator() {
   let state = useContext(TableStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
     {
       target: {type: 'root'}

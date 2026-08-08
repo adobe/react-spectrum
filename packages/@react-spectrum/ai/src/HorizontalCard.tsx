@@ -28,6 +28,7 @@ import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
+import {IconContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -36,15 +37,15 @@ import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
-interface CardRenderProps {
+interface HorizontalCardRenderProps {
   /** The size of the Card. */
   size: 'XS' | 'S' | 'M' | 'L' | 'XL';
 }
 
-export interface CardProps extends Omit<
+export interface HorizontalCardProps extends Omit<
   GridListItemProps,
   | 'className'
   | 'style'
@@ -57,7 +58,7 @@ export interface CardProps extends Omit<
   | keyof GlobalDOMAttributes
 > {
   /** The children of the Card. */
-  children: ReactNode | ((renderProps: CardRenderProps) => ReactNode);
+  children: ReactNode | ((renderProps: HorizontalCardRenderProps) => ReactNode);
   /**
    * The size of the Card.
    *
@@ -82,13 +83,15 @@ export interface CardProps extends Omit<
   styles?: StyleString;
 }
 
-export interface BasicCardProps extends Omit<CardProps, 'variant'> {
+export interface BasicCardProps extends Omit<HorizontalCardProps, 'variant'> {
   /**
    * The visual style of the Card.
    *
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  /** Whether the card is in an error state. */
+  isInvalid?: boolean;
 }
 
 const borderRadius = {
@@ -115,45 +118,14 @@ let card = style({
   flexDirection: 'row',
   position: 'relative',
   borderRadius,
-  '--s2-container-bg': {
-    type: 'backgroundColor',
-    value: {
-      variant: {
-        primary: 'elevated',
-        secondary: 'layer-1',
-        tertiary: 'layer-2'
-      },
-      isBasic: {
-        variant: {
-          primary: 'layer-2',
-          secondary: 'layer-1',
-          tertiary: 'layer-2',
-          quiet: 'layer-2'
-        }
-      },
-      forcedColors: 'ButtonFace'
-    }
+  backgroundColor: {
+    default: lightDark('transparent-white-300', 'transparent-black-300'),
+    forcedColors: 'ButtonFace'
   },
-  backgroundColor: '--s2-container-bg',
-  // TODO: No box shadow for basic, secondary, dark
-  // also none for basic tertiary
+  // TODO: waiting for design to investigate thumbnail card/attachement error state
   boxShadow: {
-    default: 'emphasized',
-    isHovered: 'elevated',
-    isFocusVisible: 'elevated',
-    isSelected: 'elevated',
-    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
-    variant: {
-      tertiary: {
-        // Render border with box-shadow to avoid affecting layout.
-        default: `[0 0 0 2px ${color('gray-100')}]`,
-        isHovered: `[0 0 0 2px ${color('gray-200')}]`,
-        isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
-        isSelected: 'none',
-        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
-      },
-      quiet: 'none'
-    }
+    default: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
+    isInvalid: `[inset 0 0 0 1px ${color('negative-900')}]`
   },
   forcedColorAdjust: 'none',
   transition: 'default',
@@ -193,8 +165,7 @@ let card = style({
         XL: 80
       }
     },
-    isCardView: 'full',
-    [onlyPreview]: 68
+    isCardView: 'full'
   },
   width: {
     default: 'full',
@@ -342,7 +313,7 @@ const image = style({
   pointerEvents: 'none'
 });
 
-let title = style({
+let title = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isBasic?: boolean}>({
   font: 'title',
   fontSize: {
     size: {
@@ -353,11 +324,14 @@ let title = style({
       XL: 'title-lg'
     }
   },
-  lineClamp: 3,
+  lineClamp: {
+    default: 3,
+    isBasic: 1
+  },
   gridArea: 'title'
 });
 
-let description = style({
+let description = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isBasic?: boolean}>({
   font: 'body',
   fontSize: {
     size: {
@@ -368,7 +342,10 @@ let description = style({
       XL: 'body'
     }
   },
-  lineClamp: 3,
+  lineClamp: {
+    default: 3,
+    isBasic: 1
+  },
   gridArea: 'description'
 });
 
@@ -377,7 +354,7 @@ let content = style({
   // By default, all elements are displayed in a stack.
   // If an action menu is present, place it next to the title.
   gridTemplateColumns: {
-    default: ['1fr'],
+    default: ['minmax(0, 1fr)'],
     ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
   },
   gridTemplateAreas: {
@@ -386,6 +363,7 @@ let content = style({
   },
   columnGap: 4,
   flexGrow: 1,
+  minWidth: 0,
   alignItems: 'baseline',
   alignContent: 'start',
   rowGap: {
@@ -456,8 +434,9 @@ const actionButtonSize = {
 } as const;
 
 const Card = forwardRef(function Card(
-  props: Omit<CardProps, 'variant'> & {
+  props: Omit<HorizontalCardProps, 'variant'> & {
     isBasic?: boolean;
+    isInvalid?: boolean;
     variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
   },
   ref: DOMRef<HTMLDivElement>
@@ -466,6 +445,7 @@ const Card = forwardRef(function Card(
   let domRef = useDOMRef(ref);
   let {
     isBasic = false,
+    isInvalid = false,
     density = 'regular',
     size = 'M',
     variant = 'primary',
@@ -484,8 +464,8 @@ const Card = forwardRef(function Card(
           {
             slots: {
               [DEFAULT_SLOT]: {},
-              title: {styles: title({size})},
-              description: {styles: description({size})}
+              title: {styles: title({size, isBasic})},
+              description: {styles: description({size, isBasic})}
             }
           }
         ],
@@ -517,6 +497,7 @@ const Card = forwardRef(function Card(
     </Provider>
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let press = pressScale(domRef);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
@@ -533,6 +514,7 @@ const Card = forwardRef(function Card(
               density,
               variant,
               isBasic,
+              isInvalid,
               isCardView: false,
               isLink: true
             }),
@@ -558,11 +540,12 @@ const Card = forwardRef(function Card(
       <div
         {...filterDOMProps(otherProps)}
         id={id != null ? String(id) : undefined}
+        aria-invalid={isInvalid || undefined}
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
         ref={domRef}
         className={mergeStyles(
-          card({size, density, variant, isBasic, isCardView: ElementType !== 'div'}),
+          card({size, density, variant, isBasic, isInvalid, isCardView: ElementType !== 'div'}),
           styles
         )}>
         <InternalCardContext.Provider
@@ -585,6 +568,7 @@ const Card = forwardRef(function Card(
     <ElementType
       {...props}
       ref={domRef}
+      aria-invalid={isInvalid || undefined}
       className={renderProps =>
         mergeStyles(
           card({
@@ -594,7 +578,8 @@ const Card = forwardRef(function Card(
             size,
             density,
             variant,
-            isBasic
+            isBasic,
+            isInvalid
           }),
           styles
         )
@@ -669,6 +654,7 @@ export interface CardPreviewProps extends DOMProps {
   styles?: StyleString;
 }
 
+// TODO: this should be the same component as the one in @react-spectrum/s2/Card
 export const CardPreview = forwardRef(function CardPreview(
   props: CardPreviewProps,
   ref: DOMRef<HTMLDivElement>
@@ -676,15 +662,13 @@ export const CardPreview = forwardRef(function CardPreview(
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
     useContext(InternalCardContext);
   let domRef = useDOMRef(ref);
+  // oxlint-disable react/react-compiler
   return (
     <div
       {...filterDOMProps(props)}
       slot="preview"
       ref={domRef}
-      className={mergeStyles(
-        preview({size, isQuiet, isHovered, isFocusVisible, isSelected}),
-        props.styles
-      )}
+      className={preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
       style={isQuiet ? pressScale(domRef)({isPressed}) : undefined}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
@@ -693,6 +677,7 @@ export const CardPreview = forwardRef(function CardPreview(
       </div>
     </div>
   );
+  // oxlint-enable react/react-compiler
 });
 
 const collection = style({
@@ -742,7 +727,7 @@ const buttonSize = {
 } as const;
 
 export const HorizontalCard = forwardRef(function HorizontalCard(
-  props: CardProps,
+  props: HorizontalCardProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {size = 'M'} = props;
@@ -825,6 +810,15 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
   );
 });
 
+const iconThumbnailStyles = style({
+  position: 'relative',
+  alignSelf: 'center',
+  flexShrink: 0,
+  pointerEvents: 'none',
+  userSelect: 'none',
+  size: '--basic-thumb-size'
+});
+
 export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
   props: BasicCardProps,
   ref: DOMRef<HTMLDivElement>
@@ -844,6 +838,7 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                     styles: style({
                       position: 'relative',
                       alignSelf: 'center',
+                      flexShrink: 0,
                       pointerEvents: 'none',
                       userSelect: 'none',
                       size: '--basic-thumb-size',
@@ -858,6 +853,17 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                       },
                       outlineColor: '--s2-container-bg'
                     })({size})
+                  }
+                }
+              }
+            ],
+            [
+              IconContext,
+              {
+                slots: {
+                  icon: {},
+                  thumbnail: {
+                    styles: iconThumbnailStyles
                   }
                 }
               }

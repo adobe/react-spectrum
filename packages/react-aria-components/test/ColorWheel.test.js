@@ -173,6 +173,19 @@ describe('ColorWheel', () => {
     expect(wrapper).toHaveClass('disabled');
   });
 
+  it('should support repeat keydown events when holding Page Up/Page Down', async () => {
+    // Page Up/Down change the hue by the page step (15); the arrow keys are handled by useMove instead.
+    let {getByRole} = renderColorWheel();
+    let slider = getByRole('slider');
+
+    await user.tab();
+    await user.keyboard('{PageUp>3/}');
+    expect(slider).toHaveValue('45');
+
+    await user.keyboard('{PageDown>3/}');
+    expect(slider).toHaveValue('0');
+  });
+
   it('should support form prop', () => {
     let {getByRole} = renderColorWheel({form: 'test'});
     let input = getByRole('slider');

@@ -1,5 +1,6 @@
 export {
   getEventTarget,
+  getPropagationTargets,
   nodeContains,
   isFocusWithin,
   getActiveElement

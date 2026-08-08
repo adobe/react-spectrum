@@ -209,6 +209,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 
   // default select the first available item
   let register = useCallback((value: Key) => {
+    // oxlint-disable-next-line react/react-compiler
     if (state && !isRegistered.current) {
       isRegistered.current = true;
       state.toggleKey(value);

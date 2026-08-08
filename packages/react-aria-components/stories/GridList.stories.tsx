@@ -12,9 +12,10 @@
 
 import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
-import {Checkbox, CheckboxProps} from '../src/Checkbox';
+import {Checkbox, CheckboxGroup, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Collection} from 'react-aria/Collection';
+import {ComboBox} from '../src/ComboBox';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {GridLayout} from '../src/GridLayout';
@@ -28,10 +29,13 @@ import {
   GridListSection
 } from '../src/GridList';
 import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
 import {Key} from '@react-types/shared';
+import {ListBox} from '../src/ListBox';
 import {ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerState';
-import {LoadingSpinner} from './utils';
+import {LoadingSpinner, MyListBoxItem} from './utils';
 import {LoadingState} from '@react-types/shared';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay, ModalOverlayProps} from '../src/Modal';
 import {Popover} from '../src/Popover';
@@ -39,10 +43,13 @@ import React, {JSX, useState} from 'react';
 import styles from '../example/index.css';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {Toolbar} from '../src/Toolbar';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
+import {Radio, RadioGroup} from '../src/RadioGroup';
 
 export default {
   title: 'React Aria Components/GridList',
@@ -312,13 +319,21 @@ GridListSectionExample.story = {
 };
 
 export function VirtualizedGridListSection() {
-  let sections: {id: string; name: string; children: {id: string; name: string}[]}[] = [];
+  let sections: {
+    id: string;
+    name: string;
+    children: {id: string; name: string}[];
+  }[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string; name: string}[] = [];
     for (let i = 0; i < 3; i++) {
       items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
     }
-    sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+    sections.push({
+      id: `section_${s}`,
+      name: `Section ${s}`,
+      children: items
+    });
   }
 
   return (
@@ -360,7 +375,9 @@ const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolea
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
+      return [...keys].map(key => ({
+        'text/plain': list.getItem(key)?.name ?? ''
+      }));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -950,6 +967,225 @@ export const AsyncGridListGridVirtualized: StoryObj<typeof AsyncGridListGridVirt
     loadingState: {
       control: 'select',
       options: ['idle', 'loadingMore']
+    }
+  }
+};
+
+let comboboxEmptyState = () => {
+  return <div style={{height: 30, width: '100%'}}>No results</div>;
+};
+
+type GridListWithTextfieldArgs = GridListProps<any> & {autoFocusChildren?: boolean};
+
+const GridListWithTextfieldRender = (args: GridListWithTextfieldArgs) => {
+  let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
+  let {autoFocusChildren, keyboardNavigationBehavior, ...otherArgs} = args;
+
+  let focusMode =
+    autoFocusChildren && keyboardNavigationBehavior === 'tab'
+      ? 'child'
+      : (undefined as 'child' | undefined);
+  let allowsArrowNavigation =
+    autoFocusChildren && keyboardNavigationBehavior === 'tab' ? true : undefined;
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <input aria-label="input before gridlist" />
+      <GridList
+        className={styles.menu}
+        aria-label="gridlist with textfield"
+        keyboardNavigationBehavior={keyboardNavigationBehavior}
+        style={{
+          width: isHorizontalStack ? undefined : 400,
+          height: isHorizontalStack ? undefined : 400,
+          display: isHorizontalStack ? 'flex' : 'grid',
+          gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
+          gridAutoFlow: args.orientation === 'horizontal' ? 'column' : 'row'
+        }}
+        {...otherArgs}>
+        <MyGridListItem textValue="Rac TextField" focusMode={focusMode}>
+          RAC TextField
+          <TextField aria-label="Name">
+            <Input />
+          </TextField>
+        </MyGridListItem>
+        <MyGridListItem textValue="Rac input" focusMode={focusMode}>
+          Raw input <input aria-label="Raw text input" style={{marginLeft: 4}} />
+        </MyGridListItem>
+        <MyGridListItem textValue="TextField + Button" focusMode={focusMode}>
+          TextField + Button
+          <TextField aria-label="Search">
+            <Input />
+          </TextField>{' '}
+          <Button>Go</Button>
+        </MyGridListItem>
+        <MyGridListItem textValue="Combobox" focusMode={focusMode}>
+          ComboBox
+          <ComboBox aria-label="combobox" allowsEmptyCollection>
+            <div style={{display: 'flex'}}>
+              <Input />
+              <Button>
+                <span aria-hidden="true" style={{padding: '0 2px'}}>
+                  ▼
+                </span>
+              </Button>
+            </div>
+            <Popover>
+              <ListBox
+                renderEmptyState={comboboxEmptyState}
+                data-testid="combo-box-list-box"
+                className={styles.menu}
+                style={{width: 'var(--trigger-width)'}}>
+                <MyListBoxItem>Foo</MyListBoxItem>
+                <MyListBoxItem>Bar</MyListBoxItem>
+                <MyListBoxItem>Baz</MyListBoxItem>
+                <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+              </ListBox>
+            </Popover>
+          </ComboBox>
+        </MyGridListItem>
+        <MyGridListItem textValue="Toolbar" focusMode={focusMode}>
+          Toolbar
+          <Toolbar aria-label="Text formatting" style={{gap: 4}}>
+            <Button onPress={action('Bold press')}>Bold</Button>
+            <Button onPress={action('Italics press')}>Italic</Button>
+            <Button onPress={action('Underline press')}>Underline</Button>
+          </Toolbar>
+        </MyGridListItem>
+        <MyGridListItem
+          textValue="Menu"
+          focusMode={focusMode}
+          allowsArrowNavigation={allowsArrowNavigation}>
+          Menu
+          {/* TODO: hitting escape to close the menu, returns focus to the row.
+          Tabbing back from the external input also focuses the trggerbutton rather than the row. Tabbing back into the textfield row focuses the row  */}
+          <MenuTrigger>
+            <Button aria-label="Options">▾</Button>
+            <Popover>
+              <Menu className={styles.menu}>
+                <MenuItem>Cut</MenuItem>
+                <MenuItem>Copy</MenuItem>
+                <MenuItem>Paste</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        </MyGridListItem>
+        <MyGridListItem textValue="Radiogroup" focusMode={focusMode}>
+          RadioGroup
+          <RadioGroup
+            aria-label="Radiogroup"
+            className={styles.radiogroup}
+            style={{flexDirection: 'row'}}>
+            <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
+              Dog
+            </Radio>
+            <Radio className={styles.radio} value="cats">
+              Cat
+            </Radio>
+            <Radio className={styles.radio} value="dragon">
+              Dragon
+            </Radio>
+          </RadioGroup>
+        </MyGridListItem>
+        <MyGridListItem textValue="Checkboxgroup" focusMode={focusMode}>
+          CheckboxGroup
+          <CheckboxGroup aria-label="Checkboxgroup" style={{display: 'flex', flexDirection: 'row'}}>
+            <Checkbox value="soccer">
+              <div className="checkbox" aria-hidden="true">
+                <svg viewBox="0 0 18 18">
+                  <polyline points="1 9 7 14 15 4" />
+                </svg>
+              </div>
+              Soccer
+            </Checkbox>
+            <Checkbox value="baseball">
+              <div className="checkbox" aria-hidden="true">
+                <svg viewBox="0 0 18 18">
+                  <polyline points="1 9 7 14 15 4" />
+                </svg>
+              </div>
+              Baseball
+            </Checkbox>
+            <Checkbox value="basketball">
+              <div className="checkbox" aria-hidden="true">
+                <svg viewBox="0 0 18 18">
+                  <polyline points="1 9 7 14 15 4" />
+                </svg>
+              </div>
+              Basketball
+            </Checkbox>
+          </CheckboxGroup>
+        </MyGridListItem>
+      </GridList>
+      <input aria-label="input after gridlist" />
+    </div>
+  );
+};
+
+export const GridListWithTextfield: StoryObj<typeof GridListWithTextfieldRender> = {
+  render: args => <GridListWithTextfieldRender {...args} />,
+  args: {
+    layout: 'stack',
+    orientation: 'vertical',
+    escapeKeyBehavior: 'clearSelection',
+    keyboardNavigationBehavior: 'tab'
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
+    },
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    autoFocusChildren: {
+      control: 'boolean'
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Note that toggling autoFocusChildren will make each row automatically focus its children. For the row with a menu, allowsArrowNavigation is also applied so that arrow keys can be used to move focus between rows still'
+    }
+  }
+};
+
+function VirtualizedDisplayNoneToggleRender() {
+  let [visible, setVisible] = useState(true);
+
+  return (
+    <div>
+      <Button onPress={() => setVisible(v => !v)} style={{marginBottom: 8}}>
+        {visible ? 'Hide' : 'Show'}
+      </Button>
+      <div style={{display: visible ? undefined : 'none'}}>
+        <VirtualizedGridDnD />
+      </div>
+    </div>
+  );
+}
+
+export const VirtualizedDisplayNoneToggle: StoryObj = {
+  render: VirtualizedDisplayNoneToggleRender,
+  parameters: {
+    description: {
+      data: 'toggling hide and show should not cause the items to disappear'
     }
   }
 };

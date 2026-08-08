@@ -298,7 +298,8 @@ module.exports = new Transformer({
               ref && ref.typeAnnotation
                 ? processExport(path.get('params.1.typeAnnotation.typeAnnotation'))
                 : null,
-            description: docs.description || null
+            description: docs.description || null,
+            examples: docs.examples || null
           });
         } else {
           let docs = getJSDocs(path);

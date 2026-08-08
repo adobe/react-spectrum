@@ -10,21 +10,49 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, forwardRefType} from '@react-types/shared';
-import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  DOMRef,
+  forwardRefType,
+  GlobalDOMAttributes
+} from '@react-types/shared';
+import {
+  baseColor,
+  focusRing,
+  iconStyle,
+  style
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
-import Close from '@react-spectrum/s2/icons/Close';
-import {forwardRef, useRef} from 'react';
-import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Cross from '../ui-icons/Cross';
+import {forwardRef, ReactNode, useContext, useRef} from 'react';
+import {IconContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
-import {StyleProps, TagProps} from '@react-spectrum/s2';
-import {Tag, TagGroup, TagGroupProps, TagList, TagListProps} from 'react-aria-components/TagGroup';
+import {Provider} from 'react-aria-components/slots';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  Tag,
+  TagGroup,
+  TagGroupProps,
+  TagList,
+  TagListProps,
+  TagProps
+} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+
+interface AttachmentRenderProps {
+  /** The size of the Card. */
+  size: 'XS' | 'S' | 'M' | 'L' | 'XL';
+}
 
 const controlSizeM = {
   default: 32,
@@ -64,16 +92,17 @@ const styles = style<{
     isFocusVisible: hoverBackground,
     isPressed: hoverBackground
   },
-  '--iconPrimary': {
-    type: 'color',
-    value: {
-      default: baseColor('neutral'),
-      isDisabled: 'disabled',
-      forcedColors: {
-        default: 'ButtonText',
-        isDisabled: 'GrayText'
-      }
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
     }
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
   },
   outlineColor: {
     default: 'focus-ring',
@@ -82,16 +111,9 @@ const styles = style<{
   disableTapHighlight: true
 });
 
-const closeIconStyle = ({size = 'M'}) => {
-  if (size === 'S') return iconStyle({size: 'XS'});
-  else if (size === 'M') return iconStyle({size: 'S'});
-  else if (size === 'L') return iconStyle({size: 'M'});
-  else if (size === 'XL') return iconStyle({size: 'L'});
-  else return iconStyle({size: 'S'});
-};
-
 const CloseButton = function CloseButton(props) {
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
     <Button
       {...props}
@@ -101,27 +123,50 @@ const CloseButton = function CloseButton(props) {
       className={renderProps =>
         mergeStyles(styles({...renderProps, size: props.size || 'M'}), props.styles)
       }>
-      <Close styles={closeIconStyle({size: props.size ?? 'M'})} />
+      <Cross size="M" />
     </Button>
   );
+  // oxlint-enable react/react-compiler
 };
 
 export interface AttachmentListProps<T>
   extends
-    Omit<TagGroupProps, 'children'>,
-    StyleProps,
-    Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'> {}
+    DOMProps,
+    Omit<
+      TagGroupProps,
+      | 'children'
+      | 'selectionMode'
+      | 'defaultSelectedKeys'
+      | 'selectionBehavior'
+      | 'selectedKeys'
+      | 'disallowEmptySelection'
+      | 'escapeKeyBehavior'
+      | 'onSelectionChange'
+      | 'shouldSelectOnPressUp'
+      | 'onAction'
+      | 'render'
+      | 'style'
+      | 'className'
+      | keyof GlobalDOMAttributes
+    >,
+    Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
 
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   return (
-    <TagGroup {...props} className={props.styles} ref={domRef}>
+    <TagGroup {...otherProps} className={styles} ref={domRef}>
       <TagList
-        items={props.items}
-        dependencies={props.dependencies}
+        items={items}
+        dependencies={dependencies}
         className={style({
           display: 'flex',
           flexDirection: 'row',
@@ -130,15 +175,98 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
           alignItems: 'center',
           width: 'full'
         })}>
-        {props.children}
+        {children}
       </TagList>
     </TagGroup>
   );
 });
 
 export interface AttachmentProps
-  extends CardProps, AriaLabelingProps, Pick<TagProps, 'id' | 'textValue'> {
+  extends
+    Omit<
+      CardProps,
+      'styles' | 'UNSAFE_className' | 'UNSAFE_style' | 'allowsArrowNavigation' | 'focusMode'
+    >,
+    AriaLabelingProps,
+    Pick<TagProps, 'id' | 'textValue' | 'render'> {
+  /** The children of the Attachment. */
+  children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
   uploadProgress?: number;
+  /** Whether the attachment has an error. */
+  isInvalid?: boolean;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
+
+const tagStyles = style({
+  flexShrink: 0,
+  flexGrow: 0,
+  position: 'relative',
+  ...focusRing(),
+  borderRadius: 'default'
+});
+
+const attachmentErrorStyles = style({
+  display: 'flex',
+  flexShrink: 0,
+  alignItems: 'center',
+  paddingStart: 8,
+  '--iconPrimary': {
+    type: 'color',
+    value: 'negative'
+  }
+});
+
+function AttachmentContextProvider({
+  children,
+  isUploading
+}: {
+  children: ReactNode;
+  isUploading: boolean;
+}) {
+  let imageCtx = useContext(ImageContext);
+  let iconCtx = useContext(IconContext);
+  const opacityStyles = style({
+    opacity: {default: 1, isUploading: 0.15},
+    transition: 'default'
+  })({isUploading});
+  const imageSlots = imageCtx && 'slots' in imageCtx ? imageCtx.slots : undefined;
+  const iconSlots = iconCtx && 'slots' in iconCtx ? iconCtx.slots : undefined;
+
+  return (
+    <Provider
+      values={[
+        [
+          ImageContext,
+          {
+            ...imageCtx,
+            slots: {
+              ...imageSlots,
+              thumbnail: {
+                ...imageSlots?.thumbnail,
+                styles: mergeStyles(imageSlots?.thumbnail?.styles, opacityStyles)
+              }
+            }
+          }
+        ],
+        [
+          IconContext,
+          {
+            slots: {
+              ...iconSlots,
+              thumbnail: {
+                ...iconSlots?.thumbnail,
+                styles: mergeStyles(iconSlots?.thumbnail?.styles, opacityStyles)
+              }
+            }
+          }
+        ]
+      ]}>
+      {children}
+    </Provider>
+  );
 }
 
 export const Attachment = forwardRef(function Attachment(
@@ -151,9 +279,14 @@ export const Attachment = forwardRef(function Attachment(
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedby,
+    styles,
+    isInvalid,
+    children,
+    size = 'M',
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Tag
       id={id}
@@ -162,14 +295,8 @@ export const Attachment = forwardRef(function Attachment(
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
       ref={domRef}
-      className={style({
-        flexShrink: 0,
-        flexGrow: 0,
-        position: 'relative',
-        ...focusRing(),
-        borderRadius: 'default'
-      })}>
-      <BasicHorizontalCard {...otherProps}>
+      className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
+      <BasicHorizontalCard {...otherProps} isInvalid={isInvalid} size={size}>
         {props.uploadProgress != null && props.uploadProgress < 100 && (
           <div
             className={style({
@@ -177,38 +304,29 @@ export const Attachment = forwardRef(function Attachment(
               top: '50%',
               insetStart: {
                 default: '50%',
-                ':has(~ [data-slot=content])': 32
+                ':has(~ [data-slot=content])':
+                  '[calc(var(--card-padding-x) + var(--basic-thumb-size) / 2)]'
               },
               transform: 'translate(-50%, -50%)'
             })}>
-            <ProgressCircle aria-label="Uploading" value={props.uploadProgress} size="S" />
+            <ProgressCircle
+              aria-label={stringFormatter.format('promptfield.uploading')}
+              value={props.uploadProgress}
+              // TODO: should probably be M for most thumbnail only attachments at varying sizes, but needs to be S if there is text content
+              // aka like a actualy horizontal card, but to do this I need to know if text sibling is there...
+              size="S"
+            />
           </div>
         )}
-        {/* Reduce opacity of the thumbnail if upload is in progress */}
-        <ImageContext.Consumer>
-          {ctx => (
-            <ImageContext.Provider
-              value={{
-                ...ctx,
-                slots: {
-                  thumbnail: {
-                    ...(ctx && 'slots' in ctx ? ctx.slots?.thumbnail : {}),
-                    styles: mergeStyles(
-                      ctx && 'slots' in ctx ? ctx.slots?.thumbnail?.styles : undefined,
-                      style({
-                        opacity: {default: 1, isUploading: 0.15},
-                        transition: 'default'
-                      })({isUploading: props.uploadProgress != null && props.uploadProgress < 100})
-                    )
-                  }
-                }
-              }}>
-              {typeof props.children === 'function'
-                ? props.children({size: otherProps.size || 'M'})
-                : props.children}
-            </ImageContext.Provider>
-          )}
-        </ImageContext.Consumer>
+        <AttachmentContextProvider
+          isUploading={props.uploadProgress != null && props.uploadProgress < 100}>
+          {typeof children === 'function' ? children({size}) : children}
+        </AttachmentContextProvider>
+        {isInvalid && (
+          <div aria-hidden="true" className={attachmentErrorStyles}>
+            <AlertTriangleIcon size={size} />
+          </div>
+        )}
       </BasicHorizontalCard>
       {/** Definitely not a close button, though looks like one. */}
       <div
@@ -223,3 +341,18 @@ export const Attachment = forwardRef(function Attachment(
     </Tag>
   );
 });
+
+function AlertTriangleIcon({size}) {
+  switch (size) {
+    case 'XS':
+      return <AlertTriangle styles={iconStyle({size: 'XS'})} />;
+    case 'S':
+      return <AlertTriangle styles={iconStyle({size: 'S'})} />;
+    case 'M':
+      return <AlertTriangle styles={iconStyle({size: 'M'})} />;
+    case 'L':
+      return <AlertTriangle styles={iconStyle({size: 'L'})} />;
+    case 'XL':
+      return <AlertTriangle styles={iconStyle({size: 'XL'})} />;
+  }
+}

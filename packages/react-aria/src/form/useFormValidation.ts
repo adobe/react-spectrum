@@ -106,6 +106,7 @@ export function useFormValidation<T>(
       // validation errors that are returned by server actions.
       // To do this, we ignore programmatic form resets that occur outside a user event.
       // This is best-effort. There may be false positives, e.g. setTimeout.
+      // oxlint-disable-next-line react/react-compiler
       form.reset = () => {
         // React uses MessageChannel for scheduling, so ignore 'message' events.
         isIgnoredReset.current =
@@ -116,8 +117,13 @@ export function useFormValidation<T>(
       };
     }
 
+    // 'change' and 'reset' do not compose across shadow DOM boundaries, but these listeners are
+    // intentionally scoped to this specific input/form element (not a global target), so shadow
+    // root propagation does not apply here.
     input.addEventListener('invalid', onInvalid);
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     input.addEventListener('change', onChange);
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     form?.addEventListener('reset', onReset);
     return () => {
       input!.removeEventListener('invalid', onInvalid);

@@ -37,29 +37,29 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a, _.b, _.c;
+"@layer _.prose, _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs14:first-child {
+  .Jbs16:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv14:first-child {
+    .Jbpv16:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
-.-macro-static-I08ui {
-        --macro-data-I08ui: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+.-macro-static-k4lBYc {
+        --macro-data-k4lBYc: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
-    expect(js).toMatchInlineSnapshot(`" Jbs14 Jbpv14 -macro-static-I08ui"`);
+    expect(js).toMatchInlineSnapshot(`" Jbs16 Jbpv16 -macro-static-k4lBYc"`);
   });
 
   it('should support self references', () => {
@@ -70,63 +70,63 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer _.prose, _.a;
 
 @layer _.a {
-  ._kc14 {
+  ._kc16 {
     border-top-width: 2px;
   }
 
 
-  .hc14 {
+  .hc16 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc14 {
+  .mCPFGYc16 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc14 {
+  .lc16 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc14 {
+  .SMBFGYc16 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv14 {
+  .Rv16 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd14 {
+  .ZjUQgKd16 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc14 {
+  .-m_-mc16 {
     --m: 2px;
   }
 
 
-  .-S_-Sv14 {
+  .-S_-Sv16 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
-.-macro-static-e1GIg {
-        --macro-data-e1GIg: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+.-macro-static-Mb83Ob {
+        --macro-data-Mb83Ob: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
 
     expect(js).toMatchInlineSnapshot(
-      `" _kc14 hc14 mCPFGYc14 lc14 SMBFGYc14 Rv14 ZjUQgKd14 -m_-mc14 -S_-Sv14 -macro-static-e1GIg"`
+      `" _kc16 hc16 mCPFGYc16 lc16 SMBFGYc16 Rv16 ZjUQgKd16 -m_-mc16 -S_-Sv16 -macro-static-Mb83Ob"`
     );
   });
 
@@ -144,9 +144,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gw14 pg14 -macro-dynamic-1hksi7i"`);
-    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb14 pHJ3AUd14 -macro-static-QgnkJd"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb14 pg14 -macro-dynamic-7jtiyi"`);
+    expect(js()).toMatchInlineSnapshot(`"  gw16 pg16 -macro-dynamic-va45iq"`);
+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb16 pHJ3AUd16 -macro-static-mluMGe"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb16 pg16 -macro-dynamic-1ka988u"`);
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -161,10 +161,10 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B14 __Ya14 -macro-dynamic-1hkkiwv"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D14 __Ya14 -macro-static-F3q0Dd"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B16 __Ya16 -macro-dynamic-n4pr0j"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D16 __Ya16 -macro-static-dVorDb"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  -_7PloMd-D14 __Ya14 -macro-dynamic-j53z9d"`
+      `"  -_7PloMd-D16 __Ya16 -macro-dynamic-1nqd9c5"`
     );
   });
 
@@ -180,10 +180,10 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  Tk14 Qk14 Sk14 Rk14 -macro-dynamic-10enpkp"`);
-    expect(overrides).toMatchInlineSnapshot(`" Tm14 Qm14 Sm14 Rm14 -macro-static-rawlJc"`);
+    expect(js()).toMatchInlineSnapshot(`"  Tk16 Qk16 Sk16 Rk16 -macro-dynamic-145tku9"`);
+    expect(overrides).toMatchInlineSnapshot(`" Tm16 Qm16 Sm16 Rm16 -macro-static-XW4HYc"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  Tm14 Qm14 Sm14 Rm14 -macro-dynamic-5anb29"`
+      `"  Tm16 Qm16 Sm16 Rm16 -macro-dynamic-91t6bt"`
     );
   });
 
@@ -199,9 +199,9 @@ describe('style-macro', () => {
       fontSize: 'ui-xs'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc14 vx14 -macro-dynamic-bw4d5q"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a14 vx14 -macro-static-cD4zjb"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a14 vx14 -macro-dynamic-1yik7yo"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc16 vx16 -macro-dynamic-1omk2g2"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a16 vx16 -macro-static-Yts0we"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a16 vx16 -macro-dynamic-1c7vv9w"`);
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -216,9 +216,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gE14 -macro-dynamic-1tvo6tc"`);
-    expect(overrides).toMatchInlineSnapshot(`" Nk14 -macro-static-1ozQQc"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk14 gE14 -macro-dynamic-1fyk7lq"`);
+    expect(js()).toMatchInlineSnapshot(`"  gE16 -macro-dynamic-91ynya"`);
+    expect(overrides).toMatchInlineSnapshot(`" Nk16 -macro-static-tAGYMd"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk16 gE16 -macro-dynamic-tnvuwy"`);
   });
 
   it('should support runtime conditions', () => {
@@ -236,35 +236,35 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer _.prose, _.a;
 
 @layer _.a {
-  .gH14 {
+  .gH16 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF14 {
+  .gF16 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE14 {
+  .gE16 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt14 {
+  .pt16 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po14 {
+  .po16 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm14 {
+  .pm16 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -272,9 +272,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  gH14 pt14 -macro-dynamic-1bsdq7g"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF14 po14 -macro-dynamic-mtyglh"`);
-    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE14 pm14 -macro-dynamic-1nxkx1e"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH16 pt16 -macro-dynamic-phpdio"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF16 po16 -macro-dynamic-ja3wp"`);
+    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE16 pm16 -macro-dynamic-11mwkcm"`);
   });
 
   it('should support nested runtime conditions', () => {
@@ -290,36 +290,36 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer _.prose, _.a;
 
 @layer _.a {
-  .gH14 {
+  .gH16 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF14 {
+  .gF16 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h14 {
+  .g_h16 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g314 {
+  .g316 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot(`"  gH14 -macro-dynamic-874gf7"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF14 -macro-dynamic-mz49cx"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h14 -macro-dynamic-15g8h7m"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH16 -macro-dynamic-meizj9"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF16 -macro-dynamic-116isgz"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h16 -macro-dynamic-1jnn0bo"`);
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      `"  g314 -macro-dynamic-1ktebam"`
+      `"  g316 -macro-dynamic-1z0sueo"`
     );
   });
 
@@ -334,9 +334,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY14 -macro-dynamic-1o5y9ec"`);
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe14 -macro-dynamic-1nrp3ym"`);
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw14 -macro-dynamic-1fldd9u"`);
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY16 -macro-dynamic-3c8qja"`);
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe16 -macro-dynamic-2xzl3k"`);
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw16 -macro-dynamic-1tsrwdw"`);
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -350,18 +350,18 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a, _.b;
+"@layer _.prose, _.a, _.b;
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb14 {
+    .plb16 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple14 {
+    .ple16 {
       color: HighlightText;
     }
   }
@@ -370,8 +370,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  plb14 -macro-dynamic-42tseq"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple14 -macro-dynamic-hfe3zp"`);
+    expect(js({})).toMatchInlineSnapshot(`"  plb16 -macro-dynamic-ia8bis"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple16 -macro-dynamic-vmsn3r"`);
   });
 
   it('inherits parent default when nested branch has no default key', () => {
@@ -387,9 +387,9 @@ describe('style-macro', () => {
     });
     // forcedColors.default should apply when variant=highlight but !isSelected
     expect(css).toContain('ButtonText');
-    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb14 -macro-dynamic-42tseq"`);
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb16 -macro-dynamic-ia8bis"`);
     expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot(
-      `"  ple14 -macro-dynamic-hfe3zp"`
+      `"  ple16 -macro-dynamic-vmsn3r"`
     );
   });
 
@@ -398,33 +398,33 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot(`" Th14 Qh14 Sh14 Rh14 -macro-static-xbQCP"`);
+    expect(js).toMatchInlineSnapshot(`" Th16 Qh16 Sh16 Rh16 -macro-static-3XoZ4"`);
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer _.prose, _.a;
 
 @layer _.a {
-  .Th14 {
+  .Th16 {
     padding-top: 24px;
   }
 
 
-  .Qh14 {
+  .Qh16 {
     padding-bottom: 24px;
   }
 
 
-  .Sh14 {
+  .Sh16 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh14 {
+  .Rh16 {
     padding-inline-end: 24px;
   }
 }
 
-.-macro-static-xbQCP {
-        --macro-data-xbQCP: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+.-macro-static-3XoZ4 {
+        --macro-data-3XoZ4: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -437,16 +437,16 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer _.prose, _.a;
 
 @layer _.a {
-  .gpQzfVb14 {
+  .gpQzfVb16 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
 
-.-macro-static-mwnohc {
-        --macro-data-mwnohc: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+.-macro-static-OHuwdd {
+        --macro-data-OHuwdd: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -462,16 +462,16 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-"@layer _.a;
+"@layer _.prose, _.a;
 
 @layer _.a {
-  .-FUeYm-gE14 {
+  .-FUeYm-gE16 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
 
-.-macro-static-OWe9Jb {
-        --macro-data-OWe9Jb: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+.-macro-static-g8lhGc {
+        --macro-data-g8lhGc: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
       }
 
 "

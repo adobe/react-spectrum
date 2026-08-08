@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {ComponentProps, ReactElement, useState} from 'react';
-import {fn} from 'storybook/test';
-import {MessageFeedback} from '@react-spectrum/ai/MessageFeedback';
+import {MessageFeedback} from '@react-spectrum/ai';
 import type {Meta, StoryObj} from '@storybook/react';
+
+const events = ['onChange'];
 
 const meta: Meta<typeof MessageFeedback> = {
   component: MessageFeedback,
@@ -22,13 +24,13 @@ const meta: Meta<typeof MessageFeedback> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    onChange: {table: {category: 'Events'}},
+    ...categorizeArgTypes('Events', events),
     value: {table: {disable: true}},
     defaultValue: {table: {disable: true}}
   },
   args: {
     'aria-label': 'Rate this response',
-    onChange: fn()
+    ...getActionArgs(events)
   },
   title: 'AI/MessageFeedback'
 };
