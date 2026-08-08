@@ -33,10 +33,10 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
+import {useButton} from 'react-aria/useButton';
 import {useDOMRef} from './useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
-import {usePress} from 'react-aria/usePress';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CardRenderProps {
@@ -448,18 +448,21 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   // Hooks must be called unconditionally (React rules of hooks).
   // isDisabled is set to true when not in interactive standalone mode so the
   // hooks are effectively no-ops in those code paths.
-  let {pressProps, isPressed: isInteractivePressed} = usePress({
-    ref: domRef,
-    onPress: e => {
-      onPress?.(e);
-      onAction?.();
+  let {buttonProps, isPressed: isInteractivePressed} = useButton(
+    {
+      elementType: 'div',
+      onPress: e => {
+        onPress?.(e);
+        onAction?.();
+      },
+      onPressStart,
+      onPressEnd,
+      onPressChange,
+      onPressUp,
+      isDisabled: isDisabled || !isInteractiveStandalone
     },
-    onPressStart,
-    onPressEnd,
-    onPressChange,
-    onPressUp,
-    isDisabled: isDisabled || !isInteractiveStandalone
-  });
+    domRef
+  );
   let {hoverProps, isHovered: isInteractiveHovered} = useHover({
     isDisabled: isDisabled || !isInteractiveStandalone
   });
@@ -531,12 +534,9 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     if (isInteractiveStandalone) {
       return (
         <div
-          {...mergeProps(filterDOMProps(otherProps), pressProps, hoverProps, focusProps)}
+          {...mergeProps(filterDOMProps(otherProps), buttonProps, hoverProps, focusProps)}
           id={id != null ? String(id) : undefined}
           ref={domRef}
-          role="button"
-          tabIndex={isDisabled ? undefined : 0}
-          aria-disabled={isDisabled ? true : undefined}
           className={
             UNSAFE_className +
             card(

@@ -32,18 +32,17 @@ describe('Card', () => {
     jest.restoreAllMocks();
   });
 
-  it('renders as a plain div when no press callbacks are provided', () => {
-    let {getByText} = render(
+  it('renders as a plain div when no press callbacks are provided', async () => {
+    let {queryAllByRole} = render(
       <Card>
         <Content>
           <Text slot="title">Static Card</Text>
         </Content>
       </Card>
     );
-    let el = getByText('Static Card').closest('[class]')!.parentElement!;
-    expect(el.tagName).toBe('DIV');
-    expect(el).not.toHaveAttribute('role');
-    expect(el).not.toHaveAttribute('tabindex');
+    expect(queryAllByRole('button')).toHaveLength(0);
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
   });
 
   it('renders as role=button and fires onPress when onPress is provided', async () => {
@@ -131,14 +130,45 @@ describe('Card', () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
-  it('does not expose role=button when no press callbacks are provided', () => {
-    let {queryByRole} = render(
-      <Card>
+  it('fires onPress when activated with the keyboard', async () => {
+    let onPress = jest.fn();
+    let {getByRole} = render(
+      <Card onPress={onPress}>
         <Content>
-          <Text slot="title">Static Card</Text>
+          <Text slot="title">Interactive Card</Text>
         </Content>
       </Card>
     );
-    expect(queryByRole('button')).toBeNull();
+
+    await user.tab();
+    let card = getByRole('button');
+    expect(card).toHaveFocus();
+
+    await user.keyboard('[Enter]');
+    expect(onPress).toHaveBeenCalledTimes(1);
+
+    await user.keyboard('[Space]');
+    expect(onPress).toHaveBeenCalledTimes(2);
+  });
+
+  it('reflects hover and keyboard focus state visually', async () => {
+    let {getByRole} = render(
+      <Card onPress={() => {}}>
+        <Content>
+          <Text slot="title">Interactive Card</Text>
+        </Content>
+      </Card>
+    );
+    let card = getByRole('button');
+    let baseClassName = card.className;
+
+    await user.hover(card);
+    expect(card.className).not.toBe(baseClassName);
+    await user.unhover(card);
+    expect(card.className).toBe(baseClassName);
+
+    await user.tab();
+    expect(card).toHaveFocus();
+    expect(card.className).not.toBe(baseClassName);
   });
 });
