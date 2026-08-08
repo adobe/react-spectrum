@@ -32,6 +32,7 @@
     "install-18": "node scripts/react-18-install-prep.mjs && yarn add react@^18 react-dom@^18 react-test-renderer@^18.3.1 && node scripts/oldReactSupport.mjs",
     "install-canary": "node scripts/react-canary-install-prep.mjs && yarn add react@canary react-dom@canary",
     "start": "cross-env NODE_ENV=storybook storybook dev -p 9003 --ci -c '.storybook'",
+    "start-parcel3": "cross-env NODE_ENV=storybook PARCEL_V3=1 storybook dev -p 9003 --ci -c '.storybook'",
     "build:storybook": "storybook build -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
     "start:chromatic": "CHROMATIC=1 NODE_ENV=storybook storybook dev -p 9004 --ci -c '.chromatic'",
     "build:chromatic": "CHROMATIC=1 storybook build -c .chromatic -o dist/$(git rev-parse HEAD)/chromatic --stats-json",
