@@ -22,32 +22,30 @@ executors:
     docker:
       - image: cimg/node:24.14.1
     resource_class: medium.gen2
-    environment:
+    environment: &global-environment
       CACHE_VERSION: v1
+      PARCEL_V3: '1'
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
       - image: cimg/node:24.14.1
     resource_class: large.gen2
-    environment:
-      CACHE_VERSION: v1
+    environment: *global-environment
     working_directory: ~/react-spectrum
 
   rsp-xlarge:
     docker:
       - image: cimg/node:24.14.1
     resource_class: xlarge.gen2
-    environment:
-      CACHE_VERSION: v1
+    environment: *global-environment
     working_directory: ~/react-spectrum
 
   rsp-2xlarge:
     docker:
       - image: cimg/node:24.14.1
     resource_class: 2xlarge.gen2
-    environment:
-      CACHE_VERSION: v1
+    environment: *global-environment
     working_directory: ~/react-spectrum
 
 commands:
@@ -1044,9 +1042,9 @@ workflows:
             branches:
               only: main
       - verdaccio:
-          filters:
-            branches:
-              only: main
+          # filters:
+          #   branches:
+          #     only: main
           requires:
             - install
       - v-webpack-4:
