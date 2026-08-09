@@ -37,7 +37,7 @@
       "default": "./page.css"
     },
     "./style": {
-      "default": "./style/index.ts",
+      "source": "./style/index.ts",
       "types": "./dist/types/style/index.d.ts",
       "node": {
         "module": "./style/dist/module.mjs",

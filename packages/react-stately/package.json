@@ -17,7 +17,8 @@
       "source": "./exports/*.ts",
       "types": "./dist/types/exports/*.d.ts",
       "import": "./dist/exports/*.mjs",
-      "require": "./dist/exports/*.cjs"
+      "require": "./dist/exports/*.cjs",
+      "legacy-module": "./dist/exports/*.js"
     }
   },
   "types": "./dist/types/exports/index.d.ts",
