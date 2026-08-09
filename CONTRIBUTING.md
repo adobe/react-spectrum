@@ -46,7 +46,7 @@ Lastly, please follow the pull request template when submitting a pull request!
 
 
 ## AI-assisted contributions
-Setting expectations: the AI doesn't contribute to React Spectrum or Quarry, you do. The AI is a tool, but you are still the author, and you own every line, every decision, and every explanation.
+Setting expectations: the AI doesn't contribute to React Spectrum, you do. The AI is a tool, but you are still the author, and you own every line, every decision, and every explanation.
 
 If you use an AI assistant, point it at our [CLAUDE.md](CLAUDE.md), which captures the repo conventions we expect it to follow. The detailed conventions are split across [`docs/contributing/`](docs/contributing/) — see testing, tooling, s2-styling, i18n-strings, codegen, and pull-requests.
 

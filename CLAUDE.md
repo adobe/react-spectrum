@@ -9,7 +9,7 @@ The repo is layered. Changes flow up from the lowest level:
 - **`@internationalized/*` and `@react-stately/*`** — the two lowest levels (i18n utilities and state management).
 - **`@react-aria/*`** — behavior and accessibility hooks built on the above.
 - **`react-aria-components` (RAC)** and some **React Spectrum v3 (RSP)** — component layer built on the hooks.
-- **RSP S2 (`@react-spectrum/s2`)** — the Spectrum 2 design system, the highest level.
+- **RSP S2 (`@react-spectrum/s2`)** — the Spectrum 2 design system, built on RAC, the highest level.
 
 ## Toolchain guardrails
 
