@@ -1,13 +1,13 @@
+import {availableParallelism} from 'node:os';
 import {ComponentType, ReactNode} from 'react' with {env: 'react-client'};
 import {createFromReadableStream} from 'react-server-dom-parcel/client.edge' with {
   env: 'react-client'
 };
 import {createWriteStream, mkdirSync} from 'fs';
 import {dirname} from 'path';
-import {availableParallelism} from 'node:os';
 import {finished} from 'node:stream/promises';
-import {isMainThread, Worker, workerData} from 'node:worker_threads';
 import {injectRSCPayload} from 'rsc-html-stream/server';
+import {isMainThread, Worker, workerData} from 'node:worker_threads';
 import {prerender} from 'react-dom/static.edge' with {env: 'react-client'};
 import {Readable} from 'stream';
 import {renderToReadableStream} from 'react-server-dom-parcel/server.edge';
