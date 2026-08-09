@@ -86,7 +86,7 @@ These can be useful constraints or reminders as AI is not inherently good at the
 * **Fast** — must run well on constrained CPU and memory, not just the latest MacBook Pro. Many users are on years-old, low-end Android devices.
 * **Mindful of the shared environment** — keep the global namespace clean, don't hog resources or throw uncaught errors, avoid CSS that leaks across boundaries, and keep ids unique.
 * **Stable** — RSP and Quarry are libraries with many downstream dependents who upgrade on their own schedule, so avoid breaking them.
-* **Accessible** — accessibility is still a relatively new web requirement, so strong examples are scarce and bad ones are common. use other examples in the repo or the APG examples first.
+* **Accessible** — accessibility is still a relatively new web requirement, so strong examples are scarce and bad ones are common. Use other examples in the repo or the APG examples first.
 * **Cross-environment** — works across browsers, assistive technologies, and devices.
 
 
