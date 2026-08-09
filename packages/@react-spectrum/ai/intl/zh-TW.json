@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "新訊息",
+  "chat.scrollToBottom": "捲動至底部",
   "messagefeedback.thumbDown": "不良回答",
   "messagefeedback.thumbUp": "良好回答",
-  "responsestatus.loading": "載入中"
+  "promptfield.aiDisclaimer": "回答是使用 AI 產生，因此可能不準確。使用前請先檢查。",
+  "promptfield.aiUserGuidlines": "AI 使用者準則",
+  "promptfield.attachments": "附件",
+  "promptfield.insertButton": "新增",
+  "promptfield.label": "提示",
+  "promptfield.placeholder": "準備好開始了嗎? 提出問題、分享想法或新增任務。",
+  "promptfield.stopButton": "停止",
+  "promptfield.submitButton": "傳送",
+  "promptfield.uploading": "上傳中",
+  "responsestatus.loading": "載入中",
+  "voicebutton.startListening": "開始錄製",
+  "voicebutton.stopListening": "停止錄製"
 }

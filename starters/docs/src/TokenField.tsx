@@ -3,10 +3,10 @@ import {
   TokenField as AriaTokenField,
   TokenInput as AriaTokenInput,
   Token as AriaToken,
-  TokenFieldProps as AriaTokenFieldProps,
-  TokenInputProps,
-  TokenProps,
-  TokenFieldValue
+  type TokenFieldProps as AriaTokenFieldProps,
+  type TokenInputProps,
+  type TokenProps,
+  type TokenFieldValue
 } from 'react-aria-components/TokenField';
 import {Label, Description} from './Form';
 import './TokenField.css';

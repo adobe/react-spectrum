@@ -93,6 +93,7 @@ function Example() {
   });
 
   let {keyboardProps: childProps} = useKeyboard({
+    /*- begin highlight -*/
     shortcuts: {
       'Mod+s': () => add('child shortcut: Mod+s (prevents save dialog)'),
       'ArrowLeft': () => add('child shortcut: ArrowLeft (prevents default, stops propagation)'),
@@ -101,6 +102,7 @@ function Example() {
         return false;
       }
     },
+    /*- end highlight -*/
     onKeyDown: () => add('child onKeyDown')
   });
 
