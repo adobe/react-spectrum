@@ -399,7 +399,7 @@ describe('useShowFocusIndicator', function () {
     );
   }
 
-  it('does not show the focus indicator on programmatic focus after a pointer interaction', async function () {
+  it('shows the focus indicator on programmatic focus after a pointer interaction', async function () {
     let user = userEvent.setup({delay: null, pointerMap});
     render(<FormExample />);
     await user.click(screen.getByRole('button', {name: 'Submit'}));
