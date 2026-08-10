@@ -23,9 +23,9 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import Chevron from '../ui-icons/Chevron';
-import {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {createIcon} from './Icon';
-import {DOMRef, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {Link} from 'react-aria-components/Link';
@@ -126,10 +126,32 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   props: SideNavProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, UNSAFE_className, UNSAFE_style, selectedRoute, ...rest} = props;
+  let {
+    children,
+    UNSAFE_className,
+    UNSAFE_style,
+    selectedRoute,
+    expandedKeys: propExpandedKeys,
+    defaultExpandedKeys: propDefaultExpandedKeys,
+    onExpandedChange,
+    ...rest
+  } = props;
 
   let domRef = useDOMRef(ref);
-  let isInSidePanel = !!useContext(SidePanelContext);
+  let {isCollapsed} = useContext(SidePanelContext) ?? {};
+  let isInSidePanel = isCollapsed !== undefined;
+
+  let [expandedKeys, setExpandedKeys] = useControlledState(
+    propExpandedKeys ? new Set(propExpandedKeys) : undefined,
+    propDefaultExpandedKeys ? new Set(propDefaultExpandedKeys) : new Set(),
+    onExpandedChange
+  );
+
+  let collapseAwareExpandedKeys = expandedKeys;
+  let emptySet = useMemo(() => new Set<Key>(), []);
+  if (isCollapsed) {
+    collapseAwareExpandedKeys = emptySet;
+  }
 
   return (
     <div
@@ -138,6 +160,8 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       style={UNSAFE_style}>
       <NavigationTree
         {...rest}
+        expandedKeys={collapseAwareExpandedKeys}
+        onExpandedChange={setExpandedKeys}
         selectedRoute={selectedRoute}
         className={renderProps => tree({...renderProps, isInSidePanel})}>
         {children}
@@ -381,7 +405,7 @@ const SideNavItemContentInner = props => {
         <div
           className={indicator({
             isDisabled,
-            isSelected: isCurrent,
+            isSelected: isCurrent || (isCurrentAncestor && isCollapsed),
             isHovered
           })}
         />
