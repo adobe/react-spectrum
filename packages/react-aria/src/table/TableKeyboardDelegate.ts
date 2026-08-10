@@ -65,7 +65,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
         return child.key;
       }
 
-      let firstKey = this.getFirstKey();
+      let firstKey = super.getFirstKey();
       if (firstKey == null) {
         return null;
       }

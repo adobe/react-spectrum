@@ -995,11 +995,6 @@ const InitialFocusExample = (args: {
   <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
     <Table aria-label="Files" {...args}>
       <TableHeader>
-        {args.selectionMode !== 'none' && (
-          <Column>
-            <MyCheckbox slot="selection" />
-          </Column>
-        )}
         <Column isRowHeader allowsSorting>
           Name
         </Column>
@@ -1008,31 +1003,16 @@ const InitialFocusExample = (args: {
       </TableHeader>
       <TableBody>
         <Row id="1">
-          {args.selectionMode !== 'none' && (
-            <Cell>
-              <MyCheckbox slot="selection" />
-            </Cell>
-          )}
           <Cell>Games</Cell>
           <Cell>File folder</Cell>
           <Cell>6/7/2020</Cell>
         </Row>
         <Row id="2">
-          {args.selectionMode !== 'none' && (
-            <Cell>
-              <MyCheckbox slot="selection" />
-            </Cell>
-          )}
           <Cell>Program Files</Cell>
           <Cell>File folder</Cell>
           <Cell>4/7/2021</Cell>
         </Row>
         <Row id="3">
-          {args.selectionMode !== 'none' && (
-            <Cell>
-              <MyCheckbox slot="selection" />
-            </Cell>
-          )}
           <Cell>bootmgr</Cell>
           <Cell>System file</Cell>
           <Cell>11/20/2010</Cell>
@@ -1044,7 +1024,7 @@ const InitialFocusExample = (args: {
 
 export const InitialFocusExampleStory: StoryObj<typeof InitialFocusExample> = {
   render: InitialFocusExample,
-  name: 'initialFocus="columnheader" with selection checkbox column',
+  name: 'initialFocus="columnheader"',
   args: {
     initialFocus: 'columnheader',
     selectionMode: 'multiple'

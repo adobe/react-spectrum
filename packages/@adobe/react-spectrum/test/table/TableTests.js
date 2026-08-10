@@ -1369,6 +1369,13 @@ export let tableTests = () => {
         expect(document.activeElement).toBe(getCell(tree, 'Bar 1'));
       });
 
+      it('should move focus from a focused column header to the first row cell with ArrowDown when initialFocus="columnheader"', function () {
+        let tree = renderTable('en-US', {initialFocus: 'columnheader'});
+        focusCell(tree, 'Foo');
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
+      });
+
       it('should allow the user to focus disabled cells', function () {
         let tree = renderTable('en-US', {disabledKeys: ['Foo 2']});
         focusCell(tree, 'Bar 1');
