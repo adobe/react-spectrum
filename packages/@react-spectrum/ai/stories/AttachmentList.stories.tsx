@@ -15,6 +15,7 @@ import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
 import File from '@react-spectrum/s2/icons/File';
 import FileText from '@react-spectrum/s2/icons/FileText';
+import FileTextIllustration from '../../s2/spectrum-illustrations/gradient/generic1/FileText';
 import {Image} from '@react-spectrum/s2/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -163,5 +164,53 @@ export const LongContents: Story = {
         </Content>
       </AttachmentComponent>
     </AttachmentList>
+  )
+};
+
+export const Mixed: Story = {
+  name: 'Mixed attachements',
+  render: (args: any) => (
+    <div className={style({flexDirection: 'column', display: 'flex', gap: 8})}>
+      <AttachmentList>
+        <AttachmentComponent size={args.size} aria-label="banner.png">
+          <Image
+            slot="thumbnail"
+            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+          />
+        </AttachmentComponent>
+        <AttachmentComponent size={args.size} aria-label="notes.tsx">
+          <FileText slot="thumbnail" />
+        </AttachmentComponent>
+        <AttachmentComponent size={args.size} aria-label="notes.tsx">
+          <FileTextIllustration slot="thumbnail" />
+        </AttachmentComponent>
+      </AttachmentList>
+      <AttachmentList>
+        <AttachmentComponent size={args.size} aria-label="banner.png">
+          <Image
+            slot="thumbnail"
+            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+          />
+          <Content>
+            <Text slot="title">banner.png</Text>
+            <Text slot="description">PNG image</Text>
+          </Content>
+        </AttachmentComponent>
+        <AttachmentComponent size={args.size} aria-label="notes.txt">
+          <FileText slot="thumbnail" />
+          <Content>
+            <Text slot="title">notes.txt</Text>
+            <Text slot="description">Plain text</Text>
+          </Content>
+        </AttachmentComponent>
+        <AttachmentComponent size={args.size} aria-label="notes.txt">
+          <FileTextIllustration slot="thumbnail" />
+          <Content>
+            <Text slot="title">notes.txt</Text>
+            <Text slot="description">Plain text</Text>
+          </Content>
+        </AttachmentComponent>
+      </AttachmentList>
+    </div>
   )
 };

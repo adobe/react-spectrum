@@ -28,7 +28,7 @@ import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
-import {IconContext} from '@react-spectrum/s2/Icon';
+import {IconContext, IllustrationContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -211,6 +211,9 @@ let card = style({
   },
   alignItems: {
     isBasic: 'center'
+  },
+  justifyContent: {
+    [onlyPreview]: 'center'
   },
   '--card-padding-y': {
     type: 'paddingTop',
@@ -810,13 +813,43 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
   );
 });
 
-const iconThumbnailStyles = style({
+// same as basic-thumb-size but isnt full size when only preview
+const iconThumbnailSize = {
+  size: {
+    XS: 24,
+    S: 26,
+    M: 32,
+    L: 36,
+    XL: 40
+  }
+} as const;
+
+const illustThumbnailSize = {
+  size: {
+    XS: 32,
+    S: 36,
+    M: 40,
+    L: 44,
+    XL: 48
+  }
+} as const;
+
+const iconThumbnailStyles = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
   position: 'relative',
   alignSelf: 'center',
   flexShrink: 0,
   pointerEvents: 'none',
   userSelect: 'none',
-  size: '--basic-thumb-size'
+  size: iconThumbnailSize
+});
+
+const illustThumbnailStyles = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+  position: 'relative',
+  alignSelf: 'center',
+  flexShrink: 0,
+  pointerEvents: 'none',
+  userSelect: 'none',
+  size: illustThumbnailSize
 });
 
 export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
@@ -863,7 +896,17 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                 slots: {
                   icon: {},
                   thumbnail: {
-                    styles: iconThumbnailStyles
+                    styles: iconThumbnailStyles({size})
+                  }
+                }
+              }
+            ],
+            [
+              IllustrationContext,
+              {
+                slots: {
+                  thumbnail: {
+                    styles: illustThumbnailStyles({size})
                   }
                 }
               }
