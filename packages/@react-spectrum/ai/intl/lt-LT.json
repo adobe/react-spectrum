@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Naujas pranešimas",
+  "chat.scrollToBottom": "Slinkite žemyn",
   "messagefeedback.thumbDown": "Blogas atsakas",
   "messagefeedback.thumbUp": "Geras atsakas",
-  "responsestatus.loading": "Įkeliama"
+  "promptfield.aiDisclaimer": "Atsakymai generuojami naudojant DI ir gali būti netikslūs. Patikrinkite prieš naudojant.",
+  "promptfield.aiUserGuidlines": "DI naudotojo gairės",
+  "promptfield.attachments": "Priedai",
+  "promptfield.insertButton": "Pridėti",
+  "promptfield.label": "Raginimas",
+  "promptfield.placeholder": "Pasiruošę pradėti? Užduokite klausimą, pasidalykite idėja arba pridėkite užduotį.",
+  "promptfield.stopButton": "Sustoti, sustok",
+  "promptfield.submitButton": "Siųsti",
+  "promptfield.uploading": "Įkėlimas",
+  "responsestatus.loading": "Įkeliama",
+  "voicebutton.startListening": "Pradėkite įrašinėti",
+  "voicebutton.stopListening": "Sustabdyti įrašymą"
 }

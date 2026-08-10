@@ -761,7 +761,13 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
           shouldFlip: props.shouldFlip
         }}>
         <PopoverContext.Provider
-          value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
+          value={{
+            hideArrow: true,
+            offset: props.trigger === 'contextMenu' ? 0 : 8,
+            crossOffset: 0,
+            placement,
+            shouldFlip
+          }}>
           <InPopoverContext.Provider value={false}>
             <AriaMenuTrigger {...props}>
               <PressResponder onPressStart={onPressStart} isPressed={isPressed}>

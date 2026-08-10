@@ -84,6 +84,7 @@ export {useKeyboard} from '../src/interactions/useKeyboard';
 export {useMove} from '../src/interactions/useMove';
 export {usePress} from '../src/interactions/usePress';
 export {useLongPress} from '../src/interactions/useLongPress';
+export {useContextMenu} from '../src/interactions/useContextMenu';
 export {useFocusable, Focusable} from '../src/interactions/useFocusable';
 export {Pressable} from '../src/interactions/Pressable';
 export {useField} from '../src/label/useField';
@@ -164,6 +165,13 @@ export {useId} from '../src/utils/useId';
 export {useObjectRef} from '../src/utils/useObjectRef';
 export {RouterProvider} from '../src/utils/openLink';
 export {VisuallyHidden, useVisuallyHidden} from '../src/visually-hidden/VisuallyHidden';
+export {
+  useTokenField,
+  tokenFieldPositionToDOMRange,
+  setTokenFieldSelection,
+  getSelection
+} from '../src/tokenfield/useTokenField';
+export {useToken} from '../src/tokenfield/useToken';
 
 export type {
   AriaAutocompleteProps,
@@ -327,7 +335,13 @@ export type {FocusWithinProps, FocusWithinResult} from '../src/interactions/useF
 export type {HoverProps, HoverResult} from '../src/interactions/useHover';
 export type {InteractOutsideProps} from '../src/interactions/useInteractOutside';
 export type {KeyboardProps, KeyboardResult} from '../src/interactions/useKeyboard';
+export type {KeyboardShortcutBindings} from '../src/interactions/createKeyboardShortcutHandler';
 export type {LongPressProps, LongPressResult} from '../src/interactions/useLongPress';
+export type {
+  ContextMenuProps,
+  ContextMenuAria,
+  ContextMenuEvent
+} from '../src/interactions/useContextMenu';
 export type {
   MoveEvents,
   PressEvent,
@@ -480,3 +494,5 @@ export type {AriaTreeProps, TreeProps, TreeAria, AriaTreeOptions} from '../src/t
 export type {AriaTreeItemOptions, TreeItemAria} from '../src/tree/useTreeItem';
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '../src/visually-hidden/VisuallyHidden';
 export type {Key, Orientation, RangeValue} from '@react-types/shared';
+export type {TokenProps, TokenAria} from '../src/tokenfield/useToken';
+export type {AriaTokenFieldProps, TokenFieldAria} from '../src/tokenfield/useTokenField';

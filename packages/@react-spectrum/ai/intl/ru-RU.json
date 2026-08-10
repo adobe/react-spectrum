@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Новое сообщение",
+  "chat.scrollToBottom": "Прокрутка вниз",
   "messagefeedback.thumbDown": "Плохой ответ",
   "messagefeedback.thumbUp": "Хороший ответ",
-  "responsestatus.loading": "Загрузка"
+  "promptfield.aiDisclaimer": "Ответы генерируются с помощью ИИ и могут быть неточными. Проверьте перед использованием.",
+  "promptfield.aiUserGuidlines": "Руководство пользователя AI",
+  "promptfield.attachments": "Вложения",
+  "promptfield.insertButton": "Добавить",
+  "promptfield.label": "Запрос",
+  "promptfield.placeholder": "Готовы начать работу? Задайте вопрос, поделитесь идеей или добавьте задачу.",
+  "promptfield.stopButton": "Остановить",
+  "promptfield.submitButton": "Отправить",
+  "promptfield.uploading": "Отправка",
+  "responsestatus.loading": "Загрузка",
+  "voicebutton.startListening": "Начать запись",
+  "voicebutton.stopListening": "Остановить запись"
 }

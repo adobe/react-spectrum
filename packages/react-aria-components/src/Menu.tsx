@@ -151,7 +151,8 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element | null {
             triggerRef: ref,
             scrollRef,
             placement: 'bottom start',
-            'aria-labelledby': menuProps['aria-labelledby']
+            'aria-labelledby': menuProps['aria-labelledby'],
+            offset: props.trigger === 'contextMenu' ? 0 : undefined
           }
         ]
       ]}>

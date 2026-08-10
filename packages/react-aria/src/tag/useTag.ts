@@ -89,7 +89,8 @@ export function useTag<T>(
           onRemove?.(new Set([item.key]));
         }
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let modality = useInteractionModality();

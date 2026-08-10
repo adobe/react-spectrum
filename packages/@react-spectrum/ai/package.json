@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/ai",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Spectrum 2 UI AI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -45,20 +45,20 @@
     "postpack": "git checkout -- package.json"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.2",
+    "@internationalized/date": "^3.12.3",
     "@internationalized/number": "^3.6.7",
-    "@react-spectrum/s2": "1.5.1",
-    "@react-types/shared": "^3.36.0",
-    "react-aria": "3.50.0",
-    "react-aria-components": "1.19.0",
-    "react-stately": "3.48.0"
+    "@react-spectrum/s2": "1.6.0",
+    "@react-types/shared": "^3.36.1",
+    "react-aria": "3.51.0",
+    "react-aria-components": "1.20.0",
+    "react-stately": "3.49.0"
   },
   "devDependencies": {
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.0.0",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.3#~/.yarn/patches/@testing-library-user-event-npm-14.6.3-15ecebe390.patch",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1"
   },

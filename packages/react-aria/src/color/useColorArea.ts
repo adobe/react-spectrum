@@ -162,7 +162,8 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
           'x'
         );
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let moveHandler = {

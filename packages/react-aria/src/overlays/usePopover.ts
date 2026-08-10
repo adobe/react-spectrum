@@ -119,7 +119,10 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,
-    onClose: isNonModal && !isSubmenu ? state.close : null
+    onClose: isNonModal && !isSubmenu ? state.close : null,
+    getTargetRect:
+      otherProps.getTargetRect ??
+      (state.point ? () => new DOMRect(state.point!.x, state.point!.y, 0, 0) : undefined)
   });
 
   usePreventScroll({

@@ -11,7 +11,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/spectrum-tokens": "14.0.0",
+    "@adobe/spectrum-tokens": "14.15.0",
     "@parcel/plugin": "^2.0.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",

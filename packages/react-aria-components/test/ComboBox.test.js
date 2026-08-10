@@ -13,6 +13,7 @@
 import {act} from '@testing-library/react';
 import {Button} from '../src/Button';
 import {ComboBox, ComboBoxContext, ComboBoxValue} from '../src/ComboBox';
+import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Form} from '../src/Form';
@@ -1324,5 +1325,21 @@ describe('ComboBox', () => {
 
     await user.keyboard('{Escape}');
     expect(queryByRole('listbox')).toBeNull();
+  });
+
+  it('should not throw when rendered inside a Dialog with a Text errorMessage slot', () => {
+    render(
+      <Dialog aria-label="Dialog">
+        <TestComboBox isInvalid />
+      </Dialog>
+    );
+  });
+
+  it('should not throw when rendered inside an alertdialog with a Text errorMessage slot', () => {
+    render(
+      <Dialog role="alertdialog" aria-label="Dialog">
+        <TestComboBox isInvalid />
+      </Dialog>
+    );
   });
 });

@@ -1,6 +1,18 @@
 {
   "chat.newMessage": "Nowa wiadomość",
+  "chat.scrollToBottom": "Przewiń do dołu",
   "messagefeedback.thumbDown": "Zła odpowiedź",
   "messagefeedback.thumbUp": "Dobra odpowiedź",
-  "responsestatus.loading": "Wczytywanie"
+  "promptfield.aiDisclaimer": "Odpowiedzi są generowane przy użyciu sztucznej inteligencji i mogą być niedokładne. Sprawdź przed użyciem.",
+  "promptfield.aiUserGuidlines": "Wskazówki dotyczące korzystania ze sztucznej inteligencji",
+  "promptfield.attachments": "Załączniki",
+  "promptfield.insertButton": "Dodaj",
+  "promptfield.label": "Monit",
+  "promptfield.placeholder": "Zaczynamy? Zadaj pytanie, podziel się pomysłem lub dodaj zadanie.",
+  "promptfield.stopButton": "Zatrzymaj",
+  "promptfield.submitButton": "Wyślij",
+  "promptfield.uploading": "Przesyłanie",
+  "responsestatus.loading": "Wczytywanie",
+  "voicebutton.startListening": "Rozpocznij nagrywanie",
+  "voicebutton.stopListening": "Zatrzymaj nagrywanie"
 }

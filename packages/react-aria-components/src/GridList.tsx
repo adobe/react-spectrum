@@ -510,6 +510,17 @@ export interface GridListItemProps<T = object>
    * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
+  /**
+   * Whether the row or its first focusable child element should be focused when navigating
+   * to the row. Defaults to 'row'.
+   */
+  focusMode?: 'child' | 'row';
+  /**
+   * Whether the row should support arrow key navigation even when the containing collection uses
+   * tab keyboard navigation. Allows users to navigate between rows with arrow keys while
+   * focus is on an interactive child element within the row.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 /**
@@ -528,7 +539,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     {
       node: item,
       shouldSelectOnPressUp: !!dragState,
-      isVirtualized
+      isVirtualized,
+      focusMode: props.focusMode,
+      allowsArrowNavigation: props.allowsArrowNavigation
     },
     state,
     ref
@@ -806,7 +819,7 @@ function RootDropIndicator() {
 
 export interface GridListLoadMoreItemProps
   extends
-    Omit<LoadMoreSentinelProps, 'collection'>,
+    Omit<LoadMoreSentinelProps, 'collection' | 'direction'>,
     StyleProps,
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
@@ -840,13 +853,8 @@ export const GridListLoadMoreItem = createLeafComponent(
 
     let sentinelRef = useRef(null);
     let memoedLoadMoreProps = useMemo(
-      () => ({
-        onLoadMore,
-        collection: state?.collection,
-        sentinelRef,
-        scrollOffset
-      }),
-      [onLoadMore, scrollOffset, state?.collection]
+      () => ({onLoadMore, collection: state?.collection, sentinelRef, scrollOffset}),
+      [onLoadMore, scrollOffset, sentinelRef, state?.collection]
     );
     useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 

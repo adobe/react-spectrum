@@ -2,7 +2,7 @@
 import assets from 'url:../pages/**/*.{png,jpg,svg}' with {env: 'react-client'};
 import {cache, ReactElement, ReactNode} from 'react';
 import {Code, ICodeProps} from './Code';
-import {CodePlatter, FileProvider, Pre} from './CodePlatter';
+import {CodePlatter, FileProvider, Pre, ShadcnProvider} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
 import {ExpandableCode, ExpandableCodeProvider} from './ExpandableCode';
 import {FileTabs} from './FileTabs';
@@ -60,6 +60,14 @@ export const standaloneCode = style({
   }
 });
 
+// Maps each starter alias to the directory under `starters/` it resolves to.
+const STARTER_DIRS: {[alias: string]: string} = {
+  'vanilla-starter': 'docs',
+  'tailwind-starter': 'tailwind',
+  'hooks-starter': 'hooks'
+};
+const STARTER_ALIAS_RE = new RegExp(`(${Object.keys(STARTER_DIRS).join('|')})/`, 'g');
+
 interface CodeBlockProps extends VisualExampleProps {
   render?: ReactNode;
   children: string;
@@ -67,6 +75,7 @@ interface CodeBlockProps extends VisualExampleProps {
   files?: string[];
   expanded?: boolean;
   hidden?: boolean;
+  hideCode?: boolean;
   showCoachMark?: boolean;
 }
 
@@ -77,13 +86,14 @@ export function CodeBlock({
   files,
   expanded,
   hidden,
+  hideCode,
   ...props
 }: CodeBlockProps) {
   if (hidden) {
     return null;
   }
 
-  let displayCode = children.replace(/(vanilla-starter|tailwind-starter)\//g, './');
+  let displayCode = children.replace(STARTER_ALIAS_RE, './');
 
   if (!render) {
     return (
@@ -120,30 +130,40 @@ export function CodeBlock({
     );
   }
 
+  // If the example imports a component from the hooks starter, offer a per-component
+  // "Install with shadcn" command pointing at its hooks registry item.
+  let hooksComponent = files
+    ?.map(f => /starters\/hooks\/src\/([A-Za-z0-9]+)\.tsx$/.exec(f)?.[1])
+    .find(Boolean);
+
   let content = (
-    <FileProvider value={downloadFiles}>
-      <CodePlatter type={props.type} showCoachMark={props.showCoachMark}>
-        {code}
-      </CodePlatter>
-    </FileProvider>
+    <ShadcnProvider value={hooksComponent ? {type: 'hooks', component: hooksComponent} : null}>
+      <FileProvider value={downloadFiles}>
+        <CodePlatter type={props.type} showCoachMark={props.showCoachMark}>
+          {code}
+        </CodePlatter>
+      </FileProvider>
+    </ShadcnProvider>
   );
 
   return (
     <div role="group" aria-label="Example" className={example}>
       <ExampleOutput component={render} align={props.align} />
-      <div>
-        {files ? (
-          <Files
-            files={files}
-            downloadFiles={downloadFiles.files}
-            maxLines={expanded ? Infinity : 6}
-            type={props.type}>
-            {content}
-          </Files>
-        ) : (
-          content
-        )}
-      </div>
+      {!hideCode && (
+        <div>
+          {files ? (
+            <Files
+              files={files}
+              downloadFiles={downloadFiles.files}
+              maxLines={expanded ? Infinity : 6}
+              type={props.type}>
+              {content}
+            </Files>
+          ) : (
+            content
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -257,7 +277,7 @@ export function File({
 }) {
   let contents = readFile(
     path.isAbsolute(filename) ? filename : path.resolve('../../../', filename)
-  ).replace(/(vanilla-starter|tailwind-starter)\//g, './');
+  ).replace(STARTER_ALIAS_RE, './');
   return (
     <CodePlatter type={type}>
       <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false} maxLines={maxLines}>
@@ -269,7 +289,7 @@ export function File({
 
 const readFileReplace = cache((file: string) => {
   let contents = readFile(file)
-    .replace(/(vanilla-starter|tailwind-starter)\//g, './')
+    .replace(STARTER_ALIAS_RE, './')
     .replace(/import (.*?) from ['"]url:(.*?)['"]/g, (_, name, specifier) => {
       return `const ${name} = '${resolveUrl(specifier, file)}'`;
     });
@@ -319,8 +339,8 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
   let deps = new Set<string>();
   for (let [, specifier] of contents.matchAll(/import (?:.|\n)*?['"](.+?)['"]/g)) {
     specifier = specifier.replace(
-      /(vanilla-starter|tailwind-starter)\//g,
-      (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/'
+      STARTER_ALIAS_RE,
+      (m, s) => 'starters/' + STARTER_DIRS[s] + '/src/'
     );
 
     if (specifier.startsWith('url:')) {
