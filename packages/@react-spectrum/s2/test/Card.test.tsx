@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -26,10 +26,6 @@ describe('Card', () => {
   afterEach(() => {
     jest.clearAllMocks();
     act(() => jest.runAllTimers());
-  });
-
-  afterAll(() => {
-    jest.restoreAllMocks();
   });
 
   it('renders as a plain div when no press callbacks are provided', async () => {
@@ -93,6 +89,8 @@ describe('Card', () => {
     await user.click(card);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledTimes(1);
+    // onPress should fire before onAction.
+    expect(onPress.mock.invocationCallOrder[0]).toBeLessThan(onAction.mock.invocationCallOrder[0]);
   });
 
   it('fires onPressStart and onPressEnd when provided', async () => {
@@ -170,5 +168,59 @@ describe('Card', () => {
     await user.tab();
     expect(card).toHaveFocus();
     expect(card.className).not.toBe(baseClassName);
+  });
+
+  it('is accessible via aria-label even without a title in Content', async () => {
+    let onPress = jest.fn();
+    let {getByRole} = render(
+      <Card onPress={onPress} aria-label="Labelled card">
+        <Content>
+          <Text>Some description, no title slot here</Text>
+        </Content>
+      </Card>
+    );
+
+    let card = getByRole('button', {name: 'Labelled card'});
+    await user.click(card);
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
+  it('forwards press callbacks to the underlying link when href is provided', async () => {
+    let onPress = jest.fn();
+    let onAction = jest.fn();
+    let {getByRole} = render(
+      <Card href="https://example.com" onPress={onPress} onAction={onAction}>
+        <Content>
+          <Text slot="title">Link Card</Text>
+        </Content>
+      </Card>
+    );
+
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('href', 'https://example.com');
+
+    await user.click(link);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not fire press callbacks on a disabled link card', async () => {
+    let onPress = jest.fn();
+    let {getByRole} = render(
+      <Card href="https://example.com" onPress={onPress} isDisabled>
+        <Content>
+          <Text slot="title">Disabled Link Card</Text>
+        </Content>
+      </Card>
+    );
+
+    let card = getByRole('link');
+    expect(card).toHaveAttribute('aria-disabled', 'true');
+
+    await user.click(card);
+    expect(onPress).not.toHaveBeenCalled();
+
+    await user.tab();
+    expect(card).not.toHaveFocus();
   });
 });

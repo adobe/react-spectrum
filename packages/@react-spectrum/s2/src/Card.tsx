@@ -11,6 +11,13 @@
  */
 
 import {ActionMenuContext} from './ActionMenu';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  DOMRef,
+  DOMRefValue,
+  GlobalDOMAttributes
+} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
@@ -20,7 +27,6 @@ import {ContentContext, FooterContext, TextContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
-import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
@@ -58,6 +64,7 @@ export interface CardProps
       | 'onClick'
       | keyof GlobalDOMAttributes
     >,
+    AriaLabelingProps,
     StyleProps {
   /** The children of the Card. */
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode);
@@ -446,9 +453,6 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     !props.href &&
     !!(onPress || onPressStart || onPressEnd || onPressChange || onPressUp || onAction);
 
-  // Hooks must be called unconditionally (React rules of hooks).
-  // isDisabled is set to true when not in interactive standalone mode so the
-  // hooks are effectively no-ops in those code paths.
   let {buttonProps, isPressed: isInteractivePressed} = useButton(
     {
       elementType: 'div',
@@ -460,13 +464,11 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
       onPressEnd,
       onPressChange,
       onPressUp,
-      isDisabled: isDisabled || !isInteractiveStandalone
+      isDisabled
     },
     domRef
   );
-  let {hoverProps, isHovered: isInteractiveHovered} = useHover({
-    isDisabled: isDisabled || !isInteractiveStandalone
-  });
+  let {hoverProps, isHovered: isInteractiveHovered} = useHover({isDisabled});
   let {focusProps, isFocusVisible: isInteractiveFocusVisible} = useFocusRing();
 
   let children = (
@@ -512,7 +514,20 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     // NOTE: In this case, the card must not contain interactive elements.
     return (
       <Link
-        {...filterDOMProps(otherProps, {isLink: true})}
+        {...filterDOMProps(otherProps, {isLink: true, labelable: true})}
+        onPress={
+          onPress || onAction
+            ? e => {
+                onPress?.(e);
+                onAction?.();
+              }
+            : undefined
+        }
+        onPressStart={onPressStart}
+        onPressEnd={onPressEnd}
+        onPressChange={onPressChange}
+        onPressUp={onPressUp}
+        isDisabled={isDisabled}
         ref={domRef as any}
         className={renderProps =>
           UNSAFE_className +
@@ -536,7 +551,12 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     if (isInteractiveStandalone) {
       return (
         <div
-          {...mergeProps(filterDOMProps(otherProps), buttonProps, hoverProps, focusProps)}
+          {...mergeProps(
+            filterDOMProps(otherProps, {labelable: true}),
+            buttonProps,
+            hoverProps,
+            focusProps
+          )}
           id={id != null ? String(id) : undefined}
           ref={domRef}
           className={
@@ -574,7 +594,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
 
     return (
       <div
-        {...filterDOMProps(otherProps)}
+        {...filterDOMProps(otherProps, {labelable: true})}
         id={id != null ? String(id) : undefined}
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
