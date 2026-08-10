@@ -13,6 +13,8 @@
 import {Attachment as AttachmentComponent, AttachmentList} from '../src/AttachmentList';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
+import File from '@react-spectrum/s2/icons/File';
+import FileText from '@react-spectrum/s2/icons/FileText';
 import {Image} from '@react-spectrum/s2/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -98,4 +100,68 @@ function AttachmentListRender(args) {
 
 export const AIAttachmentList: Story = {
   render: args => <AttachmentListRender {...args} />
+};
+
+function NonImageAttachmentListRender(args) {
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  return (
+    <AttachmentList {...listArgs} styles={style({width: 500})}>
+      {/* TODO: what should the thumbnail only look like with icons */}
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="report.pdf">
+        <File slot="thumbnail" />
+      </AttachmentComponent>
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="notes.txt">
+        <FileText slot="thumbnail" />
+        <Content>
+          <Text slot="title">notes.txt</Text>
+          <Text slot="description">Plain text document</Text>
+        </Content>
+      </AttachmentComponent>
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="data.csv">
+        <File slot="thumbnail" />
+        <Content>
+          <Text slot="title">data.csv</Text>
+        </Content>
+      </AttachmentComponent>
+    </AttachmentList>
+  );
+}
+
+export const NonImageAttachments: Story = {
+  render: args => <NonImageAttachmentListRender {...args} />
+};
+
+export const LongContents: Story = {
+  name: 'Long contents',
+  render: (args: any) => (
+    <AttachmentList>
+      <AttachmentComponent
+        size={args.size}
+        styles={style({maxWidth: 300})}
+        aria-label="Very long file name that exceeds the container width.pdf">
+        <Image
+          slot="thumbnail"
+          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+        />
+        <Content>
+          <Text slot="title">Very long file name that exceeds the container width.pdf</Text>
+          <Text slot="description">
+            Long long long long long long long long long long description.
+          </Text>
+        </Content>
+      </AttachmentComponent>
+    </AttachmentList>
+  )
 };
