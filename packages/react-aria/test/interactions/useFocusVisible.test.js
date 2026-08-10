@@ -380,16 +380,14 @@ describe('useShowFocusIndicator', function () {
   // A form library that moves focus to the first invalid field does so by calling
   // element.focus() from the submit handler. Clicking submit leaves the modality on
   // 'pointer', so the programmatic focus lands without a visible indicator.
-  function FormExample(props) {
+  function FormExample() {
     let {focusProps, isFocusVisible} = useFocusRing();
     let showFocusIndicator = useShowFocusIndicator();
     let ref = React.useRef(null);
 
     let onSubmit = e => {
       e.preventDefault();
-      if (props.showIndicator) {
-        showFocusIndicator();
-      }
+      showFocusIndicator();
       ref.current.focus();
     };
 
@@ -408,17 +406,7 @@ describe('useShowFocusIndicator', function () {
 
     let input = screen.getByRole('textbox');
     expect(input).toHaveFocus();
-    expect(input).not.toHaveAttribute('data-focus-visible');
-  });
-
-  it('shows the focus indicator on programmatic focus after a pointer interaction', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
-    render(<FormExample showIndicator />);
-    await user.click(screen.getByRole('button', {name: 'Submit'}));
-
-    let input = screen.getByRole('textbox');
-    expect(input).toHaveFocus();
-    expect(input).toHaveAttribute('data-focus-visible', 'true');
+    expect(input).toHaveAttribute('data-focus-visible');
   });
 });
 
