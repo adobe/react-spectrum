@@ -189,7 +189,9 @@ describe('Card', () => {
     let onPress = jest.fn();
     let onAction = jest.fn();
     let {getByRole} = render(
-      <Card href="https://example.com" onPress={onPress} onAction={onAction}>
+      // Use a fragment href so jsdom treats the click as a same-document hash
+      // change rather than attempting (unimplemented) navigation.
+      <Card href="#link-card" onPress={onPress} onAction={onAction}>
         <Content>
           <Text slot="title">Link Card</Text>
         </Content>
@@ -197,7 +199,7 @@ describe('Card', () => {
     );
 
     let link = getByRole('link');
-    expect(link).toHaveAttribute('href', 'https://example.com');
+    expect(link).toHaveAttribute('href', '#link-card');
 
     await user.click(link);
     expect(onPress).toHaveBeenCalledTimes(1);
@@ -207,7 +209,7 @@ describe('Card', () => {
   it('does not fire press callbacks on a disabled link card', async () => {
     let onPress = jest.fn();
     let {getByRole} = render(
-      <Card href="https://example.com" onPress={onPress} isDisabled>
+      <Card href="#disabled-link-card" onPress={onPress} isDisabled>
         <Content>
           <Text slot="title">Disabled Link Card</Text>
         </Content>
