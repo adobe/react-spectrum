@@ -12,6 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
+import {Dialog} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Label} from '../src/Label';
@@ -913,5 +914,21 @@ describe('Select', () => {
     let {getByTestId} = render(<Example />);
     let selectValue = getByTestId('select-value');
     expect(selectValue).toHaveTextContent('select value: 1');
+  });
+
+  it('should not throw when rendered inside a Dialog with a Text errorMessage slot', () => {
+    render(
+      <Dialog aria-label="Dialog">
+        <TestSelect isInvalid />
+      </Dialog>
+    );
+  });
+
+  it('should not throw when rendered inside an alertdialog with a Text errorMessage slot', () => {
+    render(
+      <Dialog role="alertdialog" aria-label="Dialog">
+        <TestSelect isInvalid />
+      </Dialog>
+    );
   });
 });
