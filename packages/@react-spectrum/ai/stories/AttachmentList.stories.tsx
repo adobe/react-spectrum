@@ -13,9 +13,9 @@
 import {Attachment as AttachmentComponent, AttachmentList} from '../src/AttachmentList';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
-import File from '@react-spectrum/s2/icons/File';
-import FileText from '@react-spectrum/s2/icons/FileText';
 import FileTextIllustration from '../../s2/spectrum-illustrations/gradient/generic1/FileText';
+import FileVideo from '@react-spectrum/s2/illustrations/gradient/generic1/FileVideo';
+import FileZip from '@react-spectrum/s2/illustrations/gradient/generic1/FileZip';
 import {Image} from '@react-spectrum/s2/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -107,20 +107,19 @@ function NonImageAttachmentListRender(args) {
   let {isInvalid, size, uploadProgress, ...listArgs} = args;
   return (
     <AttachmentList {...listArgs} styles={style({width: 500})}>
-      {/* TODO: what should the thumbnail only look like with icons */}
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
         size={size}
         aria-label="report.pdf">
-        <File slot="thumbnail" />
+        <FileTextIllustration slot="thumbnail" />
       </AttachmentComponent>
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
         size={size}
         aria-label="notes.txt">
-        <FileText slot="thumbnail" />
+        <FileTextIllustration slot="thumbnail" />
         <Content>
           <Text slot="title">notes.txt</Text>
           <Text slot="description">Plain text document</Text>
@@ -131,7 +130,7 @@ function NonImageAttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="data.csv">
-        <File slot="thumbnail" />
+        <FileTextIllustration slot="thumbnail" />
         <Content>
           <Text slot="title">data.csv</Text>
         </Content>
@@ -170,7 +169,7 @@ export const LongContents: Story = {
 export const Mixed: Story = {
   name: 'Mixed attachements',
   render: (args: any) => (
-    <div className={style({flexDirection: 'column', display: 'flex', gap: 8})}>
+    <div className={style({flexDirection: 'column', display: 'flex', gap: 16})}>
       <AttachmentList>
         <AttachmentComponent size={args.size} aria-label="banner.png">
           <Image
@@ -179,10 +178,13 @@ export const Mixed: Story = {
           />
         </AttachmentComponent>
         <AttachmentComponent size={args.size} aria-label="notes.tsx">
-          <FileText slot="thumbnail" />
-        </AttachmentComponent>
-        <AttachmentComponent size={args.size} aria-label="notes.tsx">
           <FileTextIllustration slot="thumbnail" />
+        </AttachmentComponent>
+        <AttachmentComponent size={args.size} aria-label="video.mp4">
+          <FileVideo slot="thumbnail" />
+        </AttachmentComponent>
+        <AttachmentComponent size={args.size} aria-label="debug.zip">
+          <FileZip slot="thumbnail" />
         </AttachmentComponent>
       </AttachmentList>
       <AttachmentList>
@@ -197,17 +199,25 @@ export const Mixed: Story = {
           </Content>
         </AttachmentComponent>
         <AttachmentComponent size={args.size} aria-label="notes.txt">
-          <FileText slot="thumbnail" />
+          <FileTextIllustration slot="thumbnail" />
           <Content>
             <Text slot="title">notes.txt</Text>
             <Text slot="description">Plain text</Text>
           </Content>
         </AttachmentComponent>
-        <AttachmentComponent size={args.size} aria-label="notes.txt">
-          <FileTextIllustration slot="thumbnail" />
+
+        <AttachmentComponent size={args.size} aria-label="video.mp4">
+          <FileVideo slot="thumbnail" />
           <Content>
-            <Text slot="title">notes.txt</Text>
-            <Text slot="description">Plain text</Text>
+            <Text slot="title">video.mp4</Text>
+            <Text slot="description">MP4</Text>
+          </Content>
+        </AttachmentComponent>
+        <AttachmentComponent size={args.size} aria-label="debug.zip">
+          <FileZip slot="thumbnail" />
+          <Content>
+            <Text slot="title">debug.zip</Text>
+            <Text slot="description">ZIP</Text>
           </Content>
         </AttachmentComponent>
       </AttachmentList>

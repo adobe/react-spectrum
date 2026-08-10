@@ -29,7 +29,7 @@ import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import Cross from '../ui-icons/Cross';
 import {forwardRef, ReactNode, useContext, useRef} from 'react';
-import {IconContext, IllustrationContext} from '@react-spectrum/s2/Icon';
+import {IllustrationContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -227,14 +227,12 @@ function AttachmentContextProvider({
   isUploading: boolean;
 }) {
   let imageCtx = useContext(ImageContext);
-  let iconCtx = useContext(IconContext);
   let illustrationCtx = useContext(IllustrationContext);
   const opacityStyles = style({
     opacity: {default: 1, isUploading: 0.15},
     transition: 'default'
   })({isUploading});
   const imageSlots = imageCtx && 'slots' in imageCtx ? imageCtx.slots : undefined;
-  const iconSlots = iconCtx && 'slots' in iconCtx ? iconCtx.slots : undefined;
   const illustrationSlots =
     illustrationCtx && 'slots' in illustrationCtx ? illustrationCtx.slots : undefined;
 
@@ -250,18 +248,6 @@ function AttachmentContextProvider({
               thumbnail: {
                 ...imageSlots?.thumbnail,
                 styles: mergeStyles(imageSlots?.thumbnail?.styles, opacityStyles)
-              }
-            }
-          }
-        ],
-        [
-          IconContext,
-          {
-            slots: {
-              ...iconSlots,
-              thumbnail: {
-                ...iconSlots?.thumbnail,
-                styles: mergeStyles(iconSlots?.thumbnail?.styles, opacityStyles)
               }
             }
           }

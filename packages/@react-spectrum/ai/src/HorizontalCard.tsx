@@ -28,7 +28,7 @@ import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
-import {IconContext, IllustrationContext} from '@react-spectrum/s2/Icon';
+import {IllustrationContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -813,17 +813,7 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
   );
 });
 
-// same as basic-thumb-size but isnt full size when only preview
-const iconThumbnailSize = {
-  size: {
-    XS: 24,
-    S: 26,
-    M: 32,
-    L: 36,
-    XL: 40
-  }
-} as const;
-
+// same as basic-thumb-size (with changes to accomodate for illustration padding) but isnt full size when only preview
 const illustThumbnailSize = {
   size: {
     XS: 32,
@@ -833,15 +823,6 @@ const illustThumbnailSize = {
     XL: 48
   }
 } as const;
-
-const iconThumbnailStyles = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
-  position: 'relative',
-  alignSelf: 'center',
-  flexShrink: 0,
-  pointerEvents: 'none',
-  userSelect: 'none',
-  size: iconThumbnailSize
-});
 
 const illustThumbnailStyles = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
   position: 'relative',
@@ -886,17 +867,6 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                       },
                       outlineColor: '--s2-container-bg'
                     })({size})
-                  }
-                }
-              }
-            ],
-            [
-              IconContext,
-              {
-                slots: {
-                  icon: {},
-                  thumbnail: {
-                    styles: iconThumbnailStyles({size})
                   }
                 }
               }
