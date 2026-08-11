@@ -390,25 +390,28 @@ const tagStyles = style({
   borderRadius: 'default'
 });
 
+// this is checking that there isn't content in the attachment
+// similar to onlyPreview, but specifically checking siblings before the alert icon (aka looking for Content)
+const onlyPreviewFromError = ':not([data-slot=content] ~ *)';
 const attachmentErrorStyles = style({
   display: 'flex',
   flexShrink: 0,
   alignItems: 'center',
   paddingStart: {
     default: 8,
-    ':not([data-slot=content] ~ *)': 0
+    [onlyPreviewFromError]: 0
   },
   position: {
-    ':not([data-slot=content] ~ *)': 'absolute'
+    [onlyPreviewFromError]: 'absolute'
   },
   top: {
-    ':not([data-slot=content] ~ *)': '50%'
+    [onlyPreviewFromError]: '50%'
   },
   insetStart: {
-    ':not([data-slot=content] ~ *)': '50%'
+    [onlyPreviewFromError]: '50%'
   },
   transform: {
-    ':not([data-slot=content] ~ *)': 'translate(-50%, -50%)'
+    [onlyPreviewFromError]: 'translate(-50%, -50%)'
   },
   '--iconPrimary': {
     type: 'color',
@@ -416,6 +419,9 @@ const attachmentErrorStyles = style({
   }
 });
 
+// this is also checking that there isn't content in the attachment
+// similar to onlyPreview, but specifically checking siblings after the thumbnail (aka looking for Content)
+const onlyPreviewFromThumbnail = ':not(:has(~ [data-slot=content]))';
 function AttachmentContextProvider({
   children,
   isUploading,
@@ -433,7 +439,7 @@ function AttachmentContextProvider({
       isUploading: 0.15,
       isInvalid: {
         default: 1,
-        ':not(:has(~ [data-slot=content]))': 0.15
+        [onlyPreviewFromThumbnail]: 0.15
       }
     },
     transition: 'default'
@@ -586,8 +592,10 @@ export const Attachment = forwardRef(function Attachment(
               top: '50%',
               insetStart: {
                 default: '50%',
+                // this checks that there is text content in the attachment + a Image as a thumbnail
                 ':has(~ [data-slot=content]):not(:has(~ [data-rsp-slot=thumbnail]))':
                   '[calc(var(--card-padding-x) + var(--basic-thumb-size) / 2)]',
+                // this checks that there is text content in the attachment + a Illustration as a thumbnail
                 ':has(~ [data-slot=content]):has(~ [data-rsp-slot=thumbnail])':
                   '[calc(var(--card-padding-x) + var(--illust-margin-x) + var(--illust-thumb-size) / 2)]'
               },
