@@ -122,15 +122,9 @@ export function useGridCell<T, C extends GridCollection<T>>(
           return;
         }
 
-        // Focus counts as "disrupted" (as opposed to a fresh keyboard entry from a
-        // sibling row/cell) when it's on the cell itself or fell back to body/nothing,
-        // e.g. because an overlay closed and removed the element that had focus. In
-        // that case, restore the child that was last focused instead of defaulting to
-        // childFocusStrategy's first/last child.
         let ownerDocument = getOwnerDocument(ref.current);
-        let isDisrupted =
-          ref.current === activeElement || !activeElement || activeElement === ownerDocument.body;
-        if (isDisrupted) {
+        let shouldRestoreToLastFocused = !activeElement || activeElement === ownerDocument.body;
+        if (shouldRestoreToLastFocused) {
           let lastChild = lastFocusedChild.current;
           if (
             lastChild &&
@@ -341,13 +335,6 @@ export function useGridCell<T, C extends GridCollection<T>>(
       // then skip this. We want to restore focus to the previously focused row/cell
       // in that case since the table should act like a single tab stop.
 
-      // Remember which child was focused so that if something later forces focus
-      // back to this cell (e.g. a closing overlay), focus() can restore it directly
-      // instead of falling back to the first/last focusable child. Only do this for
-      // actual DOM descendants of the cell -- portalled content (e.g. a dialog opened
-      // from within the cell) can still reach this handler because React dispatches
-      // events along the component tree rather than the DOM tree for portals, even
-      // though it isn't really inside this cell in the DOM.
       let target = getEventTarget(e) as FocusableElement;
       if (ref.current && nodeContains(ref.current, target)) {
         lastFocusedChild.current = target;
