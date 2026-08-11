@@ -20,9 +20,11 @@ import {
 } from '@react-types/shared';
 import {ColorFieldProps, ColorFieldState} from 'react-stately/useColorFieldState';
 import {InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useState} from 'react';
+import {flushSync} from 'react-dom';
 import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
 import {useFocusWithin} from '../interactions/useFocusWithin';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useFormattedTextField} from '../textfield/useFormattedTextField';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
@@ -70,7 +72,15 @@ export function useColorField(
   state: ColorFieldState,
   ref: RefObject<HTMLInputElement | null>
 ): ColorFieldAria {
-  let {isDisabled, isReadOnly, isRequired, isWheelDisabled, validationBehavior = 'aria'} = props;
+  let {
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    isWheelDisabled,
+    validationBehavior = 'aria',
+    onKeyDown,
+    onKeyUp
+  } = props;
 
   let {colorValue, inputValue, increment, decrement, incrementToMax, decrementToMin, commit} =
     state;
@@ -110,6 +120,20 @@ export function useColorField(
   let scrollingDisabled = isWheelDisabled || isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
 
+  let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
+    shortcuts: {
+      Enter: () => {
+        flushSync(() => {
+          commit();
+        });
+        return {shouldPreventDefault: false};
+      }
+    },
+    onKeyDown,
+    onKeyUp
+  });
+
   let onChange = value => {
     if (state.validate(value)) {
       state.setInputValue(value);
@@ -136,7 +160,7 @@ export function useColorField(
 
   useFormReset(ref, state.defaultColorValue, state.setColorValue);
 
-  inputProps = mergeProps(inputProps, spinButtonProps, focusWithinProps, {
+  inputProps = mergeProps(keyboardProps, inputProps, spinButtonProps, focusWithinProps, {
     role: 'textbox',
     'aria-valuemax': null,
     'aria-valuemin': null,
