@@ -106,13 +106,13 @@ function Example() {
   return (
     /*- begin highlight -*/
     <RouterProvider navigate={setRoute}>
+      {/*- end highlight -*/}
       <SideNav aria-label="Mail" selectedRoute={route}>
         <SideNavItem href="/inbox" title="Inbox" />
         <SideNavItem href="/drafts" title="Drafts" />
         <SideNavItem href="/sent" title="Sent" />
       </SideNav>
     </RouterProvider>
-    /*- end highlight -*/
   );
 }
 ```
@@ -141,28 +141,6 @@ import {RoutedSideNav} from './RoutedSideNav';
         <SideNavItem href="/projects/apollo" title="Apollo" />
         <SideNavItem href="/projects/gemini" title="Gemini" />
       </SideNavSection>
-    </SideNav>
-  )}
-</RoutedSideNav>
-```
-
-## Disabled
-
-Set the `isDisabled` prop on a `SideNavItem` to disable it. Disabled items cannot be navigated to or focused.
-
-```tsx render files={["./RoutedSideNav.tsx"]}
-"use client";
-import {SideNav, SideNavItem} from 'vanilla-starter/SideNav';
-import {RoutedSideNav} from './RoutedSideNav';
-
-<RoutedSideNav defaultSelectedRoute="/home">
-  {({selectedRoute}) => (
-    <SideNav aria-label="Files" selectedRoute={selectedRoute}>
-      <SideNavItem href="/home" title="Home" />
-      {/*- begin highlight -*/}
-      <SideNavItem href="/archive" title="Archive" isDisabled />
-      {/*- end highlight -*/}
-      <SideNavItem href="/trash" title="Trash" />
     </SideNav>
   )}
 </RoutedSideNav>
