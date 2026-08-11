@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {
   ButtonRenderProps,
   Button as RACButton,

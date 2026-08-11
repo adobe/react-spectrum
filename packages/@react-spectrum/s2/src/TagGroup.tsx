@@ -23,7 +23,7 @@ import {
   TagRenderProps
 } from 'react-aria-components/TagGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
