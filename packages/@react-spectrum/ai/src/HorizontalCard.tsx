@@ -28,7 +28,6 @@ import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
-import {IllustrationContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
@@ -212,9 +211,6 @@ let card = style({
   alignItems: {
     isBasic: 'center'
   },
-  justifyContent: {
-    [onlyPreview]: 'center'
-  },
   '--card-padding-y': {
     type: 'paddingTop',
     value: {
@@ -249,20 +245,6 @@ let card = style({
         M: 32,
         L: 36,
         XL: 40
-      },
-      [onlyPreview]: 'full'
-    }
-  },
-  '--illust-thumb-size': {
-    type: 'height',
-    value: {
-      default: 40,
-      size: {
-        XS: 32,
-        S: 36,
-        M: 40,
-        L: 44,
-        XL: 48
       },
       [onlyPreview]: 'full'
     }
@@ -827,16 +809,6 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
   );
 });
 
-const illustThumbnailStyles = style({
-  position: 'relative',
-  alignSelf: 'center',
-  flexShrink: 0,
-  pointerEvents: 'none',
-  userSelect: 'none',
-  size: '--illust-thumb-size',
-  marginX: -8
-});
-
 export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
   props: BasicCardProps,
   ref: DOMRef<HTMLDivElement>
@@ -871,16 +843,6 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                       },
                       outlineColor: '--s2-container-bg'
                     })({size})
-                  }
-                }
-              }
-            ],
-            [
-              IllustrationContext,
-              {
-                slots: {
-                  thumbnail: {
-                    styles: illustThumbnailStyles
                   }
                 }
               }

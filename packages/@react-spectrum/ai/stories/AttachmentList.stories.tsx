@@ -166,29 +166,50 @@ export const LongContents: Story = {
   )
 };
 
-export const Mixed: Story = {
-  name: 'Mixed attachements',
-  render: (args: any) => (
+function MixedAttachments(args) {
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+
+  return (
     <div className={style({flexDirection: 'column', display: 'flex', gap: 16})}>
-      <AttachmentList>
-        <AttachmentComponent size={args.size} aria-label="banner.png">
+      <AttachmentList {...listArgs}>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="banner.png">
           <Image
             slot="thumbnail"
             src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
           />
         </AttachmentComponent>
-        <AttachmentComponent size={args.size} aria-label="notes.tsx">
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="notes.tsx">
           <FileTextIllustration slot="thumbnail" />
         </AttachmentComponent>
-        <AttachmentComponent size={args.size} aria-label="video.mp4">
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="video.mp4">
           <FileVideo slot="thumbnail" />
         </AttachmentComponent>
-        <AttachmentComponent size={args.size} aria-label="debug.zip">
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="debug.zip">
           <FileZip slot="thumbnail" />
         </AttachmentComponent>
       </AttachmentList>
-      <AttachmentList>
-        <AttachmentComponent size={args.size} aria-label="banner.png">
+      <AttachmentList {...listArgs}>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="banner.png">
           <Image
             slot="thumbnail"
             src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
@@ -198,22 +219,33 @@ export const Mixed: Story = {
             <Text slot="description">PNG image</Text>
           </Content>
         </AttachmentComponent>
-        <AttachmentComponent size={args.size} aria-label="notes.txt">
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="notes.txt">
           <FileTextIllustration slot="thumbnail" />
           <Content>
             <Text slot="title">notes.txt</Text>
             <Text slot="description">Plain text</Text>
           </Content>
         </AttachmentComponent>
-
-        <AttachmentComponent size={args.size} aria-label="video.mp4">
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="video.mp4">
           <FileVideo slot="thumbnail" />
           <Content>
             <Text slot="title">video.mp4</Text>
             <Text slot="description">MP4</Text>
           </Content>
         </AttachmentComponent>
-        <AttachmentComponent size={args.size} aria-label="debug.zip">
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="debug.zip">
           <FileZip slot="thumbnail" />
           <Content>
             <Text slot="title">debug.zip</Text>
@@ -222,5 +254,10 @@ export const Mixed: Story = {
         </AttachmentComponent>
       </AttachmentList>
     </div>
-  )
+  );
+}
+
+export const Mixed: Story = {
+  name: 'Mixed attachements',
+  render: args => <MixedAttachments {...args} />
 };
