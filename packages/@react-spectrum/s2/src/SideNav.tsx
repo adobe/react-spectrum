@@ -543,7 +543,7 @@ const SideNavItemContentInner = props => {
               IconContext,
               {
                 render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                styles: style({size: fontRelative(18), flexShrink: 0})
+                styles: style({size: '1lh', flexShrink: 0})
               }
             ],
             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
@@ -697,7 +697,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
             IconContext,
             {
               render: centerBaseline({slot: 'icon', styles: treeIcon}),
-              styles: style({size: fontRelative(18), flexShrink: 0})
+              styles: style({size: '1lh', flexShrink: 0})
             }
           ]
         ]}>

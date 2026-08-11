@@ -478,7 +478,7 @@ export const Button = forwardRef(function Button(
                 {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: style({
-                    size: fontRelative(18),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     flexShrink: 0,
                     visibility: {
@@ -593,7 +593,7 @@ export const LinkButton = forwardRef(function LinkButton(
                 {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: style({
-                    size: fontRelative(18),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     flexShrink: 0
                   })

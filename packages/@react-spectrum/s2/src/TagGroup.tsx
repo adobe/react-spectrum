@@ -630,7 +630,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
                 {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: style({
-                    size: fontRelative(18),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     flexShrink: 0
                   })
@@ -647,7 +647,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
                 ImageContext,
                 {
                   styles: style({
-                    size: fontRelative(18),
+                    size: '1lh',
                     flexShrink: 0,
                     order: 0,
                     aspectRatio: 'square',

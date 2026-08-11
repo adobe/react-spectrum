@@ -234,7 +234,7 @@ export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HT
           IconContext,
           {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(18), marginStart: '--iconMargin', flexShrink: 0})
+            styles: style({size: '1lh', marginStart: '--iconMargin', flexShrink: 0})
           }
         ]
       ]}>

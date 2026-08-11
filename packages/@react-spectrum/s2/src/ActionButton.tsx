@@ -280,7 +280,7 @@ export const btnStyles = style<
     },
     '--iconWidth': {
       type: 'width',
-      value: fontRelative(18)
+      value: '1lh'
     },
     '--badgePosition': {
       type: 'width',
@@ -305,15 +305,6 @@ export const btnStyles = style<
   },
   getAllowedOverrides()
 );
-
-// Matching icon sizes. TBD.
-const avatarSize: Record<NonNullable<ActionButtonStyleProps['size']>, number> = {
-  XS: 14,
-  S: 16,
-  M: 18,
-  L: 20,
-  XL: 22
-} as const;
 
 interface ActionButtonContextProps extends Partial<ActionButtonProps> {
   holdAffordance?: boolean;
@@ -402,7 +393,7 @@ export const ActionButton = forwardRef(function ActionButton(
                 {
                   render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon'})}),
                   styles: style({
-                    size: fontRelative(18),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     visibility: {
                       isProgressVisible: 'hidden'
@@ -413,7 +404,7 @@ export const ActionButton = forwardRef(function ActionButton(
               [
                 AvatarContext,
                 {
-                  size: avatarSize[size],
+                  size: '1lh',
                   styles: style({
                     marginStart: '--iconMargin',
                     gridArea: 'icon'
