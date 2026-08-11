@@ -252,6 +252,20 @@ let card = style({
       },
       [onlyPreview]: 'full'
     }
+  },
+  '--illust-thumb-size': {
+    type: 'height',
+    value: {
+      default: 40,
+      size: {
+        XS: 32,
+        S: 36,
+        M: 40,
+        L: 44,
+        XL: 48
+      },
+      [onlyPreview]: 'full'
+    }
   }
 });
 
@@ -813,24 +827,14 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
   );
 });
 
-// same as basic-thumb-size (with changes to accomodate for illustration padding) but isnt full size when only preview
-const illustThumbnailSize = {
-  size: {
-    XS: 32,
-    S: 36,
-    M: 40,
-    L: 44,
-    XL: 48
-  }
-} as const;
-
-const illustThumbnailStyles = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+const illustThumbnailStyles = style({
   position: 'relative',
   alignSelf: 'center',
   flexShrink: 0,
   pointerEvents: 'none',
   userSelect: 'none',
-  size: illustThumbnailSize
+  size: '--illust-thumb-size',
+  marginX: -8
 });
 
 export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
@@ -876,7 +880,7 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
               {
                 slots: {
                   thumbnail: {
-                    styles: illustThumbnailStyles({size})
+                    styles: illustThumbnailStyles
                   }
                 }
               }
