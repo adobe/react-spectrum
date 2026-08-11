@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMProps, FocusableElement, RefObject} from '@react-types/shared';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
 import {DateValue, RangeCalendarState} from 'react-stately/useRangeCalendarState';
-import {isFocusWithin, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getEventTarget, isFocusWithin, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {RangeCalendarProps} from 'react-stately/useRangeCalendarState';
 import {useEvent} from '../utils/useEvent';
 import {useRef} from 'react';
@@ -76,7 +76,7 @@ export function useRangeCalendar<T extends DateValue>(
       return;
     }
 
-    let target = e.target as Element;
+    let target = getEventTarget(e) as Element;
     if (
       ref.current &&
       isFocusWithin(ref.current) &&
