@@ -13,6 +13,7 @@
 import {ActionButton} from './ActionButton';
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
+import {Badge, BadgeContext, BadgeProps} from './Badge';
 import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
@@ -41,6 +42,8 @@ import {
   NavigationTreeSection,
   NavigationTreeSectionProps
 } from 'react-aria-components/NavigationTree';
+import {NotificationBadge, NotificationBadgeContext} from './NotificationBadge';
+import {NumberFormatter} from '@internationalized/number';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import {Text, TextContext} from './Content';
@@ -271,8 +274,8 @@ let treeRowFocusRing = style({
 const treeRowLink = style({
   display: 'grid',
   gridArea: 'content',
-  gridTemplateColumns: ['auto', '1fr'],
-  gridTemplateAreas: ['icon content'],
+  gridTemplateColumns: ['auto', '1fr', 'auto'],
+  gridTemplateAreas: ['icon content badge'],
   alignItems: 'center',
   minWidth: 0,
   outlineStyle: 'none',
@@ -433,7 +436,15 @@ const SideNavItemContentInner = props => {
               }
             ],
             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
-            [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled, size: 'S'}]
+            [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled, size: 'S'}],
+            [BadgeContext, {size: 'S', fillStyle: 'subtle', styles: style({gridArea: 'badge'})}],
+            [
+              NotificationBadgeContext,
+              {
+                size: 'S',
+                styles: style({position: 'absolute', insetEnd: 8, top: 4, gridArea: 'icon'})
+              }
+            ]
           ]}>
           {typeof children === 'string' ? <Text>{children}</Text> : children}
         </Provider>
@@ -704,3 +715,18 @@ const PanelIcon = createIcon(props => {
     </svg>
   );
 });
+
+// TODO: NotificationBadge doesn't support all the colors
+export const SidePanelBadge = (props: Omit<BadgeProps, 'children'> & {value?: number | string}) => {
+  let {isCollapsed = false} = useContext(SidePanelContext) ?? {};
+  let {locale} = useLocale();
+  let formattedValue = props.value;
+  if (typeof props.value === 'number') {
+    formattedValue = new NumberFormatter(locale).format(Math.min(props.value, 99));
+  }
+  if (isCollapsed) {
+    let value: number | undefined = typeof props.value === 'number' ? props.value : undefined;
+    return <NotificationBadge {...props} value={value} />;
+  }
+  return <Badge {...props}>{formattedValue}</Badge>;
+};

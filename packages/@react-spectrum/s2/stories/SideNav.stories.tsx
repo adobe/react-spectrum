@@ -37,7 +37,8 @@ import {
   SideNavItemLink,
   SideNavProps,
   SideNavSection,
-  SidePanel
+  SidePanel,
+  SidePanelBadge
 } from '../src/SideNav';
 import {style} from '../style' with {type: 'macro'};
 import {useLandmark} from 'react-aria';
@@ -574,6 +575,54 @@ export const SidePanelExample = {
                   <SideNavItemLink>
                     <Images />
                     <Text>Photos</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+            </SideNavItem>
+          </RoutedSideNav>
+        </SidePanel>
+      </div>
+    </div>
+  )
+};
+
+export const SidePanelExample2 = {
+  render: args => (
+    <div style={{width: 300, height: 320, display: 'flex', flexDirection: 'column'}}>
+      <div
+        style={{
+          border: '1px solid #d5d5d5',
+          borderRadius: 8,
+          flex: 1,
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          alignSelf: 'start'
+        }}>
+        <SidePanel {...args} aria-label="Side panel" defaultExpandedKeys={['projects']}>
+          <RoutedSideNav {...args} selectedRoute="/files">
+            <SideNavItem href="/files" textValue="Files">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Files />
+                  <Text>Files</Text>
+                  <SidePanelBadge variant="informative" value={3} />
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+            <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <CCLibrary />
+                  <Text>Your Libraries</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+              <SideNavItem id="photos" href="/photos" textValue="Photos">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Images />
+                    <Text>Photos</Text>
+                    <SidePanelBadge variant="negative" value={140} />
                   </SideNavItemLink>
                 </SideNavItemContent>
               </SideNavItem>
