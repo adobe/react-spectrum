@@ -489,28 +489,23 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     return filterValue != null ? renderCompletions?.(filterValue, filterType) : null;
   }, [filterValue, filterType, renderCompletions]);
 
-  let onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    onKeyDownProp?.(e);
-    if (e.key === 'Tab') {
-      let index = prompt.caretPosition.index;
-      let dir = e.shiftKey ? -1 : 1;
-      for (let i = index + dir; i >= 0 && i < prompt.segments.length; i += dir) {
-        let segment = prompt.segments[i];
-        if (segment.type === 'token' && segment.value?.type === 'placeholder') {
-          e.preventDefault();
-          setPrompt(value =>
-            value.withSelectedRange(
-              new TokenFieldValue.SelectedRange(
-                {index: i, offset: 0},
-                {index: i, offset: segment.text.length}
-              )
-            )
-          );
-          break;
-        }
-      }
+  let tab = (dir: number) => {
+    // TODO: should we support tabbing to all tokens or only placeholders?
+    let nextPrompt = selectNextPlaceholder(prompt, dir);
+    if (nextPrompt) {
+      setPrompt(nextPrompt);
+      return true;
     }
+    return false;
   };
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: onKeyDownProp,
+    shortcuts: {
+      Tab: () => tab(1),
+      'Shift+Tab': () => tab(-1)
+    }
+  });
 
   return (
     <div
@@ -565,7 +560,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           aria-label={stringFormatter.format('promptfield.label')}
           isReadOnly={isListening}
           onSubmit={onSubmit}
-          onKeyDown={onKeyDown}
+          onKeyDown={keyboardProps.onKeyDown}
           onFocus={e => {
             if (e.isTrusted) {
               setFocused(true);
