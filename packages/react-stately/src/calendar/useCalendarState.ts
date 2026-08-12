@@ -33,6 +33,7 @@ import {
   GregorianCalendar,
   isEqualCalendar,
   isSameDay,
+  minDate,
   startOfMonth,
   startOfWeek,
   toCalendar,
@@ -230,7 +231,7 @@ export function useCalendarState<
 
   function normalizeValue(newValue: CalendarDate) {
     let constrained = constrainValue(newValue, minValue, maxValue);
-    let lowerBound = minValue ?? constrained;
+    let lowerBound = minValue ?? (minDate(constrained, startDate) as CalendarDate);
     let prev = previousAvailableDate(constrained, lowerBound, isDateUnavailable);
     if (!prev) {
       return null;

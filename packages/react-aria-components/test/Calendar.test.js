@@ -577,6 +577,50 @@ describe('Calendar', () => {
         focusedDate.add({months: 1}).toString()
       );
     });
+
+    it('selects the nearest earlier available date when the focused date is unavailable', async () => {
+      let {getByRole, getByTestId} = render(
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={focusedDate}
+          isDateUnavailable={d => d.day === focusedDate.day}>
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarHeading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <SelectDateExample />
+        </Calendar>
+      );
+
+      // The focused date is unavailable, but the day before it is available.
+      await user.click(getByRole('button', {name: 'Select focused'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(
+        focusedDate.subtract({days: 1}).toString()
+      );
+    });
+
+    it('does not select anything when the focused date is unavailable and no earlier date in the visible range is available', async () => {
+      let {getByRole, getByTestId} = render(
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={focusedDate}
+          isDateUnavailable={d => d.day <= focusedDate.day}>
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarHeading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <SelectDateExample />
+        </Calendar>
+      );
+
+      // Every day from the start of the visible month through the focused date is unavailable.
+      await user.click(getByRole('button', {name: 'Select focused'}));
+      expect(getByTestId('selected-value')).toHaveTextContent('none');
+    });
   });
 
   it('should not modify selection when trying to select an unavailable date by keyboard', async () => {
