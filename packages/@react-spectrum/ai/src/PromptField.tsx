@@ -735,7 +735,8 @@ export function PromptToken(props: PromptTokenProps) {
           backgroundColor: {
             default: 'transparent-overlay-1000/10',
             isSelected: 'blue-800',
-            '::selection': 'transparent'
+            // Firefox ignores completely transparent selection colors, so we need to use a nearly transparent color instead
+            '::selection': '[#ffffff01]'
           },
           color: {
             default: 'body',
@@ -754,23 +755,24 @@ export function PromptToken(props: PromptTokenProps) {
           borderRadius: 'pill',
           boxShadow: `[inset 0 24px 32px 0 ${color('transparent-white-50')}, 0 8px 32px 0 ${color('transparent-black-50')}]`,
           paddingX: 8,
-          paddingY: 4,
+          // not using inline-flex here due to a text selection bug in WebKit.
+          paddingY: space(3),
           lineHeight: '[1em]',
           cursor: 'default',
           '--iconPrimary': {
             type: 'fill',
             value: 'currentColor'
-          },
-          display: 'inline-flex',
-          alignItems: 'baseline',
-          gap: 4,
-          verticalAlign: 'baseline'
+          }
         })({...renderProps, isPlaceholder: props.token.value?.type === 'placeholder'})
       }>
       <IconContext.Provider
         value={{
-          styles: iconStyle({size: 'XS'}),
-          render: icon => <CenterBaseline>{icon}</CenterBaseline>
+          styles: style({
+            size: 14,
+            display: 'inline-block',
+            verticalAlign: '[-0.18em]',
+            marginEnd: 4
+          })
         }}>
         {props.children}
       </IconContext.Provider>
