@@ -30,6 +30,9 @@ let findMenuItem = (name: string | RegExp) => screen.findByRole('menuitem', {nam
 let getMenuItem = (name: string | RegExp) => screen.getByRole('menuitem', {name});
 let queryMenuItem = (name: string | RegExp) => screen.queryByRole('menuitem', {name});
 
+let selectedText = (v: PromptFieldValue) =>
+  v.slice(v.selectedRange.start, v.selectedRange.end).toString();
+
 // A prompt containing both a fillable object placeholder (Journey) and a free-text placeholder (Date).
 function placeholderPrompt(): PromptFieldValue {
   return new PromptFieldValue([
@@ -277,7 +280,7 @@ describeOrSkip('PromptField', () => {
       expect(queryMenuItem('New Customers')).not.toBeInTheDocument();
     });
 
-    it('selects the last placeholder when Shift+Tab-ing into the field', async () => {
+    it('selects the last token when Shift+Tab-ing into the field', async () => {
       let {user, textbox, getValue, setValue} = renderPromptField({
         initialValue: placeholderPrompt()
       });
@@ -298,8 +301,90 @@ describeOrSkip('PromptField', () => {
 
       await waitFor(() => expect(getValue().selectedRange.start).toEqual({index: 3, offset: 0}));
       // The selection covers the last placeholder (the Date token).
-      let sel = getValue();
-      expect(sel.slice(sel.selectedRange.start, sel.selectedRange.end).toString()).toBe('Date');
+      expect(selectedText(getValue())).toBe('Date');
+    });
+
+    it('tabs through all tokens, not just placeholders', async () => {
+      let initialValue = new PromptFieldValue([
+        {type: 'text', text: 'Analyze '},
+        {
+          type: 'token',
+          text: 'New Customers',
+          value: {
+            type: 'custom',
+            anchor: '@',
+            valueType: 'audience',
+            data: {kind: 'audience', title: 'New Customers'}
+          }
+        },
+        {type: 'text', text: ' and '},
+        {
+          type: 'token',
+          text: 'Journey',
+          value: {type: 'placeholder', placeholderType: 'token', anchor: '@', valueType: 'journey'}
+        }
+      ]);
+      let {user, textbox, getValue} = renderPromptField({initialValue});
+      await user.click(textbox);
+      await user.keyboard('{Home}');
+
+      // Tab selects the first token (a non-placeholder custom token).
+      await user.keyboard('{Tab}');
+      await waitFor(() => expect(selectedText(getValue())).toBe('New Customers'));
+
+      // Tab again selects the next token (the placeholder).
+      await user.keyboard('{Tab}');
+      await waitFor(() => expect(selectedText(getValue())).toBe('Journey'));
+
+      await user.keyboard('{Tab}');
+      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      expect(selectedText(getValue())).toBe('Journey');
+    });
+
+    it('advances the selection to the next placeholder after filling a placeholder', async () => {
+      let {user, textbox, getValue} = renderPromptField({initialValue: placeholderPrompt()});
+      await user.click(textbox);
+      await user.keyboard('{Home}');
+      await user.keyboard('{Tab}'); // select the Journey placeholder
+
+      await user.click(await findMenuItem('Welcome Flow'));
+
+      // Filling the placeholder auto-advances the selection to the next placeholder (Date).
+      await waitFor(() => expect(selectedText(getValue())).toBe('Date'));
+    });
+
+    it('does not advance the selection onto a following non-placeholder token', async () => {
+      let initialValue = new PromptFieldValue([
+        {type: 'text', text: 'in '},
+        {
+          type: 'token',
+          text: 'Journey',
+          value: {type: 'placeholder', placeholderType: 'token', anchor: '@', valueType: 'journey'}
+        },
+        {type: 'text', text: ' for '},
+        {
+          type: 'token',
+          text: 'New Customers',
+          value: {
+            type: 'custom',
+            anchor: '@',
+            valueType: 'audience',
+            data: {kind: 'audience', title: 'New Customers'}
+          }
+        }
+      ]);
+      let {user, textbox, getValue} = renderPromptField({initialValue});
+      await user.click(textbox);
+      await user.keyboard('{Home}');
+      await user.keyboard('{Tab}'); // select the Journey placeholder
+
+      await user.click(await findMenuItem('Welcome Flow'));
+
+      // No placeholder follows, so the selection collapses to a caret rather than selecting the
+      // non-placeholder token (auto-advance only targets placeholders).
+      await waitFor(() => expect(getValue().selectedRange.isCollapsed).toBe(true));
+      expect(selectedText(getValue())).toBe('');
+      expect(tokenTexts(getValue())).toEqual(['Welcome Flow', 'New Customers']);
     });
   });
 

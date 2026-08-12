@@ -491,8 +491,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   }, [filterValue, filterType, renderCompletions]);
 
   let tab = (dir: number) => {
-    // TODO: should we support tabbing to all tokens or only placeholders?
-    let nextPrompt = selectNextPlaceholder(prompt, dir);
+    let nextPrompt = selectNextToken(prompt, dir);
     if (nextPrompt) {
       setPrompt(nextPrompt);
       return true;
@@ -573,9 +572,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                 e.currentTarget.compareDocumentPosition(e.relatedTarget) &
                   Node.DOCUMENT_POSITION_FOLLOWING
               ) {
-                let lastPlaceholder = prompt.segments.findLastIndex(
-                  s => s.type === 'token' && s.value?.type === 'placeholder'
-                );
+                let lastPlaceholder = prompt.segments.findLastIndex(s => s.type === 'token');
                 if (lastPlaceholder >= 0) {
                   setPrompt(value =>
                     value.withSelectedRange(
@@ -662,11 +659,15 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   );
 }
 
-function selectNextPlaceholder(prompt: PromptFieldValue, dir: number): PromptFieldValue | null {
+function selectNextToken(
+  prompt: PromptFieldValue,
+  dir: number,
+  placeholder = false
+): PromptFieldValue | null {
   let index = prompt.caretPosition.index;
   for (let i = index + dir; i >= 0 && i < prompt.segments.length; i += dir) {
     let segment = prompt.segments[i];
-    if (segment.type === 'token' && segment.value?.type === 'placeholder') {
+    if (segment.type === 'token' && (!placeholder || segment.value?.type === 'placeholder')) {
       return prompt.withSelectedRange(
         new TokenFieldValue.SelectedRange(
           {index: i, offset: 0},
@@ -1020,7 +1021,7 @@ function useInsertPromptSegment(segments: TokenFieldSegment[]) {
         insert,
         false // Don't coalesce in undo/redo history.
       );
-      newValue = selectNextPlaceholder(newValue, 1) || newValue;
+      newValue = selectNextToken(newValue, 1, true) || newValue;
       pendingSelection.current = newValue.selectedRange;
       return newValue;
     });
