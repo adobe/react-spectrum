@@ -26,7 +26,7 @@ export function generatePageStyles(this: MacroContext | void): void {
     this.addAsset({
       type: 'css',
       content: `:where(:root, :host) {
-        --s2-color-scheme: light dark;
+        --s2-color-scheme: light;
         color-scheme: var(--s2-color-scheme);
         --s2-container-bg: ${colorToken(tokens['background-base-color'])};
         background: var(--s2-container-bg);
@@ -40,6 +40,7 @@ export function generatePageStyles(this: MacroContext | void): void {
         --lightningcss-dark: ;
 
         @media (prefers-color-scheme: dark) {
+          --s2-color-scheme: dark;
           --lightningcss-light: ;
           --lightningcss-dark: initial;
         }

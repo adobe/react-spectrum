@@ -28,13 +28,15 @@ import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import Cross from '../ui-icons/Cross';
-import {forwardRef, ReactNode, useRef} from 'react';
+import {forwardRef, ReactNode, useContext, useRef} from 'react';
+import {IconContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {Provider} from 'react-aria-components/slots';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Tag,
@@ -217,6 +219,56 @@ const attachmentErrorStyles = style({
   }
 });
 
+function AttachmentContextProvider({
+  children,
+  isUploading
+}: {
+  children: ReactNode;
+  isUploading: boolean;
+}) {
+  let imageCtx = useContext(ImageContext);
+  let iconCtx = useContext(IconContext);
+  const opacityStyles = style({
+    opacity: {default: 1, isUploading: 0.15},
+    transition: 'default'
+  })({isUploading});
+  const imageSlots = imageCtx && 'slots' in imageCtx ? imageCtx.slots : undefined;
+  const iconSlots = iconCtx && 'slots' in iconCtx ? iconCtx.slots : undefined;
+
+  return (
+    <Provider
+      values={[
+        [
+          ImageContext,
+          {
+            ...imageCtx,
+            slots: {
+              ...imageSlots,
+              thumbnail: {
+                ...imageSlots?.thumbnail,
+                styles: mergeStyles(imageSlots?.thumbnail?.styles, opacityStyles)
+              }
+            }
+          }
+        ],
+        [
+          IconContext,
+          {
+            slots: {
+              ...iconSlots,
+              thumbnail: {
+                ...iconSlots?.thumbnail,
+                styles: mergeStyles(iconSlots?.thumbnail?.styles, opacityStyles)
+              }
+            }
+          }
+        ]
+      ]}>
+      {children}
+    </Provider>
+  );
+}
+
 export const Attachment = forwardRef(function Attachment(
   props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
@@ -266,29 +318,10 @@ export const Attachment = forwardRef(function Attachment(
             />
           </div>
         )}
-        {/* Reduce opacity of the thumbnail if upload is in progress */}
-        <ImageContext.Consumer>
-          {ctx => (
-            <ImageContext.Provider
-              value={{
-                ...ctx,
-                slots: {
-                  thumbnail: {
-                    ...(ctx && 'slots' in ctx ? ctx.slots?.thumbnail : {}),
-                    styles: mergeStyles(
-                      ctx && 'slots' in ctx ? ctx.slots?.thumbnail?.styles : undefined,
-                      style({
-                        opacity: {default: 1, isUploading: 0.15},
-                        transition: 'default'
-                      })({isUploading: props.uploadProgress != null && props.uploadProgress < 100})
-                    )
-                  }
-                }
-              }}>
-              {typeof children === 'function' ? children({size}) : children}
-            </ImageContext.Provider>
-          )}
-        </ImageContext.Consumer>
+        <AttachmentContextProvider
+          isUploading={props.uploadProgress != null && props.uploadProgress < 100}>
+          {typeof children === 'function' ? children({size}) : children}
+        </AttachmentContextProvider>
         {isInvalid && (
           <div aria-hidden="true" className={attachmentErrorStyles}>
             <AlertTriangleIcon size={size} />
