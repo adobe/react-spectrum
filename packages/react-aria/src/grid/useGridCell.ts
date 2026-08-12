@@ -123,7 +123,8 @@ export function useGridCell<T, C extends GridCollection<T>>(
         }
 
         let ownerDocument = getOwnerDocument(ref.current);
-        let shouldRestoreToLastFocused = !activeElement || activeElement === ownerDocument.body || activeElement === ref.current;
+        let shouldRestoreToLastFocused =
+          !activeElement || activeElement === ownerDocument.body || activeElement === ref.current;
         if (shouldRestoreToLastFocused) {
           let lastChild = lastFocusedChild.current;
           if (
