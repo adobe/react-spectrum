@@ -580,7 +580,10 @@ export type {
   ItemDropTarget,
   RootDropTarget,
   TextDropItem,
-  PressEvent
+  PressEvent,
+  FocusableElement,
+  HoverEvent,
+  KeyboardEvent
 } from '@react-types/shared';
 export type {CalendarState} from 'react-stately/useCalendarState';
 export type {RangeCalendarState} from 'react-stately/useRangeCalendarState';
