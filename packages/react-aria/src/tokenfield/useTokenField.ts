@@ -397,7 +397,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
 
     announceToken(value, range);
 
-    // Update the caret position in the value. Also update the ref so the layout
+    // Update the selected range in the value. Also update the ref so the layout
     // effect does not re-apply this selection back to the DOM, which would clobber
     // the browser's native selection direction (e.g. directionless double-click).
     selectedRange.current = range;
@@ -717,7 +717,28 @@ export function setTokenFieldSelection(
 }
 
 export function tokenFieldPositionToDOMRange(root: Element, pos: Position): Range {
-  return createDOMRange(root, pos, pos);
+  // Unlike createDOMRange (used for caret/selection placement), this range is only
+  // measured via getBoundingClientRect to position things like an autocomplete popover.
+  // Place the endpoints inside the token's zero width space wrappers so the range has a
+  // valid rect at the token, rather than a collapsed root-level position.
+  let range = document.createRange();
+  let [startContainer, startOffset] = getDOMRectPosition(root, pos);
+  range.setStart(startContainer, startOffset);
+  range.setEnd(startContainer, startOffset);
+  return range;
+}
+
+function getDOMRectPosition(root: Element, pos: Position): [Node, number] {
+  let child = root.childNodes[pos.index];
+  if (child && child.nodeType === Node.ELEMENT_NODE) {
+    // Place the position inside the zero width space wrappers around the token.
+    if (pos.offset > 0) {
+      return [child.lastChild!, 1];
+    } else {
+      return [child.firstChild!, 0];
+    }
+  }
+  return getDOMPosition(root, pos);
 }
 
 function createDOMRange(root: Element, start: Position, end: Position): Range {
@@ -735,6 +756,7 @@ function getDOMPosition(root: Element, pos: Position): [Node, number] {
     return [root, Math.min(root.childNodes.length, pos.index)];
   } else if (child.nodeType === Node.ELEMENT_NODE) {
     // Place the cursor outside the token wrapper element.
+    // This is necessary for composition events.
     if (pos.offset > 0) {
       return [root, pos.index + 1];
     } else {
