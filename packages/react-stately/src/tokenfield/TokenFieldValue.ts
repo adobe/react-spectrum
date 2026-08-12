@@ -141,6 +141,10 @@ export class TokenFieldValue<T = any> {
     return result;
   }
 
+  withCaretPosition(position: Position): this {
+    return this.withSelectedRange(new SelectedRange(position));
+  }
+
   private splitSegment(
     segment: TokenFieldSegment | undefined,
     offset: number
