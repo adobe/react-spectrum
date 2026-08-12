@@ -35,6 +35,7 @@ export {
 export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';
 export {PixelLoader} from '../src/loader/react';
+export {AIButton} from '../src/AIButton';
 
 export type {AttachmentProps, AttachmentListProps} from '../src/AttachmentList';
 export type {
@@ -46,6 +47,7 @@ export type {
   PromptFieldAttachmentListProps,
   PromptTokenFieldPopoverProps,
   PromptFieldToolbarProps,
+  PromptFieldTokenValue,
   InsertMenuItemProps,
   PromptFieldVoiceButtonProps,
   InsertTokenMenuItemProps,
@@ -72,3 +74,4 @@ export type {
 export type {TokenFieldValueOptions} from 'react-aria-components/TokenField';
 export type {UserMessageProps} from '../src/UserMessage';
 export type {PixelLoaderProps} from '../src/loader/react';
+export type {AIButtonProps} from '../src/AIButton';

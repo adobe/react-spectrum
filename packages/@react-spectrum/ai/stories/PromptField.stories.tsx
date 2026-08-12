@@ -21,6 +21,7 @@ import {
   PromptFieldAttachment,
   PromptFieldAttachmentList,
   PromptFieldSubmitButton,
+  PromptFieldTokenValue,
   PromptFieldToolbar,
   PromptFieldValue,
   PromptFieldVoiceButton,
@@ -30,6 +31,7 @@ import {
 import {Attachment} from '../src/AttachmentList';
 import Brand from '@react-spectrum/s2/icons/Brand';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
+import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
   Collection,
   Header,
@@ -43,6 +45,7 @@ import {
 import {Content} from '@react-spectrum/s2/Content';
 import Data from '@react-spectrum/s2/icons/Data';
 import * as data from '../src/loader/data';
+import type {FocusableRefValue} from '@react-types/shared';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -52,6 +55,7 @@ import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
 import {TokenFieldValue} from 'react-aria-components';
+import {TokenSegment} from 'react-stately';
 import {useRef, useState} from 'react';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
 
@@ -89,6 +93,10 @@ const meta: Meta<typeof PromptField> = {
     placeholder: {
       control: 'text',
       table: {category: 'PromptTokenField'}
+    },
+    menuWidth: {
+      control: 'number',
+      table: {category: 'PromptTokenField'}
     }
   },
   args: {
@@ -97,6 +105,7 @@ const meta: Meta<typeof PromptField> = {
     attachmentVariant: 'thumbnail',
     attachmentInvalid: false,
     placeholder: undefined,
+    menuWidth: undefined,
     ...getActionArgs(events)
   },
   title: 'AI/PromptField',
@@ -120,61 +129,78 @@ type Story = StoryObj<typeof PromptField>;
 const slashCommands = [
   {
     command: '/audience-explainer',
-    type: 'skill',
+    kind: 'skill',
     description: 'Explain an AEP audience in english'
   },
-  {command: '/btw', type: 'command', description: 'Ask a side question'},
-  {command: '/clear', type: 'command', description: 'Clear the context'},
-  {command: '/compact', type: 'command', description: 'Summarize conversation history'},
-  {command: '/dataset-usage', type: 'skill', description: 'Explain how to use a dataset'},
-  {command: '/feedback', type: 'command', description: 'Submit feedback'},
-  {command: '/plan', type: 'command', description: 'Create a plan before executing'},
-  {command: '/visual-artifact', type: 'skill', description: 'Generate a chart or graph'}
+  {command: '/btw', kind: 'command', description: 'Ask a side question'},
+  {command: '/clear', kind: 'command', description: 'Clear the context'},
+  {command: '/compact', kind: 'command', description: 'Summarize conversation history'},
+  {command: '/dataset-usage', kind: 'skill', description: 'Explain how to use a dataset'},
+  {command: '/feedback', kind: 'command', description: 'Submit feedback'},
+  {command: '/plan', kind: 'command', description: 'Create a plan before executing'},
+  {command: '/visual-artifact', kind: 'skill', description: 'Generate a chart or graph'}
 ];
 
 const icons = {
-  command: <Prompt styles={iconStyle({size: 'S'})} />,
-  skill: <Plugin styles={iconStyle({size: 'S'})} />,
-  audience: <UserGroup styles={iconStyle({size: 'S'})} />,
-  campaign: <Brand styles={iconStyle({size: 'S'})} />,
-  journey: <SocialNetwork styles={iconStyle({size: 'S'})} />,
-  url: <LinkIcon styles={iconStyle({size: 'S'})} />
+  command: <Prompt styles={iconStyle({size: 'XS'})} />,
+  skill: <Plugin styles={iconStyle({size: 'XS'})} />,
+  audience: <UserGroup styles={iconStyle({size: 'XS'})} />,
+  campaign: <Brand styles={iconStyle({size: 'XS'})} />,
+  journey: <SocialNetwork styles={iconStyle({size: 'XS'})} />,
+  url: <LinkIcon styles={iconStyle({size: 'XS'})} />
 } as const;
+
+function getIcon(token: TokenSegment<PromptFieldTokenValue>) {
+  switch (token.value?.type) {
+    case 'placeholder':
+      return token.value.placeholderType === 'token' && token.value.valueType
+        ? icons[token.value.valueType]
+        : null;
+    case 'url':
+      return icons.url;
+    case 'custom':
+      return icons[token.value.valueType];
+  }
+}
 
 const objects = [
   {
     section: 'Audiences',
+    type: 'audience',
     items: [
-      {type: 'audience', title: 'New Customers'},
-      {type: 'audience', title: 'Returning Customers'},
-      {type: 'audience', title: 'Loyal Customers'},
-      {type: 'audience', title: 'High-Value Customers'},
-      {type: 'audience', title: 'Low-Value Customers'}
+      {kind: 'audience', title: 'New Customers'},
+      {kind: 'audience', title: 'Returning Customers'},
+      {kind: 'audience', title: 'Loyal Customers'},
+      {kind: 'audience', title: 'High-Value Customers'},
+      {kind: 'audience', title: 'Low-Value Customers'}
     ]
   },
   {
     section: 'Campaigns',
+    type: 'campaign',
     items: [
-      {type: 'campaign', title: 'Spring Launch 2026'},
-      {type: 'campaign', title: 'Holiday Cheer'},
-      {type: 'campaign', title: 'Back to School'},
-      {type: 'campaign', title: 'Summer Adventure'},
-      {type: 'campaign', title: 'Tech Trends Expo'}
+      {kind: 'campaign', title: 'Spring Launch 2026'},
+      {kind: 'campaign', title: 'Holiday Cheer'},
+      {kind: 'campaign', title: 'Back to School'},
+      {kind: 'campaign', title: 'Summer Adventure'},
+      {kind: 'campaign', title: 'Tech Trends Expo'}
     ]
   },
   {
     section: 'Journeys',
+    type: 'journey',
     items: [
-      {type: 'journey', title: 'Welcome Flow'},
-      {type: 'journey', title: 'Abandoned Cart Recovery'},
-      {type: 'journey', title: 'Post-Purchase Follow-up'},
-      {type: 'journey', title: 'Re-engagement Campaign'},
-      {type: 'journey', title: 'Birthday Surprise Journey'}
+      {kind: 'journey', title: 'Welcome Flow'},
+      {kind: 'journey', title: 'Abandoned Cart Recovery'},
+      {kind: 'journey', title: 'Post-Purchase Follow-up'},
+      {kind: 'journey', title: 'Re-engagement Campaign'},
+      {kind: 'journey', title: 'Birthday Surprise Journey'}
     ]
   }
 ];
 
 interface CompletionCallbacks {
+  valueType?: string | null;
   onClear?: () => void;
   onCompact?: () => void;
 }
@@ -182,7 +208,11 @@ interface CompletionCallbacks {
 function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks) {
   if (filterValue.startsWith('/')) {
     return slashCommands
-      .filter(item => item.command.includes(filterValue.slice(1)))
+      .filter(
+        item =>
+          item.command.includes(filterValue.slice(1)) &&
+          (callbacks?.valueType ? item.kind === callbacks.valueType : true)
+      )
       .map(item =>
         item.command === '/clear' ? (
           <MenuItem key={item.command} id={item.command} onAction={callbacks?.onClear}>
@@ -198,14 +228,21 @@ function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks)
           </CommandMenuItem>
         ) : item.command === '/feedback' || item.command === '/btw' ? (
           // coworker doesn't seem to have any text insertion commands anymore, so I added these for testing
-          <InsertTextMenuItem key={item.command} id={item.command} value={item}>
+          <InsertTextMenuItem key={item.command} id={item.command} text={item.command}>
             <Prompt />
             <Text slot="label">{item.command}</Text>
             <Text slot="description">{item.description}</Text>
           </InsertTextMenuItem>
         ) : (
-          <InsertTokenMenuItem key={item.command} id={item.command} value={item}>
-            {item.type === 'skill' ? <Plugin /> : <Prompt />}
+          <InsertTokenMenuItem
+            key={item.command}
+            id={item.command}
+            token={{
+              type: 'token',
+              text: item.command,
+              value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+            }}>
+            {item.kind === 'skill' ? <Plugin /> : <Prompt />}
             <Text slot="label">{item.command}</Text>
             <Text slot="description">{item.description}</Text>
           </InsertTokenMenuItem>
@@ -213,11 +250,19 @@ function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks)
       );
   } else if (filterValue.startsWith('@')) {
     return objects
+      .filter(section => (callbacks?.valueType ? section.type === callbacks.valueType : true))
       .map(section => {
         let matchingItems = section.items
           .filter(item => item.title.toLowerCase().includes(filterValue.slice(1).toLowerCase()))
           .map(item => (
-            <InsertTokenMenuItem key={item.title} id={item.title} value={item}>
+            <InsertTokenMenuItem
+              key={item.title}
+              id={item.title}
+              token={{
+                type: 'token',
+                text: item.title,
+                value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
+              }}>
               {item.title}
             </InsertTokenMenuItem>
           ));
@@ -245,35 +290,68 @@ interface UploadState {
   progress?: number;
 }
 
+function atEnd(v: PromptFieldValue) {
+  let segs = v.segments;
+  return {index: segs.length - 1, offset: segs[segs.length - 1].text.length};
+}
+
+let prompt1 = new PromptFieldValue([
+  {type: 'text', text: 'Analyze '},
+  {
+    type: 'token',
+    text: 'New Customers',
+    value: {type: 'custom', anchor: '@', valueType: 'audience', data: {title: 'New Customers'}}
+  },
+  {type: 'text', text: ' and suggest targeting strategies'}
+]);
+
+let prompt2 = new PromptFieldValue([
+  {type: 'text', text: 'Write a brief for '},
+  {
+    type: 'token',
+    text: 'Spring Launch 2026',
+    value: {type: 'custom', anchor: '@', valueType: 'campaign', data: {title: 'Spring Launch 2026'}}
+  }
+]);
+
 let prompt3Base = new PromptFieldValue([
   {type: 'text', text: 'Summarize the '},
-  {type: 'token', text: 'Welcome Flow', value: {type: 'journey', title: 'Welcome Flow'}}
+  {
+    type: 'token',
+    text: 'Welcome Flow',
+    value: {type: 'custom', anchor: '@', valueType: 'journey', data: {title: 'Welcome Flow'}}
+  }
 ]);
-let prompt3End = {
-  index: 1,
-  offset: prompt3Base.segments[1].text.length
-};
 
-let prompts = [
-  new PromptFieldValue([
-    {type: 'text', text: 'Analyze '},
-    {type: 'token', text: 'New Customers', value: {type: 'audience', title: 'New Customers'}},
-    {type: 'text', text: ' and suggest targeting strategies'}
-  ]),
-  new PromptFieldValue([
-    {type: 'text', text: 'Write a brief for '},
+let prompt4 = new PromptFieldValue(
+  [
+    {type: 'text', text: 'Detect audiences in '},
     {
       type: 'token',
-      text: 'Spring Launch 2026',
-      value: {type: 'campaign', title: 'Spring Launch 2026'}
-    }
-  ]),
-  prompt3Base.replaceRange(prompt3End, prompt3End, ' journey performance from test.com ')
+      text: 'Journey',
+      value: {type: 'placeholder', placeholderType: 'token', anchor: '@', valueType: 'journey'}
+    },
+    {type: 'text', text: ' that changed significantly in the past '},
+    {type: 'token', text: 'date', value: {type: 'placeholder', placeholderType: 'text'}}
+  ]
+  // {selectedRange: new TokenFieldValue.SelectedRange({index: 1, offset: 0}, {index: 1, offset: 1})}
+);
+
+let prompts = [
+  prompt1.withSelectedRange(new PromptFieldValue.SelectedRange(atEnd(prompt1))),
+  prompt2.withSelectedRange(new PromptFieldValue.SelectedRange(atEnd(prompt2))),
+  prompt3Base.replaceRange(
+    atEnd(prompt3Base),
+    atEnd(prompt3Base),
+    ' journey performance from test.com '
+  ),
+  prompt4
 ];
 
 function EverythingRender(args) {
-  let {placeholder, ...otherArgs} = args;
+  let {placeholder, menuWidth, ...otherArgs} = args;
   let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+  let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
   let historyRef = useRef<TokenFieldValue[]>([]);
@@ -299,46 +377,6 @@ function EverythingRender(args) {
     });
   };
 
-  let isFieldEmpty = (prompt: TokenFieldValue) => {
-    let text = prompt.toString();
-    return text === '' && !text.includes('\n');
-  };
-
-  // logic for using up/down arrow keys to fill field with previous prompts
-  let onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    let canNavigate = historyIndexRef.current !== -1 || isFieldEmpty(value);
-    let history = historyRef.current;
-    if (!canNavigate || history.length === 0) {
-      return;
-    }
-
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      let nextIndex =
-        historyIndexRef.current === -1
-          ? history.length - 1
-          : Math.max(0, historyIndexRef.current - 1);
-      historyIndexRef.current = nextIndex;
-      isHistoryNavigating.current = true;
-      setValue(history[nextIndex]);
-    } else if (e.key === 'ArrowDown') {
-      if (historyIndexRef.current === -1) {
-        return;
-      }
-      e.preventDefault();
-      let nextIndex = historyIndexRef.current + 1;
-      if (nextIndex >= history.length) {
-        historyIndexRef.current = -1;
-        isHistoryNavigating.current = true;
-        setValue(new PromptFieldValue([]));
-      } else {
-        historyIndexRef.current = nextIndex;
-        isHistoryNavigating.current = true;
-        setValue(history[nextIndex]);
-      }
-    }
-  };
-
   let handleChange = (newValue: TokenFieldValue) => {
     if (!isHistoryNavigating.current) {
       // if user edits the field, then we want to reset the index so up arrow starts from latest prompt again
@@ -352,13 +390,49 @@ function EverythingRender(args) {
     <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
       <MessageSuggestionList title="Suggestions">
         {prompts.map((prompt, i) => (
-          <MessageSuggestion key={i} onPress={() => setValue(prompt)}>
-            {prompt.toString()}
+          <MessageSuggestion
+            key={i}
+            onPress={() => {
+              setValue(prompt);
+              promptFieldRef.current?.focus();
+            }}>
+            {prompt.segments.map((s, i) =>
+              s.type === 'token' ? (
+                <span
+                  key={i}
+                  className={style({
+                    outlineStyle: {
+                      default: 'solid',
+                      isPlaceholder: 'dashed'
+                    },
+                    outlineWidth: 1,
+                    outlineColor: {
+                      default: 'transparent-overlay-1000/20',
+                      isPlaceholder: 'transparent-overlay-1000/40'
+                    },
+                    outlineOffset: -1,
+                    borderRadius: 'pill',
+                    paddingX: 8,
+                    paddingY: 0,
+                    fontSize: 'ui',
+                    display: 'inline-flex',
+                    alignItems: 'baseline',
+                    gap: 4,
+                    verticalAlign: 'baseline'
+                  })({isPlaceholder: s.value?.type === 'placeholder'})}>
+                  {getIcon(s) && <CenterBaseline>{getIcon(s)}</CenterBaseline>}
+                  {s.text}
+                </span>
+              ) : (
+                s.text
+              )
+            )}
           </MessageSuggestion>
         ))}
       </MessageSuggestionList>
       <PromptField
         {...otherArgs}
+        ref={promptFieldRef}
         value={value}
         onChange={handleChange}
         attachments={attachments}
@@ -413,22 +487,23 @@ function EverythingRender(args) {
         </PromptFieldAttachmentList>
         <PromptTokenField
           completionTrigger={/(?<=^|\s)[@/]/}
-          renderCompletions={filterValue =>
-            renderCompletions(filterValue, {
+          renderCompletions={(filterValue, valueType) => {
+            return renderCompletions(filterValue, {
+              valueType,
               onClear: () => {
                 setValue(new PromptFieldValue([]));
                 setAttachments([]);
               },
               onCompact: action('onCompact')
-            })
-          }
+            });
+          }}
           pixelLoader={data[args.pixelLoader]}
           placeholder={placeholder}
-          onKeyDown={onKeyDown}>
-          {segment => (
-            <PromptToken>
-              {icons[segment.value?.type]}
-              {segment.text}
+          menuWidth={menuWidth}>
+          {token => (
+            <PromptToken token={token}>
+              {getIcon(token)}
+              {token.text}
             </PromptToken>
           )}
         </PromptTokenField>
@@ -440,7 +515,7 @@ function EverythingRender(args) {
                 <Prompt />
                 <Text>Commands</Text>
               </MenuItem>
-              <Menu items={slashCommands.filter(item => item.type === 'command')}>
+              <Menu items={slashCommands.filter(item => item.kind === 'command')}>
                 {item =>
                   item.command === '/clear' ? (
                     <MenuItem
@@ -458,12 +533,18 @@ function EverythingRender(args) {
                       <Text slot="description">{item.description}</Text>
                     </MenuItem>
                   ) : item.command === '/feedback' || item.command === '/btw' ? (
-                    <InsertTextMenuItem id={item.command} value={item}>
+                    <InsertTextMenuItem id={item.command} text={item.command}>
                       <Text slot="label">{item.command}</Text>
                       <Text slot="description">{item.description}</Text>
                     </InsertTextMenuItem>
                   ) : (
-                    <InsertTokenMenuItem id={item.command} value={item}>
+                    <InsertTokenMenuItem
+                      id={item.command}
+                      token={{
+                        type: 'token',
+                        text: item.command,
+                        value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                      }}>
                       <Text slot="label">{item.command}</Text>
                       <Text slot="description">{item.description}</Text>
                     </InsertTokenMenuItem>
@@ -476,9 +557,15 @@ function EverythingRender(args) {
                 <Plugin />
                 <Text>Skills</Text>
               </MenuItem>
-              <Menu items={slashCommands.filter(item => item.type === 'skill')}>
+              <Menu items={slashCommands.filter(item => item.kind === 'skill')}>
                 {item => (
-                  <InsertTokenMenuItem id={item.command} value={item}>
+                  <InsertTokenMenuItem
+                    id={item.command}
+                    token={{
+                      type: 'token',
+                      text: item.command,
+                      value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                    }}>
                     <Text slot="label">{item.command}</Text>
                     <Text slot="description">{item.description}</Text>
                   </InsertTokenMenuItem>
@@ -498,7 +585,15 @@ function EverythingRender(args) {
                     </Header>
                     <Collection items={item.items}>
                       {item => (
-                        <InsertTokenMenuItem id={item.title}>{item.title}</InsertTokenMenuItem>
+                        <InsertTokenMenuItem
+                          id={item.title}
+                          token={{
+                            type: 'token',
+                            text: item.title,
+                            value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
+                          }}>
+                          {item.title}
+                        </InsertTokenMenuItem>
                       )}
                     </Collection>
                   </MenuSection>
@@ -508,7 +603,7 @@ function EverythingRender(args) {
           </InsertMenuButton>
           {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
           <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
-            <PromptFieldVoiceButton />
+            <PromptFieldVoiceButton onToggle={action('onToggle')} />
             <PromptFieldSubmitButton />
           </div>
         </PromptFieldToolbar>
@@ -545,10 +640,10 @@ export const AsyncCompletions = () => (
           await new Promise(resolve => setTimeout(resolve, 500));
           return renderCompletions(filterValue);
         }}>
-        {segment => (
-          <PromptToken>
-            {icons[segment.value?.type]}
-            {segment.text}
+        {token => (
+          <PromptToken token={token}>
+            {getIcon(token)}
+            {token.text}
           </PromptToken>
         )}
       </PromptTokenField>
