@@ -397,10 +397,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
 
     announceToken(value, range);
 
-    // Update the selected range in the value. Also update the ref so the layout
-    // effect does not re-apply this selection back to the DOM, which would clobber
-    // the browser's native selection direction (e.g. directionless double-click).
-    selectedRange.current = range;
+    // Update the selected range in the value.
     state.setValue(value => value.withSelectedRange(range));
   });
 
@@ -712,7 +709,16 @@ export function setTokenFieldSelection(
     let [anchorNode, anchorOffset] = getDOMPosition(root, selectedRange.anchor);
     let [focusNode, focusOffset] = getDOMPosition(root, selectedRange.current);
     root[isProgrammaticSelectionChange] = !fireEvent;
-    selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+
+    // Only set selection if it has changed, because this can clobber the browser's selection direction.
+    if (
+      selection.anchorNode !== anchorNode ||
+      selection.anchorOffset !== anchorOffset ||
+      selection.focusNode !== focusNode ||
+      selection.focusOffset !== focusOffset
+    ) {
+      selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    }
   }
 }
 
