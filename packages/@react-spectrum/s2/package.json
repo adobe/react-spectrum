@@ -94,12 +94,12 @@
     "react-stately": "3.49.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "14.0.0",
+    "@adobe/spectrum-tokens": "14.15.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.3#~/.yarn/patches/@testing-library-user-event-npm-14.6.3-15ecebe390.patch",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.4#~/.yarn/patches/@testing-library-user-event-npm-14.6.4-1532248d3b.patch",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1"
   },
