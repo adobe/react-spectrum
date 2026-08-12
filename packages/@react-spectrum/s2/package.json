@@ -14,6 +14,7 @@
     "page.css",
     "icons",
     "illustrations",
+    "Icon",
     "src",
     "exports",
     "*.js"
