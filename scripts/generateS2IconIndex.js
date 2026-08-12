@@ -68,7 +68,9 @@ function generate(dir) {
     }
   }
 
-  let relative = process.env.PARCEL_V3 ? '@react-spectrum/s2/Icon' : path.relative(dir, 'packages/@react-spectrum/s2/src/Icon');
+  let relative = process.env.PARCEL_V3
+    ? '@react-spectrum/s2/Icon'
+    : path.relative(dir, 'packages/@react-spectrum/s2/src/Icon');
   let typeImport = dir.includes('ui-icons')
     ? "import {ReactNode, SVGProps} from 'react';"
     : `import {ReactNode} from 'react';
