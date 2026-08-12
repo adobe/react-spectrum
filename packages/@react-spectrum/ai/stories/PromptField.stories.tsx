@@ -159,7 +159,7 @@ function getIcon(token: TokenSegment<PromptFieldTokenValue>) {
     case 'url':
       return icons.url;
     case 'custom':
-      return icons[token.value.kind];
+      return icons[token.value.valueType];
   }
 }
 
@@ -208,7 +208,11 @@ interface CompletionCallbacks {
 function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks) {
   if (filterValue.startsWith('/')) {
     return slashCommands
-      .filter(item => item.command.includes(filterValue.slice(1)))
+      .filter(
+        item =>
+          item.command.includes(filterValue.slice(1)) &&
+          (callbacks?.valueType ? item.kind === callbacks.valueType : true)
+      )
       .map(item =>
         item.command === '/clear' ? (
           <MenuItem key={item.command} id={item.command} onAction={callbacks?.onClear}>
@@ -233,14 +237,18 @@ function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks)
           <InsertTokenMenuItem
             key={item.command}
             id={item.command}
-            token={{type: 'token', text: item.command, value: {type: 'custom', ...item}}}>
+            token={{
+              type: 'token',
+              text: item.command,
+              value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+            }}>
             {item.kind === 'skill' ? <Plugin /> : <Prompt />}
             <Text slot="label">{item.command}</Text>
             <Text slot="description">{item.description}</Text>
           </InsertTokenMenuItem>
         )
       );
-  } else if (filterValue.startsWith('@') || callbacks?.valueType) {
+  } else if (filterValue.startsWith('@')) {
     return objects
       .filter(section => (callbacks?.valueType ? section.type === callbacks.valueType : true))
       .map(section => {
@@ -250,7 +258,11 @@ function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks)
             <InsertTokenMenuItem
               key={item.title}
               id={item.title}
-              token={{type: 'token', text: item.title, value: {type: 'custom', ...item}}}>
+              token={{
+                type: 'token',
+                text: item.title,
+                value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
+              }}>
               {item.title}
             </InsertTokenMenuItem>
           ));
@@ -288,7 +300,7 @@ let prompt1 = new PromptFieldValue([
   {
     type: 'token',
     text: 'New Customers',
-    value: {type: 'custom', kind: 'audience', title: 'New Customers'}
+    value: {type: 'custom', anchor: '@', valueType: 'audience', data: {title: 'New Customers'}}
   },
   {type: 'text', text: ' and suggest targeting strategies'}
 ]);
@@ -298,7 +310,7 @@ let prompt2 = new PromptFieldValue([
   {
     type: 'token',
     text: 'Spring Launch 2026',
-    value: {type: 'custom', kind: 'campaign', title: 'Spring Launch 2026'}
+    value: {type: 'custom', anchor: '@', valueType: 'campaign', data: {title: 'Spring Launch 2026'}}
   }
 ]);
 
@@ -307,7 +319,7 @@ let prompt3Base = new PromptFieldValue([
   {
     type: 'token',
     text: 'Welcome Flow',
-    value: {type: 'custom', kind: 'journey', title: 'Welcome Flow'}
+    value: {type: 'custom', anchor: '@', valueType: 'journey', data: {title: 'Welcome Flow'}}
   }
 ]);
 
@@ -320,7 +332,7 @@ let prompt4 = new PromptFieldValue(
       value: {type: 'placeholder', placeholderType: 'token', anchor: '@', valueType: 'journey'}
     },
     {type: 'text', text: ' that changed significantly in the past '},
-    {type: 'token', text: 'Date', value: {type: 'placeholder', placeholderType: 'text'}}
+    {type: 'token', text: 'date', value: {type: 'placeholder', placeholderType: 'text'}}
   ]
   // {selectedRange: new TokenFieldValue.SelectedRange({index: 1, offset: 0}, {index: 1, offset: 1})}
 );
@@ -331,7 +343,7 @@ let prompts = [
   prompt3Base.replaceRange(
     atEnd(prompt3Base),
     atEnd(prompt3Base),
-    ' journey performance from test.com'
+    ' journey performance from test.com '
   ),
   prompt4
 ];
@@ -435,7 +447,7 @@ function EverythingRender(args) {
                     },
                     outlineWidth: 1,
                     outlineColor: {
-                      default: 'transparent-overlay-1000/10',
+                      default: 'transparent-overlay-1000/20',
                       isPlaceholder: 'transparent-overlay-1000/40'
                     },
                     outlineOffset: -1,
@@ -569,7 +581,11 @@ function EverythingRender(args) {
                   ) : (
                     <InsertTokenMenuItem
                       id={item.command}
-                      token={{type: 'token', text: item.command, value: {type: 'custom', ...item}}}>
+                      token={{
+                        type: 'token',
+                        text: item.command,
+                        value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                      }}>
                       <Text slot="label">{item.command}</Text>
                       <Text slot="description">{item.description}</Text>
                     </InsertTokenMenuItem>
@@ -586,7 +602,11 @@ function EverythingRender(args) {
                 {item => (
                   <InsertTokenMenuItem
                     id={item.command}
-                    token={{type: 'token', text: item.command, value: {type: 'custom', ...item}}}>
+                    token={{
+                      type: 'token',
+                      text: item.command,
+                      value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                    }}>
                     <Text slot="label">{item.command}</Text>
                     <Text slot="description">{item.description}</Text>
                   </InsertTokenMenuItem>
@@ -611,7 +631,7 @@ function EverythingRender(args) {
                           token={{
                             type: 'token',
                             text: item.title,
-                            value: {type: 'custom', ...item}
+                            value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
                           }}>
                           {item.title}
                         </InsertTokenMenuItem>

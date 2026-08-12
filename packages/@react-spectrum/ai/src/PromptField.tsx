@@ -17,13 +17,7 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {
-  color,
-  css,
-  iconStyle,
-  style,
-  StyleString
-} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   createContext,
   createRef,
@@ -40,8 +34,8 @@ import {
 import {FocusableRef} from '@react-types/shared';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {IconContext} from '@react-spectrum/s2';
-// @ts-ignore
 import {Image, Text} from '@react-spectrum/s2/Card';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
@@ -52,6 +46,7 @@ import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
 import {
   Position,
+  SelectedRange,
   TokenFieldSegment,
   TokenFieldValue,
   TokenSegment
@@ -74,6 +69,7 @@ import {useControlledState} from 'react-stately/useControlledState';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusableRef} from './useDOMRef';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
+import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
@@ -172,7 +168,12 @@ interface AnchorTokenValue {
 
 interface CustomTokenValue {
   type: 'custom';
-  [key: string]: any;
+  /** Anchor character to insert when the user starts typing to replace the token (e.g. '@'). */
+  anchor: string;
+  /** Type of the token value, used to filter replacement completions. */
+  valueType: string;
+  /** Arbitrary token data. */
+  data: any;
 }
 
 export type PromptFieldTokenValue =
@@ -198,8 +199,8 @@ export class PromptFieldValue extends TokenFieldValue<PromptFieldTokenValue> {
     if (
       slice.length === 1 &&
       token.type === 'token' &&
-      token.value?.type === 'placeholder' &&
-      token.value.placeholderType === 'token' &&
+      ((token.value?.type === 'placeholder' && token.value.placeholderType === 'token') ||
+        token.value?.type === 'custom') &&
       segments.length === 1 &&
       segments[0].type === 'text' &&
       !segments[0].text.startsWith(token.value.anchor)
@@ -442,10 +443,10 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     let segment = slice.segments.length === 1 ? slice.segments[0] : null;
     if (
       segment?.type === 'token' &&
-      segment.value?.type === 'placeholder' &&
-      segment.value.placeholderType === 'token'
+      ((segment.value?.type === 'placeholder' && segment.value.placeholderType === 'token') ||
+        segment.value?.type === 'custom')
     ) {
-      return [prompt.selectedRange.start, '', segment.value.valueType ?? null];
+      return [prompt.selectedRange.start, segment.value.anchor, segment.value.valueType ?? null];
     }
 
     if (completionTrigger) {
@@ -661,6 +662,23 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   );
 }
 
+function selectNextPlaceholder(prompt: PromptFieldValue, dir: number): PromptFieldValue | null {
+  let index = prompt.caretPosition.index;
+  for (let i = index + dir; i >= 0 && i < prompt.segments.length; i += dir) {
+    let segment = prompt.segments[i];
+    if (segment.type === 'token' && segment.value?.type === 'placeholder') {
+      return prompt.withSelectedRange(
+        new TokenFieldValue.SelectedRange(
+          {index: i, offset: 0},
+          {index: i, offset: segment.text.length}
+        )
+      );
+    }
+  }
+
+  return null;
+}
+
 export interface PromptTokenFieldPopoverProps extends Omit<PopoverProps, 'shouldSkipAnimation'> {
   filterAnchor?: Position | null;
   items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
@@ -708,7 +726,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       getTargetRect={target => {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
-      <PromptCompletionAnchorContext.Provider value={filterAnchor ?? null}>
+      <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
         <Menu>{menuItems}</Menu>
       </PromptCompletionAnchorContext.Provider>
     </Popover>
@@ -981,36 +999,38 @@ export function AttachFileMenuItem() {
 function useInsertPromptSegment(segments: TokenFieldSegment[]) {
   let {setPrompt, inputRef} = useContext(PromptFieldContext);
   let anchor = useContext(PromptCompletionAnchorContext);
-  let pendingCaret = useRef<Position | null>(null);
+  let pendingSelection = useRef<SelectedRange | null>(null);
   return () => {
     setPrompt(value => {
       // Add a space only if not already followed by one, but move the cursor past the space in any case.
-      let space = value.findText(value.caretPosition, TokenFieldValue.Direction.Forward, ' ');
-      let hasFollowingSpace =
-        space && value.slice(value.caretPosition, space).segments.length === 0;
-      let insert: TokenFieldSegment[] = [...segments, {type: 'text', text: ' '}];
-      let endPosition = value.caretPosition;
-      if (hasFollowingSpace && space) {
-        space.offset++;
-        endPosition = space;
+      let insert: TokenFieldSegment[] = [...segments];
+      let endPosition = value.selectedRange.end;
+      if (insert.length) {
+        let space = value.findText(endPosition, TokenFieldValue.Direction.Forward, ' ');
+        let hasFollowingSpace = space && value.slice(endPosition, space).segments.length === 0;
+        insert.push({type: 'text', text: ' '});
+        if (hasFollowingSpace && space) {
+          space.offset++;
+          endPosition = space;
+        }
       }
       let newValue = value.replaceRangeWithSegments(
-        anchor ?? value.caretPosition,
+        anchor ?? value.selectedRange.start,
         endPosition,
         insert,
         false // Don't coalesce in undo/redo history.
       );
-      pendingCaret.current = newValue.caretPosition;
+      newValue = selectNextPlaceholder(newValue, 1) || newValue;
+      pendingSelection.current = newValue.selectedRange;
       return newValue;
     });
 
     if (anchor == null) {
       // Wait for popover animation, then restore cursor to after the inserted content.
       setTimeout(() => {
-        if (inputRef.current && pendingCaret.current) {
-          let position = pendingCaret.current;
-          let range = new TokenFieldValue.SelectedRange(position);
-          pendingCaret.current = null;
+        if (inputRef.current && pendingSelection.current) {
+          let range = pendingSelection.current;
+          pendingSelection.current = null;
           inputRef.current.focus();
           // we need to update the position manually since TokenField's update caret logic only happens if the field is focused
           // but this insert can happen from the + menu aka the field isn't focused until this gets called which is too late
