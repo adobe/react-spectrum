@@ -66,7 +66,7 @@ describeOrSkip('PromptField', () => {
       await expect.element(menuItem('Spring Launch 2026')).toBeInTheDocument();
       await expect.element(menuItem('Welcome Flow')).toBeInTheDocument();
 
-      await userEvent.click(menuItem('New Customers'));
+      await userEvent.keyboard('{ArrowDown}{Enter}');
       // Token replaces the typed filter and a trailing space is added.
       await waitForTokens(getValue, ['New Customers']);
       await waitForFieldText(getValue, 'New Customers ');
