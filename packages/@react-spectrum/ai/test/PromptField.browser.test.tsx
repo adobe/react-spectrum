@@ -197,7 +197,12 @@ describeOrSkip('PromptField', () => {
         {
           type: 'token',
           text: 'New Customers',
-          value: {type: 'custom', anchor: '@', valueType: 'audience', data: {kind: 'audience', title: 'New Customers'}}
+          value: {
+            type: 'custom',
+            anchor: '@',
+            valueType: 'audience',
+            data: {kind: 'audience', title: 'New Customers'}
+          }
         }
       ]);
       let {textbox, getValue} = await renderPromptField({initialValue});
@@ -315,7 +320,10 @@ describeOrSkip('PromptField', () => {
     });
 
     it('renders an attachment in the invalid state', async () => {
-      let {container} = await renderPromptField({attachments: [imageAttachment('a1')], invalid: true});
+      let {container} = await renderPromptField({
+        attachments: [imageAttachment('a1')],
+        invalid: true
+      });
       await expect.element(page.getByLabelText('Attachments')).toBeInTheDocument();
       // The invalid state renders a decorative alert icon.
       expect(container.querySelector('[aria-hidden="true"] svg')).toBeTruthy();
