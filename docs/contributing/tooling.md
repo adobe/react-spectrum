@@ -3,8 +3,8 @@
 This repo does **not** use the conventional JS toolchain — reach for these, and don't hand-format code or swap in defaults:
 
 - **Format** — `oxfmt` (`yarn format`), not Prettier. The style is opinionated (single quotes, no bracket spacing → `{foo}`, no trailing commas). Always run the tool rather than formatting by hand.
-- **Lint** — `oxlint` plus repo-local rules, not ESLint. `yarn lint` bundles format-check, type-check, `oxlint`, and Yarn `constraints` (which enforce cross-package dependency versions).
-- **Type-check** — `tsgo` (`yarn check-types`), the native TypeScript compiler — not `tsc`. A `tsc` fallback exists as `yarn check-types:tsc`.
+- **Lint** — `oxlint` (`oxlint packages --fix`) plus repo-local rules, not ESLint. `yarn lint` bundles format-check, type-check, `oxlint`, and Yarn `constraints` (`yarn constraints --fix`) (which enforce cross-package dependency versions).
+- **Type-check** — `tsgo` (`yarn check-types`), the native TypeScript compiler — not `tsc`.
 - **Build** — Parcel driven by `make` (`yarn build`), not plain `tsc`/rollup.
 - **Yarn 4 workspaces** monorepo; use `yarn workspaces foreach` for cross-package operations.
 
