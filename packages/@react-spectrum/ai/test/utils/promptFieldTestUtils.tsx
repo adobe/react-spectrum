@@ -26,7 +26,16 @@ import {
   PromptTokenField
 } from '../../src/PromptField';
 import {Attachment} from '../../src/AttachmentList';
-import {Collection, Header, Heading, Menu, MenuItem, MenuSection, SubmenuTrigger, Text} from '@react-spectrum/s2/Menu';
+import {
+  Collection,
+  Header,
+  Heading,
+  Menu,
+  MenuItem,
+  MenuSection,
+  SubmenuTrigger,
+  Text
+} from '@react-spectrum/s2/Menu';
 import {Image} from '@react-spectrum/s2/Image';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useState} from 'react';
@@ -38,18 +47,30 @@ export const TINY_PNG =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
 /**
- * jsdom doesn't implement Range.getBoundingClientRect / getClientRects, which the completion
+ * Jsdom doesn't implement Range.getBoundingClientRect / getClientRects, which the completion
  * popover relies on for positioning. Install stubs so the popover can open. Call in beforeAll.
  */
 export function installRangePolyfill(): void {
   let proto = Range.prototype as any;
   if (!proto.getBoundingClientRect) {
     proto.getBoundingClientRect = () => ({
-      x: 0, y: 0, top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, toJSON() {}
+      x: 0,
+      y: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: 0,
+      height: 0,
+      toJSON() {}
     });
   }
   if (!proto.getClientRects) {
-    proto.getClientRects = () => ({length: 0, item: () => null, [Symbol.iterator]: function* () {}});
+    proto.getClientRects = () => ({
+      length: 0,
+      item: () => null,
+      [Symbol.iterator]: function* () {}
+    });
   }
 }
 
@@ -91,7 +112,10 @@ interface CompletionCallbacks {
   onCompact?: () => void;
 }
 
-export function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks): React.ReactNode[] | null {
+export function renderCompletions(
+  filterValue: string,
+  callbacks?: CompletionCallbacks
+): React.ReactNode[] | null {
   if (filterValue.startsWith('/')) {
     return slashCommands
       .filter(
@@ -223,7 +247,10 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
       onRemoveAttachments={spies.onRemoveAttachments}>
       <PromptFieldAttachmentList dependencies={[uploadProgress, invalid]}>
         {attachment => (
-          <Attachment textValue={attachment.file.name} isInvalid={invalid} uploadProgress={uploadProgress}>
+          <Attachment
+            textValue={attachment.file.name}
+            isInvalid={invalid}
+            uploadProgress={uploadProgress}>
             {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
           </Attachment>
         )}
@@ -232,7 +259,11 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
         placeholder={placeholder}
         completionTrigger={/(?<=^|\s)[@/]/}
         renderCompletions={(filterValue, valueType) =>
-          renderCompletions(filterValue, {valueType, onClear: spies.onClear, onCompact: spies.onCompact})
+          renderCompletions(filterValue, {
+            valueType,
+            onClear: spies.onClear,
+            onCompact: spies.onCompact
+          })
         }>
         {token => <PromptToken token={token}>{token.text}</PromptToken>}
       </PromptTokenField>
@@ -250,10 +281,14 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
                     <Heading>{item.section}</Heading>
                   </Header>
                   <Collection items={item.items}>
-                    {(obj: {kind: string, title: string}) => (
+                    {(obj: {kind: string; title: string}) => (
                       <InsertTokenMenuItem
                         id={obj.title}
-                        token={{type: 'token', text: obj.title, value: {type: 'custom', anchor: '@', valueType: obj.kind, data: obj}}}>
+                        token={{
+                          type: 'token',
+                          text: obj.title,
+                          value: {type: 'custom', anchor: '@', valueType: obj.kind, data: obj}
+                        }}>
                         {obj.title}
                       </InsertTokenMenuItem>
                     )}

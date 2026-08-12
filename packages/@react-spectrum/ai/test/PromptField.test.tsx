@@ -11,8 +11,17 @@
  */
 
 import {act, screen, waitFor} from '@react-spectrum/test-utils-internal';
-import {imageAttachment, installRangePolyfill, PromptFieldValue, renderPromptField, tokenTexts} from './utils/promptFieldTestUtils';
+import {
+  imageAttachment,
+  installRangePolyfill,
+  PromptFieldValue,
+  renderPromptField,
+  tokenTexts
+} from './utils/promptFieldTestUtils';
+import {PromptField, PromptTokenField} from '../src/PromptField';
 import React from 'react';
+import {render} from '@react-spectrum/test-utils-internal';
+import userEvent from '@testing-library/user-event';
 
 // Suite requires React 19 (matches the TokenField browser coverage this ports from).
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
@@ -25,13 +34,23 @@ let queryMenuItem = (name: string | RegExp) => screen.queryByRole('menuitem', {n
 function placeholderPrompt(): PromptFieldValue {
   return new PromptFieldValue([
     {type: 'text', text: 'Detect audiences in '},
-    {type: 'token', text: 'Journey', value: {type: 'placeholder', placeholderType: 'token', anchor: '@', valueType: 'journey'}},
+    {
+      type: 'token',
+      text: 'Journey',
+      value: {type: 'placeholder', placeholderType: 'token', anchor: '@', valueType: 'journey'}
+    },
     {type: 'text', text: ' that changed in the past '},
     {type: 'token', text: 'Date', value: {type: 'placeholder', placeholderType: 'text'}}
   ]);
 }
 
 describeOrSkip('PromptField', () => {
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null});
+  });
+
   beforeAll(() => {
     installRangePolyfill();
   });
@@ -136,7 +155,9 @@ describeOrSkip('PromptField', () => {
       await user.keyboard('visit test.com now');
 
       await waitFor(() =>
-        expect(getValue().segments.some(s => s.type === 'token' && s.value?.type === 'url')).toBe(true)
+        expect(getValue().segments.some(s => s.type === 'token' && s.value?.type === 'url')).toBe(
+          true
+        )
       );
       let urlToken = getValue().segments.find(s => s.type === 'token' && s.value?.type === 'url');
       expect(urlToken?.text).toBe('test.com');
@@ -150,7 +171,12 @@ describeOrSkip('PromptField', () => {
         {
           type: 'token',
           text: 'New Customers',
-          value: {type: 'custom', anchor: '@', valueType: 'audience', data: {kind: 'audience', title: 'New Customers'}}
+          value: {
+            type: 'custom',
+            anchor: '@',
+            valueType: 'audience',
+            data: {kind: 'audience', title: 'New Customers'}
+          }
         }
       ]);
       let {user, textbox, getValue, setValue} = renderPromptField({initialValue});
@@ -158,7 +184,17 @@ describeOrSkip('PromptField', () => {
       // Select the token via the controlled value (jsdom can't click-select a token), then the
       // completions open filtered to the same type (audiences).
       await user.click(textbox);
-      act(() => setValue(v => v.withSelectedRange(new PromptFieldValue.SelectedRange({index: 1, offset: 0}, {index: 1, offset: 'New Customers'.length})) as PromptFieldValue));
+      act(() =>
+        setValue(
+          v =>
+            v.withSelectedRange(
+              new PromptFieldValue.SelectedRange(
+                {index: 1, offset: 0},
+                {index: 1, offset: 'New Customers'.length}
+              )
+            ) as PromptFieldValue
+        )
+      );
       expect(await findMenuItem('Returning Customers')).toBeInTheDocument();
       expect(queryMenuItem('Welcome Flow')).not.toBeInTheDocument();
       expect(queryMenuItem('Spring Launch 2026')).not.toBeInTheDocument();
@@ -191,7 +227,13 @@ describeOrSkip('PromptField', () => {
     it('does not insert a double space when the caret is already followed by one', async () => {
       let {user, getValue, setValue} = renderPromptField();
       // Place the caret between 'x' and the space (jsdom can't move the caret via arrow keys).
-      act(() => setValue(new PromptFieldValue([{type: 'text', text: 'x y'}]).withSelectedRange(new PromptFieldValue.SelectedRange({index: 0, offset: 1})) as PromptFieldValue));
+      act(() =>
+        setValue(
+          new PromptFieldValue([{type: 'text', text: 'x y'}]).withSelectedRange(
+            new PromptFieldValue.SelectedRange({index: 0, offset: 1})
+          ) as PromptFieldValue
+        )
+      );
 
       await user.click(screen.getByRole('button', {name: 'Add'}));
       await user.hover(getMenuItem('Reference an object'));
@@ -236,11 +278,20 @@ describeOrSkip('PromptField', () => {
     });
 
     it('selects the last placeholder when Shift+Tab-ing into the field', async () => {
-      let {user, textbox, getValue, setValue} = renderPromptField({initialValue: placeholderPrompt()});
+      let {user, textbox, getValue, setValue} = renderPromptField({
+        initialValue: placeholderPrompt()
+      });
       await user.click(textbox);
       // Put the caret past the last placeholder so Tab leaves the field instead of jumping
       // placeholders (jsdom can't move the caret to the end via {End}).
-      act(() => setValue(v => v.withSelectedRange(new PromptFieldValue.SelectedRange({index: 3, offset: 'Date'.length})) as PromptFieldValue));
+      act(() =>
+        setValue(
+          v =>
+            v.withSelectedRange(
+              new PromptFieldValue.SelectedRange({index: 3, offset: 'Date'.length})
+            ) as PromptFieldValue
+        )
+      );
       await user.keyboard('{Tab}');
       // Re-enter from a following element; the last placeholder (Date, index 3) is auto-selected.
       await user.keyboard('{Shift>}{Tab}{/Shift}');
@@ -306,5 +357,20 @@ describeOrSkip('PromptField', () => {
       // The invalid state renders a decorative alert icon.
       expect(container.querySelector('[aria-hidden="true"] svg')).toBeTruthy();
     });
+  });
+
+  it('fires onKeyDown when a key is pressed in the token field', async () => {
+    let onKeyDown = jest.fn();
+    let {getByRole} = render(
+      <PromptField>
+        <PromptTokenField onKeyDown={onKeyDown} />
+      </PromptField>
+    );
+
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('a');
+
+    expect(onKeyDown).toHaveBeenCalled();
   });
 });

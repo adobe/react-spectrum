@@ -377,46 +377,6 @@ function EverythingRender(args) {
     });
   };
 
-  let isFieldEmpty = (prompt: TokenFieldValue) => {
-    let text = prompt.toString();
-    return text === '' && !text.includes('\n');
-  };
-
-  // logic for using up/down arrow keys to fill field with previous prompts
-  let onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    let canNavigate = historyIndexRef.current !== -1 || isFieldEmpty(value);
-    let history = historyRef.current;
-    if (!canNavigate || history.length === 0) {
-      return;
-    }
-
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      let nextIndex =
-        historyIndexRef.current === -1
-          ? history.length - 1
-          : Math.max(0, historyIndexRef.current - 1);
-      historyIndexRef.current = nextIndex;
-      isHistoryNavigating.current = true;
-      setValue(history[nextIndex]);
-    } else if (e.key === 'ArrowDown') {
-      if (historyIndexRef.current === -1) {
-        return;
-      }
-      e.preventDefault();
-      let nextIndex = historyIndexRef.current + 1;
-      if (nextIndex >= history.length) {
-        historyIndexRef.current = -1;
-        isHistoryNavigating.current = true;
-        setValue(new PromptFieldValue([]));
-      } else {
-        historyIndexRef.current = nextIndex;
-        isHistoryNavigating.current = true;
-        setValue(history[nextIndex]);
-      }
-    }
-  };
-
   let handleChange = (newValue: TokenFieldValue) => {
     if (!isHistoryNavigating.current) {
       // if user edits the field, then we want to reset the index so up arrow starts from latest prompt again
@@ -537,7 +497,6 @@ function EverythingRender(args) {
               onCompact: action('onCompact')
             });
           }}
-          onKeyDown={onKeyDown}
           pixelLoader={data[args.pixelLoader]}
           placeholder={placeholder}
           menuWidth={menuWidth}>
