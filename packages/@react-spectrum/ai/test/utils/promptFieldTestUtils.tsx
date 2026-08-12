@@ -26,26 +26,32 @@ import {
   PromptTokenField
 } from '../../src/PromptField';
 import {Attachment} from '../../src/AttachmentList';
-import {
-  Collection,
-  Header,
-  Heading,
-  Menu,
-  MenuItem,
-  MenuSection,
-  SubmenuTrigger,
-  Text
-} from '@react-spectrum/s2/Menu';
-import {expect, type Mock, vi} from 'vitest';
+import {Collection, Header, Heading, Menu, MenuItem, MenuSection, SubmenuTrigger, Text} from '@react-spectrum/s2/Menu';
 import {Image} from '@react-spectrum/s2/Image';
-import {type Locator, userEvent} from 'vitest/browser';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useState} from 'react';
-import {render} from 'vitest-browser-react';
 import {TokenFieldValue} from 'react-aria-components';
+import userEvent from '@testing-library/user-event';
 
 // Tiny transparent PNG so <Image slot="thumbnail"> resolves without a network fetch.
 export const TINY_PNG =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+
+/**
+ * jsdom doesn't implement Range.getBoundingClientRect / getClientRects, which the completion
+ * popover relies on for positioning. Install stubs so the popover can open. Call in beforeAll.
+ */
+export function installRangePolyfill(): void {
+  let proto = Range.prototype as any;
+  if (!proto.getBoundingClientRect) {
+    proto.getBoundingClientRect = () => ({
+      x: 0, y: 0, top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, toJSON() {}
+    });
+  }
+  if (!proto.getClientRects) {
+    proto.getClientRects = () => ({length: 0, item: () => null, [Symbol.iterator]: function* () {}});
+  }
+}
 
 // Completion data, trimmed from PromptField.stories.tsx.
 export const slashCommands = [
@@ -85,10 +91,7 @@ interface CompletionCallbacks {
   onCompact?: () => void;
 }
 
-export function renderCompletions(
-  filterValue: string,
-  callbacks?: CompletionCallbacks
-): React.ReactNode[] | null {
+export function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks): React.ReactNode[] | null {
   if (filterValue.startsWith('/')) {
     return slashCommands
       .filter(
@@ -167,16 +170,17 @@ export interface HarnessOptions {
 }
 
 export interface HarnessSpies {
-  onSubmit: Mock;
-  onStop: Mock;
-  onClear: Mock;
-  onCompact: Mock;
-  onRemoveAttachments: Mock;
+  onSubmit: jest.Mock;
+  onStop: jest.Mock;
+  onClear: jest.Mock;
+  onCompact: jest.Mock;
+  onRemoveAttachments: jest.Mock;
 }
 
 interface ControlledPromptFieldProps extends HarnessOptions {
   valueRef: React.MutableRefObject<PromptFieldValue>;
   attachmentsRef: React.MutableRefObject<PromptFieldAttachment[]>;
+  setValueRef: React.MutableRefObject<React.Dispatch<React.SetStateAction<PromptFieldValue>>>;
   spies: HarnessSpies;
 }
 
@@ -191,10 +195,14 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
     invalid,
     valueRef,
     attachmentsRef,
+    setValueRef,
     spies
   } = props;
   let [value, setValue] = useState<PromptFieldValue>(initialValue);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>(initialAttachments);
+  useEffect(() => {
+    setValueRef.current = setValue;
+  }, [setValue, setValueRef]);
   useEffect(() => {
     valueRef.current = value;
   }, [value, valueRef]);
@@ -215,10 +223,7 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
       onRemoveAttachments={spies.onRemoveAttachments}>
       <PromptFieldAttachmentList dependencies={[uploadProgress, invalid]}>
         {attachment => (
-          <Attachment
-            textValue={attachment.file.name}
-            isInvalid={invalid}
-            uploadProgress={uploadProgress}>
+          <Attachment textValue={attachment.file.name} isInvalid={invalid} uploadProgress={uploadProgress}>
             {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
           </Attachment>
         )}
@@ -227,11 +232,7 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
         placeholder={placeholder}
         completionTrigger={/(?<=^|\s)[@/]/}
         renderCompletions={(filterValue, valueType) =>
-          renderCompletions(filterValue, {
-            valueType,
-            onClear: spies.onClear,
-            onCompact: spies.onCompact
-          })
+          renderCompletions(filterValue, {valueType, onClear: spies.onClear, onCompact: spies.onCompact})
         }>
         {token => <PromptToken token={token}>{token.text}</PromptToken>}
       </PromptTokenField>
@@ -249,14 +250,10 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
                     <Heading>{item.section}</Heading>
                   </Header>
                   <Collection items={item.items}>
-                    {(obj: {kind: string; title: string}) => (
+                    {(obj: {kind: string, title: string}) => (
                       <InsertTokenMenuItem
                         id={obj.title}
-                        token={{
-                          type: 'token',
-                          text: obj.title,
-                          value: {type: 'custom', valueType: obj.kind, anchor: '@', data: obj}
-                        }}>
+                        token={{type: 'token', text: obj.title, value: {type: 'custom', anchor: '@', valueType: obj.kind, data: obj}}}>
                         {obj.title}
                       </InsertTokenMenuItem>
                     )}
@@ -273,75 +270,48 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
 }
 
 export interface PromptFieldHarness extends HarnessSpies {
+  user: ReturnType<typeof userEvent.setup>;
   getValue: () => PromptFieldValue;
   getAttachments: () => PromptFieldAttachment[];
-  textbox: Locator;
+  /**
+   * The controlled value setter. jsdom can't drive caret/token selection through the
+   * contenteditable (that needs Selection.modify / hit-testing, covered by TokenField's own
+   * browser tests), so tests position the caret/selection through the controlled value instead.
+   */
+  setValue: React.Dispatch<React.SetStateAction<PromptFieldValue>>;
+  textbox: HTMLElement;
   container: HTMLElement;
 }
 
-export async function renderPromptField(options: HarnessOptions = {}): Promise<PromptFieldHarness> {
+export function renderPromptField(options: HarnessOptions = {}): PromptFieldHarness {
+  let user = userEvent.setup({delay: null, pointerMap});
   let valueRef = {current: options.initialValue ?? new PromptFieldValue([])};
   let attachmentsRef = {current: options.attachments ?? []};
+  let setValueRef = {current: (() => {}) as React.Dispatch<React.SetStateAction<PromptFieldValue>>};
   let spies: HarnessSpies = {
-    onSubmit: vi.fn(),
-    onStop: vi.fn(),
-    onClear: vi.fn(),
-    onCompact: vi.fn(),
-    onRemoveAttachments: vi.fn()
+    onSubmit: jest.fn(),
+    onStop: jest.fn(),
+    onClear: jest.fn(),
+    onCompact: jest.fn(),
+    onRemoveAttachments: jest.fn()
   };
-  let screen = await render(
+  let tree = render(
     <ControlledPromptField
       {...options}
       valueRef={valueRef}
       attachmentsRef={attachmentsRef}
+      setValueRef={setValueRef}
       spies={spies}
     />
   );
   return {
     ...spies,
+    user,
     getValue: () => valueRef.current,
     getAttachments: () => attachmentsRef.current,
-    textbox: screen.getByRole('textbox', {name: 'Prompt'}),
-    container: screen.container
-  };
-}
-
-export interface UncontrolledHarness {
-  onSubmit: Mock;
-  textbox: Locator;
-  container: HTMLElement;
-}
-
-/**
- * Renders an uncontrolled PromptField (using defaultValue/defaultAttachments and the default
- * attachment renderer) so submit-clears-the-field and default-render paths are exercised.
- */
-export async function renderUncontrolledPromptField(
-  options: {
-    defaultValue?: PromptFieldValue;
-    defaultAttachments?: PromptFieldAttachment[];
-  } = {}
-): Promise<UncontrolledHarness> {
-  let onSubmit = vi.fn();
-  let screen = await render(
-    <PromptField
-      defaultValue={options.defaultValue}
-      defaultAttachments={options.defaultAttachments}
-      acceptedAttachmentTypes={['image/*']}
-      onSubmit={onSubmit}>
-      <PromptFieldAttachmentList />
-      <PromptTokenField>
-        {token => <PromptToken token={token}>{token.text}</PromptToken>}
-      </PromptTokenField>
-      <PromptFieldToolbar>
-        <PromptFieldSubmitButton />
-      </PromptFieldToolbar>
-    </PromptField>
-  );
-  return {
-    onSubmit,
-    textbox: screen.getByRole('textbox', {name: 'Prompt'}),
-    container: screen.container
+    setValue: (...args) => setValueRef.current(...args),
+    textbox: tree.getByRole('textbox', {name: 'Prompt'}),
+    container: tree.container
   };
 }
 
@@ -352,25 +322,6 @@ export function imageAttachment(id: string, name = 'photo.png'): PromptFieldAtta
 
 export function tokenTexts(value: PromptFieldValue): string[] {
   return value.segments.filter(s => s.type === 'token').map(s => s.text);
-}
-
-export async function focusField(textbox: Locator): Promise<void> {
-  await userEvent.click(textbox);
-  await expect.element(textbox).toHaveFocus();
-}
-
-export async function waitForFieldText(
-  getValue: () => PromptFieldValue,
-  str: string
-): Promise<void> {
-  await expect.poll(() => getValue().toString()).toBe(str);
-}
-
-export async function waitForTokens(
-  getValue: () => PromptFieldValue,
-  tokens: string[]
-): Promise<void> {
-  await expect.poll(() => tokenTexts(getValue())).toEqual(tokens);
 }
 
 export {PromptFieldValue, TokenFieldValue};
