@@ -181,7 +181,7 @@ async function toImportFn(stories, generatedEntries) {
     if (PARCEL_V3) {
       let name = `entry_${imports.length}`;
       imports.push(
-        `import * as ${name} from ${JSON.stringify(relativePath(generatedEntries, glob) + '?async=true&flat=true')};`
+        `import ${name} from ${JSON.stringify(relativePath(generatedEntries, glob) + '?async=true&flat=true')};`
       );
       entries.push(`...${name}`);
     } else {
@@ -195,14 +195,23 @@ async function toImportFn(stories, generatedEntries) {
 
   return `
     ${imports.join('\n')}
-    import path from 'path';
+
+    function relative(from, to) {
+      let fromParts = from.split('/').filter(Boolean);
+      let toParts = to.split('/').filter(Boolean);
+      let i = 0;
+      while (i < fromParts.length && fromParts[i] === toParts[i]) {
+        i++;
+      }
+      return '../'.repeat(fromParts.length - i) + toParts.slice(i).join('/');
+    }
 
     const importers = {
       ${entries.join(',\n')}
     };
 
     async function importFn(p) {
-      p = ${PARCEL_V3 ? `path.relative(${JSON.stringify(relative)}, p)` : 'p'};
+      p = ${PARCEL_V3 ? `relative(${JSON.stringify(relative)}, p)` : 'p'};
       return importers[p]();
     }
   `;
