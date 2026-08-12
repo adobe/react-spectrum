@@ -67,5 +67,42 @@ describe('useCalendarState', () => {
       expect(result.current.value).not.toBeNull();
       expect(result.current.value!.compare(selectedDate)).toBe(0);
     });
+
+    it('selects the nearest earlier available date when the selected date is unavailable', () => {
+      let {result} = renderHook(() =>
+        useCalendarState({
+          locale: 'en-US',
+          createCalendar,
+          isDateUnavailable: date => date.day === 15,
+          defaultFocusedValue: new CalendarDate(2026, 4, 20)
+        })
+      );
+
+      // Day 15 is in the visible range, but unavailable. Day 14 is available.
+      act(() => {
+        result.current.selectDate(new CalendarDate(2026, 4, 15));
+      });
+
+      expect(result.current.value).not.toBeNull();
+      expect(result.current.value!.compare(new CalendarDate(2026, 4, 14))).toBe(0);
+    });
+
+    it('returns null when there is no available date between the selected date and the start of the visible range', () => {
+      let {result} = renderHook(() =>
+        useCalendarState({
+          locale: 'en-US',
+          createCalendar,
+          isDateUnavailable: date => date.day <= 15,
+          defaultFocusedValue: new CalendarDate(2026, 4, 20)
+        })
+      );
+
+      // Every day from the start of the visible month through day 15 is unavailable.
+      act(() => {
+        result.current.selectDate(new CalendarDate(2026, 4, 15));
+      });
+
+      expect(result.current.value).toBeNull();
+    });
   });
 });
