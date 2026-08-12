@@ -102,7 +102,7 @@ export async function focusField(locator: Locator) {
 }
 
 export function setFieldSelection(textboxEl: Element, start: Position, end: Position): void {
-  setTokenFieldSelection(textboxEl, start, end);
+  setTokenFieldSelection(textboxEl, new TokenFieldValue.SelectedRange(start, end));
 }
 
 /**
