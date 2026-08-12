@@ -114,6 +114,7 @@ build:
 	mkdir -p dist
 	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
 	if [ -n "$$PARCEL_V3" ]; then \
+		node scripts/generateS2IconIndex.js; \
 		parcel3 build $(BUILD_ENTRIES) --no-optimize --config parcel-v3/.parcelrc-build; \
 	else \
 		parcel build $(BUILD_ENTRIES) --no-optimize --config .parcelrc-build; \

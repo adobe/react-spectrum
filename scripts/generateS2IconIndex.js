@@ -68,7 +68,7 @@ function generate(dir) {
     }
   }
 
-  let relative = path.relative(dir, 'packages/@react-spectrum/s2/src/Icon');
+  let relative = process.env.PARCEL_V3 ? '@react-spectrum/s2/Icon' : path.relative(dir, 'packages/@react-spectrum/s2/src/Icon');
   let typeImport = dir.includes('ui-icons')
     ? "import {ReactNode, SVGProps} from 'react';"
     : `import {ReactNode} from 'react';
@@ -105,7 +105,7 @@ ${dir.includes('spectrum-illustrations') ? "'use client';" : ''}
       );
     }
     if (ctx) {
-      imports.push("import {useContextProps} from 'react-aria-components';");
+      imports.push("import {useContextProps} from 'react-aria-components/slots';");
     }
     if (!isIllustration) {
       imports.push("import {style} from '../style' with {type: 'macro'};");

@@ -5,7 +5,6 @@
   "transformers": {
     "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline"],
-    "*.svg": ["@parcel/transformer-svg-jsx"],
     "packages/@adobe/**/*.css": [
       "./PostCSSTransformer.mjs",
       {
