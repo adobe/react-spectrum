@@ -24,7 +24,7 @@ executors:
     resource_class: medium.gen2
     environment: &global-environment
       CACHE_VERSION: v1
-      PARCEL_V3: '1'
+      # PARCEL_V3: '1'
     working_directory: ~/react-spectrum
 
   rsp-large:
