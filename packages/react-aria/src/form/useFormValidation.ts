@@ -31,6 +31,7 @@ export function useFormValidation<T>(
   ref: RefObject<ValidatableElement | null> | undefined
 ): void {
   let {validationBehavior, focus} = props;
+  let lastValue = useRef<string | undefined>(undefined);
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
@@ -40,9 +41,21 @@ export function useFormValidation<T>(
       'setCustomValidity' in ref.current &&
       !ref.current.disabled
     ) {
-      let errorMessage = state.realtimeValidation.isInvalid
-        ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.'
-        : '';
+      let currentValue = ref.current.value;
+      let valueChanged = lastValue.current !== undefined && lastValue.current !== currentValue;
+      lastValue.current = currentValue;
+
+      // Clear custom validity to accurately read the raw DOM state.
+      ref.current.setCustomValidity('');
+      let nativeValidity = getNativeValidity(ref.current);
+
+      // Use native validity to block form submission if constraints fail.
+      // Fall back to React state for server/custom errors.
+      let errorMessage = nativeValidity.isInvalid
+        ? nativeValidity.validationErrors.join(' ') || 'Invalid value.'
+        : state.realtimeValidation.isInvalid
+          ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.'
+          : '';
       ref.current.setCustomValidity(errorMessage);
 
       // Prevent default tooltip for validation message.
@@ -52,7 +65,12 @@ export function useFormValidation<T>(
       }
 
       if (!state.realtimeValidation.isInvalid) {
-        state.updateValidation(getNativeValidity(ref.current));
+        state.updateValidation(nativeValidity);
+      }
+
+      // Commit validation immediately if the value changed externally (e.g., while unfocused) to clear stale errors.
+      if (valueChanged && document.activeElement !== ref.current) {
+        state.commitValidation();
       }
     }
   });
@@ -141,6 +159,24 @@ function getValidity(input: ValidatableElement) {
   // The native ValidityState object is live, meaning each property is a getter that returns the current state.
   // We need to create a snapshot of the validity state at the time this function is called to avoid unpredictable React renders.
   let validity = input.validity;
+
+  // Polyfill: Native DOM ignores programmatic maxLength violations.
+  let tooLong = validity.tooLong;
+  if (input.getAttribute('maxlength') && input.value.length > input.maxLength) {
+    tooLong = true;
+  }
+
+  // Polyfill: Native DOM ignores programmatic minLength violations.
+  // Note: minLength only applies if the value is not empty.
+  let tooShort = validity.tooShort;
+  if (
+    input.getAttribute('minlength') &&
+    input.value.length > 0 &&
+    input.value.length < input.minLength
+  ) {
+    tooShort = true;
+  }
+
   return {
     badInput: validity.badInput,
     customError: validity.customError,
@@ -148,19 +184,33 @@ function getValidity(input: ValidatableElement) {
     rangeOverflow: validity.rangeOverflow,
     rangeUnderflow: validity.rangeUnderflow,
     stepMismatch: validity.stepMismatch,
-    tooLong: validity.tooLong,
-    tooShort: validity.tooShort,
+    tooLong: tooLong,
+    tooShort: tooShort,
     typeMismatch: validity.typeMismatch,
     valueMissing: validity.valueMissing,
-    valid: validity.valid
+    valid: validity.valid && !tooLong && !tooShort
   };
 }
 
 function getNativeValidity(input: ValidatableElement): ValidationResult {
+  let validityDetails = getValidity(input);
+  let isInvalid = !validityDetails.valid;
+
+  let validationMessage = input.validationMessage;
+
+  // Fallback for our polyfills since the native DOM doesn't generate a message for programmatic errors.
+  if (isInvalid && !validationMessage) {
+    if (validityDetails.tooLong) {
+      validationMessage = `Please shorten this text to ${input.maxLength} characters or less (you are currently using ${input.value.length} characters).`;
+    } else if (validityDetails.tooShort) {
+      validationMessage = `Please lengthen this text to ${input.minLength} characters or more (you are currently using ${input.value.length} characters).`;
+    }
+  }
+
   return {
-    isInvalid: !input.validity.valid,
-    validationDetails: getValidity(input),
-    validationErrors: input.validationMessage ? [input.validationMessage] : []
+    isInvalid: isInvalid,
+    validationDetails: validityDetails,
+    validationErrors: validationMessage ? [validationMessage] : []
   };
 }
 

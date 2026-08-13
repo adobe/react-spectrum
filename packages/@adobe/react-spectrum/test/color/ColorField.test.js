@@ -64,16 +64,12 @@ describe('ColorField', function () {
   });
 
   it('should allow placeholder and show warning', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    try {
-      let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
-      expect(getByRole('textbox')).toBe(getByPlaceholderText('Enter a color'));
-      expect(spyWarn).toHaveBeenCalledWith(
-        'Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text'
-      );
-    } finally {
-      spyWarn.mockRestore();
-    }
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
+    expect(getByRole('textbox')).toBe(getByPlaceholderText('Enter a color'));
+    expect(spyWarn).toHaveBeenCalledWith(
+      'Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text'
+    );
   });
 
   it('should show valid validation state', function () {
@@ -539,9 +535,7 @@ describe('ColorField', function () {
         expect(input).toHaveValue('0');
 
         let button = getByTestId('submit');
-        await act(async () => {
-          await user.click(button);
-        });
+        await user.click(button);
         expect(input).toHaveValue('255');
       });
     }
