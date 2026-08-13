@@ -51,7 +51,7 @@ export const TINY_PNG =
  * in beforeAll.
  * - Range.getBoundingClientRect / getClientRects: the popover uses these for positioning.
  * - InputEvent.getTargetRanges: TokenField reads it on beforeinput to find the edited range.
- *   Returning [] makes it fall back to the current selection (its pre-existing code path).
+ * Returning [] makes it fall back to the current selection (its pre-existing code path).
  */
 export function installRangePolyfill(): void {
   let proto = Range.prototype as any;
