@@ -21,7 +21,8 @@ import {
 import {
   addWindowFocusTracking,
   useFocusVisible,
-  useFocusVisibleListener
+  useFocusVisibleListener,
+  useShowFocusIndicator
 } from '../../src/interactions/useFocusVisible';
 import {changeHandlers, hasSetupGlobalListeners} from '../../src/interactions/useFocusVisible';
 import {mergeProps} from '../../src/utils/mergeProps';
@@ -372,6 +373,40 @@ describe('useFocusVisible', function () {
 
       expect(el.textContent).toBe('example-focusVisible');
     });
+  });
+});
+
+describe('useShowFocusIndicator', function () {
+  // A form library that moves focus to the first invalid field does so by calling
+  // element.focus() from the submit handler. Clicking submit leaves the modality on
+  // 'pointer', so the programmatic focus lands without a visible indicator.
+  function FormExample() {
+    let {focusProps, isFocusVisible} = useFocusRing();
+    let showFocusIndicator = useShowFocusIndicator();
+    let ref = React.useRef(null);
+
+    let onSubmit = e => {
+      e.preventDefault();
+      showFocusIndicator();
+      ref.current.focus();
+    };
+
+    return (
+      <form onSubmit={onSubmit}>
+        <input {...focusProps} ref={ref} data-focus-visible={isFocusVisible || undefined} />
+        <button type="submit">Submit</button>
+      </form>
+    );
+  }
+
+  it('shows the focus indicator on programmatic focus after a pointer interaction', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
+    render(<FormExample />);
+    await user.click(screen.getByRole('button', {name: 'Submit'}));
+
+    let input = screen.getByRole('textbox');
+    expect(input).toHaveFocus();
+    expect(input).toHaveAttribute('data-focus-visible');
   });
 });
 
