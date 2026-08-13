@@ -22,3 +22,4 @@ starters/tailwind/registry
 starters/docs/yarn.lock
 starters/tailwind/yarn.lock
 .scout/
+.codex/
