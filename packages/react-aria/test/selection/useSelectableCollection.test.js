@@ -49,6 +49,39 @@ describe('useSelectableCollection', () => {
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it.each`
+    autoFocus  | index
+    ${'first'} | ${0}
+    ${'last'}  | ${2}
+  `(
+    'selects the autofocused item if selectOnFocus with autoFocus=$autoFocus',
+    ({autoFocus, index}) => {
+      let {getAllByRole} = render(
+        <List selectionMode="single" autoFocus={autoFocus}>
+          <Item>Paco de Lucia</Item>
+          <Item>Vicente Amigo</Item>
+          <Item>Gerardo Nunez</Item>
+        </List>
+      );
+      let options = getAllByRole('option');
+      expect(document.activeElement).toBe(options[index]);
+      expect(options[index]).toHaveAttribute('aria-selected', 'true');
+    }
+  );
+
+  it('does not change the selection when autofocusing an already selected collection', () => {
+    let {getAllByRole} = render(
+      <List selectionMode="single" autoFocus="first" defaultSelectedKeys={['Gerardo Nunez']}>
+        <Item key="Paco de Lucia">Paco de Lucia</Item>
+        <Item key="Vicente Amigo">Vicente Amigo</Item>
+        <Item key="Gerardo Nunez">Gerardo Nunez</Item>
+      </List>
+    );
+    let options = getAllByRole('option');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+    expect(options[0]).not.toHaveAttribute('aria-selected');
+  });
+
   it('can navigate without replacing the selection in multiple selection selectOnFocus', async () => {
     let {getAllByRole} = render(
       <List selectionMode="multiple" selectionBehavior="replace">
