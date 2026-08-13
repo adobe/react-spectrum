@@ -77,6 +77,7 @@ export {useNumberFormatter} from '../src/i18n/useNumberFormatter';
 export {useListFormatter} from '../src/i18n/useListFormatter';
 export {useFocus} from '../src/interactions/useFocus';
 export {useFocusVisible} from '../src/interactions/useFocusVisible';
+export {useShowFocusIndicator} from '../src/interactions/useFocusVisible';
 export {useFocusWithin} from '../src/interactions/useFocusWithin';
 export {useHover} from '../src/interactions/useHover';
 export {useInteractOutside} from '../src/interactions/useInteractOutside';

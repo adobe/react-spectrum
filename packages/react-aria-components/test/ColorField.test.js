@@ -130,6 +130,44 @@ describe('ColorField', () => {
     expect(outerEl[0]).toHaveClass('react-aria-ColorField');
   });
 
+  it('should commit the typed value on Enter', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(<TestColorField onChange={onChange} />);
+    let input = getByRole('textbox');
+
+    await user.tab();
+    await user.clear(input);
+    await user.keyboard('#0000ff');
+    expect(onChange).not.toHaveBeenCalled();
+
+    await user.keyboard('{Enter}');
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(parseColor('#0000ff'));
+    expect(input).toHaveValue('#0000FF');
+  });
+
+  it('should restore the previous value on Enter if the typed value cannot be parsed', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(<TestColorField onChange={onChange} />);
+    let input = getByRole('textbox');
+
+    await user.tab();
+    await user.clear(input);
+    await user.keyboard('ab');
+    await user.keyboard('{Enter}');
+    expect(onChange).not.toHaveBeenCalled();
+    expect(input).toHaveValue('#FF0000');
+  });
+
+  it('should call a user onKeyDown handler exactly once per key press', async () => {
+    let onKeyDown = jest.fn();
+    render(<TestColorField onKeyDown={onKeyDown} />);
+
+    await user.tab();
+    await user.keyboard('a');
+    expect(onKeyDown).toHaveBeenCalledTimes(1);
+  });
+
   it('supports validation errors', async () => {
     let {getByRole, getByTestId} = render(
       <form data-testid="form">
