@@ -215,7 +215,7 @@ export function VirtualizedStreamingChat() {
   let nextId = useRef(initialResponses.length);
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
-  let [promptValue, setPromptValue] = useState<TokenFieldValue>(new PromptFieldValue([]));
+  let [promptValue, setPromptValue] = useState(new PromptFieldValue([]));
   let followUpMessage = useRef<TokenFieldValue | null>(null);
 
   function handleSend(prompt: TokenFieldValue) {

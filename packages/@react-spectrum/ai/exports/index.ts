@@ -47,6 +47,7 @@ export type {
   PromptFieldAttachmentListProps,
   PromptTokenFieldPopoverProps,
   PromptFieldToolbarProps,
+  PromptFieldTokenValue,
   InsertMenuItemProps,
   PromptFieldVoiceButtonProps,
   InsertTokenMenuItemProps,
