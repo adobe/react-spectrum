@@ -2,9 +2,7 @@
 'use strict';
 
 // Seeds a Verdaccio 6 local-storage folder directly, without running the Verdaccio
-// server or issuing `npm publish` for each package. For a monorepo with hundreds of
-// workspaces this avoids the per-package process spawn, HTTP round-trip, and Verdaccio's
-// serialized read-modify-write of package metadata that make a normal publish slow.
+// server or issuing `npm publish` for each package.
 //
 // Storage layout (validated against verdaccio@6.0.5 / @verdaccio/local-storage-legacy):
 //   <storage>/.verdaccio-db.json          { list: [...names], secret }

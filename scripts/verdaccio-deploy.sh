@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
 # Builds all packages, bumps their versions, and writes them straight into a
-# Verdaccio local-storage folder. This does NOT start the Verdaccio server and
-# does NOT run `npm publish` per package -- it seeds the on-disk database directly,
-# which is dramatically faster for a monorepo with hundreds of workspaces.
-# Downstream jobs start their own Verdaccio pointed at this storage.
+# Verdaccio local-storage folder
 
 set -e
 
@@ -26,6 +23,6 @@ cat .yarn/versions/version.yml
 yarn version apply --all
 cat ./packages/react-aria-components/package.json
 
-# Seed the packages directly into Verdaccio storage (no server, no npm publish)
+# Seed the packages directly into Verdaccio storage
 mkdir -p "$storage_path"
 yarn workspaces list --json --no-private | node ./scripts/verdaccio-seed.js "$storage_path"
