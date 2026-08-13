@@ -47,8 +47,11 @@ export const TINY_PNG =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
 /**
- * Jsdom doesn't implement Range.getBoundingClientRect / getClientRects, which the completion
- * popover relies on for positioning. Install stubs so the popover can open. Call in beforeAll.
+ * Install DOM stubs that jsdom is missing but TokenField/the completion popover rely on. Call
+ * in beforeAll.
+ * - Range.getBoundingClientRect / getClientRects: the popover uses these for positioning.
+ * - InputEvent.getTargetRanges: TokenField reads it on beforeinput to find the edited range.
+ *   Returning [] makes it fall back to the current selection (its pre-existing code path).
  */
 export function installRangePolyfill(): void {
   let proto = Range.prototype as any;
@@ -71,6 +74,9 @@ export function installRangePolyfill(): void {
       item: () => null,
       [Symbol.iterator]: function* () {}
     });
+  }
+  if (typeof InputEvent !== 'undefined' && !(InputEvent.prototype as any).getTargetRanges) {
+    (InputEvent.prototype as any).getTargetRanges = () => [];
   }
 }
 
