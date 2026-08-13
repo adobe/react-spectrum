@@ -348,6 +348,11 @@ export function getWeeksInMonth(
 }
 
 /** Returns the lesser of the two provider dates. */
+export function minDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B;
+export function minDate<A extends DateValue, B extends DateValue>(
+  a?: A | null,
+  b?: B | null
+): A | B | null | undefined;
 export function minDate<A extends DateValue, B extends DateValue>(
   a?: A | null,
   b?: B | null

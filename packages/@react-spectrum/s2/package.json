@@ -99,7 +99,7 @@
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.0.0",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.4#~/.yarn/patches/@testing-library-user-event-npm-14.6.4-1532248d3b.patch",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1"
   },
