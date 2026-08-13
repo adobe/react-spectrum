@@ -34,7 +34,7 @@ function tarballBuffer(dir, files) {
     const chunks = [];
     tar
       .create({cwd: dir, gzip: true, portable: true, prefix: 'package/'}, files)
-      .on('data', (c) => chunks.push(c))
+      .on('data', c => chunks.push(c))
       .on('end', () => resolve(Buffer.concat(chunks)))
       .on('error', reject);
   });
@@ -94,9 +94,9 @@ async function readWorkspaceLocations() {
     .trim()
     .split('\n')
     .filter(Boolean)
-    .map((line) => JSON.parse(line))
-    .filter((ws) => ws.name && ws.location && ws.location !== '.')
-    .map((ws) => ws.location);
+    .map(line => JSON.parse(line))
+    .filter(ws => ws.name && ws.location && ws.location !== '.')
+    .map(ws => ws.location);
 }
 
 async function pool(items, worker, size) {
@@ -120,7 +120,7 @@ async function main() {
 
   const locations = await readWorkspaceLocations();
   const start = Date.now();
-  const seeded = await pool(locations, (loc) => seedOne(storagePath, loc), CONCURRENCY);
+  const seeded = await pool(locations, loc => seedOne(storagePath, loc), CONCURRENCY);
   const names = seeded.filter(Boolean);
 
   const dbPath = path.join(storagePath, '.verdaccio-db.json');
@@ -140,7 +140,7 @@ async function main() {
   );
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error(err);
   process.exit(1);
 });
