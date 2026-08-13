@@ -868,6 +868,44 @@ describe('Table', () => {
     expect(document.activeElement).toBe(getAllByRole('columnheader')[0]);
   });
 
+  it('should move focus from a focused column header to the first row cell with ArrowDown when initialFocus="columnheader"', async () => {
+    let {getAllByRole} = renderTable({tableProps: {initialFocus: 'columnheader'}});
+
+    await user.tab();
+    let columnHeader = getAllByRole('columnheader')[0];
+    expect(document.activeElement).toBe(columnHeader);
+
+    fireEvent.keyDown(columnHeader, {key: 'ArrowDown'});
+    fireEvent.keyUp(columnHeader, {key: 'ArrowDown'});
+
+    let cell = getAllByRole('rowheader')[0];
+    expect(document.activeElement).toBe(cell);
+  });
+
+  it('should still focus the first cell in a row with Home when initialFocus="columnheader"', async () => {
+    let {getAllByRole} = renderTable({tableProps: {initialFocus: 'columnheader'}});
+
+    await user.tab();
+    let columnHeader = getAllByRole('columnheader')[0];
+
+    fireEvent.keyDown(columnHeader, {key: 'ArrowDown'});
+    fireEvent.keyUp(columnHeader, {key: 'ArrowDown'});
+
+    let cell1 = getAllByRole('rowheader')[0];
+    expect(document.activeElement).toBe(cell1);
+
+    fireEvent.keyDown(cell1, {key: 'ArrowRight'});
+    fireEvent.keyUp(cell1, {key: 'ArrowRight'});
+
+    let cell2 = getAllByRole('gridcell')[0];
+    expect(document.activeElement).toBe(cell2);
+
+    fireEvent.keyDown(cell2, {key: 'Home'});
+    fireEvent.keyUp(cell2, {key: 'Home'});
+
+    expect(document.activeElement).toBe(cell1);
+  });
+
   it('should focus the selected row rather than the first column header when tabbing in with initialFocus="columnheader" if a row is already selected', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {

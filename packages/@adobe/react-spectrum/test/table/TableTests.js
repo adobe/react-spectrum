@@ -1369,13 +1369,6 @@ export let tableTests = () => {
         expect(document.activeElement).toBe(getCell(tree, 'Bar 1'));
       });
 
-      it('should move focus from a focused column header to the first row cell with ArrowDown when initialFocus="columnheader"', function () {
-        let tree = renderTable('en-US', {initialFocus: 'columnheader'});
-        focusCell(tree, 'Foo');
-        moveFocus('ArrowDown');
-        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
-      });
-
       it('should allow the user to focus disabled cells', function () {
         let tree = renderTable('en-US', {disabledKeys: ['Foo 2']});
         focusCell(tree, 'Bar 1');
@@ -1406,20 +1399,6 @@ export let tableTests = () => {
         });
         moveFocus('Home');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
-      });
-
-      it('should still focus the first cell in a row with Home when initialFocus="columnheader"', function () {
-        let tree = renderTable('en-US', {initialFocus: 'columnheader'});
-        focusCell(tree, 'Bar 1');
-        moveFocus('Home');
-        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
-      });
-
-      it('should still focus the first cell in the first row with ctrl + Home when initialFocus="columnheader"', function () {
-        let tree = renderTable('en-US', {initialFocus: 'columnheader'});
-        focusCell(tree, 'Bar 2');
-        moveFocus('Home', {ctrlKey: true});
-        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
     });
 
@@ -1835,77 +1814,6 @@ export let tableTests = () => {
         fireEvent.keyUp(before, {key: 'Tab'});
 
         expect(document.activeElement).toBe(within(table).getAllByRole('row')[1]);
-      });
-
-      it('should move focus to the first column header when tabbing into the table from the start with initialFocus="columnheader"', async function () {
-        let tree = renderFocusable({initialFocus: 'columnheader', selectionMode: 'none'});
-
-        let table = tree.getByRole('grid');
-        expect(table).toHaveAttribute('tabIndex', '0');
-
-        await user.tab();
-        expect(document.activeElement).toBe(tree.getByTestId('before'));
-
-        await user.tab();
-        expect(document.activeElement).toBe(within(table).getAllByRole('columnheader')[0]);
-      });
-
-      it('should focus the first real column header, not the selection checkbox column, when tabbing in with initialFocus="columnheader"', async function () {
-        let tree = renderFocusable({initialFocus: 'columnheader', selectionMode: 'multiple'});
-
-        let table = tree.getByRole('grid');
-        let columnHeaders = within(table).getAllByRole('columnheader');
-        // The auto-generated selection checkbox column is inserted before the "Foo" column.
-        expect(within(columnHeaders[0]).queryByRole('checkbox')).not.toBeNull();
-
-        await user.tab();
-        await user.tab();
-
-        expect(document.activeElement).toBe(columnHeaders[1]);
-        expect(document.activeElement).toHaveTextContent('Foo');
-      });
-
-      it('should focus the selected row rather than the first column header when tabbing into the table with initialFocus="columnheader" if a row is already selected', async function () {
-        let tree = render(
-          <>
-            <input data-testid="before" />
-            <TableView
-              aria-label="Table"
-              selectionMode="single"
-              selectionStyle="highlight"
-              initialFocus="columnheader"
-              defaultSelectedKeys={['1']}>
-              <TableHeader>
-                <Column>Foo</Column>
-                <Column>Bar</Column>
-                <Column>baz</Column>
-              </TableHeader>
-              <TableBody>
-                <Row key="1" id="1">
-                  <Cell>Foo 1</Cell>
-                  <Cell>Bar 1</Cell>
-                  <Cell>Baz 1</Cell>
-                </Row>
-                <Row key="2" id="2">
-                  <Cell>Foo 2</Cell>
-                  <Cell>Bar 2</Cell>
-                  <Cell>Baz 2</Cell>
-                </Row>
-              </TableBody>
-            </TableView>
-            <input data-testid="after" />
-          </>
-        );
-
-        let table = tree.getByRole('grid');
-        let selectedRow = within(table).getAllByRole('row')[1];
-        expect(selectedRow).toHaveAttribute('aria-selected', 'true');
-
-        await user.tab();
-        expect(document.activeElement).toBe(tree.getByTestId('before'));
-
-        await user.tab();
-        expect(document.activeElement).toBe(selectedRow);
       });
 
       it('should move focus to the last row when tabbing into the table from the end', function () {
