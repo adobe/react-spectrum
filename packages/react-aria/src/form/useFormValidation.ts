@@ -23,6 +23,12 @@ type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectEle
 
 interface FormValidationProps<T> extends Validation<T> {
   focus?: () => void;
+  /**
+   * Whether the field, or any part of a composite field, is currently focused.
+   * Used to detect external value changes in complex components where
+   * the validated input is not the visually active element.
+   */
+  isFocusWithin?: boolean;
 }
 
 export function useFormValidation<T>(
@@ -30,7 +36,7 @@ export function useFormValidation<T>(
   state: FormValidationState,
   ref: RefObject<ValidatableElement | null> | undefined
 ): void {
-  let {validationBehavior, focus} = props;
+  let {validationBehavior, focus, isFocusWithin} = props;
   let lastValue = useRef<string | undefined>(undefined);
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
@@ -47,15 +53,22 @@ export function useFormValidation<T>(
 
       // Clear custom validity to accurately read the raw DOM state.
       ref.current.setCustomValidity('');
-      let nativeValidity = getNativeValidity(ref.current);
+
+      let validityDetails = getValidity(ref.current);
+      let isProgrammaticViolation = validityDetails.tooLong || validityDetails.tooShort;
 
       // Use native validity to block form submission if constraints fail.
       // Fall back to React state for server/custom errors.
-      let errorMessage = nativeValidity.isInvalid
-        ? nativeValidity.validationErrors.join(' ') || 'Invalid value.'
-        : state.realtimeValidation.isInvalid
-          ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.'
-          : '';
+      let errorMessage = '';
+      if (isProgrammaticViolation) {
+        if (validityDetails.tooLong) {
+          errorMessage = `Please shorten this text to ${ref.current.maxLength} characters or less (you are currently using ${ref.current.value.length} characters).`;
+        } else if (validityDetails.tooShort) {
+          errorMessage = `Please lengthen this text to ${ref.current.minLength} characters or more (you are currently using ${ref.current.value.length} characters).`;
+        }
+      } else if (state.realtimeValidation.isInvalid) {
+        errorMessage = state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.';
+      }
       ref.current.setCustomValidity(errorMessage);
 
       // Prevent default tooltip for validation message.
@@ -64,13 +77,22 @@ export function useFormValidation<T>(
         ref.current.title = '';
       }
 
-      if (!state.realtimeValidation.isInvalid) {
+      let nativeValidity = getNativeValidity(ref.current);
+      if (!state.realtimeValidation.isInvalid || isProgrammaticViolation) {
         state.updateValidation(nativeValidity);
       }
 
-      // Commit validation immediately if the value changed externally (e.g., while unfocused) to clear stale errors.
-      if (valueChanged && document.activeElement !== ref.current) {
-        state.commitValidation();
+      // Commit validation immediately if the value changes while the field is unfocused.
+      // This clears stale errors or displays programmatic constraint violations.
+      let isFocused =
+        isFocusWithin ??
+        (typeof document !== 'undefined' && document.activeElement === ref.current);
+
+      if (valueChanged && !isFocused) {
+        let isNowValid = !nativeValidity.isInvalid && !state.realtimeValidation.isInvalid;
+        if (isNowValid || isProgrammaticViolation) {
+          state.commitValidation();
+        }
       }
     }
   });
