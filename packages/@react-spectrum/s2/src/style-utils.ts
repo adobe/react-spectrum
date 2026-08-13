@@ -360,7 +360,7 @@ const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
  * The text can optionally wrap, aligning the icon with the first line of text.
  */
 export function control(options: ControlOptions): ControlResult {
-  let paddingX = options.shape === 'pill' ? ('pill' as const) : controlPadding();
+  let paddingX = controlPadding();
   let result: ControlResult = {
     font: controlFont(),
     display: 'flex',
