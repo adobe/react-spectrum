@@ -68,7 +68,7 @@ export function brand(l: number, c: number, hueOffset: number, alpha = 1) {
 
 // Converts a single token color value to a brand-relative color, unless it's a
 // neutral (kept as-is) or not a color at all (e.g. an opacity number, kept as-is).
-function convertColor(value: any) {
+export function convertColor(value: any) {
   if (typeof value !== 'string') {
     return value;
   }
@@ -109,7 +109,7 @@ export function token(name: string) {
 export function mix(gray: string, stop: string, opacity: string) {
   let stopColor = token(stop);
   let stopOpacity = token(opacity);
-  return `color-mix(in srgb, ${gray}, ${stopColor} ${stopOpacity}%)`;
+  return `color-mix(in oklch, ${gray}, ${stopColor} ${stopOpacity}%)`;
 }
 
 export function stop(gray: string, stop: string, opacity: string) {
@@ -164,5 +164,79 @@ function outerBorderStop(stop: number, variant: string, colorScheme: string, div
   if (colorScheme === 'light') {
     opacity = opacity / div;
   }
-  return `rgb(from ${token(`outer-border.gradient.ob-hue.stop-${stop}.${colorScheme}`)} r g b / ${opacity}%)`;
+  return `oklch(from ${token(`outer-border.gradient.ob-hue.stop-${stop}.${colorScheme}`)} l c h / ${opacity}%)`;
+}
+
+export function keyframes(this: any | void, css: string): string {
+  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+  // We also check if this is globalThis, which happens in non-strict mode bundles.
+  // Also allow style to be called as a normal function in tests.
+  // @ts-ignore
+
+  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
+    throw new Error('The keyframes macro must be imported with {type: "macro"}.');
+  }
+  let name = generateArbitraryValueSelector(css, true);
+  css = `@keyframes ${name} {
+  ${css}
+}`;
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: css
+    });
+  }
+  return name;
+}
+
+function generateArbitraryValueSelector(v: string, atStart = false) {
+  let c = toBase62(hash(v));
+  if (atStart && /^[0-9]/.test(c)) {
+    c = `_${c}`;
+  }
+  return c;
+}
+
+function toBase62(value: number) {
+  if (value === 0) {
+    return generateName(value);
+  }
+
+  let res = '';
+  while (value) {
+    let remainder = value % 62;
+    res += generateName(remainder);
+    value = Math.floor((value - remainder) / 62);
+  }
+
+  return res;
+}
+
+function generateName(index: number, atStart = false): string {
+  if (index < 26) {
+    // lower case letters
+    return String.fromCharCode(index + 97);
+  }
+
+  if (index < 52) {
+    // upper case letters
+    return String.fromCharCode(index - 26 + 65);
+  }
+
+  if (index < 62 && !atStart) {
+    // numbers
+    return String.fromCharCode(index - 52 + 48);
+  }
+
+  return '_' + generateName(index - (atStart ? 52 : 62));
+}
+
+// djb2 hash function.
+// http://www.cse.yorku.ca/~oz/hash.html
+function hash(v: string) {
+  let hash = 5381;
+  for (let i = 0; i < v.length; i++) {
+    hash = ((hash << 5) + hash + v.charCodeAt(i)) >>> 0;
+  }
+  return hash;
 }
