@@ -462,8 +462,12 @@ export function calculatePositionInternal(
     isContainerDescendentOfBoundary
   );
 
-  // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
-  if (flip && overlaySize[size] > space) {
+  // Check if the overlay's size is greater than the available space to determine if we need to flip.
+  // On the height axis, fold in the user-set maxHeight so a stale clamped measurement from a previous
+  // positioning pass doesn't mask the overlay's true (unclamped) content size.
+  let sizeForFlipCheck =
+    size === 'height' ? (userSetMaxHeight ?? overlaySize[size]) : overlaySize[size];
+  if (flip && sizeForFlipCheck > space) {
     let flippedPlacementInfo = parsePlacement(
       `${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement
     );
