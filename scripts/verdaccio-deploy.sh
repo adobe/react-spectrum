@@ -40,7 +40,7 @@ yarn version apply --all
 cat ./packages/react-aria-components/package.json
 
 # Publish packages to verdaccio
-yarn workspaces foreach --all --no-private -pt npm publish --tag latest
+yarn workspaces foreach --all --no-private -p npm publish --tag latest
 
 curl -s http://localhost:4000/@adobe/react-spectrum
 
