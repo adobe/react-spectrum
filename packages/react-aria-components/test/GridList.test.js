@@ -226,6 +226,51 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(gridList);
   });
 
+  describe('autoFocus with selectOnFocus (selectionBehavior="replace")', () => {
+    it.each`
+      autoFocus  | index
+      ${'first'} | ${0}
+      ${'last'}  | ${2}
+    `(
+      'selects the autofocused row when selectOnFocus with autoFocus=$autoFocus',
+      ({autoFocus, index}) => {
+        let {getAllByRole} = renderGridList({
+          selectionMode: 'single',
+          selectionBehavior: 'replace',
+          autoFocus
+        });
+        let rows = getAllByRole('row');
+        expect(document.activeElement).toBe(rows[index]);
+        expect(rows[index]).toHaveAttribute('aria-selected', 'true');
+      }
+    );
+
+    it('does not select the autofocused row when selectionMode="none"', () => {
+      let {getAllByRole} = renderGridList({
+        selectionMode: 'none',
+        selectionBehavior: 'replace',
+        autoFocus: 'first'
+      });
+      let rows = getAllByRole('row');
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).not.toHaveAttribute('aria-selected');
+    });
+
+    it('does not change an existing "all" selection when autofocusing', () => {
+      let {getAllByRole} = renderGridList({
+        selectionMode: 'multiple',
+        selectionBehavior: 'replace',
+        defaultSelectedKeys: 'all',
+        autoFocus: 'first'
+      });
+      let rows = getAllByRole('row');
+      expect(document.activeElement).toBe(rows[0]);
+      for (let row of rows) {
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      }
+    });
+  });
+
   it('should support hover', async () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
