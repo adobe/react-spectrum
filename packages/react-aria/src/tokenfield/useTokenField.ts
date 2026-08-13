@@ -195,11 +195,14 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       stopComposition();
     }
 
-    let selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return;
+    let range = e.getTargetRanges()[0];
+    if (!range) {
+      let selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        return;
+      }
+      range = selection.getRangeAt(0);
     }
-    let range = selection.getRangeAt(0);
     let [start, end] = rangeToPositions(ref.current!, range);
 
     // https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes
@@ -274,7 +277,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       case 'deleteContent':
       case 'deleteByCut':
       case 'deleteCompositionText': {
-        if (!range.collapsed) {
+        if (!range.collapsed && !isSamePosition(start, end)) {
           apply(tokens => tokens.replaceRange(start, end, ''));
           break;
         }
