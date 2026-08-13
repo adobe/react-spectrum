@@ -69,7 +69,11 @@ interface TouchScreen {
   angle: number;
 }
 
-if (process.env.NODE_ENV === 'test' && !Reflect.has(window, 'visualViewport')) {
+if (
+  process.env.NODE_ENV === 'test' &&
+  typeof window !== 'undefined' &&
+  !Reflect.has(window, 'visualViewport')
+) {
   const visualViewport = Object.assign(new EventTarget(), {
     offsetTop: 0,
     offsetLeft: 0,
@@ -95,7 +99,11 @@ if (process.env.NODE_ENV === 'test' && !Reflect.has(window, 'visualViewport')) {
   });
 }
 
-if (process.env.NODE_ENV === 'test' && !Reflect.has(window.screen, 'orientation')) {
+if (
+  process.env.NODE_ENV === 'test' &&
+  typeof window !== 'undefined' &&
+  !Reflect.has(window.screen, 'orientation')
+) {
   const orientation = Object.assign(new EventTarget(), {
     type: 'landscape-primary'
   });
