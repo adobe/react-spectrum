@@ -13,20 +13,20 @@
 import {
   Button,
   Link,
-  RouterProvider,
-  SideNav,
-  SideNavItem,
-  SideNavItemContent
+  NavigationTree,
+  NavigationTreeItem,
+  NavigationTreeItemContent,
+  RouterProvider
 } from 'react-aria-components';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import React, {ReactNode, useState} from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components/SideNav'
+  title: 'React Aria Components/NavigationTree'
 };
 
-function RoutedSideNav(props: {
+function RoutedNavigationTree(props: {
   children: ({selectedRoute}: {selectedRoute: string}) => ReactNode;
   defaultSelectedRoute: string;
 }) {
@@ -43,7 +43,7 @@ function RoutedSideNav(props: {
 function Item(props: {href?: string; title: string; children?: ReactNode}) {
   let {href, title, children} = props;
   return (
-    <SideNavItem
+    <NavigationTreeItem
       id={href}
       href={href}
       textValue={title}
@@ -55,7 +55,7 @@ function Item(props: {href?: string; title: string; children?: ReactNode}) {
           selected: isCurrent
         })
       }>
-      <SideNavItemContent>
+      <NavigationTreeItemContent>
         {({isExpanded, hasChildItems}) => (
           <div
             className={classNames(styles, 'content-wrapper')}
@@ -86,16 +86,20 @@ function Item(props: {href?: string; title: string; children?: ReactNode}) {
             <Button>Other</Button>
           </div>
         )}
-      </SideNavItemContent>
+      </NavigationTreeItemContent>
       {children}
-    </SideNavItem>
+    </NavigationTreeItem>
   );
 }
 
 export const Example = (args: any) => (
-  <RoutedSideNav defaultSelectedRoute="/files">
+  <RoutedNavigationTree defaultSelectedRoute="/files">
     {({selectedRoute}) => (
-      <SideNav aria-label="Example" selectedRoute={selectedRoute} className={styles.tree} {...args}>
+      <NavigationTree
+        aria-label="Example"
+        selectedRoute={selectedRoute}
+        className={styles.tree}
+        {...args}>
         <Item href="/files" title="Your files" />
         <Item title="Your libraries">
           <Item href="/projects-1" title="Projects 1" />
@@ -105,7 +109,7 @@ export const Example = (args: any) => (
           <Item href="/projects-3" title="Projects 3" />
           <Item href="/projects-4" title="Projects 4" />
         </Item>
-      </SideNav>
+      </NavigationTree>
     )}
-  </RoutedSideNav>
+  </RoutedNavigationTree>
 );

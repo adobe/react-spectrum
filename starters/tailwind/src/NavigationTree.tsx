@@ -2,36 +2,36 @@
 import {
   Button,
   Link,
-  SideNav as AriaSideNav,
-  SideNavHeader as AriaSideNavHeader,
-  type SideNavHeaderProps,
-  SideNavItem as AriaSideNavItem,
-  SideNavItemContent as AriaSideNavItemContent,
-  type SideNavItemProps as AriaSideNavItemProps,
-  type SideNavProps,
-  SideNavSection as AriaSideNavSection,
-  type SideNavSectionProps
-} from 'react-aria-components/SideNav';
+  NavigationTree as AriaNavigationTree,
+  NavigationTreeHeader as AriaNavigationTreeHeader,
+  type NavigationTreeHeaderProps,
+  NavigationTreeItem as AriaNavigationTreeItem,
+  NavigationTreeItemContent as AriaNavigationTreeItemContent,
+  type NavigationTreeItemProps as AriaNavigationTreeItemProps,
+  type NavigationTreeProps,
+  NavigationTreeSection as AriaNavigationTreeSection,
+  type NavigationTreeSectionProps
+} from 'react-aria-components/NavigationTree';
 import {ChevronRight} from 'lucide-react';
 import React from 'react';
 import {tv} from 'tailwind-variants';
 import {composeTailwindRenderProps, focusRing} from './utils';
 
-export function SideNav<T>({children, ...props}: SideNavProps<T>) {
+export function NavigationTree<T>({children, ...props}: NavigationTreeProps<T>) {
   return (
-    <AriaSideNav
+    <AriaNavigationTree
       {...props}
       className={composeTailwindRenderProps(
         props.className,
         'w-56 max-w-full max-h-72 overflow-auto flex flex-col p-1 gap-0.5 relative border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 outline-hidden'
       )}>
       {children}
-    </AriaSideNav>
+    </AriaNavigationTree>
   );
 }
 
 // Selection background and the focus ring live on the row (not the link) so they span the whole
-// item. isCurrent and isFocusVisible come from the SideNavItem render props; RAC's isFocusVisible
+// item. isCurrent and isFocusVisible come from the NavigationTreeItem render props; RAC's isFocusVisible
 // already follows the link (it is not true when another child, e.g. a button, is focused).
 const itemStyles = tv({
   extend: focusRing,
@@ -72,9 +72,9 @@ const chevron = tv({
   }
 });
 
-export function SideNavItemContent(props: {children?: React.ReactNode}) {
+export function NavigationTreeItemContent(props: {children?: React.ReactNode}) {
   return (
-    <AriaSideNavItemContent>
+    <AriaNavigationTreeItemContent>
       {({level, hasChildItems, isDisabled, isExpanded}) => (
         <>
           {level > 1 && (
@@ -91,31 +91,31 @@ export function SideNavItemContent(props: {children?: React.ReactNode}) {
           )}
         </>
       )}
-    </AriaSideNavItemContent>
+    </AriaNavigationTreeItemContent>
   );
 }
 
-export interface SideNavItemProps extends Partial<AriaSideNavItemProps> {
+export interface NavigationTreeItemProps extends Partial<AriaNavigationTreeItemProps> {
   title?: React.ReactNode;
 }
 
-export function SideNavItem(props: SideNavItemProps) {
+export function NavigationTreeItem(props: NavigationTreeItemProps) {
   let textValue = typeof props.title === 'string' ? props.title : '';
   return (
-    <AriaSideNavItem className={itemStyles} textValue={textValue} {...props}>
-      <SideNavItemContent>{props.title}</SideNavItemContent>
+    <AriaNavigationTreeItem className={itemStyles} textValue={textValue} {...props}>
+      <NavigationTreeItemContent>{props.title}</NavigationTreeItemContent>
       {props.children}
-    </AriaSideNavItem>
+    </AriaNavigationTreeItem>
   );
 }
 
-export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) {
-  return <AriaSideNavSection {...props} className="not-first:mt-4" />;
+export function NavigationTreeSection<T extends object>(props: NavigationTreeSectionProps<T>) {
+  return <AriaNavigationTreeSection {...props} className="not-first:mt-4" />;
 }
 
-export function SideNavHeader(props: SideNavHeaderProps) {
+export function NavigationTreeHeader(props: NavigationTreeHeaderProps) {
   return (
-    <AriaSideNavHeader
+    <AriaNavigationTreeHeader
       {...props}
       className="px-2 py-1 text-sm font-semibold text-neutral-700 dark:text-neutral-300"
     />

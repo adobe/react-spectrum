@@ -15,23 +15,23 @@
 import 'client-only';
 
 export {
-  SideNav,
-  SideNavItem,
-  SideNavItemContent,
-  SideNavSection,
-  SideNavHeader,
-  SideNavContext
-} from '../src/SideNav';
+  NavigationTree,
+  NavigationTreeItem,
+  NavigationTreeItemContent,
+  NavigationTreeSection,
+  NavigationTreeHeader,
+  NavigationTreeContext
+} from '../src/NavigationTree';
 export type {
-  SideNavProps,
-  SideNavRenderProps,
-  SideNavItemProps,
-  SideNavItemRenderProps,
-  SideNavItemContentProps,
-  SideNavItemContentRenderProps,
-  SideNavSectionProps,
-  SideNavHeaderProps
-} from '../src/SideNav';
+  NavigationTreeProps,
+  NavigationTreeRenderProps,
+  NavigationTreeItemProps,
+  NavigationTreeItemRenderProps,
+  NavigationTreeItemContentProps,
+  NavigationTreeItemContentRenderProps,
+  NavigationTreeSectionProps,
+  NavigationTreeHeaderProps
+} from '../src/NavigationTree';
 export type {Key} from '@react-types/shared';
 
 export {Button} from '../src/Button';

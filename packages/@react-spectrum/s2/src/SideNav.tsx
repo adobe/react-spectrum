@@ -26,20 +26,20 @@ import {createContext, forwardRef, ReactNode, useContext, useRef, useState} from
 import {DOMRef, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
+import {
+  NavigationTree,
+  NavigationTreeHeader,
+  NavigationTreeHeaderProps,
+  NavigationTreeItem,
+  NavigationTreeItemContent,
+  NavigationTreeItemContentRenderProps,
+  NavigationTreeItemProps,
+  NavigationTreeProps,
+  NavigationTreeSection,
+  NavigationTreeSectionProps
+} from 'react-aria-components/NavigationTree';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
-import {
-  SideNav as RACSideNav,
-  SideNavHeader as RACSideNavHeader,
-  SideNavHeaderProps as RACSideNavHeaderProps,
-  SideNavItem as RACSideNavItem,
-  SideNavItemContent as RACSideNavItemContent,
-  SideNavItemProps as RACSideNavItemProps,
-  SideNavProps as RACSideNavProps,
-  SideNavSection as RACSideNavSection,
-  SideNavSectionProps as RACSideNavSectionProps,
-  SideNavItemContentRenderProps
-} from 'react-aria-components/SideNav';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -47,14 +47,14 @@ import {useScale} from './utils';
 
 export interface SideNavProps<T>
   extends
-    Omit<RACSideNavProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>,
+    Omit<NavigationTreeProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>,
     UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
 }
 
 export interface SideNavItemProps extends Omit<
-  RACSideNavItemProps,
+  NavigationTreeItemProps,
   | 'className'
   | 'style'
   | 'render'
@@ -123,12 +123,12 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       ref={domRef}
       className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
       style={UNSAFE_style}>
-      <RACSideNav
+      <NavigationTree
         {...rest}
         selectedRoute={selectedRoute}
         className={renderProps => tree(renderProps)}>
         {children}
-      </RACSideNav>
+      </NavigationTree>
     </div>
   );
 });
@@ -264,7 +264,7 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
 
   return (
     <SideNavInternalItemContext.Provider value={{setLinkPressed}}>
-      <RACSideNavItem
+      <NavigationTreeItem
         {...props}
         ref={rowRef}
         style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
@@ -315,13 +315,13 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
   let scale = useScale();
   let {setLinkPressed} = useContext(SideNavInternalItemContext);
   return (
-    <RACSideNavItemContent>
-      {(renderProps: SideNavItemContentRenderProps) => (
+    <NavigationTreeItemContent>
+      {(renderProps: NavigationTreeItemContentRenderProps) => (
         <SideNavItemContentInner {...renderProps} scale={scale} setLinkPressed={setLinkPressed}>
           {children}
         </SideNavItemContentInner>
       )}
-    </RACSideNavItemContent>
+    </NavigationTreeItemContent>
   );
 };
 
@@ -477,26 +477,26 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
 }
 
 export interface SideNavSectionProps<T> extends Omit<
-  RACSideNavSectionProps<T>,
+  NavigationTreeSectionProps<T>,
   'value' | 'render' | 'style' | 'className'
 > {}
 
 export function SideNavSection<T extends object>(props: SideNavSectionProps<T>) {
   return (
-    <RACSideNavSection {...props} className={style({marginTop: {':not(:first-child)': 24}})}>
+    <NavigationTreeSection {...props} className={style({marginTop: {':not(:first-child)': 24}})}>
       {props.children}
-    </RACSideNavSection>
+    </NavigationTreeSection>
   );
 }
 
 export interface SideNavHeaderProps extends Omit<
-  RACSideNavHeaderProps,
+  NavigationTreeHeaderProps,
   'value' | 'render' | 'style' | 'className'
 > {}
 
 export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
   return (
-    <RACSideNavHeader
+    <NavigationTreeHeader
       className={style({
         font: 'ui-sm',
         // Component/S/Medium for the font, doesn't appear to match our fonts
@@ -507,7 +507,7 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
         height: 16
       })}>
       {props.children}
-    </RACSideNavHeader>
+    </NavigationTreeHeader>
   );
 };
 

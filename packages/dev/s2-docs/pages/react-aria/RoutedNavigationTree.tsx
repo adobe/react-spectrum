@@ -2,7 +2,7 @@
 import {RouterProvider} from 'react-aria-components';
 import React, {ReactNode, useState} from 'react';
 
-export function RoutedSideNav(props: {
+export function RoutedNavigationTree(props: {
   children: ({selectedRoute}: {selectedRoute: string}) => ReactNode;
   defaultSelectedRoute: string;
 }) {

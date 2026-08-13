@@ -1,6 +1,6 @@
 @import './theme.css';
 
-.react-aria-SideNav {
+.react-aria-NavigationTree {
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -19,11 +19,11 @@
     outline-offset: -1px;
   }
 
-  .react-aria-SideNavSection:not(:first-child) {
+  .react-aria-NavigationTreeSection:not(:first-child) {
     margin-top: var(--spacing-4);
   }
 
-  .react-aria-SideNavHeader {
+  .react-aria-NavigationTreeHeader {
     font-size: var(--font-size-sm);
     font-weight: 600;
     padding: var(--spacing-1) var(--spacing-2);
@@ -31,7 +31,7 @@
   }
 }
 
-.react-aria-SideNavItem {
+.react-aria-NavigationTreeItem {
   --padding: var(--spacing-4);
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@
     background: var(--highlight-hover);
   }
 
-  /* React Aria sets data-current on the link matching the SideNav's selectedRoute. */
+  /* React Aria sets data-current on the link matching the NavigationTree's selectedRoute. */
   &[data-current] {
     font-weight: 600;
     color: var(--highlight-foreground);

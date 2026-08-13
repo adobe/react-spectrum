@@ -52,17 +52,18 @@ import {
 import {TreeState} from 'react-stately/useTreeState';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
-export const SideNavContext = createContext<ContextValue<SideNavProps<any>, HTMLDivElement>>(null);
+export const NavigationTreeContext =
+  createContext<ContextValue<NavigationTreeProps<any>, HTMLDivElement>>(null);
 
-interface InternalSideNavContextValue {
+interface InternalNavigationTreeContextValue {
   /** The route that is currently selected. */
   selectedRoute?: string | null;
   /** The last route the focused key was synced to; dedupes the focus sync across items. */
   syncedRouteRef?: RefObject<string | undefined>;
 }
-const InternalSideNavContext = createContext<InternalSideNavContextValue>({});
+const InternalNavigationTreeContext = createContext<InternalNavigationTreeContextValue>({});
 
-interface SideNavItemLinkContextValue {
+interface NavigationTreeItemLinkContextValue {
   href?: string;
   hrefLang?: string;
   target?: string;
@@ -76,18 +77,18 @@ interface SideNavItemLinkContextValue {
   isLinkFocused?: boolean;
   setLinkFocused?: (isFocused: boolean) => void;
 }
-const SideNavItemLinkContext = createContext<SideNavItemLinkContextValue>({});
+const NavigationTreeItemLinkContext = createContext<NavigationTreeItemLinkContextValue>({});
 
-const SideNavItemStateContext = createContext<{isCurrentAncestor: boolean}>({
+const NavigationTreeItemStateContext = createContext<{isCurrentAncestor: boolean}>({
   isCurrentAncestor: false
 });
 
-export interface SideNavRenderProps extends Pick<
+export interface NavigationTreeRenderProps extends Pick<
   TreeRenderProps,
   'isEmpty' | 'isFocused' | 'isFocusVisible' | 'state'
 > {}
 
-export interface SideNavProps<T>
+export interface NavigationTreeProps<T>
   extends
     Omit<
       TreeProps<T>,
@@ -108,48 +109,48 @@ export interface SideNavProps<T>
       | 'style'
       | 'render'
     >,
-    StyleRenderProps<SideNavRenderProps> {
+    StyleRenderProps<NavigationTreeRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
    *
-   * @default 'react-aria-SideNav'
+   * @default 'react-aria-NavigationTree'
    */
-  className?: ClassNameOrFunction<SideNavRenderProps>;
+  className?: ClassNameOrFunction<NavigationTreeRenderProps>;
   /** The route that is currently selected, matched against each item's `href`. */
   selectedRoute?: string | null;
 }
 
 /**
- * A SideNav provides users with a way to navigate a nested, hierarchical set of links.
+ * A NavigationTree provides users with a way to navigate a nested, hierarchical set of links.
  */
-export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function SideNav<T>(
-  props: SideNavProps<T>,
-  ref: ForwardedRef<HTMLDivElement>
-) {
-  [props, ref] = useContextProps(props, ref, SideNavContext);
+export const NavigationTree = /*#__PURE__*/ (forwardRef as forwardRefType)(function NavigationTree<
+  T
+>(props: NavigationTreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, NavigationTreeContext);
   let {className, style, children, selectedRoute, ...rest} = props;
   let syncedRouteRef = useRef<string | undefined>(undefined);
   let context = useMemo(() => ({selectedRoute, syncedRouteRef}), [selectedRoute]);
 
   return (
-    <InternalSideNavContext.Provider value={context}>
+    <InternalNavigationTreeContext.Provider value={context}>
       <Tree
         {...rest}
         ref={ref}
-        className={className ?? 'react-aria-SideNav'}
+        className={className ?? 'react-aria-NavigationTree'}
         style={style}
         selectionMode="none"
         keyboardNavigationBehavior="tab">
         {children}
       </Tree>
-    </InternalSideNavContext.Provider>
+    </InternalNavigationTreeContext.Provider>
   );
 });
 
-export interface SideNavItemRenderProps extends TreeItemRenderProps {
+export interface NavigationTreeItemRenderProps extends TreeItemRenderProps {
   /**
-   * Whether this item is the current route (its `href` matches the SideNav's `selectedRoute`).
+   * Whether this item is the current route (its `href` matches the NavigationTree's
+   * `selectedRoute`).
    *
    * @selector [data-current]
    */
@@ -163,7 +164,7 @@ export interface SideNavItemRenderProps extends TreeItemRenderProps {
   isCurrentAncestor: boolean;
 }
 
-export interface SideNavItemProps<T = object>
+export interface NavigationTreeItemProps<T = object>
   extends
     Omit<
       TreeItemProps<T>,
@@ -175,14 +176,14 @@ export interface SideNavItemProps<T = object>
       | 'focusMode'
       | 'value'
     >,
-    StyleRenderProps<SideNavItemRenderProps> {
+    StyleRenderProps<NavigationTreeItemRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
    *
-   * @default 'react-aria-SideNavItem'
+   * @default 'react-aria-NavigationTreeItem'
    */
-  className?: ClassNameOrFunction<SideNavItemRenderProps>;
+  className?: ClassNameOrFunction<NavigationTreeItemRenderProps>;
   /**
    * The content of the side nav item along with any nested children. Supports static nested side
    * nav items or use of a Collection to dynamically render nested side nav items.
@@ -191,108 +192,113 @@ export interface SideNavItemProps<T = object>
 }
 
 /**
- * A SideNavItem represents an individual item in a SideNav.
+ * A NavigationTreeItem represents an individual item in a NavigationTree.
  */
-export const SideNavItem = /*#__PURE__*/ (forwardRef as forwardRefType)(function SideNavItem<
-  T extends object
->(props: SideNavItemProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  let {
-    href,
-    hrefLang,
-    target,
-    rel,
-    download,
-    ping,
-    referrerPolicy,
-    routerOptions,
-    className,
-    style,
-    render,
-    ...rest
-  } = props;
-  let {selectedRoute} = useContext(InternalSideNavContext);
-  let hasLink = href != null && href.length > 0;
-  let isCurrent = hasLink && href === selectedRoute;
-  let [isLinkFocused, setLinkFocused] = useState(false);
-  // Additional render props SideNavItem adds to what TreeItem already provides.
-  let getItemRenderProps = <R extends TreeItemRenderProps>(
-    renderProps: R
-  ): R & {isCurrent: boolean; isCurrentAncestor: boolean} => ({
-    ...renderProps,
-    isCurrent,
-    isCurrentAncestor: hasSelectedDescendant(renderProps.id, renderProps.state, selectedRoute),
-    isFocusVisible:
-      renderProps.isFocusVisible || (renderProps.isFocusVisibleWithin && isLinkFocused)
-  });
+export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function NavigationTreeItem<T extends object>(
+    props: NavigationTreeItemProps<T>,
+    ref: ForwardedRef<HTMLDivElement>
+  ) {
+    let {
+      href,
+      hrefLang,
+      target,
+      rel,
+      download,
+      ping,
+      referrerPolicy,
+      routerOptions,
+      className,
+      style,
+      render,
+      ...rest
+    } = props;
+    let {selectedRoute} = useContext(InternalNavigationTreeContext);
+    let hasLink = href != null && href.length > 0;
+    let isCurrent = hasLink && href === selectedRoute;
+    let [isLinkFocused, setLinkFocused] = useState(false);
+    // Additional render props NavigationTreeItem adds to what TreeItem already provides.
+    let getItemRenderProps = <R extends TreeItemRenderProps>(
+      renderProps: R
+    ): R & {isCurrent: boolean; isCurrentAncestor: boolean} => ({
+      ...renderProps,
+      isCurrent,
+      isCurrentAncestor: hasSelectedDescendant(renderProps.id, renderProps.state, selectedRoute),
+      isFocusVisible:
+        renderProps.isFocusVisible || (renderProps.isFocusVisibleWithin && isLinkFocused)
+    });
 
-  let objRef = useObjectRef(ref);
-  useEffect(() => {
-    if (isCurrent && objRef.current) {
-      let scrollParent = getScrollParent(objRef.current, true) as HTMLElement;
-      scrollIntoView(scrollParent, objRef.current, {block: 'center'});
-    }
-  }, [isCurrent, objRef]);
+    let objRef = useObjectRef(ref);
+    useEffect(() => {
+      if (isCurrent && objRef.current) {
+        let scrollParent = getScrollParent(objRef.current, true) as HTMLElement;
+        scrollIntoView(scrollParent, objRef.current, {block: 'center'});
+      }
+    }, [isCurrent, objRef]);
 
-  return (
-    <SideNavItemLinkContext.Provider
-      value={{
-        href,
-        hrefLang,
-        target,
-        rel,
-        download,
-        ping,
-        referrerPolicy,
-        routerOptions,
-        isCurrent,
-        isLinkFocused,
-        setLinkFocused
-      }}>
-      <TreeItem
-        {...rest}
-        ref={objRef}
-        href={href}
-        focusMode={hasLink ? 'child' : undefined}
-        allowsArrowNavigation
-        data-current={isCurrent || undefined}
-        className={
-          typeof className === 'function'
-            ? renderProps => className(getItemRenderProps(renderProps))
-            : (className ?? 'react-aria-SideNavItem')
-        }
-        style={
-          typeof style === 'function'
-            ? renderProps => style(getItemRenderProps(renderProps))
-            : style
-        }
-        render={(domProps, renderProps) => {
-          let values = getItemRenderProps(renderProps);
-          let {children: rowChildren, ...domRest} = domProps;
-          let dataProps = {
-            'data-focus-visible': values.isFocusVisible || undefined,
-            'data-current-ancestor': values.isCurrentAncestor || undefined
-          };
-          let content = (
-            <SideNavItemStateContext.Provider value={{isCurrentAncestor: values.isCurrentAncestor}}>
-              {rowChildren}
-            </SideNavItemStateContext.Provider>
-          );
-          return typeof render === 'function' ? (
-            render({...domRest, ...dataProps, children: content}, values)
-          ) : (
-            <dom.div {...domRest} {...dataProps}>
-              {content}
-            </dom.div>
-          );
-        }}
-      />
-    </SideNavItemLinkContext.Provider>
-  );
-});
+    return (
+      <NavigationTreeItemLinkContext.Provider
+        value={{
+          href,
+          hrefLang,
+          target,
+          rel,
+          download,
+          ping,
+          referrerPolicy,
+          routerOptions,
+          isCurrent,
+          isLinkFocused,
+          setLinkFocused
+        }}>
+        <TreeItem
+          {...rest}
+          ref={objRef}
+          href={href}
+          focusMode={hasLink ? 'child' : undefined}
+          allowsArrowNavigation
+          data-current={isCurrent || undefined}
+          className={
+            typeof className === 'function'
+              ? renderProps => className(getItemRenderProps(renderProps))
+              : (className ?? 'react-aria-NavigationTreeItem')
+          }
+          style={
+            typeof style === 'function'
+              ? renderProps => style(getItemRenderProps(renderProps))
+              : style
+          }
+          render={(domProps, renderProps) => {
+            let values = getItemRenderProps(renderProps);
+            let {children: rowChildren, ...domRest} = domProps;
+            let dataProps = {
+              'data-focus-visible': values.isFocusVisible || undefined,
+              'data-current-ancestor': values.isCurrentAncestor || undefined
+            };
+            let content = (
+              <NavigationTreeItemStateContext.Provider
+                value={{isCurrentAncestor: values.isCurrentAncestor}}>
+                {rowChildren}
+              </NavigationTreeItemStateContext.Provider>
+            );
+            return typeof render === 'function' ? (
+              render({...domRest, ...dataProps, children: content}, values)
+            ) : (
+              <dom.div {...domRest} {...dataProps}>
+                {content}
+              </dom.div>
+            );
+          }}
+        />
+      </NavigationTreeItemLinkContext.Provider>
+    );
+  }
+);
 
-export interface SideNavItemContentRenderProps extends TreeItemContentRenderProps {
+export interface NavigationTreeItemContentRenderProps extends TreeItemContentRenderProps {
   /**
-   * Whether this item is the current route (its `href` matches the SideNav's `selectedRoute`).
+   * Whether this item is the current route (its `href` matches the NavigationTree's
+   * `selectedRoute`).
    *
    * @selector [data-current]
    */
@@ -301,12 +307,12 @@ export interface SideNavItemContentRenderProps extends TreeItemContentRenderProp
   isCurrentAncestor: boolean;
 }
 
-export interface SideNavItemContentProps {
+export interface NavigationTreeItemContentProps {
   /**
    * The children of the component. A function may be provided to alter the children based on
    * component state.
    */
-  children: ChildrenOrFunction<SideNavItemContentRenderProps>;
+  children: ChildrenOrFunction<NavigationTreeItemContentRenderProps>;
 }
 
 // The collection key of the item whose href matches `route`, or null.
@@ -342,7 +348,7 @@ function closestVisibleKey(
 // Moves the tree's focused key to the item matching selectedRoute. Runs when the route or the
 // collection changes; the shared syncedRouteRef dedupes across items so it fires once per change.
 function useRouteFocusSync({state}: {state: TreeState<unknown>}): void {
-  let {selectedRoute, syncedRouteRef} = useContext(InternalSideNavContext);
+  let {selectedRoute, syncedRouteRef} = useContext(InternalNavigationTreeContext);
   let {collection, selectionManager, expandedKeys} = state;
   useEffect(() => {
     if (
@@ -397,12 +403,12 @@ function hasSelectedDescendant(
   return getSelectedAncestors(state, selectedRoute).has(id);
 }
 
-export function SideNavItemContent(props: SideNavItemContentProps): ReactNode {
-  let linkCtx = useContext(SideNavItemLinkContext);
+export function NavigationTreeItemContent(props: NavigationTreeItemContentProps): ReactNode {
+  let linkCtx = useContext(NavigationTreeItemLinkContext);
   return (
     <TreeItemContent {...props}>
       {(treeRenderProps: TreeItemContentRenderProps & {defaultChildren: ReactNode | undefined}) => (
-        <SideNavItemContentInner
+        <NavigationTreeItemContentInner
           treeRenderProps={treeRenderProps}
           linkCtx={linkCtx}
           children={props.children}
@@ -412,31 +418,31 @@ export function SideNavItemContent(props: SideNavItemContentProps): ReactNode {
   );
 }
 
-interface SideNavItemContentInnerProps {
+interface NavigationTreeItemContentInnerProps {
   treeRenderProps: TreeItemContentRenderProps & {defaultChildren: ReactNode | undefined};
-  linkCtx: SideNavItemLinkContextValue;
-  children: ChildrenOrFunction<SideNavItemContentRenderProps>;
+  linkCtx: NavigationTreeItemLinkContextValue;
+  children: ChildrenOrFunction<NavigationTreeItemContentRenderProps>;
 }
 
-function SideNavItemContentInner(props: SideNavItemContentInnerProps): ReactNode {
+function NavigationTreeItemContentInner(props: NavigationTreeItemContentInnerProps): ReactNode {
   let {treeRenderProps, linkCtx, children} = props;
   let {isCurrent, isLinkFocused, setLinkFocused, ...linkProps} = linkCtx;
   let {state, isFocusVisible, isFocusVisibleWithin} = treeRenderProps;
-  let {isCurrentAncestor} = useContext(SideNavItemStateContext);
+  let {isCurrentAncestor} = useContext(NavigationTreeItemStateContext);
 
   useRouteFocusSync({state});
 
   // isFocusVisible follows the link: true when the row itself is keyboard focused, or when a child
   // is keyboard focused and that child is the link (not another button/action).
   let linkFocusVisible = isFocusVisible || (isFocusVisibleWithin && !!isLinkFocused);
-  let values: SideNavItemContentRenderProps & {defaultChildren: ReactNode | undefined} = {
+  let values: NavigationTreeItemContentRenderProps & {defaultChildren: ReactNode | undefined} = {
     ...treeRenderProps,
     isCurrent: !!isCurrent,
     isCurrentAncestor,
     isFocusVisible: linkFocusVisible
   };
   let renderChildren = typeof children === 'function' ? children(values) : children;
-  // Provide onFocusChange so the link reports its focus up to SideNavItem.
+  // Provide onFocusChange so the link reports its focus up to NavigationTreeItem.
   let linkContextValue = {
     ...linkProps,
     'aria-current': isCurrent ? 'page' : undefined,
@@ -445,27 +451,29 @@ function SideNavItemContentInner(props: SideNavItemContentInnerProps): ReactNode
   return <Provider values={[[LinkContext, linkContextValue]]}>{renderChildren}</Provider>;
 }
 
-export interface SideNavSectionProps<T> extends Omit<TreeSectionProps<T>, 'value'> {}
+export interface NavigationTreeSectionProps<T> extends Omit<TreeSectionProps<T>, 'value'> {}
 
 /**
- * A SideNavSection represents a section within a SideNav.
+ * A NavigationTreeSection represents a section within a NavigationTree.
  */
-export function SideNavSection<T extends object>(props: SideNavSectionProps<T>): ReactNode {
+export function NavigationTreeSection<T extends object>(
+  props: NavigationTreeSectionProps<T>
+): ReactNode {
   return (
-    <TreeSection className="react-aria-SideNavSection" {...props}>
+    <TreeSection className="react-aria-NavigationTreeSection" {...props}>
       {props.children}
     </TreeSection>
   );
 }
 
-export interface SideNavHeaderProps extends TreeHeaderProps {}
+export interface NavigationTreeHeaderProps extends TreeHeaderProps {}
 
 /**
- * A SideNavHeader renders the header of a SideNavSection.
+ * A NavigationTreeHeader renders the header of a NavigationTreeSection.
  */
-export function SideNavHeader(props: SideNavHeaderProps): ReactNode {
+export function NavigationTreeHeader(props: NavigationTreeHeaderProps): ReactNode {
   return (
-    <TreeHeader className="react-aria-SideNavHeader" {...props}>
+    <TreeHeader className="react-aria-NavigationTreeHeader" {...props}>
       {props.children}
     </TreeHeader>
   );
