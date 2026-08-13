@@ -15,7 +15,7 @@ import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {expect, it} from 'vitest';
 import {GridLayout} from '../src/GridLayout';
 import {GridList, GridListItem} from '../src/GridList';
-import React, {useState} from 'react';
+import React, {act, useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {Size} from 'react-stately/useVirtualizerState';
 import {User} from '@react-aria/test-utils';
@@ -155,7 +155,7 @@ it('scrolls focused drop indicators into view during keyboard reordering', async
   let {container} = await render(<ReorderableGridList />);
   let gridlist = container.querySelector('[role=grid]') as HTMLElement;
   let dragButton = container.querySelector('[aria-label="Drag Item 0"]') as HTMLElement;
-  dragButton.focus();
+  act(() => dragButton.focus());
 
   await userEvent.keyboard('{Enter}');
 
