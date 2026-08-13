@@ -99,31 +99,6 @@ expect.extend({
 failTestOnConsoleWarn();
 failTestOnConsoleError();
 
-// JSDOM does not implement VisualViewport or ScreenOrientation API.
-const visualViewport = Object.assign(new EventTarget(), {
-  offsetTop: 0,
-  offsetLeft: 0,
-  pageTop: 0,
-  pageLeft: 0,
-  scale: 1
-});
-
-const orientation = Object.assign(new EventTarget(), {
-  type: 'landscape-primary'
-});
-
-Object.defineProperty(window.screen, 'orientation', {
-  value: orientation,
-  configurable: true,
-  writable: true
-});
-
-Object.defineProperty(window, 'visualViewport', {
-  value: visualViewport,
-  configurable: true,
-  writable: true
-});
-
 beforeEach(() => {
   const mockIntersectionObserver = jest.fn();
   mockIntersectionObserver.mockReturnValue({
@@ -137,40 +112,12 @@ beforeEach(() => {
   // This is needed because they default to 0 in jsdom unless explicitly set.
   Object.defineProperty(document.documentElement, 'clientWidth', {
     get: () => window.innerWidth,
-    configurable: true,
-    writeable: false
+    configurable: true
   });
 
   Object.defineProperty(document.documentElement, 'clientHeight', {
     get: () => window.innerHeight,
-    configurable: true,
-    writeable: false
-  });
-
-  Object.defineProperty(window.screen.orientation, 'angle', {
-    get: () => window.orientation ?? 0,
-    configurable: true,
-    writeable: false
-  });
-
-  Object.defineProperty(visualViewport, 'width', {
-    get: () => window.innerWidth,
-    configurable: true,
-    writeable: false
-  });
-
-  Object.defineProperty(visualViewport, 'height', {
-    get: () => window.innerHeight,
-    configurable: true,
-    writeable: false
-  });
-
-  Object.assign(visualViewport, {
-    offsetTop: 0,
-    offsetLeft: 0,
-    pageTop: 0,
-    pageLeft: 0,
-    scale: 1
+    configurable: true
   });
 });
 

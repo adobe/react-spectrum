@@ -14,7 +14,7 @@ import {addEvent} from './domHelpers';
 import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
 import {getMetaValue} from './getMetaValue';
 import {isFocusable} from './isFocusable';
-import {isMac, isWebKit} from './platform';
+import {isIOS, isMac, isWebKit} from './platform';
 
 const KEYBOARD_HEIGHT = 100;
 const KEYBOARD_TIMEOUT = 600;
@@ -67,6 +67,49 @@ interface TouchScreen {
   width: number;
   height: number;
   angle: number;
+}
+
+if (process.env.NODE_ENV === 'test' && !Reflect.has(window, 'visualViewport')) {
+  const visualViewport = Object.assign(new EventTarget(), {
+    offsetTop: 0,
+    offsetLeft: 0,
+    pageTop: 0,
+    pageLeft: 0,
+    scale: 1
+  });
+
+  Reflect.defineProperty(visualViewport, 'width', {
+    get: () => window.innerWidth,
+    configurable: true
+  });
+
+  Reflect.defineProperty(visualViewport, 'height', {
+    get: () => window.innerHeight,
+    configurable: true
+  });
+
+  Reflect.defineProperty(window, 'visualViewport', {
+    value: visualViewport,
+    configurable: true,
+    writable: true
+  });
+}
+
+if (process.env.NODE_ENV === 'test' && !Reflect.has(window.screen, 'orientation')) {
+  const orientation = Object.assign(new EventTarget(), {
+    type: 'landscape-primary'
+  });
+
+  Reflect.defineProperty(window.screen, 'orientation', {
+    value: orientation,
+    configurable: true,
+    writable: true
+  });
+
+  Reflect.defineProperty(window.screen.orientation, 'angle', {
+    get: () => window.orientation ?? 0,
+    configurable: true
+  });
 }
 
 function getTouchScreen(): TouchScreen {
@@ -219,8 +262,11 @@ if (typeof document !== 'undefined') {
 }
 
 export function supportsKeyboard(): boolean {
+  let viewportMeta = getMetaValue('viewport');
+
   // Overlaying keyboards do not impact geometry, so there is nothing to await.
-  if (getMetaValue('viewport')?.includes('overlays-content')) {
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/viewport#browser_compatibility
+  if (!(isIOS() && isWebKit()) && viewportMeta?.includes('overlays-content')) {
     return false;
   }
 
