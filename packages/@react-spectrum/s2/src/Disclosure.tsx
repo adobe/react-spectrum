@@ -19,14 +19,7 @@ import {
   forwardRefType,
   GlobalDOMAttributes
 } from '@react-types/shared';
-import {
-  baseColor,
-  centerPadding,
-  focusRing,
-  lightDark,
-  space,
-  style
-} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from './CenterBaseline';
 
@@ -34,14 +27,12 @@ import Chevron from '../ui-icons/Chevron';
 
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
-  controlGap,
   controlPadding,
-  verticalPadding,
   getAllowedOverrides,
   StyleProps,
   StylesPropWithFont,
   UnsafeStyles,
-  horizontalPadding
+  verticalPadding
 } from './style-utils' with {type: 'macro'};
 import {
   DisclosureStateContext,
