@@ -62,9 +62,9 @@ export function useFormValidation<T>(
       let errorMessage = '';
       if (isProgrammaticViolation) {
         if (validityDetails.tooLong) {
-          errorMessage = `Please shorten this text to ${ref.current.maxLength} characters or less (you are currently using ${ref.current.value.length} characters).`;
+          errorMessage = `Please shorten this text to ${ref.current.getAttribute('maxlength')} characters or less (you are currently using ${ref.current.value.length} characters).`;
         } else if (validityDetails.tooShort) {
-          errorMessage = `Please lengthen this text to ${ref.current.minLength} characters or more (you are currently using ${ref.current.value.length} characters).`;
+          errorMessage = `Please lengthen this text to ${ref.current.getAttribute('minlength')} characters or more (you are currently using ${ref.current.value.length} characters).`;
         }
       } else if (state.realtimeValidation.isInvalid) {
         errorMessage = state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.';
@@ -184,17 +184,19 @@ function getValidity(input: ValidatableElement) {
 
   // Polyfill: Native DOM ignores programmatic maxLength violations.
   let tooLong = validity.tooLong;
-  if (input.getAttribute('maxlength') && input.value.length > input.maxLength) {
+  let maxLength = input.getAttribute('maxlength');
+  if (maxLength !== null && input.value.length > parseInt(maxLength, 10)) {
     tooLong = true;
   }
 
   // Polyfill: Native DOM ignores programmatic minLength violations.
   // Note: minLength only applies if the value is not empty.
   let tooShort = validity.tooShort;
+  let minLength = input.getAttribute('minlength');
   if (
-    input.getAttribute('minlength') &&
+    minLength !== null &&
     input.value.length > 0 &&
-    input.value.length < input.minLength
+    input.value.length < parseInt(minLength, 10)
   ) {
     tooShort = true;
   }
@@ -223,9 +225,9 @@ function getNativeValidity(input: ValidatableElement): ValidationResult {
   // Fallback for our polyfills since the native DOM doesn't generate a message for programmatic errors.
   if (isInvalid && !validationMessage) {
     if (validityDetails.tooLong) {
-      validationMessage = `Please shorten this text to ${input.maxLength} characters or less (you are currently using ${input.value.length} characters).`;
+      validationMessage = `Please shorten this text to ${input.getAttribute('maxlength')} characters or less (you are currently using ${input.value.length} characters).`;
     } else if (validityDetails.tooShort) {
-      validationMessage = `Please lengthen this text to ${input.minLength} characters or more (you are currently using ${input.value.length} characters).`;
+      validationMessage = `Please lengthen this text to ${input.getAttribute('minlength')} characters or more (you are currently using ${input.value.length} characters).`;
     }
   }
 
