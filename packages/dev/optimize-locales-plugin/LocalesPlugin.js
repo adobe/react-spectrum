@@ -12,7 +12,18 @@
 const {createUnplugin} = require('unplugin');
 const path = require('path');
 
-module.exports = createUnplugin(({locales}) => {
+const REACT_ARIA_PACKAGES = [
+  '@react-stately',
+  '@react-aria',
+  '@react-spectrum',
+  '@adobe/react-spectrum',
+  'react-stately',
+  'react-aria',
+  'react-aria-components'
+];
+const LOCALE_EXTENSIONS = ['json', 'mjs', 'js', 'cjs'];
+
+let plugin = createUnplugin(({locales}) => {
   locales = locales.map(l => new Intl.Locale(l));
   return {
     name: 'locales-plugin',
@@ -41,6 +52,28 @@ module.exports = createUnplugin(({locales}) => {
     }
   };
 });
+
+plugin.turbopack = ({locales}) => {
+  let loader = path.join(__dirname, 'LocalesLoader.js');
+  let rules = {};
+  for (let packageName of REACT_ARIA_PACKAGES) {
+    for (let extension of LOCALE_EXTENSIONS) {
+      rules[`**/${packageName}/**/??-??.${extension}`] = {
+        loaders: [
+          {
+            loader,
+            options: {locales}
+          }
+        ],
+        as: '*.js'
+      };
+    }
+  }
+
+  return {rules};
+};
+
+module.exports = plugin;
 
 function localeMatches(localeToMatch, includedLocale) {
   return (

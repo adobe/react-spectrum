@@ -1,6 +1,6 @@
 # @react-aria/optimize-locales-plugin
 
-A build plugin to optimize React Aria to only include translated strings for locales that your app supports. It currently supports Vite, Rollup, Webpack, and esbuild via [unplugin](https://github.com/unjs/unplugin). For Parcel, please use `@react-aria/parcel-resolver-optimize-locales`.
+A build plugin to optimize React Aria to only include translated strings for locales that your app supports. It currently supports Vite, Rollup, Webpack, and esbuild via [unplugin](https://github.com/unjs/unplugin), as well as Turbopack via a webpack loader. For Parcel, please use `@react-aria/parcel-resolver-optimize-locales`.
 
 ## Configuration
 
@@ -38,6 +38,32 @@ module.exports = {
     return config;
   }
 };
+```
+
+When using Turbopack, spread the plugin's rules into the existing `turbopack.rules` configuration:
+
+```ts
+// next.config.ts
+import type {NextConfig} from 'next';
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+const localeOptimization = optimizeLocales.turbopack({
+  locales: ['en-US', 'fr-FR']
+});
+
+const config: NextConfig = {
+  turbopack: {
+    rules: {
+      '*.css': {
+        loaders: ['@tailwindcss/turbopack'],
+        as: '*.css'
+      },
+      ...localeOptimization.rules
+    }
+  }
+};
+
+export default config;
 ```
 
 ### Vite

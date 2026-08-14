@@ -4,5 +4,17 @@ type Options = {
   locales: readonly string[];
 };
 
-declare const plugin: UnpluginInstance<Options, false>;
+type TurbopackConfig = {
+  rules: Record<
+    string,
+    {
+      loaders: [{loader: string; options: {locales: string[]}}];
+      as: '*.js';
+    }
+  >;
+};
+
+declare const plugin: UnpluginInstance<Options, false> & {
+  turbopack(options: Options): TurbopackConfig;
+};
 export = plugin;

@@ -74,6 +74,36 @@ export const description = 'How to integrate with your framework.';
         ```
       </Step>
       <Step>
+        <Counter />By default, React Aria includes localized strings for 30+ languages. To optimize the JavaScript bundle to include only your supported languages, install our bundler plugin.
+        <InstallCommand pkg="@react-aria/optimize-locales-plugin" />
+
+        Edit `next.config.ts` to add the plugin's rules to your existing Turbopack configuration:
+
+        ```ts
+        // next.config.ts
+        import type {NextConfig} from 'next';
+        import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+        const localeOptimization = optimizeLocales.turbopack({
+          locales: ['en-US', 'fr-FR']
+        });
+
+        const config: NextConfig = {
+          turbopack: {
+            rules: {
+              '*.css': {
+                loaders: ['@tailwindcss/turbopack'],
+                as: '*.css'
+              },
+              ...localeOptimization.rules
+            }
+          }
+        };
+
+        export default config;
+        ```
+      </Step>
+      <Step>
         <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
       </Step>
     </StepList>
