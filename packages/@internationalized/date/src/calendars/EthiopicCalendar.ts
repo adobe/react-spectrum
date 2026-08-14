@@ -37,6 +37,12 @@ function ceToJulianDay(epoch: number, year: number, month: number, day: number):
 
 function julianDayToCE(epoch: number, jd: number) {
   let year = Math.floor((4 * (jd - epoch)) / 1461);
+  // Years are 365 * year + floor(year / 4) days long, slightly less than the
+  // 365.25 day average assumed by the estimate above. As a result, the estimate
+  // can be one year too low on the first day of a year (3 of every 4 years).
+  if (jd >= ceToJulianDay(epoch, year + 1, 1, 1)) {
+    year++;
+  }
   let month = 1 + Math.floor((jd - ceToJulianDay(epoch, year, 1, 1)) / 30);
   let day = jd + 1 - ceToJulianDay(epoch, year, month, 1);
   return [year, month, day];
