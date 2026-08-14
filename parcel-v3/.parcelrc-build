@@ -1,0 +1,22 @@
+{
+  "extends": [".parcelrc-icons", "@parcel/config-default"],
+  "resolvers": ["@parcel/resolver-glob", "..."],
+  "bundler": "@parcel/bundler-library",
+  "transformers": {
+    "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
+    "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline"],
+    "packages/@adobe/**/*.css": [
+      "./PostCSSTransformer.mjs",
+      {
+        "plugin": "@parcel/transformer-css",
+        "config": {
+          "cssModules": true,
+          "pseudoClasses": {
+            "focusVisible": "focus-ring",
+            "hover": "is-hovered"
+          }
+        }
+      }
+    ]
+  }
+}
