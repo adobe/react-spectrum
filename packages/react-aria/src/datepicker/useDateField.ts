@@ -181,7 +181,7 @@ export function useDateField<T extends DateValue>(
   useFormValidation(
     {
       ...props,
-      isFocusWithin: isFocused.current,
+      isFocusWithin: () => isFocused.current,
       focus() {
         focusManager.focusFirst();
       }

@@ -12,7 +12,7 @@
 
 import {FormValidationState} from 'react-stately/private/form/useFormValidationState';
 
-import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {RefObject, Validation, ValidationResult} from '@react-types/shared';
 import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEffect, useRef} from 'react';
@@ -28,7 +28,7 @@ interface FormValidationProps<T> extends Validation<T> {
    * Used to detect external value changes in complex components where
    * the validated input is not the visually active element.
    */
-  isFocusWithin?: boolean;
+  isFocusWithin?: boolean | (() => boolean);
 }
 
 export function useFormValidation<T>(
@@ -85,8 +85,8 @@ export function useFormValidation<T>(
       // Commit validation immediately if the value changes while the field is unfocused.
       // This clears stale errors or displays programmatic constraint violations.
       let isFocused =
-        isFocusWithin ??
-        (typeof document !== 'undefined' && document.activeElement === ref.current);
+        (typeof isFocusWithin === 'function' ? isFocusWithin() : isFocusWithin) ??
+        (typeof document !== 'undefined' && getActiveElement() === ref.current);
 
       if (valueChanged && !isFocused) {
         let isNowValid = !nativeValidity.isInvalid && !state.realtimeValidation.isInvalid;
