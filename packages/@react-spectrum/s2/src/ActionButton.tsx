@@ -459,17 +459,7 @@ export const ActionButton = forwardRef(function ActionButton(
                   aria-label={stringFormatter.format('button.pending')}
                   size="S"
                   staticColor={staticColor}
-                  styles={style({
-                    size: {
-                      size: {
-                        XS: 12,
-                        S: 14,
-                        M: 18,
-                        L: 20,
-                        XL: 24
-                      }
-                    }
-                  })({size})}
+                  styles={style({size: '1lh'})}
                 />
               </div>
             )}
