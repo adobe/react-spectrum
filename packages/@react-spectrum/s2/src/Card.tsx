@@ -25,7 +25,7 @@ import {color, focusRing, lightDark, space, style} from '../style' with {type: '
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, RefObject, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -35,14 +35,11 @@ import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Link} from 'react-aria-components/Link';
-import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
+import {Button as RACButton} from 'react-aria-components/Button';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
-import {useButton} from 'react-aria/useButton';
 import {useDOMRef} from './useDOMRef';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {useHover} from 'react-aria/useHover';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CardRenderProps {
@@ -231,7 +228,13 @@ let card = style(
       variant: {
         quiet: 'none'
       }
-    }
+    },
+    /* Default Button styles override */
+    textAlign: 'start',
+    appearance: 'none',
+    borderStyle: 'none',
+    borderWidth: 0
+    /* End Default Button styles override */
   },
   getAllowedOverrides()
 );
@@ -453,24 +456,6 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     !props.href &&
     !!(onPress || onPressStart || onPressEnd || onPressChange || onPressUp || onAction);
 
-  let {buttonProps, isPressed: isInteractivePressed} = useButton(
-    {
-      elementType: 'div',
-      onPress: e => {
-        onPress?.(e);
-        onAction?.();
-      },
-      onPressStart,
-      onPressEnd,
-      onPressChange,
-      onPressUp,
-      isDisabled
-    },
-    domRef
-  );
-  let {hoverProps, isHovered: isInteractiveHovered} = useHover({isDisabled});
-  let {focusProps, isFocusVisible: isInteractiveFocusVisible} = useFocusRing();
-
   let children = (
     <Provider
       values={[
@@ -550,45 +535,51 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   if (ElementType === 'div' || isSkeleton) {
     if (isInteractiveStandalone) {
       return (
-        <div
-          {...mergeProps(
-            filterDOMProps(otherProps, {labelable: true}),
-            buttonProps,
-            hoverProps,
-            focusProps
-          )}
-          id={id != null ? String(id) : undefined}
-          ref={domRef}
-          className={
+        <RACButton
+          {...filterDOMProps(otherProps, {labelable: true})}
+          onPress={
+            onPress || onAction
+              ? e => {
+                  onPress?.(e);
+                  onAction?.();
+                }
+              : undefined
+          }
+          onPressStart={onPressStart}
+          onPressEnd={onPressEnd}
+          onPressChange={onPressChange}
+          onPressUp={onPressUp}
+          isDisabled={isDisabled}
+          ref={domRef as unknown as RefObject<HTMLButtonElement>}
+          className={renderProps =>
             UNSAFE_className +
             card(
               {
+                ...renderProps,
                 size,
                 density,
                 variant,
                 isCardView: false,
                 isInteractive: true,
-                isHovered: isInteractiveHovered,
-                isFocusVisible: isInteractiveFocusVisible,
                 isSelected: false
               },
               styles
             )
           }
-          style={variant === 'quiet' ? UNSAFE_style : press({isPressed: isInteractivePressed})}>
-          <InternalCardContext.Provider
-            value={{
-              size,
-              isQuiet,
-              isCheckboxSelection: false,
-              isHovered: isInteractiveHovered,
-              isFocusVisible: isInteractiveFocusVisible,
-              isSelected: false,
-              isPressed: isInteractivePressed
-            }}>
-            {children}
-          </InternalCardContext.Provider>
-        </div>
+          style={renderProps => (variant === 'quiet' ? UNSAFE_style : press(renderProps))}>
+          {renderProps => (
+            <InternalCardContext.Provider
+              value={{
+                ...renderProps,
+                size,
+                isQuiet,
+                isCheckboxSelection: false,
+                isSelected: false
+              }}>
+              {children}
+            </InternalCardContext.Provider>
+          )}
+        </RACButton>
       );
     }
 

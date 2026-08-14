@@ -122,7 +122,7 @@ describe('Card', () => {
 
     let card = getByRole('button');
     expect(card).not.toHaveAttribute('tabindex');
-    expect(card).toHaveAttribute('aria-disabled', 'true');
+    expect(card).toBeDisabled();
 
     await user.click(card);
     expect(onPress).not.toHaveBeenCalled();
