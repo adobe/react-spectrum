@@ -23,6 +23,7 @@ import {
 import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext} from 'react';
 import {
+  controlPadding,
   field,
   fieldInput,
   getAllowedOverrides,
@@ -168,7 +169,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
               styles={style({
                 ...fieldInput(),
                 textWrap: 'nowrap',
-                paddingX: 'edge-to-text'
+                paddingX: controlPadding()
               })({size})}>
               <DateInputContainer>
                 <DateInput />

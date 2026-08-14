@@ -48,6 +48,7 @@ import {
   control,
   controlBorderRadius,
   controlFont,
+  controlPadding,
   controlSize,
   field,
   fieldInput,
@@ -292,10 +293,10 @@ export let listboxItem = style(
     gridTemplateAreas: ['. checkmark icon label       .', '. .         .    description .'],
     gridTemplateColumns: {
       size: {
-        S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(24)],
-        M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(32)],
-        L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(40)],
-        XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(48)]
+        S: [controlPadding().size.S, 'auto', 'auto', 'minmax(0, 1fr)', controlPadding().size.S],
+        M: [controlPadding().size.M, 'auto', 'auto', 'minmax(0, 1fr)', controlPadding().size.M],
+        L: [controlPadding().size.L, 'auto', 'auto', 'minmax(0, 1fr)', controlPadding().size.L],
+        XL: [controlPadding().size.XL, 'auto', 'auto', 'minmax(0, 1fr)', controlPadding().size.XL]
       }
     },
     gridTemplateRows: {
@@ -324,26 +325,12 @@ export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   boxSizing: 'border-box',
   minHeight: controlSize(),
   paddingY: centerPadding(),
-  marginX: {
-    size: {
-      S: `[${edgeToText(24)}]`,
-      M: `[${edgeToText(32)}]`,
-      L: `[${edgeToText(40)}]`,
-      XL: `[${edgeToText(48)}]`
-    }
-  }
+  marginX: controlPadding()
 });
 
 const separatorWrapper = style({
   display: 'flex',
-  marginX: {
-    size: {
-      S: `[${edgeToText(24)}]`,
-      M: `[${edgeToText(32)}]`,
-      L: `[${edgeToText(40)}]`,
-      XL: `[${edgeToText(48)}]`
-    }
-  },
+  marginX: controlPadding(),
   height: 12,
   alignItems: 'center'
 });

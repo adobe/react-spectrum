@@ -89,7 +89,7 @@ export const field = () =>
       type: 'rowGap',
       value: centerPadding('var(--field-height)')
     },
-    columnGap: 12,
+    columnGap: 12, // TODO: what token to use here? controlGap would be 6px for medium
     disableTapHighlight: true
   }) as const;
 
@@ -239,15 +239,80 @@ const controlSizeS = {
   }
 } as const;
 
-// Base Gap
+// Base Gap - dynamic
 export const controlGap = () =>
   ({
     default: 'base-gap-medium',
     size: {
       XS: 'base-gap-extra-small',
       S: 'base-gap-small',
+      M: 'base-gap-medium',
       L: 'base-gap-large',
       XL: 'base-gap-extra-large'
+    }
+  }) as const;
+
+// Accessory Gap - dynamic
+export const accessoryGap = () =>
+  ({
+    default: 'accessory-gap-medium',
+    size: {
+      XS: 'accessory-gap-extra-small',
+      S: 'accessory-gap-small',
+      M: 'accessory-gap-medium',
+      L: 'accessory-gap-large',
+      XL: 'accessory-gap-extra-large',
+      '2XL': 'accessory-gap-2x-large'
+    }
+  }) as const;
+
+// Group Gap - dynamic
+export const groupGap = () =>
+  ({
+    default: 'group-gap-medium',
+    size: {
+      default: 'group-gap-medium',
+      XS: 'group-gap-extra-small',
+      S: 'group-gap-small',
+      M: 'group-gap-medium',
+      L: 'group-gap-large',
+      XL: 'group-gap-extra-large'
+    },
+    density: {
+      default: {
+        size: {
+          default: 'group-gap-medium',
+          XS: 'group-gap-extra-small',
+          S: 'group-gap-small',
+          M: 'group-gap-medium',
+          L: 'group-gap-large',
+          XL: 'group-gap-extra-large'
+        }
+      },
+      compact: 'group-gap-compact',
+      spacious: {
+        size: {
+          XS: 'group-gap-extra-small-spacious',
+          S: 'group-gap-small-spacious',
+          M: 'group-gap-medium-spacious',
+          L: 'group-gap-large-spacious',
+          XL: 'group-gap-extra-large-spacious'
+        }
+      }
+    }
+  }) as const;
+
+export const containerGap = () =>
+  ({
+    default: 'container-gap-medium',
+    size: {
+      '2XS': 'container-gap-2x-extra-small',
+      XS: 'container-gap-extra-small',
+      S: 'container-gap-small',
+      M: 'container-gap-medium',
+      L: 'container-gap-large',
+      XL: 'container-gap-extra-large',
+      '2XL': 'container-gap-2x-large'
     }
   }) as const;
 
@@ -258,9 +323,25 @@ export const controlPadding = () =>
     size: {
       XS: 'base-padding-horizontal-extra-small',
       S: 'base-padding-horizontal-small',
+      M: 'base-padding-horizontal-medium',
       L: 'base-padding-horizontal-large',
       XL: 'base-padding-horizontal-extra-large',
       '2XL': 'base-padding-horizontal-2x-large'
+    }
+  }) as const;
+
+export const containerPadding = () =>
+  ({
+    default: 'container-padding',
+    size: {
+      '2XS': 'container-padding-2x-extra-small',
+      XS: 'container-padding-extra-small',
+      S: 'container-padding-small',
+      M: 'container-padding-medium',
+      L: 'container-padding-large',
+      XL: 'container-padding-extra-large',
+      '2XL': 'container-padding-2x-large',
+      '3XL': 'container-padding-3x-large'
     }
   }) as const;
 

@@ -277,7 +277,7 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
       <div
         style={UNSAFE_style}
         className={
-          (UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4})
+          (UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4}) // TODO: this gap doesn't really exist?
         }
         ref={domRef}>
         {children}
