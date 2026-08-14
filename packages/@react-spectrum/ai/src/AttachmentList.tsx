@@ -593,10 +593,10 @@ export const Attachment = forwardRef(function Attachment(
               insetStart: {
                 default: '50%',
                 // this checks that there is text content in the attachment + a Image as a thumbnail
-                ':has(~ [data-slot=content]):not(:has(~ [data-rsp-slot=thumbnail]))':
+                ':has(~ [data-slot=content]):not(:has(~ [data-rsp-slot=illustration]))':
                   '[calc(var(--card-padding-x) + var(--basic-thumb-size) / 2)]',
                 // this checks that there is text content in the attachment + a Illustration as a thumbnail
-                ':has(~ [data-slot=content]):has(~ [data-rsp-slot=thumbnail])':
+                ':has(~ [data-slot=content]):has(~ [data-rsp-slot=illustration])':
                   '[calc(var(--card-padding-x) + var(--illust-margin-x) + var(--illust-thumb-size) / 2)]'
               },
               transform: 'translate(-50%, -50%)'
