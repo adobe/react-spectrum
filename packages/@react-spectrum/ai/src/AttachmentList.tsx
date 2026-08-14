@@ -20,23 +20,27 @@ import {
 } from '@react-types/shared';
 import {
   baseColor,
+  color,
   focusRing,
   iconStyle,
+  lightDark,
+  space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
-import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
+import {ContentContext} from '@react-spectrum/s2/Content';
 import Cross from '../ui-icons/Cross';
+import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {forwardRef, ReactNode, useContext, useRef} from 'react';
-import {IconContext} from '@react-spectrum/s2/Icon';
+import {IllustrationContext} from '@react-spectrum/s2/Icon';
 import {ImageContext} from '@react-spectrum/s2/Image';
+import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
-import {Provider} from 'react-aria-components/slots';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Tag,
@@ -46,6 +50,7 @@ import {
   TagListProps,
   TagProps
 } from 'react-aria-components/TagGroup';
+import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
@@ -109,6 +114,183 @@ const styles = style<{
     forcedColors: 'Highlight'
   },
   disableTapHighlight: true
+});
+
+const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
+const noDescription = ':not(:has([slot=description]))';
+
+const attachmentCard = style({
+  display: 'flex',
+  flexDirection: 'row',
+  position: 'relative',
+  borderRadius: 'default',
+  backgroundColor: {
+    default: lightDark('transparent-white-300', 'transparent-black-300'),
+    forcedColors: 'ButtonFace'
+  },
+  boxShadow: {
+    default: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
+    isInvalid: `[inset 0 0 0 1px ${color('negative-900')}]`
+  },
+  forcedColorAdjust: 'none',
+  transition: 'default',
+  fontFamily: 'sans',
+  overflow: 'clip',
+  contain: 'layout',
+  disableTapHighlight: true,
+  height: {
+    default: 68,
+    size: {
+      XS: 52,
+      S: 60,
+      M: 68,
+      L: 76,
+      XL: 80
+    }
+  },
+  width: {
+    default: 'full',
+    [onlyPreview]: 'auto'
+  },
+  aspectRatio: {
+    [onlyPreview]: '1/1'
+  },
+  '--card-spacing': {
+    type: 'paddingTop',
+    value: {
+      size: {
+        XS: 8,
+        S: 12,
+        M: 16,
+        L: 20,
+        XL: 24
+      },
+      [onlyPreview]: 0
+    }
+  },
+  alignItems: 'center',
+
+  '--card-padding-y': {
+    type: 'paddingTop',
+    value: {default: '--card-spacing'}
+  },
+  '--card-padding-x': {
+    type: 'paddingStart',
+    value: {default: '--card-spacing'}
+  },
+  paddingY: '--card-padding-y',
+  paddingX: '--card-padding-x',
+  boxSizing: 'border-box',
+  justifyContent: {
+    [onlyPreview]: 'center'
+  },
+  '--basic-thumb-size': {
+    type: 'height',
+    value: {
+      size: {
+        XS: 24,
+        S: 26,
+        M: 32,
+        L: 36,
+        XL: 40
+      },
+      [onlyPreview]: 'full'
+    }
+  },
+  '--illust-thumb-size': {
+    type: 'height',
+    value: {
+      size: {
+        XS: 48,
+        S: 44,
+        M: 48,
+        L: 52,
+        XL: 56
+      },
+      [onlyPreview]: 'full'
+    }
+  },
+  '--illust-margin-x': {
+    type: 'marginStart',
+    value: {
+      size: {
+        XS: -8,
+        S: -8,
+        M: -12,
+        L: -12,
+        XL: -12
+      }
+    }
+  }
+});
+
+const illustThumbnailStyles = style({
+  position: 'relative',
+  alignSelf: 'center',
+  flexShrink: 0,
+  pointerEvents: 'none',
+  userSelect: 'none',
+  size: '--illust-thumb-size',
+  marginX: '--illust-margin-x'
+});
+
+const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+  font: 'title',
+  fontSize: {
+    size: {
+      XS: 'title-xs',
+      S: 'title-xs',
+      M: 'title-sm',
+      L: 'title',
+      XL: 'title-lg'
+    }
+  },
+  lineClamp: 1,
+  gridArea: 'title'
+});
+
+const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+  font: 'body',
+  fontSize: {
+    size: {
+      XS: 'body-2xs',
+      S: 'body-2xs',
+      M: 'body-xs',
+      L: 'body-sm',
+      XL: 'body'
+    }
+  },
+  lineClamp: 1,
+  gridArea: 'description'
+});
+
+const attachmentContent = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+  display: 'grid',
+  gridTemplateColumns: ['minmax(0, 1fr)'],
+  gridTemplateAreas: ['title', 'description'],
+  columnGap: 4,
+  flexGrow: 1,
+  minWidth: 0,
+  alignItems: 'baseline',
+  alignContent: 'start',
+  rowGap: {
+    size: {
+      XS: 4,
+      S: 4,
+      M: space(6),
+      L: space(6),
+      XL: 8
+    },
+    [noDescription]: 0
+  },
+  paddingStart: {
+    default: '--card-spacing',
+    ':first-child': 0
+  },
+  paddingEnd: {
+    default: 'calc(var(--card-spacing) * 1.5 / 2)',
+    ':last-child': 0
+  }
 });
 
 const CloseButton = function CloseButton(props) {
@@ -208,32 +390,63 @@ const tagStyles = style({
   borderRadius: 'default'
 });
 
+// this is checking that there isn't content in the attachment
+// similar to onlyPreview, but specifically checking siblings before the alert icon (aka looking for Content)
+const onlyPreviewFromError = ':not([data-slot=content] ~ *)';
 const attachmentErrorStyles = style({
   display: 'flex',
   flexShrink: 0,
   alignItems: 'center',
-  paddingStart: 8,
+  paddingStart: {
+    default: 8,
+    [onlyPreviewFromError]: 0
+  },
+  position: {
+    [onlyPreviewFromError]: 'absolute'
+  },
+  top: {
+    [onlyPreviewFromError]: '50%'
+  },
+  insetStart: {
+    [onlyPreviewFromError]: '50%'
+  },
+  transform: {
+    [onlyPreviewFromError]: 'translate(-50%, -50%)'
+  },
   '--iconPrimary': {
     type: 'color',
     value: 'negative'
   }
 });
 
+// this is also checking that there isn't content in the attachment
+// similar to onlyPreview, but specifically checking siblings after the thumbnail (aka looking for Content)
+const onlyPreviewFromThumbnail = ':not(:has(~ [data-slot=content]))';
 function AttachmentContextProvider({
   children,
-  isUploading
+  isUploading,
+  isInvalid
 }: {
   children: ReactNode;
   isUploading: boolean;
+  isInvalid?: boolean;
 }) {
   let imageCtx = useContext(ImageContext);
-  let iconCtx = useContext(IconContext);
+  let illustrationCtx = useContext(IllustrationContext);
   const opacityStyles = style({
-    opacity: {default: 1, isUploading: 0.15},
+    opacity: {
+      default: 1,
+      isUploading: 0.15,
+      isInvalid: {
+        default: 1,
+        [onlyPreviewFromThumbnail]: 0.15
+      }
+    },
     transition: 'default'
-  })({isUploading});
+  })({isUploading, isInvalid});
   const imageSlots = imageCtx && 'slots' in imageCtx ? imageCtx.slots : undefined;
-  const iconSlots = iconCtx && 'slots' in iconCtx ? iconCtx.slots : undefined;
+  const illustrationSlots =
+    illustrationCtx && 'slots' in illustrationCtx ? illustrationCtx.slots : undefined;
 
   return (
     <Provider
@@ -252,13 +465,13 @@ function AttachmentContextProvider({
           }
         ],
         [
-          IconContext,
+          IllustrationContext,
           {
             slots: {
-              ...iconSlots,
+              ...illustrationSlots,
               thumbnail: {
-                ...iconSlots?.thumbnail,
-                styles: mergeStyles(iconSlots?.thumbnail?.styles, opacityStyles)
+                ...illustrationSlots?.thumbnail,
+                styles: mergeStyles(illustrationSlots?.thumbnail?.styles, opacityStyles)
               }
             }
           }
@@ -266,6 +479,82 @@ function AttachmentContextProvider({
       ]}>
       {children}
     </Provider>
+  );
+}
+
+interface AttachmentCardProps {
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
+  isInvalid?: boolean;
+  children: ReactNode;
+}
+
+function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCardProps) {
+  return (
+    <div aria-invalid={isInvalid || undefined} className={attachmentCard({size, isInvalid})}>
+      <Provider
+        values={[
+          [
+            ImageContext,
+            {
+              slots: {
+                thumbnail: {
+                  alt: '',
+                  styles: style({
+                    position: 'relative',
+                    alignSelf: 'center',
+                    flexShrink: 0,
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                    size: '--basic-thumb-size',
+                    borderRadius: '[3px]',
+                    objectFit: 'cover',
+                    outlineStyle: 'solid',
+                    outlineWidth: {
+                      default: 2,
+                      size: {
+                        XS: 1
+                      }
+                    },
+                    outlineColor: '--s2-container-bg'
+                  })({size})
+                }
+              }
+            }
+          ],
+          [
+            IllustrationContext,
+            {
+              slots: {
+                thumbnail: {
+                  styles: illustThumbnailStyles,
+                  // @ts-ignore
+                  'data-rsp-slot': 'illustration'
+                }
+              }
+            }
+          ],
+          [
+            TextContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                title: {styles: attachmentTitle({size})},
+                description: {styles: attachmentDescription({size})}
+              }
+            }
+          ],
+          [
+            ContentContext,
+            {
+              styles: attachmentContent({size}),
+              // @ts-ignore
+              'data-slot': 'content'
+            }
+          ]
+        ]}>
+        <ImageCoordinator>{children}</ImageCoordinator>
+      </Provider>
+    </div>
   );
 }
 
@@ -282,8 +571,7 @@ export const Attachment = forwardRef(function Attachment(
     styles,
     isInvalid,
     children,
-    size = 'M',
-    ...otherProps
+    size = 'M'
   } = props;
   let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
@@ -296,7 +584,7 @@ export const Attachment = forwardRef(function Attachment(
       aria-describedby={ariaDescribedby}
       ref={domRef}
       className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
-      <BasicHorizontalCard {...otherProps} isInvalid={isInvalid} size={size}>
+      <AttachmentCard size={size} isInvalid={isInvalid}>
         {props.uploadProgress != null && props.uploadProgress < 100 && (
           <div
             className={style({
@@ -304,8 +592,12 @@ export const Attachment = forwardRef(function Attachment(
               top: '50%',
               insetStart: {
                 default: '50%',
-                ':has(~ [data-slot=content])':
-                  '[calc(var(--card-padding-x) + var(--basic-thumb-size) / 2)]'
+                // this checks that there is text content in the attachment + a Image as a thumbnail
+                ':has(~ [data-slot=content]):not(:has(~ [data-rsp-slot=illustration]))':
+                  '[calc(var(--card-padding-x) + var(--basic-thumb-size) / 2)]',
+                // this checks that there is text content in the attachment + a Illustration as a thumbnail
+                ':has(~ [data-slot=content]):has(~ [data-rsp-slot=illustration])':
+                  '[calc(var(--card-padding-x) + var(--illust-margin-x) + var(--illust-thumb-size) / 2)]'
               },
               transform: 'translate(-50%, -50%)'
             })}>
@@ -319,6 +611,7 @@ export const Attachment = forwardRef(function Attachment(
           </div>
         )}
         <AttachmentContextProvider
+          isInvalid={isInvalid}
           isUploading={props.uploadProgress != null && props.uploadProgress < 100}>
           {typeof children === 'function' ? children({size}) : children}
         </AttachmentContextProvider>
@@ -327,7 +620,7 @@ export const Attachment = forwardRef(function Attachment(
             <AlertTriangleIcon size={size} />
           </div>
         )}
-      </BasicHorizontalCard>
+      </AttachmentCard>
       {/** Definitely not a close button, though looks like one. */}
       <div
         className={style({
