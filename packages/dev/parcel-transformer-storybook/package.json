@@ -18,7 +18,7 @@
     "@parcel/source-map": "^2.1.1",
     "react-docgen-typescript": "^2.2.2",
     "storybook": "^10.0.0",
-    "typescript": "^5.5.0"
+    "typescript": "^6.0.3"
   },
   "engines": {
     "parcel": "^2.8.0"
