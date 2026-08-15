@@ -245,7 +245,7 @@
     "postcss-custom-properties": "13.2.0",
     "postcss-import": "15.1.0",
     "react": "19.2.4",
-    "react-docgen-typescript/typescript": "^6.0.3",
+    "react-docgen-typescript@npm:^2.2.2": "patch:react-docgen-typescript@npm%3A2.4.0#~/.yarn/patches/react-docgen-typescript-npm-2.4.0-9669bef2f0.patch",
     "react-dom": "19.2.4",
     "react-refresh": "0.9.0",
     "react-server-dom-parcel": "canary",
@@ -256,7 +256,7 @@
     "rsc-html-stream": "0.0.8",
     "svgo": "^3"
   },
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.0",
   "@parcel/bundler-default": {
     "manualSharedBundles": [
       {

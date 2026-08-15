@@ -6363,7 +6363,7 @@ __metadata:
     "@babel/types": "npm:^7.23.0"
     "@parcel/plugin": "npm:^2.16.3"
     "@parcel/source-map": "npm:^2.1.1"
-    react-docgen-typescript: "npm:^2.2.2"
+    react-docgen-typescript: "patch:react-docgen-typescript@npm%3A2.4.0#~/.yarn/patches/react-docgen-typescript-npm-2.4.0-9669bef2f0.patch"
     storybook: "npm:^10.0.0"
     typescript: "npm:^6.0.3"
   languageName: unknown
@@ -26736,12 +26736,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-docgen-typescript@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "react-docgen-typescript@npm:2.2.2"
+"react-docgen-typescript@npm:2.4.0":
+  version: 2.4.0
+  resolution: "react-docgen-typescript@npm:2.4.0"
   peerDependencies:
     typescript: ">= 4.3.x"
-  checksum: 10c0/d31a061a21b5d4b67d4af7bc742541fd9e16254bd32861cd29c52565bc2175f40421a3550d52b6a6b0d0478e7cc408558eb0060a0bdd2957b02cfceeb0ee1e88
+  checksum: 10c0/18e3e1c80d28abcdd72e62261d2f70b0904d9b088f9c2ebe485ffee5e46f5735208bc174a20ed2772112b3ca6432b5f3d5f0ac345872fe76e541f84543e49e50
+  languageName: node
+  linkType: hard
+
+"react-docgen-typescript@patch:react-docgen-typescript@npm%3A2.4.0#~/.yarn/patches/react-docgen-typescript-npm-2.4.0-9669bef2f0.patch":
+  version: 2.4.0
+  resolution: "react-docgen-typescript@patch:react-docgen-typescript@npm%3A2.4.0#~/.yarn/patches/react-docgen-typescript-npm-2.4.0-9669bef2f0.patch::version=2.4.0&hash=c5258a"
+  peerDependencies:
+    typescript: ">= 4.3.x"
+  checksum: 10c0/6754f521ae1b0f074316dd757f343ba9b91e5f7429b7a0e9174cca8f5651f971b7871e3ae866319ccf87016b64228f52bf40d5ae1f9b9767018f10d7c4131c27
   languageName: node
   linkType: hard
 
@@ -30629,7 +30638,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^6.0.3":
+"typescript-classic@npm:typescript@^6.0.3, typescript@npm:^6.0.3":
   version: 6.0.3
   resolution: "typescript@npm:6.0.3"
   bin:
