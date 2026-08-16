@@ -53,20 +53,34 @@ let plugin = createUnplugin(({locales}) => {
   };
 });
 
-plugin.turbopack = ({locales}) => {
+plugin.turbopack = options => {
   let loader = path.join(__dirname, 'LocalesLoader.js');
+  let hasConditions = Array.isArray(options);
+  let configurations = hasConditions ? options : [options];
   let rules = {};
   for (let packageName of REACT_ARIA_PACKAGES) {
     for (let extension of LOCALE_EXTENSIONS) {
-      rules[`**/${packageName}/**/??-??.${extension}`] = {
-        loaders: [
-          {
-            loader,
-            options: {locales}
-          }
-        ],
-        as: '*.js'
-      };
+      let packageRules = configurations.map(({locales, condition}) => {
+        let rule = {
+          loaders: [
+            {
+              loader,
+              options: {locales}
+            }
+          ],
+          as: '*.js'
+        };
+
+        if (condition !== undefined) {
+          rule.condition = condition;
+        }
+
+        return rule;
+      });
+
+      rules[`**/${packageName}/**/??-??.${extension}`] = hasConditions
+        ? packageRules
+        : packageRules[0];
     }
   }
 

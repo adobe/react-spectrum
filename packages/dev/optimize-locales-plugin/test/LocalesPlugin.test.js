@@ -103,6 +103,36 @@ describe('@react-aria/optimize-locales-plugin', () => {
       expect(Object.keys(config.rules)).toHaveLength(28);
     });
 
+    test('supports different locales in browser and server module graphs', () => {
+      let config = LocalesPlugin.turbopack([
+        {locales: [], condition: 'browser'},
+        {locales: ['en-US', 'fr'], condition: {not: 'browser'}}
+      ]);
+
+      expect(config.rules['**/@react-aria/**/??-??.json']).toEqual([
+        {
+          condition: 'browser',
+          loaders: [
+            {
+              loader: LOADER,
+              options: {locales: []}
+            }
+          ],
+          as: '*.js'
+        },
+        {
+          condition: {not: 'browser'},
+          loaders: [
+            {
+              loader: LOADER,
+              options: {locales: ['en-US', 'fr']}
+            }
+          ],
+          as: '*.js'
+        }
+      ]);
+    });
+
     test('loader replaces an excluded locale with undefined', () => {
       let result = callLoader('fr-FR', ['en-US']);
       expect(result).toBe('export default undefined;');
