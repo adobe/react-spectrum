@@ -21,6 +21,8 @@ type TurbopackOptions = Options & {
   condition?: TurbopackCondition;
 };
 
+type TurbopackOptionsList = readonly [TurbopackOptions, ...TurbopackOptions[]];
+
 type TurbopackRule = {
   condition?: TurbopackCondition;
   loaders: [{loader: string; options: {locales: readonly string[]}}];
@@ -32,6 +34,6 @@ type TurbopackConfig = {
 };
 
 declare const plugin: UnpluginInstance<Options, false> & {
-  turbopack(options: Options | readonly TurbopackOptions[]): TurbopackConfig;
+  turbopack(options: Options | TurbopackOptionsList): TurbopackConfig;
 };
 export = plugin;

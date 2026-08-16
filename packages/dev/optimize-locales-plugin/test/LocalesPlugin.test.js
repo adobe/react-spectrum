@@ -133,6 +133,12 @@ describe('@react-aria/optimize-locales-plugin', () => {
       ]);
     });
 
+    test('requires at least one conditional configuration', () => {
+      expect(() => LocalesPlugin.turbopack([])).toThrow(
+        'Expected at least one Turbopack locale configuration.'
+      );
+    });
+
     test('loader replaces an excluded locale with undefined', () => {
       let result = callLoader('fr-FR', ['en-US']);
       expect(result).toBe('export default undefined;');

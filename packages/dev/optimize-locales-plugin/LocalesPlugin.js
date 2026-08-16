@@ -56,6 +56,10 @@ let plugin = createUnplugin(({locales}) => {
 plugin.turbopack = options => {
   let loader = path.join(__dirname, 'LocalesLoader.js');
   let hasConditions = Array.isArray(options);
+  if (hasConditions && options.length === 0) {
+    throw new TypeError('Expected at least one Turbopack locale configuration.');
+  }
+
   let configurations = hasConditions ? options : [options];
   let rules = {};
   for (let packageName of REACT_ARIA_PACKAGES) {
