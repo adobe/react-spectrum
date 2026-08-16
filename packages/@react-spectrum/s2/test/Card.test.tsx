@@ -206,6 +206,24 @@ describe('Card', () => {
     expect(onAction).toHaveBeenCalledTimes(1);
   });
 
+  it('fires press callbacks on a link card activated with the keyboard', async () => {
+    let onPress = jest.fn();
+    let {getByRole} = render(
+      <Card href="#keyboard-link-card" onPress={onPress}>
+        <Content>
+          <Text slot="title">Keyboard Link Card</Text>
+        </Content>
+      </Card>
+    );
+
+    await user.tab();
+    let link = getByRole('link');
+    expect(link).toHaveFocus();
+
+    await user.keyboard('[Enter]');
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
   it('does not fire press callbacks on a disabled link card', async () => {
     let onPress = jest.fn();
     let {getByRole} = render(
