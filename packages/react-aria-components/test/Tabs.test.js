@@ -21,11 +21,11 @@ import {
 import {Button} from '../src/Button';
 import {ComboBox} from '../src/ComboBox';
 import {DialogTrigger} from '../src/Dialog';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
-import {I18nProvider} from 'react-aria/I18nProvider';
 import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
