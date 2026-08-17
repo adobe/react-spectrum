@@ -1,0 +1,20 @@
+storage: /tmp/verdaccio-workspace/storage
+
+packages:
+  '@*/*':
+    # scoped packages
+    access: $all
+    publish: $all
+    proxy: npmjs
+
+  '**':
+    access: $all
+    publish: $all
+    proxy: npmjs
+
+security:
+  api:
+    jwt:
+      sign:
+        expiresIn: 60d
+        notBefore: 1
