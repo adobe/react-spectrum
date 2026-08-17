@@ -25,6 +25,7 @@ import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
@@ -468,6 +469,41 @@ describe('Tabs', () => {
 
     expect(tabs).toHaveAttribute('data-orientation', 'vertical');
     expect(tabs).toHaveClass('vertical');
+  });
+
+  it('allows user to change tab item selection via arrow keys with vertical tabs (rtl)', async () => {
+    let {getByRole} = render(
+      <I18nProvider locale="ar-AE">
+        <Tabs orientation="vertical">
+          <TabList aria-label="Test">
+            <Tab id="a">A</Tab>
+            <Tab id="b">B</Tab>
+            <Tab id="c">C</Tab>
+          </TabList>
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+          <TabPanel id="c">C</TabPanel>
+        </Tabs>
+      </I18nProvider>
+    );
+
+    let tablist = getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let selectedItem = tabs[0];
+    await user.tab();
+
+    expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowDown}');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    await user.keyboard('{ArrowUp}');
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowLeft}');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    await user.keyboard('{ArrowRight}');
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
   it.each`

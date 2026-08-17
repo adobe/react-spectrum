@@ -213,35 +213,6 @@ describe('Tabs', function () {
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('allows user to change tab item select via arrow keys with vertical tabs (rtl)', function () {
-    let container = renderComponent({orientation: 'vertical', providerProps: {locale: 'ar-AE'}});
-    let tablist = container.getByRole('tablist');
-    let tabs = within(tablist).getAllByRole('tab');
-    let selectedItem = tabs[0];
-    act(() => {
-      selectedItem.focus();
-    });
-
-    expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-
-    /** ArrowUp/ArrowDown are never flipped by locale direction. */
-    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
-    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(tabs[1], {key: 'ArrowUp', code: 38, charCode: 38});
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-
-    /**
-     * ArrowLeft/ArrowRight follow the locale direction regardless of orientation, so in rtl
-     * ArrowLeft moves to the next tab and ArrowRight moves to the previous one, matching the
-     * horizontal rtl pairings above.
-     */
-    fireEvent.keyDown(selectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
-    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(tabs[1], {key: 'ArrowRight', code: 39, charCode: 39});
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-  });
-
   it('wraps focus from first to last/last to first item', function () {
     let container = renderComponent({orientation: 'horizontal'});
     let tablist = container.getByRole('tablist');
