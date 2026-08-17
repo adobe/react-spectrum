@@ -129,4 +129,3 @@ jobs:
           else
             echo "Skipping commit — diff-current empty=$([ ! -s /tmp/diff-current.md ] && echo yes || echo no), new_release=$NEW_RELEASE, delta_empty=$([ ! -s /tmp/weekly-delta.txt ] && echo yes || echo no)"
           fi
-
