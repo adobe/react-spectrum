@@ -22,32 +22,30 @@ executors:
     docker:
       - image: cimg/node:24.14.1
     resource_class: medium.gen2
-    environment:
+    environment: &global-environment
       CACHE_VERSION: v1
+      # PARCEL_V3: '1'
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
       - image: cimg/node:24.14.1
     resource_class: large.gen2
-    environment:
-      CACHE_VERSION: v1
+    environment: *global-environment
     working_directory: ~/react-spectrum
 
   rsp-xlarge:
     docker:
       - image: cimg/node:24.14.1
     resource_class: xlarge.gen2
-    environment:
-      CACHE_VERSION: v1
+    environment: *global-environment
     working_directory: ~/react-spectrum
 
   rsp-2xlarge:
     docker:
       - image: cimg/node:24.14.1
     resource_class: 2xlarge.gen2
-    environment:
-      CACHE_VERSION: v1
+    environment: *global-environment
     working_directory: ~/react-spectrum
 
 commands:
@@ -414,6 +412,7 @@ jobs:
   test-browser:
     docker:
       - image: mcr.microsoft.com/playwright:v1.60.0-noble
+    resource_class: 2xlarge.gen2
     working_directory: /home/circleci/react-spectrum
     steps:
       - restore_cache:
@@ -562,7 +561,7 @@ jobs:
 
       - run:
           name: build s2 storybook
-          command: yarn build:storybook-s2
+          command: make storybook-s2
 
       - persist_to_workspace:
           root: dist
