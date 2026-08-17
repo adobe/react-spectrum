@@ -23,6 +23,8 @@ const REACT_ARIA_PACKAGES = [
 ];
 const LOCALE_EXTENSIONS = ['json', 'mjs', 'js', 'cjs'];
 
+const LOCALES_GLOB = `**/{${REACT_ARIA_PACKAGES.join(',')}}/**/[a-z][a-z]-[A-Z][A-Z].{${LOCALE_EXTENSIONS.join(',')}}`;
+
 let plugin = createUnplugin(({locales}) => {
   locales = locales.map(l => new Intl.Locale(l));
   return {
@@ -61,34 +63,29 @@ plugin.turbopack = options => {
   }
 
   let configurations = hasConditions ? options : [options];
-  let rules = {};
-  for (let packageName of REACT_ARIA_PACKAGES) {
-    for (let extension of LOCALE_EXTENSIONS) {
-      let packageRules = configurations.map(({locales, condition}) => {
-        let rule = {
-          loaders: [
-            {
-              loader,
-              options: {locales}
-            }
-          ],
-          as: '*.js'
-        };
-
-        if (condition !== undefined) {
-          rule.condition = condition;
+  let localeRules = configurations.map(({locales, condition}) => {
+    let rule = {
+      loaders: [
+        {
+          loader,
+          options: {locales}
         }
+      ],
+      as: '*.js'
+    };
 
-        return rule;
-      });
-
-      rules[`**/${packageName}/**/??-??.${extension}`] = hasConditions
-        ? packageRules
-        : packageRules[0];
+    if (condition !== undefined) {
+      rule.condition = condition;
     }
-  }
 
-  return {rules};
+    return rule;
+  });
+
+  return {
+    rules: {
+      [LOCALES_GLOB]: hasConditions ? localeRules : localeRules[0]
+    }
+  };
 };
 
 module.exports = plugin;

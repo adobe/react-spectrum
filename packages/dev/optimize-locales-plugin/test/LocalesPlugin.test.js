@@ -15,6 +15,8 @@ const localesLoader = require('../LocalesLoader');
 
 const EMPTY_JS = path.join(path.dirname(require.resolve('../LocalesPlugin')), 'empty.js');
 const LOADER = path.join(path.dirname(require.resolve('../LocalesPlugin')), 'LocalesLoader.js');
+const LOCALES_GLOB =
+  '**/{@react-stately,@react-aria,@react-spectrum,@adobe/react-spectrum,react-stately,react-aria,react-aria-components}/**/[a-z][a-z]-[A-Z][A-Z].{json,mjs,js,cjs}';
 
 function createPlugin(locales = ['en-US']) {
   return LocalesPlugin.raw({locales}, {framework: 'rollup'});
@@ -86,10 +88,11 @@ describe('@react-aria/optimize-locales-plugin', () => {
   });
 
   describe('Turbopack', () => {
-    test('returns scoped loader rules', () => {
+    test('returns a single scoped loader rule', () => {
       let config = LocalesPlugin.turbopack({locales: ['en-US', 'fr']});
 
-      expect(config.rules['**/@react-aria/**/??-??.json']).toEqual({
+      expect(Object.keys(config.rules)).toEqual([LOCALES_GLOB]);
+      expect(config.rules[LOCALES_GLOB]).toEqual({
         loaders: [
           {
             loader: LOADER,
@@ -98,9 +101,6 @@ describe('@react-aria/optimize-locales-plugin', () => {
         ],
         as: '*.js'
       });
-      expect(config.rules['**/@react-aria/**/??-??.mjs']).toBeDefined();
-      expect(config.rules['**/react-aria-components/**/??-??.json']).toBeDefined();
-      expect(Object.keys(config.rules)).toHaveLength(28);
     });
 
     test('supports different locales in browser and server module graphs', () => {
@@ -109,7 +109,7 @@ describe('@react-aria/optimize-locales-plugin', () => {
         {locales: ['en-US', 'fr'], condition: {not: 'browser'}}
       ]);
 
-      expect(config.rules['**/@react-aria/**/??-??.json']).toEqual([
+      expect(config.rules[LOCALES_GLOB]).toEqual([
         {
           condition: 'browser',
           loaders: [

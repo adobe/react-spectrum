@@ -40,7 +40,9 @@ module.exports = {
 };
 ```
 
-When using Turbopack, spread the plugin's rules into the existing `turbopack.rules` configuration:
+When using Turbopack, spread the plugin's rules into the existing `turbopack.rules` configuration.
+This requires Next.js 15.4 or newer, because the rule matches files using glob syntax that earlier
+versions of Turbopack do not implement.
 
 ```ts
 // next.config.ts
@@ -64,6 +66,27 @@ const config: NextConfig = {
 };
 
 export default config;
+```
+
+The object form above includes the configured locales in every module graph. This is useful when
+the application relies on the locale strings bundled with React Aria components.
+
+On Next.js 16 and newer, where Turbopack supports loader conditions, an array can be provided to
+configure different locales for individual module graphs. For example, when using `LocalizedStringProvider`, keep the supported
+locales on the server and exclude them from the browser bundle because the provider injects the
+current locale's strings into the initial HTML:
+
+```ts
+const localeOptimization = optimizeLocales.turbopack([
+  {
+    locales: [],
+    condition: 'browser'
+  },
+  {
+    locales: ['en-US', 'fr-FR'],
+    condition: {not: 'browser'}
+  }
+]);
 ```
 
 ### Vite
