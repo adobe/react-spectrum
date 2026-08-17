@@ -204,10 +204,7 @@ describe('useOverlayPosition', function () {
   });
 
   it('should not flip in RTL when a user maxHeight fits within the available space', function () {
-    // At triggerTop=250, ~406px of room is available below the trigger (see the
-    // unmodified default-placement test above). A maxHeight just under that should
-    // still fit below and never trigger a flip. Uses a "start" cross-placement so
-    // translateRTL exercises the RTL codepath.
+    // 'start' cross-placement exercises the RTL codepath.
     let res = render(
       <I18nProvider locale="ar-AE">
         <Example placement="bottom start" maxHeight={400} />
@@ -220,17 +217,14 @@ describe('useOverlayPosition', function () {
   });
 
   describe('flipping when the overlay outgrows its current placement', function () {
-    // The overlay's natural (unclamped) content height. Mutated by tests to simulate
-    // content that populates after the initial positioning pass (e.g. RAC collection
-    // items landing on a second render).
+    // Natural (unclamped) content height; tests mutate this to simulate content
+    // populating after the initial positioning pass.
     let overlayNaturalHeight = 40;
 
     beforeEach(() => {
       overlayNaturalHeight = 40;
 
-      // Simulate the browser's rendering of a scrollable (overflow: auto) overlay:
-      // its offsetHeight is clamped to whatever CSS max-height is currently applied,
-      // even if that's stale from a previous positioning pass.
+      // Simulates a scrollable overlay whose offsetHeight is clamped to its CSS max-height.
       jest
         .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
         .mockImplementation(function (this: HTMLElement) {
@@ -244,14 +238,11 @@ describe('useOverlayPosition', function () {
     });
 
     it('flips to the top once content grows, when no maxHeight is set (self-heals)', function () {
-      // Trigger near the bottom edge: ~50px of room below, ~594px above.
       let res = render(<Example triggerTop={606} />);
       let overlay = res.getByTestId('overlay');
 
       expect(overlay).toHaveTextContent('placement: bottom');
 
-      // Content populates on a second render (e.g. RAC collection items landing).
-      // Same trigger position and viewport; only the content height changes.
       overlayNaturalHeight = 400;
       fireEvent(window, new Event('resize'));
 
@@ -260,24 +251,15 @@ describe('useOverlayPosition', function () {
     });
 
     it('flips to the top and grows toward the requested maxHeight, once a user maxHeight is set', function () {
-      // Same geometry as the self-healing case above, but with a user-provided
-      // maxHeight (the reporter found maxHeight={350} made the bug reproduce
-      // reliably instead of intermittently).
       let res = render(<Example triggerTop={606} maxHeight={300} />);
       let overlay = res.getByTestId('overlay');
 
-      // The flip-trigger comparison folds the user-set maxHeight into the overlay's
-      // rendered size on the height axis, so even on the very first pass it flips to
-      // the top: the full requested maxHeight (300) needs more room than the ~50px
-      // available below, and the ~594px available above can satisfy it.
       expect(overlay).toHaveTextContent('placement: top');
       expect(parseInt(overlay.style.maxHeight, 10)).toBe(300);
 
-      // Content populates on a second render, identically to the self-healing case.
       overlayNaturalHeight = 400;
       fireEvent(window, new Event('resize'));
 
-      // Remains flipped to the top, still grown to the full requested maxHeight.
       expect(overlay).toHaveTextContent('placement: top');
       expect(parseInt(overlay.style.maxHeight, 10)).toBe(300);
     });
