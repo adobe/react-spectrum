@@ -27,7 +27,10 @@ export const description = 'A navigation component that displays a nested, hiera
           <NavigationTreeItem id="photos" href="/photos" title="Photos" />
           <NavigationTreeItem id="videos" href="/videos" title="Videos" />
         </NavigationTreeItem>
-        <NavigationTreeItem id="shared" href="/shared" title="Shared" />
+        <NavigationTreeItem id="shared" title="Shared">
+          <NavigationTreeItem id="food" href="/food" title="Food" />
+          <NavigationTreeItem id="drinks" href="/drinks" title="Drinks" />
+        </NavigationTreeItem>
       </NavigationTree>
     )}
   </RoutedNavigationTree>
@@ -46,7 +49,10 @@ export const description = 'A navigation component that displays a nested, hiera
           <NavigationTreeItem id="photos" href="/photos" title="Photos" />
           <NavigationTreeItem id="videos" href="/videos" title="Videos" />
         </NavigationTreeItem>
-        <NavigationTreeItem id="shared" href="/shared" title="Shared" />
+        <NavigationTreeItem id="shared" title="Shared">
+          <NavigationTreeItem id="food" href="/food" title="Food" />
+          <NavigationTreeItem id="drinks" href="/drinks" title="Drinks" />
+        </NavigationTreeItem>
       </NavigationTree>
     )}
   </RoutedNavigationTree>
@@ -89,35 +95,7 @@ function Example() {
 }
 ```
 
-## Current route
-
-Each `NavigationTreeItem` accepts an `href`. Set the `selectedRoute` prop on the `NavigationTree` to the current page's path, and the item whose `href` matches is marked with `aria-current="page"` (and a `data-current` attribute for styling).
-
-Combine `NavigationTree` with a client side router by wrapping your app in a [RouterProvider](routing.html) so that activating a link updates the route. Then set `selectedRoute`. In this example the router navigation is stored in local state to show the current route updating as you activate links.
-
-```tsx render
-"use client";
-import {NavigationTree, NavigationTreeItem} from 'vanilla-starter/NavigationTree';
-import {RouterProvider} from 'react-aria-components';
-import {useState} from 'react';
-
-function Example() {
-  let [route, setRoute] = useState('/inbox');
-  return (
-    /*- begin highlight -*/
-    <RouterProvider navigate={setRoute}>
-      {/*- end highlight -*/}
-      <NavigationTree aria-label="Mail" selectedRoute={route}>
-        <NavigationTreeItem href="/inbox" title="Inbox" />
-        <NavigationTreeItem href="/drafts" title="Drafts" />
-        <NavigationTreeItem href="/sent" title="Sent" />
-      </NavigationTree>
-    </RouterProvider>
-  );
-}
-```
-
-## Sections
+### Sections
 
 Use `NavigationTreeSection` to group related items, with an optional `NavigationTreeHeader` to label each group.
 
@@ -144,6 +122,34 @@ import {RoutedNavigationTree} from './RoutedNavigationTree';
     </NavigationTree>
   )}
 </RoutedNavigationTree>
+```
+
+## Current route
+
+Each `NavigationTreeItem` accepts an `href`. Set the `selectedRoute` prop on the `NavigationTree` to the current page's path, and the item whose `href` matches is marked with `aria-current="page"` (and a `data-current` attribute for styling).
+
+Combine `NavigationTree` with a client side router by wrapping your app in a [RouterProvider](routing.html) so that activating a link updates the route. Then set `selectedRoute`. In this example the router navigation is stored in local state to show the current route updating as you activate links.
+
+```tsx render
+"use client";
+import {NavigationTree, NavigationTreeItem} from 'vanilla-starter/NavigationTree';
+import {RouterProvider} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example() {
+  let [route, setRoute] = useState('/inbox');
+  return (
+    /*- begin highlight -*/
+    <RouterProvider navigate={setRoute}>
+      {/*- end highlight -*/}
+      <NavigationTree aria-label="Mail" selectedRoute={route}>
+        <NavigationTreeItem href="/inbox" title="Inbox" />
+        <NavigationTreeItem href="/drafts" title="Drafts" />
+        <NavigationTreeItem href="/sent" title="Sent" />
+      </NavigationTree>
+    </RouterProvider>
+  );
+}
 ```
 
 ## API
