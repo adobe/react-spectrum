@@ -219,7 +219,7 @@ describe('useOverlayPosition', function () {
   describe('flipping when the overlay outgrows its current placement', function () {
     // Natural (unclamped) content height; tests mutate this to simulate content
     // populating after the initial positioning pass.
-    let overlayNaturalHeight = 40;
+    let overlayNaturalHeight: number;
 
     beforeEach(() => {
       overlayNaturalHeight = 40;
