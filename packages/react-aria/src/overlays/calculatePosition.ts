@@ -462,9 +462,7 @@ export function calculatePositionInternal(
     isContainerDescendentOfBoundary
   );
 
-  // Check if the overlay's size is greater than the available space to determine if we need to flip.
-  // On the height axis, fold in the user-set maxHeight so a stale clamped measurement from a previous
-  // positioning pass doesn't mask the overlay's true (unclamped) content size.
+  // On the height axis, use the user-set maxHeight instead of a possibly stale clamped measurement.
   let sizeForFlipCheck =
     size === 'height' ? (userSetMaxHeight ?? overlaySize[size]) : overlaySize[size];
   if (flip && sizeForFlipCheck > space) {
