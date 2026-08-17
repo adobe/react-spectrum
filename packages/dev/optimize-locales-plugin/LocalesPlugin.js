@@ -23,7 +23,7 @@ const REACT_ARIA_PACKAGES = [
 ];
 const LOCALE_EXTENSIONS = ['json', 'mjs', 'js', 'cjs'];
 
-const LOCALES_GLOB = `**/{${REACT_ARIA_PACKAGES.join(',')}}/**/[a-z][a-z]-[A-Z][A-Z].{${LOCALE_EXTENSIONS.join(',')}}`;
+const LOCALES_GLOB = `**/{${REACT_ARIA_PACKAGES.join(',')}}/**/??-??.{${LOCALE_EXTENSIONS.join(',')}}`;
 
 let plugin = createUnplugin(({locales}) => {
   locales = locales.map(l => new Intl.Locale(l));

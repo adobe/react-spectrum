@@ -16,7 +16,7 @@ const localesLoader = require('../LocalesLoader');
 const EMPTY_JS = path.join(path.dirname(require.resolve('../LocalesPlugin')), 'empty.js');
 const LOADER = path.join(path.dirname(require.resolve('../LocalesPlugin')), 'LocalesLoader.js');
 const LOCALES_GLOB =
-  '**/{@react-stately,@react-aria,@react-spectrum,@adobe/react-spectrum,react-stately,react-aria,react-aria-components}/**/[a-z][a-z]-[A-Z][A-Z].{json,mjs,js,cjs}';
+  '**/{@react-stately,@react-aria,@react-spectrum,@adobe/react-spectrum,react-stately,react-aria,react-aria-components}/**/??-??.{json,mjs,js,cjs}';
 
 function createPlugin(locales = ['en-US']) {
   return LocalesPlugin.raw({locales}, {framework: 'rollup'});
