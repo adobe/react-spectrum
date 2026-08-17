@@ -193,4 +193,93 @@ describe('useSliderState', () => {
     expect(onChangeSpy).not.toHaveBeenCalled();
     expect(onChangeEndSpy).not.toHaveBeenCalled();
   });
+
+  it('should return the closest thumb to a value', () => {
+    let result = renderHook(() =>
+      useSliderState({defaultValue: [20, 50, 80], numberFormatter})
+    ).result;
+
+    expect(result.current.getClosestThumbIndex(0)).toBe(0);
+    expect(result.current.getClosestThumbIndex(34)).toBe(0);
+    expect(result.current.getClosestThumbIndex(36)).toBe(1);
+    expect(result.current.getClosestThumbIndex(50)).toBe(1);
+    expect(result.current.getClosestThumbIndex(100)).toBe(2);
+  });
+
+  it('should return the last of two stacked thumbs as the closest', () => {
+    let result = renderHook(() => useSliderState({defaultValue: [50, 50], numberFormatter})).result;
+
+    expect(result.current.getClosestThumbIndex(50)).toBe(1);
+  });
+
+  describe('snapPoints', () => {
+    let renderSnapSlider = props =>
+      renderHook(() =>
+        useSliderState({defaultValue: [0], snapPoints: [0, 25, 50], numberFormatter, ...props})
+      ).result;
+
+    it('should snap to the nearest snap point within the threshold', () => {
+      let result = renderSnapSlider();
+
+      act(() => result.current.setThumbPercent(0, 0.49));
+      expect(result.current.getThumbValue(0)).toBe(50);
+
+      act(() => result.current.setThumbPercent(0, 0.515));
+      expect(result.current.getThumbValue(0)).toBe(50);
+    });
+
+    it('should leave values outside the threshold alone', () => {
+      let result = renderSnapSlider();
+
+      act(() => result.current.setThumbPercent(0, 0.45));
+      expect(result.current.getThumbValue(0)).toBe(45);
+
+      act(() => result.current.setThumbPercent(0, 0.56));
+      expect(result.current.getThumbValue(0)).toBe(56);
+    });
+
+    it('should pick the closest snap point when two are in range', () => {
+      let result = renderSnapSlider({snapPoints: [49, 51], snapThreshold: 0.5});
+
+      act(() => result.current.setThumbPercent(0, 0.4));
+      expect(result.current.getThumbValue(0)).toBe(49);
+
+      act(() => result.current.setThumbPercent(0, 0.6));
+      expect(result.current.getThumbValue(0)).toBe(51);
+    });
+
+    it('should snap to points that are not multiples of step', () => {
+      let result = renderSnapSlider({snapPoints: [12.5], step: 5});
+
+      act(() => result.current.setThumbPercent(0, 0.13));
+      expect(result.current.getThumbValue(0)).toBe(12.5);
+    });
+
+    it('should keep snapped values within the thumb bounds', () => {
+      let result = renderSnapSlider({defaultValue: [0, 40], snapPoints: [50]});
+
+      act(() => result.current.setThumbPercent(0, 0.5));
+      expect(result.current.values).toEqual([40, 40]);
+    });
+
+    it('should not affect keyboard interactions', () => {
+      let result = renderSnapSlider({defaultValue: [45]});
+
+      act(() => result.current.incrementThumb(0));
+      expect(result.current.getThumbValue(0)).toBe(46);
+
+      act(() => result.current.setThumbValue(0, 49));
+      expect(result.current.getThumbValue(0)).toBe(49);
+
+      act(() => result.current.decrementThumb(0));
+      expect(result.current.getThumbValue(0)).toBe(48);
+    });
+
+    it('should not snap when snapThreshold is 0', () => {
+      let result = renderSnapSlider({snapThreshold: 0});
+
+      act(() => result.current.setThumbPercent(0, 0.49));
+      expect(result.current.getThumbValue(0)).toBe(49);
+    });
+  });
 });

@@ -17,6 +17,7 @@ import {
   Slider,
   SliderContext,
   SliderFill,
+  SliderMark,
   SliderOutput,
   SliderThumb,
   SliderTrack
@@ -455,5 +456,134 @@ describe('Slider', () => {
       <TestSlider sliderProps={{value: 80, orientation: 'vertical'}} fillProps={{offset: 50}} />
     );
     expect(fill).toHaveStyle({position: 'absolute', bottom: '50%', height: '30%', width: '100%'});
+  });
+
+  describe('SliderMark', () => {
+    let renderMarks = (sliderProps = {}, markProps, markValues = [0, 25, 50]) => {
+      let values = [].concat(sliderProps.defaultValue ?? 0);
+      return render(
+        <Slider defaultValue={0} {...sliderProps}>
+          <Label>Opacity</Label>
+          <SliderTrack>
+            {markValues.map(value => (
+              <SliderMark key={value} value={value} {...markProps}>
+                {value}
+              </SliderMark>
+            ))}
+            {values.map((_, i) => (
+              <SliderThumb key={i} index={i} aria-label={`thumb ${i}`} />
+            ))}
+          </SliderTrack>
+        </Slider>
+      );
+    };
+
+    it('should render marks positioned along the track', () => {
+      let {getByRole} = renderMarks();
+      let marks = getByRole('group').querySelectorAll('.react-aria-SliderMark');
+
+      expect(marks).toHaveLength(3);
+      expect(marks[1]).toHaveTextContent('25');
+      expect(marks[1]).toHaveAttribute('data-orientation', 'horizontal');
+      expect(marks[1]).toHaveStyle({
+        position: 'absolute',
+        left: '25%',
+        transform: 'translate(-50%, -50%)'
+      });
+    });
+
+    it('should position marks from the end when vertical', () => {
+      let {getByRole} = renderMarks({orientation: 'vertical'});
+      let marks = getByRole('group').querySelectorAll('.react-aria-SliderMark');
+
+      expect(marks[1]).toHaveAttribute('data-orientation', 'vertical');
+      expect(marks[1]).toHaveStyle({position: 'absolute', top: '75%'});
+    });
+
+    it('should support render props', () => {
+      let {getByRole} = renderMarks(
+        {},
+        {className: ({value, isDisabled}) => `mark-${value} ${isDisabled ? 'disabled' : ''}`.trim()}
+      );
+      let marks = getByRole('group').querySelectorAll('[class^="mark-"]');
+
+      expect(marks[1]).toHaveClass('mark-25');
+    });
+
+    it('should move the nearest thumb to the mark value when pressed', () => {
+      let onChange = jest.fn();
+      let onChangeEnd = jest.fn();
+      let {getByRole} = renderMarks({onChange, onChangeEnd});
+      let marks = getByRole('group').querySelectorAll('.react-aria-SliderMark');
+
+      fireEvent.mouseDown(marks[2]);
+      expect(getByRole('slider')).toHaveValue('50');
+      expect(onChange).toHaveBeenCalledWith(50);
+      expect(onChangeEnd).toHaveBeenCalledWith(50);
+    });
+
+    it('should not let the track handle a press on a mark', () => {
+      let {getByRole} = renderMarks({}, {style: {width: 200}});
+      let marks = getByRole('group').querySelectorAll('.react-aria-SliderMark');
+
+      // The track has no layout in JSDOM, so if it handled the press the thumb would land on 0.
+      fireEvent.mouseDown(marks[1]);
+      expect(getByRole('slider')).toHaveValue('25');
+    });
+
+    it('should move the closest of multiple thumbs', () => {
+      let {getAllByRole, getByRole} = renderMarks({defaultValue: [10, 80]});
+      let marks = getByRole('group').querySelectorAll('.react-aria-SliderMark');
+      let sliders = getAllByRole('slider');
+
+      fireEvent.mouseDown(marks[2]);
+      expect(sliders[0]).toHaveValue('10');
+      expect(sliders[1]).toHaveValue('50');
+    });
+
+    it('should round a mark that is not a snap point to the nearest step', () => {
+      let onChange = jest.fn();
+      let {getByRole} = renderMarks({onChange, step: 5}, undefined, [12.5]);
+
+      fireEvent.mouseDown(getByRole('group').querySelector('.react-aria-SliderMark'));
+      expect(onChange).toHaveBeenCalledWith(15);
+    });
+
+    it('should land exactly on a mark that is also a snap point', () => {
+      let onChange = jest.fn();
+      let {getByRole} = renderMarks({onChange, step: 5, snapPoints: [12.5]}, undefined, [12.5]);
+
+      fireEvent.mouseDown(getByRole('group').querySelector('.react-aria-SliderMark'));
+      expect(onChange).toHaveBeenCalledWith(12.5);
+    });
+
+    it('should do nothing when the slider is disabled', () => {
+      let onChange = jest.fn();
+      let {getByRole} = renderMarks({onChange, isDisabled: true});
+      let marks = getByRole('group').querySelectorAll('.react-aria-SliderMark');
+
+      expect(marks[1]).toHaveAttribute('data-disabled', 'true');
+      fireEvent.mouseDown(marks[1]);
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('should support hover state', async () => {
+      let onHoverChange = jest.fn();
+      let {getByRole} = renderMarks(
+        {},
+        {onHoverChange, className: ({isHovered}) => (isHovered ? 'mark hovered' : 'mark')}
+      );
+      let mark = getByRole('group').querySelector('.mark');
+
+      expect(mark).not.toHaveAttribute('data-hovered');
+
+      await user.hover(mark);
+      expect(mark).toHaveAttribute('data-hovered', 'true');
+      expect(mark).toHaveClass('hovered');
+      expect(onHoverChange).toHaveBeenCalledWith(true);
+
+      await user.unhover(mark);
+      expect(mark).not.toHaveAttribute('data-hovered');
+    });
   });
 });

@@ -14,7 +14,7 @@ import {Label} from '../src/Label';
 
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Slider, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
+import {Slider, SliderMark, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
 import styles from '../example/index.css';
 import './styles.css';
 
@@ -103,7 +103,53 @@ SliderCSS.argTypes = {
   }
 };
 
-const CustomThumb = ({index, children}: {index: number; children: React.ReactNode}) => {
+const MARKS = [-100, -50, 0, 50, 100];
+
+export const SliderMarks: SliderStory = props => (
+  <Slider
+    {...props}
+    aria-label="Balance"
+    defaultValue={0}
+    minValue={-100}
+    maxValue={100}
+    snapPoints={MARKS}
+    style={{position: 'relative', width: 300}}>
+    <SliderOutput />
+    <SliderTrack style={{position: 'relative', height: 30, width: '100%'}}>
+      <div
+        style={{position: 'absolute', backgroundColor: 'gray', height: 3, top: 13, width: '100%'}}
+      />
+      {MARKS.map(value => (
+        <SliderMark key={value} value={value} style={{top: 14}}>
+          {({isHovered}) => (
+            <>
+              <div style={{width: 2, height: 10, backgroundColor: 'gray'}} />
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 12,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: 12,
+                  textDecoration: isHovered ? 'underline' : undefined
+                }}>
+                {value}
+              </span>
+            </>
+          )}
+        </SliderMark>
+      ))}
+      <CustomThumb index={0} />
+    </SliderTrack>
+  </Slider>
+);
+
+SliderMarks.args = {
+  isDisabled: false,
+  snapThreshold: 0.03
+};
+
+const CustomThumb = ({index, children}: {index: number; children?: React.ReactNode}) => {
   return (
     <SliderThumb
       index={index}

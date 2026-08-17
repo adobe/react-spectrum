@@ -188,6 +188,7 @@ export {
   SliderTrack,
   SliderThumb,
   SliderFill,
+  SliderMark,
   SliderContext,
   SliderOutputContext,
   SliderTrackContext,
@@ -457,7 +458,9 @@ export type {
   SliderTrackRenderProps,
   SliderFillProps,
   SliderFillRenderProps,
-  SliderThumbRenderProps
+  SliderThumbRenderProps,
+  SliderMarkProps,
+  SliderMarkRenderProps
 } from '../src/Slider';
 export type {
   SwitchProps,

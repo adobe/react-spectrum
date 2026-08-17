@@ -99,6 +99,46 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
     fillOffset: 75
   }} />
 
+## Marks
+
+Render a `<SliderMark>` for each value you want to label along the track. Pressing a mark moves the nearest thumb to its value, so labels stay usable when they sit outside the track's bounds. Marks are not focusable — the thumb remains the keyboard interface — so keep their content short, or add `aria-hidden` where it would only repeat what the thumb already announces.
+
+```tsx render
+"use client";
+import {Slider} from 'vanilla-starter/Slider';
+
+<Slider
+  label="Brightness"
+  minValue={-100}
+  maxValue={100}
+  defaultValue={0}
+  /*- begin highlight -*/
+  marks={[-100, -50, 0, 50, 100]} />
+  {/*- end highlight -*/}
+```
+
+### Snapping
+
+Marks alone do not change how a thumb moves. Use `snapPoints` to make a pointer snap to values as it passes them, while leaving the values in between reachable. `snapThreshold` controls how close the pointer must get, as a fraction of the track length.
+
+Keyboard interactions are deliberately unaffected — arrow keys continue to move by `step` — so a snap point is a pointer affordance rather than a restriction on the value.
+
+<VisualExample
+  component={VanillaSlider}
+  docs={vanillaDocs.exports.Slider}
+  links={vanillaDocs.links}
+  props={['snapThreshold', 'step']}
+  initialProps={{
+    label: 'Brightness',
+    minValue: -100,
+    maxValue: 100,
+    defaultValue: 0,
+    marks: [-100, -50, 0, 50, 100],
+    snapPoints: [-100, -50, 0, 50, 100]
+  }} />
+
+Snap points do not have to be multiples of `step`. A value such as `0` on a slider that steps by 25 is only reachable with a pointer.
+
 ## Examples
 
 <ExampleList tag="slider" pages={props.pages} />
@@ -107,12 +147,13 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 
 <Anatomy />
 
-```tsx links={{Slider: '#slider', SliderOutput: '#slideroutput', SliderTrack: '#slidertrack', SliderFill: '#sliderfill', SliderThumb: '#sliderthumb'}}
+```tsx links={{Slider: '#slider', SliderOutput: '#slideroutput', SliderTrack: '#slidertrack', SliderFill: '#sliderfill', SliderMark: '#slidermark', SliderThumb: '#sliderthumb'}}
 <Slider>
   <Label />
   <SliderOutput />
   <SliderTrack>
     <SliderFill />
+    <SliderMark />
     <SliderThumb />
     <SliderThumb>
       <Label />
@@ -136,6 +177,10 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 ### SliderFill
 
 <PropTable component={docs.exports.SliderFill} links={docs.links} showDescription />
+
+### SliderMark
+
+<PropTable component={docs.exports.SliderMark} links={docs.links} showDescription />
 
 ### SliderThumb
 
