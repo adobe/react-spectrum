@@ -625,6 +625,7 @@ jobs:
           name: build packages and seed verdaccio storage directly
           command: |
             mkdir -p verdaccio-workspace
+            ./scripts/verdaccio-ci-for-publishing.sh
             ./scripts/verdaccio-deploy.sh
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
