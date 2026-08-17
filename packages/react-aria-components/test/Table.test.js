@@ -886,7 +886,7 @@ describe('Table', () => {
 
     await user.tab();
     let columnHeader = getAllByRole('columnheader')[0];
-  
+
     expect(document.activeElement).toBe(columnHeader);
 
     await user.keyboard('{ArrowDown}');
