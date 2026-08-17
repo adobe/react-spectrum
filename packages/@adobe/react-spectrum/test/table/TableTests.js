@@ -1671,11 +1671,11 @@ export let tableTests = () => {
     });
 
     describe('focus marshalling', function () {
-      let renderFocusable = (props = {}) =>
+      let renderFocusable = () =>
         render(
           <>
             <input data-testid="before" />
-            <TableView aria-label="Table" selectionMode="multiple" {...props}>
+            <TableView aria-label="Table" selectionMode="multiple">
               <TableHeader>
                 <Column>Foo</Column>
                 <Column>Bar</Column>

@@ -875,8 +875,7 @@ describe('Table', () => {
     let columnHeader = getAllByRole('columnheader')[0];
     expect(document.activeElement).toBe(columnHeader);
 
-    fireEvent.keyDown(columnHeader, {key: 'ArrowDown'});
-    fireEvent.keyUp(columnHeader, {key: 'ArrowDown'});
+    await user.keyboard('{ArrowDown}');
 
     let cell = getAllByRole('rowheader')[0];
     expect(document.activeElement).toBe(cell);
@@ -887,21 +886,20 @@ describe('Table', () => {
 
     await user.tab();
     let columnHeader = getAllByRole('columnheader')[0];
+  
+    expect(document.activeElement).toBe(columnHeader);
 
-    fireEvent.keyDown(columnHeader, {key: 'ArrowDown'});
-    fireEvent.keyUp(columnHeader, {key: 'ArrowDown'});
+    await user.keyboard('{ArrowDown}');
 
     let cell1 = getAllByRole('rowheader')[0];
     expect(document.activeElement).toBe(cell1);
 
-    fireEvent.keyDown(cell1, {key: 'ArrowRight'});
-    fireEvent.keyUp(cell1, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
     let cell2 = getAllByRole('gridcell')[0];
     expect(document.activeElement).toBe(cell2);
 
-    fireEvent.keyDown(cell2, {key: 'Home'});
-    fireEvent.keyUp(cell2, {key: 'Home'});
+    await user.keyboard('{Home}');
 
     expect(document.activeElement).toBe(cell1);
   });
