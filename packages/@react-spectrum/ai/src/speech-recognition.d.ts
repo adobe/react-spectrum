@@ -13,19 +13,10 @@
 // Ambient declarations for parts of the Web Speech API missing from TypeScript's
 // lib.dom.d.ts: the recognizer constructor, its vendor-prefixed alias, event
 // types, and the User-Agent Client Hints surface used for the Chromium browser
-// allowlist. SpeechRecognitionAlternative, SpeechRecognitionResult, and
-// SpeechRecognitionResultList ARE provided by lib.dom and are not redeclared.
+// allowlist. SpeechRecognitionAlternative, SpeechRecognitionResult,
+// SpeechRecognitionResultList, and SpeechRecognitionErrorCode ARE provided by
+// lib.dom and are not redeclared.
 // Spec: https://wicg.github.io/speech-api/
-
-type SpeechRecognitionErrorCode =
-  | 'no-speech'
-  | 'aborted'
-  | 'audio-capture'
-  | 'network'
-  | 'not-allowed'
-  | 'service-not-allowed'
-  | 'language-not-supported'
-  | 'phrases-not-supported';
 
 interface SpeechRecognitionEvent extends Event {
   readonly resultIndex: number;

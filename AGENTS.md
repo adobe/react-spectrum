@@ -15,7 +15,7 @@ The repo is layered. Changes flow up from the lowest level:
 
 This repo does **not** use the conventional JS toolchain — use these, don't swap in defaults:
 
-- Format with `yarn format` (oxfmt), **not** Prettier. Lint with `yarn lint` (oxlint), **not** ESLint. Type-check with `yarn check-types` (tsgo), **not** tsc. Build with `yarn build` (Parcel), **not** rollup/tsc.
+- Format with `yarn format` (oxfmt), **not** Prettier. Lint with `yarn lint` (oxlint), **not** ESLint. Type-check with `yarn check-types` (tsc, TypeScript 7's native compiler). Build with `yarn build` (Parcel), **not** rollup/tsc.
 - **Don't run `yarn chromatic` / `yarn chromatic:forced-colors`** — maintainers run the VRT suites.
 - All commonly used commands live in the root `package.json` scripts.
 
