@@ -13,9 +13,9 @@
 export interface Cell {
   cx: number;
   cy: number;
-  // Retained from the source data; no longer affects rendering.
-  outer: boolean;
   stagger: number;
+  adjustX?: number;
+  adjustY?: number;
 }
 
 type StaggerMode = 'individual' | 'grouped' | 'by-row';
@@ -30,18 +30,18 @@ interface BuildOptions {
 // ai-logo: original 12-cell diamond layout with hand-tuned timings.
 // ─────────────────────────────────────────────────────────────
 export const aiLogo: Cell[] = [
-  {cx: 240, cy: 360, outer: true, stagger: 0},
-  {cx: 160, cy: 320, outer: true, stagger: 2},
-  {cx: 320, cy: 320, outer: true, stagger: 4},
-  {cx: 200, cy: 280, outer: false, stagger: 6},
-  {cx: 280, cy: 280, outer: false, stagger: 8},
-  {cx: 120, cy: 240, outer: true, stagger: 10},
-  {cx: 360, cy: 240, outer: true, stagger: 14},
-  {cx: 200, cy: 200, outer: false, stagger: 16},
-  {cx: 280, cy: 200, outer: false, stagger: 18},
-  {cx: 160, cy: 160, outer: true, stagger: 20},
-  {cx: 320, cy: 160, outer: true, stagger: 22},
-  {cx: 240, cy: 120, outer: true, stagger: 24}
+  {cx: 240, cy: 360, adjustY: -0.5, stagger: 0},
+  {cx: 160, cy: 320, stagger: 2},
+  {cx: 320, cy: 320, stagger: 4},
+  {cx: 200, cy: 280, stagger: 6},
+  {cx: 280, cy: 280, stagger: 8},
+  {cx: 120, cy: 240, adjustX: 0.5, stagger: 10},
+  {cx: 360, cy: 240, adjustX: -0.5, stagger: 14},
+  {cx: 200, cy: 200, stagger: 16},
+  {cx: 280, cy: 200, stagger: 18},
+  {cx: 160, cy: 160, stagger: 20},
+  {cx: 320, cy: 160, stagger: 22},
+  {cx: 240, cy: 120, adjustY: 0.5, stagger: 24}
 ];
 
 // ─────────────────────────────────────────────────────────────
