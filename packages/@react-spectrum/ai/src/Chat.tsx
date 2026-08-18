@@ -306,11 +306,6 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           display: 'flex',
           boxSizing: 'border-box',
           minWidth: 0,
-          // Reserve the scrollbar gutter so the content-box width doesn't change when the
-          // vertical scrollbar appears/disappears. Without this, a width change rewraps the
-          // virtualized items to a different height, which the item-size observer reports back,
-          // toggling the scrollbar again — an infinite measure→relayout loop that trips React's
-          // "Maximum update depth exceeded".
           scrollbarGutter: 'stable'
         }}
         className={styles}>
