@@ -22,6 +22,7 @@ import {
   BaseCollection,
   CollectionNode,
   ItemNode,
+  LoaderNode,
   SectionNode
 } from 'react-aria/private/collections/BaseCollection';
 import {
@@ -40,6 +41,7 @@ import {
   Provider,
   RenderProps,
   SlotProps,
+  StyleProps,
   StyleRenderProps,
   useContextProps,
   useRenderProps,
@@ -79,7 +81,12 @@ import {
 } from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
 import {HeaderContext} from './Header';
+import {inertValue} from 'react-aria/private/utils/inertValue';
 import {KeyboardContext} from './Keyboard';
+import {
+  LoadMoreSentinelProps,
+  useLoadMoreSentinel
+} from 'react-aria/private/utils/useLoadMoreSentinel';
 import {mergeProps} from 'react-aria/mergeProps';
 import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import {Node} from '@react-types/shared';
@@ -631,3 +638,88 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
     </ElementType>
   );
 });
+
+export interface MenuLoadMoreItemProps
+  extends
+    Omit<LoadMoreSentinelProps, 'collection'>,
+    StyleProps,
+    DOMRenderProps<'div', undefined>,
+    GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
+   * @default 'react-aria-MenuLoadMoreItem'
+   */
+  className?: string;
+  /**
+   * The load more spinner to render when loading additional items.
+   */
+  children?: ReactNode;
+  /**
+   * Whether or not the loading spinner should be rendered or not.
+   */
+  isLoading?: boolean;
+}
+
+export const MenuLoadMoreItem = createLeafComponent(
+  LoaderNode,
+  function MenuLoadingIndicator(
+    props: MenuLoadMoreItemProps,
+    ref: ForwardedRef<HTMLDivElement>,
+    item: Node<object>
+  ) {
+    let state = useContext(MenuStateContext)!;
+    let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+
+    let sentinelRef = useRef<HTMLDivElement>(null);
+    let memoedLoadMoreProps = useMemo(
+      () => ({
+        onLoadMore,
+        collection: state?.collection,
+        sentinelRef,
+        scrollOffset
+      }),
+      [onLoadMore, scrollOffset, state?.collection]
+    );
+    useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+    let renderProps = useRenderProps({
+      ...otherProps,
+      id: undefined,
+      children: item.rendered,
+      defaultClassName: 'react-aria-MenuLoadingIndicator',
+      values: undefined
+    });
+
+    let itemProps = {
+      // For Android talkback
+      tabIndex: -1
+    };
+
+    return (
+      <>
+        {/* Always render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+        {/* @ts-ignore - compatibility with React < 19 */}
+        <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)}>
+          <div
+            data-testid="loadMoreSentinel"
+            ref={sentinelRef}
+            style={{position: 'absolute', height: 1, width: 1}}
+          />
+        </div>
+        {isLoading && renderProps.children && (
+          <>
+            {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- loader row is not selectable */}
+            <dom.div
+              {...mergeProps(filterDOMProps(props, {global: true}), itemProps)}
+              {...renderProps}
+              role="menuitem"
+              ref={ref as ForwardedRef<HTMLDivElement>}>
+              {renderProps.children}
+            </dom.div>
+          </>
+        )}
+      </>
+    );
+  }
+);
