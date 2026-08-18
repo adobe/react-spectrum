@@ -125,7 +125,7 @@ export function prose(this: MacroContext | void) {
     },
     'code:not(pre code)': {
       ...font('code'),
-      fontSize: 'inherit',
+      fontSize: '0.9em',
       backgroundColor: colorTokenToString(
         resolveColorToken(colorToken('background-layer-1-color'))
       ),
