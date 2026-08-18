@@ -283,7 +283,7 @@ function BlueLine({box}: {box: MarginBox}) {
     <>
       <div
         style={{
-          // display: 'none',
+          display: 'none',
           position: 'absolute',
           left: x,
           top: box.top,
