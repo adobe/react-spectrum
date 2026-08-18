@@ -36,12 +36,12 @@ export function useToken(
 
   useEvent(useRef(typeof document !== 'undefined' ? document : null), 'selectionchange', () => {
     let selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0 || !ref.current) {
+    if (!selection || !ref.current) {
       return;
     }
 
-    let range = selection.getRangeAt(0);
-    if (!range.collapsed && range.intersectsNode(ref.current)) {
+    let range = selection.rangeCount === 0 ? null : selection.getRangeAt(0);
+    if (!range?.collapsed && range?.intersectsNode(ref.current)) {
       setSelected(true);
     } else {
       setSelected(false);

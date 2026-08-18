@@ -20,7 +20,7 @@ export function Icons() {
         <P>See below for a full list of available icons. Click to copy import statement.</P>
         <div className={style({display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 48})}>
           {Object.keys(icons).map(icon => {
-            let Icon = icons[icon].default;
+            let Icon = icons[icon].default || icons[icon];
             let name = icon.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1');
             let importName = name.replace(/^(\d)/, '_$1');
             return (
