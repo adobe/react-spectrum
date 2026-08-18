@@ -520,7 +520,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         },
         transition: 'default',
         transitionDuration: 350,
-        paddingStart: 4,
+        paddingStart: space(5),
         width: 'full',
         '--loader-color': {
           type: 'color',
