@@ -39,6 +39,7 @@ describe('TableView', () => {
     offsetHeight = jest
       .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
       .mockImplementation(() => 1000);
+    // @ts-ignore
     window.CSSTransition = jest.fn(({children}) => children);
 
     // Mock the getAnimations method
