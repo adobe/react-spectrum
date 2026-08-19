@@ -76,7 +76,6 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {ImageContext} from './Image';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import intlMessages from '../intl/*.json';
 import {ListLayout} from 'react-stately/useVirtualizerState';
@@ -788,7 +787,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(
             })}>
             <Provider
               values={[
-                [ImageContext, {}],
                 [HeaderContext, {styles: listboxHeader({size})}],
                 [
                   HeadingContext,

@@ -76,7 +76,6 @@ import {forwardRefType} from './types';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {ImageContext} from './Image';
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {ListLayout} from 'react-stately/useVirtualizerState';
@@ -490,7 +489,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   })}>
                   <Provider
                     values={[
-                      [ImageContext, {}],
                       [HeaderContext, {styles: listboxHeader({size})}],
                       [
                         HeadingContext,
