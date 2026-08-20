@@ -230,7 +230,7 @@ const progressCircleStyles = style({
     }
   },
   marginStart: {
-    isInput: 'text-to-visual'
+    isInput: 'text-to-visual' // TODO
   }
 });
 
@@ -253,7 +253,7 @@ const emptyStateText = style({
   },
   display: 'flex',
   alignItems: 'center',
-  paddingStart: 'edge-to-text'
+  paddingStart: 'edge-to-text' // TODO
 });
 
 export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
@@ -266,6 +266,7 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   fontFamily: 'sans',
   fontSize: controlFont(),
   outlineStyle: 'none'
+  // TODO where to put popover padding like picker?
 });
 
 export let listboxItem = style(

@@ -22,7 +22,13 @@ import {ContextValue, Provider} from 'react-aria-components/slots';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {css} from '../style/style-macro' with {type: 'macro'};
-import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  controlGap,
+  controlPadding,
+  field,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -71,6 +77,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(
     necessityIndicator,
     labelPosition = 'top',
     labelAlign = 'start',
+    size = 'M',
     UNSAFE_className = '',
     UNSAFE_style,
     ...searchFieldProps
@@ -143,9 +150,9 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(
             size={props.size}
             styles={style({
               borderRadius: 'full',
-              paddingStart: 'pill',
+              paddingStart: controlPadding(),
               paddingEnd: 0
-            })}>
+            })({size})}>
             <Provider
               values={[
                 [
@@ -155,12 +162,12 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(
                       slot: 'icon',
                       styles: style({
                         flexShrink: 0,
-                        marginEnd: 'text-to-visual',
+                        marginEnd: controlGap(),
                         '--iconPrimary': {
                           type: 'fill',
                           value: 'currentColor'
                         }
-                      })
+                      })({size})
                     }),
                     styles: style({
                       size: fontRelative(20),

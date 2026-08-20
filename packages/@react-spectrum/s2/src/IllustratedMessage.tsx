@@ -14,6 +14,8 @@ import {ButtonGroupContext} from './ButtonGroup';
 import {ContentContext, HeadingContext} from './Content';
 import {ContextValue, Provider} from 'react-aria-components/slots';
 import {
+  containerGap,
+  containerPadding,
   controlFont,
   getAllowedOverrides,
   StylesPropWithHeight,
@@ -81,17 +83,31 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
     gridTemplateRows: {
       orientation: {
         vertical: {
-          default: ['min-content', 12, 'min-content', 4, 'min-content', 'min-content'],
+          default: [
+            'min-content',
+            containerPadding().size.XS,
+            'min-content',
+            containerGap().size['2XS'],
+            'min-content',
+            'min-content'
+          ],
           size: {
-            L: ['min-content', 8, 'min-content', 4, 'min-content', 'min-content']
+            L: [
+              'min-content',
+              containerPadding().size.XS,
+              'min-content',
+              containerGap().size['2XS'],
+              'min-content',
+              'min-content'
+            ]
           }
         },
-        horizontal: ['1fr', 4, '1fr']
+        horizontal: ['auto', containerGap().size['2XS'], '1fr', 'auto']
       }
     },
     gridTemplateColumns: {
       orientation: {
-        horizontal: ['1fr', 12, 'auto']
+        horizontal: ['1fr', containerPadding().size.XS, 'auto']
       }
     },
     justifyItems: {
@@ -150,7 +166,7 @@ const content = style({
 
 const buttonGroup = style({
   gridArea: 'buttonGroup',
-  marginTop: 16
+  marginTop: containerGap().size.XL
 });
 
 interface IllustratedMessageContextProps extends Partial<S2SpectrumIllustratedMessageProps> {

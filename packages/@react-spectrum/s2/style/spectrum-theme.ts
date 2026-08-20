@@ -520,6 +520,20 @@ const sizeSpacing = {
   'container-padding-extra-large': size(parseFloat(getToken('container-padding-extra-large'))),
   'container-padding-2x-large': size(parseFloat(getToken('container-padding-2x-large'))),
   'container-padding-3x-large': size(parseFloat(getToken('container-padding-3x-large'))),
+  'list-item-gap-small': size(parseFloat(getToken('list-item-gap-small'))),
+  'list-item-gap-medium': size(parseFloat(getToken('list-item-gap-medium'))),
+  'list-item-padding-vertical-regular': size(
+    parseFloat(getToken('list-item-padding-vertical-regular'))
+  ),
+  'list-item-padding-vertical-spacious': size(
+    parseFloat(getToken('list-item-padding-vertical-spacious'))
+  ),
+  'list-item-padding-horizontal': size(parseFloat(getToken('list-item-padding-horizontal'))),
+  'text-gap-extra-small': size(parseFloat(getToken('text-gap-extra-small'))),
+  'text-gap-small': size(parseFloat(getToken('text-gap-small'))),
+  'text-gap-medium': size(parseFloat(getToken('text-gap-medium'))),
+  'text-gap-large': size(parseFloat(getToken('text-gap-large'))),
+  'text-gap-extra-large': size(parseFloat(getToken('text-gap-extra-large'))),
   'popover-padding': size(parseFloat(getToken('popover-padding'))),
   'popover-gap': size(parseFloat(getToken('popover-gap')))
 } as const;

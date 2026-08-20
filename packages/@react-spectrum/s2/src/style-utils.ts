@@ -316,6 +316,27 @@ export const containerGap = () =>
     }
   }) as const;
 
+export const listItemGap = () =>
+  ({
+    default: 'list-item-gap-medium',
+    size: {
+      S: 'list-item-gap-small',
+      M: 'list-item-gap-medium'
+    }
+  }) as const;
+
+export const textGap = () =>
+  ({
+    default: 'text-gap-medium',
+    size: {
+      XS: 'text-gap-extra-small',
+      S: 'text-gap-small',
+      M: 'text-gap-medium',
+      L: 'text-gap-large',
+      XL: 'text-gap-extra-large'
+    }
+  }) as const;
+
 // Base Horizontal Padding - dynamic
 export const controlPadding = () =>
   ({
@@ -386,6 +407,20 @@ export const banner = () =>
         vertical: 'banner-gap-vertical'
       }
     }
+  }) as const;
+
+export const listItemPaddingVertical = () =>
+  ({
+    default: 'list-item-padding-vertical-regular',
+    density: {
+      default: 'list-item-padding-vertical-regular',
+      spacious: 'list-item-padding-vertical-spacious'
+    }
+  }) as const;
+
+export const listItemPaddingHorizontal = () =>
+  ({
+    default: 'list-item-padding-horizontal'
   }) as const;
 
 // This generates the border radius for t-shirt sizes using the

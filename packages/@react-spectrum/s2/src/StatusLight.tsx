@@ -13,7 +13,12 @@
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
-import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  controlFont,
+  controlGap,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {style} from '../style' with {type: 'macro'};
@@ -77,7 +82,7 @@ export const StatusLightContext =
 const wrapper = style<StatusLightStyleProps>(
   {
     display: 'flex',
-    gap: 'text-to-visual',
+    gap: controlGap(),
     alignItems: 'baseline',
     width: 'fit',
     font: controlFont(),
