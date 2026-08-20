@@ -14,9 +14,12 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createProxyMiddleware} from 'http-proxy-middleware';
 import fs from 'node:fs';
+import {spawn} from 'node:child_process';
 
 import {generateIframeModern} from './gen-iframe-modern.mjs';
 import {generatePreviewModern, generateSetupAddons} from './gen-preview-modern.mjs';
+
+const PARCEL_V3 = Boolean(process.env.PARCEL_V3);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,15 +69,19 @@ export async function start({options, router}) {
     req.connection = connection;
   });
 
-  watcherSubscription = await parcel.watch();
-  process.on('SIGINT', async () => {
-    await watcherSubscription?.unsubscribe();
-    process.exit();
-  });
+  if (!PARCEL_V3) {
+    watcherSubscription = await parcel.watch();
+    process.on('SIGINT', async () => {
+      await watcherSubscription?.unsubscribe();
+      process.exit();
+    });
+  }
 
   return {
     async bail() {
-      await watcherSubscription?.unsubscribe();
+      if (!PARCEL_V3) {
+        await watcherSubscription?.unsubscribe();
+      }
     },
     stats: {},
     totalTime: 0
@@ -83,7 +90,9 @@ export async function start({options, router}) {
 
 export async function build({options}) {
   const parcel = await createParcel(options);
-  await parcel.run();
+  if (!PARCEL_V3) {
+    await parcel.run();
+  }
 }
 
 // No core presets to register; previewAnnotations come transitively from
@@ -117,36 +126,64 @@ async function createParcel(options, isDev = false) {
     await generatePreviewModern(options, generatedEntries)
   );
 
-  return new Parcel({
-    entries: path.join(generatedEntries, 'iframe.html'),
-    config: path.resolve(options.configDir, '.parcelrc'),
-    mode: isDev ? 'development' : 'production',
-    serveOptions: isDev ? {port: 3000} : null,
-    hmrOptions: isDev ? {port: 3001} : null,
-    additionalReporters: [
-      {packageName: '@parcel/reporter-cli', resolveFrom: __filename},
-      ...(options.statsJson
-        ? [
-            {
-              packageName: 'parcel-reporter-turbosnap-stats',
-              resolveFrom: __filename
-            }
-          ]
-        : [])
-    ],
-    targets: {
-      storybook: {
-        distDir: options.outputDir,
-        publicUrl: './',
-        engines: {
-          browsers: [
-            'last 2 Chrome version',
-            'last 2 Safari versions',
-            'last 2 Edge version',
-            'last 2 Firefox versions'
-          ]
+  if (PARCEL_V3) {
+    let parcel = spawn(
+      'parcel3',
+      [
+        isDev ? 'serve' : 'build',
+        '--config',
+        path.resolve(options.configDir, '.parcelrc-v3'),
+        '-p',
+        '3000',
+        '--dist-dir',
+        options.outputDir,
+        path.join(generatedEntries, 'iframe.html')
+      ],
+      {stdio: 'inherit'}
+    );
+    if (!isDev) {
+      await new Promise((resolve, reject) => {
+        parcel.on('close', code => {
+          if (code === 0) {
+            resolve();
+          } else {
+            reject();
+          }
+        });
+      });
+    }
+  } else {
+    return new Parcel({
+      entries: path.join(generatedEntries, 'iframe.html'),
+      config: path.resolve(options.configDir, '.parcelrc'),
+      mode: isDev ? 'development' : 'production',
+      serveOptions: isDev ? {port: 3000} : null,
+      hmrOptions: isDev ? {port: 3001} : null,
+      additionalReporters: [
+        {packageName: '@parcel/reporter-cli', resolveFrom: __filename},
+        ...(options.statsJson
+          ? [
+              {
+                packageName: 'parcel-reporter-turbosnap-stats',
+                resolveFrom: __filename
+              }
+            ]
+          : [])
+      ],
+      targets: {
+        storybook: {
+          distDir: options.outputDir,
+          publicUrl: './',
+          engines: {
+            browsers: [
+              'last 2 Chrome version',
+              'last 2 Safari versions',
+              'last 2 Edge version',
+              'last 2 Firefox versions'
+            ]
+          }
         }
       }
-    }
-  });
+    });
+  }
 }

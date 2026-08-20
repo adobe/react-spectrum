@@ -49,10 +49,6 @@ export interface NumberFormatOptions extends Intl.NumberFormatOptions {
   numberingSystem?: string;
 }
 
-interface NumberRangeFormatPart extends Intl.NumberFormatPart {
-  source: 'startRange' | 'endRange' | 'shared';
-}
-
 /**
  * A wrapper around Intl.NumberFormat providing additional options, polyfills, and caching for
  * performance.
@@ -111,7 +107,7 @@ export class NumberFormatter implements Intl.NumberFormat {
   }
 
   /** Formats a number range as an array of parts. */
-  formatRangeToParts(start: number, end: number): NumberRangeFormatPart[] {
+  formatRangeToParts(start: number, end: number): Intl.NumberRangeFormatPart[] {
     if (typeof this.numberFormatter.formatRangeToParts === 'function') {
       return this.numberFormatter.formatRangeToParts(start, end);
     }
@@ -123,9 +119,9 @@ export class NumberFormatter implements Intl.NumberFormat {
     let startParts = this.numberFormatter.formatToParts(start);
     let endParts = this.numberFormatter.formatToParts(end);
     return [
-      ...startParts.map(p => ({...p, source: 'startRange'}) as NumberRangeFormatPart),
+      ...startParts.map(p => ({...p, source: 'startRange'}) as Intl.NumberRangeFormatPart),
       {type: 'literal', value: ' – ', source: 'shared'},
-      ...endParts.map(p => ({...p, source: 'endRange'}) as NumberRangeFormatPart)
+      ...endParts.map(p => ({...p, source: 'endRange'}) as Intl.NumberRangeFormatPart)
     ];
   }
 
