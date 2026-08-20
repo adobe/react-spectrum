@@ -53,6 +53,20 @@ in CSS.
 To determine whether a focus ring should be visible for an individual component rather than
 globally, see [useFocusRing](useFocusRing).
 
+### Making focus visible
+
+For the most part, focus visibility is handled automatically by `useFocusVisible`. However, if you need to
+manually set the interaction modality, such as moving focus programmatically to the first item
+of an invalid form, you can use `setInteractionModality`.
+
+```tsx
+import {setInteractionModality} from 'react-aria/useFocusVisible';
+
+setInteractionModality('keyboard');
+```
+
+
+
 ## API
 
 <FunctionAPI function={docs.exports.useFocusVisible} links={docs.links} />

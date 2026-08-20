@@ -76,7 +76,7 @@ export {
 export {useNumberFormatter} from '../src/i18n/useNumberFormatter';
 export {useListFormatter} from '../src/i18n/useListFormatter';
 export {useFocus} from '../src/interactions/useFocus';
-export {useFocusVisible} from '../src/interactions/useFocusVisible';
+export {setInteractionModality, useFocusVisible} from '../src/interactions/useFocusVisible';
 export {useFocusWithin} from '../src/interactions/useFocusWithin';
 export {useHover} from '../src/interactions/useHover';
 export {useInteractOutside} from '../src/interactions/useInteractOutside';
@@ -330,7 +330,11 @@ export type {
 } from '../src/dnd/useDroppableCollection';
 export type {DroppableItemOptions, DroppableItemResult} from '../src/dnd/useDroppableItem';
 export type {FocusProps, FocusResult} from '../src/interactions/useFocus';
-export type {FocusVisibleProps, FocusVisibleResult} from '../src/interactions/useFocusVisible';
+export type {
+  Modality,
+  FocusVisibleProps,
+  FocusVisibleResult
+} from '../src/interactions/useFocusVisible';
 export type {FocusWithinProps, FocusWithinResult} from '../src/interactions/useFocusWithin';
 export type {HoverProps, HoverResult} from '../src/interactions/useHover';
 export type {InteractOutsideProps} from '../src/interactions/useInteractOutside';
