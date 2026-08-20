@@ -20,7 +20,7 @@
  */
 
 import {Button} from '../src/Button';
-import {ComboBox, ComboBoxItem} from '../src/ComboBox';
+import {ComboBox} from '../src/ComboBox';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {Link} from '../src/Link';
@@ -116,11 +116,11 @@ export function PreviewWithComboBox() {
             </div>
             <Popover>
               <ListBox>
-                <ComboBoxItem>Getting Started</ComboBoxItem>
-                <ComboBoxItem>Components</ComboBoxItem>
-                <ComboBoxItem>Hooks</ComboBoxItem>
-                <ComboBoxItem>Accessibility</ComboBoxItem>
-                <ComboBoxItem>Internationalization</ComboBoxItem>
+                <ListBoxItem>Getting Started</ListBoxItem>
+                <ListBoxItem>Components</ListBoxItem>
+                <ListBoxItem>Hooks</ListBoxItem>
+                <ListBoxItem>Accessibility</ListBoxItem>
+                <ListBoxItem>Internationalization</ListBoxItem>
               </ListBox>
             </Popover>
           </ComboBox>
