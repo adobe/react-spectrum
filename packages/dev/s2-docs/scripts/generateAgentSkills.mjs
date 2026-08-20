@@ -4,18 +4,23 @@
  * Generates Agent Skills for React Spectrum (S2), migration, and React Aria.
  *
  * This script creates skills in the Agent Skills format (https://agentskills.io/specification)
+ * and publishes a discovery index per the Agent Skills Discovery via Well-Known URIs RFC
+ * (https://github.com/cloudflare/agent-skills-discovery-rfc), currently at v0.2.0.
  *
  * Usage:
  * node packages/dev/s2-docs/scripts/generateAgentSkills.mjs.
  *
  * The script will:
  * 1. Run the markdown docs generation if dist doesn't exist
- * 2. Create .well-known/skills directories inside the docs dist output
+ * 2. Create .well-known/agent-skills directories inside the docs dist output
  * 3. Copy relevant documentation to references/ subdirectories
- * 4. Generate .well-known/skills/index.json for discovery.
+ * 4. Package each skill with supporting files as a `.tar.gz` archive
+ * 5. Generate .well-known/agent-skills/index.json for discovery, with a `type`, `url`, and
+ *    SHA-256 `digest` per skill.
  */
 
-import {execSync} from 'child_process';
+import crypto from 'crypto';
+import {execFileSync, execSync} from 'child_process';
 import {fileURLToPath} from 'url';
 import fs from 'fs';
 import path from 'path';
@@ -30,7 +35,8 @@ const MARKDOWN_DOCS_SCRIPT = path.join(__dirname, 'generateMarkdownDocs.mjs');
 const MIGRATION_REFS_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/migration-references');
 const AUDIT_SKILL_SOURCE_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/spectrum-audit');
 const WELL_KNOWN_DIR = '.well-known';
-const WELL_KNOWN_SKILLS_DIR = 'skills';
+const WELL_KNOWN_SKILLS_DIR = 'agent-skills';
+const DISCOVERY_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json';
 
 // Skill definitions
 const SKILLS = {
@@ -1116,9 +1122,50 @@ function validateSkillLinks(skillDir) {
 
 function writeIndexJson(wellKnownRoot, skills) {
   const indexPath = path.join(wellKnownRoot, 'index.json');
-  const payload = {skills};
+  const payload = {$schema: DISCOVERY_SCHEMA, skills};
   fs.writeFileSync(indexPath, JSON.stringify(payload, null, 2) + '\n');
   console.log(`Generated ${path.relative(REPO_ROOT, indexPath)}`);
+}
+
+function sha256Digest(filePath) {
+  const hash = crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
+  return `sha256:${hash}`;
+}
+
+/**
+ * Package a skill directory as a `.tar.gz` archive at the well-known root, with `SKILL.md`
+ * and any supporting files (references/, etc.) at the archive root — per the Archive
+ * Distribution section of the Agent Skills Discovery RFC.
+ */
+function createSkillArchive(skillDir, skillName, wellKnownRoot) {
+  const archivePath = path.join(wellKnownRoot, `${skillName}.tar.gz`);
+  execFileSync('tar', ['--exclude=.DS_Store', '-czf', archivePath, '-C', skillDir, '.']);
+  return archivePath;
+}
+
+/**
+ * Build the discovery index entry's distribution fields (`type`, `url`, `digest`) for a
+ * generated skill. Skills consisting only of `SKILL.md` are published as `type: "skill-md"`;
+ * skills with supporting files (references/, etc.) are packaged as a `type: "archive"` tarball.
+ */
+function buildSkillArtifact(skillConfig, skillDir, wellKnownRoot, files) {
+  const wellKnownBase = `/${WELL_KNOWN_DIR}/${WELL_KNOWN_SKILLS_DIR}`;
+
+  if (files.length === 1 && files[0] === 'SKILL.md') {
+    return {
+      type: 'skill-md',
+      url: `${wellKnownBase}/${skillConfig.name}/SKILL.md`,
+      digest: sha256Digest(path.join(skillDir, 'SKILL.md'))
+    };
+  }
+
+  const archivePath = createSkillArchive(skillDir, skillConfig.name, wellKnownRoot);
+  console.log(`Generated ${path.relative(REPO_ROOT, archivePath)}`);
+  return {
+    type: 'archive',
+    url: `${wellKnownBase}/${skillConfig.name}.tar.gz`,
+    digest: sha256Digest(archivePath)
+  };
 }
 
 /**
@@ -1209,14 +1256,14 @@ function main() {
       const skillDir = generateSkill(config, wellKnownRoot);
       validateSkillLinks(skillDir);
       const files = collectSkillFiles(skillDir);
+      const artifact = buildSkillArtifact(config, skillDir, wellKnownRoot, files);
       const entry = {
         name: config.name,
+        type: artifact.type,
         description: config.description,
-        files
+        url: artifact.url,
+        digest: artifact.digest
       };
-      if (config.kind) {
-        entry.kind = config.kind;
-      }
       indexEntries.push(entry);
     }
 
