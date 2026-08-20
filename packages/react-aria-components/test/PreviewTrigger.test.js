@@ -264,6 +264,99 @@ describe('PreviewTrigger', () => {
     expect(getByTestId('preview')).toBeInTheDocument();
   });
 
+  describe('nested overlays', () => {
+    installPointerEvent();
+
+    let mockRect = (el, rect) => {
+      el.getBoundingClientRect = () => ({
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+        width: rect.right - rect.left,
+        height: rect.bottom - rect.top,
+        x: rect.left,
+        y: rect.top,
+        toJSON() {}
+      });
+    };
+
+    it('stays open when hovering over a nested popover', async () => {
+      // Need to create a proper nested popover with a trigger that sets aria-controls
+      function NestedPopoverTrigger() {
+        let [isOpen, setIsOpen] = React.useState(false);
+        let triggerId = 'nested-trigger';
+        let popoverId = 'nested-popover-id';
+        
+        return (
+          <>
+            <Button 
+              id={triggerId}
+              aria-controls={isOpen ? popoverId : undefined}
+              onPress={() => setIsOpen(true)}>
+              Open Nested
+            </Button>
+            {isOpen && (
+              <Popover 
+                data-testid="nested-popover"
+                id={popoverId}
+                isOpen
+                style={{position: 'absolute'}}>
+                <p>Nested content</p>
+              </Popover>
+            )}
+          </>
+        );
+      }
+      
+      let {getByRole, getByTestId, queryByTestId} = render(
+        <PreviewTrigger delay={0} closeDelay={0}>
+          <Link href="https://example.com">Example</Link>
+          <Popover data-testid="preview">
+            <p>Preview content</p>
+            <NestedPopoverTrigger />
+          </Popover>
+        </PreviewTrigger>
+      );
+      let link = getByRole('link');
+
+      // Open the preview
+      fireEvent.mouseMove(document.body);
+      await user.hover(link);
+      act(() => jest.runAllTimers());
+
+      let preview = getByTestId('preview');
+      expect(preview).toBeInTheDocument();
+
+      // Click to open the nested popover
+      let nestedTrigger = getByRole('button', {name: 'Open Nested'});
+      await user.click(nestedTrigger);
+      act(() => jest.runAllTimers());
+
+      let nestedPopover = getByTestId('nested-popover');
+      expect(nestedPopover).toBeInTheDocument();
+
+      // Mock positions: link at top, preview below it, nested popover to the side
+      mockRect(link, {left: 0, right: 100, top: 0, bottom: 20});
+      mockRect(preview, {left: 0, right: 100, top: 40, bottom: 140});
+      mockRect(nestedPopover, {left: 120, right: 220, top: 40, bottom: 140});
+
+      // Move pointer into the nested popover - the preview should stay open
+      fireEvent.pointerMove(document.body, {clientX: 150, clientY: 80, pointerType: 'mouse'});
+      act(() => jest.runAllTimers());
+      expect(queryByTestId('preview')).toBeInTheDocument();
+
+      // Move pointer well outside - both should close
+      fireEvent.pointerMove(document.body, {clientX: 500, clientY: 500, pointerType: 'mouse'});
+      act(() => jest.runAllTimers());
+      expect(queryByTestId('preview')).not.toBeInTheDocument();
+    });
+      fireEvent.pointerMove(document.body, {clientX: 500, clientY: 500, pointerType: 'mouse'});
+      act(() => jest.runAllTimers());
+      expect(queryByTestId('preview')).not.toBeInTheDocument();
+    });
+  });
+
   describe('long press (touch)', () => {
     installPointerEvent();
 
