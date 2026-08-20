@@ -14,12 +14,15 @@ import {action} from 'storybook/actions';
 import {ActionMenu} from '../src/ActionMenu';
 import {Avatar} from '../src/Avatar';
 import {categorizeArgTypes, getActionArgs} from './utils';
+import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
 import {Collection} from 'react-aria/Collection';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import {Divider} from '../src/Divider';
+import Files from '@react-spectrum/s2/icons/Files';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import {Heading, Keyboard, Text} from '../src/Content';
+import Images from '@react-spectrum/s2/icons/Images';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
@@ -33,7 +36,9 @@ import {
   SideNavItemContent,
   SideNavItemLink,
   SideNavProps,
-  SideNavSection
+  SideNavSection,
+  SidePanel,
+  SidePanelBadge
 } from '../src/SideNav';
 import {style} from '../style' with {type: 'macro'};
 import {useLandmark} from 'react-aria';
@@ -533,4 +538,98 @@ export const WithLandmark: AppLayoutStoryObj = {
       disable: true
     }
   }
+};
+
+export const SidePanelExample = {
+  render: args => (
+    <div style={{width: 300, height: 320, display: 'flex', flexDirection: 'column'}}>
+      <div
+        style={{
+          border: '1px solid #d5d5d5',
+          borderRadius: 8,
+          flex: 1,
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          alignSelf: 'start'
+        }}>
+        <SidePanel {...args} aria-label="Side panel" defaultExpandedKeys={['projects']}>
+          <RoutedSideNav {...args} selectedRoute="/files">
+            <SideNavItem href="/files" textValue="Files">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Files />
+                  <Text>Files</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+            <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <CCLibrary />
+                  <Text>Your Libraries</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+              <SideNavItem id="photos" href="/photos" textValue="Photos">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Images />
+                    <Text>Photos</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+            </SideNavItem>
+          </RoutedSideNav>
+        </SidePanel>
+      </div>
+    </div>
+  )
+};
+
+export const SidePanelExample2 = {
+  render: args => (
+    <div style={{width: 300, height: 320, display: 'flex', flexDirection: 'column'}}>
+      <div
+        style={{
+          border: '1px solid #d5d5d5',
+          borderRadius: 8,
+          flex: 1,
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          alignSelf: 'start'
+        }}>
+        <SidePanel {...args} aria-label="Side panel" defaultExpandedKeys={['projects']}>
+          <RoutedSideNav {...args} selectedRoute="/files">
+            <SideNavItem href="/files" textValue="Files">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Files />
+                  <Text>Files</Text>
+                  <SidePanelBadge variant="informative" value={3} />
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+            <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <CCLibrary />
+                  <Text>Your Libraries</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+              <SideNavItem id="photos" href="/photos" textValue="Photos">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Images />
+                    <Text>Photos</Text>
+                    <SidePanelBadge variant="negative" value={140} />
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+            </SideNavItem>
+          </RoutedSideNav>
+        </SidePanel>
+      </div>
+    </div>
+  )
 };
