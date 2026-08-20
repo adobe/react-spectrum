@@ -94,7 +94,7 @@ import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
-import {LayoutInfo, Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
+import {LayoutInfo, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
@@ -257,6 +257,8 @@ const table = style<
   minWidth: 0,
   fontFamily: 'sans',
   fontWeight: 'normal',
+  display: 'flex',
+  flexDirection: 'column',
   overflow: 'auto',
   backgroundColor: {
     default: 'gray-25',
@@ -343,13 +345,6 @@ export class S2TableLayout<T> extends TableLayout<T> {
     if (rowGroups.length < 2) {
       return [];
     }
-    let {layoutInfo} = rowGroups[1];
-    // TableLayout's buildCollection always sets the body width to the max width between the header width, but
-    // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
-    let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
-    if (isEmptyOrLoading) {
-      layoutInfo.rect.width = this.virtualizer!.size.width - 80;
-    }
 
     return rowGroups;
   }
@@ -359,11 +354,6 @@ export class S2TableLayout<T> extends TableLayout<T> {
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
     layoutInfo.rect.width = this.virtualizer!.size.width;
-    // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
-    // affect the positioning of the empty state renderer
-    let collection = this.virtualizer!.collection;
-    let isEmptyOrLoading = collection?.size === 0;
-    layoutInfo.isSticky = !isEmptyOrLoading;
     return layoutNode;
   }
 
@@ -375,16 +365,15 @@ export class S2TableLayout<T> extends TableLayout<T> {
     let {layoutInfo} = layoutNode;
     // Needs overflow for sticky loader
     layoutInfo.allowOverflow = true;
-    // If loading or empty, we'll want the body to be sticky and centered
+    // The base TableLayout.buildRowGroup sizes the empty/loading body from the virtualizer's
+    // current on-screen size, which is circular when no explicit height is set (the empty-state
+    // content is rendered outside this virtualized rect entirely, see Table.tsx's TableInner).
+    // Reset it back to the real (near-zero) computed height so it doesn't feed back into the
+    // ResizeObserver that measures that same on-screen size.
     let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
-      layoutInfo.rect = new Rect(
-        40,
-        40,
-        this.virtualizer!.size.width - 80,
-        this.virtualizer!.size.height - 80
-      );
-      layoutInfo.isSticky = true;
+      let maxY = layoutNode.children?.reduce((max, child) => Math.max(max, child.layoutInfo.rect.maxY), layoutInfo.rect.y) ?? layoutInfo.rect.y;
+      layoutInfo.rect.height = maxY - layoutInfo.rect.y;
     }
 
     return {...layoutNode, layoutInfo};
