@@ -1139,7 +1139,8 @@ function sha256Digest(filePath) {
  */
 function createSkillArchive(skillDir, skillName, wellKnownRoot) {
   const archivePath = path.join(wellKnownRoot, `${skillName}.tar.gz`);
-  execFileSync('tar', ['--exclude=.DS_Store', '-czf', archivePath, '-C', skillDir, '.']);
+  const entries = fs.readdirSync(skillDir).filter(name => name !== '.DS_Store');
+  execFileSync('tar', ['--exclude=.DS_Store', '-czf', archivePath, '-C', skillDir, ...entries]);
   return archivePath;
 }
 
