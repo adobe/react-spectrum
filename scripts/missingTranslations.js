@@ -1,11 +1,8 @@
 const {globSync} = require('glob');
 const fs = require('fs');
 
-for (let dir of globSync('packages/**/intl')) {
-  let enPath = `${dir}/en-US.json`;
-  if (!fs.existsSync(enPath)) {
-    continue;
-  }
+for (let enPath of globSync('packages/**/intl/**/en-US.json')) {
+  let dir = enPath.replace('/en-US.json', '');
   let en = JSON.parse(fs.readFileSync(enPath, 'utf8'));
 
   for (let file of globSync('*.json', {cwd: dir})) {
