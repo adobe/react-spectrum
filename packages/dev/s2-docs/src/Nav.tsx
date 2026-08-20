@@ -220,7 +220,7 @@ function getDefaultExpandedKeys(currentPage: Page): string[] {
   } else {
     keys.add(section);
   }
-  return [...keys];
+  return [...keys, 'Components'];
 }
 
 const SideNavContext = createContext('');

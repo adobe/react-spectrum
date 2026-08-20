@@ -305,9 +305,6 @@ document.addEventListener('click', e => {
   if (
     link &&
     isClientLink(link) &&
-    // TODO: Do we want this check? if it's there, then a click on the active sidenav item results
-    // in the entire page reloaded and other side nav sections collapsing.
-    // link.pathname !== location.pathname &&
     e.button === 0 && // left clicks only
     !e.metaKey && // open in new tab (mac)
     !e.ctrlKey && // open in new tab (windows)
