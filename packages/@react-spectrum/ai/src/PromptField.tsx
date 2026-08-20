@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {ActionButton, ActionButtonContext} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
 import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
-import {Button} from '@react-spectrum/s2/Button';
+import {Button, ButtonContext} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -39,6 +39,7 @@ import {Image, Text} from '@react-spectrum/s2/Card';
 import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
+import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {PixelLoader} from './loader/react';
@@ -53,10 +54,11 @@ import {
 } from 'react-stately/useTokenFieldState';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
+import {Provider} from 'react-aria-components/slots';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
-import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
+import {ToggleButton, ToggleButtonContext} from '@react-spectrum/s2/ToggleButton';
 import {
   Token,
   TokenField,
@@ -337,28 +339,36 @@ export const PromptField = forwardRef(function PromptField(
         onAddAttachments,
         onRemoveAttachments
       }}>
-      <div ref={domRef} {...focusWithinProps}>
-        <PromptFieldContainer
-          {...dropProps}
-          role="group"
-          variant={variant}
-          brandColor={brandColor}
-          isGenerating={isGenerating ?? false}
-          isDropTarget={isDropTarget}
-          styles={styles}
-          inputRef={inputRef}>
-          {children}
-        </PromptFieldContainer>
-        <p className={style({font: 'ui-sm', textAlign: 'center'})}>
-          {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
-          <Link
-            variant="secondary"
-            href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-            target="_blank">
-            {stringFormatter.format('promptfield.aiUserGuidlines')}
-          </Link>
-        </p>
-      </div>
+      <Provider
+        values={[
+          [ButtonContext, {staticColor: 'auto'}],
+          [LinkButtonContext, {staticColor: 'auto'}],
+          [ActionButtonContext, {staticColor: 'auto'}],
+          [ToggleButtonContext, {staticColor: 'auto'}]
+        ]}>
+        <div ref={domRef} {...focusWithinProps}>
+          <PromptFieldContainer
+            {...dropProps}
+            role="group"
+            variant={variant}
+            brandColor={brandColor}
+            isGenerating={isGenerating ?? false}
+            isDropTarget={isDropTarget}
+            styles={styles}
+            inputRef={inputRef}>
+            {children}
+          </PromptFieldContainer>
+          <p className={style({font: 'ui-sm', textAlign: 'center'})}>
+            {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
+            <Link
+              variant="secondary"
+              href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
+              target="_blank">
+              {stringFormatter.format('promptfield.aiUserGuidlines')}
+            </Link>
+          </p>
+        </div>
+      </Provider>
     </PromptFieldContext.Provider>
   );
 });
@@ -520,7 +530,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         },
         transition: 'default',
         transitionDuration: 350,
-        paddingStart: 4,
+        paddingStart: space(5),
         width: 'full',
         '--loader-color': {
           type: 'color',

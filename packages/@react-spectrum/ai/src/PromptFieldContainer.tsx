@@ -350,16 +350,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
-      className={
-        outerBorder +
-        // outline for WHCM
-        style({
-          outlineStyle: 'solid',
-          outlineColor: 'transparent',
-          outlineWidth: 1,
-          containerType: 'inline-size'
-        })
-      }
+      className={outerBorder + style({containerType: 'inline-size'})}
       style={{
         ...props.style,
         // @ts-ignore
@@ -400,7 +391,20 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
               style({
                 borderRadius: '[24px]',
                 position: 'relative',
-                overflow: 'clip'
+                overflow: 'clip',
+                outlineStyle: 'solid',
+                outlineColor: {
+                  default: 'transparent', // for WHCM
+                  ':has([contenteditable][data-focus-visible])': {
+                    default: 'transparent',
+                    '@media (prefers-contrast: more)': 'gray-1000',
+                    forcedColors: 'Highlight'
+                  }
+                },
+                outlineWidth: {
+                  default: 1,
+                  ':has([contenteditable][data-focus-visible])': 2
+                }
               }),
               styles
             )

@@ -196,7 +196,11 @@ beforeAll(() => {
 
   let buildResult = spawnSync(
     process.execPath,
-    [require.resolve('typescript/bin/tsc'), '-p', CODEMODS_TSCONFIG],
+    [
+      path.resolve(require.resolve('typescript/package.json'), '../bin/tsc'),
+      '-p',
+      CODEMODS_TSCONFIG
+    ],
     {
       cwd: REPO_ROOT,
       env: {

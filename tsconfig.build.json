@@ -27,6 +27,7 @@
     "lib": ["esnext", "dom", "dom.iterable"],
     "skipLibCheck": false,
     "strict": true,
+    "types": ["node", "jest"],
     "paths": {
       "vanilla-starter/*": ["./starters/docs/src/*"],
       "tailwind-starter/*": ["./starters/tailwind/src/*"],
