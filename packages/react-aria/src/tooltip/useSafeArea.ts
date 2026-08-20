@@ -82,7 +82,12 @@ export function useSafeArea(options: SafeAreaOptions): void {
   }, [isDisabled, isOpen, triggerRef, overlayRef]);
 }
 
-function isPointInSafeArea(point: Point, triggerRect: DOMRect, overlayRect?: DOMRect, overlayElement?: Element | null): boolean {
+function isPointInSafeArea(
+  point: Point,
+  triggerRect: DOMRect,
+  overlayRect?: DOMRect,
+  overlayElement?: Element | null
+): boolean {
   if (rectContains(triggerRect, point)) {
     return true;
   }
@@ -92,7 +97,7 @@ function isPointInSafeArea(point: Point, triggerRect: DOMRect, overlayRect?: DOM
   if (rectContains(overlayRect, point)) {
     return true;
   }
-  
+
   // Check if the pointer is within any descendant overlays (e.g. a Select opened inside a
   // PreviewTrigger). Descendant overlays are portaled outside the parent overlay's DOM tree, but
   // we want to keep the parent open while interacting with them.
@@ -105,23 +110,28 @@ function isPointInSafeArea(point: Point, triggerRect: DOMRect, overlayRect?: DOM
       if (popover === overlayElement) {
         continue;
       }
-      
+
       let popoverRect = popover.getBoundingClientRect();
       // Check if this popover is visible and contains the pointer
-      if (popoverRect.width > 0 && popoverRect.height > 0 && rectContains(popoverRect, point)) {
-        // Check if this popover was triggered from within the parent overlay by checking if any
-        // element within the parent overlay has aria-controls pointing to this popover's ID.
-        let popoverId = popover.id;
-        if (popoverId) {
-          let trigger = overlayElement.querySelector(`[aria-controls="${popoverId}"]`);
-          if (trigger) {
-            return true;
-          }
-        }
+      let isVisible = popoverRect.width > 0 && popoverRect.height > 0;
+      if (!isVisible || !rectContains(popoverRect, point)) {
+        continue;
+      }
+
+      // Check if this popover was triggered from within the parent overlay by checking if any
+      // element within the parent overlay has aria-controls pointing to this popover's ID.
+      let popoverId = popover.id;
+      if (!popoverId) {
+        continue;
+      }
+
+      let trigger = overlayElement.querySelector(`[aria-controls="${popoverId}"]`);
+      if (trigger) {
+        return true;
       }
     }
   }
-  
+
   // Otherwise, check whether the point is within the convex hull connecting the two rects.
   let hull = convexHull([...rectCorners(triggerRect), ...rectCorners(overlayRect)]);
   return hull.length >= 3 && isPointInPolygon(point, hull);
