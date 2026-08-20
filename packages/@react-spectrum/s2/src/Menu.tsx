@@ -37,7 +37,7 @@ import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
+import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   control,
   controlFont,
@@ -784,12 +784,14 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
       placement = `${direction} ${align}` as Placement;
   }
   let holdAffordance = trigger === 'longPress';
+  let actionButtonContext = useSlottedContext(ActionButtonContext) || {};
+  let toggleButtonContext = useSlottedContext(ToggleButtonContext) || {};
 
   return (
     <Provider
       values={[
-        [ActionButtonContext, {holdAffordance}],
-        [ToggleButtonContext, {holdAffordance}]
+        [ActionButtonContext, {...actionButtonContext, holdAffordance}],
+        [ToggleButtonContext, {...toggleButtonContext, holdAffordance}]
       ]}>
       <InternalMenuTriggerContext.Provider
         value={{
