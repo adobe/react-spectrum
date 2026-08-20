@@ -57,6 +57,23 @@ describe('<HiddenSelect />', () => {
     );
   });
 
+  it('should only render selected options for collection.size > 300', () => {
+    render(
+      <HiddenSelectExample
+        label="select"
+        value={5}
+        hiddenProps={{
+          name: 'select'
+        }}
+        items={makeItems(400)}
+      />
+    );
+
+    let select = screen.getByLabelText('select') as HTMLSelectElement;
+    expect(select).toHaveValue('5');
+    expect(select.options).toHaveLength(2);
+  });
+
   it('should have form value after initial render', async () => {
     let formRef = React.createRef<HTMLFormElement>();
     render(
