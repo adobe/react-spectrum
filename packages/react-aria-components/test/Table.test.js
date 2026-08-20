@@ -861,6 +861,65 @@ describe('Table', () => {
     expect(column).toHaveClass('focus');
   });
 
+  it('should focus the first column header when tabbing in with initialFocus="columnheader"', async () => {
+    let {getAllByRole} = renderTable({tableProps: {initialFocus: 'columnheader'}});
+
+    await user.tab();
+    expect(document.activeElement).toBe(getAllByRole('columnheader')[0]);
+  });
+
+  it('should move focus from a focused column header to the first row cell with ArrowDown when initialFocus="columnheader"', async () => {
+    let {getAllByRole} = renderTable({tableProps: {initialFocus: 'columnheader'}});
+
+    await user.tab();
+    let columnHeader = getAllByRole('columnheader')[0];
+    expect(document.activeElement).toBe(columnHeader);
+
+    await user.keyboard('{ArrowDown}');
+
+    let cell = getAllByRole('rowheader')[0];
+    expect(document.activeElement).toBe(cell);
+  });
+
+  it('should still focus the first cell in a row with Home when initialFocus="columnheader"', async () => {
+    let {getAllByRole} = renderTable({tableProps: {initialFocus: 'columnheader'}});
+
+    await user.tab();
+    let columnHeader = getAllByRole('columnheader')[0];
+
+    expect(document.activeElement).toBe(columnHeader);
+
+    await user.keyboard('{ArrowDown}');
+
+    let cell1 = getAllByRole('rowheader')[0];
+    expect(document.activeElement).toBe(cell1);
+
+    await user.keyboard('{ArrowRight}');
+
+    let cell2 = getAllByRole('gridcell')[0];
+    expect(document.activeElement).toBe(cell2);
+
+    await user.keyboard('{Home}');
+
+    expect(document.activeElement).toBe(cell1);
+  });
+
+  it('should focus the selected row rather than the first column header when tabbing in with initialFocus="columnheader" if a row is already selected', async () => {
+    let {getAllByRole} = renderTable({
+      tableProps: {
+        initialFocus: 'columnheader',
+        selectionMode: 'single',
+        defaultSelectedKeys: ['1']
+      }
+    });
+
+    let selectedRow = getAllByRole('row')[1];
+    expect(selectedRow).toHaveAttribute('aria-selected', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(selectedRow);
+  });
+
   it('should support press state', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
