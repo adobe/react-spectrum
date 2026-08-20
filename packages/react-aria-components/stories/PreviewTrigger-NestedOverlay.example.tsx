@@ -13,7 +13,7 @@
 /**
  * Example demonstrating the fix for GitHub issue #10443:
  * "Nested Popover closes PreviewTrigger when hovered"
- * 
+ *
  * This example shows a PreviewTrigger with interactive content (Select/ComboBox)
  * inside the preview popover. The preview should stay open while interacting with
  * the nested overlay.
@@ -34,7 +34,7 @@ export function PreviewWithSelect() {
   return (
     <div style={{padding: '50px'}}>
       <p>Hover over the link below to see a preview with a Select inside:</p>
-      
+
       <PreviewTrigger delay={200} closeDelay={100}>
         <Link href="https://example.com" target="_blank">
           Example Product
@@ -52,7 +52,7 @@ export function PreviewWithSelect() {
           <p style={{margin: '0 0 12px 0', color: '#666'}}>
             Select an option to see more information.
           </p>
-          
+
           {/* This Select opens a nested Popover - the preview should stay open */}
           <Select placeholder="Choose a variant" style={{marginBottom: '12px'}}>
             <Label>Product Variant</Label>
@@ -91,7 +91,7 @@ export function PreviewWithComboBox() {
   return (
     <div style={{padding: '50px'}}>
       <p>Hover over the link below to see a preview with a ComboBox inside:</p>
-      
+
       <PreviewTrigger delay={200} closeDelay={100}>
         <Link href="https://example.com" target="_blank">
           Search Documentation
@@ -106,7 +106,7 @@ export function PreviewWithComboBox() {
             minWidth: '300px'
           }}>
           <h3 style={{margin: '0 0 12px 0'}}>Quick Search</h3>
-          
+
           {/* This ComboBox opens a nested Popover - the preview should stay open */}
           <ComboBox>
             <Label>Search topics</Label>
@@ -134,7 +134,7 @@ export function NestedPreviewTriggers() {
   return (
     <div style={{padding: '50px'}}>
       <p>Edge case: PreviewTrigger inside another PreviewTrigger:</p>
-      
+
       <PreviewTrigger delay={200} closeDelay={100}>
         <Link href="https://example.com" target="_blank">
           Parent Link
@@ -152,7 +152,7 @@ export function NestedPreviewTriggers() {
           <p style={{margin: '0 0 12px 0'}}>
             This preview contains another link with its own preview:
           </p>
-          
+
           <PreviewTrigger delay={200} closeDelay={100}>
             <Link href="https://example.com/nested" target="_blank">
               Nested Link

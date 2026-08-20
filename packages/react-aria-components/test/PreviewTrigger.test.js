@@ -287,17 +287,17 @@ describe('PreviewTrigger', () => {
         let [isOpen, setIsOpen] = React.useState(false);
         let triggerId = 'nested-trigger';
         let popoverId = 'nested-popover-id';
-        
+
         return (
           <>
-            <Button 
+            <Button
               id={triggerId}
               aria-controls={isOpen ? popoverId : undefined}
               onPress={() => setIsOpen(true)}>
               Open Nested
             </Button>
             {isOpen && (
-              <Popover 
+              <Popover
                 data-testid="nested-popover"
                 id={popoverId}
                 isOpen
@@ -308,7 +308,7 @@ describe('PreviewTrigger', () => {
           </>
         );
       }
-      
+
       let {getByRole, getByTestId, queryByTestId} = render(
         <PreviewTrigger delay={0} closeDelay={0}>
           <Link href="https://example.com">Example</Link>
