@@ -466,6 +466,48 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('data-invalid');
   });
 
+  it('should not display the partial-value error while editing with validationBehavior="aria" (Bug #9958)', async () => {
+    let {getByRole, getAllByRole} = render(
+      <DateField name="date" validationBehavior="aria">
+        <Label>Birth Date</Label>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        <FieldError />
+      </DateField>
+    );
+
+    let group = getByRole('group');
+    let segments = getAllByRole('spinbutton');
+
+    // Filling segments one at a time from an empty state must not flash the error
+    // mid-edit, even though the value is momentarily partial.
+    await user.click(segments[0]);
+    await user.keyboard('4');
+    expect(group).not.toHaveAttribute('data-invalid');
+    await user.keyboard('28');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    // Blur while the year is still missing -> the partial error appears.
+    await user.tab();
+    expect(group).toHaveAttribute('data-invalid');
+    let getDescription = () =>
+      (group.getAttribute('aria-describedby') || '')
+        .split(' ')
+        .map(d => document.getElementById(d)?.textContent || '')
+        .join(' ');
+    expect(getDescription()).toContain('Please enter a value.');
+
+    // Deleting a filled segment must not change the displayed error until blur,
+    // and completing the value clears it in realtime.
+    await user.click(segments[2]);
+    await user.keyboard('2026');
+    expect(group).not.toHaveAttribute('data-invalid');
+    expect(getDescription()).not.toContain('Please enter a value.');
+
+    await user.keyboard('{Backspace}{Backspace}{Backspace}{Backspace}');
+    expect(segments[2]).toHaveAttribute('aria-valuetext', 'Empty');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
   it('should focus previous segment when backspacing on an empty date segment', async () => {
     let {getAllByRole} = render(
       <DateField defaultValue={new CalendarDate(2024, 12, 31)}>

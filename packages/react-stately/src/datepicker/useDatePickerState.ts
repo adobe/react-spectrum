@@ -23,12 +23,13 @@ import {
   getFormatOptions,
   getPlaceholderTime,
   getValidationResult,
-  useDefaultProps
+  useDefaultProps,
+  usePartialFormValidationState
 } from './utils';
-import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
+import {FormValidationState, privateSetIsValuePartialProp} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
+import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export interface DatePickerStateOptions<T extends DateValue> extends DatePickerProps<T> {
@@ -95,7 +96,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(
   props: DatePickerStateOptions<T>
 ): DatePickerState {
   let overlayState = useOverlayTriggerState(props);
-  let [value, setValue] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
+  let [value, setValueInternal] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
     props.value,
     props.defaultValue || null,
     props.onChange
@@ -144,16 +145,37 @@ export function useDatePickerState<T extends DateValue = DateValue>(
   );
 
   let {minValue, maxValue, isDateUnavailable} = props;
-  let builtinValidation = useMemo(
-    () => getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts),
+
+  // Partial-state lifted up from the inner DateField via `privateSetIsValuePartialProp`
+  // on fieldProps. The field calls our setter when its IncompleteDate has some-but-not-all
+  // editable segments filled, so the parent's validation pipeline can surface the error.
+  let [isValuePartial, setIsValuePartial] = useState(false);
+
+  // Wrap the raw setter so any committed value (complete or null) always resets the partial flag.
+  // This prevents stale isValuePartial state when a consumer calls state.setValue() directly.
+  let setValue = (newValue: DateValue | null) => {
+    setIsValuePartial(false);
+    setValueInternal(newValue);
+  };
+
+  let getBuiltinValidation = useCallback(
+    (displayPartialError: boolean) =>
+      getValidationResult(
+        value,
+        minValue,
+        maxValue,
+        isDateUnavailable,
+        formatOpts,
+        displayPartialError
+      ),
     [value, minValue, maxValue, isDateUnavailable, formatOpts]
   );
 
-  let validation = useFormValidationState({
-    ...props,
-    value: value as MappedDateValue<T> | null,
-    builtinValidation
-  });
+  let validation = usePartialFormValidationState(
+    {...props, value: value as MappedDateValue<T> | null},
+    isValuePartial,
+    getBuiltinValidation
+  );
 
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState | null =
@@ -199,6 +221,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(
 
   return {
     ...validation,
+    [privateSetIsValuePartialProp]: setIsValuePartial,
     value,
     defaultValue: props.defaultValue ?? initialValue,
     setValue,

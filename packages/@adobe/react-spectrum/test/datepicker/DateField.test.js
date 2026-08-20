@@ -764,6 +764,492 @@ describe('DateField', function () {
           await user.tab();
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
+
+        it('should signal valueMissing when a complete date is made partial by clearing a segment (Bug #9624)', async () => {
+          // Regression (per devongovett's direction in #9624): a partially-filled required
+          // DateField should be marked invalid on blur. onChange(null) is deliberately NOT
+          // fired for partial values; getValidationResult compensates by surfacing the
+          // localized "Please enter a value." message via builtinValidation.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateField label="Date" name="date" isRequired validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+
+          // Fill a complete valid date: 4/28/2026
+          await user.tab();
+          await user.keyboard('4');
+          await user.keyboard('28');
+          await user.keyboard('2026');
+          expect(input.validity.valid).toBe(true);
+
+          // Refocus the month and clear it
+          let segments = within(group).getAllByRole('spinbutton');
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // Tab forward past day and year to exit the group
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          // The hidden input should reflect missing value and validation should surface
+          expect(input.validity.valid).toBe(false);
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Re-focus month and complete the date with a different valid value
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('5');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          expect(input.validity.valid).toBe(true);
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should signal validation for partial values regardless of isRequired (Bug #9958)', async () => {
+          // partial values are flagged invalid even without isRequired so that
+          // min/max/unavailable/validate configurations also block submission.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField
+                  label="Date"
+                  name="date"
+                  minValue={new CalendarDate(2020, 1, 1)}
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Still focused: no error is displayed yet, but submission is already blocked
+          // (the hidden input is required while partial and its value is '').
+          expect(input).toHaveValue('');
+          expect(input).toBeRequired();
+          expect(input.validity.valueMissing).toBe(true);
+          expect(input.validity.valid).toBe(false);
+          expect(getDescription()).not.toContain('Please enter a value.');
+
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          expect(input.validity.valid).toBe(false);
+          expect(getDescription()).toContain('Please enter a value.');
+        });
+
+        it('should replace the incomplete message with the constraint error once the value is completed (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField
+                  label="Date"
+                  name="date"
+                  minValue={new CalendarDate(2030, 1, 1)}
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment and blur -> the generic incomplete message is shown,
+          // even though the committed value also violates minValue.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+          expect(getDescription()).not.toContain('Value must be 1/1/2030 or later.');
+
+          // Refilling the month completes the (still min-violating) value -> the descriptive
+          // constraint error replaces the incomplete message without another blur.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('4');
+          expect(getDescription()).toContain('Value must be 1/1/2030 or later.');
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should clear the partial-value error on form reset (Bug #9958)', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateField
+                  label="Date"
+                  name="date"
+                  isRequired
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="native"
+                />
+                <Button type="reset" data-testid="reset">
+                  Reset
+                </Button>
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Reset restores the default value and clears the displayed error.
+          await user.click(getByTestId('reset'));
+          expect(input).toHaveValue('2026-04-28');
+          expect(getDescription()).not.toContain('Please enter a value.');
+
+          // The armed state is also reset: clearing a segment again shows no error until blur.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(getDescription()).not.toContain('Please enter a value.');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+        });
+
+        it('should clear the partial-value error when an optional field is fully cleared (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField
+                  label="Date"
+                  name="date"
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment and blur -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Clearing the remaining segments empties the field entirely. An empty optional
+          // field is valid, so the error must clear without waiting for another blur.
+          act(() => {
+            segments[1].focus();
+          });
+          await user.keyboard('{Backspace}{Backspace}');
+          act(() => {
+            segments[2].focus();
+          });
+          await user.keyboard('{Backspace}{Backspace}{Backspace}{Backspace}');
+          expect(segments[1]).toHaveAttribute('aria-valuetext', 'Empty');
+          expect(segments[2]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          expect(getDescription()).not.toContain('Please enter a value.');
+          expect(input).toHaveValue('');
+          expect(input.validity.valid).toBe(true);
+        });
+
+        it('should block form submission while the value is partial (Bug #9958)', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateField
+                  label="Date"
+                  name="date"
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment and attempt to submit without ever blurring the field.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(input.validity.valueMissing).toBe(true);
+
+          let valid;
+          act(() => {
+            valid = getByTestId('form').checkValidity();
+          });
+          expect(valid).toBe(false);
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Refilling the month completes the value; the form submits cleanly again.
+          await user.keyboard('4');
+          expect(getDescription()).not.toContain('Please enter a value.');
+          act(() => {
+            valid = getByTestId('form').checkValidity();
+          });
+          expect(valid).toBe(true);
+        });
+
+        it('should not surface an error when blurring an untouched or fully cleared optional field (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField label="Date" name="date" validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Tab through the untouched placeholder field and out -> no error.
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).not.toContain('Please enter a value.');
+
+          // Type into a segment, then clear it back before ever blurring. The field returns
+          // to fully cleared, so blurring must not surface a partial error.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('4');
+          // Typing auto-advances focus to the day segment; refocus the month to clear it.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).not.toContain('Please enter a value.');
+          expect(input.validity.valid).toBe(true);
+        });
+
+        it('should clear the partial-value error when completing the value with the arrow keys (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField
+                  label="Date"
+                  name="date"
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment and blur -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Spinning the empty segment with ArrowUp fills it, completing the value.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{ArrowUp}');
+          expect(segments[0]).not.toHaveAttribute('aria-valuetext', 'Empty');
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should reset the partial state when the controlled value changes externally (Bug #9958)', async () => {
+          function Test() {
+            let [value, setValue] = React.useState(new CalendarDate(2026, 4, 28));
+            return (
+              <Provider theme={theme}>
+                <Form>
+                  <DateField
+                    label="Date"
+                    name="date"
+                    value={value}
+                    onChange={setValue}
+                    validationBehavior="native"
+                  />
+                  <Button
+                    variant="primary"
+                    data-testid="set-value"
+                    onPress={() => setValue(new CalendarDate(2027, 6, 15))}>
+                    Set value
+                  </Button>
+                </Form>
+              </Provider>
+            );
+          }
+
+          let {getByRole, getByTestId} = render(<Test />);
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment and blur -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // The parent replaces the value from outside while the display is partial.
+          // The new complete value takes over and the stale error clears.
+          await user.click(getByTestId('set-value'));
+          expect(input).toHaveValue('2027-06-15');
+          expect(getDescription()).not.toContain('Please enter a value.');
+          expect(input.validity.valid).toBe(true);
+        });
+
+        it('should show the incomplete message instead of a validate() error while the value is partial (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateField
+                  label="Date"
+                  name="date"
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validate={v => (v.year === 2026 ? 'Custom error' : null)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment and blur -> the incomplete message appears. The validate()
+          // error is suppressed: it would be computed against the stale committed value, which
+          // is not what the user sees (same reasoning as min/max while partial).
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+          expect(getDescription()).not.toContain('Custom error');
+
+          // Refilling the month completes the (still validate-failing) value -> the custom
+          // error replaces the incomplete message.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('4');
+          expect(getDescription()).toContain('Custom error');
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
       });
 
       describe('validationBehavior=aria', () => {
@@ -849,6 +1335,102 @@ describe('DateField', function () {
 
           await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
           expect(getDescription()).not.toContain('Invalid value');
+        });
+
+        it('should clear the hidden input value when partial in aria mode (Bug #9624)', async () => {
+          // Aria-mode counterpart to the native-mode #9624 regression: the hidden input must
+          // reflect the partial display state regardless of validationBehavior so any consumer
+          // (e.g. FormData) sees the missing value.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField
+                  label="Date"
+                  name="date"
+                  isRequired
+                  validationBehavior="aria"
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(input).toHaveValue('2026-04-28');
+
+          let segments = within(group).getAllByRole('spinbutton');
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          expect(input).toHaveValue('');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // No error while still editing — it appears once the field is blurred.
+          expect(getDescription()).not.toContain('Please enter a value.');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Refilling the segment completes the value and clears the error immediately.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('5');
+          expect(input).toHaveValue('2026-05-28');
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should keep the partial-value error across focus cycles while still partial (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField
+                  label="Date"
+                  name="date"
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="aria"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment and blur -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Refocusing without fixing anything must not clear the displayed error,
+          // and blurring again (still partial) keeps it.
+          act(() => {
+            segments[0].focus();
+          });
+          expect(getDescription()).toContain('Please enter a value.');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
         });
       });
     });

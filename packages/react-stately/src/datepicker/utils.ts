@@ -21,11 +21,17 @@ import {
   toCalendarDateTime
 } from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from './types';
+import {
+  FormValidationProps,
+  FormValidationState,
+  mergeValidation,
+  useFormValidationState,
+  VALID_VALIDITY_STATE
+} from '../form/useFormValidationState';
 import i18nMessages from '../../intl/datepicker/*.json';
 import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
-import {mergeValidation, VALID_VALIDITY_STATE} from '../form/useFormValidationState';
 import {RangeValue, ValidationResult} from '@react-types/shared';
-import {useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 const dictionary = new LocalizedStringDictionary(i18nMessages);
 
@@ -49,8 +55,29 @@ export function getValidationResult(
   minValue: DateValue | null | undefined,
   maxValue: DateValue | null | undefined,
   isDateUnavailable: ((v: DateValue) => boolean) | undefined,
-  options: FormatterOptions
+  options: FormatterOptions,
+  isValuePartial: boolean = false
 ): ValidationResult {
+  // A partial value blocks submission (invalid + valueMissing). While partial, `value` holds
+  // the last committed (complete) value, not what the user currently sees — so
+  // min/max/unavailable cannot be evaluated. Like native date inputs, report the value as
+  // missing until the date is complete rather than guessing at constraint violations.
+  if (isValuePartial) {
+    let strings =
+      LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') ||
+      dictionary;
+    let formatter = new LocalizedStringFormatter(getLocale(), strings);
+    return {
+      isInvalid: true,
+      validationErrors: [formatter.format('incompleteValue')],
+      validationDetails: {
+        ...VALID_VALIDITY_STATE,
+        valueMissing: true,
+        valid: false
+      }
+    };
+  }
+
   let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
   let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
   let isUnavailable = (value != null && isDateUnavailable?.(value)) || false;
@@ -106,19 +133,83 @@ export function getValidationResult(
   };
 }
 
+/**
+ * Wraps useFormValidationState with display gating for partial (incomplete) date values,
+ * shared by useDateFieldState, useDatePickerState, and useDateRangePickerState.
+ *
+ * A value is always momentarily partial while the user is typing it, and builtinValidation
+ * is displayed in realtime with validationBehavior="aria" — so the raw partial flag cannot
+ * feed the validation result directly. Instead the partial error is armed when validation
+ * is committed while partial (e.g. on blur), and disarmed in realtime once the value is
+ * completed or fully cleared.
+ *
+ * `getBuiltinValidation` receives the gated flag (partial AND armed) and must be memoized
+ * by the caller; the result is recomputed only when the callback or the flag changes.
+ */
+export function usePartialFormValidationState<T>(
+  props: FormValidationProps<T>,
+  isValuePartial: boolean,
+  getBuiltinValidation: (displayPartialError: boolean) => ValidationResult
+): FormValidationState {
+  let [showPartialError, setShowPartialError] = useState(false);
+  let displayPartialError = isValuePartial && showPartialError;
+
+  let builtinValidation = useMemo(
+    () => getBuiltinValidation(displayPartialError),
+    [getBuiltinValidation, displayPartialError]
+  );
+
+  let validation = useFormValidationState({
+    ...props,
+    // While the partial error is displayed, `value` is the stale committed value, not what
+    // the user sees — hide it so a custom validate() can't surface errors against it and
+    // override the incomplete message (mirroring how min/max are skipped while partial).
+    value: displayPartialError ? null : props.value,
+    builtinValidation
+  });
+
+  // Once the partial state resolves (the value is completed or fully cleared), disarm and
+  // commit so a displayed error clears immediately. The blur handler cannot cover this:
+  // completing the value back to the previously committed one produces no value change to
+  // commit on. Runs as an effect so the commit lands after the partial state has settled.
+  useEffect(() => {
+    if (showPartialError && !isValuePartial) {
+      // oxlint-disable-next-line react/react-compiler
+      setShowPartialError(false);
+      validation.commitValidation();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showPartialError, isValuePartial]);
+
+  return {
+    ...validation,
+    commitValidation() {
+      // Arm the partial error before committing so the committed (and, for
+      // validationBehavior="aria", realtime) validation result includes it.
+      if (isValuePartial) {
+        setShowPartialError(true);
+      }
+      validation.commitValidation();
+    }
+  };
+}
+
 export function getRangeValidationResult(
   value: RangeValue<DateValue | null> | null,
   minValue: DateValue | null | undefined,
   maxValue: DateValue | null | undefined,
   isDateUnavailable: ((v: DateValue) => boolean) | undefined,
-  options: FormatterOptions
+  options: FormatterOptions,
+  startIsValuePartial: boolean = false,
+  endIsValuePartial: boolean = false
 ): ValidationResult {
   let startValidation = getValidationResult(
     value?.start ?? null,
     minValue,
     maxValue,
     isDateUnavailable,
-    options
+    options,
+    startIsValuePartial
   );
 
   let endValidation = getValidationResult(
@@ -126,7 +217,8 @@ export function getRangeValidationResult(
     minValue,
     maxValue,
     isDateUnavailable,
-    options
+    options,
+    endIsValuePartial
   );
 
   let result = mergeValidation(startValidation, endValidation);
