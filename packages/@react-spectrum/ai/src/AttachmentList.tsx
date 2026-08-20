@@ -18,27 +18,31 @@ import {
   forwardRefType,
   GlobalDOMAttributes
 } from '@react-types/shared';
+import AudioWave from '@react-spectrum/s2/icons/AudioWave';
 import {
   baseColor,
   color,
   focusRing,
   iconStyle,
   lightDark,
-  space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import {ContentContext} from '@react-spectrum/s2/Content';
+import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {forwardRef, ReactNode, useContext, useRef} from 'react';
-import {IllustrationContext} from '@react-spectrum/s2/Icon';
-import {ImageContext} from '@react-spectrum/s2/Image';
-import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
+import File from '@react-spectrum/s2/icons/File';
+import FileText from '@react-spectrum/s2/icons/FileText';
 // @ts-ignore
+import {IllustrationContext} from '@react-spectrum/s2/Icon';
+import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
+import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
+import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -69,12 +73,7 @@ const controlSizeM = {
   }
 } as const;
 
-const hoverBackground = {
-  default: 'gray-200',
-  isStaticColor: 'transparent-overlay-200'
-} as const;
-
-const styles = style<{
+const closeButton = style<{
   isDisabled: boolean;
   isHovered: boolean;
   isFocusVisible: boolean;
@@ -92,16 +91,14 @@ const styles = style<{
   borderStyle: 'none',
   transition: 'default',
   backgroundColor: {
-    default: 'gray-200',
-    isHovered: hoverBackground,
-    isFocusVisible: hoverBackground,
-    isPressed: hoverBackground
+    default: baseColor('gray-900'),
+    forcedColors: 'ButtonText'
   },
   color: {
-    default: baseColor('neutral'),
+    default: baseColor('gray-25'),
     isDisabled: 'disabled',
     forcedColors: {
-      default: 'ButtonText',
+      default: 'ButtonFace',
       isDisabled: 'GrayText'
     }
   },
@@ -117,22 +114,40 @@ const styles = style<{
 });
 
 const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
-const noDescription = ':not(:has([slot=description]))';
+
+const container = {
+  backgroundColor: {
+    default: lightDark('white/5', 'black/5'),
+    forcedColors: 'ButtonFace'
+  },
+  boxShadow: `[inset 0 0 0 1px light-dark(${color('black/5')}, ${color('white/5')}), 0 8px 32px 0 light-dark(${color('transparent-white-50')}, ${color('transparent-black-50')}), inset 0 -5px 21.6px 0 ${color('transparent-white-50')}, inset 0 24px 32px 0 ${color('transparent-white-50')}]`
+} as const;
 
 const attachmentCard = style({
+  ...container,
   display: 'flex',
   flexDirection: 'row',
   position: 'relative',
-  borderRadius: 'default',
-  backgroundColor: {
-    default: lightDark('transparent-white-300', 'transparent-black-300'),
-    forcedColors: 'ButtonFace'
+  borderRadius: 'lg',
+  outlineStyle: 'solid',
+  outlineWidth: {
+    default: 1, // WHCM
+    isInvalid: 2
   },
-  boxShadow: {
-    default: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
-    isInvalid: `[inset 0 0 0 1px ${color('negative-900')}]`
+  outlineOffset: {
+    default: -1,
+    isInvalid: -2
+  },
+  outlineColor: {
+    default: 'transparent',
+    forcedColors: 'ButtonBorder',
+    isInvalid: {
+      default: 'negative-900',
+      forcedColors: 'Mark'
+    }
   },
   forcedColorAdjust: 'none',
+  cursor: 'default',
   transition: 'default',
   fontFamily: 'sans',
   overflow: 'clip',
@@ -264,7 +279,7 @@ const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
   gridArea: 'description'
 });
 
-const attachmentContent = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+const attachmentContent = style({
   display: 'grid',
   gridTemplateColumns: ['minmax(0, 1fr)'],
   gridTemplateAreas: ['title', 'description'],
@@ -273,16 +288,6 @@ const attachmentContent = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
   minWidth: 0,
   alignItems: 'baseline',
   alignContent: 'start',
-  rowGap: {
-    size: {
-      XS: 4,
-      S: 4,
-      M: space(6),
-      L: space(6),
-      XL: 8
-    },
-    [noDescription]: 0
-  },
   paddingStart: {
     default: '--card-spacing',
     ':first-child': 0
@@ -303,7 +308,7 @@ const CloseButton = function CloseButton(props) {
       slot="remove"
       style={pressScale(ref, {})}
       className={renderProps =>
-        mergeStyles(styles({...renderProps, size: props.size || 'M'}), props.styles)
+        mergeStyles(closeButton({...renderProps, size: props.size || 'M'}), props.styles)
       }>
       <Cross size="M" />
     </Button>
@@ -387,101 +392,8 @@ const tagStyles = style({
   flexGrow: 0,
   position: 'relative',
   ...focusRing(),
-  borderRadius: 'default'
+  borderRadius: 'lg'
 });
-
-// this is checking that there isn't content in the attachment
-// similar to onlyPreview, but specifically checking siblings before the alert icon (aka looking for Content)
-const onlyPreviewFromError = ':not([data-slot=content] ~ *)';
-const attachmentErrorStyles = style({
-  display: 'flex',
-  flexShrink: 0,
-  alignItems: 'center',
-  paddingStart: {
-    default: 8,
-    [onlyPreviewFromError]: 0
-  },
-  position: {
-    [onlyPreviewFromError]: 'absolute'
-  },
-  top: {
-    [onlyPreviewFromError]: '50%'
-  },
-  insetStart: {
-    [onlyPreviewFromError]: '50%'
-  },
-  transform: {
-    [onlyPreviewFromError]: 'translate(-50%, -50%)'
-  },
-  '--iconPrimary': {
-    type: 'color',
-    value: 'negative'
-  }
-});
-
-// this is also checking that there isn't content in the attachment
-// similar to onlyPreview, but specifically checking siblings after the thumbnail (aka looking for Content)
-const onlyPreviewFromThumbnail = ':not(:has(~ [data-slot=content]))';
-function AttachmentContextProvider({
-  children,
-  isUploading,
-  isInvalid
-}: {
-  children: ReactNode;
-  isUploading: boolean;
-  isInvalid?: boolean;
-}) {
-  let imageCtx = useContext(ImageContext);
-  let illustrationCtx = useContext(IllustrationContext);
-  const opacityStyles = style({
-    opacity: {
-      default: 1,
-      isUploading: 0.15,
-      isInvalid: {
-        default: 1,
-        [onlyPreviewFromThumbnail]: 0.15
-      }
-    },
-    transition: 'default'
-  })({isUploading, isInvalid});
-  const imageSlots = imageCtx && 'slots' in imageCtx ? imageCtx.slots : undefined;
-  const illustrationSlots =
-    illustrationCtx && 'slots' in illustrationCtx ? illustrationCtx.slots : undefined;
-
-  return (
-    <Provider
-      values={[
-        [
-          ImageContext,
-          {
-            ...imageCtx,
-            slots: {
-              ...imageSlots,
-              thumbnail: {
-                ...imageSlots?.thumbnail,
-                styles: mergeStyles(imageSlots?.thumbnail?.styles, opacityStyles)
-              }
-            }
-          }
-        ],
-        [
-          IllustrationContext,
-          {
-            slots: {
-              ...illustrationSlots,
-              thumbnail: {
-                ...illustrationSlots?.thumbnail,
-                styles: mergeStyles(illustrationSlots?.thumbnail?.styles, opacityStyles)
-              }
-            }
-          }
-        ]
-      ]}>
-      {children}
-    </Provider>
-  );
-}
-
 interface AttachmentCardProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   isInvalid?: boolean;
@@ -509,14 +421,10 @@ function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCar
                     borderRadius: '[3px]',
                     objectFit: 'cover',
                     outlineStyle: 'solid',
-                    outlineWidth: {
-                      default: 2,
-                      size: {
-                        XS: 1
-                      }
-                    },
-                    outlineColor: '--s2-container-bg'
-                  })({size})
+                    outlineWidth: 1,
+                    outlineColor: 'gray-800/10',
+                    outlineOffset: -1
+                  })
                 }
               }
             }
@@ -546,7 +454,7 @@ function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCar
           [
             ContentContext,
             {
-              styles: attachmentContent({size}),
+              styles: attachmentContent,
               // @ts-ignore
               'data-slot': 'content'
             }
@@ -574,7 +482,6 @@ export const Attachment = forwardRef(function Attachment(
     size = 'M'
   } = props;
   let domRef = useDOMRef(ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Tag
       id={id}
@@ -585,41 +492,10 @@ export const Attachment = forwardRef(function Attachment(
       ref={domRef}
       className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
       <AttachmentCard size={size} isInvalid={isInvalid}>
-        {props.uploadProgress != null && props.uploadProgress < 100 && (
-          <div
-            className={style({
-              position: 'absolute',
-              top: '50%',
-              insetStart: {
-                default: '50%',
-                // this checks that there is text content in the attachment + a Image as a thumbnail
-                ':has(~ [data-slot=content]):not(:has(~ [data-rsp-slot=illustration]))':
-                  '[calc(var(--card-padding-x) + var(--basic-thumb-size) / 2)]',
-                // this checks that there is text content in the attachment + a Illustration as a thumbnail
-                ':has(~ [data-slot=content]):has(~ [data-rsp-slot=illustration])':
-                  '[calc(var(--card-padding-x) + var(--illust-margin-x) + var(--illust-thumb-size) / 2)]'
-              },
-              transform: 'translate(-50%, -50%)'
-            })}>
-            <ProgressCircle
-              aria-label={stringFormatter.format('promptfield.uploading')}
-              value={props.uploadProgress}
-              // TODO: should probably be M for most thumbnail only attachments at varying sizes, but needs to be S if there is text content
-              // aka like a actualy horizontal card, but to do this I need to know if text sibling is there...
-              size="S"
-            />
-          </div>
-        )}
-        <AttachmentContextProvider
-          isInvalid={isInvalid}
-          isUploading={props.uploadProgress != null && props.uploadProgress < 100}>
+        <AttachmentPreviewContext.Provider
+          value={{isInvalid: !!isInvalid, uploadProgress: props.uploadProgress ?? 100, size}}>
           {typeof children === 'function' ? children({size}) : children}
-        </AttachmentContextProvider>
-        {isInvalid && (
-          <div aria-hidden="true" className={attachmentErrorStyles}>
-            <AlertTriangleIcon size={size} />
-          </div>
-        )}
+        </AttachmentPreviewContext.Provider>
       </AttachmentCard>
       {/** Definitely not a close button, though looks like one. */}
       <div
@@ -635,17 +511,103 @@ export const Attachment = forwardRef(function Attachment(
   );
 });
 
+const attachmentPreviewWrapper = style({
+  width: 32,
+  height: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+const AttachmentPreviewContext = createContext({
+  isInvalid: false,
+  uploadProgress: 100,
+  size: 'S' as 'XS' | 'S' | 'M' | 'L' | 'XL'
+});
+
+export interface AttachmentPreviewProps extends ImageProps {
+  mimeType: string;
+}
+
+export function AttachmentPreview(props: AttachmentPreviewProps) {
+  let {mimeType, ...otherProps} = props;
+  let {isInvalid, uploadProgress, size} = useContext(AttachmentPreviewContext)!;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+
+  if (isInvalid) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <AlertTriangleIcon size={size} />
+      </div>
+    );
+  }
+
+  if (uploadProgress < 100) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <ProgressCircle
+          aria-label={stringFormatter.format('promptfield.uploading')}
+          value={uploadProgress}
+          size="S"
+        />
+      </div>
+    );
+  }
+
+  if (otherProps.src) {
+    return <Image {...otherProps} slot="thumbnail" />;
+  }
+
+  if (mimeType.startsWith('audio/')) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <AudioWave />
+      </div>
+    );
+  }
+
+  if (mimeType.startsWith('video/')) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <Play />
+      </div>
+    );
+  }
+
+  if (mimeType.startsWith('image/')) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <ImageIcon />
+      </div>
+    );
+  }
+
+  if (mimeType.startsWith('text/')) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <FileText />
+      </div>
+    );
+  }
+
+  return (
+    <div className={attachmentPreviewWrapper}>
+      <File />
+    </div>
+  );
+}
+
 function AlertTriangleIcon({size}) {
   switch (size) {
     case 'XS':
-      return <AlertTriangle styles={iconStyle({size: 'XS'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'XS', color: 'negative'})} />;
     case 'S':
-      return <AlertTriangle styles={iconStyle({size: 'S'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'S', color: 'negative'})} />;
     case 'M':
-      return <AlertTriangle styles={iconStyle({size: 'M'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'M', color: 'negative'})} />;
     case 'L':
-      return <AlertTriangle styles={iconStyle({size: 'L'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'L', color: 'negative'})} />;
     case 'XL':
-      return <AlertTriangle styles={iconStyle({size: 'XL'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'XL', color: 'negative'})} />;
   }
 }

@@ -543,7 +543,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         '--loader-opacity': {
           type: 'opacity',
           value: {
-            default: 0.51,
+            default: 0.64,
             isFocused: 1,
             forcedColors: 1
           }
