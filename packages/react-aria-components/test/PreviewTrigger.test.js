@@ -351,10 +351,6 @@ describe('PreviewTrigger', () => {
       act(() => jest.runAllTimers());
       expect(queryByTestId('preview')).not.toBeInTheDocument();
     });
-      fireEvent.pointerMove(document.body, {clientX: 500, clientY: 500, pointerType: 'mouse'});
-      act(() => jest.runAllTimers());
-      expect(queryByTestId('preview')).not.toBeInTheDocument();
-    });
   });
 
   describe('long press (touch)', () => {
