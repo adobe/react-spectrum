@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -543,7 +543,7 @@ const SideNavItemContentInner = props => {
               IconContext,
               {
                 render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                styles: style({size: fontRelative(20), flexShrink: 0})
+                styles: style({size: '1lh', flexShrink: 0})
               }
             ],
             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
@@ -697,7 +697,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
             IconContext,
             {
               render: centerBaseline({slot: 'icon', styles: treeIcon}),
-              styles: style({size: fontRelative(20), flexShrink: 0})
+              styles: style({size: '1lh', flexShrink: 0})
             }
           ]
         ]}>
