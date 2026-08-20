@@ -2096,6 +2096,52 @@ describe('FocusScope', function () {
     });
   });
   describe('node to restore edge cases', () => {
+    it('does not throw when there is no focusable element to restore focus to', function () {
+      function Test({show, showRestoreTarget}) {
+        return (
+          // The outer scope stays mounted and always contains the wrapper div, so
+          // it is never an empty scope, but once showRestoreTarget is false it
+          // holds no focusable element for the restore fallback to find.
+          <FocusScope>
+            <div>
+              {showRestoreTarget && <button data-testid="restore-target">restore target</button>}
+            </div>
+            {show && (
+              <FocusScope restoreFocus autoFocus>
+                <button data-testid="inside">inside</button>
+              </FocusScope>
+            )}
+          </FocusScope>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test show={false} showRestoreTarget />);
+      let restoreTarget = getByTestId('restore-target');
+      act(() => {
+        restoreTarget.focus();
+      });
+      expect(document.activeElement).toBe(restoreTarget);
+
+      // Mount the restoreFocus scope. autoFocus moves focus inside it, and the
+      // restore target is captured as its nodeToRestore.
+      rerender(<Test show showRestoreTarget />);
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(document.activeElement).toBe(getByTestId('inside'));
+
+      // Unmount the scope and remove the restore target in the same commit, so
+      // nodeToRestore is disconnected and the fallback walks up to the outer
+      // scope, which now has nothing focusable in it.
+      rerender(<Test show={false} showRestoreTarget={false} />);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      // There was nothing to restore to, so focus is left on the body.
+      expect(document.activeElement).toBe(document.body);
+    });
+
     it('tracks node to restore if the node to restore was removed in another part of the tree', async () => {
       function Test() {
         let [showMenu, setShowMenu] = useState(false);
