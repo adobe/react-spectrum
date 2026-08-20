@@ -117,16 +117,22 @@ let popover = style(
     boxSizing: 'border-box',
     display: 'flex',
     opacity: {
+      default: 0,
+      isOpen: 1,
       isEntering: 0,
       isExiting: 0
     },
     translateY: {
       placement: {
         top: {
+          default: 4,
+          isOpen: 0,
           isEntering: 4,
           isExiting: 4
         },
         bottom: {
+          default: -4,
+          isOpen: 0,
           isEntering: -4,
           isExiting: -4
         }
@@ -136,10 +142,14 @@ let popover = style(
     translateX: {
       placement: {
         left: {
+          default: 4,
+          isOpen: 0,
           isEntering: 4,
           isExiting: 4
         },
         right: {
+          default: -4,
+          isOpen: 0,
           isEntering: -4,
           isExiting: -4
         }

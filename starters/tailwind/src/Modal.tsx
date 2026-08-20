@@ -23,6 +23,9 @@ const modalStyles = tv({
     },
     isExiting: {
       true: 'animate-out zoom-out-95 ease-in duration-200'
+    },
+    isOpen: {
+      false: 'opacity-0'
     }
   }
 });
