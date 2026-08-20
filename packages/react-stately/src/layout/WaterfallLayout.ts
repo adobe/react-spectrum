@@ -247,7 +247,7 @@ export class WaterfallLayout<
       maxHeight = layoutInfo.rect.maxY;
     }
 
-    this.contentSize = new Size(this.virtualizer!.size.width, maxHeight);
+    this.contentSize = new Size(Math.floor(this.virtualizer!.size.width), maxHeight);
     this.layoutInfos = newLayoutInfos;
     this.numColumns = numColumns;
   }
