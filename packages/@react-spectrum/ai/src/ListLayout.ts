@@ -584,7 +584,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
 
     let contentHeight = Math.max(contentLength, this.virtualizer!.size.height);
-    this.contentSize = new Size(this.virtualizer!.size.width, contentHeight);
+    this.contentSize = new Size(Math.floor(this.virtualizer!.size.width), contentHeight);
 
     // Iterate last → first so the last item in the collection (newest) is placed at the visual
     // bottom and written to nodes[0] (first in DOM) for screen-reader accessibility.
