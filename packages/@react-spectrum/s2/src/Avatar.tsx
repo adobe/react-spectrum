@@ -20,7 +20,7 @@ import {
   StylesPropWithoutWidth,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
-import {Image} from './Image';
+import {Image, ImageContext} from './Image';
 import {isDocsEnv} from './macros' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
@@ -119,19 +119,21 @@ export const Avatar = forwardRef(function Avatar(
     isLarge = size >= 64;
   }
   return (
-    <Image
-      {...domProps}
-      ref={domRef}
-      slot={slot}
-      alt={alt}
-      UNSAFE_style={{
-        ...UNSAFE_style,
-        width: remSize,
-        height: remSize
-      }}
-      UNSAFE_className={UNSAFE_className + ' ' + centerBaselineBefore}
-      styles={imageStyles({isOverBackground, isLarge, isLH}, props.styles)}
-      src={src}
-    />
+    <ImageContext.Provider value={{}}>
+      <Image
+        {...domProps}
+        ref={domRef}
+        slot={slot}
+        alt={alt}
+        UNSAFE_style={{
+          ...UNSAFE_style,
+          width: remSize,
+          height: remSize
+        }}
+        UNSAFE_className={UNSAFE_className + ' ' + centerBaselineBefore}
+        styles={imageStyles({isOverBackground, isLarge, isLH}, props.styles)}
+        src={src}
+      />
+    </ImageContext.Provider>
   );
 });

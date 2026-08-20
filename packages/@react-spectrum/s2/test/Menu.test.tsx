@@ -17,7 +17,7 @@ import {
   render,
   User
 } from '@react-spectrum/test-utils-internal';
-import {ActionButton} from '../src/ActionButton';
+import {ActionButton, ActionButtonContext} from '../src/ActionButton';
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
@@ -31,6 +31,7 @@ import {
   SubmenuTrigger,
   UnavailableMenuItemTrigger
 } from '../src/Menu';
+import {Provider, useSlottedContext} from 'react-aria-components/slots';
 import React from 'react';
 import {Selection} from '@react-types/shared';
 import {ToggleButton} from '../src/ToggleButton';
@@ -142,6 +143,32 @@ describe('Menu unavailable', () => {
     let menus = queryAllByRole('dialog');
     expect(menus).toHaveLength(0);
     expect(queryByText('Contact your administrator for permissions to delete.')).toBeNull();
+  });
+});
+
+describe('Context propagation', () => {
+  it('preserves the ActionButton context from its parent', () => {
+    function ContextActionButton() {
+      let {staticColor} = useSlottedContext(ActionButtonContext) || {};
+      return (
+        <ActionButton data-static-color={staticColor} aria-label="Menu button">
+          Menu button
+        </ActionButton>
+      );
+    }
+
+    let {getByRole} = render(
+      <Provider values={[[ActionButtonContext, {staticColor: 'auto'}]]}>
+        <MenuTrigger>
+          <ContextActionButton />
+          <Menu aria-label="Test">
+            <MenuItem id="item">Item</MenuItem>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+
+    expect(getByRole('button', {name: 'Menu button'})).toHaveAttribute('data-static-color', 'auto');
   });
 });
 
