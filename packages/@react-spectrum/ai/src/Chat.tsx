@@ -18,6 +18,7 @@ import {
 } from 'react-aria-components/CollectionBuilder';
 import {
   createContext,
+  CSSProperties,
   ForwardedRef,
   forwardRef,
   ReactNode,
@@ -307,7 +308,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           boxSizing: 'border-box',
           minWidth: 0,
           scrollbarGutter: 'stable'
-        }}
+        } as CSSProperties}
         className={styles}>
         {children}
       </GridList>
