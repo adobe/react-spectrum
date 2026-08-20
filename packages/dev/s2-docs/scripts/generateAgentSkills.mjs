@@ -739,12 +739,89 @@ This skill does not edit code. Recommend:
 }
 
 /**
+ * Build a map from a doc's flat source-relative path (e.g. "forms.md",
+ * "internationalized/date/index.md") to the relative path it will be copied to
+ * inside a skill's `references/` directory (e.g. "guides/forms.md",
+ * "internationalized/date/index.md"). Used to rewrite cross-file links that were
+ * written for the docs site's flat URL structure so they resolve in the
+ * categorized `references/` layout the skill ships.
+ */
+function buildDestinationMap(categories, customGuideEntries) {
+  const destinationMap = new Map();
+
+  const addEntries = (entries, targetSubdir, stripPrefix = null) => {
+    for (const entry of entries) {
+      let targetRelPath = entry.path;
+      if (stripPrefix && targetRelPath.startsWith(stripPrefix)) {
+        targetRelPath = targetRelPath.slice(stripPrefix.length);
+      }
+      destinationMap.set(entry.path, path.posix.join(targetSubdir, targetRelPath));
+    }
+  };
+
+  addEntries(customGuideEntries, 'guides');
+  addEntries(categories.guides, 'guides');
+  addEntries(categories.components, 'components');
+  addEntries(categories.interactions, 'interactions');
+  addEntries(categories.utilities, 'utilities');
+  addEntries(categories.testing, 'testing');
+  addEntries(categories.internationalized, 'internationalized', 'internationalized/');
+  destinationMap.set('llms.txt', 'llms.txt');
+
+  return destinationMap;
+}
+
+const LINK_PATTERN = /(\]\()([^)\s]+)(\))/g;
+// Any URI with a scheme (http:, mailto:, cursor:, vscode:, s2:, etc.) is treated as opaque —
+// only extension-less/bare relative paths refer to files shipped inside the skill.
+const URI_SCHEME_PATTERN = /^[a-zA-Z][a-zA-Z0-9+.-]*:/;
+
+/**
+ * Rewrite relative Markdown links in `content` (a file whose flat source-relative
+ * path is `sourceRelPath`, being copied to `destRelPath` within `references/`) so
+ * that links pointing at other shipped docs resolve from the new, categorized
+ * location instead of the flat location they were authored for.
+ */
+function rewriteRelativeLinks(content, sourceRelPath, destRelPath, destinationMap) {
+  return content.replace(LINK_PATTERN, (match, prefix, href, suffix) => {
+    if (!href || href.startsWith('#') || URI_SCHEME_PATTERN.test(href)) {
+      return match;
+    }
+
+    const urlMatch = href.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
+    if (!urlMatch) {
+      return match;
+    }
+    const [, pathPart, queryPart = '', hashPart = ''] = urlMatch;
+    if (!pathPart) {
+      return match;
+    }
+
+    const resolvedSourcePath = path.posix.normalize(
+      path.posix.join(path.posix.dirname(sourceRelPath), pathPart)
+    );
+    const target = destinationMap.get(resolvedSourcePath);
+    if (!target) {
+      return match;
+    }
+
+    let newHref = path.posix.relative(path.posix.dirname(destRelPath), target);
+    if (!newHref.startsWith('.')) {
+      newHref = `./${newHref}`;
+    }
+
+    return `${prefix}${newHref}${queryPart}${hashPart}${suffix}`;
+  });
+}
+
+/**
  * Copy documentation files to the skill's references directory.
  */
 function copyDocsDocumentation(skillConfig, categories, skillDir, options = {}) {
   const refsDir = path.join(skillDir, 'references', options.referenceSubdir ?? '');
   const sourceDir = path.join(MARKDOWN_DOCS_DIST, skillConfig.sourceDir);
   const customGuideEntries = getCustomGuideEntries(skillConfig.name);
+  const destinationMap = buildDestinationMap(categories, customGuideEntries);
 
   // Create subdirectories only if they have content
   const subdirs = [
@@ -776,7 +853,11 @@ function copyDocsDocumentation(skillConfig, categories, skillDir, options = {}) 
 
     const targetPath = path.join(refsDir, targetSubdir, targetRelPath);
     fs.mkdirSync(path.dirname(targetPath), {recursive: true});
-    fs.copyFileSync(sourcePath, targetPath);
+
+    const destRelPath = path.posix.join(targetSubdir, targetRelPath);
+    const content = fs.readFileSync(sourcePath, 'utf8');
+    const rewritten = rewriteRelativeLinks(content, entry.path, destRelPath, destinationMap);
+    fs.writeFileSync(targetPath, rewritten);
   };
 
   // Copy guides
@@ -857,6 +938,8 @@ function copyAdditionalReferenceLibraries(skillConfig, skillDir) {
 }
 
 function copyFocusedDocs(sourceDir, skillDir, docs) {
+  const destinationMap = new Map(docs);
+
   for (const [sourceName, outputName] of docs) {
     const sourcePath = path.join(MARKDOWN_DOCS_DIST, sourceDir, sourceName);
     if (!fs.existsSync(sourcePath)) {
@@ -866,7 +949,10 @@ function copyFocusedDocs(sourceDir, skillDir, docs) {
 
     const outputPath = path.join(skillDir, 'references', outputName);
     fs.mkdirSync(path.dirname(outputPath), {recursive: true});
-    fs.copyFileSync(sourcePath, outputPath);
+
+    const content = fs.readFileSync(sourcePath, 'utf8');
+    const rewritten = rewriteRelativeLinks(content, sourceName, outputName, destinationMap);
+    fs.writeFileSync(outputPath, rewritten);
   }
 }
 
@@ -952,33 +1038,79 @@ function collectSkillFiles(skillDir) {
 }
 
 /**
- * Validate that all references/ links in SKILL.md resolve to actual files.
- * Throws if any broken links are found.
+ * Validate that all relative links in every Markdown file that ships with the skill
+ * (SKILL.md and everything under references/) resolve to actual files, relative to
+ * the file that contains the link. Throws if any broken links are found.
  */
 function validateSkillLinks(skillDir) {
+  const markdownFiles = [];
+  const walk = currentDir => {
+    for (const dirent of fs.readdirSync(currentDir, {withFileTypes: true})) {
+      const entryPath = path.join(currentDir, dirent.name);
+      if (dirent.isDirectory()) {
+        walk(entryPath);
+      } else if (dirent.isFile() && dirent.name.endsWith('.md')) {
+        markdownFiles.push(entryPath);
+      }
+    }
+  };
+
   const skillMdPath = path.join(skillDir, 'SKILL.md');
-  if (!fs.existsSync(skillMdPath)) {
-    return;
+  if (fs.existsSync(skillMdPath)) {
+    markdownFiles.push(skillMdPath);
+  }
+  const referencesDir = path.join(skillDir, 'references');
+  if (fs.existsSync(referencesDir)) {
+    walk(referencesDir);
   }
 
-  const content = fs.readFileSync(skillMdPath, 'utf8');
-  const linkPattern = /\[([^\]]*)\]\((references\/[^)]+)\)/g;
+  const linkPattern = /\[([^\]]*)\]\(([^)\s]+)\)/g;
   const broken = [];
 
-  let match;
-  while ((match = linkPattern.exec(content)) !== null) {
-    const linkText = match[1];
-    const linkPath = match[2];
-    const resolvedPath = path.join(skillDir, linkPath);
-    if (!fs.existsSync(resolvedPath)) {
-      broken.push(`"${linkText}" -> ${linkPath}`);
+  for (const filePath of markdownFiles) {
+    const content = fs.readFileSync(filePath, 'utf8');
+
+    let match;
+    while ((match = linkPattern.exec(content)) !== null) {
+      const linkText = match[1];
+      let linkPath = match[2];
+
+      if (!linkPath || linkPath.startsWith('#') || URI_SCHEME_PATTERN.test(linkPath)) {
+        continue;
+      }
+
+      // Strip query params and hash fragments before resolving the file on disk
+      linkPath = linkPath.replace(/[?#].*$/, '');
+      if (!linkPath) {
+        continue;
+      }
+
+      // The legacy v3 docs site isn't part of this build, so its links can't be verified here.
+      if (/(^|\/)v3\//.test(linkPath)) {
+        continue;
+      }
+
+      const resolvedPath = path.resolve(path.dirname(filePath), linkPath);
+      if (fs.existsSync(resolvedPath)) {
+        continue;
+      }
+
+      // Some skills only bundle a curated subset of the full docs (e.g. blog posts, the site's
+      // own landing page, or a "focused" reference set). A link to a page that exists somewhere
+      // in the full generated docs corpus, just not in this skill's bundle, is a known, accepted
+      // gap rather than a broken/typo'd link.
+      const bareLinkPath = linkPath.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '');
+      const existsInFullCorpus = ['s2', 'react-aria'].some(lib =>
+        fs.existsSync(path.join(MARKDOWN_DOCS_DIST, lib, bareLinkPath))
+      );
+      if (!existsInFullCorpus) {
+        broken.push(`${path.relative(REPO_ROOT, filePath)}: "${linkText}" -> ${match[2]}`);
+      }
     }
   }
 
   if (broken.length > 0) {
-    throw new Error(
-      `Broken references in ${path.relative(REPO_ROOT, skillMdPath)}:\n  ${broken.join('\n  ')}`
-    );
+    throw new Error(`Broken links found:\n  ${broken.join('\n  ')}`);
   }
 }
 
