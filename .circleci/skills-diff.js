@@ -152,7 +152,7 @@ function colorCounts(counts) {
   return parts.join(' ');
 }
 
-// Map "s2/skills/<rest>" / "react-aria/skills/<rest>" (the layout produced
+// Map "s2/agent-skills/<rest>" / "react-aria/agent-skills/<rest>" (the layout produced
 // by build-skills.sh) to a cloudfront URL on the branch build.
 function fileUrl(relPath, sha) {
   if (!sha) {
@@ -161,7 +161,7 @@ function fileUrl(relPath, sha) {
   const parts = relPath.split(path.sep);
   const lib = parts[0];
   const rest = parts.slice(1).join('/');
-  // `rest` starts with "skills/...", the deploy lands it under /.well-known/
+  // `rest` starts with "agent-skills/...", the deploy lands it under /.well-known/
   let base;
   if (lib === 's2') {
     base = S2_BASE;
