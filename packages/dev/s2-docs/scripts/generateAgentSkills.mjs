@@ -1149,12 +1149,10 @@ function createSkillArchive(skillDir, skillName, wellKnownRoot) {
  * skills with supporting files (references/, etc.) are packaged as a `type: "archive"` tarball.
  */
 function buildSkillArtifact(skillConfig, skillDir, wellKnownRoot, files) {
-  const wellKnownBase = `/${WELL_KNOWN_DIR}/${WELL_KNOWN_SKILLS_DIR}`;
-
   if (files.length === 1 && files[0] === 'SKILL.md') {
     return {
       type: 'skill-md',
-      url: `${wellKnownBase}/${skillConfig.name}/SKILL.md`,
+      url: `${skillConfig.name}/SKILL.md`,
       digest: sha256Digest(path.join(skillDir, 'SKILL.md'))
     };
   }
@@ -1163,7 +1161,7 @@ function buildSkillArtifact(skillConfig, skillDir, wellKnownRoot, files) {
   console.log(`Generated ${path.relative(REPO_ROOT, archivePath)}`);
   return {
     type: 'archive',
-    url: `${wellKnownBase}/${skillConfig.name}.tar.gz`,
+    url: `${skillConfig.name}.tar.gz`,
     digest: sha256Digest(archivePath)
   };
 }
