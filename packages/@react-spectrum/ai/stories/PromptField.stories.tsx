@@ -11,7 +11,6 @@
  */
 
 import {action} from 'storybook/actions';
-import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {
   AttachFileMenuItem,
   CommandMenuItem,
@@ -31,7 +30,6 @@ import {
 } from '../src/PromptField';
 import {Attachment, AttachmentPreview} from '../src/AttachmentList';
 import Brand from '@react-spectrum/s2/icons/Brand';
-import {Button} from '@react-spectrum/s2/Button';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
@@ -41,7 +39,6 @@ import {
   Menu,
   MenuItem,
   MenuSection,
-  MenuTrigger,
   SubmenuTrigger,
   Text
 } from '@react-spectrum/s2/Menu';
@@ -51,13 +48,11 @@ import * as data from '../src/loader/data';
 import type {FocusableRefValue} from '@react-types/shared';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import LinkIcon from '@react-spectrum/s2/icons/Link';
-import ListMultiSelect from '@react-spectrum/s2/icons/ListMultiSelect';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
-import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
 import {TokenFieldValue} from 'react-aria-components';
 import {TokenSegment} from 'react-stately';
 import {useRef, useState} from 'react';
