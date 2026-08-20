@@ -150,7 +150,7 @@ function handleWindowBlur() {
 function handleInvalidEvent(e: Event) {
   let startingActiveElement = getActiveElement(getOwnerDocument(getEventTarget(e)));
   queueMicrotask(() => {
-    // If focus was moved to a differen element after the form became invalid,
+    // If focus was moved to a different element after the form became invalid,
     // then it was likely a forms library that moved focus to the first invalid field.
     // In this case, we want to set the modality to keyboard.
     if (getActiveElement(getOwnerDocument(getEventTarget(e))) !== startingActiveElement) {
