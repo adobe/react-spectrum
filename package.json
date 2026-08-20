@@ -18,9 +18,7 @@
     "packages/@*/*"
   ],
   "scripts": {
-    "tsgo": "tsgo",
-    "check-types": "tsgo --noEmit",
-    "check-types:tsc": "tsc",
+    "check-types": "tsc --noEmit",
     "clean": "make clean",
     "clean:all": "make clean_all",
     "format": "oxfmt",
@@ -141,10 +139,9 @@
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.4#~/.yarn/patches/@testing-library-user-event-npm-14.6.4-1532248d3b.patch",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.5#~/.yarn/patches/@testing-library-user-event-npm-14.6.5-1fcf457da8.patch",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@typescript/native-preview": "^7.0.0-dev.20251223.1",
     "@vitejs/plugin-react": "^5.1.4",
     "@vitest/browser-playwright": "^4.0.17",
     "@vitest/browser-preview": "^4.0.17",
@@ -213,7 +210,7 @@
     "tailwindcss": "^4.0.0",
     "tempy": "^0.5.0",
     "tw-animate-css": "^1.4.0",
-    "typescript": "^5.8.2",
+    "typescript": "^7.0.2",
     "unplugin-parcel-macros": "^0.1.1",
     "verdaccio": "^6.0.0",
     "vite": "^7.3.2",
@@ -234,7 +231,7 @@
     "@mdx-js/react": "2.0.0-rc.2",
     "@parcel/packager-react-static": "^2.16.3",
     "@sinclair/typebox": "0.27.10",
-    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.4#~/.yarn/patches/@testing-library-user-event-npm-14.6.4-1532248d3b.patch",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.5#~/.yarn/patches/@testing-library-user-event-npm-14.6.5-1fcf457da8.patch",
     "@types/node@npm:*": "^24",
     "@types/node@npm:>= 8": "^24",
     "@types/node@npm:^18.0.0": "^24",
@@ -248,6 +245,7 @@
     "postcss-custom-properties": "13.2.0",
     "postcss-import": "15.1.0",
     "react": "19.2.4",
+    "react-docgen-typescript@npm:^2.2.2": "patch:react-docgen-typescript@npm%3A2.4.0#~/.yarn/patches/react-docgen-typescript-npm-2.4.0-9669bef2f0.patch",
     "react-dom": "19.2.4",
     "react-refresh": "0.9.0",
     "react-server-dom-parcel": "canary",
@@ -258,7 +256,7 @@
     "rsc-html-stream": "0.0.8",
     "svgo": "^3"
   },
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.0",
   "@parcel/bundler-default": {
     "manualSharedBundles": [
       {

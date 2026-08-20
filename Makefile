@@ -112,7 +112,7 @@ publish-nightly: build
 
 build:
 	mkdir -p dist
-	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
+	yarn tsc --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist/types --rootDir packages
 	if [ -n "$$PARCEL_V3" ]; then \
 		node scripts/generateS2IconIndex.js; \
 		parcel3 build $(BUILD_ENTRIES) --no-optimize --config parcel-v3/.parcelrc-build; \
@@ -155,7 +155,7 @@ check-starter-css:
 
 check-examples: check-starter-css
 	node scripts/extractExamplesS2.mjs
-	yarn tsgo --project dist/docs-examples/tsconfig.json
+	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
 	cd starters/docs && yarn --no-immutable && yarn up react-aria-components && yarn tsc
