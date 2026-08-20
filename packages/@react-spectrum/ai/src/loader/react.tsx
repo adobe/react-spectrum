@@ -295,6 +295,7 @@ export function PixelLoader(props: PixelLoaderProps) {
     }
     return matrix;
   }, [cells]);
+  const isHighDPI = window.devicePixelRatio >= 2;
 
   return (
     <div
@@ -332,8 +333,8 @@ export function PixelLoader(props: PixelLoaderProps) {
         let corner = (a, b, diag) => (!a && !b && !diag ? '1px' : '0px');
 
         // Adjust position for outer cells on high DPI displays.
-        let xPx = x * cellSize + offset;
-        let yPx = y * cellSize + offset;
+        let xPx = x * cellSize + offset + (isHighDPI ? (c.adjustX ?? 0) : 0);
+        let yPx = y * cellSize + offset + (isHighDPI ? (c.adjustY ?? 0) : 0);
 
         return (
           <div

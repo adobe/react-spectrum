@@ -1144,7 +1144,7 @@ const selectAllCheckboxColumn = style({
   },
   paddingEnd: {
     default: 0,
-    ':has(slot="selection")': 8
+    ':has([slot="selection"])': 8
   },
   paddingY: 0,
   height: 'full',
