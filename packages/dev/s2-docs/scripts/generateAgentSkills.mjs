@@ -16,7 +16,7 @@
  * 3. Copy relevant documentation to references/ subdirectories
  * 4. Package each skill with supporting files as a `.tar.gz` archive
  * 5. Generate .well-known/agent-skills/index.json for discovery, with a `type`, `url`, and
- *    SHA-256 `digest` per skill.
+ * SHA-256 `digest` per skill.
  */
 
 import crypto from 'crypto';
