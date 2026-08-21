@@ -19,20 +19,21 @@ import {
   forwardRefType,
   GlobalDOMAttributes
 } from '@react-types/shared';
-import {
-  baseColor,
-  centerPadding,
-  focusRing,
-  lightDark,
-  space,
-  style
-} from '../style' with {type: 'macro'};
+import {baseColor, centerPadding, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from './CenterBaseline';
 
 import Chevron from '../ui-icons/Chevron';
 
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
+import {
+  controlTemplate,
+  getAllowedOverrides,
+  StyleProps,
+  StylesPropWithFont,
+  UnsafeStyles,
+  verticalPadding
+} from './style-utils' with {type: 'macro'};
 import {
   DisclosureStateContext,
   Disclosure as RACDisclosure,
@@ -41,12 +42,6 @@ import {
   DisclosureProps as RACDisclosureProps
 } from 'react-aria-components/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {
-  getAllowedOverrides,
-  StyleProps,
-  StylesPropWithFont,
-  UnsafeStyles
-} from './style-utils' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from './useDOMRef';
@@ -166,6 +161,7 @@ const headingStyle = style({
 const buttonStyles = style(
   {
     ...focusRing(),
+    ...controlTemplate(),
     outlineOffset: -2,
     font: 'heading',
     color: {
@@ -189,9 +185,8 @@ const buttonStyles = style(
     display: 'flex',
     flexGrow: 1,
     alignItems: 'baseline',
-    paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
     paddingY: centerPadding(),
-    gap: 'calc(self(minHeight) * 3/8 - 1px)',
+    gap: controlTemplate().paddingX,
     minHeight: {
       // compact is equivalent to 'control', but other densities have more padding.
       size: {
@@ -282,7 +277,7 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
       <div
         style={UNSAFE_style}
         className={
-          (UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4})
+          (UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4}) // TODO: this gap doesn't really exist?
         }
         ref={domRef}>
         {children}
@@ -359,16 +354,9 @@ const panelStyles = style({
 });
 
 const panelInner = style({
-  paddingTop: 8,
-  paddingBottom: 16,
-  paddingX: {
-    size: {
-      S: 8,
-      M: space(9),
-      L: 12,
-      XL: space(15)
-    }
-  }
+  paddingTop: verticalPadding('L'),
+  paddingBottom: verticalPadding('2XL'),
+  paddingX: controlTemplate().paddingX
 });
 
 /**

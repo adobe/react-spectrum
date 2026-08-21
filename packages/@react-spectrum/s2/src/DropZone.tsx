@@ -10,21 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  containerPadding,
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {ContextValue} from 'react-aria-components/slots';
-
 import {createContext, forwardRef, ReactNode} from 'react';
-
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {
   DropZoneRenderProps,
   DropZone as RACDropZone,
   DropZoneProps as RACDropZoneProps
 } from 'react-aria-components/DropZone';
-import {
-  getAllowedOverrides,
-  StylesPropWithHeight,
-  UnsafeStyles
-} from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
 import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
@@ -94,7 +93,7 @@ const dropzone = style<DropZoneRenderProps>(
       isFocusVisible: 'blue-800'
     },
     borderRadius: 'lg',
-    padding: 24,
+    padding: containerPadding({size: 'XL'}),
     boxSizing: 'border-box'
   },
   getAllowedOverrides({height: true})

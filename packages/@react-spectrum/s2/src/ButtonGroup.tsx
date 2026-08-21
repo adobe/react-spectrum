@@ -15,7 +15,7 @@ import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode, useCallback, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, groupGap, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -66,14 +66,7 @@ const buttongroup = style<ButtonGroupStyleProps>(
     display: 'inline-flex',
     position: 'relative',
     maxWidth: 'full',
-    gap: {
-      size: {
-        S: 8,
-        M: 12,
-        L: 12,
-        XL: 12
-      }
-    },
+    gap: groupGap(),
     flexDirection: {
       default: 'row',
       orientation: {

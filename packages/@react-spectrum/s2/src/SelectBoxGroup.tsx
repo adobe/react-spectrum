@@ -12,10 +12,16 @@
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import Checkmark from '../ui-icons/Checkmark';
+import {
+  containerGap,
+  containerPadding,
+  getAllowedOverrides,
+  StyleProps,
+  textGap
+} from './style-utils' with {type: 'macro'};
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Orientation} from '@react-types/shared';
 import {forwardRefType} from './types';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from '../src/Icon';
 import {ListBox, ListBoxItem, ListBoxProps} from 'react-aria-components/ListBox';
 import {pressScale} from './pressScale';
@@ -145,22 +151,7 @@ const selectBoxStyles = style(
         horizontal: 240
       }
     },
-    padding: {
-      default: 24,
-      orientation: {
-        horizontal: 16
-      }
-    },
-    paddingStart: {
-      orientation: {
-        horizontal: 32
-      }
-    },
-    paddingEnd: {
-      orientation: {
-        horizontal: 24
-      }
-    },
+    padding: containerPadding({size: 'XL'}),
     gridTemplateAreas: {
       orientation: {
         vertical: ['illustration', '.', 'label'],
@@ -172,16 +163,16 @@ const selectBoxStyles = style(
     },
     gridTemplateRows: {
       orientation: {
-        vertical: ['min-content', 8, 'min-content'],
+        vertical: ['min-content', containerGap({size: 'S'}), 'min-content'],
         horizontal: {
-          default: ['min-content', 2, 'min-content'],
+          default: ['min-content', textGap({size: 'L'}), 'min-content'],
           [noIllustration]: ['min-content']
         }
       }
     },
     gridTemplateColumns: {
       orientation: {
-        horizontal: 'min-content 10px 1fr'
+        horizontal: ['min-content', containerGap({size: 'S'}), '1fr']
       }
     },
     alignContent: {

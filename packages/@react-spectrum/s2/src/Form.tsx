@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {controlGap, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DOMRef, GlobalDOMAttributes, SpectrumLabelableProps} from '@react-types/shared';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components/Form';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
@@ -108,6 +108,7 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(
               }
             },
             // TODO: confirm when we have tokens
+            // UPDATE: still no tokens
             rowGap: {
               size: {
                 XS: 16,
@@ -117,7 +118,7 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(
                 XL: 40
               }
             },
-            columnGap: 'text-to-control'
+            columnGap: controlGap()
           },
           getAllowedOverrides()
         )({labelPosition, size}, props.styles)

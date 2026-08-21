@@ -32,8 +32,8 @@ import {
   autoStaticColor,
   ColorRef,
   colorScale,
-  ColorToken,
   colorToken,
+  ColorToken,
   fontSizeToken,
   generateOverlayColorScale,
   getToken,
@@ -427,12 +427,24 @@ export function space(this: MacroContext | void, px: number): string {
 
 const relativeSpacing = {
   // font-size relative values
+  /**
+   * @deprecated Use `controlGap()` from `style-utils`, which selects a `base-gap-*` tier per
+   *   component size.
+   */
   'text-to-control': fontRelative(10),
+  /**
+   * @deprecated Use `controlGap()` from `style-utils`, which selects a `base-gap-*` tier per
+   *   component size.
+   */
   'text-to-visual': {
     default: fontRelative(6), // -> 5px, 5px, 6px, 7px, 8px
     touch: fontRelative(8, 17) // -> 6px, 7px, 8px, 9px, 10px, should be 7px, 7px, 8px, 9px, 11px
   },
   // height relative values
+  /**
+   * @deprecated Use `controlPadding()` from `style-utils`, which selects a
+   *   `base-padding-horizontal-*` tier per component size.
+   */
   'edge-to-text': 'calc(self(height, self(minHeight)) * 3 / 8)',
   pill: 'calc(self(height, self(minHeight)) / 2)'
 } as const;

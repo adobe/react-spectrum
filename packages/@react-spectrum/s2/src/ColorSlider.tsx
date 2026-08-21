@@ -17,7 +17,12 @@ import {
 
 import {ColorHandle} from './ColorHandle';
 import {ContextValue} from 'react-aria-components/slots';
-import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  controlFont,
+  controlGap,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, useRef} from 'react';
 import {
   DOMRef,
@@ -91,7 +96,7 @@ export const ColorSlider = forwardRef(function ColorSlider(
             },
             gridTemplateColumns: ['1fr', 'auto'],
             gridTemplateAreas: ['label output', 'track track'],
-            rowGap: 4
+            rowGap: controlGap().size.S
           },
           getAllowedOverrides()
         )(renderProps, styles)

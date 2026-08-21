@@ -12,7 +12,7 @@
 
 import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {controlFont} from './style-utils' with {type: 'macro'};
+import {controlFont, controlGap} from './style-utils' with {type: 'macro'};
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {DragItem} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -64,7 +64,7 @@ export let iconCenterWrapper = style({
 export let icon = style({
   display: 'block',
   size: fontRelative(20),
-  marginEnd: 'text-to-visual',
+  marginEnd: controlGap().size.M,
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'

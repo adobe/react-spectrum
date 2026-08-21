@@ -35,6 +35,7 @@ import {
 import {ContextValue, Provider} from 'react-aria-components/slots';
 import {
   controlFont,
+  controlGap,
   controlSize,
   getAllowedOverrides,
   StyleProps
@@ -112,13 +113,7 @@ const wrapper = style<BreadcrumbsStyleProps>(
     flexGrow: 1,
     flexShrink: 0,
     flexBasis: 0,
-    gap: {
-      size: {
-        // TODO: why do these scale but other spacings don't?
-        M: size(6), // breadcrumbs-text-to-separator-medium
-        L: size(9) // breadcrumbs-text-to-separator-large
-      }
-    },
+    gap: controlGap(),
     padding: 0,
     transition: 'default',
     marginTop: 0,

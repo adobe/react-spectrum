@@ -1,5 +1,6 @@
 import {ActionButton} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {container, containerPadding, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   ContentContext,
   FooterContext,
@@ -18,8 +19,7 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria-components/Popover';
 import {Popover, PopoverDialogProps} from './Popover';
-import {space, style} from '../style' with {type: 'macro'};
-import {StyleProps} from './style-utils' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {TextContext} from 'react-aria-components/Text';
 import {useId} from 'react-aria/useId';
 import {useLabels} from 'react-aria/private/utils/useLabels';
@@ -34,17 +34,17 @@ export interface ContextualHelpPopoverProps extends Omit<PopoverDialogProps, 'is
 }
 
 const wrappingDiv = style({
+  ...container(),
   minWidth: 268,
   width: 268,
-  padding: 24,
   boxSizing: 'border-box',
   height: 'full'
-});
+})({size: 'XL'});
 
 const headingStyles = style({
   font: 'heading-xs',
   margin: 0,
-  marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
+  marginBottom: containerPadding({size: 'XS'})
 });
 
 // TODO: docs to come after release, for now this is just mentioned in unavaiable menu docs
@@ -61,7 +61,11 @@ export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
         <div
           className={mergeStyles(
             dialogInner,
-            style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24})
+            style({
+              ...container(),
+              borderRadius: 'none',
+              margin: 'calc(self(paddingTop) * -1)'
+            })({size: 'XL'})
           )}>
           <Provider
             values={[
@@ -101,8 +105,8 @@ export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
                 {
                   styles: style({
                     font: 'body-sm',
-                    marginTop: 16
-                  })
+                    marginTop: container().gap
+                  })({size: 'M'})
                 }
               ]
             ]}>

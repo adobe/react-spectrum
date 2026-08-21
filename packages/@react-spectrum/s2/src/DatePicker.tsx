@@ -11,22 +11,26 @@
  */
 
 import {
-  DatePicker as AriaDatePicker,
-  DatePickerProps as AriaDatePickerProps,
-  DateValue
-} from 'react-aria-components/DatePicker';
-import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
-import {Button, ButtonRenderProps} from 'react-aria-components/Button';
-import {Calendar, CalendarProps} from './Calendar';
-import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
-import {ContextValue, Provider} from 'react-aria-components/slots';
-import {
+  accessoryGap,
+  containerPadding,
+  control,
   controlBorderRadius,
+  controlGap,
   field,
   fieldInput,
   getAllowedOverrides,
   StyleProps
 } from './style-utils' with {type: 'macro'};
+import {
+  DatePicker as AriaDatePicker,
+  DatePickerProps as AriaDatePickerProps,
+  DateValue
+} from 'react-aria-components/DatePicker';
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {Button, ButtonRenderProps} from 'react-aria-components/Button';
+import {Calendar, CalendarProps} from './Calendar';
+import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {
   createContext,
   forwardRef,
@@ -116,7 +120,7 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean; size: 'S' | 'M' 
     }
   },
   height: 'auto',
-  marginStart: 'text-to-control',
+  marginStart: controlGap(),
   aspectRatio: 'square',
   flexShrink: 0,
   transition: {
@@ -235,15 +239,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               styles={style({
                 ...fieldInput(),
                 textWrap: 'nowrap',
-                paddingStart: 'edge-to-text',
-                paddingEnd: {
-                  size: {
-                    S: 2,
-                    M: 4,
-                    L: space(6),
-                    XL: space(6)
-                  }
-                }
+                paddingStart: control({}).paddingX,
+                paddingEnd: accessoryGap()
               })({size})}>
               <DateInputContainer>
                 <DateInput />
@@ -296,12 +293,11 @@ export function CalendarPopover(
     <Popover {...props} hideArrow padding="none">
       <div
         className={style({
-          paddingX: 16,
-          paddingY: 24,
+          padding: containerPadding({size: 'M'}),
           overflow: 'auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: 16,
+          gap: containerPadding({size: 'M'}),
           boxSizing: 'border-box',
           size: 'full'
         })}>

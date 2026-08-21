@@ -25,7 +25,7 @@ import {
   Orientation,
   SpectrumLabelableProps
 } from '@react-types/shared';
-import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, getAllowedOverrides, groupGap, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {style} from '../style' with {type: 'macro'};
@@ -104,12 +104,7 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(
         UNSAFE_className +
         style(
           {
-            ...field(),
-            // Double the usual gap because of the internal padding within checkbox that spectrum has.
-            '--field-gap': {
-              type: 'rowGap',
-              value: 'calc(var(--field-height) - 1lh)'
-            }
+            ...field()
           },
           getAllowedOverrides()
         )(
@@ -146,7 +141,7 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(
                 }
               },
               lineHeight: 'ui',
-              rowGap: '--field-gap',
+              rowGap: groupGap().density.spacious,
               // Spectrum uses a fixed spacing value for horizontal,
               // but the gap changes depending on t-shirt size in vertical.
               columnGap: 16,

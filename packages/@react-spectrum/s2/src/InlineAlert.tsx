@@ -11,6 +11,7 @@
  */
 
 import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
+import {banner, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import {ComponentType, createContext, forwardRef, ReactNode, useEffect, useRef} from 'react';
 import {ContentContext, HeadingContext} from './Content';
@@ -18,7 +19,6 @@ import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusRing, style} from '../style' with {type: 'macro'};
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import InfoCircle from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import intlMessages from '../intl/*.json';
@@ -63,7 +63,7 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>(
     display: 'inline-block',
     position: 'relative',
     boxSizing: 'border-box',
-    padding: 24,
+    padding: banner().paddingX.density.default, // TODO design is this correct? why not follow other banners?
     borderRadius: 'lg',
     borderStyle: 'solid',
     borderWidth: 2,

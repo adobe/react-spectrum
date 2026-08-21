@@ -15,6 +15,7 @@ import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {
   getAllowedOverrides,
+  groupGap,
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
@@ -70,20 +71,7 @@ export const actionGroupStyle = style(
         vertical: 'column'
       }
     },
-    gap: {
-      density: {
-        compact: 2,
-        regular: {
-          size: {
-            XS: 4,
-            S: 4,
-            M: 8,
-            L: 8,
-            XL: 8
-          }
-        }
-      }
-    }
+    gap: groupGap()
   },
   getAllowedOverrides({height: true})
 );

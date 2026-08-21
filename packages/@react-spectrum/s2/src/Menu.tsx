@@ -41,6 +41,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-ari
 import {
   control,
   controlFont,
+  controlPadding,
   controlSize,
   getAllowedOverrides,
   StyleProps
@@ -57,7 +58,6 @@ import {
 } from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
@@ -127,10 +127,46 @@ export const MenuContext =
 
 const menuItemGrid = {
   size: {
-    S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
-    M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
-    L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
-    XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
+    S: [
+      controlPadding({size: 'S'}),
+      'auto',
+      'auto',
+      'minmax(0, 1fr)',
+      'auto',
+      'auto',
+      'auto',
+      controlPadding({size: 'S'})
+    ],
+    M: [
+      controlPadding({size: 'M'}),
+      'auto',
+      'auto',
+      'minmax(0, 1fr)',
+      'auto',
+      'auto',
+      'auto',
+      controlPadding({size: 'M'})
+    ],
+    L: [
+      controlPadding({size: 'L'}),
+      'auto',
+      'auto',
+      'minmax(0, 1fr)',
+      'auto',
+      'auto',
+      'auto',
+      controlPadding({size: 'L'})
+    ],
+    XL: [
+      controlPadding({size: 'XL'}),
+      'auto',
+      'auto',
+      'minmax(0, 1fr)',
+      'auto',
+      'auto',
+      'auto',
+      controlPadding({size: 'XL'})
+    ]
   }
 } as const;
 

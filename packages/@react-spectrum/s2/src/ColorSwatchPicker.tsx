@@ -20,8 +20,8 @@ import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';
-import {focusRing, space, style} from '../style' with {type: 'macro'};
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {focusRing, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, groupGap, StyleProps} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -81,9 +81,9 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
             flexWrap: 'wrap',
             gap: {
               density: {
-                compact: space(2),
-                regular: 4,
-                spacious: space(6)
+                compact: groupGap().density.compact,
+                regular: groupGap().density.default.size.XS,
+                spacious: groupGap().density.default.size.M
               }
             }
           },

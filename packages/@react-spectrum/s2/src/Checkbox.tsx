@@ -24,6 +24,7 @@ import {ContextValue, useSlottedContext} from 'react-aria-components/slots';
 import {
   controlBorderRadius,
   controlFont,
+  controlGap,
   controlSize,
   getAllowedOverrides,
   StyleProps
@@ -89,7 +90,7 @@ const field = style(
       default: ['max-content', '1fr'],
       isNoVisibleLabel: ['max-content']
     },
-    columnGap: 'text-to-control',
+    columnGap: controlGap(),
     alignContent: 'start',
     width: {
       default: 'fit',

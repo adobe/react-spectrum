@@ -52,7 +52,7 @@ const dialogStyle = style(
     padding: {
       padding: {
         default: {
-          default: 24,
+          default: 24, // TODO: what should these be?
           sm: 32
         },
         none: 0

@@ -10,6 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  accessoryGap,
+  controlBorderRadius,
+  controlGap,
+  controlTemplate,
+  field,
+  fieldInput,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import Add from '../ui-icons/Add';
 import {
   ButtonProps as AriaButtonProps,
@@ -20,15 +30,8 @@ import {
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps
 } from 'react-aria-components/NumberField';
-import {baseColor, space, style} from '../style' with {type: 'macro'};
+import {baseColor, style} from '../style' with {type: 'macro'};
 import {ContextValue, useContextProps} from 'react-aria-components/slots';
-import {
-  controlBorderRadius,
-  field,
-  fieldInput,
-  getAllowedOverrides,
-  StyleProps
-} from './style-utils' with {type: 'macro'};
 import {
   createContext,
   CSSProperties,
@@ -109,7 +112,7 @@ const inputButton = style<
   },
   height: 'auto',
   marginStart: {
-    default: 'text-to-control',
+    default: controlGap(),
     type: {
       increment: 0
     }
@@ -151,22 +154,8 @@ const iconStyles = style({
 const stepperContainerStyles = style({
   display: 'flex',
   flexDirection: 'row',
-  gap: {
-    size: {
-      S: 8,
-      M: 4,
-      L: 8,
-      XL: 8
-    }
-  },
-  marginEnd: {
-    size: {
-      S: 2,
-      M: 4,
-      L: space(6),
-      XL: space(6)
-    }
-  }
+  gap: accessoryGap(),
+  marginEnd: accessoryGap()
 });
 
 /**
@@ -249,10 +238,10 @@ export const NumberField = forwardRef(function NumberField(
               size={size}
               styles={style({
                 ...fieldInput(),
-                paddingStart: 'edge-to-text',
+                paddingStart: controlTemplate().paddingX,
                 paddingEnd: {
                   default: 0,
-                  isStepperHidden: 'edge-to-text'
+                  isStepperHidden: controlTemplate().paddingX
                 }
               })({size, isStepperHidden: hideStepper})}>
               <InputContext.Consumer>

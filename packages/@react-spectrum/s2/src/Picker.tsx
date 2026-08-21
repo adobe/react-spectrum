@@ -60,16 +60,18 @@ import {
   control,
   controlBorderRadius,
   controlFont,
+  controlGap,
+  controlPadding,
   field,
   fieldInput,
   getAllowedOverrides,
+  popover,
   StyleProps
 } from './style-utils' with {type: 'macro'};
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {createShadowTreeWalker} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {Divider, listbox, listboxHeader, listboxItem, LOADER_ROW_HEIGHTS} from './ComboBox';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -196,7 +198,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   },
   transition: 'default',
   paddingX: {
-    default: 'edge-to-text',
+    default: control({shape: 'default', icon: true}).paddingX,
     isQuiet: 0
   },
   backgroundColor: {
@@ -229,21 +231,58 @@ const quietFocusLine = style({
 });
 
 export let menu = style({
+  ...popover(),
+  gap: 0,
   outlineStyle: 'none',
   display: 'grid',
   width: 'full',
   gridTemplateColumns: {
     size: {
-      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
-      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
-      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
-      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
+      S: [
+        controlPadding({size: 'S'}),
+        'auto',
+        'auto',
+        'minmax(0, 1fr)',
+        'auto',
+        'auto',
+        'auto',
+        controlPadding({size: 'S'})
+      ],
+      M: [
+        controlPadding({size: 'M'}),
+        'auto',
+        'auto',
+        'minmax(0, 1fr)',
+        'auto',
+        'auto',
+        'auto',
+        controlPadding({size: 'M'})
+      ],
+      L: [
+        controlPadding({size: 'L'}),
+        'auto',
+        'auto',
+        'minmax(0, 1fr)',
+        'auto',
+        'auto',
+        'auto',
+        controlPadding({size: 'L'})
+      ],
+      XL: [
+        controlPadding({size: 'XL'}),
+        'auto',
+        'auto',
+        'minmax(0, 1fr)',
+        'auto',
+        'auto',
+        'auto',
+        controlPadding({size: 'XL'})
+      ]
     }
   },
   boxSizing: 'border-box',
   maxHeight: 'inherit',
   overflow: 'auto',
-  padding: 8,
   fontFamily: 'sans',
   fontSize: controlFont(),
   gridAutoRows: 'min-content'
@@ -288,7 +327,7 @@ const iconStyles = style({
 
 const avatar = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual'
+  marginEnd: controlGap()
 });
 
 const loadingWrapperStyles = style({
@@ -706,7 +745,7 @@ const PickerButton = createHideableComponent(function PickerButton<T>(
                           slots: {
                             avatar: {
                               size: avatarSize[size ?? 'M'],
-                              styles: avatar
+                              styles: avatar({size})
                             }
                           }
                         }
@@ -829,7 +868,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
               context={AvatarContext}
               value={{
                 slots: {
-                  avatar: {size: avatarSize[size], styles: avatar}
+                  avatar: {size: avatarSize[size], styles: avatar({size})}
                 }
               }}>
               <DefaultProvider
