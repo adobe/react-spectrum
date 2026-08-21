@@ -16,6 +16,7 @@ import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shar
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {getItemId, listData} from './utils';
+import {getPosInSet} from '../utils/posinset';
 import {isFocusVisible} from '../interactions/useFocusVisible';
 import {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
@@ -128,8 +129,8 @@ export function useOption<T>(
 
   let item = state.collection.getItem(key);
   if (isVirtualized) {
-    let index = Number(item?.index);
-    optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
+    let posInSet = getPosInSet(state.collection, key, item);
+    optionProps['aria-posinset'] = Number.isNaN(posInSet) ? undefined : posInSet;
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 

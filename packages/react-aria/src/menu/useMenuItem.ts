@@ -25,6 +25,7 @@ import {
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
+import {getPosInSet} from '../utils/posinset';
 import {handleLinkClick, useLinkProps, useRouter} from '../utils/openLink';
 import {isFocusVisible, setInteractionModality} from '../interactions/useFocusVisible';
 import {menuData} from './utils';
@@ -225,8 +226,8 @@ export function useMenuItem<T>(
   }
 
   if (isVirtualized) {
-    let index = Number(item?.index);
-    ariaProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
+    let posInSet = getPosInSet(state.collection, key, item);
+    ariaProps['aria-posinset'] = Number.isNaN(posInSet) ? undefined : posInSet;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 

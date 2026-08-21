@@ -13,6 +13,8 @@
 import {AriaMenuProps, useMenu} from '../../src/menu/useMenu';
 
 import {Item} from 'react-stately/Item';
+import {Section} from 'react-stately/Section';
+import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {Key} from '@react-types/shared';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
@@ -81,6 +83,33 @@ function VirtualizedMenu<T extends object>(props: AriaMenuProps<T>) {
   );
 }
 
+function VirtualizedMenuWithSections<T extends object>(props: AriaMenuProps<T>) {
+  let state = useTreeState(props);
+  let ref = React.useRef(null);
+  let {menuProps} = useMenu(props, state, ref);
+
+  // Flatten sections into their items so useMenuItem is invoked for each item,
+  // mirroring how the real listbox iterates a sectioned collection.
+  let nodes: {key: Key; rendered: React.ReactNode; index?: number}[] = [];
+  for (let node of state.collection) {
+    if (node.type === 'section') {
+      for (let child of getChildNodes(node, state.collection)) {
+        nodes.push(child);
+      }
+    } else if (node.type === 'item') {
+      nodes.push(node);
+    }
+  }
+
+  return (
+    <ul {...menuProps} ref={ref}>
+      {nodes.map(item => (
+        <VirtualizedMenuItem key={item.key} item={item} state={state} />
+      ))}
+    </ul>
+  );
+}
+
 describe('useMenuTrigger', function () {
   let user;
   beforeAll(() => {
@@ -136,5 +165,30 @@ describe('useMenuItem with isVirtualized', function () {
     expect(items[0]).toHaveAttribute('aria-setsize', '3');
     expect(items[1]).toHaveAttribute('aria-setsize', '3');
     expect(items[2]).toHaveAttribute('aria-setsize', '3');
+  });
+
+  it('sets global aria-posinset across sections', () => {
+    let {getAllByRole} = render(
+      <VirtualizedMenuWithSections aria-label="test menu">
+        <Section title="Group 1">
+          <Item key="1">One</Item>
+          <Item key="2">Two</Item>
+        </Section>
+        <Section title="Group 2">
+          <Item key="3">Three</Item>
+          <Item key="4">Four</Item>
+        </Section>
+      </VirtualizedMenuWithSections>
+    );
+
+    // aria-posinset should be global (1..4) and match aria-setsize, not restart
+    // per section (which would report 1..2 for both groups).
+    let items = getAllByRole('menuitem');
+    expect(items[0]).toHaveAttribute('aria-posinset', '1');
+    expect(items[1]).toHaveAttribute('aria-posinset', '2');
+    expect(items[2]).toHaveAttribute('aria-posinset', '3');
+    expect(items[3]).toHaveAttribute('aria-posinset', '4');
+    expect(items[0]).toHaveAttribute('aria-setsize', '4');
+    expect(items[3]).toHaveAttribute('aria-setsize', '4');
   });
 });
