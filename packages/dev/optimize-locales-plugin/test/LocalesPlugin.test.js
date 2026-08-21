@@ -11,8 +11,12 @@
  */
 const path = require('path');
 const LocalesPlugin = require('../LocalesPlugin');
+const localesLoader = require('../LocalesLoader');
 
 const EMPTY_JS = path.join(path.dirname(require.resolve('../LocalesPlugin')), 'empty.js');
+const LOADER = path.join(path.dirname(require.resolve('../LocalesPlugin')), 'LocalesLoader.js');
+const LOCALES_GLOB =
+  '**/{@react-stately,@react-aria,@react-spectrum,@adobe/react-spectrum,react-stately,react-aria,react-aria-components}/**/??-??.{json,mjs,js,cjs}';
 
 function createPlugin(locales = ['en-US']) {
   return LocalesPlugin.raw({locales}, {framework: 'rollup'});
@@ -82,4 +86,88 @@ describe('@react-aria/optimize-locales-plugin', () => {
     const resolved = plugin.resolveId('./fr-FR.json', windowsImporter, {});
     expect(resolved).toBe(EMPTY_JS);
   });
+
+  describe('Turbopack', () => {
+    test('returns a single scoped loader rule', () => {
+      let config = LocalesPlugin.turbopack({locales: ['en-US', 'fr']});
+
+      expect(Object.keys(config.rules)).toEqual([LOCALES_GLOB]);
+      expect(config.rules[LOCALES_GLOB]).toEqual({
+        loaders: [
+          {
+            loader: LOADER,
+            options: {locales: ['en-US', 'fr']}
+          }
+        ],
+        as: '*.js'
+      });
+    });
+
+    test('supports different locales in browser and server module graphs', () => {
+      let config = LocalesPlugin.turbopack([
+        {locales: [], condition: 'browser'},
+        {locales: ['en-US', 'fr'], condition: {not: 'browser'}}
+      ]);
+
+      expect(config.rules[LOCALES_GLOB]).toEqual([
+        {
+          condition: 'browser',
+          loaders: [
+            {
+              loader: LOADER,
+              options: {locales: []}
+            }
+          ],
+          as: '*.js'
+        },
+        {
+          condition: {not: 'browser'},
+          loaders: [
+            {
+              loader: LOADER,
+              options: {locales: ['en-US', 'fr']}
+            }
+          ],
+          as: '*.js'
+        }
+      ]);
+    });
+
+    test('requires at least one conditional configuration', () => {
+      expect(() => LocalesPlugin.turbopack([])).toThrow(
+        'Expected at least one Turbopack locale configuration.'
+      );
+    });
+
+    test('loader replaces an excluded locale with undefined', () => {
+      let result = callLoader('fr-FR', ['en-US']);
+      expect(result).toBe('export default undefined;');
+    });
+
+    test('loader preserves an included locale', () => {
+      let result = callLoader('fr-FR', ['en-US', 'fr-FR']);
+      expect(result).toBe('export default {"message":"Bonjour"};');
+    });
+
+    test('loader preserves regional locales included by language', () => {
+      let result = callLoader('fr-CA', ['en-US', 'fr']);
+      expect(result).toBe('export default {"message":"Bonjour"};');
+    });
+
+    test('loader preserves included compiled locale modules', () => {
+      let source = 'export default {"message":"Bonjour"};';
+      let result = callLoader('fr-FR', ['fr'], 'mjs', source);
+      expect(result.toString()).toBe(source);
+    });
+  });
 });
+
+function callLoader(locale, locales, extension = 'json', source = '{"message":"Bonjour"}') {
+  return localesLoader.call(
+    {
+      resourcePath: `/repo/node_modules/@react-aria/button/intl/${locale}.${extension}`,
+      getOptions: () => ({locales})
+    },
+    Buffer.from(source)
+  );
+}
