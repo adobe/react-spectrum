@@ -288,7 +288,7 @@ export interface MenuProps<T>
    * @default 'react-aria-Menu'
    */
   className?: ClassNameOrFunction<MenuRenderProps>;
-  /** Provides content to display when there are no items in the list. */
+  /** Provides content to display when there are no items in the menu. */
   renderEmptyState?: () => ReactNode;
   /** Whether the menu should close when the menu item is selected. */
   shouldCloseOnSelect?: boolean;
@@ -641,7 +641,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
 
 export interface MenuLoadMoreItemProps
   extends
-    Omit<LoadMoreSentinelProps, 'collection'>,
+    Omit<LoadMoreSentinelProps, 'collection' | 'direction'>,
     StyleProps,
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
@@ -649,7 +649,7 @@ export interface MenuLoadMoreItemProps
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element.
    *
-   * @default 'react-aria-MenuLoadMoreItem'
+   * @default 'react-aria-MenuLoadingIndicator'
    */
   className?: string;
   /**
@@ -717,6 +717,7 @@ export const MenuLoadMoreItem = createLeafComponent(
               ref={ref as ForwardedRef<HTMLDivElement>}>
               {renderProps.children}
             </dom.div>
+            {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
           </>
         )}
       </>

@@ -20,6 +20,7 @@ import {Input} from '../src/Input';
 import {Keyboard} from '../src/Keyboard';
 import {Label} from '../src/Label';
 import {ListLayout} from 'react-stately/useVirtualizerState';
+import {LoadingSpinner, MyMenuItem} from './utils';
 import {
   Menu,
   MenuItem,
@@ -32,9 +33,8 @@ import {
 } from '../src/Menu';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-import {LoadingSpinner, MyMenuItem} from './utils';
 import {Popover} from '../src/Popover';
-import React, {createContext, JSX, ReactElement, useContext} from 'react';
+import React, {createContext, JSX, ReactElement, useContext, useRef} from 'react';
 import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
@@ -658,7 +658,7 @@ interface Character {
   birth_year: number;
 }
 
-export const MyMenuLoaderIndicator = props => {
+const MyMenuLoaderIndicator = props => {
   return (
     <MenuLoadMoreItem
       style={{
@@ -675,13 +675,20 @@ export const MyMenuLoaderIndicator = props => {
   );
 };
 
-// TODO: empty state support
-export function AsyncMenu() {
+type AsyncMenuArgs = {delay: number; isEmpty: boolean};
+
+function AsyncMenuRender(args: AsyncMenuArgs) {
+  let hasOpenedRef = useRef(false);
+
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
+      if (!hasOpenedRef.current) {
+        return {items: []};
+      }
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
       let json = await res.json();
       return {
@@ -691,23 +698,60 @@ export function AsyncMenu() {
     }
   });
 
+  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+
   return (
-    <MenuTrigger>
+    <MenuTrigger
+      onOpenChange={open => {
+        if (open && !hasOpenedRef.current && !args.isEmpty) {
+          hasOpenedRef.current = true;
+          list.reload();
+        }
+      }}>
       <Button aria-label="Menu">☰</Button>
       <Popover>
         <Menu
           className={styles.menu}
           aria-label="Star Wars characters"
+          renderEmptyState={() => (
+            <div style={{height: 30, width: '100%'}}>
+              {!args.isEmpty && isLoading ? (
+                <LoadingSpinner
+                  style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}}
+                />
+              ) : (
+                'No results'
+              )}
+            </div>
+          )}
           onAction={action('onAction')}>
-          <Collection items={list.items}>
+          <Collection items={args.isEmpty ? [] : list.items}>
             {(item: Character) => <MenuItem id={item.name}>{item.name}</MenuItem>}
           </Collection>
-          <MyMenuLoaderIndicator
-            isLoading={list.loadingState === 'loading' || list.loadingState === 'loadingMore'}
-            onLoadMore={list.loadMore}
-          />
+          {!args.isEmpty && (
+            <MyMenuLoaderIndicator
+              isLoading={list.loadingState === 'loadingMore'}
+              onLoadMore={list.loadMore}
+            />
+          )}
         </Menu>
       </Popover>
     </MenuTrigger>
   );
 }
+
+export const AsyncMenu: StoryObj<typeof AsyncMenuRender> = {
+  render: args => <AsyncMenuRender {...args} />,
+  args: {
+    delay: 2000,
+    isEmpty: false
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    },
+    isEmpty: {
+      control: 'boolean'
+    }
+  }
+};
