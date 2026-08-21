@@ -243,6 +243,14 @@ export {
 export {Toolbar, ToolbarContext} from '../src/Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from '../src/Tooltip';
 export {
+  NavigationTree,
+  NavigationTreeItem,
+  NavigationTreeItemContent,
+  NavigationTreeSection,
+  NavigationTreeHeader,
+  NavigationTreeContext
+} from '../src/NavigationTree';
+export {
   TreeLoadMoreItem,
   Tree,
   TreeItem,
@@ -517,6 +525,16 @@ export type {ToggleButtonProps, ToggleButtonRenderProps} from '../src/ToggleButt
 export type {ToggleButtonGroupProps, ToggleButtonGroupRenderProps} from '../src/ToggleButtonGroup';
 export type {ToolbarProps, ToolbarRenderProps} from '../src/Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from '../src/Tooltip';
+export type {
+  NavigationTreeProps,
+  NavigationTreeRenderProps,
+  NavigationTreeItemProps,
+  NavigationTreeItemRenderProps,
+  NavigationTreeItemContentProps,
+  NavigationTreeItemContentRenderProps,
+  NavigationTreeSectionProps,
+  NavigationTreeHeaderProps
+} from '../src/NavigationTree';
 export type {
   TreeProps,
   TreeRenderProps,
