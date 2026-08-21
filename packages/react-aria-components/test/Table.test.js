@@ -1656,6 +1656,18 @@ describe('Table', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Games');
     });
 
+    it('should allow pointer interaction with the drag button on first attempt', async () => {
+      let {getAllByRole} = render(<DraggableTable />);
+      let dragButton = getAllByRole('button')[0];
+
+      expect(dragButton).toHaveAttribute('aria-label', 'Drag Games');
+
+      await user.pointer({
+        target: dragButton,
+        keys: '[MouseLeft]'
+      });
+    });
+
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(
