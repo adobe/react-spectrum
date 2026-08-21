@@ -26,7 +26,6 @@
   "types": "./dist/types/exports/index.d.ts",
   "exports": {
     ".": {
-      "source": "./exports/index.ts",
       "types": "./dist/types/exports/index.d.ts",
       "import": "./dist/exports/index.mjs",
       "require": "./dist/exports/index.cjs"
@@ -43,7 +42,6 @@
     },
     "./package.json": "./package.json",
     "./*": {
-      "source": "./exports/*.ts",
       "types": "./dist/types/exports/*.d.ts",
       "legacy-module": "./dist/exports/*.js",
       "import": "./dist/exports/*.mjs",
