@@ -1146,3 +1146,38 @@ export const DropOntoRoot = () => (
     <DroppableListBox />
   </div>
 );
+
+export const FractionalWidth: StoryFn = () => {
+  let items = Array.from({length: 50}, (_, i) => ({id: i, name: `Item ${i + 1}`}));
+  return (
+    <div
+      style={{
+        display: 'flex',
+        width: 501,
+        border: '1px solid gray'
+      }}>
+      <div style={{width: '50%'}}>
+        <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 32}}>
+          <ListBox
+            aria-label="Fractional width list 1"
+            className={styles.menu}
+            style={{height: 300}}
+            items={items}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Virtualizer>
+      </div>
+      <div style={{width: '50%'}}>
+        <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 32}}>
+          <ListBox
+            aria-label="Fractional width list 2"
+            className={styles.menu}
+            style={{height: 300}}
+            items={items}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Virtualizer>
+      </div>
+    </div>
+  );
+};
