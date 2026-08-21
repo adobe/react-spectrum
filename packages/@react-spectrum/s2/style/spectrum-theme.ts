@@ -36,7 +36,6 @@ import {
   ColorToken,
   fontSizeToken,
   generateOverlayColorScale,
-  getSetToken,
   getToken,
   shadowToken,
   simpleColorScale,
@@ -450,104 +449,14 @@ const relativeSpacing = {
   pill: 'calc(self(height, self(minHeight)) / 2)'
 } as const;
 
-// Base gap/padding tiers, selected per component size at the call site
-// (see `controlGap`/`controlPadding` in `style-utils`). The token holds the
-// desktop value; the `--s2-scale` variable produces the touch value.
-const sizeSpacing = {
-  'base-gap-extra-small': size(parseFloat(getToken('base-gap-extra-small'))),
-  'base-gap-small': size(parseFloat(getToken('base-gap-small'))),
-  'base-gap-medium': size(parseFloat(getToken('base-gap-medium'))),
-  'base-gap-large': size(parseFloat(getToken('base-gap-large'))),
-  'base-gap-extra-large': size(parseFloat(getToken('base-gap-extra-large'))),
-  'base-padding-horizontal-extra-small': size(
-    parseFloat(getSetToken('base-padding-horizontal-extra-small'))
-  ),
-  'accessory-gap-extra-small': size(parseFloat(getToken('accessory-gap-extra-small'))),
-  'accessory-gap-small': size(parseFloat(getToken('accessory-gap-small'))),
-  'accessory-gap-medium': size(parseFloat(getToken('accessory-gap-medium'))),
-  'accessory-gap-large': size(parseFloat(getToken('accessory-gap-large'))),
-  'accessory-gap-extra-large': size(parseFloat(getToken('accessory-gap-extra-large'))),
-  'accessory-gap-2x-large': size(parseFloat(getToken('accessory-gap-2x-large'))),
-  'group-gap-extra-small': size(parseFloat(getToken('group-gap-extra-small'))),
-  'group-gap-small': size(parseFloat(getToken('group-gap-small'))),
-  'group-gap-medium': size(parseFloat(getToken('group-gap-medium'))),
-  'group-gap-large': size(parseFloat(getToken('group-gap-large'))),
-  'group-gap-extra-large': size(parseFloat(getToken('group-gap-extra-large'))),
-  'group-gap-compact': size(parseFloat(getToken('group-gap-compact'))),
-  'group-gap-extra-small-spacious': size(parseFloat(getToken('group-gap-extra-small-spacious'))),
-  'group-gap-small-spacious': size(parseFloat(getToken('group-gap-small-spacious'))),
-  'group-gap-medium-spacious': size(parseFloat(getToken('group-gap-medium-spacious'))),
-  'group-gap-large-spacious': size(parseFloat(getToken('group-gap-large-spacious'))),
-  'group-gap-extra-large-spacious': size(parseFloat(getToken('group-gap-extra-large-spacious'))),
-  'container-gap-2x-small': size(parseFloat(getToken('container-gap-2x-small'))),
-  'container-gap-extra-small': size(parseFloat(getToken('container-gap-extra-small'))),
-  'container-gap-small': size(parseFloat(getToken('container-gap-small'))),
-  'container-gap-medium': size(parseFloat(getToken('container-gap-medium'))),
-  'container-gap-large': size(parseFloat(getToken('container-gap-large'))),
-  'container-gap-extra-large': size(parseFloat(getToken('container-gap-extra-large'))),
-  'container-gap-2x-large': size(parseFloat(getToken('container-gap-2x-large'))),
-  'base-padding-horizontal-small': size(parseFloat(getSetToken('base-padding-horizontal-small'))),
-  'base-padding-horizontal-medium': size(parseFloat(getSetToken('base-padding-horizontal-medium'))),
-  'base-padding-horizontal-large': size(parseFloat(getSetToken('base-padding-horizontal-large'))),
-  'base-padding-horizontal-extra-large': size(
-    parseFloat(getSetToken('base-padding-horizontal-extra-large'))
-  ),
-  'base-padding-horizontal-2x-large': size(
-    parseFloat(getSetToken('base-padding-horizontal-2x-large'))
-  ),
-  'base-padding-vertical-extra-small': size(
-    parseFloat(getToken('base-padding-vertical-extra-small'))
-  ),
-  'base-padding-vertical-small': size(parseFloat(getToken('base-padding-vertical-small'))),
-  'base-padding-vertical-medium': size(parseFloat(getToken('base-padding-vertical-medium'))),
-  'base-padding-vertical-large': size(parseFloat(getToken('base-padding-vertical-large'))),
-  'base-padding-vertical-extra-large': size(
-    parseFloat(getToken('base-padding-vertical-extra-large'))
-  ),
-  'base-padding-vertical-2x-large': size(parseFloat(getToken('base-padding-vertical-2x-large'))),
-  'banner-gap-horizontal': size(parseFloat(getToken('banner-gap-horizontal'))),
-  'banner-gap-vertical': size(parseFloat(getToken('banner-gap-vertical'))),
-  'banner-padding-horizontal': size(parseFloat(getToken('banner-padding-horizontal'))),
-  'banner-padding-horizontal-compact': size(
-    parseFloat(getToken('banner-padding-horizontal-compact'))
-  ),
-  'banner-padding-vertical': size(parseFloat(getToken('banner-padding-vertical'))),
-  'container-padding-2x-small': size(parseFloat(getToken('container-padding-2x-small'))),
-  'container-padding-extra-small': size(parseFloat(getToken('container-padding-extra-small'))),
-  'container-padding-small': size(parseFloat(getToken('container-padding-small'))),
-  'container-padding-medium': size(parseFloat(getToken('container-padding-medium'))),
-  'container-padding-large': size(parseFloat(getToken('container-padding-large'))),
-  'container-padding-extra-large': size(parseFloat(getToken('container-padding-extra-large'))),
-  'container-padding-2x-large': size(parseFloat(getToken('container-padding-2x-large'))),
-  'container-padding-3x-large': size(parseFloat(getToken('container-padding-3x-large'))),
-  'list-item-gap-small': size(parseFloat(getToken('list-item-gap-small'))),
-  'list-item-gap-medium': size(parseFloat(getToken('list-item-gap-medium'))),
-  'list-item-padding-vertical-regular': size(
-    parseFloat(getToken('list-item-padding-vertical-regular'))
-  ),
-  'list-item-padding-vertical-spacious': size(
-    parseFloat(getToken('list-item-padding-vertical-spacious'))
-  ),
-  'list-item-padding-horizontal': size(parseFloat(getToken('list-item-padding-horizontal'))),
-  'text-gap-extra-small': size(parseFloat(getToken('text-gap-extra-small'))),
-  'text-gap-small': size(parseFloat(getToken('text-gap-small'))),
-  'text-gap-medium': size(parseFloat(getToken('text-gap-medium'))),
-  'text-gap-large': size(parseFloat(getToken('text-gap-large'))),
-  'text-gap-extra-large': size(parseFloat(getToken('text-gap-extra-large'))),
-  'popover-padding': size(parseFloat(getToken('popover-padding'))),
-  'popover-gap': size(parseFloat(getToken('popover-gap')))
-} as const;
-
 const spacing = {
   ...baseSpacing,
-  ...relativeSpacing,
-  ...sizeSpacing
+  ...relativeSpacing
 };
 
 const padding = {
   ...basePadding,
-  ...relativeSpacing,
-  ...sizeSpacing
+  ...relativeSpacing
 };
 
 /**

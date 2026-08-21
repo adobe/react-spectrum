@@ -27,7 +27,7 @@ import Chevron from '../ui-icons/Chevron';
 
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
-  controlPadding,
+  controlTemplate,
   getAllowedOverrides,
   StyleProps,
   StylesPropWithFont,
@@ -161,6 +161,7 @@ const headingStyle = style({
 const buttonStyles = style(
   {
     ...focusRing(),
+    ...controlTemplate(),
     outlineOffset: -2,
     font: 'heading',
     color: {
@@ -184,9 +185,8 @@ const buttonStyles = style(
     display: 'flex',
     flexGrow: 1,
     alignItems: 'baseline',
-    paddingX: controlPadding(),
     paddingY: centerPadding(),
-    gap: controlPadding(),
+    gap: controlTemplate().paddingX,
     minHeight: {
       // compact is equivalent to 'control', but other densities have more padding.
       size: {
@@ -356,7 +356,7 @@ const panelStyles = style({
 const panelInner = style({
   paddingTop: verticalPadding('L'),
   paddingBottom: verticalPadding('2XL'),
-  paddingX: controlPadding()
+  paddingX: controlTemplate().paddingX
 });
 
 /**

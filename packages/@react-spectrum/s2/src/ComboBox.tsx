@@ -50,6 +50,7 @@ import {
   controlFont,
   controlPadding,
   controlSize,
+  controlTemplate,
   field,
   fieldInput,
   getAllowedOverrides,
@@ -71,7 +72,6 @@ import {
 } from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {createLeafComponent} from 'react-aria/CollectionBuilder';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -294,10 +294,34 @@ export let listboxItem = style(
     gridTemplateAreas: ['. checkmark icon label       .', '. .         .    description .'],
     gridTemplateColumns: {
       size: {
-        S: [controlPadding().size.S, 'auto', 'auto', 'minmax(0, 1fr)', controlPadding().size.S],
-        M: [controlPadding().size.M, 'auto', 'auto', 'minmax(0, 1fr)', controlPadding().size.M],
-        L: [controlPadding().size.L, 'auto', 'auto', 'minmax(0, 1fr)', controlPadding().size.L],
-        XL: [controlPadding().size.XL, 'auto', 'auto', 'minmax(0, 1fr)', controlPadding().size.XL]
+        S: [
+          controlPadding({size: 'S'}),
+          'auto',
+          'auto',
+          'minmax(0, 1fr)',
+          controlPadding({size: 'S'})
+        ],
+        M: [
+          controlPadding({size: 'M'}),
+          'auto',
+          'auto',
+          'minmax(0, 1fr)',
+          controlPadding({size: 'M'})
+        ],
+        L: [
+          controlPadding({size: 'L'}),
+          'auto',
+          'auto',
+          'minmax(0, 1fr)',
+          controlPadding({size: 'L'})
+        ],
+        XL: [
+          controlPadding({size: 'XL'}),
+          'auto',
+          'auto',
+          'minmax(0, 1fr)',
+          controlPadding({size: 'XL'})
+        ]
       }
     },
     gridTemplateRows: {
@@ -326,12 +350,12 @@ export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   boxSizing: 'border-box',
   minHeight: controlSize(),
   paddingY: centerPadding(),
-  marginX: controlPadding()
+  marginX: controlTemplate().paddingX
 });
 
 const separatorWrapper = style({
   display: 'flex',
-  marginX: controlPadding(),
+  marginX: controlTemplate().paddingX,
   height: 12,
   alignItems: 'center'
 });
@@ -348,7 +372,7 @@ const dividerStyle = style({
 
 const avatar = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual'
+  marginEnd: 'text-to-visual' // TODO
 });
 
 // Not from any design, just following the sizing of the existing rows

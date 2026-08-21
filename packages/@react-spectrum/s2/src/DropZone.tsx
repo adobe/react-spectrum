@@ -93,7 +93,7 @@ const dropzone = style<DropZoneRenderProps>(
       isFocusVisible: 'blue-800'
     },
     borderRadius: 'lg',
-    padding: containerPadding().size.XL,
+    padding: containerPadding({size: 'XL'}),
     boxSizing: 'border-box'
   },
   getAllowedOverrides({height: true})

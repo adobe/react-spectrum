@@ -14,7 +14,7 @@ import {
   accessoryGap,
   controlBorderRadius,
   controlGap,
-  controlPadding,
+  controlTemplate,
   field,
   fieldInput,
   getAllowedOverrides,
@@ -238,10 +238,10 @@ export const NumberField = forwardRef(function NumberField(
               size={size}
               styles={style({
                 ...fieldInput(),
-                paddingStart: controlPadding(),
+                paddingStart: controlTemplate().paddingX,
                 paddingEnd: {
                   default: 0,
-                  isStepperHidden: controlPadding()
+                  isStepperHidden: controlTemplate().paddingX
                 }
               })({size, isStepperHidden: hideStepper})}>
               <InputContext.Consumer>

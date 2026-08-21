@@ -21,14 +21,14 @@ import {
 } from 'react-aria-components/DateField';
 
 import {ContextValue} from 'react-aria-components/slots';
-import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext} from 'react';
 import {
-  controlPadding,
+  controlTemplate,
   field,
   fieldInput,
   getAllowedOverrides,
   StyleProps
 } from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext} from 'react';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';
 import {
@@ -169,7 +169,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
               styles={style({
                 ...fieldInput(),
                 textWrap: 'nowrap',
-                paddingX: controlPadding()
+                paddingX: controlTemplate().paddingX
               })({size})}>
               <DateInputContainer>
                 <DateInput />

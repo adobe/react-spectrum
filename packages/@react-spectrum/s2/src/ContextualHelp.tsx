@@ -1,6 +1,6 @@
 import {ActionButton} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {containerGap, containerPadding, StyleProps} from './style-utils' with {type: 'macro'};
+import {container, containerPadding, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   ContentContext,
   FooterContext,
@@ -34,17 +34,17 @@ export interface ContextualHelpPopoverProps extends Omit<PopoverDialogProps, 'is
 }
 
 const wrappingDiv = style({
+  ...container(),
   minWidth: 268,
   width: 268,
-  padding: containerPadding().size.XL,
   boxSizing: 'border-box',
   height: 'full'
-});
+})({size: 'XL'});
 
 const headingStyles = style({
   font: 'heading-xs',
   margin: 0,
-  marginBottom: containerPadding().size.XS
+  marginBottom: containerPadding({size: 'XS'})
 });
 
 // TODO: docs to come after release, for now this is just mentioned in unavaiable menu docs
@@ -62,10 +62,10 @@ export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
           className={mergeStyles(
             dialogInner,
             style({
+              ...container(),
               borderRadius: 'none',
-              margin: 'calc(self(paddingTop) * -1)',
-              padding: containerPadding().size.XL
-            })
+              margin: 'calc(self(paddingTop) * -1)'
+            })({size: 'XL'})
           )}>
           <Provider
             values={[
@@ -105,8 +105,8 @@ export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
                 {
                   styles: style({
                     font: 'body-sm',
-                    marginTop: containerGap().size.M
-                  })
+                    marginTop: container().gap
+                  })({size: 'M'})
                 }
               ]
             ]}>

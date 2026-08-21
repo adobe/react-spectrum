@@ -65,13 +65,13 @@ import {
   field,
   fieldInput,
   getAllowedOverrides,
+  popover,
   StyleProps
 } from './style-utils' with {type: 'macro'};
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {createShadowTreeWalker} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {Divider, listbox, listboxHeader, listboxItem, LOADER_ROW_HEIGHTS} from './ComboBox';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -231,57 +231,58 @@ const quietFocusLine = style({
 });
 
 export let menu = style({
+  ...popover(),
+  gap: 0,
   outlineStyle: 'none',
   display: 'grid',
   width: 'full',
   gridTemplateColumns: {
     size: {
       S: [
-        controlPadding().size.S,
+        controlPadding({size: 'S'}),
         'auto',
         'auto',
         'minmax(0, 1fr)',
         'auto',
         'auto',
         'auto',
-        controlPadding().size.S
+        controlPadding({size: 'S'})
       ],
       M: [
-        controlPadding().size.M,
+        controlPadding({size: 'M'}),
         'auto',
         'auto',
         'minmax(0, 1fr)',
         'auto',
         'auto',
         'auto',
-        controlPadding().size.M
+        controlPadding({size: 'M'})
       ],
       L: [
-        controlPadding().size.L,
+        controlPadding({size: 'L'}),
         'auto',
         'auto',
         'minmax(0, 1fr)',
         'auto',
         'auto',
         'auto',
-        controlPadding().size.L
+        controlPadding({size: 'L'})
       ],
       XL: [
-        controlPadding().size.XL,
+        controlPadding({size: 'XL'}),
         'auto',
         'auto',
         'minmax(0, 1fr)',
         'auto',
         'auto',
         'auto',
-        controlPadding().size.XL
+        controlPadding({size: 'XL'})
       ]
     }
   },
   boxSizing: 'border-box',
   maxHeight: 'inherit',
   overflow: 'auto',
-  padding: 'popover-padding',
   fontFamily: 'sans',
   fontSize: controlFont(),
   gridAutoRows: 'min-content'

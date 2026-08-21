@@ -40,8 +40,7 @@ import {
 import {
   controlFont,
   getAllowedOverrides,
-  listItemGap,
-  listItemPaddingHorizontal,
+  listItem,
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
@@ -456,7 +455,7 @@ const listitem = style<
   ],
   // TODO why don't we have a template area defined for non-draggable??
   gridTemplateColumns: [
-    listItemPaddingHorizontal().default,
+    listItem().paddingX,
     'auto',
     8, // TODO missing from design
     'auto',
@@ -465,7 +464,7 @@ const listitem = style<
     'auto',
     'auto',
     'var(--trailing-icon-width)',
-    listItemPaddingHorizontal().default
+    listItem().paddingX
   ],
   gridTemplateRows: '1fr auto',
   rowGap: {
@@ -807,7 +806,7 @@ const listCheckbox = style({
   gridArea: 'checkmark',
   gridRowEnd: 'span 2',
   alignSelf: 'center',
-  marginEnd: listItemGap().default,
+  marginEnd: listItem().gap.default,
   visibility: {
     default: 'visible',
     isDisabled: 'hidden'
@@ -820,7 +819,7 @@ const listTrailingIcon = style({
   alignSelf: 'center',
   display: 'flex',
   alignItems: 'center',
-  marginStart: listItemGap().size.S
+  marginStart: listItem().gap.size.S
 });
 
 let dragButtonContainer = style({

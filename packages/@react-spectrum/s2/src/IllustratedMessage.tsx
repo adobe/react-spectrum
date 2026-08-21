@@ -11,8 +11,6 @@
  */
 
 import {ButtonGroupContext} from './ButtonGroup';
-import {ContentContext, HeadingContext} from './Content';
-import {ContextValue, Provider} from 'react-aria-components/slots';
 import {
   containerGap,
   containerPadding,
@@ -21,6 +19,8 @@ import {
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
+import {ContentContext, HeadingContext} from './Content';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
@@ -85,29 +85,29 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
         vertical: {
           default: [
             'min-content',
-            containerPadding().size.XS,
+            containerPadding({size: 'XS'}),
             'min-content',
-            containerGap().size['2XS'],
+            containerGap({size: '2XS'}),
             'min-content',
             'min-content'
           ],
           size: {
             L: [
               'min-content',
-              containerPadding().size.XS,
+              containerPadding({size: 'XS'}),
               'min-content',
-              containerGap().size['2XS'],
+              containerGap({size: '2XS'}),
               'min-content',
               'min-content'
             ]
           }
         },
-        horizontal: ['auto', containerGap().size['2XS'], '1fr', 'auto']
+        horizontal: ['auto', containerGap({size: '2XS'}), '1fr', 'auto']
       }
     },
     gridTemplateColumns: {
       orientation: {
-        horizontal: ['1fr', containerPadding().size.XS, 'auto']
+        horizontal: ['1fr', containerPadding({size: 'XS'}), 'auto']
       }
     },
     justifyItems: {
@@ -166,7 +166,7 @@ const content = style({
 
 const buttonGroup = style({
   gridArea: 'buttonGroup',
-  marginTop: containerGap().size.XL
+  marginTop: containerGap({size: 'XL'})
 });
 
 interface IllustratedMessageContextProps extends Partial<S2SpectrumIllustratedMessageProps> {

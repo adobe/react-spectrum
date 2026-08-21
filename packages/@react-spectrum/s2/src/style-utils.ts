@@ -11,7 +11,8 @@
  */
 
 import {CSSProperties} from 'react';
-import {fontRelative as internalFontRelative} from '../style/spectrum-theme';
+import {getSetToken, getToken} from '../style/tokens';
+import {fontRelative as internalFontRelative, size} from '../style/spectrum-theme';
 import {StyleString} from '../style/types';
 
 /**
@@ -242,146 +243,163 @@ const controlSizeS = {
 // Base Gap - dynamic
 export const controlGap = () =>
   ({
-    default: 'base-gap-medium',
+    default: size(parseFloat(getToken('base-gap-medium'))),
     size: {
-      XS: 'base-gap-extra-small',
-      S: 'base-gap-small',
-      M: 'base-gap-medium',
-      L: 'base-gap-large',
-      XL: 'base-gap-extra-large'
+      XS: size(parseFloat(getToken('base-gap-extra-small'))),
+      S: size(parseFloat(getToken('base-gap-small'))),
+      M: size(parseFloat(getToken('base-gap-medium'))),
+      L: size(parseFloat(getToken('base-gap-large'))),
+      XL: size(parseFloat(getToken('base-gap-extra-large')))
     }
   }) as const;
 
 // Accessory Gap - dynamic
 export const accessoryGap = () =>
   ({
-    default: 'accessory-gap-medium',
+    default: size(parseFloat(getToken('accessory-gap-medium'))),
     size: {
-      XS: 'accessory-gap-extra-small',
-      S: 'accessory-gap-small',
-      M: 'accessory-gap-medium',
-      L: 'accessory-gap-large',
-      XL: 'accessory-gap-extra-large',
-      '2XL': 'accessory-gap-2x-large'
+      XS: size(parseFloat(getToken('accessory-gap-extra-small'))),
+      S: size(parseFloat(getToken('accessory-gap-small'))),
+      M: size(parseFloat(getToken('accessory-gap-medium'))),
+      L: size(parseFloat(getToken('accessory-gap-large'))),
+      XL: size(parseFloat(getToken('accessory-gap-extra-large'))),
+      '2XL': size(parseFloat(getToken('accessory-gap-2x-large')))
     }
   }) as const;
 
 // Group Gap - dynamic
 export const groupGap = () =>
   ({
-    default: 'group-gap-medium',
+    default: size(parseFloat(getToken('group-gap-medium'))),
     size: {
-      default: 'group-gap-medium',
-      XS: 'group-gap-extra-small',
-      S: 'group-gap-small',
-      M: 'group-gap-medium',
-      L: 'group-gap-large',
-      XL: 'group-gap-extra-large'
+      default: size(parseFloat(getToken('group-gap-medium'))),
+      XS: size(parseFloat(getToken('group-gap-extra-small'))),
+      S: size(parseFloat(getToken('group-gap-small'))),
+      M: size(parseFloat(getToken('group-gap-medium'))),
+      L: size(parseFloat(getToken('group-gap-large'))),
+      XL: size(parseFloat(getToken('group-gap-extra-large')))
     },
     density: {
       default: {
         size: {
-          default: 'group-gap-medium',
-          XS: 'group-gap-extra-small',
-          S: 'group-gap-small',
-          M: 'group-gap-medium',
-          L: 'group-gap-large',
-          XL: 'group-gap-extra-large'
+          default: size(parseFloat(getToken('group-gap-medium'))),
+          XS: size(parseFloat(getToken('group-gap-extra-small'))),
+          S: size(parseFloat(getToken('group-gap-small'))),
+          M: size(parseFloat(getToken('group-gap-medium'))),
+          L: size(parseFloat(getToken('group-gap-large'))),
+          XL: size(parseFloat(getToken('group-gap-extra-large')))
         }
       },
-      compact: 'group-gap-compact',
+      compact: size(parseFloat(getToken('group-gap-compact'))),
       spacious: {
         size: {
-          XS: 'group-gap-extra-small-spacious',
-          S: 'group-gap-small-spacious',
-          M: 'group-gap-medium-spacious',
-          L: 'group-gap-large-spacious',
-          XL: 'group-gap-extra-large-spacious'
+          XS: size(parseFloat(getToken('group-gap-extra-small-spacious'))),
+          S: size(parseFloat(getToken('group-gap-small-spacious'))),
+          M: size(parseFloat(getToken('group-gap-medium-spacious'))),
+          L: size(parseFloat(getToken('group-gap-large-spacious'))),
+          XL: size(parseFloat(getToken('group-gap-extra-large-spacious')))
         }
       }
     }
   }) as const;
 
-export const containerGap = () =>
-  ({
-    default: 'container-gap-medium',
-    size: {
-      '2XS': 'container-gap-2x-extra-small',
-      XS: 'container-gap-extra-small',
-      S: 'container-gap-small',
-      M: 'container-gap-medium',
-      L: 'container-gap-large',
-      XL: 'container-gap-extra-large',
-      '2XL': 'container-gap-2x-large'
-    }
-  }) as const;
+const textGapTokens = {
+  XS: size(parseFloat(getToken('text-gap-extra-small'))),
+  S: size(parseFloat(getToken('text-gap-small'))),
+  M: size(parseFloat(getToken('text-gap-medium'))),
+  L: size(parseFloat(getToken('text-gap-large'))),
+  XL: size(parseFloat(getToken('text-gap-extra-large')))
+};
 
-export const listItemGap = () =>
-  ({
-    default: 'list-item-gap-medium',
-    size: {
-      S: 'list-item-gap-small',
-      M: 'list-item-gap-medium'
-    }
-  }) as const;
+export const textGap = (props: {size: keyof typeof textGapTokens}) => {
+  let {size = 'M'} = props;
+  return textGapTokens[size];
+};
 
-export const textGap = () =>
+export const text = () =>
   ({
-    default: 'text-gap-medium',
+    default: size(parseFloat(getToken('text-gap-medium'))),
     size: {
-      XS: 'text-gap-extra-small',
-      S: 'text-gap-small',
-      M: 'text-gap-medium',
-      L: 'text-gap-large',
-      XL: 'text-gap-extra-large'
+      ...textGapTokens
     }
   }) as const;
 
 // Base Horizontal Padding - dynamic
-export const controlPadding = () =>
+
+const containerGapTokens = {
+  '2XS': size(parseFloat(getToken('container-gap-2x-small'))),
+  XS: size(parseFloat(getToken('container-gap-extra-small'))),
+  S: size(parseFloat(getToken('container-gap-small'))),
+  M: size(parseFloat(getToken('container-gap-medium'))),
+  L: size(parseFloat(getToken('container-gap-large'))),
+  XL: size(parseFloat(getToken('container-gap-extra-large'))),
+  '2XL': size(parseFloat(getToken('container-gap-2x-large')))
+};
+
+const containerPaddingTokens = {
+  '2XS': size(parseFloat(getToken('container-padding-2x-small'))),
+  XS: size(parseFloat(getToken('container-padding-extra-small'))),
+  S: size(parseFloat(getToken('container-padding-small'))),
+  M: size(parseFloat(getToken('container-padding-medium'))),
+  L: size(parseFloat(getToken('container-padding-large'))),
+  XL: size(parseFloat(getToken('container-padding-extra-large'))),
+  '2XL': size(parseFloat(getToken('container-padding-2x-large'))),
+  '3XL': size(parseFloat(getToken('container-padding-3x-large')))
+};
+
+export const containerGap = (props: {size: keyof typeof containerGapTokens}) => {
+  let {size = 'M'} = props;
+  return containerGapTokens[size];
+};
+
+export const containerPadding = (props: {size: keyof typeof containerPaddingTokens}) => {
+  let {size = 'M'} = props;
+  return containerPaddingTokens[size];
+};
+
+export const container = () =>
   ({
-    default: 'base-padding-horizontal-medium',
-    size: {
-      XS: 'base-padding-horizontal-extra-small',
-      S: 'base-padding-horizontal-small',
-      M: 'base-padding-horizontal-medium',
-      L: 'base-padding-horizontal-large',
-      XL: 'base-padding-horizontal-extra-large',
-      '2XL': 'base-padding-horizontal-2x-large'
+    gap: {
+      default: size(parseFloat(getToken('container-gap-medium'))),
+      size: {
+        ...containerGapTokens
+      }
+    },
+    padding: {
+      default: size(parseFloat(getToken('container-padding-medium'))),
+      size: {
+        ...containerPaddingTokens
+      }
     }
   }) as const;
 
-export const containerPadding = () =>
+export const popover = () =>
   ({
-    default: 'container-padding',
-    size: {
-      '2XS': 'container-padding-2x-extra-small',
-      XS: 'container-padding-extra-small',
-      S: 'container-padding-small',
-      M: 'container-padding-medium',
-      L: 'container-padding-large',
-      XL: 'container-padding-extra-large',
-      '2XL': 'container-padding-2x-large',
-      '3XL': 'container-padding-3x-large'
-    }
+    gap: size(parseFloat(getToken('popover-gap'))),
+    padding: size(parseFloat(getToken('popover-padding')))
   }) as const;
+
+export const controlPadding = (props: {size: keyof typeof horizontalPaddingTokens}) => {
+  let {size = 'M'} = props;
+  return horizontalPaddingTokens[size];
+};
 
 const verticalPaddingTokens = {
-  XS: 'base-padding-vertical-extra-small',
-  S: 'base-padding-vertical-small',
-  M: 'base-padding-vertical-medium',
-  L: 'base-padding-vertical-large',
-  XL: 'base-padding-vertical-extra-large',
-  '2XL': 'base-padding-vertical-2x-large'
+  XS: size(parseFloat(getToken('base-padding-vertical-extra-small'))),
+  S: size(parseFloat(getToken('base-padding-vertical-small'))),
+  M: size(parseFloat(getToken('base-padding-vertical-medium'))),
+  L: size(parseFloat(getToken('base-padding-vertical-large'))),
+  XL: size(parseFloat(getToken('base-padding-vertical-extra-large'))),
+  '2XL': size(parseFloat(getToken('base-padding-vertical-2x-large')))
 } as const;
 
 const horizontalPaddingTokens = {
-  XS: 'base-padding-horizontal-extra-small',
-  S: 'base-padding-horizontal-small',
-  M: 'base-padding-horizontal-medium',
-  L: 'base-padding-horizontal-large',
-  XL: 'base-padding-horizontal-extra-large',
-  '2XL': 'base-padding-horizontal-2x-large'
+  XS: size(parseFloat(getSetToken('base-padding-horizontal-extra-small'))),
+  S: size(parseFloat(getSetToken('base-padding-horizontal-small'))),
+  M: size(parseFloat(getSetToken('base-padding-horizontal-medium'))),
+  L: size(parseFloat(getSetToken('base-padding-horizontal-large'))),
+  XL: size(parseFloat(getSetToken('base-padding-horizontal-extra-large'))),
+  '2XL': size(parseFloat(getSetToken('base-padding-horizontal-2x-large')))
 } as const;
 
 // Base Vertical Padding - static
@@ -392,35 +410,54 @@ export const verticalPadding = (size: keyof typeof verticalPaddingTokens = 'M') 
 export const horizontalPadding = (size: keyof typeof horizontalPaddingTokens = 'M') =>
   horizontalPaddingTokens[size];
 
+export const controlTemplate = () =>
+  ({
+    paddingX: {
+      size: {
+        ...horizontalPaddingTokens
+      }
+    },
+    paddingY: {
+      size: {
+        ...verticalPaddingTokens
+      }
+    }
+  }) as const;
+
 export const banner = () =>
   ({
     paddingX: {
       density: {
-        default: 'banner-padding-horizontal',
-        compact: 'banner-padding-horizontal-compact'
+        default: size(parseFloat(getToken('banner-padding-horizontal'))),
+        compact: size(parseFloat(getToken('banner-padding-horizontal-compact')))
       }
     },
-    paddingY: 'banner-padding-vertical',
+    paddingY: size(parseFloat(getToken('banner-padding-vertical'))),
     gap: {
       orientation: {
-        horizontal: 'banner-gap-horizontal',
-        vertical: 'banner-gap-vertical'
+        horizontal: size(parseFloat(getToken('banner-gap-horizontal'))),
+        vertical: size(parseFloat(getToken('banner-gap-vertical')))
       }
     }
   }) as const;
 
-export const listItemPaddingVertical = () =>
+export const listItem = () =>
   ({
-    default: 'list-item-padding-vertical-regular',
-    density: {
-      default: 'list-item-padding-vertical-regular',
-      spacious: 'list-item-padding-vertical-spacious'
+    gap: {
+      default: size(parseFloat(getToken('list-item-gap-medium'))),
+      size: {
+        S: size(parseFloat(getToken('list-item-gap-small'))),
+        M: size(parseFloat(getToken('list-item-gap-medium')))
+      }
+    },
+    paddingX: size(parseFloat(getToken('list-item-padding-horizontal'))),
+    paddingY: {
+      default: size(parseFloat(getToken('list-item-padding-vertical-regular'))),
+      density: {
+        default: size(parseFloat(getToken('list-item-padding-vertical-regular'))),
+        spacious: size(parseFloat(getToken('list-item-padding-vertical-spacious')))
+      }
     }
-  }) as const;
-
-export const listItemPaddingHorizontal = () =>
-  ({
-    default: 'list-item-padding-horizontal'
   }) as const;
 
 // This generates the border radius for t-shirt sizes using the
@@ -452,6 +489,8 @@ interface ControlOptions {
   icon?: boolean;
 }
 
+type ControlPaddingX = {default: `calc(${string})`; size: typeof horizontalPaddingTokens};
+
 interface ControlResult {
   font: ReturnType<typeof controlFont>;
   boxSizing?: 'border-box';
@@ -462,10 +501,7 @@ interface ControlResult {
   display?: 'flex';
   alignItems?: 'center' | {default: 'baseline'; [iconOnly]: 'center'};
   columnGap?: ReturnType<typeof controlGap>;
-  paddingX?:
-    | 'pill'
-    | ReturnType<typeof controlPadding>
-    | {default: 'pill' | ReturnType<typeof controlPadding>; [iconOnly]: 0};
+  paddingX?: 'pill' | ControlPaddingX | {default: 'pill' | ControlPaddingX; [iconOnly]: 0};
   paddingY?: 0 | `[${string}]`;
 }
 
@@ -476,7 +512,10 @@ const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
  * The text can optionally wrap, aligning the icon with the first line of text.
  */
 export function control(options: ControlOptions): ControlResult {
-  let paddingX = controlPadding();
+  let paddingX =
+    options.shape === 'pill'
+      ? ('pill' as const)
+      : {default: horizontalPaddingTokens.M, size: horizontalPaddingTokens};
   let result: ControlResult = {
     font: controlFont(),
     display: 'flex',

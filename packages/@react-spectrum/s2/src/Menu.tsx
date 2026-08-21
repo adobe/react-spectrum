@@ -58,7 +58,6 @@ import {
 } from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
@@ -129,44 +128,44 @@ export const MenuContext =
 const menuItemGrid = {
   size: {
     S: [
-      controlPadding().size.S,
+      controlPadding({size: 'S'}),
       'auto',
       'auto',
       'minmax(0, 1fr)',
       'auto',
       'auto',
       'auto',
-      controlPadding().size.S
+      controlPadding({size: 'S'})
     ],
     M: [
-      controlPadding().size.M,
+      controlPadding({size: 'M'}),
       'auto',
       'auto',
       'minmax(0, 1fr)',
       'auto',
       'auto',
       'auto',
-      controlPadding().size.M
+      controlPadding({size: 'M'})
     ],
     L: [
-      controlPadding().size.L,
+      controlPadding({size: 'L'}),
       'auto',
       'auto',
       'minmax(0, 1fr)',
       'auto',
       'auto',
       'auto',
-      controlPadding().size.L
+      controlPadding({size: 'L'})
     ],
     XL: [
-      controlPadding().size.XL,
+      controlPadding({size: 'XL'}),
       'auto',
       'auto',
       'minmax(0, 1fr)',
       'auto',
       'auto',
       'auto',
-      controlPadding().size.XL
+      controlPadding({size: 'XL'})
     ]
   }
 } as const;

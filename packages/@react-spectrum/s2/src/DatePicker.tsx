@@ -11,26 +11,26 @@
  */
 
 import {
-  DatePicker as AriaDatePicker,
-  DatePickerProps as AriaDatePickerProps,
-  DateValue
-} from 'react-aria-components/DatePicker';
-import {baseColor, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
-import {Button, ButtonRenderProps} from 'react-aria-components/Button';
-import {Calendar, CalendarProps} from './Calendar';
-import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
-import {ContextValue, Provider} from 'react-aria-components/slots';
-import {
   accessoryGap,
   containerPadding,
+  control,
   controlBorderRadius,
   controlGap,
-  controlPadding,
   field,
   fieldInput,
   getAllowedOverrides,
   StyleProps
 } from './style-utils' with {type: 'macro'};
+import {
+  DatePicker as AriaDatePicker,
+  DatePickerProps as AriaDatePickerProps,
+  DateValue
+} from 'react-aria-components/DatePicker';
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {Button, ButtonRenderProps} from 'react-aria-components/Button';
+import {Calendar, CalendarProps} from './Calendar';
+import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {
   createContext,
   forwardRef,
@@ -239,7 +239,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               styles={style({
                 ...fieldInput(),
                 textWrap: 'nowrap',
-                paddingStart: controlPadding(),
+                paddingStart: control({}).paddingX,
                 paddingEnd: accessoryGap()
               })({size})}>
               <DateInputContainer>
@@ -293,11 +293,11 @@ export function CalendarPopover(
     <Popover {...props} hideArrow padding="none">
       <div
         className={style({
-          padding: containerPadding().size.M,
+          padding: containerPadding({size: 'M'}),
           overflow: 'auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: containerPadding().size.M,
+          gap: containerPadding({size: 'M'}),
           boxSizing: 'border-box',
           size: 'full'
         })}>

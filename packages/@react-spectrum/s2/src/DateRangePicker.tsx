@@ -11,6 +11,14 @@
  */
 
 import {
+  accessoryGap,
+  control,
+  field,
+  fieldInput,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
+import {
   DateRangePicker as AriaDateRangePicker,
   DateRangePickerProps as AriaDateRangePickerProps,
   DateValue
@@ -19,14 +27,6 @@ import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
 import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
-import {
-  accessoryGap,
-  controlPadding,
-  field,
-  fieldInput,
-  getAllowedOverrides,
-  StyleProps
-} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';
 import {
@@ -167,7 +167,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(
                 styles={style({
                   ...fieldInput(),
                   textWrap: 'nowrap',
-                  paddingStart: controlPadding(),
+                  paddingStart: control({}).paddingX,
                   paddingEnd: accessoryGap()
                 })({size})}>
                 <DateInputContainer>

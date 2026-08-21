@@ -32,6 +32,7 @@ import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {
   getAllowedOverrides,
   heightProperties,
+  popover as smPopover,
   UnsafeStyles,
   widthProperties
 } from './style-utils' with {type: 'macro'};
@@ -317,7 +318,7 @@ const innerDivStyle = style(
   {
     padding: {
       padding: {
-        default: 'popover-padding',
+        default: smPopover().padding,
         none: 0
       }
     },
