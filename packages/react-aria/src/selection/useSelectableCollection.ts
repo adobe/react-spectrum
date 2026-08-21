@@ -625,6 +625,15 @@ export function useSelectableCollection(
       manager.setFocused(true);
       manager.setFocusedKey(focusedKey);
 
+      if (
+        focusedKey != null &&
+        selectOnFocus &&
+        !selectedKeys.size &&
+        manager.canSelectItem(focusedKey)
+      ) {
+        manager.replaceSelection(focusedKey);
+      }
+
       // If no default focus key is selected, focus the collection itself.
       if (focusedKey == null && !shouldUseVirtualFocus && ref.current) {
         focusSafely(ref.current);

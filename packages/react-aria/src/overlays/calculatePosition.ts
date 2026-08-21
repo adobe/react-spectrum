@@ -137,9 +137,10 @@ function getContainerDimensions(
     // The goal of the below is to get a top/left value that represents the top/left of the visual viewport with
     // respect to the layout viewport origin. This combined with the scrollTop/scrollLeft will allow us to calculate
     // coordinates/values with respect to the visual viewport or with respect to the layout viewport.
+    // Uses pageTop/pageLeft instead of offsetTop/offsetLeft because WebKit misreports those during pans.
     if (visualViewport) {
-      top = visualViewport.offsetTop;
-      left = visualViewport.offsetLeft;
+      top = Math.max(0, visualViewport.pageTop - (scroll.top ?? 0));
+      left = Math.max(0, visualViewport.pageLeft - (scroll.left ?? 0));
     }
   } else {
     ({width, height, top, left} = getOffset(containerNode, false));
