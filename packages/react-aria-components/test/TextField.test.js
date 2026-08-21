@@ -11,10 +11,11 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Button} from '../src/Button';
 import {FieldError} from '../src/FieldError';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
-import React from 'react';
+import React, {useState} from 'react';
 import {Text} from '../src/Text';
 import {TextArea} from '../src/TextArea';
 import {TextField, TextFieldContext} from '../src/TextField';
@@ -264,6 +265,103 @@ describe('TextField', () => {
 
       await user.tab();
       expect(input).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should clear validation errors when a controlled value is updated externally', async () => {
+      let Component = component;
+      function ControlledTextField() {
+        let [value, setValue] = useState('');
+
+        return (
+          <form data-testid="form">
+            <TextField value={value} onChange={setValue} validationBehavior="native" isRequired>
+              <Label>Test</Label>
+              <Component />
+              <FieldError />
+            </TextField>
+            <Button onPress={() => setValue('Devon')}>Set to Devon</Button>
+          </form>
+        );
+      }
+
+      let {getByRole, getByTestId} = render(<ControlledTextField />);
+      let input = getByRole('textbox');
+
+      act(() => {
+        getByTestId('form').checkValidity();
+      });
+
+      let describedBy = input.getAttribute('aria-describedby');
+      expect(describedBy).toBeTruthy();
+      expect(document.getElementById(describedBy)).toHaveTextContent('Constraints not satisfied');
+
+      await user.click(getByRole('button', {name: 'Set to Devon'}));
+
+      expect(input).not.toHaveAttribute('aria-describedby');
+      expect(input).not.toHaveAttribute('aria-invalid');
+    });
+
+    it('should show validation errors when a controlled value is updated externally to exceed maxLength', async () => {
+      let Component = component;
+      function ControlledTextField() {
+        let [value, setValue] = useState('');
+
+        return (
+          <form data-testid="form">
+            <TextField value={value} onChange={setValue} validationBehavior="native" maxLength={10}>
+              <Label>Test</Label>
+              <Component />
+              <FieldError />
+            </TextField>
+            <Button onPress={() => setValue('ABCDEFGHTIJKLM')}>Set too long</Button>
+          </form>
+        );
+      }
+
+      let {getByRole} = render(<ControlledTextField />);
+      let input = getByRole('textbox');
+      expect(input).not.toHaveAttribute('aria-describedby');
+
+      await user.click(getByRole('button', {name: 'Set too long'}));
+
+      let describedBy = input.getAttribute('aria-describedby');
+      expect(describedBy).toBeTruthy();
+      expect(document.getElementById(describedBy)).toHaveTextContent(
+        'Please shorten this text to 10 characters or less'
+      );
+      expect(input).toHaveAttribute('aria-invalid');
+    });
+
+    it('should show validation errors when a controlled value is updated externally to be below minLength', async () => {
+      let Component = component;
+      function ControlledTextField() {
+        let [value, setValue] = useState('');
+
+        return (
+          <form data-testid="form">
+            <TextField value={value} onChange={setValue} validationBehavior="native" minLength={10}>
+              <Label>Test</Label>
+              <Component />
+              <FieldError />
+            </TextField>
+            <Button onPress={() => setValue('ABC')}>Set too short</Button>
+          </form>
+        );
+      }
+
+      let {getByRole} = render(<ControlledTextField />);
+      let input = getByRole('textbox');
+
+      expect(input).not.toHaveAttribute('aria-describedby');
+
+      await user.click(getByRole('button', {name: 'Set too short'}));
+
+      let describedBy = input.getAttribute('aria-describedby');
+      expect(describedBy).toBeTruthy();
+      expect(document.getElementById(describedBy)).toHaveTextContent(
+        'Please lengthen this text to 10 characters or more'
+      );
+      expect(input).toHaveAttribute('aria-invalid');
     });
 
     it('should render the id attribute only on the input element', async () => {
