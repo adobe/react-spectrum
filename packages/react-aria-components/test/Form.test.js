@@ -199,7 +199,7 @@ describe('Form', () => {
     expect(form).toHaveAttribute('data-custom', 'true');
   });
 
-  it('shows focus-visible when a form library moves focus to the first invalid field on submit', async () => {
+  (parseInt(React.version, 10) >= 19 ? it : it.skip)('shows focus-visible when a form library moves focus to the first invalid field on submit', async () => {
     function Test() {
       return (
         <form data-testid="form">
