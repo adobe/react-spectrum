@@ -540,6 +540,12 @@ export interface MenuItemProps<T = object>
   'aria-label'?: string;
   /** Whether the item is disabled. */
   isDisabled?: boolean;
+  /**
+   * Whether the item should remain focusable while disabled, following the ARIA APG
+   * "focusability of disabled controls" pattern. The item stays non-interactive (no selection or
+   * action, `aria-disabled`) but remains reachable via keyboard navigation.
+   */
+  allowFocusWhenDisabled?: boolean;
   /** Handler that is called when the item is selected. */
   onAction?: () => void;
   /** Whether the menu should close when the menu item is selected. */
