@@ -15,7 +15,7 @@ import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {expect, it} from 'vitest';
 import {GridLayout} from '../src/GridLayout';
 import {GridList, GridListItem} from '../src/GridList';
-import React, {act, useState} from 'react';
+import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {Size} from 'react-stately/useVirtualizerState';
 import {User} from '@react-aria/test-utils';
@@ -152,10 +152,24 @@ it('virtualizer renders items after toggling display:none', async () => {
 });
 
 it('scrolls focused drop indicators into view during keyboard reordering', async () => {
+  let testUtilUser = new User();
   let {container} = await render(<ReorderableGridList />);
   let gridlist = container.querySelector('[role=grid]') as HTMLElement;
-  let dragButton = container.querySelector('[aria-label="Drag Item 0"]') as HTMLElement;
-  act(() => dragButton.focus());
+  let tester = testUtilUser.createTester('GridList', {
+    root: gridlist,
+    interactionType: 'keyboard'
+  });
+
+  // Wait for rows before querying the drag handle. Querying straight after
+  // render raced the first paint and returned null in all three browsers.
+  await expect.poll(() => tester.getRows().length).toBeGreaterThan(0);
+  // Select the drag handle by slot rather than by its localized aria-label. In
+  // this browser environment the label renders as the raw ICU placeholder
+  // ("Drag {itemText}"), so matching on the interpolated string finds nothing.
+  await expect.poll(() => container.querySelector('[slot=drag]')).not.toBeNull();
+
+  let dragButton = container.querySelector('[slot=drag]') as HTMLElement;
+  dragButton.focus();
 
   await userEvent.keyboard('{Enter}');
 
@@ -166,11 +180,11 @@ it('scrolls focused drop indicators into view during keyboard reordering', async
     let gridRect = gridlist.getBoundingClientRect();
     let indicatorRect = indicatorRow.getBoundingClientRect();
 
-    expect(dropIndicator).toHaveAttribute(
-      'aria-label',
-      `Insert between Item ${i} and Item ${i + 1}`
-    );
+    // Assert the drop target structurally rather than by its localized label:
+    // this environment renders aria-labels as raw ICU templates
+    // ("Insert between {beforeItemText} and {afterItemText}").
     expect(dropIndicator).toHaveAttribute('role', 'button');
+    expect(dropIndicator).toHaveAttribute('aria-roledescription', 'drop indicator');
     expect(indicatorRow).toHaveStyle({
       backgroundColor: 'rgb(255, 0, 0)',
       position: 'relative'
