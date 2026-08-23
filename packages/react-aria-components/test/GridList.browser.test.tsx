@@ -166,10 +166,17 @@ it('scrolls focused drop indicators into view during keyboard reordering', async
   // Select the drag handle by slot rather than by its localized aria-label. In
   // this browser environment the label renders as the raw ICU placeholder
   // ("Drag {itemText}"), so matching on the interpolated string finds nothing.
-  await expect.poll(() => container.querySelector('[slot=drag]')).not.toBeNull();
+  // Scope the query to the first row: a container-wide lookup resolved before
+  // that row had painted its handle, which is what returned null previously.
+  let dragButton: HTMLElement | null = null;
+  await expect
+    .poll(() => (dragButton = tester.getRows()[0]?.querySelector('[slot=drag]') ?? null))
+    .not.toBeNull();
 
-  let dragButton = container.querySelector('[slot=drag]') as HTMLElement;
-  dragButton.focus();
+  // act() is unavailable in this browser environment (React logs "not configured
+  // to support act(...)"), so the rule cannot be satisfied here.
+  // eslint-disable-next-line rsp-rules/act-events-test
+  (dragButton as unknown as HTMLElement).focus();
 
   await userEvent.keyboard('{Enter}');
 
