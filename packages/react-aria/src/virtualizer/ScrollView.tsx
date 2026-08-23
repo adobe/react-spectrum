@@ -70,14 +70,10 @@ interface ScrollViewAria {
 function getClientSize(dom: HTMLElement) {
   let clientWidth = dom.clientWidth;
   let clientHeight = dom.clientHeight;
-  let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
-
   let rect = dom.getBoundingClientRect?.();
   if (rect && rect.width > 0 && rect.height > 0) {
-    if (!isTestEnv || rect.width % 1 !== 0 || rect.height % 1 !== 0) {
-      clientWidth = rect.width - Math.max(0, dom.offsetWidth - dom.clientWidth);
-      clientHeight = rect.height - Math.max(0, dom.offsetHeight - dom.clientHeight);
-    }
+    clientWidth = rect.width - Math.max(0, dom.offsetWidth - dom.clientWidth);
+    clientHeight = rect.height - Math.max(0, dom.offsetHeight - dom.clientHeight);
   }
   return {clientWidth, clientHeight};
 }
@@ -275,7 +271,7 @@ export function useScrollView(
       let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes(
         'clientHeight'
       );
-      let {clientWidth, clientHeight} = getClientSize(dom);
+      let {clientWidth, clientHeight} = isTestEnv ? dom : getClientSize(dom);
       let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
       let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
 
@@ -300,15 +296,16 @@ export function useScrollView(
         // adjusted space. In very specific cases this might result in the scrollbars disappearing
         // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
         // an infinite loop. This matches how browsers behavior with native CSS grid layout.
-        if (!isTestEnv) {
-          let nextSize = getClientSize(dom);
-          if (clientWidth !== nextSize.clientWidth || clientHeight !== nextSize.clientHeight) {
-            state.size = new Size(nextSize.clientWidth, nextSize.clientHeight);
-            flush(() => {
-              updateVisibleRect();
-              onSizeChange?.(state.size);
-            });
-          }
+        let nextSize = isTestEnv ? dom : getClientSize(dom);
+        if (
+          (!isTestEnv && clientWidth !== nextSize.clientWidth) ||
+          clientHeight !== nextSize.clientHeight
+        ) {
+          state.size = new Size(nextSize.clientWidth, nextSize.clientHeight);
+          flush(() => {
+            updateVisibleRect();
+            onSizeChange?.(state.size);
+          });
         }
       }
 
