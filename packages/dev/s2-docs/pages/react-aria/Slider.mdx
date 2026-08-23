@@ -139,6 +139,8 @@ Keyboard interactions are deliberately unaffected — arrow keys continue to mov
 
 Snap points do not have to be multiples of `step`. A value such as `0` on a slider that steps by 25 is only reachable with a pointer.
 
+Marks and snap points cover the harder cases too. A macOS-style volume slider — ticks drawn across the track, a thumb that goes translucent while dragging, and a value readout that follows it — needs no other API: the thumb already exposes `isDragging` and `isHovered` as render props, and `SliderOutput` reads the live value. See the `SliderMarks` story for a worked example.
+
 ## Examples
 
 <ExampleList tag="slider" pages={props.pages} />
