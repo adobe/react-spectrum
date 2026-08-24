@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Attachment as AttachmentComponent, AttachmentList} from '../src/AttachmentList';
+import {
+  Attachment as AttachmentComponent,
+  AttachmentList,
+  AttachmentPreview
+} from '../src/AttachmentList';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
-import FileTextIllustration from '../../s2/spectrum-illustrations/gradient/generic1/FileText';
-import FileVideo from '@react-spectrum/s2/illustrations/gradient/generic1/FileVideo';
-import FileZip from '@react-spectrum/s2/illustrations/gradient/generic1/FileZip';
-import {Image} from '@react-spectrum/s2/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
@@ -56,7 +56,8 @@ function AttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="Demo file.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -66,7 +67,8 @@ function AttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="Alligator.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -76,7 +78,8 @@ function AttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="Rules.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -86,7 +89,8 @@ function AttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="Echidna.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -112,14 +116,14 @@ function NonImageAttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="report.pdf">
-        <FileTextIllustration slot="thumbnail" />
+        <AttachmentPreview mimeType="application/pdf" />
       </AttachmentComponent>
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
         size={size}
         aria-label="notes.txt">
-        <FileTextIllustration slot="thumbnail" />
+        <AttachmentPreview mimeType="text/plain" />
         <Content>
           <Text slot="title">notes.txt</Text>
           <Text slot="description">Plain text document</Text>
@@ -130,7 +134,7 @@ function NonImageAttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="data.csv">
-        <FileTextIllustration slot="thumbnail" />
+        <AttachmentPreview mimeType="text/csv" />
         <Content>
           <Text slot="title">data.csv</Text>
         </Content>
@@ -151,7 +155,8 @@ export const LongContents: Story = {
         size={args.size}
         styles={style({maxWidth: 300})}
         aria-label="Very long file name that exceeds the container width.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -177,8 +182,9 @@ function MixedAttachments(args) {
           isInvalid={isInvalid}
           size={size}
           aria-label="banner.png">
-          <Image
+          <AttachmentPreview
             slot="thumbnail"
+            mimeType="image/png"
             src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
           />
         </AttachmentComponent>
@@ -187,21 +193,21 @@ function MixedAttachments(args) {
           isInvalid={isInvalid}
           size={size}
           aria-label="notes.tsx">
-          <FileTextIllustration slot="thumbnail" />
+          <AttachmentPreview mimeType="text/typescript" />
         </AttachmentComponent>
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
           size={size}
           aria-label="video.mp4">
-          <FileVideo slot="thumbnail" />
+          <AttachmentPreview mimeType="video/mp4" />
         </AttachmentComponent>
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
           size={size}
           aria-label="debug.zip">
-          <FileZip slot="thumbnail" />
+          <AttachmentPreview mimeType="application/zip" />
         </AttachmentComponent>
       </AttachmentList>
       <AttachmentList {...listArgs}>
@@ -210,8 +216,9 @@ function MixedAttachments(args) {
           isInvalid={isInvalid}
           size={size}
           aria-label="banner.png">
-          <Image
+          <AttachmentPreview
             slot="thumbnail"
+            mimeType="image/png"
             src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
           />
           <Content>
@@ -224,7 +231,7 @@ function MixedAttachments(args) {
           isInvalid={isInvalid}
           size={size}
           aria-label="notes.txt">
-          <FileTextIllustration slot="thumbnail" />
+          <AttachmentPreview slot="thumbnail" mimeType="text/plain" />
           <Content>
             <Text slot="title">notes.txt</Text>
             <Text slot="description">Plain text</Text>
@@ -235,7 +242,7 @@ function MixedAttachments(args) {
           isInvalid={isInvalid}
           size={size}
           aria-label="video.mp4">
-          <FileVideo slot="thumbnail" />
+          <AttachmentPreview slot="thumbnail" mimeType="video/mp4" />
           <Content>
             <Text slot="title">video.mp4</Text>
             <Text slot="description">MP4</Text>
@@ -246,7 +253,7 @@ function MixedAttachments(args) {
           isInvalid={isInvalid}
           size={size}
           aria-label="debug.zip">
-          <FileZip slot="thumbnail" />
+          <AttachmentPreview slot="thumbnail" mimeType="application/zip" />
           <Content>
             <Text slot="title">debug.zip</Text>
             <Text slot="description">ZIP</Text>
