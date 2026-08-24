@@ -37,7 +37,7 @@ import * as DragManager from './DragManager';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {mergeProps} from '../utils/mergeProps';
-import {navigate} from './DropTargetKeyboardNavigation';
+import {navigate, getFirstItemKey} from './DropTargetKeyboardNavigation';
 import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
@@ -665,7 +665,7 @@ export function useDroppableCollection(
                 target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
               } else {
                 // If on the root, go to the item a page below the top. Otherwise a page below the current item.
-                let targetKey = keyboardDelegate.getFirstKey?.();
+                let targetKey = getFirstItemKey(keyboardDelegate, localState.state.collection);
                 if (target.type === 'item') {
                   targetKey = target.key;
                 }
@@ -737,7 +737,7 @@ export function useDroppableCollection(
               target = nextValidTarget(null, types, drag.allowedDropOperations, getPreviousTarget);
             } else if (target.type === 'item') {
               // If at the top already, switch to the root. Otherwise navigate a page up.
-              if (target.key === keyboardDelegate.getFirstKey?.()) {
+              if (target.key === getFirstItemKey(keyboardDelegate, localState.state.collection)) {
                 target = {
                   type: 'root'
                 };
@@ -745,7 +745,7 @@ export function useDroppableCollection(
                 let nextKey: Key | null | undefined = keyboardDelegate.getKeyPageAbove(target.key);
                 let dropPosition = target.dropPosition;
                 if (nextKey == null) {
-                  nextKey = keyboardDelegate.getFirstKey?.();
+                  nextKey = getFirstItemKey(keyboardDelegate, localState.state.collection);
                   dropPosition = 'before';
                 }
 
