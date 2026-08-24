@@ -36,8 +36,8 @@ import {
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
-import {mergeProps} from '../utils/mergeProps';
 import {getFirstItemKey, navigate} from './DropTargetKeyboardNavigation';
+import {mergeProps} from '../utils/mergeProps';
 import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
