@@ -758,9 +758,7 @@ export function PromptToken(props: PromptTokenProps) {
           font: 'ui',
           backgroundColor: {
             default: 'transparent-overlay-1000/10',
-            isSelected: 'blue-800',
-            // Firefox ignores completely transparent selection colors, so we need to use a nearly transparent color instead
-            '::selection': '[#ffffff01]'
+            isSelected: 'blue-800'
           },
           color: {
             default: 'body',
