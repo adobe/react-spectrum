@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import '../src/page';
-
 import {createRoot} from 'react-dom/client';
 import {DateRangePicker} from '../src/DateRangePicker';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
