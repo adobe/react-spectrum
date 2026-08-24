@@ -60,7 +60,7 @@ export function useToken(
       },
       onClick(e) {
         // Select the token when a screen reader clicks on it.
-        if (!isVirtualClick(e.nativeEvent)) {
+        if (isSelected || !isVirtualClick(e.nativeEvent)) {
           return;
         }
         let selection = window.getSelection();
