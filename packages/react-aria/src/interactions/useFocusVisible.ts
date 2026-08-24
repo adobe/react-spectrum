@@ -23,7 +23,7 @@ import {isMac} from '../utils/platform';
 import {isVirtualClick} from '../utils/isVirtualEvent';
 import {openLink} from '../utils/openLink';
 import {PointerType} from '@react-types/shared';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
 
 export type Modality = 'keyboard' | 'pointer' | 'virtual';
@@ -301,13 +301,6 @@ export function setInteractionModality(modality: Modality): void {
   currentModality = modality;
   currentPointerType = modality === 'pointer' ? 'mouse' : modality;
   triggerChangeHandlers(modality, null);
-}
-
-/**
- * Returns a callback that makes the focus indicator visible.
- */
-export function useShowFocusIndicator(): () => void {
-  return useCallback(() => setInteractionModality('keyboard'), []);
 }
 
 /** @private */
