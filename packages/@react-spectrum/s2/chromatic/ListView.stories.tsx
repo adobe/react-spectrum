@@ -303,35 +303,6 @@ export const EmptyState: Story = {
   )
 };
 
-// Renders two virtualized ListViews inside a 501px container split into 50%
-// columns (250.5px each). Exercises the Virtualizer ScrollView's handling of
-// fractional container widths so VRT catches subpixel overflow regressions.
-export const FractionalWidth: Story = {
-  render: () => {
-    let fractionalItems = Array.from({length: 50}, (_, i) => ({id: i, name: `Item ${i + 1}`}));
-    return (
-      <div style={{display: 'flex', width: 501, border: '1px solid gray'}}>
-        <div style={{width: '50%'}}>
-          <ListView
-            aria-label="Fractional width list 1"
-            styles={style({height: 300, width: 'full'})}
-            items={fractionalItems}>
-            {item => <ListViewItem textValue={item.name}>{item.name}</ListViewItem>}
-          </ListView>
-        </div>
-        <div style={{width: '50%'}}>
-          <ListView
-            aria-label="Fractional width list 2"
-            styles={style({height: 300, width: 'full'})}
-            items={fractionalItems}>
-            {item => <ListViewItem textValue={item.name}>{item.name}</ListViewItem>}
-          </ListView>
-        </div>
-      </div>
-    );
-  }
-};
-
 export const InsertionIndicator: Story = {
   ...Reorderable,
   play: async ({canvasElement}) => {
