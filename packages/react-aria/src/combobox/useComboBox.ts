@@ -391,9 +391,11 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     }
   };
 
-  // VoiceOver has issues with announcing aria-activedescendant properly on change
-  // (especially on iOS). We use a live region announcer to announce focus changes
-  // manually. In addition, section titles are announced when navigating into a new section.
+  // VoiceOver used to have issues with announcing aria-activedescendant properly on
+  // change (especially on iOS), so we announced focus changes manually via a live
+  // region. Current VoiceOver versions announce per-item details (selected state,
+  // role, item count) natively within a section, so we only announce when navigating
+  // into a new section, where VoiceOver is silent.
   let focusedItem =
     state.selectionManager.focusedKey != null && state.isOpen
       ? state.collection.getItem(state.selectionManager.focusedKey)
@@ -404,22 +406,30 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
   let lastItem = useRef(itemKey);
   useEffect(() => {
     if (isAppleDevice() && focusedItem != null && itemKey != null && itemKey !== lastItem.current) {
-      let isSelected = state.selectionManager.isSelected(itemKey);
       let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
-      let sectionTitle =
-        section?.['aria-label'] ||
-        (typeof section?.rendered === 'string' ? section.rendered : '') ||
-        '';
+      let isGroupChange = (section && sectionKey !== lastSection.current) ?? false;
 
-      let announcement = stringFormatter.format('focusAnnouncement', {
-        isGroupChange: (section && sectionKey !== lastSection.current) ?? false,
-        groupTitle: sectionTitle,
-        groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
-        optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
-        isSelected
-      });
+      // VoiceOver now announces per-item details natively (selected state, role,
+      // item count) when arrowing within a section, so announcing every focused
+      // item here interrupts that richer announcement. Only announce manually when
+      // navigating into a new section, where VoiceOver is silent.
+      if (isGroupChange) {
+        let isSelected = state.selectionManager.isSelected(itemKey);
+        let sectionTitle =
+          section?.['aria-label'] ||
+          (typeof section?.rendered === 'string' ? section.rendered : '') ||
+          '';
 
-      announce(announcement);
+        let announcement = stringFormatter.format('focusAnnouncement', {
+          isGroupChange: true,
+          groupTitle: sectionTitle,
+          groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
+          optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
+          isSelected
+        });
+
+        announce(announcement);
+      }
     }
 
     lastSection.current = sectionKey;

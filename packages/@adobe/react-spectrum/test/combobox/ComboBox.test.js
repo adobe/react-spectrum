@@ -5135,7 +5135,7 @@ describe('ComboBox', function () {
       });
 
       describe('keyboard navigating', function () {
-        it('should announce items when navigating with the arrow keys', async function () {
+        it('should not announce items when navigating with the arrow keys', async function () {
           renderComboBox();
           await user.tab();
           await user.keyboard('{ArrowDown}');
@@ -5143,17 +5143,19 @@ describe('ComboBox', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('One');
+          // VoiceOver announces per-item details natively within a section, so we
+          // should not interrupt it with our own live region announcement.
+          expect(announce).not.toHaveBeenCalledWith('One');
 
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('Two');
+          expect(announce).not.toHaveBeenCalledWith('Two');
         });
 
-        it('should announce when navigating to the selected item', async function () {
+        it('should not announce when navigating to the selected item', async function () {
           let {getByRole} = renderComboBox({selectedKey: '2'});
           let combobox = getByRole('combobox');
           act(() => {
@@ -5164,7 +5166,8 @@ describe('ComboBox', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('Two, selected');
+          // Same as above: VoiceOver handles per-item announcement natively.
+          expect(announce).not.toHaveBeenCalledWith('Two, selected');
         });
 
         it('should announce when navigating into a section with multiple items', async function () {
@@ -5183,12 +5186,14 @@ describe('ComboBox', function () {
             'Entered group Section One, with 3 options. One'
           );
 
+          // Moving within the same section should not announce again, VoiceOver
+          // handles the per-item announcement natively.
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('Two');
+          expect(announce).not.toHaveBeenLastCalledWith('Two');
         });
 
         it('should announce when navigating into a section with a single item', async function () {
@@ -5290,7 +5295,8 @@ describe('ComboBox', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('One');
+          // No per-item announcement when arrowing; VoiceOver handles that natively.
+          expect(announce).not.toHaveBeenCalledWith('One');
 
           await user.keyboard('{Enter}');
           act(() => {
@@ -5396,9 +5402,8 @@ describe('ComboBox', function () {
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
-        expect(announce).toHaveBeenCalledTimes(2);
+        expect(announce).toHaveBeenCalledTimes(1);
         expect(announce).toHaveBeenNthCalledWith(1, '3 options available.');
-        expect(announce).toHaveBeenNthCalledWith(2, 'One');
         platformMock.mockRestore();
       });
 
