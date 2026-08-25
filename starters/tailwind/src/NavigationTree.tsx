@@ -38,7 +38,7 @@ export function NavigationTree<T>({children, ...props}: NavigationTreeProps<T>) 
 // another child, e.g. a button, is focused).
 const itemStyles = tv({
   extend: focusRing,
-  base: 'group relative font-sans flex items-center rounded-md cursor-default select-none text-neutral-800 dark:text-neutral-200 -outline-offset-2',
+  base: 'group relative font-sans flex items-center rounded-md cursor-default select-none text-neutral-800 dark:text-neutral-200 -outline-offset-2 [-webkit-tap-highlight-color:transparent]',
   variants: {
     isDisabled: {
       true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
@@ -91,22 +91,18 @@ const chevron = tv({
 });
 
 const NavTreeLinkContext = React.createContext<{
-  indicator: 'current' | 'ancestor' | 'hover' | undefined;
+  indicator: 'current' | 'ancestor' | undefined;
 }>({indicator: undefined});
 
 export function NavigationTreeItemContent(props: {children?: React.ReactNode}) {
   return (
     <AriaNavigationTreeItemContent>
-      {({level, hasChildItems, isExpanded, isHovered, isCurrent, isCurrentAncestor}) => {
-        // Pick the indicator variant here so precedence is explicit: a current row keeps its color even
-        // while hovered, then a collapsed current-route ancestor, then hover on any actionable row.
-        let indicator: 'current' | 'ancestor' | 'hover' | undefined;
+      {({level, hasChildItems, isExpanded, isCurrent, isCurrentAncestor}) => {
+        let indicator: 'current' | 'ancestor' | undefined;
         if (isCurrent) {
           indicator = 'current';
         } else if (isCurrentAncestor && !isExpanded) {
           indicator = 'ancestor';
-        } else if (isHovered) {
-          indicator = 'hover';
         }
         return (
           <>
@@ -159,8 +155,16 @@ export function NavigationTreeItemLink(props: NavigationTreeItemLinkProps) {
   let {indicator} = React.useContext(NavTreeLinkContext);
   return (
     <Link {...props} className={({isDisabled}) => linkStyles({isDisabled})}>
-      <span aria-hidden data-indicator={indicator} className={indicatorStyles()} />
-      {props.children}
+      {({isHovered}) => (
+        <>
+          <span
+            aria-hidden
+            data-indicator={indicator ?? (isHovered ? 'hover' : undefined)}
+            className={indicatorStyles()}
+          />
+          {props.children}
+        </>
+      )}
     </Link>
   );
 }

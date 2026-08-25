@@ -42,6 +42,7 @@
   outline: none;
   color: var(--text-color);
   font: var(--font-size) system-ui;
+  -webkit-tap-highlight-color: transparent;
   /* Indent each nested level. --tree-item-level is set on the row by React Aria (1-based). */
   padding-inline-start: calc((var(--tree-item-level, 1) - 1) * var(--padding));
 
@@ -59,9 +60,7 @@
     border-radius: 9999px;
   }
 
-  /* The hover indicator lights up for any interactable row (links and expandable categories),
-   * matching React Aria's data-hovered, which is only set on actionable rows. */
-  &[data-hovered] a.react-aria-Link:before {
+  a.react-aria-Link[data-hovered]:before {
     display: block;
   }
 
