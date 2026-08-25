@@ -11,7 +11,6 @@
  */
 
 import {action} from 'storybook/actions';
-import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {
   AttachFileMenuItem,
   CommandMenuItem,
@@ -29,9 +28,8 @@ import {
   PromptToken,
   PromptTokenField
 } from '../src/PromptField';
-import {Attachment} from '../src/AttachmentList';
+import {Attachment, AttachmentPreview} from '../src/AttachmentList';
 import Brand from '@react-spectrum/s2/icons/Brand';
-import {Button} from '@react-spectrum/s2/Button';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
@@ -41,7 +39,6 @@ import {
   Menu,
   MenuItem,
   MenuSection,
-  MenuTrigger,
   SubmenuTrigger,
   Text
 } from '@react-spectrum/s2/Menu';
@@ -50,17 +47,12 @@ import Data from '@react-spectrum/s2/icons/Data';
 import * as data from '../src/loader/data';
 import type {FocusableRefValue} from '@react-types/shared';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Image} from '@react-spectrum/s2/Image';
-import Keyboard from '@react-spectrum/s2/icons/Keyboard';
-import {LinkButton} from '@react-spectrum/s2/LinkButton';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
-import ListMultiSelect from '@react-spectrum/s2/icons/ListMultiSelect';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
-import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
 import {TokenFieldValue} from 'react-aria-components';
 import {TokenSegment} from 'react-stately';
 import {useRef, useState} from 'react';
@@ -292,37 +284,6 @@ function renderCompletions(filterValue: string, callbacks?: CompletionCallbacks)
   return null;
 }
 
-function ToolbarButtons() {
-  return (
-    <div className={style({display: 'flex', gap: 8})}>
-      <ToggleButton isQuiet size="S">
-        <ListMultiSelect />
-        <Text>Plan mode</Text>
-      </ToggleButton>
-      <MenuTrigger>
-        <ActionButton isQuiet size="S">
-          <Keyboard />
-          <Text>Normal</Text>
-        </ActionButton>
-        <Menu>
-          <MenuSection>
-            <Header>
-              <Heading>Transcript view</Heading>
-            </Header>
-            <MenuItem>Normal</MenuItem>
-          </MenuSection>
-        </Menu>
-      </MenuTrigger>
-      <Button size="S" fillStyle="outline">
-        Model
-      </Button>
-      <LinkButton size="S" fillStyle="outline" href="#">
-        Terms and conditions
-      </LinkButton>
-    </div>
-  );
-}
-
 interface UploadState {
   status: 'uploading' | 'completed';
   progress?: number;
@@ -483,7 +444,7 @@ function EverythingRender(args) {
           setAttachments([]);
           setAttachmentState(new Map());
         }}
-        acceptedAttachmentTypes={['image/*']}
+        acceptedAttachmentTypes={['*/*']}
         onAddAttachments={newAttachments => {
           setAttachmentState(prev => {
             let newState = new Map(prev);
@@ -511,12 +472,13 @@ function EverythingRender(args) {
               <Attachment
                 isInvalid={args.attachmentInvalid}
                 uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
-                {/* TODO: what about non-image attachments? */}
-                {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+                <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
                 {args.attachmentVariant === 'card' && (
                   <Content>
                     <Text slot="title">{attachment.file.name}</Text>
-                    <Text slot="description">{attachment.file.type}</Text>
+                    <Text slot="description">
+                      {attachment.file.type.split('/').pop()?.toUpperCase()}
+                    </Text>
                   </Content>
                 )}
               </Attachment>
@@ -640,7 +602,6 @@ function EverythingRender(args) {
                 </Menu>
               </SubmenuTrigger>
             </InsertMenuButton>
-            <ToolbarButtons />
           </div>
           {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
           <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
