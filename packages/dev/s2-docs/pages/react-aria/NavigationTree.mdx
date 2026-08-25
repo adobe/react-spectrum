@@ -119,11 +119,6 @@ export const description = 'A navigation component that displays a nested, hiera
 
 </ExampleSwitcher>
 
-<InlineAlert variant="notice">
-  <Heading>Accessibility</Heading>
-  <Content>`NavigationTree` renders as a tree so keyboard users can navigate and expand the hierarchy. When it acts as the main navigation for a page, place it inside a [navigation landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/navigation.html): wrap the `NavigationTree` in a `<nav>` element with an `aria-label` so assistive technology users can quickly find it.</Content>
-</InlineAlert>
-
 ## Content
 
 `NavigationTree` follows the [Collection Components API](collections?component=NavigationTree), accepting both static and dynamic collections. The example above shows a static collection. This example shows a dynamic collection, passing a list of objects to the `items` prop and a function to render the children.
@@ -159,6 +154,11 @@ function Example() {
   );
 }
 ```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>`NavigationTree` renders as a tree so keyboard users can navigate and expand the hierarchy. When it acts as the main navigation for a page, place it inside a [navigation landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/navigation.html): wrap the `NavigationTree` in a `<nav>` element with an `aria-label` so assistive technology users can quickly find it.</Content>
+</InlineAlert>
 
 ### Sections
 
