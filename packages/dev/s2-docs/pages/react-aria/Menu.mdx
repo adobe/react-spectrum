@@ -363,13 +363,17 @@ By default, links are rendered as an `<a>` element. Use the `render` prop to int
 
 ```tsx render hideImports
 "use client";
-import {Menu} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
 
-<Menu
-  aria-label="Actions"
-  renderEmptyState={() => 'No actions available.'}>
-  {[]}
-</Menu>
+<MenuTrigger>
+  <Button>Actions</Button>
+  <Menu
+    aria-label="Actions"
+    renderEmptyState={() => 'No actions available.'}>
+    {[]}
+  </Menu>
+</MenuTrigger>
 ```
 
 ### Autocomplete
