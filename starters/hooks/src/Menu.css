@@ -30,6 +30,14 @@
   }
 }
 
+.react-aria-MenuLoadingIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 100%;
+}
+
 .react-aria-MenuItem {
   margin-inline: var(--spacing-1);
   padding: calc((var(--spacing-8) - 1lh) / 2) 0;
