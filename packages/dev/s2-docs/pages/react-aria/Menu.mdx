@@ -279,6 +279,52 @@ import {Button} from 'vanilla-starter/Button';
 </MenuTrigger>
 ```
 
+### Asynchronous loading
+
+Use [renderEmptyState](#empty-state) to display a loading indicator during initial load. To enable infinite scrolling, render a `<MenuLoadMoreItem>` at the end of the menu. Use whatever data fetching library you prefer — this example uses `useAsyncList` from `react-stately`.
+
+```tsx render
+"use client";
+import {MenuTrigger, Menu, MenuItem, MenuLoadMoreItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
+
+interface Character {
+  name: string;
+  birth_year: string;
+}
+
+function AsyncMenuExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) cursor = cursor.replace(/^http:\/\//i, 'https://');
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+      return {items: json.results, cursor: json.next};
+    }
+  });
+
+  return (
+    <MenuTrigger>
+      <Button>Star Wars Characters</Button>
+      <Menu
+        aria-label="Characters"
+        renderEmptyState={() => list.loadingState === 'loading' ? 'Loading…' : 'No characters found'}>
+        <Collection items={list.items}>
+          {(item) => <MenuItem id={item.name}>{item.name}</MenuItem>}
+        </Collection>
+        {/*- begin highlight -*/}
+        <MenuLoadMoreItem
+          onLoadMore={list.loadMore}
+          isLoading={list.loadingState === 'loadingMore'} />
+        {/*- end highlight -*/}
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
 ### Links
 
 Use the `href` prop on a `<MenuItem>` to create a link.
@@ -311,6 +357,19 @@ By default, links are rendered as an `<a>` element. Use the `render` prop to int
       ? <RouterLink {...domProps} />
       : <div {...domProps} />
   } />
+```
+
+### Empty state
+
+```tsx render hideImports
+"use client";
+import {Menu} from 'vanilla-starter/Menu';
+
+<Menu
+  aria-label="Actions"
+  renderEmptyState={() => 'No actions available.'}>
+  {[]}
+</Menu>
 ```
 
 ### Autocomplete
@@ -559,7 +618,7 @@ import {Button} from 'react-aria-components/Button';
 
 <Anatomy />
 
-```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Popover: 'Popover', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection#animated-selectionindicator'}}
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Popover: 'Popover', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection#animated-selectionindicator', MenuLoadMoreItem: '#menuloadmoreitem'}}
 <MenuTrigger>
   <Button />
   <Popover>
@@ -581,6 +640,7 @@ import {Button} from 'react-aria-components/Button';
           <Menu />
         </Popover>
       </SubmenuTrigger>
+      <MenuLoadMoreItem />
     </Menu>
   </Popover>
 </MenuTrigger>
@@ -605,3 +665,7 @@ import {Button} from 'react-aria-components/Button';
 ### SubmenuTrigger
 
 <PropTable component={docs.exports.SubmenuTrigger} links={docs.links} showDescription />
+
+### MenuLoadMoreItem
+
+<PropTable component={docs.exports.MenuLoadMoreItem} links={docs.links} showDescription />
