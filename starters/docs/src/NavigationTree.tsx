@@ -2,6 +2,7 @@
 import {
   Button,
   Link,
+  type LinkProps,
   NavigationTree as AriaNavigationTree,
   NavigationTreeHeader as AriaNavigationTreeHeader,
   type NavigationTreeHeaderProps,
@@ -26,39 +27,21 @@ export function NavigationTreeItemContent(props: {children?: React.ReactNode}) {
     <AriaNavigationTreeItemContent>
       {({hasChildItems}: NavigationTreeItemContentRenderProps) => (
         <>
-          {/* The label is rendered as a Link so it becomes the row's focusable child. It picks up
-           * href + aria-current automatically from the NavigationTree. Rows without an href render as a
-           * span instead of an anchor. */}
-          <Link>{props.children}</Link>
-          {hasChildItems && (
-            <Button slot="chevron">
-              <ChevronRight aria-hidden />
-            </Button>
-          )}
+          {props.children}
+          <Button
+            slot="chevron"
+            isDisabled={!hasChildItems}
+            style={{visibility: hasChildItems ? undefined : 'hidden'}}>
+            <ChevronRight aria-hidden />
+          </Button>
         </>
       )}
     </AriaNavigationTreeItemContent>
   );
 }
 
-export interface NavigationTreeItemProps extends Partial<AriaNavigationTreeItemProps> {
-  title?: React.ReactNode;
-}
-
-export function NavigationTreeItem(props: NavigationTreeItemProps) {
-  let textValue = typeof props.title === 'string' ? props.title : '';
-  return (
-    <AriaNavigationTreeItem textValue={textValue} {...props}>
-      {props.title != null ? (
-        <>
-          <NavigationTreeItemContent>{props.title}</NavigationTreeItemContent>
-          {props.children}
-        </>
-      ) : (
-        props.children
-      )}
-    </AriaNavigationTreeItem>
-  );
+export function NavigationTreeItem(props: AriaNavigationTreeItemProps) {
+  return <AriaNavigationTreeItem {...props} />;
 }
 
 export function NavigationTreeSection<T extends object>(props: NavigationTreeSectionProps<T>) {
@@ -67,4 +50,8 @@ export function NavigationTreeSection<T extends object>(props: NavigationTreeSec
 
 export function NavigationTreeHeader(props: NavigationTreeHeaderProps) {
   return <AriaNavigationTreeHeader {...props} />;
+}
+
+export function NavigationTreeItemLink(props: LinkProps) {
+  return <Link {...props} />;
 }

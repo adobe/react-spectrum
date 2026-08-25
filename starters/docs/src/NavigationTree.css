@@ -45,19 +45,24 @@
   /* Indent each nested level. --tree-item-level is set on the row by React Aria (1-based). */
   padding-inline-start: calc((var(--tree-item-level, 1) - 1) * var(--padding));
 
-  /* The hover indicator lights up for any interactable row (links and expandable categories),
-   * matching React Aria's data-hovered, which is only set on actionable rows. */
-  &[data-hovered] a.react-aria-Link:before {
+  .react-aria-Link:before {
+    display: none;
     content: '';
     position: absolute;
     inset-inline-start: 2px;
     top: 50%;
-    width: 4px;
+    width: 2px;
     transform: translateY(-50%);
     height: 1lh;
     background: var(--text-color-hover);
     font-weight: 600;
     border-radius: 9999px;
+  }
+
+  /* The hover indicator lights up for any interactable row (links and expandable categories),
+   * matching React Aria's data-hovered, which is only set on actionable rows. */
+  &[data-hovered] a.react-aria-Link:before {
+    display: block;
   }
 
   /* When a current-route ancestor is collapsed, tint it and show a small dot where the pill would be.
@@ -67,30 +72,16 @@
    * row renders as a link or a plain span. */
   &[data-current-ancestor]:not([data-expanded]) {
     .react-aria-Link:before {
-      content: '';
-      position: absolute;
-      inset-inline-start: 2px;
-      top: 50%;
-      width: 4px;
+      display: block;
       height: 4px;
-      transform: translateY(-50%);
-      background: var(--text-color-hover);
-      border-radius: 9999px;
+      width: 4px;
     }
   }
 
   /* React Aria sets data-current on the link matching the NavigationTree's selectedRoute. */
-  &[data-current]:not([data-hovered]) .react-aria-Link:before {
-    content: '';
-    position: absolute;
-    inset-inline-start: 2px;
-    top: 50%;
-    width: 4px;
-    transform: translateY(-50%);
-    height: 1lh;
+  &[data-current] .react-aria-Link:before {
+    display: block;
     background: var(--highlight-background);
-    font-weight: 600;
-    border-radius: 9999px;
   }
 
   &[data-focus-visible] {

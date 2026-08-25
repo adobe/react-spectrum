@@ -60,6 +60,8 @@ interface InternalNavigationTreeContextValue {
   selectedRoute?: string | null;
   /** The last route the focused key was synced to; dedupes the focus sync across items. */
   syncedRouteRef?: RefObject<string | undefined>;
+  /** The NavigationTree's root element, used to keep current-route scrolling inside the tree. */
+  treeRef?: RefObject<HTMLDivElement | null>;
 }
 const InternalNavigationTreeContext = createContext<InternalNavigationTreeContextValue>({});
 
@@ -130,13 +132,17 @@ export const NavigationTree = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   [props, ref] = useContextProps(props, ref, NavigationTreeContext);
   let {className, style, children, selectedRoute, ...rest} = props;
   let syncedRouteRef = useRef<string | undefined>(undefined);
-  let context = useMemo(() => ({selectedRoute, syncedRouteRef}), [selectedRoute]);
+  let treeRef = useObjectRef(ref);
+  let context = useMemo(
+    () => ({selectedRoute, syncedRouteRef, treeRef}),
+    [selectedRoute, treeRef]
+  );
 
   return (
     <InternalNavigationTreeContext.Provider value={context}>
       <Tree
         {...rest}
-        ref={ref}
+        ref={treeRef}
         className={className ?? 'react-aria-NavigationTree'}
         style={style}
         selectionMode="none"
@@ -213,7 +219,7 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
       render,
       ...rest
     } = props;
-    let {selectedRoute} = useContext(InternalNavigationTreeContext);
+    let {selectedRoute, treeRef} = useContext(InternalNavigationTreeContext);
     let hasLink = href != null && href.length > 0;
     let isCurrent = hasLink && href === selectedRoute;
     let [isLinkFocused, setLinkFocused] = useState(false);
@@ -232,9 +238,15 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
     useEffect(() => {
       if (isCurrent && objRef.current) {
         let scrollParent = getScrollParent(objRef.current, true) as HTMLElement;
-        scrollIntoView(scrollParent, objRef.current, {block: 'center'});
+        // Only scroll the tree's own scroll container into view — never an outer ancestor such as the
+        // page. When the tree isn't its own scroll container the nearest scroll parent is outside the
+        // tree, so we skip rather than hijack the surrounding scroll position.
+        let treeRoot = treeRef?.current;
+        if (treeRoot && treeRoot.contains(scrollParent)) {
+          scrollIntoView(scrollParent, objRef.current, {block: 'center'});
+        }
       }
-    }, [isCurrent, objRef]);
+    }, [isCurrent, objRef, treeRef]);
 
     return (
       <NavigationTreeItemLinkContext.Provider
@@ -427,7 +439,7 @@ interface NavigationTreeItemContentInnerProps {
 function NavigationTreeItemContentInner(props: NavigationTreeItemContentInnerProps): ReactNode {
   let {treeRenderProps, linkCtx, children} = props;
   let {isCurrent, isLinkFocused, setLinkFocused, ...linkProps} = linkCtx;
-  let {state, isFocusVisible, isFocusVisibleWithin} = treeRenderProps;
+  let {state, isFocusVisible, isFocusVisibleWithin, id, hasChildItems} = treeRenderProps;
   let {isCurrentAncestor} = useContext(NavigationTreeItemStateContext);
 
   useRouteFocusSync({state});
@@ -446,7 +458,8 @@ function NavigationTreeItemContentInner(props: NavigationTreeItemContentInnerPro
   let linkContextValue = {
     ...linkProps,
     'aria-current': isCurrent ? 'page' : undefined,
-    onFocusChange: setLinkFocused
+    onFocusChange: setLinkFocused,
+    onPress: linkProps.href == null && hasChildItems ? () => state.toggleKey(id) : undefined
   };
   return <Provider values={[[LinkContext, linkContextValue]]}>{renderChildren}</Provider>;
 }
