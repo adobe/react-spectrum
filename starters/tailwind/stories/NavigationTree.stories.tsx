@@ -23,11 +23,13 @@ const meta: Meta<typeof NavigationTree> = {
 export default meta;
 
 function RoutedNavigationTree(props: {
-  children: ({selectedRoute}: {selectedRoute: string}) => ReactNode,
-  defaultSelectedRoute: string
+  children: ({selectedRoute}: {selectedRoute: string}) => ReactNode;
+  defaultSelectedRoute: string;
 }) {
   let [selectedRoute, setSelectedRoute] = useState(props.defaultSelectedRoute);
-  return <RouterProvider navigate={setSelectedRoute}>{props.children({selectedRoute})}</RouterProvider>;
+  return (
+    <RouterProvider navigate={setSelectedRoute}>{props.children({selectedRoute})}</RouterProvider>
+  );
 }
 
 export const Example = (args: any) => (
@@ -41,7 +43,9 @@ export const Example = (args: any) => (
         <NavigationTreeItem id="home" href="/home" textValue="Home">
           <NavigationTreeItemContent>
             <NavigationTreeItemLink>Home</NavigationTreeItemLink>
-            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            <Button variant="quiet" aria-label="More options">
+              <MoreHorizontal size={16} aria-hidden />
+            </Button>
           </NavigationTreeItemContent>
         </NavigationTreeItem>
         <NavigationTreeItem id="files" href="/files" textValue="Files">

@@ -22,6 +22,7 @@ import {
 import {Collection, forwardRefType, Key, Node, RouterOptions} from '@react-types/shared';
 import {getScrollParent} from 'react-aria/private/utils/getScrollParent';
 import {LinkContext} from './Link';
+import {nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import React, {
   createContext,
   ForwardedRef,
@@ -133,10 +134,7 @@ export const NavigationTree = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   let {className, style, children, selectedRoute, ...rest} = props;
   let syncedRouteRef = useRef<string | undefined>(undefined);
   let treeRef = useObjectRef(ref);
-  let context = useMemo(
-    () => ({selectedRoute, syncedRouteRef, treeRef}),
-    [selectedRoute, treeRef]
-  );
+  let context = useMemo(() => ({selectedRoute, syncedRouteRef, treeRef}), [selectedRoute, treeRef]);
 
   return (
     <InternalNavigationTreeContext.Provider value={context}>
@@ -242,7 +240,7 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
         // page. When the tree isn't its own scroll container the nearest scroll parent is outside the
         // tree, so we skip rather than hijack the surrounding scroll position.
         let treeRoot = treeRef?.current;
-        if (treeRoot && treeRoot.contains(scrollParent)) {
+        if (treeRoot && nodeContains(treeRoot, scrollParent)) {
           scrollIntoView(scrollParent, objRef.current, {block: 'center'});
         }
       }

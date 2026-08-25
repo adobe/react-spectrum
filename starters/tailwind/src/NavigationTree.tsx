@@ -123,7 +123,8 @@ export function NavigationTreeItemContent(props: {children?: React.ReactNode}) {
               slot="chevron"
               isDisabled={!hasChildItems}
               className={({isFocusVisible}) =>
-                expandButton({isFocusVisible, className: hasChildItems ? undefined : 'invisible'})}>
+                expandButton({isFocusVisible, className: hasChildItems ? undefined : 'invisible'})
+              }>
               <ChevronRight aria-hidden className={chevron({isExpanded})} />
             </Button>
           </>
@@ -133,11 +134,7 @@ export function NavigationTreeItemContent(props: {children?: React.ReactNode}) {
   );
 }
 
-export interface NavigationTreeItemProps extends Partial<AriaNavigationTreeItemProps> {
-  title?: React.ReactNode;
-}
-
-export function NavigationTreeItem(props: NavigationTreeItemProps) {
+export function NavigationTreeItem(props: AriaNavigationTreeItemProps) {
   return <AriaNavigationTreeItem className={itemStyles} {...props} />;
 }
 
@@ -154,7 +151,11 @@ export function NavigationTreeHeader(props: NavigationTreeHeaderProps) {
   );
 }
 
-export function NavigationTreeItemLink(props: LinkProps) {
+export interface NavigationTreeItemLinkProps extends Omit<LinkProps, 'children'> {
+  children?: React.ReactNode;
+}
+
+export function NavigationTreeItemLink(props: NavigationTreeItemLinkProps) {
   let {indicator} = React.useContext(NavTreeLinkContext);
   return (
     <Link {...props} className={({isDisabled}) => linkStyles({isDisabled})}>
