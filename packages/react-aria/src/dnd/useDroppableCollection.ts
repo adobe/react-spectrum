@@ -35,9 +35,9 @@ import {
 } from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
-import {getFirstItemKey, navigate} from './DropTargetKeyboardNavigation';
 import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {mergeProps} from '../utils/mergeProps';
+import {navigate} from './DropTargetKeyboardNavigation';
 import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
@@ -78,7 +78,6 @@ export function useDroppableCollection(
   state: DroppableCollectionState,
   ref: RefObject<HTMLElement | null>
 ): DroppableCollectionResult {
-  // oxlint-disable-next-line react/react-compiler
   let localState = useRef<{
     props: DroppableCollectionOptions;
     state: DroppableCollectionState;
@@ -119,7 +118,6 @@ export function useDroppableCollection(
             itemTypes = item.kind === 'file' ? new Set([item.type]) : item.types;
           }
 
-          // oxlint-disable-next-line react/react-compiler
           if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => itemTypes.has(type))) {
             // If we are performing a on item drop, check if the item in question accepts the dropped item since the item may have heavier restrictions
             // than the droppable collection itself
@@ -665,7 +663,7 @@ export function useDroppableCollection(
                 target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
               } else {
                 // If on the root, go to the item a page below the top. Otherwise a page below the current item.
-                let targetKey = getFirstItemKey(keyboardDelegate, localState.state.collection);
+                let targetKey = keyboardDelegate.getFirstKey?.();
                 if (target.type === 'item') {
                   targetKey = target.key;
                 }
@@ -737,7 +735,7 @@ export function useDroppableCollection(
               target = nextValidTarget(null, types, drag.allowedDropOperations, getPreviousTarget);
             } else if (target.type === 'item') {
               // If at the top already, switch to the root. Otherwise navigate a page up.
-              if (target.key === getFirstItemKey(keyboardDelegate, localState.state.collection)) {
+              if (target.key === keyboardDelegate.getFirstKey?.()) {
                 target = {
                   type: 'root'
                 };
@@ -745,7 +743,7 @@ export function useDroppableCollection(
                 let nextKey: Key | null | undefined = keyboardDelegate.getKeyPageAbove(target.key);
                 let dropPosition = target.dropPosition;
                 if (nextKey == null) {
-                  nextKey = getFirstItemKey(keyboardDelegate, localState.state.collection);
+                  nextKey = keyboardDelegate.getFirstKey?.();
                   dropPosition = 'before';
                 }
 
@@ -790,11 +788,9 @@ export function useDroppableCollection(
         localState.props.onKeyDown?.(e);
       }
     });
-    // oxlint-disable-next-line react/react-compiler
   }, [localState, ref, onDrop, direction]);
 
   let id = useId();
-  // oxlint-disable-next-line react/react-compiler
   droppableCollectionMap.set(state, {id, ref});
   return {
     collectionProps: mergeProps(dropProps, {

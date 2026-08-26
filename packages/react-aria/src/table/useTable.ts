@@ -114,7 +114,8 @@ export function useTable<T>(
     {
       ...props,
       id,
-      keyboardDelegate: delegate
+      keyboardDelegate: delegate,
+      UNSTABLE_initialFocus: props.initialFocus
     },
     state,
     ref

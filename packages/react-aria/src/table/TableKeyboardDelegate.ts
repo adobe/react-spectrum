@@ -17,30 +17,19 @@ import {Key, Node} from '@react-types/shared';
 
 export interface TableKeyboardDelegateOptions<T> extends GridKeyboardDelegateOptions<
   ITableCollection<T>
-> {
-  /**
-   * Whether the first row or the first column header should be focused when the user tabs into the
-   * table.
-   *
-   * @default 'row'
-   */
-  initialFocus?: 'row' | 'columnheader';
-}
+> {}
 
 export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableCollection<T>> {
-  private initialFocus: 'row' | 'columnheader';
-
   constructor(options: TableKeyboardDelegateOptions<T>) {
     super(options);
-    this.initialFocus = options.initialFocus ?? 'row';
   }
 
   protected isCell(node: Node<T>): boolean {
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
-  getFirstKey(fromKey?: Key, global?: boolean): Key | null {
-    if (fromKey == null && this.initialFocus === 'columnheader') {
+  getFirstKey(fromKey?: Key, global?: boolean, initialFocus?: 'row' | 'columnheader'): Key | null {
+    if (fromKey == null && initialFocus === 'columnheader') {
       let firstColumn = this.collection.columns.find(
         column => !column.props?.isDragButtonCell && !column.props?.isSelectionCell
       );

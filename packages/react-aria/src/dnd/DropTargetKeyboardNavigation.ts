@@ -24,25 +24,6 @@ export function navigate(
   }
 }
 
-export function getFirstItemKey(
-  keyboardDelegate: KeyboardDelegate,
-  collection: Collection<Node<unknown>>
-): Key | null {
-  let key = keyboardDelegate.getFirstKey?.() ?? null;
-  let item = key != null ? collection.getItem(key) : null;
-  if (item && item.type !== 'item') {
-    // If the delegate returns a non-item (e.g. column header), return the first item in the collection.
-    // This ensures DnD always starts at rows.
-    for (let node of collection) {
-      if (node.type === 'item') {
-        return node.key;
-      }
-    }
-    return null;
-  }
-  return key;
-}
-
 function nextDropTarget(
   keyboardDelegate: KeyboardDelegate,
   collection: Collection<Node<unknown>>,
@@ -57,7 +38,7 @@ function nextDropTarget(
   }
 
   if (target.type === 'root') {
-    let nextKey = getFirstItemKey(keyboardDelegate, collection);
+    let nextKey = keyboardDelegate.getFirstKey?.() ?? null;
     if (nextKey != null) {
       return {
         type: 'item',
