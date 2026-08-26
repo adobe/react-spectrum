@@ -44,6 +44,7 @@ import React, {
   createContext,
   forwardRef,
   ReactNode,
+  RefObject,
   useCallback,
   useContext,
   useId,
@@ -80,10 +81,14 @@ const ResponseStatusContext = createContext<{
   status: 'pending' | 'failed' | 'success';
   hasPanelContent: boolean;
   registerPanel: (mounted: boolean) => void;
+  isExpanded: boolean;
+  responseStatusRef: RefObject<HTMLDivElement | null> | null;
 }>({
   status: 'pending',
   hasPanelContent: false,
-  registerPanel: () => {}
+  registerPanel: () => {},
+  isExpanded: false,
+  responseStatusRef: null
 });
 
 const responseStatus = style({
@@ -102,17 +107,36 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
 ) {
   let {status = 'pending', styles} = props;
   let domRef = useDOMRef(ref);
-  let [hasPanelContent, setHasPanelContent] = useState(false);
-  let registerPanel = useCallback((mounted: boolean) => setHasPanelContent(mounted), []);
 
   return (
-    <Provider values={[[ResponseStatusContext, {status, hasPanelContent, registerPanel}]]}>
-      <RACDisclosure {...props} ref={domRef} className={mergeStyles(responseStatus, styles)}>
+    <RACDisclosure {...props} ref={domRef} className={mergeStyles(responseStatus, styles)}>
+      <ResponseStatusContextProvider status={status} responseStatusRef={domRef}>
         {props.children}
-      </RACDisclosure>
-    </Provider>
+      </ResponseStatusContextProvider>
+    </RACDisclosure>
   );
 });
+
+function ResponseStatusContextProvider({
+  status,
+  children,
+  responseStatusRef
+}: {
+  status: 'pending' | 'success' | 'failed';
+  children: ReactNode;
+  responseStatusRef: RefObject<HTMLDivElement | null> | null;
+}) {
+  let [hasPanelContent, setHasPanelContent] = useState(false);
+  let registerPanel = useCallback((mounted: boolean) => setHasPanelContent(mounted), []);
+  let {isExpanded} = useContext(DisclosureStateContext)!;
+
+  return (
+    <ResponseStatusContext.Provider
+      value={{status, hasPanelContent, registerPanel, isExpanded, responseStatusRef}}>
+      {children}
+    </ResponseStatusContext.Provider>
+  );
+}
 
 export interface ResponseStatusTitleProps extends DOMProps {
   /**
@@ -394,22 +418,36 @@ const shimmer = css(`
   }
 `);
 
+const shimmerSym = Symbol('shimmer');
+
 function ShimmerText(props: DetailTriggerProps) {
   let {children, isPending} = props;
-  let {isExpanded} = useContext(DisclosureStateContext)!;
+  let {isExpanded, responseStatusRef} = useContext(ResponseStatusContext)!;
   let id = useId();
 
   // Do the animation in JS rather than CSS so we can synchronize across elements.
-  let shimmerRef = useCallback((el: HTMLSpanElement | null) => {
-    if (el && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      let animation = el.animate(
-        [{transform: 'translateX(-100%)'}, {transform: 'translateX(100%)'}],
-        {duration: 2500, iterations: Infinity, easing: 'ease-in-out', pseudoElement: '::after'}
-      );
-      animation.startTime = 0;
-      return () => animation.cancel();
-    }
-  }, []);
+  let shimmerRef = useCallback(
+    (el: HTMLSpanElement | null) => {
+      if (el && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        let animation = el.animate(
+          [{transform: 'translateX(-100%)'}, {transform: 'translateX(100%)'}],
+          {duration: 2500, iterations: Infinity, easing: 'ease-in-out', pseudoElement: '::after'}
+        );
+        animation[shimmerSym] = true;
+
+        // If there is an existing shimmer animation already happening, synchronize with it.
+        // If there is only one, then start from the beginning of the animation.
+        let existingAnim = responseStatusRef?.current
+          ?.getAnimations({subtree: true})
+          .find(anim => anim[shimmerSym] && anim !== animation);
+        if (existingAnim) {
+          animation.startTime = existingAnim.startTime;
+        }
+        return () => animation.cancel();
+      }
+    },
+    [responseStatusRef]
+  );
 
   return (
     <span className={style({position: 'relative', display: 'inline-block'})}>

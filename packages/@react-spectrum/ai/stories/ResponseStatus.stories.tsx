@@ -219,7 +219,7 @@ function WithExecutionTraceRender(args) {
       return;
     }
     let timers = [...executionTraceSteps, null].map((_, i) =>
-      setTimeout(() => setVisibleCount(i + 1), i * 2500)
+      setTimeout(() => setVisibleCount(i + 1), i * 2000 + Math.random() * 500)
     );
     return () => timers.forEach(clearTimeout);
   }, [args.static, args.status]);
