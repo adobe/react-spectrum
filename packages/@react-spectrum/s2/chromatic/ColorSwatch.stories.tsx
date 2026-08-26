@@ -13,6 +13,8 @@
 import {ColorSwatch} from '../src/ColorSwatch';
 import {CustomWidth, Example, NoValue} from '../stories/ColorSwatch.stories';
 import type {Meta} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
+import type {StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorSwatch> = {
   component: ColorSwatch,
@@ -25,3 +27,27 @@ const meta: Meta<typeof ColorSwatch> = {
 export default meta;
 
 export {Example, NoValue, CustomWidth};
+
+export const StaticOptions: StoryObj<typeof ColorSwatch> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={120}>
+      {(['XS', 'S', 'M', 'L'] as const).flatMap(size =>
+        (['none', 'default', 'full'] as const).flatMap(rounding => [
+          <StaticMatrixCell key={`${size}-${rounding}-color`} label={`${size} ${rounding}`}>
+            <ColorSwatch size={size} rounding={rounding} color="#e43f5a" />
+          </StaticMatrixCell>,
+          <StaticMatrixCell
+            key={`${size}-${rounding}-transparent`}
+            label={`${size} ${rounding} transparent`}>
+            <ColorSwatch size={size} rounding={rounding} color="#0000" />
+          </StaticMatrixCell>,
+          <StaticMatrixCell
+            key={`${size}-${rounding}-empty`}
+            label={`${size} ${rounding} no value`}>
+            <ColorSwatch size={size} rounding={rounding} />
+          </StaticMatrixCell>
+        ])
+      )}
+    </StaticMatrix>
+  )
+};

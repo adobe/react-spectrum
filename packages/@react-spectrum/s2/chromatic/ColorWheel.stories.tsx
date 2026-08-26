@@ -12,6 +12,7 @@
 
 import {ColorWheel} from '../src/ColorWheel';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 
 const meta: Meta<typeof ColorWheel> = {
   component: ColorWheel,
@@ -39,4 +40,25 @@ export const InContainer: StoryObj<typeof ColorWheel> = {
   args: {
     defaultValue: 'hsl(30, 100%, 50%)'
   }
+};
+
+export const SizesAndDisabled: StoryObj<typeof ColorWheel> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={260}>
+      {[176, 240, 320].flatMap(size =>
+        [false, true].map(isDisabled => (
+          <StaticMatrixCell
+            key={`${size}-${isDisabled}`}
+            label={`${size}px${isDisabled ? ' disabled' : ''}`}>
+            <ColorWheel
+              aria-label="Hue"
+              defaultValue="hsl(210, 100%, 50%)"
+              size={size}
+              isDisabled={isDisabled}
+            />
+          </StaticMatrixCell>
+        ))
+      )}
+    </StaticMatrix>
+  )
 };

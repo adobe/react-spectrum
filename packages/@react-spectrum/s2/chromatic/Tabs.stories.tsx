@@ -16,6 +16,7 @@ import {Collection} from 'react-aria/Collection';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 import {Text} from '../src/Content';
@@ -154,6 +155,46 @@ export const Vertical: Story = {
   args: {
     orientation: 'vertical'
   }
+};
+
+export const StaticLayouts: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={480}>
+      {(['compact', 'regular'] as const).flatMap(density =>
+        (['horizontal', 'vertical'] as const).flatMap(orientation =>
+          [false, true].map(iconOnly => (
+            <StaticMatrixCell
+              key={`${density}-${orientation}-${iconOnly}`}
+              label={`${density} ${orientation} ${iconOnly ? 'icon only' : 'labels'}`}>
+              <Tabs
+                density={density}
+                orientation={orientation}
+                aria-label="Project sections"
+                styles={style({width: 440, height: 180})}>
+                <TabList>
+                  <Tab id="edit" aria-label={iconOnly ? 'Edit' : undefined}>
+                    <Edit />
+                    {!iconOnly && <Text>Edit</Text>}
+                  </Tab>
+                  <Tab id="favorite" aria-label={iconOnly ? 'Favorite' : undefined}>
+                    <Heart />
+                    {!iconOnly && <Text>Favorite</Text>}
+                  </Tab>
+                  <Tab id="alerts" aria-label={iconOnly ? 'Alerts' : undefined}>
+                    <Bell />
+                    {!iconOnly && <Text>Alerts</Text>}
+                  </Tab>
+                </TabList>
+                <TabPanel id="edit">Edit project settings</TabPanel>
+                <TabPanel id="favorite">Favorite projects</TabPanel>
+                <TabPanel id="alerts">Project alerts</TabPanel>
+              </Tabs>
+            </StaticMatrixCell>
+          ))
+        )
+      )}
+    </StaticMatrix>
+  )
 };
 
 export const VerticalMaxWidth: Story = {

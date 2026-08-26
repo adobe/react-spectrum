@@ -12,6 +12,7 @@
 
 import {Avatar} from '../src/Avatar';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Avatar> = {
@@ -33,6 +34,29 @@ export const OverBackground: Story = {
   render: () => (
     <div className={style({backgroundColor: 'indigo-800', padding: 40})}>
       <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" />
+    </div>
+  )
+};
+
+const avatarSource = new URL('assets/normal.png', import.meta.url).toString();
+
+export const Sizes: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={120}>
+      {([16, 20, 24, 28, 32, 36, 40, 44, 48, 56, 64, 80, 96, 112, 52, '1lh'] as const).map(size => (
+        <StaticMatrixCell key={size} label={`${size}`}>
+          <Avatar alt="Profile" src={avatarSource} size={size} />
+        </StaticMatrixCell>
+      ))}
+    </StaticMatrix>
+  )
+};
+
+export const OverBackgroundSizes: Story = {
+  render: () => (
+    <div className={style({backgroundColor: 'indigo-800', padding: 40, display: 'flex', gap: 24})}>
+      <Avatar alt="Small profile" src={avatarSource} size={20} isOverBackground />
+      <Avatar alt="Large profile" src={avatarSource} size={96} isOverBackground />
     </div>
   )
 };

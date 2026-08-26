@@ -18,6 +18,7 @@ import {Image} from '../src/Image';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Tag, TagGroup} from '../src/TagGroup';
 
@@ -236,4 +237,56 @@ export const ContextualHelpExample: Story = {
       </ContextualHelp>
     )
   }
+};
+
+const CoverageTags = () => (
+  <>
+    {[
+      'Chocolate',
+      'Mint',
+      'Strawberry',
+      'Vanilla',
+      'Cookie dough',
+      'Pistachio',
+      'Coffee',
+      'Caramel'
+    ].map(tag => (
+      <Tag key={tag} id={tag}>
+        {tag}
+      </Tag>
+    ))}
+  </>
+);
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={360}>
+      {(['S', 'M', 'L'] as const).map(size => (
+        <StaticMatrixCell key={size} label={`${size} emphasized removable`}>
+          <TagGroup
+            size={size}
+            label="Ice cream flavors"
+            isEmphasized
+            selectionMode="multiple"
+            defaultSelectedKeys={['Chocolate']}
+            onRemove={action('remove')}>
+            <CoverageTags />
+          </TagGroup>
+        </StaticMatrixCell>
+      ))}
+      <StaticMatrixCell label="invalid collapsed with group action">
+        <div style={{width: 320}}>
+          <TagGroup
+            label="Ice cream flavors"
+            isInvalid
+            errorMessage="Choose fewer flavors"
+            maxRows={1}
+            groupActionLabel="Add flavor"
+            onGroupAction={action('group action')}>
+            <CoverageTags />
+          </TagGroup>
+        </div>
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

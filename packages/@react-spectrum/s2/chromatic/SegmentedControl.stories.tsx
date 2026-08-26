@@ -101,3 +101,33 @@ export const CustomWidthJustified: Story = {
     isJustified: true
   }
 };
+
+export const DisabledStates: Story = {
+  render: () => (
+    <div style={{display: 'grid', gap: 24}}>
+      <SegmentedControl aria-label="Disabled control" isDisabled defaultSelectedKey="week">
+        <SegmentedControlItem id="day">Day</SegmentedControlItem>
+        <SegmentedControlItem id="week">Week</SegmentedControlItem>
+      </SegmentedControl>
+      <SegmentedControl aria-label="Disabled items" defaultSelectedKey="week">
+        <SegmentedControlItem id="day" isDisabled>
+          Day
+        </SegmentedControlItem>
+        <SegmentedControlItem id="week" isDisabled>
+          Week
+        </SegmentedControlItem>
+        <SegmentedControlItem id="month">Month</SegmentedControlItem>
+      </SegmentedControl>
+      <SegmentedControl
+        aria-label="Disabled justified control"
+        isDisabled
+        isJustified
+        defaultSelectedKey="week"
+        styles={style({width: 400})}>
+        <SegmentedControlItem id="day">Day</SegmentedControlItem>
+        <SegmentedControlItem id="week">Week</SegmentedControlItem>
+        <SegmentedControlItem id="month">Month</SegmentedControlItem>
+      </SegmentedControl>
+    </div>
+  )
+};

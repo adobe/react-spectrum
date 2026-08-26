@@ -35,6 +35,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {Meter} from '../src/Meter';
 import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {StatusLight} from '../src/StatusLight';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -103,6 +104,29 @@ export const Example: StoryObj<typeof Card> = {
         )}
       </Card>
     </div>
+  )
+};
+
+export const StaticOptions: StoryObj<typeof Card> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={420}>
+      {(['XS', 'S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        (['compact', 'regular', 'spacious'] as const).flatMap(density =>
+          (['primary', 'secondary', 'tertiary', 'quiet'] as const).map(variant => (
+            <StaticMatrixCell
+              key={`${size}-${density}-${variant}`}
+              label={`${size} ${density} ${variant}`}>
+              <Card size={size} density={density} variant={variant}>
+                <Content>
+                  <Text slot="title">Project card</Text>
+                  <Text slot="description">A deterministic card used for visual coverage.</Text>
+                </Content>
+              </Card>
+            </StaticMatrixCell>
+          ))
+        )
+      )}
+    </StaticMatrix>
   )
 };
 

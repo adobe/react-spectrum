@@ -14,6 +14,8 @@ import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
 import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from '../stories/utils';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticColorProvider} from '../stories/utils';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 import {ToggleButton} from '../src/ToggleButton';
@@ -103,5 +105,69 @@ export const Justified: Story = {
         <Text slot="label">Underline</Text>
       </ToggleButton>
     </ToggleButtonGroup>
+  )
+};
+
+const GroupContents = () => (
+  <>
+    <ToggleButton id="bold">
+      <Bold />
+      <Text slot="label">Bold</Text>
+    </ToggleButton>
+    <ToggleButton id="italic">
+      <Italic />
+      <Text slot="label">Italic</Text>
+    </ToggleButton>
+    <ToggleButton id="underline" isDisabled>
+      <Underline />
+      <Text slot="label">Underline</Text>
+    </ToggleButton>
+  </>
+);
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={340}>
+      {(['XS', 'S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        (['compact', 'regular'] as const).map(density => (
+          <StaticMatrixCell
+            key={`${size}-${density}`}
+            label={`${size} ${density} emphasized multiple`}>
+            <ToggleButtonGroup
+              size={size}
+              density={density}
+              isEmphasized
+              selectionMode="multiple"
+              defaultSelectedKeys={['bold', 'underline']}>
+              <GroupContents />
+            </ToggleButtonGroup>
+          </StaticMatrixCell>
+        ))
+      )}
+      <StaticMatrixCell label="single quiet disabled vertical">
+        <ToggleButtonGroup
+          selectionMode="single"
+          defaultSelectedKeys={['bold']}
+          isQuiet
+          isDisabled
+          orientation="vertical">
+          <GroupContents />
+        </ToggleButtonGroup>
+      </StaticMatrixCell>
+      {(['black', 'white', 'auto'] as const).map(staticColor => (
+        <StaticMatrixCell key={staticColor} label={`static ${staticColor} justified`}>
+          <StaticColorProvider staticColor={staticColor} hideColorPicker>
+            <ToggleButtonGroup
+              staticColor={staticColor}
+              isJustified
+              selectionMode="multiple"
+              defaultSelectedKeys={['bold']}
+              styles={justifiedStyle({orientation: 'horizontal'})}>
+              <GroupContents />
+            </ToggleButtonGroup>
+          </StaticColorProvider>
+        </StaticMatrixCell>
+      ))}
+    </StaticMatrix>
   )
 };

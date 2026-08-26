@@ -16,6 +16,7 @@ import {Content, Heading} from '../src/Content';
 import {InlineAlert, InlineAlertProps} from '../src/InlineAlert';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 
 const meta: Meta<typeof InlineAlert> = {
   component: InlineAlert,
@@ -73,5 +74,26 @@ export const NoHeading: Story = {
         correct, then try again.
       </Content>
     </InlineAlert>
+  )
+};
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={300}>
+      {(['informative', 'positive', 'notice', 'negative', 'neutral'] as const).flatMap(variant =>
+        (['border', 'subtleFill', 'boldFill'] as const).flatMap(fillStyle =>
+          [true, false].map(hasHeading => (
+            <StaticMatrixCell
+              key={`${variant}-${fillStyle}-${hasHeading}`}
+              label={`${variant} ${fillStyle}${hasHeading ? ' with heading' : ' without heading'}`}>
+              <InlineAlert variant={variant} fillStyle={fillStyle}>
+                {hasHeading && <Heading>Account update</Heading>}
+                <Content>Your account settings were updated.</Content>
+              </InlineAlert>
+            </StaticMatrixCell>
+          ))
+        )
+      )}
+    </StaticMatrix>
   )
 };

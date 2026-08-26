@@ -13,6 +13,7 @@
 import {CalendarDate, CalendarDateTime} from '@internationalized/date';
 import {DatePicker} from '../src/DatePicker';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof DatePicker> = {
@@ -108,4 +109,36 @@ export const OpenPickerWithTime: Story = {
       disableAnimations: true
     }
   }
+};
+
+export const ClosedStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={320}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-empty`} label={`${size} empty`}>
+          <DatePicker size={size} label="Start date" labelPosition={index % 2 ? 'side' : 'top'} />
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-value`} label={`${size} populated`}>
+          <DatePicker
+            size={size}
+            label="Start date"
+            defaultValue={date}
+            isDisabled={index === 0}
+            isReadOnly={index === 1}
+          />
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="required invalid">
+        <DatePicker
+          label="Start date"
+          isRequired
+          isInvalid
+          description="Choose a project start date"
+          errorMessage="Enter a valid date"
+          labelPosition="side"
+          labelAlign="end"
+        />
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

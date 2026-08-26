@@ -178,6 +178,29 @@ export const DisabledBehaviorSelection: Story = {
   }
 };
 
+export const ExternalLinkIcons: Story = {
+  render: () => (
+    <div style={{display: 'flex', gap: 24}}>
+      {[false, true].map(hideLinkOutIcon => (
+        <ListView
+          key={`${hideLinkOutIcon}`}
+          aria-label={
+            hideLinkOutIcon ? 'External links hidden icon' : 'External links visible icon'
+          }
+          hideLinkOutIcon={hideLinkOutIcon}
+          styles={listViewStyles}>
+          <ListViewItem id="docs" href="https://react-spectrum.adobe.com/" target="_blank">
+            Documentation
+          </ListViewItem>
+          <ListViewItem id="github" href="https://github.com/adobe/react-spectrum" target="_blank">
+            GitHub repository
+          </ListViewItem>
+        </ListView>
+      ))}
+    </div>
+  )
+};
+
 export const CheckboxSelection: Story = {
   ...Example,
   args: {

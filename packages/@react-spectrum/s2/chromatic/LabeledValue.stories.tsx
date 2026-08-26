@@ -11,7 +11,8 @@
  */
 
 import {LabeledValue} from '../src/LabeledValue';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 
 const meta: Meta<typeof LabeledValue> = {
   component: LabeledValue,
@@ -45,3 +46,23 @@ export {
   FormCustomLayoutExample,
   FormLayout
 } from '../stories/LabeledValue.stories';
+
+export const StaticOptions: StoryObj<typeof LabeledValue> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={280}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        (['top', 'side'] as const).map((labelPosition, index) => (
+          <StaticMatrixCell key={`${size}-${labelPosition}`} label={`${size} ${labelPosition}`}>
+            <LabeledValue
+              size={size}
+              label="Project owner"
+              labelPosition={labelPosition}
+              labelAlign={index ? 'end' : 'start'}
+              value="A representative long value that demonstrates wrapping at this size"
+            />
+          </StaticMatrixCell>
+        ))
+      )}
+    </StaticMatrix>
+  )
+};

@@ -13,6 +13,7 @@
 import {CalendarDate, CalendarDateTime} from '@internationalized/date';
 import {DateRangePicker} from '../src/DateRangePicker';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof DateRangePicker> = {
@@ -131,4 +132,40 @@ export const FirstDayOfWeek: Story = {
     value: {start: startDate, end: endDate}
   },
   play: OpenPicker.play
+};
+
+export const ClosedStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={380}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-empty`} label={`${size} empty`}>
+          <DateRangePicker
+            size={size}
+            label="Travel dates"
+            labelPosition={index % 2 ? 'side' : 'top'}
+          />
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-value`} label={`${size} populated`}>
+          <DateRangePicker
+            size={size}
+            label="Travel dates"
+            defaultValue={{start: startDate, end: endDate}}
+            isDisabled={index === 0}
+            isReadOnly={index === 1}
+          />
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="required invalid">
+        <DateRangePicker
+          label="Travel dates"
+          isRequired
+          isInvalid
+          description="Choose departure and return dates"
+          errorMessage="Enter a valid range"
+          labelPosition="side"
+          labelAlign="end"
+        />
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

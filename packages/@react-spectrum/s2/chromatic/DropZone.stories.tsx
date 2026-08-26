@@ -24,6 +24,7 @@ import {IllustratedMessage} from '../src/IllustratedMessage';
 import {mergeProps} from 'react-aria/mergeProps';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useState} from 'react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useButton} from 'react-aria/useButton';
 import {useClipboard} from 'react-aria/useClipboard';
@@ -182,4 +183,22 @@ const GradientExample = (args: DropZoneProps): ReactElement => {
 
 export const Gradient: StoryObj<typeof GradientExample> = {
   render: args => <GradientExample {...args} />
+};
+
+export const Sizes: StoryObj<typeof DropZone> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={340}>
+      {(['S', 'M', 'L'] as const).map(size => (
+        <StaticMatrixCell key={size} label={size}>
+          <DropZone size={size} styles={style({width: 320, height: 260})}>
+            <IllustratedMessage>
+              <DropToUpload />
+              <Heading>Drag or paste your file</Heading>
+              <Content>Or, select a file from your computer</Content>
+            </IllustratedMessage>
+          </DropZone>
+        </StaticMatrixCell>
+      ))}
+    </StaticMatrix>
+  )
 };

@@ -12,7 +12,9 @@
 
 import {ActionMenu} from '../src/ActionMenu';
 import {DynamicExample, Example} from '../stories/ActionMenu.stories';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<typeof ActionMenu<any>> = {
@@ -49,4 +51,28 @@ export const Dynamic: Story = {
     let body = canvasElement.ownerDocument.body;
     await within(body).findByRole('menu');
   }
+};
+
+export const ClosedStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={160}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap(size => [
+        <StaticMatrixCell key={`${size}-default`} label={size}>
+          <ActionMenu size={size}>
+            <MenuItem>Copy</MenuItem>
+          </ActionMenu>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-quiet`} label={`${size} quiet`}>
+          <ActionMenu size={size} isQuiet>
+            <MenuItem>Copy</MenuItem>
+          </ActionMenu>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-disabled`} label={`${size} disabled`}>
+          <ActionMenu size={size} isDisabled>
+            <MenuItem>Copy</MenuItem>
+          </ActionMenu>
+        </StaticMatrixCell>
+      ])}
+    </StaticMatrix>
+  )
 };

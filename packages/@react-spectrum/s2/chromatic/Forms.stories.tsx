@@ -34,6 +34,7 @@ import {SearchField} from '../src/SearchField';
 import {Slider} from '../src/Slider';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Switch} from '../src/Switch';
 import {Tag, TagGroup} from '../src/TagGroup';
@@ -265,4 +266,39 @@ export const CustomLabelsExample: StoryObj<typeof CustomLabelsExampleRender> = {
       disable: true
     }
   }
+};
+
+const FormFields = () => (
+  <>
+    <TextField label="Project name" description="Visible to collaborators" />
+    <TextArea label="Description" />
+    <Picker label="Owner" defaultValue="devon">
+      <PickerItem id="devon">Devon</PickerItem>
+      <PickerItem id="sam">Sam</PickerItem>
+    </Picker>
+  </>
+);
+
+export const StaticOptions: StoryObj<typeof Form> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={360}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-top`} label={`${size} top labels`}>
+          <Form size={size} isEmphasized={index % 2 === 1} isRequired necessityIndicator="icon">
+            <FormFields />
+          </Form>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-side`} label={`${size} side labels aligned end`}>
+          <Form size={size} labelPosition="side" labelAlign="end" necessityIndicator="label">
+            <FormFields />
+          </Form>
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="form disabled">
+        <Form isDisabled>
+          <FormFields />
+        </Form>
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

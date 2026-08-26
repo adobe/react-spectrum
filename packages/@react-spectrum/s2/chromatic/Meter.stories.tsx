@@ -13,6 +13,8 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import {Meter} from '../src/Meter';
 import {StaticColorDecorator} from '../stories/utils';
+import {StaticColorProvider} from '../stories/utils';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 
 const meta: Meta<typeof Meter> = {
   component: Meter,
@@ -33,4 +35,34 @@ export const Example: Story = {
     value: 80,
     variant: 'informative'
   }
+};
+
+const meterVariants = ['informative', 'positive', 'notice', 'negative'] as const;
+const meterSizes = ['S', 'M', 'L', 'XL'] as const;
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={260}>
+      {meterVariants.flatMap(variant =>
+        meterSizes.map((size, index) => (
+          <StaticMatrixCell key={`${variant}-${size}`} label={`${variant} ${size}`}>
+            <Meter
+              label="Storage space"
+              labelPosition={index % 2 ? 'side' : 'top'}
+              size={size}
+              value={index % 2 ? 100 : 0}
+              variant={variant}
+            />
+          </StaticMatrixCell>
+        ))
+      )}
+      {(['black', 'white', 'auto'] as const).map(staticColor => (
+        <StaticMatrixCell key={staticColor} label={`static ${staticColor}`}>
+          <StaticColorProvider staticColor={staticColor} hideColorPicker>
+            <Meter label="Storage space" staticColor={staticColor} value={65} />
+          </StaticColorProvider>
+        </StaticMatrixCell>
+      ))}
+    </StaticMatrix>
+  )
 };

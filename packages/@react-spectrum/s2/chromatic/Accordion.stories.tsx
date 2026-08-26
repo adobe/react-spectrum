@@ -22,6 +22,7 @@ import {ActionButton} from '../src/ActionButton';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {TextField} from '../src/TextField';
 
@@ -150,4 +151,43 @@ export const WithActionButton: Story = {
       </div>
     );
   }
+};
+
+const AccordionContents = () => (
+  <>
+    <AccordionItem id="files">
+      <AccordionItemTitle>Files</AccordionItemTitle>
+      <AccordionItemPanel>Files content</AccordionItemPanel>
+    </AccordionItem>
+    <AccordionItem id="people">
+      <AccordionItemTitle>People</AccordionItemTitle>
+      <AccordionItemPanel>People content</AccordionItemPanel>
+    </AccordionItem>
+  </>
+);
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={320}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        (['compact', 'regular', 'spacious'] as const).map(density => (
+          <StaticMatrixCell key={`${size}-${density}`} label={`${size} ${density}`}>
+            <Accordion size={size} density={density} defaultExpandedKeys={['files']}>
+              <AccordionContents />
+            </Accordion>
+          </StaticMatrixCell>
+        ))
+      )}
+      <StaticMatrixCell label="quiet multiple expanded">
+        <Accordion isQuiet allowsMultipleExpanded defaultExpandedKeys={['files', 'people']}>
+          <AccordionContents />
+        </Accordion>
+      </StaticMatrixCell>
+      <StaticMatrixCell label="container disabled">
+        <Accordion isDisabled defaultExpandedKeys={['files']}>
+          <AccordionContents />
+        </Accordion>
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

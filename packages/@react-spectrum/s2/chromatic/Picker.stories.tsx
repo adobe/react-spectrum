@@ -24,6 +24,7 @@ import {
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Picker, PickerItem} from '../src/Picker';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {userEvent, waitFor, within} from 'storybook/test';
 
 const meta: Meta<typeof Picker<any>> = {
@@ -180,4 +181,42 @@ export const AsyncResults: StoryObj<AsyncPickerStoryType> = {
       {timeout: 5000}
     );
   }
+};
+
+export const ClosedStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={280}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-empty`} label={`${size} empty`}>
+          <Picker label="Flavor" size={size} labelPosition={index % 2 ? 'side' : 'top'}>
+            <PickerItem>Chocolate</PickerItem>
+            <PickerItem>Vanilla</PickerItem>
+          </Picker>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-value`} label={`${size} populated`}>
+          <Picker
+            label="Flavor"
+            size={size}
+            defaultValue="chocolate"
+            isDisabled={index === 0}>
+            <PickerItem id="chocolate">Chocolate</PickerItem>
+            <PickerItem id="vanilla">Vanilla</PickerItem>
+          </Picker>
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="required invalid description and error">
+        <Picker
+          label="Flavor"
+          isRequired
+          isInvalid
+          description="Choose your favorite"
+          errorMessage="A flavor is required"
+          labelAlign="end"
+          labelPosition="side">
+          <PickerItem>Chocolate</PickerItem>
+          <PickerItem>Vanilla</PickerItem>
+        </Picker>
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

@@ -145,6 +145,32 @@ export const HighlightSelection: StoryObj<typeof StaticTable> = {
   }
 };
 
+export const StaticOptions: StoryObj<typeof StaticTable> = {
+  render: () => (
+    <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, max-content)', gap: 24}}>
+      {(['compact', 'regular', 'spacious'] as const).flatMap(density =>
+        (['wrap', 'truncate'] as const).flatMap(overflowMode =>
+          (['checkbox', 'highlight'] as const).map(selectionStyle => (
+            <StaticTable
+              key={`${density}-${overflowMode}-${selectionStyle}`}
+              density={density}
+              overflowMode={overflowMode}
+              selectionMode="multiple"
+              selectionStyle={selectionStyle}
+              defaultSelectedKeys={['1', '2']}
+              isQuiet={density === 'spacious'}
+              onLoadMore={undefined}
+              onResize={undefined}
+              onResizeStart={undefined}
+              onResizeEnd={undefined}
+            />
+          ))
+        )
+      )}
+    </div>
+  )
+};
+
 const DynamicTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
     <TableHeader columns={columns}>

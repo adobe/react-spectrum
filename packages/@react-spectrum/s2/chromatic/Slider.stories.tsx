@@ -15,6 +15,7 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Slider} from '../src/Slider';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Slider> = {
@@ -112,4 +113,30 @@ export const ContextualHelpExample: Story = {
       </ContextualHelp>
     )
   }
+};
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={320}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        (['thin', 'thick'] as const).flatMap(trackStyle =>
+          (['default', 'precise'] as const).map(thumbStyle => (
+            <StaticMatrixCell
+              key={`${size}-${trackStyle}-${thumbStyle}`}
+              label={`${size} ${trackStyle} ${thumbStyle}`}>
+              <Slider
+                label="Opacity"
+                size={size}
+                trackStyle={trackStyle}
+                thumbStyle={thumbStyle}
+                defaultValue={40}
+                isEmphasized={trackStyle === 'thick'}
+                isDisabled={thumbStyle === 'precise' && size === 'XL'}
+              />
+            </StaticMatrixCell>
+          ))
+        )
+      )}
+    </StaticMatrix>
+  )
 };

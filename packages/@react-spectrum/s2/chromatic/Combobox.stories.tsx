@@ -23,9 +23,10 @@ import {
   WithIcons
 } from '../stories/ComboBox.stories';
 import {Avatar} from '../exports';
-import {ComboBox} from '../src/ComboBox';
+import {ComboBox, ComboBoxItem} from '../src/ComboBox';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {userEvent, waitFor, within} from 'storybook/test';
 
 const meta: Meta<typeof ComboBox<any>> = {
@@ -199,4 +200,43 @@ export const WithPrefix: Story = {
   args: {
     prefix: <Avatar size={20} src="https://i.imgur.com/xIe7Wlb.png" />
   }
+};
+
+export const ClosedStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={280}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-empty`} label={`${size} empty`}>
+          <ComboBox label="Flavor" size={size} labelPosition={index % 2 ? 'side' : 'top'}>
+            <ComboBoxItem>Chocolate</ComboBoxItem>
+            <ComboBoxItem>Vanilla</ComboBoxItem>
+          </ComboBox>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-value`} label={`${size} populated`}>
+          <ComboBox
+            label="Flavor"
+            size={size}
+            defaultInputValue="Chocolate"
+            isDisabled={index === 0}
+            isReadOnly={index === 1}>
+            <ComboBoxItem>Chocolate</ComboBoxItem>
+            <ComboBoxItem>Vanilla</ComboBoxItem>
+          </ComboBox>
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="required invalid description and error">
+        <ComboBox
+          label="Flavor"
+          isRequired
+          isInvalid
+          description="Choose your favorite"
+          errorMessage="A flavor is required"
+          labelAlign="end"
+          labelPosition="side">
+          <ComboBoxItem>Chocolate</ComboBoxItem>
+          <ComboBoxItem>Vanilla</ComboBoxItem>
+        </ComboBox>
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

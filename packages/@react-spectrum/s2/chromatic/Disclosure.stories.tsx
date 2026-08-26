@@ -16,6 +16,7 @@ import {Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle} from '..
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Disclosure> = {
@@ -76,4 +77,33 @@ export const WithActionButton: Story = {
       </div>
     );
   }
+};
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={300}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        (['compact', 'regular', 'spacious'] as const).map(density => (
+          <StaticMatrixCell key={`${size}-${density}`} label={`${size} ${density}`}>
+            <Disclosure size={size} density={density} defaultExpanded>
+              <DisclosureTitle>Files</DisclosureTitle>
+              <DisclosurePanel>Expanded files content</DisclosurePanel>
+            </Disclosure>
+          </StaticMatrixCell>
+        ))
+      )}
+      <StaticMatrixCell label="quiet expanded">
+        <Disclosure isQuiet defaultExpanded>
+          <DisclosureTitle>Files</DisclosureTitle>
+          <DisclosurePanel>Expanded files content</DisclosurePanel>
+        </Disclosure>
+      </StaticMatrixCell>
+      <StaticMatrixCell label="disabled expanded">
+        <Disclosure isDisabled defaultExpanded>
+          <DisclosureTitle>Files</DisclosureTitle>
+          <DisclosurePanel>Expanded files content</DisclosurePanel>
+        </Disclosure>
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

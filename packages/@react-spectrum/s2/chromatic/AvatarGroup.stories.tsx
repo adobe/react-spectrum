@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {Avatar} from '../src/Avatar';
 import {AvatarGroup} from '../src/AvatarGroup';
 import {Example, WithLabel, WithProviderBackground} from '../stories/AvatarGroup.stories';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 
 const meta: Meta<typeof AvatarGroup> = {
   component: AvatarGroup,
@@ -25,3 +27,25 @@ const meta: Meta<typeof AvatarGroup> = {
 export default meta;
 
 export {Example, WithLabel, WithProviderBackground};
+
+const avatarSource = new URL('assets/normal.png', import.meta.url).toString();
+
+export const Sizes: StoryObj<typeof AvatarGroup> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={180}>
+      {([16, 20, 24, 28, 32, 36, 40] as const).flatMap(size =>
+        [undefined, '145 members'].map(label => (
+          <StaticMatrixCell
+            key={`${size}-${label ?? 'no-label'}`}
+            label={`${size}${label ? ' with label' : ''}`}>
+            <AvatarGroup size={size} label={label} aria-label={label ? undefined : 'Online users'}>
+              <Avatar alt="Profile one" src={avatarSource} />
+              <Avatar alt="Profile two" src={avatarSource} />
+              <Avatar alt="Profile three" src={avatarSource} />
+            </AvatarGroup>
+          </StaticMatrixCell>
+        ))
+      )}
+    </StaticMatrix>
+  )
+};

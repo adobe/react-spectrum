@@ -16,6 +16,7 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Radio, RadioGroup} from '../src/RadioGroup';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof RadioGroup> = {
@@ -109,4 +110,47 @@ export const ContextualHelpExample: Story = {
       </ContextualHelp>
     )
   }
+};
+
+const Radios = () => (
+  <>
+    <Radio value="soccer">Soccer</Radio>
+    <Radio value="baseball">Baseball</Radio>
+    <Radio value="football" isDisabled>
+      Football
+    </Radio>
+  </>
+);
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={260}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap(size => [
+        <StaticMatrixCell key={`${size}-emphasized`} label={`${size} emphasized selected`}>
+          <RadioGroup size={size} label="Favorite sport" isEmphasized defaultValue="baseball">
+            <Radios />
+          </RadioGroup>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-horizontal`} label={`${size} horizontal`}>
+          <RadioGroup
+            size={size}
+            label="Favorite sport"
+            orientation="horizontal"
+            defaultValue="football">
+            <Radios />
+          </RadioGroup>
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="group disabled required">
+        <RadioGroup label="Favorite sport" isDisabled isRequired defaultValue="baseball">
+          <Radios />
+        </RadioGroup>
+      </StaticMatrixCell>
+      <StaticMatrixCell label="invalid required">
+        <RadioGroup label="Favorite sport" isRequired isInvalid errorMessage="Choose a sport">
+          <Radios />
+        </RadioGroup>
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

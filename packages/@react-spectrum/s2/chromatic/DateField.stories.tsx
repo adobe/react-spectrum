@@ -13,6 +13,7 @@
 import {CalendarDate} from '@internationalized/date';
 import {DateField} from '../src/DateField';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {userEvent} from 'storybook/test';
 
 const meta: Meta<typeof DateField> = {
@@ -59,4 +60,36 @@ export const Focused: Story = {
       disableAnimations: true
     }
   }
+};
+
+export const StaticStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={300}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-empty`} label={`${size} empty`}>
+          <DateField size={size} label="Date of birth" labelPosition={index % 2 ? 'side' : 'top'} />
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-value`} label={`${size} populated`}>
+          <DateField
+            size={size}
+            label="Date of birth"
+            defaultValue={date}
+            isDisabled={index === 0}
+            isReadOnly={index === 1}
+          />
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="required invalid">
+        <DateField
+          label="Date of birth"
+          isRequired
+          isInvalid
+          description="Use month, day, and year"
+          errorMessage="Enter a valid date"
+          labelPosition="side"
+          labelAlign="end"
+        />
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

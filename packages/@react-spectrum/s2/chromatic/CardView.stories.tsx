@@ -18,6 +18,7 @@ import {IllustratedMessage} from '../src/IllustratedMessage';
 import type {Meta, StoryObj} from '@storybook/react';
 import {PhotoCard} from '../stories/CardView.stories';
 import {SkeletonCollection} from '../src/SkeletonCollection';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof CardView> = {
@@ -87,5 +88,58 @@ export const Loading: StoryObj<typeof CardView> = {
         )}
       </SkeletonCollection>
     </CardView>
+  )
+};
+
+const preview = new URL('assets/preview.png', import.meta.url).toString();
+const cardItems = Array.from({length: 6}, (_, index) => ({
+  id: index + 1,
+  user: {name: `Owner ${index + 1}`, profile_image: {small: preview}},
+  urls: {regular: preview},
+  description: `Asset ${index + 1}`,
+  alt_description: '',
+  width: 400,
+  height: index % 2 ? 520 : 300
+}));
+const cardViewConfigs = [
+  {size: 'XS', density: 'compact', variant: 'primary', layout: 'grid', selectionStyle: 'checkbox'},
+  {
+    size: 'S',
+    density: 'regular',
+    variant: 'secondary',
+    layout: 'waterfall',
+    selectionStyle: 'highlight'
+  },
+  {size: 'M', density: 'spacious', variant: 'tertiary', layout: 'grid', selectionStyle: 'checkbox'},
+  {
+    size: 'L',
+    density: 'compact',
+    variant: 'quiet',
+    layout: 'waterfall',
+    selectionStyle: 'highlight'
+  },
+  {size: 'XL', density: 'regular', variant: 'primary', layout: 'grid', selectionStyle: 'highlight'}
+] as const;
+
+export const PopulatedStaticOptions: StoryObj<typeof CardView> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={720}>
+      {cardViewConfigs.map(config => (
+        <StaticMatrixCell
+          key={Object.values(config).join('-')}
+          label={Object.values(config).join(' ')}>
+          <CardView
+            aria-label="Assets"
+            {...config}
+            selectionMode="multiple"
+            defaultSelectedKeys={[1, 3]}
+            styles={style({width: 680, height: 520})}>
+            {cardItems.map(item => (
+              <PhotoCard key={item.id} item={item} layout={config.layout} />
+            ))}
+          </CardView>
+        </StaticMatrixCell>
+      ))}
+    </StaticMatrix>
   )
 };

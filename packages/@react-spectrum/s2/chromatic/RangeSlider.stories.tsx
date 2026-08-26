@@ -15,6 +15,7 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {RangeSlider} from '../src/RangeSlider';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 
 const meta: Meta<typeof RangeSlider> = {
   component: RangeSlider,
@@ -65,4 +66,30 @@ export const ContextualHelpExample: Story = {
       </ContextualHelp>
     )
   }
+};
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={320}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        (['thin', 'thick'] as const).flatMap(trackStyle =>
+          (['default', 'precise'] as const).map(thumbStyle => (
+            <StaticMatrixCell
+              key={`${size}-${trackStyle}-${thumbStyle}`}
+              label={`${size} ${trackStyle} ${thumbStyle}`}>
+              <RangeSlider
+                label="Price range"
+                size={size}
+                trackStyle={trackStyle}
+                thumbStyle={thumbStyle}
+                defaultValue={{start: 25, end: 75}}
+                isEmphasized={trackStyle === 'thick'}
+                isDisabled={thumbStyle === 'precise' && size === 'XL'}
+              />
+            </StaticMatrixCell>
+          ))
+        )
+      )}
+    </StaticMatrix>
+  )
 };

@@ -11,6 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {StatusLight} from '../src/StatusLight';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -41,4 +42,44 @@ export const LongLabel: Story = {
   args: {
     variant: 'positive'
   }
+};
+
+const variants = [
+  'informative',
+  'neutral',
+  'positive',
+  'notice',
+  'negative',
+  'celery',
+  'chartreuse',
+  'cyan',
+  'fuchsia',
+  'purple',
+  'magenta',
+  'indigo',
+  'seafoam',
+  'yellow',
+  'pink',
+  'turquoise',
+  'cinnamon',
+  'brown',
+  'silver'
+] as const;
+const sizes = ['S', 'M', 'L', 'XL'] as const;
+
+export const StaticOptions: Story = {
+  render: () => (
+    <StaticMatrix>
+      {variants.map((variant, index) => {
+        let size = sizes[index % sizes.length];
+        return (
+          <StaticMatrixCell key={variant} label={`${variant} ${size}`}>
+            <StatusLight variant={variant} size={size} styles={style({maxWidth: 192})}>
+              {index % 2 ? 'A representative long status label' : variant}
+            </StatusLight>
+          </StaticMatrixCell>
+        );
+      })}
+    </StaticMatrix>
+  )
 };

@@ -16,6 +16,7 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
 import {SearchField} from '../src/SearchField';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof SearchField> = {
@@ -68,4 +69,34 @@ export const ContextualHelpExample: Story = {
       </ContextualHelp>
     )
   }
+};
+
+export const StaticStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={280}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-top`} label={`${size} top`}>
+          <SearchField
+            size={size}
+            label="Search"
+            defaultValue={index % 2 ? 'Spectrum' : ''}
+            description="Search all projects"
+          />
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-side`} label={`${size} side aligned end`}>
+          <SearchField
+            size={size}
+            label="Search"
+            labelPosition="side"
+            labelAlign="end"
+            isDisabled={index === 0}
+            isReadOnly={index === 1}
+          />
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="required invalid with error">
+        <SearchField label="Search" isRequired isInvalid errorMessage="Enter a search query" />
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

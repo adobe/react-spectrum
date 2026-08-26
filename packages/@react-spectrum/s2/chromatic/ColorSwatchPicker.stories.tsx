@@ -14,6 +14,7 @@ import {ColorSwatch} from '../src/ColorSwatch';
 import {ColorSwatchPicker} from '../src/ColorSwatchPicker';
 import {Example} from '../stories/ColorSwatchPicker.stories';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ColorSwatchPicker> = {
@@ -62,5 +63,32 @@ export const ManySwatches: StoryObj<typeof ColorSwatchPicker> = {
         return <ColorSwatch key={color} color={color} />;
       })}
     </ColorSwatchPicker>
+  )
+};
+
+export const StaticOptions: StoryObj<typeof ColorSwatchPicker> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={180}>
+      {(['compact', 'regular', 'spacious'] as const).flatMap(density =>
+        (['XS', 'S', 'M', 'L'] as const).flatMap(size =>
+          (['none', 'default', 'full'] as const).map(rounding => (
+            <StaticMatrixCell
+              key={`${density}-${size}-${rounding}`}
+              label={`${density} ${size} ${rounding}`}>
+              <ColorSwatchPicker
+                aria-label="Color"
+                density={density}
+                size={size}
+                rounding={rounding}
+                defaultValue="#0346d4">
+                <ColorSwatch color="#0346d4" />
+                <ColorSwatch color="#d1239a" />
+                <ColorSwatch color="#70f72d" isDisabled />
+              </ColorSwatchPicker>
+            </StaticMatrixCell>
+          ))
+        )
+      )}
+    </StaticMatrix>
   )
 };

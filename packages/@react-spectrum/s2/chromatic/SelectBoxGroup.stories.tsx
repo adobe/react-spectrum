@@ -115,3 +115,38 @@ export const HorizontalOrientationMultSelect: Story = {
     </div>
   )
 };
+
+export const DisabledStates: Story = {
+  render: () => (
+    <div style={{display: 'grid', gap: 24}}>
+      {(['vertical', 'horizontal'] as const).flatMap(orientation =>
+        (['single', 'multiple'] as const).map(selectionMode => (
+          <SelectBoxGroup
+            key={`${orientation}-${selectionMode}`}
+            aria-label={`${orientation} ${selectionMode}`}
+            orientation={orientation}
+            selectionMode={selectionMode}
+            defaultSelectedKeys={['selected-disabled']}>
+            <SelectBox id="enabled">
+              <Text slot="label">Enabled</Text>
+            </SelectBox>
+            <SelectBox id="disabled" isDisabled>
+              <Text slot="label">Disabled</Text>
+            </SelectBox>
+            <SelectBox id="selected-disabled" isDisabled>
+              <Text slot="label">Selected disabled</Text>
+            </SelectBox>
+          </SelectBoxGroup>
+        ))
+      )}
+      <SelectBoxGroup aria-label="Disabled group" isDisabled>
+        <SelectBox id="one">
+          <Text slot="label">One</Text>
+        </SelectBox>
+        <SelectBox id="two">
+          <Text slot="label">Two</Text>
+        </SelectBox>
+      </SelectBoxGroup>
+    </div>
+  )
+};

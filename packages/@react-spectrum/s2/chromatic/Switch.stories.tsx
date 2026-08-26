@@ -11,6 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Switch} from '../src/Switch';
 
@@ -38,5 +39,42 @@ export const LongLabel: Story = {
     <Switch {...args} styles={style({maxWidth: 128})}>
       Switch with very long label so we can see wrapping
     </Switch>
+  )
+};
+
+const sizes = ['S', 'M', 'L', 'XL'] as const;
+
+export const StaticStates: Story = {
+  render: () => (
+    <StaticMatrix>
+      {sizes.flatMap(size => [
+        <StaticMatrixCell key={`${size}-default`} label={`${size} unselected`}>
+          <Switch size={size}>Wi-Fi</Switch>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-selected`} label={`${size} selected emphasized`}>
+          <Switch size={size} defaultSelected isEmphasized>
+            Wi-Fi
+          </Switch>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-disabled`} label={`${size} disabled`}>
+          <Switch size={size} isDisabled>
+            Wi-Fi
+          </Switch>
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-selected-disabled`} label={`${size} selected disabled`}>
+          <Switch size={size} defaultSelected isDisabled>
+            Wi-Fi
+          </Switch>
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="description">
+        <Switch description="Controls wireless connectivity">Wi-Fi</Switch>
+      </StaticMatrixCell>
+      <StaticMatrixCell label="invalid with error">
+        <Switch isInvalid errorMessage="A connection option is required">
+          Wi-Fi
+        </Switch>
+      </StaticMatrixCell>
+    </StaticMatrix>
   )
 };

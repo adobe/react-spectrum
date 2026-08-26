@@ -18,6 +18,8 @@ import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
+import {StaticColorProvider} from '../stories/utils';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
@@ -103,5 +105,55 @@ export const Justified: StoryObj<typeof ActionButtonGroup> = {
         <Text slot="label">Paste</Text>
       </ActionButton>
     </ActionButtonGroup>
+  )
+};
+
+const GroupContents = () => (
+  <>
+    <ActionButton>
+      <Cut />
+      <Text slot="label">Cut</Text>
+    </ActionButton>
+    <ActionButton>
+      <Copy />
+      <Text slot="label">Copy</Text>
+    </ActionButton>
+    <ActionButton>
+      <Paste />
+      <Text slot="label">Paste</Text>
+    </ActionButton>
+  </>
+);
+
+export const StaticOptions: StoryObj<typeof ActionButtonGroup> = {
+  render: () => (
+    <StaticMatrix minColumnWidth={320}>
+      {(['XS', 'S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        (['compact', 'regular'] as const).map(density => (
+          <StaticMatrixCell key={`${size}-${density}`} label={`${size} ${density}`}>
+            <ActionButtonGroup size={size} density={density}>
+              <GroupContents />
+            </ActionButtonGroup>
+          </StaticMatrixCell>
+        ))
+      )}
+      <StaticMatrixCell label="quiet disabled vertical">
+        <ActionButtonGroup isQuiet isDisabled orientation="vertical">
+          <GroupContents />
+        </ActionButtonGroup>
+      </StaticMatrixCell>
+      {(['black', 'white', 'auto'] as const).map(staticColor => (
+        <StaticMatrixCell key={staticColor} label={`static ${staticColor} justified`}>
+          <StaticColorProvider staticColor={staticColor} hideColorPicker>
+            <ActionButtonGroup
+              staticColor={staticColor}
+              isJustified
+              styles={justifiedStyle({orientation: 'horizontal'})}>
+              <GroupContents />
+            </ActionButtonGroup>
+          </StaticColorProvider>
+        </StaticMatrixCell>
+      ))}
+    </StaticMatrix>
   )
 };

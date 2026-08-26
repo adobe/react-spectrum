@@ -11,6 +11,31 @@
  */
 
 import {generatePowerset} from '@react-spectrum/story-utils';
+import {ReactNode} from 'react';
+
+export function StaticMatrix(props: {children: ReactNode; minColumnWidth?: number}) {
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(auto-fit, minmax(${props.minColumnWidth ?? 220}px, max-content))`,
+        alignItems: 'start',
+        gap: 24,
+        padding: 16
+      }}>
+      {props.children}
+    </div>
+  );
+}
+
+export function StaticMatrixCell(props: {children: ReactNode; label: string}) {
+  return (
+    <section style={{display: 'grid', gap: 8, alignContent: 'start'}}>
+      <div style={{font: '12px sans-serif', color: 'gray'}}>{props.label}</div>
+      {props.children}
+    </section>
+  );
+}
 
 export function shortName(key: string, value: any): string {
   let returnVal = '';

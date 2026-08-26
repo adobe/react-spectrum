@@ -18,6 +18,7 @@ import {Content, Heading} from '../src/Content';
 import Folder from '../spectrum-illustrations/gradient/generic2/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 
 const meta: Meta<typeof IllustratedMessage> = {
   component: IllustratedMessage,
@@ -84,5 +85,28 @@ export const Gradient: Story = {
         <Button variant="accent">Label</Button>
       </ButtonGroup>
     </IllustratedMessage>
+  )
+};
+
+export const SizesAndOrientations: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={420}>
+      {(['S', 'M', 'L'] as const).flatMap(size =>
+        (['vertical', 'horizontal'] as const).flatMap(orientation =>
+          [true, false].map(hasButton => (
+            <StaticMatrixCell
+              key={`${size}-${orientation}-${hasButton}`}
+              label={`${size} ${orientation}${hasButton ? ' with button' : ' without button'}`}>
+              <IllustratedMessage size={size} orientation={orientation}>
+                <Cloud />
+                <Heading>No results found</Heading>
+                <Content>Try changing your filters or search terms.</Content>
+                {hasButton && <Button variant="accent">Clear filters</Button>}
+              </IllustratedMessage>
+            </StaticMatrixCell>
+          ))
+        )
+      )}
+    </StaticMatrix>
   )
 };

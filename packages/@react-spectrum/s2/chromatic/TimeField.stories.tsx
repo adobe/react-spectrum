@@ -11,6 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {Time} from '@internationalized/date';
 import {TimeField} from '../src/TimeField';
 import {userEvent} from 'storybook/test';
@@ -58,4 +59,38 @@ export const Focused: Story = {
       disableAnimations: true
     }
   }
+};
+
+const time = new Time(14, 30);
+
+export const StaticStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={300}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-empty`} label={`${size} empty`}>
+          <TimeField size={size} label="Reminder time" labelPosition={index % 2 ? 'side' : 'top'} />
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-value`} label={`${size} populated`}>
+          <TimeField
+            size={size}
+            label="Reminder time"
+            defaultValue={time}
+            isDisabled={index === 0}
+            isReadOnly={index === 1}
+          />
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="required invalid">
+        <TimeField
+          label="Reminder time"
+          isRequired
+          isInvalid
+          description="Use local time"
+          errorMessage="Enter a valid time"
+          labelPosition="side"
+          labelAlign="end"
+        />
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };

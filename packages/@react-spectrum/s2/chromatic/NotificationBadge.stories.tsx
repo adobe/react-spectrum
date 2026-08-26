@@ -13,6 +13,7 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import {NotificationBadge} from '../src/NotificationBadge';
 import {StaticColorDecorator} from '../stories/utils';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 
 const meta: Meta<typeof NotificationBadge> = {
   component: NotificationBadge,
@@ -37,4 +38,20 @@ export const Example: Story = {
       </div>
     );
   }
+};
+
+export const SizesAndValues: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={120}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap(size =>
+        [undefined, 8, 105].map(value => (
+          <StaticMatrixCell
+            key={`${size}-${value ?? 'indicator'}`}
+            label={`${size} ${value ?? 'indicator'}`}>
+            <NotificationBadge size={size} value={value} />
+          </StaticMatrixCell>
+        ))
+      )}
+    </StaticMatrix>
+  )
 };

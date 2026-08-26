@@ -14,13 +14,13 @@ import {ActionButton, ActionButtonContext, ActionButtonProps} from '../src/Actio
 import {Avatar} from '../src/Avatar';
 import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
+import {CSSProperties, ReactElement} from 'react';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {NotificationBadge} from '../src/NotificationBadge';
-import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style' with {type: 'macro'};
@@ -188,6 +188,23 @@ export const NotificationBadgesCustomWidth: ActionButtonStory = {
         <Text>Notifications</Text>
         <NotificationBadge value={105} />
       </ActionButton>
+    </div>
+  )
+};
+
+export const AutoStaticColor: ActionButtonStory = {
+  render: () => (
+    <div style={{display: 'grid', gap: 16}}>
+      {['#f7e8ff', '#5131c4'].map(background => (
+        <div
+          key={background}
+          style={{background, padding: 24, '--s2-container-bg': background} as CSSProperties}>
+          <ActionButton staticColor="auto">
+            <NewIcon />
+            <Text>Automatic contrast</Text>
+          </ActionButton>
+        </div>
+      ))}
     </div>
   )
 };

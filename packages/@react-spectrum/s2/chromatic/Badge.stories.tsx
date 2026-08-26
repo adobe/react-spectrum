@@ -118,3 +118,12 @@ export const ComboPt3: Story = {
 };
 
 export {Example};
+
+export const OverflowModes: StoryObj<typeof Badge> = {
+  render: () => (
+    <div style={{display: 'grid', gap: 16, width: 160}}>
+      <Badge overflowMode="wrap">A long badge label that wraps onto multiple lines</Badge>
+      <Badge overflowMode="truncate">A long badge label that truncates on one line</Badge>
+    </div>
+  )
+};

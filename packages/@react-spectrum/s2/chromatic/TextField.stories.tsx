@@ -18,6 +18,7 @@ import {Form} from '../src/Form';
 import {Link} from '../src/Link';
 import Magnifier from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StaticMatrix, StaticMatrixCell} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {TextArea, TextField} from '../src/TextField';
 
@@ -201,4 +202,50 @@ export const FormCustomWidth: Story = {
       disable: true
     }
   }
+};
+
+export const StaticStates: Story = {
+  render: () => (
+    <StaticMatrix minColumnWidth={300}>
+      {(['S', 'M', 'L', 'XL'] as const).flatMap((size, index) => [
+        <StaticMatrixCell key={`${size}-field`} label={`TextField ${size}`}>
+          <TextField
+            size={size}
+            label="Project name"
+            defaultValue={index % 2 ? 'React Spectrum' : ''}
+            isDisabled={index === 0}
+            isReadOnly={index === 1}
+            description="Visible to collaborators"
+          />
+        </StaticMatrixCell>,
+        <StaticMatrixCell key={`${size}-area`} label={`TextArea ${size} side`}>
+          <TextArea
+            size={size}
+            label="Description"
+            labelPosition="side"
+            labelAlign={index % 2 ? 'end' : 'start'}
+            defaultValue={index % 2 ? 'A project description' : ''}
+          />
+        </StaticMatrixCell>
+      ])}
+      <StaticMatrixCell label="TextField required invalid">
+        <TextField
+          label="Project name"
+          isRequired
+          isInvalid
+          description="Visible to collaborators"
+          errorMessage="Enter a project name"
+        />
+      </StaticMatrixCell>
+      <StaticMatrixCell label="TextArea required invalid">
+        <TextArea
+          label="Description"
+          isRequired
+          isInvalid
+          description="Describe the project"
+          errorMessage="Enter a description"
+        />
+      </StaticMatrixCell>
+    </StaticMatrix>
+  )
 };
