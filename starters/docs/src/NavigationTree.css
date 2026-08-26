@@ -1,0 +1,148 @@
+@import './theme.css';
+
+.react-aria-NavigationTree {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: var(--spacing-1);
+  border: 0.5px solid var(--border-color);
+  border-radius: calc(var(--radius) + var(--spacing-1));
+  background: var(--overlay-background);
+  forced-color-adjust: none;
+  outline: none;
+  width: 250px;
+  max-height: 300px;
+  box-sizing: border-box;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+
+  .react-aria-NavigationTreeSection:not(:first-child) {
+    margin-top: var(--spacing-4);
+  }
+
+  .react-aria-NavigationTreeHeader {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    padding: var(--spacing-1) var(--spacing-2);
+    color: var(--text-color);
+  }
+}
+
+.react-aria-NavigationTreeItem {
+  --padding: var(--spacing-4);
+  display: flex;
+  position: relative;
+  align-items: center;
+  min-height: var(--spacing-8);
+  border-radius: var(--radius);
+  box-sizing: border-box;
+  outline: none;
+  color: var(--text-color);
+  font: var(--font-size) system-ui;
+  -webkit-tap-highlight-color: transparent;
+  /* Indent each nested level. --tree-item-level is set on the row by React Aria (1-based). */
+  padding-inline-start: calc((var(--tree-item-level, 1) - 1) * var(--padding));
+
+  .react-aria-Link:before {
+    display: none;
+    content: '';
+    position: absolute;
+    inset-inline-start: 2px;
+    top: 50%;
+    width: 2px;
+    transform: translateY(-50%);
+    height: 1lh;
+    background: var(--text-color-hover);
+    font-weight: 600;
+    border-radius: 9999px;
+  }
+
+  a.react-aria-Link[data-hovered]:before {
+    display: block;
+  }
+
+  /* When a current-route ancestor is collapsed, tint it and show a small dot where the pill would be.
+   * The dot (rather than the full pill) signals "the current route is nested inside here" without
+   * looking selected, and gives a non-color affordance. Higher specificity than the hover rule above,
+   * so the dot wins over the hover pill on these rows. Targets .react-aria-Link so it works whether the
+   * row renders as a link or a plain span. */
+  &[data-current-ancestor]:not([data-expanded]) {
+    .react-aria-Link:before {
+      display: block;
+      height: 4px;
+      width: 4px;
+    }
+  }
+
+  /* React Aria sets data-current on the link matching the NavigationTree's selectedRoute. */
+  &[data-current] .react-aria-Link:before {
+    display: block;
+    background: var(--highlight-background);
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+
+  .react-aria-Link {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    min-width: 0;
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius);
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* A row without an href renders its label as a non-interactive span. */
+  &:not([data-href]) .react-aria-Link {
+    cursor: default;
+  }
+
+  .react-aria-Button[slot='chevron'] {
+    all: unset;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    border-radius: var(--radius);
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+
+    svg {
+      width: var(--spacing-4);
+      height: var(--spacing-4);
+      rotate: 0deg;
+      transition: rotate 200ms;
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+    }
+  }
+
+  &[data-expanded] .react-aria-Button[slot='chevron'] svg {
+    rotate: 90deg;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-NavigationTreeItem a.react-aria-Link {
+    color: LinkText;
+  }
+}
