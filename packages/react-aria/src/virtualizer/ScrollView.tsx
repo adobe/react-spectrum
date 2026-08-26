@@ -70,6 +70,11 @@ interface ScrollViewAria {
 function getClientSize(dom: HTMLElement) {
   let clientWidth = dom.clientWidth;
   let clientHeight = dom.clientHeight;
+  let doc = dom.ownerDocument;
+  if (!doc || dom === doc.documentElement || dom === doc.body || dom === doc.scrollingElement) {
+    return {clientWidth, clientHeight};
+  }
+
   let rect = dom.getBoundingClientRect?.();
   if (rect && rect.width > 0 && rect.height > 0) {
     clientWidth = rect.width - Math.max(0, dom.offsetWidth - dom.clientWidth);
