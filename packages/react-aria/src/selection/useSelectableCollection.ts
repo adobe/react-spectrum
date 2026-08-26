@@ -262,7 +262,11 @@ export function useSelectableCollection(
         return false;
       }
       // TODO: should Home and End also be reversed in column reverse aka Home goes to top? Or should Home always to to the "first" (bottom)
-      let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e), UNSTABLE_initialFocus);
+      let firstKey: Key | null = delegate.getFirstKey(
+        manager.focusedKey,
+        isCtrlKeyPressed(e),
+        UNSTABLE_initialFocus
+      );
       manager.setFocusedKey(firstKey);
       if (firstKey != null) {
         if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
@@ -488,7 +492,9 @@ export function useSelectableCollection(
       // always go to the first item in the Thread when tabbing forwards/backwards into the collection
       // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
       navigateToKey(
-        UNSTABLE_focusOnEntry === 'first' ? delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus) : delegate.getLastKey?.()
+        UNSTABLE_focusOnEntry === 'first'
+          ? delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus)
+          : delegate.getLastKey?.()
       );
     } else if (manager.focusedKey == null) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
@@ -501,7 +507,10 @@ export function useSelectableCollection(
       ) {
         navigateToKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
       } else {
-        navigateToKey(manager.firstSelectedKey ?? delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus));
+        navigateToKey(
+          manager.firstSelectedKey ??
+            delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus)
+        );
       }
     } else if (scrollRef.current) {
       // Restore the scroll position to what it was before.

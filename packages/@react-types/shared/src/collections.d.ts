@@ -123,7 +123,11 @@ export interface KeyboardDelegate {
   getKeyPageAbove?(key: Key): Key | null;
 
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(key?: Key | null, global?: boolean, initialFocus?: 'row' | 'columnheader'): Key | null;
+  getFirstKey?(
+    key?: Key | null,
+    global?: boolean,
+    initialFocus?: 'row' | 'columnheader'
+  ): Key | null;
 
   /** Returns the last key, or `null` for none. */
   getLastKey?(key?: Key | null, global?: boolean): Key | null;

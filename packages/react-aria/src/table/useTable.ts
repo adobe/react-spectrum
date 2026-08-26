@@ -91,8 +91,7 @@ export function useTable<T>(
         direction,
         collator,
         layoutDelegate,
-        layout,
-        initialFocus
+        layout
       }),
     [
       keyboardDelegate,
@@ -103,8 +102,7 @@ export function useTable<T>(
       direction,
       collator,
       layoutDelegate,
-      layout,
-      initialFocus
+      layout
     ]
   );
   let id = useId(props.id);
