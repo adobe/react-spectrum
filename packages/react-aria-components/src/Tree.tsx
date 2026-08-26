@@ -1124,7 +1124,6 @@ export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoa
     ...otherProps,
     id: undefined,
     children: item.rendered,
-    // TODO: this isn't consistent with other components
     defaultClassName: 'react-aria-TreeLoader',
     values: {
       level
