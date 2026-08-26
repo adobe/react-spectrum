@@ -94,6 +94,7 @@ export interface PromptFieldProps {
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
+  onAITermsPress?: () => void;
   styles?: StyleString;
   variant?: 'balanced' | 'prominent' | 'subtle';
   brandColor?: string;
@@ -354,7 +355,8 @@ export const PromptField = forwardRef(function PromptField(
           <Link
             variant="secondary"
             href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-            target="_blank">
+            target="_blank"
+            onPress={props.onAITermsPress}>
             {stringFormatter.format('promptfield.aiUserGuidlines')}
           </Link>
         </p>
@@ -941,8 +943,6 @@ function buildVoicePrompt(base: TokenFieldValue, voiceText: string): PromptField
   return base.replaceRange(base.caretPosition, base.caretPosition, voiceText) as PromptFieldValue;
 }
 
-// TODO: how do we feed about these extending menutrigger props? IMO the "InsertMenuButton" makes
-// it a bit weird to pass MenuTrigger props to it
 export interface InsertMenuItemProps extends Pick<MenuTriggerProps, 'onOpenChange'> {
   children: React.ReactNode;
 }

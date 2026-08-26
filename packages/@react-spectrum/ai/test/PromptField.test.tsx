@@ -499,4 +499,12 @@ describeOrSkip('PromptField', () => {
 
     expect(onKeyDown).toHaveBeenCalled();
   });
+
+  it('calls onAITermsPress when the AI User Guidelines link is pressed', async () => {
+    let onAITermsPress = jest.fn();
+    let {user} = renderPromptField({onAITermsPress});
+
+    await user.click(screen.getByRole('link', {name: 'AI User Guidelines'}));
+    expect(onAITermsPress).toHaveBeenCalledTimes(1);
+  });
 });
