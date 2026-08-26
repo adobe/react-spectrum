@@ -120,11 +120,11 @@ export const WithExecutionTrace: Story = {
                 <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
                   <div>
                     <span className={style({color: 'gray-600'})}>skill_name: </span>
-                    <span className={style({font: 'code-sm'})}>operational-insights</span>
+                    <span className={style({font: 'code-xs'})}>operational-insights</span>
                   </div>
                   <div>
                     <div className={style({color: 'gray-600', marginBottom: 4})}>RESULT</div>
-                    <div className={style({font: 'code-sm'})}>
+                    <div className={style({font: 'code-xs'})}>
                       Loaded skill: operational-insights
                     </div>
                   </div>
@@ -149,7 +149,7 @@ export const WithExecutionTrace: Story = {
                   </div>
                   <div>
                     <div className={style({color: 'gray-600', marginBottom: 4})}>sql:</div>
-                    <div className={style({font: 'code-sm', whiteSpace: 'pre-wrap'})}>
+                    <div className={style({font: 'code-xs', whiteSpace: 'pre-wrap'})}>
                       {'SELECT DISTINCT a.audienceId AS audience_id, a.name AS audience_name, CASE WHEN a.isEdge = true ' +
                         "THEN 'Edge' WHEN a.isStreaming = true THEN 'Streaming' WHEN a.isBatch = true THEN 'Batch' ELSE " +
                         "'Unknown' END AS evaluation_type, a.totalProfiles AS profile_count, ARRAY_AGG(DISTINCT d.name) A" +
@@ -171,7 +171,7 @@ export const WithExecutionTrace: Story = {
                         have access, your Adobe account team can help get you set up.
                         <br />
                         <br />
-                        <span className={style({font: 'code-sm'})}>
+                        <span className={style({font: 'code-xs'})}>
                           {'<system-reminder>\n' +
                             'The underlying response was HTTP 403 (access denied) — usually because the organization is not ' +
                             'entitled to this Adobe Experience Platform capability. Reply to the user with the message above ' +
@@ -192,8 +192,10 @@ export const WithExecutionTrace: Story = {
               Attempted to call list items tool
             </ExecutionTraceItem>
 
-            <ExecutionTraceItem icon={<Tools />}>
-              Searched the{' '}
+            <ExecutionTraceItem
+              icon={<Tools />}
+              status={args.status === 'loading' ? 'pending' : args.status}>
+              {args.status === 'loading' ? 'Searching' : 'Searched'} the{' '}
               <Link variant="secondary" href="https://react-spectrum.adobe.com" target="_blank">
                 React Spectrum
               </Link>{' '}

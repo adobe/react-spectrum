@@ -11,18 +11,13 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
-import {
-  baseColor,
-  focusRing,
-  iconStyle,
-  space,
-  style
-} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Chevron from '../ui-icons/Chevron';
 import CloseCircle from '@react-spectrum/s2/icons/CloseCircle';
+import {color, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Cross from '../ui-icons/Cross';
 import {
   DisclosureStateContext,
   Disclosure as RACDisclosure,
@@ -33,10 +28,10 @@ import {
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
+import {keyframes} from './tokens.macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
-import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {PixelLoader} from '../exports';
+import {pressScale} from '@react-spectrum/s2';
 import {Provider} from 'react-aria-components/slots';
 import React, {
   createContext,
@@ -44,13 +39,13 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
+  useRef,
   useState
 } from 'react';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
-import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface ResponseStatusProps extends Omit<
   RACDisclosureProps,
@@ -102,19 +97,9 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   let [hasPanelContent, setHasPanelContent] = useState(false);
   let registerPanel = useCallback((mounted: boolean) => setHasPanelContent(mounted), []);
 
-  let disclosureProps: Partial<RACDisclosureProps> = {};
-  if (status === 'loading') {
-    disclosureProps.isExpanded = false;
-    disclosureProps.onExpandedChange = () => {};
-  }
-
   return (
     <Provider values={[[ResponseStatusContext, {status, hasPanelContent, registerPanel}]]}>
-      <RACDisclosure
-        {...props}
-        {...disclosureProps}
-        ref={domRef}
-        className={mergeStyles(responseStatus, styles)}>
+      <RACDisclosure {...props} ref={domRef} className={mergeStyles(responseStatus, styles)}>
         {props.children}
       </RACDisclosure>
     </Provider>
@@ -146,10 +131,9 @@ const headingStyle = style({
 
 const buttonStyles = style({
   ...focusRing(),
-  outlineOffset: -2,
-  font: 'body',
+  font: 'ui-sm',
   color: {
-    default: baseColor('neutral'),
+    default: 'gray-600',
     isLoading: 'neutral',
     forcedColors: 'ButtonText',
     isDisabled: {
@@ -160,15 +144,21 @@ const buttonStyles = style({
   display: 'flex',
   flexGrow: 0,
   alignItems: 'center',
-  paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
-  gap: 'calc(self(minHeight) * 3/8 - 1px)',
-  minHeight: 32,
-  backgroundColor: 'transparent',
+  paddingX: 12,
+  paddingY: 4,
+  gap: 8,
+  backgroundColor: {
+    default: 'transparent',
+    isHovered: 'gray-75',
+    isFocusVisible: 'gray-75',
+    isPressed: 'gray-75'
+  },
   transition: 'default',
   borderWidth: 0,
   borderRadius: 'default',
   textAlign: 'start',
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  truncate: true
 });
 
 const chevronStyles = {
@@ -183,11 +173,6 @@ const chevronStyles = {
   },
   flexShrink: 0
 } as const;
-
-const progressCircleStyles = style({
-  width: 18,
-  height: 18
-});
 
 /**
  * A response status title consisting of a heading and a trigger button. The leading icon is a
@@ -205,20 +190,17 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let {status, hasPanelContent} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   let isLoading = status === 'loading';
-  let isInteractive = hasPanelContent && !isLoading;
+  let isInteractive = hasPanelContent;
 
   let rowContent = (
     <>
       {isLoading ? (
-        <CenterBaseline>
-          <ProgressCircle
-            styles={progressCircleStyles}
-            isIndeterminate
-            aria-label={stringFormatter.format('responsestatus.loading')}
-          />
+        // 1px padding to center the loader in a 16px box, aligning with the other status icons.
+        <CenterBaseline styles={style({padding: '[1px]', size: 14})}>
+          <PixelLoader size={14} />
         </CenterBaseline>
       ) : (
         <Provider
@@ -229,7 +211,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
                 styles: style({
                   marginStart: 'auto',
                   flexShrink: 0,
-                  size: 20,
+                  size: 16,
                   '--iconPrimary': {
                     type: 'fill',
                     value: 'currentColor'
@@ -256,11 +238,19 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
     </>
   );
 
+  let buttonRef = useRef<HTMLButtonElement | null>(null);
+
   return (
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
       <Button
+        ref={buttonRef}
+        // eslint-disable-next-line react/react-compiler
+        style={pressScale(buttonRef)}
         className={renderProps =>
-          buttonStyles({...renderProps, isLoading, isOnlyText: !isInteractive})
+          mergeStyles(
+            buttonStyles({...renderProps, isLoading, isOnlyText: !isInteractive}),
+            style({font: 'body-sm', color: 'gray-1000'})
+          )
         }
         slot={isInteractive ? 'trigger' : undefined}>
         {rowContent}
@@ -282,7 +272,8 @@ export interface ResponseStatusPanelProps
 }
 
 const panelStyle = {
-  font: 'body',
+  font: 'body-2xs',
+  color: 'gray-600',
   height: '--disclosure-panel-height',
   overflow: 'clip',
   transition: {
@@ -319,7 +310,7 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
     <RACDisclosurePanel
       {...domProps}
       ref={panelRef}
-      className={mergeStyles(style(panelStyle), styles)}>
+      className={mergeStyles(style({...panelStyle, marginStart: 24}), styles)}>
       <div className={panelInner}>{props.children}</div>
     </RACDisclosurePanel>
   );
@@ -367,33 +358,60 @@ export const ExecutionTrace = forwardRef(function ExecutionTrace(
 
 interface DetailTriggerProps {
   children: ReactNode;
+  isPending: boolean;
 }
 
 const detailTriggerStyles = style({
-  display: 'block',
-  paddingStart: 8
+  display: 'block'
 });
 
-const detailTriggerChevronStyles = style({
-  ...chevronStyles,
-  display: 'inline-flex',
-  marginStart: 8
+const shimmerAnimation = keyframes(`
+  from {
+    background-position: 100% 0%;
+  }
+
+  to {
+    background-position: 0% 0%;
+  }
+`);
+
+const SPREAD = '4ch';
+
+const shimmer = style({
+  backgroundImage: {
+    isPending: `linear-gradient(90deg, currentColor calc(50% - ${SPREAD}), ${color('gray-1000')} 50%, currentColor calc(50% + ${SPREAD}))`
+  },
+  backgroundClip: 'text',
+  backgroundSize: `[calc(200% + ${SPREAD} * 2) 100%]`,
+  animation: {
+    isPending: shimmerAnimation
+  },
+  animationDuration: 2000,
+  animationIterationCount: 'infinite'
 });
+
+function ShimmerText(props: DetailTriggerProps) {
+  let {children, isPending} = props;
+  return (
+    <span
+      className={shimmer({isPending})}
+      style={{WebkitTextFillColor: isPending ? 'transparent' : undefined}}>
+      {children}
+    </span>
+  );
+}
 
 function DetailTrigger(props: DetailTriggerProps) {
-  let {children} = props;
-  let {direction} = useLocale();
-  let isRTL = direction === 'rtl';
-  let {isExpanded} = useContext(DisclosureStateContext)!;
+  let ref = useRef<HTMLButtonElement | null>(null);
 
   return (
     <Button
+      ref={ref}
+      // eslint-disable-next-line react/react-compiler
+      style={pressScale(ref)}
       className={renderProps => mergeStyles(buttonStyles({...renderProps}), detailTriggerStyles)}
       slot="trigger">
-      {children}
-      <CenterBaseline styles={detailTriggerChevronStyles({isExpanded, isRTL})}>
-        <Chevron size="M" />
-      </CenterBaseline>
+      <ShimmerText {...props} />
     </Button>
   );
 }
@@ -403,21 +421,19 @@ export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
    * The label describing the step.
    */
   children: ReactNode;
-  detail?: ReactNode;
+  status?: 'pending' | 'failed' | 'success';
   /**
-   * Spectrum-defined styles, returned by the `style()` macro.
+   * Additional detail revealed when the step is expanded, such as tool call input or output.
+   * If omitted, the row is static and cannot be expanded.
    */
+  detail?: ReactNode;
   /**
    * An icon shown at the leading edge of the row. If omitted, a checkmark is rendered by default.
    */
   icon?: ReactNode;
   /** Allows detail content to render but prevents the row from being collapsible. */
   isAlwaysOpen?: boolean;
-  /**
-   * Additional detail revealed when the step is expanded, such as tool call input or output.
-   * If omitted, the row is static and cannot be expanded.
-   */
-
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString;
 }
 
@@ -458,26 +474,29 @@ const executionTraceItemIconContainerStyles = style({
 const executionTraceItemDividerStyles = style({
   width: 1,
   flexGrow: 1,
-  marginY: 2,
-  backgroundColor: 'gray-500',
+  marginY: 0,
+  minHeight: 12,
+  backgroundColor: 'gray-200',
   display: 'var(--divider-display, flex)'
 });
 
 const executionTraceDisclosurePanelStyles = style({
-  ...panelStyle,
-  paddingStart: 8
+  ...panelStyle
 });
 
-const executionTraceDisclosureContainerStyles = style({
-  paddingBottom: 'var(--execution-trace-item-padding-bottom-disclosure)',
-  marginTop: -4
+// Extra wrapper for padding to avoid transition jump
+const executationTradeDetailWrapperStyle = style({
+  paddingTop: 4,
+  paddingBottom: 20
 });
 
-const executionTraceWithoutDisclosureStyles = style({
-  paddingStart: 8,
-  display: 'flex',
-  flexDirection: 'column',
-  paddingBottom: 'var(--execution-trace-item-padding-bottom-no-disclosure)'
+const executionTraceDetailStyle = style({
+  paddingX: 12,
+  paddingY: 8,
+  backgroundColor: 'layer-1',
+  borderRadius: 'lg',
+  font: 'body-2xs',
+  color: 'gray-600'
 });
 
 /**
@@ -491,9 +510,10 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   let {
     isAlwaysOpen,
     detail,
-    icon = <CheckmarkCircle aria-hidden="true" />,
+    // icon = <CheckmarkCircle aria-hidden="true" />,
     children,
     styles,
+    status = 'success',
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -503,24 +523,62 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   return (
     <li {...domProps} ref={domRef} className={mergeStyles(executionTraceItemStyles, styles)}>
       <div className={executionTraceItemIconContainerStyles}>
-        <Provider values={[[IconContext, {styles: iconStyle({size: 'M'})}]]}>
+        {/* <Provider values={[[IconContext, {styles: iconStyle({size: 'M'})}]]}>
           <CenterBaseline>{icon}</CenterBaseline>
-        </Provider>
+        </Provider> */}
+        <CenterBaseline>
+          {status === 'failed' && (
+            <Cross className={style({'--iconPrimary': {type: 'fill', value: 'gray-600'}})} />
+          )}
+          {status !== 'failed' && (
+            <svg
+              viewBox="0 0 8 8"
+              className={style({
+                size: 8,
+                fill: {
+                  default: 'none',
+                  status: {
+                    success: 'gray-500'
+                  }
+                },
+                stroke: {
+                  default: 'none',
+                  status: {
+                    pending: 'gray-600'
+                  }
+                },
+                strokeWidth: {
+                  default: 0,
+                  status: {
+                    pending: 1
+                  }
+                }
+              })({status})}>
+              <circle cx={4} cy={4} r={status === 'pending' ? 3.5 : 4} />
+            </svg>
+          )}
+        </CenterBaseline>
         <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
       {hasDetail && !isAlwaysOpen ? (
-        <div className={executionTraceDisclosureContainerStyles}>
-          <RACDisclosure>
-            <DetailTrigger>{children}</DetailTrigger>
-            <RACDisclosurePanel className={executionTraceDisclosurePanelStyles}>
-              {detail}
-            </RACDisclosurePanel>
-          </RACDisclosure>
-        </div>
+        <RACDisclosure className="">
+          <DetailTrigger isPending={status === 'pending'}>{children}</DetailTrigger>
+          <RACDisclosurePanel className={executionTraceDisclosurePanelStyles}>
+            <div className={executationTradeDetailWrapperStyle}>
+              <div className={executionTraceDetailStyle}>{detail}</div>
+            </div>
+          </RACDisclosurePanel>
+        </RACDisclosure>
       ) : (
-        <div className={executionTraceWithoutDisclosureStyles}>
-          <span>{children}</span>
-          {hasDetail && isAlwaysOpen ? <div>{detail}</div> : null}
+        <div>
+          <span className={mergeStyles(buttonStyles({}), detailTriggerStyles)}>
+            <ShimmerText isPending={status === 'pending'}>{children}</ShimmerText>
+          </span>
+          {hasDetail && isAlwaysOpen ? (
+            <div className={executationTradeDetailWrapperStyle}>
+              <div className={executionTraceDetailStyle}>{detail}</div>
+            </div>
+          ) : null}
         </div>
       )}
     </li>
