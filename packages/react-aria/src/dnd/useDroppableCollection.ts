@@ -78,6 +78,7 @@ export function useDroppableCollection(
   state: DroppableCollectionState,
   ref: RefObject<HTMLElement | null>
 ): DroppableCollectionResult {
+  // oxlint-disable-next-line react/react-compiler
   let localState = useRef<{
     props: DroppableCollectionOptions;
     state: DroppableCollectionState;
