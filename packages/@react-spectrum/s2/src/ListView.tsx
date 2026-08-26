@@ -414,6 +414,7 @@ const listitem = style<
     isDropTarget?: boolean;
   }
 >({
+  font: controlFont(),
   outlineStyle: {
     default: 'none'
   },
