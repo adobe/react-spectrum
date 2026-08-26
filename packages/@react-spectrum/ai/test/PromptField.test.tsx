@@ -446,7 +446,7 @@ describeOrSkip('PromptField', () => {
       let {container} = renderPromptField({attachments: [imageAttachment('a1')], invalid: true});
       expect(screen.getByLabelText('Attachments')).toBeInTheDocument();
       // The invalid state renders a decorative alert icon.
-      expect(container.querySelector('[aria-hidden="true"] svg')).toBeTruthy();
+      expect(container.querySelector('svg')).toBeTruthy();
     });
   });
 

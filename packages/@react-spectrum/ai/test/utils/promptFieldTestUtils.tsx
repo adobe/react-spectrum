@@ -25,7 +25,7 @@ import {
   PromptToken,
   PromptTokenField
 } from '../../src/PromptField';
-import {Attachment} from '../../src/AttachmentList';
+import {Attachment, AttachmentPreview} from '../../src/AttachmentList';
 import {
   Collection,
   Header,
@@ -36,7 +36,6 @@ import {
   SubmenuTrigger,
   Text
 } from '@react-spectrum/s2/Menu';
-import {Image} from '@react-spectrum/s2/Image';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useState} from 'react';
 import {TokenFieldValue} from 'react-aria-components';
@@ -260,7 +259,7 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
             textValue={attachment.file.name}
             isInvalid={invalid}
             uploadProgress={uploadProgress}>
-            {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+            {attachment.image && <AttachmentPreview mimeType="image/png" src={attachment.image} />}
           </Attachment>
         )}
       </PromptFieldAttachmentList>

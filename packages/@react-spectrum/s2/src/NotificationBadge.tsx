@@ -93,7 +93,7 @@ const badge = style(
           isIndicatorOnly: 8
         },
         M: {
-          default: fontRelative(18), // sort of arbitrary? tried to get as close to the figma designs as possible
+          default: '1lh', // sort of arbitrary? tried to get as close to the figma designs as possible
           isIndicatorOnly: 8
         },
         L: {
