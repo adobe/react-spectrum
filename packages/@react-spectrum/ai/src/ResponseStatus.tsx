@@ -11,12 +11,20 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
+import {
+  baseColor,
+  color,
+  css,
+  focusRing,
+  space,
+  style
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
+import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Chevron from '../ui-icons/Chevron';
 import CloseCircle from '@react-spectrum/s2/icons/CloseCircle';
-import {color, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Cross from '../ui-icons/Cross';
 import {
   DisclosureStateContext,
@@ -28,7 +36,6 @@ import {
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
-import {keyframes} from './tokens.macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {PixelLoader} from '../exports';
 import {pressScale} from '@react-spectrum/s2';
@@ -39,6 +46,7 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
+  useId,
   useRef,
   useState
 } from 'react';
@@ -54,9 +62,9 @@ export interface ResponseStatusProps extends Omit<
   /**
    * The current status of the response.
    *
-   * @default 'loading'
+   * @default 'pending'
    */
-  status?: 'loading' | 'failed' | 'success';
+  status?: 'pending' | 'failed' | 'success';
   /**
    * The contents of the response status, consisting of a ResponseStatusTitle and
    * ResponseStatusPanel.
@@ -69,11 +77,11 @@ export interface ResponseStatusProps extends Omit<
 }
 
 const ResponseStatusContext = createContext<{
-  status: 'loading' | 'failed' | 'success';
+  status: 'pending' | 'failed' | 'success';
   hasPanelContent: boolean;
   registerPanel: (mounted: boolean) => void;
 }>({
-  status: 'loading',
+  status: 'pending',
   hasPanelContent: false,
   registerPanel: () => {}
 });
@@ -92,7 +100,7 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   props: ResponseStatusProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {status = 'loading', styles} = props;
+  let {status = 'pending', styles} = props;
   let domRef = useDOMRef(ref);
   let [hasPanelContent, setHasPanelContent] = useState(false);
   let registerPanel = useCallback((mounted: boolean) => setHasPanelContent(mounted), []);
@@ -119,6 +127,8 @@ export interface ResponseStatusTitleProps extends DOMProps {
    * Spectrum-defined styles, returned by the `style()` macro.
    */
   styles?: StyleString;
+  /** Pixel loader icon or sequence to display. */
+  pixelLoader?: Cell[] | Cell[][];
 }
 
 const headingStyle = style({
@@ -129,12 +139,12 @@ const headingStyle = style({
   minWidth: 0
 });
 
-const buttonStyles = style({
+// Top-level disclosure.
+const disclosureStyles = style({
   ...focusRing(),
-  font: 'ui-sm',
+  font: 'body-sm',
   color: {
-    default: 'gray-600',
-    isLoading: 'neutral',
+    default: baseColor('gray-800'),
     forcedColors: 'ButtonText',
     isDisabled: {
       default: 'disabled',
@@ -144,21 +154,11 @@ const buttonStyles = style({
   display: 'flex',
   flexGrow: 0,
   alignItems: 'center',
-  paddingX: 12,
-  paddingY: 4,
   gap: 8,
-  backgroundColor: {
-    default: 'transparent',
-    isHovered: 'gray-75',
-    isFocusVisible: 'gray-75',
-    isPressed: 'gray-75'
-  },
   transition: 'default',
-  borderWidth: 0,
   borderRadius: 'default',
   textAlign: 'start',
-  disableTapHighlight: true,
-  truncate: true
+  width: 'fit'
 });
 
 const chevronStyles = {
@@ -183,60 +183,15 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   props: ResponseStatusTitleProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {level = 3, styles, ...otherProps} = props;
+  let {level = 3, styles, pixelLoader, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let {status, hasPanelContent} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
-  // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
-
-  let isLoading = status === 'loading';
+  let isLoading = status === 'pending';
   let isInteractive = hasPanelContent;
-
-  let rowContent = (
-    <>
-      {isLoading ? (
-        // 1px padding to center the loader in a 16px box, aligning with the other status icons.
-        <CenterBaseline styles={style({padding: '[1px]', size: 14})}>
-          <PixelLoader size={14} />
-        </CenterBaseline>
-      ) : (
-        <Provider
-          values={[
-            [
-              IconContext,
-              {
-                styles: style({
-                  marginStart: 'auto',
-                  flexShrink: 0,
-                  size: 16,
-                  '--iconPrimary': {
-                    type: 'fill',
-                    value: 'currentColor'
-                  }
-                })
-              }
-            ]
-          ]}>
-          <CenterBaseline slot="icon">
-            {status === 'failed' ? (
-              <CloseCircle aria-hidden="true" />
-            ) : (
-              <CheckmarkCircle aria-hidden="true" />
-            )}
-          </CenterBaseline>
-        </Provider>
-      )}
-      {props.children}
-      {isInteractive ? (
-        <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
-          <Chevron size="M" />
-        </CenterBaseline>
-      ) : null}
-    </>
-  );
 
   let buttonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -246,14 +201,57 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
         ref={buttonRef}
         // eslint-disable-next-line react/react-compiler
         style={pressScale(buttonRef)}
-        className={renderProps =>
-          mergeStyles(
-            buttonStyles({...renderProps, isLoading, isOnlyText: !isInteractive}),
-            style({font: 'body-sm', color: 'gray-1000'})
-          )
-        }
+        className={style({
+          padding: 0,
+          backgroundColor: 'transparent',
+          width: 'full',
+          disableTapHighlight: true,
+          borderWidth: 0,
+          outlineStyle: 'none',
+          transition: 'default'
+        })}
         slot={isInteractive ? 'trigger' : undefined}>
-        {rowContent}
+        {renderProps => (
+          <span className={disclosureStyles({...renderProps, isOnlyText: !isInteractive})}>
+            {isLoading ? (
+              <CenterBaseline>
+                <PixelLoader size={21} icon={pixelLoader} />
+              </CenterBaseline>
+            ) : (
+              <Provider
+                values={[
+                  [
+                    IconContext,
+                    {
+                      styles: style({
+                        flexShrink: 0,
+                        size: 20,
+                        '--iconPrimary': {
+                          type: 'fill',
+                          value: 'currentColor'
+                        }
+                      })
+                    }
+                  ]
+                ]}>
+                <CenterBaseline slot="icon" styles={style({size: 21})}>
+                  {status === 'failed' ? (
+                    <CloseCircle aria-hidden="true" />
+                  ) : (
+                    <CheckmarkCircle aria-hidden="true" />
+                  )}
+                </CenterBaseline>
+              </Provider>
+            )}
+            {/* TODO: translation */}
+            {isLoading && isExpanded ? 'Processing...' : props.children}
+            {isInteractive ? (
+              <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
+                <Chevron size="M" />
+              </CenterBaseline>
+            ) : null}
+          </span>
+        )}
       </Button>
     </Heading>
   );
@@ -290,7 +288,7 @@ const panelInner = style({
 
 /**
  * A response status panel is a collapsible section of content that is hidden until the
- * response status is expanded. The panel cannot be expanded while `status` is `'loading'`.
+ * response status is expanded. The panel cannot be expanded while `status` is `'pending'`.
  */
 export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   props: ResponseStatusPanelProps,
@@ -310,7 +308,7 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
     <RACDisclosurePanel
       {...domProps}
       ref={panelRef}
-      className={mergeStyles(style({...panelStyle, marginStart: 24}), styles)}>
+      className={mergeStyles(style({...panelStyle, marginStart: 16}), styles)}>
       <div className={panelInner}>{props.children}</div>
     </RACDisclosurePanel>
   );
@@ -361,45 +359,104 @@ interface DetailTriggerProps {
   isPending: boolean;
 }
 
-const detailTriggerStyles = style({
-  display: 'block'
-});
+const SPREAD = '4ch';
 
-const shimmerAnimation = keyframes(`
-  from {
-    background-position: 100% 0%;
+/* Only supported in Chrome/Safari, not Firefox for performance reasons.
+   Tried using `mask-image: -moz-element(#id)` but this disables GPU acceleration. */
+const shimmer = css(`
+  position: relative;
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  color: transparent;
+  contain: strict;
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+  
+  @supports (-webkit-mask-clip: text) {
+    mask-image: linear-gradient(white, white);
+    -webkit-mask-clip: text;
   }
 
-  to {
-    background-position: 0% 0%;
+  @supports not (-webkit-mask-clip: text) {
+    display: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent calc(50% - ${SPREAD}), ${color('gray-1000')} 50%, transparent calc(50% + ${SPREAD}));
+    will-change: transform;
+    pointer-events: none;
   }
 `);
 
-const SPREAD = '4ch';
-
-const shimmer = style({
-  backgroundImage: {
-    isPending: `linear-gradient(90deg, currentColor calc(50% - ${SPREAD}), ${color('gray-1000')} 50%, currentColor calc(50% + ${SPREAD}))`
-  },
-  backgroundClip: 'text',
-  backgroundSize: `[calc(200% + ${SPREAD} * 2) 100%]`,
-  animation: {
-    isPending: shimmerAnimation
-  },
-  animationDuration: 2000,
-  animationIterationCount: 'infinite'
-});
-
 function ShimmerText(props: DetailTriggerProps) {
   let {children, isPending} = props;
+  let {isExpanded} = useContext(DisclosureStateContext)!;
+  let id = useId();
+
+  // Do the animation in JS rather than CSS so we can synchronize across elements.
+  let shimmerRef = useCallback((el: HTMLSpanElement | null) => {
+    if (el && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let animation = el.animate(
+        [{transform: 'translateX(-100%)'}, {transform: 'translateX(100%)'}],
+        {duration: 2500, iterations: Infinity, easing: 'ease-in-out', pseudoElement: '::after'}
+      );
+      animation.startTime = 0;
+      return () => animation.cancel();
+    }
+  }, []);
+
   return (
-    <span
-      className={shimmer({isPending})}
-      style={{WebkitTextFillColor: isPending ? 'transparent' : undefined}}>
-      {children}
+    <span className={style({position: 'relative', display: 'inline-block'})}>
+      <span id={id} className={style({display: 'inline-block'})}>
+        {children}
+      </span>
+      {/* inert clone of the children with shimmer effect mask. */}
+      {isPending && isExpanded && (
+        <span inert ref={shimmerRef} className={shimmer}>
+          {children}
+        </span>
+      )}
     </span>
   );
 }
+
+// Inner disclosure.
+const detailTriggerStyles = style({
+  ...focusRing(),
+  display: 'block',
+  font: 'ui-sm',
+  color: {
+    default: 'gray-600',
+    forcedColors: 'ButtonText',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  flexGrow: 0,
+  alignItems: 'center',
+  paddingX: 12,
+  paddingY: 4,
+  gap: 8,
+  backgroundColor: {
+    default: 'transparent',
+    isHovered: 'gray-75',
+    isFocusVisible: 'gray-75',
+    isPressed: 'gray-75'
+  },
+  transition: 'default',
+  borderWidth: 0,
+  borderRadius: 'default',
+  textAlign: 'start',
+  disableTapHighlight: true,
+  truncate: true
+});
 
 function DetailTrigger(props: DetailTriggerProps) {
   let ref = useRef<HTMLButtonElement | null>(null);
@@ -409,7 +466,7 @@ function DetailTrigger(props: DetailTriggerProps) {
       ref={ref}
       // eslint-disable-next-line react/react-compiler
       style={pressScale(ref)}
-      className={renderProps => mergeStyles(buttonStyles({...renderProps}), detailTriggerStyles)}
+      className={detailTriggerStyles}
       slot="trigger">
       <ShimmerText {...props} />
     </Button>
@@ -421,6 +478,7 @@ export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
    * The label describing the step.
    */
   children: ReactNode;
+  /** The status of this step. */
   status?: 'pending' | 'failed' | 'success';
   /**
    * Additional detail revealed when the step is expanded, such as tool call input or output.
@@ -448,19 +506,11 @@ const executionTraceItemStyles = style({
       ':last-child': 'none'
     }
   },
-  '--execution-trace-item-padding-bottom-disclosure': {
-    type: 'paddingBottom',
-    value: {
-      default: 12,
-      ':last-child': 0
-    }
-  },
-  '--execution-trace-item-padding-bottom-no-disclosure': {
-    type: 'paddingBottom',
-    value: {
-      default: 16,
-      ':last-child': 0
-    }
+  transition: 'opacity',
+  transitionDuration: 300,
+  opacity: {
+    default: 1,
+    '@starting-style': 0
   }
 });
 
@@ -477,11 +527,13 @@ const executionTraceItemDividerStyles = style({
   marginY: 0,
   minHeight: 12,
   backgroundColor: 'gray-200',
-  display: 'var(--divider-display, flex)'
-});
-
-const executionTraceDisclosurePanelStyles = style({
-  ...panelStyle
+  display: 'var(--divider-display, flex)',
+  transition: 'opacity',
+  transitionDuration: 300,
+  opacity: {
+    default: 1,
+    '@starting-style': 0
+  }
 });
 
 // Extra wrapper for padding to avoid transition jump
@@ -510,6 +562,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   let {
     isAlwaysOpen,
     detail,
+    // TODO: do we still support icons?
     // icon = <CheckmarkCircle aria-hidden="true" />,
     children,
     styles,
@@ -563,7 +616,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
       {hasDetail && !isAlwaysOpen ? (
         <RACDisclosure className="">
           <DetailTrigger isPending={status === 'pending'}>{children}</DetailTrigger>
-          <RACDisclosurePanel className={executionTraceDisclosurePanelStyles}>
+          <RACDisclosurePanel className={style(panelStyle)}>
             <div className={executationTradeDetailWrapperStyle}>
               <div className={executionTraceDetailStyle}>{detail}</div>
             </div>
@@ -571,7 +624,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
         </RACDisclosure>
       ) : (
         <div>
-          <span className={mergeStyles(buttonStyles({}), detailTriggerStyles)}>
+          <span className={detailTriggerStyles({})}>
             <ShimmerText isPending={status === 'pending'}>{children}</ShimmerText>
           </span>
           {hasDetail && isAlwaysOpen ? (
