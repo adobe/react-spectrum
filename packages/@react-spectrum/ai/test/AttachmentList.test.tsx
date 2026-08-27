@@ -19,26 +19,36 @@ import userEvent from '@testing-library/user-event';
 
 // Conditionally skip the suite
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+
+function renderAttachments(count: number, wrap: (el: JSX.Element) => JSX.Element = el => el) {
+  return render(
+    wrap(
+      <AttachmentList aria-label="Uploaded files">
+        {Array.from({length: count}, (_, i) => (
+          <Attachment key={i} aria-label={`file-${i}.pdf`} textValue={`file-${i}.pdf`}>
+            <Image slot="thumbnail" src="https://example.com/image.png" />
+          </Attachment>
+        ))}
+      </AttachmentList>
+    )
+  );
+}
+
 describeOrSkip('AttachmentList', () => {
   it('should render', () => {
-    let {getByRole} = render(
-      <AttachmentList aria-label="Uploaded files">
-        <Attachment aria-label="Demo file.pdf" textValue="Demo file.pdf">
-          <Image slot="thumbnail" src="https://example.com/image.png" />
-        </Attachment>
-      </AttachmentList>
-    );
-
+    let {getByRole} = renderAttachments(1);
     expect(getByRole('grid')).toBeInTheDocument();
   });
 
   describe('carousel overflow', () => {
-    let offsetWidthSpy, clientWidthSpy, scrollWidthSpy;
+    let offsetWidthSpy, clientWidthSpy, scrollWidthSpy, scrollLeftSpy;
 
     afterEach(() => {
       offsetWidthSpy?.mockRestore();
       clientWidthSpy?.mockRestore();
       scrollWidthSpy?.mockRestore();
+      scrollLeftSpy?.mockRestore();
+      delete window.HTMLElement.prototype.scrollBy;
     });
 
     it('should switch to a carousel once attachments overflow the container width', () => {
@@ -49,16 +59,7 @@ describeOrSkip('AttachmentList', () => {
         .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
         .mockImplementation(() => 800);
 
-      let {getByRole} = render(
-        <AttachmentList aria-label="Uploaded files">
-          <Attachment aria-label="one.pdf" textValue="one.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-          <Attachment aria-label="two.pdf" textValue="two.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-        </AttachmentList>
-      );
+      let {getByRole} = renderAttachments(2);
 
       expect(getByRole('button', {name: 'Show previous attachments'})).toBeInTheDocument();
       expect(getByRole('button', {name: 'Show next attachments'})).toBeInTheDocument();
@@ -72,26 +73,12 @@ describeOrSkip('AttachmentList', () => {
         .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
         .mockImplementation(() => 200);
 
-      let {queryByRole} = render(
-        <AttachmentList aria-label="Uploaded files">
-          <Attachment aria-label="one.pdf" textValue="one.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-        </AttachmentList>
-      );
+      let {queryByRole} = renderAttachments(1);
 
       expect(queryByRole('button', {name: 'Show previous attachments'})).not.toBeInTheDocument();
     });
 
-    it('should not overflow just because the carousel nav buttons would take up their own space', () => {
-      // Regression test: comparing the track's own (post-button) width against itself, or against
-      // a container whose width shrinks once carousel mode reserves room for the nav buttons, can
-      // create a feedback loop - entering carousel mode eats just enough space that the content
-      // "still" doesn't fit, keeping it stuck on forever. Content that fits the *outer* box just
-      // fine (independent of whether buttons are shown) should never trigger the carousel.
-      // The track (role="grid") reports a smaller offsetWidth than the outer box, as it would once
-      // nav buttons reserve their own room - only comparing scrollWidth against the *outer* box's
-      // width (not the track's own) avoids the feedback loop, so this must mock them differently.
+    it("should not get stuck in carousel mode from the nav buttons shrinking the track's own width", () => {
       offsetWidthSpy = jest
         .spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get')
         .mockImplementation(function (this: HTMLElement) {
@@ -101,23 +88,12 @@ describeOrSkip('AttachmentList', () => {
         .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
         .mockImplementation(() => 690);
 
-      let {queryByRole} = render(
-        <AttachmentList aria-label="Uploaded files">
-          <Attachment aria-label="one.pdf" textValue="one.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-          <Attachment aria-label="two.pdf" textValue="two.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-        </AttachmentList>
-      );
+      let {queryByRole} = renderAttachments(2);
 
       expect(queryByRole('button', {name: 'Show previous attachments'})).not.toBeInTheDocument();
     });
 
     it('should disable "previous" at the natural resting start position, even when it is not scrollLeft 0', () => {
-      // Browsers can rest scroll-snapped content at a nonzero scrollLeft (e.g. to account for the
-      // track's own padding) - the very first read should be treated as "the start", not literal 0.
       offsetWidthSpy = jest
         .spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get')
         .mockImplementation(() => 200);
@@ -127,30 +103,38 @@ describeOrSkip('AttachmentList', () => {
       scrollWidthSpy = jest
         .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
         .mockImplementation(() => 800);
-      let scrollLeftSpy = jest
+      scrollLeftSpy = jest
         .spyOn(window.HTMLElement.prototype, 'scrollLeft', 'get')
         .mockImplementation(() => 12);
 
-      let {getByRole} = render(
-        <AttachmentList aria-label="Uploaded files">
-          <Attachment aria-label="one.pdf" textValue="one.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-          <Attachment aria-label="two.pdf" textValue="two.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-        </AttachmentList>
-      );
+      let {getByRole} = renderAttachments(2);
 
       expect(getByRole('button', {name: 'Show previous attachments'})).toBeDisabled();
       expect(getByRole('button', {name: 'Show next attachments'})).not.toBeDisabled();
+    });
 
-      scrollLeftSpy.mockRestore();
+    it('should disable "next" at the natural resting end position', () => {
+      // Mirror of the "previous"-at-start test above, for the end boundary.
+      offsetWidthSpy = jest
+        .spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get')
+        .mockImplementation(() => 200);
+      clientWidthSpy = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 200);
+      scrollWidthSpy = jest
+        .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
+        .mockImplementation(() => 800);
+      scrollLeftSpy = jest
+        .spyOn(window.HTMLElement.prototype, 'scrollLeft', 'get')
+        .mockImplementation(() => 600);
+
+      let {getByRole} = renderAttachments(2);
+
+      expect(getByRole('button', {name: 'Show next attachments'})).toBeDisabled();
+      expect(getByRole('button', {name: 'Show previous attachments'})).not.toBeDisabled();
     });
 
     it('should recalculate carousel mode when the container is resized', () => {
-      // ResizeObserver isn't implemented in jsdom, so this exercises the window resize fallback
-      // (useResizeObserver observes the parent element and falls back to a 'resize' listener).
       let fits = true;
       offsetWidthSpy = jest
         .spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get')
@@ -159,16 +143,7 @@ describeOrSkip('AttachmentList', () => {
         .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
         .mockImplementation(() => 700);
 
-      let {queryByRole} = render(
-        <AttachmentList aria-label="Uploaded files">
-          <Attachment aria-label="one.pdf" textValue="one.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-          <Attachment aria-label="two.pdf" textValue="two.pdf">
-            <Image slot="thumbnail" src="https://example.com/image.png" />
-          </Attachment>
-        </AttachmentList>
-      );
+      let {queryByRole} = renderAttachments(2);
 
       expect(queryByRole('button', {name: 'Show previous attachments'})).not.toBeInTheDocument();
 
@@ -189,27 +164,15 @@ describeOrSkip('AttachmentList', () => {
       scrollWidthSpy = jest
         .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
         .mockImplementation(() => 800);
-      // Starts at the resting position, then simulate having scrolled in, so "previous" isn't
-      // disabled at the start boundary when it's pressed.
+      // Simulate having scrolled in, so "previous" isn't disabled at the start boundary.
       let scrollLeftValue = 0;
-      let scrollLeftSpy = jest
+      scrollLeftSpy = jest
         .spyOn(window.HTMLElement.prototype, 'scrollLeft', 'get')
         .mockImplementation(() => scrollLeftValue);
       let scrollBy = jest.fn();
       window.HTMLElement.prototype.scrollBy = scrollBy;
 
-      let {getByRole} = render(
-        <Provider locale="ar-AE">
-          <AttachmentList aria-label="Uploaded files">
-            <Attachment aria-label="one.pdf" textValue="one.pdf">
-              <Image slot="thumbnail" src="https://example.com/image.png" />
-            </Attachment>
-            <Attachment aria-label="two.pdf" textValue="two.pdf">
-              <Image slot="thumbnail" src="https://example.com/image.png" />
-            </Attachment>
-          </AttachmentList>
-        </Provider>
-      );
+      let {getByRole} = renderAttachments(2, el => <Provider locale="ar-AE">{el}</Provider>);
 
       scrollLeftValue = -300;
       fireEvent.scroll(getByRole('grid'));
@@ -219,8 +182,33 @@ describeOrSkip('AttachmentList', () => {
       // the opposite of LTR.
       expect(scrollBy).toHaveBeenCalledWith(expect.objectContaining({left: expect.any(Number)}));
       expect(scrollBy.mock.calls[0][0].left).toBeGreaterThan(0);
+    });
 
-      scrollLeftSpy.mockRestore();
+    it('should scroll in the opposite direction for "previous" vs "next" when LTR', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
+      offsetWidthSpy = jest
+        .spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get')
+        .mockImplementation(() => 200);
+      clientWidthSpy = jest
+        .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+        .mockImplementation(() => 200);
+      scrollWidthSpy = jest
+        .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
+        .mockImplementation(() => 800);
+      // Simulate having already scrolled in, so neither button is disabled at a boundary.
+      scrollLeftSpy = jest
+        .spyOn(window.HTMLElement.prototype, 'scrollLeft', 'get')
+        .mockImplementation(() => 300);
+      let scrollBy = jest.fn();
+      window.HTMLElement.prototype.scrollBy = scrollBy;
+
+      let {getByRole} = renderAttachments(2);
+
+      await user.click(getByRole('button', {name: 'Show next attachments'}));
+      expect(scrollBy.mock.calls[0][0].left).toBeGreaterThan(0);
+
+      await user.click(getByRole('button', {name: 'Show previous attachments'}));
+      expect(scrollBy.mock.calls[1][0].left).toBeLessThan(0);
     });
   });
 });

@@ -260,25 +260,6 @@ const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
   gridArea: 'description'
 });
 
-const attachmentContent = style({
-  display: 'grid',
-  gridTemplateColumns: ['minmax(0, 1fr)'],
-  gridTemplateAreas: ['title', 'description'],
-  columnGap: 4,
-  flexGrow: 1,
-  minWidth: 0,
-  alignItems: 'baseline',
-  alignContent: 'start',
-  paddingStart: {
-    default: '--card-spacing',
-    ':first-child': 0
-  },
-  paddingEnd: {
-    default: 'calc(var(--card-spacing) * 1.5 / 2)',
-    ':last-child': 0
-  }
-});
-
 const CloseButton = function CloseButton(props) {
   let ref = useRef(null);
   // oxlint-disable react/react-compiler
@@ -324,12 +305,6 @@ export interface AttachmentListProps<T>
   styles?: StyleString;
 }
 
-// Caps growth so more attachments can't keep inflating an unsized ancestor; matches the Prompt
-// field's content width.
-const attachmentListStyles = style({
-  maxWidth: 700
-});
-
 const flexRow = {
   display: 'flex',
   flexDirection: 'row',
@@ -337,24 +312,16 @@ const flexRow = {
   width: 'full'
 } as const;
 
-const carouselContainer = style({
-  ...flexRow,
-  gap: 8
-});
-
 const tagListStyles = style<{isCarousel: boolean}>({
   ...flexRow,
   gap: 16,
   minWidth: 0,
   flexWrap: {default: 'wrap', isCarousel: 'nowrap'},
   overflowX: {isCarousel: 'auto'},
-  // overflowX forces overflow-y into a clipping context too; hide the native scrollbar since the
-  // chevrons drive scrolling (same combo DateField's segmentContainer uses).
   overflowY: {isCarousel: 'hidden'},
   scrollbarWidth: {isCarousel: 'none'},
   scrollSnapType: {isCarousel: 'x mandatory'},
   flexGrow: {isCarousel: 1},
-  // Room for the close-button badge, which pokes past each card's corner.
   padding: {isCarousel: 12}
 });
 
@@ -366,8 +333,6 @@ const carouselMask = {
   maskImage: carouselMaskImage
 } as const;
 
-// borderRadius/transform aren't allowed ActionButton style overrides, so shape and RTL flip go on
-// this wrapper instead, same as Calendar's CalendarButton.
 const carouselNavButton = style({
   flexShrink: 0,
   borderRadius: 'full',
@@ -419,8 +384,6 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
     setIsCarousel(function* () {
       yield true;
       let el = scrollRef.current;
-      // Compare to domRef's width, not el's, so the nav buttons taking up their own share of the
-      // track can't feed back into this check.
       yield !!el && !!domRef.current && el.scrollWidth > domRef.current.offsetWidth + 1;
     });
   }, [setIsCarousel]);
@@ -442,13 +405,11 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   let {direction} = useLocale();
   let [canScrollPrev, setCanScrollPrev] = useState(false);
   let [canScrollNext, setCanScrollNext] = useState(false);
-  // The track's own padding shifts the scroll-snap resting position away from 0; use the first
-  // read as the "start" baseline instead of assuming it's 0.
+  // Track padding can rest scroll-snap at a nonzero scrollLeft; treat the first read as "start".
   let startScrollRef = useRef<number | null>(null);
   let updateScrollState = useCallback(() => {
     let el = scrollRef.current;
     if (el) {
-      // RTL reports scrollLeft as <= 0, the mirror of LTR; normalize with Math.abs.
       let maxScroll = el.scrollWidth - el.clientWidth;
       let scrolled = Math.abs(el.scrollLeft);
       if (startScrollRef.current == null) {
@@ -486,9 +447,9 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   );
 
   return (
-    <TagGroup {...otherProps} className={mergeStyles(attachmentListStyles, styles)} ref={domRef}>
+    <TagGroup {...otherProps} className={mergeStyles(style({maxWidth: 700}), styles)} ref={domRef}>
       {isCarousel ? (
-        <div className={carouselContainer}>
+        <div className={style({...flexRow, gap: 8})}>
           <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />
           {tagList}
           <CarouselNavButton side="end" isDisabled={!canScrollNext} onPress={() => scroll(1)} />
@@ -584,7 +545,24 @@ function AttachmentCard({
           [
             ContentContext,
             {
-              styles: attachmentContent,
+              styles: style({
+                display: 'grid',
+                gridTemplateColumns: ['minmax(0, 1fr)'],
+                gridTemplateAreas: ['title', 'description'],
+                columnGap: 4,
+                flexGrow: 1,
+                minWidth: 0,
+                alignItems: 'baseline',
+                alignContent: 'start',
+                paddingStart: {
+                  default: '--card-spacing',
+                  ':first-child': 0
+                },
+                paddingEnd: {
+                  default: 'calc(var(--card-spacing) * 1.5 / 2)',
+                  ':last-child': 0
+                }
+              }),
               // @ts-ignore
               'data-slot': 'content'
             }
