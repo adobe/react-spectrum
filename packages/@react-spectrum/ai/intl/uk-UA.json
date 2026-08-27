@@ -16,5 +16,7 @@
   "responsestatus.loading": "Завантаження",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Починайте запис",
-  "voicebutton.stopListening": "Припиніть запис"
+  "voicebutton.stopListening": "Припиніть запис",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

@@ -16,5 +16,7 @@
   "responsestatus.loading": "로드 중",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "기록 시작",
-  "voicebutton.stopListening": "기록 중지"
+  "voicebutton.stopListening": "기록 중지",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

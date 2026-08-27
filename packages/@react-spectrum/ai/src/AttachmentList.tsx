@@ -33,7 +33,15 @@ import {CardProps} from '@react-spectrum/s2/Card';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContentContext} from '@react-spectrum/s2/Content';
-import {createContext, forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
+import {
+  createContext,
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useContext,
+  useRef,
+  useState
+} from 'react';
 import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
@@ -371,9 +379,15 @@ const carouselNavButton = style({
   }
 });
 
-function CarouselNavButton(
-  {side, onPress, isDisabled}: {side: 'start' | 'end', onPress: () => void, isDisabled: boolean}
-) {
+function CarouselNavButton({
+  side,
+  onPress,
+  isDisabled
+}: {
+  side: 'start' | 'end';
+  onPress: () => void;
+  isDisabled: boolean;
+}) {
   let {direction} = useLocale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let Icon = side === 'start' ? ChevronLeft : ChevronRight;

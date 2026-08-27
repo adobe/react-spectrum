@@ -11,10 +11,10 @@
  */
 
 import {Attachment, AttachmentList} from '@react-spectrum/ai';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Image} from '@react-spectrum/s2/Image';
 import {Provider} from '@react-spectrum/s2/Provider';
 import React from 'react';
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import userEvent from '@testing-library/user-event';
 
 // Conditionally skip the suite
