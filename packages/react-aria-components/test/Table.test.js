@@ -332,6 +332,38 @@ let DraggableTable = props => {
   return <TestTable tableProps={{dragAndDropHooks}} />;
 };
 
+// A table that both accepts drops from other tables and supports reordering within itself,
+// like the "Multiple positions" example in the docs.
+let ReorderableTable = ({items, onInsert, ...props}) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys => [...keys].map(key => ({'custom-app-type': String(key)})),
+    acceptedDragTypes: ['custom-app-type'],
+    getDropOperation: () => 'move',
+    onInsert: onInsert ?? (() => {}),
+    onReorder: () => {},
+    onRootDrop: () => {}
+  });
+
+  return (
+    <Table {...props} dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column />
+        <Column isRowHeader>Name</Column>
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row>
+            <Cell>
+              <Button slot="drag">≡</Button>
+            </Cell>
+            <Cell>{item.name}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
 let DisabledRowDraggableTable = () => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
@@ -1939,6 +1971,50 @@ describe('Table', () => {
       act(() => jest.runAllTimers());
       expect(tableTester.getRows()).toHaveLength(8);
       expect(tableTester.getSelectedRows()).toHaveLength(1);
+    });
+
+    it('should target the last row when dragging past the end of the table', async () => {
+      let onInsert = jest.fn();
+      let {getAllByRole} = render(
+        <>
+          <ReorderableTable aria-label="First table" items={[{id: 'a1', name: 'One'}]} />
+          <ReorderableTable
+            aria-label="Second table"
+            items={[
+              {id: 'b1', name: 'Two'},
+              {id: 'b2', name: 'Three'}
+            ]}
+            onInsert={onInsert}
+          />
+        </>
+      );
+      let grids = getAllByRole('grid');
+      let draggedRow = within(grids[0]).getAllByRole('row')[1];
+
+      let dataTransfer = new DataTransfer();
+      fireEvent(draggedRow, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+      act(() => jest.runAllTimers());
+
+      // Drag below the last row. Past the end of the table the drop target used to escalate to
+      // the <TableBody>, whose key is generated rather than provided by the user, so the item
+      // was never inserted. Several pointer paths reach that state; moving downward and moving
+      // horizontally each suffice, so exercise both.
+      fireEvent(grids[1], new DragEvent('dragenter', {dataTransfer, clientX: 100, clientY: 50}));
+      fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 100, clientY: 50}));
+      fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 70, clientY: 50}));
+      fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 70, clientY: 75}));
+
+      await act(async () =>
+        fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 70, clientY: 75}))
+      );
+      act(() => jest.runAllTimers());
+
+      expect(onInsert).toHaveBeenCalledTimes(1);
+      expect(onInsert.mock.calls[0][0].target).toEqual({
+        type: 'item',
+        key: 'b2',
+        dropPosition: 'after'
+      });
     });
   });
 
