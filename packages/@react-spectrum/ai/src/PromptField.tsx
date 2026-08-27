@@ -33,7 +33,7 @@ import {
 } from 'react';
 import {FocusableRef} from '@react-types/shared';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
-import {IconContext} from '@react-spectrum/s2';
+import {IconContext, MenuTriggerProps} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -96,6 +96,7 @@ export interface PromptFieldProps {
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
+  onAITermsPress?: () => void;
   styles?: StyleString;
   variant?: 'balanced' | 'prominent' | 'subtle';
   brandColor?: string;
@@ -363,7 +364,8 @@ export const PromptField = forwardRef(function PromptField(
             <Link
               variant="secondary"
               href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-              target="_blank">
+              target="_blank"
+              onPress={props.onAITermsPress}>
               {stringFormatter.format('promptfield.aiUserGuidlines')}
             </Link>
           </p>
@@ -950,15 +952,15 @@ function buildVoicePrompt(base: TokenFieldValue, voiceText: string): PromptField
   return base.replaceRange(base.caretPosition, base.caretPosition, voiceText) as PromptFieldValue;
 }
 
-export interface InsertMenuItemProps {
+export interface InsertMenuItemProps extends Pick<MenuTriggerProps, 'onOpenChange'> {
   children: React.ReactNode;
 }
 
 export function InsertMenuButton(props: InsertMenuItemProps) {
-  let {children} = props;
+  let {children, onOpenChange} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
-    <MenuTrigger>
+    <MenuTrigger onOpenChange={onOpenChange}>
       <ActionButton
         isQuiet
         staticColor="auto"
@@ -969,12 +971,29 @@ export function InsertMenuButton(props: InsertMenuItemProps) {
     </MenuTrigger>
   );
 }
+export interface AttachFileMenuItemProps extends Omit<
+  MenuItemProps,
+  | 'children'
+  | 'UNSAFE_className'
+  | 'UNSAFE_style'
+  | 'download'
+  | 'href'
+  | 'hrefLang'
+  | 'ping'
+  | 'referrerPolicy'
+  | 'rel'
+  | 'routerOptions'
+  | 'target'
+> {}
 
-export function AttachFileMenuItem() {
+export function AttachFileMenuItem(props: AttachFileMenuItemProps) {
+  let {onAction, ...otherProps} = props;
   let {acceptedAttachmentTypes, setAttachments, onAddAttachments} = useContext(PromptFieldContext);
   return (
     <MenuItem
+      {...otherProps}
       onAction={() => {
+        onAction?.();
         let input = document.createElement('input');
         input.type = 'file';
         if (acceptedAttachmentTypes) {
