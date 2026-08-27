@@ -199,37 +199,40 @@ describe('Form', () => {
     expect(form).toHaveAttribute('data-custom', 'true');
   });
 
-  (parseInt(React.version, 10) >= 19 ? it : it.skip)('shows focus-visible when a form library moves focus to the first invalid field on submit', async () => {
-    function Test() {
-      return (
-        <form data-testid="form">
-          <Input aria-label="Name" name="name" required />
-          <Button type="submit">Submit</Button>
-        </form>
-      );
+  (parseInt(React.version, 10) >= 19 ? it : it.skip)(
+    'shows focus-visible when a form library moves focus to the first invalid field on submit',
+    async () => {
+      function Test() {
+        return (
+          <form data-testid="form">
+            <Input aria-label="Name" name="name" required />
+            <Button type="submit">Submit</Button>
+          </form>
+        );
+      }
+
+      let {getByRole} = render(<Test />);
+      let input = getByRole('textbox');
+      let button = getByRole('button');
+
+      await user.click(button);
+      expect(input).not.toHaveAttribute('data-focus-visible');
+
+      // On submit the form is invalid, so the browser fires an invalid event on
+      // the required field. react-hook-form (shouldFocusError) then moves focus
+      // to the first invalid field with a plain ref.focus().
+      act(() => {
+        input.checkValidity();
+        input.focus();
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      expect(document.activeElement).toBe(input);
+      expect(input).toHaveAttribute('data-focus-visible');
     }
-
-    let {getByRole} = render(<Test />);
-    let input = getByRole('textbox');
-    let button = getByRole('button');
-
-    await user.click(button);
-    expect(input).not.toHaveAttribute('data-focus-visible');
-
-    // On submit the form is invalid, so the browser fires an invalid event on
-    // the required field. react-hook-form (shouldFocusError) then moves focus
-    // to the first invalid field with a plain ref.focus().
-    act(() => {
-      input.checkValidity();
-      input.focus();
-    });
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(document.activeElement).toBe(input);
-    expect(input).toHaveAttribute('data-focus-visible');
-  });
+  );
 
   it('should not throw when form contains elements without validity property', async () => {
     function Test() {

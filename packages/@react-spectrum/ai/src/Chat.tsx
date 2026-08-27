@@ -18,6 +18,7 @@ import {
 } from 'react-aria-components/CollectionBuilder';
 import {
   createContext,
+  CSSProperties,
   ForwardedRef,
   forwardRef,
   ReactNode,
@@ -302,11 +303,14 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledby}
         // TODO: for now we enforce this, but to be configurable?
-        style={{
-          display: 'flex',
-          boxSizing: 'border-box',
-          minWidth: 0
-        }}
+        style={
+          {
+            display: 'flex',
+            boxSizing: 'border-box',
+            minWidth: 0,
+            scrollbarGutter: 'stable'
+          } as CSSProperties
+        }
         className={styles}>
         {children}
       </GridList>
