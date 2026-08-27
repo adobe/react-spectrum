@@ -16,6 +16,7 @@ import {
   color,
   css,
   focusRing,
+  iconStyle,
   space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -47,10 +48,10 @@ import React, {
   RefObject,
   useCallback,
   useContext,
-  useId,
   useRef,
   useState
 } from 'react';
+import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -307,7 +308,7 @@ const panelStyle = {
 const panelInner = style({
   paddingTop: 8,
   paddingBottom: 16,
-  paddingX: space(9)
+  paddingX: space(6)
 });
 
 /**
@@ -385,8 +386,15 @@ interface DetailTriggerProps {
 
 const SPREAD = '4ch';
 
-/* Only supported in Chrome/Safari, not Firefox for performance reasons.
-   Tried using `mask-image: -moz-element(#id)` but this disables GPU acceleration. */
+/* Inert clone positioned above original text.
+ * This element acts as a mask for the actual shimmer
+ * in the ::after pseudo element.
+ *
+ * NOTE: It is possible to add the ::after shimmer
+ * directly to the original text instead of a clone,
+ * but this can cause the text to appear thinner than
+ * expected due to masking of sub-pixels. The clone
+ * fixes that problem. */
 const shimmer = css(`
   position: relative;
   position: absolute;
@@ -420,10 +428,10 @@ const shimmer = css(`
 
 const shimmerSym = Symbol('shimmer');
 
+// TODO: make this component a reusable utility?
 function ShimmerText(props: DetailTriggerProps) {
   let {children, isPending} = props;
   let {isExpanded, responseStatusRef} = useContext(ResponseStatusContext)!;
-  let id = useId();
 
   // Do the animation in JS rather than CSS so we can synchronize across elements.
   let shimmerRef = useCallback(
@@ -451,9 +459,7 @@ function ShimmerText(props: DetailTriggerProps) {
 
   return (
     <span className={style({position: 'relative', display: 'inline-block'})}>
-      <span id={id} className={style({display: 'inline-block'})}>
-        {children}
-      </span>
+      <span className={style({display: 'inline-block'})}>{children}</span>
       {/* inert clone of the children with shimmer effect mask. */}
       {isPending && isExpanded && (
         <span inert ref={shimmerRef} className={shimmer}>
@@ -581,8 +587,6 @@ const executationTradeDetailWrapperStyle = style({
 });
 
 const executionTraceDetailStyle = style({
-  paddingX: 12,
-  paddingY: 8,
   backgroundColor: 'layer-1',
   borderRadius: 'lg',
   font: 'body-2xs',
@@ -597,16 +601,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   props: ExecutionTraceItemProps,
   ref: DOMRef<HTMLLIElement>
 ) {
-  let {
-    isAlwaysOpen,
-    detail,
-    // TODO: do we still support icons?
-    // icon = <CheckmarkCircle aria-hidden="true" />,
-    children,
-    styles,
-    status = 'success',
-    ...otherProps
-  } = props;
+  let {isAlwaysOpen, detail, icon, children, styles, status = 'success', ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let domProps = filterDOMProps(otherProps);
   let hasDetail = detail != null;
@@ -614,40 +609,50 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   return (
     <li {...domProps} ref={domRef} className={mergeStyles(executionTraceItemStyles, styles)}>
       <div className={executionTraceItemIconContainerStyles}>
-        {/* <Provider values={[[IconContext, {styles: iconStyle({size: 'M'})}]]}>
-          <CenterBaseline>{icon}</CenterBaseline>
-        </Provider> */}
         <CenterBaseline>
           {status === 'failed' && (
-            <Cross className={style({'--iconPrimary': {type: 'fill', value: 'gray-600'}})} />
-          )}
-          {status !== 'failed' && (
-            <svg
-              viewBox="0 0 8 8"
+            <div
               className={style({
-                size: 8,
-                fill: {
-                  default: 'none',
-                  status: {
-                    success: 'gray-500'
-                  }
-                },
-                stroke: {
-                  default: 'none',
-                  status: {
-                    pending: 'gray-600'
-                  }
-                },
-                strokeWidth: {
-                  default: 0,
-                  status: {
-                    pending: 1
-                  }
-                }
-              })({status})}>
-              <circle cx={4} cy={4} r={status === 'pending' ? 3.5 : 4} />
-            </svg>
+                size: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              })}>
+              <Cross className={style({'--iconPrimary': {type: 'fill', value: 'gray-600'}})} />
+            </div>
           )}
+          {status !== 'failed' &&
+            (icon ? (
+              <IconContext.Provider value={{styles: iconStyle({size: 'S'})}}>
+                {icon}
+              </IconContext.Provider>
+            ) : (
+              <svg
+                viewBox="0 0 16 16"
+                className={style({
+                  size: 16,
+                  fill: {
+                    default: 'none',
+                    status: {
+                      success: 'gray-500'
+                    }
+                  },
+                  stroke: {
+                    default: 'none',
+                    status: {
+                      pending: 'gray-600'
+                    }
+                  },
+                  strokeWidth: {
+                    default: 0,
+                    status: {
+                      pending: 2
+                    }
+                  }
+                })({status})}>
+                <circle cx={8} cy={8} r={status === 'pending' ? 3 : 4} />
+              </svg>
+            ))}
         </CenterBaseline>
         <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
@@ -656,7 +661,15 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
           <DetailTrigger isPending={status === 'pending'}>{children}</DetailTrigger>
           <RACDisclosurePanel className={style(panelStyle)}>
             <div className={executationTradeDetailWrapperStyle}>
-              <div className={executionTraceDetailStyle}>{detail}</div>
+              <div className={executionTraceDetailStyle}>
+                <div
+                  className={
+                    scrollFade({y: 24}) +
+                    style({maxHeight: 120, overflow: 'auto', paddingX: 12, paddingY: 8})
+                  }>
+                  {detail}
+                </div>
+              </div>
             </div>
           </RACDisclosurePanel>
         </RACDisclosure>

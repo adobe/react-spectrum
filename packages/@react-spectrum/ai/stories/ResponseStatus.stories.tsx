@@ -105,7 +105,8 @@ export const WithExecutionTrace: Story = {
     defaultExpanded: false,
     status: 'success',
     static: false,
-    parallelTasks: 1
+    parallelTasks: 1,
+    showIcons: false
   } as any,
   argTypes: {
     pixelLoader: {
@@ -126,7 +127,7 @@ const executionTraceSteps: Array<Omit<ExecutionTraceItemProps, 'status'>> = [
     detail:
       "The user wants to 'parse the data' with their existing audiences. This is a bit vague - they want to create a new audience based on/combining their existing audiences. Let me search for their existing audiences first to see what we have to work with, then we can brainstorm something creative.",
     icon: <MagicWand />,
-    isAlwaysOpen: true,
+    // isAlwaysOpen: true,
     children: 'Thought'
   },
   {
@@ -219,7 +220,7 @@ function WithExecutionTraceRender(args) {
       return;
     }
     let timers = [...executionTraceSteps, null].map((_, i) =>
-      setTimeout(() => setVisibleCount(i + 1), i * 2000 + Math.random() * 500)
+      setTimeout(() => setVisibleCount(i + 1), i * 2000 + Math.random() * 1000)
     );
     return () => timers.forEach(clearTimeout);
   }, [args.static, args.status]);
@@ -249,7 +250,11 @@ function WithExecutionTraceRender(args) {
             {executionTraceSteps.slice(0, visibleCount).map((step, i) => {
               let isLast = i >= visibleCount - args.parallelTasks;
               return (
-                <ExecutionTraceItem key={i} {...step} status={isLast ? status : 'success'}>
+                <ExecutionTraceItem
+                  key={i}
+                  {...step}
+                  icon={args.showIcons ? step.icon : null}
+                  status={isLast ? status : 'success'}>
                   {step.children}
                 </ExecutionTraceItem>
               );
