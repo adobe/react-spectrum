@@ -30,41 +30,41 @@ export const description = 'Displays a list of actions or options that a user ca
     </Button>
     <Menu>
       <MenuSection>
-        <MenuItem onAction={() => alert('open')}>
+        <MenuItem onAction={() => alert('open')} textValue="Open">
           <FolderOpen />
           <Text slot="label">Open</Text>
           <Keyboard>⌘O</Keyboard>
         </MenuItem>
-        <MenuItem onAction={() => alert('rename')}>
+        <MenuItem onAction={() => alert('rename')} textValue="Rename">
           <Pencil />
           <Text slot="label">Rename…</Text>
           <Keyboard>⌘R</Keyboard>
         </MenuItem>
-        <MenuItem onAction={() => alert('duplicate')}>
+        <MenuItem onAction={() => alert('duplicate')} textValue="Duplicate">
           <Copy />
           <Text slot="label">Duplicate</Text>
           <Keyboard>⌘D</Keyboard>
         </MenuItem>
-        <MenuItem onAction={() => alert('delete')}>
+        <MenuItem onAction={() => alert('delete')} textValue="Delete">
           <Trash />
           <Text slot="label">Delete…</Text>
           <Keyboard>⌘⌫</Keyboard>
         </MenuItem>
         <SubmenuTrigger>
-          <MenuItem>
+          <MenuItem textValue="Share">
             <Share />
             <Text slot="label">Share</Text>
           </MenuItem>
           <Menu>
-            <MenuItem>
+            <MenuItem textValue="Email">
               <Mail />
               <Text slot="label">Email</Text>
             </MenuItem>
-            <MenuItem>
+            <MenuItem textValue="SMS">
               <Smartphone />
               <Text slot="label">SMS</Text>
             </MenuItem>
-            <MenuItem>
+            <MenuItem textValue="Instagram">
               <Instagram />
               <Text slot="label">Instagram</Text>
             </MenuItem>
