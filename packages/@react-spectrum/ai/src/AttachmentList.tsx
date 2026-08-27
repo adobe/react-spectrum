@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
 import {
   AriaLabelingProps,
@@ -29,8 +30,10 @@ import {
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
+import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
+import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContentContext} from '@react-spectrum/s2/Content';
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
@@ -54,7 +57,11 @@ import {
 } from 'react-aria-components/TagGroup';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
+import {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 
 interface AttachmentRenderProps {
   /** The size of the Card. */
@@ -309,27 +316,172 @@ export interface AttachmentListProps<T>
   styles?: StyleString;
 }
 
+// Caps growth so more attachments can't keep inflating an unsized ancestor; matches the Prompt
+// field's content width.
+const attachmentListStyles = style({
+  maxWidth: 700
+});
+
+const flexRow = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  width: 'full'
+} as const;
+
+const carouselContainer = style({
+  ...flexRow,
+  gap: 8
+});
+
+const tagListStyles = style<{isCarousel: boolean}>({
+  ...flexRow,
+  gap: 16,
+  minWidth: 0,
+  flexWrap: {default: 'wrap', isCarousel: 'nowrap'},
+  overflowX: {isCarousel: 'auto'},
+  // overflowX forces overflow-y into a clipping context too; hide the native scrollbar since the
+  // chevrons drive scrolling (same combo DateField's segmentContainer uses).
+  overflowY: {isCarousel: 'hidden'},
+  scrollbarWidth: {isCarousel: 'none'},
+  scrollSnapType: {isCarousel: 'x mandatory'},
+  flexGrow: {isCarousel: 1},
+  // Room for the close-button badge, which pokes past each card's corner.
+  padding: {isCarousel: 12}
+});
+
+// Fades the peeking edge attachment to read as more content, not a hard clip.
+const carouselMaskImage =
+  'linear-gradient(to right, transparent, black 32px, black calc(100% - 32px), transparent)';
+const carouselMask = {
+  WebkitMaskImage: carouselMaskImage,
+  maskImage: carouselMaskImage
+} as const;
+
+// borderRadius/transform aren't allowed ActionButton style overrides, so shape and RTL flip go on
+// this wrapper instead, same as Calendar's CalendarButton.
+const carouselNavButton = style({
+  flexShrink: 0,
+  borderRadius: 'full',
+  overflow: 'clip',
+  scale: {
+    direction: {
+      rtl: -1
+    }
+  }
+});
+
+function CarouselNavButton(
+  {side, onPress, isDisabled}: {side: 'start' | 'end', onPress: () => void, isDisabled: boolean}
+) {
+  let {direction} = useLocale();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  let Icon = side === 'start' ? ChevronLeft : ChevronRight;
+  return (
+    <div className={carouselNavButton({direction})}>
+      <ActionButton
+        isDisabled={isDisabled}
+        aria-label={stringFormatter.format(
+          side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
+        )}
+        onPress={onPress}>
+        <Icon />
+      </ActionButton>
+    </div>
+  );
+}
+
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let scrollRef = useRef<HTMLDivElement>(null);
+
+  let [isCarousel, setIsCarousel] = useValueEffect(false);
+  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
+  let checkForOverflow = useCallback(() => {
+    setIsCarousel(function* () {
+      yield true;
+      let el = scrollRef.current;
+      // Compare to domRef's width, not el's, so the nav buttons taking up their own share of the
+      // track can't feed back into this check.
+      yield !!el && !!domRef.current && el.scrollWidth > domRef.current.offsetWidth + 1;
+    });
+  }, [setIsCarousel]);
+  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
+  useLayoutEffect(() => {
+    checkForOverflow();
+  }, [checkForOverflow, items, children]);
+  // Observe the parent, not domRef: our own size changes when isCarousel toggles.
+  let parent = useRef<HTMLElement | null>(null);
+  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
+  useLayoutEffect(() => {
+    if (domRef.current) {
+      parent.current = domRef.current.parentElement as HTMLElement;
+    }
+  }, [domRef.current]);
+  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
+  useResizeObserver({ref: parent, onResize: checkForOverflow});
+
+  let {direction} = useLocale();
+  let [canScrollPrev, setCanScrollPrev] = useState(false);
+  let [canScrollNext, setCanScrollNext] = useState(false);
+  // The track's own padding shifts the scroll-snap resting position away from 0; use the first
+  // read as the "start" baseline instead of assuming it's 0.
+  let startScrollRef = useRef<number | null>(null);
+  let updateScrollState = useCallback(() => {
+    let el = scrollRef.current;
+    if (el) {
+      // RTL reports scrollLeft as <= 0, the mirror of LTR; normalize with Math.abs.
+      let maxScroll = el.scrollWidth - el.clientWidth;
+      let scrolled = Math.abs(el.scrollLeft);
+      if (startScrollRef.current == null) {
+        startScrollRef.current = scrolled;
+      }
+      setCanScrollPrev(scrolled > startScrollRef.current + 1);
+      setCanScrollNext(scrolled < maxScroll - 1);
+    }
+  }, []);
+  useLayoutEffect(() => {
+    startScrollRef.current = null;
+    updateScrollState();
+  }, [updateScrollState, isCarousel]);
+  useResizeObserver({ref: scrollRef, onResize: updateScrollState});
+
+  let scroll = (dir: 1 | -1) => {
+    // RTL flips the scroll direction convention; flip the sign to match.
+    let sign = direction === 'rtl' ? -1 : 1;
+    scrollRef.current?.scrollBy({
+      left: sign * dir * scrollRef.current.clientWidth * 0.8,
+      behavior: 'smooth'
+    });
+  };
+
+  let tagList = (
+    <TagList
+      ref={scrollRef}
+      items={items}
+      dependencies={dependencies}
+      onScroll={updateScrollState}
+      className={tagListStyles({isCarousel})}
+      style={isCarousel ? carouselMask : undefined}>
+      {children}
+    </TagList>
+  );
+
   return (
-    <TagGroup {...otherProps} className={styles} ref={domRef}>
-      <TagList
-        items={items}
-        dependencies={dependencies}
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 16,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          width: 'full'
-        })}>
-        {children}
-      </TagList>
+    <TagGroup {...otherProps} className={mergeStyles(attachmentListStyles, styles)} ref={domRef}>
+      {isCarousel ? (
+        <div className={carouselContainer}>
+          <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />
+          {tagList}
+          <CarouselNavButton side="end" isDisabled={!canScrollNext} onPress={() => scroll(1)} />
+        </div>
+      ) : (
+        tagList
+      )}
     </TagGroup>
   );
 });
@@ -359,7 +511,8 @@ const tagStyles = style({
   position: 'relative',
   ...focusRing(),
   borderRadius: 'lg',
-  maxWidth: 'full'
+  maxWidth: 'full',
+  scrollSnapAlign: 'start'
 });
 interface AttachmentCardProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
