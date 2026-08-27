@@ -12,8 +12,8 @@
 
 import {FocusableElement} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
-import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
-import {getOwnerWindow} from '../utils/domHelpers';
+import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getOwnerWindow, isShadowRoot} from '../utils/domHelpers';
 import {isFocusable} from '../utils/isFocusable';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -125,21 +125,36 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
   }
 
   let ownerWindow = getOwnerWindow(target);
-  let activeElement = ownerWindow.document.activeElement as FocusableElement | null;
+  let activeElement = getActiveElement(ownerWindow.document) as FocusableElement | null;
   if (!activeElement || activeElement === target) {
     return;
   }
 
+  // Listen on the target's root (document or shadow root) so we catch focus events inside
+  // shadow DOM; they do not reach the main window.
+  let targetRoot = target?.getRootNode();
+  let root = targetRoot != null && isShadowRoot(targetRoot) ? targetRoot : getOwnerWindow(target);
+
+  // Focus is "moving to target" when it moves to the button or to a descendant of the button
+  // (e.g. SVG icon)
+  let isFocusMovingToTarget = (focusTarget: Element | null) =>
+    focusTarget === target || (focusTarget != null && nodeContains(target, focusTarget));
+  // Blur/focusout events have their target as the element losing focus. Stop propagation when
+  // that is the previously focused element (activeElement) or a descendant (e.g. in shadow DOM).
+  let isBlurFromActiveElement = (eventTarget: Element | null) =>
+    eventTarget === activeElement ||
+    (activeElement != null && eventTarget != null && nodeContains(activeElement, eventTarget));
+
   ignoreFocusEvent = true;
   let isRefocusing = false;
-  let onBlur = (e: FocusEvent) => {
-    if (getEventTarget(e) === activeElement || isRefocusing) {
+  let onBlur: EventListener = e => {
+    if (isBlurFromActiveElement(getEventTarget(e) as Element) || isRefocusing) {
       e.stopImmediatePropagation();
     }
   };
 
-  let onFocusOut = (e: FocusEvent) => {
-    if (getEventTarget(e) === activeElement || isRefocusing) {
+  let onFocusOut: EventListener = e => {
+    if (isBlurFromActiveElement(getEventTarget(e) as Element) || isRefocusing) {
       e.stopImmediatePropagation();
 
       // If there was no focusable ancestor, we don't expect a focus event.
@@ -152,14 +167,14 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
     }
   };
 
-  let onFocus = (e: FocusEvent) => {
-    if (getEventTarget(e) === target || isRefocusing) {
+  let onFocus: EventListener = e => {
+    if (isFocusMovingToTarget(getEventTarget(e) as Element) || isRefocusing) {
       e.stopImmediatePropagation();
     }
   };
 
-  let onFocusIn = (e: FocusEvent) => {
-    if (getEventTarget(e) === target || isRefocusing) {
+  let onFocusIn: EventListener = e => {
+    if (isFocusMovingToTarget(getEventTarget(e) as Element) || isRefocusing) {
       e.stopImmediatePropagation();
 
       if (!isRefocusing) {
@@ -170,17 +185,17 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
     }
   };
 
-  ownerWindow.addEventListener('blur', onBlur, true);
-  ownerWindow.addEventListener('focusout', onFocusOut, true);
-  ownerWindow.addEventListener('focusin', onFocusIn, true);
-  ownerWindow.addEventListener('focus', onFocus, true);
+  root.addEventListener('blur', onBlur, true);
+  root.addEventListener('focusout', onFocusOut, true);
+  root.addEventListener('focusin', onFocusIn, true);
+  root.addEventListener('focus', onFocus, true);
 
   let cleanup = () => {
     cancelAnimationFrame(raf);
-    ownerWindow.removeEventListener('blur', onBlur, true);
-    ownerWindow.removeEventListener('focusout', onFocusOut, true);
-    ownerWindow.removeEventListener('focusin', onFocusIn, true);
-    ownerWindow.removeEventListener('focus', onFocus, true);
+    root.removeEventListener('blur', onBlur, true);
+    root.removeEventListener('focusout', onFocusOut, true);
+    root.removeEventListener('focusin', onFocusIn, true);
+    root.removeEventListener('focus', onFocus, true);
     ignoreFocusEvent = false;
     isRefocusing = false;
   };
