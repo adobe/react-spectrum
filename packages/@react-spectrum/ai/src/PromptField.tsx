@@ -758,9 +758,7 @@ export function PromptToken(props: PromptTokenProps) {
           font: 'ui',
           backgroundColor: {
             default: 'transparent-overlay-1000/10',
-            isSelected: 'blue-800',
-            // Firefox ignores completely transparent selection colors, so we need to use a nearly transparent color instead
-            '::selection': '[#ffffff01]'
+            isSelected: 'blue-800'
           },
           color: {
             default: 'body',
@@ -778,6 +776,7 @@ export function PromptToken(props: PromptTokenProps) {
           outlineOffset: -1,
           borderRadius: 'pill',
           boxShadow: `[inset 0 24px 32px 0 ${color('transparent-white-50')}, 0 8px 32px 0 ${color('transparent-black-50')}]`,
+          boxDecorationBreak: 'clone',
           paddingX: 8,
           // not using inline-flex here due to a text selection bug in WebKit.
           paddingY: space(3),
