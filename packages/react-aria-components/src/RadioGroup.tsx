@@ -40,7 +40,15 @@ import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {RadioGroupState, useRadioGroupState} from 'react-stately/useRadioGroupState';
-import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
+import React, {
+  createContext,
+  CSSProperties,
+  ForwardedRef,
+  forwardRef,
+  Ref,
+  useContext,
+  useMemo
+} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
@@ -90,6 +98,29 @@ export interface RadioProps
    * A ref for the HTML input element.
    */
   inputRef?: Ref<HTMLInputElement | null>;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * HTML input element.
+   */
+  inputClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * HTML input element.
+   */
+  inputStyle?: CSSProperties;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * VisuallyHidden wrapper around the HTML input element.
+   */
+  visuallyHiddenClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * VisuallyHidden wrapper around the HTML input element. To make the screen reader focus ring
+   * match the component, stretch this wrapper to the label (e.g. `{inset: 0, width: 'auto', height: 'auto'}`)
+   * and set `position: relative` on the label (or a positioned ancestor) so the input resolves
+   * against it rather than the viewport.
+   */
+  visuallyHiddenStyle?: CSSProperties;
 }
 
 export interface RadioFieldProps
@@ -109,6 +140,29 @@ export interface RadioFieldProps
    * A ref for the HTML input element.
    */
   inputRef?: Ref<HTMLInputElement | null>;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * HTML input element.
+   */
+  inputClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * HTML input element.
+   */
+  inputStyle?: CSSProperties;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * VisuallyHidden wrapper around the HTML input element.
+   */
+  visuallyHiddenClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * VisuallyHidden wrapper around the HTML input element. To make the screen reader focus ring
+   * match the component, stretch this wrapper to the label (e.g. `{inset: 0, width: 'auto', height: 'auto'}`)
+   * and set `position: relative` on the label (or a positioned ancestor) so the input resolves
+   * against it rather than the viewport.
+   */
+  visuallyHiddenStyle?: CSSProperties;
 }
 
 export interface RadioButtonProps
@@ -124,6 +178,29 @@ export interface RadioButtonProps
    * @default 'react-aria-RadioButton'
    */
   className?: ClassNameOrFunction<RadioButtonRenderProps>;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * HTML input element.
+   */
+  inputClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * HTML input element.
+   */
+  inputStyle?: CSSProperties;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * VisuallyHidden wrapper around the HTML input element.
+   */
+  visuallyHiddenClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * VisuallyHidden wrapper around the HTML input element. To make the screen reader focus ring
+   * match the component, stretch this wrapper to the label (e.g. `{inset: 0, width: 'auto', height: 'auto'}`)
+   * and set `position: relative` on the label (or a positioned ancestor) so the input resolves
+   * against it rather than the viewport.
+   */
+  visuallyHiddenStyle?: CSSProperties;
 }
 
 export interface RadioGroupRenderProps {
@@ -364,7 +441,15 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
 
   return (
     <InternalRadioContext.Provider
-      value={{...aria, inputRef, defaultClassName: 'react-aria-Radio'}}>
+      value={{
+        ...aria,
+        inputRef,
+        defaultClassName: 'react-aria-Radio',
+        inputClassName: props.inputClassName,
+        inputStyle: props.inputStyle,
+        visuallyHiddenClassName: props.visuallyHiddenClassName,
+        visuallyHiddenStyle: props.visuallyHiddenStyle
+      }}>
       <RadioButton {...props} ref={ref} />
     </InternalRadioContext.Provider>
   );
@@ -373,6 +458,10 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
 interface InternalRadioContextValue extends RadioAria {
   inputRef: RefObject<HTMLInputElement | null>;
   defaultClassName: string;
+  inputClassName?: string;
+  inputStyle?: CSSProperties;
+  visuallyHiddenClassName?: string;
+  visuallyHiddenStyle?: CSSProperties;
 }
 
 const InternalRadioContext = createContext<InternalRadioContextValue | null>(null);
@@ -438,7 +527,11 @@ export const RadioField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             {
               ...aria,
               inputRef,
-              defaultClassName: 'react-aria-RadioButton'
+              defaultClassName: 'react-aria-RadioButton',
+              inputClassName: props.inputClassName,
+              inputStyle: props.inputStyle,
+              visuallyHiddenClassName: props.visuallyHiddenClassName,
+              visuallyHiddenStyle: props.visuallyHiddenStyle
             }
           ],
           [
@@ -463,11 +556,29 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   props: RadioButtonProps,
   ref: ForwardedRef<HTMLLabelElement>
 ) {
-  let {labelProps, inputProps, isSelected, isDisabled, isPressed, defaultClassName, inputRef} =
-    useContext(InternalRadioContext)!;
+  let {
+    labelProps,
+    inputProps,
+    isSelected,
+    isDisabled,
+    isPressed,
+    defaultClassName,
+    inputRef,
+    inputClassName,
+    inputStyle,
+    visuallyHiddenClassName,
+    visuallyHiddenStyle
+  } = useContext(InternalRadioContext)!;
   let state = React.useContext(RadioGroupStateContext)!;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
+
+  // Allow inputClassName/inputStyle to be passed directly to RadioButton,
+  // taking precedence over values inherited from a wrapping Radio/RadioField.
+  inputClassName = props.inputClassName ?? inputClassName;
+  inputStyle = props.inputStyle ?? inputStyle;
+  visuallyHiddenClassName = props.visuallyHiddenClassName ?? visuallyHiddenClassName;
+  visuallyHiddenStyle = props.visuallyHiddenStyle ?? visuallyHiddenStyle;
 
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -507,8 +618,13 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       data-readonly={state.isReadOnly || undefined}
       data-invalid={state.isInvalid || undefined}
       data-required={state.isRequired || undefined}>
-      <VisuallyHidden elementType="span">
-        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+      <VisuallyHidden elementType="span" className={visuallyHiddenClassName} style={visuallyHiddenStyle}>
+        <input
+          {...mergeProps(inputProps, focusProps)}
+          ref={inputRef}
+          className={inputClassName}
+          style={inputStyle}
+        />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>

@@ -755,6 +755,20 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(inputRef.current).toBe(radio);
   });
 
+  it('should support input className and style', () => {
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio inputClassName="test" inputStyle={{inset: 0}} value="a">
+          A
+        </Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(radio).toHaveClass('test');
+    expect(radio).toHaveStyle('inset: 0');
+  });
+
   it('should support callback ref', () => {
     let cleanup = jest.fn();
     let onRef = jest.fn(() => cleanup);
@@ -902,5 +916,23 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     await user.keyboard('{Enter}');
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('RadioButton', function () {
+  it('should support input className and style directly on RadioButton', () => {
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <RadioField>
+          <RadioButton inputClassName="test" inputStyle={{inset: 0}} value="a">
+            A
+          </RadioButton>
+        </RadioField>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(radio).toHaveClass('test');
+    expect(radio).toHaveStyle('inset: 0');
   });
 });

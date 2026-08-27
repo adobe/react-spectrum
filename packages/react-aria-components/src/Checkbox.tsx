@@ -39,7 +39,15 @@ import {HoverEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
+import React, {
+  createContext,
+  CSSProperties,
+  ForwardedRef,
+  forwardRef,
+  Ref,
+  useContext,
+  useMemo
+} from 'react';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
@@ -90,6 +98,29 @@ export interface CheckboxProps
    * A ref for the HTML input element.
    */
   inputRef?: Ref<HTMLInputElement | null>;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * HTML input element.
+   */
+  inputClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * HTML input element.
+   */
+  inputStyle?: CSSProperties;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * VisuallyHidden wrapper around the HTML input element.
+   */
+  visuallyHiddenClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * VisuallyHidden wrapper around the HTML input element. To make the screen reader focus ring
+   * match the component, stretch this wrapper to the label (e.g. `{inset: 0, width: 'auto', height: 'auto'}`)
+   * and set `position: relative` on the label (or a positioned ancestor) so the input resolves
+   * against it rather than the viewport.
+   */
+  visuallyHiddenStyle?: CSSProperties;
 }
 
 export interface CheckboxFieldProps
@@ -110,6 +141,29 @@ export interface CheckboxFieldProps
    * A ref for the HTML input element.
    */
   inputRef?: Ref<HTMLInputElement | null>;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * HTML input element.
+   */
+  inputClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * HTML input element.
+   */
+  inputStyle?: CSSProperties;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * VisuallyHidden wrapper around the HTML input element.
+   */
+  visuallyHiddenClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * VisuallyHidden wrapper around the HTML input element. To make the screen reader focus ring
+   * match the component, stretch this wrapper to the label (e.g. `{inset: 0, width: 'auto', height: 'auto'}`)
+   * and set `position: relative` on the label (or a positioned ancestor) so the input resolves
+   * against it rather than the viewport.
+   */
+  visuallyHiddenStyle?: CSSProperties;
 }
 
 export interface CheckboxButtonProps
@@ -125,6 +179,29 @@ export interface CheckboxButtonProps
    * @default 'react-aria-CheckboxButton'
    */
   className?: ClassNameOrFunction<CheckboxButtonRenderProps>;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * HTML input element.
+   */
+  inputClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * HTML input element.
+   */
+  inputStyle?: CSSProperties;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * VisuallyHidden wrapper around the HTML input element.
+   */
+  visuallyHiddenClassName?: string;
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * VisuallyHidden wrapper around the HTML input element. To make the screen reader focus ring
+   * match the component, stretch this wrapper to the label (e.g. `{inset: 0, width: 'auto', height: 'auto'}`)
+   * and set `position: relative` on the label (or a positioned ancestor) so the input resolves
+   * against it rather than the viewport.
+   */
+  visuallyHiddenStyle?: CSSProperties;
 }
 
 export interface CheckboxGroupRenderProps {
@@ -343,6 +420,10 @@ interface InternalCheckboxContextValue extends CheckboxAria {
   defaultClassName: string;
   isIndeterminate?: boolean;
   isRequired?: boolean;
+  inputClassName?: string;
+  inputStyle?: CSSProperties;
+  visuallyHiddenClassName?: string;
+  visuallyHiddenStyle?: CSSProperties;
 }
 
 const InternalCheckboxContext = createContext<InternalCheckboxContextValue | null>(null);
@@ -406,7 +487,11 @@ export const CheckboxField = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
               inputRef,
               defaultClassName: 'react-aria-CheckboxButton',
               isIndeterminate: props.isIndeterminate,
-              isRequired: props.isRequired
+              isRequired: props.isRequired,
+              inputClassName: props.inputClassName,
+              inputStyle: props.inputStyle,
+              visuallyHiddenClassName: props.visuallyHiddenClassName,
+              visuallyHiddenStyle: props.visuallyHiddenStyle
             }
           ],
           [
@@ -476,7 +561,11 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
         inputRef,
         defaultClassName: 'react-aria-Checkbox',
         isIndeterminate: props.isIndeterminate,
-        isRequired: props.isRequired
+        isRequired: props.isRequired,
+        inputClassName: props.inputClassName,
+        inputStyle: props.inputStyle,
+        visuallyHiddenClassName: props.visuallyHiddenClassName,
+        visuallyHiddenStyle: props.visuallyHiddenStyle
       }}>
       <CheckboxButton {...props} ref={ref} />
     </InternalCheckboxContext.Provider>
@@ -501,10 +590,21 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
     inputRef,
     defaultClassName,
     isIndeterminate,
-    isRequired
+    isRequired,
+    inputClassName,
+    inputStyle,
+    visuallyHiddenClassName,
+    visuallyHiddenStyle
   } = useContext(InternalCheckboxContext)!;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
+
+  // Allow inputClassName/inputStyle to be passed directly to CheckboxButton,
+  // taking precedence over values inherited from a wrapping Checkbox/CheckboxField.
+  inputClassName = props.inputClassName ?? inputClassName;
+  inputStyle = props.inputStyle ?? inputStyle;
+  visuallyHiddenClassName = props.visuallyHiddenClassName ?? visuallyHiddenClassName;
+  visuallyHiddenStyle = props.visuallyHiddenStyle ?? visuallyHiddenStyle;
 
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -547,8 +647,13 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
       data-readonly={isReadOnly || undefined}
       data-invalid={isInvalid || undefined}
       data-required={isRequired || undefined}>
-      <VisuallyHidden elementType="span">
-        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+      <VisuallyHidden elementType="span" className={visuallyHiddenClassName} style={visuallyHiddenStyle}>
+        <input
+          {...mergeProps(inputProps, focusProps)}
+          ref={inputRef}
+          className={inputClassName}
+          style={inputStyle}
+        />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>

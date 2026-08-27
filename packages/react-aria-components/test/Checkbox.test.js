@@ -423,6 +423,17 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
   });
 
+  it('should support input className and style', () => {
+    let {getByRole} = render(
+      <Checkbox inputClassName="test" inputStyle={{inset: 0}}>
+        Test
+      </Checkbox>
+    );
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveClass('test');
+    expect(checkbox).toHaveStyle('inset: 0');
+  });
+
   it('should support callback ref', () => {
     let cleanup = jest.fn();
     let onRef = jest.fn(() => cleanup);
@@ -489,5 +500,20 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     await user.keyboard('{Enter}');
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('CheckboxButton', function () {
+  it('should support input className and style directly on CheckboxButton', () => {
+    let {getByRole} = render(
+      <CheckboxField>
+        <CheckboxButton inputClassName="test" inputStyle={{inset: 0}}>
+          Test
+        </CheckboxButton>
+      </CheckboxField>
+    );
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveClass('test');
+    expect(checkbox).toHaveStyle('inset: 0');
   });
 });
