@@ -329,7 +329,6 @@ const flexRow = {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  width: 'full'
 } as const;
 
 const tagListStyles = style<{isCarousel: boolean}>({
