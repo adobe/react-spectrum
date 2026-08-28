@@ -510,7 +510,7 @@ export function VirtualizedStreamingChat() {
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
-                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
+                    <ResponseStatus status={msg.isStreaming ? 'pending' : 'success'}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
                         {msg.details && (
@@ -734,7 +734,7 @@ export function EmptyChat() {
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
-                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
+                    <ResponseStatus status={msg.isStreaming ? 'pending' : 'success'}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
                         {msg.details && (
