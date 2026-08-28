@@ -9,6 +9,7 @@
   "promptfield.insertButton": "הוסף",
   "promptfield.label": "הנחיה",
   "promptfield.placeholder": "מוכנים להתחיל? שאלו שאלה, שתפו רעיון או הוסיפו משימה.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "עצור",
   "promptfield.submitButton": "שלח",
   "promptfield.uploading": "העלאה",

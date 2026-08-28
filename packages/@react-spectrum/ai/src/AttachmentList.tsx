@@ -358,7 +358,8 @@ const tagStyles = style({
   flexGrow: 0,
   position: 'relative',
   ...focusRing(),
-  borderRadius: 'lg'
+  borderRadius: 'lg',
+  maxWidth: 'full'
 });
 interface AttachmentCardProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';

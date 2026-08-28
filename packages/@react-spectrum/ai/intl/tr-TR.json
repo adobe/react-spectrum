@@ -9,6 +9,7 @@
   "promptfield.insertButton": "Ekle",
   "promptfield.label": "Prompt",
   "promptfield.placeholder": "Başlamaya hazır mısınız? Soru sorun, fikir paylaşın veya görev ekleyin.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Dur",
   "promptfield.submitButton": "Gönder",
   "promptfield.uploading": "Yükleme",

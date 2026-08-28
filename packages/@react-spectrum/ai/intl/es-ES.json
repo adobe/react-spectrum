@@ -9,6 +9,7 @@
   "promptfield.insertButton": "Agregar",
   "promptfield.label": "Preguntar",
   "promptfield.placeholder": "¿Listo para empezar? Formule una pregunta, comparta una idea o añada una tarea.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Detener",
   "promptfield.submitButton": "Enviar",
   "promptfield.uploading": "Cargando",

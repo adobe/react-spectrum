@@ -9,6 +9,7 @@
   "promptfield.insertButton": "Add",
   "promptfield.label": "Prompt",
   "promptfield.placeholder": "Készen áll a kezdésre? Tegyen fel egy kérdést, ossza meg az ötletét, vagy adjon hozzá egy feladatot.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Állj meg",
   "promptfield.submitButton": "Elküldöm",
   "promptfield.uploading": "Feltöltés",

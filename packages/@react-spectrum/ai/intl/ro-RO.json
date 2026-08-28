@@ -9,6 +9,7 @@
   "promptfield.insertButton": "Adaugă",
   "promptfield.label": "Prompt",
   "promptfield.placeholder": "Sunteți gata să începeți? Puneți o întrebare, împărtășiți o idee sau adaugați o sarcină.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Stop",
   "promptfield.submitButton": "Trimite",
   "promptfield.uploading": "Încărcare",
