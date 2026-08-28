@@ -454,7 +454,11 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 },
                 animationDuration: '2s, 3s, 4s',
                 animationTimingFunction: 'linear',
-                animationIterationCount: 'infinite'
+                animationIterationCount: 'infinite',
+                contain: 'strict',
+                willChange: {
+                  isGenerating: 'transform'
+                }
               })({isGenerating})
             }
           />
