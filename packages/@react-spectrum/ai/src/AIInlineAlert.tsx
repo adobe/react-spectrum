@@ -46,6 +46,7 @@ const ICONS: Record<string, ComponentType<any> | undefined> = {
 const container = style<{closeButtonPlacement: 'inline' | 'floating'}>({
   position: 'relative',
   display: 'flex',
+  alignItems: 'center',
   boxSizing: 'border-box',
   gap: 'text-to-visual',
   borderRadius: 'lg',
