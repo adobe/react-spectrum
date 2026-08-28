@@ -74,19 +74,21 @@ export function convertColor(value: any, opacity?: number) {
   if (typeof value !== 'string') {
     return value;
   }
-  let match = value.match(/rgba?\(([^)]+)\)/);
-  if (!match) {
-    return value;
-  }
-  let parts = match[1].split(',').map(x => parseFloat(x.trim()));
-  let [r, g, b] = parts;
-  let alpha = opacity != null ? opacity / 100 : parts[3] ?? 1;
-  let [L, C, H] = rgbToOklch(r, g, b);
-  if (C < NEUTRAL_CHROMA) {
-    return value;
-  }
-  let offset = Math.round((H - BRAND_REF_HUE) * 10) / 10;
-  return brand(Math.round(L * 1e4) / 1e4, Math.round(C * 1e4) / 1e4, offset, alpha);
+  return value.replace(/rgba?\([^)]+\)/g, value => {
+    let match = value.match(/rgba?\(([^)]+)\)/);
+    if (!match) {
+      return value;
+    }
+    let parts = match[1].split(',').map(x => parseFloat(x.trim()));
+    let [r, g, b] = parts;
+    let alpha = opacity != null ? opacity / 100 : (parts[3] ?? 1);
+    let [L, C, H] = rgbToOklch(r, g, b);
+    if (C < NEUTRAL_CHROMA) {
+      return value;
+    }
+    let offset = Math.round((H - BRAND_REF_HUE) * 10) / 10;
+    return brand(Math.round(L * 1e4) / 1e4, Math.round(C * 1e4) / 1e4, offset, alpha);
+  });
 }
 
 export function token(name: string) {
