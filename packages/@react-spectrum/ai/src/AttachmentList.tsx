@@ -131,14 +131,8 @@ const attachmentCard = style({
   position: 'relative',
   borderRadius: 'lg',
   outlineStyle: 'solid',
-  outlineWidth: {
-    default: 1, // WHCM
-    isInvalid: 2
-  },
-  outlineOffset: {
-    default: -1,
-    isInvalid: -2
-  },
+  outlineWidth: 1,
+  outlineOffset: -1,
   outlineColor: {
     default: lightDark('black/3', 'white/3'),
     isLoading: lightDark('black/2', 'white/2'),
@@ -428,7 +422,7 @@ function AttachmentCard({
                     pointerEvents: 'none',
                     userSelect: 'none',
                     size: '--basic-thumb-size',
-                    borderRadius: '[3px]',
+                    borderRadius: 'inherit',
                     objectFit: 'cover',
                     outlineStyle: 'solid',
                     outlineWidth: 1,
