@@ -1,0 +1,51 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'August 28, 2026';
+export const title = 'v1.7.0';
+export const description = 'This release refreshes icon sizing to match text line height, and includes contrast and rendering fixes across ActionBar, Avatar, ListView, Menu, and TableView.';
+export const isSubpage = true;
+
+# v1.7.0
+
+This release updates icon sizing across components to match the text line height. It also includes contrast and rendering fixes for [ActionBar](../ActionBar), [Avatar](../Avatar), [ListView](../ListView), [Menu](../Menu), and [TableView](../TableView).
+
+## Changelog
+
+### ActionBar
+- Fix the close button icon color so it meets contrast in dark mode - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10429)
+### Avatar
+- Show Avatars when a ComboBox or Picker is rendered inside a Dialog - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10482)
+### Icons
+- Size icons to match the text line height using the `lh` unit - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10414)
+- Update S2 workflow icons to `v7.1.0` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10522)
+### ListView
+- Fix the workflow icon size - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10514)
+### Menu
+- Set `staticColor` to `auto` for buttons inside a Menu so their colors adapt to the background - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10474)
+### TableView
+- Fix an invalid empty `:has()` selector emitted in TableView CSS - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10469)
+### Tooltip
+- Update Tooltip docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10413)
+
+## Released packages
+
+```
+[TODO: paste output of yarn bumpVersions here]
+```
