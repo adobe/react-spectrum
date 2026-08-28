@@ -39,7 +39,6 @@ import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {PixelLoader} from '../exports';
-import {pressScale} from '@react-spectrum/s2';
 import {Provider} from 'react-aria-components/slots';
 import React, {
   createContext,
@@ -48,7 +47,6 @@ import React, {
   RefObject,
   useCallback,
   useContext,
-  useRef,
   useState
 } from 'react';
 import {scrollFade} from './tokens.macro' with {type: 'macro'};
@@ -169,7 +167,8 @@ const disclosureStyles = style({
   ...focusRing(),
   font: 'body-sm',
   color: {
-    default: baseColor('gray-800'),
+    default: baseColor('neutral-subdued'),
+    isExpanded: 'gray-1000',
     forcedColors: 'ButtonText',
     isDisabled: {
       default: 'disabled',
@@ -218,14 +217,9 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   let isLoading = status === 'pending';
   let isInteractive = hasPanelContent;
 
-  let buttonRef = useRef<HTMLButtonElement | null>(null);
-
   return (
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
       <Button
-        ref={buttonRef}
-        // eslint-disable-next-line react/react-compiler
-        style={pressScale(buttonRef)}
         className={style({
           padding: 0,
           backgroundColor: 'transparent',
@@ -237,7 +231,8 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
         })}
         slot={isInteractive ? 'trigger' : undefined}>
         {renderProps => (
-          <span className={disclosureStyles({...renderProps, isOnlyText: !isInteractive})}>
+          <span
+            className={disclosureStyles({...renderProps, isExpanded, isOnlyText: !isInteractive})}>
             {isLoading ? (
               <CenterBaseline>
                 <PixelLoader size={21} icon={pixelLoader} />
@@ -476,7 +471,7 @@ const detailTriggerStyles = style({
   display: 'block',
   font: 'ui-sm',
   color: {
-    default: 'gray-600',
+    default: baseColor('gray-600'),
     forcedColors: 'ButtonText',
     isDisabled: {
       default: 'disabled',
@@ -492,7 +487,7 @@ const detailTriggerStyles = style({
     default: 'transparent',
     isHovered: 'gray-75',
     isFocusVisible: 'gray-75',
-    isPressed: 'gray-75'
+    isPressed: 'gray-100'
   },
   transition: 'default',
   borderWidth: 0,
@@ -503,15 +498,8 @@ const detailTriggerStyles = style({
 });
 
 function DetailTrigger(props: DetailTriggerProps) {
-  let ref = useRef<HTMLButtonElement | null>(null);
-
   return (
-    <Button
-      ref={ref}
-      // eslint-disable-next-line react/react-compiler
-      style={pressScale(ref)}
-      className={detailTriggerStyles}
-      slot="trigger">
+    <Button className={detailTriggerStyles} slot="trigger">
       <ShimmerText {...props} />
     </Button>
   );
@@ -530,11 +518,15 @@ export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
    */
   detail?: ReactNode;
   /**
+   * Maximum height for the detail panel.
+   *
+   * @default 120
+   */
+  detailMaxHeight?: number;
+  /**
    * An icon shown at the leading edge of the row. If omitted, a checkmark is rendered by default.
    */
   icon?: ReactNode;
-  /** Allows detail content to render but prevents the row from being collapsible. */
-  isAlwaysOpen?: boolean;
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString;
 }
@@ -601,7 +593,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   props: ExecutionTraceItemProps,
   ref: DOMRef<HTMLLIElement>
 ) {
-  let {isAlwaysOpen, detail, icon, children, styles, status = 'success', ...otherProps} = props;
+  let {detail, detailMaxHeight, icon, children, styles, status = 'success', ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let domProps = filterDOMProps(otherProps);
   let hasDetail = detail != null;
@@ -611,6 +603,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
       <div className={executionTraceItemIconContainerStyles}>
         <CenterBaseline>
           {status === 'failed' && (
+            /* 16px box so it lines up with other icons */
             <div
               className={style({
                 size: 16,
@@ -656,7 +649,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
         </CenterBaseline>
         <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
-      {hasDetail && !isAlwaysOpen ? (
+      {hasDetail ? (
         <RACDisclosure className="">
           <DetailTrigger isPending={status === 'pending'}>{children}</DetailTrigger>
           <RACDisclosurePanel className={style(panelStyle)}>
@@ -666,7 +659,8 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
                   className={
                     scrollFade({y: 24}) +
                     style({maxHeight: 120, overflow: 'auto', paddingX: 12, paddingY: 8})
-                  }>
+                  }
+                  style={{maxHeight: detailMaxHeight}}>
                   {detail}
                 </div>
               </div>
@@ -678,11 +672,6 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
           <span className={detailTriggerStyles({})}>
             <ShimmerText isPending={status === 'pending'}>{children}</ShimmerText>
           </span>
-          {hasDetail && isAlwaysOpen ? (
-            <div className={executationTradeDetailWrapperStyle}>
-              <div className={executionTraceDetailStyle}>{detail}</div>
-            </div>
-          ) : null}
         </div>
       )}
     </li>
