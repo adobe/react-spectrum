@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
-import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useMemo} from 'react';
 import {
   getAllowedOverrides,
   StylesPropWithHeight,
@@ -110,6 +110,11 @@ export const ActionButtonGroup = forwardRef(function ActionButtonGroup(
     styles
   } = props;
 
+  let context = useMemo(
+    () => ({size, density, orientation, isJustified}),
+    [size, density, orientation, isJustified]
+  );
+
   return (
     <Toolbar
       {...props}
@@ -118,7 +123,7 @@ export const ActionButtonGroup = forwardRef(function ActionButtonGroup(
       className={
         UNSAFE_className + actionGroupStyle({size, density, orientation, isJustified}, styles)
       }>
-      <ActionButtonGroupContext.Provider value={props}>
+      <ActionButtonGroupContext.Provider value={context}>
         {children}
       </ActionButtonGroupContext.Provider>
     </Toolbar>
