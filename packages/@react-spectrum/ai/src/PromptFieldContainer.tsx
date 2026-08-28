@@ -1,5 +1,6 @@
 import {
   brand,
+  convertColor,
   defaultBrand,
   defineProperties,
   keyframes,
@@ -449,11 +450,15 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 height: '100%',
                 boxSizing: 'border-box',
                 borderRadius: 'inherit',
-                backgroundColor: 'blue-800/10',
+                backgroundColor: {
+                  variant: {
+                    subtle: `[${convertColor(color('indigo-800'), 10)}]`
+                  }
+                },
                 borderStyle: 'solid',
                 borderWidth: 2,
-                borderColor: 'blue-800'
-              })}
+                borderColor: `[${convertColor(color('indigo-800'))}]`
+              })({variant})}
             />
           )}
           <div
