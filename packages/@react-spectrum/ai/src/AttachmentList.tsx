@@ -328,7 +328,7 @@ export interface AttachmentListProps<T>
 const flexRow = {
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'center',
+  alignItems: 'center'
 } as const;
 
 const tagListStyles = style<{isCarousel: boolean}>({
@@ -337,7 +337,7 @@ const tagListStyles = style<{isCarousel: boolean}>({
   flexWrap: {default: 'wrap', isCarousel: 'nowrap'},
   overflowX: {isCarousel: 'auto'},
   scrollbarWidth: {isCarousel: 'none'},
-  scrollSnapType: {isCarousel: 'x mandatory'},
+  scrollSnapType: {isCarousel: 'x mandatory'}
 });
 
 const carouselNavButton = style({
@@ -454,11 +454,15 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
 
   return (
     <TagGroup {...otherProps} className={styles} ref={domRef}>
-      <div className={style({...flexRow, gap: 8, display: {default: 'contents', isCarousel: 'flex'}})({isCarousel})}>
-        {isCarousel && <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />}
-        {tagList}
-        {isCarousel && <CarouselNavButton side="end" isDisabled={!canScrollNext} onPress={() => scroll(1)} />}
-      </div>
+      {isCarousel ? (
+        <div className={style({...flexRow, gap: 8})}>
+          <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />
+          {tagList}
+          <CarouselNavButton side="end" isDisabled={!canScrollNext} onPress={() => scroll(1)} />
+        </div>
+      ) : (
+        tagList
+      )}
     </TagGroup>
   );
 });
