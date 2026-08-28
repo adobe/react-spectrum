@@ -24,7 +24,7 @@ export const isSubpage = true;
 
 # v1.21.0
 
-This release introduces the new [NavigationTree](../NavigationTree) for building hierarchical app navigation and adds async loading and empty state support to [Menu](../Menu), along with many bug fixes!
+The new [NavigationTree](../NavigationTree) component can be used for building hierarchical app navigation.
 
 ```tsx render hideCode
 "use client";
@@ -96,6 +96,49 @@ function RoutedNavigationTree(props: {
     </NavigationTree>
   )}
 </RoutedNavigationTree>
+```
+
+[Menu](../Menu#asynchronous-loading) now supports async loading and empty state.
+
+```tsx render hideCode
+"use client"
+
+import {MenuTrigger, Menu, MenuItem, MenuLoadMoreItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
+
+interface Character {
+  name: string;
+  birth_year: string;
+}
+
+function AsyncMenuExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) cursor = cursor.replace(/^http:\/\//i, 'https://');
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+      return {items: json.results, cursor: json.next};
+    }
+  });
+
+  return (
+    <MenuTrigger>
+      <Button>Select Character</Button>
+      <Menu
+        aria-label="Characters"
+        renderEmptyState={() => list.loadingState === 'loading' ? 'Loading…' : 'No characters found'}>
+        <Collection items={list.items}>
+          {(item) => <MenuItem id={item.name}>{item.name}</MenuItem>}
+        </Collection>
+        <MenuLoadMoreItem
+          onLoadMore={list.loadMore}
+          isLoading={list.loadingState === 'loadingMore'} />
+      </Menu>
+    </MenuTrigger>
+  );
+}
 ```
 
 ## Changelog
