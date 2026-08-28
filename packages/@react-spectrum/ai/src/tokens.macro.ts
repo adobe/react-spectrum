@@ -68,7 +68,9 @@ export function brand(l: number, c: number, hueOffset: number, alpha = 1) {
 
 // Converts a single token color value to a brand-relative color, unless it's a
 // neutral (kept as-is) or not a color at all (e.g. an opacity number, kept as-is).
-export function convertColor(value: any) {
+// An optional opacity (0-100) overrides the color's own alpha. Note: neutral
+// colors are returned untouched, so opacity is ignored for them.
+export function convertColor(value: any, opacity?: number) {
   if (typeof value !== 'string') {
     return value;
   }
@@ -78,7 +80,7 @@ export function convertColor(value: any) {
   }
   let parts = match[1].split(',').map(x => parseFloat(x.trim()));
   let [r, g, b] = parts;
-  let alpha = parts[3] ?? 1;
+  let alpha = opacity != null ? opacity / 100 : parts[3] ?? 1;
   let [L, C, H] = rgbToOklch(r, g, b);
   if (C < NEUTRAL_CHROMA) {
     return value;
