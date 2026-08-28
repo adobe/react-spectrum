@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Αποστολή",
   "promptfield.uploading": "Μεταφόρτωση",
   "responsestatus.loading": "Φόρτωση",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Ξεκινήστε την εγγραφή",
   "voicebutton.stopListening": "Διακοπή εγγραφής"
 }

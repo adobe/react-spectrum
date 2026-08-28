@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Lähetä",
   "promptfield.uploading": "Lataaminen",
   "responsestatus.loading": "Ladataan",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Aloita äänitys",
   "voicebutton.stopListening": "Lopeta tallennus"
 }

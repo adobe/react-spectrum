@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Отправить",
   "promptfield.uploading": "Отправка",
   "responsestatus.loading": "Загрузка",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Начать запись",
   "voicebutton.stopListening": "Остановить запись"
 }

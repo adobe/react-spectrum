@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Gönder",
   "promptfield.uploading": "Yükleme",
   "responsestatus.loading": "Yükleniyor",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Kayıtlara başlayın",
   "voicebutton.stopListening": "Kaydı durdur"
 }

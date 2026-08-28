@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Pošlji",
   "promptfield.uploading": "Nalaganje",
   "responsestatus.loading": "Nalaganje",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Začni snemati",
   "voicebutton.stopListening": "Prenehajte snemati"
 }

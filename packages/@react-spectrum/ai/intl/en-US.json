@@ -4,6 +4,7 @@
   "messagefeedback.thumbDown": "Bad response",
   "messagefeedback.thumbUp": "Good response",
   "responsestatus.loading": "Loading",
+  "responsestatus.processing": "Processing...",
   "voicebutton.stopListening": "Stop recording",
   "voicebutton.startListening": "Start recording",
   "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",

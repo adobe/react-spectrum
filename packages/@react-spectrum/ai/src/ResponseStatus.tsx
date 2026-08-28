@@ -37,6 +37,8 @@ import {
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {PixelLoader} from '../exports';
 import {Provider} from 'react-aria-components/slots';
@@ -52,8 +54,10 @@ import React, {
 import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
+import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface ResponseStatusProps extends Omit<
   RACDisclosureProps,
@@ -169,6 +173,7 @@ const disclosureStyles = style({
   color: {
     default: baseColor('neutral-subdued'),
     isExpanded: 'gray-1000',
+    isOnlyText: 'gray-1000',
     forcedColors: 'ButtonText',
     isDisabled: {
       default: 'disabled',
@@ -210,6 +215,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   let {level = 3, styles, pixelLoader, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   const domProps = filterDOMProps(otherProps);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let {status, hasPanelContent} = useContext(ResponseStatusContext)!;
@@ -263,8 +269,9 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
                 </CenterBaseline>
               </Provider>
             )}
-            {/* TODO: translation */}
-            {isLoading && isExpanded ? 'Processing...' : props.children}
+            {isLoading && isExpanded
+              ? stringFormatter.format('responsestatus.processing')
+              : props.children}
             {isInteractive ? (
               <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
                 <Chevron size="M" />
@@ -308,7 +315,7 @@ const panelInner = style({
 
 /**
  * A response status panel is a collapsible section of content that is hidden until the
- * response status is expanded. The panel cannot be expanded while `status` is `'pending'`.
+ * response status is expanded.
  */
 export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   props: ResponseStatusPanelProps,
@@ -401,7 +408,7 @@ const shimmer = css(`
   @media (prefers-reduced-motion: reduce) {
     display: none;
   }
-  
+
   @supports (-webkit-mask-clip: text) {
     mask-image: linear-gradient(white, white);
     -webkit-mask-clip: text;
@@ -579,6 +586,9 @@ const executationTradeDetailWrapperStyle = style({
 });
 
 const executionTraceDetailStyle = style({
+  // focus ring needs to be here instead of child detail div since the fade fades the focus ring
+  ...focusRing(),
+  outlineOffset: -2,
   backgroundColor: 'layer-1',
   borderRadius: 'lg',
   font: 'body-2xs',
@@ -596,6 +606,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   let {detail, detailMaxHeight, icon, children, styles, status = 'success', ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let domProps = filterDOMProps(otherProps);
+  let {isFocusVisible, focusProps} = useFocusRing();
   let hasDetail = detail != null;
 
   return (
@@ -654,11 +665,18 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
           <DetailTrigger isPending={status === 'pending'}>{children}</DetailTrigger>
           <RACDisclosurePanel className={style(panelStyle)}>
             <div className={executationTradeDetailWrapperStyle}>
-              <div className={executionTraceDetailStyle}>
+              <div className={executionTraceDetailStyle({isFocusVisible})}>
                 <div
+                  {...focusProps}
                   className={
                     scrollFade({y: 24}) +
-                    style({maxHeight: 120, overflow: 'auto', paddingX: 12, paddingY: 8})
+                    style({
+                      outlineStyle: 'none',
+                      maxHeight: 120,
+                      overflow: 'auto',
+                      paddingX: 12,
+                      paddingY: 8
+                    })
                   }
                   style={{maxHeight: detailMaxHeight}}>
                   {detail}

@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Sūtīt",
   "promptfield.uploading": "Augšupielāde",
   "responsestatus.loading": "Notiek ielāde",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Sāciet ierakstīt",
   "voicebutton.stopListening": "Pārtraukt ierakstu"
 }

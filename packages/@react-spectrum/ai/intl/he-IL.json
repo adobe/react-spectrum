@@ -13,6 +13,7 @@
   "promptfield.submitButton": "שלח",
   "promptfield.uploading": "העלאה",
   "responsestatus.loading": "בטעינה…",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "התחל להקליט",
   "voicebutton.stopListening": "הפסק להקליט"
 }

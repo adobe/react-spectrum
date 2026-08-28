@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Siųsti",
   "promptfield.uploading": "Įkėlimas",
   "responsestatus.loading": "Įkeliama",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Pradėkite įrašinėti",
   "voicebutton.stopListening": "Sustabdyti įrašymą"
 }

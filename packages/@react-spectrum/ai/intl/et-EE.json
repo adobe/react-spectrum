@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Saada",
   "promptfield.uploading": "Üleslaadimine",
   "responsestatus.loading": "Laadimine",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Alusta salvestamist",
   "voicebutton.stopListening": "Lõpeta salvestamine"
 }

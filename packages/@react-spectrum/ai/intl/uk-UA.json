@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Відправити",
   "promptfield.uploading": "Завантаження",
   "responsestatus.loading": "Завантаження",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Починайте запис",
   "voicebutton.stopListening": "Припиніть запис"
 }

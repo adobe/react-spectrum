@@ -13,6 +13,7 @@
   "promptfield.submitButton": "Elküldöm",
   "promptfield.uploading": "Feltöltés",
   "responsestatus.loading": "Betöltés folyamatban",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Kezdj el felvételt",
   "voicebutton.stopListening": "Felvétel abbahagyása"
 }
