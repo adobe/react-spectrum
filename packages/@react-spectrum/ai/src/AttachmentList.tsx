@@ -54,6 +54,7 @@ import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Tag,
@@ -322,16 +323,8 @@ const tagListStyles = style<{isCarousel: boolean}>({
   scrollbarWidth: {isCarousel: 'none'},
   scrollSnapType: {isCarousel: 'x mandatory'},
   flexGrow: {isCarousel: 1},
-  padding: {isCarousel: 12}
+  paddingX: {isCarousel: 12}
 });
-
-// Fades the peeking edge attachment to read as more content, not a hard clip.
-const carouselMaskImage =
-  'linear-gradient(to right, transparent, black 32px, black calc(100% - 32px), transparent)';
-const carouselMask = {
-  WebkitMaskImage: carouselMaskImage,
-  maskImage: carouselMaskImage
-} as const;
 
 const carouselNavButton = style({
   flexShrink: 0,
@@ -440,14 +433,13 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
       items={items}
       dependencies={dependencies}
       onScroll={updateScrollState}
-      className={tagListStyles({isCarousel})}
-      style={isCarousel ? carouselMask : undefined}>
+      className={tagListStyles({isCarousel}) + ' ' + (isCarousel ? scrollFade({x: 32}) : '')}>
       {children}
     </TagList>
   );
 
   return (
-    <TagGroup {...otherProps} className={mergeStyles(style({maxWidth: 700}), styles)} ref={domRef}>
+    <TagGroup {...otherProps} className={styles} ref={domRef}>
       {isCarousel ? (
         <div className={style({...flexRow, gap: 8})}>
           <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />
@@ -612,7 +604,7 @@ export const Attachment = forwardRef(function Attachment(
           position: 'absolute',
           top: 0,
           insetEnd: 0,
-          transform: 'translate(50%, -50%)'
+          transform: 'translate(25%, -25%)'
         })}>
         <CloseButton size="XS" />
       </div>

@@ -304,7 +304,7 @@ export function scrollFade(this: any | void, options: ScrollFadeOptions) {
     '100%'
   );
   let animations = [topAnimation, bottomAnimation, leftAnimation, rightAnimation];
-  let timeline = ['scroll(self y)', 'scroll(self y)', 'scroll(self x)', 'scroll(self y)']
+  let timeline = ['scroll(self y)', 'scroll(self y)', 'scroll(self x)', 'scroll(self x)']
     .filter((_, i) => animations[i])
     .join(', ');
   let range = [
