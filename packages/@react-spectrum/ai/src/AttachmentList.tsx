@@ -261,6 +261,25 @@ const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
   gridArea: 'description'
 });
 
+const attachmentContent = style({
+  display: 'grid',
+  gridTemplateColumns: ['minmax(0, 1fr)'],
+  gridTemplateAreas: ['title', 'description'],
+  columnGap: 4,
+  flexGrow: 1,
+  minWidth: 0,
+  alignItems: 'baseline',
+  alignContent: 'start',
+  paddingStart: {
+    default: '--card-spacing',
+    ':first-child': 0
+  },
+  paddingEnd: {
+    default: 'calc(var(--card-spacing) * 1.5 / 2)',
+    ':last-child': 0
+  }
+});
+
 const CloseButton = function CloseButton(props) {
   let ref = useRef(null);
   // oxlint-disable react/react-compiler
@@ -315,15 +334,11 @@ const flexRow = {
 
 const tagListStyles = style<{isCarousel: boolean}>({
   ...flexRow,
-  gap: 16,
-  minWidth: 0,
+  gap: 8,
   flexWrap: {default: 'wrap', isCarousel: 'nowrap'},
   overflowX: {isCarousel: 'auto'},
-  overflowY: {isCarousel: 'hidden'},
   scrollbarWidth: {isCarousel: 'none'},
   scrollSnapType: {isCarousel: 'x mandatory'},
-  flexGrow: {isCarousel: 1},
-  paddingX: {isCarousel: 12}
 });
 
 const carouselNavButton = style({
@@ -440,15 +455,11 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
 
   return (
     <TagGroup {...otherProps} className={styles} ref={domRef}>
-      {isCarousel ? (
-        <div className={style({...flexRow, gap: 8})}>
-          <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />
-          {tagList}
-          <CarouselNavButton side="end" isDisabled={!canScrollNext} onPress={() => scroll(1)} />
-        </div>
-      ) : (
-        tagList
-      )}
+      <div className={style({...flexRow, gap: 8, display: {default: 'contents', isCarousel: 'flex'}})({isCarousel})}>
+        {isCarousel && <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />}
+        {tagList}
+        {isCarousel && <CarouselNavButton side="end" isDisabled={!canScrollNext} onPress={() => scroll(1)} />}
+      </div>
     </TagGroup>
   );
 });
@@ -537,24 +548,7 @@ function AttachmentCard({
           [
             ContentContext,
             {
-              styles: style({
-                display: 'grid',
-                gridTemplateColumns: ['minmax(0, 1fr)'],
-                gridTemplateAreas: ['title', 'description'],
-                columnGap: 4,
-                flexGrow: 1,
-                minWidth: 0,
-                alignItems: 'baseline',
-                alignContent: 'start',
-                paddingStart: {
-                  default: '--card-spacing',
-                  ':first-child': 0
-                },
-                paddingEnd: {
-                  default: 'calc(var(--card-spacing) * 1.5 / 2)',
-                  ':last-child': 0
-                }
-              }),
+              styles: attachmentContent,
               // @ts-ignore
               'data-slot': 'content'
             }
