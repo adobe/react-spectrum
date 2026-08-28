@@ -416,7 +416,7 @@ export interface PromptTokenFieldProps {
   ) => React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   children?: (segment: TokenSegment<PromptFieldTokenValue>) => React.ReactElement;
   pixelLoader?: Cell[] | Cell[][];
-  disablePixelLoaderAnimation?: boolean;
+  shouldAnimatePixelLoader?: boolean;
   placeholder?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   // TODO: temp api for coworker so that the weird popover shrinking behavior
@@ -430,7 +430,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     renderCompletions,
     children,
     pixelLoader,
-    disablePixelLoaderAnimation,
+    shouldAnimatePixelLoader = false,
     placeholder,
     menuWidth,
     onKeyDown: onKeyDownProp
@@ -553,7 +553,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
       })({isFocused: isFocused || prompt.segments.length > 0})}>
       <CenterBaseline>
         <PixelLoader
-          isPlaying={isGenerating && !disablePixelLoaderAnimation}
+          isPlaying={isGenerating && shouldAnimatePixelLoader}
           icon={pixelLoader}
           color="var(--loader-color)"
           className={style({

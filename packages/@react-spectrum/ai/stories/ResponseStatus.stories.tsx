@@ -264,7 +264,7 @@ function WithExecutionTraceRender(args) {
       </ResponseStatus>
       <p className={style({font: 'body', flexGrow: 1})}>This is an example response.</p>
       <PromptField isGenerating={isStreaming}>
-        <PromptTokenField pixelLoader={data[args.pixelLoader]} disablePixelLoaderAnimation>
+        <PromptTokenField pixelLoader={data[args.pixelLoader]}>
           {token => <PromptToken token={token}>{token.text}</PromptToken>}
         </PromptTokenField>
         <PromptFieldToolbar>
