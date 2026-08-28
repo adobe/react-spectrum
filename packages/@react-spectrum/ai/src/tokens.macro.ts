@@ -344,16 +344,18 @@ function scrollFadeKeyframes(this: any, name: string, start: string, end: string
     return '';
   }
 
-  this.addAsset({
-    type: 'css',
-    content: `
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: `
     @property --scroll-fade-${name} {
       syntax: "<length-percentage>";
       inherits: false;
       initial-value: ${initial};
     }
   `
-  });
+    });
+  }
 
   return keyframes.call(
     this,
