@@ -35,8 +35,6 @@ import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
 import FileText from '@react-spectrum/s2/icons/FileText';
-// @ts-ignore
-import {IllustrationContext} from '@react-spectrum/s2/Icon';
 import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
@@ -195,7 +193,7 @@ const attachmentCard = style({
   justifyContent: {
     [onlyPreview]: 'center'
   },
-  '--basic-thumb-size': {
+  '--image-size': {
     type: 'height',
     value: {
       size: {
@@ -208,41 +206,13 @@ const attachmentCard = style({
       [onlyPreview]: 'full'
     }
   },
-  '--illust-thumb-size': {
-    type: 'height',
+  '--image-border-radius': {
+    type: 'borderTopStartRadius',
     value: {
-      size: {
-        XS: 48,
-        S: 44,
-        M: 48,
-        L: 52,
-        XL: 56
-      },
-      [onlyPreview]: 'full'
-    }
-  },
-  '--illust-margin-x': {
-    type: 'marginStart',
-    value: {
-      size: {
-        XS: -8,
-        S: -8,
-        M: -12,
-        L: -12,
-        XL: -12
-      }
+      default: '[3px]',
+      [onlyPreview]: 'lg'
     }
   }
-});
-
-const illustThumbnailStyles = style({
-  position: 'relative',
-  alignSelf: 'center',
-  flexShrink: 0,
-  pointerEvents: 'none',
-  userSelect: 'none',
-  size: '--illust-thumb-size',
-  marginX: '--illust-margin-x'
 });
 
 const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
@@ -421,26 +391,14 @@ function AttachmentCard({
                     flexShrink: 0,
                     pointerEvents: 'none',
                     userSelect: 'none',
-                    size: '--basic-thumb-size',
-                    borderRadius: 'inherit',
+                    size: '--image-size',
+                    borderRadius: '--image-border-radius',
                     objectFit: 'cover',
                     outlineStyle: 'solid',
                     outlineWidth: 1,
                     outlineColor: 'gray-800/10',
                     outlineOffset: -1
                   })
-                }
-              }
-            }
-          ],
-          [
-            IllustrationContext,
-            {
-              slots: {
-                thumbnail: {
-                  styles: illustThumbnailStyles,
-                  // @ts-ignore
-                  'data-rsp-slot': 'illustration'
                 }
               }
             }
