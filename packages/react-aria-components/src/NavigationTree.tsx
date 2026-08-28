@@ -82,7 +82,7 @@ interface NavigationTreeItemLinkContextValue {
 }
 const NavigationTreeItemLinkContext = createContext<NavigationTreeItemLinkContextValue>({});
 
-const NavigationTreeItemStateContext = createContext<{isCurrentAncestor: boolean}>({
+export const NavigationTreeItemStateContext = createContext<{isCurrentAncestor: boolean}>({
   isCurrentAncestor: false
 });
 
@@ -305,17 +305,7 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
   }
 );
 
-export interface NavigationTreeItemContentRenderProps extends TreeItemContentRenderProps {
-  /**
-   * Whether this item is the current route (its `href` matches the NavigationTree's
-   * `selectedRoute`).
-   *
-   * @selector [data-current]
-   */
-  isCurrent: boolean;
-  /** Whether this item is an ancestor of the current-route item. */
-  isCurrentAncestor: boolean;
-}
+export interface NavigationTreeItemContentRenderProps extends NavigationTreeItemRenderProps {}
 
 export interface NavigationTreeItemContentProps {
   /**

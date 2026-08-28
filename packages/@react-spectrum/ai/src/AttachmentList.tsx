@@ -35,8 +35,6 @@ import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
 import FileText from '@react-spectrum/s2/icons/FileText';
-// @ts-ignore
-import {IllustrationContext} from '@react-spectrum/s2/Icon';
 import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
@@ -91,14 +89,14 @@ const closeButton = style<{
   borderStyle: 'none',
   transition: 'default',
   backgroundColor: {
-    default: baseColor('gray-900'),
-    forcedColors: 'ButtonText'
+    default: baseColor('gray-200'),
+    forcedColors: 'ButtonFace'
   },
   color: {
-    default: baseColor('gray-25'),
+    default: baseColor('neutral'),
     isDisabled: 'disabled',
     forcedColors: {
-      default: 'ButtonFace',
+      default: 'ButtonText',
       isDisabled: 'GrayText'
     }
   },
@@ -117,10 +115,11 @@ const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview
 
 const container = {
   backgroundColor: {
-    default: lightDark('white/5', 'black/5'),
+    default: lightDark('black/3', 'white/3'),
+    isInvalid: 'red-700/8',
     forcedColors: 'ButtonFace'
   },
-  boxShadow: `[inset 0 0 0 1px light-dark(${color('black/5')}, ${color('white/5')}), 0 8px 32px 0 light-dark(${color('transparent-white-50')}, ${color('transparent-black-50')}), inset 0 -5px 21.6px 0 ${color('transparent-white-50')}, inset 0 24px 32px 0 ${color('transparent-white-50')}]`
+  boxShadow: `[0 8px 32px 0 light-dark(${color('transparent-black-50')}, ${color('transparent-white-50')})]`
 } as const;
 
 const attachmentCard = style({
@@ -130,16 +129,11 @@ const attachmentCard = style({
   position: 'relative',
   borderRadius: 'lg',
   outlineStyle: 'solid',
-  outlineWidth: {
-    default: 1, // WHCM
-    isInvalid: 2
-  },
-  outlineOffset: {
-    default: -1,
-    isInvalid: -2
-  },
+  outlineWidth: 1,
+  outlineOffset: -1,
   outlineColor: {
-    default: 'transparent',
+    default: lightDark('black/3', 'white/3'),
+    isLoading: lightDark('black/2', 'white/2'),
     forcedColors: 'ButtonBorder',
     isInvalid: {
       default: 'negative-900',
@@ -199,7 +193,7 @@ const attachmentCard = style({
   justifyContent: {
     [onlyPreview]: 'center'
   },
-  '--basic-thumb-size': {
+  '--image-size': {
     type: 'height',
     value: {
       size: {
@@ -212,41 +206,13 @@ const attachmentCard = style({
       [onlyPreview]: 'full'
     }
   },
-  '--illust-thumb-size': {
-    type: 'height',
+  '--image-border-radius': {
+    type: 'borderTopStartRadius',
     value: {
-      size: {
-        XS: 48,
-        S: 44,
-        M: 48,
-        L: 52,
-        XL: 56
-      },
-      [onlyPreview]: 'full'
-    }
-  },
-  '--illust-margin-x': {
-    type: 'marginStart',
-    value: {
-      size: {
-        XS: -8,
-        S: -8,
-        M: -12,
-        L: -12,
-        XL: -12
-      }
+      default: '[3px]',
+      [onlyPreview]: 'lg'
     }
   }
-});
-
-const illustThumbnailStyles = style({
-  position: 'relative',
-  alignSelf: 'center',
-  flexShrink: 0,
-  pointerEvents: 'none',
-  userSelect: 'none',
-  size: '--illust-thumb-size',
-  marginX: '--illust-margin-x'
 });
 
 const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
@@ -398,12 +364,20 @@ const tagStyles = style({
 interface AttachmentCardProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   isInvalid?: boolean;
+  isLoading?: boolean;
   children: ReactNode;
 }
 
-function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCardProps) {
+function AttachmentCard({
+  size = 'M',
+  isInvalid = false,
+  isLoading = false,
+  children
+}: AttachmentCardProps) {
   return (
-    <div aria-invalid={isInvalid || undefined} className={attachmentCard({size, isInvalid})}>
+    <div
+      aria-invalid={isInvalid || undefined}
+      className={attachmentCard({size, isInvalid, isLoading})}>
       <Provider
         values={[
           [
@@ -418,26 +392,14 @@ function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCar
                     flexShrink: 0,
                     pointerEvents: 'none',
                     userSelect: 'none',
-                    size: '--basic-thumb-size',
-                    borderRadius: '[3px]',
+                    size: '--image-size',
+                    borderRadius: '--image-border-radius',
                     objectFit: 'cover',
                     outlineStyle: 'solid',
                     outlineWidth: 1,
                     outlineColor: 'gray-800/10',
                     outlineOffset: -1
                   })
-                }
-              }
-            }
-          ],
-          [
-            IllustrationContext,
-            {
-              slots: {
-                thumbnail: {
-                  styles: illustThumbnailStyles,
-                  // @ts-ignore
-                  'data-rsp-slot': 'illustration'
                 }
               }
             }
@@ -483,6 +445,7 @@ export const Attachment = forwardRef(function Attachment(
     size = 'M'
   } = props;
   let domRef = useDOMRef(ref);
+  let isLoading = props.uploadProgress != null && props.uploadProgress < 100;
   return (
     <Tag
       id={id}
@@ -492,7 +455,7 @@ export const Attachment = forwardRef(function Attachment(
       aria-describedby={ariaDescribedby}
       ref={domRef}
       className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
-      <AttachmentCard size={size} isInvalid={isInvalid}>
+      <AttachmentCard size={size} isInvalid={isInvalid} isLoading={isLoading}>
         <AttachmentPreviewContext.Provider
           value={{isInvalid: !!isInvalid, uploadProgress: props.uploadProgress ?? 100, size}}>
           {typeof children === 'function' ? children({size}) : children}

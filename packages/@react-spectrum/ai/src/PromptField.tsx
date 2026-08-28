@@ -91,7 +91,7 @@ export interface PromptFieldProps {
   attachments?: PromptFieldAttachment[];
   defaultAttachments?: PromptFieldAttachment[];
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
-  onSubmit?: (prompt: TokenFieldValue, attachments: PromptFieldAttachment[]) => void;
+  onSubmit?: (prompt: PromptFieldValue, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
