@@ -31,6 +31,7 @@ export type {
 export type {AriaTableCellProps, TableCellAria} from '../src/table/useTableCell';
 export type {TableHeaderRowAria} from '../src/table/useTableHeaderRow';
 export type {
+  AriaTableSelectAllCheckboxProps,
   AriaTableSelectionCheckboxProps,
   TableSelectionCheckboxAria,
   TableSelectAllCheckboxAria

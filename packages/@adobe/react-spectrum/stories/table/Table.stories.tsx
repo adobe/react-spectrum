@@ -920,6 +920,44 @@ export const CustomRowHeaderLabeling: TableStory = {
   }
 };
 
+export const CustomSelectAllLabel: TableStory = {
+  args: {
+    'aria-label': 'Items',
+    selectionMode: 'multiple',
+    selectAllLabel: 'Select all items',
+    width: 500,
+    height: 200
+  },
+  render: args => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column key="foo">Foo</Column>
+        <Column key="bar">Bar</Column>
+        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+        <Row>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'custom select all labeling',
+  parameters: {
+    description: {
+      content:
+        'Overrides the accessible label of the select all checkbox in the table header via selectAllLabel.'
+    }
+  }
+};
+
 export const CRUD: TableStory = {
   render: args => <CRUDExample {...args} />,
   name: 'CRUD'
