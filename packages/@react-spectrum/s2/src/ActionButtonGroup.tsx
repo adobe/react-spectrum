@@ -104,15 +104,19 @@ export const ActionButtonGroup = forwardRef(function ActionButtonGroup(
     size = 'M',
     orientation = 'horizontal',
     isJustified,
+    isQuiet,
+    staticColor,
+    isDisabled,
     children,
     UNSAFE_className = '',
     UNSAFE_style,
     styles
   } = props;
 
+  // Make sure we get all the same defaults as the ActionButtonGroup
   let context = useMemo(
-    () => ({size, density, orientation, isJustified}),
-    [size, density, orientation, isJustified]
+    () => ({size, density, orientation, isJustified, isQuiet, staticColor, isDisabled}),
+    [size, density, orientation, isJustified, isQuiet, staticColor, isDisabled]
   );
 
   return (
