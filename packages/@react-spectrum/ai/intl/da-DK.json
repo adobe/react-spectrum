@@ -14,6 +14,7 @@
   "promptfield.submitButton": "Send",
   "promptfield.uploading": "Upload",
   "responsestatus.loading": "Indlæser",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Start optagelsen",
   "voicebutton.stopListening": "Stop optagelsen"
 }

@@ -14,6 +14,7 @@
   "promptfield.submitButton": "Invia",
   "promptfield.uploading": "Caricamento",
   "responsestatus.loading": "Caricamento",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Avvia registrazione",
   "voicebutton.stopListening": "Interrompi registrazione"
 }

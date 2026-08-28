@@ -14,6 +14,7 @@
   "promptfield.submitButton": "发送",
   "promptfield.uploading": "正在上载",
   "responsestatus.loading": "加载",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "开始录制",
   "voicebutton.stopListening": "停止录制"
 }

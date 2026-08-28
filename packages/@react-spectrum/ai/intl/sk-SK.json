@@ -14,6 +14,7 @@
   "promptfield.submitButton": "Odoslať",
   "promptfield.uploading": "Nahrávanie",
   "responsestatus.loading": "Načítava sa",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Začni nahrávať",
   "voicebutton.stopListening": "Zastavte nahrávanie"
 }

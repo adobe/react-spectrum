@@ -14,6 +14,7 @@
   "promptfield.submitButton": "Enviar",
   "promptfield.uploading": "Carregando",
   "responsestatus.loading": "Carregando",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Iniciar gravação",
   "voicebutton.stopListening": "Parar gravação"
 }

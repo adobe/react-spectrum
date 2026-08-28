@@ -14,6 +14,7 @@
   "promptfield.submitButton": "Изпрати",
   "promptfield.uploading": "Качване",
   "responsestatus.loading": "Зареждане",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Започнете запис",
   "voicebutton.stopListening": "Спри записа"
 }

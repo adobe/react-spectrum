@@ -14,6 +14,7 @@
   "promptfield.submitButton": "전송",
   "promptfield.uploading": "업로드",
   "responsestatus.loading": "로드 중",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "기록 시작",
   "voicebutton.stopListening": "기록 중지"
 }

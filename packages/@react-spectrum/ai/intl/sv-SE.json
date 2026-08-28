@@ -14,6 +14,7 @@
   "promptfield.submitButton": "Skicka",
   "promptfield.uploading": "Överför",
   "responsestatus.loading": "Läser in",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Starta inspelning",
   "voicebutton.stopListening": "Stoppa inspelning"
 }

@@ -14,6 +14,7 @@
   "promptfield.submitButton": "Send",
   "promptfield.uploading": "Uploading",
   "responsestatus.loading": "Učitavanje",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Start recording",
   "voicebutton.stopListening": "Stop recording"
 }
