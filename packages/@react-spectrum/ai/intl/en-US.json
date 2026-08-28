@@ -7,6 +7,7 @@
   "voicebutton.stopListening": "Stop recording",
   "voicebutton.startListening": "Start recording",
   "promptfield.placeholder": "Ready to get started? Ask a question, share an idea, or add a task.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.aiDisclaimer": "Responses are generated using AI, and may be inaccurate. Check before using.",
   "promptfield.aiUserGuidlines": "AI User Guidelines",
   "promptfield.attachments": "Attachments",

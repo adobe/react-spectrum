@@ -9,6 +9,7 @@
   "promptfield.insertButton": "Додати",
   "promptfield.label": "Підказка",
   "promptfield.placeholder": "Готові розпочати? Задайте запитання, поділіться ідеєю або додайте завдання.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Стоп",
   "promptfield.submitButton": "Відправити",
   "promptfield.uploading": "Завантаження",

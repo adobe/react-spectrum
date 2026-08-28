@@ -109,10 +109,10 @@ const meta: Meta<typeof PromptField> = {
   },
   title: 'AI/PromptField',
   decorators: [
-    Story => (
+    (Story, {args}) => (
       <div
         style={{
-          width: '800px',
+          width: args.size === 'S' ? '300px' : '800px',
           maxWidth: '90vw',
           margin: '0 auto'
         }}>

@@ -369,7 +369,7 @@ export const PromptField = forwardRef(function PromptField(
             inputRef={inputRef}>
             {children}
           </PromptFieldContainer>
-          <p className={style({font: 'ui-sm', textAlign: 'center'})}>
+          <p className={style({font: 'ui-sm', color: 'gray-600', textAlign: 'center'})}>
             {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
             <Link
               variant="secondary"
@@ -534,7 +534,12 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     <div
       className={style({
         display: 'flex',
-        gap: 12,
+        gap: {
+          size: {
+            M: 12,
+            S: 8
+          }
+        },
         alignItems: 'baseline',
         color: {
           default: 'transparent-overlay-600',
@@ -542,8 +547,14 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           forcedColors: 'ButtonText'
         },
         transition: 'default',
-        transitionDuration: 350,
-        paddingStart: space(5),
+        transitionDuration: 700,
+        transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]',
+        paddingStart: {
+          size: {
+            M: space(5),
+            S: 2
+          }
+        },
         width: 'full',
         '--loader-color': {
           type: 'color',
@@ -561,17 +572,18 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             forcedColors: 1
           }
         }
-      })({isFocused: isFocused || prompt.segments.length > 0})}>
+      })({size, isFocused: isFocused || prompt.segments.length > 0})}>
       <CenterBaseline>
         <PixelLoader
-          size={size === 'S' ? 19 : 21} // why the extra 1px? smaller size looks pretty bad
+          size={21}
           isPlaying={isGenerating}
           icon={pixelLoader}
           color="var(--loader-color)"
           className={style({
             opacity: '--loader-opacity',
             transition: 'opacity',
-            transitionDuration: 350
+            transitionDuration: 700,
+            transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
           })}
         />
       </CenterBaseline>
@@ -638,29 +650,38 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
               : undefined
           }>
           <TokenInput
-            data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
+            data-placeholder={
+              placeholder ||
+              stringFormatter.format(
+                size === 'S' ? 'promptfield.placeholder.small' : 'promptfield.placeholder'
+              )
+            }
             ref={inputRef}
             className={
               css('&:empty::before { content: attr(data-placeholder); }') +
-              style({
+              style<{size: 'S' | 'M'; isFocused: boolean}>({
                 font: {
                   default: 'body',
                   size: {
-                    default: 'body',
+                    M: 'body',
                     S: 'body-sm'
                   }
                 },
                 color: {
                   default: 'neutral',
                   ':empty': {
-                    default: 'gray-600',
+                    default: 'transparent-overlay-1000/56',
+                    isFocused: 'transparent-overlay-1000/80',
                     forcedColors: 'GrayText'
                   }
                 },
                 width: 'full',
                 outlineStyle: 'none',
-                cursor: 'text'
-              })({size})
+                cursor: 'text',
+                transition: 'colors',
+                transitionDuration: 700,
+                transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
+              })({size, isFocused})
             }>
             {useCallback(
               (token: TokenSegment<PromptFieldTokenValue>) => {
@@ -770,12 +791,18 @@ export interface PromptTokenProps extends Omit<TokenProps, 'children' | 'render'
 }
 
 export function PromptToken(props: PromptTokenProps) {
+  let {size} = useContext(PromptFieldContext)!;
   return (
     <Token
       {...props}
       className={renderProps =>
         style({
-          font: 'ui',
+          font: {
+            size: {
+              M: 'ui',
+              S: 'ui-sm'
+            }
+          },
           backgroundColor: {
             default: 'transparent-overlay-1000/10',
             isSelected: 'blue-800'
@@ -799,19 +826,24 @@ export function PromptToken(props: PromptTokenProps) {
           boxDecorationBreak: 'clone',
           paddingX: 8,
           // not using inline-flex here due to a text selection bug in WebKit.
-          paddingY: space(3),
+          paddingY: {
+            size: {
+              M: space(3),
+              S: 2
+            }
+          },
           lineHeight: '[1em]',
           cursor: 'default',
           '--iconPrimary': {
             type: 'fill',
             value: 'currentColor'
           }
-        })({...renderProps, isPlaceholder: props.token.value?.type === 'placeholder'})
+        })({...renderProps, isPlaceholder: props.token.value?.type === 'placeholder', size})
       }>
       <IconContext.Provider
         value={{
           styles: style({
-            size: 14,
+            size: '1lh',
             display: 'inline-block',
             verticalAlign: '[-0.18em]',
             marginEnd: 4

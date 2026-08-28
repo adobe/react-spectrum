@@ -9,6 +9,7 @@
   "promptfield.insertButton": "追加",
   "promptfield.label": "プロンプト",
   "promptfield.placeholder": "開始する準備は整いましたか？質問をしたり、アイデアを共有したり、タスクを追加したりします。",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "停止",
   "promptfield.submitButton": "送信",
   "promptfield.uploading": "アップロード中",

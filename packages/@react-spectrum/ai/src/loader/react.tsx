@@ -309,9 +309,9 @@ export function PixelLoader(props: PixelLoaderProps) {
         position: 'relative',
         // @ts-ignore
         forcedColorAdjust: 'none',
+        willChange: 'opacity',
         ...(isPlaying && {
-          animation: `${animId}-group-o ${duration}ms linear ${iteration}`,
-          willChange: 'opacity'
+          animation: `${animId}-group-o ${duration}ms linear ${iteration}`
         })
       }}
       {...rest}>

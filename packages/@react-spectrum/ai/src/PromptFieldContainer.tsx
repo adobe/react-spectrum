@@ -63,7 +63,7 @@ const containerBackground = css(`
 
   background:
     radial-gradient(
-      circle at right bottom in oklch,
+      circle at right bottom in oklab,
       var(--bg-stop-1) 0%,
       var(--bg-stop-2) 35%,
       var(--bg-stop-3) 82%,
@@ -75,22 +75,21 @@ const containerBackground = css(`
   --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
   --prominent-outer-glow: ;
   --prominent-inset-glow: ;
+  --subtle-shadow: ;
 
   /* Only the non-inset (outward) shadows live here: the inset shadows are painted
      on top of the background layers by a separate element (insetShadow below), since
      this element's overflow:clip must stay on this box to clip the outward shadows. */
   box-shadow:
+    var(--subtle-shadow)
     var(--prominent-outer-glow)
-    0 -3px 10px 1px var(--drop-shadow-color);
+    0 3px 10px 1px var(--drop-shadow-color);
 
-  &[data-variant=prominent] {
+  &[data-variant=prominent],
+  &[data-state=generating] {
     /* trailing comma is intentional so it can be interpolated above */
     --prominent-outer-glow: 0 20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
     --prominent-inset-glow: inset 0 -20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
-    &[data-focused] {
-      --prominent-outer-glow: 0 20px 20px -24px transparent,;
-      --prominent-inset-glow: inset 0 -20px 20px -24px transparent,;
-    }
   }
 
   &[data-state=idle] {
@@ -108,9 +107,15 @@ const containerBackground = css(`
       &[data-hovered] {
         ${stops('idle', 'hover', 'prominent')}
       }
+
+      &[data-focused] {
+        --prominent-outer-glow: 0 20px 20px -24px transparent,;
+        --prominent-inset-glow: inset 0 -20px 20px -24px transparent,;
+      }
     }
 
     &[data-variant=subtle] {
+      --subtle-shadow: 0 8px 32px ${color('transparent-black-75')},;
       --con-hue-opacity: 0%;
       --bg-stop-1: light-dark(white, ${color('gray-75')});
       --bg-stop-2: light-dark(white, ${color('gray-75')});
@@ -123,6 +128,9 @@ const containerBackground = css(`
         ${stops('idle', 'hover', 'subtle')}
         --border-color: ${token(`container.border.default`)};
         --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
+        &:where([data-size=M]) {
+          --subtle-shadow: 0 0 0 transparent;
+        }
       }
     }
 
@@ -135,14 +143,16 @@ const containerBackground = css(`
       --border-color: ${token(`container.border.focus`)};
       --inset-shadow-color: transparent;
       --drop-shadow-color: transparent;
+      --subtle-shadow: 0 8px 32px ${color('transparent-black-75')},;
     }
   }
 
   &[data-state=generating] {
+    --generating-glow: 0 6px 83px rgb(from ${token('outer-border.gradient.ob-spread-shadow.generating.stop-3')} r g b / var(--spread-shadow-opacity));
     box-shadow:
       var(--prominent-outer-glow)
-      0 -3px 10px 1px var(--drop-shadow-color),
-      0 6px 83px rgb(from ${token('outer-border.gradient.ob-spread-shadow.generating.stop-3')} r g b / var(--spread-shadow-opacity));
+      0 3px 10px 1px var(--drop-shadow-color),
+      var(--generating-glow);
 
     &[data-variant=balanced] {
       --spread-shadow-opacity: ${token('outer-border.opacity.spread-bg-balanced')}%;
@@ -169,6 +179,10 @@ const containerBackground = css(`
       &[data-hovered] {
         ${stops('generating', 'hover', 'subtle')}
       }
+    }
+
+    &[data-size=S] {
+      --generating-glow: 0 0 0 transparent;
     }
   }
 `);
@@ -341,8 +355,16 @@ interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
 }
 
 export function PromptFieldContainer(props: PropFieldContainerProps) {
-  let {variant, isGenerating, isDropTarget, styles, inputRef, brandColor, size, ...otherProps} =
-    props;
+  let {
+    variant,
+    isGenerating,
+    isDropTarget,
+    styles,
+    inputRef,
+    brandColor,
+    size = 'M',
+    ...otherProps
+  } = props;
   let [isFocused, setFocused] = useState(false);
 
   return (
@@ -386,12 +408,18 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
           data-focused={isFocused || undefined}
           data-variant={variant}
           data-state={isGenerating ? 'generating' : 'idle'}
+          data-size={size}
           className={
             ' ' +
             containerBackground +
             mergeStyles(
               style({
-                borderRadius: '[24px]',
+                borderRadius: {
+                  size: {
+                    M: '[24px]',
+                    S: 'xl'
+                  }
+                },
                 position: 'relative',
                 overflow: 'clip',
                 outlineStyle: 'solid',
@@ -407,7 +435,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                   default: 1,
                   ':has([contenteditable][data-focus-visible])': 2
                 }
-              }),
+              })({size}),
               styles
             )
           }>
