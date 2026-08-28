@@ -100,6 +100,12 @@ export interface PromptFieldProps {
   styles?: StyleString;
   variant?: 'balanced' | 'prominent' | 'subtle';
   brandColor?: string;
+  /**
+   * The size of the PromptField.
+   *
+   * @default 'M'
+   */
+  size?: 'S' | 'M';
 }
 
 interface PromptFieldState {
@@ -221,7 +227,7 @@ export class PromptFieldValue extends TokenFieldValue<PromptFieldTokenValue> {
   }
 }
 
-const PromptFieldContext = createContext<PromptFieldState>({
+const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
   attachments: [],
   setAttachments: () => {},
   prompt: new PromptFieldValue([]),
@@ -229,7 +235,8 @@ const PromptFieldContext = createContext<PromptFieldState>({
   inputRef: createRef(),
   isGenerating: false,
   isListening: false,
-  setListening: () => {}
+  setListening: () => {},
+  size: 'M'
 });
 
 // to communicate the anchor position to the menu items in the completion popover
@@ -262,7 +269,8 @@ export const PromptField = forwardRef(function PromptField(
     onAddAttachments,
     onRemoveAttachments,
     variant = 'balanced',
-    brandColor
+    brandColor,
+    size = 'M'
   } = props;
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
@@ -338,19 +346,21 @@ export const PromptField = forwardRef(function PromptField(
         setListening,
         onStop,
         onAddAttachments,
-        onRemoveAttachments
+        onRemoveAttachments,
+        size
       }}>
       <Provider
         values={[
-          [ButtonContext, {staticColor: 'auto'}],
-          [LinkButtonContext, {staticColor: 'auto'}],
-          [ActionButtonContext, {staticColor: 'auto'}],
-          [ToggleButtonContext, {staticColor: 'auto'}]
+          [ButtonContext, {staticColor: 'auto', size}],
+          [LinkButtonContext, {staticColor: 'auto', size}],
+          [ActionButtonContext, {staticColor: 'auto', size}],
+          [ToggleButtonContext, {staticColor: 'auto', size}]
         ]}>
         <div ref={domRef} {...focusWithinProps}>
           <PromptFieldContainer
             {...dropProps}
             role="group"
+            size={size}
             variant={variant}
             brandColor={brandColor}
             isGenerating={isGenerating ?? false}
@@ -444,7 +454,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     inputRef,
     onSubmit,
     isGenerating,
-    isListening
+    isListening,
+    size
   } = useContext(PromptFieldContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [isFocused, setFocused] = useState(false);
@@ -553,6 +564,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
       })({isFocused: isFocused || prompt.segments.length > 0})}>
       <CenterBaseline>
         <PixelLoader
+          size={size === 'S' ? 19 : 21} // why the extra 1px? smaller size looks pretty bad
           isPlaying={isGenerating}
           icon={pixelLoader}
           color="var(--loader-color)"
@@ -631,7 +643,13 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             className={
               css('&:empty::before { content: attr(data-placeholder); }') +
               style({
-                font: 'body',
+                font: {
+                  default: 'body',
+                  size: {
+                    default: 'body',
+                    S: 'body-sm'
+                  }
+                },
                 color: {
                   default: 'neutral',
                   ':empty': {
@@ -642,7 +660,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                 width: 'full',
                 outlineStyle: 'none',
                 cursor: 'text'
-              })
+              })({size})
             }>
             {useCallback(
               (token: TokenSegment<PromptFieldTokenValue>) => {
