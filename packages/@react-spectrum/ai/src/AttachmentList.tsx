@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
 import {
   AriaLabelingProps,
@@ -337,18 +336,52 @@ const tagListStyles = style<{isCarousel: boolean}>({
   flexWrap: {default: 'wrap', isCarousel: 'nowrap'},
   overflowX: {isCarousel: 'auto'},
   scrollbarWidth: {isCarousel: 'none'},
-  scrollSnapType: {isCarousel: 'x mandatory'}
+  scrollSnapType: {isCarousel: 'x mandatory'},
+  paddingY: 12
 });
 
-const carouselNavButton = style({
+const carouselNavButtonStyles = style<{
+  isDisabled: boolean;
+  isHovered: boolean;
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  direction: 'ltr' | 'rtl';
+}>({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  size: controlSizeM,
   flexShrink: 0,
   borderRadius: 'full',
-  overflow: 'clip',
+  borderStyle: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: baseColor('gray-100'),
+    forcedColors: 'ButtonFace'
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
   scale: {
     direction: {
       rtl: -1
     }
-  }
+  },
+  disableTapHighlight: true
 });
 
 function CarouselNavButton({
@@ -360,21 +393,25 @@ function CarouselNavButton({
   onPress: () => void;
   isDisabled: boolean;
 }) {
+  let ref = useRef(null);
   let {direction} = useLocale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let Icon = side === 'start' ? ChevronLeft : ChevronRight;
+  // oxlint-disable react/react-compiler
   return (
-    <div className={carouselNavButton({direction})}>
-      <ActionButton
-        isDisabled={isDisabled}
-        aria-label={stringFormatter.format(
-          side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
-        )}
-        onPress={onPress}>
-        <Icon />
-      </ActionButton>
-    </div>
+    <Button
+      ref={ref}
+      isDisabled={isDisabled}
+      aria-label={stringFormatter.format(
+        side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
+      )}
+      style={pressScale(ref, {})}
+      onPress={onPress}
+      className={renderProps => carouselNavButtonStyles({...renderProps, direction})}>
+      <Icon />
+    </Button>
   );
+  // oxlint-enable react/react-compiler
 }
 
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
@@ -601,7 +638,7 @@ export const Attachment = forwardRef(function Attachment(
           position: 'absolute',
           top: 0,
           insetEnd: 0,
-          transform: 'translate(25%, -25%)'
+          transform: 'translate(50%, -50%)'
         })}>
         <CloseButton size="XS" />
       </div>
