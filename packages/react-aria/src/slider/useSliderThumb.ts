@@ -113,7 +113,9 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   let isDisabled = opts.isDisabled || state.isDisabled;
   let isVertical = orientation === 'vertical';
 
-  let {direction} = useLocale();
+  // Sliders that represent media playback rather than reading order are not mirrored in RTL locales.
+  let {direction: localeDirection} = useLocale();
+  let direction = state.hasFixedDirection ? 'ltr' : localeDirection;
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let data = sliderData.get(state)!;

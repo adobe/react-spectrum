@@ -456,4 +456,32 @@ describe('Slider', () => {
     );
     expect(fill).toHaveStyle({position: 'absolute', bottom: '50%', height: '30%', width: '100%'});
   });
+
+  describe('hasFixedDirection', () => {
+    it('positions SliderFill with insetInlineStart by default', () => {
+      let {getByRole} = render(<TestSlider sliderProps={{value: 30}} />);
+      let fill = getByRole('group').querySelector('.react-aria-SliderFill');
+      expect(fill).toHaveStyle({insetInlineStart: '0%', width: '30%'});
+      expect(fill.style.left).toBe('');
+    });
+
+    it('positions SliderFill with a physical left when hasFixedDirection is set', () => {
+      // insetInlineStart resolves to `right` in an RTL document, but the thumb is positioned
+      // with the physical `left`. A non-mirrored slider must use `left` for both so they stay
+      // on the same side of the track.
+      let {getByRole} = render(<TestSlider sliderProps={{value: 30, hasFixedDirection: true}} />);
+      let fill = getByRole('group').querySelector('.react-aria-SliderFill');
+      expect(fill).toHaveStyle({left: '0%', width: '30%'});
+      expect(fill.style.insetInlineStart).toBe('');
+    });
+
+    it('does not affect vertical SliderFill', () => {
+      let {getByRole} = render(
+        <TestSlider sliderProps={{value: 30, hasFixedDirection: true, orientation: 'vertical'}} />
+      );
+      let fill = getByRole('group').querySelector('.react-aria-SliderFill');
+      expect(fill).toHaveStyle({bottom: '0%', height: '30%'});
+      expect(fill.style.left).toBe('');
+    });
+  });
 });

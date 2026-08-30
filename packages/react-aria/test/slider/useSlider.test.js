@@ -6,6 +6,7 @@ import {
   renderHook,
   screen
 } from '@react-spectrum/test-utils-internal';
+import {I18nProvider} from '../../src/i18n/I18nProvider';
 import * as React from 'react';
 import {useRef} from 'react';
 import {useSlider} from '../../src/slider/useSlider';
@@ -421,6 +422,67 @@ describe('useSlider', () => {
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([10, 80]);
+    });
+  });
+
+  describe('hasFixedDirection', () => {
+    let widthStub;
+    beforeAll(() => {
+      widthStub = jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+    });
+    afterAll(() => {
+      widthStub.mockReset();
+    });
+
+    installMouseEvent();
+
+    let stateRef = React.createRef();
+
+    function Example(props) {
+      let trackRef = useRef(null);
+      let state = useSliderState({...props, numberFormatter});
+      stateRef.current = state;
+      let {trackProps} = useSlider(props, state, trackRef);
+      return <div data-testid="track" ref={trackRef} {...trackProps} />;
+    }
+
+    function clickTrackAt(clientX) {
+      let track = screen.getByTestId('track');
+      fireEvent.mouseDown(track, {clientX, pageX: clientX});
+      fireEvent.mouseUp(track, {clientX, pageX: clientX});
+    }
+
+    // 25 is used rather than 50 so that the mirrored and non-mirrored results differ.
+    it('mirrors a track click in an RTL locale by default', () => {
+      render(
+        <I18nProvider locale="ar-AE">
+          <Example aria-label="Slider" defaultValue={[0]} />
+        </I18nProvider>
+      );
+      clickTrackAt(25);
+      expect(stateRef.current.values).toEqual([75]);
+    });
+
+    it('does not mirror a track click in an RTL locale when hasFixedDirection is set', () => {
+      render(
+        <I18nProvider locale="ar-AE">
+          <Example aria-label="Slider" defaultValue={[0]} hasFixedDirection />
+        </I18nProvider>
+      );
+      clickTrackAt(25);
+      expect(stateRef.current.values).toEqual([25]);
+    });
+
+    it('does not change track clicks in an LTR locale', () => {
+      render(
+        <I18nProvider locale="en-US">
+          <Example aria-label="Slider" defaultValue={[0]} hasFixedDirection />
+        </I18nProvider>
+      );
+      clickTrackAt(25);
+      expect(stateRef.current.values).toEqual([25]);
     });
   });
 });
