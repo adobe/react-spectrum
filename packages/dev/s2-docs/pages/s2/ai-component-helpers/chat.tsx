@@ -522,7 +522,7 @@ export function VirtualizedStreamingChat(props) {
             }}
           </Thread>
         </div>
-        {props.children}
+        {typeof props.children === 'function' ? props.children(handleSend) : props.children}
       </Chat>
     </div>
   );

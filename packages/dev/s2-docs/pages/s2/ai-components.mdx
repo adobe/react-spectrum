@@ -49,7 +49,9 @@ function BasicPrompt() {
       }}>
       <PromptTokenField placeholder="Ask anything" />
       <PromptFieldToolbar>
-        <PromptFieldSubmitButton />
+        <div style={{marginInlineStart: 'auto'}}>
+          <PromptFieldSubmitButton />
+        </div>
       </PromptFieldToolbar>
     </PromptField>
   );
@@ -112,7 +114,9 @@ function PromptSuggestions() {
           }
           placeholder="Ask about @customers" />
         <PromptFieldToolbar>
-          <PromptFieldSubmitButton />
+          <div style={{marginInlineStart: 'auto'}}>
+            <PromptFieldSubmitButton />
+          </div>
         </PromptFieldToolbar>
       </PromptField>
     </div>
@@ -167,8 +171,10 @@ function PromptAttachments() {
             Summarize image
           </InsertTextMenuItem>
         </InsertMenuButton>
-        <PromptFieldVoiceButton />
-        <PromptFieldSubmitButton />
+        <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+          <PromptFieldVoiceButton />
+          <PromptFieldSubmitButton />
+        </div>
       </PromptFieldToolbar>
     </PromptField>
   );
@@ -186,7 +192,9 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 let messages = [
   {id: 1, type: 'user', text: 'Summarize the campaign results.'},
-  {id: 2, type: 'assistant', text: 'Engagement increased 18% this month, led by email and social.'}
+  {id: 2, type: 'assistant', text: 'Engagement increased 18% this month, led by email and social.'},
+  {id: 3, type: 'user', text: 'Which channel performed best?'},
+  {id: 4, type: 'assistant', text: 'Email drove the most conversions, with social close behind.'}
 ];
 
 function BasicChat() {
@@ -199,6 +207,7 @@ function BasicChat() {
         width: 'full',
         overflow: 'hidden',
         boxSizing: 'border-box',
+        paddingX: 4,
         minWidth: 0
       })}>
       <div
@@ -216,7 +225,6 @@ function BasicChat() {
             flexGrow: 1,
             overflowX: 'hidden',
             overflowY: 'auto',
-            padding: 8,
             scrollPadding: 8,
             rowGap: 16
           })}>
@@ -262,7 +270,7 @@ import {
   PromptToken,
   PromptTokenField,
   TokenFieldValue,
-  MessageSuggestion, 
+  MessageSuggestion,
   MessageSuggestionList
 } from '@react-spectrum/ai';
 import {type FocusableRefValue} from '@react-types/shared';
@@ -320,10 +328,11 @@ function Example(args) {
   return (
     <div className={style({height: 600, backgroundColor: 'layer-2'})}>
     <VirtualizedStreamingChat>
+    {onSend => (
     <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
       {/*- begin highlight -*/}
       <MessageSuggestionList title="Suggestions">
-        {prompts.map((prompt, i) => (
+        {prompts.slice(0, 2).map((prompt, i) => (
           <MessageSuggestion
             key={i}
             onPress={() => {
@@ -375,6 +384,7 @@ function Example(args) {
         onSubmit={prompt => {
           historyRef.current = [...historyRef.current, prompt];
           historyIndexRef.current = -1;
+          onSend(prompt);
           setValue(new PromptFieldValue([]));
           setAttachments([]);
           setAttachmentState(new Map());
@@ -552,6 +562,7 @@ function Example(args) {
         {/*- end highlight -*/}
       </PromptField>
     </div>
+    )}
     </VirtualizedStreamingChat>
     </div>
   );
