@@ -1,41 +1,32 @@
 import {
   CommandMenuItem,
-  InsertTextMenuItem,
   InsertTokenMenuItem,
   PromptFieldTokenValue,
   PromptFieldValue
 } from '@react-spectrum/ai';
-import Brand from '@react-spectrum/s2/icons/Brand';
-import {Header, Heading, MenuItem, MenuSection, Text} from '@react-spectrum/s2/Menu';
+import FileText from '@react-spectrum/s2/icons/FileText';
+import {Header, Heading, MenuSection, Text} from '@react-spectrum/s2/Menu';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
+import Project from '@react-spectrum/s2/icons/Project';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
-import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
 import {TokenSegment} from 'react-stately';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
 
 export const slashCommands = [
-  {
-    command: '/audience-explainer',
-    kind: 'skill',
-    description: 'Explain an AEP audience in english'
-  },
-  {command: '/btw', kind: 'command', description: 'Ask a side question'},
-  {command: '/clear', kind: 'command', description: 'Clear the context'},
-  {command: '/compact', kind: 'command', description: 'Summarize conversation history'},
-  {command: '/dataset-usage', kind: 'skill', description: 'Explain how to use a dataset'},
-  {command: '/feedback', kind: 'command', description: 'Submit feedback'},
-  {command: '/plan', kind: 'command', description: 'Create a plan before executing'},
-  {command: '/visual-artifact', kind: 'skill', description: 'Generate a chart or graph'}
+  {command: '/clear', kind: 'command', description: 'Clear the conversation'},
+  {command: '/compact', kind: 'command', description: 'Summarize the conversation so far'},
+  {command: '/docx', kind: 'skill', description: 'Create or edit a Word document'},
+  {command: '/pptx', kind: 'skill', description: 'Create a slide deck'}
 ];
 
 const icons = {
   command: <Prompt styles={iconStyle({size: 'XS'})} />,
   skill: <Plugin styles={iconStyle({size: 'XS'})} />,
-  audience: <UserGroup styles={iconStyle({size: 'XS'})} />,
-  campaign: <Brand styles={iconStyle({size: 'XS'})} />,
-  journey: <SocialNetwork styles={iconStyle({size: 'XS'})} />,
+  person: <UserGroup styles={iconStyle({size: 'XS'})} />,
+  document: <FileText styles={iconStyle({size: 'XS'})} />,
+  project: <Project styles={iconStyle({size: 'XS'})} />,
   url: <LinkIcon styles={iconStyle({size: 'XS'})} />
 } as const;
 
@@ -54,36 +45,29 @@ export function getIcon(token: TokenSegment<PromptFieldTokenValue>) {
 
 export const objects = [
   {
-    section: 'Audiences',
-    type: 'audience',
+    section: 'People',
+    type: 'person',
     items: [
-      {kind: 'audience', title: 'New Customers'},
-      {kind: 'audience', title: 'Returning Customers'},
-      {kind: 'audience', title: 'Loyal Customers'},
-      {kind: 'audience', title: 'High-Value Customers'},
-      {kind: 'audience', title: 'Low-Value Customers'}
+      {kind: 'person', title: 'Alex Rivera'},
+      {kind: 'person', title: 'Jamie Chen'},
+      {kind: 'person', title: 'Morgan Taylor'}
     ]
   },
   {
-    section: 'Campaigns',
-    type: 'campaign',
+    section: 'Documents',
+    type: 'document',
     items: [
-      {kind: 'campaign', title: 'Spring Launch 2026'},
-      {kind: 'campaign', title: 'Holiday Cheer'},
-      {kind: 'campaign', title: 'Back to School'},
-      {kind: 'campaign', title: 'Summer Adventure'},
-      {kind: 'campaign', title: 'Tech Trends Expo'}
+      {kind: 'document', title: 'Project plan'},
+      {kind: 'document', title: 'Meeting notes'},
+      {kind: 'document', title: 'Research summary'}
     ]
   },
   {
-    section: 'Journeys',
-    type: 'journey',
+    section: 'Projects',
+    type: 'project',
     items: [
-      {kind: 'journey', title: 'Welcome Flow'},
-      {kind: 'journey', title: 'Abandoned Cart Recovery'},
-      {kind: 'journey', title: 'Post-Purchase Follow-up'},
-      {kind: 'journey', title: 'Re-engagement Campaign'},
-      {kind: 'journey', title: 'Birthday Surprise Journey'}
+      {kind: 'project', title: 'Website redesign'},
+      {kind: 'project', title: 'Mobile app launch'}
     ]
   }
 ];
@@ -103,25 +87,15 @@ export function renderCompletions(filterValue: string, callbacks?: CompletionCal
           (callbacks?.valueType ? item.kind === callbacks.valueType : true)
       )
       .map(item =>
-        item.command === '/clear' ? (
-          <MenuItem key={item.command} id={item.command} onAction={callbacks?.onClear}>
-            <Prompt />
-            <Text slot="label">{item.command}</Text>
-            <Text slot="description">{item.description}</Text>
-          </MenuItem>
-        ) : item.command === '/compact' ? (
-          <CommandMenuItem key={item.command} id={item.command} onAction={callbacks?.onCompact}>
+        item.kind === 'command' ? (
+          <CommandMenuItem
+            key={item.command}
+            id={item.command}
+            onAction={item.command === '/clear' ? callbacks?.onClear : callbacks?.onCompact}>
             <Prompt />
             <Text slot="label">{item.command}</Text>
             <Text slot="description">{item.description}</Text>
           </CommandMenuItem>
-        ) : item.command === '/feedback' || item.command === '/btw' ? (
-          // coworker doesn't seem to have any text insertion commands anymore, so I added these for testing
-          <InsertTextMenuItem key={item.command} id={item.command} text={item.command}>
-            <Prompt />
-            <Text slot="label">{item.command}</Text>
-            <Text slot="description">{item.description}</Text>
-          </InsertTextMenuItem>
         ) : (
           <InsertTokenMenuItem
             key={item.command}
@@ -131,7 +105,7 @@ export function renderCompletions(filterValue: string, callbacks?: CompletionCal
               text: item.command,
               value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
             }}>
-            {item.kind === 'skill' ? <Plugin /> : <Prompt />}
+            <Plugin />
             <Text slot="label">{item.command}</Text>
             <Text slot="description">{item.description}</Text>
           </InsertTokenMenuItem>
@@ -179,60 +153,11 @@ export interface UploadState {
   progress?: number;
 }
 
-function atEnd(v: PromptFieldValue) {
-  let segs = v.segments;
-  return {index: segs.length - 1, offset: segs[segs.length - 1].text.length};
-}
-
-let prompt1 = new PromptFieldValue([
-  {type: 'text', text: 'Analyze '},
-  {
-    type: 'token',
-    text: 'New Customers',
-    value: {type: 'custom', anchor: '@', valueType: 'audience', data: {title: 'New Customers'}}
-  },
-  {type: 'text', text: ' and suggest targeting strategies'}
-]);
-
-let prompt2 = new PromptFieldValue([
-  {type: 'text', text: 'Write a brief for '},
-  {
-    type: 'token',
-    text: 'Spring Launch 2026',
-    value: {type: 'custom', anchor: '@', valueType: 'campaign', data: {title: 'Spring Launch 2026'}}
-  }
-]);
-
-let prompt3Base = new PromptFieldValue([
-  {type: 'text', text: 'Summarize the '},
-  {
-    type: 'token',
-    text: 'Welcome Flow',
-    value: {type: 'custom', anchor: '@', valueType: 'journey', data: {title: 'Welcome Flow'}}
-  }
-]);
-
-let prompt4 = new PromptFieldValue(
-  [
-    {type: 'text', text: 'Detect audiences in '},
-    {
-      type: 'token',
-      text: 'Journey',
-      value: {type: 'placeholder', placeholderType: 'token', anchor: '@', valueType: 'journey'}
-    },
-    {type: 'text', text: ' that changed significantly in the past '},
-    {type: 'token', text: 'date', value: {type: 'placeholder', placeholderType: 'text'}}
-  ]
-  // {selectedRange: new TokenFieldValue.SelectedRange({index: 1, offset: 0}, {index: 1, offset: 1})}
-);
-
-export const prompts = [
-  prompt1.withSelectedRange(new PromptFieldValue.SelectedRange(atEnd(prompt1))),
-  prompt2.withSelectedRange(new PromptFieldValue.SelectedRange(atEnd(prompt2))),
-  prompt3Base.replaceRange(
-    atEnd(prompt3Base),
-    atEnd(prompt3Base),
-    ' journey performance from test.com '
-  ),
-  prompt4
+export const suggestions = [
+  new PromptFieldValue([{type: 'text', text: 'Summarize this conversation'}]),
+  new PromptFieldValue([
+    {type: 'text', text: 'Suggest places to eat after the hike within '},
+    {type: 'token', text: '#', value: {type: 'placeholder', placeholderType: 'text'}},
+    {type: 'text', text: ' miles'}
+  ])
 ];
