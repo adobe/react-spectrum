@@ -1,0 +1,296 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import Anatomy from './NavigationTreeAnatomy.svg';
+
+export const tags = ['navigation', 'nav', 'sidebar'];
+export const version = 'alpha';
+export const description = 'A navigation component that displays a nested, hierarchical set of links, with support for keyboard navigation and a current route indicator.';
+
+# NavigationTree
+
+<PageDescription>{docs.exports.NavigationTree.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.NavigationTree} links={docs.links} props={[]} type="vanilla" files={["starters/docs/src/NavigationTree.tsx", "starters/docs/src/NavigationTree.css", "packages/dev/s2-docs/pages/react-aria/RoutedNavigationTree.tsx"]}
+  "use client";
+  import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink} from 'vanilla-starter/NavigationTree';
+  import {Button} from 'vanilla-starter/Button';
+  import {MoreHorizontal} from 'lucide-react';
+  import {RoutedNavigationTree} from './RoutedNavigationTree';
+
+  <RoutedNavigationTree defaultSelectedRoute="/photos">
+    {({selectedRoute}) => (
+      <NavigationTree aria-label="Files" selectedRoute={selectedRoute} defaultExpandedKeys={['files']}>
+        <NavigationTreeItem id="home" href="/home" textValue="Home">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Home</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <NavigationTreeItem id="files" href="/files" textValue="Files">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Files</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+          <NavigationTreeItem id="photos" href="/photos" textValue="Photos">
+            <NavigationTreeItemContent>
+              <NavigationTreeItemLink>Photos</NavigationTreeItemLink>
+              <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+          <NavigationTreeItem id="videos" href="/videos" textValue="Videos">
+            <NavigationTreeItemContent>
+              <NavigationTreeItemLink>Videos</NavigationTreeItemLink>
+              <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+        </NavigationTreeItem>
+        <NavigationTreeItem id="shared" textValue="Shared">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Shared</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+          <NavigationTreeItem id="food" href="/food" textValue="Food">
+            <NavigationTreeItemContent>
+              <NavigationTreeItemLink>Food</NavigationTreeItemLink>
+              <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+          <NavigationTreeItem id="drinks" href="/drinks" textValue="Drinks">
+            <NavigationTreeItemContent>
+              <NavigationTreeItemLink>Drinks</NavigationTreeItemLink>
+              <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+        </NavigationTreeItem>
+      </NavigationTree>
+    )}
+  </RoutedNavigationTree>
+  ```
+
+  ```tsx render docs={docs.exports.NavigationTree} links={docs.links} props={[]} type="tailwind" files={["starters/tailwind/src/NavigationTree.tsx", "packages/dev/s2-docs/pages/react-aria/RoutedNavigationTree.tsx"]}
+  "use client";
+  import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink} from 'tailwind-starter/NavigationTree';
+  import {Button} from 'tailwind-starter/Button';
+  import {MoreHorizontal} from 'lucide-react';
+  import {RoutedNavigationTree} from './RoutedNavigationTree';
+
+  <RoutedNavigationTree defaultSelectedRoute="/photos">
+    {({selectedRoute}) => (
+      <NavigationTree aria-label="Files" selectedRoute={selectedRoute} defaultExpandedKeys={['files']}>
+        <NavigationTreeItem id="home" href="/home" textValue="Home">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Home</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <NavigationTreeItem id="files" href="/files" textValue="Files">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Files</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+          <NavigationTreeItem id="photos" href="/photos" textValue="Photos">
+            <NavigationTreeItemContent>
+              <NavigationTreeItemLink>Photos</NavigationTreeItemLink>
+              <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+          <NavigationTreeItem id="videos" href="/videos" textValue="Videos">
+            <NavigationTreeItemContent>
+              <NavigationTreeItemLink>Videos</NavigationTreeItemLink>
+              <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+        </NavigationTreeItem>
+        <NavigationTreeItem id="shared" textValue="Shared">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Shared</NavigationTreeItemLink>
+            <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+          </NavigationTreeItemContent>
+          <NavigationTreeItem id="food" href="/food" textValue="Food">
+            <NavigationTreeItemContent>
+              <NavigationTreeItemLink>Food</NavigationTreeItemLink>
+              <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+          <NavigationTreeItem id="drinks" href="/drinks" textValue="Drinks">
+            <NavigationTreeItemContent>
+              <NavigationTreeItemLink>Drinks</NavigationTreeItemLink>
+              <Button variant="quiet" aria-label="More options"><MoreHorizontal size={16} aria-hidden /></Button>
+            </NavigationTreeItemContent>
+          </NavigationTreeItem>
+        </NavigationTreeItem>
+      </NavigationTree>
+    )}
+  </RoutedNavigationTree>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`NavigationTree` follows the [Collection Components API](collections?component=NavigationTree), accepting both static and dynamic collections. The example above shows a static collection. This example shows a dynamic collection, passing a list of objects to the `items` prop and a function to render the children.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/RoutedNavigationTree.tsx"]}
+"use client";
+import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink} from 'vanilla-starter/NavigationTree';
+import {RoutedNavigationTree} from './RoutedNavigationTree';
+
+function Example() {
+  let items = [
+    {id: 'overview', url: '/overview', label: 'Overview'},
+    {id: 'reports', url: '/reports', label: 'Reports'},
+    {id: 'settings', url: '/settings', label: 'Settings'}
+  ];
+
+  return (
+    <RoutedNavigationTree defaultSelectedRoute="/reports">
+      {({selectedRoute}) => (
+        /*- begin highlight -*/
+        <NavigationTree aria-label="Sections" items={items} selectedRoute={selectedRoute}>
+          {item => (
+            <NavigationTreeItem href={item.url} textValue={item.label}>
+              <NavigationTreeItemContent>
+                <NavigationTreeItemLink>{item.label}</NavigationTreeItemLink>
+              </NavigationTreeItemContent>
+            </NavigationTreeItem>
+          )}
+        </NavigationTree>
+        /*- end highlight -*/
+      )}
+    </RoutedNavigationTree>
+  );
+}
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>`NavigationTree` renders as a tree so keyboard users can navigate and expand the hierarchy. When it acts as the main navigation for a page, place it inside a [navigation landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/navigation.html): wrap the `NavigationTree` in a `<nav>` element with an `aria-label` so assistive technology users can quickly find it.</Content>
+</InlineAlert>
+
+### Sections
+
+Use `NavigationTreeSection` to group related items, with an optional `NavigationTreeHeader` to label each group. Sections without a header must have an `aria-label`.
+
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/RoutedNavigationTree.tsx"]}
+"use client";
+import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink, NavigationTreeSection, NavigationTreeHeader} from 'vanilla-starter/NavigationTree';
+import {RoutedNavigationTree} from './RoutedNavigationTree';
+
+<RoutedNavigationTree defaultSelectedRoute="/projects/apollo">
+  {({selectedRoute}) => (
+    <NavigationTree aria-label="Workspace" selectedRoute={selectedRoute}>
+      {/*- begin highlight -*/}
+      <NavigationTreeSection>
+        <NavigationTreeHeader>Personal</NavigationTreeHeader>
+        <NavigationTreeItem href="/home" textValue="Home">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Home</NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <NavigationTreeItem href="/starred" textValue="Starred">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Starred</NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+      </NavigationTreeSection>
+      {/*- end highlight -*/}
+      <NavigationTreeSection>
+        <NavigationTreeHeader>Projects</NavigationTreeHeader>
+        <NavigationTreeItem href="/projects/apollo" textValue="Apollo">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Apollo</NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <NavigationTreeItem href="/projects/gemini" textValue="Gemini">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Gemini</NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+      </NavigationTreeSection>
+    </NavigationTree>
+  )}
+</RoutedNavigationTree>
+```
+
+## Current route
+
+Each `NavigationTreeItem` accepts an `href`. Set the `selectedRoute` prop on the `NavigationTree` to the current page's path, and the item whose `href` matches is marked with `aria-current="page"` (and a `data-current` attribute for styling).
+
+Combine `NavigationTree` with a client side router by wrapping your app in a [RouterProvider](frameworks) so that activating a link updates the route. Then set `selectedRoute`. In this example the router navigation is stored in local state to show the current route updating as you activate links.
+
+```tsx render
+"use client";
+import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink} from 'vanilla-starter/NavigationTree';
+import {RouterProvider} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example() {
+  let [route, setRoute] = useState('/inbox');
+  return (
+    /*- begin highlight -*/
+    <RouterProvider navigate={setRoute}>
+      {/*- end highlight -*/}
+      <NavigationTree aria-label="Mail" selectedRoute={route}>
+        <NavigationTreeItem href="/inbox" textValue="Inbox">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Inbox</NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <NavigationTreeItem href="/drafts" textValue="Drafts">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Drafts</NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+        <NavigationTreeItem href="/sent" textValue="Sent">
+          <NavigationTreeItemContent>
+            <NavigationTreeItemLink>Sent</NavigationTreeItemLink>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+      </NavigationTree>
+    </RouterProvider>
+  );
+}
+```
+
+## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a NavigationTree, consisting of sections of items. Each item contains a link, and items with children include a chevron button to collapse and expand them." />
+
+```tsx links={{NavigationTree: '#NavigationTree', NavigationTreeItem: '#NavigationTreeitem', NavigationTreeItemContent: '#NavigationTreeitemcontent', NavigationTreeSection: '#NavigationTreesection', NavigationTreeHeader: '#NavigationTreeheader', Link: 'Link'}}
+<NavigationTree>
+  <NavigationTreeSection>
+    <NavigationTreeHeader />
+    <NavigationTreeItem>
+      <NavigationTreeItemContent>
+        <Link />
+        <Button slot="chevron" />
+      </NavigationTreeItemContent>
+    </NavigationTreeItem>
+  </NavigationTreeSection>
+</NavigationTree>
+```
+
+### NavigationTree
+
+<PropTable component={docs.exports.NavigationTree} links={docs.links} showDescription />
+
+### NavigationTreeItem
+
+<PropTable component={docs.exports.NavigationTreeItem} links={docs.links} showDescription />
+
+### NavigationTreeItemContent
+
+<PropTable component={docs.exports.NavigationTreeItemContent} links={docs.links} showDescription hideRenderProps />
+
+### NavigationTreeSection
+
+<PropTable component={docs.exports.NavigationTreeSection} links={docs.links} showDescription />
+
+### NavigationTreeHeader
+
+<PropTable component={docs.exports.NavigationTreeHeader} links={docs.links} showDescription />

@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Pievienot",
   "promptfield.label": "Uzvedne",
   "promptfield.placeholder": "Vai esat gatavs sākt? Uzdodiet jautājumu, dalieties pārdomās vai pievienojiet jaunu uzdevumu.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Apstājies",
   "promptfield.submitButton": "Sūtīt",
   "promptfield.uploading": "Augšupielāde",
   "responsestatus.loading": "Notiek ielāde",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Sāciet ierakstīt",
   "voicebutton.stopListening": "Pārtraukt ierakstu"
 }

@@ -268,6 +268,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Meter: [MeterLight, MeterDark],
   'Migrating to Spectrum 2': [MigratingLight, MigratingDark],
   Modal: [DialogLight, DialogDark],
+  NavigationTree: [SideNavLight, SideNavDark],
   NumberField: [NumberFieldLight, NumberFieldDark],
   Picker: [PickerLight, PickerDark],
   Popover: [PopoverLight, PopoverDark],

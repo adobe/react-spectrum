@@ -33,7 +33,7 @@ import {
 } from 'react';
 import {FocusableRef} from '@react-types/shared';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
-import {IconContext} from '@react-spectrum/s2';
+import {IconContext, MenuTriggerProps} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -91,14 +91,21 @@ export interface PromptFieldProps {
   attachments?: PromptFieldAttachment[];
   defaultAttachments?: PromptFieldAttachment[];
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
-  onSubmit?: (prompt: TokenFieldValue, attachments: PromptFieldAttachment[]) => void;
+  onSubmit?: (prompt: PromptFieldValue, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
+  onAITermsPress?: () => void;
   styles?: StyleString;
   variant?: 'balanced' | 'prominent' | 'subtle';
   brandColor?: string;
+  /**
+   * The size of the PromptField.
+   *
+   * @default 'M'
+   */
+  size?: 'S' | 'M';
 }
 
 interface PromptFieldState {
@@ -220,7 +227,7 @@ export class PromptFieldValue extends TokenFieldValue<PromptFieldTokenValue> {
   }
 }
 
-const PromptFieldContext = createContext<PromptFieldState>({
+const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
   attachments: [],
   setAttachments: () => {},
   prompt: new PromptFieldValue([]),
@@ -228,7 +235,8 @@ const PromptFieldContext = createContext<PromptFieldState>({
   inputRef: createRef(),
   isGenerating: false,
   isListening: false,
-  setListening: () => {}
+  setListening: () => {},
+  size: 'M'
 });
 
 // to communicate the anchor position to the menu items in the completion popover
@@ -261,7 +269,8 @@ export const PromptField = forwardRef(function PromptField(
     onAddAttachments,
     onRemoveAttachments,
     variant = 'balanced',
-    brandColor
+    brandColor,
+    size = 'M'
   } = props;
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
@@ -337,19 +346,21 @@ export const PromptField = forwardRef(function PromptField(
         setListening,
         onStop,
         onAddAttachments,
-        onRemoveAttachments
+        onRemoveAttachments,
+        size
       }}>
       <Provider
         values={[
-          [ButtonContext, {staticColor: 'auto'}],
-          [LinkButtonContext, {staticColor: 'auto'}],
-          [ActionButtonContext, {staticColor: 'auto'}],
-          [ToggleButtonContext, {staticColor: 'auto'}]
+          [ButtonContext, {staticColor: 'auto', size}],
+          [LinkButtonContext, {staticColor: 'auto', size}],
+          [ActionButtonContext, {staticColor: 'auto', size}],
+          [ToggleButtonContext, {staticColor: 'auto', size}]
         ]}>
         <div ref={domRef} {...focusWithinProps}>
           <PromptFieldContainer
             {...dropProps}
             role="group"
+            size={size}
             variant={variant}
             brandColor={brandColor}
             isGenerating={isGenerating ?? false}
@@ -358,12 +369,13 @@ export const PromptField = forwardRef(function PromptField(
             inputRef={inputRef}>
             {children}
           </PromptFieldContainer>
-          <p className={style({font: 'ui-sm', textAlign: 'center'})}>
+          <p className={style({font: 'ui-sm', color: 'gray-600', textAlign: 'center'})}>
             {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
             <Link
               variant="secondary"
               href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-              target="_blank">
+              target="_blank"
+              onPress={props.onAITermsPress}>
               {stringFormatter.format('promptfield.aiUserGuidlines')}
             </Link>
           </p>
@@ -416,6 +428,7 @@ export interface PromptTokenFieldProps {
   ) => React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   children?: (segment: TokenSegment<PromptFieldTokenValue>) => React.ReactElement;
   pixelLoader?: Cell[] | Cell[][];
+  shouldAnimatePixelLoader?: boolean;
   placeholder?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   // TODO: temp api for coworker so that the weird popover shrinking behavior
@@ -429,6 +442,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     renderCompletions,
     children,
     pixelLoader,
+    shouldAnimatePixelLoader = false,
     placeholder,
     menuWidth,
     onKeyDown: onKeyDownProp
@@ -442,7 +456,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     inputRef,
     onSubmit,
     isGenerating,
-    isListening
+    isListening,
+    size
   } = useContext(PromptFieldContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [isFocused, setFocused] = useState(false);
@@ -521,7 +536,12 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     <div
       className={style({
         display: 'flex',
-        gap: 12,
+        gap: {
+          size: {
+            M: 12,
+            S: 8
+          }
+        },
         alignItems: 'baseline',
         color: {
           default: 'transparent-overlay-600',
@@ -529,8 +549,14 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           forcedColors: 'ButtonText'
         },
         transition: 'default',
-        transitionDuration: 350,
-        paddingStart: space(5),
+        transitionDuration: 700,
+        transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]',
+        paddingStart: {
+          size: {
+            M: space(5),
+            S: 2
+          }
+        },
         width: 'full',
         '--loader-color': {
           type: 'color',
@@ -543,21 +569,23 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         '--loader-opacity': {
           type: 'opacity',
           value: {
-            default: 0.51,
+            default: 0.64,
             isFocused: 1,
             forcedColors: 1
           }
         }
-      })({isFocused: isFocused || prompt.segments.length > 0})}>
+      })({size, isFocused: isFocused || prompt.segments.length > 0})}>
       <CenterBaseline>
         <PixelLoader
-          isPlaying={isGenerating}
+          size={21}
+          isPlaying={isGenerating && shouldAnimatePixelLoader}
           icon={pixelLoader}
           color="var(--loader-color)"
           className={style({
             opacity: '--loader-opacity',
             transition: 'opacity',
-            transitionDuration: 350
+            transitionDuration: 700,
+            transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
           })}
         />
       </CenterBaseline>
@@ -624,23 +652,38 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
               : undefined
           }>
           <TokenInput
-            data-placeholder={placeholder || stringFormatter.format('promptfield.placeholder')}
+            data-placeholder={
+              placeholder ||
+              stringFormatter.format(
+                size === 'S' ? 'promptfield.placeholder.small' : 'promptfield.placeholder'
+              )
+            }
             ref={inputRef}
             className={
               css('&:empty::before { content: attr(data-placeholder); }') +
-              style({
-                font: 'body',
+              style<{size: 'S' | 'M'; isFocused: boolean}>({
+                font: {
+                  default: 'body',
+                  size: {
+                    M: 'body',
+                    S: 'body-sm'
+                  }
+                },
                 color: {
                   default: 'neutral',
                   ':empty': {
-                    default: 'gray-600',
+                    default: 'transparent-overlay-1000/56',
+                    isFocused: 'transparent-overlay-1000/80',
                     forcedColors: 'GrayText'
                   }
                 },
                 width: 'full',
                 outlineStyle: 'none',
-                cursor: 'text'
-              })
+                cursor: 'text',
+                transition: 'colors',
+                transitionDuration: 700,
+                transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
+              })({size, isFocused})
             }>
             {useCallback(
               (token: TokenSegment<PromptFieldTokenValue>) => {
@@ -750,17 +793,21 @@ export interface PromptTokenProps extends Omit<TokenProps, 'children' | 'render'
 }
 
 export function PromptToken(props: PromptTokenProps) {
+  let {size} = useContext(PromptFieldContext)!;
   return (
     <Token
       {...props}
       className={renderProps =>
         style({
-          font: 'ui',
+          font: {
+            size: {
+              M: 'ui',
+              S: 'ui-sm'
+            }
+          },
           backgroundColor: {
             default: 'transparent-overlay-1000/10',
-            isSelected: 'blue-800',
-            // Firefox ignores completely transparent selection colors, so we need to use a nearly transparent color instead
-            '::selection': '[#ffffff01]'
+            isSelected: 'blue-800'
           },
           color: {
             default: 'body',
@@ -778,21 +825,27 @@ export function PromptToken(props: PromptTokenProps) {
           outlineOffset: -1,
           borderRadius: 'pill',
           boxShadow: `[inset 0 24px 32px 0 ${color('transparent-white-50')}, 0 8px 32px 0 ${color('transparent-black-50')}]`,
+          boxDecorationBreak: 'clone',
           paddingX: 8,
           // not using inline-flex here due to a text selection bug in WebKit.
-          paddingY: space(3),
+          paddingY: {
+            size: {
+              M: space(3),
+              S: 2
+            }
+          },
           lineHeight: '[1em]',
           cursor: 'default',
           '--iconPrimary': {
             type: 'fill',
             value: 'currentColor'
           }
-        })({...renderProps, isPlaceholder: props.token.value?.type === 'placeholder'})
+        })({...renderProps, isPlaceholder: props.token.value?.type === 'placeholder', size})
       }>
       <IconContext.Provider
         value={{
           styles: style({
-            size: 14,
+            size: '1lh',
             display: 'inline-block',
             verticalAlign: '[-0.18em]',
             marginEnd: 4
@@ -951,15 +1004,15 @@ function buildVoicePrompt(base: TokenFieldValue, voiceText: string): PromptField
   return base.replaceRange(base.caretPosition, base.caretPosition, voiceText) as PromptFieldValue;
 }
 
-export interface InsertMenuItemProps {
+export interface InsertMenuItemProps extends Pick<MenuTriggerProps, 'onOpenChange'> {
   children: React.ReactNode;
 }
 
 export function InsertMenuButton(props: InsertMenuItemProps) {
-  let {children} = props;
+  let {children, onOpenChange} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
-    <MenuTrigger>
+    <MenuTrigger onOpenChange={onOpenChange}>
       <ActionButton
         isQuiet
         staticColor="auto"
@@ -970,12 +1023,29 @@ export function InsertMenuButton(props: InsertMenuItemProps) {
     </MenuTrigger>
   );
 }
+export interface AttachFileMenuItemProps extends Omit<
+  MenuItemProps,
+  | 'children'
+  | 'UNSAFE_className'
+  | 'UNSAFE_style'
+  | 'download'
+  | 'href'
+  | 'hrefLang'
+  | 'ping'
+  | 'referrerPolicy'
+  | 'rel'
+  | 'routerOptions'
+  | 'target'
+> {}
 
-export function AttachFileMenuItem() {
+export function AttachFileMenuItem(props: AttachFileMenuItemProps) {
+  let {onAction, ...otherProps} = props;
   let {acceptedAttachmentTypes, setAttachments, onAddAttachments} = useContext(PromptFieldContext);
   return (
     <MenuItem
+      {...otherProps}
       onAction={() => {
+        onAction?.();
         let input = document.createElement('input');
         input.type = 'file';
         if (acceptedAttachmentTypes) {

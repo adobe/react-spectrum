@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Ekle",
   "promptfield.label": "Prompt",
   "promptfield.placeholder": "Başlamaya hazır mısınız? Soru sorun, fikir paylaşın veya görev ekleyin.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Dur",
   "promptfield.submitButton": "Gönder",
   "promptfield.uploading": "Yükleme",
   "responsestatus.loading": "Yükleniyor",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Kayıtlara başlayın",
   "voicebutton.stopListening": "Kaydı durdur"
 }
