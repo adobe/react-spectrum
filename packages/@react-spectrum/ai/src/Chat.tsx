@@ -120,6 +120,9 @@ export interface ChatProps {
   children?: ReactNode;
 }
 
+/**
+ * A Chat displays an accessible, streaming conversation between a user and an AI.
+ */
 export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   props: ChatProps,
   ref: DOMRef<HTMLDivElement>

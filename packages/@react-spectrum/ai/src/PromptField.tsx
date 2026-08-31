@@ -256,6 +256,10 @@ function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
   });
 }
 
+/**
+ * A PromptField allows users to compose and submit prompts containing text, tokens, and
+ * attachments.
+ */
 export const PromptField = forwardRef(function PromptField(
   props: PromptFieldProps,
   ref: FocusableRef<HTMLDivElement>

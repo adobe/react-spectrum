@@ -309,6 +309,9 @@ export interface AttachmentListProps<T>
   styles?: StyleString;
 }
 
+/**
+ * An AttachmentList displays removable file attachments with previews and upload states.
+ */
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
