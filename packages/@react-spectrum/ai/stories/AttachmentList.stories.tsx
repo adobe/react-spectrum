@@ -272,7 +272,7 @@ export const Mixed: Story = {
 function CarouselRender(args) {
   let {isInvalid, size, uploadProgress, ...listArgs} = args;
   return (
-    <AttachmentList {...listArgs} styles={style({width: 500})}>
+    <AttachmentList {...listArgs} styles={style({width: 500, maxWidth: 'calc(100vw - 32px)'})}>
       {Array.from({length: 8}, (_, i) => (
         <AttachmentComponent
           key={i}
@@ -299,7 +299,7 @@ export const Carousel: Story = {
 function CarouselCardsRender(args) {
   let {isInvalid, size, uploadProgress, ...listArgs} = args;
   return (
-    <AttachmentList {...listArgs} styles={style({width: 500})}>
+    <AttachmentList {...listArgs} styles={style({width: 500, maxWidth: 'calc(100vw - 32px)'})}>
       {Array.from({length: 6}, (_, i) => (
         <AttachmentComponent
           key={i}

@@ -318,16 +318,23 @@ const flexRow = {
   alignItems: 'center'
 } as const;
 
-const tagListStyles = style<{isCarousel: boolean}>({
+const tagListStyles = style({
   ...flexRow,
   gap: 8,
-  flexWrap: {default: 'wrap', isCarousel: 'nowrap'},
-  overflowX: {isCarousel: 'auto'},
-  scrollbarWidth: {isCarousel: 'none'},
-  scrollSnapType: {isCarousel: 'x mandatory'},
+  overflowX: 'auto',
+  overflowY: 'clip',
+  scrollbarWidth: {
+    '@supports (animation-timeline: scroll())': 'none'
+  },
+  scrollSnapType: 'x mandatory',
+  // padding for focus ring
   padding: 16,
+  margin: -16,
   boxSizing: 'border-box',
-  scrollPaddingX: 40
+  scrollPaddingX: {
+    default: 16,
+    '@supports (animation-timeline: scroll())': 64
+  }
 });
 
 const buttonFade = keyframes(`
@@ -353,7 +360,7 @@ const carouselNavButtonStyles = style<{
   borderStyle: 'none',
   transition: 'default',
   backgroundColor: {
-    default: baseColor('gray-100'),
+    default: baseColor('transparent-overlay-100'),
     forcedColors: 'ButtonFace'
   },
   color: {
@@ -441,10 +448,21 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   let scrollRef = useRef<HTMLDivElement>(null);
   let {direction} = useLocale();
   let scroll = (dir: 1 | -1) => {
+    let el = scrollRef.current;
+    if (!el) {
+      return;
+    }
+
     // RTL flips the scroll direction convention; flip the sign to match.
     let sign = direction === 'rtl' ? -1 : 1;
-    scrollRef.current?.scrollBy({
-      left: sign * dir * scrollRef.current.clientWidth,
+    el.scrollTo({
+      left: Math.max(
+        0,
+        Math.min(
+          el.scrollWidth - el.clientWidth,
+          el.scrollLeft + sign * dir * (el.clientWidth - 64 * 2)
+        )
+      ),
       behavior: 'smooth'
     });
   };
@@ -452,10 +470,7 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   return (
     <TagGroup
       {...otherProps}
-      className={mergeStyles(
-        style({...flexRow, gap: 8, position: 'relative', marginX: -16}),
-        styles
-      )}
+      className={mergeStyles(style({...flexRow, gap: 8, position: 'relative'}), styles)}
       style={
         {
           timelineScope: '--carousel-scroll'
@@ -468,13 +483,14 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
         items={items}
         dependencies={dependencies}
         className={
-          tagListStyles({isCarousel: true}) +
+          tagListStyles +
           ' ' +
-          scrollFade({x: 32, inset: 40}) +
+          scrollFade({x: 32, inset: 56}) +
           ' ' +
           // Hack to keep scroll fade visible when the buttons are focused.
+          // 88px = 32 + 56
           css(
-            `&:is(button[data-focus-visible]+*){--scroll-fade-left: 72px !important} &:has(+ button[data-focus-visible]){--scroll-fade-right: calc(100% - 72px) !important}`
+            `&:is(button[data-focus-visible]+*){--scroll-fade-left: 88px !important} &:has(+ button[data-focus-visible]){--scroll-fade-right: calc(100% - 88px) !important}`
           )
         }
         style={
@@ -515,7 +531,7 @@ const tagStyles = style({
   position: 'relative',
   ...focusRing(),
   borderRadius: 'lg',
-  maxWidth: 'full',
+  maxWidth: 'calc(100% - 52px * 2)',
   scrollSnapAlign: 'start'
 });
 interface AttachmentCardProps {
