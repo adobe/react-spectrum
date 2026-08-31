@@ -1,4 +1,8 @@
 {
+  "aiinlinealert.informative": "Informative",
+  "aiinlinealert.negative": "Negative",
+  "aiinlinealert.notice": "Notice",
+  "aiinlinealert.positive": "Positive",
   "chat.newMessage": "新訊息",
   "chat.scrollToBottom": "捲動至底部",
   "messagefeedback.thumbDown": "不良回答",

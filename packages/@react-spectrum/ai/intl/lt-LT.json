@@ -1,4 +1,8 @@
 {
+  "aiinlinealert.informative": "Informative",
+  "aiinlinealert.negative": "Negative",
+  "aiinlinealert.notice": "Notice",
+  "aiinlinealert.positive": "Positive",
   "chat.newMessage": "Naujas pranešimas",
   "chat.scrollToBottom": "Slinkite žemyn",
   "messagefeedback.thumbDown": "Blogas atsakas",

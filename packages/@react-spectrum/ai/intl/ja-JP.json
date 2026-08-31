@@ -1,4 +1,8 @@
 {
+  "aiinlinealert.informative": "Informative",
+  "aiinlinealert.negative": "Negative",
+  "aiinlinealert.notice": "Notice",
+  "aiinlinealert.positive": "Positive",
   "chat.newMessage": "新規メッセージ",
   "chat.scrollToBottom": "下にスクロール",
   "messagefeedback.thumbDown": "無効な応答",

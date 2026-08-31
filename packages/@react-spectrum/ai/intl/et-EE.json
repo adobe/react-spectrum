@@ -1,4 +1,8 @@
 {
+  "aiinlinealert.informative": "Informative",
+  "aiinlinealert.negative": "Negative",
+  "aiinlinealert.notice": "Notice",
+  "aiinlinealert.positive": "Positive",
   "chat.newMessage": "Uus sõnum",
   "chat.scrollToBottom": "Kerige alla",
   "messagefeedback.thumbDown": "Halb vastus",

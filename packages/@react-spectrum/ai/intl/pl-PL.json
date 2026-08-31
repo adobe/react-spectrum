@@ -1,4 +1,8 @@
 {
+  "aiinlinealert.informative": "Informative",
+  "aiinlinealert.negative": "Negative",
+  "aiinlinealert.notice": "Notice",
+  "aiinlinealert.positive": "Positive",
   "chat.newMessage": "Nowa wiadomość",
   "chat.scrollToBottom": "Przewiń do dołu",
   "messagefeedback.thumbDown": "Zła odpowiedź",
