@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference path="./speech-recognition.d.ts" />
+
 import {
   Dispatch,
   RefObject,
@@ -21,34 +23,6 @@ import {
   useState
 } from 'react';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
-
-declare global {
-  interface SpeechRecognition extends EventTarget {
-    continuous: boolean;
-    interimResults: boolean;
-    lang: string;
-    onstart: ((ev: Event) => void) | null;
-    onresult: ((ev: SpeechRecognitionEvent) => void) | null;
-    onerror: ((ev: {error: string}) => void) | null;
-    onend: ((ev: Event) => void) | null;
-    abort(): void;
-    start(): void;
-    stop(): void;
-  }
-
-  interface SpeechRecognitionConstructor {
-    new (): SpeechRecognition;
-  }
-
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-  }
-
-  interface Navigator {
-    userAgentData?: {brands: Array<{brand: string; version: string}>; platform?: string};
-  }
-}
 
 /**
  * Chromium brands whose Web Speech backend is known to work. Other Chromium
