@@ -20,21 +20,23 @@ import {
   InsertTextMenuItem,
   InsertTokenMenuItem,
   InsertMenuButton,
-  Prompt,
   PromptField,
+  Attachment,
+  AttachmentPreview,
   PromptFieldAttachment,
   PromptFieldAttachmentList,
   PromptFieldSubmitButton,
-  PromptFieldTokenValue,
   PromptFieldToolbar,
   PromptFieldValue,
   PromptFieldVoiceButton,
   PromptToken,
   PromptTokenField,
+  TokenFieldValue,
   MessageSuggestion, 
   MessageSuggestionList
 } from '@react-spectrum/ai';
-import {getIcon, prompts, slashCommands, objects, renderCompletions} from './ai-component-helpers/promptfield';
+import {type FocusableRefValue} from '@react-types/shared';
+import {getIcon, prompts, slashCommands, objects, renderCompletions, type UploadState} from './ai-component-helpers/promptfield';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import * as data from '@react-spectrum/ai/loader';

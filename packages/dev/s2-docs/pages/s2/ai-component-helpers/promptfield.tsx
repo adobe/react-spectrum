@@ -174,7 +174,7 @@ export function renderCompletions(filterValue: string, callbacks?: CompletionCal
   return null;
 }
 
-interface UploadState {
+export interface UploadState {
   status: 'uploading' | 'completed';
   progress?: number;
 }

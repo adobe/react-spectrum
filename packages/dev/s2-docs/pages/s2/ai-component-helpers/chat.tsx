@@ -1,11 +1,8 @@
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
-import ChatIcon from '@react-spectrum/s2/icons/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
-import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/s2/Content';
-import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
 import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
@@ -14,7 +11,6 @@ import {
   MessageSource,
   MessageSuggestion,
   MessageSuggestionList,
-  PromptFieldValue,
   ResponseStatus,
   ResponseStatusPanel,
   ResponseStatusTitle,
@@ -22,15 +18,12 @@ import {
   SourceListItem,
   Thread,
   ThreadItem,
-  ThreadLoadMoreItem,
   ThreadScrollButton,
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
-import type {Meta} from '@storybook/react';
-import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
-import {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
+import {ReactNode, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 
@@ -181,7 +174,6 @@ export function VirtualizedStreamingChat(props) {
   let nextId = useRef(initialResponses.length);
   let [isGenerating, setGenerating] = useState(false);
   let timeouts = useRef<NodeJS.Timeout[]>([]);
-  let [promptValue, setPromptValue] = useState(new PromptFieldValue([]));
   let followUpMessage = useRef<TokenFieldValue | null>(null);
 
   function handleSend(prompt: TokenFieldValue) {
@@ -381,21 +373,6 @@ export function VirtualizedStreamingChat(props) {
       handleSend(followup);
     }
   }, [isGenerating]);
-
-  // TODO: maybe also have it finalize any in progress tool calls and what not, but do it later
-  function handleStop() {
-    followUpMessage.current = null;
-    timeouts.current.forEach(clearTimeout);
-    timeouts.current = [];
-    setMessages(prev =>
-      prev.map(m =>
-        (m.type === 'system' || m.type === 'status') && m.isStreaming
-          ? {...m, isStreaming: false}
-          : m
-      )
-    );
-    setGenerating(false);
-  }
 
   return (
     // TODO: these extra div wrappers would need to be implemented by the RAC user, maybe we can internalize some more?
