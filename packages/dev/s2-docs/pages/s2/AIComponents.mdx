@@ -1,0 +1,317 @@
+import {Layout} from '../../src/Layout';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+export default Layout;
+
+export const section = 'Guides';
+export const tags = ['spectrum', 'ai'];
+export const description = 'How to use AI components.';
+
+# AI Components
+
+<PageDescription>Spectrum has a .</PageDescription>
+
+
+```tsx render type="s2" files={["packages/dev/s2-docs/pages/s2/ai-component-helpers/promptfield.tsx", "packages/dev/s2-docs/pages/s2/ai-component-helpers/chat.tsx"]}
+"use client";
+import {useState, useRef} from 'react';
+import {
+  AttachFileMenuItem,
+  CommandMenuItem,
+  InsertTextMenuItem,
+  InsertTokenMenuItem,
+  InsertMenuButton,
+  Prompt,
+  PromptField,
+  PromptFieldAttachment,
+  PromptFieldAttachmentList,
+  PromptFieldSubmitButton,
+  PromptFieldTokenValue,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptFieldVoiceButton,
+  PromptToken,
+  PromptTokenField,
+  MessageSuggestion, 
+  MessageSuggestionList
+} from '@react-spectrum/ai';
+import {getIcon, prompts, slashCommands, objects, renderCompletions} from './ai-component-helpers/promptfield';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
+import * as data from '@react-spectrum/ai/loader';
+import {Collection, SubmenuTrigger, Menu, MenuItem, MenuSection, Header, Heading, Text} from '@react-spectrum/s2';
+import Data from '@react-spectrum/s2/icons/Data';
+import Plugin from '@react-spectrum/s2/icons/Plugin';
+import Prompt from '@react-spectrum/s2/icons/Prompt';
+import {VirtualizedStreamingChat} from './ai-component-helpers/chat';
+
+
+function Example(args) {
+  let {placeholder, menuWidth, ...otherArgs} = args;
+  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+  let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
+  let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
+  let historyRef = useRef<TokenFieldValue[]>([]);
+  let historyIndexRef = useRef(-1);
+  let isHistoryNavigating = useRef(false);
+
+  let mockUpload = async (id: string) => {
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 30));
+    setAttachmentState(prev => {
+      let item = prev.get(id);
+      if (!item || item.status === 'completed') {
+        return prev;
+      }
+      let newState = new Map(prev);
+      let progress = (item.progress ?? 0) + 1;
+      if (progress >= 100) {
+        newState.set(id, {status: 'completed'});
+      } else {
+        newState.set(id, {status: 'uploading', progress});
+        mockUpload(id);
+      }
+      return newState;
+    });
+  };
+
+  let handleChange = (newValue: TokenFieldValue) => {
+    if (!isHistoryNavigating.current) {
+      // if user edits the field, then we want to reset the index so up arrow starts from latest prompt again
+      historyIndexRef.current = -1;
+    }
+    isHistoryNavigating.current = false;
+    setValue(newValue);
+  };
+
+  return (
+    <div className={style({height: 600, backgroundColor: 'layer-2'})}>
+    <VirtualizedStreamingChat>
+    <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
+      <MessageSuggestionList title="Suggestions">
+        {prompts.map((prompt, i) => (
+          <MessageSuggestion
+            key={i}
+            onPress={() => {
+              setValue(prompt);
+              promptFieldRef.current?.focus();
+            }}>
+            {prompt.segments.map((s, i) =>
+              s.type === 'token' ? (
+                <span
+                  key={i}
+                  className={style({
+                    outlineStyle: {
+                      default: 'solid',
+                      isPlaceholder: 'dashed'
+                    },
+                    outlineWidth: 1,
+                    outlineColor: {
+                      default: 'transparent-overlay-1000/20',
+                      isPlaceholder: 'transparent-overlay-1000/40'
+                    },
+                    outlineOffset: -1,
+                    borderRadius: 'pill',
+                    paddingX: 8,
+                    paddingY: 0,
+                    fontSize: 'ui',
+                    display: 'inline-flex',
+                    alignItems: 'baseline',
+                    gap: 4,
+                    verticalAlign: 'baseline'
+                  })({isPlaceholder: s.value?.type === 'placeholder'})}>
+                  {getIcon(s) && <CenterBaseline>{getIcon(s)}</CenterBaseline>}
+                  {s.text}
+                </span>
+              ) : (
+                s.text
+              )
+            )}
+          </MessageSuggestion>
+        ))}
+      </MessageSuggestionList>
+      <PromptField
+        {...otherArgs}
+        ref={promptFieldRef}
+        value={value}
+        onChange={handleChange}
+        attachments={attachments}
+        onAttachmentsChange={setAttachments}
+        onSubmit={prompt => {
+          historyRef.current = [...historyRef.current, prompt];
+          historyIndexRef.current = -1;
+          setValue(new PromptFieldValue([]));
+          setAttachments([]);
+          setAttachmentState(new Map());
+        }}
+        acceptedAttachmentTypes={['*/*']}
+        onAddAttachments={newAttachments => {
+          setAttachmentState(prev => {
+            let newState = new Map(prev);
+            newAttachments.forEach(attachment => {
+              newState.set(attachment.id, {status: 'uploading', progress: 0});
+              mockUpload(attachment.id);
+            });
+            return newState;
+          });
+        }}
+        onRemoveAttachments={removedAttachments => {
+          setAttachmentState(prev => {
+            let newState = new Map(prev);
+            removedAttachments.forEach(attachment => {
+              newState.delete(attachment.id);
+            });
+            return newState;
+          });
+        }}>
+        <PromptFieldAttachmentList
+          dependencies={[attachmentState, args.attachmentVariant, args.attachmentInvalid]}>
+          {attachment => {
+            let state = attachmentState.get(attachment.id);
+            return (
+              <Attachment
+                isInvalid={args.attachmentInvalid}
+                uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
+                <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+                {args.attachmentVariant === 'card' && (
+                  <Content>
+                    <Text slot="title">{attachment.file.name}</Text>
+                    <Text slot="description">
+                      {attachment.file.type.split('/').pop()?.toUpperCase()}
+                    </Text>
+                  </Content>
+                )}
+              </Attachment>
+            );
+          }}
+        </PromptFieldAttachmentList>
+        <PromptTokenField
+          completionTrigger={/(?<=^|\s)[@/]/}
+          renderCompletions={(filterValue, valueType) => {
+            return renderCompletions(filterValue, {
+              valueType,
+              onClear: () => {
+                setValue(new PromptFieldValue([]));
+                setAttachments([]);
+              }
+            });
+          }}
+          pixelLoader={data[args.pixelLoader]}
+          shouldAnimatePixelLoader
+          placeholder={placeholder}
+          menuWidth={menuWidth}>
+          {token => (
+            <PromptToken token={token}>
+              {getIcon(token)}
+              {token.text}
+            </PromptToken>
+          )}
+        </PromptTokenField>
+        <PromptFieldToolbar>
+          <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+            <InsertMenuButton>
+              <AttachFileMenuItem />
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Prompt />
+                  <Text>Commands</Text>
+                </MenuItem>
+                <Menu items={slashCommands.filter(item => item.kind === 'command')}>
+                  {item =>
+                    item.command === '/clear' ? (
+                      <MenuItem
+                        id={item.command}
+                        onAction={() => {
+                          setValue(new PromptFieldValue([]));
+                          setAttachments([]);
+                        }}>
+                        <Text slot="label">{item.command}</Text>
+                        <Text slot="description">{item.description}</Text>
+                      </MenuItem>
+                    ) : item.command === '/compact' ? (
+                      <MenuItem id={item.command} onAction={() => console.log('onCompact')}>
+                        <Text slot="label">{item.command}</Text>
+                        <Text slot="description">{item.description}</Text>
+                      </MenuItem>
+                    ) : item.command === '/feedback' || item.command === '/btw' ? (
+                      <InsertTextMenuItem id={item.command} text={item.command}>
+                        <Text slot="label">{item.command}</Text>
+                        <Text slot="description">{item.description}</Text>
+                      </InsertTextMenuItem>
+                    ) : (
+                      <InsertTokenMenuItem
+                        id={item.command}
+                        token={{
+                          type: 'token',
+                          text: item.command,
+                          value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                        }}>
+                        <Text slot="label">{item.command}</Text>
+                        <Text slot="description">{item.description}</Text>
+                      </InsertTokenMenuItem>
+                    )
+                  }
+                </Menu>
+              </SubmenuTrigger>
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Plugin />
+                  <Text>Skills</Text>
+                </MenuItem>
+                <Menu items={slashCommands.filter(item => item.kind === 'skill')}>
+                  {item => (
+                    <InsertTokenMenuItem
+                      id={item.command}
+                      token={{
+                        type: 'token',
+                        text: item.command,
+                        value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                      }}>
+                      <Text slot="label">{item.command}</Text>
+                      <Text slot="description">{item.description}</Text>
+                    </InsertTokenMenuItem>
+                  )}
+                </Menu>
+              </SubmenuTrigger>
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Data />
+                  <Text>Reference an object</Text>
+                </MenuItem>
+                <Menu items={objects}>
+                  {item => (
+                    <MenuSection>
+                      <Header>
+                        <Heading>{item.section}</Heading>
+                      </Header>
+                      <Collection items={item.items}>
+                        {item => (
+                          <InsertTokenMenuItem
+                            id={item.title}
+                            token={{
+                              type: 'token',
+                              text: item.title,
+                              value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
+                            }}>
+                            {item.title}
+                          </InsertTokenMenuItem>
+                        )}
+                      </Collection>
+                    </MenuSection>
+                  )}
+                </Menu>
+              </SubmenuTrigger>
+            </InsertMenuButton>
+          </div>
+          {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
+          <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+            <PromptFieldVoiceButton onToggle={() => console.log('onToggle')} />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptFieldToolbar>
+      </PromptField>
+    </div>
+    </VirtualizedStreamingChat>
+    </div>
+  );
+}
+```
