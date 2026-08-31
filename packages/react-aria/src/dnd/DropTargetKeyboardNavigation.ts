@@ -38,7 +38,12 @@ function nextDropTarget(
   }
 
   if (target.type === 'root') {
-    let nextKey = keyboardDelegate.getFirstKey?.() ?? null;
+    let nextKey =
+      keyboardDelegate.getFirstKey?.(
+        undefined,
+        undefined,
+        key => collection.getItem(key)?.type === 'item'
+      ) ?? null;
     if (nextKey != null) {
       return {
         type: 'item',
@@ -194,7 +199,10 @@ function previousDropTarget(
           ? keyboardDelegate.getKeyLeftOf?.(target.key, {includeDisabled: true})
           : keyboardDelegate.getKeyRightOf?.(target.key, {includeDisabled: true});
     } else {
-      prevKey = keyboardDelegate.getKeyAbove?.(target.key, {includeDisabled: true});
+      prevKey = keyboardDelegate.getKeyAbove?.(target.key, {
+        includeDisabled: true,
+        filter: key => collection.getItem(key)?.type === 'item'
+      });
     }
     let prevCollectionKey = getNextItem(collection, target.key, key =>
       collection.getKeyBefore(key)

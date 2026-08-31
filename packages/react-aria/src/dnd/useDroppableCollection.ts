@@ -665,7 +665,11 @@ export function useDroppableCollection(
                 target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
               } else {
                 // If on the root, go to the item a page below the top. Otherwise a page below the current item.
-                let targetKey = keyboardDelegate.getFirstKey?.();
+                let targetKey = keyboardDelegate.getFirstKey?.(
+                  undefined,
+                  undefined,
+                  key => localState.state.collection.getItem(key)?.type === 'item'
+                );
                 if (target.type === 'item') {
                   targetKey = target.key;
                 }
@@ -678,9 +682,20 @@ export function useDroppableCollection(
                 // If there is no next key, or we are starting on the last key, jump to the last possible position.
                 if (
                   nextKey == null ||
-                  (target.type === 'item' && target.key === keyboardDelegate.getLastKey?.())
+                  (target.type === 'item' &&
+                    target.key ===
+                      keyboardDelegate.getLastKey?.(
+                        undefined,
+                        undefined,
+                        key => localState.state.collection.getItem(key)?.type === 'item'
+                      ))
                 ) {
-                  nextKey = keyboardDelegate.getLastKey?.() ?? null;
+                  nextKey =
+                    keyboardDelegate.getLastKey?.(
+                      undefined,
+                      undefined,
+                      key => localState.state.collection.getItem(key)?.type === 'item'
+                    ) ?? null;
                   dropPosition = 'after';
                 }
 
@@ -737,7 +752,14 @@ export function useDroppableCollection(
               target = nextValidTarget(null, types, drag.allowedDropOperations, getPreviousTarget);
             } else if (target.type === 'item') {
               // If at the top already, switch to the root. Otherwise navigate a page up.
-              if (target.key === keyboardDelegate.getFirstKey?.()) {
+              if (
+                target.key ===
+                keyboardDelegate.getFirstKey?.(
+                  undefined,
+                  undefined,
+                  key => localState.state.collection.getItem(key)?.type === 'item'
+                )
+              ) {
                 target = {
                   type: 'root'
                 };
@@ -745,7 +767,11 @@ export function useDroppableCollection(
                 let nextKey: Key | null | undefined = keyboardDelegate.getKeyPageAbove(target.key);
                 let dropPosition = target.dropPosition;
                 if (nextKey == null) {
-                  nextKey = keyboardDelegate.getFirstKey?.();
+                  nextKey = keyboardDelegate.getFirstKey?.(
+                    undefined,
+                    undefined,
+                    key => localState.state.collection.getItem(key)?.type === 'item'
+                  );
                   dropPosition = 'before';
                 }
 

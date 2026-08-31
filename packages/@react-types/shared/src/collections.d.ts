@@ -105,10 +105,16 @@ export type SortDirection = 'ascending' | 'descending';
 
 export interface KeyboardDelegate {
   /** Returns the key visually below the given one, or `null` for none. */
-  getKeyBelow?(key: Key, options?: {includeDisabled?: boolean}): Key | null;
+  getKeyBelow?(
+    key: Key,
+    options?: {includeDisabled?: boolean; filter?: (key: Key) => boolean}
+  ): Key | null;
 
   /** Returns the key visually above the given one, or `null` for none. */
-  getKeyAbove?(key: Key, options?: {includeDisabled?: boolean}): Key | null;
+  getKeyAbove?(
+    key: Key,
+    options?: {includeDisabled?: boolean; filter?: (key: Key) => boolean}
+  ): Key | null;
 
   /** Returns the key visually to the left of the given one, or `null` for none. */
   getKeyLeftOf?(key: Key, options?: {includeDisabled?: boolean}): Key | null;
@@ -123,14 +129,10 @@ export interface KeyboardDelegate {
   getKeyPageAbove?(key: Key): Key | null;
 
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(
-    key?: Key | null,
-    global?: boolean,
-    initialFocus?: 'row' | 'columnheader'
-  ): Key | null;
+  getFirstKey?(key?: Key | null, global?: boolean, filter?: (key: Key) => boolean): Key | null;
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(key?: Key | null, global?: boolean): Key | null;
+  getLastKey?(key?: Key | null, global?: boolean, filter?: (key: Key) => boolean): Key | null;
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key | null): Key | null;

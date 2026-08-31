@@ -17,27 +17,37 @@ import {Key, Node} from '@react-types/shared';
 
 export interface TableKeyboardDelegateOptions<T> extends GridKeyboardDelegateOptions<
   ITableCollection<T>
-> {}
+> {
+  initialFocus?: 'row' | 'columnheader';
+}
 
 export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableCollection<T>> {
+  private initialFocus: 'row' | 'columnheader';
+
   constructor(options: TableKeyboardDelegateOptions<T>) {
     super(options);
+    this.initialFocus = options.initialFocus || 'row';
   }
 
   protected isCell(node: Node<T>): boolean {
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
-  getFirstKey(fromKey?: Key, global?: boolean, initialFocus?: 'row' | 'columnheader'): Key | null {
-    if (fromKey == null && initialFocus === 'columnheader') {
+  getFirstKey(fromKey?: Key, global?: boolean, filter?: (key: Key) => boolean): Key | null {
+    if (fromKey == null && this.initialFocus === 'columnheader') {
       let firstColumn = this.collection.columns.find(
         column => !column.props?.isDragButtonCell && !column.props?.isSelectionCell
       );
-      if (firstColumn) {
+      if (firstColumn && (!filter || filter(firstColumn.key))) {
         return firstColumn.key;
       }
     }
-    return super.getFirstKey(fromKey, global);
+
+    let key = super.getFirstKey(fromKey, global);
+    if (key != null && filter && !filter(key)) {
+      return null;
+    }
+    return key;
   }
 
   getKeyBelow(key: Key, options?: {includeDisabled?: boolean}): Key | null {
@@ -70,7 +80,10 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
     return super.getKeyBelow(key, options);
   }
 
-  getKeyAbove(key: Key, options?: {includeDisabled?: boolean}): Key | null {
+  getKeyAbove(
+    key: Key,
+    options?: {includeDisabled?: boolean; filter?: (key: Key) => boolean}
+  ): Key | null {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return null;
@@ -97,11 +110,20 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
     // If no item was found, and focus was on a cell, then focus the
     // corresponding column header.
     if (this.isCell(startItem)) {
-      return this.collection.columns[startItem.index].key;
+      let colKey = this.collection.columns[startItem.index].key;
+      if (!options?.filter || options.filter(colKey)) {
+        return colKey;
+      }
+      return null;
     }
 
     // If focus was on a row, then focus the first column header.
-    return this.collection.columns[0].key;
+    let colKey = this.collection.columns[0].key;
+    if (!options?.filter || options.filter(colKey)) {
+      return colKey;
+    }
+
+    return null;
   }
 
   private findNextColumnKey(column: Node<T>): Key | null {

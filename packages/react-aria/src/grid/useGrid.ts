@@ -89,13 +89,6 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * @default 'arrow'
    */
   keyboardNavigationBehavior?: 'arrow' | 'tab';
-  /**
-   * Whether the first row or the first column header should be focused when the user tabs into the
-   * table.
-   *
-   * @private
-   */
-  UNSTABLE_initialFocus?: 'row' | 'columnheader';
 }
 
 export interface GridAria {
@@ -128,8 +121,7 @@ export function useGrid<T>(
     onCellAction,
     escapeKeyBehavior = 'clearSelection',
     shouldSelectOnPressUp,
-    keyboardNavigationBehavior = 'arrow',
-    UNSTABLE_initialFocus
+    keyboardNavigationBehavior = 'arrow'
   } = props;
   let {selectionManager: manager} = state;
 
@@ -173,8 +165,7 @@ export function useGrid<T>(
     isVirtualized,
     scrollRef,
     disallowTypeAhead,
-    escapeKeyBehavior,
-    UNSTABLE_initialFocus
+    escapeKeyBehavior
   });
 
   let id = useId(props.id);

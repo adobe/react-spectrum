@@ -73,7 +73,7 @@ export function useTable<T>(
   state: TableState<T> | TreeGridState<T>,
   ref: RefObject<HTMLElement | null>
 ): GridAria {
-  let {keyboardDelegate, isVirtualized, layoutDelegate, layout} = props;
+  let {keyboardDelegate, isVirtualized, layoutDelegate, layout, initialFocus} = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
@@ -91,7 +91,8 @@ export function useTable<T>(
         direction,
         collator,
         layoutDelegate,
-        layout
+        layout,
+        initialFocus
       }),
     [
       keyboardDelegate,
@@ -102,7 +103,8 @@ export function useTable<T>(
       direction,
       collator,
       layoutDelegate,
-      layout
+      layout,
+      initialFocus
     ]
   );
   let id = useId(props.id);
@@ -112,8 +114,7 @@ export function useTable<T>(
     {
       ...props,
       id,
-      keyboardDelegate: delegate,
-      UNSTABLE_initialFocus: props.initialFocus
+      keyboardDelegate: delegate
     },
     state,
     ref

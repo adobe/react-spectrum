@@ -136,13 +136,6 @@ export interface AriaSelectableCollectionOptions {
    * @private
    */
   UNSTABLE_focusOnEntry?: 'first' | 'last';
-  /**
-   * Whether the first row or the first column header should be focused when the user tabs into the
-   * table.
-   *
-   * @private
-   */
-  UNSTABLE_initialFocus?: 'row' | 'columnheader';
 }
 
 export interface SelectableCollectionAria {
@@ -172,8 +165,7 @@ export function useSelectableCollection(
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
     linkBehavior = 'action',
-    UNSTABLE_focusOnEntry,
-    UNSTABLE_initialFocus
+    UNSTABLE_focusOnEntry
   } = options;
   let {direction} = useLocale();
   let router = useRouter();
@@ -227,9 +219,9 @@ export function useSelectableCollection(
       let nextKey =
         manager.focusedKey != null
           ? delegate.getKeyBelow?.(manager.focusedKey)
-          : delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus);
+          : delegate.getFirstKey?.();
       if (nextKey == null && shouldFocusWrap) {
-        nextKey = delegate.getFirstKey?.(manager.focusedKey, undefined, UNSTABLE_initialFocus);
+        nextKey = delegate.getFirstKey?.(manager.focusedKey);
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey);
@@ -262,11 +254,7 @@ export function useSelectableCollection(
         return false;
       }
       // TODO: should Home and End also be reversed in column reverse aka Home goes to top? Or should Home always to to the "first" (bottom)
-      let firstKey: Key | null = delegate.getFirstKey(
-        manager.focusedKey,
-        isCtrlKeyPressed(e),
-        UNSTABLE_initialFocus
-      );
+      let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
       manager.setFocusedKey(firstKey);
       if (firstKey != null) {
         if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
@@ -286,11 +274,11 @@ export function useSelectableCollection(
       let nextKey: Key | undefined | null =
         manager.focusedKey != null
           ? delegate.getKeyLeftOf?.(manager.focusedKey)
-          : delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus);
+          : delegate.getFirstKey?.();
       if (nextKey == null && shouldFocusWrap) {
         nextKey =
           direction === 'rtl'
-            ? delegate.getFirstKey?.(manager.focusedKey, undefined, UNSTABLE_initialFocus)
+            ? delegate.getFirstKey?.(manager.focusedKey)
             : delegate.getLastKey?.(manager.focusedKey);
       }
       if (nextKey != null) {
@@ -306,12 +294,12 @@ export function useSelectableCollection(
       let nextKey: Key | undefined | null =
         manager.focusedKey != null
           ? delegate.getKeyRightOf?.(manager.focusedKey)
-          : delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus);
+          : delegate.getFirstKey?.();
       if (nextKey == null && shouldFocusWrap) {
         nextKey =
           direction === 'rtl'
             ? delegate.getLastKey?.(manager.focusedKey)
-            : delegate.getFirstKey?.(manager.focusedKey, undefined, UNSTABLE_initialFocus);
+            : delegate.getFirstKey?.(manager.focusedKey);
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey, direction === 'rtl' ? 'last' : 'first');
@@ -492,9 +480,7 @@ export function useSelectableCollection(
       // always go to the first item in the Thread when tabbing forwards/backwards into the collection
       // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
       navigateToKey(
-        UNSTABLE_focusOnEntry === 'first'
-          ? delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus)
-          : delegate.getLastKey?.()
+        UNSTABLE_focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.()
       );
     } else if (manager.focusedKey == null) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
@@ -507,10 +493,7 @@ export function useSelectableCollection(
       ) {
         navigateToKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
       } else {
-        navigateToKey(
-          manager.firstSelectedKey ??
-            delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus)
-        );
+        navigateToKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
       }
     } else if (scrollRef.current) {
       // Restore the scroll position to what it was before.
@@ -565,7 +548,7 @@ export function useSelectableCollection(
   );
 
   // update active descendant
-  let firstKey = delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus) ?? null;
+  let firstKey = delegate.getFirstKey?.() ?? null;
   useUpdateLayoutEffect(() => {
     if (shouldVirtualFocusFirst.current) {
       // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
@@ -622,7 +605,7 @@ export function useSelectableCollection(
 
       // Check focus strategy to determine which item to focus
       if (autoFocus === 'first') {
-        focusedKey = delegate.getFirstKey?.(undefined, undefined, UNSTABLE_initialFocus) ?? null;
+        focusedKey = delegate.getFirstKey?.() ?? null;
       }
       if (autoFocus === 'last') {
         focusedKey = delegate.getLastKey?.() ?? null;
