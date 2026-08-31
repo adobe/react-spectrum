@@ -15,6 +15,7 @@ import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
   MenuItemProps as AriaMenuItemProps,
+  MenuLoadMoreItem as AriaMenuLoadMoreItem,
   MenuProps as AriaMenuProps,
   MenuSection as AriaMenuSection,
   MenuSectionProps as AriaMenuSectionProps,
@@ -24,6 +25,14 @@ import {
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   MenuItemRenderProps
 } from 'react-aria-components/Menu';
+import {
+  AsyncLoadable,
+  DOMRef,
+  DOMRefValue,
+  GlobalDOMAttributes,
+  LoadingState,
+  PressEvent
+} from '@react-types/shared';
 import {
   baseColor,
   centerPadding,
@@ -37,6 +46,7 @@ import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
+import {Collection} from 'react-aria/Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   control,
@@ -56,7 +66,6 @@ import {
   useState
 } from 'react';
 import {divider} from './Divider';
-import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
@@ -70,6 +79,7 @@ import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
 import {Separator, SeparatorProps} from 'react-aria-components/Separator';
 import {ToggleButtonContext} from './ToggleButton';
 import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
@@ -107,6 +117,7 @@ export interface MenuProps<T>
       AriaMenuProps<T>,
       'children' | 'style' | 'className' | 'render' | 'renderEmptyState' | keyof GlobalDOMAttributes
     >,
+    Pick<AsyncLoadable, 'onLoadMore'>,
     StyleProps {
   /**
    * The size of the Menu.
@@ -120,6 +131,11 @@ export interface MenuProps<T>
   children: ReactNode | ((item: T) => ReactNode);
   /** Hides the default link out icons on menu items that open links in a new tab. */
   hideLinkOutIcon?: boolean;
+  /**
+   * The current loading state of the Menu. Determines whether or not the progress circle should
+   * be shown, and whether a "no results" message is displayed when there are no items.
+   */
+  loadingState?: LoadingState;
 }
 
 export const MenuContext =
@@ -413,6 +429,50 @@ let wrappingDiv = style({
   size: 'full'
 });
 
+const loadingWrapperStyles = style({
+  gridColumnStart: '1',
+  gridColumnEnd: '-1',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginY: 8
+});
+
+const progressCircleStyles = style({
+  size: {
+    size: {
+      S: 16,
+      M: 20,
+      L: 22,
+      XL: 26
+    }
+  }
+});
+
+const emptyStateText = style({
+  gridColumnStart: '1',
+  gridColumnEnd: '-1',
+  height: {
+    size: {
+      S: 24,
+      M: 32,
+      L: 40,
+      XL: 48
+    }
+  },
+  font: {
+    size: {
+      S: 'ui-sm',
+      M: 'ui',
+      L: 'ui-lg',
+      XL: 'ui-xl'
+    }
+  },
+  display: 'flex',
+  alignItems: 'center',
+  paddingStart: 'edge-to-text'
+});
+
 /**
  * Menus display a list of actions or options that a user can choose.
  */
@@ -428,10 +488,48 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     UNSAFE_style,
     UNSAFE_className,
     styles,
-    hideLinkOutIcon = false
+    hideLinkOutIcon = false,
+    items,
+    loadingState,
+    onLoadMore
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
   let inPopover = useContext(InPopoverContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+
+  let menuLoadingCircle = (
+    <AriaMenuLoadMoreItem
+      isLoading={loadingState === 'loadingMore'}
+      onLoadMore={onLoadMore}
+      className={loadingWrapperStyles}>
+      <ProgressCircle
+        isIndeterminate
+        size="S"
+        styles={progressCircleStyles({size})}
+        // Same loading string as table
+        aria-label={stringFormatter.format('table.loadingMore')}
+      />
+    </AriaMenuLoadMoreItem>
+  );
+
+  let renderer;
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items} dependencies={props.dependencies}>
+          {children}
+        </Collection>
+        {menuLoadingCircle}
+      </>
+    );
+  } else {
+    renderer = (
+      <>
+        {children}
+        {menuLoadingCircle}
+      </>
+    );
+  }
 
   let isPopover = (ctx || isSubmenu) && !inPopover;
   let content = (
@@ -457,8 +555,27 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
           ],
           [InPopoverContext, false]
         ]}>
-        <AriaMenu {...props} className={menu({size, isPopover}, isPopover ? null : styles)}>
-          {children}
+        <AriaMenu
+          {...props}
+          className={menu({size, isPopover}, isPopover ? null : styles)}
+          renderEmptyState={() =>
+            loadingState === 'loading' ? (
+              <div className={loadingWrapperStyles}>
+                <ProgressCircle
+                  isIndeterminate
+                  size="S"
+                  styles={progressCircleStyles({size})}
+                  // Same loading string as table
+                  aria-label={stringFormatter.format('table.loading')}
+                />
+              </div>
+            ) : (
+              <span className={emptyStateText({size})}>
+                {stringFormatter.format('combobox.noResults')}
+              </span>
+            )
+          }>
+          {renderer}
         </AriaMenu>
       </Provider>
     </InternalMenuContext.Provider>
