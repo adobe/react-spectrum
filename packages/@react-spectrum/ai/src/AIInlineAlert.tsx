@@ -13,24 +13,20 @@
 import AlertDiamond from '@react-spectrum/s2/icons/AlertDiamond';
 import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
 import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
-import {Button} from 'react-aria-components/Button';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
-import {ComponentType, forwardRef, ReactNode, useRef} from 'react';
-import Cross from '../ui-icons/Cross';
+import {ComponentType, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
 import intlMessages from '../intl/*.json';
 import {lightDark, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
-import {pressScale} from '@react-spectrum/s2/pressScale';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface AIInlineAlertProps extends DOMProps, AriaLabelingProps {
   children: ReactNode;
   variant?: 'informative' | 'positive' | 'notice' | 'negative' | 'neutral';
-  closeButtonPlacement?: 'inline' | 'floating';
   onDismiss?: () => void;
   styles?: StyleString;
 }
@@ -43,7 +39,7 @@ const ICONS: Record<string, ComponentType<any> | undefined> = {
   neutral: undefined
 };
 
-const container = style<{closeButtonPlacement: 'inline' | 'floating'}>({
+const container = style({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
@@ -55,9 +51,6 @@ const container = style<{closeButtonPlacement: 'inline' | 'floating'}>({
   borderColor: lightDark('black/3', 'white/3'),
   backgroundColor: lightDark('black/2', 'white/2'),
   paddingStart: 8,
-  paddingEnd: {
-    closeButtonPlacement: {floating: 12}
-  },
   paddingY: 4
 });
 
@@ -85,51 +78,12 @@ const text = style({
   minWidth: 0
 });
 
-const floatingCloseButtonWrapper = style({
-  position: 'absolute',
-  top: 0,
-  insetEnd: 0,
-  transform: 'translate(50%, -50%)'
-});
-
-const floatingCloseButton = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  size: 20,
-  borderRadius: 'full',
-  borderStyle: 'none',
-  backgroundColor: 'gray-200',
-  color: 'gray-900',
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
-});
-
-function FloatingCloseButton(props: {onPress?: () => void}) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
-  let ref = useRef<HTMLButtonElement | null>(null);
-  // oxlint-disable react/react-compiler
-  return (
-    <Button
-      ref={ref}
-      onPress={props.onPress}
-      aria-label={stringFormatter.format('aiinlinealert.dismiss')}
-      style={pressScale(ref, {backdropFilter: 'blur(10px)'})}
-      className={floatingCloseButton}>
-      <Cross size="S" />
-    </Button>
-  );
-  // oxlint-enable react/react-compiler
-}
-
 export const AIInlineAlert = forwardRef(function AIInlineAlert(
   props: AIInlineAlertProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
-  let {children, variant = 'neutral', closeButtonPlacement = 'inline', onDismiss, styles} = props;
+  let {children, variant = 'neutral', onDismiss, styles} = props;
   let domRef = useDOMRef(ref);
   let Icon = ICONS[variant];
 
@@ -138,7 +92,7 @@ export const AIInlineAlert = forwardRef(function AIInlineAlert(
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
       role="alert"
-      className={mergeStyles(container({closeButtonPlacement}), styles)}>
+      className={mergeStyles(container, styles)}>
       {Icon && (
         <Icon
           styles={icon({variant})}
@@ -146,13 +100,7 @@ export const AIInlineAlert = forwardRef(function AIInlineAlert(
         />
       )}
       <span className={text}>{children}</span>
-      {closeButtonPlacement === 'floating' ? (
-        <div className={floatingCloseButtonWrapper}>
-          <FloatingCloseButton onPress={onDismiss} />
-        </div>
-      ) : (
-        <CloseButton size="S" onPress={onDismiss} />
-      )}
+      <CloseButton size="S" onPress={onDismiss} />
     </div>
   );
 });

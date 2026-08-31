@@ -28,16 +28,11 @@ const meta: Meta<typeof AIInlineAlert> = {
     variant: {
       control: 'radio',
       options: ['informative', 'positive', 'notice', 'negative', 'neutral']
-    },
-    closeButtonPlacement: {
-      control: 'radio',
-      options: ['inline', 'floating']
     }
   },
   args: {
     children: 'In-line alert description.',
     variant: 'neutral',
-    closeButtonPlacement: 'inline',
     ...getActionArgs(events)
   },
   title: 'AI/AIInlineAlert'
@@ -51,26 +46,13 @@ export const Example: Story = {
 };
 
 const VARIANTS = ['informative', 'positive', 'notice', 'negative', 'neutral'] as const;
-const PLACEMENTS = ['inline', 'floating'] as const;
 
 export const AllVariants: Story = {
   name: 'All variants',
   render: args => (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 24})}>
-      {PLACEMENTS.map(closeButtonPlacement => (
-        <div
-          key={closeButtonPlacement}
-          className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
-          {VARIANTS.map(variant => (
-            <AIInlineAlert
-              {...args}
-              key={variant}
-              variant={variant}
-              closeButtonPlacement={closeButtonPlacement}
-              styles={style({width: 336})}
-            />
-          ))}
-        </div>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
+      {VARIANTS.map(variant => (
+        <AIInlineAlert {...args} key={variant} variant={variant} styles={style({width: 336})} />
       ))}
     </div>
   ),
