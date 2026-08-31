@@ -13,10 +13,13 @@
 import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
 import {
   AriaLabelingProps,
+  Collection,
   DOMProps,
   DOMRef,
   forwardRefType,
-  GlobalDOMAttributes
+  GlobalDOMAttributes,
+  Node,
+  RefObject
 } from '@react-types/shared';
 import AudioWave from '@react-spectrum/s2/icons/AudioWave';
 import {
@@ -31,13 +34,18 @@ import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
+import {
+  CollectionRenderer,
+  CollectionRendererContext
+} from 'react-aria-components/CollectionBuilder';
 import {ContentContext} from '@react-spectrum/s2/Content';
 import {
   createContext,
   forwardRef,
+  Fragment,
   ReactNode,
-  useCallback,
   useContext,
+  useMemo,
   useRef,
   useState
 } from 'react';
@@ -65,11 +73,10 @@ import {
 } from 'react-aria-components/TagGroup';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
-import {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 
 interface AttachmentRenderProps {
   /** The size of the Card. */
@@ -322,6 +329,7 @@ export interface AttachmentListProps<T>
    * Spectrum-defined styles, returned by the `style()` macro.
    */
   styles?: StyleString;
+  overflowBehavior: 'wrap' | 'scroll';
 }
 
 const flexRow = {
@@ -337,7 +345,8 @@ const tagListStyles = style<{isCarousel: boolean}>({
   overflowX: {isCarousel: 'auto'},
   scrollbarWidth: {isCarousel: 'none'},
   scrollSnapType: {isCarousel: 'x mandatory'},
-  paddingY: 12
+  paddingY: 12,
+  position: 'relative'
 });
 
 const carouselNavButtonStyles = style<{
@@ -346,9 +355,13 @@ const carouselNavButtonStyles = style<{
   isFocusVisible: boolean;
   isPressed: boolean;
   direction: 'ltr' | 'rtl';
+  isHidden: boolean;
 }>({
   ...focusRing(),
-  display: 'flex',
+  display: {
+    default: 'flex',
+    isHidden: 'none'
+  },
   alignItems: 'center',
   justifyContent: 'center',
   size: controlSizeM,
@@ -387,11 +400,13 @@ const carouselNavButtonStyles = style<{
 function CarouselNavButton({
   side,
   onPress,
-  isDisabled
+  isDisabled,
+  isHidden
 }: {
   side: 'start' | 'end';
   onPress: () => void;
   isDisabled: boolean;
+  isHidden: boolean;
 }) {
   let ref = useRef(null);
   let {direction} = useLocale();
@@ -407,7 +422,7 @@ function CarouselNavButton({
       )}
       style={pressScale(ref, {})}
       onPress={onPress}
-      className={renderProps => carouselNavButtonStyles({...renderProps, direction})}>
+      className={renderProps => carouselNavButtonStyles({...renderProps, isHidden, direction})}>
       <Icon />
     </Button>
   );
@@ -418,56 +433,14 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {styles, items, children, dependencies, ...otherProps} = props;
+  let {styles, items, children, dependencies, overflowBehavior = 'scroll', ...otherProps} = props;
   let domRef = useDOMRef(ref);
-  let scrollRef = useRef<HTMLDivElement>(null);
-
-  let [isCarousel, setIsCarousel] = useValueEffect(false);
-  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
-  let checkForOverflow = useCallback(() => {
-    setIsCarousel(function* () {
-      yield true;
-      let el = scrollRef.current;
-      yield !!el && !!domRef.current && el.scrollWidth > domRef.current.offsetWidth + 1;
-    });
-  }, [setIsCarousel]);
-  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    checkForOverflow();
-  }, [checkForOverflow, items, children]);
-  // Observe the parent, not domRef: our own size changes when isCarousel toggles.
-  let parent = useRef<HTMLElement | null>(null);
-  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    if (domRef.current) {
-      parent.current = domRef.current.parentElement as HTMLElement;
-    }
-  }, [domRef.current]);
-  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
-  useResizeObserver({ref: parent, onResize: checkForOverflow});
-
   let {direction} = useLocale();
+  let scrollRef = useRef<HTMLDivElement>(null);
   let [canScrollPrev, setCanScrollPrev] = useState(false);
   let [canScrollNext, setCanScrollNext] = useState(false);
-  // Track padding can rest scroll-snap at a nonzero scrollLeft; treat the first read as "start".
-  let startScrollRef = useRef<number | null>(null);
-  let updateScrollState = useCallback(() => {
-    let el = scrollRef.current;
-    if (el) {
-      let maxScroll = el.scrollWidth - el.clientWidth;
-      let scrolled = Math.abs(el.scrollLeft);
-      if (startScrollRef.current == null) {
-        startScrollRef.current = scrolled;
-      }
-      setCanScrollPrev(scrolled > startScrollRef.current + 1);
-      setCanScrollNext(scrolled < maxScroll - 1);
-    }
-  }, []);
-  useLayoutEffect(() => {
-    startScrollRef.current = null;
-    updateScrollState();
-  }, [updateScrollState, isCarousel]);
-  useResizeObserver({ref: scrollRef, onResize: updateScrollState});
+
+  let [isCarousel, setIsCarousel] = useState(false);
 
   let scroll = (dir: 1 | -1) => {
     // RTL flips the scroll direction convention; flip the sign to match.
@@ -483,24 +456,40 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
       ref={scrollRef}
       items={items}
       dependencies={dependencies}
-      onScroll={updateScrollState}
-      className={tagListStyles({isCarousel}) + ' ' + (isCarousel ? scrollFade({x: 32}) : '')}>
+      className={
+        tagListStyles({isCarousel: overflowBehavior === 'scroll'}) +
+        ' ' +
+        (overflowBehavior === 'scroll' && isCarousel ? scrollFade({x: 32}) : '')
+      }>
       {children}
     </TagList>
   );
 
   return (
-    <TagGroup {...otherProps} className={styles} ref={domRef}>
-      {isCarousel ? (
+    <CarouselCollection
+      containerRef={scrollRef}
+      groupRef={domRef}
+      onOverflowChange={setIsCarousel}
+      onSetPrevButtonDisabled={setCanScrollPrev}
+      onSetNextButtonDisabled={setCanScrollNext}>
+      <TagGroup {...otherProps} className={styles} ref={domRef}>
         <div className={style({...flexRow, gap: 8})}>
-          <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />
+          <CarouselNavButton
+            side="start"
+            isDisabled={!canScrollPrev}
+            isHidden={!isCarousel}
+            onPress={() => scroll(-1)}
+          />
           {tagList}
-          <CarouselNavButton side="end" isDisabled={!canScrollNext} onPress={() => scroll(1)} />
+          <CarouselNavButton
+            side="end"
+            isDisabled={!canScrollNext}
+            isHidden={!isCarousel}
+            onPress={() => scroll(1)}
+          />
         </div>
-      ) : (
-        tagList
-      )}
-    </TagGroup>
+      </TagGroup>
+    </CarouselCollection>
   );
 });
 
@@ -746,3 +735,165 @@ function AlertTriangleIcon({size}) {
       return <AlertTriangle styles={iconStyle({size: 'XL', color: 'negative'})} />;
   }
 }
+
+// Context for passing the count for the custom renderer
+let CarouselContext = createContext<{
+  containerRef: RefObject<HTMLOListElement | null>;
+  groupRef?: RefObject<HTMLDivElement | null>;
+  onOverflowChange?: (isCarousel: boolean) => void;
+  onSetPrevButtonDisabled?: (isDisabled: boolean) => void;
+  onSetNextButtonDisabled?: (isDisabled: boolean) => void;
+} | null>(null);
+
+function CarouselCollection({
+  children,
+  containerRef,
+  groupRef,
+  onOverflowChange,
+  onSetPrevButtonDisabled,
+  onSetNextButtonDisabled
+}) {
+  return (
+    <CarouselContext.Provider
+      value={{
+        containerRef,
+        groupRef,
+        onOverflowChange,
+        onSetPrevButtonDisabled,
+        onSetNextButtonDisabled
+      }}>
+      <CollectionRendererContext.Provider value={CarouselCollectionRenderer}>
+        {children}
+      </CollectionRendererContext.Provider>
+    </CarouselContext.Provider>
+  );
+}
+
+let CarouselCollectionRenderer: CollectionRenderer = {
+  CollectionRoot({collection}) {
+    return useCollectionRender(collection);
+  },
+  CollectionBranch({collection}) {
+    return useCollectionRender(collection);
+  }
+};
+
+let useCollectionRender = (collection: Collection<Node<unknown>>) => {
+  let {containerRef, groupRef, onOverflowChange, onSetPrevButtonDisabled, onSetNextButtonDisabled} =
+    useContext(CarouselContext) ?? {};
+
+  let children = useMemo(() => {
+    let result: Node<any>[] = [];
+    for (let key of collection.getKeys()) {
+      result.push(collection.getItem(key)!);
+    }
+    return result;
+  }, [collection]);
+
+  let overflowStartRef = useRef(null);
+  let overflowEndRef = useRef(null);
+  let overflowStartVisibleEvent = useEffectEvent(() => {
+    onSetPrevButtonDisabled?.(true);
+  });
+  let overflowEndVisibleEvent = useEffectEvent(() => {
+    onSetNextButtonDisabled?.(true);
+  });
+  let overflowStartHiddenEvent = useEffectEvent(() => {
+    onSetPrevButtonDisabled?.(false);
+  });
+  let overflowEndHiddenEvent = useEffectEvent(() => {
+    onSetNextButtonDisabled?.(false);
+  });
+
+  useLayoutEffect(() => {
+    if (
+      children.length <= 0 ||
+      !overflowStartRef.current ||
+      !overflowEndRef.current ||
+      !containerRef?.current
+    ) {
+      return;
+    }
+    let startObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          overflowStartHiddenEvent();
+        } else {
+          overflowStartVisibleEvent();
+        }
+      },
+      // threshold of 0 allows you to detect when a zero width element is intersectiong
+      {root: containerRef.current, threshold: 0}
+    );
+    let endObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          overflowEndHiddenEvent();
+        } else {
+          overflowEndVisibleEvent();
+        }
+      },
+      {root: containerRef.current, threshold: 0}
+    );
+    startObserver.observe(overflowStartRef.current);
+    endObserver.observe(overflowEndRef.current);
+    return () => {
+      startObserver.disconnect();
+      endObserver.disconnect();
+    };
+  }, [containerRef, children]);
+
+  let checkForOverflowEvent = useEffectEvent((val: boolean) => {
+    onOverflowChange?.(val);
+  });
+  useLayoutEffect(() => {
+    if (children.length <= 0 || !groupRef?.current) {
+      return;
+    }
+    let computeHasOverflow = () => {
+      if (groupRef?.current && children.length > 0) {
+        let containerRect = groupRef.current.getBoundingClientRect();
+        let assets = [...groupRef.current.querySelectorAll('[role="gridcell"]')];
+        let firstAsset = assets[0].children[0].getBoundingClientRect();
+        let lastAsset = assets.at(-1)!.children[0].getBoundingClientRect();
+        let removeButtonWidth =
+          assets[0].querySelector('[data-slot="remove"]')?.getBoundingClientRect().width ?? 0;
+        // handle rtl vs ltr
+        let assetsTotalWidth = Math.max(
+          lastAsset.right - firstAsset.left + removeButtonWidth / 2,
+          firstAsset.right - lastAsset.left + removeButtonWidth / 2
+        );
+        checkForOverflowEvent(assetsTotalWidth > containerRect.width);
+      }
+    };
+    // resize observer will fire an intial resize event
+    let observer = new ResizeObserver(entries => {
+      if (!entries.length) {
+        return;
+      }
+
+      computeHasOverflow();
+    });
+    observer.observe(groupRef.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, [groupRef, children]);
+
+  return (
+    <div
+      className={style({
+        ...flexRow,
+        gap: 8,
+        flexWrap: 'nowrap',
+        paddingY: 12,
+        position: 'relative'
+      })}>
+      <div ref={overflowStartRef} className={style({position: 'absolute', left: 0})} />
+      {children.map(node => (
+        <Fragment key={node.key}>{node.render?.(node)}</Fragment>
+      ))}
+      <div ref={overflowEndRef} className={style({position: 'absolute', right: 0})} />
+    </div>
+  );
+};

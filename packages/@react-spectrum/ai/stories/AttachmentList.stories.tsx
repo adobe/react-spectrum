@@ -272,22 +272,30 @@ export const Mixed: Story = {
 function CarouselRender(args) {
   let {isInvalid, size, uploadProgress, ...listArgs} = args;
   return (
-    <AttachmentList {...listArgs} styles={style({width: 500})}>
-      {Array.from({length: 8}, (_, i) => (
-        <AttachmentComponent
-          key={i}
-          uploadProgress={uploadProgress}
-          isInvalid={isInvalid}
-          size={size}
-          aria-label={`file-${i + 1}.pdf`}>
-          <AttachmentPreview
-            mimeType="application/pdf"
-            slot="thumbnail"
-            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-          />
-        </AttachmentComponent>
-      ))}
-    </AttachmentList>
+    <div
+      style={{
+        width: '500px',
+        resize: 'horizontal',
+        overflow: 'hidden',
+        border: '1px solid gray'
+      }}>
+      <AttachmentList {...listArgs} styles={style({width: 'full'})}>
+        {Array.from({length: 8}, (_, i) => (
+          <AttachmentComponent
+            key={i}
+            uploadProgress={uploadProgress}
+            isInvalid={isInvalid}
+            size={size}
+            aria-label={`file-${i + 1}.pdf`}>
+            <AttachmentPreview
+              mimeType="application/pdf"
+              slot="thumbnail"
+              src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+            />
+          </AttachmentComponent>
+        ))}
+      </AttachmentList>
+    </div>
   );
 }
 
