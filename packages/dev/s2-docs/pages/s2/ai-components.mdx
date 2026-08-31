@@ -1,16 +1,27 @@
 import {Layout} from '../../src/Layout';
+import {InstallCommand} from '../../src/InstallCommand';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import {VersionBadge} from '../../src/VersionBadge';
 export default Layout;
+
+import docs from 'docs:@react-spectrum/ai';
 
 export const section = 'Guides';
 export const tags = ['spectrum', 'ai'];
 export const description = 'Build AI-powered experiences with prompts, messages, suggestions, attachments, and voice input.';
 
 # AI Components
+<VersionBadge version="alpha" />
 
 <PageDescription>React Spectrum provides components for building AI-powered experiences, including prompts, messages, suggestions, attachments, and voice input.</PageDescription>
 
-## Prompt field
+## Installation
+
+AI components are published as a separate package from `@react-spectrum/s2`.
+
+<InstallCommand pkg="@react-spectrum/ai" />
+
+## Prompt fields
 
 Use `PromptField` as the foundation for allowing the user to submit a prompt. It manages an editable sequence of text and tokens, while `PromptTokenField` renders the input and `PromptFieldToolbar` contains its actions.
 
@@ -166,7 +177,7 @@ function PromptAttachments() {
 }
 ```
 
-## Chat
+## Chat threads
 
 Compose a conversation from `Chat`, `Thread`, and message components. The thread can be driven by a collection as messages arrive from your application.
 
@@ -549,3 +560,152 @@ function Example(args) {
   );
 }
 ```
+
+## API
+
+### Prompt field
+
+```tsx links={{PromptField: '#promptfield', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar', PromptFieldSubmitButton: '#promptfieldsubmitbutton', PromptFieldVoiceButton: '#promptfieldvoicebutton', PromptToken: '#prompttoken', PromptFieldAttachmentList: '#promptfieldattachmentlist', InsertMenuButton: '#insertmenubutton', AttachFileMenuItem: '#attachfilemenuitem', InsertTextMenuItem: '#inserttextmenuitem', InsertTokenMenuItem: '#inserttokenmenuitem', CommandMenuItem: '#commandmenuitem'}}
+<PromptField>
+  <PromptFieldAttachmentList />
+  <PromptTokenField>
+    {token => <PromptToken token={token} />}
+  </PromptTokenField>
+  <PromptFieldToolbar>
+    <InsertMenuButton>
+      <AttachFileMenuItem />
+      <InsertTextMenuItem />
+      <InsertTokenMenuItem />
+      <CommandMenuItem />
+    </InsertMenuButton>
+    <PromptFieldVoiceButton />
+    <PromptFieldSubmitButton />
+  </PromptFieldToolbar>
+</PromptField>
+```
+
+#### PromptField
+
+<PropTable component={docs.exports.PromptField} links={docs.links} />
+
+#### PromptTokenField
+
+<PropTable component={docs.exports.PromptTokenField} links={docs.links} />
+
+#### PromptToken
+
+<PropTable component={docs.exports.PromptToken} links={docs.links} />
+
+#### PromptFieldAttachmentList
+
+<PropTable component={docs.exports.PromptFieldAttachmentList} links={docs.links} />
+
+#### PromptFieldToolbar
+
+<PropTable component={docs.exports.PromptFieldToolbar} links={docs.links} />
+
+#### PromptFieldSubmitButton
+
+<PropTable component={docs.exports.PromptFieldSubmitButton} links={docs.links} />
+
+#### PromptFieldVoiceButton
+
+<PropTable component={docs.exports.PromptFieldVoiceButton} links={docs.links} />
+
+#### InsertMenuButton
+
+<PropTable component={docs.exports.InsertMenuButton} links={docs.links} />
+
+#### AttachFileMenuItem
+
+<PropTable component={docs.exports.AttachFileMenuItem} links={docs.links} />
+
+#### InsertTextMenuItem
+
+<PropTable component={docs.exports.InsertTextMenuItem} links={docs.links} />
+
+#### InsertTokenMenuItem
+
+<PropTable component={docs.exports.InsertTokenMenuItem} links={docs.links} />
+
+#### CommandMenuItem
+
+<PropTable component={docs.exports.CommandMenuItem} links={docs.links} />
+
+### Suggestions
+
+```tsx links={{MessageSuggestionList: '#messagesuggestionlist', MessageSuggestion: '#messagesuggestion'}}
+<MessageSuggestionList>
+  <MessageSuggestion />
+</MessageSuggestionList>
+```
+
+#### MessageSuggestionList
+
+<PropTable component={docs.exports.MessageSuggestionList} links={docs.links} />
+
+#### MessageSuggestion
+
+<PropTable component={docs.exports.MessageSuggestion} links={docs.links} />
+
+### Attachments
+
+```tsx links={{Attachment: '#attachment', AttachmentList: '#attachmentlist', AttachmentPreview: '#attachmentpreview'}}
+<AttachmentList>
+  {attachment => (
+    <Attachment>
+      <AttachmentPreview />
+    </Attachment>
+  )}
+</AttachmentList>
+```
+
+#### Attachment
+
+<PropTable component={docs.exports.Attachment} links={docs.links} />
+
+#### AttachmentList
+
+<PropTable component={docs.exports.AttachmentList} links={docs.links} />
+
+#### AttachmentPreview
+
+<PropTable component={docs.exports.AttachmentPreview} links={docs.links} />
+
+### Chat
+
+```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadLoadMoreItem: '#threadloadmoreitem', ThreadScrollButton: '#threadscrollbutton', UserMessage: '#usermessage'}}
+<Chat>
+  <Thread>
+    <ThreadItem>
+      <UserMessage /> or assistant content
+    </ThreadItem>
+    <ThreadLoadMoreItem />
+  </Thread>
+  <ThreadScrollButton />
+</Chat>
+```
+
+#### Chat
+
+<PropTable component={docs.exports.Chat} links={docs.links} />
+
+#### Thread
+
+<PropTable component={docs.exports.Thread} links={docs.links} />
+
+#### ThreadItem
+
+<PropTable component={docs.exports.ThreadItem} links={docs.links} />
+
+#### ThreadLoadMoreItem
+
+<PropTable component={docs.exports.ThreadLoadMoreItem} links={docs.links} />
+
+#### ThreadScrollButton
+
+<PropTable component={docs.exports.ThreadScrollButton} links={docs.links} />
+
+#### UserMessage
+
+<PropTable component={docs.exports.UserMessage} links={docs.links} />
