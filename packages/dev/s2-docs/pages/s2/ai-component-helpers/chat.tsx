@@ -7,6 +7,8 @@ import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
   Chat,
+  ExecutionTrace,
+  ExecutionTraceItem,
   MessageFeedback,
   MessageSource,
   MessageSuggestion,
@@ -106,15 +108,21 @@ let initialResponses = [
   }
 ] as Message[];
 
+interface ExecutionStep {
+  id: number;
+  label: string;
+  status: 'pending' | 'success';
+  detail?: string;
+}
+
 type StreamingMessage =
   | {id: number; type: 'user'; content: string}
   | {id: number; type: 'system'; content: string; isStreaming?: boolean; sources?: string[]}
   | {
       id: number;
       type: 'status';
-      label: string;
-      isStreaming: boolean;
-      details: string;
+      status: 'pending' | 'success';
+      steps: ExecutionStep[];
     }
   | {id: number; type: 'card'; title: string; description: string; imageUrl: string}
   | {id: number; type: 'suggestions'; title: string; suggestions: string[]};
@@ -167,6 +175,44 @@ function CardMessage({
   );
 }
 
+function StatusThreadItem({msg}: {msg: Extract<StreamingMessage, {type: 'status'}>}) {
+  let isStreaming = msg.status === 'pending';
+  let lastStep = msg.steps[msg.steps.length - 1];
+  let title = isStreaming
+    ? `${lastStep.label}…`
+    : msg.steps.length > 1
+      ? `Completed ${msg.steps.length} steps`
+      : lastStep.label;
+  let announcement = isStreaming ? `${lastStep.label}…` : `${title} complete`;
+  // TODO: might want to have ThreadItem be a part of the ResponseStatus by default?
+  // Ideally it would auto focus the ResponseStatus itself via focusMode=child, but we
+  // probably want to make that on a case by case basis
+  // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
+  return (
+    <ThreadItem textValue={announcement} isStreaming={isStreaming} shouldAnnounceOnMount>
+      <ResponseStatus status={isStreaming ? 'pending' : 'success'}>
+        <ResponseStatusTitle>{title}</ResponseStatusTitle>
+        <ResponseStatusPanel>
+          <ExecutionTrace>
+            {msg.steps.map(step => (
+              <ExecutionTraceItem
+                key={step.id}
+                status={step.status}
+                detail={
+                  step.detail && (
+                    <p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>
+                  )
+                }>
+                {step.label}
+              </ExecutionTraceItem>
+            ))}
+          </ExecutionTrace>
+        </ResponseStatusPanel>
+      </ResponseStatus>
+    </ThreadItem>
+  );
+}
+
 export function VirtualizedStreamingChat(props) {
   let [messages, setMessages] = useState<StreamingMessage[]>(
     initialResponses as StreamingMessage[]
@@ -184,38 +230,67 @@ export function VirtualizedStreamingChat(props) {
       {id: nextId.current++, type: 'user', content: prompt.toString()}
     ]);
 
-    function addTool(label: string, replaceStatus = false) {
-      setMessages(prev =>
-        replaceStatus
-          ? [
-              ...prev.slice(0, -1),
-              {
-                id: nextId.current++,
-                type: 'status',
-                label,
-                isStreaming: true,
-                details: ''
-              }
-            ]
-          : [
-              ...prev,
-              {
-                id: nextId.current++,
-                type: 'status',
-                label,
-                isStreaming: true,
-                details: ''
-              }
-            ]
-      );
+    // Starts a new grouped status message containing a single pending execution trace step.
+    function startToolGroup(label: string) {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: nextId.current++,
+          type: 'status',
+          status: 'pending',
+          steps: [{id: nextId.current++, label, status: 'pending'}]
+        }
+      ]);
     }
 
-    function completeTool(details: string) {
-      setMessages(prev =>
-        prev.map(m =>
-          m.type === 'status' && m.isStreaming ? {...m, isStreaming: false, details} : m
-        )
-      );
+    // Adds a new step to the trailing status group if one is still open, otherwise starts a new group.
+    function addStep(label: string) {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        let newStep: ExecutionStep = {id: nextId.current++, label, status: 'pending'};
+        if (last?.type === 'status' && last.status === 'pending') {
+          return [
+            ...prev.slice(0, -1),
+            {
+              ...last,
+              steps: [
+                ...last.steps.slice(0, -1),
+                {...last.steps[last.steps.length - 1], status: 'success'},
+                newStep
+              ]
+            }
+          ];
+        }
+        return [
+          ...prev,
+          {id: nextId.current++, type: 'status', status: 'pending', steps: [newStep]}
+        ];
+      });
+    }
+
+    // Completes the last step of the trailing status group, optionally updating its label.
+    function completeStep(detail: string, label?: string) {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        if (last?.type !== 'status') {
+          return prev;
+        }
+        let steps = last.steps.slice();
+        let step = steps[steps.length - 1];
+        steps[steps.length - 1] = {...step, label: label ?? step.label, status: 'success', detail};
+        return [...prev.slice(0, -1), {...last, steps}];
+      });
+    }
+
+    // Marks the trailing status group as complete once all of its steps have finished.
+    function completeGroup() {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        if (last?.type !== 'status') {
+          return prev;
+        }
+        return [...prev.slice(0, -1), {...last, status: 'success'}];
+      });
     }
 
     function streamText(content: string, sources?: string[]) {
@@ -257,39 +332,25 @@ export function VirtualizedStreamingChat(props) {
     let timestamp = 0;
     let toolCallDuration = 1000;
     // Status added after short delay so user message announcement plays first
-    addTimeout(
-      () => {
-        setMessages(prev => [
-          ...prev,
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Generating response',
-            isStreaming: true,
-            details: ''
-          }
-        ]);
-      },
-      (timestamp += 500)
-    );
-    addTimeout(() => addTool('Thinking', true), (timestamp += 500));
+    addTimeout(() => startToolGroup('Thinking'), (timestamp += 500));
     addTimeout(
       () =>
-        completeTool(
+        completeStep(
           'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
         ),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Loading tool'), (timestamp += 500));
+    addTimeout(() => addStep('Loading tool'), (timestamp += 500));
     addTimeout(
-      () => completeTool('Asset search tool loaded with access to the Hilton brand library.'),
+      () => completeStep('Asset search tool loaded with access to the Hilton brand library.'),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Searching'), (timestamp += 500));
+    addTimeout(() => addStep('Searching'), (timestamp += 500));
     addTimeout(
-      () => completeTool('Found 15 assets matching the brand criteria across 3 campaigns.'),
+      () => completeStep('Found 15 assets matching the brand criteria across 3 campaigns.'),
       (timestamp += toolCallDuration)
     );
+    addTimeout(() => completeGroup(), (timestamp += 200));
     addTimeout(
       () =>
         streamText(
@@ -299,49 +360,30 @@ export function VirtualizedStreamingChat(props) {
     );
 
     // then does searching, streaming more text, returning a card and sources
-    addTimeout(() => addTool('Searching'), (timestamp += 1000));
+    addTimeout(() => startToolGroup('Searching'), (timestamp += 1000));
     addTimeout(
       () =>
-        completeTool('Identified additional brand materials related to the presentation context.'),
+        completeStep('Identified additional brand materials related to the presentation context.'),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Querying database'), (timestamp += 1000));
+    addTimeout(() => addStep('Querying database'), (timestamp += 1000));
     addTimeout(
       () =>
-        completeTool(
+        completeStep(
           'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
         ),
       (timestamp += toolCallDuration)
     );
+    addTimeout(() => addStep('Generating response'), (timestamp += 500));
     addTimeout(
       () =>
-        setMessages(prev => [
-          ...prev,
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Generating response',
-            isStreaming: true,
-            details: ''
-          }
-        ]),
-      (timestamp += 500)
-    );
-    addTimeout(
-      () =>
-        setMessages(prev => [
-          ...prev.slice(0, -1),
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Response generated',
-            isStreaming: false,
-            details:
-              'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.'
-          }
-        ]),
+        completeStep(
+          'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.',
+          'Response generated'
+        ),
       (timestamp += 1000)
     );
+    addTimeout(() => completeGroup(), (timestamp += 200));
     let secondStreamContent =
       'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
       'layering in supporting visuals and data to reinforce the core message. The main themes ' +
@@ -442,27 +484,7 @@ export function VirtualizedStreamingChat(props) {
                 );
               }
               if (msg.type === 'status') {
-                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
-                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
-                // TODO: might want to have ThreadItem be a part of the ResponseStatus by default?
-                // Ideally it would auto focus the ResponseStatus itself via focusMode=child, but we
-                // probably want to make that on a case by case basis
-                // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
-                return (
-                  <ThreadItem
-                    textValue={announcement}
-                    isStreaming={msg.isStreaming}
-                    shouldAnnounceOnMount>
-                    <ResponseStatus status={msg.isStreaming ? 'pending' : 'success'}>
-                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
-                      <ResponseStatusPanel>
-                        {msg.details && (
-                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
-                        )}
-                      </ResponseStatusPanel>
-                    </ResponseStatus>
-                  </ThreadItem>
-                );
+                return <StatusThreadItem msg={msg} />;
               }
               if (msg.type === 'card') {
                 return (
