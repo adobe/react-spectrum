@@ -10,6 +10,228 @@ export const description = 'Build AI-powered experiences with prompts, messages,
 
 <PageDescription>React Spectrum provides components for building AI-powered experiences, including prompts, messages, suggestions, attachments, and voice input.</PageDescription>
 
+## Prompt field
+
+Use `PromptField` as the foundation for allowing the user to submit a prompt. It manages an editable sequence of text and tokens, while `PromptTokenField` renders the input and `PromptFieldToolbar` contains its actions.
+
+```tsx render type="s2"
+"use client";
+import {useState} from 'react';
+import {
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptTokenField,
+  TokenFieldValue
+} from '@react-spectrum/ai';
+
+function BasicPrompt() {
+  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+
+  return (
+    <PromptField
+      value={value}
+      onChange={setValue}
+      onSubmit={value => {
+        console.log(value.toString());
+        setValue(new PromptFieldValue([]));
+      }}>
+      <PromptTokenField placeholder="Ask anything" />
+      <PromptFieldToolbar>
+        <PromptFieldSubmitButton />
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+}
+```
+
+## Suggestions and tokens
+
+Suggestions can prefill a prompt, and a token field can offer context-aware completions such as mentions or commands.
+
+```tsx render type="s2"
+"use client";
+import {useState} from 'react';
+import {
+  InsertTokenMenuItem,
+  MessageSuggestion,
+  MessageSuggestionList,
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptTokenField,
+  TokenFieldValue
+} from '@react-spectrum/ai';
+
+let suggestions = ['Summarize this report', 'Draft a project brief', 'Find risks in this plan'];
+let people = ['Customers', 'Designers', 'Developers'];
+
+function PromptSuggestions() {
+  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <MessageSuggestionList title="Try asking">
+        {suggestions.map(suggestion => (
+          <MessageSuggestion
+            key={suggestion}
+            onPress={() => setValue(new PromptFieldValue([{type: 'text', text: suggestion}]))}>
+            {suggestion}
+          </MessageSuggestion>
+        ))}
+      </MessageSuggestionList>
+      <PromptField value={value} onChange={setValue} onSubmit={console.log}>
+        <PromptTokenField
+          completionTrigger={/(?<=^|\s)@/}
+          renderCompletions={filterValue =>
+            people
+              .filter(person => person.toLowerCase().includes(filterValue.slice(1).toLowerCase()))
+              .map(person => (
+                <InsertTokenMenuItem
+                  key={person}
+                  id={person}
+                  token={{
+                    type: 'token',
+                    text: person,
+                    value: {type: 'custom', anchor: '@', valueType: 'person', data: person}
+                  }}>
+                  {person}
+                </InsertTokenMenuItem>
+              ))
+          }
+          placeholder="Ask about @customers" />
+        <PromptFieldToolbar>
+          <PromptFieldSubmitButton />
+        </PromptFieldToolbar>
+      </PromptField>
+    </div>
+  );
+}
+```
+
+## Attachments and actions
+
+Add attachments and place common actions in the toolbar. Use a custom attachment render function when an attachment needs a thumbnail or additional metadata.
+
+```tsx render type="s2"
+"use client";
+import {useState} from 'react';
+import {
+  Attachment,
+  AttachmentPreview,
+  AttachFileMenuItem,
+  InsertMenuButton,
+  InsertTextMenuItem,
+  PromptField,
+  PromptFieldAttachment,
+  PromptFieldAttachmentList,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldVoiceButton,
+  PromptFieldValue,
+  PromptTokenField
+} from '@react-spectrum/ai';
+
+function PromptAttachments() {
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
+
+  return (
+    <PromptField
+      defaultValue={new PromptFieldValue([])}
+      attachments={attachments}
+      onAttachmentsChange={setAttachments}
+      acceptedAttachmentTypes={['image/*']}>
+      <PromptFieldAttachmentList>
+        {attachment => (
+          <Attachment>
+            <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+          </Attachment>
+        )}
+      </PromptFieldAttachmentList>
+      <PromptTokenField placeholder="Describe the image" />
+      <PromptFieldToolbar>
+        <InsertMenuButton>
+          <AttachFileMenuItem />
+          <InsertTextMenuItem id="summarize" text="Summarize this image">
+            Summarize image
+          </InsertTextMenuItem>
+        </InsertMenuButton>
+        <PromptFieldVoiceButton />
+        <PromptFieldSubmitButton />
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+}
+```
+
+## Chat
+
+Compose a conversation from `Chat`, `Thread`, and message components. The thread can be driven by a collection as messages arrive from your application.
+
+```tsx render type="s2"
+"use client";
+import {Chat, Thread, ThreadItem, UserMessage} from '@react-spectrum/ai';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+let messages = [
+  {id: 1, type: 'user', text: 'Summarize the campaign results.'},
+  {id: 2, type: 'assistant', text: 'Engagement increased 18% this month, led by email and social.'}
+];
+
+function BasicChat() {
+  return (
+    <Chat
+      styles={style({
+        display: 'flex',
+        flexDirection: 'column',
+        height: 240,
+        width: 'full',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+        minWidth: 0
+      })}>
+      <div
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
+          minWidth: 0,
+          overflow: 'hidden'
+        })}>
+        <Thread
+          items={messages}
+          aria-label="Campaign discussion"
+          styles={style({
+            flexGrow: 1,
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            padding: 8,
+            scrollPadding: 8,
+            rowGap: 16
+          })}>
+          {message =>
+            message.type === 'user' ? (
+              <ThreadItem
+                textValue={message.text}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{message.text}</UserMessage>
+              </ThreadItem>
+            ) : (
+              <ThreadItem textValue={message.text}>{message.text}</ThreadItem>
+            )
+          }
+        </Thread>
+      </div>
+    </Chat>
+  );
+}
+```
+
+## Complete example
+
+This example combines prompt suggestions, token completions, attachments, toolbar actions, and a streaming chat thread.
 
 ```tsx render type="s2" files={["packages/dev/s2-docs/pages/s2/ai-component-helpers/promptfield.tsx", "packages/dev/s2-docs/pages/s2/ai-component-helpers/chat.tsx"]}
 "use client";
@@ -48,6 +270,7 @@ import {VirtualizedStreamingChat} from './ai-component-helpers/chat';
 
 
 function Example(args) {
+  /*- begin highlight -*/
   let {placeholder, menuWidth, ...otherArgs} = args;
   let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
   let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
@@ -56,6 +279,7 @@ function Example(args) {
   let historyRef = useRef<TokenFieldValue[]>([]);
   let historyIndexRef = useRef(-1);
   let isHistoryNavigating = useRef(false);
+  /*- end highlight -*/
 
   let mockUpload = async (id: string) => {
     await new Promise(resolve => setTimeout(resolve, Math.random() * 30));
@@ -89,6 +313,7 @@ function Example(args) {
     <div className={style({height: 600, backgroundColor: 'layer-2'})}>
     <VirtualizedStreamingChat>
     <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
+      {/*- begin highlight -*/}
       <MessageSuggestionList title="Suggestions">
         {prompts.map((prompt, i) => (
           <MessageSuggestion
@@ -131,6 +356,7 @@ function Example(args) {
           </MessageSuggestion>
         ))}
       </MessageSuggestionList>
+      {/*- end highlight -*/}
       <PromptField
         {...otherArgs}
         ref={promptFieldRef}
@@ -165,6 +391,7 @@ function Example(args) {
             return newState;
           });
         }}>
+        {/*- begin highlight -*/}
         <PromptFieldAttachmentList
           dependencies={[attachmentState, args.attachmentVariant, args.attachmentInvalid]}>
           {attachment => {
@@ -186,6 +413,8 @@ function Example(args) {
             );
           }}
         </PromptFieldAttachmentList>
+        {/*- end highlight -*/}
+        {/*- begin highlight -*/}
         <PromptTokenField
           completionTrigger={/(?<=^|\s)[@/]/}
           renderCompletions={(filterValue, valueType) => {
@@ -208,6 +437,8 @@ function Example(args) {
             </PromptToken>
           )}
         </PromptTokenField>
+        {/*- end highlight -*/}
+        {/*- begin highlight -*/}
         <PromptFieldToolbar>
           <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
             <InsertMenuButton>
@@ -310,6 +541,7 @@ function Example(args) {
             <PromptFieldSubmitButton />
           </div>
         </PromptFieldToolbar>
+        {/*- end highlight -*/}
       </PromptField>
     </div>
     </VirtualizedStreamingChat>
