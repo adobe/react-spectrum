@@ -252,10 +252,11 @@ interface ScrollFadeOptions {
   end?: number;
   x?: number;
   y?: number;
+  inset?: number;
 }
 
 export function scrollFade(this: any | void, options: ScrollFadeOptions) {
-  let {x = 0, y = 0, top = y, bottom = y, start = x, end = x} = options;
+  let {x = 0, y = 0, top = y, bottom = y, start = x, end = x, inset = 0} = options;
 
   let blockMask = '',
     inlineMask = '';
@@ -263,10 +264,10 @@ export function scrollFade(this: any | void, options: ScrollFadeOptions) {
   if (top || bottom) {
     blockMask = `linear-gradient(
       to bottom,
-      transparent 0px,
-      black var(--scroll-fade-top, 0px),
-      black var(--scroll-fade-bottom, 100%),
-      transparent 100%
+      transparent 0px ${inset > 0 ? `calc(var(--scroll-fade-top, ${inset}px) - ${top}px)` : ''},
+      black var(--scroll-fade-top, ${inset}px),
+      black var(--scroll-fade-bottom, calc(100% - ${bottom}px)),
+      transparent ${inset > 0 ? `calc(var(--scroll-fade-bottom, 100%) + ${inset}px)` : ''} 100%
     )`;
   }
 
@@ -274,18 +275,24 @@ export function scrollFade(this: any | void, options: ScrollFadeOptions) {
     // TODO: rtl
     inlineMask = `linear-gradient(
       to right,
-      transparent 0px,
-      black var(--scroll-fade-left, 0px),
-      black var(--scroll-fade-right, 100%),
-      transparent 100%
+      transparent 0px ${inset > 0 ? `calc(var(--scroll-fade-left, ${inset}px) - ${start}px)` : ''},
+      black var(--scroll-fade-left, ${inset}px),
+      black var(--scroll-fade-right, calc(100% - ${end}px)),
+      transparent ${inset > 0 ? `calc(var(--scroll-fade-right, 100%) + ${end}px)` : ''} 100%
     )`;
   }
 
-  let topAnimation = scrollFadeKeyframes.call(this, 'top', '0px', top ? `${top}px` : '', '0px');
+  let topAnimation = scrollFadeKeyframes.call(
+    this,
+    'top',
+    '0px',
+    top ? `${top + inset}px` : '',
+    '0px'
+  );
   let bottomAnimation = scrollFadeKeyframes.call(
     this,
     'bottom',
-    bottom ? `calc(100% - ${bottom}px)` : '',
+    bottom ? `calc(100% - ${bottom + inset}px)` : '',
     '100%',
     '100%'
   );
@@ -293,13 +300,13 @@ export function scrollFade(this: any | void, options: ScrollFadeOptions) {
     this,
     'left',
     '0px',
-    start ? `${start}px` : '',
+    start ? `${start + inset}px` : '',
     '0px'
   );
   let rightAnimation = scrollFadeKeyframes.call(
     this,
     'right',
-    end ? `calc(100% - ${end}px)` : '',
+    end ? `calc(100% - ${end + inset}px)` : '',
     '100%',
     '100%'
   );

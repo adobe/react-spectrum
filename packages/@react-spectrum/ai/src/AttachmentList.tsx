@@ -21,26 +21,18 @@ import {
 import AudioWave from '@react-spectrum/s2/icons/AudioWave';
 import {
   baseColor,
-  color,
+  css,
   focusRing,
   iconStyle,
   lightDark,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from 'react-aria-components/Button';
+import {Button, ButtonProps} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContentContext} from '@react-spectrum/s2/Content';
-import {
-  createContext,
-  forwardRef,
-  ReactNode,
-  useCallback,
-  useContext,
-  useRef,
-  useState
-} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, useContext, useRef} from 'react';
 import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
@@ -49,11 +41,11 @@ import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
+import {keyframes, scrollFade} from './tokens.macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
-import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Tag,
@@ -65,11 +57,8 @@ import {
 } from 'react-aria-components/TagGroup';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
-import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
-import {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 
 interface AttachmentRenderProps {
   /** The size of the Card. */
@@ -133,8 +122,7 @@ const container = {
     default: lightDark('black/3', 'white/3'),
     isInvalid: 'red-700/8',
     forcedColors: 'ButtonFace'
-  },
-  boxShadow: `[0 8px 32px 0 light-dark(${color('transparent-black-50')}, ${color('transparent-white-50')})]`
+  }
 } as const;
 
 const attachmentCard = style({
@@ -337,8 +325,15 @@ const tagListStyles = style<{isCarousel: boolean}>({
   overflowX: {isCarousel: 'auto'},
   scrollbarWidth: {isCarousel: 'none'},
   scrollSnapType: {isCarousel: 'x mandatory'},
-  paddingY: 12
+  padding: 16,
+  boxSizing: 'border-box',
+  scrollPaddingX: 40
 });
+
+const buttonFade = keyframes(`
+  from { opacity: 0; visibility: hidden }
+  to { opacity: 1; visibility: visible }
+`);
 
 const carouselNavButtonStyles = style<{
   isDisabled: boolean;
@@ -346,6 +341,7 @@ const carouselNavButtonStyles = style<{
   isFocusVisible: boolean;
   isPressed: boolean;
   direction: 'ltr' | 'rtl';
+  side: 'start' | 'end';
 }>({
   ...focusRing(),
   display: 'flex',
@@ -381,18 +377,38 @@ const carouselNavButtonStyles = style<{
       rtl: -1
     }
   },
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  position: 'absolute',
+  zIndex: 1,
+  insetEnd: {
+    side: {
+      end: 0
+    }
+  },
+  opacity: {
+    default: 0,
+    isFocusVisible: 1
+  },
+  visibility: {
+    default: 'hidden',
+    isFocusVisible: 'visible'
+  },
+  animation: {
+    '@supports (animation-timeline: scroll())': buttonFade,
+    isFocusVisible: 'none'
+  },
+  animationDuration: 1,
+  animationTimingFunction: 'in-out',
+  animationFillMode: 'both',
+  animationDirection: {
+    side: {
+      start: 'normal',
+      end: 'reverse'
+    }
+  }
 });
 
-function CarouselNavButton({
-  side,
-  onPress,
-  isDisabled
-}: {
-  side: 'start' | 'end';
-  onPress: () => void;
-  isDisabled: boolean;
-}) {
+function CarouselNavButton({side, ...otherProps}: ButtonProps & {side: 'start' | 'end'}) {
   let ref = useRef(null);
   let {direction} = useLocale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
@@ -400,14 +416,16 @@ function CarouselNavButton({
   // oxlint-disable react/react-compiler
   return (
     <Button
+      {...otherProps}
       ref={ref}
-      isDisabled={isDisabled}
       aria-label={stringFormatter.format(
         side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
       )}
-      style={pressScale(ref, {})}
-      onPress={onPress}
-      className={renderProps => carouselNavButtonStyles({...renderProps, direction})}>
+      style={pressScale(ref, {
+        animationTimeline: '--carousel-scroll',
+        animationRange: side === 'start' ? '0px 32px' : 'calc(100% - 32px) 100%'
+      } as CSSProperties)}
+      className={renderProps => carouselNavButtonStyles({...renderProps, direction, side})}>
       <Icon />
     </Button>
   );
@@ -421,85 +439,53 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLDivElement>(null);
-
-  let [isCarousel, setIsCarousel] = useValueEffect(false);
-  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
-  let checkForOverflow = useCallback(() => {
-    setIsCarousel(function* () {
-      yield true;
-      let el = scrollRef.current;
-      yield !!el && !!domRef.current && el.scrollWidth > domRef.current.offsetWidth + 1;
-    });
-  }, [setIsCarousel]);
-  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    checkForOverflow();
-  }, [checkForOverflow, items, children]);
-  // Observe the parent, not domRef: our own size changes when isCarousel toggles.
-  let parent = useRef<HTMLElement | null>(null);
-  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    if (domRef.current) {
-      parent.current = domRef.current.parentElement as HTMLElement;
-    }
-  }, [domRef.current]);
-  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
-  useResizeObserver({ref: parent, onResize: checkForOverflow});
-
   let {direction} = useLocale();
-  let [canScrollPrev, setCanScrollPrev] = useState(false);
-  let [canScrollNext, setCanScrollNext] = useState(false);
-  // Track padding can rest scroll-snap at a nonzero scrollLeft; treat the first read as "start".
-  let startScrollRef = useRef<number | null>(null);
-  let updateScrollState = useCallback(() => {
-    let el = scrollRef.current;
-    if (el) {
-      let maxScroll = el.scrollWidth - el.clientWidth;
-      let scrolled = Math.abs(el.scrollLeft);
-      if (startScrollRef.current == null) {
-        startScrollRef.current = scrolled;
-      }
-      setCanScrollPrev(scrolled > startScrollRef.current + 1);
-      setCanScrollNext(scrolled < maxScroll - 1);
-    }
-  }, []);
-  useLayoutEffect(() => {
-    startScrollRef.current = null;
-    updateScrollState();
-  }, [updateScrollState, isCarousel]);
-  useResizeObserver({ref: scrollRef, onResize: updateScrollState});
-
   let scroll = (dir: 1 | -1) => {
     // RTL flips the scroll direction convention; flip the sign to match.
     let sign = direction === 'rtl' ? -1 : 1;
     scrollRef.current?.scrollBy({
-      left: sign * dir * scrollRef.current.clientWidth * 0.8,
+      left: sign * dir * scrollRef.current.clientWidth,
       behavior: 'smooth'
     });
   };
 
-  let tagList = (
-    <TagList
-      ref={scrollRef}
-      items={items}
-      dependencies={dependencies}
-      onScroll={updateScrollState}
-      className={tagListStyles({isCarousel}) + ' ' + (isCarousel ? scrollFade({x: 32}) : '')}>
-      {children}
-    </TagList>
-  );
-
   return (
-    <TagGroup {...otherProps} className={styles} ref={domRef}>
-      {isCarousel ? (
-        <div className={style({...flexRow, gap: 8})}>
-          <CarouselNavButton side="start" isDisabled={!canScrollPrev} onPress={() => scroll(-1)} />
-          {tagList}
-          <CarouselNavButton side="end" isDisabled={!canScrollNext} onPress={() => scroll(1)} />
-        </div>
-      ) : (
-        tagList
+    <TagGroup
+      {...otherProps}
+      className={mergeStyles(
+        style({...flexRow, gap: 8, position: 'relative', marginX: -16}),
+        styles
       )}
+      style={
+        {
+          timelineScope: '--carousel-scroll'
+        } as CSSProperties
+      }
+      ref={domRef}>
+      <CarouselNavButton side="start" onPress={() => scroll(-1)} />
+      <TagList
+        ref={scrollRef}
+        items={items}
+        dependencies={dependencies}
+        className={
+          tagListStyles({isCarousel: true}) +
+          ' ' +
+          scrollFade({x: 32, inset: 40}) +
+          ' ' +
+          // Hack to keep scroll fade visible when the buttons are focused.
+          css(
+            `&:is(button[data-focus-visible]+*){--scroll-fade-left: 72px !important} &:has(+ button[data-focus-visible]){--scroll-fade-right: calc(100% - 72px) !important}`
+          )
+        }
+        style={
+          {
+            scrollTimelineName: '--carousel-scroll',
+            scrollTimelineAxis: 'inline'
+          } as CSSProperties
+        }>
+        {children}
+      </TagList>
+      <CarouselNavButton side="end" onPress={() => scroll(1)} />
     </TagGroup>
   );
 });
@@ -638,7 +624,7 @@ export const Attachment = forwardRef(function Attachment(
           position: 'absolute',
           top: 0,
           insetEnd: 0,
-          transform: 'translate(50%, -50%)'
+          transform: 'translate(30%, -30%)'
         })}>
         <CloseButton size="XS" />
       </div>
