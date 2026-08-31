@@ -19,19 +19,34 @@ export const section = 'Releases';
 export const tags = ['release', 'S2'];
 export const date = 'September 1, 2026';
 export const title = 'v1.7.0';
-export const description = 'This release refreshes icon sizing to match text line height, and several bug fixes';
+export const description = 'This release makes the AI Icon widely available, refreshes icon sizing to match text line height, and includes several bug fixes';
 export const isSubpage = true;
 
 # v1.7.0
 
-This release updates workflow icons to the latest version, refreshes icon sizing to match the text line height, and includes several bug fixes!
+## AI Components
+
+We are excited to announce the first preview of React Spectrum AI components to help build AI-powered experiences! Today, we are releasing our first batch of components and [documentation](../ai-components.mdx) on how to get started. Give it a try by installing through your preferred package manager!
+
+<InstallCommand pkg="@react-spectrum/ai" />
+
+### AI Icon
+
+The `<AIMark />` icon is now widely available for use and can be imported via:
+<Command command="import AIMark from '@react-spectrum/s2/icons/AIMark';" />
 
 ## Icon size updates
 
 Spectrum has updated the intended size of workflow icons relative to surrounding text. This is an intentional design update but it does mean icons may render at a different size from before post update. If you rely on visual regression tests, expect diffs around icon sizing and update your baselines accordingly.
 
+## TypeScript
+
+Types are now generated with TypeScript 7 so emitted `.d.ts` output may differ slightly.
+
 ## Changelog
 
+## General Changes
+- Upgrade to TypeScript 7 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10461
 ### ActionBar
 - Fix the close button icon color so it meets contrast in dark mode - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10429)
 ### Avatar
