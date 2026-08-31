@@ -17,14 +17,14 @@ import docs from 'docs:@react-spectrum/s2';
 export const hideNav = true;
 export const section = 'Releases';
 export const tags = ['release', 'React Aria'];
-export const date = 'August 28, 2026';
+export const date = 'September 1, 2026';
 export const title = 'v1.21.0';
 export const description = 'This release adds a new NavigationTree component, async loading and empty state support for Menu, along with many bug fixes!'
 export const isSubpage = true;
 
 # v1.21.0
 
-The new [NavigationTree](../NavigationTree) component can be used for building hierarchical app navigation.
+We're excited to welcome a brand new component to the family! The new [NavigationTree](../NavigationTree) component displays a hierarchical set of links, perfect for building sidebars and complex app navigation. It comes fully loaded with keyboard navigation, and support for nested routes.
 
 ```tsx render hideCode
 "use client";
@@ -98,7 +98,7 @@ function RoutedNavigationTree(props: {
 </RoutedNavigationTree>
 ```
 
-[Menu](../Menu#asynchronous-loading) now supports async loading and empty state.
+[Menu](../Menu#asynchronous-loading) also gets a big upgrade this release: it now supports async loading and empty states! Load menu items from an API as needed as the user scrolls with the new `MenuLoadMoreItem` and use `renderEmptyState` to show a indicator when data is loading or when the menu is empty.
 
 ```tsx render hideCode
 "use client"
@@ -141,6 +141,12 @@ function AsyncMenuExample() {
 }
 ```
 
+## TokenField selection API update
+
+`TokenFieldValue` now tracks the full selected range instead of a single caret position. The `caretPosition` property is replaced by `selectedRange`, which stores both the anchor and current offsets so a range selection can be restored after an undo or redo. Use `withSelectedRange` to update the selection going forward.
+
+Finally, this release also features many fixes and updates from external contributors! As always, a big thank you for all the support!
+
 ## Changelog
 
 ### General Changes
@@ -166,7 +172,7 @@ function AsyncMenuExample() {
 - Add Formisch to the form libraries section of the forms doc guide - [@fabian-hiller](https://github.com/fabian-hiller) - [PR](https://github.com/adobe/react-spectrum/pull/10410)
 ### Menu
 - Add async loading and empty state support to Menu - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10494)
-- Add typeahead support to Menu example in docs [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10508)
+- Add typeahead support to Menu example in docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10508)
 ### NavigationTree
 - Add NavigationTree component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10404), [PR](https://github.com/adobe/react-spectrum/pull/10507)
 ### Overlays
@@ -181,9 +187,9 @@ function AsyncMenuExample() {
 ### Tabs
 - Keep ArrowLeft and ArrowRight consistent in RTL vertical orientation - [@starboyvarun](https://github.com/starboyvarun) - [PR](https://github.com/adobe/react-spectrum/pull/10467)
 ### TokenField
-- Track the TokenField selection range to allow external control and restore selection on undo- [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10438), [PR](https://github.com/adobe/react-spectrum/pull/10505)
+- Track the TokenField selection range to allow external control and restore selection on undo - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10438), [PR](https://github.com/adobe/react-spectrum/pull/10505)
 - Fix IME composition in Firefox - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/10422)
-- Fix TokenField docs regex for IME [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10474)
+- Fix TokenField docs regex for IME - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10474)
 
 
 ## Released packages
