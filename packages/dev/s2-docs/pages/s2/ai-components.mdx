@@ -404,6 +404,8 @@ import {
   PromptFieldValue,
   PromptTokenField
 } from '@react-spectrum/ai';
+import {Text} from '@react-spectrum/s2';
+import CommentText from '@react-spectrum/s2/icons/CommentText';
 
 function PromptAttachments() {
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
@@ -426,7 +428,8 @@ function PromptAttachments() {
         <InsertMenuButton>
           <AttachFileMenuItem />
           <InsertTextMenuItem id="summarize" text="Summarize this image">
-            Summarize image
+            <CommentText />
+            <Text>Summarize image</Text>
           </InsertTextMenuItem>
         </InsertMenuButton>
         <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
