@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "新訊息",
   "chat.scrollToBottom": "捲動至底部",
   "messagefeedback.thumbDown": "不良回答",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "載入中",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "開始錄製",
-  "voicebutton.stopListening": "停止錄製"
+  "voicebutton.stopListening": "停止錄製",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

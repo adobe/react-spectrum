@@ -21,16 +21,18 @@ import {
 import AudioWave from '@react-spectrum/s2/icons/AudioWave';
 import {
   baseColor,
-  color,
+  css,
   focusRing,
   iconStyle,
   lightDark,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from 'react-aria-components/Button';
+import {Button, ButtonProps} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
+import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
+import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContentContext} from '@react-spectrum/s2/Content';
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, useContext, useRef} from 'react';
 import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
@@ -39,6 +41,7 @@ import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
+import {keyframes, scrollFade} from './tokens.macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
@@ -54,6 +57,7 @@ import {
 } from 'react-aria-components/TagGroup';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 interface AttachmentRenderProps {
@@ -118,8 +122,7 @@ const container = {
     default: lightDark('black/3', 'white/3'),
     isInvalid: 'red-700/8',
     forcedColors: 'ButtonFace'
-  },
-  boxShadow: `[0 8px 32px 0 light-dark(${color('transparent-black-50')}, ${color('transparent-white-50')})]`
+  }
 } as const;
 
 const attachmentCard = style({
@@ -309,27 +312,200 @@ export interface AttachmentListProps<T>
   styles?: StyleString;
 }
 
+const flexRow = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center'
+} as const;
+
+const tagListStyles = style({
+  ...flexRow,
+  flexGrow: 1,
+  gap: 8,
+  overflowX: 'auto',
+  overflowY: 'clip',
+  scrollbarWidth: {
+    '@supports (animation-timeline: scroll())': 'none'
+  },
+  scrollSnapType: 'x mandatory',
+  // padding for focus ring
+  padding: 16,
+  margin: -16,
+  boxSizing: 'border-box',
+  scrollPaddingX: {
+    default: 16,
+    '@supports (animation-timeline: scroll())': 64
+  }
+});
+
+const buttonFade = keyframes(`
+  from { opacity: 0; visibility: hidden }
+  to { opacity: 1; visibility: visible }
+`);
+
+const carouselNavButtonStyles = style<{
+  isDisabled: boolean;
+  isHovered: boolean;
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  direction: 'ltr' | 'rtl';
+  side: 'start' | 'end';
+}>({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  size: controlSizeM,
+  flexShrink: 0,
+  borderRadius: 'full',
+  borderStyle: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: baseColor('transparent-overlay-100'),
+    forcedColors: 'ButtonFace'
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  scale: {
+    direction: {
+      rtl: -1
+    }
+  },
+  disableTapHighlight: true,
+  position: 'absolute',
+  zIndex: 1,
+  insetEnd: {
+    side: {
+      end: 0
+    }
+  },
+  opacity: {
+    default: 0,
+    isFocusVisible: 1
+  },
+  visibility: {
+    default: 'hidden',
+    isFocusVisible: 'visible'
+  },
+  animation: {
+    '@supports (animation-timeline: scroll())': buttonFade,
+    isFocusVisible: 'none'
+  },
+  animationDuration: 1,
+  animationTimingFunction: 'in-out',
+  animationFillMode: 'both',
+  animationDirection: {
+    side: {
+      start: 'normal',
+      end: 'reverse'
+    }
+  }
+});
+
+function CarouselNavButton({side, ...otherProps}: ButtonProps & {side: 'start' | 'end'}) {
+  let ref = useRef(null);
+  let {direction} = useLocale();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  let Icon = side === 'start' ? ChevronLeft : ChevronRight;
+  // oxlint-disable react/react-compiler
+  return (
+    <Button
+      {...otherProps}
+      ref={ref}
+      aria-label={stringFormatter.format(
+        side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
+      )}
+      style={pressScale(ref, {
+        animationTimeline: '--carousel-scroll',
+        animationRange: side === 'start' ? '0px 32px' : 'calc(100% - 32px) 100%'
+      } as CSSProperties)}
+      className={renderProps => carouselNavButtonStyles({...renderProps, direction, side})}>
+      <Icon />
+    </Button>
+  );
+  // oxlint-enable react/react-compiler
+}
+
+/**
+ * An AttachmentList displays removable file attachments with previews and upload states.
+ */
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let scrollRef = useRef<HTMLDivElement>(null);
+  let {direction} = useLocale();
+  let scroll = (dir: 1 | -1) => {
+    let el = scrollRef.current;
+    if (!el) {
+      return;
+    }
+
+    // RTL flips the scroll direction convention; flip the sign to match.
+    let sign = direction === 'rtl' ? -1 : 1;
+    el.scrollTo({
+      left: Math.max(
+        0,
+        Math.min(
+          el.scrollWidth - el.clientWidth,
+          el.scrollLeft + sign * dir * (el.clientWidth - 64 * 2)
+        )
+      ),
+      behavior: 'smooth'
+    });
+  };
+
   return (
-    <TagGroup {...otherProps} className={styles} ref={domRef}>
+    <TagGroup
+      {...otherProps}
+      className={mergeStyles(style({...flexRow, gap: 8, position: 'relative'}), styles)}
+      style={
+        {
+          timelineScope: '--carousel-scroll'
+        } as CSSProperties
+      }
+      ref={domRef}>
+      <CarouselNavButton side="start" onPress={() => scroll(-1)} />
       <TagList
+        ref={scrollRef}
         items={items}
         dependencies={dependencies}
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 16,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          width: 'full'
-        })}>
+        className={
+          tagListStyles +
+          ' ' +
+          scrollFade({x: 32, inset: 56}) +
+          ' ' +
+          // Hack to keep scroll fade visible when the buttons are focused.
+          // 88px = 32 + 56
+          css(
+            `&:is(button[data-focus-visible]+*){--scroll-fade-left: 88px !important} &:has(+ button[data-focus-visible]){--scroll-fade-right: calc(100% - 88px) !important}`
+          )
+        }
+        style={
+          {
+            scrollTimelineName: '--carousel-scroll',
+            scrollTimelineAxis: 'inline'
+          } as CSSProperties
+        }>
         {children}
       </TagList>
+      <CarouselNavButton side="end" onPress={() => scroll(1)} />
     </TagGroup>
   );
 });
@@ -359,7 +535,8 @@ const tagStyles = style({
   position: 'relative',
   ...focusRing(),
   borderRadius: 'lg',
-  maxWidth: 'full'
+  maxWidth: 'calc(100% - 52px * 2)',
+  scrollSnapAlign: 'start'
 });
 interface AttachmentCardProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
@@ -429,6 +606,9 @@ function AttachmentCard({
   );
 }
 
+/**
+ * Attachment displays an individual file attachment within a PromptFieldAttachmentList.
+ */
 export const Attachment = forwardRef(function Attachment(
   props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
@@ -467,7 +647,7 @@ export const Attachment = forwardRef(function Attachment(
           position: 'absolute',
           top: 0,
           insetEnd: 0,
-          transform: 'translate(50%, -50%)'
+          transform: 'translate(30%, -30%)'
         })}>
         <CloseButton size="XS" />
       </div>
@@ -493,6 +673,9 @@ export interface AttachmentPreviewProps extends ImageProps {
   mimeType: string;
 }
 
+/**
+ * AttachmentPreview renders a preview of a file attachment.
+ */
 export function AttachmentPreview(props: AttachmentPreviewProps) {
   let {mimeType, ...otherProps} = props;
   let {isInvalid, uploadProgress, size} = useContext(AttachmentPreviewContext)!;

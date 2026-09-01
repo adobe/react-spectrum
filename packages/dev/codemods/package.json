@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/codemods",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -21,11 +21,11 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.47.0",
+    "@adobe/react-spectrum": "3.47.4",
     "@babel/parser": "^7.24.5",
     "@babel/traverse": "^7.24.5",
     "@babel/types": "^7.24.5",
-    "@react-spectrum/s2": "1.6.0",
+    "@react-spectrum/s2": "1.7.0",
     "@react-types/shared": "^3.34.0",
     "@types/node": "^24",
     "boxen": "^5.1.2",

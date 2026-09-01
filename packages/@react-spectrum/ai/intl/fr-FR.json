@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Nouveau message",
   "chat.scrollToBottom": "Défilement vers le bas",
   "messagefeedback.thumbDown": "Réponse incorrecte",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Chargement",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Démarrer l'enregistrement",
-  "voicebutton.stopListening": "Arrêter l'enregistrement"
+  "voicebutton.stopListening": "Arrêter l'enregistrement",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

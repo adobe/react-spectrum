@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "رسالة جديدة",
   "chat.scrollToBottom": "التمرير إلى الأسفل",
   "messagefeedback.thumbDown": "استجابة  سيئة",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "جارٍ التحميل",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "ابدأ التسجيل",
-  "voicebutton.stopListening": "أوقف التسجيل"
+  "voicebutton.stopListening": "أوقف التسجيل",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

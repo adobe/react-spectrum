@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "새 메시지",
   "chat.scrollToBottom": "맨 아래로 스크롤",
   "messagefeedback.thumbDown": "잘못된 응답",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "로드 중",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "기록 시작",
-  "voicebutton.stopListening": "기록 중지"
+  "voicebutton.stopListening": "기록 중지",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

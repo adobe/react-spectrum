@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Νέο μήνυμα",
   "chat.scrollToBottom": "Κύλιση προς τα κάτω",
   "messagefeedback.thumbDown": "Κακή απάντηση",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Φόρτωση",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Ξεκινήστε την εγγραφή",
-  "voicebutton.stopListening": "Διακοπή εγγραφής"
+  "voicebutton.stopListening": "Διακοπή εγγραφής",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
