@@ -16,5 +16,7 @@
   "responsestatus.loading": "Cargando",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Iniciar grabación",
-  "voicebutton.stopListening": "Detener grabación"
+  "voicebutton.stopListening": "Detener grabación",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
