@@ -10,7 +10,6 @@ export function Link(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
       {...props}
       onClick={e => {
         e.preventDefault();
-        props.onClick?.(e);
         if (props.href) {
           navigate(props.href);
         }
