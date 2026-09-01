@@ -265,7 +265,7 @@ AI components are published as a separate package from `@react-spectrum/s2`.
 
 Use `PromptField` as the foundation for allowing the user to submit a prompt. It manages an editable sequence of text and tokens, while `PromptTokenField` renders the input and `PromptFieldToolbar` contains its actions.
 
-```tsx render type="s2"
+```tsx render type="s2" docs={docs.exports.PromptField} props={['variant', 'size']}
 "use client";
 import {useState} from 'react';
 import {
@@ -282,6 +282,7 @@ function BasicPrompt(props) {
   return (
     <PromptField
       {...props}
+      /* PROPS */
       value={value}
       onChange={setValue}
       onSubmit={value => {
