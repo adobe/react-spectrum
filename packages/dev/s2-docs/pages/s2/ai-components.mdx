@@ -236,6 +236,24 @@ AI components are published as a separate package from `@react-spectrum/s2`.
 
 <InstallCommand pkg="@react-spectrum/ai" />
 
+## AI Button
+
+Use `AIButton` to trigger an AI-powered action, such as opening a prompt field or starting a chat.
+
+```tsx render type="s2" docs={docs.exports.AIButton} props={['size']}
+"use client";
+import {AIButton} from '@react-spectrum/ai';
+
+function Example(props) {
+  return (
+    <div style={{display: 'flex', gap: 8}}>
+      <AIButton {...props}>Ask AI</AIButton>
+      <AIButton {...props} aria-label="Ask AI" />
+    </div>
+  );
+}
+```
+
 ## Prompt fields
 
 Use `PromptField` as the foundation for allowing the user to submit a prompt. It manages an editable sequence of text and tokens, while `PromptTokenField` renders the input and `PromptFieldToolbar` contains its actions.
@@ -565,7 +583,8 @@ function BasicChat() {
 
 ## API
 
-```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadScrollButton: '#threadscrollbutton', PromptField: '#promptfield'}}
+```tsx links={{AIButton: '#aibutton', Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadScrollButton: '#threadscrollbutton', PromptField: '#promptfield'}}
+<AIButton />
 <Chat>
   <Thread>
     <ThreadItem />
@@ -574,6 +593,10 @@ function BasicChat() {
   <PromptField />
 </Chat>
 ```
+
+## AIButton
+
+<PropTable component={docs.exports.AIButton} links={docs.links} showDescription />
 
 ## Chat
 
