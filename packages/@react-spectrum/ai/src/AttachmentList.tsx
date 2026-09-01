@@ -320,6 +320,7 @@ const flexRow = {
 
 const tagListStyles = style({
   ...flexRow,
+  flexGrow: 1,
   gap: 8,
   overflowX: 'auto',
   overflowY: 'clip',
@@ -439,6 +440,9 @@ function CarouselNavButton({side, ...otherProps}: ButtonProps & {side: 'start' |
   // oxlint-enable react/react-compiler
 }
 
+/**
+ * An AttachmentList displays removable file attachments with previews and upload states.
+ */
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
@@ -602,6 +606,9 @@ function AttachmentCard({
   );
 }
 
+/**
+ * Attachment displays an individual file attachment within a PromptFieldAttachmentList.
+ */
 export const Attachment = forwardRef(function Attachment(
   props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
@@ -666,6 +673,9 @@ export interface AttachmentPreviewProps extends ImageProps {
   mimeType: string;
 }
 
+/**
+ * AttachmentPreview renders a preview of a file attachment.
+ */
 export function AttachmentPreview(props: AttachmentPreviewProps) {
   let {mimeType, ...otherProps} = props;
   let {isInvalid, uploadProgress, size} = useContext(AttachmentPreviewContext)!;

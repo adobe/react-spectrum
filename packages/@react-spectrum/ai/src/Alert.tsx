@@ -79,6 +79,9 @@ const text = style({
   minWidth: 0
 });
 
+/**
+ * An Alert shows an error message within a Chat thread or PromptField.
+ */
 export const Alert = forwardRef(function Alert(props: AlertProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let {children, variant = 'neutral', onDismiss, styles} = props;
