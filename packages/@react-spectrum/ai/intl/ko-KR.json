@@ -1,8 +1,8 @@
 {
-  "aiinlinealert.informative": "Informative",
-  "aiinlinealert.negative": "Negative",
-  "aiinlinealert.notice": "Notice",
-  "aiinlinealert.positive": "Positive",
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "새 메시지",
   "chat.scrollToBottom": "맨 아래로 스크롤",
   "messagefeedback.thumbDown": "잘못된 응답",

@@ -24,7 +24,7 @@ import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
-export interface AIInlineAlertProps extends DOMProps, AriaLabelingProps {
+export interface AlertProps extends DOMProps, AriaLabelingProps {
   children: ReactNode;
   variant?: 'informative' | 'positive' | 'notice' | 'negative' | 'neutral';
   onDismiss?: () => void;
@@ -52,11 +52,10 @@ const container = style({
   backgroundColor: lightDark('black/2', 'white/2'),
   paddingStart: 8,
   paddingY: 4,
-  minHeight: 32,
   paddingEnd: 4
 });
 
-const icon = style<{variant: AIInlineAlertProps['variant']}>({
+const icon = style<{variant: AlertProps['variant']}>({
   size: 18,
   flexShrink: 0,
   '--iconPrimary': {
@@ -80,8 +79,8 @@ const text = style({
   minWidth: 0
 });
 
-export const AIInlineAlert = forwardRef(function AIInlineAlert(
-  props: AIInlineAlertProps,
+export const Alert = forwardRef(function Alert(
+  props: AlertProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
@@ -98,7 +97,7 @@ export const AIInlineAlert = forwardRef(function AIInlineAlert(
       {Icon && (
         <Icon
           styles={icon({variant})}
-          aria-label={stringFormatter.format(`aiinlinealert.${variant}`)}
+          aria-label={stringFormatter.format(`alert.${variant}`)}
         />
       )}
       <span className={text}>{children}</span>

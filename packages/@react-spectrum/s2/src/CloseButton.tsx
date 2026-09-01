@@ -123,7 +123,12 @@ export const CloseButton = forwardRef(function CloseButton(
       className={renderProps =>
         UNSAFE_className +
         styles(
-          {...renderProps, size: props.size, staticColor: props.staticColor, isStaticColor: !!props.staticColor},
+          {
+            ...renderProps,
+            size: props.size,
+            staticColor: props.staticColor,
+            isStaticColor: !!props.staticColor
+          },
           props.styles
         )
       }>

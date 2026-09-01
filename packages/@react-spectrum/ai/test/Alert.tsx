@@ -10,38 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
-import {AIInlineAlert} from '@react-spectrum/ai';
+import {Alert} from '@react-spectrum/ai';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 // Conditionally skip the suite
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
-describeOrSkip('AIInlineAlert', () => {
+describeOrSkip('Alert', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
   it('renders children with role="alert"', () => {
-    let {getByRole} = render(<AIInlineAlert>Alert description</AIInlineAlert>);
+    let {getByRole} = render(<Alert>Alert description</Alert>);
     expect(getByRole('alert')).toHaveTextContent('Alert description');
   });
 
   it('renders no variant icon for the default neutral variant, only the close button icon', () => {
-    let {container} = render(<AIInlineAlert>Alert description</AIInlineAlert>);
+    let {container} = render(<Alert>Alert description</Alert>);
     expect(container.querySelectorAll('svg')).toHaveLength(1);
   });
 
   it('renders a variant icon in addition to the close button icon', () => {
-    let {container} = render(<AIInlineAlert variant="negative">Alert description</AIInlineAlert>);
+    let {container} = render(<Alert variant="negative">Alert description</Alert>);
     expect(container.querySelectorAll('svg')).toHaveLength(2);
   });
 
   it('fires onDismiss when the close button is pressed', async () => {
     let onDismiss = jest.fn();
     let {getByRole} = render(
-      <AIInlineAlert onDismiss={onDismiss}>Alert description</AIInlineAlert>
+      <Alert onDismiss={onDismiss}>Alert description</Alert>
     );
 
     await user.click(getByRole('button', {name: 'Dismiss'}));

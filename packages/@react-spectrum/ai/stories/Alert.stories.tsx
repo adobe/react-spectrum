@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AIInlineAlert} from '../src/AIInlineAlert';
+import {Alert} from '../src/Alert';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const events = ['onDismiss'];
 
-const meta: Meta<typeof AIInlineAlert> = {
-  component: AIInlineAlert,
+const meta: Meta<typeof Alert> = {
+  component: Alert,
   parameters: {
     layout: 'centered'
   },
@@ -35,14 +35,14 @@ const meta: Meta<typeof AIInlineAlert> = {
     variant: 'neutral',
     ...getActionArgs(events)
   },
-  title: 'AI/AIInlineAlert'
+  title: 'AI/Alert'
 };
 
 export default meta;
-type Story = StoryObj<typeof AIInlineAlert>;
+type Story = StoryObj<typeof Alert>;
 
 export const Example: Story = {
-  render: args => <AIInlineAlert {...args} styles={style({width: 336})} />
+  render: args => <Alert {...args} styles={style({width: 336})} />
 };
 
 const VARIANTS = ['informative', 'positive', 'notice', 'negative', 'neutral'] as const;
@@ -52,7 +52,7 @@ export const AllVariants: Story = {
   render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
       {VARIANTS.map(variant => (
-        <AIInlineAlert {...args} key={variant} variant={variant} styles={style({width: 336})} />
+        <Alert {...args} key={variant} variant={variant} styles={style({width: 336})} />
       ))}
     </div>
   ),

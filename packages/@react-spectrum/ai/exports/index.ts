@@ -1,4 +1,4 @@
-export {AIInlineAlert} from '../src/AIInlineAlert';
+export {Alert} from '../src/Alert';
 export {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentList';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
@@ -38,7 +38,7 @@ export {UserMessage} from '../src/UserMessage';
 export {PixelLoader} from '../src/loader/react';
 export {AIButton} from '../src/AIButton';
 
-export type {AIInlineAlertProps} from '../src/AIInlineAlert';
+export type {AlertProps} from '../src/Alert';
 export type {
   AttachmentProps,
   AttachmentListProps,
