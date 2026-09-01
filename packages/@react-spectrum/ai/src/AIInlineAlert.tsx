@@ -51,7 +51,9 @@ const container = style({
   borderColor: lightDark('black/3', 'white/3'),
   backgroundColor: lightDark('black/2', 'white/2'),
   paddingStart: 8,
-  paddingY: 4
+  paddingY: 4,
+  minHeight: 32,
+  paddingEnd: 4
 });
 
 const icon = style<{variant: AIInlineAlertProps['variant']}>({
