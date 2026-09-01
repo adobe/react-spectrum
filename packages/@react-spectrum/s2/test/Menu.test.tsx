@@ -453,8 +453,8 @@ describe('Async loading', () => {
     let sentinel = getByTestId('loadMoreSentinel');
     expect(observe).toHaveBeenLastCalledWith(sentinel);
 
-    act(() => {
-      observer.instance.triggerCallback([{isIntersecting: true}]);
+    await act(async () => {
+      await observer.instance.triggerCallback([{isIntersecting: true}]);
     });
     act(() => {
       jest.runAllTimers();

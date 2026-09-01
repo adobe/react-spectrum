@@ -438,14 +438,7 @@ export const loadingWrapperStyles = style({
 });
 
 export const progressCircleStyles = style({
-  size: {
-    size: {
-      S: 16,
-      M: 20,
-      L: 22,
-      XL: 26
-    }
-  }
+  size: '1lh'
 });
 
 const emptyStateText = style({
@@ -502,7 +495,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
       <ProgressCircle
         isIndeterminate
         size="S"
-        styles={progressCircleStyles({size})}
+        styles={progressCircleStyles}
         // Same loading string as table
         aria-label={stringFormatter.format('table.loadingMore')}
       />
@@ -561,7 +554,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
                 <ProgressCircle
                   isIndeterminate
                   size="S"
-                  styles={progressCircleStyles({size})}
+                  styles={progressCircleStyles}
                   aria-label={stringFormatter.format('table.loading')}
                 />
               </div>

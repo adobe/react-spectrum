@@ -509,14 +509,14 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
 });
 
 function PickerProgressCircle(props) {
-  let {id, size, 'aria-label': ariaLabel} = props;
+  let {id, 'aria-label': ariaLabel} = props;
   return (
     <ProgressCircle
       id={id}
       isIndeterminate
       size="S"
       aria-label={ariaLabel}
-      styles={progressCircleStyles({size})}
+      styles={progressCircleStyles}
     />
   );
 }
