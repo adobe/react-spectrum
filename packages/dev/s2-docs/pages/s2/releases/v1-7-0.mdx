@@ -29,6 +29,69 @@ export const isSubpage = true;
 
 We are excited to announce the first preview of React Spectrum's AI components to help build AI-powered experiences! Developed in close partnership with Spectrum design, this first batch of components covers the core of a chat interface, along with [documentation](../ai-components) to help you get started. 
 
+```tsx render hideCode
+"use client";
+import {useState} from 'react';
+import {
+  Attachment,
+  AttachmentPreview,
+  AttachFileMenuItem,
+  InsertMenuButton,
+  InsertTextMenuItem,
+  PromptField,
+  PromptFieldAttachment,
+  PromptFieldAttachmentList,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldVoiceButton,
+  PromptFieldValue,
+  PromptTokenField
+} from '@react-spectrum/ai';
+import {Text} from '@react-spectrum/s2';
+import CommentText from '@react-spectrum/s2/icons/CommentText';
+
+function PromptAttachments() {
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([
+    {id: '0', file: new File([], 'preview.png', {type: 'image/png'}), image: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
+    {id: '1', file: new File([], 'notes.txt', {type: 'text/plain'}), image: ''}
+  ]);
+
+  return (
+    <PromptField
+      defaultValue={new PromptFieldValue([])}
+      attachments={attachments}
+      onAttachmentsChange={setAttachments}
+      acceptedAttachmentTypes={['*/*']}>
+      {/*- begin highlight -*/}
+      <PromptFieldAttachmentList>
+        {attachment => (
+          <Attachment textValue={attachment.file.name}>
+            <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+          </Attachment>
+        )}
+      </PromptFieldAttachmentList>
+      {/*- end highlight -*/}
+      <PromptTokenField placeholder="Describe the image" />
+      <PromptFieldToolbar>
+        <InsertMenuButton>
+          <AttachFileMenuItem />
+          <InsertTextMenuItem id="summarize" text="Summarize this image">
+            <CommentText />
+            <Text>Summarize image</Text>
+          </InsertTextMenuItem>
+        </InsertMenuButton>
+        <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+          <PromptFieldVoiceButton />
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+}
+```
+
+AI components are published as a separate package from `@react-spectrum/s2`.
+
 <InstallCommand pkg="@react-spectrum/ai" />
 
 ## Icon size updates
@@ -58,5 +121,6 @@ Spectrum has updated the intended size of workflow icons relative to surrounding
 ## Released packages
 
 ```
-[TODO: paste output of yarn bumpVersions here]
+ - @react-spectrum/ai@0.3.0
+ - @react-spectrum/s2@1.7.0
 ```
