@@ -1,37 +1,41 @@
 'use client';
-import React, {createContext, ReactNode, useContext, useState} from 'react';
+import React, {ReactNode, useState, createContext, useContext} from 'react';
 
-// A tiny in-memory router that mirrors the parts of the `react-router` API used
-// to integrate with React Aria. In a real app, `MemoryRouter`, `useNavigate`, and
-// `useLocation` would come from the `react-router` package — the wiring above is
-// identical.
+// This is a fake router for documentation purposes. In a real app, you would
+// use a routing library like React Router or a framework like Next.js.
+const NavigateContext = createContext<(href: string) => void>(() => {});
 
-interface Location {
-  pathname: string;
+export function Link(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  let navigate = useContext(NavigateContext);
+
+  function handleNavigate(href: string | undefined, e: React.SyntheticEvent) {
+    e.preventDefault();
+    if (href) {
+      navigate(href);
+    }
+  }
+
+  return (
+    <a
+      {...props}
+      onClick={e => handleNavigate(props.href, e)}
+      onKeyDown={e => {
+        if (e.key === 'Enter') {
+          handleNavigate(props.href, e);
+        }
+      }}
+    />
+  );
 }
 
-interface RouterContextValue {
-  location: Location;
-  navigate: (pathname: string) => void;
-}
-
-const RouterContext = createContext<RouterContextValue>({
-  location: {pathname: '/'},
-  navigate: () => {}
-});
-
-export function MemoryRouter(props: {initialEntries?: string[]; children: ReactNode}) {
-  let {initialEntries = ['/'], children} = props;
-  let [location, setLocation] = useState<Location>({pathname: initialEntries[0]});
-  let navigate = (pathname: string) => setLocation({pathname});
-
-  return <RouterContext.Provider value={{location, navigate}}>{children}</RouterContext.Provider>;
-}
-
-export function useLocation(): Location {
-  return useContext(RouterContext).location;
-}
-
-export function useNavigate(): (pathname: string) => void {
-  return useContext(RouterContext).navigate;
+export function Router(props: {
+  children: ({selectedRoute}: {selectedRoute: string}) => ReactNode;
+  defaultSelectedRoute: string;
+}) {
+  let [selectedRoute, setSelectedRoute] = useState(props.defaultSelectedRoute);
+  return (
+    <NavigateContext.Provider value={setSelectedRoute}>
+      {props.children({selectedRoute})}
+    </NavigateContext.Provider>
+  );
 }

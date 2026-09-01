@@ -12,13 +12,13 @@ export const description = 'Displays hierarchical navigation with collapsing.';
 
 <PageDescription>{docs.exports.SideNav.description}</PageDescription>
 
-```tsx render docs={docs.exports.SideNav} links={docs.links} props={[]} type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+```tsx render docs={docs.exports.SideNav} links={docs.links} props={[]} type="s2" files={['packages/dev/s2-docs/pages/react-aria/Router.tsx']}
 "use client";
 import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink} from '@react-spectrum/s2/SideNav';
-import {RoutedSideNav} from './RoutedSideNav';
+import {Router, Link as RouterLink} from './Router';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<RoutedSideNav defaultSelectedRoute="/guidelines">
+<Router defaultSelectedRoute="/guidelines">
   {({selectedRoute}) => (
     <SideNav
       aria-label="Files"
@@ -27,36 +27,36 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
       styles={style({height: 240, width: 210})}
       defaultExpandedKeys={['guidelines', 'color']}>
       <SideNavItem href="/guidelines" id="guidelines" textValue="Guidelines">
-        <SideNavItemContent><SideNavItemLink>Guidelines</SideNavItemLink></SideNavItemContent>
+        <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Guidelines</SideNavItemLink></SideNavItemContent>
         <SideNavItem href="/style" id="style" textValue="Style">
-          <SideNavItemContent><SideNavItemLink>Style</SideNavItemLink></SideNavItemContent>
+          <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Style</SideNavItemLink></SideNavItemContent>
         </SideNavItem>
         <SideNavItem href="/color" id="color" textValue="Color">
-          <SideNavItemContent><SideNavItemLink>Color</SideNavItemLink></SideNavItemContent>
+          <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Color</SideNavItemLink></SideNavItemContent>
           <SideNavItem href="/background-layers" id="background-layers" textValue="Background Layers">
-            <SideNavItemContent><SideNavItemLink>Background Layers</SideNavItemLink></SideNavItemContent>
+            <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Background Layers</SideNavItemLink></SideNavItemContent>
           </SideNavItem>
         </SideNavItem>
       </SideNavItem>
       <SideNavItem id="support" textValue="Support">
         <SideNavItemContent>Support</SideNavItemContent>
         <SideNavItem href="/contact-us" id="contact-us" textValue="Contact Us">
-          <SideNavItemContent><SideNavItemLink>Contact Us</SideNavItemLink></SideNavItemContent>
+          <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Contact Us</SideNavItemLink></SideNavItemContent>
         </SideNavItem>
       </SideNavItem>
     </SideNav>
   )}
-</RoutedSideNav>
+</Router>
 ```
 
 ## Content
 
 `SideNav` follows the [Collection Components API](collections), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
 
-```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/react-aria/Router.tsx']}
 "use client";
 import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection} from '@react-spectrum/s2/SideNav';
-import {RoutedSideNav} from './RoutedSideNav';
+import {Router, Link as RouterLink} from './Router';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -82,7 +82,7 @@ let items: Item[] = [
 ];
 ///- end collapse -///
 
-<RoutedSideNav defaultSelectedRoute="/notes">
+<Router defaultSelectedRoute="/notes">
   {({selectedRoute}) => (
     <SideNav
       aria-label="Files"
@@ -93,7 +93,7 @@ let items: Item[] = [
       {function renderItem(item) {
         return (
           <SideNavItem textValue={item.title} href={item.href}>
-            <SideNavItemContent>{item.href ? <SideNavItemLink>{item.title}</SideNavItemLink> : item.title}</SideNavItemContent>
+            <SideNavItemContent>{item.href ? <SideNavItemLink render={props => <RouterLink {...props} />}>{item.title}</SideNavItemLink> : item.title}</SideNavItemContent>
             {/*- begin highlight -*/}
             {/* recursively render children */}
             {item.children && <Collection items={item.children}>
@@ -105,17 +105,17 @@ let items: Item[] = [
       }}
     </SideNav>
   )}
-</RoutedSideNav>
+</Router>
 ```
 
 ### Slots
 
 `SideNavItemContent` supports icons, `Text`, [SideNavItemLink](#sidenavitemlink), [ActionMenu](ActionMenu), and [ActionButtonGroup](ActionButtonGroup) as children.
 
-```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/react-aria/Router.tsx']}
 "use client";
 import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SideNav';
-import {RoutedSideNav} from './RoutedSideNav';
+import {Router, Link as RouterLink} from './Router';
 import {ActionMenu, MenuItem} from '@react-spectrum/s2/ActionMenu';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import File from '@react-spectrum/s2/icons/File';
@@ -145,7 +145,7 @@ let items: Item[] = [
 ];
 ///- end collapse -///
 
-<RoutedSideNav defaultSelectedRoute="/notes">
+<Router defaultSelectedRoute="/notes">
   {({selectedRoute}) => (
     <SideNav
       aria-label="Files"
@@ -159,7 +159,7 @@ let items: Item[] = [
             <SideNavItemContent>
               {/*- begin highlight -*/}
               {
-                item.href ? <SideNavItemLink>
+                item.href ? <SideNavItemLink render={props => <RouterLink {...props} />}>
                   {item.type === 'directory' ? <Folder /> : <File />}
                   <Text>{item.title}</Text>
                 </SideNavItemLink> : <>
@@ -187,80 +187,117 @@ let items: Item[] = [
       }}
     </SideNav>
   )}
-</RoutedSideNav>
+</Router>
 ```
 
 ## Routing
 
 SideNavs do not support an uncontrolled selection state, you are responsible for managing it through the `selectedRoute` prop. You may wire this up
-to a router or other state management solution. The example below derives `selectedRoute` from the router's current location,
-and provides React Aria's `RouterProvider` with the router's `navigate` function so that clicking an item performs a client side navigation.
+to a router or other state management solution.
 
 If a SideNavItem has an `href`, then you must pass a `SideNavItemLink` as a child of the `SideNavItemContent`.
 
-See Routing setup in [Getting Started](./getting-started) for more info.
-
-```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/router.tsx']}
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/react-aria/Router.tsx']}
 "use client";
 import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Text} from '@react-spectrum/s2/SideNav';
-import {RouterProvider} from 'react-aria-components';
-import {MemoryRouter, useLocation, useNavigate} from './router';
+import {Router, Link as RouterLink} from './Router';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
 import Files from '@react-spectrum/s2/icons/Files';
 import Images from '@react-spectrum/s2/icons/Images';
 
-function FilesSideNav() {
-  /*- begin highlight -*/
-  let navigate = useNavigate();
-  let {pathname} = useLocation();
+/*- begin highlight -*/
+<Router defaultSelectedRoute="/files">
+  {({selectedRoute}) => (
+    <SideNav
+      aria-label="Files"
+      defaultExpandedKeys={['your-libraries']}
+      selectedRoute={selectedRoute}
+      styles={style({height: 120, width: 210})}>
+    {/*- end highlight -*/}
+      <SideNavItem href="/files" textValue="Files">
+        <SideNavItemContent>
+          <SideNavItemLink render={props => <RouterLink {...props} />}>
+            <Files />
+            <Text>Files</Text>
+          </SideNavItemLink>
+        </SideNavItemContent>
+      </SideNavItem>
+      <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+        <SideNavItemContent>
+          <SideNavItemLink render={props => <RouterLink {...props} />}>
+            <CCLibrary />
+            <Text>Your Libraries</Text>
+          </SideNavItemLink>
+        </SideNavItemContent>
+        <SideNavItem id="photos" href="/photos" textValue="Photos">
+          <SideNavItemContent>
+            <SideNavItemLink render={props => <RouterLink {...props} />}>
+              <Images />
+              <Text>Photos</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+      </SideNavItem>
+    </SideNav>
+  )}
+</Router>
+```
 
-  return (
-    <RouterProvider navigate={navigate}>
-      <SideNav aria-label="Files" defaultExpandedKeys={['your-libraries']} selectedRoute={pathname} styles={style({height: 120, width: 210})}>
-      {/*- end highlight -*/}
+To integrate with a client side router, use the `renderLink` prop on `SideNavItemLink` to delegate to your router's link component. This supports features like prefetching on hover and avoids full page reloads.
+Get the current route from your framework and pass it as `selectedRoute`.
+
+<ExampleSwitcher type="framework" examples={['Next.js', 'React Router']}>
+  ```tsx
+  import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Text} from '@react-spectrum/s2/SideNav';
+  import NextLink from 'next/link';
+  import {usePathname} from 'next/navigation';
+
+  function Sidebar() {
+    let selectedRoute = usePathname();
+    return (
+      <SideNav aria-label="Files" selectedRoute={selectedRoute}>
         <SideNavItem href="/files" textValue="Files">
           <SideNavItemContent>
-            <SideNavItemLink>
-              <Files />
+            <SideNavItemLink render={props => <NextLink {...props} />}>
               <Text>Files</Text>
             </SideNavItemLink>
           </SideNavItemContent>
         </SideNavItem>
-        <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+      </SideNav>
+    );
+  }
+  ```
+
+  ```tsx
+  import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Text} from '@react-spectrum/s2/SideNav';
+  import {Link as RouterLink, useLocation} from 'react-router';
+
+  function Sidebar() {
+    let {pathname} = useLocation();
+    return (
+      <SideNav aria-label="Files" selectedRoute={pathname}>
+        <SideNavItem href="/files" textValue="Files">
           <SideNavItemContent>
-            <SideNavItemLink>
-              <CCLibrary />
-              <Text>Your Libraries</Text>
+            <SideNavItemLink render={props => <RouterLink {...props} to={props.href} />}>
+              <Text>Files</Text>
             </SideNavItemLink>
           </SideNavItemContent>
-          <SideNavItem id="photos" href="/photos" textValue="Photos">
-            <SideNavItemContent>
-              <SideNavItemLink>
-                <Images />
-                <Text>Photos</Text>
-              </SideNavItemLink>
-            </SideNavItemContent>
-          </SideNavItem>
         </SideNavItem>
       </SideNav>
-    </RouterProvider>
-  );
-}
-
-<MemoryRouter initialEntries={['/files']}>
-  <FilesSideNav />
-</MemoryRouter>
-```
+    );
+  }
+  ```
+</ExampleSwitcher>
 
 ## Sections
 
 A SideNav can contain sections to group items together. They are non-collapsible and non-interactive.
 
-```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/RoutedSideNav.tsx']}
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/react-aria/Router.tsx']}
 "use client";
 import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNav';
-import {RoutedSideNav} from './RoutedSideNav';
+import {Router, Link as RouterLink} from './Router';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
@@ -270,7 +307,7 @@ import Animation from '@react-spectrum/s2/icons/Animation';
 import Download from '@react-spectrum/s2/icons/Download';
 import Apps from '@react-spectrum/s2/icons/Apps';
 
-<RoutedSideNav defaultSelectedRoute="/files">
+<Router defaultSelectedRoute="/files">
   {({selectedRoute}) => (
     <SideNav aria-label="Files" selectedRoute={selectedRoute} styles={style({height: 260, width: 210})}>
       {/*- begin highlight -*/}
@@ -279,7 +316,7 @@ import Apps from '@react-spectrum/s2/icons/Apps';
       {/*- end highlight -*/}
         <SideNavItem href="/applications" textValue="Applications">
           <SideNavItemContent>
-            <SideNavItemLink>
+            <SideNavItemLink render={props => <RouterLink {...props} />}>
               <Apps />
               <Text>Applications</Text>
             </SideNavItemLink>
@@ -287,7 +324,7 @@ import Apps from '@react-spectrum/s2/icons/Apps';
         </SideNavItem>
         <SideNavItem href="/downloads" textValue="Downloads">
           <SideNavItemContent>
-            <SideNavItemLink>
+            <SideNavItemLink render={props => <RouterLink {...props} />}>
               <Download />
               <Text>Downloads</Text>
             </SideNavItemLink>
@@ -298,7 +335,7 @@ import Apps from '@react-spectrum/s2/icons/Apps';
         <SideNavHeader>Workspaces</SideNavHeader>
         <SideNavItem href="/files" textValue="Files">
           <SideNavItemContent>
-            <SideNavItemLink>
+            <SideNavItemLink render={props => <RouterLink {...props} />}>
               <Files />
               <Text>Files</Text>
             </SideNavItemLink>
@@ -306,14 +343,14 @@ import Apps from '@react-spectrum/s2/icons/Apps';
         </SideNavItem>
         <SideNavItem href="/your-libraries" textValue="Your Libraries">
           <SideNavItemContent>
-            <SideNavItemLink>
+            <SideNavItemLink render={props => <RouterLink {...props} />}>
               <CCLibrary />
               <Text>Your Libraries</Text>
             </SideNavItemLink>
           </SideNavItemContent>
           <SideNavItem href="/photos" textValue="Photos">
             <SideNavItemContent>
-              <SideNavItemLink>
+              <SideNavItemLink render={props => <RouterLink {...props} />}>
                 <Images />
                 <Text>Photos</Text>
               </SideNavItemLink>
@@ -322,14 +359,14 @@ import Apps from '@react-spectrum/s2/icons/Apps';
         </SideNavItem>
         <SideNavItem href="/shared-with-you" id="shared-with-you" textValue="Shared with You">
           <SideNavItemContent>
-            <SideNavItemLink>
+            <SideNavItemLink render={props => <RouterLink {...props} />}>
               <UserGroup />
               <Text>Shared with You</Text>
             </SideNavItemLink>
           </SideNavItemContent>
           <SideNavItem href="/animations" textValue="Animations">
             <SideNavItemContent>
-              <SideNavItemLink>
+              <SideNavItemLink render={props => <RouterLink {...props} />}>
                 <Animation />
                 <Text>Animations</Text>
               </SideNavItemLink>
@@ -339,7 +376,7 @@ import Apps from '@react-spectrum/s2/icons/Apps';
       </SideNavSection>
     </SideNav>
   )}
-</RoutedSideNav>
+</Router>
 ```
 
 ## API

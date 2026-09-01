@@ -1,7 +1,8 @@
 'use client';
 import React, {ReactNode, useState, createContext, useContext} from 'react';
 
-// This is a fake router for documentation purposes. In a real app, you would use a routing library like React Router or a framework like Next.js.
+// This is a fake router for documentation purposes. In a real app, you would
+// use a routing library like React Router or a framework like Next.js.
 const NavigateContext = createContext<(href: string) => void>(() => {});
 
 export function Link(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {

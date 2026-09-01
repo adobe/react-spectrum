@@ -25,7 +25,7 @@ import Chevron from '../ui-icons/Chevron';
 import {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {DOMRef, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
-import {Link} from 'react-aria-components/Link';
+import {Link, type LinkProps} from 'react-aria-components/Link';
 import {
   NavigationTree,
   NavigationTreeHeader,
@@ -511,17 +511,20 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
   );
 };
 
-export interface SideNavItemLinkProps {
+export interface SideNavItemLinkProps extends Pick<LinkProps, 'render'> {
   /** Rendered contents of the link. */
   children?: ReactNode;
 }
 
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
-  let {children} = props;
+  let {children, ...otherProps} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
 
   return (
-    <Link {...props} {...linkFocus} className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
+    <Link
+      {...otherProps}
+      {...linkFocus}
+      className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
       <Provider
         values={[
           [TextContext, {styles: treeContent}],
