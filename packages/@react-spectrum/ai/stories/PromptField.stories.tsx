@@ -109,10 +109,10 @@ const meta: Meta<typeof PromptField> = {
   },
   title: 'AI/PromptField',
   decorators: [
-    Story => (
+    (Story, {args}) => (
       <div
         style={{
-          width: '800px',
+          width: args.size === 'S' ? '300px' : '800px',
           maxWidth: '90vw',
           margin: '0 auto'
         }}>
@@ -498,6 +498,7 @@ function EverythingRender(args) {
             });
           }}
           pixelLoader={data[args.pixelLoader]}
+          shouldAnimatePixelLoader
           placeholder={placeholder}
           menuWidth={menuWidth}>
           {token => (
@@ -622,7 +623,7 @@ function BasicRender({placeholder, ...args}: any) {
   return (
     <PromptField {...args}>
       <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-        <PromptTokenField placeholder={placeholder} />
+        <PromptTokenField placeholder={placeholder} shouldAnimatePixelLoader />
         <PromptFieldSubmitButton />
       </div>
     </PromptField>
@@ -637,6 +638,7 @@ export const AsyncCompletions = () => (
   <PromptField>
     <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
       <PromptTokenField
+        shouldAnimatePixelLoader
         completionTrigger={/(?<=^|\s)[@/]/}
         renderCompletions={async filterValue => {
           await new Promise(resolve => setTimeout(resolve, 500));

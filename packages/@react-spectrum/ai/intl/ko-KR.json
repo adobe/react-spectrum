@@ -9,10 +9,12 @@
   "promptfield.insertButton": "추가",
   "promptfield.label": "프롬프트",
   "promptfield.placeholder": "시작할 준비가 되셨습니까? 질문을 하거나, 아이디어를 공유하거나, 작업을 추가하세요.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "중단",
   "promptfield.submitButton": "전송",
   "promptfield.uploading": "업로드",
   "responsestatus.loading": "로드 중",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "기록 시작",
   "voicebutton.stopListening": "기록 중지"
 }

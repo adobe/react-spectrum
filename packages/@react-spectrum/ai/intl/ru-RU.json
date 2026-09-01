@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Добавить",
   "promptfield.label": "Запрос",
   "promptfield.placeholder": "Готовы начать работу? Задайте вопрос, поделитесь идеей или добавьте задачу.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Остановить",
   "promptfield.submitButton": "Отправить",
   "promptfield.uploading": "Отправка",
   "responsestatus.loading": "Загрузка",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Начать запись",
   "voicebutton.stopListening": "Остановить запись"
 }

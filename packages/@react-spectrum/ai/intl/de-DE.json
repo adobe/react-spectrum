@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Hinzufügen",
   "promptfield.label": "Aufforderung",
   "promptfield.placeholder": "Sind Sie bereit? Sie können Fragen stellen, Ideen teilen oder Aufgaben hinzufügen.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Anhalten",
   "promptfield.submitButton": "Senden",
   "promptfield.uploading": "Hochladen",
   "responsestatus.loading": "Ladevorgang läuft",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Aufzeichnung starten",
   "voicebutton.stopListening": "Aufzeichnung stoppen"
 }

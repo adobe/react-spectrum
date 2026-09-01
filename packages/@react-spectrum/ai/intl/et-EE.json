@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Add",
   "promptfield.label": "Ülesanne",
   "promptfield.placeholder": "Kas te olete valmis alustama? Esitage küsimus, jagage ideed või lisage ülesanne.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Peatu",
   "promptfield.submitButton": "Saada",
   "promptfield.uploading": "Üleslaadimine",
   "responsestatus.loading": "Laadimine",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Alusta salvestamist",
   "voicebutton.stopListening": "Lõpeta salvestamine"
 }

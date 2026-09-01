@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Přidat",
   "promptfield.label": "Výzva",
   "promptfield.placeholder": "Jste připraveni začít? Položte otázku, podělte se o svůj nápad nebo přidejte úkol.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Zastavit",
   "promptfield.submitButton": "Odeslat",
   "promptfield.uploading": "Nahrávání",
   "responsestatus.loading": "Načítání",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Začít nahrávat",
   "voicebutton.stopListening": "Zastavit nahrávání"
 }

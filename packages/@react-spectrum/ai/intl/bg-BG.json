@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Добави",
   "promptfield.label": "Подсказка",
   "promptfield.placeholder": "Готови ли сте да започнете? Задайте въпрос, споделете идея или добавете задача.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Спри",
   "promptfield.submitButton": "Изпрати",
   "promptfield.uploading": "Качване",
   "responsestatus.loading": "Зареждане",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Започнете запис",
   "voicebutton.stopListening": "Спри записа"
 }

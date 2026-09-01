@@ -9,10 +9,12 @@
   "promptfield.insertButton": "جمع",
   "promptfield.label": "الموضوع",
   "promptfield.placeholder": "هل أنت مستعد للبدء؟ اطرح سؤالًا، أو شارك فكرة، أو أضف مهمة.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "توقف",
   "promptfield.submitButton": "أرسلني",
   "promptfield.uploading": "التحميل",
   "responsestatus.loading": "جارٍ التحميل",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "ابدأ التسجيل",
   "voicebutton.stopListening": "أوقف التسجيل"
 }

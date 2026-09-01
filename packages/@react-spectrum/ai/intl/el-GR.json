@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Προσθήκη",
   "promptfield.label": "Προτροπή",
   "promptfield.placeholder": "Είστε έτοιμοι να ξεκινήσετε; Υποβάλετε μια ερώτηση, μοιραστείτε μια ιδέα ή προσθέστε μια εργασία.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Σταμάτα",
   "promptfield.submitButton": "Αποστολή",
   "promptfield.uploading": "Μεταφόρτωση",
   "responsestatus.loading": "Φόρτωση",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Ξεκινήστε την εγγραφή",
   "voicebutton.stopListening": "Διακοπή εγγραφής"
 }

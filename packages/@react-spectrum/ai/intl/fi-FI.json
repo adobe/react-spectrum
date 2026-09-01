@@ -9,10 +9,12 @@
   "promptfield.insertButton": "Add",
   "promptfield.label": "Kehotus",
   "promptfield.placeholder": "Oletko valmis aloittamaan? Esitä kysymys, jaa idea tai lisää tehtävä.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Seis",
   "promptfield.submitButton": "Lähetä",
   "promptfield.uploading": "Lataaminen",
   "responsestatus.loading": "Ladataan",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Aloita äänitys",
   "voicebutton.stopListening": "Lopeta tallennus"
 }
