@@ -25,6 +25,7 @@ import {
 } from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {ButtonGroup} from './ButtonGroup';
+import {ColorSchemeContext} from './Provider';
 import {
   CellRenderProps,
   ColumnRenderProps,
@@ -1657,6 +1658,7 @@ function EditableCellInner(
   let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
 
   let {density, keyboardNavigationBehavior} = useContext(InternalTableContext);
+  let colorScheme = useContext(ColorSchemeContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
   if (density === 'compact') {
     size = 'S';
@@ -1787,7 +1789,7 @@ function EditableCellInner(
               // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
               zIndex: undefined
             }}
-            className={editPopover}>
+            className={renderProps => editPopover({...renderProps, colorScheme})}>
             <Provider values={[[OverlayTriggerStateContext, null]]}>
               <Form
                 ref={formRef}
