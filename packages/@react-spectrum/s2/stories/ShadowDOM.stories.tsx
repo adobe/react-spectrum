@@ -186,26 +186,13 @@ function useStorybookColorScheme(): Scheme {
 
 /**
  * The app rendered into the nested shadow root. It tracks Storybook's color scheme itself and
- * passes it to `<Provider colorScheme>`, so the scheme updates through React state within
- * this root. `data-color-scheme` is also mirrored onto the shadow host(s) so page.css themes the
- * background.
+ * passes it to `<Provider colorScheme>`, so the scheme updates through React state within this
+ * root.
  */
-function ShadowApp({
-  hosts,
-  portalContainerRef
-}: {
-  hosts: HTMLElement[];
-  portalContainerRef: {current: HTMLDivElement | null};
-}) {
+function ShadowApp({portalContainerRef}: {portalContainerRef: {current: HTMLDivElement | null}}) {
   const colorScheme = useStorybookColorScheme();
-  useEffect(() => {
-    for (const host of hosts) {
-      host.setAttribute('data-color-scheme', colorScheme);
-    }
-  }, [colorScheme, hosts]);
-
   return (
-    <Provider colorScheme={colorScheme}>
+    <Provider colorScheme={colorScheme} background="base" styles={style({minHeight: 600})}>
       <UNSAFE_PortalProvider getContainer={() => portalContainerRef.current}>
         <AllComponents />
       </UNSAFE_PortalProvider>
@@ -241,7 +228,7 @@ function ShadowDOMContained() {
 
     const root = createRoot(appContainer);
     rootRef.current = root;
-    root.render(<ShadowApp hosts={[host]} portalContainerRef={portalContainerRef} />);
+    root.render(<ShadowApp portalContainerRef={portalContainerRef} />);
 
     return () => {
       rootRef.current = null;
@@ -284,8 +271,8 @@ function ShadowDOMPortalToBody() {
 
     const root = createRoot(appContainer);
     rootRef.current = root;
-    // The portaled overlays inherit colorScheme through the Provider context, so both hosts get themed.
-    root.render(<ShadowApp hosts={[host, portalHost]} portalContainerRef={portalContainerRef} />);
+    // The portaled overlays inherit colorScheme through the Provider context, so both shadows theme.
+    root.render(<ShadowApp portalContainerRef={portalContainerRef} />);
 
     return () => {
       rootRef.current = null;

@@ -66,7 +66,7 @@ type Story = StoryObj<typeof ResponseStatus>;
 
 export const Example: Story = {
   render: args => (
-    <div className={style({width: 320, minHeight: 240})}>
+    <div className={style({width: 320, maxWidth: '100vw', minHeight: 240})}>
       <ResponseStatus {...args}>
         <ResponseStatusTitle>
           {args.status === 'pending'
@@ -86,7 +86,7 @@ export const Example: Story = {
 
 export const NoResponseContent: Story = {
   render: args => (
-    <div className={style({width: 320, minHeight: 240})}>
+    <div className={style({width: 320, maxWidth: '100vw', minHeight: 240})}>
       <ResponseStatus {...args}>
         <ResponseStatusTitle>
           {args.status === 'pending'
@@ -228,7 +228,7 @@ function WithExecutionTraceRender(args) {
   return (
     <div
       className={style({
-        maxWidth: 800,
+        maxWidth: 'min(800px, 100vw)',
         minHeight: 240,
         marginX: 'auto',
         paddingY: 40,
