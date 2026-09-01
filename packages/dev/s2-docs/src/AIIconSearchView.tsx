@@ -42,12 +42,10 @@ import {
   wand
 } from '@react-spectrum/ai/loader';
 import {
-  Autocomplete,
   GridLayout,
   ListBox,
   ListBoxItem,
   Size,
-  useFilter,
   Virtualizer
 } from 'react-aria-components';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
@@ -57,7 +55,6 @@ import {
   IllustratedMessage,
   Link,
   pressScale,
-  SearchField,
   ToastQueue
 } from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -103,20 +100,6 @@ export const aiIconList: {id: string; cells: Cell[]}[] = [
   {id: 'journey', cells: journey},
   {id: 'floppy', cells: floppy}
 ];
-
-export function useAIIconFilter() {
-  let {contains} = useFilter({sensitivity: 'base'});
-  return useCallback(
-    (textValue: string, inputValue: string) => {
-      let trimmedInput = inputValue.trim();
-      if (!trimmedInput) {
-        return true;
-      }
-      return textValue != null && contains(textValue, trimmedInput);
-    },
-    [contains]
-  );
-}
 
 export function useCopyAIImport() {
   let [copiedId, setCopiedId] = useState<string | null>(null);
@@ -200,7 +183,7 @@ function AIIconItem({
           <>
             {/* Only animate the tile under the pointer or keyboard focus, so the grid isn't
                 looping dozens of pixel animations simultaneously. */}
-            <PixelLoader icon={item.cells} size={32} isPlaying={isHovered || isFocusVisible} />
+            <PixelLoader icon={item.cells} isPlaying={isHovered || isFocusVisible} />
             <div
               className={style({
                 maxWidth: '100%',
@@ -255,30 +238,26 @@ function AIIconListBox({items, copiedId, onAction, listBoxClassName}: AIIconList
 }
 
 export function AIIconsPageSearch() {
-  let filter = useAIIconFilter();
   let {copiedId, handleCopyImport} = useCopyAIImport();
 
   return (
-    <Autocomplete filter={filter}>
-      <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        <SearchField size="L" aria-label="Search AI icons" placeholder="Search icons" />
-        <InfoMessage>
-          Press an item to copy its import statement. Hover or focus a tile to preview its
-          animation. See <Link href="ai-components#loaders">Loaders</Link> for more information.
-        </InfoMessage>
-        <AIIconListBox
-          items={aiIconList}
-          copiedId={copiedId}
-          onAction={handleCopyImport}
-          listBoxClassName={style({
-            height: 380,
-            width: '100%',
-            maxHeight: '100%',
-            overflow: 'auto',
-            scrollPaddingY: 4
-          })}
-        />
-      </div>
-    </Autocomplete>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      <InfoMessage>
+        Press an item to copy its import statement. Hover or focus a tile to preview its
+        animation. See <Link href="ai-components#loaders">Loaders</Link> for more information.
+      </InfoMessage>
+      <AIIconListBox
+        items={aiIconList}
+        copiedId={copiedId}
+        onAction={handleCopyImport}
+        listBoxClassName={style({
+          height: 340,
+          width: '100%',
+          maxHeight: '100%',
+          overflow: 'auto',
+          scrollPaddingY: 4
+        })}
+      />
+    </div>
   );
 }
