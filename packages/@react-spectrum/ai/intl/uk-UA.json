@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Нове повідомлення",
   "chat.scrollToBottom": "Прокрутіть вниз",
   "messagefeedback.thumbDown": "Погана відповідь",

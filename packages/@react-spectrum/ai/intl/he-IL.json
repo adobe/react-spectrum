@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "הודעה חדשה",
   "chat.scrollToBottom": "גלול למטה",
   "messagefeedback.thumbDown": "תגובה גרועה",

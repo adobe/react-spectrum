@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Nová správa",
   "chat.scrollToBottom": "Prejdite na koniec",
   "messagefeedback.thumbDown": "Zlá odozva",

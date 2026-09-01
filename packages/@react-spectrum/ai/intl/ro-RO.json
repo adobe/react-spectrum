@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Mesaj nou",
   "chat.scrollToBottom": "Derulează până jos",
   "messagefeedback.thumbDown": "Răspuns greșit",

@@ -295,7 +295,7 @@ export function PixelLoader(props: PixelLoaderProps) {
     }
     return matrix;
   }, [cells]);
-  const isHighDPI = window.devicePixelRatio >= 2;
+  const isHighDPI = (typeof document !== 'undefined' && window.devicePixelRatio >= 2) ?? false;
 
   return (
     <div
