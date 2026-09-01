@@ -9,7 +9,7 @@ import {
   token
 } from './tokens.macro' with {type: 'macro'};
 import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
@@ -382,7 +382,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
         '--brand': brandColor
       }}
       onFocus={e => {
-        if (e.isTrusted) {
+        if (e.isTrusted && nodeContains(inputRef.current, getEventTarget(e))) {
           setFocused(true);
         }
       }}

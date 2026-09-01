@@ -16,5 +16,7 @@
   "responsestatus.loading": "Indlæser",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Start optagelsen",
-  "voicebutton.stopListening": "Stop optagelsen"
+  "voicebutton.stopListening": "Stop optagelsen",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
