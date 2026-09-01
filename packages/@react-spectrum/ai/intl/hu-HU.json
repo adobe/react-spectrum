@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Új üzenet",
   "chat.scrollToBottom": "Görgess le az alulra",
   "messagefeedback.thumbDown": "Rossz válasz",
