@@ -17,7 +17,14 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button, ButtonContext} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  color,
+  css,
+  fontRelative,
+  space,
+  style,
+  StyleString
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   createContext,
   createRef,
@@ -845,7 +852,7 @@ export function PromptToken(props: PromptTokenProps) {
       <IconContext.Provider
         value={{
           styles: style({
-            size: '1lh',
+            size: fontRelative(20),
             display: 'inline-block',
             verticalAlign: '[-0.18em]',
             marginEnd: 4
