@@ -25,7 +25,6 @@ import {
 } from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {ButtonGroup} from './ButtonGroup';
-import {ColorSchemeContext} from './Provider';
 import {
   CellRenderProps,
   ColumnRenderProps,
@@ -60,6 +59,7 @@ import {
   CollectionRendererContext,
   DefaultCollectionRenderer
 } from 'react-aria-components/CollectionBuilder';
+import {ColorSchemeContext} from './Provider';
 import {ColumnSize} from 'react-stately/useTableState';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
