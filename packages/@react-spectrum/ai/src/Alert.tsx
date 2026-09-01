@@ -22,7 +22,7 @@ import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
 import intlMessages from '../intl/*.json';
 import {lightDark, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
-import {Provider} from 'react-aria-components';
+import {Provider} from 'react-aria-components/slots';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 

@@ -51,7 +51,15 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-import {Content, Heading, IllustratedMessage, Link, pressScale, SearchField, ToastQueue} from '@react-spectrum/s2';
+import {
+  Content,
+  Heading,
+  IllustratedMessage,
+  Link,
+  pressScale,
+  SearchField,
+  ToastQueue
+} from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {InfoMessage} from './colorSearchData';
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
@@ -157,7 +165,13 @@ const itemStyle = style({
   cursor: 'default'
 });
 
-function AIIconItem({item, isCopied = false}: {item: (typeof aiIconList)[number]; isCopied?: boolean}) {
+function AIIconItem({
+  item,
+  isCopied = false
+}: {
+  item: (typeof aiIconList)[number];
+  isCopied?: boolean;
+}) {
   let ref = useRef(null);
   // oxlint-disable react/react-compiler
   return (
@@ -172,7 +186,13 @@ function AIIconItem({item, isCopied = false}: {item: (typeof aiIconList)[number]
         isCopied ? (
           <>
             <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
-            <div className={style({maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'})}>
+            <div
+              className={style({
+                maxWidth: '100%',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap'
+              })}>
               Copied!
             </div>
           </>
@@ -181,7 +201,13 @@ function AIIconItem({item, isCopied = false}: {item: (typeof aiIconList)[number]
             {/* Only animate the tile under the pointer or keyboard focus, so the grid isn't
                 looping dozens of pixel animations simultaneously. */}
             <PixelLoader icon={item.cells} size={32} isPlaying={isHovered || isFocusVisible} />
-            <div className={style({maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'})}>
+            <div
+              className={style({
+                maxWidth: '100%',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap'
+              })}>
               {item.id}
             </div>
           </>
@@ -237,8 +263,8 @@ export function AIIconsPageSearch() {
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
         <SearchField size="L" aria-label="Search AI icons" placeholder="Search icons" />
         <InfoMessage>
-          Press an item to copy its import statement. Hover or focus a tile to preview its animation. See{' '}
-          <Link href="ai-components#loaders">Loaders</Link> for more information.
+          Press an item to copy its import statement. Hover or focus a tile to preview its
+          animation. See <Link href="ai-components#loaders">Loaders</Link> for more information.
         </InfoMessage>
         <AIIconListBox
           items={aiIconList}
