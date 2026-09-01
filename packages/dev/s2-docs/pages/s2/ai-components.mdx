@@ -507,8 +507,8 @@ let initialMessages = [
   {
     id: 6,
     type: 'alert',
-    variant: 'notice',
-    text: "This summary may be incomplete. The connected data source hasn't synced in 2 hours.",
+    variant: 'notice' as const,
+    text: "This summary may be incomplete. The connected data source hasn't synced in 2 hours."
   }
 ];
 
@@ -617,7 +617,7 @@ function PresetLoader() {
       <Picker
         label="Animation"
         selectedKey={preset}
-        onSelectionChange={key => setPreset(key)}>
+        onSelectionChange={key => setPreset(key as string)}>
         <PickerItem id="cc">Creative Cloud</PickerItem>
         <PickerItem id="dc">Document Cloud</PickerItem>
         <PickerItem id="exp">Experience Cloud</PickerItem>
