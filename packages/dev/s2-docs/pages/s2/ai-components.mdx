@@ -33,20 +33,19 @@ import {
   PromptFieldValue,
   PromptFieldVoiceButton,
   PromptToken,
-  PromptTokenField,
-  TokenFieldValue
+  PromptTokenField
 } from '@react-spectrum/ai';
 import {type FocusableRefValue} from '@react-types/shared';
 import {getIcon, slashCommands, objects, renderCompletions, suggestions, type UploadState} from './ai-component-helpers/promptfield';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Collection, Content, SubmenuTrigger, Menu, MenuItem, MenuSection, Header, Heading, Text} from '@react-spectrum/s2';
+import {Collection, SubmenuTrigger, Menu, MenuItem, MenuSection, Header, Heading, Text} from '@react-spectrum/s2';
 import Data from '@react-spectrum/s2/icons/Data';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import {VirtualizedStreamingChat} from './ai-component-helpers/chat';
 
 function Example() {
-  let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
+  let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
   let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
@@ -85,7 +84,7 @@ function Example() {
       <VirtualizedStreamingChat
         suggestions={suggestions}
         onSelectSuggestion={value => {
-          setValue(value);
+          setValue(value as PromptFieldValue);
           promptFieldRef.current?.focus();
         }}>
         {onSend => (
