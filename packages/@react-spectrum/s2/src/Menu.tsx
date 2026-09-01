@@ -132,8 +132,7 @@ export interface MenuProps<T>
   /** Hides the default link out icons on menu items that open links in a new tab. */
   hideLinkOutIcon?: boolean;
   /**
-   * The current loading state of the Menu. Determines whether or not the progress circle should
-   * be shown, and whether a "no results" message is displayed when there are no items.
+   * The current loading state of the Menu.
    */
   loadingState?: LoadingState;
 }
@@ -429,7 +428,7 @@ let wrappingDiv = style({
   size: 'full'
 });
 
-const loadingWrapperStyles = style({
+export const loadingWrapperStyles = style({
   gridColumnStart: '1',
   gridColumnEnd: '-1',
   display: 'flex',
@@ -438,7 +437,7 @@ const loadingWrapperStyles = style({
   marginY: 8
 });
 
-const progressCircleStyles = style({
+export const progressCircleStyles = style({
   size: {
     size: {
       S: 16,
@@ -450,8 +449,6 @@ const progressCircleStyles = style({
 });
 
 const emptyStateText = style({
-  gridColumnStart: '1',
-  gridColumnEnd: '-1',
   height: {
     size: {
       S: 24,
@@ -470,7 +467,7 @@ const emptyStateText = style({
   },
   display: 'flex',
   alignItems: 'center',
-  paddingStart: 'edge-to-text'
+  paddingX: 'edge-to-text'
 });
 
 /**
@@ -565,7 +562,6 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
                   isIndeterminate
                   size="S"
                   styles={progressCircleStyles({size})}
-                  // Same loading string as table
                   aria-label={stringFormatter.format('table.loading')}
                 />
               </div>

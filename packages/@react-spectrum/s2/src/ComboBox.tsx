@@ -39,7 +39,7 @@ import {BaseCollection, CollectionNode} from 'react-aria/private/collections/Bas
 import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
-import {checkmark, description, icon, iconCenterWrapper, label, sectionHeading} from './Menu';
+import {checkmark, description, icon, iconCenterWrapper, label, loadingWrapperStyles, sectionHeading} from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
@@ -210,14 +210,6 @@ const iconStyles = style({
   }
 });
 
-const loadingWrapperStyles = style({
-  gridColumnStart: '1',
-  gridColumnEnd: '-1',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginY: 8
-});
 
 const progressCircleStyles = style({
   size: '1lh',

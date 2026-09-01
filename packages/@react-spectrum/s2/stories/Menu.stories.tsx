@@ -453,7 +453,10 @@ interface Character {
   name: string;
 }
 
-const AsyncMenuRender = (args: MenuProps<Character> & {delay: number}): ReactElement => {
+const AsyncMenuRender = (
+  args: MenuProps<Character> & {delay: number; isEmpty: boolean}
+): ReactElement => {
+  let {delay, isEmpty, ...menuTriggerArgs} = args;
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -461,7 +464,7 @@ const AsyncMenuRender = (args: MenuProps<Character> & {delay: number}): ReactEle
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, args.delay));
+      await new Promise(resolve => setTimeout(resolve, delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
       let json = await res.json();
 
@@ -473,16 +476,16 @@ const AsyncMenuRender = (args: MenuProps<Character> & {delay: number}): ReactEle
   });
 
   return (
-    <MenuTrigger>
+    <MenuTrigger {...menuTriggerArgs}>
       <Button aria-label="Select Character">
         <NewIcon />
       </Button>
       <Menu
-        {...args}
+        {...menuTriggerArgs}
         aria-label="Star Wars Characters"
-        items={list.items}
-        loadingState={list.loadingState}
-        onLoadMore={list.loadMore}>
+        items={isEmpty ? [] : list.items}
+        loadingState={isEmpty ? undefined : list.loadingState}
+        onLoadMore={isEmpty ? undefined : list.loadMore}>
         {(item: Character) => <MenuItem id={item.name}>{item.name}</MenuItem>}
       </Menu>
     </MenuTrigger>
@@ -493,22 +496,14 @@ export type AsyncMenuStoryType = typeof AsyncMenuRender;
 export const AsyncMenuStory: StoryObj<AsyncMenuStoryType> = {
   render: AsyncMenuRender,
   args: {
-    delay: 50
+    delay: 2000,
+    isEmpty: false
+  },
+  argTypes: {
+    delay: {control: 'number'},
+    isEmpty: {control: 'boolean'}
   },
   name: 'Async loading menu'
-};
-
-export const EmptyState: Story = {
-  render: args => (
-    <MenuTrigger {...args}>
-      <Button aria-label="Actions">
-        <NewIcon />
-      </Button>
-      <Menu {...args} items={[]}>
-        {() => <MenuItem>Never rendered</MenuItem>}
-      </Menu>
-    </MenuTrigger>
-  )
 };
 
 export const HoldAffordance: Story = {
