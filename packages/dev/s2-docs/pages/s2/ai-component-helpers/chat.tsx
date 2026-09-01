@@ -48,7 +48,9 @@ function SuggestionLabel({value}: {value: TokenFieldValue}) {
     <>
       {value.segments.map((seg, i) =>
         seg.type === 'token' ? (
-          <span key={i} className={suggestionToken({isPlaceholder: seg.value?.type === 'placeholder'})}>
+          <span
+            key={i}
+            className={suggestionToken({isPlaceholder: seg.value?.type === 'placeholder'})}>
             {getIcon(seg) && <CenterBaseline>{getIcon(seg)}</CenterBaseline>}
             {seg.text}
           </span>
@@ -69,8 +71,7 @@ let initialResponses = [
   {
     id: 1,
     type: 'system',
-    content:
-      'Sure! How many days do you have, and do you prefer hiking, skiing, or just relaxing?'
+    content: 'Sure! How many days do you have, and do you prefer hiking, skiing, or just relaxing?'
   },
   {
     id: 2,
@@ -293,7 +294,7 @@ export function VirtualizedStreamingChat(props: VirtualizedStreamingChatProps) {
     []
   );
 
-  let items = useMemo(() => {
+  let items = useMemo<StreamingMessage[]>(() => {
     if (isGenerating || !suggestions) {
       return messages;
     }

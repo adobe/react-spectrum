@@ -12,6 +12,8 @@ import ActionMenuDark from 'url:../assets/component-illustrations/dark/ActionMen
 import ActionMenuLight from 'url:../assets/component-illustrations/light/ActionMenu.avif';
 import AdobeDark from 'url:../assets/component-illustrations/dark/Adobe.avif';
 import AdobeLight from 'url:../assets/component-illustrations/light/Adobe.avif';
+import AIComponentsDark from 'url:../assets/component-illustrations/dark/AIComponents.avif';
+import AIComponentsLight from 'url:../assets/component-illustrations/light/AIComponents.avif';
 import AutocompleteDark from 'url:../assets/component-illustrations/dark/Autocomplete.avif';
 import AutocompleteLight from 'url:../assets/component-illustrations/light/Autocomplete.avif';
 import AvatarDark from 'url:../assets/component-illustrations/dark/Avatar.avif';
@@ -199,8 +201,6 @@ import TreeDark from 'url:../assets/component-illustrations/dark/Tree.avif';
 import TreeLight from 'url:../assets/component-illustrations/light/Tree.avif';
 import UtilityDark from 'url:../assets/component-illustrations/dark/Utility.avif';
 import UtilityLight from 'url:../assets/component-illustrations/light/Utility.avif';
-import AIComponentsDark from 'url:../assets/component-illustrations/dark/AIComponents.avif';
-import AIComponentsLight from 'url:../assets/component-illustrations/light/AIComponents.avif';
 
 export interface ComponentCardItem {
   id: string;

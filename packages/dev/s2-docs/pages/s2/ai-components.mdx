@@ -36,11 +36,12 @@ import {
   PromptTokenField
 } from '@react-spectrum/ai';
 
-function BasicPrompt() {
+function BasicPrompt(props) {
   let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
 
   return (
     <PromptField
+      {...props}
       value={value}
       onChange={setValue}
       onSubmit={value => {
@@ -76,8 +77,20 @@ import {
   PromptTokenField
 } from '@react-spectrum/ai';
 
-let suggestions = ['Summarize this report', 'Draft a project brief', 'Find risks in this plan'];
 let people = ['Customers', 'Designers', 'Developers'];
+
+let suggestions = [
+  new PromptFieldValue([{type: 'text', text: 'Summarize this report'}]),
+  new PromptFieldValue([
+    {type: 'text', text: 'Draft a project brief for '},
+    {
+      type: 'token',
+      text: 'Designers',
+      value: {type: 'custom', anchor: '@', valueType: 'person', data: 'Designers'}
+    }
+  ]),
+  new PromptFieldValue([{type: 'text', text: 'Find risks in this plan'}])
+];
 
 function PromptSuggestions() {
   let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
@@ -85,11 +98,9 @@ function PromptSuggestions() {
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
       <MessageSuggestionList title="Try asking">
-        {suggestions.map(suggestion => (
-          <MessageSuggestion
-            key={suggestion}
-            onPress={() => setValue(new PromptFieldValue([{type: 'text', text: suggestion}]))}>
-            {suggestion}
+        {suggestions.map((suggestion, i) => (
+          <MessageSuggestion key={i} onPress={() => setValue(suggestion)}>
+            {suggestion.toString()}
           </MessageSuggestion>
         ))}
       </MessageSuggestionList>
@@ -188,13 +199,37 @@ Compose a conversation from `Chat`, `Thread`, and message components. The thread
 ```tsx render type="s2"
 "use client";
 import {Chat, Thread, ThreadItem, UserMessage} from '@react-spectrum/ai';
+import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 let messages = [
   {id: 1, type: 'user', text: 'Summarize the campaign results.'},
-  {id: 2, type: 'assistant', text: 'Engagement increased 18% this month, led by email and social.'},
+  {
+    id: 2,
+    type: 'assistant',
+    text: 'Engagement increased 18% this month, led by email and social. See the full report for a channel breakdown.',
+    content: (
+      <>
+        Engagement increased <strong>18%</strong> this month, led by email and social. See the{' '}
+        <a href="#">full report</a> for a channel breakdown.
+      </>
+    )
+  },
   {id: 3, type: 'user', text: 'Which channel performed best?'},
-  {id: 4, type: 'assistant', text: 'Email drove the most conversions, with social close behind.'}
+  {
+    id: 4,
+    type: 'assistant',
+    text: 'Email drove the most conversions, with social close behind: Email with 4,200 conversions, Social with 3,100 conversions.',
+    content: (
+      <>
+        <p>Email drove the most conversions, with social close behind:</p>
+        <ul>
+          <li>Email: 4,200 conversions</li>
+          <li>Social: 3,100 conversions</li>
+        </ul>
+      </>
+    )
+  }
 ];
 
 function BasicChat() {
@@ -208,6 +243,7 @@ function BasicChat() {
         overflow: 'hidden',
         boxSizing: 'border-box',
         paddingX: 4,
+        backgroundColor: 'layer-2',
         minWidth: 0
       })}>
       <div
@@ -236,7 +272,9 @@ function BasicChat() {
                 <UserMessage>{message.text}</UserMessage>
               </ThreadItem>
             ) : (
-              <ThreadItem textValue={message.text}>{message.text}</ThreadItem>
+              <ThreadItem textValue={message.text}>
+                <div className={prose()}>{message.content}</div>
+              </ThreadItem>
             )
           }
         </Thread>
@@ -492,6 +530,59 @@ function Example(args) {
 
 ## API
 
+```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadLoadMoreItem: '#threadloadmoreitem', ThreadScrollButton: '#threadscrollbutton', UserMessage: '#usermessage', MessageFeedback: '#messagefeedback', MessageSource: '#messagesource', SourceList: '#sourcelist', SourceListItem: '#sourcelistitem', ResponseStatus: '#responsestatus', ResponseStatusTitle: '#responsestatustitle', ResponseStatusPanel: '#responsestatuspanel', ExecutionTrace: '#executiontrace', ExecutionTraceItem: '#executiontraceitem', MessageSuggestionList: '#messagesuggestionlist', MessageSuggestion: '#messagesuggestion', Attachment: '#attachment', AttachmentList: '#attachmentlist', AttachmentPreview: '#attachmentpreview', PromptField: '#promptfield', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar', PromptFieldSubmitButton: '#promptfieldsubmitbutton', PromptFieldVoiceButton: '#promptfieldvoicebutton', PromptToken: '#prompttoken', PromptFieldAttachmentList: '#promptfieldattachmentlist', InsertMenuButton: '#insertmenubutton', AttachFileMenuItem: '#attachfilemenuitem', InsertTextMenuItem: '#inserttextmenuitem', InsertTokenMenuItem: '#inserttokenmenuitem', CommandMenuItem: '#commandmenuitem'}}
+<Chat>
+  <Thread>
+    <ThreadItem>
+      <UserMessage />
+      <ResponseStatus>
+        <ResponseStatusTitle />
+        <ResponseStatusPanel>
+          <ExecutionTrace>
+            <ExecutionTraceItem />
+          </ExecutionTrace>
+        </ResponseStatusPanel>
+      </ResponseStatus>
+      <MessageSource>
+        <SourceList>
+          <SourceListItem />
+        </SourceList>
+      </MessageSource>
+      <MessageFeedback />
+    </ThreadItem>
+    <ThreadItem>
+      <MessageSuggestionList>
+        <MessageSuggestion />
+      </MessageSuggestionList>
+    </ThreadItem>
+    <ThreadLoadMoreItem />
+  </Thread>
+  <ThreadScrollButton />
+  <PromptField>
+    <PromptFieldAttachmentList>
+      {attachment => (
+        <Attachment>
+          <AttachmentPreview />
+        </Attachment>
+      )}
+    </PromptFieldAttachmentList>
+    <PromptTokenField>
+      {token => <PromptToken token={token} />}
+    </PromptTokenField>
+    <PromptFieldToolbar>
+      <InsertMenuButton>
+        <AttachFileMenuItem />
+        <InsertTextMenuItem />
+        <InsertTokenMenuItem />
+        <CommandMenuItem />
+      </InsertMenuButton>
+      <PromptFieldVoiceButton />
+      <PromptFieldSubmitButton />
+    </PromptFieldToolbar>
+  </PromptField>
+</Chat>
+```
+
 ### Prompt field
 
 ```tsx links={{PromptField: '#promptfield', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar', PromptFieldSubmitButton: '#promptfieldsubmitbutton', PromptFieldVoiceButton: '#promptfieldvoicebutton', PromptToken: '#prompttoken', PromptFieldAttachmentList: '#promptfieldattachmentlist', InsertMenuButton: '#insertmenubutton', AttachFileMenuItem: '#attachfilemenuitem', InsertTextMenuItem: '#inserttextmenuitem', InsertTokenMenuItem: '#inserttokenmenuitem', CommandMenuItem: '#commandmenuitem'}}
@@ -603,11 +694,27 @@ function Example(args) {
 
 ### Chat
 
-```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadLoadMoreItem: '#threadloadmoreitem', ThreadScrollButton: '#threadscrollbutton', UserMessage: '#usermessage'}}
+```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadLoadMoreItem: '#threadloadmoreitem', ThreadScrollButton: '#threadscrollbutton', UserMessage: '#usermessage', MessageFeedback: '#messagefeedback', MessageSource: '#messagesource', SourceList: '#sourcelist', SourceListItem: '#sourcelistitem', ResponseStatus: '#responsestatus', ResponseStatusTitle: '#responsestatustitle', ResponseStatusPanel: '#responsestatuspanel', ExecutionTrace: '#executiontrace', ExecutionTraceItem: '#executiontraceitem'}}
 <Chat>
   <Thread>
     <ThreadItem>
       <UserMessage /> or assistant content
+    </ThreadItem>
+    <ThreadItem>
+      <ResponseStatus>
+        <ResponseStatusTitle />
+        <ResponseStatusPanel>
+          <ExecutionTrace>
+            <ExecutionTraceItem />
+          </ExecutionTrace>
+        </ResponseStatusPanel>
+      </ResponseStatus>
+      <MessageFeedback />
+      <MessageSource>
+        <SourceList>
+          <SourceListItem />
+        </SourceList>
+      </MessageSource>
     </ThreadItem>
     <ThreadLoadMoreItem />
   </Thread>
@@ -638,3 +745,39 @@ function Example(args) {
 #### UserMessage
 
 <PropTable component={docs.exports.UserMessage} links={docs.links} />
+
+#### MessageFeedback
+
+<PropTable component={docs.exports.MessageFeedback} links={docs.links} />
+
+#### MessageSource
+
+<PropTable component={docs.exports.MessageSource} links={docs.links} />
+
+#### SourceList
+
+<PropTable component={docs.exports.SourceList} links={docs.links} />
+
+#### SourceListItem
+
+<PropTable component={docs.exports.SourceListItem} links={docs.links} />
+
+#### ResponseStatus
+
+<PropTable component={docs.exports.ResponseStatus} links={docs.links} />
+
+#### ResponseStatusTitle
+
+<PropTable component={docs.exports.ResponseStatusTitle} links={docs.links} />
+
+#### ResponseStatusPanel
+
+<PropTable component={docs.exports.ResponseStatusPanel} links={docs.links} />
+
+#### ExecutionTrace
+
+<PropTable component={docs.exports.ExecutionTrace} links={docs.links} />
+
+#### ExecutionTraceItem
+
+<PropTable component={docs.exports.ExecutionTraceItem} links={docs.links} />
