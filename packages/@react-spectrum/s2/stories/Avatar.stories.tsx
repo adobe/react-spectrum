@@ -40,32 +40,3 @@ type Story = StoryObj<typeof Avatar>;
 export const Example: Story = {
   render: args => <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" {...args} />
 };
-
-export const ExtremelyLargeHeader: Story = {
-  render: args => (
-    <div
-      className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8})}>
-      <div className={style({font: 'heading-3xl', display: 'flex', alignItems: 'center', gap: 8})}>
-        <Avatar
-          alt="design provided"
-          src="https://i.imgur.com/xIe7Wlb.png"
-          size={'1lh'}
-          {...args}
-        />
-        <span>Person</span>
-      </div>
-      <div className={style({font: 'heading-2xl', display: 'flex', alignItems: 'center', gap: 8})}>
-        <Avatar
-          alt="design provided"
-          src="https://i.imgur.com/xIe7Wlb.png"
-          size={'1lh'}
-          {...args}
-        />
-        <span>Person</span>
-      </div>
-    </div>
-  ),
-  argTypes: {
-    size: {control: false}
-  }
-};

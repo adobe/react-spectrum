@@ -294,7 +294,7 @@ export const FieldGroup = forwardRef(function FieldGroup(
               IconContext,
               {
                 styles: style({
-                  size: '1lh',
+                  size: fontRelative(20),
                   '--iconPrimary': {type: 'fill', value: 'currentColor'}
                 })
               }
@@ -490,7 +490,7 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
               })
             }),
             styles: style({
-              size: '1lh',
+              size: fontRelative(20),
               marginStart: 'text-to-visual',
               marginEnd: fontRelative(-2),
               flexShrink: 0

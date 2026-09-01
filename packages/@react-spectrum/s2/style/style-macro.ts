@@ -119,9 +119,7 @@ export type LengthPercentageUnit =
   | 'cqw'
   | 'cqh'
   | 'cqmin'
-  | 'cqmax'
-  | 'lh'
-  | 'rlh';
+  | 'cqmax';
 export type LengthPercentage = `${number}${LengthPercentageUnit}`;
 
 export class PercentageProperty<T extends CSSValue>
@@ -135,7 +133,7 @@ export class PercentageProperty<T extends CSSValue>
   toCSSValue(value: T | LengthPercentage): PropertyValueDefinition<Value> {
     if (
       typeof value === 'string' &&
-      /^-?\d+(?:\.\d+)?(%|vw|svw|dvw|vh|svh|dvh|vmin|svmin|dvmin|vmax|svmax|dvmax|cqw|cqh|cqmin|cqmax|lh|rlh)$/.test(
+      /^-?\d+(?:\.\d+)?(%|vw|svw|dvw|vh|svh|dvh|vmin|svmin|dvmin|vmax|svmax|dvmax|cqw|cqh|cqmin|cqmax)$/.test(
         value
       )
     ) {

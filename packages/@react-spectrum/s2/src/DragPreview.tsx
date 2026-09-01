@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, style} from '../style' with {type: 'macro'};
+import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {controlFont} from './style-utils' with {type: 'macro'};
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
@@ -63,7 +63,7 @@ export let iconCenterWrapper = style({
 
 export let icon = style({
   display: 'block',
-  size: '1lh',
+  size: fontRelative(20),
   marginEnd: 'text-to-visual',
   '--iconPrimary': {
     type: 'fill',

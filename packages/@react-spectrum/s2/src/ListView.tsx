@@ -12,7 +12,15 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, color, colorMix, focusRing, space, style} from '../style' with {type: 'macro'};
+import {
+  baseColor,
+  color,
+  colorMix,
+  focusRing,
+  fontRelative,
+  space,
+  style
+} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
@@ -227,7 +235,7 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean; isDropTarget?: 
     type: 'width',
     value: {
       default: 'auto',
-      [hasTrailingIconRows]: '1lh'
+      [hasTrailingIconRows]: fontRelative(20)
     }
   }
 });

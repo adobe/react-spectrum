@@ -16,6 +16,7 @@ import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/s
 import CornerTriangle from '../ui-icons/CornerTriangle';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {fontRelative, space, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {
@@ -23,7 +24,6 @@ import {
   ToggleButtonProps as RACToggleButtonProps
 } from 'react-aria-components/ToggleButton';
 import {SkeletonContext} from './Skeleton';
-import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {Text, TextContext} from './Content';
 import {ToggleButtonGroupContext} from './ToggleButtonGroup';
@@ -126,7 +126,7 @@ export const ToggleButton = forwardRef(function ToggleButton(
             IconContext,
             {
               render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: style({size: '1lh', marginStart: '--iconMargin', flexShrink: 0})
+              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
             }
           ]
         ]}>

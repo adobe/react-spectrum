@@ -15,8 +15,8 @@ import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {lightDark, style} from '../style' with {type: 'macro'};
 import {TextContext as RACTextContext} from 'react-aria-components/Text';
 import React, {createContext, forwardRef, ReactNode} from 'react';
 import {SkeletonWrapper} from './Skeleton';
@@ -234,7 +234,7 @@ export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HT
           IconContext,
           {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: '1lh', marginStart: '--iconMargin', flexShrink: 0})
+            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }
         ]
       ]}>

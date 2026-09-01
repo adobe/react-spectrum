@@ -220,7 +220,14 @@ const loadingWrapperStyles = style({
 });
 
 const progressCircleStyles = style({
-  size: '1lh',
+  size: {
+    size: {
+      S: 16,
+      M: 20,
+      L: 22,
+      XL: 26
+    }
+  },
   marginStart: {
     isInput: 'text-to-visual'
   }
@@ -445,6 +452,13 @@ export interface ComboBoxItemProps
   children: ReactNode;
 }
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
+
 const checkmarkIconSize = {
   S: 'XS',
   M: 'M',
@@ -490,7 +504,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                   AvatarContext,
                   {
                     slots: {
-                      avatar: {size: '1lh', styles: avatar}
+                      avatar: {size: avatarSize[size], styles: avatar}
                     }
                   }
                 ],
@@ -653,7 +667,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
       <ProgressCircle
         isIndeterminate
         size="S"
-        styles={progressCircleStyles({})}
+        styles={progressCircleStyles({size})}
         // Same loading string as table
         aria-label={stringFormatter.format('table.loadingMore')}
       />
@@ -724,7 +738,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
               id={spinnerId}
               isIndeterminate
               size="S"
-              styles={progressCircleStyles({isInput: true})}
+              styles={progressCircleStyles({size, isInput: true})}
               aria-label={stringFormatter.format('table.loading')}
             />
           )}
