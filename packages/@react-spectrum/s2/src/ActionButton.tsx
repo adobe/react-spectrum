@@ -129,7 +129,14 @@ export const btnStyles = style<
       isJustified: 0
     },
     fontWeight: 'medium',
-    width: 'fit',
+    width: {
+      default: 'fit',
+      isInGroup: {
+        orientation: {
+          vertical: '100%'
+        }
+      }
+    },
     userSelect: 'none',
     transition: 'default',
     forcedColorAdjust: 'none',

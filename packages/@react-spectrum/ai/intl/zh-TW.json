@@ -13,10 +13,14 @@
   "promptfield.insertButton": "新增",
   "promptfield.label": "提示",
   "promptfield.placeholder": "準備好開始了嗎? 提出問題、分享想法或新增任務。",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "停止",
   "promptfield.submitButton": "傳送",
   "promptfield.uploading": "上傳中",
   "responsestatus.loading": "載入中",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "開始錄製",
-  "voicebutton.stopListening": "停止錄製"
+  "voicebutton.stopListening": "停止錄製",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

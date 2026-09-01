@@ -13,10 +13,14 @@
   "promptfield.insertButton": "Toevoegen",
   "promptfield.label": "Vragen",
   "promptfield.placeholder": "Klaar om aan de slag te gaan? Stel een vraag, deel een idee of voeg een taak toe.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Stoppen",
   "promptfield.submitButton": "Verzenden",
   "promptfield.uploading": "Uploaden",
   "responsestatus.loading": "Laden",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Opname starten",
-  "voicebutton.stopListening": "Opname stoppen"
+  "voicebutton.stopListening": "Opname stoppen",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

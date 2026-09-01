@@ -13,10 +13,14 @@
   "promptfield.insertButton": "Add",
   "promptfield.label": "Prompt",
   "promptfield.placeholder": "Készen áll a kezdésre? Tegyen fel egy kérdést, ossza meg az ötletét, vagy adjon hozzá egy feladatot.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Állj meg",
   "promptfield.submitButton": "Elküldöm",
   "promptfield.uploading": "Feltöltés",
   "responsestatus.loading": "Betöltés folyamatban",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Kezdj el felvételt",
-  "voicebutton.stopListening": "Felvétel abbahagyása"
+  "voicebutton.stopListening": "Felvétel abbahagyása",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

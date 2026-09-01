@@ -13,10 +13,14 @@
   "promptfield.insertButton": "Agregar",
   "promptfield.label": "Preguntar",
   "promptfield.placeholder": "¿Listo para empezar? Formule una pregunta, comparta una idea o añada una tarea.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Detener",
   "promptfield.submitButton": "Enviar",
   "promptfield.uploading": "Cargando",
   "responsestatus.loading": "Cargando",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Iniciar grabación",
-  "voicebutton.stopListening": "Detener grabación"
+  "voicebutton.stopListening": "Detener grabación",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

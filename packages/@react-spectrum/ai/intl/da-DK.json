@@ -13,10 +13,14 @@
   "promptfield.insertButton": "Tilføj",
   "promptfield.label": "Prompt",
   "promptfield.placeholder": "Er du klar til at komme i gang? Stil et spørgsmål, del en idé, eller tilføj en opgave.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Stop",
   "promptfield.submitButton": "Send",
   "promptfield.uploading": "Upload",
   "responsestatus.loading": "Indlæser",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Start optagelsen",
-  "voicebutton.stopListening": "Stop optagelsen"
+  "voicebutton.stopListening": "Stop optagelsen",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

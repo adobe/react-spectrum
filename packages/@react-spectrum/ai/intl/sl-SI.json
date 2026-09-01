@@ -13,10 +13,14 @@
   "promptfield.insertButton": "Dodaj",
   "promptfield.label": "Navodilo",
   "promptfield.placeholder": "Ste pripravljeni začeti? Postavite vprašanje, delite idejo ali dodajte nalogo.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Ustavi se",
   "promptfield.submitButton": "Pošlji",
   "promptfield.uploading": "Nalaganje",
   "responsestatus.loading": "Nalaganje",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Začni snemati",
-  "voicebutton.stopListening": "Prenehajte snemati"
+  "voicebutton.stopListening": "Prenehajte snemati",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
