@@ -18,8 +18,17 @@ import {ChevronRight} from 'lucide-react';
 import React from 'react';
 import './NavigationTree.css';
 
-export function NavigationTree<T>(props: NavigationTreeProps<T>) {
-  return <AriaNavigationTree {...props} />;
+const RenderLinkContext = React.createContext<LinkProps['render'] | undefined>(undefined);
+
+export function NavigationTree<T>({
+  renderLink,
+  ...props
+}: NavigationTreeProps<T> & {renderLink?: LinkProps['render']}) {
+  return (
+    <RenderLinkContext.Provider value={renderLink}>
+      <AriaNavigationTree {...props} />
+    </RenderLinkContext.Provider>
+  );
 }
 
 export function NavigationTreeItemContent(props: {children?: React.ReactNode}) {
@@ -52,6 +61,7 @@ export function NavigationTreeHeader(props: NavigationTreeHeaderProps) {
   return <AriaNavigationTreeHeader {...props} />;
 }
 
-export function NavigationTreeItemLink(props: LinkProps) {
-  return <Link {...props} />;
+export function NavigationTreeItemLink({render: renderProp, ...props}: LinkProps) {
+  const contextRender = React.useContext(RenderLinkContext);
+  return <Link render={renderProp ?? contextRender} {...props} />;
 }
