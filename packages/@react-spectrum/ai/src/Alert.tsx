@@ -79,10 +79,7 @@ const text = style({
   minWidth: 0
 });
 
-export const Alert = forwardRef(function Alert(
-  props: AlertProps,
-  ref: DOMRef<HTMLDivElement>
-) {
+export const Alert = forwardRef(function Alert(props: AlertProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let {children, variant = 'neutral', onDismiss, styles} = props;
   let domRef = useDOMRef(ref);
@@ -95,10 +92,7 @@ export const Alert = forwardRef(function Alert(
       role="alert"
       className={mergeStyles(container, styles)}>
       {Icon && (
-        <Icon
-          styles={icon({variant})}
-          aria-label={stringFormatter.format(`alert.${variant}`)}
-        />
+        <Icon styles={icon({variant})} aria-label={stringFormatter.format(`alert.${variant}`)} />
       )}
       <span className={text}>{children}</span>
       <CloseButton size="S" onPress={onDismiss} />

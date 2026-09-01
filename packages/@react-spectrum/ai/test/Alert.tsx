@@ -40,9 +40,7 @@ describeOrSkip('Alert', () => {
 
   it('fires onDismiss when the close button is pressed', async () => {
     let onDismiss = jest.fn();
-    let {getByRole} = render(
-      <Alert onDismiss={onDismiss}>Alert description</Alert>
-    );
+    let {getByRole} = render(<Alert onDismiss={onDismiss}>Alert description</Alert>);
 
     await user.click(getByRole('button', {name: 'Dismiss'}));
     expect(onDismiss).toHaveBeenCalledTimes(1);
