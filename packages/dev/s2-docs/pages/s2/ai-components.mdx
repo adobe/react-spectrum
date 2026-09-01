@@ -548,85 +548,160 @@ function BasicChat() {
 
 ## API
 
-```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadLoadMoreItem: '#threadloadmoreitem', ThreadScrollButton: '#threadscrollbutton', UserMessage: '#usermessage', MessageFeedback: '#messagefeedback', MessageSource: '#messagesource', SourceList: '#sourcelist', SourceListItem: '#sourcelistitem', ResponseStatus: '#responsestatus', ResponseStatusTitle: '#responsestatustitle', ResponseStatusPanel: '#responsestatuspanel', ExecutionTrace: '#executiontrace', ExecutionTraceItem: '#executiontraceitem', MessageSuggestionList: '#messagesuggestionlist', MessageSuggestion: '#messagesuggestion', Attachment: '#attachment', AttachmentList: '#attachmentlist', AttachmentPreview: '#attachmentpreview', PromptField: '#promptfield', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar', PromptFieldSubmitButton: '#promptfieldsubmitbutton', PromptFieldVoiceButton: '#promptfieldvoicebutton', PromptToken: '#prompttoken', PromptFieldAttachmentList: '#promptfieldattachmentlist', InsertMenuButton: '#insertmenubutton', AttachFileMenuItem: '#attachfilemenuitem', InsertTextMenuItem: '#inserttextmenuitem', InsertTokenMenuItem: '#inserttokenmenuitem', CommandMenuItem: '#commandmenuitem'}}
+```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadScrollButton: '#threadscrollbutton', PromptField: '#promptfield'}}
 <Chat>
   <Thread>
-    <ThreadItem>
-      <UserMessage />
-      <ResponseStatus>
-        <ResponseStatusTitle />
-        <ResponseStatusPanel>
-          <ExecutionTrace>
-            <ExecutionTraceItem />
-          </ExecutionTrace>
-        </ResponseStatusPanel>
-      </ResponseStatus>
-      <MessageSource>
-        <SourceList>
-          <SourceListItem />
-        </SourceList>
-      </MessageSource>
-      <MessageFeedback />
-    </ThreadItem>
-    <ThreadItem>
-      <MessageSuggestionList>
-        <MessageSuggestion />
-      </MessageSuggestionList>
-    </ThreadItem>
-    <ThreadLoadMoreItem />
+    <ThreadItem />
   </Thread>
   <ThreadScrollButton />
-  <PromptField>
-    <PromptFieldAttachmentList>
-      {attachment => (
-        <Attachment>
-          <AttachmentPreview />
-        </Attachment>
-      )}
-    </PromptFieldAttachmentList>
-    <PromptTokenField>
-      {token => <PromptToken token={token} />}
-    </PromptTokenField>
-    <PromptFieldToolbar>
-      <InsertMenuButton>
-        <AttachFileMenuItem />
-        <InsertTextMenuItem />
-        <InsertTokenMenuItem />
-        <CommandMenuItem />
-      </InsertMenuButton>
-      <PromptFieldVoiceButton />
-      <PromptFieldSubmitButton />
-    </PromptFieldToolbar>
-  </PromptField>
+  <PromptField />
 </Chat>
 ```
 
-### Prompt field
+## Chat
 
-```tsx links={{PromptField: '#promptfield', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar', PromptFieldSubmitButton: '#promptfieldsubmitbutton', PromptFieldVoiceButton: '#promptfieldvoicebutton', PromptToken: '#prompttoken', PromptFieldAttachmentList: '#promptfieldattachmentlist', InsertMenuButton: '#insertmenubutton', AttachFileMenuItem: '#attachfilemenuitem', InsertTextMenuItem: '#inserttextmenuitem', InsertTokenMenuItem: '#inserttokenmenuitem', CommandMenuItem: '#commandmenuitem'}}
+<PropTable component={docs.exports.Chat} links={docs.links} />
+
+### ThreadScrollButton
+
+<PropTable component={docs.exports.ThreadScrollButton} links={docs.links} />
+
+## Thread
+
+```tsx links={{Thread: '#thread', ThreadItem: '#threaditem', ThreadLoadMoreItem: '#threadloadmoreitem', MessageSuggestionList: '#messagesuggestionlist', UserMessage: '#usermessage', ResponseStatus: '#responsestatus', MessageSource: '#messagesource', MessageFeedback: '#messagefeedback'}}
+<Thread>
+  <ThreadItem>
+    <UserMessage /> or <ResponseStatus /> or <MessageSuggestionList /> or assistant content
+    <MessageSource /> and/or <MessageFeedback />
+  </ThreadItem>
+  <ThreadLoadMoreItem />
+</Thread>
+```
+
+<PropTable component={docs.exports.Thread} links={docs.links} />
+
+### ThreadItem
+
+<PropTable component={docs.exports.ThreadItem} links={docs.links} />
+
+### ThreadLoadMoreItem
+
+<PropTable component={docs.exports.ThreadLoadMoreItem} links={docs.links} />
+
+### UserMessage
+
+<PropTable component={docs.exports.UserMessage} links={docs.links} />
+
+### ResponseStatus
+
+```tsx links={{ResponseStatus: '#responsestatus', ResponseStatusTitle: '#responsestatustitle', ResponseStatusPanel: '#responsestatuspanel', ExecutionTrace: '#executiontrace', ExecutionTraceItem: '#executiontraceitem'}}
+<ResponseStatus>
+  <ResponseStatusTitle />
+  <ResponseStatusPanel>
+    <ExecutionTrace>
+      <ExecutionTraceItem />
+    </ExecutionTrace>
+  </ResponseStatusPanel>
+</ResponseStatus>
+```
+
+<PropTable component={docs.exports.ResponseStatus} links={docs.links} />
+
+#### ResponseStatusTitle
+
+<PropTable component={docs.exports.ResponseStatusTitle} links={docs.links} />
+
+#### ResponseStatusPanel
+
+<PropTable component={docs.exports.ResponseStatusPanel} links={docs.links} />
+
+#### ExecutionTrace
+
+<PropTable component={docs.exports.ExecutionTrace} links={docs.links} />
+
+#### ExecutionTraceItem
+
+<PropTable component={docs.exports.ExecutionTraceItem} links={docs.links} />
+
+### MessageSuggestionList
+
+```tsx links={{MessageSuggestionList: '#messagesuggestionlist', MessageSuggestion: '#messagesuggestion'}}
+<MessageSuggestionList>
+  <MessageSuggestion />
+</MessageSuggestionList>
+```
+
+<PropTable component={docs.exports.MessageSuggestionList} links={docs.links} />
+
+#### MessageSuggestion
+
+<PropTable component={docs.exports.MessageSuggestion} links={docs.links} />
+
+### MessageFeedback
+
+<PropTable component={docs.exports.MessageFeedback} links={docs.links} />
+
+### MessageSource
+
+```tsx links={{MessageSource: '#messagesource', SourceList: '#sourcelist', SourceListItem: '#sourcelistitem'}}
+<MessageSource>
+  <SourceList>
+    <SourceListItem />
+  </SourceList>
+</MessageSource>
+```
+
+<PropTable component={docs.exports.MessageSource} links={docs.links} />
+
+#### SourceList
+
+<PropTable component={docs.exports.SourceList} links={docs.links} />
+
+#### SourceListItem
+
+<PropTable component={docs.exports.SourceListItem} links={docs.links} />
+
+## PromptField
+
+```tsx links={{PromptField: '#promptfield', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar'}}
 <PromptField>
   <PromptFieldAttachmentList />
-  <PromptTokenField>
-    {token => <PromptToken token={token} />}
-  </PromptTokenField>
-  <PromptFieldToolbar>
-    <InsertMenuButton>
-      <AttachFileMenuItem />
-      <InsertTextMenuItem />
-      <InsertTokenMenuItem />
-      <CommandMenuItem />
-    </InsertMenuButton>
-    <PromptFieldVoiceButton />
-    <PromptFieldSubmitButton />
-  </PromptFieldToolbar>
+  <PromptTokenField />
+  <PromptFieldToolbar />
 </PromptField>
 ```
 
-#### PromptField
-
 <PropTable component={docs.exports.PromptField} links={docs.links} />
 
-#### PromptTokenField
+### PromptFieldAttachmentList
+
+```tsx links={{PromptFieldAttachmentList: '#promptfieldattachmentlist', Attachment: '#attachment', AttachmentPreview: '#attachmentpreview'}}
+<PromptFieldAttachmentList>
+  {attachment => (
+    <Attachment>
+      <AttachmentPreview />
+    </Attachment>
+  )}
+</PromptFieldAttachmentList>
+```
+
+<PropTable component={docs.exports.PromptFieldAttachmentList} links={docs.links} />
+
+#### Attachment
+
+<PropTable component={docs.exports.Attachment} links={docs.links} />
+
+#### AttachmentPreview
+
+<PropTable component={docs.exports.AttachmentPreview} links={docs.links} />
+
+### PromptTokenField
+
+```tsx links={{PromptTokenField: '#prompttokenfield', PromptToken: '#prompttoken'}}
+<PromptTokenField>
+  {token => <PromptToken token={token} />}
+</PromptTokenField>
+```
 
 <PropTable component={docs.exports.PromptTokenField} links={docs.links} />
 
@@ -634,21 +709,23 @@ function BasicChat() {
 
 <PropTable component={docs.exports.PromptToken} links={docs.links} />
 
-#### PromptFieldAttachmentList
+### PromptFieldToolbar
 
-<PropTable component={docs.exports.PromptFieldAttachmentList} links={docs.links} />
-
-#### PromptFieldToolbar
+```tsx links={{PromptFieldToolbar: '#promptfieldtoolbar', InsertMenuButton: '#insertmenubutton', AttachFileMenuItem: '#attachfilemenuitem', InsertTextMenuItem: '#inserttextmenuitem', InsertTokenMenuItem: '#inserttokenmenuitem', CommandMenuItem: '#commandmenuitem', SubmenuTrigger: 'Menu#submenutrigger', Menu: 'Menu#menu', PromptFieldVoiceButton: '#promptfieldvoicebutton', PromptFieldSubmitButton: '#promptfieldsubmitbutton'}}
+<PromptFieldToolbar>
+  <InsertMenuButton>
+    <AttachFileMenuItem />
+    <SubmenuTrigger>
+      <InsertTextMenuItem /> or <InsertTokenMenuItem /> or <CommandMenuItem />
+      <Menu />
+    </SubmenuTrigger>
+  </InsertMenuButton>
+  <PromptFieldVoiceButton />
+  <PromptFieldSubmitButton />
+</PromptFieldToolbar>
+```
 
 <PropTable component={docs.exports.PromptFieldToolbar} links={docs.links} />
-
-#### PromptFieldSubmitButton
-
-<PropTable component={docs.exports.PromptFieldSubmitButton} links={docs.links} />
-
-#### PromptFieldVoiceButton
-
-<PropTable component={docs.exports.PromptFieldVoiceButton} links={docs.links} />
 
 #### InsertMenuButton
 
@@ -670,23 +747,15 @@ function BasicChat() {
 
 <PropTable component={docs.exports.CommandMenuItem} links={docs.links} />
 
-### Suggestions
+#### PromptFieldVoiceButton
 
-```tsx links={{MessageSuggestionList: '#messagesuggestionlist', MessageSuggestion: '#messagesuggestion'}}
-<MessageSuggestionList>
-  <MessageSuggestion />
-</MessageSuggestionList>
-```
+<PropTable component={docs.exports.PromptFieldVoiceButton} links={docs.links} />
 
-#### MessageSuggestionList
+#### PromptFieldSubmitButton
 
-<PropTable component={docs.exports.MessageSuggestionList} links={docs.links} />
+<PropTable component={docs.exports.PromptFieldSubmitButton} links={docs.links} />
 
-#### MessageSuggestion
-
-<PropTable component={docs.exports.MessageSuggestion} links={docs.links} />
-
-### Attachments
+## AttachmentList
 
 ```tsx links={{Attachment: '#attachment', AttachmentList: '#attachmentlist', AttachmentPreview: '#attachmentpreview'}}
 <AttachmentList>
@@ -698,104 +767,12 @@ function BasicChat() {
 </AttachmentList>
 ```
 
-#### Attachment
+<PropTable component={docs.exports.AttachmentList} links={docs.links} />
+
+### Attachment
 
 <PropTable component={docs.exports.Attachment} links={docs.links} />
 
-#### AttachmentList
-
-<PropTable component={docs.exports.AttachmentList} links={docs.links} />
-
-#### AttachmentPreview
+### AttachmentPreview
 
 <PropTable component={docs.exports.AttachmentPreview} links={docs.links} />
-
-### Chat
-
-```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadLoadMoreItem: '#threadloadmoreitem', ThreadScrollButton: '#threadscrollbutton', UserMessage: '#usermessage', MessageFeedback: '#messagefeedback', MessageSource: '#messagesource', SourceList: '#sourcelist', SourceListItem: '#sourcelistitem', ResponseStatus: '#responsestatus', ResponseStatusTitle: '#responsestatustitle', ResponseStatusPanel: '#responsestatuspanel', ExecutionTrace: '#executiontrace', ExecutionTraceItem: '#executiontraceitem'}}
-<Chat>
-  <Thread>
-    <ThreadItem>
-      <UserMessage /> or assistant content
-    </ThreadItem>
-    <ThreadItem>
-      <ResponseStatus>
-        <ResponseStatusTitle />
-        <ResponseStatusPanel>
-          <ExecutionTrace>
-            <ExecutionTraceItem />
-          </ExecutionTrace>
-        </ResponseStatusPanel>
-      </ResponseStatus>
-      <MessageFeedback />
-      <MessageSource>
-        <SourceList>
-          <SourceListItem />
-        </SourceList>
-      </MessageSource>
-    </ThreadItem>
-    <ThreadLoadMoreItem />
-  </Thread>
-  <ThreadScrollButton />
-</Chat>
-```
-
-#### Chat
-
-<PropTable component={docs.exports.Chat} links={docs.links} />
-
-#### Thread
-
-<PropTable component={docs.exports.Thread} links={docs.links} />
-
-#### ThreadItem
-
-<PropTable component={docs.exports.ThreadItem} links={docs.links} />
-
-#### ThreadLoadMoreItem
-
-<PropTable component={docs.exports.ThreadLoadMoreItem} links={docs.links} />
-
-#### ThreadScrollButton
-
-<PropTable component={docs.exports.ThreadScrollButton} links={docs.links} />
-
-#### UserMessage
-
-<PropTable component={docs.exports.UserMessage} links={docs.links} />
-
-#### MessageFeedback
-
-<PropTable component={docs.exports.MessageFeedback} links={docs.links} />
-
-#### MessageSource
-
-<PropTable component={docs.exports.MessageSource} links={docs.links} />
-
-#### SourceList
-
-<PropTable component={docs.exports.SourceList} links={docs.links} />
-
-#### SourceListItem
-
-<PropTable component={docs.exports.SourceListItem} links={docs.links} />
-
-#### ResponseStatus
-
-<PropTable component={docs.exports.ResponseStatus} links={docs.links} />
-
-#### ResponseStatusTitle
-
-<PropTable component={docs.exports.ResponseStatusTitle} links={docs.links} />
-
-#### ResponseStatusPanel
-
-<PropTable component={docs.exports.ResponseStatusPanel} links={docs.links} />
-
-#### ExecutionTrace
-
-<PropTable component={docs.exports.ExecutionTrace} links={docs.links} />
-
-#### ExecutionTraceItem
-
-<PropTable component={docs.exports.ExecutionTraceItem} links={docs.links} />
