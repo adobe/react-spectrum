@@ -320,6 +320,7 @@ const flexRow = {
 
 const tagListStyles = style({
   ...flexRow,
+  flexGrow: 1,
   gap: 8,
   overflowX: 'auto',
   overflowY: 'clip',

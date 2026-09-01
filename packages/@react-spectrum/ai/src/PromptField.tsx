@@ -98,6 +98,7 @@ export interface PromptFieldProps {
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onAITermsPress?: () => void;
   styles?: StyleString;
+  /** @default 'balanced' */
   variant?: 'balanced' | 'prominent' | 'subtle';
   brandColor?: string;
   /**

@@ -81,19 +81,22 @@ function Example() {
 
   return (
     <div className={style({height: 700, width: 'full'})}>
+      {/*- begin focus -*/}
       <VirtualizedStreamingChat
         suggestions={suggestions}
         onSelectSuggestion={value => {
           setValue(value as PromptFieldValue);
           promptFieldRef.current?.focus();
         }}>
-        {onSend => (
+        {/*- end focus -*/}
+        {(onSend, isGenerating) => (
           <PromptField
             ref={promptFieldRef}
             value={value}
             onChange={setValue}
             attachments={attachments}
             onAttachmentsChange={setAttachments}
+            isGenerating={isGenerating}
             onSubmit={prompt => {
               onSend(prompt);
               setValue(new PromptFieldValue([]));
@@ -237,7 +240,7 @@ AI components are published as a separate package from `@react-spectrum/s2`.
 
 Use `PromptField` as the foundation for allowing the user to submit a prompt. It manages an editable sequence of text and tokens, while `PromptTokenField` renders the input and `PromptFieldToolbar` contains its actions.
 
-```tsx render type="s2" docs={docs.exports.PromptField} props={['variant', 'size']}
+```tsx render wide type="s2" docs={docs.exports.PromptField} props={['variant', 'size', 'isGenerating']}
 "use client";
 import {useState} from 'react';
 import {
@@ -257,12 +260,13 @@ function BasicPrompt(props) {
       className={style({
         minWidth: 190,
         width: {
+          default: 'full',
           size: {
-            default: 'full',
             S: '50%'
           }
         }
       })({size: props.size})}>
+      {/*- begin highlight -*/}
       <PromptField
         {...props}
         /* PROPS */
@@ -272,7 +276,8 @@ function BasicPrompt(props) {
           console.log(value.toString());
           setValue(new PromptFieldValue([]));
         }}>
-        <PromptTokenField placeholder="Ask anything" />
+        {/*- end highlight -*/}
+        <PromptTokenField />
         <PromptFieldToolbar>
           <div style={{marginInlineStart: 'auto'}}>
             <PromptFieldSubmitButton />
@@ -354,6 +359,7 @@ function PromptSuggestions() {
       <PromptField value={value} onChange={setValue} onSubmit={console.log}>
         <PromptTokenField
           completionTrigger={/(?<=^|\s)@/}
+          /*- begin highlight -*/
           renderCompletions={filterValue =>
             people
               .filter(person => person.toLowerCase().includes(filterValue.slice(1).toLowerCase()))
@@ -370,6 +376,7 @@ function PromptSuggestions() {
                 </InsertTokenMenuItem>
               ))
           }
+          /*- end highlight -*/
           placeholder="Ask about @customers" />
         <PromptFieldToolbar>
           <div style={{marginInlineStart: 'auto'}}>
@@ -384,7 +391,7 @@ function PromptSuggestions() {
 
 ### Attachments and actions
 
-Add attachments and place common actions in the toolbar. Use a custom attachment render function when an attachment needs a thumbnail or additional metadata.
+Use `PromptFieldAttachmentList` to render a preview of attached files the user has dragged onto the PromptField or added via the `InsertMenuButton` in the toolbar. Custom menu items and toolbar controls can be added as well.
 
 ```tsx render type="s2"
 "use client";
@@ -408,21 +415,26 @@ import {Text} from '@react-spectrum/s2';
 import CommentText from '@react-spectrum/s2/icons/CommentText';
 
 function PromptAttachments() {
-  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([
+    {id: '0', file: new File([], 'preview.png', {type: 'image/png'}), image: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
+    {id: '1', file: new File([], 'notes.txt', {type: 'text/plain'}), image: ''}
+  ]);
 
   return (
     <PromptField
       defaultValue={new PromptFieldValue([])}
       attachments={attachments}
       onAttachmentsChange={setAttachments}
-      acceptedAttachmentTypes={['image/*']}>
+      acceptedAttachmentTypes={['*/*']}>
+      {/*- begin highlight -*/}
       <PromptFieldAttachmentList>
         {attachment => (
-          <Attachment>
+          <Attachment textValue={attachment.file.name}>
             <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
           </Attachment>
         )}
       </PromptFieldAttachmentList>
+      {/*- end highlight -*/}
       <PromptTokenField placeholder="Describe the image" />
       <PromptFieldToolbar>
         <InsertMenuButton>
@@ -444,11 +456,11 @@ function PromptAttachments() {
 
 ## Chat threads
 
-Compose a conversation from `Chat`, `Thread`, and message components. The thread can be driven by a collection as messages arrive from your application.
+Compose a conversation from `Chat`, `Thread`, `ResponseStatus`, and message components. The thread can be driven by a collection as messages arrive from your application.
 
 ```tsx render type="s2"
 "use client";
-import {Chat, Thread, ThreadItem, UserMessage} from '@react-spectrum/ai';
+import {Chat, Thread, ThreadItem, UserMessage, ResponseStatus, ResponseStatusTitle, ResponseStatusPanel, ExecutionTrace, ExecutionTraceItem} from '@react-spectrum/ai';
 import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -456,6 +468,16 @@ let messages = [
   {id: 1, type: 'user', text: 'Summarize the campaign results.'},
   {
     id: 2,
+    type: 'status',
+    status: 'success' as const,
+    text: 'Response complete',
+    steps: [
+      {id: 1, label: 'Fetching campaign', status: 'success' as const, detail: 'Loaded campaign details and fetched engagement results from the database.'},
+      {id: 2, label: 'Summarizing results', status: 'success' as const, detail: 'Created a full channel report and summarized the results.'}
+    ]
+  },
+  {
+    id: 3,
     type: 'assistant',
     text: 'Engagement increased 18% this month, led by email and social. See the full report for a channel breakdown.',
     content: (
@@ -465,9 +487,9 @@ let messages = [
       </>
     )
   },
-  {id: 3, type: 'user', text: 'Which channel performed best?'},
+  {id: 4, type: 'user', text: 'Which channel performed best?'},
   {
-    id: 4,
+    id: 5,
     type: 'assistant',
     text: 'Email drove the most conversions, with social close behind: Email with 4,200 conversions, Social with 3,100 conversions.',
     content: (
@@ -484,50 +506,58 @@ let messages = [
 
 function BasicChat() {
   return (
+    /*- begin highlight -*/
     <Chat
-      styles={style({
-        display: 'flex',
-        flexDirection: 'column',
-        height: 260,
-        width: 'full',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-        paddingX: 4,
-        minWidth: 0
-      })}>
-      <div
-        className={style({
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1,
-          minWidth: 0,
-          overflow: 'hidden'
+      /*- end highlight -*/
+      styles={style({width: 'full'})}>
+      <Thread
+        items={messages}
+        aria-label="Campaign discussion"
+        styles={style({
+          height: 350,
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          scrollPadding: 8
         })}>
-        <Thread
-          items={messages}
-          aria-label="Campaign discussion"
-          styles={style({
-            flexGrow: 1,
-            overflowX: 'hidden',
-            overflowY: 'auto',
-            scrollPadding: 8,
-            rowGap: 16
-          })}>
-          {message =>
-            message.type === 'user' ? (
-              <ThreadItem
-                textValue={message.text}
-                styles={style({display: 'flex', justifyContent: 'end'})}>
-                <UserMessage>{message.text}</UserMessage>
-              </ThreadItem>
-            ) : (
-              <ThreadItem textValue={message.text}>
-                <div className={prose()}>{message.content}</div>
-              </ThreadItem>
-            )
+        {message => {
+          switch (message.type) {
+            case 'user':
+              return (
+                <ThreadItem
+                  textValue={message.text}
+                  styles={style({display: 'flex', justifyContent: 'end'})}>
+                  <UserMessage>{message.text}</UserMessage>
+                </ThreadItem>
+              );
+            case 'assistant':
+              return (
+                <ThreadItem textValue={message.text}>
+                  <div className={prose()}>{message.content}</div>
+                </ThreadItem>
+              );
+            case 'status':
+              return (
+                <ThreadItem textValue={message.text}>
+                  <ResponseStatus status={message.status}>
+                    <ResponseStatusTitle>{message.text}</ResponseStatusTitle>
+                    <ResponseStatusPanel>
+                      <ExecutionTrace>
+                        {message.steps?.map(step => (
+                          <ExecutionTraceItem
+                            key={step.id}
+                            status={step.status}
+                            detail={<p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>}>
+                            {step.label}
+                          </ExecutionTraceItem>
+                        ))}
+                      </ExecutionTrace>
+                    </ResponseStatusPanel>
+                  </ResponseStatus>
+                </ThreadItem>
+              );
           }
-        </Thread>
-      </div>
+        }}
+      </Thread>
     </Chat>
   );
 }

@@ -66,7 +66,7 @@ type StreamingMessage =
   | {id: number | string; type: 'suggestions'; suggestions: TokenFieldValue[]};
 
 export interface VirtualizedStreamingChatProps {
-  children: (onSend: (prompt: TokenFieldValue) => void) => ReactNode;
+  children: (onSend: (prompt: TokenFieldValue) => void, isGenerating: boolean) => ReactNode;
   /** Suggestions shown at the end of the thread. Hidden while a response is streaming in. */
   suggestions?: TokenFieldValue[];
   onSelectSuggestion?: (suggestion: TokenFieldValue) => void;
@@ -318,7 +318,7 @@ export function VirtualizedStreamingChat(props: VirtualizedStreamingChatProps) {
             }}
           </Thread>
         </div>
-        {children(handleSend)}
+        {children(handleSend, isGenerating)}
       </Chat>
     </div>
   );
