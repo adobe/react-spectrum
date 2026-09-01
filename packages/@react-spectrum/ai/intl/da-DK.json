@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Ny besked",
   "chat.scrollToBottom": "Scroll ned til bunden",
   "messagefeedback.thumbDown": "Dårligt svar",

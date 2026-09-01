@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "新消息",
   "chat.scrollToBottom": "滚动到底部",
   "messagefeedback.thumbDown": "错误响应",
