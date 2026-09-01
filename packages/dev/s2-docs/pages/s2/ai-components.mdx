@@ -39,22 +39,17 @@ import {
 import {type FocusableRefValue} from '@react-types/shared';
 import {getIcon, slashCommands, objects, renderCompletions, suggestions, type UploadState} from './ai-component-helpers/promptfield';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import * as data from '@react-spectrum/ai/loader';
 import {Collection, Content, SubmenuTrigger, Menu, MenuItem, MenuSection, Header, Heading, Text} from '@react-spectrum/s2';
 import Data from '@react-spectrum/s2/icons/Data';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import {VirtualizedStreamingChat} from './ai-component-helpers/chat';
 
-
-function Example(args) {
-  /*- begin highlight -*/
-  let {placeholder, menuWidth, ...otherArgs} = args;
+function Example() {
   let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
   let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
-  /*- end highlight -*/
 
   let mockUpload = async (id: string) => {
     await new Promise(resolve => setTimeout(resolve, Math.random() * 30));
@@ -86,170 +81,148 @@ function Example(args) {
   };
 
   return (
-    <div className={style({height: 600, width: 'full', backgroundColor: 'layer-2'})}>
-    <VirtualizedStreamingChat
-      suggestions={suggestions}
-      onSelectSuggestion={value => {
-        setValue(value);
-        promptFieldRef.current?.focus();
-      }}>
-    {onSend => (
-      <PromptField
-        {...otherArgs}
-        ref={promptFieldRef}
-        value={value}
-        onChange={setValue}
-        attachments={attachments}
-        onAttachmentsChange={setAttachments}
-        onSubmit={prompt => {
-          onSend(prompt);
-          setValue(new PromptFieldValue([]));
-          setAttachments([]);
-          setAttachmentState(new Map());
-        }}
-        acceptedAttachmentTypes={['*/*']}
-        onAddAttachments={newAttachments => {
-          setAttachmentState(prev => {
-            let newState = new Map(prev);
-            newAttachments.forEach(attachment => {
-              newState.set(attachment.id, {status: 'uploading', progress: 0});
-              mockUpload(attachment.id);
-            });
-            return newState;
-          });
-        }}
-        onRemoveAttachments={removedAttachments => {
-          setAttachmentState(prev => {
-            let newState = new Map(prev);
-            removedAttachments.forEach(attachment => {
-              newState.delete(attachment.id);
-            });
-            return newState;
-          });
+    <div className={style({height: 700, width: 'full'})}>
+      <VirtualizedStreamingChat
+        suggestions={suggestions}
+        onSelectSuggestion={value => {
+          setValue(value);
+          promptFieldRef.current?.focus();
         }}>
-        {/*- begin highlight -*/}
-        <PromptFieldAttachmentList
-          dependencies={[attachmentState, args.attachmentVariant, args.attachmentInvalid]}>
-          {attachment => {
-            let state = attachmentState.get(attachment.id);
-            return (
-              <Attachment
-                isInvalid={args.attachmentInvalid}
-                uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
-                <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
-                {args.attachmentVariant === 'card' && (
-                  <Content>
-                    <Text slot="title">{attachment.file.name}</Text>
-                    <Text slot="description">
-                      {attachment.file.type.split('/').pop()?.toUpperCase()}
-                    </Text>
-                  </Content>
-                )}
-              </Attachment>
-            );
-          }}
-        </PromptFieldAttachmentList>
-        {/*- end highlight -*/}
-        {/*- begin highlight -*/}
-        <PromptTokenField
-          completionTrigger={/(?<=^|\s)[@/]/}
-          renderCompletions={(filterValue, valueType) => {
-            return renderCompletions(filterValue, {valueType, onClear: clearPrompt, onCompact: compactPrompt});
-          }}
-          pixelLoader={data[args.pixelLoader]}
-          shouldAnimatePixelLoader
-          placeholder={placeholder}
-          menuWidth={menuWidth}>
-          {token => (
-            <PromptToken token={token}>
-              {getIcon(token)}
-              {token.text}
-            </PromptToken>
-          )}
-        </PromptTokenField>
-        {/*- end highlight -*/}
-        {/*- begin highlight -*/}
-        <PromptFieldToolbar>
-          <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
-            <InsertMenuButton>
-              <AttachFileMenuItem />
-              <SubmenuTrigger>
-                <MenuItem>
-                  <Prompt />
-                  <Text>Commands</Text>
-                </MenuItem>
-                <Menu items={slashCommands.filter(item => item.kind === 'command')}>
-                  {item => (
-                    <CommandMenuItem
-                      id={item.command}
-                      onAction={item.command === '/clear' ? clearPrompt : compactPrompt}>
+        {onSend => (
+          <PromptField
+            ref={promptFieldRef}
+            value={value}
+            onChange={setValue}
+            attachments={attachments}
+            onAttachmentsChange={setAttachments}
+            onSubmit={prompt => {
+              onSend(prompt);
+              setValue(new PromptFieldValue([]));
+              setAttachments([]);
+              setAttachmentState(new Map());
+            }}
+            acceptedAttachmentTypes={['*/*']}
+            onAddAttachments={newAttachments => {
+              setAttachmentState(prev => {
+                let newState = new Map(prev);
+                newAttachments.forEach(attachment => {
+                  newState.set(attachment.id, {status: 'uploading', progress: 0});
+                  mockUpload(attachment.id);
+                });
+                return newState;
+              });
+            }}
+            onRemoveAttachments={removedAttachments => {
+              setAttachmentState(prev => {
+                let newState = new Map(prev);
+                removedAttachments.forEach(attachment => {
+                  newState.delete(attachment.id);
+                });
+                return newState;
+              });
+            }}>
+            <PromptFieldAttachmentList dependencies={[attachmentState]}>
+              {attachment => {
+                let state = attachmentState.get(attachment.id);
+                return (
+                  <Attachment uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
+                    <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+                  </Attachment>
+                );
+              }}
+            </PromptFieldAttachmentList>
+            <PromptTokenField
+              completionTrigger={/(?<=^|\s)[@/]/}
+              renderCompletions={(filterValue, valueType) => {
+                return renderCompletions(filterValue, {valueType, onClear: clearPrompt, onCompact: compactPrompt});
+              }}>
+              {token => (
+                <PromptToken token={token}>
+                  {getIcon(token)}
+                  {token.text}
+                </PromptToken>
+              )}
+            </PromptTokenField>
+            <PromptFieldToolbar>
+              <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+                <InsertMenuButton>
+                  <AttachFileMenuItem />
+                  <SubmenuTrigger>
+                    <MenuItem>
                       <Prompt />
-                      <Text slot="label">{item.command}</Text>
-                      <Text slot="description">{item.description}</Text>
-                    </CommandMenuItem>
-                  )}
-                </Menu>
-              </SubmenuTrigger>
-              <SubmenuTrigger>
-                <MenuItem>
-                  <Plugin />
-                  <Text>Skills</Text>
-                </MenuItem>
-                <Menu items={slashCommands.filter(item => item.kind === 'skill')}>
-                  {item => (
-                    <InsertTokenMenuItem
-                      id={item.command}
-                      token={{
-                        type: 'token',
-                        text: item.command,
-                        value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
-                      }}>
+                      <Text>Commands</Text>
+                    </MenuItem>
+                    <Menu items={slashCommands.filter(item => item.kind === 'command')}>
+                      {item => (
+                        <CommandMenuItem
+                          id={item.command}
+                          onAction={item.command === '/clear' ? clearPrompt : compactPrompt}>
+                          <Prompt />
+                          <Text slot="label">{item.command}</Text>
+                          <Text slot="description">{item.description}</Text>
+                        </CommandMenuItem>
+                      )}
+                    </Menu>
+                  </SubmenuTrigger>
+                  <SubmenuTrigger>
+                    <MenuItem>
                       <Plugin />
-                      <Text slot="label">{item.command}</Text>
-                      <Text slot="description">{item.description}</Text>
-                    </InsertTokenMenuItem>
-                  )}
-                </Menu>
-              </SubmenuTrigger>
-              <SubmenuTrigger>
-                <MenuItem>
-                  <Data />
-                  <Text>Reference an object</Text>
-                </MenuItem>
-                <Menu items={objects}>
-                  {item => (
-                    <MenuSection>
-                      <Header>
-                        <Heading>{item.section}</Heading>
-                      </Header>
-                      <Collection items={item.items}>
-                        {item => (
-                          <InsertTokenMenuItem
-                            id={item.title}
-                            token={{
-                              type: 'token',
-                              text: item.title,
-                              value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
-                            }}>
-                            {item.title}
-                          </InsertTokenMenuItem>
-                        )}
-                      </Collection>
-                    </MenuSection>
-                  )}
-                </Menu>
-              </SubmenuTrigger>
-            </InsertMenuButton>
-          </div>
-          <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
-            <PromptFieldVoiceButton />
-            <PromptFieldSubmitButton />
-          </div>
-        </PromptFieldToolbar>
-        {/*- end highlight -*/}
-      </PromptField>
-    )}
-    </VirtualizedStreamingChat>
+                      <Text>Skills</Text>
+                    </MenuItem>
+                    <Menu items={slashCommands.filter(item => item.kind === 'skill')}>
+                      {item => (
+                        <InsertTokenMenuItem
+                          id={item.command}
+                          token={{
+                            type: 'token',
+                            text: item.command,
+                            value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                          }}>
+                          <Plugin />
+                          <Text slot="label">{item.command}</Text>
+                          <Text slot="description">{item.description}</Text>
+                        </InsertTokenMenuItem>
+                      )}
+                    </Menu>
+                  </SubmenuTrigger>
+                  <SubmenuTrigger>
+                    <MenuItem>
+                      <Data />
+                      <Text>Reference an object</Text>
+                    </MenuItem>
+                    <Menu items={objects}>
+                      {item => (
+                        <MenuSection>
+                          <Header>
+                            <Heading>{item.section}</Heading>
+                          </Header>
+                          <Collection items={item.items}>
+                            {item => (
+                              <InsertTokenMenuItem
+                                id={item.title}
+                                token={{
+                                  type: 'token',
+                                  text: item.title,
+                                  value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
+                                }}>
+                                {item.title}
+                              </InsertTokenMenuItem>
+                            )}
+                          </Collection>
+                        </MenuSection>
+                      )}
+                    </Menu>
+                  </SubmenuTrigger>
+                </InsertMenuButton>
+              </div>
+              <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+                <PromptFieldVoiceButton />
+                <PromptFieldSubmitButton />
+              </div>
+            </PromptFieldToolbar>
+          </PromptField>
+        )}
+      </VirtualizedStreamingChat>
     </div>
   );
 }
@@ -300,7 +273,7 @@ function BasicPrompt(props) {
 }
 ```
 
-## Suggestions and tokens
+### Suggestions and tokens
 
 Suggestions can prefill a prompt, and a token field can offer context-aware completions such as mentions or commands.
 
@@ -398,7 +371,7 @@ function PromptSuggestions() {
 }
 ```
 
-## Attachments and actions
+### Attachments and actions
 
 Add attachments and place common actions in the toolbar. Use a custom attachment render function when an attachment needs a thumbnail or additional metadata.
 
