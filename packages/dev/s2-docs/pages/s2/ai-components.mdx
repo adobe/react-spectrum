@@ -588,7 +588,7 @@ function BasicChat() {
 
 `PixelLoader` is the animated pixel icon shown inside `PromptField` and `ResponseStatus` while the assistant is working. It can also be used standalone anywhere an AI loading indicator is needed.
 
-```tsx render type="s2" docs={docs.exports.PixelLoader} props={['size', 'isPlaying']}
+```tsx render type="s2" docs={docs.exports.PixelLoader} props={['size', 'isPlaying']} initialProps={{isPlaying: true}}
 "use client";
 import {PixelLoader} from '@react-spectrum/ai/loader';
 
