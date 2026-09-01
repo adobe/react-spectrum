@@ -394,6 +394,9 @@ export interface PromptFieldAttachmentListProps extends AttachmentListProps<Prom
   children?: (attachment: PromptFieldAttachment) => React.ReactNode;
 }
 
+/**
+ * PromptFieldAttachmentList displays a list of file attachments within a PromptField.
+ */
 export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps) {
   let {children} = props;
   let {attachments, setAttachments, onRemoveAttachments, inputRef} = useContext(PromptFieldContext);
@@ -441,6 +444,10 @@ export interface PromptTokenFieldProps {
   menuWidth?: number;
 }
 
+/**
+ * PromptTokenField renders an editable text input for a prompt, and supports inserting inline
+ * object references as tokens via autocomplete.
+ */
 export function PromptTokenField(props: PromptTokenFieldProps) {
   let {
     completionTrigger,
@@ -797,6 +804,9 @@ export interface PromptTokenProps extends Omit<TokenProps, 'children' | 'render'
   children: React.ReactNode;
 }
 
+/**
+ * A PromptToken displays a non-editable inline object reference within a PromptTokenField.
+ */
 export function PromptToken(props: PromptTokenProps) {
   let {size} = useContext(PromptFieldContext)!;
   return (
@@ -866,6 +876,9 @@ export interface PromptFieldToolbarProps {
   children: React.ReactNode;
 }
 
+/**
+ * PromptFieldToolbar contains action buttons related to the PromptField.
+ */
 export function PromptFieldToolbar(props: PromptFieldToolbarProps) {
   let {children} = props;
   return (
@@ -883,6 +896,7 @@ export function PromptFieldToolbar(props: PromptFieldToolbarProps) {
 
 export interface PromptFieldSubmitButtonProps {}
 
+/** PromptFieldSubmitButton submits the PromptField. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
   let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
@@ -911,6 +925,9 @@ export interface PromptFieldVoiceButtonProps {
   onToggle?: (isListening: boolean) => void;
 }
 
+/**
+ * PromptFieldVoiceButton triggers voice input for the PromptField.
+ */
 export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let {lang: langProp, isDisabled: isDisabledProp, onError, onToggle} = props;
   let {locale} = useLocale();
@@ -1013,6 +1030,9 @@ export interface InsertMenuItemProps extends Pick<MenuTriggerProps, 'onOpenChang
   children: React.ReactNode;
 }
 
+/**
+ * InsertMenuButton renders an ActionButton with a plus icon that opens a menu.
+ */
 export function InsertMenuButton(props: InsertMenuItemProps) {
   let {children, onOpenChange} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
@@ -1043,6 +1063,9 @@ export interface AttachFileMenuItemProps extends Omit<
   | 'target'
 > {}
 
+/**
+ * AttachFileMenuItem triggers a system file dialog to attach files within an InsertMenuButton.
+ */
 export function AttachFileMenuItem(props: AttachFileMenuItemProps) {
   let {onAction, ...otherProps} = props;
   let {acceptedAttachmentTypes, setAttachments, onAddAttachments} = useContext(PromptFieldContext);
@@ -1149,6 +1172,10 @@ export interface InsertTokenMenuItemProps extends Omit<
   token: TokenSegment<PromptFieldTokenValue>;
 }
 
+/**
+ * InsertTokenMenuItem inserts a token (i.e. object reference) into the PromptField within an
+ * InsertMenuButton.
+ */
 export function InsertTokenMenuItem(props: InsertTokenMenuItemProps) {
   let insert = useInsertPromptSegment([props.token]);
 
@@ -1180,6 +1207,9 @@ export interface InsertTextMenuItemProps extends Omit<
   text: string;
 }
 
+/**
+ * InsertTextMenuItem inserts plain text into the PromptField from within an InsertMenuButton.
+ */
 export function InsertTextMenuItem(props: InsertTextMenuItemProps) {
   let insert = useInsertPromptSegment([{type: 'text', text: props.text}]);
 
@@ -1210,6 +1240,9 @@ export interface CommandMenuItemProps extends Omit<
 // specifically for menu items that only trigger a callback in the autocomplete menu
 // since they dont end up inserting a token or text, we need to clear the partial text that the user used
 // to filter the menu
+/**
+ * CommandMenuItem performs an immediate action from within an InsertMenuButton.
+ */
 export function CommandMenuItem(props: CommandMenuItemProps) {
   let insert = useInsertPromptSegment([]);
   return (

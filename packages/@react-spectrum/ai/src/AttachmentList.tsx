@@ -606,6 +606,9 @@ function AttachmentCard({
   );
 }
 
+/**
+ * Attachment displays an individual file attachment within a PromptFieldAttachmentList.
+ */
 export const Attachment = forwardRef(function Attachment(
   props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
@@ -670,6 +673,9 @@ export interface AttachmentPreviewProps extends ImageProps {
   mimeType: string;
 }
 
+/**
+ * AttachmentPreview renders a preview of a file attachment.
+ */
 export function AttachmentPreview(props: AttachmentPreviewProps) {
   let {mimeType, ...otherProps} = props;
   let {isInvalid, uploadProgress, size} = useContext(AttachmentPreviewContext)!;
