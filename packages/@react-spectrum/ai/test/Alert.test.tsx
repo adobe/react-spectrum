@@ -13,6 +13,7 @@
 import {Alert} from '@react-spectrum/ai';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {Thread, ThreadItem} from '../src/Chat';
 import userEvent from '@testing-library/user-event';
 
 // Conditionally skip the suite
@@ -44,5 +45,23 @@ describeOrSkip('Alert', () => {
 
     await user.click(getByRole('button', {name: 'Dismiss'}));
     expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders without throwing when used inside a Thread/ThreadItem', () => {
+    // ThreadItem's underlying GridListItem provides a ButtonContext scoped to
+    // "default"/"drag" slots. Alert's CloseButton renders a Button with slot="close",
+    // which must not inherit that context or it throws "Invalid slot" errors.
+    let {getByRole} = render(
+      <Thread items={[{id: '1'}]} aria-label="Chat">
+        {() => (
+          <ThreadItem textValue="Alert description">
+            <Alert>Alert description</Alert>
+          </ThreadItem>
+        )}
+      </Thread>
+    );
+
+    expect(getByRole('alert')).toHaveTextContent('Alert description');
+    expect(getByRole('button', {name: 'Dismiss'})).toBeInTheDocument();
   });
 });

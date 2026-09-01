@@ -456,11 +456,11 @@ function PromptAttachments() {
 
 ## Chat threads
 
-Compose a conversation from `Chat`, `Thread`, `ResponseStatus`, and message components. The thread can be driven by a collection as messages arrive from your application.
+Compose a conversation from `Chat`, `Thread`, `ResponseStatus`, `Alert`, and message components. The thread can be driven by a collection as messages arrive from your application.
 
 ```tsx render type="s2"
 "use client";
-import {Chat, Thread, ThreadItem, UserMessage, ResponseStatus, ResponseStatusTitle, ResponseStatusPanel, ExecutionTrace, ExecutionTraceItem} from '@react-spectrum/ai';
+import {Alert, Chat, Thread, ThreadItem, UserMessage, ResponseStatus, ResponseStatusTitle, ResponseStatusPanel, ExecutionTrace, ExecutionTraceItem} from '@react-spectrum/ai';
 import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -501,6 +501,12 @@ let messages = [
         </ul>
       </>
     )
+  },
+  {
+    id: 6,
+    type: 'alert',
+    variant: 'notice',
+    text: "This summary may be incomplete. The connected data source hasn't synced in 2 hours.",
   }
 ];
 
@@ -555,6 +561,14 @@ function BasicChat() {
                   </ResponseStatus>
                 </ThreadItem>
               );
+            case 'alert':
+              return (
+                <ThreadItem textValue={message.text}>
+                  <Alert variant={message.variant}>
+                    {message.text}
+                  </Alert>
+                </ThreadItem>
+              )
           }
         }}
       </Thread>
