@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Naujas pranešimas",
   "chat.scrollToBottom": "Slinkite žemyn",
   "messagefeedback.thumbDown": "Blogas atsakas",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Įkeliama",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Pradėkite įrašinėti",
-  "voicebutton.stopListening": "Sustabdyti įrašymą"
+  "voicebutton.stopListening": "Sustabdyti įrašymą",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

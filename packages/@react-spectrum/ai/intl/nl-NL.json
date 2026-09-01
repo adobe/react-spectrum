@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Nieuw bericht",
   "chat.scrollToBottom": "Naar beneden schuiven",
   "messagefeedback.thumbDown": "Slecht antwoord",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Laden",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Opname starten",
-  "voicebutton.stopListening": "Opname stoppen"
+  "voicebutton.stopListening": "Opname stoppen",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

@@ -589,7 +589,7 @@ const executionTraceDetailStyle = style({
   // focus ring needs to be here instead of child detail div since the fade fades the focus ring
   ...focusRing(),
   outlineOffset: -2,
-  backgroundColor: 'layer-1',
+  backgroundColor: 'transparent-overlay-50',
   borderRadius: 'lg',
   font: 'body-2xs',
   color: 'gray-600'

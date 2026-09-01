@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Нове повідомлення",
   "chat.scrollToBottom": "Прокрутіть вниз",
   "messagefeedback.thumbDown": "Погана відповідь",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Завантаження",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Починайте запис",
-  "voicebutton.stopListening": "Припиніть запис"
+  "voicebutton.stopListening": "Припиніть запис",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

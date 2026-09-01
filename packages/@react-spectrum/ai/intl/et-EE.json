@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Uus sõnum",
   "chat.scrollToBottom": "Kerige alla",
   "messagefeedback.thumbDown": "Halb vastus",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Laadimine",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Alusta salvestamist",
-  "voicebutton.stopListening": "Lõpeta salvestamine"
+  "voicebutton.stopListening": "Lõpeta salvestamine",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

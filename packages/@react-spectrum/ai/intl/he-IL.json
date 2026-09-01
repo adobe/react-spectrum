@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "הודעה חדשה",
   "chat.scrollToBottom": "גלול למטה",
   "messagefeedback.thumbDown": "תגובה גרועה",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "בטעינה…",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "התחל להקליט",
-  "voicebutton.stopListening": "הפסק להקליט"
+  "voicebutton.stopListening": "הפסק להקליט",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

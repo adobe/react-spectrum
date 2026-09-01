@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Yeni mesaj",
   "chat.scrollToBottom": "Aşağıya kaydırın",
   "messagefeedback.thumbDown": "Yanıt kötüydü",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Yükleniyor",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Kayıtlara başlayın",
-  "voicebutton.stopListening": "Kaydı durdur"
+  "voicebutton.stopListening": "Kaydı durdur",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

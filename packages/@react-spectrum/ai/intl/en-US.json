@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "New message",
   "chat.scrollToBottom": "Scroll to bottom",
   "messagefeedback.thumbDown": "Bad response",
@@ -16,5 +20,7 @@
   "promptfield.stopButton": "Stop",
   "promptfield.submitButton": "Send",
   "promptfield.insertButton": "Add",
-  "promptfield.uploading": "Uploading"
+  "promptfield.uploading": "Uploading",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

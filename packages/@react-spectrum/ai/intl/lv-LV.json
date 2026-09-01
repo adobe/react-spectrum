@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Jauns ziņojums",
   "chat.scrollToBottom": "Ritiniet uz leju",
   "messagefeedback.thumbDown": "Slikta atbilde",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Notiek ielāde",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Sāciet ierakstīt",
-  "voicebutton.stopListening": "Pārtraukt ierakstu"
+  "voicebutton.stopListening": "Pārtraukt ierakstu",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

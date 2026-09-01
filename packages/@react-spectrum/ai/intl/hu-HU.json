@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Új üzenet",
   "chat.scrollToBottom": "Görgess le az alulra",
   "messagefeedback.thumbDown": "Rossz válasz",
@@ -16,5 +20,7 @@
   "responsestatus.loading": "Betöltés folyamatban",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Kezdj el felvételt",
-  "voicebutton.stopListening": "Felvétel abbahagyása"
+  "voicebutton.stopListening": "Felvétel abbahagyása",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

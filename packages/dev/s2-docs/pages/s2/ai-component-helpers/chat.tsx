@@ -18,49 +18,10 @@ import {
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
+import * as loaders from '@react-spectrum/ai/loader';
 import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import {ReactNode, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-let suggestionToken = style({
-  outlineStyle: {
-    default: 'solid',
-    isPlaceholder: 'dashed'
-  },
-  outlineWidth: 1,
-  outlineColor: {
-    default: 'transparent-overlay-1000/20',
-    isPlaceholder: 'transparent-overlay-1000/40'
-  },
-  outlineOffset: -1,
-  borderRadius: 'pill',
-  paddingX: 8,
-  paddingY: 0,
-  fontSize: 'ui',
-  display: 'inline-flex',
-  alignItems: 'baseline',
-  gap: 4,
-  verticalAlign: 'baseline'
-});
-
-function SuggestionLabel({value}: {value: TokenFieldValue}) {
-  return (
-    <>
-      {value.segments.map((seg, i) =>
-        seg.type === 'token' ? (
-          <span
-            key={i}
-            className={suggestionToken({isPlaceholder: seg.value?.type === 'placeholder'})}>
-            {getIcon(seg) && <CenterBaseline>{getIcon(seg)}</CenterBaseline>}
-            {seg.text}
-          </span>
-        ) : (
-          seg.text
-        )
-      )}
-    </>
-  );
-}
 
 let initialResponses = [
   {
@@ -103,40 +64,6 @@ type StreamingMessage =
       steps: ExecutionStep[];
     }
   | {id: number | string; type: 'suggestions'; suggestions: TokenFieldValue[]};
-
-function StatusThreadItem({msg}: {msg: Extract<StreamingMessage, {type: 'status'}>}) {
-  let isStreaming = msg.status === 'pending';
-  let lastStep = msg.steps[msg.steps.length - 1];
-  let title = isStreaming
-    ? `${lastStep.label}…`
-    : msg.steps.length > 1
-      ? `Completed ${msg.steps.length} steps`
-      : lastStep.label;
-  let announcement = isStreaming ? `${lastStep.label}…` : `${title} complete`;
-  return (
-    <ThreadItem textValue={announcement} isStreaming={isStreaming} shouldAnnounceOnMount>
-      <ResponseStatus status={isStreaming ? 'pending' : 'success'}>
-        <ResponseStatusTitle>{title}</ResponseStatusTitle>
-        <ResponseStatusPanel>
-          <ExecutionTrace>
-            {msg.steps.map(step => (
-              <ExecutionTraceItem
-                key={step.id}
-                status={step.status}
-                detail={
-                  step.detail && (
-                    <p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>
-                  )
-                }>
-                {step.label}
-              </ExecutionTraceItem>
-            ))}
-          </ExecutionTrace>
-        </ResponseStatusPanel>
-      </ResponseStatus>
-    </ThreadItem>
-  );
-}
 
 export interface VirtualizedStreamingChatProps {
   children: (onSend: (prompt: TokenFieldValue) => void) => ReactNode;
@@ -352,8 +279,7 @@ export function VirtualizedStreamingChat(props: VirtualizedStreamingChatProps) {
               flexGrow: 1,
               overflowX: 'hidden',
               overflowY: 'auto',
-              scrollPadding: 8,
-              rowGap: 16
+              scrollPadding: 8
             })}>
             {(msg: StreamingMessage) => {
               if (msg.type === 'user') {
@@ -371,7 +297,7 @@ export function VirtualizedStreamingChat(props: VirtualizedStreamingChatProps) {
               if (msg.type === 'suggestions') {
                 return (
                   <ThreadItem textValue="Suggestions">
-                    <MessageSuggestionList title="Suggestions">
+                    <MessageSuggestionList title="Suggestions" styles={style({marginTop: 40})}>
                       {msg.suggestions.map((s, i) => (
                         <MessageSuggestion key={i} onPress={() => onSelectSuggestion?.(s)}>
                           <SuggestionLabel value={s} />
@@ -395,5 +321,79 @@ export function VirtualizedStreamingChat(props: VirtualizedStreamingChatProps) {
         {children(handleSend)}
       </Chat>
     </div>
+  );
+}
+
+function StatusThreadItem({msg}: {msg: Extract<StreamingMessage, {type: 'status'}>}) {
+  let isStreaming = msg.status === 'pending';
+  let lastStep = msg.steps[msg.steps.length - 1];
+  let title = isStreaming
+    ? `${lastStep.label}…`
+    : msg.steps.length > 1
+      ? `Completed ${msg.steps.length} steps`
+      : lastStep.label;
+  let announcement = isStreaming ? `${lastStep.label}…` : `${title} complete`;
+  return (
+    <ThreadItem textValue={announcement} isStreaming={isStreaming} shouldAnnounceOnMount>
+      <ResponseStatus status={isStreaming ? 'pending' : 'success'}>
+        <ResponseStatusTitle pixelLoader={loaders.mega}>{title}</ResponseStatusTitle>
+        <ResponseStatusPanel>
+          <ExecutionTrace>
+            {msg.steps.map(step => (
+              <ExecutionTraceItem
+                key={step.id}
+                status={step.status}
+                detail={
+                  step.detail && (
+                    <p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>
+                  )
+                }>
+                {step.label}
+              </ExecutionTraceItem>
+            ))}
+          </ExecutionTrace>
+        </ResponseStatusPanel>
+      </ResponseStatus>
+    </ThreadItem>
+  );
+}
+
+let suggestionToken = style({
+  outlineStyle: {
+    default: 'solid',
+    isPlaceholder: 'dashed'
+  },
+  outlineWidth: 1,
+  outlineColor: {
+    default: 'transparent-overlay-1000/20',
+    isPlaceholder: 'transparent-overlay-1000/40'
+  },
+  outlineOffset: -1,
+  borderRadius: 'pill',
+  paddingX: 8,
+  paddingY: 0,
+  fontSize: 'ui',
+  display: 'inline-flex',
+  alignItems: 'baseline',
+  gap: 4,
+  verticalAlign: 'baseline'
+});
+
+function SuggestionLabel({value}: {value: TokenFieldValue}) {
+  return (
+    <>
+      {value.segments.map((seg, i) =>
+        seg.type === 'token' ? (
+          <span
+            key={i}
+            className={suggestionToken({isPlaceholder: seg.value?.type === 'placeholder'})}>
+            {getIcon(seg) && <CenterBaseline>{getIcon(seg)}</CenterBaseline>}
+            {seg.text}
+          </span>
+        ) : (
+          seg.text
+        )
+      )}
+    </>
   );
 }
