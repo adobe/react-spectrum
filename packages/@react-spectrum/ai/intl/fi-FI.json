@@ -16,5 +16,7 @@
   "responsestatus.loading": "Ladataan",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Aloita äänitys",
-  "voicebutton.stopListening": "Lopeta tallennus"
+  "voicebutton.stopListening": "Lopeta tallennus",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

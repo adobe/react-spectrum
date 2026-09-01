@@ -16,5 +16,7 @@
   "responsestatus.loading": "Φόρτωση",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Ξεκινήστε την εγγραφή",
-  "voicebutton.stopListening": "Διακοπή εγγραφής"
+  "voicebutton.stopListening": "Διακοπή εγγραφής",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

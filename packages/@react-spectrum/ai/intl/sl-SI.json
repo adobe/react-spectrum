@@ -16,5 +16,7 @@
   "responsestatus.loading": "Nalaganje",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Začni snemati",
-  "voicebutton.stopListening": "Prenehajte snemati"
+  "voicebutton.stopListening": "Prenehajte snemati",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
