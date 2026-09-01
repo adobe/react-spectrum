@@ -16,5 +16,7 @@
   "responsestatus.loading": "Načítava sa",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Začni nahrávať",
-  "voicebutton.stopListening": "Zastavte nahrávanie"
+  "voicebutton.stopListening": "Zastavte nahrávanie",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

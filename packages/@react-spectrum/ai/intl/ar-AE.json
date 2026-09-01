@@ -16,5 +16,7 @@
   "responsestatus.loading": "جارٍ التحميل",
   "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "ابدأ التسجيل",
-  "voicebutton.stopListening": "أوقف التسجيل"
+  "voicebutton.stopListening": "أوقف التسجيل",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
