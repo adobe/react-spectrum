@@ -293,7 +293,6 @@ const avatar = style({
   marginEnd: 'text-to-visual'
 });
 
-
 let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 let InsideSelectValueContext = createContext(false);
 
