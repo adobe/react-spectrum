@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Jauns ziņojums",
   "chat.scrollToBottom": "Ritiniet uz leju",
   "messagefeedback.thumbDown": "Slikta atbilde",

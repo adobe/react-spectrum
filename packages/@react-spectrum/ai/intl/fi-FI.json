@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Uusi viesti",
   "chat.scrollToBottom": "Selaa alas",
   "messagefeedback.thumbDown": "Huono vastaus",
