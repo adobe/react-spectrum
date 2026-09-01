@@ -247,27 +247,39 @@ import {
   PromptFieldValue,
   PromptTokenField
 } from '@react-spectrum/ai';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function BasicPrompt(props) {
   let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
 
   return (
-    <PromptField
-      {...props}
-      /* PROPS */
-      value={value}
-      onChange={setValue}
-      onSubmit={value => {
-        console.log(value.toString());
-        setValue(new PromptFieldValue([]));
-      }}>
-      <PromptTokenField placeholder="Ask anything" />
-      <PromptFieldToolbar>
-        <div style={{marginInlineStart: 'auto'}}>
-          <PromptFieldSubmitButton />
-        </div>
-      </PromptFieldToolbar>
-    </PromptField>
+    <div 
+      className={style({
+        minWidth: 190,
+        width: {
+          size: {
+            default: 'full',
+            S: '50%'
+          }
+        }
+      })({size: props.size})}>
+      <PromptField
+        {...props}
+        /* PROPS */
+        value={value}
+        onChange={setValue}
+        onSubmit={value => {
+          console.log(value.toString());
+          setValue(new PromptFieldValue([]));
+        }}>
+        <PromptTokenField placeholder="Ask anything" />
+        <PromptFieldToolbar>
+          <div style={{marginInlineStart: 'auto'}}>
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptFieldToolbar>
+      </PromptField>
+    </div>
   );
 }
 ```
