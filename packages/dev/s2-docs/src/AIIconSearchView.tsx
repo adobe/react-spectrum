@@ -41,13 +41,7 @@ import {
   trefoil,
   wand
 } from '@react-spectrum/ai/loader';
-import {
-  GridLayout,
-  ListBox,
-  ListBoxItem,
-  Size,
-  Virtualizer
-} from 'react-aria-components';
+import {GridLayout, ListBox, ListBoxItem, Size, Virtualizer} from 'react-aria-components';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {
   Content,
@@ -243,8 +237,8 @@ export function AIIconsPageSearch() {
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
       <InfoMessage>
-        Press an item to copy its import statement. Hover or focus a tile to preview its
-        animation. See <Link href="ai-components#loaders">Loaders</Link> for more information.
+        Press an item to copy its import statement. Hover or focus a tile to preview its animation.
+        See <Link href="ai-components#loaders">Loaders</Link> for more information.
       </InfoMessage>
       <AIIconListBox
         items={aiIconList}

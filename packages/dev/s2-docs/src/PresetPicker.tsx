@@ -27,7 +27,8 @@ interface PresetPickerProps {
 }
 
 /**
- * A control for PixelLoader's `icon` prop. `icon` accepts a single icon or a themed preset (Cell[][])
+ * A control for PixelLoader's `icon` prop. `icon` accepts a single icon or a themed preset
+ * (Cell[][])
  */
 export function PresetPicker({value, onChange}: PresetPickerProps) {
   let selectedKey = Object.keys(presets).find(name => presets[name] === value) ?? 'default';
