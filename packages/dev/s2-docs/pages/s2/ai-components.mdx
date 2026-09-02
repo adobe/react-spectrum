@@ -256,7 +256,7 @@ function BasicPrompt(props) {
   let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
 
   return (
-    <div 
+    <div
       className={style({
         minWidth: 190,
         width: {
@@ -684,7 +684,7 @@ function BasicChat() {
 
 ## PromptField
 
-```tsx links={{PromptField: '#promptfield', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar'}}
+```tsx links={{PromptField: '#promptfield', PromptFieldAttachmentList: '#promptfieldattachmentlist', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar'}}
 <PromptField>
   <PromptFieldAttachmentList />
   <PromptTokenField />
