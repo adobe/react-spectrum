@@ -251,22 +251,23 @@ import {Router, Link as RouterLink} from './Router';
 </Router>
 ```
 
-To integrate with a client side router, use the `renderLink` prop on `NavigationTree` to delegate to your router's link component. This supports features like prefetching on hover and avoids full page reloads.
+To integrate with a client side router, use the `render` prop on `Link` to delegate to your router's link component. This supports features like prefetching on hover and avoids full page reloads.
 Get the current route from your framework and pass it as `selectedRoute`.
 
 <ExampleSwitcher type="framework" examples={['Next.js', 'React Router']}>
   ```tsx
-  import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink} from '@/components/NavigationTree';
+  import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent} from './NavigationTree';
+  import {Link} from 'react-aria-components/Link';
   import NextLink from 'next/link';
   import {usePathname} from 'next/navigation';
 
   function Sidebar() {
     let selectedRoute = usePathname();
     return (
-      <NavigationTree selectedRoute={selectedRoute} renderLink={props => <NextLink {...props} />}>
+      <NavigationTree selectedRoute={selectedRoute}>
         <NavigationTreeItem href="/inbox" textValue="Inbox">
           <NavigationTreeItemContent>
-            <NavigationTreeItemLink>Inbox</NavigationTreeItemLink>
+            <Link render={props => <NextLink {...props} />}>Inbox</Link>
           </NavigationTreeItemContent>
         </NavigationTreeItem>
       </NavigationTree>
@@ -275,16 +276,17 @@ Get the current route from your framework and pass it as `selectedRoute`.
   ```
 
   ```tsx
-  import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent, NavigationTreeItemLink} from './NavigationTree';
+  import {NavigationTree, NavigationTreeItem, NavigationTreeItemContent} from './NavigationTree';
+  import {Link} from 'react-aria-components/Link';
   import {Link as RouterLink, useLocation} from 'react-router';
 
   function Sidebar() {
     let {pathname} = useLocation();
     return (
-      <NavigationTree selectedRoute={pathname} renderLink={props => <RouterLink {...props} to={props.href} />}>
+      <NavigationTree selectedRoute={pathname}>
         <NavigationTreeItem href="/inbox" textValue="Inbox">
           <NavigationTreeItemContent>
-            <NavigationTreeItemLink>Inbox</NavigationTreeItemLink>
+            <Link render={props => <RouterLink {...props} to={props.href} />}>Inbox</Link>
           </NavigationTreeItemContent>
         </NavigationTreeItem>
       </NavigationTree>
