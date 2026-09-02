@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Nytt meddelande",
   "chat.scrollToBottom": "Bläddra längst ned",
   "messagefeedback.thumbDown": "Dåligt svar",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "Lägg till",
   "promptfield.label": "Uppmaning",
   "promptfield.placeholder": "Redo att komma igång? Ställ en fråga, dela en idé eller lägg till en uppgift.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Stoppa",
   "promptfield.submitButton": "Skicka",
   "promptfield.uploading": "Överför",
   "responsestatus.loading": "Läser in",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Starta inspelning",
-  "voicebutton.stopListening": "Stoppa inspelning"
+  "voicebutton.stopListening": "Stoppa inspelning",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

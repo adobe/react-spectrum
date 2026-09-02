@@ -249,7 +249,8 @@ export {
   NavigationTreeItemContent,
   NavigationTreeSection,
   NavigationTreeHeader,
-  NavigationTreeContext
+  NavigationTreeContext,
+  NavigationTreeItemStateContext
 } from '../src/NavigationTree';
 export {
   TreeLoadMoreItem,
