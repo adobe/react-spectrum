@@ -13,12 +13,13 @@
 import {AriaMenuProps, useMenu} from '../../src/menu/useMenu';
 import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {Item} from 'react-stately/Item';
-import {Key} from '@react-types/shared';
+import {Key, Node} from '@react-types/shared';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Section} from 'react-stately/Section';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useMenuItem} from '../../src/menu/useMenuItem';
+import {useMenuSection} from '../../src/menu/useMenuSection';
 import userEvent from '@testing-library/user-event';
 
 function Menu<T extends object>(props: AriaMenuProps<T> & {onSelect: () => void}) {
@@ -82,6 +83,30 @@ function VirtualizedMenu<T extends object>(props: AriaMenuProps<T>) {
   );
 }
 
+function VirtualizedMenuSection<T extends object>({
+  node,
+  state
+}: {
+  node: Node<T>;
+  state: TreeState<T>;
+}) {
+  let {itemProps, headingProps, groupProps} = useMenuSection({
+    heading: node.rendered,
+    'aria-label': node['aria-label']
+  });
+
+  return (
+    <div {...itemProps}>
+      {node.rendered && <span {...headingProps}>{node.rendered}</span>}
+      <div {...groupProps}>
+        {[...getChildNodes(node, state.collection)].map(item => (
+          <VirtualizedMenuItem key={item.key} item={item} state={state} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function VirtualizedMenuWithSections<T extends object>(props: AriaMenuProps<T>) {
   let state = useTreeState(props);
   let ref = React.useRef(null);
@@ -89,26 +114,13 @@ function VirtualizedMenuWithSections<T extends object>(props: AriaMenuProps<T>) 
 
   return (
     <ul {...menuProps} ref={ref}>
-      {[...state.collection].map(node => {
-        if (node.type === 'section') {
-          let headingId = `heading-${node.key}`;
-          return (
-            <div key={node.key} role="presentation">
-              {node.rendered && (
-                <span id={headingId} role="presentation">
-                  {node.rendered}
-                </span>
-              )}
-              <div role="group" aria-labelledby={headingId}>
-                {[...getChildNodes(node, state.collection)].map(item => (
-                  <VirtualizedMenuItem key={item.key} item={item} state={state} />
-                ))}
-              </div>
-            </div>
-          );
-        }
-        return <VirtualizedMenuItem key={node.key} item={node} state={state} />;
-      })}
+      {[...state.collection].map(node =>
+        node.type === 'section' ? (
+          <VirtualizedMenuSection key={node.key} node={node} state={state} />
+        ) : (
+          <VirtualizedMenuItem key={node.key} item={node} state={state} />
+        )
+      )}
     </ul>
   );
 }
