@@ -41,7 +41,6 @@ import {
   trefoil,
   wand
 } from '@react-spectrum/ai/loader';
-import {GridLayout, ListBox, ListBoxItem, Size, Virtualizer} from 'react-aria-components';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {
   Content,
@@ -52,6 +51,7 @@ import {
   ToastQueue
 } from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {GridLayout, ListBox, ListBoxItem, Size, Virtualizer} from 'react-aria-components';
 import {InfoMessage} from './colorSearchData';
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {useCallback, useRef, useState} from 'react';
