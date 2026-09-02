@@ -26,6 +26,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
+import {CollectionRendererContext, DefaultCollectionRenderer} from './Collection';
 import {DismissButton, Overlay} from 'react-aria/Overlay';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
@@ -330,6 +331,15 @@ function PopoverInner({
     ...renderProps.style,
     '--trigger-width': renderProps.style?.['--trigger-width'] || triggerWidth
   };
+
+  // oxlint-disable-next-line react/react-compiler
+  if (props.trigger) {
+    children = (
+      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+        {children}
+      </CollectionRendererContext.Provider>
+    );
+  }
 
   // oxlint-disable react/react-compiler
   let overlay = (
