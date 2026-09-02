@@ -466,7 +466,7 @@ import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-let initialMessages = [
+let messages = [
   {id: 1, type: 'user', text: 'Summarize the campaign results.'},
   {
     id: 2,
@@ -513,11 +513,6 @@ let initialMessages = [
 ];
 
 function BasicChat() {
-  let [messages, setMessages] = useState(initialMessages);
-  let dismissMessage = (id: number) => {
-    setMessages(messages => messages.filter(message => message.id !== id));
-  }
-
   return (
     /*- begin highlight -*/
     <Chat
@@ -571,7 +566,7 @@ function BasicChat() {
             case 'alert':
               return (
                 <ThreadItem textValue={message.text}>
-                  <Alert variant={message.variant} onDismiss={() => dismissMessage(message.id)} >
+                  <Alert variant={message.variant} >
                     {message.text}
                   </Alert>
                 </ThreadItem>
@@ -588,47 +583,16 @@ function BasicChat() {
 
 `PixelLoader` is the animated pixel icon shown inside `PromptField` and `ResponseStatus` while the assistant is working. It can also be used standalone anywhere an AI loading indicator is needed.
 
-```tsx render type="s2" docs={docs.exports.PixelLoader} props={['size', 'isPlaying']} initialProps={{isPlaying: true}}
+The `icon` prop accepts either a single icon, which loops forever, or a themed preset, which cycles through several icons, one per loop. Icons and presets are exported individually from `@react-spectrum/ai/loader`.
+
+```tsx render type="s2" docs={docs.exports.PixelLoader} props={['icon', 'isPlaying']} initialProps={{isPlaying: true}}
 "use client";
 import {PixelLoader} from '@react-spectrum/ai/loader';
 
-function PixelLoaderExample(props) {
-  return <PixelLoader {...props} />;
-}
-```
-
-### Choosing an animation
-
-The `icon` prop accepts either a single icon, which loops forever, or a themed preset, which cycles through several icons, one per loop. Icons and presets are exported individually from `@react-spectrum/ai/loader`.
-
-```tsx render type="s2"
-"use client";
-import {analyze, cc, cxo, dc, exp, mega, PixelLoader} from '@react-spectrum/ai/loader';
-import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
-import {useState} from 'react';
-
-let presets = {cc, dc, exp, cxo, analyze, mega};
-
-function PresetLoader() {
-  let [preset, setPreset] = useState('cxo');
-
+function PresetLoader(props) {
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center'}}>
-      <Picker
-        label="Animation"
-        selectedKey={preset}
-        onSelectionChange={key => setPreset(key as string)}>
-        <PickerItem id="cc">Creative Cloud</PickerItem>
-        <PickerItem id="dc">Document Cloud</PickerItem>
-        <PickerItem id="exp">Experience Cloud</PickerItem>
-        <PickerItem id="cxo">CXO</PickerItem>
-        <PickerItem id="analyze">Analyze</PickerItem>
-        <PickerItem id="mega">Mega</PickerItem>
-      </Picker>
-      {/*- begin highlight -*/}
-      <PixelLoader key={preset} icon={presets[preset]} size={32} />
-      {/*- end highlight -*/}
-    </div>
+    <PixelLoader 
+      /* PROPS */ />
   );
 }
 ```
@@ -657,7 +621,7 @@ function LoadingStatus() {
 
 ```tsx render type="s2"
 "use client";
-import {dc} from '@react-spectrum/ai/loader';
+import {pencil} from '@react-spectrum/ai/loader';
 import {
   PromptField,
   PromptFieldSubmitButton,
@@ -683,7 +647,7 @@ function GeneratingPrompt() {
       }}
       onStop={() => setIsGenerating(false)}>
       {/*- begin highlight -*/}
-      <PromptTokenField placeholder="Ask a question" pixelLoader={dc} shouldAnimatePixelLoader />
+      <PromptTokenField placeholder="Ask a question" pixelLoader={pencil} />
       {/*- end highlight -*/}
       <PromptFieldToolbar>
         <div style={{marginInlineStart: 'auto'}}>
