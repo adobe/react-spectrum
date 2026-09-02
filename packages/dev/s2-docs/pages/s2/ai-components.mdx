@@ -590,8 +590,10 @@ import {PixelLoader} from '@react-spectrum/ai/loader';
 
 function PresetLoader(props) {
   return (
-    <PixelLoader 
-      /* PROPS */ />
+    <PixelLoader
+      {...props}
+      /* PROPS */
+    />
   );
 }
 ```
