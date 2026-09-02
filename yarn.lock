@@ -7619,7 +7619,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/ai@workspace:packages/@react-spectrum/ai":
+"@react-spectrum/ai@npm:^0.3.0, @react-spectrum/ai@workspace:packages/@react-spectrum/ai":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/ai@workspace:packages/@react-spectrum/ai"
   dependencies:
@@ -8290,6 +8290,7 @@ __metadata:
     "@react-aria/i18n": "npm:^3.12.10"
     "@react-aria/interactions": "npm:^3.25.1"
     "@react-aria/utils": "npm:^3.29.0"
+    "@react-spectrum/ai": "npm:^0.3.0"
     "@react-spectrum/s2": "npm:^1.0.0"
     "@react-spectrum/utils": "npm:^3.12.6"
     "@react-types/shared": "npm:^3.30.0"

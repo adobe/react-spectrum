@@ -2,6 +2,7 @@ import {Layout} from '../../src/Layout';
 import {InstallCommand} from '../../src/InstallCommand';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import {VersionBadge} from '../../src/VersionBadge';
+import {AIIconsPageSearch} from '../../src/AIIconSearchView';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/ai';
@@ -456,11 +457,11 @@ function PromptAttachments() {
 
 ## Chat threads
 
-Compose a conversation from `Chat`, `Thread`, `ResponseStatus`, and message components. The thread can be driven by a collection as messages arrive from your application.
+Compose a conversation from `Chat`, `Thread`, `ResponseStatus`, `Alert`, and message components. The thread can be driven by a collection as messages arrive from your application.
 
 ```tsx render type="s2"
 "use client";
-import {Chat, Thread, ThreadItem, UserMessage, ResponseStatus, ResponseStatusTitle, ResponseStatusPanel, ExecutionTrace, ExecutionTraceItem} from '@react-spectrum/ai';
+import {Alert, Chat, Thread, ThreadItem, UserMessage, ResponseStatus, ResponseStatusTitle, ResponseStatusPanel, ExecutionTrace, ExecutionTraceItem} from '@react-spectrum/ai';
 import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -501,6 +502,12 @@ let messages = [
         </ul>
       </>
     )
+  },
+  {
+    id: 6,
+    type: 'alert',
+    variant: 'notice' as const,
+    text: "This summary may be incomplete. The connected data source hasn't synced in 2 hours."
   }
 ];
 
@@ -555,6 +562,14 @@ function BasicChat() {
                   </ResponseStatus>
                 </ThreadItem>
               );
+            case 'alert':
+              return (
+                <ThreadItem textValue={message.text}>
+                  <Alert variant={message.variant} >
+                    {message.text}
+                  </Alert>
+                </ThreadItem>
+              )
           }
         }}
       </Thread>
@@ -562,6 +577,100 @@ function BasicChat() {
   );
 }
 ```
+
+## Loaders
+
+`PixelLoader` is the animated pixel icon shown inside `PromptField` and `ResponseStatus` while the assistant is working. It can also be used standalone anywhere an AI loading indicator is needed.
+
+The `icon` prop accepts either a single icon, which loops forever, or a themed preset, which cycles through several icons, one per loop. Icons and presets are exported individually from `@react-spectrum/ai/loader`.
+
+```tsx render type="s2" docs={docs.exports.PixelLoader} props={['icon', 'isPlaying']} initialProps={{isPlaying: true}}
+"use client";
+import {PixelLoader} from '@react-spectrum/ai/loader';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function PresetLoader(props) {
+  return (
+    <div className={style({height: 40})}>
+      <PixelLoader
+        {...props}
+        /* PROPS */
+      />
+    </div>
+  )
+}
+```
+
+### Usage
+
+Use the `pixelLoader` prop on `PromptTokenField` and `ResponseStatusTitle` to display the pixel loader.
+
+<ExampleSwitcher type={null} examples={['ResponseStatus', 'PromptField']}>
+
+```tsx render type="s2"
+"use client";
+import {cc} from '@react-spectrum/ai/loader';
+import {ResponseStatus, ResponseStatusTitle} from '@react-spectrum/ai';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function LoadingStatus() {
+  return (
+    <div className={style({height: 40})}>
+      <ResponseStatus status="pending">
+        {/*- begin highlight -*/}
+        <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
+        {/*- end highlight -*/}
+      </ResponseStatus>
+    </div>
+  );
+}
+```
+
+```tsx render type="s2"
+"use client";
+import {pencil} from '@react-spectrum/ai/loader';
+import {
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptTokenField
+} from '@react-spectrum/ai';
+import {useState} from 'react';
+
+function GeneratingPrompt() {
+  let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
+  let [isGenerating, setIsGenerating] = useState(false);
+
+  return (
+    <PromptField
+      value={value}
+      onChange={setValue}
+      isGenerating={isGenerating}
+      onSubmit={() => {
+        setValue(new PromptFieldValue([]));
+        setIsGenerating(true);
+        setTimeout(() => setIsGenerating(false), 3000);
+      }}
+      onStop={() => setIsGenerating(false)}>
+      {/*- begin highlight -*/}
+      <PromptTokenField placeholder="Ask a question" pixelLoader={pencil} />
+      {/*- end highlight -*/}
+      <PromptFieldToolbar>
+        <div style={{marginInlineStart: 'auto'}}>
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+}
+```
+
+</ExampleSwitcher>
+
+### Available icons
+
+<AIIconsPageSearch />
 
 ## API
 
@@ -775,3 +884,8 @@ function BasicChat() {
 #### PromptFieldSubmitButton
 
 <PropTable component={docs.exports.PromptFieldSubmitButton} links={docs.links} showDescription />
+
+## PixelLoader
+
+<PropTable component={docs.exports.PixelLoader} links={docs.links} showDescription />
+
