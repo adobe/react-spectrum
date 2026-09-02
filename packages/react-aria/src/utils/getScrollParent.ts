@@ -10,17 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {isScrollable} from './isScrollable';
+import {genScrollParents} from './getScrollParents';
+import {getOwnerDocument} from './domHelpers';
+import {getScrollingElement} from './layoutHelpers';
 
-export function getScrollParent(node: Element, checkForOverflow?: boolean): Element {
-  let scrollableNode: Element | null = node;
-  if (isScrollable(scrollableNode, checkForOverflow)) {
-    scrollableNode = scrollableNode.parentElement;
-  }
+/**
+ * Returns the (scrollable) parent container for a given scroll alignment query.
+ *
+ * @deprecated Use 'getScrollTarget(element.parentElement)' instead.
+ */
+export function getScrollParent(element: Element, checkForOverflow?: boolean): Element {
+  let ownerDocument = getOwnerDocument(element);
 
-  while (scrollableNode && !isScrollable(scrollableNode, checkForOverflow)) {
-    scrollableNode = scrollableNode.parentElement;
-  }
+  let generator = genScrollParents(element, {
+    scrollable: checkForOverflow,
+    container: 'nearest'
+  });
 
-  return scrollableNode || document.scrollingElement || document.documentElement;
+  let cursor = generator.next();
+
+  // Fallback is a bug, but is kept for backwards compatibility.
+  return cursor.value ?? getScrollingElement(ownerDocument);
 }
