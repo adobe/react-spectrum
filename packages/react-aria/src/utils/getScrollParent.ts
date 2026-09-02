@@ -15,7 +15,7 @@ import {getOwnerDocument} from './domHelpers';
 import {getScrollingElement} from './layoutHelpers';
 
 /**
- * Returns the (scrollable) parent container for a given scroll alignment query.
+ * Returns the nearest (scrollable) ancestor of a given element.
  *
  * @deprecated Use 'getScrollTarget(element.parentElement)' instead.
  */
