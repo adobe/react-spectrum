@@ -23,7 +23,7 @@ import {isMac} from '../utils/platform';
 import {isVirtualClick} from '../utils/isVirtualEvent';
 import {openLink} from '../utils/openLink';
 import {PointerType} from '@react-types/shared';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
 
 export type Modality = 'keyboard' | 'pointer' | 'virtual';
@@ -110,17 +110,29 @@ function handleClickEvent(e: MouseEvent) {
 }
 
 function handleFocusEvent(e: FocusEvent) {
+  if (ignoreFocusEvent) {
+    return;
+  }
+
+  let target = getEventTarget(e);
+  let ownerWindow = getOwnerWindow(target);
+  let ownerDocument = getOwnerDocument(target);
+
+  // When the window regains focus, the browser restores focus to the element that was focused
+  // before, firing a focus event the user did not initiate. handleWindowBlur sets
+  // hasBlurredWindowRecently so restored focus doesn't switch to virtual modality below, but
+  // Safari fires the window/element focus pair twice when returning to a tab or app and the first
+  // element focus event clears the flag, so re-arm it whenever the window itself is focused.
+  // Like handleWindowBlur, this intentionally doesn't check isTrusted.
+  if (target === ownerWindow) {
+    hasBlurredWindowRecently = true;
+    return;
+  }
+
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  let ownerWindow = getOwnerWindow(getEventTarget(e));
-  let ownerDocument = getOwnerDocument(getEventTarget(e));
-  if (
-    getEventTarget(e) === ownerWindow ||
-    getEventTarget(e) === ownerDocument ||
-    ignoreFocusEvent ||
-    !e.isTrusted
-  ) {
+  if (target === ownerDocument || !e.isTrusted) {
     return;
   }
 
@@ -301,13 +313,6 @@ export function setInteractionModality(modality: Modality): void {
   currentModality = modality;
   currentPointerType = modality === 'pointer' ? 'mouse' : modality;
   triggerChangeHandlers(modality, null);
-}
-
-/**
- * Returns a callback that makes the focus indicator visible.
- */
-export function useShowFocusIndicator(): () => void {
-  return useCallback(() => setInteractionModality('keyboard'), []);
 }
 
 /** @private */

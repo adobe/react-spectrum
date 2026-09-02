@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Ново съобщение",
   "chat.scrollToBottom": "Превъртете надолу",
   "messagefeedback.thumbDown": "Лош отговор",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "Добави",
   "promptfield.label": "Подсказка",
   "promptfield.placeholder": "Готови ли сте да започнете? Задайте въпрос, споделете идея или добавете задача.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Спри",
   "promptfield.submitButton": "Изпрати",
   "promptfield.uploading": "Качване",
   "responsestatus.loading": "Зареждане",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Започнете запис",
-  "voicebutton.stopListening": "Спри записа"
+  "voicebutton.stopListening": "Спри записа",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
