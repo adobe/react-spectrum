@@ -11,13 +11,19 @@
  */
 
 import {ActionButton} from '../src/ActionButton';
-
-import {ActionButtonGroup} from '../src/ActionButtonGroup';
-import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from '../stories/utils';
+import {ActionButtonGroup, ActionButtonGroupProps} from '../src/ActionButtonGroup';
+import {
+  categorizeArgTypes,
+  getActionArgs,
+  StaticColorDecorator,
+  StaticColorProvider
+} from '../stories/utils';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
+import {generateComboChunks, shortName} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
+import {ReactElement, ReactNode} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
@@ -104,4 +110,208 @@ export const Justified: StoryObj<typeof ActionButtonGroup> = {
       </ActionButton>
     </ActionButtonGroup>
   )
+};
+
+let states = [
+  {isDisabled: true},
+  {isQuiet: true},
+  {isJustified: true},
+  {size: ['XS', 'S', 'M', 'L', 'XL']},
+  {density: ['compact', 'regular']},
+  {staticColor: ['black', 'white']}
+];
+
+let combinationChunks = generateComboChunks({states, numChunks: 3});
+
+let Template = ({
+  combos,
+  orientation,
+  children
+}: {
+  combos: any[];
+  orientation: 'horizontal' | 'vertical';
+  children: ReactNode;
+}): ReactElement => (
+  <div
+    className={style({
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'start',
+      gap: 24,
+      width: '100%',
+      maxWidth: '100%',
+      boxSizing: 'border-box'
+    })}>
+    {combos.map(c => {
+      let fullComboName = Object.keys(c)
+        .map(k => `${k}: ${c[k]}`)
+        .join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
+      if (!key) {
+        key = 'default';
+      }
+
+      let group = (
+        <ActionButtonGroup
+          key={key}
+          data-testid={fullComboName}
+          orientation={orientation}
+          {...(c as ActionButtonGroupProps)}
+          styles={c.isJustified ? justifiedStyle({...c, orientation}) : undefined}>
+          {children}
+        </ActionButtonGroup>
+      );
+
+      if (c.staticColor != null) {
+        return (
+          <StaticColorProvider key={`static-${key}`} staticColor={c.staticColor}>
+            {group}
+          </StaticColorProvider>
+        );
+      }
+
+      return group;
+    })}
+  </div>
+);
+
+let labeledChildren = (
+  <>
+    <ActionButton>
+      <Cut />
+      <Text slot="label">Cut</Text>
+    </ActionButton>
+    <ActionButton>
+      <Copy />
+      <Text slot="label">Copy</Text>
+    </ActionButton>
+    <ActionButton>
+      <Paste />
+      <Text slot="label">Paste</Text>
+    </ActionButton>
+  </>
+);
+
+let iconOnlyChildren = (
+  <>
+    <ActionButton aria-label="Cut">
+      <Cut />
+    </ActionButton>
+    <ActionButton aria-label="Copy">
+      <Copy />
+    </ActionButton>
+    <ActionButton aria-label="Paste">
+      <Paste />
+    </ActionButton>
+  </>
+);
+
+export const HorizontalCombo: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="horizontal">
+      {labeledChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[0]}
+};
+
+export const HorizontalComboPt2: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="horizontal">
+      {labeledChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[1]}
+};
+
+export const HorizontalComboPt3: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="horizontal">
+      {labeledChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[2]}
+};
+
+export const VerticalCombo: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="vertical">
+      {labeledChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[0]}
+};
+
+export const VerticalComboPt2: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="vertical">
+      {labeledChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[1]}
+};
+
+export const VerticalComboPt3: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="vertical">
+      {labeledChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[2]}
+};
+
+export const HorizontalComboIconOnly: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="horizontal">
+      {iconOnlyChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[0]}
+};
+
+export const HorizontalComboIconOnlyPt2: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="horizontal">
+      {iconOnlyChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[1]}
+};
+
+export const HorizontalComboIconOnlyPt3: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="horizontal">
+      {iconOnlyChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[2]}
+};
+
+export const VerticalComboIconOnly: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="vertical">
+      {iconOnlyChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[0]}
+};
+
+export const VerticalComboIconOnlyPt2: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="vertical">
+      {iconOnlyChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[1]}
+};
+
+export const VerticalComboIconOnlyPt3: StoryObj<typeof Template> = {
+  render: args => (
+    <Template {...args} orientation="vertical">
+      {iconOnlyChildren}
+    </Template>
+  ),
+  args: {combos: combinationChunks[2]}
 };

@@ -112,6 +112,26 @@ function NoLinkActionMenuNavigationTreeExample(props: Partial<NavigationTreeProp
   );
 }
 
+function NoHrefLinkNavigationTreeExample(props: Partial<NavigationTreeProps<unknown>>) {
+  return (
+    <NavigationTree aria-label="Test NavigationTree" {...props}>
+      <NavigationTreeItem id="section" textValue="Section">
+        <NavigationTreeItemContent>
+          <Link>Section</Link>
+          <Button slot="chevron" aria-label="expand">
+            ▶
+          </Button>
+        </NavigationTreeItemContent>
+        <NavigationTreeItem id="section-2" href="/section-2" textValue="Section 2">
+          <NavigationTreeItemContent>
+            <Link>Section 2</Link>
+          </NavigationTreeItemContent>
+        </NavigationTreeItem>
+      </NavigationTreeItem>
+    </NavigationTree>
+  );
+}
+
 // Section 1 has an aria-label instead of a NavigationTreeHeader (as is allowed by the underlying
 // TreeSection); Section 2 uses a NavigationTreeHeader so both default classes get covered.
 function SectionNavigationTreeExample(props: Partial<NavigationTreeProps<unknown>>) {
@@ -346,6 +366,18 @@ describe('NavigationTree', () => {
     let sectionRow = getByRole('row', {name: 'Section'});
     expect(sectionRow).toHaveFocus();
     expect(within(sectionRow).getByRole('button', {name: 'More actions'})).not.toHaveFocus();
+  });
+
+  it('toggles expansion when pressing the label (a no-href Link) of a parent row', async () => {
+    let {getByRole} = render(<NoHrefLinkNavigationTreeExample />);
+    let sectionRow = getByRole('row', {name: 'Section'});
+    expect(sectionRow).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(within(sectionRow).getByRole('link', {name: 'Section'}));
+    expect(sectionRow).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(within(sectionRow).getByRole('link', {name: 'Section'}));
+    expect(sectionRow).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('arrow left from a deep leaf steps to parent, collapses it, then moves to the grandparent', async () => {
