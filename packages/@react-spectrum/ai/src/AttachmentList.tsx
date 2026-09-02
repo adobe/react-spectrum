@@ -18,27 +18,32 @@ import {
   forwardRefType,
   GlobalDOMAttributes
 } from '@react-types/shared';
+import AudioWave from '@react-spectrum/s2/icons/AudioWave';
 import {
   baseColor,
-  color,
+  css,
   focusRing,
   iconStyle,
   lightDark,
-  space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from 'react-aria-components/Button';
+import {Button, ButtonProps} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
+import ChevronLeft from '@react-spectrum/s2/icons/ChevronLeft';
+import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContentContext} from '@react-spectrum/s2/Content';
+import {createContext, CSSProperties, forwardRef, ReactNode, useContext, useRef} from 'react';
 import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {forwardRef, ReactNode, useContext, useRef} from 'react';
-import {IllustrationContext} from '@react-spectrum/s2/Icon';
-import {ImageContext} from '@react-spectrum/s2/Image';
+import File from '@react-spectrum/s2/icons/File';
+import FileText from '@react-spectrum/s2/icons/FileText';
+import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
-// @ts-ignore
+import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
+import {keyframes, scrollFade} from './tokens.macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -52,6 +57,7 @@ import {
 } from 'react-aria-components/TagGroup';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 interface AttachmentRenderProps {
@@ -69,12 +75,7 @@ const controlSizeM = {
   }
 } as const;
 
-const hoverBackground = {
-  default: 'gray-200',
-  isStaticColor: 'transparent-overlay-200'
-} as const;
-
-const styles = style<{
+const closeButton = style<{
   isDisabled: boolean;
   isHovered: boolean;
   isFocusVisible: boolean;
@@ -92,10 +93,8 @@ const styles = style<{
   borderStyle: 'none',
   transition: 'default',
   backgroundColor: {
-    default: 'gray-200',
-    isHovered: hoverBackground,
-    isFocusVisible: hoverBackground,
-    isPressed: hoverBackground
+    default: baseColor('gray-200'),
+    forcedColors: 'ButtonFace'
   },
   color: {
     default: baseColor('neutral'),
@@ -117,22 +116,35 @@ const styles = style<{
 });
 
 const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
-const noDescription = ':not(:has([slot=description]))';
+
+const container = {
+  backgroundColor: {
+    default: lightDark('black/3', 'white/3'),
+    isInvalid: 'red-700/8',
+    forcedColors: 'ButtonFace'
+  }
+} as const;
 
 const attachmentCard = style({
+  ...container,
   display: 'flex',
   flexDirection: 'row',
   position: 'relative',
-  borderRadius: 'default',
-  backgroundColor: {
-    default: lightDark('transparent-white-300', 'transparent-black-300'),
-    forcedColors: 'ButtonFace'
-  },
-  boxShadow: {
-    default: `[inset 0 0 0 1px light-dark(${color('transparent-black-300')}, ${color('transparent-white-300')})]`,
-    isInvalid: `[inset 0 0 0 1px ${color('negative-900')}]`
+  borderRadius: 'lg',
+  outlineStyle: 'solid',
+  outlineWidth: 1,
+  outlineOffset: -1,
+  outlineColor: {
+    default: lightDark('black/3', 'white/3'),
+    isLoading: lightDark('black/2', 'white/2'),
+    forcedColors: 'ButtonBorder',
+    isInvalid: {
+      default: 'negative-900',
+      forcedColors: 'Mark'
+    }
   },
   forcedColorAdjust: 'none',
+  cursor: 'default',
   transition: 'default',
   fontFamily: 'sans',
   overflow: 'clip',
@@ -184,7 +196,7 @@ const attachmentCard = style({
   justifyContent: {
     [onlyPreview]: 'center'
   },
-  '--basic-thumb-size': {
+  '--image-size': {
     type: 'height',
     value: {
       size: {
@@ -197,41 +209,13 @@ const attachmentCard = style({
       [onlyPreview]: 'full'
     }
   },
-  '--illust-thumb-size': {
-    type: 'height',
+  '--image-border-radius': {
+    type: 'borderTopStartRadius',
     value: {
-      size: {
-        XS: 48,
-        S: 44,
-        M: 48,
-        L: 52,
-        XL: 56
-      },
-      [onlyPreview]: 'full'
-    }
-  },
-  '--illust-margin-x': {
-    type: 'marginStart',
-    value: {
-      size: {
-        XS: -8,
-        S: -8,
-        M: -12,
-        L: -12,
-        XL: -12
-      }
+      default: '[3px]',
+      [onlyPreview]: 'lg'
     }
   }
-});
-
-const illustThumbnailStyles = style({
-  position: 'relative',
-  alignSelf: 'center',
-  flexShrink: 0,
-  pointerEvents: 'none',
-  userSelect: 'none',
-  size: '--illust-thumb-size',
-  marginX: '--illust-margin-x'
 });
 
 const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
@@ -264,7 +248,7 @@ const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
   gridArea: 'description'
 });
 
-const attachmentContent = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+const attachmentContent = style({
   display: 'grid',
   gridTemplateColumns: ['minmax(0, 1fr)'],
   gridTemplateAreas: ['title', 'description'],
@@ -273,16 +257,6 @@ const attachmentContent = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
   minWidth: 0,
   alignItems: 'baseline',
   alignContent: 'start',
-  rowGap: {
-    size: {
-      XS: 4,
-      S: 4,
-      M: space(6),
-      L: space(6),
-      XL: 8
-    },
-    [noDescription]: 0
-  },
   paddingStart: {
     default: '--card-spacing',
     ':first-child': 0
@@ -303,7 +277,7 @@ const CloseButton = function CloseButton(props) {
       slot="remove"
       style={pressScale(ref, {})}
       className={renderProps =>
-        mergeStyles(styles({...renderProps, size: props.size || 'M'}), props.styles)
+        mergeStyles(closeButton({...renderProps, size: props.size || 'M'}), props.styles)
       }>
       <Cross size="M" />
     </Button>
@@ -338,27 +312,200 @@ export interface AttachmentListProps<T>
   styles?: StyleString;
 }
 
+const flexRow = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center'
+} as const;
+
+const tagListStyles = style({
+  ...flexRow,
+  flexGrow: 1,
+  gap: 8,
+  overflowX: 'auto',
+  overflowY: 'clip',
+  scrollbarWidth: {
+    '@supports (animation-timeline: scroll())': 'none'
+  },
+  scrollSnapType: 'x mandatory',
+  // padding for focus ring
+  padding: 16,
+  margin: -16,
+  boxSizing: 'border-box',
+  scrollPaddingX: {
+    default: 16,
+    '@supports (animation-timeline: scroll())': 64
+  }
+});
+
+const buttonFade = keyframes(`
+  from { opacity: 0; visibility: hidden }
+  to { opacity: 1; visibility: visible }
+`);
+
+const carouselNavButtonStyles = style<{
+  isDisabled: boolean;
+  isHovered: boolean;
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  direction: 'ltr' | 'rtl';
+  side: 'start' | 'end';
+}>({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  size: controlSizeM,
+  flexShrink: 0,
+  borderRadius: 'full',
+  borderStyle: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: baseColor('transparent-overlay-100'),
+    forcedColors: 'ButtonFace'
+  },
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  scale: {
+    direction: {
+      rtl: -1
+    }
+  },
+  disableTapHighlight: true,
+  position: 'absolute',
+  zIndex: 1,
+  insetEnd: {
+    side: {
+      end: 0
+    }
+  },
+  opacity: {
+    default: 0,
+    isFocusVisible: 1
+  },
+  visibility: {
+    default: 'hidden',
+    isFocusVisible: 'visible'
+  },
+  animation: {
+    '@supports (animation-timeline: scroll())': buttonFade,
+    isFocusVisible: 'none'
+  },
+  animationDuration: 1,
+  animationTimingFunction: 'in-out',
+  animationFillMode: 'both',
+  animationDirection: {
+    side: {
+      start: 'normal',
+      end: 'reverse'
+    }
+  }
+});
+
+function CarouselNavButton({side, ...otherProps}: ButtonProps & {side: 'start' | 'end'}) {
+  let ref = useRef(null);
+  let {direction} = useLocale();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  let Icon = side === 'start' ? ChevronLeft : ChevronRight;
+  // oxlint-disable react/react-compiler
+  return (
+    <Button
+      {...otherProps}
+      ref={ref}
+      aria-label={stringFormatter.format(
+        side === 'start' ? 'attachmentlist.previousAttachments' : 'attachmentlist.nextAttachments'
+      )}
+      style={pressScale(ref, {
+        animationTimeline: '--carousel-scroll',
+        animationRange: side === 'start' ? '0px 32px' : 'calc(100% - 32px) 100%'
+      } as CSSProperties)}
+      className={renderProps => carouselNavButtonStyles({...renderProps, direction, side})}>
+      <Icon />
+    </Button>
+  );
+  // oxlint-enable react/react-compiler
+}
+
+/**
+ * An AttachmentList displays removable file attachments with previews and upload states.
+ */
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let scrollRef = useRef<HTMLDivElement>(null);
+  let {direction} = useLocale();
+  let scroll = (dir: 1 | -1) => {
+    let el = scrollRef.current;
+    if (!el) {
+      return;
+    }
+
+    // RTL flips the scroll direction convention; flip the sign to match.
+    let sign = direction === 'rtl' ? -1 : 1;
+    el.scrollTo({
+      left: Math.max(
+        0,
+        Math.min(
+          el.scrollWidth - el.clientWidth,
+          el.scrollLeft + sign * dir * (el.clientWidth - 64 * 2)
+        )
+      ),
+      behavior: 'smooth'
+    });
+  };
+
   return (
-    <TagGroup {...otherProps} className={styles} ref={domRef}>
+    <TagGroup
+      {...otherProps}
+      className={mergeStyles(style({...flexRow, gap: 8, position: 'relative'}), styles)}
+      style={
+        {
+          timelineScope: '--carousel-scroll'
+        } as CSSProperties
+      }
+      ref={domRef}>
+      <CarouselNavButton side="start" onPress={() => scroll(-1)} />
       <TagList
+        ref={scrollRef}
         items={items}
         dependencies={dependencies}
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 16,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          width: 'full'
-        })}>
+        className={
+          tagListStyles +
+          ' ' +
+          scrollFade({x: 32, inset: 56}) +
+          ' ' +
+          // Hack to keep scroll fade visible when the buttons are focused.
+          // 88px = 32 + 56
+          css(
+            `&:is(button[data-focus-visible]+*){--scroll-fade-left: 88px !important} &:has(+ button[data-focus-visible]){--scroll-fade-right: calc(100% - 88px) !important}`
+          )
+        }
+        style={
+          {
+            scrollTimelineName: '--carousel-scroll',
+            scrollTimelineAxis: 'inline'
+          } as CSSProperties
+        }>
         {children}
       </TagList>
+      <CarouselNavButton side="end" onPress={() => scroll(1)} />
     </TagGroup>
   );
 });
@@ -387,110 +534,27 @@ const tagStyles = style({
   flexGrow: 0,
   position: 'relative',
   ...focusRing(),
-  borderRadius: 'default'
+  borderRadius: 'lg',
+  maxWidth: 'calc(100% - 52px * 2)',
+  scrollSnapAlign: 'start'
 });
-
-// this is checking that there isn't content in the attachment
-// similar to onlyPreview, but specifically checking siblings before the alert icon (aka looking for Content)
-const onlyPreviewFromError = ':not([data-slot=content] ~ *)';
-const attachmentErrorStyles = style({
-  display: 'flex',
-  flexShrink: 0,
-  alignItems: 'center',
-  paddingStart: {
-    default: 8,
-    [onlyPreviewFromError]: 0
-  },
-  position: {
-    [onlyPreviewFromError]: 'absolute'
-  },
-  top: {
-    [onlyPreviewFromError]: '50%'
-  },
-  insetStart: {
-    [onlyPreviewFromError]: '50%'
-  },
-  transform: {
-    [onlyPreviewFromError]: 'translate(-50%, -50%)'
-  },
-  '--iconPrimary': {
-    type: 'color',
-    value: 'negative'
-  }
-});
-
-// this is also checking that there isn't content in the attachment
-// similar to onlyPreview, but specifically checking siblings after the thumbnail (aka looking for Content)
-const onlyPreviewFromThumbnail = ':not(:has(~ [data-slot=content]))';
-function AttachmentContextProvider({
-  children,
-  isUploading,
-  isInvalid
-}: {
-  children: ReactNode;
-  isUploading: boolean;
-  isInvalid?: boolean;
-}) {
-  let imageCtx = useContext(ImageContext);
-  let illustrationCtx = useContext(IllustrationContext);
-  const opacityStyles = style({
-    opacity: {
-      default: 1,
-      isUploading: 0.15,
-      isInvalid: {
-        default: 1,
-        [onlyPreviewFromThumbnail]: 0.15
-      }
-    },
-    transition: 'default'
-  })({isUploading, isInvalid});
-  const imageSlots = imageCtx && 'slots' in imageCtx ? imageCtx.slots : undefined;
-  const illustrationSlots =
-    illustrationCtx && 'slots' in illustrationCtx ? illustrationCtx.slots : undefined;
-
-  return (
-    <Provider
-      values={[
-        [
-          ImageContext,
-          {
-            ...imageCtx,
-            slots: {
-              ...imageSlots,
-              thumbnail: {
-                ...imageSlots?.thumbnail,
-                styles: mergeStyles(imageSlots?.thumbnail?.styles, opacityStyles)
-              }
-            }
-          }
-        ],
-        [
-          IllustrationContext,
-          {
-            slots: {
-              ...illustrationSlots,
-              thumbnail: {
-                ...illustrationSlots?.thumbnail,
-                styles: mergeStyles(illustrationSlots?.thumbnail?.styles, opacityStyles)
-              }
-            }
-          }
-        ]
-      ]}>
-      {children}
-    </Provider>
-  );
-}
-
 interface AttachmentCardProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   isInvalid?: boolean;
+  isLoading?: boolean;
   children: ReactNode;
 }
 
-function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCardProps) {
+function AttachmentCard({
+  size = 'M',
+  isInvalid = false,
+  isLoading = false,
+  children
+}: AttachmentCardProps) {
   return (
-    <div aria-invalid={isInvalid || undefined} className={attachmentCard({size, isInvalid})}>
+    <div
+      aria-invalid={isInvalid || undefined}
+      className={attachmentCard({size, isInvalid, isLoading})}>
       <Provider
         values={[
           [
@@ -505,30 +569,14 @@ function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCar
                     flexShrink: 0,
                     pointerEvents: 'none',
                     userSelect: 'none',
-                    size: '--basic-thumb-size',
-                    borderRadius: '[3px]',
+                    size: '--image-size',
+                    borderRadius: '--image-border-radius',
                     objectFit: 'cover',
                     outlineStyle: 'solid',
-                    outlineWidth: {
-                      default: 2,
-                      size: {
-                        XS: 1
-                      }
-                    },
-                    outlineColor: '--s2-container-bg'
-                  })({size})
-                }
-              }
-            }
-          ],
-          [
-            IllustrationContext,
-            {
-              slots: {
-                thumbnail: {
-                  styles: illustThumbnailStyles,
-                  // @ts-ignore
-                  'data-rsp-slot': 'illustration'
+                    outlineWidth: 1,
+                    outlineColor: 'gray-800/10',
+                    outlineOffset: -1
+                  })
                 }
               }
             }
@@ -546,7 +594,7 @@ function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCar
           [
             ContentContext,
             {
-              styles: attachmentContent({size}),
+              styles: attachmentContent,
               // @ts-ignore
               'data-slot': 'content'
             }
@@ -558,6 +606,9 @@ function AttachmentCard({size = 'M', isInvalid = false, children}: AttachmentCar
   );
 }
 
+/**
+ * Attachment displays an individual file attachment within a PromptFieldAttachmentList.
+ */
 export const Attachment = forwardRef(function Attachment(
   props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
@@ -574,7 +625,7 @@ export const Attachment = forwardRef(function Attachment(
     size = 'M'
   } = props;
   let domRef = useDOMRef(ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+  let isLoading = props.uploadProgress != null && props.uploadProgress < 100;
   return (
     <Tag
       id={id}
@@ -584,42 +635,11 @@ export const Attachment = forwardRef(function Attachment(
       aria-describedby={ariaDescribedby}
       ref={domRef}
       className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
-      <AttachmentCard size={size} isInvalid={isInvalid}>
-        {props.uploadProgress != null && props.uploadProgress < 100 && (
-          <div
-            className={style({
-              position: 'absolute',
-              top: '50%',
-              insetStart: {
-                default: '50%',
-                // this checks that there is text content in the attachment + a Image as a thumbnail
-                ':has(~ [data-slot=content]):not(:has(~ [data-rsp-slot=illustration]))':
-                  '[calc(var(--card-padding-x) + var(--basic-thumb-size) / 2)]',
-                // this checks that there is text content in the attachment + a Illustration as a thumbnail
-                ':has(~ [data-slot=content]):has(~ [data-rsp-slot=illustration])':
-                  '[calc(var(--card-padding-x) + var(--illust-margin-x) + var(--illust-thumb-size) / 2)]'
-              },
-              transform: 'translate(-50%, -50%)'
-            })}>
-            <ProgressCircle
-              aria-label={stringFormatter.format('promptfield.uploading')}
-              value={props.uploadProgress}
-              // TODO: should probably be M for most thumbnail only attachments at varying sizes, but needs to be S if there is text content
-              // aka like a actualy horizontal card, but to do this I need to know if text sibling is there...
-              size="S"
-            />
-          </div>
-        )}
-        <AttachmentContextProvider
-          isInvalid={isInvalid}
-          isUploading={props.uploadProgress != null && props.uploadProgress < 100}>
+      <AttachmentCard size={size} isInvalid={isInvalid} isLoading={isLoading}>
+        <AttachmentPreviewContext.Provider
+          value={{isInvalid: !!isInvalid, uploadProgress: props.uploadProgress ?? 100, size}}>
           {typeof children === 'function' ? children({size}) : children}
-        </AttachmentContextProvider>
-        {isInvalid && (
-          <div aria-hidden="true" className={attachmentErrorStyles}>
-            <AlertTriangleIcon size={size} />
-          </div>
-        )}
+        </AttachmentPreviewContext.Provider>
       </AttachmentCard>
       {/** Definitely not a close button, though looks like one. */}
       <div
@@ -627,7 +647,7 @@ export const Attachment = forwardRef(function Attachment(
           position: 'absolute',
           top: 0,
           insetEnd: 0,
-          transform: 'translate(50%, -50%)'
+          transform: 'translate(30%, -30%)'
         })}>
         <CloseButton size="XS" />
       </div>
@@ -635,17 +655,106 @@ export const Attachment = forwardRef(function Attachment(
   );
 });
 
+const attachmentPreviewWrapper = style({
+  width: 32,
+  height: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+const AttachmentPreviewContext = createContext({
+  isInvalid: false,
+  uploadProgress: 100,
+  size: 'S' as 'XS' | 'S' | 'M' | 'L' | 'XL'
+});
+
+export interface AttachmentPreviewProps extends ImageProps {
+  mimeType: string;
+}
+
+/**
+ * AttachmentPreview renders a preview of a file attachment.
+ */
+export function AttachmentPreview(props: AttachmentPreviewProps) {
+  let {mimeType, ...otherProps} = props;
+  let {isInvalid, uploadProgress, size} = useContext(AttachmentPreviewContext)!;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
+
+  if (isInvalid) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <AlertTriangleIcon size={size} />
+      </div>
+    );
+  }
+
+  if (uploadProgress < 100) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <ProgressCircle
+          aria-label={stringFormatter.format('promptfield.uploading')}
+          value={uploadProgress}
+          size="S"
+        />
+      </div>
+    );
+  }
+
+  if (otherProps.src) {
+    return <Image {...otherProps} slot="thumbnail" />;
+  }
+
+  if (mimeType.startsWith('audio/')) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <AudioWave />
+      </div>
+    );
+  }
+
+  if (mimeType.startsWith('video/')) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <Play />
+      </div>
+    );
+  }
+
+  if (mimeType.startsWith('image/')) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <ImageIcon />
+      </div>
+    );
+  }
+
+  if (mimeType.startsWith('text/')) {
+    return (
+      <div className={attachmentPreviewWrapper}>
+        <FileText />
+      </div>
+    );
+  }
+
+  return (
+    <div className={attachmentPreviewWrapper}>
+      <File />
+    </div>
+  );
+}
+
 function AlertTriangleIcon({size}) {
   switch (size) {
     case 'XS':
-      return <AlertTriangle styles={iconStyle({size: 'XS'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'XS', color: 'negative'})} />;
     case 'S':
-      return <AlertTriangle styles={iconStyle({size: 'S'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'S', color: 'negative'})} />;
     case 'M':
-      return <AlertTriangle styles={iconStyle({size: 'M'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'M', color: 'negative'})} />;
     case 'L':
-      return <AlertTriangle styles={iconStyle({size: 'L'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'L', color: 'negative'})} />;
     case 'XL':
-      return <AlertTriangle styles={iconStyle({size: 'XL'})} />;
+      return <AlertTriangle styles={iconStyle({size: 'XL', color: 'negative'})} />;
   }
 }

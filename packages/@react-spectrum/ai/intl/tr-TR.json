@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Yeni mesaj",
   "chat.scrollToBottom": "Aşağıya kaydırın",
   "messagefeedback.thumbDown": "Yanıt kötüydü",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "Ekle",
   "promptfield.label": "Prompt",
   "promptfield.placeholder": "Başlamaya hazır mısınız? Soru sorun, fikir paylaşın veya görev ekleyin.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Dur",
   "promptfield.submitButton": "Gönder",
   "promptfield.uploading": "Yükleme",
   "responsestatus.loading": "Yükleniyor",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Kayıtlara başlayın",
-  "voicebutton.stopListening": "Kaydı durdur"
+  "voicebutton.stopListening": "Kaydı durdur",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
