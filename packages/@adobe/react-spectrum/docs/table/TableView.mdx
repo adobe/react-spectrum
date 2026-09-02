@@ -301,27 +301,6 @@ The example below applies `isRowHeader` to the "First Name" and "Last Name" colu
 </TableView>
 ```
 
-When `selectionMode` is `"multiple"`, the select all checkbox in the table header defaults to an accessible label of "Select All". Use the `selectAllLabel` prop to provide a more descriptive label, which is especially useful when a page has multiple TableViews and the default label wouldn't let assistive technology users distinguish between them.
-
-```tsx example
-<TableView aria-label="Items" selectionMode="multiple" selectAllLabel="Select all items">
-  <TableHeader>
-    <Column isRowHeader>Name</Column>
-    <Column align="end">Price</Column>
-  </TableHeader>
-  <TableBody>
-    <Row>
-      <Cell>Keyboard</Cell>
-      <Cell>$50</Cell>
-    </Row>
-    <Row>
-      <Cell>Mouse</Cell>
-      <Cell>$25</Cell>
-    </Row>
-  </TableBody>
-</TableView>
-```
-
 ## Asynchronous loading
 TableView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
 set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
