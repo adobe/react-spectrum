@@ -24,24 +24,25 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
       aria-label="Files"
       /* PROPS */
       selectedRoute={selectedRoute}
+      renderLink={props => <RouterLink {...props} />}
       styles={style({height: 240, width: 210})}
       defaultExpandedKeys={['guidelines', 'color']}>
       <SideNavItem href="/guidelines" id="guidelines" textValue="Guidelines">
-        <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Guidelines</SideNavItemLink></SideNavItemContent>
+        <SideNavItemContent><SideNavItemLink>Guidelines</SideNavItemLink></SideNavItemContent>
         <SideNavItem href="/style" id="style" textValue="Style">
-          <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Style</SideNavItemLink></SideNavItemContent>
+          <SideNavItemContent><SideNavItemLink>Style</SideNavItemLink></SideNavItemContent>
         </SideNavItem>
         <SideNavItem href="/color" id="color" textValue="Color">
-          <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Color</SideNavItemLink></SideNavItemContent>
+          <SideNavItemContent><SideNavItemLink>Color</SideNavItemLink></SideNavItemContent>
           <SideNavItem href="/background-layers" id="background-layers" textValue="Background Layers">
-            <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Background Layers</SideNavItemLink></SideNavItemContent>
+            <SideNavItemContent><SideNavItemLink>Background Layers</SideNavItemLink></SideNavItemContent>
           </SideNavItem>
         </SideNavItem>
       </SideNavItem>
       <SideNavItem id="support" textValue="Support">
         <SideNavItemContent>Support</SideNavItemContent>
         <SideNavItem href="/contact-us" id="contact-us" textValue="Contact Us">
-          <SideNavItemContent><SideNavItemLink render={props => <RouterLink {...props} />}>Contact Us</SideNavItemLink></SideNavItemContent>
+          <SideNavItemContent><SideNavItemLink>Contact Us</SideNavItemLink></SideNavItemContent>
         </SideNavItem>
       </SideNavItem>
     </SideNav>
@@ -88,12 +89,13 @@ let items: Item[] = [
       aria-label="Files"
       styles={style({height: 260, width: 210})}
       selectedRoute={selectedRoute}
+      renderLink={props => <RouterLink {...props} />}
       defaultExpandedKeys={[1, 2, 5]}
       items={items}>
       {function renderItem(item) {
         return (
           <SideNavItem textValue={item.title} href={item.href}>
-            <SideNavItemContent>{item.href ? <SideNavItemLink render={props => <RouterLink {...props} />}>{item.title}</SideNavItemLink> : item.title}</SideNavItemContent>
+            <SideNavItemContent>{item.href ? <SideNavItemLink>{item.title}</SideNavItemLink> : item.title}</SideNavItemContent>
             {/*- begin highlight -*/}
             {/* recursively render children */}
             {item.children && <Collection items={item.children}>
@@ -151,6 +153,7 @@ let items: Item[] = [
       aria-label="Files"
       styles={style({height: 300, width: 210})}
       selectedRoute={selectedRoute}
+      renderLink={props => <RouterLink {...props} />}
       defaultExpandedKeys={[1, 2, 5]}
       items={items}>
       {function renderItem(item) {
@@ -159,7 +162,7 @@ let items: Item[] = [
             <SideNavItemContent>
               {/*- begin highlight -*/}
               {
-                item.href ? <SideNavItemLink render={props => <RouterLink {...props} />}>
+                item.href ? <SideNavItemLink>
                   {item.type === 'directory' ? <Folder /> : <File />}
                   <Text>{item.title}</Text>
                 </SideNavItemLink> : <>
@@ -192,10 +195,7 @@ let items: Item[] = [
 
 ## Routing
 
-SideNavs do not support an uncontrolled selection state, you are responsible for managing it through the `selectedRoute` prop. You may wire this up
-to a router or other state management solution.
-
-If a SideNavItem has an `href`, then you must pass a `SideNavItemLink` as a child of the `SideNavItemContent`.
+SideNavs do not support an uncontrolled selection state, you are responsible for managing it through the `selectedRoute` prop. If a SideNavItem has an `href`, then you must pass a `SideNavItemLink` as a child of the `SideNavItemContent`.
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/react-aria/Router.tsx']}
 "use client";
@@ -213,11 +213,12 @@ import Images from '@react-spectrum/s2/icons/Images';
       aria-label="Files"
       defaultExpandedKeys={['your-libraries']}
       selectedRoute={selectedRoute}
+      renderLink={props => <RouterLink {...props} />}
       styles={style({height: 120, width: 210})}>
     {/*- end highlight -*/}
       <SideNavItem href="/files" textValue="Files">
         <SideNavItemContent>
-          <SideNavItemLink render={props => <RouterLink {...props} />}>
+          <SideNavItemLink>
             <Files />
             <Text>Files</Text>
           </SideNavItemLink>
@@ -225,14 +226,14 @@ import Images from '@react-spectrum/s2/icons/Images';
       </SideNavItem>
       <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
         <SideNavItemContent>
-          <SideNavItemLink render={props => <RouterLink {...props} />}>
+          <SideNavItemLink>
             <CCLibrary />
             <Text>Your Libraries</Text>
           </SideNavItemLink>
         </SideNavItemContent>
         <SideNavItem id="photos" href="/photos" textValue="Photos">
           <SideNavItemContent>
-            <SideNavItemLink render={props => <RouterLink {...props} />}>
+            <SideNavItemLink>
               <Images />
               <Text>Photos</Text>
             </SideNavItemLink>
@@ -244,7 +245,7 @@ import Images from '@react-spectrum/s2/icons/Images';
 </Router>
 ```
 
-To integrate with a client side router, use the `renderLink` prop on `SideNavItemLink` to delegate to your router's link component. This supports features like prefetching on hover and avoids full page reloads.
+To integrate with a client side router, use the `renderLink` prop on `SideNav` to delegate to your router's link component. This supports features like prefetching on hover and avoids full page reloads.
 Get the current route from your framework and pass it as `selectedRoute`.
 
 <ExampleSwitcher type="framework" examples={['Next.js', 'React Router']}>
@@ -256,10 +257,10 @@ Get the current route from your framework and pass it as `selectedRoute`.
   function Sidebar() {
     let selectedRoute = usePathname();
     return (
-      <SideNav aria-label="Files" selectedRoute={selectedRoute}>
+      <SideNav aria-label="Files" selectedRoute={selectedRoute} renderLink={props => <NextLink {...props} />}>
         <SideNavItem href="/files" textValue="Files">
           <SideNavItemContent>
-            <SideNavItemLink render={props => <NextLink {...props} />}>
+            <SideNavItemLink>
               <Text>Files</Text>
             </SideNavItemLink>
           </SideNavItemContent>
@@ -276,10 +277,10 @@ Get the current route from your framework and pass it as `selectedRoute`.
   function Sidebar() {
     let {pathname} = useLocation();
     return (
-      <SideNav aria-label="Files" selectedRoute={pathname}>
+      <SideNav aria-label="Files" selectedRoute={pathname} renderLink={props => <RouterLink {...props} to={props.href} />}>
         <SideNavItem href="/files" textValue="Files">
           <SideNavItemContent>
-            <SideNavItemLink render={props => <RouterLink {...props} to={props.href} />}>
+            <SideNavItemLink>
               <Text>Files</Text>
             </SideNavItemLink>
           </SideNavItemContent>
@@ -309,14 +310,14 @@ import Apps from '@react-spectrum/s2/icons/Apps';
 
 <Router defaultSelectedRoute="/files">
   {({selectedRoute}) => (
-    <SideNav aria-label="Files" selectedRoute={selectedRoute} styles={style({height: 260, width: 210})}>
+    <SideNav aria-label="Files" selectedRoute={selectedRoute} renderLink={props => <RouterLink {...props} />} styles={style({height: 260, width: 210})}>
       {/*- begin highlight -*/}
       <SideNavSection>
         <SideNavHeader>Favorites</SideNavHeader>
       {/*- end highlight -*/}
         <SideNavItem href="/applications" textValue="Applications">
           <SideNavItemContent>
-            <SideNavItemLink render={props => <RouterLink {...props} />}>
+            <SideNavItemLink>
               <Apps />
               <Text>Applications</Text>
             </SideNavItemLink>
@@ -324,7 +325,7 @@ import Apps from '@react-spectrum/s2/icons/Apps';
         </SideNavItem>
         <SideNavItem href="/downloads" textValue="Downloads">
           <SideNavItemContent>
-            <SideNavItemLink render={props => <RouterLink {...props} />}>
+            <SideNavItemLink>
               <Download />
               <Text>Downloads</Text>
             </SideNavItemLink>
@@ -335,7 +336,7 @@ import Apps from '@react-spectrum/s2/icons/Apps';
         <SideNavHeader>Workspaces</SideNavHeader>
         <SideNavItem href="/files" textValue="Files">
           <SideNavItemContent>
-            <SideNavItemLink render={props => <RouterLink {...props} />}>
+            <SideNavItemLink>
               <Files />
               <Text>Files</Text>
             </SideNavItemLink>
@@ -343,14 +344,14 @@ import Apps from '@react-spectrum/s2/icons/Apps';
         </SideNavItem>
         <SideNavItem href="/your-libraries" textValue="Your Libraries">
           <SideNavItemContent>
-            <SideNavItemLink render={props => <RouterLink {...props} />}>
+            <SideNavItemLink>
               <CCLibrary />
               <Text>Your Libraries</Text>
             </SideNavItemLink>
           </SideNavItemContent>
           <SideNavItem href="/photos" textValue="Photos">
             <SideNavItemContent>
-              <SideNavItemLink render={props => <RouterLink {...props} />}>
+              <SideNavItemLink>
                 <Images />
                 <Text>Photos</Text>
               </SideNavItemLink>
@@ -359,14 +360,14 @@ import Apps from '@react-spectrum/s2/icons/Apps';
         </SideNavItem>
         <SideNavItem href="/shared-with-you" id="shared-with-you" textValue="Shared with You">
           <SideNavItemContent>
-            <SideNavItemLink render={props => <RouterLink {...props} />}>
+            <SideNavItemLink>
               <UserGroup />
               <Text>Shared with You</Text>
             </SideNavItemLink>
           </SideNavItemContent>
           <SideNavItem href="/animations" textValue="Animations">
             <SideNavItemContent>
-              <SideNavItemLink render={props => <RouterLink {...props} />}>
+              <SideNavItemLink>
                 <Animation />
                 <Text>Animations</Text>
               </SideNavItemLink>
