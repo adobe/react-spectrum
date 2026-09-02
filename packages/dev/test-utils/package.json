@@ -29,8 +29,8 @@
     "@swc/helpers": "^0.5.0",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^6.0.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.5#~/.yarn/patches/@testing-library-user-event-npm-14.6.5-1fcf457da8.patch",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.7#~/.yarn/patches/@testing-library-user-event-npm-14.6.7-826ddcedb3.patch",
     "jest": "^30.0.0",
     "react-aria": "^3.47.0",
     "resolve": "^2.0.0-next.6"

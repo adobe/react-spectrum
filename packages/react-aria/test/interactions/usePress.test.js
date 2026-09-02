@@ -3404,6 +3404,42 @@ describe('usePress', function () {
         }
       ]);
     });
+
+    it('should not fire an extra press for the native click fired after keyboard activation on native elements', function () {
+      // Native elements (checkbox/radio/button/anchor) fire a native click as the default action
+      // of keyboard activation. That click looks like a virtual click (detail === 0, empty
+      // pointerType), so it must not fire press a second time on top of the keyboard press.
+      let onPress = jest.fn();
+      let {getByRole} = render(<Example elementType="input" type="checkbox" onPress={onPress} />);
+
+      let el = getByRole('checkbox');
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
+      // The browser fires a native click as the default action of the keyboard activation.
+      fireEvent.click(el, {detail: 0});
+
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onPress.mock.calls[0][0].pointerType).toBe('keyboard');
+    });
+
+    it('should still fire press for a virtual click after keyboard activation on non-native elements', function () {
+      // A div with role="button" does not fire a native click on keyboard activation, so a click
+      // is always a genuine virtual click (e.g. from a screen reader) that must fire press, even
+      // if it follows a keyboard activation of the same element.
+      let onPress = jest.fn();
+      let {getByRole} = render(<Example role="button" onPress={onPress} />);
+
+      let el = getByRole('button');
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onPress.mock.calls[0][0].pointerType).toBe('keyboard');
+
+      // A later virtual click from a screen reader should still fire press.
+      fireEvent.click(el, {detail: 0});
+      expect(onPress).toHaveBeenCalledTimes(2);
+      expect(onPress.mock.calls[1][0].pointerType).toBe('virtual');
+    });
   });
 
   describe('virtual click events', function () {

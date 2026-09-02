@@ -77,6 +77,7 @@ export interface PressHookProps extends PressProps {
 interface PressState {
   isPressed: boolean;
   ignoreEmulatedMouseEvents: boolean;
+  ignoreClickAfterKeyboard: boolean;
   didFirePressStart: boolean;
   isTriggeringEvent: boolean;
   activePointerId: any;
@@ -211,6 +212,7 @@ export function usePress(props: PressHookProps): PressResult {
   let ref = useRef<PressState>({
     isPressed: false,
     ignoreEmulatedMouseEvents: false,
+    ignoreClickAfterKeyboard: false,
     didFirePressStart: false,
     isTriggeringEvent: false,
     activePointerId: null,
@@ -461,6 +463,7 @@ export function usePress(props: PressHookProps): PressResult {
           // trigger as if it were a keyboard click.
           if (
             !state.ignoreEmulatedMouseEvents &&
+            !state.ignoreClickAfterKeyboard &&
             !state.isPressed &&
             (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))
           ) {
@@ -488,6 +491,7 @@ export function usePress(props: PressHookProps): PressResult {
           }
 
           state.ignoreEmulatedMouseEvents = false;
+          state.ignoreClickAfterKeyboard = false;
           if (shouldStopPropagation) {
             e.stopPropagation();
           }
@@ -505,6 +509,15 @@ export function usePress(props: PressHookProps): PressResult {
         let wasPressed = nodeContains(state.target, target as Element);
         triggerPressEndEvent(createEvent(state.target, e), 'keyboard', wasPressed);
         if (wasPressed) {
+          // Some elements (e.g. checkbox, radio, button) fire a native click event as the
+          // default action of keyboard activation. That click is a "virtual" click (detail === 0,
+          // empty pointerType), so ignore it in the onClick handler to avoid firing press twice.
+          // Only set this for elements that actually fire a native click; otherwise a later
+          // genuine virtual click (e.g. from a screen reader) on a non-native element like a
+          // div with role="button" would be incorrectly suppressed.
+          if (firesNativeClickOnKeyboard(state.target)) {
+            state.ignoreClickAfterKeyboard = true;
+          }
           triggerSyntheticClick(e, state.target);
         }
         removeAllGlobalListeners();
@@ -555,6 +568,8 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         state.pointerType = e.pointerType;
+        // A new physical pointer interaction supersedes any pending keyboard activation.
+        state.ignoreClickAfterKeyboard = false;
 
         let shouldStopPropagation = true;
         if (!state.isPressed) {
@@ -1013,6 +1028,21 @@ export function usePress(props: PressHookProps): PressResult {
 
 function isHTMLAnchorLink(target: Element): target is HTMLAnchorElement {
   return target.tagName === 'A' && target.hasAttribute('href');
+}
+
+// Elements that fire a native click event as the default action of keyboard activation.
+// For these, keyboard activation results in both our keyboard press handling and a native
+// (virtual) click, so the click must be ignored to avoid firing press twice. Non-native
+// elements (e.g. a div with role="button") do not fire a native click, so a click on them
+// is always a genuine virtual click (e.g. from a screen reader) that should fire press.
+function firesNativeClickOnKeyboard(target: Element): boolean {
+  let ownerWindow = getOwnerWindow(target);
+  return (
+    target instanceof ownerWindow.HTMLButtonElement ||
+    target instanceof ownerWindow.HTMLInputElement ||
+    isHTMLAnchorLink(target) ||
+    target.tagName === 'SUMMARY'
+  );
 }
 
 function isValidKeyboardEvent(

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
@@ -26,7 +27,10 @@ export type SwitchStory = StoryFn<typeof Switch>;
 
 export const SwitchExample: SwitchStory = () => {
   return (
-    <Switch className={classNames(styles, 'switchExample')} data-testid="switch-example">
+    <Switch
+      className={classNames(styles, 'switchExample')}
+      data-testid="switch-example"
+      onPress={action('onPress')}>
       <div className={classNames(styles, 'switchExample-indicator')} />
       Switch me
     </Switch>

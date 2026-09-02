@@ -1,0 +1,36 @@
+diff --git a/dist/cjs/document/prepareDocument.js b/dist/cjs/document/prepareDocument.js
+index 39a24b8f2ccdc52739d130480ab18975073616cb..3d7befabd9753edf08de96da9664b02dffa2e16c 100644
+--- a/dist/cjs/document/prepareDocument.js
++++ b/dist/cjs/document/prepareDocument.js
+@@ -27,6 +27,13 @@ function prepareDocument(document) {
+     }
+     document.addEventListener('blur', (e)=>{
+         const el = e.target;
++        // Do not treat programmatic/virtual blur events (e.g. ARIA virtual focus) as a
++        // real blur. A virtual blur leaves the element as the active element while the
++        // document still has focus; a genuine window blur clears document focus and a
++        // real focus change moves activeElement — both of those should still commit.
++        if (el && el.ownerDocument && el.ownerDocument.activeElement === el && el.ownerDocument.hasFocus()) {
++            return;
++        }
+         const initialValue = UI.getInitialValue(el);
+         if (initialValue !== undefined) {
+             if (el.value !== initialValue) {
+diff --git a/dist/esm/document/prepareDocument.js b/dist/esm/document/prepareDocument.js
+index e1c0fcc77e638e43526f0a9452355932d0d6b05b..8bb853f6f27f9e4c2364fc90ac4c2cdd9c0e739e 100644
+--- a/dist/esm/document/prepareDocument.js
++++ b/dist/esm/document/prepareDocument.js
+@@ -25,6 +25,13 @@ function prepareDocument(document) {
+     }
+     document.addEventListener('blur', (e)=>{
+         const el = e.target;
++        // Do not treat programmatic/virtual blur events (e.g. ARIA virtual focus) as a
++        // real blur. A virtual blur leaves the element as the active element while the
++        // document still has focus; a genuine window blur clears document focus and a
++        // real focus change moves activeElement — both of those should still commit.
++        if (el && el.ownerDocument && el.ownerDocument.activeElement === el && el.ownerDocument.hasFocus()) {
++            return;
++        }
+         const initialValue = getInitialValue(el);
+         if (initialValue !== undefined) {
+             if (el.value !== initialValue) {
