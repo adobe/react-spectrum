@@ -12,13 +12,19 @@
 
 import {act, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import {
+  AttachFileMenuItem,
+  InsertMenuButton,
+  PromptField,
+  PromptFieldToolbar,
+  PromptTokenField
+} from '../src/PromptField';
+import {
   imageAttachment,
   installRangePolyfill,
   PromptFieldValue,
   renderPromptField,
   tokenTexts
 } from './utils/promptFieldTestUtils';
-import {PromptField, PromptTokenField} from '../src/PromptField';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import userEvent from '@testing-library/user-event';
@@ -444,6 +450,41 @@ describeOrSkip('PromptField', () => {
     });
   });
 
+  describe('InsertMenuButton', () => {
+    it('calls onOpenChange when the menu is opened', async () => {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <PromptField>
+          <PromptTokenField />
+          <PromptFieldToolbar>
+            <InsertMenuButton onOpenChange={onOpenChange}>
+              <AttachFileMenuItem />
+            </InsertMenuButton>
+          </PromptFieldToolbar>
+        </PromptField>
+      );
+      await user.click(getByRole('button', {name: 'Add'}));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+    });
+
+    it('calls AttachFileMenuItem onAction when the item is selected', async () => {
+      let onAction = jest.fn();
+      let {getByRole} = render(
+        <PromptField>
+          <PromptTokenField />
+          <PromptFieldToolbar>
+            <InsertMenuButton>
+              <AttachFileMenuItem onAction={onAction} />
+            </InsertMenuButton>
+          </PromptFieldToolbar>
+        </PromptField>
+      );
+      await user.click(getByRole('button', {name: 'Add'}));
+      await user.click(await findMenuItem('Attach a file'));
+      expect(onAction).toHaveBeenCalled();
+    });
+  });
+
   it('fires onKeyDown when a key is pressed in the token field', async () => {
     let onKeyDown = jest.fn();
     let {getByRole} = render(
@@ -457,5 +498,13 @@ describeOrSkip('PromptField', () => {
     await user.keyboard('a');
 
     expect(onKeyDown).toHaveBeenCalled();
+  });
+
+  it('calls onAITermsPress when the AI User Guidelines link is pressed', async () => {
+    let onAITermsPress = jest.fn();
+    let {user} = renderPromptField({onAITermsPress});
+
+    await user.click(screen.getByRole('link', {name: 'AI User Guidelines'}));
+    expect(onAITermsPress).toHaveBeenCalledTimes(1);
   });
 });

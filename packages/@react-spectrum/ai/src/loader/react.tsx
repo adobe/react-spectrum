@@ -295,7 +295,7 @@ export function PixelLoader(props: PixelLoaderProps) {
     }
     return matrix;
   }, [cells]);
-  const isHighDPI = window.devicePixelRatio >= 2;
+  const isHighDPI = (typeof document !== 'undefined' && window.devicePixelRatio >= 2) ?? false;
 
   return (
     <div
@@ -309,9 +309,9 @@ export function PixelLoader(props: PixelLoaderProps) {
         position: 'relative',
         // @ts-ignore
         forcedColorAdjust: 'none',
+        willChange: 'opacity',
         ...(isPlaying && {
-          animation: `${animId}-group-o ${duration}ms linear ${iteration}`,
-          willChange: 'opacity'
+          animation: `${animId}-group-o ${duration}ms linear ${iteration}`
         })
       }}
       {...rest}>

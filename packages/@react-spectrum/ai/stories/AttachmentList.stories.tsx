@@ -268,3 +268,61 @@ export const Mixed: Story = {
   name: 'Mixed attachements',
   render: args => <MixedAttachments {...args} />
 };
+
+function CarouselRender(args) {
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  return (
+    <AttachmentList {...listArgs} styles={style({width: 500, maxWidth: 'calc(100vw - 32px)'})}>
+      {Array.from({length: 8}, (_, i) => (
+        <AttachmentComponent
+          key={i}
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label={`file-${i + 1}.pdf`}>
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+          />
+        </AttachmentComponent>
+      ))}
+    </AttachmentList>
+  );
+}
+
+export const Carousel: Story = {
+  name: 'Carousel (overflow)',
+  render: args => <CarouselRender {...args} />
+};
+
+function CarouselCardsRender(args) {
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  return (
+    <AttachmentList {...listArgs} styles={style({width: 500, maxWidth: 'calc(100vw - 32px)'})}>
+      {Array.from({length: 6}, (_, i) => (
+        <AttachmentComponent
+          key={i}
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label={`Card_file_${i + 1}.pdf`}>
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+          />
+          <Content>
+            <Text slot="title">{`Card_file_${i + 1}.pdf`}</Text>
+            <Text slot="description">PDF</Text>
+          </Content>
+        </AttachmentComponent>
+      ))}
+    </AttachmentList>
+  );
+}
+
+export const CarouselCards: Story = {
+  name: 'Carousel with cards (overflow)',
+  render: args => <CarouselCardsRender {...args} />
+};

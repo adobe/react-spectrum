@@ -760,19 +760,21 @@ function createDOMRange(root: Element, start: Position, end: Position): Range {
 }
 
 function getDOMPosition(root: Element, pos: Position): [Node, number] {
-  let child = root.childNodes[pos.index];
+  let index = Math.max(0, Math.min(root.childNodes.length, pos.index));
+  let child = root.childNodes[index];
   if (!child) {
-    return [root, Math.min(root.childNodes.length, pos.index)];
+    return [root, index];
   } else if (child.nodeType === Node.ELEMENT_NODE) {
     // Place the cursor outside the token wrapper element.
     // This is necessary for composition events.
     if (pos.offset > 0) {
-      return [root, pos.index + 1];
+      return [root, index + 1];
     } else {
-      return [root, pos.index];
+      return [root, index];
     }
   } else {
-    return [child, pos.offset];
+    let offset = Math.max(0, Math.min(child.textContent?.length ?? 0, pos.offset));
+    return [child, offset];
   }
 }
 

@@ -120,6 +120,9 @@ export interface ChatProps {
   children?: ReactNode;
 }
 
+/**
+ * A Chat displays an accessible, streaming conversation between a user and an AI.
+ */
 export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   props: ChatProps,
   ref: DOMRef<HTMLDivElement>
@@ -249,6 +252,9 @@ export interface ThreadProps<T extends object> extends Pick<
   scrollEndThreshold?: number;
 }
 
+/**
+ * A Thread shows a conversation within a Chat.
+ */
 export function Thread<T extends object>(props: ThreadProps<T>) {
   let {
     items,
@@ -324,6 +330,9 @@ export interface ThreadScrollButtonProps {
 
 // TODO: wrapper so we can do the "if isNearBottom then hide" logic, could do this via inline styles perhaps
 // and ditch the wrapper?
+/**
+ * A ThreadScrollButton displays a button to scroll to the bottom of a Chat thread.
+ */
 export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
   let {isNearBottom, scrollToBottom, ...buttonProps} = useContext(ThreadScrollButtonContext);
   let ref = useRef<HTMLDivElement>(null);
@@ -378,6 +387,9 @@ export interface ThreadItemProps extends Pick<
   shouldAnnounceOnMount?: boolean;
 }
 
+/**
+ * A ThreadItem displays an individual chat message.
+ */
 export function ThreadItem(props: ThreadItemProps) {
   let {
     styles,
@@ -429,6 +441,9 @@ export interface ThreadLoadMoreItemProps extends GridListLoadMoreItemProps {}
 
 // TODO: Reuse GridListLoadMoreItem instead when Thread component moves into RAC.
 // Re-implementing here so we can avoid passing 'direction' to the LoadMore item
+/**
+ * A ThreadLoadMoreItem loads more chat messages when it is scrolled into the viewport.
+ */
 export const ThreadLoadMoreItem = createLeafComponent(
   LoaderNode,
   function GridListLoadingIndicator(

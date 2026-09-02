@@ -196,6 +196,7 @@ export interface HarnessOptions {
   uploadProgress?: number;
   /** Renders every attachment in the invalid state. */
   invalid?: boolean;
+  onAITermsPress?: () => void;
 }
 
 export interface HarnessSpies {
@@ -225,7 +226,8 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
     valueRef,
     attachmentsRef,
     setValueRef,
-    spies
+    spies,
+    onAITermsPress
   } = props;
   let [value, setValue] = useState<PromptFieldValue>(initialValue);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>(initialAttachments);
@@ -249,7 +251,8 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
       onStop={spies.onStop}
       onSubmit={spies.onSubmit}
       acceptedAttachmentTypes={acceptedAttachmentTypes}
-      onRemoveAttachments={spies.onRemoveAttachments}>
+      onRemoveAttachments={spies.onRemoveAttachments}
+      onAITermsPress={onAITermsPress}>
       <PromptFieldAttachmentList dependencies={[uploadProgress, invalid]}>
         {attachment => (
           <Attachment
