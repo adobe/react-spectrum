@@ -87,24 +87,28 @@ function VirtualizedMenuWithSections<T extends object>(props: AriaMenuProps<T>) 
   let ref = React.useRef(null);
   let {menuProps} = useMenu(props, state, ref);
 
-  // Flatten sections into their items so useMenuItem is invoked for each item,
-  // mirroring how the real listbox iterates a sectioned collection.
-  let nodes: {key: Key; rendered: React.ReactNode; index?: number}[] = [];
-  for (let node of state.collection) {
-    if (node.type === 'section') {
-      for (let child of getChildNodes(node, state.collection)) {
-        nodes.push(child);
-      }
-    } else if (node.type === 'item') {
-      nodes.push(node);
-    }
-  }
-
   return (
     <ul {...menuProps} ref={ref}>
-      {nodes.map(item => (
-        <VirtualizedMenuItem key={item.key} item={item} state={state} />
-      ))}
+      {[...state.collection].map(node => {
+        if (node.type === 'section') {
+          let headingId = `heading-${node.key}`;
+          return (
+            <div key={node.key} role="presentation">
+              {node.rendered && (
+                <span id={headingId} role="presentation">
+                  {node.rendered}
+                </span>
+              )}
+              <div role="group" aria-labelledby={headingId}>
+                {[...getChildNodes(node, state.collection)].map(item => (
+                  <VirtualizedMenuItem key={item.key} item={item} state={state} />
+                ))}
+              </div>
+            </div>
+          );
+        }
+        return <VirtualizedMenuItem key={node.key} item={node} state={state} />;
+      })}
     </ul>
   );
 }
@@ -167,7 +171,7 @@ describe('useMenuItem with isVirtualized', function () {
   });
 
   it('sets global aria-posinset across sections', () => {
-    let {getAllByRole} = render(
+    let {getAllByRole, getAllByRole: getAllByRole2} = render(
       <VirtualizedMenuWithSections aria-label="test menu">
         <Section title="Group 1">
           <Item key="1">One</Item>
@@ -179,6 +183,19 @@ describe('useMenuItem with isVirtualized', function () {
         </Section>
       </VirtualizedMenuWithSections>
     );
+
+    // The sections must actually render as groups, mirroring the real
+    // sectioned menu structure, so this test locks the real DOM shape.
+    let groups = getAllByRole2('group');
+    expect(groups).toHaveLength(2);
+    // Each group is labelled by its section heading, which is present in the DOM.
+    for (let group of groups) {
+      let labelledBy = group.getAttribute('aria-labelledby');
+      expect(labelledBy).not.toBeNull();
+      let heading = document.getElementById(labelledBy!);
+      expect(heading).not.toBeNull();
+      expect(heading!.textContent).toMatch(/^Group [12]$/);
+    }
 
     // aria-posinset should be global (1..4) and match aria-setsize, not restart
     // per section (which would report 1..2 for both groups).
