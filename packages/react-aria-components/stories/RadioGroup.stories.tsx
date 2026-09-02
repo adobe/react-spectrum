@@ -80,8 +80,7 @@ export const RadioGroupScreenReaderFocusRing: RadioGroupStoryObj = {
           onBlur={action('radio blur')}
           value="dogs"
           style={{position: 'relative'}}
-          visuallyHiddenStyle={{inset: 0, width: 'auto', height: 'auto'}}
-          inputStyle={{position: 'absolute', inset: 0, width: '100%', height: '100%'}}>
+          hiddenInput="stretch-to-label">
           Dog
         </Radio>
         <Radio
@@ -89,8 +88,7 @@ export const RadioGroupScreenReaderFocusRing: RadioGroupStoryObj = {
           onBlur={action('radio blur')}
           value="cats"
           style={{position: 'relative'}}
-          visuallyHiddenStyle={{inset: 0, width: 'auto', height: 'auto'}}
-          inputStyle={{position: 'absolute', inset: 0, width: '100%', height: '100%'}}>
+          hiddenInput="stretch-to-label">
           Cat
         </Radio>
       </RadioGroup>

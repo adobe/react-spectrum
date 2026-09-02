@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-// Verifies in a real browser (not jsdom) that exposing visuallyHiddenStyle and
-// inputStyle lets the hidden native input's bounding box match the visible
+// Verifies in a real browser (not jsdom) that the hiddenInput="stretch-to-label"
+// option lets the hidden native input's bounding box match the visible
 // component, so the screen reader focus ring aligns with the visual one.
 //
 // This is a layout test: jsdom does no layout, so it cannot validate this.
@@ -40,12 +40,9 @@ function covers(a: {width: number; height: number}, b: {width: number; height: n
   return a.width >= b.width - 1 && a.height >= b.height - 1;
 }
 
-it('Checkbox: visuallyHiddenStyle + inputStyle make the input cover the component', async () => {
+it('Checkbox: hiddenInput="stretch-to-label" makes the input cover the component', async () => {
   let screen = await render(
-    <Checkbox
-      style={{position: 'relative'}}
-      visuallyHiddenStyle={{inset: 0, width: 'auto', height: 'auto'}}
-      inputStyle={{position: 'absolute', inset: 0, width: '100%', height: '100%'}}>
+    <Checkbox style={{position: 'relative'}} hiddenInput="stretch-to-label">
       Test
     </Checkbox>
   );
@@ -66,15 +63,11 @@ it('Checkbox: visuallyHiddenStyle + inputStyle make the input cover the componen
   expect(inputRect.height).toBeLessThanOrEqual(labelRect.height + 2);
 });
 
-it('Radio: visuallyHiddenStyle + inputStyle make the input cover the component', async () => {
+it('Radio: hiddenInput="stretch-to-label" makes the input cover the component', async () => {
   let screen = await render(
     <RadioGroup>
       <Label>Test</Label>
-      <Radio
-        value="a"
-        style={{position: 'relative'}}
-        visuallyHiddenStyle={{inset: 0, width: 'auto', height: 'auto'}}
-        inputStyle={{position: 'absolute', inset: 0, width: '100%', height: '100%'}}>
+      <Radio value="a" style={{position: 'relative'}} hiddenInput="stretch-to-label">
         A
       </Radio>
     </RadioGroup>

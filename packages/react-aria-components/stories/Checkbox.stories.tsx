@@ -36,8 +36,7 @@ export const CheckboxScreenReaderFocusRing: CheckboxStory = {
     <Checkbox
       {...args}
       style={{position: 'relative'}}
-      visuallyHiddenStyle={{inset: 0, width: 'auto', height: 'auto'}}
-      inputStyle={{position: 'absolute', inset: 0, width: '100%', height: '100%'}}>
+      hiddenInput="stretch-to-label">
       <div className="checkbox">
         <svg viewBox="0 0 18 18" aria-hidden="true">
           <polyline points="1 9 7 14 15 4" />

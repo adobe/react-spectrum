@@ -755,18 +755,20 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(inputRef.current).toBe(radio);
   });
 
-  it('should support input className and style', () => {
+  it('should support hiddenInput stretch-to-label', () => {
     let {getByRole} = render(
       <RadioGroup>
         <Label>Test</Label>
-        <Radio inputClassName="test" inputStyle={{inset: 0}} value="a">
+        <Radio hiddenInput="stretch-to-label" value="a">
           A
         </Radio>
       </RadioGroup>
     );
     let radio = getByRole('radio');
-    expect(radio).toHaveClass('test');
+    expect(radio).toHaveStyle('position: absolute');
     expect(radio).toHaveStyle('inset: 0');
+    expect(radio).toHaveStyle('width: 100%');
+    expect(radio).toHaveStyle('height: 100%');
   });
 
   it('should support callback ref', () => {
@@ -920,19 +922,21 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
 });
 
 describe('RadioButton', function () {
-  it('should support input className and style directly on RadioButton', () => {
+  it('should support hiddenInput stretch-to-label directly on RadioButton', () => {
     let {getByRole} = render(
       <RadioGroup>
         <Label>Test</Label>
         <RadioField>
-          <RadioButton inputClassName="test" inputStyle={{inset: 0}} value="a">
+          <RadioButton hiddenInput="stretch-to-label" value="a">
             A
           </RadioButton>
         </RadioField>
       </RadioGroup>
     );
     let radio = getByRole('radio');
-    expect(radio).toHaveClass('test');
+    expect(radio).toHaveStyle('position: absolute');
     expect(radio).toHaveStyle('inset: 0');
+    expect(radio).toHaveStyle('width: 100%');
+    expect(radio).toHaveStyle('height: 100%');
   });
 });
