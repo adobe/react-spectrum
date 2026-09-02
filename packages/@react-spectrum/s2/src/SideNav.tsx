@@ -25,7 +25,7 @@ import Chevron from '../ui-icons/Chevron';
 import {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {DOMRef, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
-import {Link, type LinkProps} from 'react-aria-components/Link';
+import {Link} from 'react-aria-components/Link';
 import {
   NavigationTree,
   NavigationTreeHeader,
@@ -51,12 +51,6 @@ export interface SideNavProps<T>
     UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight;
-  /**
-   * A render function to use for all SideNavItemLink elements. Overrides the default DOM element
-   * with a custom render function. This allows rendering existing components with built-in styles
-   * and behaviors such as router links, animation libraries, and pre-styled components.
-   */
-  renderLink?: LinkProps['render'];
 }
 
 export interface SideNavItemProps extends Omit<
@@ -76,8 +70,6 @@ export interface SideNavItemProps extends Omit<
   /** Whether this item has children. */
   hasChildItems?: boolean;
 }
-
-const RenderLinkContext = createContext<LinkProps['render'] | undefined>(undefined);
 
 const sideNavWrapper = style(
   {
@@ -122,7 +114,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   props: SideNavProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, UNSAFE_className, UNSAFE_style, selectedRoute, renderLink, ...rest} = props;
+  let {children, UNSAFE_className, UNSAFE_style, selectedRoute, ...rest} = props;
 
   let domRef = useDOMRef(ref);
 
@@ -131,14 +123,12 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       ref={domRef}
       className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
       style={UNSAFE_style}>
-      <RenderLinkContext.Provider value={renderLink}>
-        <NavigationTree
-          {...rest}
-          selectedRoute={selectedRoute}
-          className={renderProps => tree(renderProps)}>
-          {children}
-        </NavigationTree>
-      </RenderLinkContext.Provider>
+      <NavigationTree
+        {...rest}
+        selectedRoute={selectedRoute}
+        className={renderProps => tree(renderProps)}>
+        {children}
+      </NavigationTree>
     </div>
   );
 });
@@ -521,22 +511,17 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
   );
 };
 
-export interface SideNavItemLinkProps extends Pick<LinkProps, 'render'> {
+export interface SideNavItemLinkProps {
   /** Rendered contents of the link. */
   children?: ReactNode;
 }
 
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
-  let {children, render: renderProp, ...otherProps} = props;
+  let {children} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
-  let contextRender = useContext(RenderLinkContext);
 
   return (
-    <Link
-      render={renderProp ?? contextRender}
-      {...otherProps}
-      {...linkFocus}
-      className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
+    <Link {...props} {...linkFocus} className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
       <Provider
         values={[
           [TextContext, {styles: treeContent}],
