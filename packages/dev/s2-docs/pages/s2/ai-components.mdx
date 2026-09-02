@@ -587,20 +587,23 @@ The `icon` prop accepts either a single icon, which loops forever, or a themed p
 ```tsx render type="s2" docs={docs.exports.PixelLoader} props={['icon', 'isPlaying']} initialProps={{isPlaying: true}}
 "use client";
 import {PixelLoader} from '@react-spectrum/ai/loader';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function PresetLoader(props) {
   return (
-    <PixelLoader
-      {...props}
-      /* PROPS */
-    />
-  );
+    <div className={style({height: 40})}>
+      <PixelLoader
+        {...props}
+        /* PROPS */
+      />
+    </div>
+  )
 }
 ```
 
 ### Usage
 
-Use the `pixelLoader` prop on `PromptTokenField` and `ResponseStatusTitle` to display the animated pixel icon.
+Use the `pixelLoader` prop on `PromptTokenField` and `ResponseStatusTitle` to display the pixel loader.
 
 <ExampleSwitcher type={null} examples={['ResponseStatus', 'PromptField']}>
 
@@ -608,14 +611,17 @@ Use the `pixelLoader` prop on `PromptTokenField` and `ResponseStatusTitle` to di
 "use client";
 import {cc} from '@react-spectrum/ai/loader';
 import {ResponseStatus, ResponseStatusTitle} from '@react-spectrum/ai';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function LoadingStatus() {
   return (
-    <ResponseStatus status="pending">
-      {/*- begin highlight -*/}
-      <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
-      {/*- end highlight -*/}
-    </ResponseStatus>
+    <div className={style({height: 40})}>
+      <ResponseStatus status="pending">
+        {/*- begin highlight -*/}
+        <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
+        {/*- end highlight -*/}
+      </ResponseStatus>
+    </div>
   );
 }
 ```
