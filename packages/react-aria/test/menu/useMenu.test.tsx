@@ -11,13 +11,12 @@
  */
 
 import {AriaMenuProps, useMenu} from '../../src/menu/useMenu';
-
-import {Item} from 'react-stately/Item';
-import {Section} from 'react-stately/Section';
 import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
+import {Item} from 'react-stately/Item';
 import {Key} from '@react-types/shared';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {Section} from 'react-stately/Section';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useMenuItem} from '../../src/menu/useMenuItem';
 import userEvent from '@testing-library/user-event';
