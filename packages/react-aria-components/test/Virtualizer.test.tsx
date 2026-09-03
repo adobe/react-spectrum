@@ -10,7 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Menu, MenuItem, MenuTrigger, Popover, Virtualizer} from 'react-aria-components';
+import {
+  Button,
+  Cell,
+  Column,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+  Row,
+  Table,
+  TableBody,
+  TableHeader,
+  Virtualizer
+} from 'react-aria-components';
 import {CollectionRendererContext} from '../src/Collection';
 import React, {useMemo} from 'react';
 import {render, within} from '@react-spectrum/test-utils-internal';
@@ -32,14 +45,26 @@ describe('Virtualizer', () => {
 
       return (
         <Virtualizer layout={layout}>
-          <MenuTrigger>
-            <Button>Trigger</Button>
-            <Popover>
-              <Menu aria-label="Menu">
-                <MenuItem id="item-1">Item 1</MenuItem>
-              </Menu>
-            </Popover>
-          </MenuTrigger>
+          <Table aria-label="Table">
+            <TableHeader>
+              <Column isRowHeader id="name">
+                Name
+                <MenuTrigger>
+                  <Button>Trigger</Button>
+                  <Popover>
+                    <Menu aria-label="Menu">
+                      <MenuItem id="item-1">Item 1</MenuItem>
+                    </Menu>
+                  </Popover>
+                </MenuTrigger>
+              </Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="row-1">
+                <Cell>Cell 1</Cell>
+              </Row>
+            </TableBody>
+          </Table>
         </Virtualizer>
       );
     }
