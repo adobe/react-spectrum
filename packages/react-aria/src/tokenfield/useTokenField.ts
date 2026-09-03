@@ -22,6 +22,7 @@ import {
 } from 'react';
 import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
+import {getScrollParents} from '../utils/getScrollParents';
 import {isMac} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {
@@ -32,6 +33,7 @@ import {
   TokenFieldState,
   TokenFieldValue
 } from 'react-stately/useTokenFieldState';
+import {scrollRectIntoView} from '../utils/scrollIntoView';
 import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEvent} from '../utils/useEvent';
 import {useField} from '../label/useField';
@@ -183,6 +185,9 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       if (ref.current === getActiveElement(getOwnerDocument(ref.current))) {
         setTokenFieldSelection(ref.current, value.selectedRange);
         announceToken(value);
+        // We call preventDefault in the beforeinput handler below, which also prevents the
+        // browser's default behavior of scrolling the caret into view. Do it ourselves instead.
+        scrollCaretIntoView(ref.current);
       }
       selectedRange.current = value.selectedRange;
     }
@@ -411,7 +416,12 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
     }
 
     let selection = window.getSelection();
-    if (ref.current && selection && selection.containsNode(ref.current, true)) {
+    if (
+      ref.current &&
+      selection &&
+      selection.containsNode(ref.current, true) &&
+      !selection.isCollapsed
+    ) {
       selection.removeAllRanges();
       state.setValue(value =>
         value.withSelectedRange(new TokenFieldValue.SelectedRange(value.caretPosition))
@@ -721,6 +731,62 @@ export function setTokenFieldSelection(
       selection.focusOffset !== focusOffset
     ) {
       selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    }
+  }
+}
+
+// Calling preventDefault in the beforeinput handler stops the browser from performing its
+// default edit action, which also suppresses its normal behavior of scrolling the caret into
+// view. Recreate that behavior by measuring the caret's position with a Range and
+// scrolling each scrollable ancestor of the field so it is visible.
+function scrollCaretIntoView(root: HTMLElement): void {
+  let selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0 || !nodeContains(root, selection.focusNode)) {
+    return;
+  }
+
+  let range = selection.getRangeAt(0);
+  if (!range.collapsed) {
+    return;
+  }
+
+  let rect = range.getBoundingClientRect();
+
+  // A collapsed range doesn't always produce a client rect. This happens for empty lines.
+  if (rect.top === 0 && rect.bottom === 0 && rect.left === 0 && rect.right === 0) {
+    let node: Node | null = range.endContainer;
+    if (node.nodeType === Node.TEXT_NODE && range.endOffset < node.nodeValue!.length) {
+      // If we are not at the end of the text node, extend the range to include the next character.
+      range = range.cloneRange();
+      range.setEnd(node, range.endOffset + 1);
+      rect = range.getBoundingClientRect();
+    } else {
+      // Otherwise find the next sibling element (e.g. trailing <br>) and use its rect in this case.
+      let nextSibling = node.nextSibling;
+      while (node && node !== root && !nextSibling) {
+        node = node.parentNode as Node | null;
+        nextSibling = node ? node.nextSibling : null;
+      }
+
+      if (nextSibling?.nodeType === Node.ELEMENT_NODE) {
+        rect = (nextSibling as HTMLElement).getBoundingClientRect();
+      }
+    }
+  }
+
+  for (let element of getScrollParents(root, true)) {
+    // scrollRectIntoView only scrolls a single scroll parent based on `rect`, which is a
+    // snapshot of the caret's position before any scrolling occurs. Scrolling an inner ancestor
+    // moves the caret within the viewport, so translate `rect` by however much we just scrolled
+    // before moving on to the next (outer) ancestor.
+    let scrollParent = element as HTMLElement;
+    let beforeTop = scrollParent.scrollTop;
+    let beforeLeft = scrollParent.scrollLeft;
+    scrollRectIntoView(scrollParent, root, rect, {block: 'nearest', inline: 'nearest'});
+    let dy = scrollParent.scrollTop - beforeTop;
+    let dx = scrollParent.scrollLeft - beforeLeft;
+    if (dy !== 0 || dx !== 0) {
+      rect = new DOMRect(rect.x - dx, rect.y - dy, rect.width, rect.height);
     }
   }
 }

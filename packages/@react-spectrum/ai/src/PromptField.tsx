@@ -12,7 +12,7 @@
 
 import {ActionButton, ActionButtonContext} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
-import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
+import {Attachment, AttachmentList, AttachmentListProps, AttachmentPreview} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button, ButtonContext} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
@@ -34,13 +34,13 @@ import {
 import {FocusableRef} from '@react-types/shared';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {IconContext, MenuTriggerProps} from '@react-spectrum/s2';
-import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {PixelLoader} from './loader/react';
 import Plus from '@react-spectrum/s2/icons/Add';
@@ -55,9 +55,11 @@ import {
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import {Provider} from 'react-aria-components/slots';
+import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
+import {Text} from '@react-spectrum/s2/Card';
 import {ToggleButton, ToggleButtonContext} from '@react-spectrum/s2/ToggleButton';
 import {
   Token,
@@ -75,7 +77,6 @@ import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
-
 export interface PromptFieldAttachment {
   id: string;
   file: File;
@@ -107,6 +108,10 @@ export interface PromptFieldProps {
    * @default 'M'
    */
   size?: 'S' | 'M';
+  /**
+   * Custom text for the AI usage disclaimer shown below the prompt field.
+   */
+  aiDisclaimer?: React.ReactNode;
 }
 
 interface PromptFieldState {
@@ -361,7 +366,13 @@ export const PromptField = forwardRef(function PromptField(
           [ActionButtonContext, {staticColor: 'auto', size}],
           [ToggleButtonContext, {staticColor: 'auto', size}]
         ]}>
-        <div ref={domRef} {...focusWithinProps}>
+        <div
+          ref={domRef}
+          {...focusWithinProps}
+          className={mergeStyles(
+            style({maxHeight: '40cqh', display: 'flex', flexDirection: 'column'}),
+            styles
+          )}>
           <PromptFieldContainer
             {...dropProps}
             role="group"
@@ -370,19 +381,24 @@ export const PromptField = forwardRef(function PromptField(
             brandColor={brandColor}
             isGenerating={isGenerating ?? false}
             isDropTarget={isDropTarget}
-            styles={styles}
             inputRef={inputRef}>
             {children}
           </PromptFieldContainer>
           <p className={style({font: 'ui-sm', color: 'gray-600', textAlign: 'center'})}>
-            {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
-            <Link
-              variant="secondary"
-              href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-              target="_blank"
-              onPress={props.onAITermsPress}>
-              {stringFormatter.format('promptfield.aiUserGuidlines')}
-            </Link>
+            {props.aiDisclaimer ?? (
+              <>
+                {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
+                <Link
+                  variant="secondary"
+                  href={
+                    'https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html'
+                  }
+                  target="_blank"
+                  onPress={props.onAITermsPress}>
+                  {stringFormatter.format('promptfield.aiUserGuidlines')}
+                </Link>
+              </>
+            )}
           </p>
         </div>
       </Provider>
@@ -421,7 +437,7 @@ export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps)
       {children ||
         (attachment => (
           <Attachment>
-            {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+            <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
           </Attachment>
         ))}
     </AttachmentList>
@@ -569,7 +585,11 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             S: 2
           }
         },
-        width: 'full',
+        flexGrow: 1,
+        flexShrink: 1,
+        minHeight: 0,
+        marginY: -16,
+        marginEnd: -16,
         '--loader-color': {
           type: 'color',
           value: {
@@ -606,7 +626,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           value={prompt}
           onChange={setPrompt}
           allowsNewlines
-          className={style({flexGrow: 1})}
+          className={style({flexGrow: 1, minHeight: 0, height: 'full'})}
           aria-label={stringFormatter.format('promptfield.label')}
           isReadOnly={isListening}
           onSubmit={onSubmit}
@@ -647,7 +667,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                   let clipboardData = e.clipboardData as DataTransfer;
                   let attachments: PromptFieldAttachment[] = [];
                   for (let item of clipboardData.items) {
-                    if (matchMimeType(item.type, acceptedAttachmentTypes)) {
+                    if (item.kind === 'file' && matchMimeType(item.type, acceptedAttachmentTypes)) {
                       let file = item.getAsFile()!;
                       attachments.push({
                         id: crypto.randomUUID(),
@@ -673,12 +693,14 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             ref={inputRef}
             className={
               css('&:empty::before { content: attr(data-placeholder); }') +
+              ' ' +
+              scrollFade({y: 16}) +
               style<{size: 'S' | 'M'; isFocused: boolean}>({
                 font: {
-                  default: 'body',
+                  default: 'ui-lg',
                   size: {
-                    M: 'body',
-                    S: 'body-sm'
+                    M: 'ui-lg',
+                    S: 'ui'
                   }
                 },
                 color: {
@@ -690,6 +712,13 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                   }
                 },
                 width: 'full',
+                height: 'full',
+                minHeight: '1lh',
+                overflow: 'auto',
+                paddingY: 16,
+                paddingEnd: 16,
+                scrollPaddingY: 16,
+                boxSizing: 'border-box',
                 outlineStyle: 'none',
                 cursor: 'text',
                 transition: 'colors',
@@ -799,7 +828,10 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
   );
 }
 
-export interface PromptTokenProps extends Omit<TokenProps, 'children' | 'render'> {
+export interface PromptTokenProps extends Omit<
+  TokenProps,
+  'children' | 'render' | 'className' | 'style'
+> {
   token: TokenSegment<PromptFieldTokenValue>;
   children: React.ReactNode;
 }
@@ -905,6 +937,7 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
     <Button
       variant="primary"
       staticColor="auto"
+      styles={style({alignSelf: 'end'})}
       // TODO: should it be possible to submit a prompt with only attachments?
       isDisabled={prompt.segments.length === 0 && !isGenerating}
       aria-label={
