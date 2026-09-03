@@ -91,7 +91,8 @@ function VirtualizedMenuSection<T extends {title?: React.ReactNode}>({
   state: TreeState<T>;
 }) {
   let {itemProps, headingProps, groupProps} = useMenuSection({
-    heading: node.props.title
+    heading: node.props.title,
+    'aria-label': node['aria-label']
   });
 
   return (
@@ -217,5 +218,23 @@ describe('useMenuItem with isVirtualized', function () {
     expect(items[3]).toHaveAttribute('aria-posinset', '4');
     expect(items[0]).toHaveAttribute('aria-setsize', '4');
     expect(items[3]).toHaveAttribute('aria-setsize', '4');
+  });
+
+  it('labels a section group via aria-label when the section has no heading', () => {
+    let {getAllByRole} = render(
+      <VirtualizedMenuWithSections aria-label="test menu">
+        <Section aria-label="Actions">
+          <Item key="1">One</Item>
+          <Item key="2">Two</Item>
+        </Section>
+      </VirtualizedMenuWithSections>
+    );
+
+    // With no heading, useMenuSection falls back to the aria-label for the
+    // group's accessible name instead of aria-labelledby.
+    let groups = getAllByRole('group');
+    expect(groups).toHaveLength(1);
+    expect(groups[0]).toHaveAttribute('aria-label', 'Actions');
+    expect(groups[0].getAttribute('aria-labelledby')).toBeNull();
   });
 });
