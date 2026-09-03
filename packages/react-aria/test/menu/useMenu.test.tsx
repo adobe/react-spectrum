@@ -91,13 +91,13 @@ function VirtualizedMenuSection<T extends {title?: React.ReactNode}>({
   state: TreeState<T>;
 }) {
   let {itemProps, headingProps, groupProps} = useMenuSection({
-    heading: node.props.title,
+    heading: node.rendered,
     'aria-label': node['aria-label']
   });
 
   return (
     <div {...itemProps}>
-      {node.props.title && <span {...headingProps}>{node.props.title}</span>}
+      {node.rendered && <span {...headingProps}>{node.rendered}</span>}
       <div {...groupProps}>
         {[...getChildNodes(node, state.collection)].map(item => (
           <VirtualizedMenuItem key={item.key} item={item} state={state} />
