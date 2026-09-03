@@ -8,20 +8,21 @@ const NavigateContext = createContext<(href: string) => void>(() => {});
 export function Link(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   let navigate = useContext(NavigateContext);
 
-  function handleNavigate(href: string | undefined, e: React.SyntheticEvent) {
-    if (href) {
-      e.preventDefault();
-      navigate(href);
-    }
-  }
-
   return (
     <a
       {...props}
-      onClick={e => handleNavigate(props.href, e)}
+      onClick={e => {
+        props.onClick?.(e);
+        if (props.href) {
+          e.preventDefault();
+          navigate(props.href);
+        }
+      }}
       onKeyDown={e => {
-        if (e.key === 'Enter') {
-          handleNavigate(props.href, e);
+        props.onKeyDown?.(e);
+        if (e.key === 'Enter' && props.href) {
+          e.preventDefault();
+          navigate(props.href);
         }
       }}
     />
