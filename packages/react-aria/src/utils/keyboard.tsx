@@ -13,7 +13,7 @@
 import {addEvent} from './domHelpers';
 import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
 import {getMetaValue} from './getMetaValue';
-import {isAndroid, isIOS, isMac, isWebKit} from './platform';
+import {isAndroid, isMac, isWebKit} from './platform';
 import {isFocusable} from './isFocusable';
 
 const KEYBOARD_HEIGHT = 100;
@@ -145,9 +145,11 @@ function onResizeStart(e: Event): void {
 }
 
 function onResizeEnd(): void {
+  let viewportMeta = getMetaValue('viewport');
+
   // Overlaying keyboards do not impact geometry, so there is nothing to measure.
   // https://caniuse.com/mdn-html_elements_meta_name_viewport_interactive-widget
-  if (isAndroid() && getMetaValue('viewport')?.includes('overlays-content')) {
+  if (isAndroid() && viewportMeta?.includes('overlays-content')) {
     return;
   }
 
@@ -233,17 +235,22 @@ function onFocus(e: FocusEvent): void {
 
   let delta = state.screenHeight - screen.height;
 
-  // Update the screen if we are about to open.
+  // Update the screen and start the timer if we are about to open.
   if (delta < KEYBOARD_HEIGHT && willKeyboardOpen) {
     state.screenWidth = screen.width;
     state.screenHeight = screen.height;
     state.screenAngle = screen.angle;
+    state.startTimeStamp = time;
   }
 
-  // This focus will open a keyboard so reset the buffer and timer.
+  // This focus will open a keyboard so reset the buffer.
   if (willKeyboardOpen) {
     window.clearTimeout(state.screenTimeout);
-    state.startTimeStamp = time;
+  }
+
+  // Stop the timer if the keyboard is already open.
+  if (delta >= KEYBOARD_HEIGHT && willKeyboardOpen) {
+    state.endTimeStamp = time;
   }
 }
 
@@ -274,8 +281,8 @@ export function supportsKeyboard(): boolean {
   let viewportMeta = getMetaValue('viewport');
 
   // Overlaying keyboards do not impact geometry, so there is nothing to await.
-  // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/viewport#browser_compatibility
-  if (!(isIOS() && isWebKit()) && viewportMeta?.includes('overlays-content')) {
+  // https://caniuse.com/mdn-html_elements_meta_name_viewport_interactive-widget
+  if (isAndroid() && viewportMeta?.includes('overlays-content')) {
     return false;
   }
 

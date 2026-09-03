@@ -142,12 +142,18 @@ describe('keyboard', function () {
     });
 
     it('stays open on input-to-input focus', function () {
+      let input2 = document.createElement('input');
+
+      document.body.appendChild(input2);
+
       act(() => input.focus());
       resize({width: 300, height: 450});
 
-      act(() => input.focus());
+      act(() => input2.focus());
 
       expect(isKeyboardOpen()).toBe(true);
+
+      input2.remove();
     });
 
     it('stays open during focus marshalling', function () {
@@ -190,6 +196,25 @@ describe('keyboard', function () {
       expect(isKeyboardOpen()).toBe(true);
     });
 
+    it('stays open until the closing resize', function () {
+      resize({width: 300, height: 400});
+      act(() => input.focus());
+
+      expect(isKeyboardOpen()).toBe(true);
+
+      act(() => button.focus());
+
+      expect(isKeyboardOpen()).toBe(true);
+
+      act(() => jest.advanceTimersByTime(700));
+
+      expect(isKeyboardOpen()).toBe(true);
+
+      resize({width: 300, height: 800});
+
+      expect(isKeyboardOpen()).toBe(false);
+    });
+
     it('supports orientation changes', function () {
       act(() => input.focus());
       resize({width: 800, height: 150});
@@ -222,6 +247,8 @@ describe('keyboard', function () {
       resize({width: 300, height: 400});
       act(() => input.focus());
 
+      act(() => jest.advanceTimersByTime(700));
+
       expect(isKeyboardOpen()).toBe(true);
     });
   });
@@ -253,8 +280,32 @@ describe('keyboard', function () {
 
       expect(supportsKeyboard()).toBe(false);
 
+      act(() => button.focus());
       act(() => input.focus());
       resize({width: 300, height: 450});
+
+      act(() => button.focus());
+      resize({width: 300, height: 800});
+
+      act(() => jest.advanceTimersByTime(700));
+
+      expect(supportsKeyboard()).toBe(true);
+    });
+
+    it('recovers when the keyboard opened before focus', function () {
+      act(() => input.focus());
+      act(() => jest.advanceTimersByTime(700));
+
+      expect(supportsKeyboard()).toBe(false);
+
+      act(() => button.focus());
+      resize({width: 300, height: 450});
+      act(() => input.focus());
+
+      act(() => button.focus());
+      resize({width: 300, height: 800});
+
+      act(() => jest.advanceTimersByTime(700));
 
       expect(supportsKeyboard()).toBe(true);
     });
@@ -266,22 +317,51 @@ describe('keyboard', function () {
       expect(supportsKeyboard()).toBe(true);
 
       act(() => button.focus());
+      resize({width: 300, height: 800});
+
       act(() => jest.advanceTimersByTime(700));
 
       expect(supportsKeyboard()).toBe(true);
     });
 
     it('returns false when the keyboard overlays the viewport', function () {
+      let spy = jest.spyOn(window.navigator, 'userAgent', 'get');
       let meta = document.createElement('meta');
 
       meta.name = 'viewport';
       meta.content = 'interactive-widget=overlays-content';
 
       document.head.appendChild(meta);
+      spy.mockReturnValue('Android');
 
       expect(supportsKeyboard()).toBe(false);
 
+      spy.mockRestore();
       document.head.removeChild(meta);
+    });
+
+    it('does not change on input-to-input focus', function () {
+      let input2 = document.createElement('input');
+
+      document.body.appendChild(input2);
+
+      act(() => input.focus());
+      resize({width: 300, height: 450});
+
+      expect(supportsKeyboard()).toBe(true);
+
+      act(() => input2.focus());
+      act(() => jest.advanceTimersByTime(700));
+
+      expect(supportsKeyboard()).toBe(true);
+
+      act(() => button.focus());
+      resize({width: 300, height: 800});
+      act(() => jest.advanceTimersByTime(700));
+
+      expect(supportsKeyboard()).toBe(true);
+
+      input2.remove();
     });
   });
 });

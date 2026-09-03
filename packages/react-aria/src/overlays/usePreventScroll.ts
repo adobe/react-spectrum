@@ -17,9 +17,9 @@ import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
-import {runAfterKeyboard, runAfterKeyboardTransition} from '../utils/runAfterKeyboard';
+import {runAfterKeyboard} from '../utils/runAfterKeyboard';
+import {runAfterKeyboardTransition} from 'react-aria/private/utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
-import {willOpenKeyboard} from '../utils/keyboard';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -178,15 +178,10 @@ function preventScrollMobileWebKit() {
   let onBlur = (e: FocusEvent) => {
     let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
-    if (relatedTarget && willOpenKeyboard(relatedTarget)) {
-      // Focus without scrolling the whole page, and then scroll into view manually.
-      relatedTarget.focus({preventScroll: true});
-      runAfterKeyboard(isOpen =>
-        isOpen
-          ? scrollIntoView(relatedTarget)
-          : runAfterKeyboardTransition(() => scrollIntoView(relatedTarget))
-      );
-    } else if (!relatedTarget) {
+    if (relatedTarget) {
+      // Re-focus programmatically to have the override below perform the scroll.
+      relatedTarget.focus();
+    } else {
       // When tapping the Done button on the keyboard, focus moves to the body.
       // FocusScope will then restore focus back to the input. Later when tapping
       // the same input again, it is already focused, so no blur event will fire,
@@ -207,7 +202,9 @@ function preventScrollMobileWebKit() {
       focus.call(this, {...opts, preventScroll: true});
 
       if (!opts || !opts.preventScroll) {
-        runAfterKeyboard(() => scrollIntoView(this));
+        runAfterKeyboard(isOpen =>
+          isOpen ? scrollIntoView(this) : runAfterKeyboardTransition(() => scrollIntoView(this))
+        );
       }
     }
   });
