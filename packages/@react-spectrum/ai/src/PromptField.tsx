@@ -110,11 +110,7 @@ export interface PromptFieldProps {
   /**
    * Custom text for the AI usage disclaimer shown below the prompt field.
    */
-  aiDisclosure?: string;
-  /**
-   * Custom label and link for the AI user guidelines link shown below the prompt field.
-   */
-  aiUserGuidelines?: {label: string; href: string};
+  aiDisclaimer?: React.ReactNode;
 }
 
 interface PromptFieldState {
@@ -383,18 +379,20 @@ export const PromptField = forwardRef(function PromptField(
             {children}
           </PromptFieldContainer>
           <p className={style({font: 'ui-sm', color: 'gray-600', textAlign: 'center'})}>
-            {props.aiDisclosure ?? stringFormatter.format('promptfield.aiDisclaimer')}{' '}
-            <Link
-              variant="secondary"
-              href={
-                props.aiUserGuidelines?.href ??
-                'https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html'
-              }
-              target="_blank"
-              onPress={props.onAITermsPress}>
-              {props.aiUserGuidelines?.label ??
-                stringFormatter.format('promptfield.aiUserGuidlines')}
-            </Link>
+            {props.aiDisclaimer ?? (
+              <>
+                {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
+                <Link
+                  variant="secondary"
+                  href={
+                    'https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html'
+                  }
+                  target="_blank"
+                  onPress={props.onAITermsPress}>
+                  {stringFormatter.format('promptfield.aiUserGuidlines')}
+                </Link>
+              </>
+            )}
           </p>
         </div>
       </Provider>
