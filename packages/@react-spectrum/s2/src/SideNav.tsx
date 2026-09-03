@@ -344,7 +344,7 @@ const treeRowButton = style({
   margin: -4,
   borderRadius: 'sm',
   textAlign: 'inherit',
-  font: '[inherit]'
+  font: 'ui'
 });
 
 const treeActions = style({
