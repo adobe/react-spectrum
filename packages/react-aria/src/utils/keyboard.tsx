@@ -13,9 +13,8 @@
 import {addEvent} from './domHelpers';
 import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
 import {getMetaValue} from './getMetaValue';
-import {isAndroid} from 'react-aria/private/utils/platform';
+import {isAndroid, isIOS, isMac, isWebKit} from './platform';
 import {isFocusable} from './isFocusable';
-import {isIOS, isMac, isWebKit} from './platform';
 
 const KEYBOARD_HEIGHT = 100;
 const KEYBOARD_TIMEOUT = 600;
