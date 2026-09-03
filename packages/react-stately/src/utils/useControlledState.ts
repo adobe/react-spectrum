@@ -13,9 +13,8 @@
 import React, {SetStateAction, useCallback, useEffect, useReducer, useRef, useState} from 'react';
 
 // Use the earliest effect possible to reset the ref below.
-const isReactNative = typeof navigator !== 'undefined' && navigator.product === 'ReactNative';
 const useEarlyEffect: typeof React.useLayoutEffect =
-  typeof document !== 'undefined' || isReactNative
+  typeof document !== 'undefined' || parseInt(React.version, 10) >= 19
     ? (React['useInsertionEffect'] ?? React.useLayoutEffect)
     : () => {};
 
