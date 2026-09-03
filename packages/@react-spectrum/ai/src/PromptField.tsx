@@ -107,7 +107,13 @@ export interface PromptFieldProps {
    * @default 'M'
    */
   size?: 'S' | 'M';
+  /**
+   * Custom text for the AI usage disclaimer shown below the prompt field.
+   */
   aiDisclosure?: string;
+  /**
+   * Custom label and link for the AI user guidelines link shown below the prompt field.
+   */
   aiUserGuidelines?: {label: string; href: string};
 }
 
