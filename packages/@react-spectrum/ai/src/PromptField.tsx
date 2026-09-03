@@ -34,7 +34,6 @@ import {
 import {FocusableRef} from '@react-types/shared';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {IconContext, MenuTriggerProps} from '@react-spectrum/s2';
-import {Image, Text} from '@react-spectrum/s2/Card';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
@@ -59,6 +58,7 @@ import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
+import {Text} from '@react-spectrum/s2/Card';
 import {ToggleButton, ToggleButtonContext} from '@react-spectrum/s2/ToggleButton';
 import {
   Token,
