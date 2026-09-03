@@ -11,6 +11,8 @@
  */
 
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
+import {AttachmentGrid, AttachmentGridItem} from '../src/AttachmentGrid';
+import {AttachmentPreview} from '../src/AttachmentList';
 import {categorizeArgTypes} from '../../s2/stories/utils';
 import {Heading} from '@react-spectrum/s2/Heading';
 import {Image} from '@react-spectrum/s2/Image';
@@ -83,6 +85,26 @@ export const WithImage: Story = {
         <Text styles={style({font: 'body-2xs'})}>2026</Text>
       </UserMessage>
     </div>
+  )
+};
+
+export const WithAttachmentGrid: Story = {
+  render: args => (
+    <UserMessage {...args} styles={style({width: 518})}>
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 8, width: 'full'})}>
+        <AttachmentGrid aria-label="Uploaded files" styles={style({width: 'full'})}>
+          {Array.from({length: 20}, (_, i) => (
+            <AttachmentGridItem key={i} aria-label={`file-${i + 1}.pdf`}>
+              <AttachmentPreview
+                mimeType="application/pdf"
+                slot="thumbnail"
+                src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+              />
+            </AttachmentGridItem>
+          ))}
+        </AttachmentGrid>
+      </div>
+    </UserMessage>
   )
 };
 
