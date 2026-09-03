@@ -799,7 +799,10 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
   );
 }
 
-export interface PromptTokenProps extends Omit<TokenProps, 'children' | 'render'> {
+export interface PromptTokenProps extends Omit<
+  TokenProps,
+  'children' | 'render' | 'className' | 'style'
+> {
   token: TokenSegment<PromptFieldTokenValue>;
   children: React.ReactNode;
 }
