@@ -107,6 +107,8 @@ export interface PromptFieldProps {
    * @default 'M'
    */
   size?: 'S' | 'M';
+  aiDisclosure?: string;
+  aiUserGuidelines?: {label: string; href: string};
 }
 
 interface PromptFieldState {
@@ -375,12 +377,16 @@ export const PromptField = forwardRef(function PromptField(
             {children}
           </PromptFieldContainer>
           <p className={style({font: 'ui-sm', color: 'gray-600', textAlign: 'center'})}>
-            {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
+            `${props.aiDisclosure} ` ?? {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
             <Link
               variant="secondary"
-              href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
+              href={
+                props.aiUserGuidelines?.href ??
+                'https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html'
+              }
               target="_blank"
               onPress={props.onAITermsPress}>
+              {props.aiUserGuidelines?.label} ??{' '}
               {stringFormatter.format('promptfield.aiUserGuidlines')}
             </Link>
           </p>
