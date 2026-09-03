@@ -24,12 +24,22 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import Chevron from '../ui-icons/Chevron';
-import {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import {
+  createContext,
+  forwardRef,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {createIcon} from './Icon';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
-import {Link} from 'react-aria-components/Link';
+import {Link, LinkContext} from 'react-aria-components/Link';
+import {mergeProps} from 'react-aria/mergeProps';
 import {
   NavigationTree,
   NavigationTreeHeader,
@@ -50,6 +60,7 @@ import {Text, TextContext} from './Content';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useHover} from 'react-aria/useHover';
+import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
@@ -214,7 +225,10 @@ const treeCellGrid = style({
   },
   gridTemplateRows: '1fr',
   gridTemplateAreas: ['. level-padding icon content actions actionmenu'],
-  paddingEnd: 4, // account for any focus rings on the last item in the cell
+  paddingEnd: {
+    default: 4, // account for any focus rings on the last item in the cell,
+    isCollapsed: 0
+  },
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
@@ -285,6 +299,29 @@ const treeRowLink = style({
     default: 'pointer',
     isDisabled: 'default'
   }
+});
+
+const treeRowButton = style({
+  display: 'grid',
+  gridArea: 'content',
+  gridTemplateColumns: ['auto', '1fr', 'auto'],
+  gridTemplateAreas: ['icon content badge'],
+  alignItems: 'center',
+  minWidth: 0,
+  outlineStyle: 'none',
+  textDecoration: 'none',
+  color: 'inherit',
+  cursor: 'default',
+  backgroundColor: {
+    default: 'transparent',
+    isHovered: baseColor('gray-100').isHovered
+  },
+  borderStyle: 'none',
+  padding: 4,
+  margin: -4,
+  borderRadius: 'sm',
+  textAlign: 'inherit',
+  font: 'inherit'
 });
 
 const treeActions = style({
@@ -588,13 +625,91 @@ export interface SideNavItemLinkProps {
   children?: ReactNode;
 }
 
+let SideNavItemButton = (
+  props: SideNavItemLinkProps & {onExpandSidePanel: () => void}
+): ReactNode => {
+  let {children, onExpandSidePanel} = props;
+  let linkFocus = useContext(SideNavItemLinkContext);
+  let linkProps = useContext(LinkContext);
+  let {isCollapsed = false} = useContext(SidePanelContext);
+  let labelId = useId();
+  let additionalExplanation = 'panel collapsed, click to expand';
+  let additionalExplanationId = useId();
+
+  let eventHandlers = linkProps
+    ? Object.keys(linkProps).reduce(
+        (acc, key) => {
+          if (key.startsWith('on')) {
+            acc[key] = linkProps[key];
+          }
+          return acc;
+        },
+        {} as Record<string, any>
+      )
+    : {};
+  return (
+    <Button
+      {...props}
+      {...mergeProps(eventHandlers, linkFocus)}
+      onPress={() => {
+        onExpandSidePanel?.();
+      }}
+      aria-expanded={false}
+      aria-labelledby={`${labelId} ${additionalExplanationId}`}
+      className={treeRowButton}>
+      <Provider
+        values={[
+          [TextContext, {styles: treeContent({isCollapsed}), id: labelId}],
+          [
+            IconContext,
+            {
+              render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
+              styles: style({size: '1lh', flexShrink: 0})
+            }
+          ]
+        ]}>
+        {typeof children === 'string' ? <Text>{children}</Text> : children}
+        <span className={style({display: 'none'})} id={additionalExplanationId}>
+          {additionalExplanation}
+        </span>
+      </Provider>
+    </Button>
+  );
+};
+
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
-  let {isCollapsed = false} = useContext(SidePanelContext);
+  let {isCollapsed = false, setCollapsed} = useContext(SidePanelContext);
+  let linkRef = useRef<HTMLAnchorElement>(null);
+
+  let isFocusedRef = useRef(false);
+  useEffect(() => {
+    if (!isCollapsed && isFocusedRef.current) {
+      linkRef.current?.focus();
+    }
+    isFocusedRef.current = false;
+  }, [isCollapsed]);
+
+  if (isCollapsed) {
+    return (
+      <SideNavItemButton
+        {...props}
+        onExpandSidePanel={() => {
+          setCollapsed?.(false);
+          // if the SidePanel is expanded via this button, we know it was focused
+          isFocusedRef.current = true;
+        }}
+      />
+    );
+  }
 
   return (
-    <Link {...props} {...linkFocus} className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
+    <Link
+      {...props}
+      {...linkFocus}
+      ref={linkRef}
+      className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
       <Provider
         values={[
           [TextContext, {styles: treeContent({isCollapsed})}],
