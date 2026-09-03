@@ -78,7 +78,6 @@ export const AttachmentGrid = (forwardRef as forwardRefType)(function Attachment
       items={items}
       dependencies={dependencies}
       ref={domRef}
-      onPointerDown={() => domRef.current?.focus()}
       className={renderProps =>
         mergeStyles(gridStyles({...renderProps}), styles) +
         ' ' +

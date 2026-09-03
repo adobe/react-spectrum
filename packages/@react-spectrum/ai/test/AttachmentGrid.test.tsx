@@ -58,20 +58,4 @@ describeOrSkip('AttachmentGrid', () => {
     expect(fireEvent.keyDown(grid, {key: 'ArrowDown'})).toBe(true);
     expect(fireEvent.keyDown(grid, {key: 'ArrowUp'})).toBe(true);
   });
-
-  it('should focus the grid when a disabled attachment is clicked', () => {
-    let {getByRole} = render(
-      <AttachmentGrid aria-label="Uploaded files">
-        <AttachmentGridItem aria-label="one.pdf" textValue="one.pdf">
-          <Image slot="thumbnail" src="https://example.com/image.png" />
-        </AttachmentGridItem>
-      </AttachmentGrid>
-    );
-
-    let grid = getByRole('listbox');
-    let option = getByRole('option');
-    expect(grid).not.toHaveFocus();
-    fireEvent.pointerDown(option);
-    expect(grid).toHaveFocus();
-  });
 });
