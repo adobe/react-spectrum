@@ -12,6 +12,7 @@
 
 import {action} from 'storybook/actions';
 import {ActionMenu} from '../src/ActionMenu';
+import {AdobeLogo} from '../../../dev/s2-docs/src/icons/AdobeLogo';
 import {Avatar} from '../src/Avatar';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
@@ -26,6 +27,7 @@ import Images from '@react-spectrum/s2/icons/Images';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
+import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import React, {ReactElement, ReactNode, useRef, useState} from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {SearchField} from '../src/SearchField';
@@ -542,48 +544,111 @@ export const WithLandmark: AppLayoutStoryObj = {
 
 export const SidePanelExample = {
   render: args => (
-    <div style={{width: 300, height: 320, display: 'flex', flexDirection: 'column'}}>
+    <div
+      className={style({
+        width: 'full',
+        height: '100vh',
+        display: 'grid',
+        gridTemplateAreas: ['header header', 'sidebar main'],
+        gridTemplateColumns: 'auto 1fr',
+        gridTemplateRows: 'auto 1fr',
+        backgroundColor: 'layer-1'
+      })}>
       <div
-        style={{
-          border: '1px solid #d5d5d5',
-          borderRadius: 8,
-          flex: 1,
-          overflow: 'hidden',
+        className={style({
+          gridArea: 'header',
           display: 'flex',
-          flexDirection: 'column',
-          alignSelf: 'start'
-        }}>
-        <SidePanel {...args} aria-label="Side panel" defaultExpandedKeys={['projects']}>
-          <RoutedSideNav {...args} selectedRoute="/files">
-            <SideNavItem href="/files" textValue="Files">
+          alignItems: 'center',
+          paddingX: 8,
+          paddingY: 16
+        })}>
+        <AdobeLogo size={28} />
+      </div>
+      <SidePanel
+        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
+        {...args}
+        aria-label="Side panel"
+        defaultExpandedKeys={['projects']}>
+        <RoutedSideNav {...args} styles={style({width: 'full'})} selectedRoute="/files">
+          <SideNavItem href="/files" textValue="Files">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Files />
+                <Text>Files</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+          <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <CCLibrary />
+                <Text>Your Libraries</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+            <SideNavItem id="photos" href="/photos" textValue="Photos">
               <SideNavItemContent>
                 <SideNavItemLink>
-                  <Files />
-                  <Text>Files</Text>
+                  <Images />
+                  <Text>Photos</Text>
                 </SideNavItemLink>
               </SideNavItemContent>
             </SideNavItem>
-            <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+          </SideNavItem>
+          <SideNavSection>
+            <SideNavHeader>Work</SideNavHeader>
+            <SideNavItem href="/projects" textValue="Projects">
               <SideNavItemContent>
                 <SideNavItemLink>
-                  <CCLibrary />
-                  <Text>Your Libraries</Text>
+                  <Project />
+                  <Text>Projects</Text>
                 </SideNavItemLink>
               </SideNavItemContent>
-              <SideNavItem id="photos" href="/photos" textValue="Photos">
+              <SideNavItem href="/projects-1" id="projects-1" textValue="Projects-1">
                 <SideNavItemContent>
                   <SideNavItemLink>
-                    <Images />
-                    <Text>Photos</Text>
+                    <Text>Projects-1</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+                <SideNavItem href="/projects-1A" textValue="Projects-1A">
+                  <SideNavItemContent>
+                    <SideNavItemLink>
+                      <Text>Projects-1A</Text>
+                    </SideNavItemLink>
+                  </SideNavItemContent>
+                </SideNavItem>
+              </SideNavItem>
+              <SideNavItem href="/projects-2" textValue="Projects-2">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Projects-2</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+              <SideNavItem href="/projects-3" textValue="Projects-3">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Projects-3</Text>
                   </SideNavItemLink>
                 </SideNavItemContent>
               </SideNavItem>
             </SideNavItem>
-          </RoutedSideNav>
-        </SidePanel>
-      </div>
+          </SideNavSection>
+        </RoutedSideNav>
+      </SidePanel>
+      <div
+        className={style({
+          gridArea: 'main',
+          backgroundColor: 'layer-2',
+          borderTopStartRadius: 'lg'
+        })}
+      />
     </div>
-  )
+  ),
+  parameters: {
+    layout: {
+      fullscreen: true
+    }
+  }
 };
 
 export const SidePanelExample2 = {

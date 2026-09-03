@@ -35,9 +35,12 @@ import {
   useState
 } from 'react';
 import {createIcon} from './Icon';
+import {Divider} from './Divider';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {Link, LinkContext} from 'react-aria-components/Link';
 import {mergeProps} from 'react-aria/mergeProps';
 import {
@@ -63,6 +66,7 @@ import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useMediaQuery} from './useMediaQuery';
 import {useScale} from './utils';
 
 export interface SideNavProps<T>
@@ -117,10 +121,7 @@ const tree = style({
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
-  width: {
-    default: 'full',
-    isInSidePanel: 'unset'
-  },
+  width: 'full',
   height: 'full',
   overflowY: 'auto',
   overflowX: 'hidden',
@@ -169,6 +170,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
 
   return (
     <div
+      data-this-one
       ref={domRef}
       className={(UNSAFE_className ?? '') + sideNavWrapper({isInSidePanel}, props.styles)}
       style={UNSAFE_style}>
@@ -259,13 +261,34 @@ const treeIcon = style({
   }
 });
 
-const treeContent = style<{isCollapsed?: boolean}>({
+const fadeInKeyframes = keyframes(`
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+`);
+
+const treeContent = style<{isCollapsed?: boolean; isInSidePanel?: boolean}>({
   display: {
     default: 'block',
     isCollapsed: 'none'
   },
   gridArea: 'content',
-  paddingY: `--centerPadding`
+  paddingY: `--centerPadding`,
+  // In a side panel the label hides instantly on collapse (display:none above) and fades in quickly
+  // when it reappears on expand. Scoped to the side panel so a plain SideNav's labels don't animate.
+  animation: {
+    isInSidePanel: {
+      default: fadeInKeyframes,
+      '@media (prefers-reduced-motion: reduce)': 'none'
+    }
+  },
+  animationDuration: 150,
+  animationDelay: 200,
+  animationFillMode: 'backwards'
 });
 
 let treeRowFocusRing = style({
@@ -321,7 +344,7 @@ const treeRowButton = style({
   margin: -4,
   borderRadius: 'sm',
   textAlign: 'inherit',
-  font: 'inherit'
+  font: '[inherit]'
 });
 
 const treeActions = style({
@@ -348,12 +371,17 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
   let rowRef = useRef<HTMLDivElement | null>(null);
   // oxlint-disable-next-line react-compiler
   let scaling = pressScale(rowRef);
+  let {isCollapsed = false} = useContext(SidePanelContext);
 
   return (
     <SideNavInternalItemContext.Provider value={{setLinkPressed}}>
       <NavigationTreeItem
         {...props}
         ref={rowRef}
+        // When collapsed, every item renders as a focusable expanding button, so focus the child
+        // rather than the row — otherwise keyboard focus lands on the row and items without an
+        // href (which default to row focus) can't be reached or activated.
+        focusMode={isCollapsed ? 'child' : undefined}
         style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
         className={renderProps => treeRow(renderProps)}
       />
@@ -413,7 +441,11 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
 };
 
 const SideNavItemContentInner = props => {
-  let {isCollapsed = false} = useContext(SidePanelContext);
+  let sidePanelContext = useContext(SidePanelContext);
+  let {isCollapsed = false, showControls = true} = sidePanelContext;
+  let isInSidePanel = sidePanelContext.isCollapsed !== undefined;
+  // Hide row controls while collapsed and during the expand animation (they reveal once expanded).
+  let isControlsHidden = isInSidePanel && !showControls;
   let {
     isExpanded,
     hasChildItems,
@@ -492,6 +524,8 @@ const SideNavItemContentInner = props => {
         isExpanded={isExpanded}
         scale={scale}
         isHidden={!hasChildItems}
+        isInSidePanel={isInSidePanel}
+        isControlsHidden={isControlsHidden}
       />
     </>
   );
@@ -504,13 +538,28 @@ interface ExpandableRowChevronProps {
   isRTL?: boolean;
   scale: 'medium' | 'large';
   isHidden?: boolean;
+  isInSidePanel?: boolean;
+  isControlsHidden?: boolean;
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
   display: {
     default: 'flex',
-    isCollapsed: 'none'
+    isCollapsed: 'none',
+    // Removed from layout while collapsed/expanding so it doesn't reflow the narrow panel.
+    isControlsHidden: 'none'
   },
+  // Fade the chevron in once the panel has finished expanding (display flips back on). Gated on the
+  // hidden state so the animation-name changes none -> fadeIn on reveal, forcing it to (re)play.
+  animation: {
+    isInSidePanel: {
+      default: fadeInKeyframes,
+      isControlsHidden: 'none',
+      '@media (prefers-reduced-motion: reduce)': 'none'
+    }
+  },
+  animationDuration: 150,
+  animationFillMode: 'backwards',
   gridArea: 'expand-button',
   color: {
     default: 'inherit',
@@ -549,7 +598,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     expandButtonRef,
     ButtonContext
   );
-  let {isExpanded, scale, isHidden, isCollapsed} = fullProps;
+  let {isExpanded, scale, isHidden, isCollapsed, isInSidePanel, isControlsHidden} = fullProps;
   let {direction} = useLocale();
 
   return (
@@ -564,7 +613,9 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
           isCollapsed,
           isRTL: direction === 'rtl',
           scale,
-          isHidden
+          isHidden,
+          isInSidePanel,
+          isControlsHidden
         })
       }>
       <Chevron
@@ -604,8 +655,11 @@ export interface SideNavHeaderProps extends Omit<
 > {}
 
 export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
+  let {isCollapsed = false} = useContext(SidePanelContext);
+  let id = useId();
   return (
     <NavigationTreeHeader
+      id={id}
       className={style({
         font: 'ui-sm',
         // Component/S/Medium for the font, doesn't appear to match our fonts
@@ -615,7 +669,11 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
         marginBottom: '[8px]',
         height: 16
       })}>
-      {props.children}
+      {isCollapsed ? (
+        <Divider aria-labelledby={id} orientation="horizontal" styles={style({marginX: 8})} />
+      ) : (
+        props.children
+      )}
     </NavigationTreeHeader>
   );
 };
@@ -680,7 +738,9 @@ let SideNavItemButton = (
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
-  let {isCollapsed = false, setCollapsed} = useContext(SidePanelContext);
+  let sidePanelContext = useContext(SidePanelContext);
+  let {isCollapsed = false, setCollapsed} = sidePanelContext;
+  let isInSidePanel = sidePanelContext.isCollapsed !== undefined;
   let linkRef = useRef<HTMLAnchorElement>(null);
 
   let isFocusedRef = useRef(false);
@@ -712,7 +772,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
       className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
       <Provider
         values={[
-          [TextContext, {styles: treeContent({isCollapsed})}],
+          [TextContext, {styles: treeContent({isCollapsed, isInSidePanel})}],
           [
             IconContext,
             {
@@ -741,12 +801,44 @@ interface SidePanelProps<T> extends Omit<SideNavProps<T>, 'children'> {
 const SidePanelContext = createContext<{
   isCollapsed?: boolean;
   setCollapsed?: (isCollapsed: boolean) => void;
+  // Whether row controls (chevron, action buttons, etc.) should be shown. False while collapsed and
+  // during the expand animation, so they stay out of layout until there is room; true once expanded.
+  showControls?: boolean;
 }>({});
+
+// Duration of the collapse/expand width transition (see sidePanelStyle). Row controls are revealed
+// only after this completes so they don't reflow the panel while it is still narrow.
+const COLLAPSE_ANIMATION_DURATION = 200;
+
+const sidePanelStyle = style(
+  {
+    display: 'flex',
+    flexDirection: 'column',
+    height: 'full',
+    // The expanded width is supplied by the consumer via the `styles` prop. When collapsed, SidePanel
+    // applies an inline `width: var(--collapsedWidth)` (the fixed icon-rail size) which overrides that
+    // class-based width; the CSS width transition animates between the two. overflow clips the labels
+    // as the panel grows/shrinks.
+    '--collapsedWidth': {
+      type: 'width',
+      value: 42
+    },
+    overflow: 'hidden',
+    transition: {
+      default: '[width]',
+      '@media (prefers-reduced-motion: reduce)': 'none'
+    },
+    transitionDuration: 200,
+    transitionTimingFunction: 'default'
+  },
+  getAllowedOverrides({height: true})
+);
 
 export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function SidePanelProps<T>(
   props: SidePanelProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let {children, UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let [isCollapsed, setCollapsed] = useControlledState<boolean>(
     props.isCollapsed,
@@ -754,12 +846,34 @@ export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function S
     props.onCollapsedChange
   );
 
+  // Row controls are hidden while collapsed and during the expand animation, then revealed once the
+  // width transition has finished so they don't reflow the panel while it is still too narrow.
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+  let [showControls, setShowControls] = useState(!isCollapsed);
+  useEffect(() => {
+    if (isCollapsed) {
+      setShowControls(false);
+      return;
+    }
+    if (reduceMotion) {
+      setShowControls(true);
+      return;
+    }
+    let timeout = setTimeout(() => setShowControls(true), COLLAPSE_ANIMATION_DURATION);
+    return () => clearTimeout(timeout);
+  }, [isCollapsed, reduceMotion]);
+
+  let filteredProps = filterDOMProps(otherProps);
   return (
-    <SidePanelContext.Provider value={{isCollapsed, setCollapsed}}>
+    <SidePanelContext.Provider value={{isCollapsed, setCollapsed, showControls}}>
       <div
+        {...filteredProps}
         ref={domRef}
-        className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
-        <div className={style({flexGrow: 1, flexShrink: 1, minHeight: 0})}>{props.children}</div>
+        // When collapsed, override the consumer's class-based (expanded) width with the fixed icon-rail
+        // width. The CSS width transition animates between the two.
+        style={{...UNSAFE_style, width: isCollapsed ? 'var(--collapsedWidth)' : undefined}}
+        className={UNSAFE_className + sidePanelStyle(null, styles)}>
+        <div className={style({flexGrow: 1, flexShrink: 1, minHeight: 0})}>{children}</div>
         <div className={style({flexGrow: 0, flexShrink: 0})}>
           <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
         </div>
@@ -782,12 +896,13 @@ function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: 
   );
 }
 
-function PanelToggleButton({isCollapsed, setCollapsed}: any) {
+function PanelToggleButton({isCollapsed, setCollapsed, ...otherProps}: any) {
   let [isHovered, setHovered] = useState(false);
   let {hoverProps} = useHover({onHoverChange: setHovered});
   return (
     <div {...hoverProps} className={style({display: 'contents'})}>
       <ActionButton
+        {...otherProps}
         isQuiet
         styles={style({alignSelf: 'start'})}
         onPress={() => {
