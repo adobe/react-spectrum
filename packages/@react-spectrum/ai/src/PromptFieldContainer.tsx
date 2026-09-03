@@ -375,7 +375,10 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
-      className={(size === 'M' ? outerBorder : '') + style({containerType: 'inline-size'})}
+      className={
+        (size === 'M' ? outerBorder : '') +
+        style({containerType: 'inline-size', flexGrow: 1, minHeight: 0, display: 'flex'})
+      }
       style={{
         ...props.style,
         // @ts-ignore
@@ -423,6 +426,8 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 },
                 position: 'relative',
                 overflow: 'clip',
+                minHeight: 0,
+                width: 'full',
                 outlineStyle: 'solid',
                 outlineColor: {
                   default: 'transparent', // for WHCM
@@ -503,7 +508,9 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 flexDirection: 'column',
                 gap: 16,
                 padding: 16,
-                cursor: 'text'
+                cursor: 'text',
+                height: 'full',
+                boxSizing: 'border-box'
               }) + (props.className || '')
             }>
             {props.children}
