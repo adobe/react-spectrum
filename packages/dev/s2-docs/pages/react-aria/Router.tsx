@@ -9,8 +9,8 @@ export function Link(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   let navigate = useContext(NavigateContext);
 
   function handleNavigate(href: string | undefined, e: React.SyntheticEvent) {
-    e.preventDefault();
     if (href) {
+      e.preventDefault();
       navigate(href);
     }
   }
