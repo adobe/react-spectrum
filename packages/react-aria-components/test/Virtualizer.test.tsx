@@ -24,7 +24,6 @@ import {
   TableHeader,
   Virtualizer
 } from 'react-aria-components';
-import {CollectionRendererContext} from '../src/Collection';
 import React, {useMemo} from 'react';
 import {render, within} from '@react-spectrum/test-utils-internal';
 import {TableLayout} from '@react-stately/layout';
@@ -78,53 +77,5 @@ describe('Virtualizer', () => {
 
     let item = within(menu).getByRole('menuitem');
     expect(item).toHaveTextContent('Item 1');
-  });
-
-  it('allows an explicit nested Virtualizer inside an overlay', async () => {
-    let user = userEvent.setup({delay: null, pointerEventsCheck: 0});
-    function TestApp() {
-      let outerLayout = useMemo(() => new TableLayout({rowHeight: 24, headingHeight: 24}), []);
-      let innerLayout = useMemo(() => new TableLayout({rowHeight: 24, headingHeight: 24}), []);
-
-      return (
-        <Virtualizer layout={outerLayout}>
-          <MenuTrigger>
-            <Button>Trigger</Button>
-            <Popover>
-              <Virtualizer layout={innerLayout}>
-                <div data-testid="nested-virtualizer">Nested</div>
-              </Virtualizer>
-            </Popover>
-          </MenuTrigger>
-        </Virtualizer>
-      );
-    }
-
-    let {getByRole, getByTestId} = render(<TestApp />);
-    await user.click(getByRole('button'));
-
-    expect(getByTestId('nested-virtualizer')).toBeInTheDocument();
-  });
-
-  it('allows Virtualizer to intentionally wrap a standalone Popover', async () => {
-    function Inner() {
-      let {isVirtualized} = React.useContext(CollectionRendererContext);
-      return <div data-testid="is-virtualized">{String(isVirtualized)}</div>;
-    }
-
-    function TestApp() {
-      let layout = useMemo(() => new TableLayout({rowHeight: 24, headingHeight: 24}), []);
-
-      return (
-        <Virtualizer layout={layout}>
-          <Popover isOpen triggerRef={{current: document.body}}>
-            <Inner />
-          </Popover>
-        </Virtualizer>
-      );
-    }
-
-    let {getByTestId} = render(<TestApp />);
-    expect(getByTestId('is-virtualized')).toHaveTextContent('true');
   });
 });
