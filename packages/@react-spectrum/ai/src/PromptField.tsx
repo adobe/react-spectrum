@@ -40,6 +40,7 @@ import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Microphone from '@react-spectrum/s2/icons/Microphone';
 import {PixelLoader} from './loader/react';
 import Plus from '@react-spectrum/s2/icons/Add';
@@ -364,7 +365,10 @@ export const PromptField = forwardRef(function PromptField(
         <div
           ref={domRef}
           {...focusWithinProps}
-          className={style({maxHeight: '40cqh', display: 'flex', flexDirection: 'column'})}>
+          className={mergeStyles(
+            style({maxHeight: '40cqh', display: 'flex', flexDirection: 'column'}),
+            styles
+          )}>
           <PromptFieldContainer
             {...dropProps}
             role="group"
@@ -373,7 +377,6 @@ export const PromptField = forwardRef(function PromptField(
             brandColor={brandColor}
             isGenerating={isGenerating ?? false}
             isDropTarget={isDropTarget}
-            styles={styles}
             inputRef={inputRef}>
             {children}
           </PromptFieldContainer>
@@ -654,7 +657,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                   let clipboardData = e.clipboardData as DataTransfer;
                   let attachments: PromptFieldAttachment[] = [];
                   for (let item of clipboardData.items) {
-                    if (matchMimeType(item.type, acceptedAttachmentTypes)) {
+                    if (item.kind === 'file' && matchMimeType(item.type, acceptedAttachmentTypes)) {
                       let file = item.getAsFile()!;
                       attachments.push({
                         id: crypto.randomUUID(),
