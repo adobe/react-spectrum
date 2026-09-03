@@ -17,6 +17,7 @@ import {
   css,
   focusRing,
   iconStyle,
+  size,
   space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -25,7 +26,6 @@ import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Chevron from '../ui-icons/Chevron';
-import CloseCircle from '@react-spectrum/s2/icons/CloseCircle';
 import Cross from '../ui-icons/Cross';
 import {
   DisclosureStateContext,
@@ -39,6 +39,7 @@ import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {keyframes, scrollFade} from './tokens.macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {PixelLoader} from '../exports';
 import {Provider} from 'react-aria-components/slots';
@@ -51,7 +52,6 @@ import React, {
   useContext,
   useState
 } from 'react';
-import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
@@ -149,7 +149,7 @@ export interface ResponseStatusTitleProps extends DOMProps {
    */
   level?: number;
   /** The contents of the response status header. */
-  children: React.ReactNode;
+  children: string;
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
@@ -165,6 +165,13 @@ const headingStyle = style({
   flexShrink: 1,
   minWidth: 0
 });
+
+const ICON_SIZE = 21;
+const DISCLOSURE_GAP = 8;
+const FAILED_TRANSLATE_X = ICON_SIZE + DISCLOSURE_GAP;
+
+const CROSS_FADE_DURATION = 350;
+const CROSS_FADE_TIMING_FUNCTION = '[cubic-bezier(0.14, 0.45, 0.45, 0.99)]';
 
 // Top-level disclosure.
 const disclosureStyles = style({
@@ -183,19 +190,21 @@ const disclosureStyles = style({
   display: 'flex',
   flexGrow: 0,
   alignItems: 'center',
-  gap: 8,
+  gap: DISCLOSURE_GAP,
   transition: 'default',
   borderRadius: 'default',
-  textAlign: 'start',
-  width: 'fit'
+  textAlign: 'start'
 });
 
+const DISCLOSURE_TRANSITION_TIMING_FUNCTION = '[cubic-bezier(0.21, 0, 0.15, 0.99)]';
 const chevronStyles = {
   rotate: {
     isRTL: 180,
     isExpanded: 90
   },
   transition: 'default',
+  transitionDuration: 150,
+  transitionTimingFunction: DISCLOSURE_TRANSITION_TIMING_FUNCTION,
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -222,6 +231,8 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   let isRTL = direction === 'rtl';
   let isLoading = status === 'pending';
   let isInteractive = hasPanelContent;
+  let label =
+    isLoading && isExpanded ? stringFormatter.format('responsestatus.processing') : props.children;
 
   return (
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
@@ -239,50 +250,143 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
         {renderProps => (
           <span
             className={disclosureStyles({...renderProps, isExpanded, isOnlyText: !isInteractive})}>
-            {isLoading ? (
-              <CenterBaseline>
-                <PixelLoader size={21} icon={pixelLoader} />
-              </CenterBaseline>
-            ) : (
-              <Provider
-                values={[
-                  [
-                    IconContext,
-                    {
-                      styles: style({
-                        flexShrink: 0,
-                        size: 20,
-                        '--iconPrimary': {
-                          type: 'fill',
-                          value: 'currentColor'
-                        }
-                      })
-                    }
-                  ]
-                ]}>
-                <CenterBaseline slot="icon" styles={style({size: 21})}>
-                  {status === 'failed' ? (
-                    <CloseCircle aria-hidden="true" />
-                  ) : (
-                    <CheckmarkCircle aria-hidden="true" />
-                  )}
-                </CenterBaseline>
-              </Provider>
-            )}
-            {isLoading && isExpanded
-              ? stringFormatter.format('responsestatus.processing')
-              : props.children}
-            {isInteractive ? (
-              <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
-                <Chevron size="M" />
-              </CenterBaseline>
-            ) : null}
+            <CrossFade depKey={status}>
+              <StatusIcon status={status} pixelLoader={pixelLoader} />
+            </CrossFade>
+            <CrossFade
+              depKey={label}
+              styles={style({
+                flexGrow: 1,
+                transition: {
+                  default: 'transform',
+                  '@media (prefers-reduced-motion: reduce)': 'none'
+                },
+                transitionDuration: CROSS_FADE_DURATION,
+                transitionTimingFunction: CROSS_FADE_TIMING_FUNCTION,
+                translateX: {
+                  default: 0,
+                  isFailed: {default: size(-FAILED_TRANSLATE_X), isRTL: size(FAILED_TRANSLATE_X)}
+                }
+              })({isFailed: status === 'failed', isRTL})}>
+              <div className={style({display: 'flex', alignItems: 'center', gap: 8, minWidth: 0})}>
+                {label}
+                {isInteractive ? (
+                  <CenterBaseline styles={style(chevronStyles)({isExpanded, isRTL})}>
+                    <Chevron size="M" />
+                  </CenterBaseline>
+                ) : null}
+              </div>
+            </CrossFade>
           </span>
         )}
       </Button>
     </Heading>
   );
 });
+
+function StatusIcon({status, pixelLoader}: {status: string; pixelLoader?: Cell[] | Cell[][]}) {
+  switch (status) {
+    case 'pending':
+      return (
+        <CenterBaseline>
+          <PixelLoader size={ICON_SIZE} icon={pixelLoader} />
+        </CenterBaseline>
+      );
+    case 'failed':
+      // Space holder to maintain layout during transition.
+      return <div className={style({size: ICON_SIZE})} />;
+    case 'success':
+      return (
+        <Provider
+          values={[
+            [
+              IconContext,
+              {
+                styles: style({
+                  flexShrink: 0,
+                  size: 20,
+                  '--iconPrimary': {
+                    type: 'fill',
+                    value: 'currentColor'
+                  }
+                })
+              }
+            ]
+          ]}>
+          <CenterBaseline slot="icon" styles={style({size: ICON_SIZE})}>
+            <CheckmarkCircle aria-hidden="true" />
+          </CenterBaseline>
+        </Provider>
+      );
+  }
+}
+
+const crossFadeContainerStyles = style({
+  position: 'relative'
+});
+
+const crossFadeLayerStyles = style({
+  transition: 'opacity',
+  transitionDuration: CROSS_FADE_DURATION,
+  transitionTimingFunction: CROSS_FADE_TIMING_FUNCTION,
+  opacity: {
+    default: 1,
+    '@starting-style': 0,
+    isInitial: 1
+  },
+  position: 'relative',
+  zIndex: 2
+});
+
+const fadeOut = keyframes(`
+  from { opacity: 1 }
+  to { opacity: 0 }
+`);
+
+const crossFadeExitStyles = style({
+  position: 'absolute',
+  insetStart: 0,
+  top: 0,
+  animation: fadeOut,
+  animationDuration: 150,
+  animationFillMode: 'both',
+  animationTimingFunction: '[cubic-bezier(0.15, 0.47, 0.67, 0.77)]',
+  opacity: 0,
+  zIndex: 1
+});
+
+/**
+ * Cross-fades between `children` whenever `depKey` changes.
+ */
+function CrossFade(props: {depKey: string; children: ReactNode; styles?: StyleString}) {
+  let [state, setState] = useState(props);
+  let [prev, setPrev] = useState<typeof props | null>(null);
+  if (state.depKey !== props.depKey) {
+    setPrev(state);
+    setState(props);
+  }
+
+  return (
+    <span className={mergeStyles(crossFadeContainerStyles, props.styles)}>
+      {prev && (
+        <span
+          key={prev.depKey}
+          inert
+          className={crossFadeExitStyles}
+          onAnimationEnd={e => {
+            if (e.animationName === fadeOut) {
+              setPrev(null);
+            }
+          }}>
+          {prev.children}
+        </span>
+      )}
+      <span key={props.depKey} className={crossFadeLayerStyles({isInitial: prev == null})}>
+        {props.children}
+      </span>
+    </span>
+  );
+}
 
 export interface ResponseStatusPanelProps
   extends
@@ -304,7 +408,9 @@ const panelStyle = {
   transition: {
     default: '[height]',
     '@media (prefers-reduced-motion: reduce)': 'none'
-  }
+  },
+  transitionDuration: 250,
+  transitionTimingFunction: DISCLOSURE_TRANSITION_TIMING_FUNCTION
 } as const;
 
 const panelInner = style({
@@ -386,7 +492,7 @@ interface DetailTriggerProps {
   isPending: boolean;
 }
 
-const SPREAD = '4ch';
+const SPREAD = '60%';
 
 /* Inert clone positioned above original text.
  * This element acts as a mask for the actual shimmer
@@ -439,9 +545,21 @@ function ShimmerText(props: DetailTriggerProps) {
   let shimmerRef = useCallback(
     (el: HTMLSpanElement | null) => {
       if (el && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        let duration = 1500;
+        let delay = 300;
         let animation = el.animate(
-          [{transform: 'translateX(-100%)'}, {transform: 'translateX(100%)'}],
-          {duration: 2500, iterations: Infinity, easing: 'ease-in-out', pseudoElement: '::after'}
+          [
+            {transform: `translateX(calc(-50% - ${SPREAD}))`, offset: 0},
+            {transform: `translateX(calc(50% + ${SPREAD}))`, offset: 1 - delay / duration},
+            {transform: `translateX(calc(50% + ${SPREAD}))`, offset: 1}
+          ],
+          {
+            duration: 1500 + delay,
+            iterations: Infinity,
+            easing: 'cubic-bezier(0.41, 0.01, 0.43, 0.99)',
+            fill: 'both',
+            pseudoElement: '::after'
+          }
         );
         animation[shimmerSym] = true;
 
@@ -452,6 +570,7 @@ function ShimmerText(props: DetailTriggerProps) {
           .find(anim => anim[shimmerSym] && anim !== animation);
         if (existingAnim) {
           animation.startTime = existingAnim.startTime;
+          animation.play();
         }
         return () => animation.cancel();
       }
@@ -516,7 +635,7 @@ export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
   /**
    * The label describing the step.
    */
-  children: ReactNode;
+  children: string;
   /** The status of this step. */
   status?: 'pending' | 'failed' | 'success';
   /**
@@ -538,6 +657,9 @@ export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
   styles?: StyleString;
 }
 
+const EXECUTION_TRACE_ITEM_TRANSITION_DURATION = 650;
+const EXECUTION_TRACE_ITEM_TIMING_FUNCTION = 'cubic-bezier(0.18, 0.41, 0.4, 1)';
+
 const executionTraceItemStyles = style({
   display: 'flex',
   font: 'body',
@@ -549,11 +671,16 @@ const executionTraceItemStyles = style({
       ':last-child': 'none'
     }
   },
-  transition: 'opacity',
-  transitionDuration: 300,
+  transition: '[opacity, translate]',
+  transitionDuration: `[${EXECUTION_TRACE_ITEM_TRANSITION_DURATION}ms, 310ms]`,
+  transitionTimingFunction: `[cubic-bezier(0.45, 0, 0.4, 1), ${EXECUTION_TRACE_ITEM_TIMING_FUNCTION}]`,
   opacity: {
     default: 1,
     '@starting-style': 0
+  },
+  translateY: {
+    default: 0,
+    '@starting-style': size(6)
   }
 });
 
@@ -572,7 +699,7 @@ const executionTraceItemDividerStyles = style({
   backgroundColor: 'gray-200',
   display: 'var(--divider-display, flex)',
   transition: 'opacity',
-  transitionDuration: 300,
+  transitionDuration: EXECUTION_TRACE_ITEM_TRANSITION_DURATION,
   opacity: {
     default: 1,
     '@starting-style': 0
