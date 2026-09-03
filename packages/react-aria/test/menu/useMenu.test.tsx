@@ -83,7 +83,7 @@ function VirtualizedMenu<T extends object>(props: AriaMenuProps<T>) {
   );
 }
 
-function VirtualizedMenuSection<T extends object>({
+function VirtualizedMenuSection<T extends {title?: React.ReactNode}>({
   node,
   state
 }: {
@@ -91,13 +91,12 @@ function VirtualizedMenuSection<T extends object>({
   state: TreeState<T>;
 }) {
   let {itemProps, headingProps, groupProps} = useMenuSection({
-    heading: node.rendered,
-    'aria-label': node['aria-label']
+    heading: node.props.title
   });
 
   return (
     <div {...itemProps}>
-      {node.rendered && <span {...headingProps}>{node.rendered}</span>}
+      {node.props.title && <span {...headingProps}>{node.props.title}</span>}
       <div {...groupProps}>
         {[...getChildNodes(node, state.collection)].map(item => (
           <VirtualizedMenuItem key={item.key} item={item} state={state} />
