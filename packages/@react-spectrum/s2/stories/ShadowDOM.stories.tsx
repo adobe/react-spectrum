@@ -122,7 +122,7 @@ import Server from '../spectrum-illustrations/linear/Server';
 import StarFilled1 from '../spectrum-illustrations/linear/Star';
 import {style} from '../style' with {type: 'macro'};
 import {UNSAFE_PortalProvider} from 'react-aria';
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 enableShadowDOM();
 
@@ -165,6 +165,41 @@ function unmountRootDeferred(root: ReturnType<typeof createRoot>): void {
   });
 }
 
+type Scheme = 'light' | 'dark';
+
+function getDocumentColorScheme(): Scheme {
+  return document.documentElement.getAttribute('data-color-scheme') === 'dark' ? 'dark' : 'light';
+}
+
+function useStorybookColorScheme(): Scheme {
+  const [colorScheme, setColorScheme] = useState<Scheme>(getDocumentColorScheme);
+  useEffect(() => {
+    const docEl = document.documentElement;
+    const update = () => setColorScheme(getDocumentColorScheme());
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(docEl, {attributes: true, attributeFilter: ['data-color-scheme']});
+    return () => observer.disconnect();
+  }, []);
+  return colorScheme;
+}
+
+/**
+ * The app rendered into the nested shadow root. It tracks Storybook's color scheme itself and
+ * passes it to `<Provider colorScheme>`, so the scheme updates through React state within this
+ * root.
+ */
+function ShadowApp({portalContainerRef}: {portalContainerRef: {current: HTMLDivElement | null}}) {
+  const colorScheme = useStorybookColorScheme();
+  return (
+    <Provider colorScheme={colorScheme} background="base" styles={style({minHeight: 600})}>
+      <UNSAFE_PortalProvider getContainer={() => portalContainerRef.current}>
+        <AllComponents />
+      </UNSAFE_PortalProvider>
+    </Provider>
+  );
+}
+
 function ShadowDOMContained() {
   const hostRef = useRef<HTMLDivElement>(null);
   const portalContainerRef = useRef<HTMLDivElement | null>(null);
@@ -177,12 +212,6 @@ function ShadowDOMContained() {
     }
 
     const shadowRoot = host.attachShadow({mode: 'open'});
-
-    // So S2 theme variables apply: :host in the copied CSS targets the shadow host.
-    const scheme = document.documentElement.getAttribute('data-color-scheme');
-    if (scheme) {
-      host.setAttribute('data-color-scheme', scheme);
-    }
 
     // Copy all styles from the document into the shadow root so S2 (and Storybook) styles apply.
     // Shadow DOM does not inherit styles; we must duplicate every stylesheet.
@@ -199,13 +228,7 @@ function ShadowDOMContained() {
 
     const root = createRoot(appContainer);
     rootRef.current = root;
-    root.render(
-      <Provider colorScheme="dark">
-        <UNSAFE_PortalProvider getContainer={() => portalContainerRef.current}>
-          <AllComponents />
-        </UNSAFE_PortalProvider>
-      </Provider>
-    );
+    root.render(<ShadowApp portalContainerRef={portalContainerRef} />);
 
     return () => {
       rootRef.current = null;
@@ -233,13 +256,6 @@ function ShadowDOMPortalToBody() {
     const shadowRoot = host.attachShadow({mode: 'open'});
     const shadowPortal = portalHost.attachShadow({mode: 'open'});
 
-    // So S2 theme variables apply: :host in the copied CSS targets the shadow host.
-    const scheme = document.documentElement.getAttribute('data-color-scheme');
-    if (scheme) {
-      host.setAttribute('data-color-scheme', scheme);
-      portalHost.setAttribute('data-color-scheme', scheme);
-    }
-
     // Each shadow root needs its own style clone — reusing one node only leaves styles in the last root.
     shadowRoot.appendChild(createClonedDocumentStyleRoot());
     shadowPortal.appendChild(createClonedDocumentStyleRoot());
@@ -255,13 +271,8 @@ function ShadowDOMPortalToBody() {
 
     const root = createRoot(appContainer);
     rootRef.current = root;
-    root.render(
-      <Provider colorScheme="dark">
-        <UNSAFE_PortalProvider getContainer={() => portalContainerRef.current}>
-          <AllComponents />
-        </UNSAFE_PortalProvider>
-      </Provider>
-    );
+    // The portaled overlays inherit colorScheme through the Provider context, so both shadows theme.
+    root.render(<ShadowApp portalContainerRef={portalContainerRef} />);
 
     return () => {
       rootRef.current = null;
@@ -557,7 +568,9 @@ function AllComponents() {
             </ActionBar>
           )}>
           <TableHeader>
-            <Column id="col1">Name</Column>
+            <Column id="col1" isRowHeader>
+              Name
+            </Column>
             <Column id="col2">Value</Column>
           </TableHeader>
           <TableBody>
