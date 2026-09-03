@@ -454,71 +454,71 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <Popover
-              hideArrow
-              padding="none"
-              offset={menuOffset}
-              crossOffset={isQuiet ? RTLFlipOffset * -12 : undefined}
-              placement={`${direction} ${align}` as Placement}
-              shouldFlip={shouldFlip}
-              UNSAFE_style={{
-                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
-              }}
-              styles={style({
-                minWidth: {
-                  default: '--trigger-width',
-                  isQuiet: 192
-                },
-                width: {
-                  default: '--trigger-width',
-                  isQuiet: '[calc(var(--trigger-width) - 24)]'
-                }
-              })(props)}>
-              <div
-                className={style({
-                  display: 'flex',
-                  size: 'full'
-                })}>
-                <Provider
-                  values={[
-                    [HeaderContext, {styles: listboxHeader({size})}],
-                    [
-                      HeadingContext,
-                      {
-                        // @ts-ignore
-                        role: 'presentation',
-                        styles: sectionHeading
-                      }
-                    ],
-                    [
-                      TextContext,
-                      {
-                        slots: {
-                          description: {
-                            styles: description({size, isFocused: false, isDisabled: false})
+            <Virtualizer
+              layout={ListLayout}
+              layoutOptions={{
+                estimatedRowHeight: 32,
+                estimatedHeadingHeight: 50,
+                padding: 8,
+                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
+              }}>
+              <Popover
+                hideArrow
+                padding="none"
+                offset={menuOffset}
+                crossOffset={isQuiet ? RTLFlipOffset * -12 : undefined}
+                placement={`${direction} ${align}` as Placement}
+                shouldFlip={shouldFlip}
+                UNSAFE_style={{
+                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                }}
+                styles={style({
+                  minWidth: {
+                    default: '--trigger-width',
+                    isQuiet: 192
+                  },
+                  width: {
+                    default: '--trigger-width',
+                    isQuiet: '[calc(var(--trigger-width) - 24)]'
+                  }
+                })(props)}>
+                <div
+                  className={style({
+                    display: 'flex',
+                    size: 'full'
+                  })}>
+                  <Provider
+                    values={[
+                      [HeaderContext, {styles: listboxHeader({size})}],
+                      [
+                        HeadingContext,
+                        {
+                          // @ts-ignore
+                          role: 'presentation',
+                          styles: sectionHeading
+                        }
+                      ],
+                      [
+                        TextContext,
+                        {
+                          slots: {
+                            description: {
+                              styles: description({size, isFocused: false, isDisabled: false})
+                            }
                           }
                         }
-                      }
-                    ]
-                  ]}>
-                  <Virtualizer
-                    layout={ListLayout}
-                    layoutOptions={{
-                      estimatedRowHeight: 32,
-                      estimatedHeadingHeight: 50,
-                      padding: 8,
-                      loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
-                    }}>
+                      ]
+                    ]}>
                     <ListBox
                       dependencies={props.dependencies}
                       items={items}
                       className={listbox({size})}>
                       {renderer}
                     </ListBox>
-                  </Virtualizer>
-                </Provider>
-              </div>
-            </Popover>
+                  </Provider>
+                </div>
+              </Popover>
+            </Virtualizer>
           </InternalPickerContext.Provider>
         </>
       )}
