@@ -377,7 +377,7 @@ export const PromptField = forwardRef(function PromptField(
             {children}
           </PromptFieldContainer>
           <p className={style({font: 'ui-sm', color: 'gray-600', textAlign: 'center'})}>
-            `${props.aiDisclosure} ` ?? {stringFormatter.format('promptfield.aiDisclaimer')}{' '}
+            {props.aiDisclosure ?? stringFormatter.format('promptfield.aiDisclaimer')}{' '}
             <Link
               variant="secondary"
               href={
@@ -386,8 +386,8 @@ export const PromptField = forwardRef(function PromptField(
               }
               target="_blank"
               onPress={props.onAITermsPress}>
-              {props.aiUserGuidelines?.label} ??{' '}
-              {stringFormatter.format('promptfield.aiUserGuidlines')}
+              {props.aiUserGuidelines?.label ??
+                stringFormatter.format('promptfield.aiUserGuidlines')}
             </Link>
           </p>
         </div>
