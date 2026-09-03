@@ -257,35 +257,32 @@ function BasicPrompt(props) {
   let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
 
   return (
-    <div
-      className={style({
+    /*- begin highlight -*/
+    <PromptField
+      {...props}
+      /* PROPS */
+      value={value}
+      onChange={setValue}
+      onSubmit={value => {
+        console.log(value.toString());
+        setValue(new PromptFieldValue([]));
+      }}
+      styles={style({
         minWidth: 190,
         width: {
           default: 'full',
           size: {
             S: '50%'
           }
-        }
-      })({size: props.size})}>
-      {/*- begin highlight -*/}
-      <PromptField
-        {...props}
-        /* PROPS */
-        value={value}
-        onChange={setValue}
-        onSubmit={value => {
-          console.log(value.toString());
-          setValue(new PromptFieldValue([]));
-        }}>
-        {/*- end highlight -*/}
-        <PromptTokenField />
-        <PromptFieldToolbar>
-          <div style={{marginInlineStart: 'auto'}}>
-            <PromptFieldSubmitButton />
-          </div>
-        </PromptFieldToolbar>
-      </PromptField>
-    </div>
+        }})({size: props.size})}>
+      {/*- end highlight -*/}
+      <PromptTokenField />
+      <PromptFieldToolbar>
+        <div style={{marginInlineStart: 'auto'}}>
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptFieldToolbar>
+    </PromptField>
   );
 }
 ```
