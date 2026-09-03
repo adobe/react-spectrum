@@ -826,6 +826,9 @@ export interface GridListLoadMoreItemProps
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element.
+   * 
+   *  @default 'react-aria-GridListLoadingIndicator'
+   * 
    */
   className?: string;
   /**
