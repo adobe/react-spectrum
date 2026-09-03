@@ -704,6 +704,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                 overflow: 'auto',
                 paddingY: 16,
                 paddingEnd: 16,
+                scrollPaddingY: 16,
                 boxSizing: 'border-box',
                 outlineStyle: 'none',
                 cursor: 'text',
