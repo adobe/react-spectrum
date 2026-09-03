@@ -1,0 +1,891 @@
+import {Layout} from '../../src/Layout';
+import {InstallCommand} from '../../src/InstallCommand';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import {VersionBadge} from '../../src/VersionBadge';
+import {AIIconsPageSearch} from '../../src/AIIconSearchView';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/ai';
+
+export const section = 'Guides';
+export const tags = ['spectrum', 'ai'];
+export const description = 'Build AI-powered experiences with prompts, messages, suggestions, attachments, and voice input.';
+export const version = 'alpha';
+
+# AI Components
+
+<PageDescription>React Spectrum provides components for building AI-powered experiences, including prompts, messages, suggestions, attachments, and voice input.</PageDescription>
+
+```tsx render type="s2" files={["packages/dev/s2-docs/pages/s2/ai-component-helpers/promptfield.tsx", "packages/dev/s2-docs/pages/s2/ai-component-helpers/chat.tsx"]}
+"use client";
+import {useState, useRef} from 'react';
+import {
+  AttachFileMenuItem,
+  CommandMenuItem,
+  InsertTokenMenuItem,
+  InsertMenuButton,
+  PromptField,
+  Attachment,
+  AttachmentPreview,
+  PromptFieldAttachment,
+  PromptFieldAttachmentList,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptFieldVoiceButton,
+  PromptToken,
+  PromptTokenField
+} from '@react-spectrum/ai';
+import {type FocusableRefValue} from '@react-types/shared';
+import {getIcon, slashCommands, objects, renderCompletions, suggestions, type UploadState} from './ai-component-helpers/promptfield';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Collection, SubmenuTrigger, Menu, MenuItem, MenuSection, Header, Heading, Text} from '@react-spectrum/s2';
+import Data from '@react-spectrum/s2/icons/Data';
+import Plugin from '@react-spectrum/s2/icons/Plugin';
+import Prompt from '@react-spectrum/s2/icons/Prompt';
+import {VirtualizedStreamingChat} from './ai-component-helpers/chat';
+
+function Example() {
+  let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
+  let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
+  let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
+
+  let mockUpload = async (id: string) => {
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 30));
+    setAttachmentState(prev => {
+      let item = prev.get(id);
+      if (!item || item.status === 'completed') {
+        return prev;
+      }
+      let newState = new Map(prev);
+      let progress = (item.progress ?? 0) + 1;
+      if (progress >= 100) {
+        newState.set(id, {status: 'completed'});
+      } else {
+        newState.set(id, {status: 'uploading', progress});
+        mockUpload(id);
+      }
+      return newState;
+    });
+  };
+
+  let clearPrompt = () => {
+    setValue(new PromptFieldValue([]));
+    setAttachments([]);
+    alert('Conversation cleared');
+  };
+
+  let compactPrompt = () => {
+    alert('Conversation compacted');
+  };
+
+  return (
+    <div className={style({height: 700, width: 'full'})}>
+      {/*- begin focus -*/}
+      <VirtualizedStreamingChat
+        suggestions={suggestions}
+        onSelectSuggestion={value => {
+          setValue(value as PromptFieldValue);
+          promptFieldRef.current?.focus();
+        }}>
+        {/*- end focus -*/}
+        {(onSend, isGenerating) => (
+          <PromptField
+            ref={promptFieldRef}
+            value={value}
+            onChange={setValue}
+            attachments={attachments}
+            onAttachmentsChange={setAttachments}
+            isGenerating={isGenerating}
+            onSubmit={prompt => {
+              onSend(prompt);
+              setValue(new PromptFieldValue([]));
+              setAttachments([]);
+              setAttachmentState(new Map());
+            }}
+            acceptedAttachmentTypes={['*/*']}
+            onAddAttachments={newAttachments => {
+              setAttachmentState(prev => {
+                let newState = new Map(prev);
+                newAttachments.forEach(attachment => {
+                  newState.set(attachment.id, {status: 'uploading', progress: 0});
+                  mockUpload(attachment.id);
+                });
+                return newState;
+              });
+            }}
+            onRemoveAttachments={removedAttachments => {
+              setAttachmentState(prev => {
+                let newState = new Map(prev);
+                removedAttachments.forEach(attachment => {
+                  newState.delete(attachment.id);
+                });
+                return newState;
+              });
+            }}>
+            <PromptFieldAttachmentList dependencies={[attachmentState]}>
+              {attachment => {
+                let state = attachmentState.get(attachment.id);
+                return (
+                  <Attachment uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
+                    <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+                  </Attachment>
+                );
+              }}
+            </PromptFieldAttachmentList>
+            <PromptTokenField
+              completionTrigger={/(?<=^|\s)[@/]/}
+              renderCompletions={(filterValue, valueType) => {
+                return renderCompletions(filterValue, {valueType, onClear: clearPrompt, onCompact: compactPrompt});
+              }}>
+              {token => (
+                <PromptToken token={token}>
+                  {getIcon(token)}
+                  {token.text}
+                </PromptToken>
+              )}
+            </PromptTokenField>
+            <PromptFieldToolbar>
+              <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+                <InsertMenuButton>
+                  <AttachFileMenuItem />
+                  <SubmenuTrigger>
+                    <MenuItem>
+                      <Prompt />
+                      <Text>Commands</Text>
+                    </MenuItem>
+                    <Menu items={slashCommands.filter(item => item.kind === 'command')}>
+                      {item => (
+                        <CommandMenuItem
+                          id={item.command}
+                          onAction={item.command === '/clear' ? clearPrompt : compactPrompt}>
+                          <Prompt />
+                          <Text slot="label">{item.command}</Text>
+                          <Text slot="description">{item.description}</Text>
+                        </CommandMenuItem>
+                      )}
+                    </Menu>
+                  </SubmenuTrigger>
+                  <SubmenuTrigger>
+                    <MenuItem>
+                      <Plugin />
+                      <Text>Skills</Text>
+                    </MenuItem>
+                    <Menu items={slashCommands.filter(item => item.kind === 'skill')}>
+                      {item => (
+                        <InsertTokenMenuItem
+                          id={item.command}
+                          token={{
+                            type: 'token',
+                            text: item.command,
+                            value: {type: 'custom', anchor: '/', valueType: item.kind, data: item}
+                          }}>
+                          <Plugin />
+                          <Text slot="label">{item.command}</Text>
+                          <Text slot="description">{item.description}</Text>
+                        </InsertTokenMenuItem>
+                      )}
+                    </Menu>
+                  </SubmenuTrigger>
+                  <SubmenuTrigger>
+                    <MenuItem>
+                      <Data />
+                      <Text>Reference an object</Text>
+                    </MenuItem>
+                    <Menu items={objects}>
+                      {item => (
+                        <MenuSection>
+                          <Header>
+                            <Heading>{item.section}</Heading>
+                          </Header>
+                          <Collection items={item.items}>
+                            {item => (
+                              <InsertTokenMenuItem
+                                id={item.title}
+                                token={{
+                                  type: 'token',
+                                  text: item.title,
+                                  value: {type: 'custom', anchor: '@', valueType: item.kind, data: item}
+                                }}>
+                                {item.title}
+                              </InsertTokenMenuItem>
+                            )}
+                          </Collection>
+                        </MenuSection>
+                      )}
+                    </Menu>
+                  </SubmenuTrigger>
+                </InsertMenuButton>
+              </div>
+              <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+                <PromptFieldVoiceButton />
+                <PromptFieldSubmitButton />
+              </div>
+            </PromptFieldToolbar>
+          </PromptField>
+        )}
+      </VirtualizedStreamingChat>
+    </div>
+  );
+}
+```
+
+## Installation
+
+AI components are published as a separate package from `@react-spectrum/s2`.
+
+<InstallCommand pkg="@react-spectrum/ai" />
+
+## Prompt fields
+
+Use `PromptField` as the foundation for allowing the user to submit a prompt. It manages an editable sequence of text and tokens, while `PromptTokenField` renders the input and `PromptFieldToolbar` contains its actions.
+
+```tsx render wide type="s2" docs={docs.exports.PromptField} props={['variant', 'size', 'isGenerating']}
+"use client";
+import {useState} from 'react';
+import {
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptTokenField
+} from '@react-spectrum/ai';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function BasicPrompt(props) {
+  let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
+
+  return (
+    <div
+      className={style({
+        minWidth: 190,
+        width: {
+          default: 'full',
+          size: {
+            S: '50%'
+          }
+        }
+      })({size: props.size})}>
+      {/*- begin highlight -*/}
+      <PromptField
+        {...props}
+        /* PROPS */
+        value={value}
+        onChange={setValue}
+        onSubmit={value => {
+          console.log(value.toString());
+          setValue(new PromptFieldValue([]));
+        }}>
+        {/*- end highlight -*/}
+        <PromptTokenField />
+        <PromptFieldToolbar>
+          <div style={{marginInlineStart: 'auto'}}>
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptFieldToolbar>
+      </PromptField>
+    </div>
+  );
+}
+```
+
+### Suggestions and tokens
+
+Suggestions can prefill a prompt, and a token field can offer context-aware completions such as mentions or commands.
+
+```tsx render type="s2"
+"use client";
+import {useState} from 'react';
+import {
+  InsertTokenMenuItem,
+  MessageSuggestion,
+  MessageSuggestionList,
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptTokenField
+} from '@react-spectrum/ai';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+/*- begin collapse -*/
+let suggestionToken = style({
+  outlineStyle: 'solid',
+  outlineWidth: 1,
+  outlineColor: 'transparent-overlay-1000/20',
+  outlineOffset: -1,
+  borderRadius: 'pill',
+  paddingX: 8,
+  paddingY: 0,
+  fontSize: 'ui',
+  display: 'inline-flex',
+  verticalAlign: 'baseline'
+});
+/*- end collapse -*/
+
+let people = ['Customers', 'Designers', 'Developers'];
+
+let suggestions = [
+  new PromptFieldValue([{type: 'text', text: 'Summarize this report'}]),
+  new PromptFieldValue([
+    {type: 'text', text: 'Draft a project brief for '},
+    {
+      type: 'token',
+      text: 'Designers',
+      value: {type: 'custom', anchor: '@', valueType: 'person', data: 'Designers'}
+    }
+  ]),
+  new PromptFieldValue([{type: 'text', text: 'Find risks in this plan'}])
+];
+
+function PromptSuggestions() {
+  let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+      <MessageSuggestionList title="Try asking">
+        {suggestions.map((suggestion, i) => (
+          <MessageSuggestion key={i} onPress={() => setValue(suggestion)}>
+            {suggestion.segments.map((segment, j) =>
+              segment.type === 'token' ? (
+                <span key={j} className={suggestionToken}>{segment.text}</span>
+              ) : (
+                segment.text
+              )
+            )}
+          </MessageSuggestion>
+        ))}
+      </MessageSuggestionList>
+      <PromptField value={value} onChange={setValue} onSubmit={console.log}>
+        <PromptTokenField
+          completionTrigger={/(?<=^|\s)@/}
+          /*- begin highlight -*/
+          renderCompletions={filterValue =>
+            people
+              .filter(person => person.toLowerCase().includes(filterValue.slice(1).toLowerCase()))
+              .map(person => (
+                <InsertTokenMenuItem
+                  key={person}
+                  id={person}
+                  token={{
+                    type: 'token',
+                    text: person,
+                    value: {type: 'custom', anchor: '@', valueType: 'person', data: person}
+                  }}>
+                  {person}
+                </InsertTokenMenuItem>
+              ))
+          }
+          /*- end highlight -*/
+          placeholder="Ask about @customers" />
+        <PromptFieldToolbar>
+          <div style={{marginInlineStart: 'auto'}}>
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptFieldToolbar>
+      </PromptField>
+    </div>
+  );
+}
+```
+
+### Attachments and actions
+
+Use `PromptFieldAttachmentList` to render a preview of attached files the user has dragged onto the PromptField or added via the `InsertMenuButton` in the toolbar. Custom menu items and toolbar controls can be added as well.
+
+```tsx render type="s2"
+"use client";
+import {useState} from 'react';
+import {
+  Attachment,
+  AttachmentPreview,
+  AttachFileMenuItem,
+  InsertMenuButton,
+  InsertTextMenuItem,
+  PromptField,
+  PromptFieldAttachment,
+  PromptFieldAttachmentList,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldVoiceButton,
+  PromptFieldValue,
+  PromptTokenField
+} from '@react-spectrum/ai';
+import {Text} from '@react-spectrum/s2';
+import CommentText from '@react-spectrum/s2/icons/CommentText';
+
+function PromptAttachments() {
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([
+    {id: '0', file: new File([], 'preview.png', {type: 'image/png'}), image: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
+    {id: '1', file: new File([], 'notes.txt', {type: 'text/plain'}), image: ''}
+  ]);
+
+  return (
+    <PromptField
+      defaultValue={new PromptFieldValue([])}
+      attachments={attachments}
+      onAttachmentsChange={setAttachments}
+      acceptedAttachmentTypes={['*/*']}>
+      {/*- begin highlight -*/}
+      <PromptFieldAttachmentList>
+        {attachment => (
+          <Attachment textValue={attachment.file.name}>
+            <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+          </Attachment>
+        )}
+      </PromptFieldAttachmentList>
+      {/*- end highlight -*/}
+      <PromptTokenField placeholder="Describe the image" />
+      <PromptFieldToolbar>
+        <InsertMenuButton>
+          <AttachFileMenuItem />
+          <InsertTextMenuItem id="summarize" text="Summarize this image">
+            <CommentText />
+            <Text>Summarize image</Text>
+          </InsertTextMenuItem>
+        </InsertMenuButton>
+        <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+          <PromptFieldVoiceButton />
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+}
+```
+
+## Chat threads
+
+Compose a conversation from `Chat`, `Thread`, `ResponseStatus`, `Alert`, and message components. The thread can be driven by a collection as messages arrive from your application.
+
+```tsx render type="s2"
+"use client";
+import {Alert, Chat, Thread, ThreadItem, UserMessage, ResponseStatus, ResponseStatusTitle, ResponseStatusPanel, ExecutionTrace, ExecutionTraceItem} from '@react-spectrum/ai';
+import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+let messages = [
+  {id: 1, type: 'user', text: 'Summarize the campaign results.'},
+  {
+    id: 2,
+    type: 'status',
+    status: 'success' as const,
+    text: 'Response complete',
+    steps: [
+      {id: 1, label: 'Fetching campaign', status: 'success' as const, detail: 'Loaded campaign details and fetched engagement results from the database.'},
+      {id: 2, label: 'Summarizing results', status: 'success' as const, detail: 'Created a full channel report and summarized the results.'}
+    ]
+  },
+  {
+    id: 3,
+    type: 'assistant',
+    text: 'Engagement increased 18% this month, led by email and social. See the full report for a channel breakdown.',
+    content: (
+      <>
+        Engagement increased <strong>18%</strong> this month, led by email and social. See the{' '}
+        <a href="#">full report</a> for a channel breakdown.
+      </>
+    )
+  },
+  {id: 4, type: 'user', text: 'Which channel performed best?'},
+  {
+    id: 5,
+    type: 'assistant',
+    text: 'Email drove the most conversions, with social close behind: Email with 4,200 conversions, Social with 3,100 conversions.',
+    content: (
+      <>
+        <p>Email drove the most conversions, with social close behind:</p>
+        <ul>
+          <li>Email: 4,200 conversions</li>
+          <li>Social: 3,100 conversions</li>
+        </ul>
+      </>
+    )
+  },
+  {
+    id: 6,
+    type: 'alert',
+    variant: 'notice' as const,
+    text: "This summary may be incomplete. The connected data source hasn't synced in 2 hours."
+  }
+];
+
+function BasicChat() {
+  return (
+    /*- begin highlight -*/
+    <Chat
+      /*- end highlight -*/
+      styles={style({width: 'full'})}>
+      <Thread
+        items={messages}
+        aria-label="Campaign discussion"
+        styles={style({
+          height: 350,
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          scrollPadding: 8
+        })}>
+        {message => {
+          switch (message.type) {
+            case 'user':
+              return (
+                <ThreadItem
+                  textValue={message.text}
+                  styles={style({display: 'flex', justifyContent: 'end'})}>
+                  <UserMessage>{message.text}</UserMessage>
+                </ThreadItem>
+              );
+            case 'assistant':
+              return (
+                <ThreadItem textValue={message.text}>
+                  <div className={prose()}>{message.content}</div>
+                </ThreadItem>
+              );
+            case 'status':
+              return (
+                <ThreadItem textValue={message.text}>
+                  <ResponseStatus status={message.status}>
+                    <ResponseStatusTitle>{message.text}</ResponseStatusTitle>
+                    <ResponseStatusPanel>
+                      <ExecutionTrace>
+                        {message.steps?.map(step => (
+                          <ExecutionTraceItem
+                            key={step.id}
+                            status={step.status}
+                            detail={<p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>}>
+                            {step.label}
+                          </ExecutionTraceItem>
+                        ))}
+                      </ExecutionTrace>
+                    </ResponseStatusPanel>
+                  </ResponseStatus>
+                </ThreadItem>
+              );
+            case 'alert':
+              return (
+                <ThreadItem textValue={message.text}>
+                  <Alert variant={message.variant} >
+                    {message.text}
+                  </Alert>
+                </ThreadItem>
+              )
+          }
+        }}
+      </Thread>
+    </Chat>
+  );
+}
+```
+
+## Loaders
+
+`PixelLoader` is the animated pixel icon shown inside `PromptField` and `ResponseStatus` while the assistant is working. It can also be used standalone anywhere an AI loading indicator is needed.
+
+The `icon` prop accepts either a single icon, which loops forever, or a themed preset, which cycles through several icons, one per loop. Icons and presets are exported individually from `@react-spectrum/ai/loader`.
+
+```tsx render type="s2" docs={docs.exports.PixelLoader} props={['icon', 'isPlaying']} initialProps={{isPlaying: true}}
+"use client";
+import {PixelLoader} from '@react-spectrum/ai/loader';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function PresetLoader(props) {
+  return (
+    <div className={style({height: 40})}>
+      <PixelLoader
+        {...props}
+        /* PROPS */
+      />
+    </div>
+  )
+}
+```
+
+### Usage
+
+Use the `pixelLoader` prop on `PromptTokenField` and `ResponseStatusTitle` to display the pixel loader.
+
+<ExampleSwitcher type={null} examples={['ResponseStatus', 'PromptField']}>
+
+```tsx render type="s2"
+"use client";
+import {cc} from '@react-spectrum/ai/loader';
+import {ResponseStatus, ResponseStatusTitle} from '@react-spectrum/ai';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function LoadingStatus() {
+  return (
+    <div className={style({height: 40})}>
+      <ResponseStatus status="pending">
+        {/*- begin highlight -*/}
+        <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
+        {/*- end highlight -*/}
+      </ResponseStatus>
+    </div>
+  );
+}
+```
+
+```tsx render type="s2"
+"use client";
+import {pencil} from '@react-spectrum/ai/loader';
+import {
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldValue,
+  PromptTokenField
+} from '@react-spectrum/ai';
+import {useState} from 'react';
+
+function GeneratingPrompt() {
+  let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
+  let [isGenerating, setIsGenerating] = useState(false);
+
+  return (
+    <PromptField
+      value={value}
+      onChange={setValue}
+      isGenerating={isGenerating}
+      onSubmit={() => {
+        setValue(new PromptFieldValue([]));
+        setIsGenerating(true);
+        setTimeout(() => setIsGenerating(false), 3000);
+      }}
+      onStop={() => setIsGenerating(false)}>
+      {/*- begin highlight -*/}
+      <PromptTokenField placeholder="Ask a question" pixelLoader={pencil} />
+      {/*- end highlight -*/}
+      <PromptFieldToolbar>
+        <div style={{marginInlineStart: 'auto'}}>
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+}
+```
+
+</ExampleSwitcher>
+
+### Available icons
+
+<AIIconsPageSearch />
+
+## API
+
+```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadScrollButton: '#threadscrollbutton', PromptField: '#promptfield'}}
+<Chat>
+  <Thread>
+    <ThreadItem />
+  </Thread>
+  <ThreadScrollButton />
+  <PromptField />
+</Chat>
+```
+
+## Chat
+
+<PropTable component={docs.exports.Chat} links={docs.links} showDescription />
+
+### ThreadScrollButton
+
+<PropTable component={docs.exports.ThreadScrollButton} links={docs.links} showDescription />
+
+## Thread
+
+```tsx links={{Thread: '#thread', ThreadItem: '#threaditem', ThreadLoadMoreItem: '#threadloadmoreitem', MessageSuggestionList: '#messagesuggestionlist', UserMessage: '#usermessage', ResponseStatus: '#responsestatus', MessageSource: '#messagesource', MessageFeedback: '#messagefeedback'}}
+<Thread>
+  <ThreadItem>
+    <UserMessage /> or <ResponseStatus /> or <MessageSuggestionList /> or assistant content
+    <MessageSource /> and/or <MessageFeedback />
+  </ThreadItem>
+  <ThreadLoadMoreItem />
+</Thread>
+```
+
+<PropTable component={docs.exports.Thread} links={docs.links} showDescription />
+
+### ThreadItem
+
+<PropTable component={docs.exports.ThreadItem} links={docs.links} showDescription />
+
+### ThreadLoadMoreItem
+
+<PropTable component={docs.exports.ThreadLoadMoreItem} links={docs.links} showDescription />
+
+### UserMessage
+
+<PropTable component={docs.exports.UserMessage} links={docs.links} showDescription />
+
+### ResponseStatus
+
+```tsx links={{ResponseStatus: '#responsestatus', ResponseStatusTitle: '#responsestatustitle', ResponseStatusPanel: '#responsestatuspanel', ExecutionTrace: '#executiontrace', ExecutionTraceItem: '#executiontraceitem'}}
+<ResponseStatus>
+  <ResponseStatusTitle />
+  <ResponseStatusPanel>
+    <ExecutionTrace>
+      <ExecutionTraceItem />
+    </ExecutionTrace>
+  </ResponseStatusPanel>
+</ResponseStatus>
+```
+
+<PropTable component={docs.exports.ResponseStatus} links={docs.links} showDescription />
+
+#### ResponseStatusTitle
+
+<PropTable component={docs.exports.ResponseStatusTitle} links={docs.links} showDescription />
+
+#### ResponseStatusPanel
+
+<PropTable component={docs.exports.ResponseStatusPanel} links={docs.links} showDescription />
+
+#### ExecutionTrace
+
+<PropTable component={docs.exports.ExecutionTrace} links={docs.links} showDescription />
+
+#### ExecutionTraceItem
+
+<PropTable component={docs.exports.ExecutionTraceItem} links={docs.links} showDescription />
+
+### Alert
+
+<PropTable component={docs.exports.Alert} links={docs.links} showDescription />
+
+### MessageSuggestionList
+
+```tsx links={{MessageSuggestionList: '#messagesuggestionlist', MessageSuggestion: '#messagesuggestion'}}
+<MessageSuggestionList>
+  <MessageSuggestion />
+</MessageSuggestionList>
+```
+
+<PropTable component={docs.exports.MessageSuggestionList} links={docs.links} showDescription />
+
+#### MessageSuggestion
+
+<PropTable component={docs.exports.MessageSuggestion} links={docs.links} showDescription />
+
+### MessageFeedback
+
+<PropTable component={docs.exports.MessageFeedback} links={docs.links} showDescription />
+
+### MessageSource
+
+```tsx links={{MessageSource: '#messagesource', SourceList: '#sourcelist', SourceListItem: '#sourcelistitem'}}
+<MessageSource>
+  <SourceList>
+    <SourceListItem />
+  </SourceList>
+</MessageSource>
+```
+
+<PropTable component={docs.exports.MessageSource} links={docs.links} showDescription />
+
+#### SourceList
+
+<PropTable component={docs.exports.SourceList} links={docs.links} showDescription />
+
+#### SourceListItem
+
+<PropTable component={docs.exports.SourceListItem} links={docs.links} showDescription />
+
+## PromptField
+
+```tsx links={{PromptField: '#promptfield', PromptFieldAttachmentList: '#promptfieldattachmentlist', PromptTokenField: '#prompttokenfield', PromptFieldToolbar: '#promptfieldtoolbar'}}
+<PromptField>
+  <PromptFieldAttachmentList />
+  <PromptTokenField />
+  <PromptFieldToolbar />
+</PromptField>
+```
+
+<PropTable component={docs.exports.PromptField} links={docs.links} showDescription />
+
+### PromptFieldAttachmentList
+
+```tsx links={{PromptFieldAttachmentList: '#promptfieldattachmentlist', Attachment: '#attachment', AttachmentPreview: '#attachmentpreview'}}
+<PromptFieldAttachmentList>
+  {attachment => (
+    <Attachment>
+      <AttachmentPreview />
+    </Attachment>
+  )}
+</PromptFieldAttachmentList>
+```
+
+<PropTable component={docs.exports.PromptFieldAttachmentList} links={docs.links} showDescription />
+
+#### Attachment
+
+<PropTable component={docs.exports.Attachment} links={docs.links} showDescription />
+
+#### AttachmentPreview
+
+<PropTable component={docs.exports.AttachmentPreview} links={docs.links} showDescription />
+
+### PromptTokenField
+
+```tsx links={{PromptTokenField: '#prompttokenfield', PromptToken: '#prompttoken'}}
+<PromptTokenField>
+  {token => <PromptToken token={token} />}
+</PromptTokenField>
+```
+
+<PropTable component={docs.exports.PromptTokenField} links={docs.links} showDescription />
+
+#### PromptToken
+
+<PropTable component={docs.exports.PromptToken} links={docs.links} showDescription />
+
+### PromptFieldToolbar
+
+```tsx links={{PromptFieldToolbar: '#promptfieldtoolbar', InsertMenuButton: '#insertmenubutton', AttachFileMenuItem: '#attachfilemenuitem', InsertTextMenuItem: '#inserttextmenuitem', InsertTokenMenuItem: '#inserttokenmenuitem', CommandMenuItem: '#commandmenuitem', SubmenuTrigger: 'Menu#submenutrigger', Menu: 'Menu#menu', PromptFieldVoiceButton: '#promptfieldvoicebutton', PromptFieldSubmitButton: '#promptfieldsubmitbutton'}}
+<PromptFieldToolbar>
+  <InsertMenuButton>
+    <AttachFileMenuItem />
+    <SubmenuTrigger>
+      <InsertTextMenuItem /> or <InsertTokenMenuItem /> or <CommandMenuItem />
+      <Menu />
+    </SubmenuTrigger>
+  </InsertMenuButton>
+  <PromptFieldVoiceButton />
+  <PromptFieldSubmitButton />
+</PromptFieldToolbar>
+```
+
+<PropTable component={docs.exports.PromptFieldToolbar} links={docs.links} showDescription />
+
+#### InsertMenuButton
+
+<PropTable component={docs.exports.InsertMenuButton} links={docs.links} showDescription />
+
+#### AttachFileMenuItem
+
+<PropTable component={docs.exports.AttachFileMenuItem} links={docs.links} showDescription />
+
+#### InsertTextMenuItem
+
+<PropTable component={docs.exports.InsertTextMenuItem} links={docs.links} showDescription />
+
+#### InsertTokenMenuItem
+
+<PropTable component={docs.exports.InsertTokenMenuItem} links={docs.links} showDescription />
+
+#### CommandMenuItem
+
+<PropTable component={docs.exports.CommandMenuItem} links={docs.links} showDescription />
+
+#### PromptFieldVoiceButton
+
+<PropTable component={docs.exports.PromptFieldVoiceButton} links={docs.links} showDescription />
+
+#### PromptFieldSubmitButton
+
+<PropTable component={docs.exports.PromptFieldSubmitButton} links={docs.links} showDescription />
+
+## PixelLoader
+
+<PropTable component={docs.exports.PixelLoader} links={docs.links} showDescription />
+

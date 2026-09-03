@@ -2342,7 +2342,7 @@ export interface TableLoadMoreItemProps
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element.
    *
-   * @default 'react-aria-TableLoadMoreItem'
+   * @default 'react-aria-TableLoadingIndicator'
    */
   className?: string;
   /**

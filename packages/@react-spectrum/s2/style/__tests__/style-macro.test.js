@@ -40,26 +40,26 @@ describe('style-macro', () => {
 "@layer _.prose, _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs16:first-child {
+  .Jbs17:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv16:first-child {
+    .Jbpv17:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
-.-macro-static-k4lBYc {
-        --macro-data-k4lBYc: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+.-macro-static-8AsEje {
+        --macro-data-8AsEje: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
-    expect(js).toMatchInlineSnapshot(`" Jbs16 Jbpv16 -macro-static-k4lBYc"`);
+    expect(js).toMatchInlineSnapshot(`" Jbs17 Jbpv17 -macro-static-8AsEje"`);
   });
 
   it('should support self references', () => {
@@ -73,60 +73,60 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  ._kc16 {
+  ._kc17 {
     border-top-width: 2px;
   }
 
 
-  .hc16 {
+  .hc17 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc16 {
+  .mCPFGYc17 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc16 {
+  .lc17 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc16 {
+  .SMBFGYc17 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv16 {
+  .Rv17 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd16 {
+  .ZjUQgKd17 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc16 {
+  .-m_-mc17 {
     --m: 2px;
   }
 
 
-  .-S_-Sv16 {
+  .-S_-Sv17 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
-.-macro-static-Mb83Ob {
-        --macro-data-Mb83Ob: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+.-macro-static-3LQeBc {
+        --macro-data-3LQeBc: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
 
     expect(js).toMatchInlineSnapshot(
-      `" _kc16 hc16 mCPFGYc16 lc16 SMBFGYc16 Rv16 ZjUQgKd16 -m_-mc16 -S_-Sv16 -macro-static-Mb83Ob"`
+      `" _kc17 hc17 mCPFGYc17 lc17 SMBFGYc17 Rv17 ZjUQgKd17 -m_-mc17 -S_-Sv17 -macro-static-3LQeBc"`
     );
   });
 
@@ -144,9 +144,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gw16 pg16 -macro-dynamic-va45iq"`);
-    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb16 pHJ3AUd16 -macro-static-mluMGe"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb16 pg16 -macro-dynamic-1ka988u"`);
+    expect(js()).toMatchInlineSnapshot(`"  gw17 pg17 -macro-dynamic-k4rz6c"`);
+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb17 pHJ3AUd17 -macro-static-AhVaPc"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb17 pg17 -macro-dynamic-194x1wg"`);
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -161,10 +161,10 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B16 __Ya16 -macro-dynamic-n4pr0j"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D16 __Ya16 -macro-static-dVorDb"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B17 __Ya17 -macro-dynamic-17fce1x"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D17 __Ya17 -macro-static-1rvuYc"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  -_7PloMd-D16 __Ya16 -macro-dynamic-1nqd9c5"`
+      `"  -_7PloMd-D17 __Ya17 -macro-dynamic-8zvuef"`
     );
   });
 
@@ -180,10 +180,10 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  Tk16 Qk16 Sk16 Rk16 -macro-dynamic-145tku9"`);
-    expect(overrides).toMatchInlineSnapshot(`" Tm16 Qm16 Sm16 Rm16 -macro-static-XW4HYc"`);
+    expect(js()).toMatchInlineSnapshot(`"  Tk17 Qk17 Sk17 Rk17 -macro-dynamic-6iuhhh"`);
+    expect(overrides).toMatchInlineSnapshot(`" Tm17 Qm17 Sm17 Rm17 -macro-static-bKJ3K"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  Tm16 Qm16 Sm16 Rm16 -macro-dynamic-91t6bt"`
+      `"  Tm17 Qm17 Sm17 Rm17 -macro-dynamic-1afy4y5"`
     );
   });
 
@@ -199,9 +199,9 @@ describe('style-macro', () => {
       fontSize: 'ui-xs'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc16 vx16 -macro-dynamic-1omk2g2"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a16 vx16 -macro-static-Yts0we"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a16 vx16 -macro-dynamic-1c7vv9w"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc17 vx17 -macro-dynamic-1dh7w3o"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a17 vx17 -macro-static-kO1nNd"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a17 vx17 -macro-dynamic-112joxi"`);
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -216,9 +216,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gE16 -macro-dynamic-91ynya"`);
-    expect(overrides).toMatchInlineSnapshot(`" Nk16 -macro-static-tAGYMd"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk16 gE16 -macro-dynamic-tnvuwy"`);
+    expect(js()).toMatchInlineSnapshot(`"  gE17 -macro-dynamic-1fo7yhv"`);
+    expect(overrides).toMatchInlineSnapshot(`" Nk17 -macro-static-aA7HUb"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk17 gE17 -macro-dynamic-iijokk"`);
   });
 
   it('should support runtime conditions', () => {
@@ -239,32 +239,32 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .gH16 {
+  .gH17 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF16 {
+  .gF17 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE16 {
+  .gE17 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt16 {
+  .pt17 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po16 {
+  .po17 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm16 {
+  .pm17 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -272,9 +272,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  gH16 pt16 -macro-dynamic-phpdio"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF16 po16 -macro-dynamic-ja3wp"`);
-    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE16 pm16 -macro-dynamic-11mwkcm"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH17 pt17 -macro-dynamic-ecd76a"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF17 po17 -macro-dynamic-1of1zjf"`);
+    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE17 pm17 -macro-dynamic-qhke08"`);
   });
 
   it('should support nested runtime conditions', () => {
@@ -293,33 +293,33 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .gH16 {
+  .gH17 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF16 {
+  .gF17 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h16 {
+  .g_h17 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g316 {
+  .g317 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot(`"  gH16 -macro-dynamic-meizj9"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF16 -macro-dynamic-116isgz"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h16 -macro-dynamic-1jnn0bo"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH17 -macro-dynamic-1t0sa2u"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF17 -macro-dynamic-8ro11g"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h17 -macro-dynamic-r8s8w5"`);
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      `"  g316 -macro-dynamic-1z0sueo"`
+      `"  g317 -macro-dynamic-16ly2z5"`
     );
   });
 
@@ -334,9 +334,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY16 -macro-dynamic-3c8qja"`);
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe16 -macro-dynamic-2xzl3k"`);
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw16 -macro-dynamic-1tsrwdw"`);
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY17 -macro-dynamic-19yi12v"`);
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe17 -macro-dynamic-19k8vn5"`);
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw17 -macro-dynamic-11dx4yd"`);
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -354,14 +354,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb16 {
+    .plb17 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple16 {
+    .ple17 {
       color: HighlightText;
     }
   }
@@ -370,8 +370,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  plb16 -macro-dynamic-ia8bis"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple16 -macro-dynamic-vmsn3r"`);
+    expect(js({})).toMatchInlineSnapshot(`"  plb17 -macro-dynamic-1owhm2d"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple17 -macro-dynamic-37xvo8"`);
   });
 
   it('inherits parent default when nested branch has no default key', () => {
@@ -387,9 +387,9 @@ describe('style-macro', () => {
     });
     // forcedColors.default should apply when variant=highlight but !isSelected
     expect(css).toContain('ButtonText');
-    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb16 -macro-dynamic-ia8bis"`);
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb17 -macro-dynamic-1owhm2d"`);
     expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot(
-      `"  ple16 -macro-dynamic-vmsn3r"`
+      `"  ple17 -macro-dynamic-37xvo8"`
     );
   });
 
@@ -398,33 +398,33 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot(`" Th16 Qh16 Sh16 Rh16 -macro-static-3XoZ4"`);
+    expect(js).toMatchInlineSnapshot(`" Th17 Qh17 Sh17 Rh17 -macro-static-lXi0xd"`);
     expect(css).toMatchInlineSnapshot(`
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .Th16 {
+  .Th17 {
     padding-top: 24px;
   }
 
 
-  .Qh16 {
+  .Qh17 {
     padding-bottom: 24px;
   }
 
 
-  .Sh16 {
+  .Sh17 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh16 {
+  .Rh17 {
     padding-inline-end: 24px;
   }
 }
 
-.-macro-static-3XoZ4 {
-        --macro-data-3XoZ4: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+.-macro-static-lXi0xd {
+        --macro-data-lXi0xd: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -440,13 +440,13 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .gpQzfVb16 {
+  .gpQzfVb17 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
 
-.-macro-static-OHuwdd {
-        --macro-data-OHuwdd: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+.-macro-static-vHVflb {
+        --macro-data-vHVflb: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -465,13 +465,13 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .-FUeYm-gE16 {
+  .-FUeYm-gE17 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
 
-.-macro-static-g8lhGc {
-        --macro-data-g8lhGc: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+.-macro-static-X7M0N {
+        --macro-data-X7M0N: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
       }
 
 "

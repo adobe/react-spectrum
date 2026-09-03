@@ -148,6 +148,7 @@ export {
 export {
   Menu,
   MenuItem,
+  MenuLoadMoreItem,
   MenuTrigger,
   MenuSection,
   MenuContext,
@@ -248,7 +249,8 @@ export {
   NavigationTreeItemContent,
   NavigationTreeSection,
   NavigationTreeHeader,
-  NavigationTreeContext
+  NavigationTreeContext,
+  NavigationTreeItemStateContext
 } from '../src/NavigationTree';
 export {
   TreeLoadMoreItem,
@@ -284,6 +286,7 @@ export {Focusable} from 'react-aria/Focusable';
 export {VisuallyHidden} from 'react-aria/VisuallyHidden';
 export {FormValidationContext} from 'react-stately/private/form/useFormValidationState';
 export {parseColor, getColorChannels} from 'react-stately/Color';
+export {setInteractionModality} from 'react-aria/useFocusVisible';
 export {ToastQueue as UNSTABLE_ToastQueue} from 'react-stately/useToastState';
 export {useListData} from 'react-stately/useListData';
 export {useTreeData} from 'react-stately/useTreeData';
@@ -414,6 +417,7 @@ export type {
   MenuProps,
   MenuItemProps,
   MenuItemRenderProps,
+  MenuLoadMoreItemProps,
   MenuTriggerProps,
   SubmenuTriggerProps,
   MenuSectionProps
@@ -626,6 +630,7 @@ export type {DateRangePickerState} from 'react-stately/useDateRangePickerState';
 export type {DisclosureState} from 'react-stately/useDisclosureState';
 export type {DisclosureGroupState} from 'react-stately/useDisclosureGroupState';
 export type {ListState} from 'react-stately/useListState';
+export type {Modality} from 'react-aria/useFocusVisible';
 export type {NumberFieldState} from 'react-stately/useNumberFieldState';
 export type {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 export type {QueuedToast, ToastOptions, ToastState} from 'react-stately/useToastState';
