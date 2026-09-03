@@ -12,7 +12,7 @@
 
 import {ActionButton, ActionButtonContext} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
-import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
+import {Attachment, AttachmentList, AttachmentListProps, AttachmentPreview} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button, ButtonContext} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
@@ -424,7 +424,7 @@ export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps)
       {children ||
         (attachment => (
           <Attachment>
-            {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+            <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
           </Attachment>
         ))}
     </AttachmentList>
