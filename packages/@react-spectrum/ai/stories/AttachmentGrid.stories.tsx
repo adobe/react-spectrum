@@ -86,7 +86,7 @@ type Story = StoryObj<typeof AttachmentGridDemo>;
 
 export const AIAttachmentGrid: Story = {
   render: args => (
-    <div style={{width: 320, padding: 4}}>
+    <div style={{width: 320}}>
       <AttachmentGridDemo {...args} count={5} />
     </div>
   )
@@ -95,7 +95,7 @@ export const AIAttachmentGrid: Story = {
 export const Overflow: Story = {
   name: 'Overflow (vertical scroll fade)',
   render: args => (
-    <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
+    <div style={{width: 320, resize: 'horizontal', overflow: 'hidden'}}>
       <AttachmentGridDemo {...args} count={20} />
     </div>
   )
