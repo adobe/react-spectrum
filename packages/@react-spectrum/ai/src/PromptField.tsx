@@ -55,6 +55,7 @@ import {
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import {Provider} from 'react-aria-components/slots';
+import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -75,7 +76,6 @@ import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
-
 export interface PromptFieldAttachment {
   id: string;
   file: File;
@@ -361,7 +361,10 @@ export const PromptField = forwardRef(function PromptField(
           [ActionButtonContext, {staticColor: 'auto', size}],
           [ToggleButtonContext, {staticColor: 'auto', size}]
         ]}>
-        <div ref={domRef} {...focusWithinProps}>
+        <div
+          ref={domRef}
+          {...focusWithinProps}
+          className={style({maxHeight: '40cqh', display: 'flex', flexDirection: 'column'})}>
           <PromptFieldContainer
             {...dropProps}
             role="group"
@@ -569,7 +572,11 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             S: 2
           }
         },
-        width: 'full',
+        flexGrow: 1,
+        flexShrink: 1,
+        minHeight: 0,
+        marginY: -16,
+        marginEnd: -16,
         '--loader-color': {
           type: 'color',
           value: {
@@ -606,7 +613,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           value={prompt}
           onChange={setPrompt}
           allowsNewlines
-          className={style({flexGrow: 1})}
+          className={style({flexGrow: 1, minHeight: 0, height: 'full'})}
           aria-label={stringFormatter.format('promptfield.label')}
           isReadOnly={isListening}
           onSubmit={onSubmit}
@@ -673,12 +680,14 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             ref={inputRef}
             className={
               css('&:empty::before { content: attr(data-placeholder); }') +
+              ' ' +
+              scrollFade({y: 16}) +
               style<{size: 'S' | 'M'; isFocused: boolean}>({
                 font: {
-                  default: 'body',
+                  default: 'ui-lg',
                   size: {
-                    M: 'body',
-                    S: 'body-sm'
+                    M: 'ui-lg',
+                    S: 'ui'
                   }
                 },
                 color: {
@@ -690,6 +699,12 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                   }
                 },
                 width: 'full',
+                height: 'full',
+                minHeight: '1lh',
+                overflow: 'auto',
+                paddingY: 16,
+                paddingEnd: 16,
+                boxSizing: 'border-box',
                 outlineStyle: 'none',
                 cursor: 'text',
                 transition: 'colors',
@@ -905,6 +920,7 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
     <Button
       variant="primary"
       staticColor="auto"
+      styles={style({alignSelf: 'end'})}
       // TODO: should it be possible to submit a prompt with only attachments?
       isDisabled={prompt.segments.length === 0 && !isGenerating}
       aria-label={
