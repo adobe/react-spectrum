@@ -12,7 +12,7 @@
 
 import {addEvent, setStyle} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
-import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
@@ -202,8 +202,16 @@ function preventScrollMobileWebKit() {
       focus.call(this, {...opts, preventScroll: true});
 
       if (!opts || !opts.preventScroll) {
+        let scroll = () => {
+          let activeElement = getActiveElement();
+
+          if (activeElement === this) {
+            scrollIntoView(this);
+          }
+        };
+
         runAfterKeyboard(isOpen =>
-          isOpen ? scrollIntoView(this) : runAfterKeyboardTransition(() => scrollIntoView(this))
+          isOpen ? scroll() : runAfterKeyboardTransition(() => scroll())
         );
       }
     }
