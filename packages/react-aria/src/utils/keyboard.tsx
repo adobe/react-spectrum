@@ -13,6 +13,7 @@
 import {addEvent} from './domHelpers';
 import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
 import {getMetaValue} from './getMetaValue';
+import {isAndroid} from 'react-aria/private/utils/platform';
 import {isFocusable} from './isFocusable';
 import {isIOS, isMac, isWebKit} from './platform';
 
@@ -146,7 +147,8 @@ function onResizeStart(e: Event): void {
 
 function onResizeEnd(): void {
   // Overlaying keyboards do not impact geometry, so there is nothing to measure.
-  if (getMetaValue('viewport')?.includes('overlays-content')) {
+  // https://caniuse.com/mdn-html_elements_meta_name_viewport_interactive-widget
+  if (isAndroid() && getMetaValue('viewport')?.includes('overlays-content')) {
     return;
   }
 

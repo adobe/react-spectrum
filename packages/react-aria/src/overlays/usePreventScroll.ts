@@ -17,7 +17,7 @@ import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
-import {runAfterKeyboard} from '../utils/runAfterKeyboard';
+import {runAfterKeyboard, runAfterKeyboardTransition} from '../utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {willOpenKeyboard} from '../utils/keyboard';
 
@@ -181,7 +181,11 @@ function preventScrollMobileWebKit() {
     if (relatedTarget && willOpenKeyboard(relatedTarget)) {
       // Focus without scrolling the whole page, and then scroll into view manually.
       relatedTarget.focus({preventScroll: true});
-      runAfterKeyboard(() => scrollIntoView(relatedTarget));
+      runAfterKeyboard(isOpen =>
+        isOpen
+          ? scrollIntoView(relatedTarget)
+          : runAfterKeyboardTransition(() => scrollIntoView(relatedTarget))
+      );
     } else if (!relatedTarget) {
       // When tapping the Done button on the keyboard, focus moves to the body.
       // FocusScope will then restore focus back to the input. Later when tapping
