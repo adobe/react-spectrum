@@ -13,6 +13,7 @@
 import AlertDiamond from '@react-spectrum/s2/icons/AlertDiamond';
 import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
 import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
+import {ButtonContext} from 'react-aria-components/Button';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {ComponentType, forwardRef, ReactNode} from 'react';
@@ -21,6 +22,7 @@ import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
 import intlMessages from '../intl/*.json';
 import {lightDark, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import {Provider} from 'react-aria-components/slots';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
@@ -98,7 +100,9 @@ export const Alert = forwardRef(function Alert(props: AlertProps, ref: DOMRef<HT
         <Icon styles={icon({variant})} aria-label={stringFormatter.format(`alert.${variant}`)} />
       )}
       <span className={text}>{children}</span>
-      <CloseButton size="S" onPress={onDismiss} />
+      <Provider values={[[ButtonContext, null]]}>
+        <CloseButton size="S" onPress={onDismiss} />
+      </Provider>
     </div>
   );
 });

@@ -40,6 +40,7 @@ import {flushSync} from 'react-dom';
 import {getColorChannels, parseColor} from 'react-stately';
 import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
+import {presetNames} from './PresetPicker';
 import type {PropControl} from './VisualExample';
 import React, {
   createContext,
@@ -63,6 +64,9 @@ export const IconPicker = lazy(() =>
   import('./IconPicker').then(({IconPicker}) => ({default: IconPicker}))
 );
 let LazyIcon = lazy(() => import('./IconPicker').then(({Icon}) => ({default: Icon})));
+let LazyPresetPicker = lazy(() =>
+  import('./PresetPicker').then(({PresetPicker}) => ({default: PresetPicker}))
+);
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -515,6 +519,10 @@ function renderValue(value: any, indent = '') {
       if (value == null) {
         return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
       }
+      if (presetNames.has(value)) {
+        return <span className={style({color: 'red-1000'})}>{presetNames.get(value)}</span>;
+      }
+
       if (Array.isArray(value)) {
         let res: ReactNode[] = value.map((item, i) => {
           let result = renderValue(item, indent);
@@ -684,6 +692,15 @@ export function Control({name}: {name: string}) {
       }
       if (name === 'src') {
         return <StringControl control={control} value={value} onChange={onChange} />;
+      }
+      if (name === 'icon' && control.value.elements.some(e => e.type === 'array')) {
+        return (
+          <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
+            <Suspense fallback={<ActionButton isPending>Icon</ActionButton>}>
+              <LazyPresetPicker value={value} onChange={onChange} />
+            </Suspense>
+          </Wrapper>
+        );
       }
       return <UnionControl control={control} value={value} onChange={onChange} />;
     case 'number':

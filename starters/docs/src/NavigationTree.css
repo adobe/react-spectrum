@@ -80,7 +80,7 @@
   /* React Aria sets data-current on the link matching the NavigationTree's selectedRoute. */
   &[data-current] .react-aria-Link:before {
     display: block;
-    background: var(--highlight-background);
+    background: var(--focus-ring-color);
   }
 
   &[data-focus-visible] {
