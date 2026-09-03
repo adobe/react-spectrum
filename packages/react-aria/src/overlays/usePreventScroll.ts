@@ -17,8 +17,7 @@ import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
-import {runAfterKeyboard} from '../utils/runAfterKeyboard';
-import {runAfterKeyboardTransition} from 'react-aria/private/utils/runAfterKeyboard';
+import {runAfterKeyboard, runAfterKeyboardTransition} from '../utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
 interface PreventScrollOptions {
