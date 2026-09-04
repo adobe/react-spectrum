@@ -581,7 +581,7 @@ function BasicChat() {
 
 The `icon` prop accepts either a single icon, which loops forever, or a themed preset, which cycles through several icons, one per loop. Icons and presets are exported individually from `@react-spectrum/ai/loader`.
 
-```tsx render type="s2" docs={docs.exports.PixelLoader} props={['icon']}
+```tsx render type="s2" docs={docs.exports.PixelLoader} props={['icon', 'isPlaying']} initialProps={{isPlaying: true}}
 "use client";
 import {PixelLoader} from '@react-spectrum/ai/loader';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -601,13 +601,17 @@ function PresetLoader(props) {
 
   return (
     <div ref={ref} className={style({height: 40})} >
-    {/*- begin highlight -*/}
-      <PixelLoader
-        {...props}
-        isPlaying={isInView}
-        /* PROPS */
-      />
-      {/*- end highlight -*/}
+      {isInView && (
+        <>
+          {/*- begin highlight -*/}
+          <PixelLoader
+            {...props}
+            /* PROPS */
+          />
+          {/*- end highlight -*/}
+        </>
+        )
+      }
     </div>
   );
 }
@@ -641,11 +645,15 @@ function LoadingStatus() {
 
   return (
     <div ref={ref} className={style({height: 40})} >
-      <ResponseStatus status={isInView ? 'pending' : 'success'}>
-        {/*- begin highlight -*/}
-        <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
-        {/*- end highlight -*/}
-      </ResponseStatus>
+      {
+        isInView && (
+        <ResponseStatus status='pending'>
+          {/*- begin highlight -*/}
+          <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
+          {/*- end highlight -*/}
+        </ResponseStatus>
+        )
+      }
     </div>
   );
 }
