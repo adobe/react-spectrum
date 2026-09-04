@@ -787,7 +787,7 @@ function PlantModal(props: ModalOverlayProps) {
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>
-      {({isEntering, isExiting}) => (
+      {({isEntering, isExiting, isOpen}) => (
         <>
           {/* Inner position: sticky div sized to the visual viewport
             height so the modal appears in view.
@@ -799,6 +799,7 @@ function PlantModal(props: ModalOverlayProps) {
               <div
                 data-react-aria-top-layer="true"
                 className={`absolute top-0 left-0 w-full h-(--visual-viewport-height) z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
+                ${!isOpen ? 'opacity-0' : ''}
                 ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
                 ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
               `}>

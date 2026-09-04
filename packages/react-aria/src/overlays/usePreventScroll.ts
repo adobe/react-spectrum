@@ -10,16 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {addEvent} from '../utils/domHelpers';
+import {addEvent, setStyle} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
-import {setStyle} from '../utils/domHelpers';
+import {runAfterKeyboard, runAfterKeyboardTransition} from '../utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
-import {willOpenKeyboard} from '../utils/keyboard';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -178,11 +177,10 @@ function preventScrollMobileWebKit() {
   let onBlur = (e: FocusEvent) => {
     let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
-    if (relatedTarget && willOpenKeyboard(relatedTarget)) {
-      // Focus without scrolling the whole page, and then scroll into view manually.
-      relatedTarget.focus({preventScroll: true});
-      scrollIntoViewWhenReady(relatedTarget, willOpenKeyboard(target));
-    } else if (!relatedTarget) {
+    if (relatedTarget) {
+      // Re-focus programmatically to have the override below perform the scroll.
+      relatedTarget.focus();
+    } else {
       // When tapping the Done button on the keyboard, focus moves to the body.
       // FocusScope will then restore focus back to the input. Later when tapping
       // the same input again, it is already focused, so no blur event will fire,
@@ -199,15 +197,21 @@ function preventScrollMobileWebKit() {
     configurable: true,
     writable: true,
     value: function (opts?: FocusOptions) {
-      // Track whether the keyboard was already visible before.
-      let activeElement = getActiveElement();
-      let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
-
       // Focus the element without scrolling the page.
       focus.call(this, {...opts, preventScroll: true});
 
       if (!opts || !opts.preventScroll) {
-        scrollIntoViewWhenReady(this, wasKeyboardVisible);
+        let scroll = () => {
+          let activeElement = getActiveElement();
+
+          if (activeElement === this) {
+            scrollIntoView(this);
+          }
+        };
+
+        runAfterKeyboard(isOpen =>
+          isOpen ? scroll() : runAfterKeyboardTransition(() => scroll())
+        );
       }
     }
   });
@@ -230,21 +234,10 @@ function preventScrollMobileWebKit() {
   };
 }
 
-function scrollIntoViewWhenReady(target: Element, wasKeyboardVisible: boolean) {
-  if (wasKeyboardVisible || !visualViewport) {
-    // If the keyboard was already visible, scroll the target into view immediately.
-    scrollIntoView(target);
-  } else {
-    // Otherwise, wait for the visual viewport to resize before scrolling so we can
-    // measure the correct position to scroll to.
-    visualViewport.addEventListener('resize', () => scrollIntoView(target), {once: true});
-  }
-}
-
 function scrollIntoView(target: Element) {
   let root = document.scrollingElement || document.documentElement;
   let nextTarget: Element | null = target;
-  while (nextTarget && nextTarget !== root) {
+  while (nextTarget && nextTarget !== root && nextTarget.isConnected) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
     let scrollable = getScrollParent(nextTarget);
     if (

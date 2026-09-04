@@ -111,24 +111,20 @@ beforeEach(() => {
   });
   window.IntersectionObserver = mockIntersectionObserver;
 
-  // Set document.documentElement dimensions to match jsdom's default window.innerWidth/innerHeight
-  // This is needed because clientWidth/clientHeight default to 0 in jsdom unless explicitly set
+  // Proxy client dimensions to the window to match jsdom's default.
+  // This is needed because they default to 0 in jsdom unless explicitly set.
   Object.defineProperty(document.documentElement, 'clientWidth', {
-    writable: true,
-    configurable: true,
-    value: 1024
+    get: () => window.innerWidth,
+    configurable: true
   });
+
   Object.defineProperty(document.documentElement, 'clientHeight', {
-    writable: true,
-    configurable: true,
-    value: 768
+    get: () => window.innerHeight,
+    configurable: true
   });
 });
 
 afterEach(() => {
   delete window.IntersectionObserver;
-  // Clean up the clientWidth/clientHeight properties
-  delete document.documentElement.clientWidth;
-  delete document.documentElement.clientHeight;
   cleanupMatchMedia();
 });
