@@ -19,10 +19,11 @@ import {chain} from 'react-aria/chain';
 import {Content, Heading} from './Content';
 import {Dialog} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {forwardRef, ReactNode} from 'react';
+import {forwardRef, KeyboardEvent as ReactKeyboardEvent, ReactNode, useContext} from 'react';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {Provider} from 'react-aria-components/slots';
 import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -108,9 +109,37 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
 
   let domProps = filterDOMProps(props, {labelable: true});
 
+  // The Escape key is normally handled by the modal overlay, which closes the dialog
+  // without pressing the cancel button. Handle it on the dialog itself instead, so that
+  // dismissing an AlertDialog with the Escape key is equivalent to pressing the cancel button.
+  let state = useContext(OverlayTriggerStateContext);
+  let onKeyDown = (e: ReactKeyboardEvent) => {
+    if (
+      e.key === 'Escape' &&
+      !e.nativeEvent.isComposing &&
+      !e.nativeEvent.repeat &&
+      !e.altKey &&
+      !e.ctrlKey &&
+      !e.shiftKey &&
+      !e.metaKey
+    ) {
+      if (state) {
+        state.close();
+        onCancel();
+        e.stopPropagation();
+        e.preventDefault();
+      } else {
+        // Within a DialogContainer there is no trigger state at this point in the tree.
+        // Let the event propagate so the overlay closes the dialog, and only fire onCancel.
+        onCancel();
+      }
+    }
+  };
+
   return (
     <Dialog
       {...domProps}
+      onKeyDown={onKeyDown}
       role="alertdialog"
       ref={ref}
       size={props.size}
