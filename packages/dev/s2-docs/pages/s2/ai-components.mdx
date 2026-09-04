@@ -585,37 +585,16 @@ The `icon` prop accepts either a single icon, which loops forever, or a themed p
 "use client";
 import {PixelLoader} from '@react-spectrum/ai/loader';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useRef, useState, useEffect} from 'react';
 
 function PresetLoader(props) {
-  let ref = useRef<HTMLDivElement>(null);
-  let [isInView, setIsInView] = useState(false);
-
-  useEffect(() => {
-    if (!ref.current) {
-      return;
-    }
-
-    let observer = new IntersectionObserver(([entry]) => {
-      setIsInView(entry.isIntersecting);
-    });
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <div ref={ref} className={style({height: 40})} >
-      {isInView && (
-        <>
-          {/*- begin highlight -*/}
-          <PixelLoader
-            {...props}
-            /* PROPS */
-          />
-          {/*- end highlight -*/}
-        </>
-        )
-      }
+    <div className={style({height: 40})} >
+      {/*- begin highlight -*/}
+      <PixelLoader
+        {...props}
+        /* PROPS */
+      />
+      {/*- end highlight -*/}
     </div>
   );
 }
@@ -632,34 +611,15 @@ Use the `pixelLoader` prop on `ResponseStatusTitle` and `PromptFieldToken` to di
 import {cc} from '@react-spectrum/ai/loader';
 import {ResponseStatus, ResponseStatusTitle} from '@react-spectrum/ai';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useRef, useState, useEffect} from 'react';
 
 function LoadingStatus() {
-  let ref = useRef<HTMLDivElement>(null);
-  let [isInView, setIsInView] = useState(false);
-
-  useEffect(() => {
-    if (!ref.current){
-      return;
-    }
-
-    let observer = new IntersectionObserver(
-      ([entry]) => setIsInView(entry.isIntersecting)
-    );
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <div ref={ref} className={style({height: 40})} >
-      {isInView && (
-        <ResponseStatus status='pending'>
-          {/*- begin highlight -*/}
-          <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
-          {/*- end highlight -*/}
-        </ResponseStatus>
-        )
-      }
+    <div className={style({height: 40})} >
+      <ResponseStatus status='pending'>
+        {/*- begin highlight -*/}
+        <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
+        {/*- end highlight -*/}
+      </ResponseStatus>
     </div>
   );
 }
