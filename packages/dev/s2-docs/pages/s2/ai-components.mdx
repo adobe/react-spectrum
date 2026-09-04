@@ -623,7 +623,6 @@ Use the `pixelLoader` prop on `ResponseStatusTitle` and `PromptFieldToken` to di
 
 <ExampleSwitcher type={null} examples={['ResponseStatus', 'PromptField']}>
 
-
 ```tsx render type="s2"
 "use client";
 import {cc} from '@react-spectrum/ai/loader';
@@ -645,8 +644,7 @@ function LoadingStatus() {
 
   return (
     <div ref={ref} className={style({height: 40})} >
-      {
-        isInView && (
+      {isInView && (
         <ResponseStatus status='pending'>
           {/*- begin highlight -*/}
           <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
