@@ -62,5 +62,38 @@ describe('useModalOverlay', function () {
       fireEvent.click(document.body);
       expect(onOpenChange).not.toHaveBeenCalled();
     });
+
+    it('should not hide the overlay when a press is retargeted to the document element', function () {
+      // When the pressed element is removed from the DOM mid-press (e.g. a button swapped
+      // out after an async mutation), the browser retargets the press events to the
+      // document element. That must not be treated as a press outside the modal.
+      let onOpenChange = jest.fn();
+      render(
+        <Example
+          isOpen
+          onOpenChange={onOpenChange}
+          isDismissable />
+      );
+      pressStart(document.documentElement);
+      pressEnd(document.documentElement);
+      fireEvent.click(document.documentElement);
+      expect(onOpenChange).not.toHaveBeenCalled();
+    });
+
+    it('should ignore a retargeted press even if shouldCloseOnInteractOutside returns true', function () {
+      let onOpenChange = jest.fn();
+      render(
+        <Example
+          isOpen
+          onOpenChange={onOpenChange}
+          isDismissable
+          shouldCloseOnInteractOutside={() => true}
+        />
+      );
+      pressStart(document.documentElement);
+      pressEnd(document.documentElement);
+      fireEvent.click(document.documentElement);
+      expect(onOpenChange).not.toHaveBeenCalled();
+    });
   });
 });
