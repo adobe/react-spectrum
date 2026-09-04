@@ -592,7 +592,7 @@ function PresetLoader(props) {
   let [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
-    let (!ref.current) {
+    if (!ref.current) {
       return;
     }
 
