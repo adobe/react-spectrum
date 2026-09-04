@@ -146,7 +146,7 @@ function tokenizeURLs(text: string): TokenFieldSegment[] {
     if (match.index > start) {
       segments.push({type: 'text', text: text.slice(start, match.index)});
     }
-    segments.push({type: 'token', text: match[3], value: {type: 'url', url: match[0]}});
+    segments.push({type: 'token', text: match[0], value: {type: 'url', url: match[0]}});
     start = match.index + match[0].length;
   }
 

@@ -93,6 +93,46 @@ export interface TokenFieldAria {
 const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
 /**
+ * When pasting a rendered link (e.g. copied from Slack, a doc, etc.), the browser's
+ * plain-text clipboard representation uses the anchor's visible label, which may omit
+ * the scheme (e.g. "https://") that's only present in its `href`. This inspects the
+ * pasted HTML and substitutes an anchor's `href` for its display text when the two
+ * represent the same URL, so the scheme isn't silently dropped. In every other case
+ * (no anchors, anchor text doesn't match its href, parsing fails), this returns
+ * `plainText` unchanged, preserving the existing plain-text paste behavior.
+ */
+function preferLinkHrefs(html: string, plainText: string): string {
+  try {
+    let doc = new DOMParser().parseFromString(html, 'text/html');
+    let anchors = doc.body.querySelectorAll('a[href]');
+    let result = plainText;
+    for (let anchor of anchors) {
+      let displayText = anchor.textContent?.trim();
+      let href = anchor.getAttribute('href');
+      if (!displayText || !href || !result.includes(displayText)) {
+        continue;
+      }
+
+      let hrefWithoutSchemeAndWWW = href
+        .replace(/^[a-z][a-z0-9+.-]*:\/\//i, '')
+        .replace(/^www\./i, '')
+        .replace(/\/$/, '');
+      let displayWithoutWWW = displayText.replace(/^www\./i, '').replace(/\/$/, '');
+
+      // Only substitute when the display text is a scheme/www-less rendering of the
+      // href itself (i.e. the link's label wasn't custom text unrelated to its target).
+      if (hrefWithoutSchemeAndWWW === displayWithoutWWW) {
+        result = result.replace(displayText, href);
+      }
+    }
+
+    return result;
+  } catch {
+    return plainText;
+  }
+}
+
+/**
  * Provides the behavior and accessibility implementation for a token field.
  * A token field allows users to enter text with inline tokens.
  *
@@ -229,6 +269,11 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
             : null;
           if (parsed) {
             data = parsed;
+          } else if (e.dataTransfer.types.includes('text/html')) {
+            let html = e.dataTransfer.getData('text/html');
+            data[0].text = e.dataTransfer.types.includes('text/plain')
+              ? preferLinkHrefs(html, e.dataTransfer.getData('text/plain'))
+              : preferLinkHrefs(html, data[0].text);
           } else if (e.dataTransfer.types.includes('text/plain')) {
             data[0].text = e.dataTransfer.getData('text/plain');
           }
