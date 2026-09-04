@@ -101,8 +101,7 @@ export function useRadio(
 
   let checked = state.selectedValue === value;
 
-  let onChange = e => {
-    e.stopPropagation();
+  let onChange = () => {
     state.setSelectedValue(value);
   };
 
