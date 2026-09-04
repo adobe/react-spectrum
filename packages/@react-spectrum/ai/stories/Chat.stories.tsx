@@ -16,7 +16,6 @@ import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {Chat} from '../src/Chat';
 import ChatIcon from '@react-spectrum/s2/icons/Chat';
-import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/s2/Content';
 import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
@@ -40,7 +39,6 @@ import {
   Thread,
   ThreadItem,
   ThreadLoadMoreItem,
-  ThreadScrollButton,
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
@@ -483,160 +481,106 @@ export function VirtualizedStreamingChat() {
   }
 
   return (
-    // TODO: these extra div wrappers would need to be implemented by the RAC user, maybe we can internalize some more?
-    // of particular note is the scroll button. Same for the other styles
-    <div
-      className={style({
-        margin: 0,
-        marginX: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 32,
-        height: '100%'
-      })}>
-      <Chat
-        styles={style({
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flexGrow: 1,
-          gap: 16,
-          paddingX: 16,
-          boxSizing: 'border-box',
-          minWidth: 0,
-          containerType: 'size'
-        })}>
-        <div
-          className={style({
-            position: 'relative',
-            flexGrow: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0
-          })}>
-          <div
-            className={style({
-              position: 'absolute',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1
-            })}>
-            <ThreadScrollButton>
-              <ActionButton slot="scroll" aria-label="Scroll to bottom">
-                <ChevronDown />
-              </ActionButton>
-            </ThreadScrollButton>
-          </div>
-          <Thread
-            items={messages}
-            aria-label="Chat thread"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              scrollPadding: 8,
-              rowGap: 16
-            })}>
-            {(msg: StreamingMessage) => {
-              if (msg.type === 'user') {
-                // TODO: probably want ThreadItem to be a part of UserMessage?
-                return (
-                  <ThreadItem
-                    textValue={msg.content}
-                    styles={style({display: 'flex', justifyContent: 'end'})}>
-                    <UserMessage>{msg.content}</UserMessage>
-                  </ThreadItem>
-                );
-              }
-              if (msg.type === 'status') {
-                return <StatusThreadItem msg={msg} />;
-              }
-              if (msg.type === 'card') {
-                return (
-                  <CardMessage
-                    title={msg.title}
-                    description={msg.description}
-                    imageUrl={msg.imageUrl}
-                  />
-                );
-              }
-              if (msg.type === 'suggestions') {
-                // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
-                // but this one I could see perhaps being a standalone component to be used outside of thread
-                return (
-                  <ThreadItem textValue={msg.title}>
-                    <MessageSuggestionList title={msg.title}>
-                      {msg.suggestions.map((s, i) => (
-                        <MessageSuggestion key={i}>{s}</MessageSuggestion>
-                      ))}
-                    </MessageSuggestionList>
-                  </ThreadItem>
-                );
-              }
-              return (
-                <SystemMessage
-                  textValue={msg.content}
-                  isStreaming={msg.isStreaming}
-                  sources={msg.sources}>
-                  <div role="document">
-                    <p className={style({font: 'body'})}>{msg.content || ''}</p>
-                  </div>
-                  {!msg.isStreaming && <MessageFeedback />}
-                </SystemMessage>
-              );
-            }}
-          </Thread>
-        </div>
-        <PromptField
-          value={promptValue}
-          onChange={setPromptValue}
-          onSubmit={prompt => {
-            setPromptValue(new PromptFieldValue([]));
-            handleSend(prompt);
-          }}
-          isGenerating={isGenerating}
-          onStop={handleStop}>
-          <PromptTokenField
-            placeholder={
-              isGenerating
-                ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
-                : undefined
+    <Chat>
+      <Thread items={messages} aria-label="Chat thread">
+        {(msg: StreamingMessage) => {
+          if (msg.type === 'user') {
+            // TODO: probably want ThreadItem to be a part of UserMessage?
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
+          }
+          if (msg.type === 'status') {
+            return <StatusThreadItem msg={msg} />;
+          }
+          if (msg.type === 'card') {
+            return (
+              <CardMessage
+                title={msg.title}
+                description={msg.description}
+                imageUrl={msg.imageUrl}
+              />
+            );
+          }
+          if (msg.type === 'suggestions') {
+            // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
+            // but this one I could see perhaps being a standalone component to be used outside of thread
+            // DG: maybe we could auto-wrap if it's inside a Thread?
+            return (
+              <ThreadItem textValue={msg.title}>
+                <MessageSuggestionList title={msg.title}>
+                  {msg.suggestions.map((s, i) => (
+                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                  ))}
+                </MessageSuggestionList>
+              </ThreadItem>
+            );
+          }
+          return (
+            <SystemMessage
+              textValue={msg.content}
+              isStreaming={msg.isStreaming}
+              sources={msg.sources}>
+              {/* TODO: make this a component? Build it into SystemMessage? */}
+              <div role="document" className={prose()}>
+                <p className={style({font: 'body'})}>{msg.content || ''}</p>
+              </div>
+              {!msg.isStreaming && <MessageFeedback styles={style({marginTop: 8})} />}
+            </SystemMessage>
+          );
+        }}
+      </Thread>
+      <PromptField
+        value={promptValue}
+        onChange={setPromptValue}
+        onSubmit={prompt => {
+          setPromptValue(new PromptFieldValue([]));
+          handleSend(prompt);
+        }}
+        isGenerating={isGenerating}
+        onStop={handleStop}>
+        <PromptTokenField
+          placeholder={
+            isGenerating
+              ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+              : undefined
+          }
+          onKeyDown={e => {
+            if (!isGenerating) {
+              return;
             }
-            onKeyDown={e => {
-              if (!isGenerating) {
-                return;
-              }
 
-              // TODO: we could make this even more realistic but for now just fire storybook event
-              // and add follow up message to queue
-              if (e.key === 'Enter' && !e.altKey) {
-                e.preventDefault();
-                if (promptValue.segments.length > 0) {
-                  action('onSteer')(promptValue.toString());
-                  setPromptValue(new PromptFieldValue([]));
-                }
-              } else if (e.key === 'Enter' && e.altKey) {
-                e.preventDefault();
-                if (promptValue.segments.length > 0) {
-                  action('onFollowUp')(promptValue.toString());
-                  followUpMessage.current = promptValue;
-                  setPromptValue(new PromptFieldValue([]));
-                }
-              } else if (e.key === 'Escape') {
-                e.preventDefault();
-                handleStop();
+            // TODO: we could make this even more realistic but for now just fire storybook event
+            // and add follow up message to queue
+            if (e.key === 'Enter' && !e.altKey) {
+              e.preventDefault();
+              if (promptValue.segments.length > 0) {
+                action('onSteer')(promptValue.toString());
+                setPromptValue(new PromptFieldValue([]));
               }
-            }}
-          />
-          <PromptFieldToolbar>
-            <div />
-            <PromptFieldSubmitButton />
-          </PromptFieldToolbar>
-        </PromptField>
-      </Chat>
-    </div>
+            } else if (e.key === 'Enter' && e.altKey) {
+              e.preventDefault();
+              if (promptValue.segments.length > 0) {
+                action('onFollowUp')(promptValue.toString());
+                followUpMessage.current = promptValue;
+                setPromptValue(new PromptFieldValue([]));
+              }
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              handleStop();
+            }
+          }}
+        />
+        <PromptFieldToolbar>
+          <div />
+          <PromptFieldSubmitButton />
+        </PromptFieldToolbar>
+      </PromptField>
+    </Chat>
   );
 }
 
@@ -696,119 +640,65 @@ export function EmptyChat() {
   }
 
   return (
-    <div
-      className={style({
-        margin: 0,
-        marginX: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 32,
-        height: '100%'
-      })}>
-      <Chat
-        styles={style({
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flexGrow: 1,
-          gap: 16,
-          paddingX: 16,
-          boxSizing: 'border-box',
-          minWidth: 0,
-          containerType: 'size'
-        })}>
-        <div
-          className={style({
-            position: 'relative',
-            flexGrow: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0
-          })}>
-          <div
-            className={style({
-              position: 'absolute',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1
-            })}>
-            <ThreadScrollButton>
-              <ActionButton slot="scroll" aria-label="Scroll to bottom">
-                <ChevronDown />
-              </ActionButton>
-            </ThreadScrollButton>
-          </div>
-          <Thread
-            items={messages}
-            aria-label="Chat thread"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              scrollPadding: 8,
-              rowGap: 16
-            })}>
-            {(msg: StreamingMessage) => {
-              if (msg.type === 'user') {
-                return (
-                  <ThreadItem
-                    textValue={msg.content}
-                    styles={style({display: 'flex', justifyContent: 'end'})}>
-                    <UserMessage>{msg.content}</UserMessage>
-                  </ThreadItem>
-                );
-              }
-              if (msg.type === 'status') {
-                return <StatusThreadItem msg={msg} />;
-              }
-              if (msg.type === 'card') {
-                return (
-                  <CardMessage
-                    title={msg.title}
-                    description={msg.description}
-                    imageUrl={msg.imageUrl}
-                  />
-                );
-              }
-              if (msg.type === 'suggestions') {
-                return (
-                  <ThreadItem textValue={msg.title}>
-                    <MessageSuggestionList title={msg.title}>
-                      {msg.suggestions.map((s, i) => (
-                        <MessageSuggestion key={i}>{s}</MessageSuggestion>
-                      ))}
-                    </MessageSuggestionList>
-                  </ThreadItem>
-                );
-              }
-              return (
-                <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
-                  <div role="document">
-                    <p className={style({font: 'body'})}>{msg.content || ''}</p>
-                  </div>
-                  {!msg.isStreaming && <MessageFeedback />}
-                </SystemMessage>
-              );
-            }}
-          </Thread>
+    <Chat>
+      <Thread items={messages} aria-label="Chat thread">
+        {(msg: StreamingMessage) => {
+          if (msg.type === 'user') {
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
+          }
+          if (msg.type === 'status') {
+            return <StatusThreadItem msg={msg} />;
+          }
+          if (msg.type === 'card') {
+            return (
+              <CardMessage
+                title={msg.title}
+                description={msg.description}
+                imageUrl={msg.imageUrl}
+              />
+            );
+          }
+          if (msg.type === 'suggestions') {
+            return (
+              <ThreadItem textValue={msg.title}>
+                <MessageSuggestionList title={msg.title}>
+                  {msg.suggestions.map((s, i) => (
+                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                  ))}
+                </MessageSuggestionList>
+              </ThreadItem>
+            );
+          }
+          return (
+            <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+              <div role="document">
+                <p className={style({font: 'body'})}>{msg.content || ''}</p>
+              </div>
+              {!msg.isStreaming && <MessageFeedback />}
+            </SystemMessage>
+          );
+        }}
+      </Thread>
+      <PromptField
+        onSubmit={handleSend}
+        isGenerating={isGenerating}
+        onStop={() => {
+          setGenerating(false);
+          timeouts.current.forEach(clearTimeout);
+          timeouts.current = [];
+        }}>
+        <div className={style({display: 'flex', gap: 16, height: 'full'})}>
+          <PromptTokenField />
+          <PromptFieldSubmitButton />
         </div>
-        <PromptField
-          onSubmit={handleSend}
-          isGenerating={isGenerating}
-          onStop={() => {
-            setGenerating(false);
-            timeouts.current.forEach(clearTimeout);
-            timeouts.current = [];
-          }}>
-          <div className={style({display: 'flex', gap: 16, height: 'full'})}>
-            <PromptTokenField />
-            <PromptFieldSubmitButton />
-          </div>
-        </PromptField>
-      </Chat>
-    </div>
+      </PromptField>
+    </Chat>
   );
 }
 
@@ -875,28 +765,8 @@ export function ChatPopover() {
         <ChatIcon />
       </ActionButton>
       <Popover styles={style({width: 400, height: 520})}>
-        <Chat
-          styles={style({
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-            height: 'full',
-            gap: 16,
-            boxSizing: 'border-box',
-            minWidth: 0,
-            containerType: 'size'
-          })}>
-          <Thread
-            items={messages}
-            aria-label="Chat thread"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              padding: 8,
-              scrollPadding: 8,
-              rowGap: 16
-            })}>
+        <Chat>
+          <Thread items={messages} aria-label="Chat thread">
             {(msg: PopoverMessage) => {
               if (msg.type === 'user') {
                 return (
@@ -1236,77 +1106,23 @@ export function AsyncLoadingChat() {
   const {messages, isLoadingMore, handleLoadMore, hasMore} = useAsyncMessages();
 
   return (
-    <div
-      className={style({
-        margin: 0,
-        marginX: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 32,
-        height: '100%'
-      })}>
-      <Chat
-        styles={style({
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flexGrow: 1,
-          gap: 16,
-          paddingX: 16,
-          boxSizing: 'border-box',
-          minWidth: 0,
-          containerType: 'size'
-        })}>
-        <div
-          className={style({
-            position: 'relative',
-            flexGrow: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0
-          })}>
-          <div
-            className={style({
-              position: 'absolute',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1
-            })}>
-            <ThreadScrollButton>
-              <ActionButton slot="scroll" aria-label="Scroll to bottom">
-                <ChevronDown />
-              </ActionButton>
-            </ThreadScrollButton>
+    <Chat>
+      <Thread aria-label="Chat">
+        <ThreadLoadMoreItem
+          isLoading={isLoadingMore}
+          onLoadMore={hasMore ? handleLoadMore : undefined}>
+          <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
+            <ProgressCircle aria-label="Loading older messages" isIndeterminate />
           </div>
-          <Thread
-            aria-label="Chat"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              padding: 8,
-              scrollPadding: 8,
-              rowGap: 16
-            })}>
-            <ThreadLoadMoreItem
-              isLoading={isLoadingMore}
-              onLoadMore={hasMore ? handleLoadMore : undefined}>
-              <div className={style({display: 'flex', justifyContent: 'center', padding: 8})}>
-                <ProgressCircle aria-label="Loading older messages" isIndeterminate />
-              </div>
-            </ThreadLoadMoreItem>
-            <Collection items={messages}>{renderAsyncMessage}</Collection>
-          </Thread>
+        </ThreadLoadMoreItem>
+        <Collection items={messages}>{renderAsyncMessage}</Collection>
+      </Thread>
+      <PromptField>
+        <div className={style({display: 'flex', gap: 16, height: 'full'})}>
+          <PromptTokenField />
+          <PromptFieldSubmitButton />
         </div>
-        <PromptField>
-          <div className={style({display: 'flex', gap: 16, height: 'full'})}>
-            <PromptTokenField />
-            <PromptFieldSubmitButton />
-          </div>
-        </PromptField>
-      </Chat>
-    </div>
+      </PromptField>
+    </Chat>
   );
 }
