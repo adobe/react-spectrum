@@ -588,10 +588,14 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useRef, useState, useEffect} from 'react';
 
 function PresetLoader(props) {
-  let ref = useRef(null);
+  let ref = useRef<HTMLDivElement>(null);
   let [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
+    let (!ref.current) {
+      return;
+    }
+
     let observer = new IntersectionObserver(([entry]) => {
       setIsInView(entry.isIntersecting);
     });
@@ -631,10 +635,14 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useRef, useState, useEffect} from 'react';
 
 function LoadingStatus() {
-  let ref = useRef(null);
+  let ref = useRef<HTMLDivElement>(null);
   let [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
+    if (!ref.current){
+      return;
+    }
+
     let observer = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting)
     );
