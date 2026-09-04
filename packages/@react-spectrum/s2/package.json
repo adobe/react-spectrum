@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Spectrum 2 UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -90,8 +90,8 @@
     "@internationalized/number": "^3.6.8",
     "@parcel/macros": "^2.16.3",
     "@react-types/shared": "^3.36.1",
-    "react-aria": "3.52.0",
-    "react-aria-components": "1.21.0",
+    "react-aria": "3.52.1",
+    "react-aria-components": "1.21.1",
     "react-stately": "3.50.0"
   },
   "devDependencies": {
