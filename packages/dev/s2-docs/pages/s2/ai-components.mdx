@@ -581,39 +581,67 @@ function BasicChat() {
 
 The `icon` prop accepts either a single icon, which loops forever, or a themed preset, which cycles through several icons, one per loop. Icons and presets are exported individually from `@react-spectrum/ai/loader`.
 
-```tsx render type="s2" docs={docs.exports.PixelLoader} props={['icon', 'isPlaying']} initialProps={{isPlaying: true}}
+```tsx render type="s2" docs={docs.exports.PixelLoader} props={['icon']}
 "use client";
 import {PixelLoader} from '@react-spectrum/ai/loader';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useRef, useState, useEffect} from 'react';
 
 function PresetLoader(props) {
+  let ref = useRef(null);
+  let [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    let observer = new IntersectionObserver(([entry]) => {
+      setIsInView(entry.isIntersecting);
+    });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className={style({height: 40})}>
+    <div ref={ref} className={style({height: 40})} >
+    {/*- begin highlight -*/}
       <PixelLoader
         {...props}
+        isPlaying={isInView}
         /* PROPS */
       />
+      {/*- end highlight -*/}
     </div>
-  )
+  );
 }
 ```
 
 ### Usage
 
-Use the `pixelLoader` prop on `PromptTokenField` and `ResponseStatusTitle` to display the pixel loader.
+Use the `pixelLoader` prop on `ResponseStatusTitle` and `PromptFieldToken` to display the pixel loader.
 
 <ExampleSwitcher type={null} examples={['ResponseStatus', 'PromptField']}>
+
 
 ```tsx render type="s2"
 "use client";
 import {cc} from '@react-spectrum/ai/loader';
 import {ResponseStatus, ResponseStatusTitle} from '@react-spectrum/ai';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useRef, useState, useEffect} from 'react';
 
 function LoadingStatus() {
+  let ref = useRef(null);
+  let [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    let observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting)
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className={style({height: 40})}>
-      <ResponseStatus status="pending">
+    <div ref={ref} className={style({height: 40})} >
+      <ResponseStatus status={isInView ? 'pending' : 'success'}>
         {/*- begin highlight -*/}
         <ResponseStatusTitle pixelLoader={cc}>Analyzing campaign data...</ResponseStatusTitle>
         {/*- end highlight -*/}
