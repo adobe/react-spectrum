@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from './ActionButton';
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
+import {Badge, BadgeContext, BadgeProps} from './Badge';
+import {baseColor, css, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -22,10 +24,24 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import Chevron from '../ui-icons/Chevron';
-import {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
-import {DOMRef, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {
+  createContext,
+  forwardRef,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {createIcon} from './Icon';
+import {Divider} from './Divider';
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {IconContext} from './Icon';
-import {Link} from 'react-aria-components/Link';
+import intlMessages from '../intl/*.json';
+import {Link, LinkContext} from 'react-aria-components/Link';
+import {mergeProps} from 'react-aria/mergeProps';
 import {
   NavigationTree,
   NavigationTreeHeader,
@@ -38,11 +54,18 @@ import {
   NavigationTreeSection,
   NavigationTreeSectionProps
 } from 'react-aria-components/NavigationTree';
+import {NotificationBadge, NotificationBadgeContext} from './NotificationBadge';
+import {NumberFormatter} from '@internationalized/number';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import {Text, TextContext} from './Content';
+import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
+import {useExitAnimation} from 'react-aria/private/utils/animation';
+import {useHover} from 'react-aria/useHover';
+import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 
 export interface SideNavProps<T>
@@ -75,7 +98,12 @@ const sideNavWrapper = style(
   {
     minHeight: 0,
     height: 'full',
-    minWidth: 160,
+    flexShrink: 1,
+    flexGrow: 1,
+    minWidth: {
+      default: 160,
+      isInSidePanel: 'unset'
+    },
     display: 'flex',
     isolation: 'isolate',
     disableTapHighlight: true,
@@ -114,19 +142,44 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   props: SideNavProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, UNSAFE_className, UNSAFE_style, selectedRoute, ...rest} = props;
+  let {
+    children,
+    UNSAFE_className,
+    UNSAFE_style,
+    selectedRoute,
+    expandedKeys: propExpandedKeys,
+    defaultExpandedKeys: propDefaultExpandedKeys,
+    onExpandedChange,
+    ...rest
+  } = props;
 
   let domRef = useDOMRef(ref);
+  let {isCollapsed} = useContext(SidePanelContext) ?? {};
+  let isInSidePanel = isCollapsed !== undefined;
+
+  let [expandedKeys, setExpandedKeys] = useControlledState(
+    propExpandedKeys ? new Set(propExpandedKeys) : undefined,
+    propDefaultExpandedKeys ? new Set(propDefaultExpandedKeys) : new Set(),
+    onExpandedChange
+  );
+
+  let collapseAwareExpandedKeys = expandedKeys;
+  let emptySet = useMemo(() => new Set<Key>(), []);
+  if (isCollapsed) {
+    collapseAwareExpandedKeys = emptySet;
+  }
 
   return (
     <div
       ref={domRef}
-      className={(UNSAFE_className ?? '') + sideNavWrapper(null, props.styles)}
+      className={(UNSAFE_className ?? '') + sideNavWrapper({isInSidePanel}, props.styles)}
       style={UNSAFE_style}>
       <NavigationTree
         {...rest}
+        expandedKeys={collapseAwareExpandedKeys}
+        onExpandedChange={setExpandedKeys}
         selectedRoute={selectedRoute}
-        className={renderProps => tree(renderProps)}>
+        className={renderProps => tree({...renderProps, isInSidePanel})}>
         {children}
       </NavigationTree>
     </div>
@@ -168,10 +221,16 @@ const treeCellGrid = style({
   boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: [12, 'auto', 'auto', '1fr', 'auto', 'auto'],
+  gridTemplateColumns: {
+    default: [12, 'auto', 'auto', '1fr', 'auto', 'auto'],
+    isHidden: [12, 'auto', 'auto', '1fr', 0, 12]
+  },
   gridTemplateRows: '1fr',
   gridTemplateAreas: ['. level-padding icon content actions actionmenu'],
-  paddingEnd: 4, // account for any focus rings on the last item in the cell
+  paddingEnd: {
+    default: 4, // account for any focus rings on the last item in the cell,
+    isHidden: 0
+  },
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
@@ -192,16 +251,44 @@ const treeCellGrid = style({
 
 const treeIcon = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual',
+  marginEnd: {
+    default: 'text-to-visual',
+    isCollapsed: 0
+  },
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
   }
 });
 
-const treeContent = style({
+const treeContent = style<{isHidden?: boolean; isInSidePanel?: boolean; isReady?: boolean}>({
   gridArea: 'content',
-  paddingY: `--centerPadding`
+  paddingY: `--centerPadding`,
+  flexShrink: 1,
+  minWidth: 0,
+  display: {
+    default: 'block',
+    isHidden: 'none'
+  },
+  opacity: {
+    default: 1,
+    isHidden: 0,
+    '@starting-style': 0
+  },
+  transition: {
+    isInSidePanel: {
+      default: 'none',
+      isReady: {
+        default: '[opacity, display]',
+        isHidden: 'none',
+        '@media (prefers-reduced-motion: reduce)': 'none'
+      }
+    }
+  },
+  transitionBehavior: {
+    isInSidePanel: 'allow-discrete'
+  },
+  transitionDuration: 150
 });
 
 let treeRowFocusRing = style({
@@ -224,8 +311,8 @@ let treeRowFocusRing = style({
 const treeRowLink = style({
   display: 'grid',
   gridArea: 'content',
-  gridTemplateColumns: ['auto', '1fr'],
-  gridTemplateAreas: ['icon content'],
+  gridTemplateColumns: ['auto', '1fr', 'auto'],
+  gridTemplateAreas: ['icon content badge'],
   alignItems: 'center',
   minWidth: 0,
   outlineStyle: 'none',
@@ -237,15 +324,34 @@ const treeRowLink = style({
   }
 });
 
-const treeActions = style({
-  gridArea: 'actions',
-  marginStart: 2,
-  marginEnd: 4
+const treeRowButton = style({
+  display: 'grid',
+  gridArea: 'content',
+  gridTemplateColumns: ['auto', '1fr', 'auto'],
+  gridTemplateAreas: ['icon content badge'],
+  alignItems: 'center',
+  minWidth: 0,
+  outlineStyle: 'none',
+  textDecoration: 'none',
+  color: 'inherit',
+  cursor: 'default',
+  backgroundColor: {
+    default: 'transparent',
+    isHovered: baseColor('gray-100').isHovered
+  },
+  borderStyle: 'none',
+  padding: 4,
+  margin: -4,
+  borderRadius: 'sm',
+  textAlign: 'inherit',
+  font: 'ui'
 });
 
-const treeActionMenu = style({
-  gridArea: 'actionmenu'
-});
+const treeActions = style({gridArea: 'actions', marginStart: 2, marginEnd: 4});
+
+const treeActionMenu = style({gridArea: 'actionmenu'});
+
+const hideUnmarkedChildren = css('& > *:not([data-do-not-hide]) {display: none;}');
 
 const SideNavItemLinkContext = createContext<{
   isDisabled?: boolean;
@@ -261,12 +367,17 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
   let rowRef = useRef<HTMLDivElement | null>(null);
   // oxlint-disable-next-line react-compiler
   let scaling = pressScale(rowRef);
+  let {isCollapsed = false} = useContext(SidePanelContext);
 
   return (
     <SideNavInternalItemContext.Provider value={{setLinkPressed}}>
       <NavigationTreeItem
         {...props}
         ref={rowRef}
+        // When collapsed, every item renders as a focusable expanding button, so focus the child
+        // rather than the row — otherwise keyboard focus lands on the row and items without an
+        // href (which default to row focus) can't be reached or activated.
+        focusMode={isCollapsed ? 'child' : undefined}
         style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
         className={renderProps => treeRow(renderProps)}
       />
@@ -326,6 +437,9 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
 };
 
 const SideNavItemContentInner = props => {
+  let sidePanelContext = useContext(SidePanelContext);
+  let {isCollapsed = false, isHidden = false, isReady = false} = sidePanelContext;
+  let isInSidePanel = sidePanelContext.isCollapsed !== undefined;
   let {
     isExpanded,
     hasChildItems,
@@ -348,19 +462,24 @@ const SideNavItemContentInner = props => {
         })}
       />
       <div
-        className={treeCellGrid({
-          isDisabled,
-          isSelected: isCurrent,
-          isDescendantSelected: isCurrentAncestor && !isExpanded
-        })}>
-        <div
-          className={indicator({
+        className={
+          treeCellGrid({
             isDisabled,
             isSelected: isCurrent,
+            isDescendantSelected: isCurrentAncestor && !isExpanded,
+            isHidden
+          }) + (isHidden ? ' ' + hideUnmarkedChildren : '')
+        }>
+        <div
+          data-do-not-hide
+          className={indicator({
+            isDisabled,
+            isSelected: isCurrent || (isCurrentAncestor && isCollapsed),
             isHovered
           })}
         />
         <div
+          data-do-not-hide
           className={style({
             gridArea: 'level-padding',
             width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
@@ -368,7 +487,7 @@ const SideNavItemContentInner = props => {
         />
         <Provider
           values={[
-            [TextContext, {styles: treeContent}],
+            [TextContext, {styles: treeContent({isHidden, isInSidePanel, isReady})}],
             [
               SideNavItemLinkContext,
               {
@@ -379,21 +498,33 @@ const SideNavItemContentInner = props => {
             [
               IconContext,
               {
-                render: centerBaseline({slot: 'icon', styles: treeIcon}),
+                render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
                 styles: style({size: '1lh', flexShrink: 0})
               }
             ],
             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
-            [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled, size: 'S'}]
+            [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled, size: 'S'}],
+            [BadgeContext, {size: 'S', fillStyle: 'subtle', styles: style({gridArea: 'badge'})}],
+            [
+              NotificationBadgeContext,
+              {
+                size: 'S',
+                styles: style({position: 'absolute', insetEnd: 8, top: 4, gridArea: 'icon'})
+              }
+            ]
           ]}>
           {typeof children === 'string' ? <Text>{children}</Text> : children}
         </Provider>
       </div>
       <ExpandableRowChevron
+        isCollapsed={isCollapsed}
         isDisabled={isDisabled}
         isExpanded={isExpanded}
         scale={scale}
         isHidden={!hasChildItems}
+        isInSidePanel={isInSidePanel}
+        isControlsHidden={isHidden}
+        isReady={isReady}
       />
     </>
   );
@@ -401,13 +532,26 @@ const SideNavItemContentInner = props => {
 
 interface ExpandableRowChevronProps {
   isExpanded?: boolean;
+  isCollapsed?: boolean;
   isDisabled?: boolean;
   isRTL?: boolean;
   scale: 'medium' | 'large';
   isHidden?: boolean;
+  isInSidePanel?: boolean;
+  isControlsHidden?: boolean;
+  isReady?: boolean;
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
+  display: {
+    default: 'flex',
+    isControlsHidden: 'none'
+  },
+  opacity: {
+    default: 1,
+    isControlsHidden: 0,
+    '@starting-style': 0
+  },
   gridArea: 'expand-button',
   color: {
     default: 'inherit',
@@ -418,7 +562,6 @@ const expandButton = style<ExpandableRowChevronProps>({
   },
   height: 32,
   width: 32,
-  display: 'flex',
   flexWrap: 'wrap',
   alignContent: 'center',
   justifyContent: 'center',
@@ -431,7 +574,21 @@ const expandButton = style<ExpandableRowChevronProps>({
     }
   },
   padding: 0,
-  transition: 'default',
+  transition: {
+    default: 'default',
+    isInSidePanel: {
+      default: 'none',
+      isReady: {
+        default: '[opacity, transform, display]',
+        isControlsHidden: 'none',
+        '@media (prefers-reduced-motion: reduce)': 'none'
+      }
+    }
+  },
+  transitionBehavior: {
+    isInSidePanel: 'allow-discrete'
+  },
+  transitionDuration: 150,
   backgroundColor: 'transparent',
   borderStyle: 'none',
   disableTapHighlight: true,
@@ -447,7 +604,8 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     expandButtonRef,
     ButtonContext
   );
-  let {isExpanded, scale, isHidden} = fullProps;
+  let {isExpanded, scale, isHidden, isCollapsed, isInSidePanel, isControlsHidden, isReady} =
+    fullProps;
   let {direction} = useLocale();
 
   return (
@@ -456,7 +614,17 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       ref={ref}
       slot="chevron"
       className={renderProps =>
-        expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})
+        expandButton({
+          ...renderProps,
+          isExpanded,
+          isCollapsed,
+          isRTL: direction === 'rtl',
+          scale,
+          isHidden,
+          isInSidePanel,
+          isControlsHidden,
+          isReady
+        })
       }>
       <Chevron
         className={style({
@@ -495,9 +663,13 @@ export interface SideNavHeaderProps extends Omit<
 > {}
 
 export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
+  let {isCollapsed = false} = useContext(SidePanelContext);
+  let id = useId();
   return (
     <NavigationTreeHeader
+      id={id}
       className={style({
+        position: 'relative',
         font: 'ui-sm',
         // Component/S/Medium for the font, doesn't appear to match our fonts
         fontWeight: 'medium',
@@ -506,7 +678,26 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
         marginBottom: '[8px]',
         height: 16
       })}>
-      {props.children}
+      <div
+        className={style({
+          position: 'absolute',
+          top: '50%',
+          insetStart: 0,
+          insetEnd: 0,
+          translateY: '-50%',
+          marginX: 8,
+          visibility: {
+            default: 'hidden',
+            isCollapsed: 'visible'
+          }
+        })({
+          isCollapsed
+        })}>
+        <Divider aria-labelledby={id} orientation="horizontal" />
+      </div>
+      <div className={style({visibility: {isCollapsed: 'hidden'}})({isCollapsed})}>
+        {props.children}
+      </div>
     </NavigationTreeHeader>
   );
 };
@@ -516,19 +707,107 @@ export interface SideNavItemLinkProps {
   children?: ReactNode;
 }
 
-export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
-  let {children} = props;
+let SideNavItemButton = (
+  props: SideNavItemLinkProps & {onExpandSidePanel: () => void}
+): ReactNode => {
+  let {children, onExpandSidePanel} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
+  let linkProps = useContext(LinkContext);
+  let {isCollapsed = false} = useContext(SidePanelContext);
+  let labelId = useId();
+  let additionalExplanation = 'panel collapsed, click to expand';
+  let additionalExplanationId = useId();
 
+  let eventHandlers = linkProps
+    ? Object.keys(linkProps).reduce(
+        (acc, key) => {
+          if (key.startsWith('on')) {
+            acc[key] = linkProps[key];
+          }
+          return acc;
+        },
+        {} as Record<string, any>
+      )
+    : {};
   return (
-    <Link {...props} {...linkFocus} className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
+    <Button
+      {...props}
+      {...mergeProps(eventHandlers, linkFocus)}
+      onPress={() => {
+        onExpandSidePanel?.();
+      }}
+      aria-expanded={false}
+      aria-labelledby={`${labelId} ${additionalExplanationId}`}
+      data-do-not-hide
+      className={renderProps => treeRowButton(renderProps) + ' ' + hideUnmarkedChildren}>
       <Provider
         values={[
-          [TextContext, {styles: treeContent}],
+          [TextContext, {styles: treeContent({isHidden: true, isInSidePanel: true}), id: labelId}],
           [
             IconContext,
             {
-              render: centerBaseline({slot: 'icon', styles: treeIcon}),
+              render: centerBaseline({
+                slot: 'icon',
+                styles: treeIcon({isCollapsed}),
+                // @ts-ignore
+                'data-do-not-hide': true
+              }),
+              styles: style({size: '1lh', flexShrink: 0})
+            }
+          ]
+        ]}>
+        {typeof children === 'string' ? <Text>{children}</Text> : children}
+        <span className={style({display: 'none'})} id={additionalExplanationId}>
+          {additionalExplanation}
+        </span>
+      </Provider>
+    </Button>
+  );
+};
+
+export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
+  let {children} = props;
+  let linkFocus = useContext(SideNavItemLinkContext);
+  let sidePanelContext = useContext(SidePanelContext);
+  let {isCollapsed = false, setCollapsed, isHidden = false, isReady = false} = sidePanelContext;
+  let isInSidePanel = sidePanelContext.isCollapsed !== undefined;
+  let linkRef = useRef<HTMLAnchorElement>(null);
+
+  let isFocusedRef = useRef(false);
+  useEffect(() => {
+    if (!isCollapsed && isFocusedRef.current) {
+      linkRef.current?.focus();
+    }
+    isFocusedRef.current = false;
+  }, [isCollapsed]);
+
+  if (isCollapsed) {
+    return (
+      <SideNavItemButton
+        {...props}
+        onExpandSidePanel={() => {
+          setCollapsed?.(false);
+          // if the SidePanel is expanded via this button, we know it was focused
+          isFocusedRef.current = true;
+        }}
+      />
+    );
+  }
+
+  return (
+    <Link
+      {...props}
+      {...linkFocus}
+      ref={linkRef}
+      data-do-not-hide
+      className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
+      <Provider
+        values={[
+          [TextContext, {styles: treeContent({isHidden, isInSidePanel, isReady})}],
+          [
+            IconContext,
+            {
+              render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
               styles: style({size: '1lh', flexShrink: 0})
             }
           ]
@@ -537,4 +816,173 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
       </Provider>
     </Link>
   );
+};
+
+interface SidePanelProps<T> extends Omit<SideNavProps<T>, 'children'> {
+  /** The content of the side panel. */
+  children?: ReactNode;
+  /** Whether the side panel is collapsed (controlled). */
+  isCollapsed?: boolean;
+  /** Whether the side panel is collapsed by default (uncontrolled). */
+  defaultCollapsed?: boolean;
+  /** Handler that is called when the collapsed state changes. */
+  onCollapsedChange?: (isCollapsed: boolean) => void;
+}
+
+export const SidePanelContext = createContext<{
+  isCollapsed?: boolean;
+  setCollapsed?: (isCollapsed: boolean) => void;
+  isHidden?: boolean;
+  isReady?: boolean;
+}>({});
+
+const sidePanelStyle = style(
+  {
+    display: 'flex',
+    flexDirection: 'column',
+    height: 'full',
+    // The expanded width is supplied by the consumer via the `styles` prop. When collapsed, SidePanel
+    // applies an inline `width: var(--collapsedWidth)` (the fixed icon-rail size) which overrides that
+    // class-based width; the CSS width transition animates between the two. overflow clips the labels
+    // as the panel grows/shrinks.
+    '--collapsedWidth': {
+      type: 'width',
+      value: 42
+    },
+    overflow: 'hidden',
+    transition: {
+      default: '[width]',
+      '@media (prefers-reduced-motion: reduce)': 'none'
+    },
+    transitionDuration: '200ms',
+    transitionTimingFunction: 'default'
+  },
+  getAllowedOverrides({height: true})
+);
+
+export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function SidePanelProps<T>(
+  props: SidePanelProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {children, UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let [isCollapsed, setCollapsed] = useControlledState<boolean>(
+    props.isCollapsed,
+    props.defaultCollapsed ?? false,
+    props.onCollapsedChange
+  );
+
+  let isExpanding = useExitAnimation(domRef, isCollapsed);
+  let isHidden = isCollapsed || isExpanding;
+
+  let [isReady, setIsReady] = useState(false);
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
+  let filteredProps = filterDOMProps(otherProps);
+  return (
+    <SidePanelContext.Provider value={{isCollapsed, setCollapsed, isHidden, isReady}}>
+      <div
+        {...filteredProps}
+        ref={domRef}
+        // When collapsed, override the consumer's class-based (expanded) width with the fixed icon-rail
+        // width. The CSS width transition animates between the two.
+        style={{...UNSAFE_style, width: isCollapsed ? 'var(--collapsedWidth)' : undefined}}
+        className={UNSAFE_className + sidePanelStyle(null, styles)}>
+        <div
+          className={style({
+            flexGrow: 1,
+            flexShrink: 1,
+            minHeight: 0,
+            display: 'flex',
+            flexDirection: 'column'
+          })}>
+          {children}
+        </div>
+        <div className={style({flexGrow: 0, flexShrink: 0})}>
+          <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
+        </div>
+      </div>
+    </SidePanelContext.Provider>
+  );
+});
+
+function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: boolean) => void}) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+
+  let label = stringFormatter.format(`sidepanel.${props.isCollapsed ? 'expand' : 'collapse'}`);
+
+  return (
+    <PanelToggleButton
+      isCollapsed={props.isCollapsed}
+      setCollapsed={props.setCollapsed}
+      aria-label={label}
+    />
+  );
+}
+
+function PanelToggleButton({isCollapsed, setCollapsed, ...otherProps}: any) {
+  let [isHovered, setHovered] = useState(false);
+  let {hoverProps} = useHover({onHoverChange: setHovered});
+  return (
+    <div {...hoverProps} className={style({display: 'contents'})}>
+      <ActionButton
+        {...otherProps}
+        isQuiet
+        styles={style({alignSelf: 'start'})}
+        onPress={() => {
+          setCollapsed(!isCollapsed);
+          setHovered(false);
+        }}>
+        {/* @ts-ignore */}
+        <PanelIcon isCollapsed={isCollapsed} isHovered={isHovered} />
+      </ActionButton>
+    </div>
+  );
+}
+
+const PanelIcon = createIcon(props => {
+  let {isCollapsed, isHovered, ...otherProps} = props as any;
+  return (
+    <svg viewBox="0 0 20 20" fill="var(--iconPrimary)" {...otherProps}>
+      <path
+        d="M15.75 18H4.25C3.00977 18 2 16.9907 2 15.75V4.25C2 3.00928 3.00977 2 4.25 2H15.75C16.9902 2 18 3.00928 18 4.25V15.75C18 16.9907 16.9902 18 15.75 18ZM4.25 3.5C3.83691 3.5 3.5 3.83643 3.5 4.25V15.75C3.5 16.1636 3.83691 16.5 4.25 16.5H15.75C16.1631 16.5 16.5 16.1636 16.5 15.75V4.25C16.5 3.83643 16.1631 3.5 15.75 3.5H4.25Z"
+        fill="var(--iconPrimary)"
+      />
+      <rect
+        x={5}
+        y={5}
+        rx={0.5}
+        height={10}
+        className={style({
+          transition: '[width]',
+          transitionDuration: 300,
+          width: {
+            default: '[5px]',
+            isHovered: '[1.5px]',
+            isCollapsed: {
+              default: '[1.5px]',
+              isHovered: '[5px]'
+            }
+          }
+        })({isCollapsed, isHovered})}
+      />
+    </svg>
+  );
+});
+
+// TODO: NotificationBadge doesn't support all the colors
+export const SidePanelBadge = (props: Omit<BadgeProps, 'children'> & {value?: number | string}) => {
+  let {isCollapsed = false} = useContext(SidePanelContext) ?? {};
+  let {locale} = useLocale();
+  let formattedValue = props.value;
+  if (typeof props.value === 'number') {
+    formattedValue = new NumberFormatter(locale).format(Math.min(props.value, 99));
+  }
+  if (isCollapsed) {
+    let value: number | undefined = typeof props.value === 'number' ? props.value : undefined;
+    return <NotificationBadge {...props} value={value} />;
+  }
+  return <Badge {...props}>{formattedValue}</Badge>;
 };

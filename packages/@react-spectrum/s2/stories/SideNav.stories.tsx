@@ -11,19 +11,27 @@
  */
 
 import {action} from 'storybook/actions';
+import {ActionButton} from '../src/ActionButton';
 import {ActionMenu} from '../src/ActionMenu';
+import {AdobeLogo} from '../../../dev/s2-docs/src/icons/AdobeLogo';
 import {Avatar} from '../src/Avatar';
+import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import {categorizeArgTypes, getActionArgs} from './utils';
+import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
 import {Collection} from 'react-aria/Collection';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import {Divider} from '../src/Divider';
+import Files from '@react-spectrum/s2/icons/Files';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import {Heading, Keyboard, Text} from '../src/Content';
+import {Image} from '../src/Image';
+import Images from '@react-spectrum/s2/icons/Images';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
-import React, {ReactElement, ReactNode, useRef, useState} from 'react';
+import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
+import React, {ReactElement, ReactNode, useContext, useRef, useState} from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {SearchField} from '../src/SearchField';
 import {
@@ -33,7 +41,10 @@ import {
   SideNavItemContent,
   SideNavItemLink,
   SideNavProps,
-  SideNavSection
+  SideNavSection,
+  SidePanel,
+  SidePanelBadge,
+  SidePanelContext
 } from '../src/SideNav';
 import {style} from '../style' with {type: 'macro'};
 import {useLandmark} from 'react-aria';
@@ -531,6 +542,240 @@ export const WithLandmark: AppLayoutStoryObj = {
     layout: 'fullscreen',
     docs: {
       disable: true
+    }
+  }
+};
+
+const SidePanelExtraControls = () => {
+  let {isCollapsed = false} = useContext(SidePanelContext);
+  return (
+    <div
+      className={style({
+        display: 'flex',
+        flexDirection: {
+          default: 'row',
+          isCollapsed: 'column-reverse'
+        },
+        flexShrink: 0,
+        flexGrow: 0,
+        gap: 8,
+        padding: 8,
+        alignItems: 'center',
+        backgroundColor: 'elevated',
+        borderColor: 'white',
+        borderRadius: 'default'
+      })({isCollapsed})}>
+      <div className={style({width: 32, height: 32, borderRadius: 'default', overflow: 'hidden'})}>
+        <Image src="https://i.pravatar.cc/64?img=12" alt="User avatar" width={32} height={32} />
+      </div>
+      <div
+        className={style({
+          display: {default: 'flex', isCollapsed: 'none'},
+          flexDirection: 'column',
+          gap: 2,
+          flexGrow: 1
+        })({isCollapsed})}>
+        <Text styles={style({font: 'ui'})}>Jordan Rivera</Text>
+        <Text styles={style({font: 'detail'})}>Adobe</Text>
+      </div>
+      <ActionButton aria-label="Notifications" isQuiet>
+        <Bell />
+      </ActionButton>
+      <ActionMenu aria-label="User menu" isQuiet>
+        <MenuItem textValue="Profile" onAction={() => alert('Profile')}>
+          <Text slot="label">Profile</Text>
+        </MenuItem>
+        <MenuItem textValue="Settings" onAction={() => alert('Settings')}>
+          <Text slot="label">Settings</Text>
+        </MenuItem>
+        <MenuItem textValue="Sign out" onAction={() => alert('Sign out')}>
+          <Text slot="label">Sign out</Text>
+        </MenuItem>
+      </ActionMenu>
+    </div>
+  );
+};
+
+export const SidePanelExample = {
+  render: args => (
+    <div
+      className={style({
+        width: 'full',
+        height: '100vh',
+        display: 'grid',
+        gridTemplateAreas: ['header header', 'sidebar main'],
+        gridTemplateColumns: 'auto 1fr',
+        gridTemplateRows: 'auto 1fr',
+        backgroundColor: 'layer-1'
+      })}>
+      <div
+        className={style({
+          gridArea: 'header',
+          display: 'flex',
+          alignItems: 'center',
+          paddingX: 12,
+          paddingY: 16
+        })}>
+        <AdobeLogo size={28} />
+      </div>
+      <SidePanel
+        defaultCollapsed
+        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
+        {...args}
+        aria-label="Side panel"
+        defaultExpandedKeys={['projects']}>
+        <RoutedSideNav {...args} styles={style({width: 'full'})} selectedRoute="/files">
+          <SideNavItem href="/files" textValue="Files">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Files />
+                <Text>Files</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+          <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <CCLibrary />
+                <Text>Your Libraries</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+            <SideNavItem id="photos" href="/photos" textValue="Photos">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Images />
+                  <Text>Photos</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+          </SideNavItem>
+          <SideNavSection>
+            <SideNavHeader>Work</SideNavHeader>
+            <SideNavItem href="/projects" textValue="Projects">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Project />
+                  <Text>Projects</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+              <SideNavItem href="/projects-1" id="projects-1" textValue="Projects-1">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Projects-1</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+                <SideNavItem href="/projects-1A" textValue="Projects-1A">
+                  <SideNavItemContent>
+                    <SideNavItemLink>
+                      <Text>Projects-1A</Text>
+                    </SideNavItemLink>
+                  </SideNavItemContent>
+                </SideNavItem>
+              </SideNavItem>
+              <SideNavItem href="/projects-2" textValue="Projects-2">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Projects-2</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+              <SideNavItem href="/projects-3" textValue="Projects-3">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Text>Projects-3</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+            </SideNavItem>
+          </SideNavSection>
+        </RoutedSideNav>
+        <SidePanelExtraControls />
+      </SidePanel>
+      <div
+        className={style({
+          gridArea: 'main',
+          backgroundColor: 'layer-2',
+          borderTopStartRadius: 'lg'
+        })}
+      />
+    </div>
+  ),
+  parameters: {
+    layout: {
+      fullscreen: true
+    }
+  }
+};
+
+export const SidePanelExample2 = {
+  render: args => (
+    <div
+      className={style({
+        width: 'full',
+        height: '100vh',
+        display: 'grid',
+        gridTemplateAreas: ['header header', 'sidebar main'],
+        gridTemplateColumns: 'auto 1fr',
+        gridTemplateRows: 'auto 1fr',
+        backgroundColor: 'layer-1'
+      })}>
+      <div
+        className={style({
+          gridArea: 'header',
+          display: 'flex',
+          alignItems: 'center',
+          paddingX: 8,
+          paddingY: 16
+        })}>
+        <AdobeLogo size={28} />
+      </div>
+      <SidePanel
+        defaultCollapsed
+        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
+        {...args}
+        aria-label="Side panel"
+        defaultExpandedKeys={['projects']}>
+        <RoutedSideNav {...args} selectedRoute="/files">
+          <SideNavItem href="/files" textValue="Files">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Files />
+                <Text>Files</Text>
+                <SidePanelBadge variant="informative" value={3} />
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+          <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <CCLibrary />
+                <Text>Your Libraries</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+            <SideNavItem id="photos" href="/photos" textValue="Photos">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Images />
+                  <Text>Photos</Text>
+                  <SidePanelBadge variant="negative" value={140} />
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+          </SideNavItem>
+        </RoutedSideNav>
+      </SidePanel>
+      <div
+        className={style({
+          gridArea: 'main',
+          backgroundColor: 'layer-2',
+          borderTopStartRadius: 'lg'
+        })}
+      />
+    </div>
+  ),
+  parameters: {
+    layout: {
+      fullscreen: true
     }
   }
 };
