@@ -634,14 +634,16 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
 
+      // The first letter always advances past the focused item to the next match,
+      // landing on the next option that shares the "Foo" prefix.
       fireEvent.keyDown(listbox, {key: 'F'});
-      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[5]);
 
       fireEvent.keyDown(listbox, {key: 'O'});
-      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[5]);
 
       fireEvent.keyDown(listbox, {key: 'O'});
-      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[5]);
 
       fireEvent.keyDown(listbox, {key: ' '});
       expect(document.activeElement).toBe(options[5]);
@@ -662,14 +664,16 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
 
+      // The first letter always advances past the focused item to the next match,
+      // landing on the next option that shares the "Foo" prefix.
       fireEvent.keyDown(listbox, {key: 'F'});
-      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[5]);
 
       fireEvent.keyDown(listbox, {key: 'O'});
-      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[5]);
 
       fireEvent.keyDown(listbox, {key: 'O'});
-      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[5]);
 
       fireEvent.keyDown(listbox, {key: ' '});
       expect(document.activeElement).toBe(options[5]);
@@ -726,8 +730,9 @@ describe('ListBox', function () {
         jest.runAllTimers();
       });
 
+      // After the reset, a fresh 'B' advances past the focused item to the next 'B' match.
       fireEvent.keyDown(listbox, {key: 'B'});
-      expect(document.activeElement).toBe(options[1]);
+      expect(document.activeElement).toBe(options[2]);
     });
 
     it('wraps around when no items past the current one match', function () {
@@ -745,8 +750,9 @@ describe('ListBox', function () {
         jest.runAllTimers();
       });
 
+      // No 'B' match past the focused Bleh, so the search wraps around to the first 'B' (Bar).
       fireEvent.keyDown(listbox, {key: 'B'});
-      expect(document.activeElement).toBe(options[4]);
+      expect(document.activeElement).toBe(options[1]);
     });
   });
 
