@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '../src/Button';
+import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {expect, it} from 'vitest';
 import {GridLayout} from '../src/GridLayout';
 import {GridList, GridListItem} from '../src/GridList';
@@ -17,7 +19,35 @@ import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {Size} from 'react-stately/useVirtualizerState';
 import {User} from '@react-aria/test-utils';
+import {userEvent} from 'vitest/browser';
 import {Virtualizer} from '../src/Virtualizer';
+
+const reorderableItems = Array.from({length: 10}, (_, i) => ({id: i, name: `Item ${i}`}));
+
+function ReorderableGridList() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
+    onReorder: () => undefined,
+    renderDropIndicator: target => (
+      <DropIndicator target={target} style={{backgroundColor: 'rgb(255, 0, 0)'}} />
+    )
+  });
+
+  return (
+    <GridList
+      aria-label="Reorderable list"
+      dragAndDropHooks={dragAndDropHooks}
+      items={reorderableItems}
+      style={{display: 'flex', flexDirection: 'column', height: 120, overflow: 'auto'}}>
+      {item => (
+        <GridListItem style={{flex: '0 0 40px'}} textValue={item.name}>
+          <Button slot="drag">Drag</Button>
+          {item.name}
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
 
 function Grid() {
   return (
@@ -119,4 +149,56 @@ it('virtualizer renders items after toggling display:none', async () => {
   await button.click();
   await button.click();
   await expect(tester.getRows().length).toBeGreaterThan(0);
+});
+
+it('scrolls focused drop indicators into view during keyboard reordering', async () => {
+  let testUtilUser = new User();
+  let {container} = await render(<ReorderableGridList />);
+  let gridlist = container.querySelector('[role=grid]') as HTMLElement;
+  let tester = testUtilUser.createTester('GridList', {
+    root: gridlist,
+    interactionType: 'keyboard'
+  });
+
+  // Wait for rows before querying the drag handle. Querying straight after
+  // render raced the first paint and returned null in all three browsers.
+  await expect.poll(() => tester.getRows().length).toBeGreaterThan(0);
+  // Select the drag handle by slot rather than by its localized aria-label. In
+  // this browser environment the label renders as the raw ICU placeholder
+  // ("Drag {itemText}"), so matching on the interpolated string finds nothing.
+  // Scope the query to the first row: a container-wide lookup resolved before
+  // that row had painted its handle, which is what returned null previously.
+  let dragButton: HTMLElement | null = null;
+  await expect
+    .poll(() => (dragButton = tester.getRows()[0]?.querySelector('[slot=drag]') ?? null))
+    .not.toBeNull();
+
+  // act() is unavailable in this browser environment (React logs "not configured
+  // to support act(...)"), so the rule cannot be satisfied here.
+  // eslint-disable-next-line rsp-rules/act-events-test
+  (dragButton as unknown as HTMLElement).focus();
+
+  await userEvent.keyboard('{Enter}');
+
+  for (let i = 1; i <= 4; i++) {
+    await userEvent.keyboard('{ArrowDown}');
+    let dropIndicator = document.activeElement as HTMLElement;
+    let indicatorRow = dropIndicator.closest('[role=row]') as HTMLElement;
+    let gridRect = gridlist.getBoundingClientRect();
+    let indicatorRect = indicatorRow.getBoundingClientRect();
+
+    // Assert the drop target structurally rather than by its localized label:
+    // this environment renders aria-labels as raw ICU templates
+    // ("Insert between {beforeItemText} and {afterItemText}").
+    expect(dropIndicator).toHaveAttribute('role', 'button');
+    expect(dropIndicator).toHaveAttribute('aria-roledescription', 'drop indicator');
+    expect(indicatorRow).toHaveStyle({
+      backgroundColor: 'rgb(255, 0, 0)',
+      position: 'relative'
+    });
+    expect(indicatorRect.top).toBeGreaterThanOrEqual(gridRect.top);
+    expect(indicatorRect.bottom).toBeLessThanOrEqual(gridRect.bottom);
+  }
+
+  expect(gridlist.scrollTop).toBeGreaterThan(0);
 });
