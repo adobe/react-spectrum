@@ -210,6 +210,15 @@ Non-boolean states follow the `{name}-{value}` pattern. For example, an element 
 </Tabs>
 ```
 
+### Exceptions
+
+There are a few exceptions to how states with the `data-` prefix are styled in Tailwind:
+
+* `data-hovered` is styled with `hover:`
+* `data-focused` is styled with `focus:`
+* `data-readonly` is styled with `read-only:`
+* `data-placeholder` is styled with `placeholder-shown:`
+
 ### Modifier prefix
 
 By default, all modifiers are unprefixed (e.g. `disabled:`), and generate CSS that automatically handles both React Aria Components and native CSS pseudo classes when the names conflict. If you prefer, you can optionally prefix all React Aria Components modifiers with a string of your choice.
