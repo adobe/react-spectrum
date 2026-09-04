@@ -1,6 +1,6 @@
 'use client';
 import React, {ReactNode, useState, createContext, useContext} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from 'react-aria/mergeProps';
 
 // This is a fake router for documentation purposes. In a real app, you would
 // use a routing library like React Router or a framework like Next.js.
