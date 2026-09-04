@@ -28,6 +28,14 @@ export interface TableSelectionCheckboxAria {
   checkboxProps: AriaCheckboxProps;
 }
 
+export interface AriaTableSelectAllCheckboxProps {
+  /**
+   * A custom aria-label for the select all checkbox. Overrides the default
+   * localized "Select All" label.
+   */
+  'aria-label'?: string;
+}
+
 export interface TableSelectAllCheckboxAria {
   /** Props for the select all checkbox element. */
   checkboxProps: AriaCheckboxProps;
@@ -60,13 +68,18 @@ export function useTableSelectionCheckbox<T>(
  * @param props - Props for the select all checkbox.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectAllCheckboxAria {
+export function useTableSelectAllCheckbox<T>(
+  state: TableState<T>,
+  props: AriaTableSelectAllCheckboxProps = {}
+): TableSelectAllCheckboxAria {
   let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
 
   return {
     checkboxProps: {
-      'aria-label': stringFormatter.format(selectionMode === 'single' ? 'select' : 'selectAll'),
+      'aria-label':
+        props['aria-label'] ??
+        stringFormatter.format(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
       isDisabled:
         selectionMode !== 'multiple' ||
