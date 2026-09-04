@@ -25,9 +25,14 @@ export const queue = new ToastQueue<MyToastContent>({
   // Wrap state updates in a CSS view transition.
   wrapUpdate(fn) {
     if ('startViewTransition' in document) {
-      document.startViewTransition(() => {
+      let transition = document.startViewTransition(() => {
         flushSync(fn);
       });
+      // Prevents unhandled promise rejections when a transition is
+      // preempted by another (e.g. overlapping toasts).
+      transition.finished.catch(() => {});
+      transition.ready.catch(() => {});
+      transition.updateCallbackDone.catch(() => {});
     } else {
       fn();
     }
