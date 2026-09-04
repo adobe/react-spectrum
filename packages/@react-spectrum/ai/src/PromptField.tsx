@@ -231,6 +231,12 @@ export class PromptFieldValue extends TokenFieldValue<PromptFieldTokenValue> {
     }
     return super.replaceRangeWithSegments(start, end, segments, coalesce);
   }
+
+  toString() {
+    return this.segments
+      .map(s => (s.type === 'token' && s.value?.type === 'url' ? s.value.url : s.text))
+      .join('');
+  }
 }
 
 const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
