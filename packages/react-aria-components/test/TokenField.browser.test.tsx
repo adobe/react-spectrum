@@ -854,10 +854,7 @@ describeOrSkip('TokenField browser interactions', () => {
       await navigateCaret(textbox, multiline, {index: 0, offset: 11});
       let mod = modKey();
       await userEvent.keyboard(`{${mod}>}{Backspace}{/${mod}}`);
-      // macOS has a delete-to-line-start shortcut (Cmd+Backspace) that removes the line including
-      // its leading newline. Windows/Linux have no such shortcut: Ctrl+Backspace deletes the
-      // previous word ("world"), leaving the newline behind.
-      await waitForFieldText(getValue, isMacPlatform() ? 'hello' : 'hello\n');
+      await waitForFieldText(getValue, 'hello\n');
     });
 
     it('deletes forward to end of line with line-delete forward shortcut', async () => {
