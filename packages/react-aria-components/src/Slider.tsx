@@ -436,7 +436,10 @@ export const SliderFill = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
           }
         : {
             position: 'absolute',
-            insetInlineStart: `${startPercent}%`,
+            // The thumb is positioned with the physical `left` property, so the fill must also be
+            // physical when the slider does not mirror. `insetInlineStart` would still resolve to
+            // `right` in an RTL document and the two would end up on opposite sides of the track.
+            [state.hasFixedDirection ? 'left' : 'insetInlineStart']: `${startPercent}%`,
             width: `${sizePercent}%`,
             height: '100%'
           },

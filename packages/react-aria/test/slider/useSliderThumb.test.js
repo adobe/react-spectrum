@@ -7,6 +7,7 @@ import {
   renderHook,
   screen
 } from '@react-spectrum/test-utils-internal';
+import {I18nProvider} from '../../src/i18n/I18nProvider';
 import * as React from 'react';
 import {useRef} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -639,6 +640,117 @@ describe('useSliderThumb', () => {
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([99]);
         expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
         expect(stateRef.current.values).toEqual([99]);
+      });
+    });
+  });
+
+  describe('hasFixedDirection', () => {
+    let widthStub;
+    beforeAll(() => {
+      widthStub = jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+    });
+    afterAll(() => {
+      widthStub.mockReset();
+    });
+
+    installMouseEvent();
+
+    let stateRef = React.createRef();
+
+    function Example(props) {
+      let trackRef = useRef(null);
+      let inputRef = useRef(null);
+      let state = useSliderState({...props, numberFormatter});
+      stateRef.current = state;
+      let {trackProps} = useSlider(props, state, trackRef);
+      let {inputProps, thumbProps} = useSliderThumb(
+        {...props, 'aria-label': 'Value', index: 0, trackRef, inputRef},
+        state
+      );
+      return (
+        <div data-testid="track" ref={trackRef} {...trackProps}>
+          <div data-testid="thumb" {...thumbProps}>
+            <input ref={inputRef} {...inputProps} />
+          </div>
+        </div>
+      );
+    }
+
+    function renderSlider(locale, props) {
+      return render(
+        <I18nProvider locale={locale}>
+          <Example aria-label="Slider" defaultValue={[25]} {...props} />
+        </I18nProvider>
+      );
+    }
+
+    // A value of 25 is used rather than 50 so the mirrored position (75%) and the
+    // non-mirrored position (25%) are distinguishable.
+    describe('thumb position', () => {
+      it('mirrors in an RTL locale by default', () => {
+        renderSlider('ar-AE');
+        expect(screen.getByTestId('thumb')).toHaveStyle({left: '75%'});
+      });
+
+      it('does not mirror in an RTL locale when hasFixedDirection is set', () => {
+        renderSlider('ar-AE', {hasFixedDirection: true});
+        expect(screen.getByTestId('thumb')).toHaveStyle({left: '25%'});
+      });
+
+      it('is unaffected in an LTR locale', () => {
+        renderSlider('en-US', {hasFixedDirection: true});
+        expect(screen.getByTestId('thumb')).toHaveStyle({left: '25%'});
+      });
+
+      it('still mirrors vertically regardless of hasFixedDirection', () => {
+        renderSlider('ar-AE', {hasFixedDirection: true, orientation: 'vertical'});
+        // Vertical sliders always run bottom to top, which hasFixedDirection must not change.
+        expect(screen.getByTestId('thumb')).toHaveStyle({top: '75%'});
+      });
+    });
+
+    describe('keyboard', () => {
+      it('reverses arrow keys in an RTL locale by default', async () => {
+        let user = userEvent.setup({delay: null, pointerMap});
+        renderSlider('ar-AE');
+        await user.tab();
+        await user.keyboard('{ArrowRight}');
+        expect(stateRef.current.values).toEqual([24]);
+        await user.keyboard('{ArrowLeft}');
+        expect(stateRef.current.values).toEqual([25]);
+      });
+
+      it('does not reverse arrow keys in an RTL locale when hasFixedDirection is set', async () => {
+        let user = userEvent.setup({delay: null, pointerMap});
+        renderSlider('ar-AE', {hasFixedDirection: true});
+        await user.tab();
+        await user.keyboard('{ArrowRight}');
+        expect(stateRef.current.values).toEqual([26]);
+        await user.keyboard('{ArrowLeft}');
+        expect(stateRef.current.values).toEqual([25]);
+      });
+    });
+
+    describe('dragging', () => {
+      it('reverses drag in an RTL locale by default', () => {
+        renderSlider('ar-AE');
+        let thumb = screen.getByTestId('thumb');
+        fireEvent.mouseDown(thumb, {clientX: 25, pageX: 25});
+        fireEvent.mouseMove(thumb, {clientX: 35, pageX: 35});
+        fireEvent.mouseUp(thumb, {clientX: 35, pageX: 35});
+        // Moving right decreases the value when mirrored.
+        expect(stateRef.current.values).toEqual([15]);
+      });
+
+      it('does not reverse drag in an RTL locale when hasFixedDirection is set', () => {
+        renderSlider('ar-AE', {hasFixedDirection: true});
+        let thumb = screen.getByTestId('thumb');
+        fireEvent.mouseDown(thumb, {clientX: 25, pageX: 25});
+        fireEvent.mouseMove(thumb, {clientX: 35, pageX: 35});
+        fireEvent.mouseUp(thumb, {clientX: 35, pageX: 35});
+        expect(stateRef.current.values).toEqual([35]);
       });
     });
   });

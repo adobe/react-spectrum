@@ -67,7 +67,9 @@ export function useSlider<T extends number | number[]>(
     'aria-details': props['aria-details']
   });
 
-  let {direction} = useLocale();
+  // Sliders that represent media playback rather than reading order are not mirrored in RTL locales.
+  let {direction: localeDirection} = useLocale();
+  let direction = state.hasFixedDirection ? 'ltr' : localeDirection;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 

@@ -24,6 +24,14 @@ export interface SliderProps<T = number | number[]>
    * @default 'horizontal'
    */
   orientation?: Orientation;
+  /**
+   * Whether the slider's layout direction stays left-to-right in right-to-left locales.
+   * Controls that represent media playback rather than reading order, such as an audio
+   * progress bar, are conventionally not mirrored. Has no effect on vertical sliders.
+   *
+   * @default false
+   */
+  hasFixedDirection?: boolean;
   /** Whether the whole Slider is disabled. */
   isDisabled?: boolean;
   /** Fired when the slider stops moving, due to being let go. */
@@ -194,6 +202,9 @@ export interface SliderState {
   /** The orientation of the slider. */
   readonly orientation: Orientation;
 
+  /** Whether the slider's layout direction stays left-to-right in right-to-left locales. */
+  readonly hasFixedDirection: boolean;
+
   /** Whether the slider is disabled. */
   readonly isDisabled: boolean;
 }
@@ -223,7 +234,8 @@ export function useSliderState<T extends number | number[]>(
     maxValue = DEFAULT_MAX_VALUE,
     numberFormatter: formatter,
     step = DEFAULT_STEP_VALUE,
-    orientation = 'horizontal'
+    orientation = 'horizontal',
+    hasFixedDirection = false
   } = props;
 
   // Page step should be at least equal to step and always a multiple of the step.
@@ -403,6 +415,7 @@ export function useSliderState<T extends number | number[]>(
     step,
     pageSize,
     orientation,
+    hasFixedDirection,
     isDisabled
   };
 }
