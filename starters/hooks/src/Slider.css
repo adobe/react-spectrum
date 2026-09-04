@@ -40,6 +40,41 @@
     }
   }
 
+  .react-aria-SliderMark {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    .tick {
+      display: block;
+      background: var(--border-color);
+      border-radius: 9999px;
+    }
+
+    .tick-label {
+      position: absolute;
+      font-size: var(--font-size-sm);
+      color: var(--gray-800);
+      white-space: nowrap;
+    }
+
+    &[data-hovered] .tick-label {
+      color: var(--text-color);
+    }
+
+    &[data-disabled] {
+      cursor: default;
+
+      .tick {
+        background: var(--border-color-disabled);
+      }
+
+      .tick-label {
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+
   .react-aria-SliderThumb {
     width: calc(var(--spacing) * 5.5);
     height: calc(var(--spacing) * 5.5);
@@ -92,6 +127,25 @@
     .react-aria-SliderThumb {
       top: 50%;
     }
+
+    .react-aria-SliderMark {
+      top: 50%;
+
+      .tick {
+        width: 2px;
+        height: var(--spacing-2);
+      }
+
+      .tick-label {
+        top: calc(100% + var(--spacing-1));
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    .react-aria-SliderTrack:has(.react-aria-SliderMark) {
+      margin-bottom: var(--spacing-5);
+    }
   }
 
   &[data-orientation='vertical'] {
@@ -138,6 +192,21 @@
 
     .react-aria-SliderThumb {
       left: 50%;
+    }
+
+    .react-aria-SliderMark {
+      left: 50%;
+
+      .tick {
+        width: var(--spacing-2);
+        height: 2px;
+      }
+
+      .tick-label {
+        left: calc(100% + var(--spacing-1));
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
   }
 

@@ -14,7 +14,7 @@ import {Label} from '../src/Label';
 
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Slider, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
+import {Slider, SliderMark, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
 import styles from '../example/index.css';
 import './styles.css';
 
@@ -103,7 +103,113 @@ SliderCSS.argTypes = {
   }
 };
 
-const CustomThumb = ({index, children}: {index: number; children: React.ReactNode}) => {
+// Seven ticks over six intervals, matching the macOS Sound output volume slider that
+// https://github.com/adobe/react-spectrum/issues/8285 asks for.
+const VOLUME_TICKS = [0, 100 / 6, 200 / 6, 50, 400 / 6, 500 / 6, 100];
+
+export const SliderMarks: SliderStory = props => (
+  <Slider
+    {...props}
+    aria-label="Volume"
+    defaultValue={70}
+    snapPoints={VOLUME_TICKS}
+    style={{display: 'flex', alignItems: 'center', gap: 10, width: 360}}>
+    <SliderTrack
+      style={{position: 'relative', flex: 1, height: 22, display: 'flex', alignItems: 'center'}}>
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          height: 4,
+          background: '#d4d4d4',
+          borderRadius: 2
+        }}
+      />
+      {VOLUME_TICKS.map((value, i) => (
+        <SliderMark key={i} value={value}>
+          {({isHovered}) => (
+            <div
+              style={{
+                width: 2,
+                height: 11,
+                borderRadius: 1,
+                background: isHovered ? '#8a8a8a' : '#bdbdbd'
+              }}
+            />
+          )}
+        </SliderMark>
+      ))}
+      <SliderThumb
+        style={({isDragging}) => ({
+          width: 11,
+          height: 22,
+          top: '50%',
+          borderRadius: 5.5,
+          // The thumb goes translucent while dragging, as the macOS slider does.
+          background: isDragging ? 'rgba(255, 255, 255, 0.45)' : '#fff',
+          boxShadow: isDragging
+            ? '0 0 0 0.5px rgba(0, 0, 0, 0.09)'
+            : '0 0 0 0.5px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.28)'
+        })}
+      />
+    </SliderTrack>
+    <SliderOutput style={{width: 40, textAlign: 'end', fontVariantNumeric: 'tabular-nums'}} />
+  </Slider>
+);
+
+SliderMarks.args = {
+  isDisabled: false,
+  snapThreshold: 0.02
+};
+
+const LABELLED_MARKS = [-100, -50, 0, 50, 100];
+
+export const SliderMarksWithLabels: SliderStory = props => (
+  <Slider
+    {...props}
+    aria-label="Balance"
+    defaultValue={0}
+    minValue={-100}
+    maxValue={100}
+    snapPoints={LABELLED_MARKS}
+    style={{position: 'relative', width: 300}}>
+    <SliderOutput />
+    <SliderTrack style={{position: 'relative', height: 30, width: '100%'}}>
+      <div
+        style={{position: 'absolute', backgroundColor: 'gray', height: 3, top: 13, width: '100%'}}
+      />
+      {LABELLED_MARKS.map(value => (
+        <SliderMark key={value} value={value} style={{top: 14}}>
+          {({isHovered}) => (
+            <>
+              <div style={{width: 2, height: 10, backgroundColor: 'gray'}} />
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 12,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: 12,
+                  textDecoration: isHovered ? 'underline' : undefined
+                }}>
+                {value}
+              </span>
+            </>
+          )}
+        </SliderMark>
+      ))}
+      <CustomThumb index={0} />
+    </SliderTrack>
+  </Slider>
+);
+
+SliderMarksWithLabels.args = {
+  isDisabled: false,
+  snapThreshold: 0.03
+};
+
+const CustomThumb = ({index, children}: {index: number; children?: React.ReactNode}) => {
   return (
     <SliderThumb
       index={index}
