@@ -11,6 +11,7 @@
  */
 
 import type {EventMapType} from '@react-types/shared';
+import {isDocument, isWindow} from './typeHelpers';
 
 export const getOwnerDocument = (target?: EventTarget | null): Document => {
   if (isWindow(target)) return target.document;
@@ -27,44 +28,6 @@ export const getOwnerWindow = (target?: EventTarget | null): Window & typeof glo
   // @ts-expect-error Ensure safe access in SSR environments.
   return ownerDocument?.defaultView ?? (typeof window !== 'undefined' ? window : undefined);
 };
-
-/**
- * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType
- * property.
- */
-export function isNode(value: unknown): value is Node {
-  return (
-    value !== null &&
-    typeof value === 'object' &&
-    'nodeType' in value &&
-    typeof value.nodeType === 'number'
-  );
-}
-
-/**
- * Type guard that checks if a value is a Window. Uses window self reference checks to
- * distinguish Window from other values.
- */
-function isWindow(value: unknown): value is Window & typeof globalThis {
-  return typeof value === 'object' && value != null && 'window' in value && value.window === value;
-}
-
-/**
- * Type guard that checks if a value is a Document. Uses nodeType and host property checks to
- * distinguish Document from other values.
- */
-export function isDocument(value: unknown): value is Document {
-  return isNode(value) && value.nodeType === 9;
-}
-
-/**
- * Type guard that checks if a value is a ShadowRoot. Uses nodeType and host property checks to
- * distinguish ShadowRoot from other values.
- */
-export function isShadowRoot(value: unknown): value is ShadowRoot {
-  // 11 = DOCUMENT_FRAGMENT_NODE
-  return isNode(value) && value.nodeType === 11 && 'host' in value;
-}
 
 /**
  * Attaches an event listener on target(s) and returns a cleanup function.
