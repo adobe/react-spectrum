@@ -50,6 +50,8 @@ import {
   icon,
   iconCenterWrapper,
   label,
+  loadingWrapperStyles,
+  progressCircleStyles,
   sectionHeading
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
@@ -291,26 +293,6 @@ const avatar = style({
   marginEnd: 'text-to-visual'
 });
 
-const loadingWrapperStyles = style({
-  gridColumnStart: '1',
-  gridColumnEnd: '-1',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginY: 8
-});
-
-const progressCircleStyles = style({
-  size: {
-    size: {
-      S: 16,
-      M: 20,
-      L: 22,
-      XL: 26
-    }
-  }
-});
-
 let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 let InsideSelectValueContext = createContext(false);
 
@@ -527,14 +509,14 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
 });
 
 function PickerProgressCircle(props) {
-  let {id, size, 'aria-label': ariaLabel} = props;
+  let {id, 'aria-label': ariaLabel} = props;
   return (
     <ProgressCircle
       id={id}
       isIndeterminate
       size="S"
       aria-label={ariaLabel}
-      styles={progressCircleStyles({size})}
+      styles={progressCircleStyles}
     />
   );
 }
