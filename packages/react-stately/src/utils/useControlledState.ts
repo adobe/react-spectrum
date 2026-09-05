@@ -14,7 +14,7 @@ import React, {SetStateAction, useCallback, useEffect, useReducer, useRef, useSt
 
 // Use the earliest effect possible to reset the ref below.
 const useEarlyEffect: typeof React.useLayoutEffect =
-  typeof document !== 'undefined'
+  typeof document !== 'undefined' || parseInt(React.version, 10) >= 19
     ? (React['useInsertionEffect'] ?? React.useLayoutEffect)
     : () => {};
 
