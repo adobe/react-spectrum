@@ -41,7 +41,10 @@ export function Column(props: Omit<ColumnProps, 'children'> & {children?: React.
     <AriaColumn {...props} className="react-aria-Column button-base">
       {({allowsSorting, sortDirection}) => (
         <div className="column-header">
-          <Group role="presentation" tabIndex={-1} className="column-name">
+          <Group
+            role={allowsSorting ? 'button' : 'presentation'}
+            tabIndex={-1}
+            className="column-name">
             {props.children}
           </Group>
           {allowsSorting && (
