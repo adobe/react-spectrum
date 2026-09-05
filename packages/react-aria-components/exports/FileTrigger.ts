@@ -14,7 +14,7 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {FileTrigger} from '../src/FileTrigger';
-export type {FileTriggerProps} from '../src/FileTrigger';
+export {FileTrigger, FileField, FileFieldContext} from '../src/FileTrigger';
+export type {FileTriggerProps, FileFieldProps, FileFieldRenderProps} from '../src/FileTrigger';
 
 export {Pressable} from 'react-aria/Pressable';
