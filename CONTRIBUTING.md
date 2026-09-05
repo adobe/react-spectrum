@@ -96,7 +96,7 @@ All third-party contributions to this project must be accompanied by a signed co
 ## Where to start
 There are many places to dive into react-spectrum to help out. Before you take on a feature or issue, make sure you become familiar with [our architecture](https://github.com/adobe/react-spectrum/blob/main/rfcs/2019-v3-architecture.md).
 
-If you are looking for place to start, consider the following options:
+If you are looking for a place to start, consider the following options:
 - Look for issues tagged with help wanted and/or good first issue.
 - Help triage existing issues by investigating problems and following up on missing information.
 - Update missing or fix existing documentation
