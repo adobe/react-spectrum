@@ -69,6 +69,9 @@
   align-items: center;
   gap: var(--spacing-2);
   min-height: var(--spacing-8);
+  /* Set to the row's intrinsic height while it animates in or out, and auto otherwise. */
+  height: var(--tree-item-height, auto);
+  overflow: clip;
   padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-2);
   box-sizing: border-box;
   --padding: var(--spacing-4);
@@ -79,10 +82,24 @@
   font: var(--font-size) system-ui;
   position: relative;
   transform: translateZ(0);
-  transition-property: background, color, border-radius;
+  transition-property: background, color, border-radius, height, min-height, padding, opacity;
   transition-duration: 200ms;
   -webkit-tap-highlight-color: transparent;
   --chevron-width: var(--spacing-5);
+
+  /* Rows stay mounted while their parent expands or collapses, so they can animate in and out. A row
+     can't shrink below its own padding, so that has to go with the height or it pops out rather than
+     closing. */
+  &[data-entering],
+  &[data-exiting] {
+    min-height: 0;
+    padding-block: 0;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   &[data-has-child-items] {
     --chevron-width: 0px;
