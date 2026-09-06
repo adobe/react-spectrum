@@ -310,6 +310,7 @@ export function PixelLoader(props: PixelLoaderProps) {
     return matrix;
   }, [cells]);
   const isHighDPI = (typeof document !== 'undefined' && window.devicePixelRatio >= 2) ?? false;
+  const isAIIcon = cells === aiLogo;
 
   return (
     <div
@@ -362,6 +363,8 @@ export function PixelLoader(props: PixelLoaderProps) {
               transformOrigin: 'center',
               borderRadius: `${corner(left, top, topLeft)} ${corner(right, top, topRight)} ${corner(right, bottom, bottomRight)} ${corner(left, bottom, bottomLeft)}`,
               backgroundColor: color,
+              // Extra stroke only on the AI icon's cells to match the original SVG.
+              boxShadow: isAIIcon ? `0 0 0 ${c.outer ? '0.15px' : '0.1px'} ${color}` : undefined,
               ...(isPlaying &&
                 !isReducedMotion && {
                   animation:

@@ -247,7 +247,8 @@ export function VirtualizedStreamingChat(props: VirtualizedStreamingChatProps) {
           gap: 16,
           paddingX: 16,
           boxSizing: 'border-box',
-          minWidth: 0
+          minWidth: 0,
+          containerType: 'size'
         })}>
         <div
           className={style({
