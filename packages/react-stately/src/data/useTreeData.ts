@@ -499,14 +499,11 @@ function moveItems<T extends object>(
 
   let parent = toParent;
   let removeKeys = new Set(keys);
-  while (parent?.parentKey != null) {
+  while (parent != null) {
     if (removeKeys.has(parent.key)) {
       throw new Error('Cannot move an item to be a child of itself.');
     }
-    parent = nodeMap.get(parent.parentKey!) ?? null;
-  }
-  if (parent != null && removeKeys.has(parent.key)) {
-    throw new Error('Cannot move an item to be a child of itself.');
+    parent = parent.parentKey != null ? (nodeMap.get(parent.parentKey) ?? null) : null;
   }
 
   let originalToIndex = toIndex;

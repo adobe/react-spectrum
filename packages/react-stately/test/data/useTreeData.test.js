@@ -914,40 +914,28 @@ describe('useTreeData', function () {
     });
 
     let expectToThrow = cb => {
-      let didThrow = false;
-      try {
-        cb();
-      } catch (e) {
-        didThrow = true;
-        expect(e.toString()).toContain('Cannot move an item to be a child of itself.');
-      }
-
-      if (!didThrow) {
-        expect(console.error).toHaveBeenCalled();
-        const errorString = console.error.mock.calls.flat().join(' ');
-        expect(errorString).toContain('Cannot move an item to be a child of itself.');
-      }
+      expect(cb).toThrow('Cannot move an item to be a child of itself.');
     };
 
-    it('cannot move an item before itself', function () {
+    it('cannot move an item before a child inside itself', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
       expectToThrow(() => act(() => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli'])));
     });
 
-    it('cannot move a root-level item before itself', function () {
+    it('cannot move a root-level item before any of its children', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
       expectToThrow(() => act(() => result.current.moveBefore('Suzie', ['David'])));
     });
 
-    it('cannot move an item after itself', function () {
+    it('cannot move an item after a child inside itself', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
       expectToThrow(() => act(() => result.current.moveAfter('Suzie', ['John'])));
     });
 
-    it('cannot move a root-level item after itself', function () {
+    it('cannot move a root-level item after any of its children', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
       expectToThrow(() => act(() => result.current.moveAfter('Suzie', ['David'])));
