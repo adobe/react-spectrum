@@ -2,7 +2,7 @@
 /* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target */
 
 import {getOwnerWindow} from '../domHelpers';
-import {isShadowRoot} from '../typeHelpers';
+import {isElement, isShadowRoot} from '../typeHelpers';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 import type {SyntheticEvent} from 'react';
 
@@ -73,6 +73,19 @@ export function nodeContains(
   }
 
   return false;
+}
+
+/**
+ * ShadowDOM safe version of element.parentElement.
+ */
+export function getParentElement(node: Node): Element | null {
+  let parentNode = getParentNode(node);
+
+  while (parentNode != null && !isElement(parentNode)) {
+    parentNode = getParentNode(parentNode);
+  }
+
+  return parentNode;
 }
 
 /**

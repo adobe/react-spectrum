@@ -13,9 +13,10 @@
 import {addEvent, getOwnerDocument, getOwnerWindow} from './domHelpers';
 import {BoundingNode, BoundingOptions, BoxModel} from '@react-types/shared';
 import {getOverflowingElement, getStylingElement, getVisualViewport} from './layoutHelpers';
-import {getPropagationTargets, nodeContains} from './shadowdom/DOMFunctions';
+import {getParentElement, getPropagationTargets, nodeContains} from './shadowdom/DOMFunctions';
+import {getScaleLeft, getScaleTop} from './layoutHelpers';
 import {isChrome, isIOS, isWebKit} from './platform';
-import {isDocument, isHTMLElement} from './typeHelpers';
+import {isDocument} from './typeHelpers';
 import {SyntheticEventTarget} from './events';
 
 /**
@@ -62,7 +63,6 @@ interface DOMBoxStrategy<T extends BoundingNode> {
   model: NonNullable<BoxOptions<T>['model']>;
   precision: NonNullable<BoxOptions<T>['precision']>;
   transform: NonNullable<BoxOptions<T>['transform']>;
-  initialRect: DOMRect;
   visibleRect: DOMRect;
   boundingRect: DOMRect;
   target: T;
@@ -132,30 +132,46 @@ class ElementBox<T extends Element> implements DOMBoxStrategy<T> {
     let stylingElement = getStylingElement(this.target);
     let style = ownerWindow.getComputedStyle(stylingElement);
 
-    // If disabled, strip 2D transforms while attempting to preserve subpixel precision.
+    let width = rect.width / getScaleLeft(this.target);
+    let height = rect.height / getScaleTop(this.target);
+
+    // If disabled, strip 2D transforms while preserving the inherited coordinate space.
     // This can be useful when positioning a bounding target relative to an animated anchor.
-    if (!this.transform && isHTMLElement(this.target)) {
+    if (!this.transform) {
+      let parentElement = getParentElement(this.target);
+
+      let parentScaleX = parentElement != null ? getScaleLeft(parentElement) : 1;
+      let parentScaleY = parentElement != null ? getScaleTop(parentElement) : 1;
+
       if (style.transform !== 'none' && typeof ownerWindow.DOMMatrix !== 'undefined') {
         let matrix = new DOMMatrix(style.transform);
 
+        let [transformOriginX, transformOriginY] = style.transformOrigin.split(' ');
+        let originX = parseFloat(transformOriginX) || 0;
+        let originY = parseFloat(transformOriginY) || 0;
+
+        let centerX = width / 2 - originX;
+        let centerY = height / 2 - originY;
+        let shiftX = matrix.a * centerX + matrix.c * centerY - centerX + matrix.e;
+        let shiftY = matrix.b * centerX + matrix.d * centerY - centerY + matrix.f;
+
         if (matrix && matrix.is2D) {
-          rect.width /= Math.hypot(matrix.a, matrix.b) || 1;
-          rect.height /= Math.hypot(matrix.c, matrix.d) || 1;
+          rect.x = rect.x + rect.width / 2 - parentScaleX * (shiftX + width / 2);
+          rect.y = rect.y + rect.height / 2 - parentScaleY * (shiftY + height / 2);
         }
       }
 
-      if (Math.abs(rect.width - this.target.offsetWidth) >= 1) {
-        rect.width = this.target.offsetWidth;
-      }
-
-      if (Math.abs(rect.height - this.target.offsetHeight) >= 1) {
-        rect.height = this.target.offsetHeight;
-      }
+      rect.width = width * parentScaleX;
+      rect.height = height * parentScaleY;
     }
 
     if (rect.width <= 0 || rect.height <= 0) {
       return new DOMRect();
     }
+
+    // Recalculate the scale after potentially stripping transforms on the target.
+    let scaleX = rect.width / width;
+    let scaleY = rect.height / height;
 
     if (this.model === 'scroll-margin-box') {
       rect.y -= parseFloat(style.scrollMarginTop) || 0;
@@ -165,19 +181,19 @@ class ElementBox<T extends Element> implements DOMBoxStrategy<T> {
       rect.width += parseFloat(style.scrollMarginLeft) || 0;
       rect.width += parseFloat(style.scrollMarginRight) || 0;
     } else if (this.model === 'margin-box') {
-      rect.y -= parseFloat(style.marginTop) || 0;
-      rect.height += parseFloat(style.marginTop) || 0;
-      rect.height += parseFloat(style.marginBottom) || 0;
-      rect.x -= parseFloat(style.marginLeft) || 0;
-      rect.width += parseFloat(style.marginLeft) || 0;
-      rect.width += parseFloat(style.marginRight) || 0;
+      rect.y -= scaleY * parseFloat(style.marginTop) || 0;
+      rect.height += scaleY * parseFloat(style.marginTop) || 0;
+      rect.height += scaleY * parseFloat(style.marginBottom) || 0;
+      rect.x -= scaleX * parseFloat(style.marginLeft) || 0;
+      rect.width += scaleX * parseFloat(style.marginLeft) || 0;
+      rect.width += scaleX * parseFloat(style.marginRight) || 0;
     }
 
     if (this.model.endsWith('padding-box') || this.model.endsWith('content-box')) {
-      let clientTop = parseFloat(style.borderTopWidth) || 0;
-      let clientLeft = parseFloat(style.borderLeftWidth) || 0;
-      let clientBottom = parseFloat(style.borderBottomWidth) || 0;
-      let clientRight = parseFloat(style.borderRightWidth) || 0;
+      let clientTop = scaleY * parseFloat(style.borderTopWidth) || 0;
+      let clientLeft = scaleX * parseFloat(style.borderLeftWidth) || 0;
+      let clientBottom = scaleY * parseFloat(style.borderBottomWidth) || 0;
+      let clientRight = scaleX * parseFloat(style.borderRightWidth) || 0;
 
       // A node containing the root overflowing element shall assert as its document.
       if (!nodeContains(this.target, getOverflowingElement(ownerDocument))) {
@@ -186,8 +202,8 @@ class ElementBox<T extends Element> implements DOMBoxStrategy<T> {
         let innerWidth = Math.max(0, rect.width - clientLeft - clientRight);
         let innerHeight = Math.max(0, rect.height - clientTop - clientBottom);
 
-        let gutterWidth = Math.max(0, innerWidth - this.target.clientWidth);
-        let gutterHeight = Math.max(0, innerHeight - this.target.clientHeight);
+        let gutterWidth = Math.max(0, innerWidth - this.target.clientWidth * scaleX);
+        let gutterHeight = Math.max(0, innerHeight - this.target.clientHeight * scaleY);
 
         // https://bugs.webkit.org/show_bug.cgi?id=318043
         if (/both-edges/.test(style.scrollbarGutter) && isWebKit()) gutterWidth *= 2;
@@ -228,12 +244,12 @@ class ElementBox<T extends Element> implements DOMBoxStrategy<T> {
     }
 
     if (this.model === 'content-box') {
-      rect.y += parseFloat(style.paddingTop) || 0;
-      rect.height -= parseFloat(style.paddingTop) || 0;
-      rect.height -= parseFloat(style.paddingBottom) || 0;
-      rect.x += parseFloat(style.paddingLeft) || 0;
-      rect.width -= parseFloat(style.paddingLeft) || 0;
-      rect.width -= parseFloat(style.paddingRight) || 0;
+      rect.y += scaleY * parseFloat(style.paddingTop) || 0;
+      rect.height -= scaleY * parseFloat(style.paddingTop) || 0;
+      rect.height -= scaleY * parseFloat(style.paddingBottom) || 0;
+      rect.x += scaleX * parseFloat(style.paddingLeft) || 0;
+      rect.width -= scaleX * parseFloat(style.paddingLeft) || 0;
+      rect.width -= scaleX * parseFloat(style.paddingRight) || 0;
     }
 
     if (rect.width > 0 && rect.height > 0) {
@@ -265,7 +281,7 @@ class DocumentBox<T extends Document> implements DOMBoxStrategy<T> {
     let sentinel = DocumentBox.sentinels.get(target);
 
     if (sentinel == null) {
-      sentinel ??= target.createElement('div');
+      sentinel = target.createElement('div');
       sentinel.id = 'react-aria-icb-sentinel';
       sentinel.popover = 'manual';
       sentinel.style.all = 'initial';
@@ -434,30 +450,6 @@ export class DOMBox<T extends BoundingNode> implements DOMBoxStrategy<T> {
   }
 
   /**
-   * Returns the initial bounding rectangle of this target in frame coordinate space.
-   * Similar to `node.getBoundingClientRect()`, but only when rendered.
-   */
-  public get initialRect(): DOMRect {
-    let rect = this.strategy.initialRect;
-
-    let ownerWindow = getOwnerWindow(this.target);
-
-    if (this.precision === 'pixel') {
-      rect.x = Math.round(rect.x);
-      rect.y = Math.round(rect.y);
-      rect.width = Math.round(rect.width);
-      rect.height = Math.round(rect.height);
-    } else if (this.precision === 'device-pixel') {
-      rect.x *= ownerWindow.devicePixelRatio || 1;
-      rect.y *= ownerWindow.devicePixelRatio || 1;
-      rect.width *= ownerWindow.devicePixelRatio || 1;
-      rect.height *= ownerWindow.devicePixelRatio || 1;
-    }
-
-    return rect;
-  }
-
-  /**
    * Returns the visible bounding rectangle in frame coordinate space.
    * Similar to `node.getBoundingClientRect()`, but intersected with all ancestors.
    */
@@ -549,14 +541,6 @@ export class DOMResizableBox<T extends BoundingNode>
   }
 
   /**
-   * Returns the initial bounding rectangle of this target in frame coordinate space.
-   * Similar to `node.getBoundingClientRect()`, but only when rendered.
-   */
-  public get initialRect(): DOMRect {
-    return this.boundingBox.initialRect;
-  }
-
-  /**
    * Returns the visible bounding rectangle in frame coordinate space.
    * Similar to `node.getBoundingClientRect()`, but intersected with all ancestors.
    */
@@ -628,8 +612,6 @@ export class DOMResizableBox<T extends BoundingNode>
  */
 export class DOMBoxAnchor<T extends HTMLElement> extends DOMResizableBox<T> {
   private static sentinels: WeakMap<HTMLElement, HTMLElement> = new WeakMap();
-
-  protected animationFrame: number = 0;
 
   constructor(target: T, options?: BoxOptions<T>) {
     super(target, options);
@@ -723,13 +705,6 @@ export class DOMBoxAnchor<T extends HTMLElement> extends DOMResizableBox<T> {
     super.connect();
   }
 
-  protected override disconnect(): void {
-    window.cancelAnimationFrame(this.animationFrame);
-    this.animationFrame = 0;
-
-    super.disconnect();
-  }
-
   protected override update(): void {
     let prev = this.head;
     let next = this.boundingRect;
@@ -748,17 +723,6 @@ export class DOMBoxAnchor<T extends HTMLElement> extends DOMResizableBox<T> {
       this.changedAt = event.timeStamp;
 
       super.dispatchEvent(event);
-    }
-
-    if (performance.now() - this.changedAt <= 150) {
-      this.animationFrame ||= window.requestAnimationFrame(() => {
-        this.animationFrame = 0;
-        this.update();
-      });
-
-      super.disconnect();
-    } else if (this.changedAt !== 0) {
-      this.connect();
     }
   }
 }

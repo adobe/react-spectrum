@@ -10,11 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {BoundingNode} from '@react-types/shared';
+import {Axis, BoundingNode} from '@react-types/shared';
 import {getOwnerDocument, getOwnerWindow} from './domHelpers';
 import {getParentNode, nodeContains} from './shadowdom/DOMFunctions';
 import {isContainingBlock} from './isContainingBlock';
 import {isDocument, isElement, isHTMLElement} from './typeHelpers';
+
+/**
+ * Returns the composite scale of a bounding node in the physical block axis.
+ * https://www.w3.org/TR/css-transforms-1/#transform-rendering.
+ */
+export function getScaleTop(node: BoundingNode): number {
+  return getBoundingScale(node, 'block');
+}
+
+/**
+ * Returns the composite scale of a bounding node in the physical inline axis.
+ * https://www.w3.org/TR/css-transforms-1/#transform-rendering.
+ */
+export function getScaleLeft(node: BoundingNode): number {
+  return getBoundingScale(node, 'inline');
+}
 
 /**
  * Returns the visual viewport of a document. This is the visible viewport intersection.
@@ -128,7 +144,7 @@ export function getContainingElement(node: BoundingNode): Element | null {
   let ownerDocument = getOwnerDocument(node);
 
   // A node containing the body element shall return the initial containing block.
-  if (nodeContains(node, ownerDocument.body)) {
+  if (isDocument(node) || nodeContains(node, ownerDocument.body)) {
     return ownerDocument.documentElement;
   }
 
@@ -163,4 +179,36 @@ export function getContainingElement(node: BoundingNode): Element | null {
   }
 
   return offsetParent;
+}
+
+function getBoundingScale(node: BoundingNode, axis: Axis): number {
+  let ownerWindow = getOwnerWindow(node);
+  let stylingElement = getStylingElement(node);
+
+  let style = ownerWindow.getComputedStyle(stylingElement);
+  let rect = stylingElement.getBoundingClientRect();
+
+  let width = parseFloat(style.width) || 0;
+  let height = parseFloat(style.height) || 0;
+
+  if (axis === 'block' && style.boxSizing === 'content-box') {
+    height += parseFloat(style.paddingTop) || 0;
+    height += parseFloat(style.paddingBottom) || 0;
+    height += parseFloat(style.borderTopWidth) || 0;
+    height += parseFloat(style.borderBottomWidth) || 0;
+  }
+
+  if (axis === 'inline' && style.boxSizing === 'content-box') {
+    width += parseFloat(style.paddingLeft) || 0;
+    width += parseFloat(style.paddingRight) || 0;
+    width += parseFloat(style.borderLeftWidth) || 0;
+    width += parseFloat(style.borderRightWidth) || 0;
+  }
+
+  switch (axis) {
+    case 'block':
+      return height > 0 && rect.height > 0 ? rect.height / height : 1;
+    case 'inline':
+      return width > 0 && rect.width > 0 ? rect.width / width : 1;
+  }
 }
