@@ -96,6 +96,7 @@ export const SharedElement = forwardRef(function SharedElement(
     let scope = scopeRef.current;
     let prevSnapshot = scope[name];
     let frame: number | null = null;
+    let restoreStyles: (() => void) | null = null;
 
     if (element && isVisible && prevSnapshot) {
       // Element is transitioning from a previous instance.
@@ -125,11 +126,14 @@ export const SharedElement = forwardRef(function SharedElement(
       }
 
       // Remove overrides after one frame to animate to the current values.
-      frame = requestAnimationFrame(() => {
-        frame = null;
+      restoreStyles = () => {
         for (let [property, value] of values) {
           element.style[property] = value;
         }
+      };
+      frame = requestAnimationFrame(() => {
+        frame = null;
+        restoreStyles?.();
       });
 
       delete scope[name];
@@ -160,6 +164,7 @@ export const SharedElement = forwardRef(function SharedElement(
     return () => {
       if (frame != null) {
         cancelAnimationFrame(frame);
+        restoreStyles?.();
       }
 
       if (element && element.isConnected && !element.hasAttribute('data-exiting')) {
