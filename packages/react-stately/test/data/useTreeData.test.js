@@ -913,44 +913,50 @@ describe('useTreeData', function () {
       console.error = consoleError;
     });
 
-    let expectToThrow = cb => {
-      expect(cb).toThrow('Cannot move an item to be a child of itself.');
+    let reactMajor = parseInt(React.version, 10);
+    let expectMoveError = (result, action) => {
+      if (reactMajor >= 18) {
+        expect(() => act(action)).toThrow('Cannot move an item to be a child of itself.');
+      } else {
+        act(action);
+        expect(result.error?.message).toContain('Cannot move an item to be a child of itself.');
+      }
     };
 
     it('cannot move an item before a child inside itself', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
-      expectToThrow(() => act(() => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli'])));
+      expectMoveError(result, () => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli']));
     });
 
     it('cannot move a root-level item before any of its children', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
-      expectToThrow(() => act(() => result.current.moveBefore('Suzie', ['David'])));
+      expectMoveError(result, () => result.current.moveBefore('Suzie', ['David']));
     });
 
     it('cannot move an item after a child inside itself', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
-      expectToThrow(() => act(() => result.current.moveAfter('Suzie', ['John'])));
+      expectMoveError(result, () => result.current.moveAfter('Suzie', ['John']));
     });
 
     it('cannot move a root-level item after any of its children', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
-      expectToThrow(() => act(() => result.current.moveAfter('Suzie', ['David'])));
+      expectMoveError(result, () => result.current.moveAfter('Suzie', ['David']));
     });
 
     it('cannot move an item into itself', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
-      expectToThrow(() => act(() => result.current.move('John', 'Suzie', 0)));
+      expectMoveError(result, () => result.current.move('John', 'Suzie', 0));
     });
 
     it('cannot move a root-level item into itself', function () {
       const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
       let {result} = renderHook(() => useTreeData({initialItems, getChildren, getKey}));
-      expectToThrow(() => act(() => result.current.move('David', 'Suzie', 0)));
+      expectMoveError(result, () => result.current.move('David', 'Suzie', 0));
     });
   });
 
