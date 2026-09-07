@@ -231,6 +231,12 @@ export class PromptFieldValue extends TokenFieldValue<PromptFieldTokenValue> {
     }
     return super.replaceRangeWithSegments(start, end, segments, coalesce);
   }
+
+  toString() {
+    return this.segments
+      .map(s => (s.type === 'token' && s.value?.type === 'url' ? s.value.url : s.text))
+      .join('');
+  }
 }
 
 const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
@@ -369,10 +375,7 @@ export const PromptField = forwardRef(function PromptField(
         <div
           ref={domRef}
           {...focusWithinProps}
-          className={mergeStyles(
-            style({maxHeight: '40cqh', display: 'flex', flexDirection: 'column'}),
-            styles
-          )}>
+          className={mergeStyles(style({display: 'flex', flexDirection: 'column'}), styles)}>
           <PromptFieldContainer
             {...dropProps}
             role="group"
@@ -587,7 +590,6 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         },
         flexGrow: 1,
         flexShrink: 1,
-        minHeight: 0,
         marginY: -16,
         marginEnd: -16,
         '--loader-color': {
@@ -626,7 +628,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           value={prompt}
           onChange={setPrompt}
           allowsNewlines
-          className={style({flexGrow: 1, minHeight: 0, height: 'full'})}
+          className={style({flexGrow: 1})}
           aria-label={stringFormatter.format('promptfield.label')}
           isReadOnly={isListening}
           onSubmit={onSubmit}
@@ -713,7 +715,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
                 },
                 width: 'full',
                 height: 'full',
-                minHeight: '1lh',
+                minHeight: 'calc(1lh + 32px)',
+                maxHeight: '30cqh',
                 overflow: 'auto',
                 paddingY: 16,
                 paddingEnd: 16,
