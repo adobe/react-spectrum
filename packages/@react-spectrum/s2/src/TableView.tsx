@@ -98,6 +98,7 @@ import {Key} from '@react-types/shared';
 import {LayoutInfo, Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
+import MoreVertical from '../s2wf-icons/S2_Icon_MoreVertical_20_N.svg';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {ProgressCircle} from './ProgressCircle';
@@ -955,14 +956,13 @@ const columnHeaderText = style({
   flexBasis: 'auto'
 });
 
-const chevronIcon = style({
-  rotate: 90,
+const moreVerticalIcon = style({
   marginStart: 'text-to-visual',
   minWidth: fontRelative(16),
   flexShrink: 0,
   '--iconPrimary': {
     type: 'fill',
-    value: 'currentColor'
+    value: 'gray-700'
   }
 });
 
@@ -1079,7 +1079,17 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
             </Provider>
           )}
           <div className={columnHeaderText}>{children}</div>
-          <Chevron size="M" className={chevronIcon} />
+          <Provider
+            values={[
+                [
+                  IconContext,
+                  {
+                    styles: moreVerticalIcon
+                  }
+                ]
+              ]}>
+                <MoreVertical />
+            </Provider>
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
           {items.length > 0 && (
