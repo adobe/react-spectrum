@@ -52,8 +52,8 @@ import {
   TokenFieldValue,
   TokenSegment
 } from 'react-stately/useTokenFieldState';
+import {InternalChatContext, PromptFocusContext} from './Chat';
 import {PromptFieldContainer} from './PromptFieldContainer';
-import {PromptFocusContext} from './Chat';
 import {Provider} from 'react-aria-components/slots';
 import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
@@ -329,6 +329,10 @@ export const PromptField = forwardRef(function PromptField(
   let [isListening, setListening] = useState(false);
   let {onFocusChange} = useContext(PromptFocusContext);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
+  let {setPromptFieldSize} = useContext(InternalChatContext);
+  useEffect(() => {
+    setPromptFieldSize(size);
+  }, [setPromptFieldSize, size]);
 
   let isPromptControlled = props.value !== undefined;
   let isAttachmentsControlled = props.attachments !== undefined;

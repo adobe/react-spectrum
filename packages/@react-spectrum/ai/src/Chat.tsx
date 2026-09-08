@@ -91,12 +91,16 @@ interface InternalChatContextValue {
   announceItem: (text: string) => void;
   setIsNearBottom: (isNear: boolean) => void;
   setScrollElement: (element: HTMLElement | null) => void;
+  promptFieldSize: 'S' | 'M';
+  setPromptFieldSize: (size: 'S' | 'M') => void;
 }
 
-const InternalChatContext = createContext<InternalChatContextValue>({
+export const InternalChatContext = createContext<InternalChatContextValue>({
   announceItem: text => announce(text, 'polite'),
   setIsNearBottom: () => {},
-  setScrollElement: () => {}
+  setScrollElement: () => {},
+  promptFieldSize: 'M',
+  setPromptFieldSize: () => {}
 });
 
 interface ThreadScrollButtonContextValue {
@@ -162,6 +166,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
     el.scrollTo({top: el.scrollHeight - el.clientHeight, behavior: 'smooth'});
   }, []);
   let [isNearBottom, setIsNearBottom] = useState(true);
+  let [promptFieldSize, setPromptFieldSize] = useState<'S' | 'M'>('M');
 
   // only announce new items if user is in the prompt field, otherwise if they
   // are outside the field, only announce there are new responses. If not in chat at all, don't announce
@@ -212,7 +217,10 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   return (
     <Provider
       values={[
-        [InternalChatContext, {announceItem, setIsNearBottom, setScrollElement}],
+        [
+          InternalChatContext,
+          {announceItem, setIsNearBottom, setScrollElement, promptFieldSize, setPromptFieldSize}
+        ],
         [
           ThreadScrollButtonContext,
           {
@@ -284,7 +292,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     'aria-labelledby': ariaLabelledby
   } = props;
 
-  let {setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
+  let {setIsNearBottom, setScrollElement, promptFieldSize} = useContext(InternalChatContext);
   let isNearBottomRef = useRef(true);
   let gridListRef = useRef<HTMLDivElement | null>(null);
   let callbackRef = useCallback(
@@ -338,8 +346,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
         layout={ListLayout}
         layoutOptions={{
           estimatedRowHeight: 100,
-          // TODO: adjust this for small size prompt field (line up with icon/buttons)
-          padding: 24,
+          padding: promptFieldSize === 'S' ? 16 : 24,
           gap: 16,
           anchorTo: 'end',
           loaderSize: 48,

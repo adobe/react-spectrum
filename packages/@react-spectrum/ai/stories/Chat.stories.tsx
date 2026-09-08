@@ -1126,3 +1126,121 @@ export function AsyncLoadingChat() {
     </Chat>
   );
 }
+
+let initialMessages = [
+  {id: 1, type: 'user', content: 'What\'s a good cat breed for a small apartment?'},
+  {id: 2, type: 'assistant', content: 'Russian Blues and British Shorthairs do well in apartments. They\'re calm, quiet, and don\'t need a lot of space to stay happy.'},
+  {id: 3, type: 'user', content: 'Do they need a lot of grooming?'},
+  {id: 4, type: 'assistant', content: 'Not much. Both have short, dense coats, so a weekly brush is usually enough to keep shedding under control.'},
+  {id: 5, type: 'user', content: 'Good to know. Are they okay to leave alone during a full workday?'},
+  {id: 6, type: 'assistant', content: 'Yes, they\'re pretty independent. Just make sure they have fresh water, a clean litter box, and a few toys to stay entertained while you\'re out.'}
+];
+
+export function SmallChat() {
+  let [messages, setMessages] = useState<StreamingMessage[]>(initialMessages);
+  let nextId = useRef(0);
+  let [isGenerating, setGenerating] = useState(false);
+  let timeouts = useRef<NodeJS.Timeout[]>([]);
+
+  function handleSend(prompt: TokenFieldValue) {
+    setGenerating(true);
+    setMessages(prev => [
+      ...prev,
+      {id: nextId.current++, type: 'user', content: prompt.toString()}
+    ]);
+
+    let addTimeout = (callback: () => void, delay: number) => {
+      let timeout = setTimeout(callback, delay);
+      timeouts.current.push(timeout);
+      return timeout;
+    };
+
+    let response = DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
+
+    addTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+      ]);
+      let tokens = response.split(' ');
+      let accumulated = '';
+      tokens.forEach((token, i) => {
+        addTimeout(() => {
+          accumulated += (i === 0 ? '' : ' ') + token;
+          let isLastToken = i === tokens.length - 1;
+          setMessages(prev =>
+            prev.map(m =>
+              m.type === 'system' && m.isStreaming
+                ? {...m, content: accumulated, isStreaming: !isLastToken}
+                : m
+            )
+          );
+          if (isLastToken) {
+            setGenerating(false);
+          }
+        }, i * 60);
+      });
+    }, 600);
+  }
+
+  return (
+    <Chat styles={style({width: 400})}>
+      <Thread items={messages} aria-label="Chat thread">
+        {(msg: StreamingMessage) => {
+          if (msg.type === 'user') {
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
+          }
+          if (msg.type === 'status') {
+            return <StatusThreadItem msg={msg} />;
+          }
+          if (msg.type === 'card') {
+            return (
+              <CardMessage
+                title={msg.title}
+                description={msg.description}
+                imageUrl={msg.imageUrl}
+              />
+            );
+          }
+          if (msg.type === 'suggestions') {
+            return (
+              <ThreadItem textValue={msg.title}>
+                <MessageSuggestionList title={msg.title}>
+                  {msg.suggestions.map((s, i) => (
+                    <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                  ))}
+                </MessageSuggestionList>
+              </ThreadItem>
+            );
+          }
+          return (
+            <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+              <div role="document">
+                <p className={style({font: 'body'})}>{msg.content || ''}</p>
+              </div>
+              {!msg.isStreaming && <MessageFeedback />}
+            </SystemMessage>
+          );
+        }}
+      </Thread>
+      <PromptField
+        size="S"
+        onSubmit={handleSend}
+        isGenerating={isGenerating}
+        onStop={() => {
+          setGenerating(false);
+          timeouts.current.forEach(clearTimeout);
+          timeouts.current = [];
+        }}>
+        <PromptTokenField />
+        <PromptFieldSubmitButton />
+      </PromptField>
+    </Chat>
+  );
+}
