@@ -115,6 +115,12 @@ const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>(
   'aria-label': ''
 });
 
+interface ThreadContextProps {
+  isInThread?: boolean;
+}
+
+export const ThreadContext = createContext<ThreadContextProps>({});
+
 // TODO: make this more RAC like (aka default class name and other RAC prop)
 export interface ChatProps {
   /**
@@ -315,76 +321,78 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
   }, [setIsNearBottom, scrollEndThreshold]);
 
   return (
-    <div
-      className={mergeStyles(
-        style({
-          position: 'relative',
-          flexGrow: 1,
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          minWidth: 0
-        }),
-        styles
-      )}>
-      {/* TODO: do we want the scroll button to be optional? */}
+    <Provider values={[[ThreadContext, {isInThread: true}]]}>
       <div
-        className={style({
-          position: 'absolute',
-          bottom: 16,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 1
-        })}>
-        <ThreadScrollButton>
-          <ActionButton slot="scroll" aria-label="Scroll to bottom">
-            <ChevronDown />
-          </ActionButton>
-        </ThreadScrollButton>
+        className={mergeStyles(
+          style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0
+          }),
+          styles
+        )}>
+        {/* TODO: do we want the scroll button to be optional? */}
+        <div
+          className={style({
+            position: 'absolute',
+            bottom: 16,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1
+          })}>
+          <ThreadScrollButton>
+            <ActionButton slot="scroll" aria-label="Scroll to bottom">
+              <ChevronDown />
+            </ActionButton>
+          </ThreadScrollButton>
+        </div>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{
+            estimatedRowHeight: 100,
+            padding: promptFieldSize === 'S' ? 16 : 24,
+            gap: 16,
+            anchorTo: 'end',
+            loaderSize: 48,
+            scrollEndThreshold
+          }}
+          shouldObserveItemSize>
+          <GridList
+            ref={callbackRef}
+            disallowTypeAhead
+            onScroll={handleScroll}
+            keyboardNavigationBehavior="tab"
+            UNSTABLE_focusOnEntry="last"
+            items={items}
+            aria-label={ariaLabel}
+            aria-labelledby={ariaLabelledby}
+            // TODO: for now we enforce this, but to be configurable?
+            style={
+              {
+                display: 'flex',
+                boxSizing: 'border-box',
+                minWidth: 0,
+                scrollbarGutter: 'stable'
+              } as CSSProperties
+            }
+            className={
+              scrollFade({y: 32}) +
+              ' ' +
+              style({
+                flexGrow: 1,
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                scrollPadding: 24
+              })
+            }>
+            {children}
+          </GridList>
+        </Virtualizer>
       </div>
-      <Virtualizer
-        layout={ListLayout}
-        layoutOptions={{
-          estimatedRowHeight: 100,
-          padding: promptFieldSize === 'S' ? 16 : 24,
-          gap: 16,
-          anchorTo: 'end',
-          loaderSize: 48,
-          scrollEndThreshold
-        }}
-        shouldObserveItemSize>
-        <GridList
-          ref={callbackRef}
-          disallowTypeAhead
-          onScroll={handleScroll}
-          keyboardNavigationBehavior="tab"
-          UNSTABLE_focusOnEntry="last"
-          items={items}
-          aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledby}
-          // TODO: for now we enforce this, but to be configurable?
-          style={
-            {
-              display: 'flex',
-              boxSizing: 'border-box',
-              minWidth: 0,
-              scrollbarGutter: 'stable'
-            } as CSSProperties
-          }
-          className={
-            scrollFade({y: 32}) +
-            ' ' +
-            style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              scrollPadding: 24
-            })
-          }>
-          {children}
-        </GridList>
-      </Virtualizer>
-    </div>
+    </Provider>
   );
 }
 
@@ -437,9 +445,8 @@ const threadItemBase = style({
   borderRadius: 'default'
 });
 
-export interface ThreadItemProps extends Pick<
-  GridListItemProps,
-  'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'
+export interface ThreadItemProps extends Partial<
+  Pick<GridListItemProps, 'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'>
 > {
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
