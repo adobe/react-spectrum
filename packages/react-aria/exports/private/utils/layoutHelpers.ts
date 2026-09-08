@@ -1,4 +1,6 @@
 export {
+  getScaleTop,
+  getScaleLeft,
   getVisualViewport,
   getWritingElement,
   getStylingElement,

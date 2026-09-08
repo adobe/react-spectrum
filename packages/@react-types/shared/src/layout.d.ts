@@ -13,26 +13,19 @@
 export type BoundingNode = Element | Document;
 
 export type Axis = 'block' | 'inline';
-export type Precision = 'pixel' | 'sub-pixel' | 'device-pixel';
+export type Model = 'margin-box' | 'border-box' | 'padding-box' | 'content-box';
 export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 export type Position = 'start' | 'center' | 'end';
+export type Precision = 'pixel' | 'sub-pixel' | 'device-pixel';
 
 export interface BoundingOptions {
   /** The pixel precision to calculate the bound with. */
   precision?: Precision;
-  /** Whether or not to allow 2D transforms on the bound. */
+  /** Whether or not to allow transforms on the bound. */
   transform?: boolean;
   /** The box-model to use when bounding. */
-  model?: BoxModel;
+  model?: Model;
 }
-
-export type BoxModel =
-  | 'margin-box'
-  | 'scroll-margin-box'
-  | 'border-box'
-  | 'padding-box'
-  | 'scroll-padding-box'
-  | 'content-box';
 
 export interface Point {
   x: number;
