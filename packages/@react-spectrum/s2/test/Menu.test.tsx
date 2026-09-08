@@ -15,7 +15,9 @@ import {
   installPointerEvent,
   pointerMap,
   render,
-  User
+  setupIntersectionObserverMock,
+  User,
+  within
 } from '@react-spectrum/test-utils-internal';
 import {ActionButton, ActionButtonContext} from '../src/ActionButton';
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
@@ -378,4 +380,86 @@ AriaMenuTests({
         </MenuTrigger>
       )
   }
+});
+
+describe('Async loading', () => {
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+    jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  it('should show a "No results" message when there are no items and it is not loading', async () => {
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" items={[]}>
+          {(item: any) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+    expect(menuTester.getMenu()).toHaveTextContent('No results');
+  });
+
+  it('should show a progress circle when loadingState is "loading"', async () => {
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" items={[]} loadingState="loading">
+          {(item: any) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+    expect(
+      within(menuTester.getMenu()!).getByRole('progressbar', {hidden: true})
+    ).toBeInTheDocument();
+  });
+
+  it('should call onLoadMore when intersection is detected while loadingState is "loadingMore"', async () => {
+    let onLoadMore = jest.fn();
+    let observe = jest.fn();
+    let observer = setupIntersectionObserverMock({observe});
+
+    let {getByRole, getByTestId} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" loadingState="loadingMore" onLoadMore={onLoadMore}>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+          <MenuItem>Paste</MenuItem>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(0);
+    let sentinel = getByTestId('loadMoreSentinel');
+    expect(observe).toHaveBeenLastCalledWith(sentinel);
+
+    await act(async () => {
+      await observer.instance.triggerCallback([{isIntersecting: true}]);
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
 });
