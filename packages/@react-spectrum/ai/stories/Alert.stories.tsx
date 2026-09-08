@@ -42,7 +42,8 @@ export default meta;
 type Story = StoryObj<typeof Alert>;
 
 export const Example: Story = {
-  render: args => <Alert {...args} styles={style({width: 336})} />
+  // Storybook uses 16px padding left and right
+  render: args => <Alert {...args} styles={style({width: 336, maxWidth: 'calc(100vw - 32px)'})} />
 };
 
 const VARIANTS = ['informative', 'positive', 'notice', 'negative', 'neutral'] as const;
@@ -52,7 +53,12 @@ export const AllVariants: Story = {
   render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
       {VARIANTS.map(variant => (
-        <Alert {...args} key={variant} variant={variant} styles={style({width: 336})} />
+        <Alert
+          {...args}
+          key={variant}
+          variant={variant}
+          styles={style({width: 336, maxWidth: 'calc(100vw - 32px)'})}
+        />
       ))}
     </div>
   ),

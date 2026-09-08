@@ -1,5 +1,6 @@
 'use client';
 import React, {ReactNode, useState, createContext, useContext} from 'react';
+import {mergeProps} from 'react-aria/mergeProps';
 
 // This is a fake router for documentation purposes. In a real app, you would
 // use a routing library like React Router or a framework like Next.js.
@@ -8,24 +9,21 @@ const NavigateContext = createContext<(href: string) => void>(() => {});
 export function Link(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   let navigate = useContext(NavigateContext);
 
-  function handleNavigate(href: string | undefined, e: React.SyntheticEvent) {
-    e.preventDefault();
-    if (href) {
-      navigate(href);
+  let onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (props.href) {
+      e.preventDefault();
+      navigate(props.href);
     }
-  }
+  };
 
-  return (
-    <a
-      {...props}
-      onClick={e => handleNavigate(props.href, e)}
-      onKeyDown={e => {
-        if (e.key === 'Enter') {
-          handleNavigate(props.href, e);
-        }
-      }}
-    />
-  );
+  let onKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>) => {
+    if (e.key === 'Enter' && props.href) {
+      e.preventDefault();
+      navigate(props.href);
+    }
+  };
+
+  return <a {...mergeProps(props, {onClick, onKeyDown})} />;
 }
 
 export function Router(props: {
