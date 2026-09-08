@@ -6,6 +6,7 @@ import {
   renderHook,
   screen
 } from '@react-spectrum/test-utils-internal';
+import {I18nProvider} from '../../src/i18n/I18nProvider';
 import * as React from 'react';
 import {useRef} from 'react';
 import {useSlider} from '../../src/slider/useSlider';
@@ -421,6 +422,73 @@ describe('useSlider', () => {
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([10, 80]);
+    });
+  });
+
+  describe('direction', () => {
+    let widthStub;
+    beforeAll(() => {
+      widthStub = jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+    });
+    afterAll(() => {
+      widthStub.mockReset();
+    });
+
+    installMouseEvent();
+
+    let stateRef = React.createRef();
+
+    function Example(props) {
+      let trackRef = useRef(null);
+      let state = useSliderState({...props, numberFormatter});
+      stateRef.current = state;
+      let {trackProps} = useSlider(props, state, trackRef);
+      return <div data-testid="track" ref={trackRef} {...trackProps} />;
+    }
+
+    function clickTrackAt(locale, props, clientX) {
+      render(
+        <I18nProvider locale={locale}>
+          <Example aria-label="Slider" defaultValue={[0]} {...props} />
+        </I18nProvider>
+      );
+      let track = screen.getByTestId('track');
+      fireEvent.mouseDown(track, {clientX, pageX: clientX});
+      fireEvent.mouseUp(track, {clientX, pageX: clientX});
+    }
+
+    // 25 is used rather than 50 so that the mirrored and non-mirrored results differ.
+    it('mirrors a track click in an RTL locale by default', () => {
+      clickTrackAt('ar-AE', {}, 25);
+      expect(stateRef.current.values).toEqual([75]);
+    });
+
+    it('does not mirror a track click in an LTR locale by default', () => {
+      clickTrackAt('en-US', {}, 25);
+      expect(stateRef.current.values).toEqual([25]);
+    });
+
+    it('does not mirror a track click in an RTL locale when direction is ltr', () => {
+      clickTrackAt('ar-AE', {direction: 'ltr'}, 25);
+      expect(stateRef.current.values).toEqual([25]);
+    });
+
+    // The case a boolean could not express: content that reads right to left inside an LTR UI.
+    it('mirrors a track click in an LTR locale when direction is rtl', () => {
+      clickTrackAt('en-US', {direction: 'rtl'}, 25);
+      expect(stateRef.current.values).toEqual([75]);
+    });
+
+    it('is a no-op when direction matches the locale', () => {
+      clickTrackAt('en-US', {direction: 'ltr'}, 25);
+      expect(stateRef.current.values).toEqual([25]);
+    });
+
+    it('is a no-op when direction matches an RTL locale', () => {
+      clickTrackAt('ar-AE', {direction: 'rtl'}, 25);
+      expect(stateRef.current.values).toEqual([75]);
     });
   });
 });
