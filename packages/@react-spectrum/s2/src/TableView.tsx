@@ -1081,15 +1081,15 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
           <div className={columnHeaderText}>{children}</div>
           <Provider
             values={[
-                [
-                  IconContext,
-                  {
-                    styles: moreVerticalIcon
-                  }
-                ]
-              ]}>
-                <MoreVertical />
-            </Provider>
+              [
+                IconContext,
+                {
+                  styles: moreVerticalIcon
+                }
+              ]
+            ]}>
+            <MoreVertical />
+          </Provider>
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
           {items.length > 0 && (
