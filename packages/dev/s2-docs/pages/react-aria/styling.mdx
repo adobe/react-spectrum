@@ -210,18 +210,73 @@ Non-boolean states follow the `{name}-{value}` pattern. For example, an element 
 </Tabs>
 ```
 
-### Exceptions
-
-There are a few exceptions to how states with the `data-` prefix are styled in Tailwind:
-
-* `data-hovered` is styled with `hover:`
-* `data-focused` is styled with `focus:`
-* `data-readonly` is styled with `read-only:`
-* `data-placeholder` is styled with `placeholder-shown:`
 
 ### Modifier prefix
 
-By default, all modifiers are unprefixed (e.g. `disabled:`), and generate CSS that automatically handles both React Aria Components and native CSS pseudo classes when the names conflict. If you prefer, you can optionally prefix all React Aria Components modifiers with a string of your choice.
+By default, all modifiers are unprefixed (e.g. `disabled:`), and generate CSS that automatically handles both React Aria Components and native CSS pseudo classes when the names conflict.
+
+<Disclosure size="S" isQuiet>
+  <DisclosureTitle>Mapping of all states and their corresponding Tailwind classes</DisclosureTitle>
+  <DisclosurePanel>
+
+| State | Tailwind Class |
+|-------|----------------|
+| `data-allows-removing` | `allows-removing:` |
+| `data-allows-sorting` | `allows-sorting:` |
+| `data-allows-dragging` | `allows-dragging:` |
+| `data-has-submenu` | `has-submenu:` |
+| `data-has-child-items` | `has-child-items:` |
+| `data-open` | `open:` |
+| `data-expanded` | `expanded:` |
+| `data-entering` | `entering:` |
+| `data-exiting` | `exiting:` |
+| `data-indeterminate` | `indeterminate:` |
+| `data-placeholder` | `placeholder-shown:` |
+| `data-current` | `current:` |
+| `data-required` | `required:` |
+| `data-unavailable` | `unavailable:` |
+| `data-invalid` | `invalid:` |
+| `data-readonly` | `read-only:` |
+| `data-outside-month` | `outside-month:` |
+| `data-outside-visible-range` | `outside-visible-range:` |
+| `data-pending` | `pending:` |
+| `data-empty` | `empty:` |
+| `data-focus-within` | `focus-within:` |
+| `data-hovered` | `hover:` |
+| `data-focused` | `focus:` |
+| `data-focus-visible` | `focus-visible:` |
+| `data-pressed` | `pressed:` |
+| `data-active` | `active:` |
+| `data-selected` | `selected:` |
+| `data-selection-start` | `selection-start:` |
+| `data-selection-end` | `selection-end:` |
+| `data-dragging` | `dragging:` |
+| `data-drop-target` | `drop-target:` |
+| `data-resizing` | `resizing:` |
+| `data-disabled` | `disabled:` |
+| `data-placement="left"` | `placement-left:` |
+| `data-placement="right"` | `placement-right:` |
+| `data-placement="top"` | `placement-top:` |
+| `data-placement="bottom"` | `placement-bottom:` |
+| `data-type="literal"` | `type-literal:` |
+| `data-type="year"` | `type-year:` |
+| `data-type="month"` | `type-month:` |
+| `data-type="day"` | `type-day:` |
+| `data-layout="grid"` | `layout-grid:` |
+| `data-layout="stack"` | `layout-stack:` |
+| `data-orientation="horizontal"` | `orientation-horizontal:` |
+| `data-orientation="vertical"` | `orientation-vertical:` |
+| `data-selection-mode="single"` | `selection-single:` |
+| `data-selection-mode="multiple"` | `selection-multiple:` |
+| `data-resizable-direction="right"` | `resizable-right:` |
+| `data-resizable-direction="left"` | `resizable-left:` |
+| `data-resizable-direction="both"` | `resizable-both:` |
+| `data-sort-direction="ascending"` | `sort-ascending:` |
+| `data-sort-direction="descending"` | `sort-descending:` |
+  </DisclosurePanel>
+</Disclosure>
+
+If you prefer, you can optionally prefix all React Aria Components modifiers with a string of your choice.
 
 ```css
 @plugin "tailwindcss-react-aria-components" { prefix: rac };
