@@ -510,67 +510,62 @@ let messages = [
 
 function BasicChat() {
   return (
-    /*- begin highlight -*/
-    <Chat
-      /*- end highlight -*/
-      styles={style({width: 'full'})}>
-      <Thread
-        items={messages}
-        aria-label="Campaign discussion"
-        styles={style({
-          height: 350,
-          overflowX: 'hidden',
-          overflowY: 'auto',
-          scrollPadding: 8
-        })}>
-        {message => {
-          switch (message.type) {
-            case 'user':
-              return (
-                <ThreadItem
-                  textValue={message.text}
-                  styles={style({display: 'flex', justifyContent: 'end'})}>
-                  <UserMessage>{message.text}</UserMessage>
-                </ThreadItem>
-              );
-            case 'assistant':
-              return (
-                <ThreadItem textValue={message.text}>
-                  <div className={prose()}>{message.content}</div>
-                </ThreadItem>
-              );
-            case 'status':
-              return (
-                <ThreadItem textValue={message.text}>
-                  <ResponseStatus status={message.status}>
-                    <ResponseStatusTitle>{message.text}</ResponseStatusTitle>
-                    <ResponseStatusPanel>
-                      <ExecutionTrace>
-                        {message.steps?.map(step => (
-                          <ExecutionTraceItem
-                            key={step.id}
-                            status={step.status}
-                            detail={<p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>}>
-                            {step.label}
-                          </ExecutionTraceItem>
-                        ))}
-                      </ExecutionTrace>
-                    </ResponseStatusPanel>
-                  </ResponseStatus>
-                </ThreadItem>
-              );
-            case 'alert':
-              return (
-                <ThreadItem textValue={message.text}>
-                  <Alert variant={message.variant} >
-                    {message.text}
-                  </Alert>
-                </ThreadItem>
-              )
-          }
-        }}
-      </Thread>
-    </Chat>
+    <div className={style({height: 450, width: 'full'})}>
+      {/*- begin highlight -*/}
+      <Chat>
+        {/*- end highlight -*/}
+        <Thread
+          items={messages}
+          aria-label="Campaign discussion">
+          {message => {
+            switch (message.type) {
+              case 'user':
+                return (
+                  <ThreadItem
+                    textValue={message.text}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{message.text}</UserMessage>
+                  </ThreadItem>
+                );
+              case 'assistant':
+                return (
+                  <ThreadItem textValue={message.text}>
+                    <div className={prose()}>{message.content}</div>
+                  </ThreadItem>
+                );
+              case 'status':
+                return (
+                  <ThreadItem textValue={message.text}>
+                    <ResponseStatus status={message.status}>
+                      <ResponseStatusTitle>{message.text}</ResponseStatusTitle>
+                      <ResponseStatusPanel>
+                        <ExecutionTrace>
+                          {message.steps?.map(step => (
+                            <ExecutionTraceItem
+                              key={step.id}
+                              status={step.status}
+                              detail={<p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>}>
+                              {step.label}
+                            </ExecutionTraceItem>
+                          ))}
+                        </ExecutionTrace>
+                      </ResponseStatusPanel>
+                    </ResponseStatus>
+                  </ThreadItem>
+                );
+              case 'alert':
+                return (
+                  <ThreadItem textValue={message.text}>
+                    <Alert variant={message.variant} >
+                      {message.text}
+                    </Alert>
+                  </ThreadItem>
+                )
+            }
+          }}
+        </Thread>
+      </Chat>
+    </div>
   );
 }
 ```

@@ -229,99 +229,48 @@ export function VirtualizedStreamingChat(props: VirtualizedStreamingChatProps) {
   }, [messages, isGenerating, suggestions]);
 
   return (
-    <div
-      className={style({
-        margin: 0,
-        marginX: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 32,
-        height: '100%'
-      })}>
-      <Chat
-        styles={style({
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flexGrow: 1,
-          gap: 16,
-          paddingX: 16,
-          boxSizing: 'border-box',
-          minWidth: 0,
-          containerType: 'size'
-        })}>
-        <div
-          className={style({
-            position: 'relative',
-            flexGrow: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0
-          })}>
-          <div
-            className={style({
-              position: 'absolute',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1
-            })}>
-            <ThreadScrollButton>
-              <ActionButton slot="scroll" aria-label="Scroll to bottom">
-                <ChevronDown />
-              </ActionButton>
-            </ThreadScrollButton>
-          </div>
-          <Thread
-            items={items}
-            aria-label="Chat thread"
-            styles={style({
-              flexGrow: 1,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              scrollPadding: 8
-            })}>
-            {(msg: StreamingMessage) => {
-              if (msg.type === 'user') {
-                return (
-                  <ThreadItem
-                    textValue={msg.content}
-                    styles={style({display: 'flex', justifyContent: 'end'})}>
-                    <UserMessage>{msg.content}</UserMessage>
-                  </ThreadItem>
-                );
-              }
-              if (msg.type === 'status') {
-                return <StatusThreadItem msg={msg} />;
-              }
-              if (msg.type === 'suggestions') {
-                return (
-                  <ThreadItem textValue="Suggestions">
-                    <MessageSuggestionList title="Suggestions" styles={style({marginTop: 40})}>
-                      {msg.suggestions.map((s, i) => (
-                        <MessageSuggestion key={i} onPress={() => onSelectSuggestion?.(s)}>
-                          <SuggestionLabel value={s} />
-                        </MessageSuggestion>
-                      ))}
-                    </MessageSuggestionList>
-                  </ThreadItem>
-                );
-              }
-              return (
-                <ThreadItem textValue={msg.content} isStreaming={msg.isStreaming}>
-                  <div role="document">
-                    <p className={prose()}>{msg.content || ''}</p>
-                  </div>
-                  {!msg.isStreaming && <MessageFeedback />}
-                </ThreadItem>
-              );
-            }}
-          </Thread>
-        </div>
-        {children(handleSend, isGenerating)}
-      </Chat>
-    </div>
+    <Chat>
+      <Thread
+        items={items}
+        aria-label="Chat thread">
+        {(msg: StreamingMessage) => {
+          if (msg.type === 'user') {
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
+          }
+          if (msg.type === 'status') {
+            return <StatusThreadItem msg={msg} />;
+          }
+          if (msg.type === 'suggestions') {
+            return (
+              <ThreadItem textValue="Suggestions">
+                <MessageSuggestionList title="Suggestions" styles={style({marginTop: 40})}>
+                  {msg.suggestions.map((s, i) => (
+                    <MessageSuggestion key={i} onPress={() => onSelectSuggestion?.(s)}>
+                      <SuggestionLabel value={s} />
+                    </MessageSuggestion>
+                  ))}
+                </MessageSuggestionList>
+              </ThreadItem>
+            );
+          }
+          return (
+            <ThreadItem textValue={msg.content} isStreaming={msg.isStreaming}>
+              <div role="document">
+                <p className={prose()}>{msg.content || ''}</p>
+              </div>
+              {!msg.isStreaming && <MessageFeedback />}
+            </ThreadItem>
+          );
+        }}
+      </Thread>
+      {children(handleSend, isGenerating)}
+    </Chat>
   );
 }
 
