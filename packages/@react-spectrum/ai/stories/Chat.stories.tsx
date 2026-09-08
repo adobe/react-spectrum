@@ -1127,13 +1127,32 @@ export function AsyncLoadingChat() {
   );
 }
 
-let initialMessages = [
-  {id: 1, type: 'user', content: 'What\'s a good cat breed for a small apartment?'},
-  {id: 2, type: 'assistant', content: 'Russian Blues and British Shorthairs do well in apartments. They\'re calm, quiet, and don\'t need a lot of space to stay happy.'},
+let initialMessages: StreamingMessage[] = [
+  {id: 1, type: 'user', content: "What's a good cat breed for a small apartment?"},
+  {
+    id: 2,
+    type: 'system',
+    content:
+      "Russian Blues and British Shorthairs do well in apartments. They're calm, quiet, and don't need a lot of space to stay happy."
+  },
   {id: 3, type: 'user', content: 'Do they need a lot of grooming?'},
-  {id: 4, type: 'assistant', content: 'Not much. Both have short, dense coats, so a weekly brush is usually enough to keep shedding under control.'},
-  {id: 5, type: 'user', content: 'Good to know. Are they okay to leave alone during a full workday?'},
-  {id: 6, type: 'assistant', content: 'Yes, they\'re pretty independent. Just make sure they have fresh water, a clean litter box, and a few toys to stay entertained while you\'re out.'}
+  {
+    id: 4,
+    type: 'system',
+    content:
+      'Not much. Both have short, dense coats, so a weekly brush is usually enough to keep shedding under control.'
+  },
+  {
+    id: 5,
+    type: 'user',
+    content: 'Good to know. Are they okay to leave alone during a full workday?'
+  },
+  {
+    id: 6,
+    type: 'system',
+    content:
+      "Yes, they're pretty independent. Just make sure they have fresh water, a clean litter box, and a few toys to stay entertained while you're out."
+  }
 ];
 
 export function SmallChat() {

@@ -230,9 +230,7 @@ export function VirtualizedStreamingChat(props: VirtualizedStreamingChatProps) {
 
   return (
     <Chat>
-      <Thread
-        items={items}
-        aria-label="Chat thread">
+      <Thread items={items} aria-label="Chat thread">
         {(msg: StreamingMessage) => {
           if (msg.type === 'user') {
             return (
