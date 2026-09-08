@@ -316,6 +316,9 @@ describe('useSlider', () => {
       expect(onChangeSpy).toHaveBeenLastCalledWith([20, 40]);
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([20, 40]);
+
+      // Release the pointer so the global listeners installed on pointer down are removed.
+      fireEvent.pointerUp(track, {pageX: 20, clientX: 20});
     });
 
     it('should allow you to set value of after thumbs when thumbs stacked', () => {
@@ -336,6 +339,9 @@ describe('useSlider', () => {
       expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([40, 60]);
+
+      // Release the pointer so the global listeners installed on pointer down are removed.
+      fireEvent.pointerUp(track, {pageX: 60, clientX: 60});
     });
 
     it('should allow you to set value of before thumbs when many thumbs and stacked', () => {
