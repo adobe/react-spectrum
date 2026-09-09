@@ -37,6 +37,7 @@ import {IconContext, MenuTriggerProps} from '@react-spectrum/s2';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
+import {InternalChatContext, PromptFocusContext} from './Chat';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
@@ -52,7 +53,6 @@ import {
   TokenFieldValue,
   TokenSegment
 } from 'react-stately/useTokenFieldState';
-import {InternalChatContext, PromptFocusContext} from './Chat';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {Provider} from 'react-aria-components/slots';
 import {scrollFade} from './tokens.macro' with {type: 'macro'};

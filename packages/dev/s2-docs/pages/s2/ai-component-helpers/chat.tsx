@@ -1,6 +1,4 @@
-import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {getIcon} from './promptfield';
 import {
   Chat,
@@ -14,7 +12,6 @@ import {
   ResponseStatusTitle,
   Thread,
   ThreadItem,
-  ThreadScrollButton,
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
