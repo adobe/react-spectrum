@@ -414,8 +414,9 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
 
-    act(() => {
+    await act(async () => {
       getByTestId('form').checkValidity();
+      await Promise.resolve();
     });
 
     expect(group).toHaveAttribute('aria-describedby');
@@ -457,8 +458,9 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
 
-    act(() => {
+    await act(async () => {
       getByTestId('form').checkValidity();
+      await Promise.resolve();
     });
 
     expect(input.validity.valid).toBe(false);
