@@ -10,23 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
 import {
   AttachmentCard,
   AttachmentPreviewContext,
   AttachmentRenderProps,
   isAttachmentLoading
 } from './AttachmentList';
-import {CSSProperties, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {forwardRef, ReactNode} from 'react';
 import {ListBox, ListBoxItem, ListBoxItemProps, ListBoxProps} from 'react-aria-components/ListBox';
-import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
-import {useHover} from 'react-aria/useHover';
 
 export interface AttachmentGridProps<T>
   extends
@@ -57,7 +55,6 @@ const gridStyles = style({
   maxHeight: 240,
   overflowY: 'auto',
   overflowX: 'clip',
-  scrollbarWidth: 'thin',
   boxSizing: 'border-box',
   ...focusRing()
 });
@@ -74,24 +71,16 @@ export const AttachmentGrid = (forwardRef as forwardRefType)(function Attachment
 ) {
   let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
-  let {hoverProps, isHovered} = useHover({});
 
   return (
     <ListBox
-      {...mergeProps(otherProps, hoverProps as DOMAttributes<Element>)}
+      {...otherProps}
       layout="grid"
       items={items}
       dependencies={dependencies}
       ref={domRef}
-      style={{
-        scrollbarColor: isHovered
-          ? 'light-dark(rgb(0 0 0 / 30%), rgb(255 255 255 / 30%)) transparent'
-          : 'transparent transparent'
-      } as CSSProperties}
       className={renderProps =>
-        mergeStyles(gridStyles({...renderProps}), styles) +
-        ' ' +
-        scrollFade({y: 36})
+        mergeStyles(gridStyles({...renderProps}), styles) + ' ' + scrollFade({y: 36})
       }>
       {children}
     </ListBox>

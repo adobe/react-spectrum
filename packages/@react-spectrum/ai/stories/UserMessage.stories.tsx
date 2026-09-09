@@ -91,17 +91,17 @@ export const WithImage: Story = {
 export const WithAttachmentGrid: Story = {
   render: args => (
     <UserMessage {...args} styles={style({width: 360, maxWidth: 360})}>
-        <AttachmentGrid aria-label="Uploaded files" styles={style({width: 'full'})}>
-          {Array.from({length: 20}, (_, i) => (
-            <AttachmentGridItem key={i} aria-label={`file-${i + 1}.pdf`}>
-              <AttachmentPreview
-                mimeType="application/pdf"
-                slot="thumbnail"
-                src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-              />
-            </AttachmentGridItem>
-          ))}
-        </AttachmentGrid>
+      <AttachmentGrid aria-label="Uploaded files" styles={style({width: 'full'})}>
+        {Array.from({length: 20}, (_, i) => (
+          <AttachmentGridItem key={i} aria-label={`file-${i + 1}.pdf`}>
+            <AttachmentPreview
+              mimeType="application/pdf"
+              slot="thumbnail"
+              src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+            />
+          </AttachmentGridItem>
+        ))}
+      </AttachmentGrid>
     </UserMessage>
   )
 };
