@@ -142,7 +142,7 @@ export const Breadcrumb = /*#__PURE__*/ createLeafComponent(
     let isCurrent = node.nextKey == null;
     let {isDisabled, onAction} = useSlottedContext(BreadcrumbsContext)!;
     let linkProps = {
-      'aria-current': isCurrent ? 'page' : null,
+      'aria-current': isCurrent ? ('page' as const) : undefined,
       isDisabled: isDisabled || isCurrent,
       onPress: () => onAction?.(node.key)
     };
