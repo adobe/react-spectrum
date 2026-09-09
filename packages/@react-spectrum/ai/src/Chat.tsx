@@ -20,7 +20,6 @@ import {
 } from 'react-aria-components/CollectionBuilder';
 import {
   createContext,
-  CSSProperties,
   ForwardedRef,
   forwardRef,
   ReactNode,
