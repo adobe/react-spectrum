@@ -370,23 +370,24 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledby}
             // TODO: for now we enforce this, but to be configurable?
-            style={
-              {
-                display: 'flex',
-                boxSizing: 'border-box',
-                minWidth: 0,
-                scrollbarGutter: 'stable'
-              } as CSSProperties
-            }
             className={
               scrollFade({y: 32}) +
               ' ' +
               style({
+                display: 'flex',
+                boxSizing: 'border-box',
+                minWidth: 0,
+                scrollbarGutter: 'stable',
                 flexGrow: 1,
                 overflowX: 'hidden',
                 overflowY: 'auto',
-                scrollPadding: 24
-              })
+                scrollPadding: {
+                  default: 24,
+                  promptFieldSize: {
+                    S: 16
+                  }
+                }
+              })({promptFieldSize})
             }>
             {children}
           </GridList>
