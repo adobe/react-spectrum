@@ -10,20 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
 import {
   AttachmentCard,
   AttachmentPreviewContext,
   AttachmentRenderProps,
   isAttachmentLoading
 } from './AttachmentList';
-import {css, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {forwardRef, ReactNode} from 'react';
+import {CSSProperties, forwardRef, ReactNode} from 'react';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ListBox, ListBoxItem, ListBoxItemProps, ListBoxProps} from 'react-aria-components/ListBox';
+import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
+import {useHover} from 'react-aria/useHover';
 
 export interface AttachmentGridProps<T>
   extends
@@ -41,22 +44,23 @@ export interface AttachmentGridProps<T>
 const hasContent = ':has([data-slot=content])';
 
 const gridStyles = style({
-  display: 'grid',
+  display: {
+    default: 'flex',
+    [hasContent]: 'grid'
+  },
+  flexWrap: 'wrap',
+  alignItems: 'start',
   gridTemplateColumns: {
-    default: 'repeat(auto-fill, minmax(64px, 1fr))',
     [hasContent]: 'repeat(auto-fill, minmax(240px, 1fr))'
   },
+  gap: 8,
   maxHeight: 240,
   overflowY: 'auto',
   overflowX: 'clip',
-  scrollbarWidth: {
-    '@supports (animation-timeline: scroll())': 'none'
-  },
+  scrollbarWidth: 'thin',
   boxSizing: 'border-box',
   ...focusRing()
 });
-
-const gridGap = css('gap: 6px;');
 
 /**
  * An AttachmentGrid displays file attachments as a wrapping, vertically-scrolling grid of
@@ -70,18 +74,22 @@ export const AttachmentGrid = (forwardRef as forwardRefType)(function Attachment
 ) {
   let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let {hoverProps, isHovered} = useHover({});
 
   return (
     <ListBox
-      {...otherProps}
+      {...mergeProps(otherProps, hoverProps as DOMAttributes<Element>)}
       layout="grid"
       items={items}
       dependencies={dependencies}
       ref={domRef}
+      style={{
+        scrollbarColor: isHovered
+          ? 'light-dark(rgb(0 0 0 / 30%), rgb(255 255 255 / 30%)) transparent'
+          : 'transparent transparent'
+      } as CSSProperties}
       className={renderProps =>
         mergeStyles(gridStyles({...renderProps}), styles) +
-        ' ' +
-        gridGap +
         ' ' +
         scrollFade({y: 36})
       }>
@@ -119,27 +127,15 @@ export const AttachmentGridItem = forwardRef(function AttachmentGridItem(
   props: AttachmentGridItemProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {
-    id,
-    textValue,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
-    styles,
-    isInvalid,
-    children,
-    size = 'M'
-  } = props;
+  let {id, textValue, styles, isInvalid, size = 'M', children, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let isLoading = isAttachmentLoading(props.uploadProgress);
 
   return (
     <ListBoxItem
       id={id}
+      {...filterDOMProps(otherProps, {labelable: true})}
       textValue={textValue}
-      aria-label={ariaLabel}
-      aria-labelledby={ariaLabelledby}
-      aria-describedby={ariaDescribedby}
       isDisabled
       ref={domRef}
       className={mergeStyles(itemStyles, styles)}>

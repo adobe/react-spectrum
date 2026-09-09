@@ -31,8 +31,8 @@ function AttachmentGridDemo({
   count,
   isInvalid,
   uploadProgress,
-  size,
-  showCardContent
+  showCardContent,
+  size
 }: AttachmentGridDemoProps) {
   return (
     <AttachmentGrid aria-label="Uploaded files" styles={style({width: 'full'})}>
@@ -70,13 +70,10 @@ const meta: Meta<typeof AttachmentGridDemo> = {
     count: {table: {disable: true}},
     isInvalid: {control: 'boolean'},
     uploadProgress: {control: 'number', min: 0, max: 100},
-    size: {
-      control: 'radio',
-      options: ['XS', 'S', 'M', 'L', 'XL']
-    },
-    showCardContent: {control: 'boolean'}
+    showCardContent: {control: 'boolean'},
+    size: {control: 'select', options: ['XS', 'S', 'M', 'L', 'XL']}
   },
-  args: {isInvalid: false, size: 'M', showCardContent: false},
+  args: {isInvalid: false, showCardContent: false, size: 'M'},
   title: 'AI/AttachmentGrid'
 };
 
@@ -95,7 +92,7 @@ export const AIAttachmentGrid: Story = {
 export const Overflow: Story = {
   name: 'Overflow (vertical scroll fade)',
   render: args => (
-    <div style={{width: 320, resize: 'horizontal', overflow: 'hidden'}}>
+    <div style={{width: 404, resize: 'horizontal', overflow: 'hidden'}}>
       <AttachmentGridDemo {...args} count={20} />
     </div>
   )

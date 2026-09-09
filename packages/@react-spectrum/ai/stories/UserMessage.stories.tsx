@@ -90,8 +90,7 @@ export const WithImage: Story = {
 
 export const WithAttachmentGrid: Story = {
   render: args => (
-    <UserMessage {...args} styles={style({width: 518})}>
-      <div className={style({display: 'flex', flexDirection: 'column', gap: 8, width: 'full'})}>
+    <UserMessage {...args} styles={style({width: 360, maxWidth: 360})}>
         <AttachmentGrid aria-label="Uploaded files" styles={style({width: 'full'})}>
           {Array.from({length: 20}, (_, i) => (
             <AttachmentGridItem key={i} aria-label={`file-${i + 1}.pdf`}>
@@ -103,7 +102,6 @@ export const WithAttachmentGrid: Story = {
             </AttachmentGridItem>
           ))}
         </AttachmentGrid>
-      </div>
     </UserMessage>
   )
 };
