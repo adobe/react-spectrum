@@ -1084,18 +1084,18 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
                     (sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />)}
                 </Provider>
               )}
-            <div className={columnHeaderText}>{children}</div>
-            <Provider
-              values={[
-                [
-                  IconContext,
-                  {
-                    styles: moreVerticalIcon({isHovered, isFocusVisible})
-                  }
-                ]
-              ]}>
-              <MoreVertical />
-            </Provider>
+              <div className={columnHeaderText}>{children}</div>
+              <Provider
+                values={[
+                  [
+                    IconContext,
+                    {
+                      styles: moreVerticalIcon({isHovered, isFocusVisible})
+                    }
+                  ]
+                ]}>
+                <MoreVertical />
+              </Provider>
             </>
           )}
         </Button>
