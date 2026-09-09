@@ -34,10 +34,10 @@ import {
 import {FocusableRef} from '@react-types/shared';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {IconContext, MenuTriggerProps} from '@react-spectrum/s2';
+import {InternalChatContext, PromptFocusContext} from './Chat';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
-import {InternalChatContext, PromptFocusContext} from './Chat';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
