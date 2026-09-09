@@ -962,7 +962,11 @@ const moreVerticalIcon = style({
   flexShrink: 0,
   '--iconPrimary': {
     type: 'fill',
-    value: 'gray-700'
+    value: {
+      default: 'gray-700',
+      isHovered: 'gray-800',
+      isFocusVisible: 'gray-800'
+    }
   }
 });
 
@@ -1064,32 +1068,36 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
           className={renderProps =>
             resizableMenuButtonWrapper({...renderProps, align: buttonAlignment})
           }>
-          {allowsSorting && (
+          {({isHovered, isFocusVisible}) => (
+            <>
+              {allowsSorting && (
+                <Provider
+                  values={[
+                    [
+                      IconContext,
+                      {
+                        styles: sortIcon({isButton: true})
+                      }
+                    ]
+                  ]}>
+                  {sortDirection != null &&
+                    (sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />)}
+                </Provider>
+              )}
+            <div className={columnHeaderText}>{children}</div>
             <Provider
               values={[
                 [
                   IconContext,
                   {
-                    styles: sortIcon({isButton: true})
+                    styles: moreVerticalIcon({isHovered, isFocusVisible})
                   }
                 ]
               ]}>
-              {sortDirection != null &&
-                (sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />)}
+              <MoreVertical />
             </Provider>
+            </>
           )}
-          <div className={columnHeaderText}>{children}</div>
-          <Provider
-            values={[
-              [
-                IconContext,
-                {
-                  styles: moreVerticalIcon
-                }
-              ]
-            ]}>
-            <MoreVertical />
-          </Provider>
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
           {items.length > 0 && (
