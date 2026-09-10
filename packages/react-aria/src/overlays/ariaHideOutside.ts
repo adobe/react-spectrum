@@ -50,7 +50,7 @@ let observerStack: Array<ObserverWrapper> = [];
 export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOptions | Element) {
   let windowObj = getOwnerWindow(targets?.[0]);
   let opts = options instanceof windowObj.Element ? {root: options} : options;
-  let root = opts?.root ?? document.body;
+  let root = opts?.root ?? windowObj.document.body;
   let shouldUseInert = opts?.shouldUseInert && supportsInert;
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
