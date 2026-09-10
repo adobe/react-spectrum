@@ -12,6 +12,8 @@
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from './useOverlayPosition';
 import {clamp} from 'react-stately/private/utils/number';
+import {getContainingElement} from '../utils/layoutHelpers';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {isWebKit} from '../utils/platform';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 
@@ -804,47 +806,6 @@ function getPosition(
 // this element will be positioned relative to.
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block
 function getContainingBlock(node: HTMLElement): Element {
-  // The offsetParent of an element in most cases equals the containing block.
-  // https://w3c.github.io/csswg-drafts/cssom-view/#dom-htmlelement-offsetparent
-  let offsetParent = node.offsetParent;
-
-  // The offsetParent algorithm terminates at the document body,
-  // even if the body is not a containing block. Double check that
-  // and use the documentElement if so.
-  if (
-    offsetParent &&
-    offsetParent === document.body &&
-    window.getComputedStyle(offsetParent).position === 'static' &&
-    !isContainingBlock(offsetParent)
-  ) {
-    offsetParent = document.documentElement;
-  }
-
-  // TODO(later): handle table elements?
-
-  // The offsetParent can be null if the element has position: fixed, or a few other cases.
-  // We have to walk up the tree manually in this case because fixed positioned elements
-  // are still positioned relative to their containing block, which is not always the viewport.
-  if (offsetParent == null) {
-    offsetParent = node.parentElement;
-    while (offsetParent && !isContainingBlock(offsetParent)) {
-      offsetParent = offsetParent.parentElement;
-    }
-  }
-
-  // Fall back to the viewport.
-  return offsetParent || document.documentElement;
-}
-
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
-function isContainingBlock(node: Element): boolean {
-  let style = window.getComputedStyle(node);
-  return (
-    style.transform !== 'none' ||
-    /transform|perspective/.test(style.willChange) ||
-    style.filter !== 'none' ||
-    style.contain === 'paint' ||
-    ('backdropFilter' in style && style.backdropFilter !== 'none') ||
-    ('WebkitBackdropFilter' in style && style.WebkitBackdropFilter !== 'none')
-  );
+  let ownerDocument = getOwnerDocument(node);
+  return getContainingElement(node) ?? ownerDocument.documentElement;
 }
