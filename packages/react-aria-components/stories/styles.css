@@ -707,3 +707,183 @@
     white-space: nowrap;
   }
 }
+
+/* Tab-based StepList (StepListTabs) — mirrors the coworker chevron look, but the rail is a
+   role="tablist" of Tabs. Current = the selected tab (data-selected on the Tab root);
+   completed/current also land on the StepState span (display:contents) that wraps each
+   step's content, so descendant markers/labels can react to them. */
+.coworker-StepListTabs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.coworker-StepListTabList-wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.coworker-StepListTabList {
+  --coworker-notch: 16px;
+  --coworker-gap: 2px;
+
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  background: #141414;
+
+  :global(.react-aria-Tab) {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+    margin-left: calc(var(--coworker-notch) * -1 + var(--coworker-gap));
+    padding: 12px 16px 12px calc(16px + var(--coworker-notch));
+    color: #a1a1a1;
+    background: #1c1c1c;
+    cursor: pointer;
+    outline: none;
+    /* arrow: notch cut into the left edge, point extending off the right */
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--coworker-notch)) 0,
+      100% 50%,
+      calc(100% - var(--coworker-notch)) 100%,
+      0 100%,
+      var(--coworker-notch) 50%
+    );
+
+    &:first-child {
+      margin-left: 0;
+      padding-left: 16px;
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--coworker-notch)) 0,
+        100% 50%,
+        calc(100% - var(--coworker-notch)) 100%,
+        0 100%
+      );
+    }
+
+    &:last-child {
+      padding-right: 16px;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 100%,
+        0 100%,
+        var(--coworker-notch) 50%
+      );
+    }
+
+    &[data-hovered] {
+      background: #242424;
+    }
+
+    /* current step = the selected tab */
+    &[data-selected] {
+      color: #f5f5f5;
+      background: #3a3a3a;
+      cursor: default;
+    }
+
+    /* upcoming steps aren't navigable */
+    &[data-disabled] {
+      cursor: default;
+      color: #5c5c5c;
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid #4a8cff;
+      outline-offset: -3px;
+    }
+  }
+
+  /* completed steps get brighter labels (data-completed is on the StepState span) */
+  [data-completed] .coworker-StepListTab-title {
+    color: #f5f5f5;
+  }
+
+  .coworker-StepListTab-marker {
+    flex-shrink: 0;
+    display: inline-flex;
+  }
+
+  .coworker-StepListTab-icon,
+  .coworker-StepListTab-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    box-sizing: border-box;
+  }
+
+  .coworker-StepListTab-icon {
+    color: inherit;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  [data-current] .coworker-StepListTab-icon {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+  }
+
+  /* completed steps swap the icon for a green check */
+  .coworker-StepListTab-check {
+    display: none;
+    color: #ffffff;
+    background: #12a150;
+  }
+
+  [data-completed] .coworker-StepListTab-icon {
+    display: none;
+  }
+
+  [data-completed] .coworker-StepListTab-check {
+    display: inline-flex;
+  }
+
+  .coworker-StepListTab-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    line-height: 1.2;
+  }
+
+  .coworker-StepListTab-title {
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .coworker-StepListTab-stage {
+    font-size: 12px;
+    font-weight: 400;
+    color: #8a8a8a;
+    white-space: nowrap;
+  }
+}
+
+.coworker-StepListTabPanel {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: #141414;
+  color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+}
