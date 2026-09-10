@@ -86,7 +86,7 @@ friendly alternative to all long press interactions if you are using this hook d
 
 ## Features
 
-A long press is triggered when a user presses and holds their pointer over a target for a minimum period of time. If the user moves their pointer off of the target before the time threshold, the interaction is canceled. Once a long press event is triggered, other pointer interactions that may be active such as `usePress` and `useMove` will be canceled so that only the long press is activated.
+A long press is triggered when a user presses and holds their pointer over a target for a minimum period of time. If the user moves their pointer off of the target before the time threshold, the interaction is canceled. On touch devices, a second finger touching the screen also cancels the interaction, matching native iOS and Android behavior. Once a long press event is triggered, other pointer interactions that may be active such as `usePress` and `useMove` will be canceled so that only the long press is activated.
 
 * Handles mouse and touch events
 * Prevents text selection on touch devices while long pressing
