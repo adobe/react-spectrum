@@ -1479,6 +1479,30 @@ describe('Tree', () => {
         expect(rows).toHaveLength(17);
       });
 
+      it('should expand/collapse a row when using Space on the row when selectionMode is none', async () => {
+        if (type !== 'keyboard') {
+          return;
+        }
+
+        let {getAllByRole} = render(<DynamicTree />);
+        let rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
+
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+
+        await user.keyboard(' ');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).not.toHaveAttribute('data-expanded');
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+
+        await user.keyboard(' ');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(2);
+      });
+
       it('should not expand when clicking/using Enter on the row if the row is selectable', async () => {
         let {getAllByRole} = render(<DynamicTree treeProps={{selectionMode: 'multiple'}} />);
         let rows = getAllByRole('row');
