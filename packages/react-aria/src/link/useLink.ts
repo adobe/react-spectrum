@@ -22,13 +22,18 @@ import {
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {handleLinkClick, useLinkProps, useRouter} from '../utils/openLink';
 import {mergeProps} from '../utils/mergeProps';
-import React from 'react';
+import React, {AnchorHTMLAttributes} from 'react';
 import {useFocusable} from '../interactions/useFocusable';
 import {usePress} from '../interactions/usePress';
 
 export interface LinkProps extends PressEvents, FocusableProps {}
 
-export interface AriaLinkProps extends LinkProps, LinkDOMProps, AriaLabelingProps {}
+export interface AriaLinkProps
+  extends
+    LinkProps,
+    LinkDOMProps,
+    AriaLabelingProps,
+    Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'aria-current'> {}
 
 export interface AriaLinkOptions extends AriaLinkProps {
   /** Whether the link is disabled. */

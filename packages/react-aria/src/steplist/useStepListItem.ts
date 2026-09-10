@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {AriaLinkOptions} from 'react-aria/useLink';
+import {HTMLAttributes, useId} from 'react';
 import {Key, RefObject} from '@react-types/shared';
 import {SelectableItemStates} from '../selection/useSelectableItem';
 import {StepListState} from 'react-stately/private/steplist/useStepListState';
@@ -27,6 +28,8 @@ export interface StepListItemAria extends SelectableItemStates {
   stepStateProps?: HTMLAttributes<HTMLElement>;
   /** Text content for the visually hidden message indicating the status of the step state. */
   stepStateText?: String;
+  /** Props for the step link element. */
+  linkProps: AriaLinkOptions;
 }
 
 export function useStepListItem<T>(
@@ -38,6 +41,7 @@ export function useStepListItem<T>(
   let {selectionManager: manager} = state;
 
   let isDisabled = !state.isSelectable(key);
+  let stepId = useId();
 
   let {itemProps, ...states} = useSelectableItem({
     isDisabled,
@@ -48,11 +52,14 @@ export function useStepListItem<T>(
 
   return {
     stepProps: {
+      id: stepId,
       ...itemProps,
-      role: 'link',
-      'aria-current': states.isSelected ? 'step' : undefined,
-      'aria-disabled': isDisabled ? true : undefined,
-      tabIndex: !isDisabled ? 0 : undefined
+      tabIndex: undefined
+    },
+    linkProps: {
+      'aria-labelledby': stepId,
+      isDisabled,
+      'aria-current': states.isSelected ? 'step' : undefined
     },
     ...states
   };

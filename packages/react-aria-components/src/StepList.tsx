@@ -24,6 +24,7 @@ import {
   ContextValue,
   dom,
   DOMRenderProps,
+  Provider,
   RenderProps,
   SlotProps,
   StyleProps,
@@ -35,15 +36,14 @@ import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuild
 import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {LinkContext} from './Link';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {StepListState, useStepListState} from 'react-stately/useStepListState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
-import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -183,6 +183,10 @@ export interface StepListItemProps
    * A unique id for the step.
    */
   id?: Key;
+  /**
+   * The href for the step link.
+   */
+  href?: string;
 }
 
 class StepListItemNode extends CollectionNode<unknown> {
@@ -195,15 +199,14 @@ class StepListItemNode extends CollectionNode<unknown> {
 export const StepListItem = /*#__PURE__*/ createLeafComponent(
   StepListItemNode,
   function StepListItem(
-    props: StepListItemProps,
+    props: StepListItemProps, // TODO fix inheritance of props
     forwardedRef: ForwardedRef<HTMLLIElement>,
     node: Node<unknown>
   ) {
     let ref = useObjectRef<HTMLLIElement>(forwardedRef);
     let state = useContext(StepListStateContext)!;
     let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
-    let numberFormatter = useNumberFormatter();
-    let {stepProps, ...states} = useStepListItem({key: node.key}, state, ref);
+    let {stepProps, linkProps, ...states} = useStepListItem({key: node.key}, state, ref);
 
     let isCurrent = states.isSelected;
     let isCompleted = state.isCompleted(node.key);
@@ -238,6 +241,11 @@ export const StepListItem = /*#__PURE__*/ createLeafComponent(
       }
     });
 
+    let linkContextValue = {
+      ...linkProps,
+      href: state.isSelectable(node.key) && !isCurrent ? props.href : undefined
+    };
+
     let DOMProps = filterDOMProps(props as any, {global: true, labelable: true});
     delete DOMProps.id;
 
@@ -253,7 +261,7 @@ export const StepListItem = /*#__PURE__*/ createLeafComponent(
         data-focus-visible={isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}>
         <VisuallyHidden elementType="span">{stepStateText}</VisuallyHidden>
-        {renderProps.children}
+        <Provider values={[[LinkContext, linkContextValue]]}>{renderProps.children}</Provider>
       </dom.li>
     );
   }
