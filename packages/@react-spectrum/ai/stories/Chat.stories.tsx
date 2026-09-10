@@ -485,7 +485,14 @@ export function VirtualizedStreamingChat() {
       <Thread items={messages} aria-label="Chat thread">
         {(msg: StreamingMessage) => {
           if (msg.type === 'user') {
-            return <UserMessage>{msg.content}</UserMessage>;
+            // TODO: probably want ThreadItem to be a part of UserMessage?
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
           }
           if (msg.type === 'status') {
             return <StatusThreadItem msg={msg} />;
@@ -637,7 +644,13 @@ export function EmptyChat() {
       <Thread items={messages} aria-label="Chat thread">
         {(msg: StreamingMessage) => {
           if (msg.type === 'user') {
-            return <UserMessage>{msg.content}</UserMessage>;
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
           }
           if (msg.type === 'status') {
             return <StatusThreadItem msg={msg} />;
@@ -756,7 +769,13 @@ export function ChatPopover() {
           <Thread items={messages} aria-label="Chat thread">
             {(msg: PopoverMessage) => {
               if (msg.type === 'user') {
-                return <UserMessage>{msg.content}</UserMessage>;
+                return (
+                  <ThreadItem
+                    textValue={msg.content}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{msg.content}</UserMessage>
+                  </ThreadItem>
+                );
               }
               return (
                 <SystemMessage textValue="Design token pipeline overview">
@@ -1041,7 +1060,11 @@ const PAGE_SIZE = 10;
 
 function renderAsyncMessage(msg: AsyncMessage) {
   if (msg.role === 'user') {
-    return <UserMessage>{msg.content}</UserMessage>;
+    return (
+      <ThreadItem textValue={msg.content} styles={style({display: 'flex', justifyContent: 'end'})}>
+        <UserMessage>{msg.content}</UserMessage>
+      </ThreadItem>
+    );
   }
   return (
     <ThreadItem textValue={msg.content} styles={style({font: 'body'})}>
@@ -1184,7 +1207,13 @@ export function SmallChat() {
       <Thread items={messages} aria-label="Chat thread">
         {(msg: StreamingMessage) => {
           if (msg.type === 'user') {
-            return <UserMessage>{msg.content}</UserMessage>;
+            return (
+              <ThreadItem
+                textValue={msg.content}
+                styles={style({display: 'flex', justifyContent: 'end'})}>
+                <UserMessage>{msg.content}</UserMessage>
+              </ThreadItem>
+            );
           }
           if (msg.type === 'status') {
             return <StatusThreadItem msg={msg} />;

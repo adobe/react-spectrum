@@ -114,12 +114,6 @@ const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>(
   'aria-label': ''
 });
 
-interface ThreadContextProps {
-  isInThread?: boolean;
-}
-
-export const ThreadContext = createContext<ThreadContextProps>({});
-
 // TODO: make this more RAC like (aka default class name and other RAC prop)
 export interface ChatProps {
   /**
@@ -320,7 +314,19 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
   }, [setIsNearBottom, scrollEndThreshold]);
 
   return (
-    <Provider values={[[ThreadContext, {isInThread: true}]]}>
+    <div
+      className={mergeStyles(
+        style({
+          position: 'relative',
+          flexGrow: 1,
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0
+        }),
+        styles
+      )}>
+      {/* TODO: do we want the scroll button to be optional? */}
       <div
         className={mergeStyles(
           style({
@@ -392,7 +398,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           </GridList>
         </Virtualizer>
       </div>
-    </Provider>
+    </div>
   );
 }
 
@@ -445,8 +451,9 @@ const threadItemBase = style({
   borderRadius: 'default'
 });
 
-export interface ThreadItemProps extends Partial<
-  Pick<GridListItemProps, 'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'>
+export interface ThreadItemProps extends Pick<
+  GridListItemProps,
+  'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'
 > {
   /**
    * Spectrum-defined styles, returned by the `style()` macro.

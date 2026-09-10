@@ -13,12 +13,11 @@
 import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import {DEFAULT_SLOT, Provider, SlotProps} from 'react-aria-components/slots';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {forwardRef, ReactNode, useContext} from 'react';
+import {forwardRef, ReactNode} from 'react';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {ThreadContext, ThreadItem} from './Chat';
 import {useDOMRef} from './useDOMRef';
 
 export interface UserMessageProps extends DOMProps, AriaLabelingProps, SlotProps {
@@ -78,10 +77,8 @@ export const UserMessage = forwardRef(function UserMessage(
 ) {
   let domRef = useDOMRef(ref);
   let {children, styles} = props;
-  let ctx = useContext(ThreadContext);
-  let isInThread = ctx.isInThread;
 
-  let userMessage = (
+  return (
     <div
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
@@ -102,14 +99,4 @@ export const UserMessage = forwardRef(function UserMessage(
       </Provider>
     </div>
   );
-
-  if (isInThread) {
-    return (
-      <ThreadItem styles={style({display: 'flex', justifyContent: 'end'})}>
-        {userMessage}
-      </ThreadItem>
-    );
-  }
-
-  return userMessage;
 });
