@@ -87,10 +87,12 @@ export interface GroupProps
    * Use `'region'` when the contents of the group is important enough to be
    * included in the page table of contents. Use `'presentation'` if the group
    * is visual only and does not represent a semantic grouping of controls.
+   * Use `'button'` when the group wraps focusable text that forwards clicks
+   * to a parent control, such as the text of a sortable table column header.
    *
    * @default 'group'
    */
-  role?: 'group' | 'region' | 'presentation';
+  role?: 'group' | 'region' | 'presentation' | 'button';
 }
 
 export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
