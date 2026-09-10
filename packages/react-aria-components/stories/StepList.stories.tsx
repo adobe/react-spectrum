@@ -143,7 +143,13 @@ interface CoworkerItemValue {
 let coworkerItems: Array<CoworkerItemValue> = [
   {id: 'plan', url: '/plan', title: 'Plan', stage: 1, Icon: ClipboardList},
   {id: 'build', url: '/build', title: 'Build', stage: 2, Icon: Hammer},
-  {id: 'governance', url: '/governance', title: 'Governance review', stage: 3, Icon: GitCompareArrows},
+  {
+    id: 'governance',
+    url: '/governance',
+    title: 'Governance review',
+    stage: 3,
+    Icon: GitCompareArrows
+  },
   {id: 'launch', url: '/launch', title: 'Launch', stage: 4, Icon: ShieldCheck},
   {id: 'monitor', url: '/monitor', title: 'Monitor', stage: 5, Icon: Rocket}
 ];
@@ -188,9 +194,13 @@ export const CoworkerStepListExample: StepListStory = {
                           </span>
                         </span>
                         <span className={styles['coworker-StepListItem-labels']}>
-                          <Text className={styles['coworker-StepListItem-title']}>{item.title}</Text>
+                          <Text className={styles['coworker-StepListItem-title']}>
+                            {item.title}
+                          </Text>
                           <span
-                            className={styles['coworker-StepListItem-stage']}>{`Stage ${item.stage}`}</span>
+                            className={
+                              styles['coworker-StepListItem-stage']
+                            }>{`Stage ${item.stage}`}</span>
                         </span>
                       </Link>
                     </StepListItem>
@@ -208,5 +218,13 @@ export const CoworkerStepListExample: StepListStory = {
         );
       }}
     </Router>
-  )
+  ),
+  parameters: {
+    description:
+      'A StepList component for navigating through steps, based on NavigationTree with links. Follows https://www.w3.org/WAI/tutorials/forms/multi-page/#using-step-by-step-indicator mostly.'
+  }
+};
+
+export const TabBasedStepList: StepListStory = {
+  render: args => <div />
 };
