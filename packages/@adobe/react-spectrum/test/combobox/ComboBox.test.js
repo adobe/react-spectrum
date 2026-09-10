@@ -1496,6 +1496,131 @@ describe('ComboBox', function () {
       expect(items).toHaveLength(1);
       expect(combobox).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it("doesn't focus the first item when filtering by default", async function () {
+      let {getByRole} = renderComboBox();
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+      });
+      await user.keyboard('o');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(2);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+    });
+
+    it('focuses the first item when filtering if autoFocusFirst is true', async function () {
+      let {getByRole} = renderComboBox({autoFocusFirst: true});
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+      });
+      await user.keyboard('o');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(2);
+      expect(items[0]).toHaveTextContent('One');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+      // Narrowing the filter further should keep moving focus to the new first match.
+      await user.keyboard('ne');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(1);
+      expect(items[0]).toHaveTextContent('One');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+    });
+
+    it('still focuses the first item if the menu was already open before typing', async function () {
+      let {getByRole} = renderComboBox({autoFocusFirst: true});
+
+      let button = getByRole('button');
+      await user.click(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let combobox = getByRole('combobox');
+      let listbox = getByRole('listbox');
+      await user.keyboard('o');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let items = within(listbox).getAllByRole('option');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+    });
+
+    it('does not get stuck on a stale selection when re-searching after selecting an item', async function () {
+      let {getByRole} = renderComboBox({autoFocusFirst: true});
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+      });
+      await user.keyboard('One');
+      act(() => {
+        jest.runAllTimers();
+      });
+      await user.keyboard('[Enter]');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      await user.clear(combobox);
+      await user.keyboard('T');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items[0]).toHaveTextContent('Two');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+    });
+
+    it('clears the focused option when the input is cleared back to empty', async function () {
+      let {getByRole} = renderComboBox({autoFocusFirst: true});
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+      });
+      await user.keyboard('One');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+      await user.clear(combobox);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      // Clearing returns to the unfiltered list, which should not be treated as "a filter was
+      // performed," so no option should be focused until the user navigates explicitly.
+      listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(3);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+    });
   });
 
   describe('blur', function () {
