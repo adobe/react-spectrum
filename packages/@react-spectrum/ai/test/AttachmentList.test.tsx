@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Attachment, AttachmentList} from '@react-spectrum/ai';
+import {Attachment, AttachmentList, AttachmentPreview} from '@react-spectrum/ai';
 import {Image} from '@react-spectrum/s2/Image';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
@@ -54,5 +54,44 @@ describeOrSkip('AttachmentList', () => {
 
     offsetWidthSpy.mockRestore();
     scrollWidthSpy.mockRestore();
+  });
+
+  it('should automatically show a mime-type badge on the large thumbnail variant', () => {
+    let {getByText} = render(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="Demo file.pdf" size="L">
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+      </AttachmentList>
+    );
+    expect(getByText('PDF')).toBeInTheDocument();
+  });
+
+  it('should not show a badge for other sizes or when no thumbnail image is provided', () => {
+    let {queryByText, rerender} = render(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="Demo file.pdf" size="M">
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+      </AttachmentList>
+    );
+    expect(queryByText('PDF')).not.toBeInTheDocument();
+
+    rerender(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="report.pdf" size="L">
+          <AttachmentPreview mimeType="application/pdf" />
+        </Attachment>
+      </AttachmentList>
+    );
+    expect(queryByText('PDF')).not.toBeInTheDocument();
   });
 });
