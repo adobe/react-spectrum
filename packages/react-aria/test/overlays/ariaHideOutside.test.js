@@ -49,6 +49,25 @@ describe('ariaHideOutside', function () {
     expect(() => getByRole('button')).not.toThrow();
   });
 
+  it('should use the target document as the default root', function () {
+    let iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    let iframeDocument = iframe.contentWindow.document;
+    iframeDocument.body.innerHTML = '<div id="outside"></div><div id="target"></div>';
+    let target = iframeDocument.getElementById('target');
+    let outside = iframeDocument.getElementById('outside');
+
+    let revert = ariaHideOutside([target]);
+
+    expect(outside).toHaveAttribute('aria-hidden', 'true');
+    expect(target).not.toHaveAttribute('aria-hidden');
+    expect(document.body).not.toHaveAttribute('aria-hidden');
+
+    revert();
+    expect(outside).not.toHaveAttribute('aria-hidden');
+    iframe.remove();
+  });
+
   it('should hide everything except multiple elements', function () {
     let {getByRole, getAllByRole, queryByRole, queryAllByRole} = render(
       <>
