@@ -28,6 +28,10 @@ describe('getScrollParents', () => {
     let div = document.createElement('div');
     document.body.appendChild(div);
 
+    jest.spyOn(window, 'getComputedStyle').mockImplementation(() => {
+      return {overflow: 'visible'} as CSSStyleDeclaration;
+    });
+
     let parents = getScrollParents(div);
     expect(parents).toContain(root);
   });
@@ -70,6 +74,10 @@ describe('getScrollParents', () => {
     let child = document.createElement('div');
     document.body.appendChild(plain);
     plain.appendChild(child);
+
+    jest.spyOn(window, 'getComputedStyle').mockImplementation(() => {
+      return {overflow: 'visible'} as CSSStyleDeclaration;
+    });
 
     let parents = getScrollParents(child);
     expect(parents).not.toContain(plain);
