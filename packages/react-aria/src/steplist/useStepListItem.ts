@@ -12,6 +12,7 @@
 
 import {HTMLAttributes} from 'react';
 import {Key, RefObject} from '@react-types/shared';
+import {SelectableItemStates} from '../selection/useSelectableItem';
 import {StepListState} from 'react-stately/private/steplist/useStepListState';
 import {useSelectableItem} from '../selection/useSelectableItem';
 
@@ -19,7 +20,7 @@ export interface AriaStepListItemProps {
   key: Key;
 }
 
-export interface StepListItemAria {
+export interface StepListItemAria extends SelectableItemStates {
   /** Props for the step link element. */
   stepProps: HTMLAttributes<HTMLElement>;
   /** Props for the visually hidden element indicating the step state. */
@@ -34,26 +35,25 @@ export function useStepListItem<T>(
   ref: RefObject<HTMLElement | null>
 ): StepListItemAria {
   const {key} = props;
-  let {selectionManager: manager, selectedKey} = state;
+  let {selectionManager: manager} = state;
 
   let isDisabled = !state.isSelectable(key);
 
-  let {itemProps} = useSelectableItem({
+  let {itemProps, ...states} = useSelectableItem({
     isDisabled,
     key,
     ref,
     selectionManager: manager
   });
 
-  const isSelected = selectedKey === key;
-
   return {
     stepProps: {
       ...itemProps,
       role: 'link',
-      'aria-current': isSelected ? 'step' : undefined,
+      'aria-current': states.isSelected ? 'step' : undefined,
       'aria-disabled': isDisabled ? true : undefined,
       tabIndex: !isDisabled ? 0 : undefined
-    }
+    },
+    ...states
   };
 }

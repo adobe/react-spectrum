@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,6 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export {useStepListState} from 'react-stately/private/steplist/useStepListState';
+export {useStepListState} from '../src/steplist/useStepListState';
 
-export type {StepListProps, StepListStateOptions, StepListState} from 'react-stately/private/steplist/useStepListState';
+export type {
+  StepListProps,
+  StepListStateOptions,
+  StepListState
+} from '../src/steplist/useStepListState';
