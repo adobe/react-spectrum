@@ -19,6 +19,7 @@ import {
   GlobalDOMAttributes
 } from '@react-types/shared';
 import AudioWave from '@react-spectrum/s2/icons/AudioWave';
+import {Badge} from '@react-spectrum/s2/Badge';
 import {
   baseColor,
   css,
@@ -42,6 +43,7 @@ import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
 import {keyframes, scrollFade} from './tokens.macro' with {type: 'macro'};
+import {matchMimeType} from './PromptField';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
@@ -697,10 +699,16 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
   }
 
   if (otherProps.src) {
-    return <Image {...otherProps} slot="thumbnail" />;
+    //only the large thumnail variant should display the MIME type badge
+    return (
+      <>
+        <Image {...otherProps} slot="thumbnail" />
+        {size === 'L' && <AttachmentBadge mimeType={mimeType} />}
+      </>
+    );
   }
 
-  if (mimeType.startsWith('audio/')) {
+  if (matchMimeType(mimeType, ['audio/*'])) {
     return (
       <div className={attachmentPreviewWrapper}>
         <AudioWave />
@@ -708,7 +716,7 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
     );
   }
 
-  if (mimeType.startsWith('video/')) {
+  if (matchMimeType(mimeType, ['video/*'])) {
     return (
       <div className={attachmentPreviewWrapper}>
         <Play />
@@ -716,7 +724,7 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
     );
   }
 
-  if (mimeType.startsWith('image/')) {
+  if (matchMimeType(mimeType, ['image/*'])) {
     return (
       <div className={attachmentPreviewWrapper}>
         <ImageIcon />
@@ -724,7 +732,7 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
     );
   }
 
-  if (mimeType.startsWith('text/')) {
+  if (matchMimeType(mimeType, ['text/*'])) {
     return (
       <div className={attachmentPreviewWrapper}>
         <FileText />
@@ -736,6 +744,27 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
     <div className={attachmentPreviewWrapper}>
       <File />
     </div>
+  );
+}
+
+const attachmentBadgeStyles = style({
+  position: 'absolute',
+  bottom: 4,
+  insetStart: 4,
+  maxWidth: 64
+});
+
+function AttachmentBadge({mimeType}: {mimeType: string}) {
+  let label = matchMimeType(mimeType, ['application/pdf']) ? 'PDF' : 'FILE';
+  return (
+    <Badge
+      size="S"
+      variant="neutral"
+      fillStyle="subtle"
+      overflowMode="truncate"
+      styles={attachmentBadgeStyles}>
+      {label}
+    </Badge>
   );
 }
 
