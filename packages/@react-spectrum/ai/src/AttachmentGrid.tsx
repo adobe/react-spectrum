@@ -32,13 +32,18 @@ export interface AttachmentGridProps<T>
     AriaLabelingProps,
     Pick<ListBoxProps<T>, 'items' | 'children' | 'dependencies'> {
   /**
+   * The alignment of attachments within the grid.
+   *
+   * @default 'start'
+   */
+  align?: 'start' | 'center' | 'end';
+  /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
   styles?: StyleString;
 }
 
-// Cards with title/description content (see AttachmentList.tsx's identical selector) need
-// room for text, so they get a much wider column track than bare thumbnails.
+// Grid items are expected to be either all thumbnails or cards and the same size.
 const hasContent = ':has([data-slot=content])';
 
 const gridStyles = style({
@@ -50,6 +55,13 @@ const gridStyles = style({
   alignItems: 'start',
   gridTemplateColumns: {
     [hasContent]: 'repeat(auto-fill, minmax(240px, 1fr))'
+  },
+  justifyContent: {
+    align: {
+      start: 'normal',
+      center: 'center',
+      end: 'end'
+    }
   },
   gap: 8,
   maxHeight: 240,
@@ -69,7 +81,7 @@ export const AttachmentGrid = (forwardRef as forwardRefType)(function Attachment
   props: AttachmentGridProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {styles, items, children, dependencies, ...otherProps} = props;
+  let {styles, items, children, dependencies, align = 'start', ...otherProps} = props;
   let domRef = useDOMRef(ref);
 
   return (
@@ -80,7 +92,7 @@ export const AttachmentGrid = (forwardRef as forwardRefType)(function Attachment
       dependencies={dependencies}
       ref={domRef}
       className={renderProps =>
-        mergeStyles(gridStyles({...renderProps}), styles) + ' ' + scrollFade({y: 36})
+        mergeStyles(gridStyles({...renderProps, align}), styles) + ' ' + scrollFade({y: 36})
       }>
       {children}
     </ListBox>

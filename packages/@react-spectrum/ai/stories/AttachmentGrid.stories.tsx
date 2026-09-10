@@ -10,17 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {AttachmentGrid, AttachmentGridItem, AttachmentGridItemProps} from '../src/AttachmentGrid';
+import {
+  AttachmentGrid,
+  AttachmentGridItem,
+  AttachmentGridItemProps,
+  AttachmentGridProps
+} from '../src/AttachmentGrid';
 import {AttachmentPreview} from '../src/AttachmentList';
 import {Content} from '@react-spectrum/s2/Content';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 
-interface AttachmentGridDemoProps extends Pick<
-  AttachmentGridItemProps,
-  'isInvalid' | 'uploadProgress' | 'size'
-> {
+interface AttachmentGridDemoProps
+  extends
+    Pick<AttachmentGridItemProps, 'isInvalid' | 'uploadProgress' | 'size'>,
+    Pick<AttachmentGridProps<unknown>, 'align'> {
   /** Number of demo attachments to render. */
   count: number;
   /** Whether to show title/description content below the thumbnail. */
@@ -32,10 +37,11 @@ function AttachmentGridDemo({
   isInvalid,
   uploadProgress,
   showCardContent,
-  size
+  size,
+  align
 }: AttachmentGridDemoProps) {
   return (
-    <AttachmentGrid aria-label="Uploaded files" styles={style({width: 'full'})}>
+    <AttachmentGrid aria-label="Uploaded files" align={align} styles={style({width: 'full'})}>
       {Array.from({length: count}, (_, i) => (
         <AttachmentGridItem
           key={i}
@@ -62,6 +68,7 @@ function AttachmentGridDemo({
 
 const meta: Meta<typeof AttachmentGridDemo> = {
   component: AttachmentGridDemo,
+  subcomponents: {AttachmentGrid, AttachmentGridItem},
   parameters: {
     layout: 'centered'
   },
@@ -71,9 +78,10 @@ const meta: Meta<typeof AttachmentGridDemo> = {
     isInvalid: {control: 'boolean'},
     uploadProgress: {control: 'number', min: 0, max: 100},
     showCardContent: {control: 'boolean'},
-    size: {control: 'select', options: ['XS', 'S', 'M', 'L', 'XL']}
+    size: {control: 'select', options: ['XS', 'S', 'M', 'L', 'XL']},
+    align: {control: 'select', options: ['start', 'center', 'end']}
   },
-  args: {isInvalid: false, showCardContent: false, size: 'M'},
+  args: {isInvalid: false, showCardContent: false, size: 'M', align: 'start'},
   title: 'AI/AttachmentGrid'
 };
 
