@@ -485,7 +485,6 @@ export function VirtualizedStreamingChat() {
       <Thread items={messages} aria-label="Chat thread">
         {(msg: StreamingMessage) => {
           if (msg.type === 'user') {
-            // TODO: probably want ThreadItem to be a part of UserMessage?
             return (
               <ThreadItem
                 textValue={msg.content}
@@ -510,6 +509,7 @@ export function VirtualizedStreamingChat() {
             // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
             // but this one I could see perhaps being a standalone component to be used outside of thread
             // DG: maybe we could auto-wrap if it's inside a Thread?
+            // YL: If we auto-wrap, we would need to move some ThreadItem props (isStreaming, textValue) to the ai component level. Might be strange to have those props when used standalone
             return (
               <ThreadItem textValue={msg.title}>
                 <MessageSuggestionList title={msg.title}>

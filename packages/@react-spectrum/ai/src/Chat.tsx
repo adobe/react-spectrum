@@ -326,7 +326,6 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
         }),
         styles
       )}>
-      {/* TODO: do we want the scroll button to be optional? */}
       <div
         className={mergeStyles(
           style({
@@ -339,7 +338,6 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           }),
           styles
         )}>
-        {/* TODO: do we want the scroll button to be optional? */}
         <div
           className={style({
             position: 'absolute',
