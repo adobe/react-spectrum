@@ -88,22 +88,48 @@ export function captureScrollAnchor(
   isAnchorable: (layoutInfo: LayoutInfo) => boolean = () => true
 ): ScrollAnchor | null {
   let dimension = dimensionForAxis(axis);
+  // The corner on the item's leading edge - the side where content is added/removed. For 'end'
+  // that's the start of the axis (top/left); for 'start' it's the end of the axis (bottom/right).
+  let corner: RectCorner =
+    axis === 'x'
+      ? edge === 'end'
+        ? 'topLeft'
+        : 'topRight'
+      : edge === 'end'
+        ? 'topLeft'
+        : 'bottomLeft';
+  let viewportExtent = visibleRect[dimension];
   let best: ScrollAnchor | null = null;
+  // Fallback used only when every visible item is clipped past the leading edge (e.g. a single item
+  // taller than the viewport): the least-clipped item still makes the most stable anchor available.
+  let fallback: ScrollAnchor | null = null;
   for (let [key, layoutInfo] of visibleLayoutInfos) {
     if (!layoutInfo || !isAnchorable(layoutInfo)) {
       continue;
     }
     let overlap = layoutInfo.rect.intersection(visibleRect)[dimension];
-    if (layoutInfo.rect.area > 0 && overlap >= MIN_ANCHOR_OVERLAP) {
-      let corner = layoutInfo.rect.getCornerInRect(visibleRect) ?? 'topLeft';
-      let offset = layoutInfo.rect[corner][axis] - visibleRect[axis];
+    if (layoutInfo.rect.area <= 0 || overlap < MIN_ANCHOR_OVERLAP) {
+      continue;
+    }
+    let offset = layoutInfo.rect[corner][axis] - visibleRect[axis];
+    // Is the leading edge within the viewport?
+    let leadingEdgeVisible = edge === 'end' ? offset >= 0 : offset <= viewportExtent;
+    if (leadingEdgeVisible) {
+      // Pick the item nearest the leading edge among those whose leading edge is visible.
       let isBetter = !best || (edge === 'end' ? offset < best.offset : offset > best.offset);
       if (isBetter) {
         best = {key, corner, offset};
       }
+    } else {
+      // Least-clipped = closest to the leading edge from the clipped side.
+      let isBetter =
+        !fallback || (edge === 'end' ? offset > fallback.offset : offset < fallback.offset);
+      if (isBetter) {
+        fallback = {key, corner, offset};
+      }
     }
   }
-  return best;
+  return best ?? fallback;
 }
 
 /** Returns the viewport coordinate (along `axis`) that pins the viewport to `edge` of the content. */
@@ -154,7 +180,8 @@ export function resolveScrollAdjustment(
   contentSizeDelta: number,
   getLayoutInfo: (key: Key) => LayoutInfo | null,
   previousVisibleRect: Rect,
-  contentSize: Size
+  contentSize: Size,
+  changeIsAtEdge: boolean = true
 ): Rect | null {
   let withTarget = (target: number): Rect =>
     axis === 'x'
@@ -171,7 +198,16 @@ export function resolveScrollAdjustment(
           previousVisibleRect.height
         );
 
-  if (anchor) {
+  // Two possible responses when content settles: "follow the edge" (keep the viewport pinned to the
+  // content edge, e.g. the bottom of a chat) or "preserve the anchor" (keep the item the user is
+  // looking at in place).
+  let followEdge =
+    wasNearAnchorEdge &&
+    !isScrolling &&
+    itemSizeChanged &&
+    contentSizeDelta !== 0 &&
+    changeIsAtEdge;
+  if (anchor && !followEdge) {
     let target = computeScrollAnchorTarget(
       anchor,
       axis,
@@ -184,7 +220,12 @@ export function resolveScrollAdjustment(
     }
   }
 
-  if (wasNearAnchorEdge && !isScrolling && (!itemSizeChanged || contentSizeDelta > 0)) {
+  if (
+    wasNearAnchorEdge &&
+    !isScrolling &&
+    (!itemSizeChanged || contentSizeDelta !== 0) &&
+    changeIsAtEdge
+  ) {
     let target = withTarget(getEdgeSnapTarget(edge, axis, contentSize, previousVisibleRect));
     return target.equals(previousVisibleRect) ? null : target;
   }
@@ -196,14 +237,18 @@ export interface ResolveAfterLayoutOptions {
   anchorInfo: ScrollAnchorInfo | null;
   /** The anchor captured by `captureBeforeLayout` before this pass's `layout.update()` ran. */
   anchor: ScrollAnchor | null;
-  /** The full post-layout visible layout infos, i.e. `virtualizer.getVisibleLayoutInfos()`. */
-  postLayoutInfos: Map<Key, LayoutInfo>;
   previousVisibleRect: Rect;
   previousContentSize: Size;
   contentSize: Size;
   itemSizeChanged: boolean;
   isScrolling: boolean;
   getLayoutInfo: (key: Key) => LayoutInfo | null;
+  /**
+   * Whether the content that changed this pass was at the anchored edge (e.g. the newest item in a
+   * bottom-anchored list). When false, the viewport does not follow the edge, so a mid-list resize
+   * while the user is scrolled away preserves their position. Defaults to true.
+   */
+  changeIsAtEdge?: boolean;
 }
 
 /**
@@ -212,14 +257,10 @@ export interface ResolveAfterLayoutOptions {
  */
 export class ScrollAnchorTracker {
   private hasSnappedToEdge = false;
-  private hadEstimatedVisibleItems = false;
-  private wasNearAnchorEdge = false;
 
-  /** Resets all tracked state, e.g. when the virtualizer's layout instance changes. */
+  /** Resets the first-layout flag, e.g. when the virtualizer's layout instance changes. */
   reset(): void {
     this.hasSnappedToEdge = false;
-    this.hadEstimatedVisibleItems = false;
-    this.wasNearAnchorEdge = false;
   }
 
   /**
@@ -250,41 +291,17 @@ export class ScrollAnchorTracker {
     let {
       anchorInfo,
       anchor,
-      postLayoutInfos,
       previousVisibleRect,
       previousContentSize,
       contentSize,
       itemSizeChanged,
       isScrolling,
-      getLayoutInfo
+      getLayoutInfo,
+      changeIsAtEdge = true
     } = options;
 
     if (!anchorInfo) {
       return null;
-    }
-
-    // Read the previous pass's state into locals before any writes below overwrite it.
-    let wasSettlingLastPass = this.hadEstimatedVisibleItems;
-    let wasNearAnchorEdgeLastPass = this.wasNearAnchorEdge;
-
-    let hasEstimated = false;
-    for (let layoutInfo of postLayoutInfos.values()) {
-      if (layoutInfo.estimatedSize) {
-        hasEstimated = true;
-        break;
-      }
-    }
-    this.hadEstimatedVisibleItems = hasEstimated;
-    // Don't recheck "near edge?" mid-resize because it could look like a scroll that never happened.
-    // Reuse the answer from before the resizing started.
-    if (!wasSettlingLastPass) {
-      this.wasNearAnchorEdge = isNearEdge(
-        previousVisibleRect,
-        previousContentSize,
-        anchorInfo.edge,
-        anchorInfo.axis,
-        anchorInfo.threshold
-      );
     }
 
     if (previousVisibleRect.area === 0) {
@@ -303,7 +320,6 @@ export class ScrollAnchorTracker {
 
     let wasNearAnchorEdge =
       isFirstAnchoredLayout ||
-      (wasSettlingLastPass && wasNearAnchorEdgeLastPass) ||
       isNearEdge(
         previousVisibleRect,
         previousContentSize,
@@ -311,15 +327,9 @@ export class ScrollAnchorTracker {
         anchorInfo.axis,
         anchorInfo.threshold
       );
-    // A first-ever layout always snaps to the edge, even if the raw distance check says
-    // otherwise. Save that real decision here so later passes in this cascade reuse it.
-    if (!wasSettlingLastPass) {
-      this.wasNearAnchorEdge = wasNearAnchorEdge;
-    }
-    // Skip restoring to the captured anchor while still resizing because items above it are also still growing,
-    // and following it would fall short of the edge.
-    let effectiveAnchor =
-      isFirstAnchoredLayout || (wasSettlingLastPass && wasNearAnchorEdgeLastPass) ? null : anchor;
+    let effectiveAnchor = isFirstAnchoredLayout ? null : anchor;
+    // The first anchored layout always snaps to the edge, regardless of what changed.
+    let effectiveChangeIsAtEdge = isFirstAnchoredLayout || changeIsAtEdge;
     return resolveScrollAdjustment(
       anchorInfo.edge,
       anchorInfo.axis,
@@ -330,7 +340,8 @@ export class ScrollAnchorTracker {
       contentSizeDelta,
       getLayoutInfo,
       previousVisibleRect,
-      contentSize
+      contentSize,
+      effectiveChangeIsAtEdge
     );
   }
 }

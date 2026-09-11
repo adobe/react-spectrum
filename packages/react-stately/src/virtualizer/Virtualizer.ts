@@ -71,7 +71,12 @@ export class Virtualizer<T extends object, V> {
   private _isScrolling: boolean;
   private _invalidationContext: InvalidationContext;
   private _overscanManager: OverscanManager;
+
   private _scrollAnchor: ScrollAnchorTracker;
+  // Together they classify whether the changed content was at the anchored (e.g. bottom) edge to avoid
+  // following the edge when only a mid-list item resized while the user is scrolled away.
+  private _hadItemResize: boolean;
+  private _batchIncludedNewestContent: boolean;
 
   constructor(options: VirtualizerOptions<T, V>) {
     this.delegate = options.delegate;
@@ -88,6 +93,8 @@ export class Virtualizer<T extends object, V> {
     this._invalidationContext = {};
     this._overscanManager = new OverscanManager();
     this._scrollAnchor = new ScrollAnchorTracker();
+    this._hadItemResize = false;
+    this._batchIncludedNewestContent = false;
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
@@ -177,14 +184,11 @@ export class Virtualizer<T extends object, V> {
     // On first render _visibleViews is empty so no anchor will be found.
     let anchor: ScrollAnchor | null = null;
     if (anchorInfo) {
-      let preLayoutInfos: [Key, LayoutInfo][] = [];
-      for (let [key, view] of this._visibleViews) {
-        let layoutInfo = this.layout.getLayoutInfo(key) ?? view.layoutInfo;
-        if (layoutInfo) {
-          preLayoutInfos.push([key, layoutInfo]);
-        }
-      }
-      anchor = this._scrollAnchor.captureBeforeLayout(anchorInfo, preLayoutInfos, this.visibleRect);
+      anchor = this._scrollAnchor.captureBeforeLayout(
+        anchorInfo,
+        this.getVisibleLayoutInfos(),
+        this.visibleRect
+      );
     }
 
     let previousContentSize = this.contentSize;
@@ -196,17 +200,28 @@ export class Virtualizer<T extends object, V> {
     let rawContentSize = this.layout.getContentSize();
     (this as Mutable<this>).contentSize = new Size(rawContentSize.width, rawContentSize.height);
 
+    // Decide whether the change that triggered this relayout was at the newest edge. If items
+    // resized but none of them were the newest content, we don't follow the edge and we keep the
+    // user's reading position instead.
+    let changeIsAtEdge = !this._hadItemResize || this._batchIncludedNewestContent;
+
     let target = this._scrollAnchor.resolveAfterLayout({
       anchorInfo,
       anchor,
-      postLayoutInfos: anchorInfo ? this.getVisibleLayoutInfos() : new Map(),
       previousVisibleRect,
       previousContentSize,
       contentSize: this.contentSize,
       itemSizeChanged: context.itemSizeChanged ?? false,
       isScrolling: this._isScrolling,
-      getLayoutInfo: (key: Key) => this.layout.getLayoutInfo(key)
+      getLayoutInfo: (key: Key) => this.layout.getLayoutInfo(key),
+      changeIsAtEdge
     });
+
+    // Clear these flags because a relayout can also run for reasons unrelated to a resize
+    // (scrolling, a new message, a window resize). If we left the flags set, the next relayout
+    // would still see this pass's "an item resized / it was the newest" values and make the wrong call.
+    this._hadItemResize = false;
+    this._batchIncludedNewestContent = false;
 
     if (target) {
       // Queues a new render cycle. Return early to skip updateSubviews — running it now
@@ -447,9 +462,28 @@ export class Virtualizer<T extends object, V> {
 
     let changed = this.layout.updateItemSize(key, size);
     if (changed) {
+      this._hadItemResize = true;
+      // "Batch" refers to the set of updateItemSize calls that happen between one relayout and the next
+      this._batchIncludedNewestContent ||= this.isNewestContent(key);
       this.invalidate({
         itemSizeChanged: true
       });
     }
+  }
+
+  /**
+   * Whether `key` is the newest real item in the collection — i.e. the last non-loader node.
+   */
+  private isNewestContent(key: Key): boolean {
+    let lastKey = this.collection.getLastKey();
+    while (lastKey != null) {
+      let node = this.collection.getItem(lastKey) as {type?: string} | null;
+      if (node?.type !== 'loader') {
+        break;
+      }
+      lastKey = this.collection.getKeyBefore(lastKey);
+    }
+
+    return lastKey != null && lastKey === key;
   }
 }
