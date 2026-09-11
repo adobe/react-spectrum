@@ -427,6 +427,42 @@ export let tableTests = () => {
     expect(cells[5]).toHaveAttribute('aria-colindex', '4');
   });
 
+  it('defaults the select all checkbox aria-label to "Select All" when selectAllLabel is not provided', function () {
+    let {getAllByRole} = render(
+      <TableView aria-label="Items" selectionMode="multiple">
+        <TableHeader>
+          <Column>Foo</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+
+    let checkbox = getAllByRole('checkbox')[0];
+    expect(checkbox).toHaveAttribute('aria-label', 'Select All');
+  });
+
+  it('allows the select all checkbox aria-label to be overridden via selectAllLabel', function () {
+    let {getAllByRole} = render(
+      <TableView aria-label="Items" selectAllLabel="Select all items" selectionMode="multiple">
+        <TableHeader>
+          <Column>Foo</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+
+    let checkbox = getAllByRole('checkbox')[0];
+    expect(checkbox).toHaveAttribute('aria-label', 'Select all items');
+  });
+
   it('accepts a UNSAFE_className', function () {
     let {getByRole} = render(
       <TableView

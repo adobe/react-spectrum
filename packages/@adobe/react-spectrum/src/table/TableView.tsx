@@ -60,6 +60,11 @@ export interface SpectrumTableProps<T>
   /** Sets what the TableView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element;
   /**
+   * A custom accessibility label for the select all checkbox in the table header.
+   * If not provided, defaults to the standard localized "Select All" label.
+   */
+  selectAllLabel?: string;
+  /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
    *
    * @default 'selection'

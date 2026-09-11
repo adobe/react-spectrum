@@ -29,6 +29,7 @@ export type {
   AriaTableCellProps,
   TableCellAria,
   TableHeaderRowAria,
+  AriaTableSelectAllCheckboxProps,
   AriaTableSelectionCheckboxProps,
   TableSelectionCheckboxAria,
   TableSelectAllCheckboxAria,

@@ -161,6 +161,7 @@ export interface TableContextValue<T> {
   headerMenuOpen: boolean;
   setHeaderMenuOpen: (val: boolean) => void;
   renderEmptyState?: () => ReactElement;
+  selectAllLabel?: string;
 }
 
 export const TableContext = React.createContext<TableContextValue<unknown> | null>(null);
@@ -193,6 +194,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     onResizeStart: propsOnResizeStart,
     onResizeEnd: propsOnResizeEnd,
     dragAndDropHooks,
+    selectAllLabel,
     state
   } = props;
   let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -525,7 +527,8 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         onFocusedResizer,
         headerMenuOpen,
         setHeaderMenuOpen,
-        renderEmptyState: props.renderEmptyState
+        renderEmptyState: props.renderEmptyState,
+        selectAllLabel
       }}>
       <TableVirtualizer
         {...mergedProps}
@@ -1148,7 +1151,7 @@ function ResizableTableColumnHeader(props) {
 
 function TableSelectAllCell({column}) {
   let ref = useRef<HTMLDivElement | null>(null);
-  let {state} = useTableContext();
+  let {state, selectAllLabel} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader(
     {
@@ -1159,7 +1162,7 @@ function TableSelectAllCell({column}) {
     ref
   );
 
-  let {checkboxProps} = useTableSelectAllCheckbox(state);
+  let {checkboxProps} = useTableSelectAllCheckbox(state, {'aria-label': selectAllLabel});
   let {hoverProps, isHovered} = useHover({});
 
   return (
