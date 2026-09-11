@@ -51,6 +51,21 @@ describe('Dialog', () => {
     expect(dialog).toHaveAttribute('data-rac');
   });
 
+  it('should support onKeyDown on the dialog element', async () => {
+    let onKeyDown = jest.fn();
+    let {getByRole} = render(
+      <Dialog onKeyDown={onKeyDown}>
+        <Heading slot="title">Title</Heading>
+      </Dialog>
+    );
+
+    let dialog = getByRole('dialog');
+    act(() => dialog.focus());
+    await user.keyboard('{Enter}');
+    expect(onKeyDown).toHaveBeenCalledTimes(1);
+    expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({key: 'Enter'}));
+  });
+
   it('works with modal', async () => {
     let {getByRole} = render(
       <DialogTrigger>

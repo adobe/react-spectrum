@@ -20,7 +20,7 @@ import {
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
-import {useEffect, useRef} from 'react';
+import {KeyboardEventHandler, useEffect, useRef} from 'react';
 import {useOverlayFocusContain} from '../overlays/Overlay';
 import {useSlotId} from '../utils/useId';
 
@@ -31,6 +31,8 @@ export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
    * @default 'dialog'
    */
   role?: 'dialog' | 'alertdialog';
+  /** Handler that is called when a key is pressed while focus is inside the dialog. */
+  onKeyDown?: KeyboardEventHandler<FocusableElement>;
 }
 
 export interface DialogAria {
@@ -125,6 +127,7 @@ export function useDialog(
       tabIndex: -1,
       'aria-labelledby': props['aria-labelledby'] ?? titleId,
       'aria-describedby': ariaDescribedby,
+      onKeyDown: props.onKeyDown,
       // Prevent blur events from reaching useOverlay, which may cause
       // popovers to close. Since focus is contained within the dialog,
       // we don't want this to occur due to the above useEffect.
