@@ -354,6 +354,7 @@ const treeActionMenu = style({gridArea: 'actionmenu'});
 const hideUnmarkedChildren = css('& > *:not([data-do-not-hide]) {display: none;}');
 
 const SideNavItemLinkContext = createContext<{
+  hasChildItems?: boolean;
   isDisabled?: boolean;
   onPressChange?: (isPressed: boolean) => void;
 }>({});
@@ -491,6 +492,7 @@ const SideNavItemContentInner = props => {
             [
               SideNavItemLinkContext,
               {
+                hasChildItems,
                 isDisabled,
                 onPressChange: setLinkPressed
               }
@@ -767,7 +769,7 @@ let SideNavItemButton = (
 
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
-  let linkFocus = useContext(SideNavItemLinkContext);
+  let {hasChildItems = false, ...linkFocus} = useContext(SideNavItemLinkContext);
   let sidePanelContext = useContext(SidePanelContext);
   let {isCollapsed = false, setCollapsed, isHidden = false, isReady = false} = sidePanelContext;
   let isInSidePanel = sidePanelContext.isCollapsed !== undefined;
@@ -781,7 +783,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
     isFocusedRef.current = false;
   }, [isCollapsed]);
 
-  if (isCollapsed) {
+  if (isCollapsed && hasChildItems) {
     return (
       <SideNavItemButton
         {...props}
