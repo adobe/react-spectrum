@@ -672,6 +672,9 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
       id={id}
       className={style({
         position: 'relative',
+        display: {
+          isCollapsed: 'none'
+        },
         font: 'ui-sm',
         // Component/S/Medium for the font, doesn't appear to match our fonts
         fontWeight: 'medium',
@@ -679,27 +682,8 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
         paddingStart: 'edge-to-text',
         marginBottom: '[8px]',
         height: 16
-      })}>
-      <div
-        className={style({
-          position: 'absolute',
-          top: '50%',
-          insetStart: 0,
-          insetEnd: 0,
-          translateY: '-50%',
-          marginX: 8,
-          visibility: {
-            default: 'hidden',
-            isCollapsed: 'visible'
-          }
-        })({
-          isCollapsed
-        })}>
-        <Divider aria-labelledby={id} orientation="horizontal" />
-      </div>
-      <div className={style({visibility: {isCollapsed: 'hidden'}})({isCollapsed})}>
-        {props.children}
-      </div>
+      })({isCollapsed})}>
+      {props.children}
     </NavigationTreeHeader>
   );
 };
