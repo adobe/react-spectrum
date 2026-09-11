@@ -282,9 +282,13 @@ class RGBColor extends Color {
     // matching rgb(rrr, ggg, bbb), rgba(rrr, ggg, bbb, 0.a)
     const match = value.match(/^rgba?\((.*)\)$/);
     if (match?.[1]) {
-      colors = match[1].split(',').map(value => Number(value.trim()));
-      colors = colors.map((num, i) => {
-        return clamp(num ?? 0, 0, i < 3 ? 255 : 1);
+      const parts = match[1].split(',').map(value => value.trim());
+      // Number('') is 0 rather than NaN, so empty components need their own check.
+      if (parts.some(part => part === '' || !Number.isFinite(Number(part)))) {
+        return undefined;
+      }
+      colors = parts.map((part, i) => {
+        return clamp(Number(part), 0, i < 3 ? 255 : 1);
       });
     }
     if (colors[0] === undefined || colors[1] === undefined || colors[2] === undefined) {

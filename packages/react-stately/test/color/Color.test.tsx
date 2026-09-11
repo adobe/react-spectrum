@@ -107,6 +107,20 @@ describe('Color', function () {
       expect(color.getChannelValue('alpha')).toBe(1);
       expect(color.toString('rgba')).toBe('rgba(255, 0, 0, 1)');
     });
+
+    it('should throw on non-numeric rgb channels', function () {
+      expect(() => parseColor('rgb(a, b, c)')).toThrow('Invalid color value: rgb(a, b, c)');
+    });
+
+    it('should throw on a non-numeric rgba alpha', function () {
+      expect(() => parseColor('rgba(0, 0, 0, abc)')).toThrow(
+        'Invalid color value: rgba(0, 0, 0, abc)'
+      );
+    });
+
+    it('should throw on empty rgb channels', function () {
+      expect(() => parseColor('rgb(, , )')).toThrow('Invalid color value: rgb(, , )');
+    });
   });
 
   describe('hsl', function () {
