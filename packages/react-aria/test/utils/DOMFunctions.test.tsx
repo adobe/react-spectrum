@@ -71,6 +71,15 @@ describe('nodeContains with shadow DOM', function () {
 
     cleanup();
   });
+
+  it('does not throw when the other node is a non-Node event target (e.g. window)', function () {
+    // Focus/blur events can be dispatched with `window` as their target (it is an EventTarget, not
+    // a Node). Walking up from it via parentNode yields `undefined`, so the loop must terminate on
+    // undefined rather than dereferencing it (which threw "reading 'assignedElements'").
+    expect((window as unknown as Node).parentNode).toBeUndefined();
+    expect(() => nodeContains(document.body, window as unknown as Node)).not.toThrow();
+    expect(nodeContains(document.body, window as unknown as Node)).toBe(false);
+  });
 });
 
 describe('getPropagationTargets with shadow DOM', function () {
