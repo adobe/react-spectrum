@@ -11,12 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
-import {
-  AttachmentCard,
-  AttachmentPreviewContext,
-  AttachmentRenderProps,
-  isAttachmentLoading
-} from './AttachmentList';
+import {AttachmentCard, AttachmentPreviewContext, isAttachmentLoading} from './AttachmentList';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {forwardRef, ReactNode} from 'react';
@@ -107,7 +102,7 @@ export interface AttachmentGridItemProps
   isInvalid?: boolean;
   uploadProgress?: number;
   /** The children of the AttachmentGridItem. */
-  children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
+  children: ReactNode;
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
@@ -143,7 +138,7 @@ export const AttachmentGridItem = forwardRef(function AttachmentGridItem(
       <AttachmentCard size={size} isInvalid={isInvalid} isLoading={isLoading}>
         <AttachmentPreviewContext.Provider
           value={{isInvalid: !!isInvalid, uploadProgress: props.uploadProgress ?? 100, size}}>
-          {typeof children === 'function' ? children({size}) : children}
+          {children}
         </AttachmentPreviewContext.Provider>
       </AttachmentCard>
     </ListBoxItem>
