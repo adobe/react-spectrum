@@ -128,8 +128,12 @@ export interface KeyboardDelegate {
   /** Returns the last key, or `null` for none. */
   getLastKey?(key?: Key | null, global?: boolean): Key | null;
 
-  /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
-  getKeyForSearch?(search: string, fromKey?: Key | null): Key | null;
+  /**
+   * Returns the key that matches the given search string, or `null` for none.
+   * By default the search is inclusive of `fromKey`. When `options.advance` is true,
+   * the search starts after `fromKey` so each call moves to the next match.
+   */
+  getKeyForSearch?(search: string, fromKey?: Key | null, options?: {advance?: boolean}): Key | null;
 }
 
 export interface Rect {

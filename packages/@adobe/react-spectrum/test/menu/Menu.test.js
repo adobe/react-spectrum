@@ -573,8 +573,9 @@ describe('Menu', function () {
         jest.runAllTimers();
       });
 
+      // After the reset, a fresh 'B' advances past the focused item to the next 'B' match.
       fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[1]);
+      expect(document.activeElement).toBe(menuItems[2]);
     });
 
     it.each`
@@ -595,8 +596,9 @@ describe('Menu', function () {
         jest.runAllTimers();
       });
 
+      // No 'B' match past the focused Bleh, so the search wraps around to the first 'B' (Bar).
       fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[4]);
+      expect(document.activeElement).toBe(menuItems[1]);
     });
   });
 
