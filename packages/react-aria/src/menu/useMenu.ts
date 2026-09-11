@@ -26,6 +26,7 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import {menuData} from './utils';
 import {mergeProps} from '../utils/mergeProps';
 import {TreeState} from 'react-stately/useTreeState';
+import {useHover} from '../interactions/useHover';
 import {useSelectableList} from '../selection/useSelectableList';
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -100,6 +101,26 @@ export function useMenu<T>(
     linkBehavior: 'override'
   });
 
+  // When the pointer leaves the menu entirely, clear the focused key so the last hovered item
+  // doesn't keep intercepting Enter/Space. useSelectableCollection already moves DOM focus to the
+  // menu itself once focusedKey becomes null (the same path used when a focused item is removed),
+  // so this reuses that existing behavior rather than introducing a new one.
+  // Skip this while a submenu opened from this menu is still expanded: the pointer moving from the
+  // trigger item towards its submenu leaves this menu's bounding box (the submenu renders in a
+  // separate popover), and the trigger item should stay visually focused while its submenu is open.
+  let {hoverProps} = useHover({
+    onHoverEnd() {
+      let {selectionManager: manager} = state;
+      if (
+        manager.isFocused &&
+        manager.focusedKey != null &&
+        !ref.current?.querySelector('[aria-haspopup][aria-expanded="true"]')
+      ) {
+        manager.setFocusedKey(null);
+      }
+    }
+  });
+
   menuData.set(state, {
     onClose: props.onClose,
     onAction: props.onAction,
@@ -110,6 +131,7 @@ export function useMenu<T>(
     menuProps: mergeProps(
       domProps,
       {onKeyDown, onKeyUp},
+      hoverProps,
       {
         role: 'menu',
         ...listProps,
