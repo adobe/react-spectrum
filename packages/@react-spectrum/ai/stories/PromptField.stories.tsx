@@ -655,3 +655,14 @@ export const AsyncCompletions = () => (
     </div>
   </PromptField>
 );
+
+export const CustomAIDisclaimer: Story = {
+  render: args => (
+    <BasicRender
+      aiDisclaimer={
+        'By using this feature, you agree to our AI User Guidelines. Responses may be inaccurate.'
+      }
+      {...args}
+    />
+  )
+};

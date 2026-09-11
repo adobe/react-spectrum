@@ -112,8 +112,8 @@ describe('Combobox', () => {
     let sentinel = tree.getByTestId('loadMoreSentinel');
     expect(observe).toHaveBeenLastCalledWith(sentinel);
 
-    act(() => {
-      observer.instance.triggerCallback([{isIntersecting: true}]);
+    await act(async () => {
+      await observer.instance.triggerCallback([{isIntersecting: true}]);
     });
     act(() => {
       jest.runAllTimers();
@@ -129,8 +129,8 @@ describe('Combobox', () => {
       </ComboBox>
     );
 
-    act(() => {
-      observer.instance.triggerCallback([{isIntersecting: true}]);
+    await act(async () => {
+      await observer.instance.triggerCallback([{isIntersecting: true}]);
     });
     act(() => {
       jest.runAllTimers();

@@ -60,11 +60,6 @@ import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
-interface AttachmentRenderProps {
-  /** The size of the Card. */
-  size: 'XS' | 'S' | 'M' | 'L' | 'XL';
-}
-
 const controlSizeM = {
   default: 32,
   size: {
@@ -519,7 +514,7 @@ export interface AttachmentProps
     AriaLabelingProps,
     Pick<TagProps, 'id' | 'textValue' | 'render'> {
   /** The children of the Attachment. */
-  children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
+  children: ReactNode;
   uploadProgress?: number;
   /** Whether the attachment has an error. */
   isInvalid?: boolean;
@@ -638,7 +633,7 @@ export const Attachment = forwardRef(function Attachment(
       <AttachmentCard size={size} isInvalid={isInvalid} isLoading={isLoading}>
         <AttachmentPreviewContext.Provider
           value={{isInvalid: !!isInvalid, uploadProgress: props.uploadProgress ?? 100, size}}>
-          {typeof children === 'function' ? children({size}) : children}
+          {children}
         </AttachmentPreviewContext.Provider>
       </AttachmentCard>
       {/** Definitely not a close button, though looks like one. */}

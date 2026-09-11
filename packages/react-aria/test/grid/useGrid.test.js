@@ -157,4 +157,25 @@ describe('useGrid', () => {
     await user.keyboard('[ArrowLeft]');
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
   });
+
+  it('should restore focus to the child that was last focused within a cell, not the first child', async () => {
+    let tree = renderGrid({gridFocusMode: 'cell', cellFocusMode: 'child'});
+    let switches = tree.getAllByRole('switch');
+    let cells = tree.getAllByRole('gridcell');
+
+    await user.tab();
+    expect(document.activeElement).toBe(switches[0]);
+
+    await user.keyboard('[ArrowRight]');
+    expect(document.activeElement).toBe(switches[1]);
+
+    act(() => {
+      cells[0].focus();
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(document.activeElement).toBe(switches[1]);
+  });
 });

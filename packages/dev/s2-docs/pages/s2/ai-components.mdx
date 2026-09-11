@@ -257,35 +257,32 @@ function BasicPrompt(props) {
   let [value, setValue] = useState<PromptFieldValue>(() => new PromptFieldValue([]));
 
   return (
-    <div
-      className={style({
+    /*- begin highlight -*/
+    <PromptField
+      {...props}
+      /* PROPS */
+      value={value}
+      onChange={setValue}
+      onSubmit={value => {
+        console.log(value.toString());
+        setValue(new PromptFieldValue([]));
+      }}
+      styles={style({
         minWidth: 190,
         width: {
           default: 'full',
           size: {
             S: '50%'
           }
-        }
-      })({size: props.size})}>
-      {/*- begin highlight -*/}
-      <PromptField
-        {...props}
-        /* PROPS */
-        value={value}
-        onChange={setValue}
-        onSubmit={value => {
-          console.log(value.toString());
-          setValue(new PromptFieldValue([]));
-        }}>
-        {/*- end highlight -*/}
-        <PromptTokenField />
-        <PromptFieldToolbar>
-          <div style={{marginInlineStart: 'auto'}}>
-            <PromptFieldSubmitButton />
-          </div>
-        </PromptFieldToolbar>
-      </PromptField>
-    </div>
+        }})({size: props.size})}>
+      {/*- end highlight -*/}
+      <PromptTokenField />
+      <PromptFieldToolbar>
+        <div style={{marginInlineStart: 'auto'}}>
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptFieldToolbar>
+    </PromptField>
   );
 }
 ```
@@ -591,19 +588,21 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function PresetLoader(props) {
   return (
-    <div className={style({height: 40})}>
+    <div className={style({height: 40})} >
+      {/*- begin highlight -*/}
       <PixelLoader
         {...props}
         /* PROPS */
       />
+      {/*- end highlight -*/}
     </div>
-  )
+  );
 }
 ```
 
 ### Usage
 
-Use the `pixelLoader` prop on `PromptTokenField` and `ResponseStatusTitle` to display the pixel loader.
+Use the `pixelLoader` prop on `ResponseStatusTitle` and `PromptTokenField` to display the pixel loader.
 
 <ExampleSwitcher type={null} examples={['ResponseStatus', 'PromptField']}>
 

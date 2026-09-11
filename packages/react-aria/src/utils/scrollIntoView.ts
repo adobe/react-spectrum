@@ -35,16 +35,24 @@ export function scrollIntoView(
   element: HTMLElement,
   opts: ScrollIntoViewOpts = {}
 ): void {
-  let {block = 'nearest', inline = 'nearest'} = opts;
-
   if (scrollView === element) {
     return;
   }
 
+  let target = element.getBoundingClientRect();
+  scrollRectIntoView(scrollView, element, target, opts);
+}
+
+export function scrollRectIntoView(
+  scrollView: HTMLElement,
+  element: HTMLElement,
+  target: DOMRect,
+  opts: ScrollIntoViewOpts = {}
+) {
+  let {block = 'nearest', inline = 'nearest'} = opts;
   let y = scrollView.scrollTop;
   let x = scrollView.scrollLeft;
 
-  let target = element.getBoundingClientRect();
   let view = scrollView.getBoundingClientRect();
   let itemStyle = window.getComputedStyle(element);
   let viewStyle = window.getComputedStyle(scrollView);
