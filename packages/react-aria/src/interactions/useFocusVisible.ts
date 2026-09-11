@@ -20,7 +20,7 @@ import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions'
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {ignoreFocusEvent} from './utils';
 import {isMac} from '../utils/platform';
-import {isVirtualClick} from '../utils/isVirtualEvent';
+import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
 import {openLink} from '../utils/openLink';
 import {PointerType} from '@react-types/shared';
 import {useEffect, useState} from 'react';
@@ -93,11 +93,21 @@ function handleKeyboardEvent(e: KeyboardEvent) {
 }
 
 function handlePointerEvent(e: PointerEvent | MouseEvent) {
-  currentModality = 'pointer';
-  currentPointerType = 'pointerType' in e ? (e.pointerType as PointerType) : 'mouse';
+  // JAWS and NVDA on Chromium synthesize a pointer event with pointerType 'mouse' rather than
+  // the empty string other screen readers use, so it is only distinguishable from a real mouse
+  // by its zero contact geometry. This is the same signal usePress relies on. The pointerType
+  // check keeps the mousedown fallback path, which has no width or height, out of this branch.
+  if ('pointerType' in e && isVirtualPointerEvent(e)) {
+    currentModality = 'virtual';
+    currentPointerType = 'virtual';
+  } else {
+    currentModality = 'pointer';
+    currentPointerType = 'pointerType' in e ? (e.pointerType as PointerType) : 'mouse';
+  }
+
   if (e.type === 'mousedown' || e.type === 'pointerdown') {
     hasEventBeforeFocus = true;
-    triggerChangeHandlers('pointer', e);
+    triggerChangeHandlers(currentModality, e);
   }
 }
 
