@@ -53,9 +53,23 @@ export function useModalOverlay(
   state: OverlayTriggerState,
   ref: RefObject<HTMLElement | null>
 ): ModalOverlayAria {
+  let {shouldCloseOnInteractOutside} = props;
   let {overlayProps, underlayProps} = useOverlay(
     {
       ...props,
+      shouldCloseOnInteractOutside: (element) => {
+        // A modal's underlay covers the viewport, so the document element is never a
+        // legitimate outside-press target. It only appears as one when the browser
+        // retargets a press whose original target was removed from the DOM mid-press
+        // (e.g. a button swapped out after an async mutation), and dismissing then
+        // would close the modal under the user's pointer. Non-modal overlays must keep
+        // treating it as valid: on pages with a short body, presses below the body
+        // target the document element and should still dismiss (see #1367).
+        if (element === element.ownerDocument.documentElement) {
+          return false;
+        }
+        return shouldCloseOnInteractOutside ? shouldCloseOnInteractOutside(element) : true;
+      },
       isOpen: state.isOpen,
       onClose: state.close
     },
