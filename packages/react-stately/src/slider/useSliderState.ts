@@ -47,6 +47,17 @@ export interface SliderProps<T = number | number[]>
    * @default 1
    */
   step?: number;
+  /**
+   * A list of values that a thumb magnetically snaps to while dragging or clicking with a pointer.
+   * Values in between remain reachable, and keyboard interactions are unaffected.
+   */
+  snapPoints?: number[];
+  /**
+   * How close a pointer must be to a snap point for it to snap, as a fraction of the track length.
+   *
+   * @default 0.02
+   */
+  snapThreshold?: number;
 }
 
 export interface SliderState {
@@ -158,6 +169,14 @@ export interface SliderState {
   getPercentValue(percent: number): number;
 
   /**
+   * Returns the index of the thumb nearest to the given value. When two thumbs are
+   * stacked on the same value, the one after the value is returned.
+   *
+   * @param value
+   */
+  getClosestThumbIndex(value: number): number;
+
+  /**
    * Returns if the specified thumb is editable.
    *
    * @param index
@@ -201,6 +220,7 @@ export interface SliderState {
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP_VALUE = 1;
+const DEFAULT_SNAP_THRESHOLD = 0.02;
 
 export interface SliderStateOptions<T> extends SliderProps<T> {
   numberFormatter: Intl.NumberFormat;
@@ -223,7 +243,9 @@ export function useSliderState<T extends number | number[]>(
     maxValue = DEFAULT_MAX_VALUE,
     numberFormatter: formatter,
     step = DEFAULT_STEP_VALUE,
-    orientation = 'horizontal'
+    orientation = 'horizontal',
+    snapPoints,
+    snapThreshold = DEFAULT_SNAP_THRESHOLD
   } = props;
 
   // Page step should be at least equal to step and always a multiple of the step.
@@ -294,17 +316,24 @@ export function useSliderState<T extends number | number[]>(
     isEditablesRef.current[index] = editable;
   }
 
-  function updateValue(index: number, value: number) {
+  function commitValue(index: number, value: number) {
     if (isDisabled || !isThumbEditable(index)) {
       return;
     }
-    const thisMin = getThumbMinValue(index);
-    const thisMax = getThumbMaxValue(index);
-
-    // Round value to multiple of step, clamp value between min and max
-    value = snapValueToStep(value, thisMin, thisMax, step);
-    let newValues = replaceIndex(valuesRef.current, index, value);
+    let newValues = replaceIndex(
+      valuesRef.current,
+      index,
+      clamp(value, getThumbMinValue(index), getThumbMaxValue(index))
+    );
     setValues(newValues);
+  }
+
+  function updateValue(index: number, value: number) {
+    // Round value to multiple of step, clamp value between min and max
+    commitValue(
+      index,
+      snapValueToStep(value, getThumbMinValue(index), getThumbMaxValue(index), step)
+    );
   }
 
   function updateDragging(index: number, dragging: boolean) {
@@ -356,8 +385,50 @@ export function useSliderState<T extends number | number[]>(
     }
   }
 
+  // Pointer interactions run through percentages, so snapping is applied here rather than in
+  // updateValue. That leaves keyboard interactions, which move by step, unaffected.
   function setThumbPercent(index: number, percent: number) {
-    updateValue(index, getPercentValue(percent));
+    let snapPoint = getSnapPoint(percent);
+    if (snapPoint != null) {
+      commitValue(index, snapPoint);
+    } else {
+      updateValue(index, getPercentValue(percent));
+    }
+  }
+
+  function getSnapPoint(percent: number) {
+    if (!snapPoints || snapThreshold <= 0) {
+      return undefined;
+    }
+
+    let closest: number | undefined;
+    let closestDistance = snapThreshold;
+    for (let snapPoint of snapPoints) {
+      let distance = Math.abs(getValuePercent(snapPoint) - percent);
+      if (distance <= closestDistance) {
+        closest = snapPoint;
+        closestDistance = distance;
+      }
+    }
+
+    return closest;
+  }
+
+  function getClosestThumbIndex(value: number) {
+    // Split the array on the first thumb positioned after the value.
+    let split = values.findIndex(v => value - v < 0);
+    if (split === 0) {
+      return split;
+    }
+    if (split === -1) {
+      // The value is past all of the thumbs.
+      return values.length - 1;
+    }
+
+    // Pick the thumb before the value, unless the one after it is closer or they are stacked.
+    return Math.abs(values[split - 1] - value) < Math.abs(values[split] - value)
+      ? split - 1
+      : split;
   }
 
   function getRoundedValue(value: number) {
@@ -396,6 +467,7 @@ export function useSliderState<T extends number | number[]>(
     getThumbMinValue,
     getThumbMaxValue,
     getPercentValue,
+    getClosestThumbIndex,
     isThumbEditable,
     setThumbEditable,
     incrementThumb,
