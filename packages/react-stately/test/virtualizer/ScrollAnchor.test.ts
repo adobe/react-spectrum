@@ -349,6 +349,50 @@ describe('resolveScrollAdjustment', () => {
     expect(result?.y).toBe(2000 - 468);
   });
 
+  it('preserves the anchor over the edge when the change was not at the edge', () => {
+    // Near the edge and an item resized, but the change was NOT at the anchored edge (e.g. a
+    // mid-list item grew while the user reads up top). We must preserve the anchor, not snap.
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
+
+    let result = resolveScrollAdjustment(
+      'end',
+      'y',
+      anchor,
+      true, // wasNearAnchorEdge
+      false, // isScrolling
+      true, // itemSizeChanged
+      50, // contentSizeDelta > 0
+      () => layoutInfo,
+      visibleRect,
+      contentSize,
+      false // changeIsAtEdge -- the change was NOT at the anchored edge
+    );
+
+    // Anchor target (600), not the edge-snap target (2000 - 468 = 1532).
+    expect(result?.y).toBe(600);
+  });
+
+  it('does not snap to the edge when the change was not at the edge and no anchor resolves', () => {
+    // Fallback path: null anchor, near the edge, an item resized, but not at the anchored edge.
+    // Without gating the fallback too, this would still snap. It must stay put.
+    let result = resolveScrollAdjustment(
+      'end',
+      'y',
+      null,
+      true, // wasNearAnchorEdge
+      false, // isScrolling
+      true, // itemSizeChanged
+      50, // contentSizeDelta > 0
+      () => null,
+      visibleRect,
+      contentSize,
+      false // changeIsAtEdge
+    );
+
+    expect(result).toBeNull();
+  });
+
   it('falls back to snapping to the edge when there is no anchor and near the edge', () => {
     let result = resolveScrollAdjustment(
       'end',
@@ -679,6 +723,47 @@ describe('ScrollAnchorTracker', () => {
 
     // The real bottom (1692 - 468 = 1224), not the anchor target (960).
     expect(result?.y).toBe(1692 - 468);
+  });
+
+  it('preserves the reading position when a change not at the edge settles after the first pass', () => {
+    // Mirrors the initial-settle case, but the growth was NOT at the anchored edge (a mid-thread
+    // item resized while the user is scrolled up). Instead of snapping to the real bottom, keep
+    // the anchor so the reading position is preserved.
+    let tracker = new ScrollAnchorTracker();
+
+    // Pass 1: establish hasSnappedToEdge so pass 2 is a normal relayout, not the first.
+    let firstContentSize = new Size(400, 1296);
+    tracker.resolveAfterLayout({
+      anchorInfo,
+      anchor: null,
+      previousVisibleRect: new Rect(0, 0, 400, 468),
+      previousContentSize: firstContentSize,
+      contentSize: firstContentSize,
+      itemSizeChanged: false,
+      isScrolling: false,
+      getLayoutInfo: () => null
+    });
+
+    // Pass 2: content grew from a mid-thread resize (changeIsAtEdge false). The anchor resolves to
+    // 960; we return that instead of the edge snap (1692 - 468 = 1224).
+    let scrolledUp = new Rect(0, 828, 400, 468);
+    let measuredContentSize = new Size(400, 1692);
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let movedAnchorInfo = new LayoutInfo('item', 'item', new Rect(0, 970, 400, 40));
+
+    let result = tracker.resolveAfterLayout({
+      anchorInfo,
+      anchor,
+      previousVisibleRect: scrolledUp,
+      previousContentSize: firstContentSize,
+      contentSize: measuredContentSize,
+      itemSizeChanged: true,
+      isScrolling: false,
+      getLayoutInfo: () => movedAnchorInfo,
+      changeIsAtEdge: false
+    });
+
+    expect(result?.y).toBe(960);
   });
 
   it('reset() clears tracked state so the next call behaves like a first pass again', () => {

@@ -180,7 +180,8 @@ export function resolveScrollAdjustment(
   contentSizeDelta: number,
   getLayoutInfo: (key: Key) => LayoutInfo | null,
   previousVisibleRect: Rect,
-  contentSize: Size
+  contentSize: Size,
+  changeIsAtEdge: boolean = true
 ): Rect | null {
   let withTarget = (target: number): Rect =>
     axis === 'x'
@@ -197,10 +198,15 @@ export function resolveScrollAdjustment(
           previousVisibleRect.height
         );
 
-  // When the user is following the edge and items are settling (their size changed), pin to the
-  // edge rather than to the anchor. Whether content grew or shrank, following the edge means
-  // staying at the new edge.
-  let followEdge = wasNearAnchorEdge && !isScrolling && itemSizeChanged && contentSizeDelta !== 0;
+  // Two possible responses when content settles: "follow the edge" (keep the viewport pinned to the
+  // content edge, e.g. the bottom of a chat) or "preserve the anchor" (keep the item the user is
+  // looking at in place).
+  let followEdge =
+    wasNearAnchorEdge &&
+    !isScrolling &&
+    itemSizeChanged &&
+    contentSizeDelta !== 0 &&
+    changeIsAtEdge;
   if (anchor && !followEdge) {
     let target = computeScrollAnchorTarget(
       anchor,
@@ -214,7 +220,12 @@ export function resolveScrollAdjustment(
     }
   }
 
-  if (wasNearAnchorEdge && !isScrolling && (!itemSizeChanged || contentSizeDelta !== 0)) {
+  if (
+    wasNearAnchorEdge &&
+    !isScrolling &&
+    (!itemSizeChanged || contentSizeDelta !== 0) &&
+    changeIsAtEdge
+  ) {
     let target = withTarget(getEdgeSnapTarget(edge, axis, contentSize, previousVisibleRect));
     return target.equals(previousVisibleRect) ? null : target;
   }
@@ -232,6 +243,12 @@ export interface ResolveAfterLayoutOptions {
   itemSizeChanged: boolean;
   isScrolling: boolean;
   getLayoutInfo: (key: Key) => LayoutInfo | null;
+  /**
+   * Whether the content that changed this pass was at the anchored edge (e.g. the newest item in a
+   * bottom-anchored list). When false, the viewport does not follow the edge, so a mid-list resize
+   * while the user is scrolled away preserves their position. Defaults to true.
+   */
+  changeIsAtEdge?: boolean;
 }
 
 /**
@@ -279,7 +296,8 @@ export class ScrollAnchorTracker {
       contentSize,
       itemSizeChanged,
       isScrolling,
-      getLayoutInfo
+      getLayoutInfo,
+      changeIsAtEdge = true
     } = options;
 
     if (!anchorInfo) {
@@ -310,6 +328,8 @@ export class ScrollAnchorTracker {
         anchorInfo.threshold
       );
     let effectiveAnchor = isFirstAnchoredLayout ? null : anchor;
+    // The first anchored layout always snaps to the edge, regardless of what changed.
+    let effectiveChangeIsAtEdge = isFirstAnchoredLayout || changeIsAtEdge;
     return resolveScrollAdjustment(
       anchorInfo.edge,
       anchorInfo.axis,
@@ -320,7 +340,8 @@ export class ScrollAnchorTracker {
       contentSizeDelta,
       getLayoutInfo,
       previousVisibleRect,
-      contentSize
+      contentSize,
+      effectiveChangeIsAtEdge
     );
   }
 }
