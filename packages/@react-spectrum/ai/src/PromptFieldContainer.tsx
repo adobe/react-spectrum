@@ -1,13 +1,15 @@
 import {
   brand,
+  convertColor,
   defaultBrand,
   defineProperties,
+  keyframes,
   outerBorderStops,
   stops,
   token
 } from './tokens.macro' with {type: 'macro'};
 import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
@@ -29,60 +31,40 @@ defineProperties(`
   @property --con-hue-opacity {
     syntax: '<percentage>';
     initial-value: 0%;
-    inherits: false;
+    inherits: true;
   }
 
   @property --bg-stop-1 {
     syntax: '<color>';
     initial-value: #0000;
-    inherits: false;
+    inherits: true;
   }
 
   @property --bg-stop-2 {
     syntax: '<color>';
     initial-value: #0000;
-    inherits: false;  
+    inherits: true;  
   }
 
   @property --bg-stop-3 {
     syntax: '<color>';
     initial-value: #0000;
-    inherits: false;
+    inherits: true;
   }
 
   @property --bg-stop-4 {
     syntax: '<color>';
     initial-value: #0000;
-    inherits: false;
+    inherits: true;
   }
 `);
 
 const containerBackground = css(`
   transition: --con-hue-opacity ${STATE_TRANSITION}, --bg-stop-1 ${STATE_TRANSITION}, --bg-stop-2 ${STATE_TRANSITION}, --bg-stop-3 ${STATE_TRANSITION}, --bg-stop-4 ${STATE_TRANSITION}, box-shadow ${STATE_TRANSITION};
-  
+
   background:
-    linear-gradient(
-      to bottom,
-      light-dark(rgb(255 255 255 / 75%), rgb(0 0 0 / 40%)) 0% 37%,
-      light-dark(rgb(255 255 255 / 15%), rgb(0 0 0 / 12%)) 83% 100%
-    ),
     radial-gradient(
-      50% 50% at -20% 100%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-3')} r g b / var(--con-hue-opacity)),
-      transparent
-    ),
-    radial-gradient(
-      70% 60% at 5% 80%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-2')} r g b / var(--con-hue-opacity)),
-      transparent
-    ),
-    radial-gradient(
-      70% 50% at 40% 80%,
-      rgb(from ${token('container.gradient.con-hue.generating.stop-1')} r g b / var(--con-hue-opacity)),
-      transparent
-    ),
-    radial-gradient(
-      circle at right bottom,
+      circle at right bottom in oklab,
       var(--bg-stop-1) 0%,
       var(--bg-stop-2) 35%,
       var(--bg-stop-3) 82%,
@@ -92,25 +74,23 @@ const containerBackground = css(`
   --border-color: ${token(`container.border.default`)};
   --inset-shadow-color: ${color('transparent-white-50')};
   --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
-  --prominent-outline-glow: ;
+  --prominent-outer-glow: ;
+  --prominent-inset-glow: ;
+  --subtle-shadow: ;
 
+  /* Only the non-inset (outward) shadows live here: the inset shadows are painted
+     on top of the background layers by a separate element (insetShadow below), since
+     this element's overflow:clip must stay on this box to clip the outward shadows. */
   box-shadow:
-    var(--prominent-outline-glow)
-    inset 0 0 0 1px var(--border-color),
-    inset 0 6px 15px 0 var(--inset-shadow-color),
-    inset 0 0 0 0 transparent, /* placeholder for generating state so transition is smooth */
-    inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
-    inset 0 24px 32px 0 ${color('transparent-white-50')},
-    0 -3px 10px 1px var(--drop-shadow-color);
+    var(--subtle-shadow)
+    var(--prominent-outer-glow)
+    0 3px 10px 1px var(--drop-shadow-color);
 
-  &[data-variant=prominent] {
+  &[data-variant=prominent],
+  &[data-state=generating] {
     /* trailing comma is intentional so it can be interpolated above */
-    --prominent-outline-glow:
-      0 20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},
-      inset 0 -20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
-    &[data-focused] {
-      --prominent-outline-glow: 0 20px 20px -24px transparent, inset 0 -20px 20px -24px transparent,;
-    }
+    --prominent-outer-glow: 0 20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
+    --prominent-inset-glow: inset 0 -20px 20px -24px ${token('outline-glow.gradient.generating.stop-3')},;
   }
 
   &[data-state=idle] {
@@ -128,9 +108,15 @@ const containerBackground = css(`
       &[data-hovered] {
         ${stops('idle', 'hover', 'prominent')}
       }
+
+      &[data-focused] {
+        --prominent-outer-glow: 0 20px 20px -24px transparent,;
+        --prominent-inset-glow: inset 0 -20px 20px -24px transparent,;
+      }
     }
 
     &[data-variant=subtle] {
+      --subtle-shadow: 0 8px 32px ${color('transparent-black-75')},;
       --con-hue-opacity: 0%;
       --bg-stop-1: light-dark(white, ${color('gray-75')});
       --bg-stop-2: light-dark(white, ${color('gray-75')});
@@ -143,6 +129,9 @@ const containerBackground = css(`
         ${stops('idle', 'hover', 'subtle')}
         --border-color: ${token(`container.border.default`)};
         --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
+        &:where([data-size=M]) {
+          --subtle-shadow: 0 0 0 transparent;
+        }
       }
     }
 
@@ -155,19 +144,16 @@ const containerBackground = css(`
       --border-color: ${token(`container.border.focus`)};
       --inset-shadow-color: transparent;
       --drop-shadow-color: transparent;
+      --subtle-shadow: 0 8px 32px ${color('transparent-black-75')},;
     }
   }
 
   &[data-state=generating] {
+    --generating-glow: 0 6px 83px rgb(from ${token('outer-border.gradient.ob-spread-shadow.generating.stop-3')} r g b / var(--spread-shadow-opacity));
     box-shadow:
-      var(--prominent-outline-glow)
-      inset 0 0 0 1px var(--border-color),
-      inset 0 6px 15px 0 var(--inset-shadow-color),
-      inset 0 -32px 100px -50px ${token('container.color.inner-shadow.generating')},
-      inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
-      inset 0 24px 32px 0 ${color('transparent-white-50')},
-      0 -3px 10px 1px var(--drop-shadow-color),
-      0 6px 83px rgb(from ${token('outer-border.gradient.ob-spread-shadow.generating.stop-3')} r g b / var(--spread-shadow-opacity));
+      var(--prominent-outer-glow)
+      0 3px 10px 1px var(--drop-shadow-color),
+      var(--generating-glow);
 
     &[data-variant=balanced] {
       --spread-shadow-opacity: ${token('outer-border.opacity.spread-bg-balanced')}%;
@@ -195,6 +181,113 @@ const containerBackground = css(`
         ${stops('generating', 'hover', 'subtle')}
       }
     }
+
+    &[data-size=S] {
+      --generating-glow: 0 0 0 transparent;
+    }
+  }
+`);
+
+const insetShadow = css(`
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transition: box-shadow ${STATE_TRANSITION};
+
+  box-shadow:
+    var(--prominent-inset-glow)
+    inset 0 0 0 1px var(--border-color),
+    inset 0 6px 15px 0 var(--inset-shadow-color),
+    inset 0 0 0 0 transparent, /* placeholder for generating state so transition is smooth */
+    inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
+    inset 0 24px 32px 0 ${color('transparent-white-50')};
+
+  &[data-state=generating] {
+    box-shadow:
+      var(--prominent-inset-glow)
+      inset 0 0 0 1px var(--border-color),
+      inset 0 6px 15px 0 var(--inset-shadow-color),
+      inset 0 -32px 100px -50px ${token('container.color.inner-shadow.generating')},
+      inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
+      inset 0 24px 32px 0 ${color('transparent-white-50')};
+  }
+`);
+
+const containerHue = css(`
+  background:
+    radial-gradient(
+      50% 50% at -20% 100% in oklch,
+      oklch(from ${token('container.gradient.con-hue.generating.stop-3')} l c h / var(--con-hue-opacity)),
+      transparent
+    ),
+    radial-gradient(
+      70% 60% at 5% 80% in oklch,
+      oklch(from ${token('container.gradient.con-hue.generating.stop-2')} l c h / var(--con-hue-opacity)),
+      transparent
+    ),
+    radial-gradient(
+      70% 50% at 40% 80% in oklch,
+      oklch(from ${token('container.gradient.con-hue.generating.stop-1')} l c h / var(--con-hue-opacity)),
+      transparent
+    );
+
+  --rotation: 7deg;
+  --translation: 44px;
+  @supports (rotate: atan(1px / 1cqw)) {
+    --rotation: atan(30px / 50cqw);
+    --translation: clamp(44px, 44px * (800px / 100cqw), 72px);
+  }
+`);
+
+const overlay = css(`
+  background: 
+    linear-gradient(
+      to bottom in oklch,
+      light-dark(oklch(from white l c h / 75%), oklch(from black l c h / 40%)) 0% 37%,
+      light-dark(oklch(from white l c h / 15%), oklch(from black l c h / 12%)) 83% 100%
+    );
+`);
+
+/* The rotation and translation animations use the computed variables above, which adjust depending
+   on the container width (when division with units is supported - everywhere except Firefox).
+   The rotation is calculated based on the desired "lift" amount, which is (width / 2) * sin(angle).
+   The translation is based on a ratio with the full size reference width (800px). Both translation
+   and rotation increase at smaller widths to make the motion more visible in that space. */
+const rotation = keyframes(`
+  0% { rotate: 0rad }
+  25% { rotate: var(--rotation) }
+  50% { rotate: 0rad }
+  75% { rotate: calc(-1 * var(--rotation)) }
+  100% { rotate: 0rad }
+`);
+
+const translation = keyframes(`
+  0% {
+    animation-timing-function: ease-in-out;
+    translate: 0px 0px;
+  }
+
+  50% {
+    translate: 0px var(--translation);
+  }
+
+  100% {
+    translate: 0px 0px;
+  }
+`);
+
+const scale = keyframes(`
+  0% {
+    scale: 1 1;
+  }
+
+  50% {
+    scale: 3 1;
+  }
+
+  100% {
+    scale: 1 1;
   }
 `);
 
@@ -205,7 +298,7 @@ const outerBorder = css(`
   border-radius: calc(24px + 6px);
   transition: --bg-stop-1 ${STATE_TRANSITION}, --bg-stop-2 ${STATE_TRANSITION}, --bg-stop-3 ${STATE_TRANSITION}, box-shadow ${STATE_TRANSITION};
   background: linear-gradient(
-    to right,
+    to right in oklch,
     var(--bg-stop-1) 0%,
     var(--bg-stop-2) 37%,
     var(--bg-stop-3) 77%
@@ -259,10 +352,20 @@ interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
   brandColor?: string;
   styles?: StyleString;
   inputRef: React.RefObject<HTMLDivElement | null>;
+  size?: 'S' | 'M';
 }
 
 export function PromptFieldContainer(props: PropFieldContainerProps) {
-  let {variant, isGenerating, isDropTarget, styles, inputRef, brandColor, ...otherProps} = props;
+  let {
+    variant,
+    isGenerating,
+    isDropTarget,
+    styles,
+    inputRef,
+    brandColor,
+    size = 'M',
+    ...otherProps
+  } = props;
   let [isFocused, setFocused] = useState(false);
 
   return (
@@ -272,14 +375,17 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
       data-focused={isFocused || undefined}
-      className={outerBorder}
+      className={
+        (size === 'M' ? outerBorder : '') +
+        style({containerType: 'inline-size', flexGrow: 1, display: 'flex'})
+      }
       style={{
         ...props.style,
         // @ts-ignore
         '--brand': brandColor
       }}
       onFocus={e => {
-        if (e.isTrusted) {
+        if (e.isTrusted && nodeContains(inputRef.current, getEventTarget(e))) {
           setFocused(true);
         }
       }}
@@ -306,23 +412,71 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
           data-focused={isFocused || undefined}
           data-variant={variant}
           data-state={isGenerating ? 'generating' : 'idle'}
+          data-size={size}
           className={
-            (props.className || '') +
             ' ' +
             containerBackground +
             mergeStyles(
               style({
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 16,
-                padding: 16,
-                cursor: 'text',
-                borderRadius: '[24px]',
-                position: 'relative'
-              }),
+                borderRadius: {
+                  size: {
+                    M: '[24px]',
+                    S: 'xl'
+                  }
+                },
+                position: 'relative',
+                overflow: 'clip',
+                width: 'full',
+                outlineStyle: 'solid',
+                outlineColor: {
+                  default: 'transparent', // for WHCM
+                  ':has([contenteditable][data-focus-visible])': {
+                    default: 'transparent',
+                    '@media (prefers-contrast: more)': 'gray-1000',
+                    forcedColors: 'Highlight'
+                  }
+                },
+                outlineWidth: {
+                  default: 1,
+                  ':has([contenteditable][data-focus-visible])': 2
+                }
+              })({size}),
               styles
             )
           }>
+          <div
+            className={
+              containerHue +
+              style({
+                pointerEvents: 'none',
+                position: 'absolute',
+                inset: '[-44px]',
+                animation: {
+                  default: 'none',
+                  isGenerating: `${translation}, ${rotation}, ${scale}`,
+                  '@media (prefers-reduced-motion: reduce)': 'none'
+                },
+                animationDuration: '2s, 3s, 4s',
+                animationTimingFunction: 'linear',
+                animationIterationCount: 'infinite',
+                contain: 'strict',
+                willChange: {
+                  isGenerating: 'transform'
+                }
+              })({isGenerating})
+            }
+          />
+          <div
+            className={
+              overlay +
+              style({
+                pointerEvents: 'none',
+                position: 'absolute',
+                inset: 0
+              })
+            }
+          />
+          <div data-state={isGenerating ? 'generating' : 'idle'} className={insetShadow} />
           {isDropTarget && (
             <div
               className={style({
@@ -334,14 +488,32 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 height: '100%',
                 boxSizing: 'border-box',
                 borderRadius: 'inherit',
-                backgroundColor: 'blue-800/10',
+                backgroundColor: {
+                  variant: {
+                    subtle: `[${convertColor(color('indigo-800'), 10)}]`
+                  }
+                },
                 borderStyle: 'solid',
                 borderWidth: 2,
-                borderColor: 'blue-800'
-              })}
+                borderColor: `[${convertColor(color('indigo-800'))}]`
+              })({variant})}
             />
           )}
-          {props.children}
+          <div
+            className={
+              style({
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                padding: 16,
+                cursor: 'text',
+                height: 'full',
+                boxSizing: 'border-box'
+              }) + (props.className || '')
+            }>
+            {props.children}
+          </div>
         </div>
       )}
     </Group>

@@ -14,6 +14,8 @@ import path from 'path';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {VisualExample, VisualExampleProps} from './VisualExample';
 
+const baseDir = process.env.PARCEL_V3 ? __dirname + '/../../../../' : '../../../';
+
 const example = style({
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
@@ -106,7 +108,8 @@ export function CodeBlock({
   }
 
   let resolveFrom = path.resolve(
-    'pages',
+    baseDir,
+    'packages/dev/s2-docs/pages',
     dir || (props.type === 's2' ? 's2' : 'react-aria'),
     'index.tsx'
   );
@@ -275,9 +278,7 @@ export function File({
   maxLines?: number;
   type?: 'vanilla' | 'tailwind' | 's2';
 }) {
-  let contents = readFile(
-    path.isAbsolute(filename) ? filename : path.resolve('../../../', filename)
-  ).replace(STARTER_ALIAS_RE, './');
+  let contents = readFile(path.resolve(baseDir, filename)).replace(STARTER_ALIAS_RE, './');
   return (
     <CodePlatter type={type}>
       <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false} maxLines={maxLines}>
@@ -306,7 +307,7 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
 
   if (type === 'tailwind' && !fileContents['index.css']) {
     fileContents['index.css'] = readFileReplace(
-      path.resolve('../../../starters/tailwind/src/index.css')
+      path.resolve(baseDir, 'starters/tailwind/src/index.css')
     );
   }
 
@@ -314,7 +315,7 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
 }
 
 function findAllFiles(files: string[], npmDeps = {}) {
-  files = files.map(file => (path.isAbsolute(file) ? file : path.resolve('../../../', file)));
+  files = files.map(file => (path.isAbsolute(file) ? file : path.resolve(baseDir, file)));
 
   let queue: string[] = [...files];
   let allFiles = new Set<string>();
@@ -358,7 +359,7 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
 
     let resolved = specifier.startsWith('.')
       ? path.resolve(path.dirname(file), specifier)
-      : path.resolve('../../../' + specifier);
+      : path.resolve(baseDir, specifier);
     if (path.extname(resolved) === '') {
       if (fs.existsSync(resolved + '.tsx')) {
         resolved += '.tsx';

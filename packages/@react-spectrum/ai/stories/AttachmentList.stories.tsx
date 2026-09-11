@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Attachment as AttachmentComponent, AttachmentList} from '../src/AttachmentList';
+import {
+  Attachment as AttachmentComponent,
+  AttachmentList,
+  AttachmentPreview
+} from '../src/AttachmentList';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
-import {Image} from '@react-spectrum/s2/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
@@ -53,7 +56,8 @@ function AttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="Demo file.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -63,7 +67,8 @@ function AttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="Alligator.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -73,7 +78,8 @@ function AttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="Rules.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -83,7 +89,8 @@ function AttachmentListRender(args) {
         isInvalid={isInvalid}
         size={size}
         aria-label="Echidna.pdf">
-        <Image
+        <AttachmentPreview
+          mimeType="application/pdf"
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
@@ -98,4 +105,224 @@ function AttachmentListRender(args) {
 
 export const AIAttachmentList: Story = {
   render: args => <AttachmentListRender {...args} />
+};
+
+function NonImageAttachmentListRender(args) {
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  return (
+    <AttachmentList {...listArgs} styles={style({width: 500})}>
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="report.pdf">
+        <AttachmentPreview mimeType="application/pdf" />
+      </AttachmentComponent>
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="notes.txt">
+        <AttachmentPreview mimeType="text/plain" />
+        <Content>
+          <Text slot="title">notes.txt</Text>
+          <Text slot="description">Plain text document</Text>
+        </Content>
+      </AttachmentComponent>
+      <AttachmentComponent
+        uploadProgress={uploadProgress}
+        isInvalid={isInvalid}
+        size={size}
+        aria-label="data.csv">
+        <AttachmentPreview mimeType="text/csv" />
+        <Content>
+          <Text slot="title">data.csv</Text>
+        </Content>
+      </AttachmentComponent>
+    </AttachmentList>
+  );
+}
+
+export const NonImageAttachments: Story = {
+  render: args => <NonImageAttachmentListRender {...args} />
+};
+
+export const LongContents: Story = {
+  name: 'Long contents',
+  render: (args: any) => (
+    <AttachmentList>
+      <AttachmentComponent
+        size={args.size}
+        styles={style({maxWidth: 300})}
+        aria-label="Very long file name that exceeds the container width.pdf">
+        <AttachmentPreview
+          mimeType="application/pdf"
+          slot="thumbnail"
+          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+        />
+        <Content>
+          <Text slot="title">Very long file name that exceeds the container width.pdf</Text>
+          <Text slot="description">
+            Long long long long long long long long long long description.
+          </Text>
+        </Content>
+      </AttachmentComponent>
+    </AttachmentList>
+  )
+};
+
+function MixedAttachments(args) {
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+
+  return (
+    <div className={style({flexDirection: 'column', display: 'flex', gap: 16})}>
+      <AttachmentList {...listArgs}>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="banner.png">
+          <AttachmentPreview
+            slot="thumbnail"
+            mimeType="image/png"
+            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+          />
+        </AttachmentComponent>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="notes.tsx">
+          <AttachmentPreview mimeType="text/typescript" />
+        </AttachmentComponent>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="video.mp4">
+          <AttachmentPreview mimeType="video/mp4" />
+        </AttachmentComponent>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="debug.zip">
+          <AttachmentPreview mimeType="application/zip" />
+        </AttachmentComponent>
+      </AttachmentList>
+      <AttachmentList {...listArgs}>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="banner.png">
+          <AttachmentPreview
+            slot="thumbnail"
+            mimeType="image/png"
+            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+          />
+          <Content>
+            <Text slot="title">banner.png</Text>
+            <Text slot="description">PNG image</Text>
+          </Content>
+        </AttachmentComponent>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="notes.txt">
+          <AttachmentPreview slot="thumbnail" mimeType="text/plain" />
+          <Content>
+            <Text slot="title">notes.txt</Text>
+            <Text slot="description">Plain text</Text>
+          </Content>
+        </AttachmentComponent>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="video.mp4">
+          <AttachmentPreview slot="thumbnail" mimeType="video/mp4" />
+          <Content>
+            <Text slot="title">video.mp4</Text>
+            <Text slot="description">MP4</Text>
+          </Content>
+        </AttachmentComponent>
+        <AttachmentComponent
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label="debug.zip">
+          <AttachmentPreview slot="thumbnail" mimeType="application/zip" />
+          <Content>
+            <Text slot="title">debug.zip</Text>
+            <Text slot="description">ZIP</Text>
+          </Content>
+        </AttachmentComponent>
+      </AttachmentList>
+    </div>
+  );
+}
+
+export const Mixed: Story = {
+  name: 'Mixed attachements',
+  render: args => <MixedAttachments {...args} />
+};
+
+function CarouselRender(args) {
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  return (
+    <AttachmentList {...listArgs} styles={style({width: 500, maxWidth: 'calc(100vw - 32px)'})}>
+      {Array.from({length: 8}, (_, i) => (
+        <AttachmentComponent
+          key={i}
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label={`file-${i + 1}.pdf`}>
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+          />
+        </AttachmentComponent>
+      ))}
+    </AttachmentList>
+  );
+}
+
+export const Carousel: Story = {
+  name: 'Carousel (overflow)',
+  render: args => <CarouselRender {...args} />
+};
+
+function CarouselCardsRender(args) {
+  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  return (
+    <AttachmentList {...listArgs} styles={style({width: 500, maxWidth: 'calc(100vw - 32px)'})}>
+      {Array.from({length: 6}, (_, i) => (
+        <AttachmentComponent
+          key={i}
+          uploadProgress={uploadProgress}
+          isInvalid={isInvalid}
+          size={size}
+          aria-label={`Card_file_${i + 1}.pdf`}>
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+          />
+          <Content>
+            <Text slot="title">{`Card_file_${i + 1}.pdf`}</Text>
+            <Text slot="description">PDF</Text>
+          </Content>
+        </AttachmentComponent>
+      ))}
+    </AttachmentList>
+  );
+}
+
+export const CarouselCards: Story = {
+  name: 'Carousel with cards (overflow)',
+  render: args => <CarouselCardsRender {...args} />
 };

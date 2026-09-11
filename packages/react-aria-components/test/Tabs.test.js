@@ -20,6 +20,8 @@ import {
 } from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {ComboBox} from '../src/ComboBox';
+import {DialogTrigger} from '../src/Dialog';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem} from '../src/ListBox';
@@ -467,6 +469,41 @@ describe('Tabs', () => {
 
     expect(tabs).toHaveAttribute('data-orientation', 'vertical');
     expect(tabs).toHaveClass('vertical');
+  });
+
+  it('allows user to change tab item selection via arrow keys with vertical tabs (rtl)', async () => {
+    let {getByRole} = render(
+      <I18nProvider locale="ar-AE">
+        <Tabs orientation="vertical">
+          <TabList aria-label="Test">
+            <Tab id="a">A</Tab>
+            <Tab id="b">B</Tab>
+            <Tab id="c">C</Tab>
+          </TabList>
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+          <TabPanel id="c">C</TabPanel>
+        </Tabs>
+      </I18nProvider>
+    );
+
+    let tablist = getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let selectedItem = tabs[0];
+    await user.tab();
+
+    expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowDown}');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    await user.keyboard('{ArrowUp}');
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowLeft}');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    await user.keyboard('{ArrowRight}');
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
   it.each`
@@ -1078,5 +1115,38 @@ describe('Tabs', () => {
     await menu.open();
     expect(menu.getOptions()).toHaveLength(3);
     await menu.close();
+  });
+
+  it('supports DialogTrigger inside Tabs', async () => {
+    let tree = render(
+      <Tabs>
+        <div>
+          <TabList>
+            <Tab id="key1">First Tab</Tab>
+            <Tab id="key2">Second Tab</Tab>
+          </TabList>
+          <DialogTrigger>
+            <Button>Dialog button</Button>
+            <Popover aria-label="Filters">
+              <Menu aria-label="Filter options">
+                <MenuItem>Item 1</MenuItem>
+                <MenuItem>Item 2</MenuItem>
+              </Menu>
+            </Popover>
+          </DialogTrigger>
+        </div>
+        <TabPanel id="key1">First Tab content</TabPanel>
+        <TabPanel id="key2">Second Tab content</TabPanel>
+      </Tabs>
+    );
+
+    let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
+    expect(tester.getTabs().length).toBe(2);
+
+    let trigger = tree.getByRole('button');
+    await user.click(trigger);
+
+    let dialog = tree.getByRole('dialog');
+    expect(within(dialog).getAllByRole('menuitem')).toHaveLength(2);
   });
 });

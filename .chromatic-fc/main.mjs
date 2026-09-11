@@ -5,7 +5,7 @@ export default {
   },
   stories: [
     '../packages/**/chromatic-fc/**/*.stories.{js,jsx,ts,tsx}',
-    '../packages/@react-spectrum/s2/chromatic/*.stories.@(js|jsx|mjs|ts|tsx)'
+    '../packages/@react-spectrum/s2/chromatic/*.stories.{js,jsx,mjs,ts,tsx}'
   ],
   addons:
     process.env.NODE_ENV === 'production' ? [] : ['storybook/actions', '@storybook/addon-a11y'],

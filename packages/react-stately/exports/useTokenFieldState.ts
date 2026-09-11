@@ -19,5 +19,6 @@ export type {
   TokenSegment,
   TextSegment,
   Position,
+  SelectedRange,
   TokenFieldValueOptions
 } from '../src/tokenfield/TokenFieldValue';

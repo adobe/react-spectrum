@@ -2,7 +2,7 @@ import {type TokenFieldSegment, TokenFieldValue} from 'react-aria-components/Tok
 
 export class TagFieldValue extends TokenFieldValue {
   tokenize(text: string): TokenFieldSegment[] {
-    let parts = text.split(/[, \n]/);
+    let parts = text.split(/[,\s\u200B]/);
 
     let segments: TokenFieldSegment[] = parts.map((part, i) => {
       if (i === parts.length - 1 || part.length === 0) {

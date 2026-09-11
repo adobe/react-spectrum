@@ -209,14 +209,19 @@ export class TreeDropTargetDelegate<T> {
       let isLastChildAtLevel = !nextItem || nextItem.parentKey !== parentKey;
 
       if (isLastChildAtLevel) {
-        let afterParentTarget = {
-          type: 'item',
-          key: parentKey,
-          dropPosition: 'after'
-        } as const;
+        // Only items can be drop targets. Ancestors such as a Table's <TableBody> or a
+        // <TreeSection> are part of the collection, but their keys are generated rather than
+        // provided by the user, so dropping "after" them is not something the user can handle.
+        if (parentItem?.type === 'item') {
+          let afterParentTarget = {
+            type: 'item',
+            key: parentKey,
+            dropPosition: 'after'
+          } as const;
 
-        if (isValidDropTarget(afterParentTarget)) {
-          ancestorTargets.push(afterParentTarget);
+          if (isValidDropTarget(afterParentTarget)) {
+            ancestorTargets.push(afterParentTarget);
+          }
         }
         if (nextItem) {
           break;

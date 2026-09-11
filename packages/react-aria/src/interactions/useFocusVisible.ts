@@ -110,17 +110,29 @@ function handleClickEvent(e: MouseEvent) {
 }
 
 function handleFocusEvent(e: FocusEvent) {
+  if (ignoreFocusEvent) {
+    return;
+  }
+
+  let target = getEventTarget(e);
+  let ownerWindow = getOwnerWindow(target);
+  let ownerDocument = getOwnerDocument(target);
+
+  // When the window regains focus, the browser restores focus to the element that was focused
+  // before, firing a focus event the user did not initiate. handleWindowBlur sets
+  // hasBlurredWindowRecently so restored focus doesn't switch to virtual modality below, but
+  // Safari fires the window/element focus pair twice when returning to a tab or app and the first
+  // element focus event clears the flag, so re-arm it whenever the window itself is focused.
+  // Like handleWindowBlur, this intentionally doesn't check isTrusted.
+  if (target === ownerWindow) {
+    hasBlurredWindowRecently = true;
+    return;
+  }
+
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  let ownerWindow = getOwnerWindow(getEventTarget(e));
-  let ownerDocument = getOwnerDocument(getEventTarget(e));
-  if (
-    getEventTarget(e) === ownerWindow ||
-    getEventTarget(e) === ownerDocument ||
-    ignoreFocusEvent ||
-    !e.isTrusted
-  ) {
+  if (target === ownerDocument || !e.isTrusted) {
     return;
   }
 
@@ -145,6 +157,18 @@ function handleWindowBlur() {
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
   hasBlurredWindowRecently = true;
+}
+
+function handleInvalidEvent(e: Event) {
+  let startingActiveElement = getActiveElement(getOwnerDocument(getEventTarget(e)));
+  queueMicrotask(() => {
+    // If focus was moved to a different element after the form became invalid,
+    // then it was likely a forms library that moved focus to the first invalid field.
+    // In this case, we want to set the modality to keyboard.
+    if (getActiveElement(getOwnerDocument(getEventTarget(e))) !== startingActiveElement) {
+      setInteractionModality('keyboard');
+    }
+  });
 }
 
 /**
@@ -183,6 +207,8 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   documentObject.addEventListener('keydown', handleKeyboardEvent, true);
   documentObject.addEventListener('keyup', handleKeyboardEvent, true);
   documentObject.addEventListener('click', handleClickEvent, true);
+
+  documentObject.addEventListener('invalid', handleInvalidEvent, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -229,6 +255,8 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
   documentObject.removeEventListener('click', handleClickEvent, true);
+
+  documentObject.removeEventListener('invalid', handleInvalidEvent, true);
 
   windowObject.removeEventListener('focus', handleFocusEvent, true);
   windowObject.removeEventListener('blur', handleWindowBlur, false);

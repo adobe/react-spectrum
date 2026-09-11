@@ -1,0 +1,126 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+import {Command} from '../../../src/Command';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'September 1, 2026';
+export const title = 'v1.7.0';
+export const description = "This release includes a first preview of React Spectrum's new AI Components, updates workflow icons, refreshes icon sizing to match text line height, and includes several bug fixes";
+export const isSubpage = true;
+
+# v1.7.0
+
+## AI Components
+
+We are excited to announce the first preview of React Spectrum's AI components to help build AI-powered experiences! Developed in close partnership with Spectrum design, this first batch of components covers the core of a chat interface, along with [documentation](../ai-components) to help you get started. 
+
+```tsx render hideCode
+"use client";
+import {useState} from 'react';
+import {
+  Attachment,
+  AttachmentPreview,
+  AttachFileMenuItem,
+  InsertMenuButton,
+  InsertTextMenuItem,
+  PromptField,
+  PromptFieldAttachment,
+  PromptFieldAttachmentList,
+  PromptFieldSubmitButton,
+  PromptFieldToolbar,
+  PromptFieldVoiceButton,
+  PromptFieldValue,
+  PromptTokenField
+} from '@react-spectrum/ai';
+import {Text} from '@react-spectrum/s2';
+import CommentText from '@react-spectrum/s2/icons/CommentText';
+
+function PromptAttachments() {
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([
+    {id: '0', file: new File([], 'preview.png', {type: 'image/png'}), image: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
+    {id: '1', file: new File([], 'notes.txt', {type: 'text/plain'}), image: ''}
+  ]);
+
+  return (
+    <PromptField
+      defaultValue={new PromptFieldValue([])}
+      attachments={attachments}
+      onAttachmentsChange={setAttachments}
+      acceptedAttachmentTypes={['*/*']}>
+      {/*- begin highlight -*/}
+      <PromptFieldAttachmentList>
+        {attachment => (
+          <Attachment textValue={attachment.file.name}>
+            <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
+          </Attachment>
+        )}
+      </PromptFieldAttachmentList>
+      {/*- end highlight -*/}
+      <PromptTokenField placeholder="Describe the image" />
+      <PromptFieldToolbar>
+        <InsertMenuButton>
+          <AttachFileMenuItem />
+          <InsertTextMenuItem id="summarize" text="Summarize this image">
+            <CommentText />
+            <Text>Summarize image</Text>
+          </InsertTextMenuItem>
+        </InsertMenuButton>
+        <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+          <PromptFieldVoiceButton />
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+}
+```
+
+AI components are published as a separate package from `@react-spectrum/s2`.
+
+<InstallCommand pkg="@react-spectrum/ai" />
+
+## Icon size updates
+
+Spectrum has updated the intended size of workflow icons relative to surrounding text. This is an intentional design update but it does mean icons may render at a different size from before post update. If you rely on visual regression tests, expect diffs around icon sizing and update your baselines accordingly.
+
+## Changelog
+
+### General Changes
+- Upgrade to TypeScript 7 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10461)
+### ActionBar
+- Fix the close button icon color so it meets contrast in dark mode - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10429)
+### Avatar
+- Show Avatars when a ComboBox or Picker is rendered inside a Dialog - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10482)
+### Icons
+- Size icons to match the text line height using the `lh` unit - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10414)
+- Update S2 workflow icons to `v7.1.0` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10522)
+### ListView
+- Fix the workflow icon size - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10514)
+### Menu
+- Set `staticColor` to `auto` for buttons inside a Menu so their colors adapt to the background - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10474)
+### TableView
+- Fix an invalid empty `:has()` selector emitted in TableView CSS - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10469)
+### Tooltip
+- Update Tooltip docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10413)
+
+## Released packages
+
+```
+ - @react-spectrum/ai@0.3.0
+ - @react-spectrum/s2@1.7.0
+```

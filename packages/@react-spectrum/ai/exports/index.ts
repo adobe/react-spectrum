@@ -1,4 +1,5 @@
-export {Attachment, AttachmentList} from '../src/AttachmentList';
+export {Alert} from '../src/Alert';
+export {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentList';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
@@ -35,8 +36,14 @@ export {
 export {TokenFieldValue} from 'react-aria-components/TokenField';
 export {UserMessage} from '../src/UserMessage';
 export {PixelLoader} from '../src/loader/react';
+export {AIButton} from '../src/AIButton';
 
-export type {AttachmentProps, AttachmentListProps} from '../src/AttachmentList';
+export type {AlertProps} from '../src/Alert';
+export type {
+  AttachmentProps,
+  AttachmentListProps,
+  AttachmentPreviewProps
+} from '../src/AttachmentList';
 export type {
   PromptFieldProps,
   PromptFieldSubmitButtonProps,
@@ -46,7 +53,9 @@ export type {
   PromptFieldAttachmentListProps,
   PromptTokenFieldPopoverProps,
   PromptFieldToolbarProps,
+  PromptFieldTokenValue,
   InsertMenuItemProps,
+  AttachFileMenuItemProps,
   PromptFieldVoiceButtonProps,
   InsertTokenMenuItemProps,
   InsertTextMenuItemProps,
@@ -72,3 +81,4 @@ export type {
 export type {TokenFieldValueOptions} from 'react-aria-components/TokenField';
 export type {UserMessageProps} from '../src/UserMessage';
 export type {PixelLoaderProps} from '../src/loader/react';
+export type {AIButtonProps} from '../src/AIButton';

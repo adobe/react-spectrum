@@ -34,32 +34,45 @@ for (let pkg of fs.globSync(['packages/@react-{spectrum,aria,stately}/*/'])) {
 // Add extra shims for bundlers that don't support package.json exports, specifically webpack 4 and Parcel (without config).
 for (let pkg of ['@adobe/react-spectrum', 'react-aria', 'react-stately', 'react-aria-components']) {
   for (let file of fs.globSync(`packages/${pkg}/dist/exports/**/*.js`)) {
-    if (file.endsWith('index.js')) {
-      continue;
+    if (!file.endsWith('index.js')) {
+      writePackageExportShim(file);
     }
-
-    // webpack 4 does not support importing non-ESM modules from .mjs files, so rename to .js
-    // This should be sufficient because Parcel prioritizes .js over .cjs.
-    // We do not support any tools that only support CommonJS.
-    let shim = file.replace('/dist/exports/', '/');
-    let specifier = path.relative(shim, file);
-
-    let dir = shim.replace('.js', '');
-    fs.mkdirSync(dir, {recursive: true});
-    fs.writeFileSync(
-      dir + '/package.json',
-      JSON.stringify(
-        {
-          main: specifier.replace('.js', '.cjs'),
-          module: specifier,
-          types: path.relative(
-            shim,
-            file.replace('/dist/exports/', '/dist/types/exports/').replace('.js', '.d.ts')
-          )
-        },
-        null,
-        2
-      ) + '\n'
-    );
   }
+}
+
+if (process.env.PARCEL_V3) {
+  // S2 icons use a package self-reference so that Icon is shared across the separate icon and
+  // component build targets. Only add this shim because other S2 subpaths do not need legacy support.
+  let s2Icon = 'packages/@react-spectrum/s2/dist/exports/Icon.mjs';
+  if (fs.existsSync(s2Icon)) {
+    writePackageExportShim(s2Icon);
+  }
+}
+
+function writePackageExportShim(file) {
+  let extension = path.extname(file);
+
+  // webpack 4 does not support importing non-ESM modules from .mjs files, so most packages use
+  // the generated .js variant. S2 is built directly to .mjs and only needs the Icon shim.
+  let shim = file.replace('/dist/exports/', '/');
+  let specifier = path.relative(shim, file);
+
+  let dir = shim.slice(0, -extension.length);
+  fs.mkdirSync(dir, {recursive: true});
+  fs.writeFileSync(
+    dir + '/package.json',
+    JSON.stringify(
+      {
+        main: specifier.slice(0, -extension.length) + '.cjs',
+        module: specifier,
+        types: path.relative(
+          shim,
+          file.replace('/dist/exports/', '/dist/types/exports/').slice(0, -extension.length) +
+            '.d.ts'
+        )
+      },
+      null,
+      2
+    ) + '\n'
+  );
 }

@@ -151,7 +151,10 @@ export const setColorScheme = () =>
       type: 'colorScheme',
       value: {
         colorScheme: {
-          'light dark': 'light dark',
+          'light dark': {
+            default: 'light',
+            '@media (prefers-color-scheme: dark)': 'dark'
+          },
           light: 'light',
           dark: 'dark'
         }

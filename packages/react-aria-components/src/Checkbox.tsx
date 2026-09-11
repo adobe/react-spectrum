@@ -39,7 +39,7 @@ import {HoverEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
@@ -89,7 +89,7 @@ export interface CheckboxProps
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: RefObject<HTMLInputElement | null>;
+  inputRef?: Ref<HTMLInputElement | null>;
 }
 
 export interface CheckboxFieldProps
@@ -109,7 +109,7 @@ export interface CheckboxFieldProps
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: RefObject<HTMLInputElement | null>;
+  inputRef?: Ref<HTMLInputElement | null>;
 }
 
 export interface CheckboxButtonProps
@@ -429,7 +429,7 @@ export const CheckboxField = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
 
 function useCheckboxAria(
   props: CheckboxProps | CheckboxFieldProps,
-  userProvidedInputRef: RefObject<HTMLInputElement | null> | null
+  userProvidedInputRef: Ref<HTMLInputElement | null> | null
 ): [CheckboxAria, RefObject<HTMLInputElement | null>] {
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';

@@ -1,7 +1,7 @@
 import {style} from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
 import {highlight} from './highlight' with {type: 'macro'};
 import {H2, H3, H3, P, Pre, Code, Strong, H4, Link} from './typography';
-import {MDXProvider} from '@mdx-js/react';
+import {cloneElement} from 'react';
 
 const mdxComponents = {
   h1: ({children}) => <h1 className={style({font: 'heading-2xl'})}>{children}</h1>,
@@ -23,7 +23,7 @@ export function MDXLayout({children}) {
   return (
     <div className={'sb-unstyled ' + style({marginX: 'auto'})}>
       <main className={style({marginX: 48})}>
-        <MDXProvider components={mdxComponents}>{children}</MDXProvider>
+        {cloneElement(children, {components: mdxComponents})}
       </main>
     </div>
   );

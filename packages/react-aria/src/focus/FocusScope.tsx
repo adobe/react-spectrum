@@ -538,7 +538,7 @@ function focusElement(element: FocusableElement | null, scroll = false) {
   }
 }
 
-function getFirstInScope(scope: Element[], tabbable = true) {
+function getFirstInScope(scope: Element[], tabbable = true): FocusableElement | null {
   let sentinel = scope[0].previousElementSibling!;
   let scopeRoot = getScopeRoot(scope);
   let walker = getFocusableTreeWalker(scopeRoot, {tabbable}, scope);
@@ -553,7 +553,8 @@ function getFirstInScope(scope: Element[], tabbable = true) {
     nextNode = walker.nextNode();
   }
 
-  return nextNode as FocusableElement;
+  // TreeWalker.nextNode() returns null when the scope contains no focusable element.
+  return nextNode as FocusableElement | null;
 }
 
 function focusFirstInScope(scope: Element[], tabbable: boolean = true) {
@@ -811,8 +812,12 @@ function useRestoreFocus(
               ) {
                 // oxlint-disable-next-line react-hooks/exhaustive-deps
                 let node = getFirstInScope(treeNode.scopeRef.current, true);
-                restoreFocusToElement(node);
-                return;
+                // The scope may have nothing focusable in it, e.g. if its focusable
+                // content was removed or hidden. Keep walking up in that case.
+                if (node) {
+                  restoreFocusToElement(node);
+                  return;
+                }
               }
               treeNode = treeNode.parent;
             }

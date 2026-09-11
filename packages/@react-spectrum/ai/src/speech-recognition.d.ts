@@ -13,71 +13,66 @@
 // Ambient declarations for parts of the Web Speech API missing from TypeScript's
 // lib.dom.d.ts: the recognizer constructor, its vendor-prefixed alias, event
 // types, and the User-Agent Client Hints surface used for the Chromium browser
-// allowlist. SpeechRecognitionAlternative, SpeechRecognitionResult, and
-// SpeechRecognitionResultList ARE provided by lib.dom and are not redeclared.
+// allowlist. SpeechRecognitionAlternative, SpeechRecognitionResult,
+// SpeechRecognitionResultList, and SpeechRecognitionErrorCode ARE provided by
+// lib.dom and are not redeclared.
 // Spec: https://wicg.github.io/speech-api/
 
-type SpeechRecognitionErrorCode =
-  | 'no-speech'
-  | 'aborted'
-  | 'audio-capture'
-  | 'network'
-  | 'not-allowed'
-  | 'service-not-allowed'
-  | 'language-not-supported'
-  | 'phrases-not-supported';
+export {};
 
-interface SpeechRecognitionEvent extends Event {
-  readonly resultIndex: number;
-  readonly results: SpeechRecognitionResultList;
-}
+declare global {
+  interface SpeechRecognitionEvent extends Event {
+    readonly resultIndex: number;
+    readonly results: SpeechRecognitionResultList;
+  }
 
-interface SpeechRecognitionErrorEvent extends Event {
-  readonly error: SpeechRecognitionErrorCode;
-  readonly message: string;
-}
+  interface SpeechRecognitionErrorEvent extends Event {
+    readonly error: SpeechRecognitionErrorCode;
+    readonly message: string;
+  }
 
-interface SpeechRecognition extends EventTarget {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  maxAlternatives: number;
-  start(): void;
-  stop(): void;
-  abort(): void;
-  onaudiostart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onsoundstart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onspeechstart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onspeechend: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onsoundend: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onaudioend: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
-  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
-  onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => void) | null;
-}
+  interface SpeechRecognition extends EventTarget {
+    lang: string;
+    continuous: boolean;
+    interimResults: boolean;
+    maxAlternatives: number;
+    start(): void;
+    stop(): void;
+    abort(): void;
+    onaudiostart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onsoundstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onspeechstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onspeechend: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onsoundend: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onaudioend: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+    onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+    onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
+    onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  }
 
-interface SpeechRecognitionConstructor {
-  new (): SpeechRecognition;
-}
+  interface SpeechRecognitionConstructor {
+    new (): SpeechRecognition;
+  }
 
-interface Window {
-  SpeechRecognition?: SpeechRecognitionConstructor;
-  webkitSpeechRecognition?: SpeechRecognitionConstructor;
-}
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  }
 
-// User-Agent Client Hints — present in Chromium, absent in Safari/Firefox.
-interface NavigatorUABrandVersion {
-  readonly brand: string;
-  readonly version: string;
-}
+  // User-Agent Client Hints — present in Chromium, absent in Safari/Firefox.
+  interface NavigatorUABrandVersion {
+    readonly brand: string;
+    readonly version: string;
+  }
 
-interface NavigatorUAData {
-  readonly brands: ReadonlyArray<NavigatorUABrandVersion>;
-  readonly platform?: string;
-}
+  interface NavigatorUAData {
+    readonly brands: ReadonlyArray<NavigatorUABrandVersion>;
+    readonly platform?: string;
+  }
 
-interface Navigator {
-  readonly userAgentData?: NavigatorUAData;
+  interface Navigator {
+    readonly userAgentData?: NavigatorUAData;
+  }
 }

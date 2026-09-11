@@ -20,18 +20,21 @@ import {
   useMemo,
   useRef
 } from 'react';
-import {getActiveElement} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getInteractionModality, setInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
+import {getScrollParents} from '../utils/getScrollParents';
 import {isMac} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {
   Position,
+  SelectedRange,
   TokenFieldProps,
   TokenFieldSegment,
   TokenFieldState,
   TokenFieldValue
 } from 'react-stately/useTokenFieldState';
-import {setInteractionModality} from '../interactions/useFocusVisible';
+import {scrollRectIntoView} from '../utils/scrollIntoView';
 import {useEvent} from '../utils/useEvent';
 import {useField} from '../label/useField';
 import {useFocusable} from '../interactions/useFocusable';
@@ -175,19 +178,18 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
     nextValue.current = value;
   });
 
-  let caretPosition = useRef<Position | null>(null);
+  let selectedRange = useRef<SelectedRange | null>(null);
   useLayoutEffect(() => {
-    if (
-      ref.current &&
-      value.caretPosition &&
-      !state.isComposing &&
-      value.caretPosition !== caretPosition.current
-    ) {
+    if (ref.current && !state.isComposing && value.selectedRange !== selectedRange.current) {
       // Only move the caret when the field is already focused.
       if (ref.current === getActiveElement(getOwnerDocument(ref.current))) {
-        setCursor(ref.current, value.caretPosition);
+        setTokenFieldSelection(ref.current, value.selectedRange);
+        announceToken(value);
+        // We call preventDefault in the beforeinput handler below, which also prevents the
+        // browser's default behavior of scrolling the caret into view. Do it ourselves instead.
+        scrollCaretIntoView(ref.current);
       }
-      caretPosition.current = value.caretPosition;
+      selectedRange.current = value.selectedRange;
     }
   });
 
@@ -198,11 +200,14 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       stopComposition();
     }
 
-    let selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return;
+    let range = e.getTargetRanges()[0];
+    if (!range) {
+      let selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        return;
+      }
+      range = selection.getRangeAt(0);
     }
-    let range = selection.getRangeAt(0);
     let [start, end] = rangeToPositions(ref.current!, range);
 
     // https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes
@@ -277,7 +282,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       case 'deleteContent':
       case 'deleteByCut':
       case 'deleteCompositionText': {
-        if (!range.collapsed) {
+        if (!range.collapsed && !isSamePosition(start, end)) {
           apply(tokens => tokens.replaceRange(start, end, ''));
           break;
         }
@@ -393,20 +398,34 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
 
     // When the cursor moves next to a token, announce it.
     // Otherwise the screen reader will only announce the first/last character.
-    if (window.getSelection()?.isCollapsed) {
-      let [start, end] = getSelection(ref.current!)!;
-      if (start.offset === 0) {
-        let segment = value.segments[start.index];
-        if (segment?.type !== 'token') {
-          segment = value.segments[start.index - 1];
-        }
-        if (segment?.type === 'token') {
-          announce(segment.text, 'assertive');
-        }
+    let range = getSelectedRange(ref.current!);
+    if (!range) {
+      return;
+    }
 
-        // Update the caret position in the value.
-        state.setValue(value => value.withCaretPosition(end));
-      }
+    announceToken(value, range);
+
+    // Update the selected range in the value.
+    state.setValue(value => value.withSelectedRange(range));
+  });
+
+  // Clear selection on blur.
+  useEvent(ref, 'blur', e => {
+    if (!e.isTrusted) {
+      return;
+    }
+
+    let selection = window.getSelection();
+    if (
+      ref.current &&
+      selection &&
+      selection.containsNode(ref.current, true) &&
+      !selection.isCollapsed
+    ) {
+      selection.removeAllRanges();
+      state.setValue(value =>
+        value.withSelectedRange(new TokenFieldValue.SelectedRange(value.caretPosition))
+      );
     }
   });
 
@@ -423,7 +442,7 @@ export function useTokenField<T extends TokenFieldValue = TokenFieldValue>(
       let end = value.findLineBoundary(selection[1], TokenFieldValue.Direction.Forward);
       if (start && end) {
         e.preventDefault();
-        setTokenFieldSelection(ref.current!, start, end, true);
+        setTokenFieldSelection(ref.current!, new TokenFieldValue.SelectedRange(start, end), true);
       }
     }
   });
@@ -613,13 +632,34 @@ export function getSelection(container: Element): [Position, Position] | null {
   return rangeToPositions(container, range);
 }
 
+export function getSelectedRange(container: Element) {
+  let selection = window.getSelection();
+  if (
+    !selection ||
+    !selection.anchorNode ||
+    !selection.focusNode ||
+    !nodeContains(container, selection.anchorNode) ||
+    !nodeContains(container, selection.focusNode)
+  ) {
+    return null;
+  }
+  let anchor = getPosition(container, selection.anchorNode, selection.anchorOffset, false);
+  let current = getPosition(
+    container,
+    selection.focusNode,
+    selection.focusOffset,
+    !selection.isCollapsed
+  );
+  return new TokenFieldValue.SelectedRange(anchor, current);
+}
+
 function rangeToPositions(container: Element, range: Range | StaticRange): [Position, Position] {
-  let start = getPosition(container, range.startContainer, range.startOffset);
-  let end = getPosition(container, range.endContainer, range.endOffset);
+  let start = getPosition(container, range.startContainer, range.startOffset, false);
+  let end = getPosition(container, range.endContainer, range.endOffset, !range.collapsed);
   return [start, end];
 }
 
-function getPosition(container: Element, node: Node, offset: number): Position {
+function getPosition(container: Element, node: Node, offset: number, isRangeEnd = false): Position {
   if (node === container) {
     return {index: offset, offset: 0};
   }
@@ -636,7 +676,7 @@ function getPosition(container: Element, node: Node, offset: number): Position {
     let endOffset = 0;
     if (originalNode === tokenNode) {
       // Cursor is inside the token.
-      atEnd = offset > 0;
+      atEnd = isRangeEnd || offset > 0;
     } else if (originalNode === node) {
       // Cursor is inside the wrapper element.
       atEnd = offset > 1;
@@ -666,57 +706,146 @@ function getPosition(container: Element, node: Node, offset: number): Position {
 let isProgrammaticSelectionChange = Symbol('isProgrammaticSelectionChange');
 
 function setCursor(root: Element, pos: Position, fireEvent = false) {
-  setTokenFieldSelection(root, pos, pos, fireEvent);
+  setTokenFieldSelection(root, new TokenFieldValue.SelectedRange(pos), fireEvent);
 }
 
 export function setTokenFieldSelection(
   root: Element,
-  start: Position,
-  end: Position,
+  selectedRange: SelectedRange,
   fireEvent = false
 ) {
   let selection = window.getSelection();
   if (selection) {
-    let range = createDOMRange(root, start, end);
+    // Use setBaseAndExtent to preserve the selection direction. A plain Range +
+    // addRange always produces a forward selection and collapses when the
+    // anchor comes after the current position (backward selections).
+    let [anchorNode, anchorOffset] = getDOMPosition(root, selectedRange.anchor);
+    let [focusNode, focusOffset] = getDOMPosition(root, selectedRange.current);
     root[isProgrammaticSelectionChange] = !fireEvent;
-    selection.removeAllRanges();
-    selection.addRange(range);
+
+    // Only set selection if it has changed, because this can clobber the browser's selection direction.
+    if (
+      selection.anchorNode !== anchorNode ||
+      selection.anchorOffset !== anchorOffset ||
+      selection.focusNode !== focusNode ||
+      selection.focusOffset !== focusOffset
+    ) {
+      selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    }
+  }
+}
+
+// Calling preventDefault in the beforeinput handler stops the browser from performing its
+// default edit action, which also suppresses its normal behavior of scrolling the caret into
+// view. Recreate that behavior by measuring the caret's position with a Range and
+// scrolling each scrollable ancestor of the field so it is visible.
+function scrollCaretIntoView(root: HTMLElement): void {
+  let selection = window.getSelection();
+  if (
+    getInteractionModality() !== 'keyboard' ||
+    !selection ||
+    selection.rangeCount === 0 ||
+    !nodeContains(root, selection.focusNode)
+  ) {
+    return;
+  }
+
+  let range = selection.getRangeAt(0);
+  let rect = range.getBoundingClientRect();
+
+  // A collapsed range doesn't always produce a client rect. This happens for empty lines.
+  if (rect.top === 0 && rect.bottom === 0 && rect.left === 0 && rect.right === 0) {
+    let node: Node | null = range.endContainer;
+    if (node.nodeType === Node.TEXT_NODE && range.endOffset < node.nodeValue!.length) {
+      // If we are not at the end of the text node, extend the range to include the next character.
+      range = range.cloneRange();
+      range.setEnd(node, range.endOffset + 1);
+      rect = range.getBoundingClientRect();
+    } else if (root.firstChild == null) {
+      // If the root has no children, use its rect.
+      rect = root.getBoundingClientRect();
+    } else {
+      // Otherwise find the next sibling element (e.g. trailing <br>) and use its rect in this case.
+      let nextSibling = node.nextSibling;
+      while (node && node !== root && !nextSibling) {
+        node = node.parentNode as Node | null;
+        nextSibling = node ? node.nextSibling : null;
+      }
+
+      if (nextSibling?.nodeType === Node.ELEMENT_NODE) {
+        rect = (nextSibling as HTMLElement).getBoundingClientRect();
+      }
+    }
+  }
+
+  for (let element of getScrollParents(root, true)) {
+    // scrollRectIntoView only scrolls a single scroll parent based on `rect`, which is a
+    // snapshot of the caret's position before any scrolling occurs. Scrolling an inner ancestor
+    // moves the caret within the viewport, so translate `rect` by however much we just scrolled
+    // before moving on to the next (outer) ancestor.
+    let scrollParent = element as HTMLElement;
+    let beforeTop = scrollParent.scrollTop;
+    let beforeLeft = scrollParent.scrollLeft;
+    scrollRectIntoView(scrollParent, root, rect, {block: 'nearest', inline: 'nearest'});
+    let dy = scrollParent.scrollTop - beforeTop;
+    let dx = scrollParent.scrollLeft - beforeLeft;
+    if (dy !== 0 || dx !== 0) {
+      rect = new DOMRect(rect.x - dx, rect.y - dy, rect.width, rect.height);
+    }
   }
 }
 
 export function tokenFieldPositionToDOMRange(root: Element, pos: Position): Range {
-  return createDOMRange(root, pos, pos);
+  // Unlike createDOMRange (used for caret/selection placement), this range is only
+  // measured via getBoundingClientRect to position things like an autocomplete popover.
+  // Place the endpoints inside the token's zero width space wrappers so the range has a
+  // valid rect at the token, rather than a collapsed root-level position.
+  let range = document.createRange();
+  let [startContainer, startOffset] = getDOMRectPosition(root, pos);
+  range.setStart(startContainer, startOffset);
+  range.setEnd(startContainer, startOffset);
+  return range;
+}
+
+function getDOMRectPosition(root: Element, pos: Position): [Node, number] {
+  let child = root.childNodes[pos.index];
+  if (child && child.nodeType === Node.ELEMENT_NODE) {
+    // Place the position inside the zero width space wrappers around the token.
+    if (pos.offset > 0) {
+      return [child.lastChild!, 1];
+    } else {
+      return [child.firstChild!, 0];
+    }
+  }
+  return getDOMPosition(root, pos);
 }
 
 function createDOMRange(root: Element, start: Position, end: Position): Range {
   let range = document.createRange();
-  let startChild = root.childNodes[start.index];
-  if (!startChild) {
-    range.setStart(root, Math.min(root.childNodes.length, start.index));
-  } else if (startChild.nodeType === Node.ELEMENT_NODE) {
-    // Place the cursor outside the token wrapper element.
-    if (start.offset > 0) {
-      range.setStartAfter(startChild);
-    } else {
-      range.setStartBefore(startChild);
-    }
-  } else {
-    range.setStart(startChild, start.offset);
-  }
-
-  let endChild = root.childNodes[end.index];
-  if (!endChild) {
-    range.setEnd(root, Math.min(root.childNodes.length, end.index));
-  } else if (endChild.nodeType === Node.ELEMENT_NODE) {
-    if (end.offset > 0) {
-      range.setEndAfter(endChild);
-    } else {
-      range.setEndBefore(endChild);
-    }
-  } else {
-    range.setEnd(endChild, end.offset);
-  }
+  let [startContainer, startOffset] = getDOMPosition(root, start);
+  let [endContainer, endOffset] = getDOMPosition(root, end);
+  range.setStart(startContainer, startOffset);
+  range.setEnd(endContainer, endOffset);
   return range;
+}
+
+function getDOMPosition(root: Element, pos: Position): [Node, number] {
+  let index = Math.max(0, Math.min(root.childNodes.length, pos.index));
+  let child = root.childNodes[index];
+  if (!child) {
+    return [root, index];
+  } else if (child.nodeType === Node.ELEMENT_NODE) {
+    // Place the cursor outside the token wrapper element.
+    // This is necessary for composition events.
+    if (pos.offset > 0) {
+      return [root, index + 1];
+    } else {
+      return [root, index];
+    }
+  } else {
+    let offset = Math.max(0, Math.min(child.textContent?.length ?? 0, pos.offset));
+    return [child, offset];
+  }
 }
 
 function isSamePosition(a: Position, b: Position): boolean {
@@ -831,4 +960,27 @@ function trackMutations(element: Element) {
       }
     }
   };
+}
+
+function announceToken(value: TokenFieldValue, range = value.selectedRange) {
+  if (range.isCollapsed) {
+    // Announce adjacent tokens.
+    let segment = value.segments[range.current.index];
+    if (segment && segment.type !== 'token') {
+      if (range.current.offset === 0) {
+        segment = value.segments[range.current.index - 1];
+      } else if (range.current.offset === segment.text.length) {
+        segment = value.segments[range.current.index + 1];
+      }
+    }
+    if (segment?.type === 'token') {
+      announce(segment.text, 'assertive');
+    }
+  } else {
+    // Announce token if it is the only thing selected.
+    let selected = value.slice(range.start, range.end).segments;
+    if (selected.length === 1 && selected[0].type === 'token') {
+      announce(selected[0].text, 'assertive');
+    }
+  }
 }

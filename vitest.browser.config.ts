@@ -136,8 +136,11 @@ function iconWrapperPlugin(): Plugin {
     name: 'icon-wrapper',
     enforce: 'pre',
     resolveId(source) {
-      if (source.startsWith('@react-spectrum/s2/icons/')) {
-        const iconName = source.replace('@react-spectrum/s2/icons/', '');
+      // Match both the bare specifier and the form produced after the
+      // `@react-spectrum/s2` -> exports alias rewrites it to `.../exports/icons/<Name>`.
+      const match = source.match(/(?:@react-spectrum\/s2|[\\/]exports)[\\/]icons[\\/](.+)$/);
+      if (match) {
+        const iconName = match[1];
         if (iconMap.has(iconName)) {
           return VIRTUAL_PREFIX + iconName;
         }

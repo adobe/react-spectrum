@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Jauns ziņojums",
   "chat.scrollToBottom": "Ritiniet uz leju",
   "messagefeedback.thumbDown": "Slikta atbilde",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "Pievienot",
   "promptfield.label": "Uzvedne",
   "promptfield.placeholder": "Vai esat gatavs sākt? Uzdodiet jautājumu, dalieties pārdomās vai pievienojiet jaunu uzdevumu.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Apstājies",
   "promptfield.submitButton": "Sūtīt",
   "promptfield.uploading": "Augšupielāde",
   "responsestatus.loading": "Notiek ielāde",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Sāciet ierakstīt",
-  "voicebutton.stopListening": "Pārtraukt ierakstu"
+  "voicebutton.stopListening": "Pārtraukt ierakstu",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

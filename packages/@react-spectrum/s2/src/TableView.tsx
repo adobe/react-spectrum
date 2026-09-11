@@ -59,6 +59,7 @@ import {
   CollectionRendererContext,
   DefaultCollectionRenderer
 } from 'react-aria-components/CollectionBuilder';
+import {ColorSchemeContext} from './Provider';
 import {ColumnSize} from 'react-stately/useTableState';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
@@ -1144,7 +1145,7 @@ const selectAllCheckboxColumn = style({
   },
   paddingEnd: {
     default: 0,
-    ':has(slot="selection")': 8
+    ':has([slot="selection"])': 8
   },
   paddingY: 0,
   height: 'full',
@@ -1657,6 +1658,7 @@ function EditableCellInner(
   let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
 
   let {density, keyboardNavigationBehavior} = useContext(InternalTableContext);
+  let colorScheme = useContext(ColorSchemeContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
   if (density === 'compact') {
     size = 'S';
@@ -1787,7 +1789,7 @@ function EditableCellInner(
               // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
               zIndex: undefined
             }}
-            className={editPopover}>
+            className={renderProps => editPopover({...renderProps, colorScheme})}>
             <Provider values={[[OverlayTriggerStateContext, null]]}>
               <Form
                 ref={formRef}

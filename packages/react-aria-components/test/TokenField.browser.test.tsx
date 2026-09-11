@@ -854,10 +854,7 @@ describeOrSkip('TokenField browser interactions', () => {
       await navigateCaret(textbox, multiline, {index: 0, offset: 11});
       let mod = modKey();
       await userEvent.keyboard(`{${mod}>}{Backspace}{/${mod}}`);
-      // macOS has a delete-to-line-start shortcut (Cmd+Backspace) that removes the line including
-      // its leading newline. Windows/Linux have no such shortcut: Ctrl+Backspace deletes the
-      // previous word ("world"), leaving the newline behind.
-      await waitForFieldText(getValue, isMacPlatform() ? 'hello' : 'hello\n');
+      await waitForFieldText(getValue, 'hello\n');
     });
 
     it('deletes forward to end of line with line-delete forward shortcut', async () => {
@@ -1134,6 +1131,24 @@ describeOrSkip('TokenField browser interactions', () => {
         await userEvent.keyboard('{Control>}y{/Control}');
       }
       await waitForFieldText(getValue, 'b');
+    });
+
+    it('restores the selection when undoing a replacement', async () => {
+      let list = segments(text('abcde'));
+      let {textbox, getValue} = await renderControlledTokenField(list);
+      let el = textbox.element();
+      await focusField(textbox);
+      // Select "bcd".
+      setFieldSelection(el, {index: 0, offset: 1}, {index: 0, offset: 4});
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 4});
+      // Replace the selection by typing.
+      await userEvent.keyboard('X');
+      await waitForFieldText(getValue, 'aXe');
+      // Undo restores both the text and the selection that was replaced.
+      let mod = modKey();
+      await userEvent.keyboard(`{${mod}>}z{/${mod}}`);
+      await waitForFieldText(getValue, 'abcde');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 4});
     });
   });
 });

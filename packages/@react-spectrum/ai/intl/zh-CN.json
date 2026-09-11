@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "新消息",
   "chat.scrollToBottom": "滚动到底部",
   "messagefeedback.thumbDown": "错误响应",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "添加",
   "promptfield.label": "提示词",
   "promptfield.placeholder": "准备好开始了吗？提出问题、分享想法或添加任务。",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "停止",
   "promptfield.submitButton": "发送",
   "promptfield.uploading": "正在上载",
   "responsestatus.loading": "加载",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "开始录制",
-  "voicebutton.stopListening": "停止录制"
+  "voicebutton.stopListening": "停止录制",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

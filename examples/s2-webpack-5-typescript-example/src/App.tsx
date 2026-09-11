@@ -19,6 +19,7 @@ import {
   Button,
   ButtonGroup,
   Cell,
+  Collection,
   Column,
   Divider,
   Heading,
@@ -31,6 +32,10 @@ import {
   PickerItem,
   Provider,
   Row,
+  SideNav,
+  SideNavItem,
+  SideNavItemContent,
+  SideNavItemLink,
   SubmenuTrigger,
   TableBody,
   TableHeader,
@@ -44,15 +49,101 @@ import {
 } from '@react-spectrum/s2';
 import {CardViewExample} from './components/CardViewExample';
 import {CollectionCardsExample} from './components/CollectionCardsExample';
+import Delete from '@react-spectrum/s2/icons/Delete';
 import Edit from '@react-spectrum/s2/icons/Edit';
+import File from '@react-spectrum/s2/icons/File';
 import FileTxt from '@react-spectrum/s2/icons/FileText';
 import Folder from '@react-spectrum/s2/icons/Folder';
+import {RouterProvider} from 'react-aria-components';
 import {LoadingState} from '@react-types/shared';
 import React, {useState} from 'react';
 import Section from './components/Section';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const Lazy = React.lazy(() => import('./Lazy'));
+
+interface SideNavItemData {
+  id: number;
+  title: string;
+  type: 'directory' | 'file';
+  href?: string;
+  children?: SideNavItemData[];
+}
+
+let sideNavItems: SideNavItemData[] = [
+  {
+    id: 1,
+    title: 'Documents',
+    type: 'directory',
+    children: [
+      {
+        id: 2,
+        title: 'Project',
+        type: 'directory',
+        children: [
+          {id: 3, title: 'Notes', type: 'file', href: '/notes'},
+          {id: 4, title: 'Budget', type: 'file', href: '/budget'}
+        ]
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: 'Photos',
+    type: 'directory',
+    children: [
+      {id: 6, title: 'Image 1', type: 'file', href: '/image-1'},
+      {id: 7, title: 'Image 2', type: 'file', href: '/image-2'}
+    ]
+  }
+];
+
+// Wrap SideNav in a RouterProvider whose navigate only updates local state so
+// clicking a link selects the item without actually navigating the page.
+function SideNavExample() {
+  let [selectedRoute, setSelectedRoute] = useState('/notes');
+  return (
+    <RouterProvider navigate={href => setSelectedRoute(href)}>
+      <SideNav
+        aria-label="Files"
+        styles={style({height: 300, width: 210})}
+        selectedRoute={selectedRoute}
+        defaultExpandedKeys={[1, 2, 5]}
+        items={sideNavItems}>
+        {function renderItem(item: SideNavItemData) {
+          return (
+            <SideNavItem textValue={item.title} href={item.href}>
+              <SideNavItemContent>
+                {item.href ? (
+                  <SideNavItemLink>
+                    {item.type === 'directory' ? <Folder /> : <File />}
+                    <Text>{item.title}</Text>
+                  </SideNavItemLink>
+                ) : (
+                  <>
+                    {item.type === 'directory' ? <Folder /> : <File />}
+                    <Text>{item.title}</Text>
+                  </>
+                )}
+                <ActionMenu>
+                  <MenuItem>
+                    <Edit />
+                    <Text>Edit</Text>
+                  </MenuItem>
+                  <MenuItem>
+                    <Delete />
+                    <Text>Delete</Text>
+                  </MenuItem>
+                </ActionMenu>
+              </SideNavItemContent>
+              {item.children && <Collection items={item.children}>{renderItem}</Collection>}
+            </SideNavItem>
+          );
+        }}
+      </SideNav>
+    </RouterProvider>
+  );
+}
 
 function App() {
   let [isLazyLoaded, setLazyLoaded] = useState(false);
@@ -263,6 +354,7 @@ function App() {
               </TreeViewItem>
             </TreeViewItem>
           </TreeView>
+          <SideNavExample />
         </Section>
 
         {!isLazyLoaded && (

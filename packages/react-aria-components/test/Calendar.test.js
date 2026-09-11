@@ -501,6 +501,128 @@ describe('Calendar', () => {
     expect(cell).not.toHaveClass('selected');
   });
 
+  describe('selectDate', () => {
+    // Use a fixed date so the tests are deterministic regardless of the current date.
+    let focusedDate = new CalendarDate(2026, 4, 15);
+
+    let SelectDateExample = () => {
+      let state = useContext(CalendarStateContext);
+      return (
+        <ButtonContext.Provider value={null}>
+          <Button onPress={() => state.selectDate(focusedDate)}>Select focused</Button>
+          <Button onPress={() => state.selectDate(focusedDate.subtract({months: 1}))}>
+            Select one month before
+          </Button>
+          <Button onPress={() => state.selectDate(focusedDate.add({months: 1}))}>
+            Select one month after
+          </Button>
+          <span data-testid="selected-value">{state.value ? state.value.toString() : 'none'}</span>
+        </ButtonContext.Provider>
+      );
+    };
+
+    it('selects a date before the visible range when isDateUnavailable is provided', async () => {
+      let {getByRole, getAllByRole, getByTestId} = render(
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={focusedDate}
+          isDateUnavailable={() => false}>
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarHeading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <SelectDateExample />
+        </Calendar>
+      );
+
+      // Navigate to the next month so the focused date is before the visible range.
+      await user.click(getAllByRole('button', {name: 'Next'})[0]);
+
+      // Selecting a date before the visible range should still work.
+      await user.click(getByRole('button', {name: 'Select focused'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(focusedDate.toString());
+
+      await user.click(getByRole('button', {name: 'Select one month before'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(
+        focusedDate.subtract({months: 1}).toString()
+      );
+    });
+
+    it('selects a date after the visible range when isDateUnavailable is provided', async () => {
+      let {getByRole, getByTestId} = render(
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={focusedDate}
+          isDateUnavailable={() => false}>
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarHeading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <SelectDateExample />
+        </Calendar>
+      );
+
+      // Navigate to the previous month so the focused date is after the visible range.
+      await user.click(getByRole('button', {name: 'Previous'}));
+
+      await user.click(getByRole('button', {name: 'Select focused'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(focusedDate.toString());
+
+      await user.click(getByRole('button', {name: 'Select one month after'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(
+        focusedDate.add({months: 1}).toString()
+      );
+    });
+
+    it('selects the nearest earlier available date when the focused date is unavailable', async () => {
+      let {getByRole, getByTestId} = render(
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={focusedDate}
+          isDateUnavailable={d => d.day === focusedDate.day}>
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarHeading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <SelectDateExample />
+        </Calendar>
+      );
+
+      // The focused date is unavailable, but the day before it is available.
+      await user.click(getByRole('button', {name: 'Select focused'}));
+      expect(getByTestId('selected-value')).toHaveTextContent(
+        focusedDate.subtract({days: 1}).toString()
+      );
+    });
+
+    it('does not select anything when the focused date is unavailable and no earlier date in the visible range is available', async () => {
+      let {getByRole, getByTestId} = render(
+        <Calendar
+          aria-label="Appointment date"
+          defaultFocusedValue={focusedDate}
+          isDateUnavailable={d => d.day <= focusedDate.day}>
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarHeading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+          <SelectDateExample />
+        </Calendar>
+      );
+
+      // Every day from the start of the visible month through the focused date is unavailable.
+      await user.click(getByRole('button', {name: 'Select focused'}));
+      expect(getByTestId('selected-value')).toHaveTextContent('none');
+    });
+  });
+
   it('should not modify selection when trying to select an unavailable date by keyboard', async () => {
     let calendar = renderCalendar({isDateUnavailable: d => d.day === 15});
     let day16 = calendar.getByText('16');
@@ -802,7 +924,7 @@ describe('Calendar', () => {
                   value={value}
                   onChange={e => onChange(e.target.value)}>
                   {items.map(item => (
-                    <option key={item.id} value={item.id}>
+                    <option key={item.id} value={item.id} data-date={item.date.toString()}>
                       {item.formatted}
                     </option>
                   ))}
@@ -845,6 +967,22 @@ describe('Calendar', () => {
         .getAllByRole('option')
         .map(o => o.textContent)
     ).toEqual(Array.from({length: 7}, (_, i) => String(i + 2020)));
+
+    tree.rerender(
+      <YearPickerExample
+        key="cross-year-range"
+        calendarProps={{
+          minValue: new CalendarDate(2024, 8, 3),
+          maxValue: new CalendarDate(2025, 2, 3),
+          focusedValue: new CalendarDate(2025, 2, 1)
+        }}
+      />
+    );
+    let yearPicker = tree.getByLabelText('year');
+    let options = within(yearPicker).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(['2024', '2025']);
+    expect(yearPicker).toHaveValue('1');
+    expect(options[1]).toHaveAttribute('data-date', '2025-02-03');
 
     tree.rerender(
       <YearPickerExample

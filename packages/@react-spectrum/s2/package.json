@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2",
-  "version": "1.6.0",
+  "version": "1.7.1",
   "description": "Spectrum 2 UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -12,9 +12,9 @@
     "dist",
     "style",
     "page.css",
-    "page.css.map",
     "icons",
     "illustrations",
+    "Icon",
     "src",
     "exports",
     "*.js"
@@ -34,16 +34,17 @@
       "require": "./dist/exports/index.cjs"
     },
     "./page.css": {
-      "source": "./src/page.ts",
       "types": "./dist/types/src/page.d.ts",
       "default": "./page.css"
     },
     "./style": {
       "source": "./style/index.ts",
       "types": "./dist/types/style/index.d.ts",
-      "module": "./style/dist/module.mjs",
-      "import": "./style/dist/module.mjs",
-      "require": "./style/dist/main.cjs"
+      "node": {
+        "module": "./style/dist/module.mjs",
+        "import": "./style/dist/module.mjs",
+        "require": "./style/dist/main.cjs"
+      }
     },
     "./icons/*": {
       "source": "./s2wf-icons/S2_Icon_*_20_N.svg",
@@ -80,26 +81,26 @@
     "access": "public"
   },
   "scripts": {
-    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/private/page*.css page.css && mv dist/private/page.css.map page.css.map || true",
+    "build:page-css": "node scripts/buildPageCss.mjs",
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
     "postpack": "git checkout -- package.json"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.3",
-    "@internationalized/number": "^3.6.7",
+    "@internationalized/date": "^3.12.4",
+    "@internationalized/number": "^3.6.8",
     "@parcel/macros": "^2.16.3",
     "@react-types/shared": "^3.36.1",
-    "react-aria": "3.51.0",
-    "react-aria-components": "1.20.0",
-    "react-stately": "3.49.0"
+    "react-aria": "3.52.1",
+    "react-aria-components": "1.21.1",
+    "react-stately": "3.50.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "14.0.0",
+    "@adobe/spectrum-tokens": "14.15.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.0.0",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.5#~/.yarn/patches/@testing-library-user-event-npm-14.6.5-1fcf457da8.patch",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1"
   },
@@ -108,17 +109,12 @@
     "react-dom": "^19.0.0-rc.1"
   },
   "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
-  "page": "dist/page.cjs",
   "style-main": "style/dist/main.cjs",
   "style-module": "style/dist/module.mjs",
   "targets": {
     "module": false,
     "main": false,
     "types": false,
-    "page": {
-      "source": "src/page.ts",
-      "isLibrary": true
-    },
     "style-module": {
       "source": "style/index.ts",
       "isLibrary": true,
