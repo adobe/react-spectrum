@@ -368,6 +368,70 @@ describe('ComboBox', () => {
     }
   );
 
+  it('should not clear the selection when a fully controlled value is applied asynchronously', async () => {
+    let onSelectionChange = jest.fn();
+    let keyToText = {
+      1: 'Cat',
+      2: 'Dog',
+      3: 'Kangaroo'
+    };
+
+    // Form libraries such as Formik and react-hook-form apply the controlled value after
+    // running validation, so it lands in a later render than the one that reported it.
+    function ControlledComboBox() {
+      let [selectedKey, setSelectedKey] = useState(null);
+      let [inputValue, setInputValue] = useState('');
+
+      return (
+        <>
+          <ComboBox
+            selectedKey={selectedKey}
+            inputValue={inputValue}
+            onSelectionChange={key => {
+              onSelectionChange(key);
+              setTimeout(() => {
+                setSelectedKey(key);
+                setInputValue(key != null ? keyToText[key] : '');
+              }, 10);
+            }}
+            onInputChange={setInputValue}>
+            <Label>Favorite Animal</Label>
+            <Input />
+            <Button />
+            <Popover>
+              <ListBox>
+                <ListBoxItem id="1">Cat</ListBoxItem>
+                <ListBoxItem id="2">Dog</ListBoxItem>
+                <ListBoxItem id="3">Kangaroo</ListBoxItem>
+              </ListBox>
+            </Popover>
+          </ComboBox>
+          <button type="button">Next</button>
+        </>
+      );
+    }
+
+    let tree = render(<ControlledComboBox />);
+    let input = tree.getByRole('combobox');
+
+    await user.tab();
+    await user.keyboard('Do');
+    act(() => jest.runAllTimers());
+
+    // Select without letting the deferred update land first, so focus moves away while the
+    // controlled value still reports the previous selection.
+    await user.click(within(tree.getByRole('listbox')).getByRole('option', {name: 'Dog'}));
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledWith('2');
+
+    await user.tab();
+    act(() => jest.runAllTimers());
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(input).toHaveValue('Dog');
+    expect(tree.queryByRole('listbox')).toBeNull();
+  });
+
   it('should support form reset', async () => {
     const tree = render(
       <form>
