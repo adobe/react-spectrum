@@ -98,7 +98,9 @@ import React, {
   ForwardedRef,
   forwardRef,
   JSX,
+  MutableRefObject,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -109,6 +111,7 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
+import {useAnimation, useEnterAnimation} from 'react-aria/private/utils/animation';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 import {useCollator} from 'react-aria/useCollator';
 import {useControlledState} from 'react-stately/useControlledState';
@@ -116,16 +119,43 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useGridListSection, useGridListSelectionCheckbox} from 'react-aria/useGridList';
 import {useHover} from 'react-aria/useHover';
 import {useId} from 'react-aria/useId';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
+const emptyKeySet: Set<Key> = new Set();
+
+interface TreeAnimationContextValue {
+  /** Keys of rows that have been collapsed but are still mounted while they animate out. */
+  exitingKeys: Set<Key>;
+  /**
+   * Keys of rows that were just revealed by an expansion. Held in a ref rather than state because
+   * rows read it once as they mount, which happens in the same commit that expands their parent.
+   */
+  enteringKeysRef: MutableRefObject<Set<Key>>;
+  /** Called by a row once its exit animation has finished, to release it from the collection. */
+  onExitComplete: (key: Key) => void;
+}
+
+const TreeAnimationContext = createContext<TreeAnimationContextValue | null>(null);
+
 class TreeCollection<T> extends BaseCollection<T> {
   private expandedKeys: Set<Key> = new Set();
+  // Superset of expandedKeys used only when producing the rendered rows. It additionally contains the
+  // ancestors of rows that are animating out, so those rows stay mounted after their parent collapses.
+  // Navigation, selection and the a11y tree deliberately continue to use expandedKeys, so a collapse is
+  // reflected immediately and exiting rows are unreachable while they animate.
+  private renderedExpandedKeys: Set<Key> = new Set();
 
-  withExpandedKeys(lastExpandedKeys: Set<Key>, expandedKeys: Set<Key>) {
+  withExpandedKeys(
+    lastExpandedKeys: Set<Key>,
+    expandedKeys: Set<Key>,
+    renderedExpandedKeys: Set<Key> = expandedKeys
+  ) {
     let collection = this.clone();
     collection.expandedKeys = expandedKeys;
+    collection.renderedExpandedKeys = renderedExpandedKeys;
 
     // Clone ancestor section nodes so React knows to re-render since the same item won't cause a new render but a clone creating a new object with the same value will
     // Without this change, the items won't expand and collapse when virtualized inside a section
@@ -169,7 +199,7 @@ class TreeCollection<T> extends BaseCollection<T> {
       } else {
         // This will include both item and content nodes
         // We handle the content nodes in useCollectionRenderer and ListLayout
-        let key = this.getKeyAfter(node.key);
+        let key = this.getKeyAfterInternal(node.key, this.renderedExpandedKeys);
         node = key != null ? this.getItem(key) : null;
       }
     }
@@ -197,12 +227,16 @@ class TreeCollection<T> extends BaseCollection<T> {
   }
 
   getKeyAfter(key: Key) {
+    return this.getKeyAfterInternal(key, this.expandedKeys);
+  }
+
+  private getKeyAfterInternal(key: Key, expandedKeys: Set<Key>) {
     let node = this.getItem(key) as CollectionNode<T>;
     if (!node) {
       return null;
     }
 
-    if ((this.expandedKeys.has(node.key) || node.type !== 'item') && node.firstChildKey != null) {
+    if ((expandedKeys.has(node.key) || node.type !== 'item') && node.firstChildKey != null) {
       return node.firstChildKey;
     }
 
@@ -259,7 +293,9 @@ class TreeCollection<T> extends BaseCollection<T> {
           while (node && node.key !== parent.nextKey) {
             yield self.getItem(node.key)!;
             // This will include content nodes which we skip in ListLayout
-            let key = self.getKeyAfter(node.key);
+            // Sections render their rows via CollectionBranch rather than the collection iterator, so this
+            // walks the rendered set to keep exiting rows mounted inside a section as well.
+            let key = self.getKeyAfterInternal(node.key, self.renderedExpandedKeys);
             node = key != null ? (self.getItem(key)! as CollectionNode<T>) : null;
           }
         } else {
@@ -445,16 +481,71 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
 
   let [lastCollection, setLastCollection] = useState(collection);
   let [lastExpandedKeys, setLastExpandedKeys] = useState(expandedKeys);
+  let [exitingKeys, setExitingKeys] = useState(emptyKeySet);
+  let [lastExitingKeys, setLastExitingKeys] = useState(exitingKeys);
+  let enteringKeysRef = useRef(emptyKeySet);
   let [flattenedCollection, setFlattenedCollection] = useState(() =>
     collection.withExpandedKeys(lastExpandedKeys, expandedKeys)
   );
 
+  // Rows are removed from the collection as soon as their parent collapses, which gives them no chance to
+  // animate out. Instead, keep them in the rendered part of the collection until their animations finish.
+  // Keyboard navigation, selection and aria-expanded continue to use expandedKeys, so the collapse is
+  // reflected immediately and only the DOM lags behind.
+  let expandedKeysChanged = !areSetsEqual(lastExpandedKeys, expandedKeys);
+  let nextExitingKeys = exitingKeys;
+  if (expandedKeysChanged) {
+    nextExitingKeys = getExitingKeys(collection, lastExpandedKeys, expandedKeys, exitingKeys);
+    // Written during render alongside the collection so rows can read it as they mount in this same
+    // commit. Same trade-off as the previous-size ref in TabPanels.
+    // oxlint-disable-next-line react/react-compiler, rsp-rules/pure-render
+    enteringKeysRef.current = getEnteringKeys(collection, lastExpandedKeys, expandedKeys);
+  }
+
   // if the lastExpandedKeys is not the same as the currentExpandedKeys or the collection has changed, then run this
-  if (!areSetsEqual(lastExpandedKeys, expandedKeys) || collection !== lastCollection) {
-    setFlattenedCollection(collection.withExpandedKeys(lastExpandedKeys, expandedKeys));
+  if (
+    expandedKeysChanged ||
+    collection !== lastCollection ||
+    !areSetsEqual(lastExitingKeys, nextExitingKeys)
+  ) {
+    setFlattenedCollection(
+      collection.withExpandedKeys(
+        lastExpandedKeys,
+        expandedKeys,
+        withExitingAncestors(collection, expandedKeys, nextExitingKeys)
+      )
+    );
     setLastCollection(collection);
     setLastExpandedKeys(expandedKeys);
+    setLastExitingKeys(nextExitingKeys);
+    if (nextExitingKeys !== exitingKeys) {
+      setExitingKeys(nextExitingKeys);
+    }
   }
+
+  let onExitComplete = useCallback((key: Key) => {
+    setExitingKeys(keys => {
+      if (!keys.has(key)) {
+        return keys;
+      }
+      let next = new Set(keys);
+      next.delete(key);
+      return next;
+    });
+  }, []);
+
+  // Entering keys are only meaningful for the commit that revealed them. Clearing afterwards stops a row
+  // that mounts later (e.g. scrolled into view in a virtualized tree) from replaying the enter animation.
+  useLayoutEffect(() => {
+    if (enteringKeysRef.current.size > 0) {
+      enteringKeysRef.current = emptyKeySet;
+    }
+  });
+
+  let animationContextValue = useMemo(
+    () => ({exitingKeys: nextExitingKeys, enteringKeysRef, onExitComplete}),
+    [nextExitingKeys, onExitComplete]
+  );
 
   let state = useTreeState({
     ...props,
@@ -635,6 +726,7 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
           <Provider
             values={[
               [TreeStateContext, state],
+              [TreeAnimationContext, animationContextValue],
               [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
               [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
             ]}>
@@ -686,6 +778,21 @@ export interface TreeItemRenderProps extends ItemRenderProps {
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean;
+  /**
+   * Whether the tree item is currently entering, after its parent was expanded. Use this to apply
+   * animations.
+   *
+   * @selector [data-entering]
+   */
+  isEntering: boolean;
+  /**
+   * Whether the tree item is currently exiting, after its parent was collapsed. The row remains in
+   * the DOM until its animations complete, but is inert and excluded from keyboard navigation. Use
+   * this to apply animations.
+   *
+   * @selector [data-exiting]
+   */
+  isExiting: boolean;
   /** The state of the tree. */
   state: TreeState<unknown>;
   /** The unique id of the tree row. */
@@ -799,6 +906,19 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
       props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;
     let level = rowProps['aria-level'] || 1;
 
+    let {exitingKeys, enteringKeysRef, onExitComplete} = useContext(TreeAnimationContext)!;
+    let isExiting = exitingKeys.has(item.key);
+    // Whether this row appeared because its parent was expanded, as opposed to being present on mount.
+    // Captured once so that defaultExpandedKeys doesn't animate the initial rows in.
+    let [didEnterViaExpansion] = useState(() => enteringKeysRef.current.has(item.key));
+    let isEntering = useEnterAnimation(ref, didEnterViaExpansion) && !isExiting;
+    useTreeItemHeight(ref, isEntering, isExiting);
+    useAnimation(
+      ref,
+      isExiting,
+      useCallback(() => onExitComplete(item.key), [onExitComplete, item.key])
+    );
+
     let {hoverProps, isHovered} = useHover({
       // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
       // results in hover styles sticking around after a reorder/drop operation...
@@ -854,6 +974,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
         selectionMode,
         selectionBehavior,
         isFocusVisibleWithin,
+        isEntering,
+        isExiting,
         state,
         id: item.key,
         allowsDragging: !!dragState,
@@ -868,6 +990,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
         hasChildItems,
         level,
         isFocusVisibleWithin,
+        isEntering,
+        isExiting,
         state,
         item.key,
         dragState,
@@ -991,6 +1115,12 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
           data-focused={states.isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}
           data-pressed={states.isPressed || undefined}
+          data-entering={isEntering || undefined}
+          data-exiting={isExiting || undefined}
+          // Exiting rows are only still here so they can animate out. Keep them from being focused,
+          // clicked or announced while they do.
+          // @ts-ignore - compatibility with React < 19
+          inert={inertValue(isExiting)}
           data-selection-mode={
             state.selectionManager.selectionMode === 'none'
               ? undefined
@@ -1316,6 +1446,126 @@ export const TreeHeader = (props: TreeHeaderProps): ReactNode => {
   );
 };
 
+/**
+ * The row's height as if it weren't animating. The entering and exiting states commonly override
+ * the padding — a row can't shrink below it — and any height already applied here would clamp the
+ * result, so both are lifted for the duration of the read. Transitions are suppressed alongside
+ * them, or lifting an override would just start it animating and the read would return where it had
+ * got to rather than where it was heading. This runs inside a layout effect, so nothing is painted
+ * in between.
+ *
+ * Suppressing transitions cancels any that are in flight, so this must only be called while the row
+ * is at rest.
+ */
+function measureRestingHeight(element: HTMLElement) {
+  let entering = element.getAttribute('data-entering');
+  let exiting = element.getAttribute('data-exiting');
+  let height = element.style.getPropertyValue('--tree-item-height');
+  let transition = element.style.transition;
+
+  element.style.transition = 'none';
+  if (entering != null) {
+    element.removeAttribute('data-entering');
+  }
+  if (exiting != null) {
+    element.removeAttribute('data-exiting');
+  }
+  if (height) {
+    element.style.removeProperty('--tree-item-height');
+  }
+
+  let restingHeight = element.offsetHeight;
+
+  if (entering != null) {
+    element.setAttribute('data-entering', entering);
+  }
+  if (exiting != null) {
+    element.setAttribute('data-exiting', exiting);
+  }
+  if (height) {
+    element.style.setProperty('--tree-item-height', height);
+  }
+
+  // Settle the restored styles before transitions come back, so none of this animates.
+  element.offsetHeight;
+  element.style.transition = transition;
+
+  return restingHeight;
+}
+
+/**
+ * Publishes a row's intrinsic height as `--tree-item-height` while it animates in or out, so CSS
+ * can interpolate between zero and a real height. `height: auto` isn't animatable, and requiring a
+ * fixed row height would rule out rows that size to their content, so the value is measured here —
+ * the same polyfill `useDisclosure` applies to its panel.
+ *
+ * Only runs when the row actually declares a height transition, since measuring forces a layout.
+ */
+function useTreeItemHeight(
+  ref: RefObject<HTMLElement | null>,
+  isEntering: boolean,
+  isExiting: boolean
+) {
+  let hasHeightTransition = useRef<boolean | null>(null);
+  let restingHeight = useRef<number | null>(null);
+  let isSized = useRef(false);
+
+  useLayoutEffect(() => {
+    let element = ref.current;
+    if (!element || typeof element.getAnimations !== 'function') {
+      return;
+    }
+
+    if (hasHeightTransition.current == null) {
+      hasHeightTransition.current = /height|block-size|all/.test(
+        window.getComputedStyle(element).transition
+      );
+    }
+
+    if (!hasHeightTransition.current) {
+      return;
+    }
+
+    // `isSized` keeps this running for one more pass after an interrupted collapse, which leaves the row
+    // holding a pixel height it needs to grow back out of.
+    let isAtRest = !isEntering && !isExiting && !isSized.current;
+
+    // At rest nothing is in flight, so this is the only point the row can be measured honestly. The first
+    // pass of an entering row also qualifies: it has only just mounted, so its styles are its initial ones
+    // and no transition has started from them yet.
+    if (isAtRest || restingHeight.current == null) {
+      restingHeight.current = measureRestingHeight(element);
+    }
+
+    if (isAtRest) {
+      return;
+    }
+
+    let height = restingHeight.current + 'px';
+    // An interrupted collapse animates from wherever it got to, so it doesn't get a starting value.
+    let from = isExiting ? height : isEntering ? '0px' : null;
+    if (from != null) {
+      element.style.setProperty('--tree-item-height', from);
+
+      // Force style re-calculation to trigger animations.
+      window.getComputedStyle(element).height;
+    }
+
+    element.style.setProperty('--tree-item-height', isExiting ? '0px' : height);
+    isSized.current = true;
+
+    if (!isExiting) {
+      // After the animations complete, switch back to auto so the row can resize with its content.
+      Promise.all(element.getAnimations().map(a => a.finished))
+        .then(() => {
+          element.style.setProperty('--tree-item-height', 'auto');
+          isSized.current = false;
+        })
+        .catch(() => {});
+    }
+  }, [ref, isEntering, isExiting]);
+}
+
 function areSetsEqual<T>(a: Set<T>, b: Set<T>) {
   if (a.size !== b.size) {
     return false;
@@ -1327,4 +1577,119 @@ function areSetsEqual<T>(a: Set<T>, b: Set<T>) {
     }
   }
   return true;
+}
+
+/** Adds every row that would be rendered beneath `key` for the given expanded set. */
+function addRenderedDescendants<T>(
+  collection: BaseCollection<T>,
+  key: Key,
+  expandedKeys: Set<Key>,
+  keys: Set<Key>
+) {
+  let node = collection.getItem(key) as CollectionNode<T> | null;
+  let childKey = node?.firstChildKey ?? null;
+  while (childKey != null) {
+    let child = collection.getItem(childKey) as CollectionNode<T> | null;
+    if (!child) {
+      break;
+    }
+
+    // Content nodes render inside their parent row rather than as rows of their own.
+    if (child.type !== 'content') {
+      keys.add(child.key);
+      if (child.type !== 'item' || expandedKeys.has(child.key)) {
+        addRenderedDescendants(collection, child.key, expandedKeys, keys);
+      }
+    }
+
+    childKey = child.nextKey;
+  }
+}
+
+/**
+ * Whether every ancestor of `key` is expanded, i.e. the row is part of the collapsed-aware
+ * collection.
+ */
+function isRowVisible<T>(collection: BaseCollection<T>, key: Key, expandedKeys: Set<Key>) {
+  let parentKey = collection.getItem(key)?.parentKey ?? null;
+  while (parentKey != null) {
+    let parent = collection.getItem(parentKey);
+    if (!parent) {
+      return false;
+    }
+
+    if (parent.type === 'item' && !expandedKeys.has(parent.key)) {
+      return false;
+    }
+
+    parentKey = parent.parentKey ?? null;
+  }
+
+  return true;
+}
+
+/**
+ * The rows that should keep rendering after a collapse. Rows revealed again by an interrupted
+ * collapse, and rows that have left the collection entirely, are dropped so they don't linger.
+ */
+function getExitingKeys<T>(
+  collection: BaseCollection<T>,
+  lastExpandedKeys: Set<Key>,
+  expandedKeys: Set<Key>,
+  exitingKeys: Set<Key>
+): Set<Key> {
+  let next = new Set(exitingKeys);
+  for (let key of lastExpandedKeys) {
+    if (!expandedKeys.has(key) && collection.getItem(key)) {
+      addRenderedDescendants(collection, key, lastExpandedKeys, next);
+    }
+  }
+
+  for (let key of next) {
+    if (!collection.getItem(key) || isRowVisible(collection, key, expandedKeys)) {
+      next.delete(key);
+    }
+  }
+
+  return next.size === 0 ? emptyKeySet : next;
+}
+
+/** The rows that a just-applied expansion revealed. */
+function getEnteringKeys<T>(
+  collection: BaseCollection<T>,
+  lastExpandedKeys: Set<Key>,
+  expandedKeys: Set<Key>
+): Set<Key> {
+  let keys = new Set<Key>();
+  for (let key of expandedKeys) {
+    if (!lastExpandedKeys.has(key) && collection.getItem(key)) {
+      addRenderedDescendants(collection, key, expandedKeys, keys);
+    }
+  }
+
+  return keys.size === 0 ? emptyKeySet : keys;
+}
+
+/**
+ * Expanded keys widened with the parents of every exiting row, so the render traversal can still
+ * reach them while they animate. Returns `expandedKeys` untouched when nothing is exiting.
+ */
+function withExitingAncestors<T>(
+  collection: BaseCollection<T>,
+  expandedKeys: Set<Key>,
+  exitingKeys: Set<Key>
+): Set<Key> {
+  if (exitingKeys.size === 0) {
+    return expandedKeys;
+  }
+
+  let keys = new Set(expandedKeys);
+  for (let key of exitingKeys) {
+    let parentKey = collection.getItem(key)?.parentKey;
+    if (parentKey != null) {
+      keys.add(parentKey);
+    }
+  }
+
+  return keys;
 }

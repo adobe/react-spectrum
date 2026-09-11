@@ -367,6 +367,41 @@ import {TextField} from 'vanilla-starter/TextField';
 </Tree>
 ```
 
+## Animation
+
+Rows revealed by expanding a parent are marked with the `isEntering` state, and rows hidden by collapsing a
+parent stay mounted with the `isExiting` state until their animations finish. Use the corresponding
+`data-entering` and `data-exiting` selectors to animate rows in and out.
+
+Expansion state itself is never delayed: `aria-expanded` updates immediately, and exiting rows are `inert`,
+so they are excluded from keyboard navigation and hidden from assistive technology while they animate away.
+
+```css render=false
+.react-aria-TreeItem {
+  height: var(--tree-item-height, auto);
+  overflow: clip;
+  transition: height 200ms, padding 200ms, opacity 200ms;
+
+  &[data-entering],
+  &[data-exiting] {
+    padding-block: 0;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+```
+
+`height: auto` can't be animated, so while a row is entering or exiting the Tree sets
+`--tree-item-height` to its measured height in pixels, and back to `auto` once the animation finishes.
+This is only measured when the row declares a transition on `height`. A row can't shrink below its own
+padding, so animate that alongside the height.
+
+In a [virtualized](Virtualizer) Tree, the layout does not re-measure rows while they animate; animate
+`opacity` or `transform` instead of `height` there.
+
 ## Drag and drop
 
 Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=Tree) to learn more.
@@ -481,7 +516,8 @@ function Example() {
   links={docs.links}
   showDescription
   cssVariables={{
-    '--tree-item-level': "The depth of the item within the tree. Useful to calculate indentation."
+    '--tree-item-level': "The depth of the item within the tree. Useful to calculate indentation.",
+    '--tree-item-height': "The item's intrinsic height in pixels while it is entering or exiting, and auto otherwise. Useful for animations. Set when height, block-size, or all is used in the CSS transition."
   }} />
 
 ### TreeItemContent
