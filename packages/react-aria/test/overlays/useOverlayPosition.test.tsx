@@ -11,6 +11,7 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils-internal';
+import {I18nProvider} from '../../src/i18n/I18nProvider';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../../src/overlays/useOverlayPosition';
 
@@ -40,6 +41,31 @@ function Example({
       <div ref={containerRef} data-testid="container" style={containerStyle}>
         <div ref={overlayRef} data-testid="overlay" style={style}>
           <div data-testid="arrow" {...arrowProps} />
+          placement: {placement}
+        </div>
+      </div>
+    </React.Fragment>
+  );
+}
+
+function AutoWidthExample({triggerLeft = 360, ...props}) {
+  let targetRef = useRef(null);
+  let overlayRef = useRef(null);
+  let {overlayProps, placement} = useOverlayPosition({
+    targetRef,
+    overlayRef,
+    ...props
+  });
+  return (
+    <React.Fragment>
+      <div
+        ref={targetRef}
+        data-testid="trigger"
+        style={{left: triggerLeft, top: 250, width: 100, height: 100}}>
+        Trigger
+      </div>
+      <div data-testid="container" style={{width: 500, height: 768}}>
+        <div ref={overlayRef} data-testid="overlay" style={{height: 200, ...overlayProps.style}}>
           placement: {placement}
         </div>
       </div>
@@ -259,6 +285,172 @@ describe('useOverlayPosition', function () {
 
     expect(arrow).toHaveAttribute('aria-hidden', 'true');
     expect(arrow).toHaveAttribute('role', 'presentation');
+  });
+
+  describe('auto-width overlay (shrink-to-fit)', function () {
+    // The natural (preferred) width of the overlay's content. Mutated by tests to
+    // simulate content that grows after the initial positioning pass (e.g. RAC
+    // collections populating on a second render).
+    let overlayNaturalWidth = 60;
+
+    beforeEach(() => {
+      overlayNaturalWidth = 60;
+
+      // setupTests.js defines document.documentElement.clientWidth = 1024, which would
+      // disagree with the 500px visualViewport/body used by this suite. Align them so
+      // boundary, containing block, and viewport all share one width.
+      Object.defineProperty(document.documentElement, 'clientWidth', {
+        writable: true,
+        configurable: true,
+        value: 500
+      });
+
+      // Simulate the browser's shrink-to-fit sizing of a position: absolute element
+      // with width: auto: the available width is capped by the applied left/right
+      // insets against a 500px containing block, and setting both insets stretches
+      // the element between them.
+      jest
+        .spyOn(HTMLElement.prototype, 'offsetWidth', 'get')
+        .mockImplementation(function (this: HTMLElement) {
+          if (this.getAttribute?.('data-testid') === 'overlay') {
+            let containingBlockWidth = 500;
+            let hasLeft = this.style.left !== '';
+            let hasRight = this.style.right !== '';
+            if (hasLeft && hasRight) {
+              return Math.max(
+                containingBlockWidth -
+                  (parseInt(this.style.left, 10) || 0) -
+                  (parseInt(this.style.right, 10) || 0),
+                0
+              );
+            }
+            let inset = hasLeft
+              ? parseInt(this.style.left, 10) || 0
+              : hasRight
+                ? parseInt(this.style.right, 10) || 0
+                : 0;
+            return Math.min(overlayNaturalWidth, containingBlockWidth - inset);
+          }
+          return parseInt(this.style.width, 10) || 0;
+        });
+    });
+
+    it('should measure natural width when the content grows, not the width clamped by the stale position', function () {
+      let res = render(<AutoWidthExample placement="bottom end" />);
+      let overlay = res.getByTestId('overlay');
+
+      // 60px wide overlay aligned to the trigger's right edge (360 + 100 - 60).
+      expect(overlay).toHaveStyle(`
+        left: 400px;
+        top: 350px;
+      `);
+
+      // The content grows (e.g. menu items with descriptions render). In the browser
+      // this fires the overlay's ResizeObserver; in jsdom useResizeObserver falls
+      // back to the window resize event.
+      overlayNaturalWidth = 300;
+      fireEvent(window, new Event('resize'));
+
+      // The overlay must be measured at its natural width (300px) and repositioned in
+      // a single pass (360 + 100 - 300). With a stale left of 400px the measurement
+      // is clamped to 100px and the overlay only creeps toward its final position.
+      expect(overlay).toHaveStyle(`
+        left: 160px;
+        top: 350px;
+      `);
+    });
+
+    it('should not measure the overlay stretched between a stale right inset and the measurement reset', function () {
+      // A physical left placement positions the overlay via a `right` inset.
+      let res = render(<AutoWidthExample placement="left top" triggerLeft={180} />);
+      let overlay = res.getByTestId('overlay');
+
+      // 60px wide overlay anchored to the left of the trigger: right = 500 - 180.
+      expect(overlay).toHaveStyle(`
+        right: 320px;
+        top: 250px;
+      `);
+      expect(overlay).toHaveTextContent('placement: left');
+
+      // The content grows, but still fits to the left of the trigger (100px < 168px
+      // of available space), so the overlay must stay on the left.
+      overlayNaturalWidth = 100;
+      fireEvent(window, new Event('resize'));
+
+      // If the measurement reset sets left: 0px while the stale right: 320px is still
+      // applied, the overlay is stretched between both insets (500 - 0 - 320 = 180px),
+      // over-measuring its width and spuriously flipping it to the right.
+      expect(overlay).toHaveStyle(`
+        right: 320px;
+        top: 250px;
+      `);
+      expect(overlay).toHaveTextContent('placement: left');
+    });
+
+    it('should measure natural width when the user provides a maxHeight', function () {
+      // A user maxHeight only affects the vertical measurement reset; the horizontal
+      // reset must happen regardless.
+      let res = render(<AutoWidthExample placement="bottom end" maxHeight={300} />);
+      let overlay = res.getByTestId('overlay');
+
+      expect(overlay).toHaveStyle(`
+        left: 400px;
+        top: 350px;
+      `);
+
+      overlayNaturalWidth = 300;
+      fireEvent(window, new Event('resize'));
+
+      expect(overlay).toHaveStyle(`
+        left: 160px;
+        top: 350px;
+      `);
+    });
+
+    it('should measure natural width in RTL, where end placements position via a right inset', function () {
+      let res = render(
+        <I18nProvider locale="ar-AE">
+          <AutoWidthExample placement="end top" triggerLeft={180} />
+        </I18nProvider>
+      );
+      let overlay = res.getByTestId('overlay');
+
+      // In RTL, 'end top' resolves to the physical 'left top' placement.
+      expect(overlay).toHaveStyle(`
+        right: 320px;
+        top: 250px;
+      `);
+      expect(overlay).toHaveTextContent('placement: left');
+
+      overlayNaturalWidth = 100;
+      fireEvent(window, new Event('resize'));
+
+      expect(overlay).toHaveStyle(`
+        right: 320px;
+        top: 250px;
+      `);
+      expect(overlay).toHaveTextContent('placement: left');
+    });
+
+    it('should leave only one horizontal inset applied after the placement changes', function () {
+      let res = render(<AutoWidthExample placement="left top" triggerLeft={180} />);
+      let overlay = res.getByTestId('overlay');
+
+      expect(overlay).toHaveStyle(`
+        right: 320px;
+        top: 250px;
+      `);
+
+      res.rerender(<AutoWidthExample placement="bottom end" triggerLeft={180} />);
+
+      // 180 + 100 - 60 = 220. The stale right inset from the previous placement must
+      // be gone so the overlay is positioned by exactly one horizontal inset.
+      expect(overlay).toHaveStyle(`
+        left: 220px;
+        top: 350px;
+      `);
+      expect(overlay.style.right).toBe('');
+    });
   });
 });
 
