@@ -21,6 +21,8 @@ import {Button} from '../src/Button';
 import {Link} from '../src/Link';
 import {Popover} from '../src/Popover';
 import {PreviewTrigger} from '../src/PreviewTrigger';
+import {Tooltip} from '../src/Tooltip';
+import {TooltipTrigger} from '../src/Tooltip';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -324,4 +326,34 @@ describe('PreviewTrigger', () => {
       }
     });
   });
+
+  it('stays open when a Tooltip inside the popover is hovered', async () => {
+    let {getByRole, getByTestId, getByText} = render(
+      <PreviewTrigger delay={0} closeDelay={0}>
+        <Link href="https://example.com">Example</Link>
+        <Popover data-testid="preview">
+          <TooltipTrigger>
+            <Button aria-label="Info">Info</Button>
+            <Tooltip>Tooltip content</Tooltip>
+          </TooltipTrigger>
+        </Popover>
+      </PreviewTrigger>
+    );
+    let link = getByRole('link');
+    let infoButton = getByRole('button', {name: 'Info'});
+
+    // Open the preview by hovering the trigger.
+    fireEvent.mouseMove(document.body);
+    await user.hover(link);
+    act(() => jest.runAllTimers());
+    let preview = getByTestId('preview');
+    expect(preview).toBeInTheDocument();
+
+    // Hovering a Tooltip trigger inside the popover opens the tooltip but the preview stays open.
+    await user.hover(infoButton);
+    act(() => jest.runAllTimers());
+    expect(getByText('Tooltip content')).toBeInTheDocument();
+    expect(preview).toBeInTheDocument();
+  });
+
 });
