@@ -14,6 +14,7 @@ import {action} from 'storybook/actions';
 import {ActionButton} from '../src/ActionButton';
 import {ActionMenu} from '../src/ActionMenu';
 import {AdobeLogo} from '../../../dev/s2-docs/src/icons/AdobeLogo';
+import {AIButton} from './SideNavAIButton';
 import {Avatar} from '../src/Avatar';
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import {categorizeArgTypes, getActionArgs} from './utils';
@@ -547,7 +548,7 @@ export const WithLandmark: AppLayoutStoryObj = {
 };
 
 const SidePanelExtraControls = () => {
-  let {isCollapsed = false} = useContext(SidePanelContext);
+  let {isCollapsed = false, isHidden = false} = useContext(SidePanelContext);
   return (
     <div
       className={style({
@@ -570,18 +571,18 @@ const SidePanelExtraControls = () => {
       </div>
       <div
         className={style({
-          display: {default: 'flex', isCollapsed: 'none'},
+          display: {default: 'flex', isHidden: 'none'},
           flexDirection: 'column',
           gap: 2,
           flexGrow: 1
-        })({isCollapsed})}>
+        })({isHidden})}>
         <Text styles={style({font: 'ui'})}>Jordan Rivera</Text>
         <Text styles={style({font: 'detail'})}>Adobe</Text>
       </div>
       <ActionButton aria-label="Notifications" isQuiet>
         <Bell />
       </ActionButton>
-      <ActionMenu aria-label="User menu" isQuiet>
+      <ActionMenu aria-label="User menu" isQuiet direction={isCollapsed ? 'right' : 'top'}>
         <MenuItem textValue="Profile" onAction={() => alert('Profile')}>
           <Text slot="label">Profile</Text>
         </MenuItem>
@@ -624,6 +625,20 @@ export const SidePanelExample = {
         {...args}
         aria-label="Side panel"
         defaultExpandedKeys={['projects']}>
+        <SidePanelContext.Consumer>
+          {({isHidden}) => (
+            <div className={style({display: 'flex', flexDirection: 'column', gap: 2})}>
+              <AIButton
+                size="M"
+                brandColor="#FF0000"
+                aria-label="Ask Coworker"
+                styles={style({marginStart: 8})}>
+                {isHidden ? undefined : 'Ask Coworker'}
+              </AIButton>
+              <Divider styles={style({marginY: 16})} />
+            </div>
+          )}
+        </SidePanelContext.Consumer>
         <RoutedSideNav {...args} styles={style({width: 'full'})} selectedRoute="/files">
           <SideNavItem href="/files" textValue="Files">
             <SideNavItemContent>

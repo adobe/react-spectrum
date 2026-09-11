@@ -35,7 +35,6 @@ import {
   useState
 } from 'react';
 import {createIcon} from './Icon';
-import {Divider} from './Divider';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {IconContext} from './Icon';
