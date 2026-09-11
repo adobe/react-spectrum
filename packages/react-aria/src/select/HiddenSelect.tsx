@@ -12,7 +12,7 @@
 
 import {FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
-import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useRef} from 'react';
+import React, {JSX, ReactNode, useCallback, useEffect, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectionMode, SelectState} from 'react-stately/useSelectState';
 import {useFormReset} from '../utils/useFormReset';
@@ -103,17 +103,69 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(
   );
 
   let setValue = state.setValue;
+  let subscribeToValueChange = state.subscribeToValueChange;
+  let isDispatchingChange = useRef(false);
   let onChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      let eventTarget = getEventTarget(e);
-      if (eventTarget.multiple) {
-        setValue(Array.from(eventTarget.selectedOptions, option => option.value) as any);
-      } else {
-        setValue(e.currentTarget.value as any);
+      if (isDispatchingChange.current) {
+        return;
       }
+
+      let eventTarget = getEventTarget(e);
+      let value: string | string[];
+      if (eventTarget.multiple) {
+        value = Array.from(eventTarget.selectedOptions, option => option.value);
+      } else {
+        value = e.currentTarget.value;
+      }
+
+      setValue(value as any);
     },
     [setValue]
   );
+
+  useEffect(() => {
+    return subscribeToValueChange(value => {
+      let select = props.selectRef?.current;
+      if (!(select instanceof HTMLSelectElement)) {
+        return;
+      }
+
+      let values = (Array.isArray(value) ? value : [value]).map(value => String(value ?? ''));
+      let temporaryOptions: HTMLOptionElement[] = [];
+      for (let value of values) {
+        if (![...select.options].some(option => option.value === value)) {
+          let option = select.ownerDocument.createElement('option');
+          option.value = value;
+          select.add(option);
+          temporaryOptions.push(option);
+        }
+      }
+
+      if (select.multiple) {
+        let selectedValues = new Set(values);
+        for (let option of select.options) {
+          option.selected = selectedValues.has(option.value);
+        }
+      } else {
+        let valueSetter = Object.getOwnPropertyDescriptor(
+          Object.getPrototypeOf(select),
+          'value'
+        )?.set;
+        valueSetter?.call(select, values[0] ?? '');
+      }
+
+      isDispatchingChange.current = true;
+      try {
+        select.dispatchEvent(new Event('change', {bubbles: true}));
+      } finally {
+        for (let option of temporaryOptions) {
+          option.remove();
+        }
+        isDispatchingChange.current = false;
+      }
+    });
+  }, [props.selectRef, subscribeToValueChange]);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers
@@ -155,91 +207,41 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(
 export function HiddenSelect<T, M extends SelectionMode = 'single'>(
   props: HiddenSelectProps<T, M>
 ): JSX.Element | null {
-  let {state, triggerRef, label, name, form, isDisabled} = props;
+  let {state, triggerRef, label, name} = props;
   let selectRef = useRef(null);
-  let inputRef = useRef(null);
-  let {containerProps, selectProps} = useHiddenSelect(
-    {...props, selectRef: state.collection.size <= 300 ? selectRef : inputRef},
-    state,
-    triggerRef
-  );
+  let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
 
   let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
 
-  // If used in a <form>, use a hidden input so the value can be submitted to a server.
-  // If the collection isn't too big, use a hidden <select> element for this so that browser
-  // autofill will work. Otherwise, use an <input type="hidden">.
-  if (state.collection.size <= 300) {
-    return (
-      <div {...containerProps} data-testid="hidden-select-container">
-        <label>
-          {label}
-          <select {...selectProps} ref={selectRef}>
-            <option value="" label={'\u00A0'}>
-              {'\u00A0'}
-            </option>
-            {[...state.collection.getKeys()].map(key => {
-              let item = state.collection.getItem(key);
-              if (item && item.type === 'item') {
-                return (
-                  <option key={item.key} value={item.key}>
-                    {item.textValue}
-                  </option>
-                );
-              }
-            })}
-            {/* The collection may be empty during the initial render. */}
-            {/* Rendering options for the current values ensures the select has a value immediately, */}
-            {/* making FormData reads consistent. */}
-            {state.collection.size === 0 &&
-              name &&
-              values.map((value, i) => <option key={i} value={value ?? ''} />)}
-          </select>
-        </label>
-      </div>
-    );
-  } else if (name) {
-    let data = selectData.get(state) || {};
-    let {validationBehavior} = data;
-
-    // Always render at least one hidden input to ensure required form submission.
-    if (values.length === 0) {
-      values = [null];
-    }
-
-    let res = values.map((value, i) => {
-      let inputProps: InputHTMLAttributes<HTMLInputElement> = {
-        type: 'hidden',
-        autoComplete: selectProps.autoComplete,
-        name,
-        form,
-        disabled: isDisabled,
-        value: value ?? ''
-      };
-
-      if (validationBehavior === 'native') {
-        // Use a hidden <input type="text"> rather than <input type="hidden">
-        // so that an empty value blocks HTML form submission when the field is required.
-        return (
-          <input
-            key={i}
-            {...inputProps}
-            ref={i === 0 ? inputRef : null}
-            style={{display: 'none'}}
-            type="text"
-            required={i === 0 ? selectProps.required : false}
-            onChange={() => {
-              /** Ignore react warning. */
-            }}
-          />
-        );
-      }
-
-      return <input key={i} {...inputProps} ref={i === 0 ? inputRef : null} />;
-    });
-
-    return <>{res}</>;
-  }
-
-  return null;
+  return (
+    <div {...containerProps} data-testid="hidden-select-container">
+      <label>
+        {label}
+        <select {...selectProps} ref={selectRef}>
+          <option value="" label={'\u00A0'}>
+            {'\u00A0'}
+          </option>
+          {/* Avoid rendering a large native select while preserving form and change event semantics. */}
+          {state.collection.size <= 300
+            ? [...state.collection.getKeys()].map(key => {
+                let item = state.collection.getItem(key);
+                if (item && item.type === 'item') {
+                  return (
+                    <option key={item.key} value={item.key}>
+                      {item.textValue}
+                    </option>
+                  );
+                }
+              })
+            : values.map((value, i) => (value != null ? <option key={i} value={value} /> : null))}
+          {/* The collection may be empty during the initial render. */}
+          {/* Rendering options for the current values ensures the select has a value immediately, */}
+          {/* making FormData reads consistent. */}
+          {state.collection.size === 0 &&
+            name &&
+            values.map((value, i) => <option key={i} value={value ?? ''} />)}
+        </select>
+      </label>
+    </div>
+  );
 }
