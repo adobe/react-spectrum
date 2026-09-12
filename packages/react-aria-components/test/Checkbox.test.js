@@ -423,6 +423,19 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
   });
 
+  it('should support hiddenInput stretch-to-label', () => {
+    let {getByRole} = render(
+      <Checkbox hiddenInput="stretch-to-label">
+        Test
+      </Checkbox>
+    );
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveStyle('position: absolute');
+    expect(checkbox).toHaveStyle('inset: 0');
+    expect(checkbox).toHaveStyle('width: 100%');
+    expect(checkbox).toHaveStyle('height: 100%');
+  });
+
   it('should support callback ref', () => {
     let cleanup = jest.fn();
     let onRef = jest.fn(() => cleanup);
@@ -489,5 +502,22 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     await user.keyboard('{Enter}');
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('CheckboxButton', function () {
+  it('should support hiddenInput stretch-to-label directly on CheckboxButton', () => {
+    let {getByRole} = render(
+      <CheckboxField>
+        <CheckboxButton hiddenInput="stretch-to-label">
+          Test
+        </CheckboxButton>
+      </CheckboxField>
+    );
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveStyle('position: absolute');
+    expect(checkbox).toHaveStyle('inset: 0');
+    expect(checkbox).toHaveStyle('width: 100%');
+    expect(checkbox).toHaveStyle('height: 100%');
   });
 });

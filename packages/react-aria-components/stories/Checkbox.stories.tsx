@@ -27,3 +27,22 @@ export const CheckboxExample: CheckboxStory = {
     </Checkbox>
   )
 };
+
+// Demonstrates stretching the hidden input over the visible component so the
+// screen reader focus ring tracks the checkbox instead of collapsing to a 1x1px
+// square. Requires the label (or a positioned ancestor) to be a containing block.
+export const CheckboxScreenReaderFocusRing: CheckboxStory = {
+  render: args => (
+    <Checkbox
+      {...args}
+      style={{position: 'relative'}}
+      hiddenInput="stretch-to-label">
+      <div className="checkbox">
+        <svg viewBox="0 0 18 18" aria-hidden="true">
+          <polyline points="1 9 7 14 15 4" />
+        </svg>
+      </div>
+      Unsubscribe
+    </Checkbox>
+  )
+};
