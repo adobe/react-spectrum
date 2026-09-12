@@ -18,16 +18,22 @@ import React from 'react';
 import {tv} from 'tailwind-variants';
 import {composeTailwindRenderProps, focusRing} from './utils';
 
-export function NavigationTree<T>({children, ...props}: NavigationTreeProps<T>) {
+export function NavigationTree<T>({
+  renderLink,
+  children,
+  ...props
+}: NavigationTreeProps<T> & {renderLink?: LinkProps['render']}) {
   return (
-    <AriaNavigationTree
-      {...props}
-      className={composeTailwindRenderProps(
-        props.className,
-        'w-56 max-w-full max-h-72 overflow-auto flex flex-col p-1 gap-0.5 relative border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 outline-none'
-      )}>
-      {children}
-    </AriaNavigationTree>
+    <RenderLinkContext.Provider value={renderLink}>
+      <AriaNavigationTree
+        {...props}
+        className={composeTailwindRenderProps(
+          props.className,
+          'w-56 max-w-full max-h-72 overflow-auto flex flex-col p-1 gap-0.5 relative border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 outline-none'
+        )}>
+        {children}
+      </AriaNavigationTree>
+    </RenderLinkContext.Provider>
   );
 }
 
@@ -94,6 +100,8 @@ const NavTreeLinkContext = React.createContext<{
   indicator: 'current' | 'ancestor' | undefined;
 }>({indicator: undefined});
 
+const RenderLinkContext = React.createContext<LinkProps['render'] | undefined>(undefined);
+
 export function NavigationTreeItemContent(props: {children?: React.ReactNode}) {
   return (
     <AriaNavigationTreeItemContent>
@@ -151,10 +159,17 @@ export interface NavigationTreeItemLinkProps extends Omit<LinkProps, 'children'>
   children?: React.ReactNode;
 }
 
-export function NavigationTreeItemLink(props: NavigationTreeItemLinkProps) {
+export function NavigationTreeItemLink({
+  render: renderProp,
+  ...props
+}: NavigationTreeItemLinkProps) {
   let {indicator} = React.useContext(NavTreeLinkContext);
+  let contextRender = React.useContext(RenderLinkContext);
   return (
-    <Link {...props} className={({isDisabled}) => linkStyles({isDisabled})}>
+    <Link
+      render={renderProp ?? contextRender}
+      {...props}
+      className={({isDisabled}) => linkStyles({isDisabled})}>
       {({isHovered}) => (
         <>
           <span

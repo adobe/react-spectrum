@@ -743,8 +743,11 @@ describe('CheckboxGroup', () => {
         let group = getByRole('group');
         expect(group).not.toHaveAttribute('aria-describedby');
 
-        act(() => {
+        await act(async () => {
           getByTestId('form').checkValidity();
+          // Flush the microtask queued by the global invalid event handler,
+          // which moves focus to the first invalid field and updates modality.
+          await Promise.resolve();
         });
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(

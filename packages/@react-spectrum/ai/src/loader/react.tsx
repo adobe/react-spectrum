@@ -163,7 +163,20 @@ function cellScaleKeyframes(name, c, total) {
 
 // Group opacity envelope for the whole loader, applied once to the cell-grid
 // container so overlapping cells never stack their alpha.
-function groupOpacityKeyframes(name, total) {
+function groupOpacityKeyframes(name, total, isReducedMotion: boolean) {
+  // In reduced motion mode, the entire icon fades in and out instead of individual cells.
+  if (isReducedMotion) {
+    return emitKeyframes(
+      name,
+      [
+        {f: 0, decl: op(0)},
+        {f: total / 2 - OP_FADE_OUT / 2, decl: op('var(--loader-opacity, 1)')},
+        {f: total / 2 + OP_FADE_OUT / 2, decl: op('var(--loader-opacity, 1)')},
+        {f: total, decl: op(0)}
+      ],
+      total
+    );
+  }
   return emitKeyframes(
     name,
     [
@@ -191,8 +204,10 @@ function iconId(cells: object): string {
 }
 
 const cssCache = new WeakMap<object, string>();
-function keyframesFor(cells: Cell[]): string {
-  let css = cssCache.get(cells);
+const reducedMotionCssCache = new WeakMap<object, string>();
+function keyframesFor(cells: Cell[], isReducedMotion: boolean): string {
+  let cache = isReducedMotion ? reducedMotionCssCache : cssCache;
+  let css = cache.get(cells);
   if (css === undefined) {
     const id = iconId(cells);
     const total = loopFramesFor(cells);
@@ -202,8 +217,8 @@ function keyframesFor(cells: Cell[]): string {
           (c, i) =>
             cellYKeyframes(`${id}-${i}-y`, c, total) + cellScaleKeyframes(`${id}-${i}-s`, c, total)
         )
-        .join('') + groupOpacityKeyframes(`${id}-group-o`, total);
-    cssCache.set(cells, css);
+        .join('') + groupOpacityKeyframes(`${id}-group-o`, total, isReducedMotion);
+    cache.set(cells, css);
   }
   return css;
 }
@@ -237,14 +252,26 @@ export interface PixelLoaderProps {
 export function PixelLoader(props: PixelLoaderProps) {
   const {
     size = 21,
-    isPlaying: isPlayingProp = true,
+    isPlaying = true,
     icon = aiLogo,
     color = 'currentColor',
     className,
     ...rest
   } = props;
   let isReducedMotion = useReducedMotion();
-  let isPlaying = isReducedMotion ? false : isPlayingProp;
+
+  let ref = React.useRef<HTMLDivElement>(null);
+  let [isInView, setIsInView] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    let observer = new IntersectionObserver(([entry]) => setIsInView(entry.isIntersecting));
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Normalize to a sequence.
   const sequence = React.useMemo(
@@ -270,16 +297,17 @@ export function PixelLoader(props: PixelLoaderProps) {
 
   // Advance the sequence one icon per cycle while playing. Single-icon
   // loaders never start a timer — they're a pure infinite CSS loop.
+  let isAdvancing = isPlaying && isInView;
   React.useEffect(() => {
-    if (!isPlaying || !isSequence) {
+    if (!isAdvancing || !isSequence) {
       return undefined;
     }
     const id = setInterval(() => setTick(t => t + 1), duration);
     return () => clearInterval(id);
-  }, [isPlaying, isSequence, duration, sequence]);
+  }, [isAdvancing, isSequence, duration, sequence]);
 
   const animId = iconId(cells);
-  const css = keyframesFor(cells);
+  const css = keyframesFor(cells, isReducedMotion);
   // Sequences play each icon once and hold its faded-out final frame
   // (`forwards`) until the next remount; a single icon loops forever.
   const iteration = isSequence ? '1 forwards' : 'infinite';
@@ -296,9 +324,11 @@ export function PixelLoader(props: PixelLoaderProps) {
     return matrix;
   }, [cells]);
   const isHighDPI = (typeof document !== 'undefined' && window.devicePixelRatio >= 2) ?? false;
+  const isAIIcon = cells === aiLogo;
 
   return (
     <div
+      ref={ref}
       aria-hidden="true"
       className={className}
       style={{
@@ -311,7 +341,7 @@ export function PixelLoader(props: PixelLoaderProps) {
         forcedColorAdjust: 'none',
         willChange: 'opacity',
         ...(isPlaying && {
-          animation: `${animId}-group-o ${duration}ms linear ${iteration}`
+          animation: `${animId}-group-o ${duration}ms linear ${iteration} ${isInView ? 'running' : 'paused'}`
         })
       }}
       {...rest}>
@@ -348,12 +378,15 @@ export function PixelLoader(props: PixelLoaderProps) {
               transformOrigin: 'center',
               borderRadius: `${corner(left, top, topLeft)} ${corner(right, top, topRight)} ${corner(right, bottom, bottomRight)} ${corner(left, bottom, bottomLeft)}`,
               backgroundColor: color,
-              ...(isPlaying && {
-                animation:
-                  `${animId}-${i}-y ${duration}ms linear ${iteration}, ` +
-                  `${animId}-${i}-s ${duration}ms linear ${iteration}`,
-                willChange: 'transform'
-              })
+              // Extra stroke only on the AI icon's cells to match the original SVG.
+              boxShadow: isAIIcon ? `0 0 0 ${c.outer ? '0.15px' : '0.1px'} ${color}` : undefined,
+              ...(isPlaying &&
+                !isReducedMotion && {
+                  animation:
+                    `${animId}-${i}-y ${duration}ms linear ${iteration} ${isInView ? 'running' : 'paused'}, ` +
+                    `${animId}-${i}-s ${duration}ms linear ${iteration} ${isInView ? 'running' : 'paused'}`,
+                  willChange: 'transform'
+                })
             }}
           />
         );

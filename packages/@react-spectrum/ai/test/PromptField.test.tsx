@@ -507,4 +507,19 @@ describeOrSkip('PromptField', () => {
     await user.click(screen.getByRole('link', {name: 'AI User Guidelines'}));
     expect(onAITermsPress).toHaveBeenCalledTimes(1);
   });
+
+  it('keeps the full URL when stringifying', async () => {
+    let {user, textbox, getValue} = renderPromptField();
+    await user.click(textbox);
+    await user.keyboard('visit https://www.test.com now');
+
+    await waitFor(() =>
+      expect(getValue().segments.some(s => s.type === 'token' && s.value?.type === 'url')).toBe(
+        true
+      )
+    );
+    let urlToken = getValue().segments.find(s => s.type === 'token' && s.value?.type === 'url');
+    expect(urlToken?.text).toBe('test.com');
+    expect(getValue().toString()).toContain('https://www.test.com');
+  });
 });
