@@ -588,19 +588,21 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function PresetLoader(props) {
   return (
-    <div className={style({height: 40})}>
+    <div className={style({height: 40})} >
+      {/*- begin highlight -*/}
       <PixelLoader
         {...props}
         /* PROPS */
       />
+      {/*- end highlight -*/}
     </div>
-  )
+  );
 }
 ```
 
 ### Usage
 
-Use the `pixelLoader` prop on `PromptTokenField` and `ResponseStatusTitle` to display the pixel loader.
+Use the `pixelLoader` prop on `ResponseStatusTitle` and `PromptTokenField` to display the pixel loader.
 
 <ExampleSwitcher type={null} examples={['ResponseStatus', 'PromptField']}>
 

@@ -21,6 +21,7 @@ import {
   useRef
 } from 'react';
 import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getInteractionModality, setInteractionModality} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
 import {getScrollParents} from '../utils/getScrollParents';
 import {isMac} from '../utils/platform';
@@ -34,7 +35,6 @@ import {
   TokenFieldValue
 } from 'react-stately/useTokenFieldState';
 import {scrollRectIntoView} from '../utils/scrollIntoView';
-import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEvent} from '../utils/useEvent';
 import {useField} from '../label/useField';
 import {useFocusable} from '../interactions/useFocusable';
@@ -741,15 +741,16 @@ export function setTokenFieldSelection(
 // scrolling each scrollable ancestor of the field so it is visible.
 function scrollCaretIntoView(root: HTMLElement): void {
   let selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0 || !nodeContains(root, selection.focusNode)) {
+  if (
+    getInteractionModality() !== 'keyboard' ||
+    !selection ||
+    selection.rangeCount === 0 ||
+    !nodeContains(root, selection.focusNode)
+  ) {
     return;
   }
 
   let range = selection.getRangeAt(0);
-  if (!range.collapsed) {
-    return;
-  }
-
   let rect = range.getBoundingClientRect();
 
   // A collapsed range doesn't always produce a client rect. This happens for empty lines.
@@ -760,6 +761,9 @@ function scrollCaretIntoView(root: HTMLElement): void {
       range = range.cloneRange();
       range.setEnd(node, range.endOffset + 1);
       rect = range.getBoundingClientRect();
+    } else if (root.firstChild == null) {
+      // If the root has no children, use its rect.
+      rect = root.getBoundingClientRect();
     } else {
       // Otherwise find the next sibling element (e.g. trailing <br>) and use its rect in this case.
       let nextSibling = node.nextSibling;

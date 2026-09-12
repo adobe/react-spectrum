@@ -377,7 +377,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       data-focused={isFocused || undefined}
       className={
         (size === 'M' ? outerBorder : '') +
-        style({containerType: 'inline-size', flexGrow: 1, minHeight: 0, display: 'flex'})
+        style({containerType: 'inline-size', flexGrow: 1, display: 'flex'})
       }
       style={{
         ...props.style,
@@ -426,7 +426,6 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
                 },
                 position: 'relative',
                 overflow: 'clip',
-                minHeight: 0,
                 width: 'full',
                 outlineStyle: 'solid',
                 outlineColor: {

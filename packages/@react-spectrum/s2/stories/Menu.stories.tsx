@@ -54,6 +54,7 @@ import StampClone from '../s2wf-icons/S2_Icon_StampClone_20_N.svg';
 import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
 import {ToggleButton} from '../src/ToggleButton';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
+import {useAsyncList} from 'react-stately/useAsyncList';
 
 const events = ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'];
 
@@ -446,6 +447,63 @@ export const ContextMenu: Story = {
       </Menu>
     </MenuTrigger>
   )
+};
+
+interface Character {
+  name: string;
+}
+
+const AsyncMenuRender = (
+  args: MenuProps<Character> & {delay: number; isEmpty: boolean}
+): ReactElement => {
+  let {delay, isEmpty, ...menuTriggerArgs} = args;
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, delay));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <MenuTrigger {...menuTriggerArgs}>
+      <Button aria-label="Select Character">
+        <NewIcon />
+      </Button>
+      <Menu
+        {...menuTriggerArgs}
+        aria-label="Star Wars Characters"
+        items={isEmpty ? [] : list.items}
+        loadingState={isEmpty ? undefined : list.loadingState}
+        onLoadMore={isEmpty ? undefined : list.loadMore}>
+        {(item: Character) => <MenuItem id={item.name}>{item.name}</MenuItem>}
+      </Menu>
+    </MenuTrigger>
+  );
+};
+
+export type AsyncMenuStoryType = typeof AsyncMenuRender;
+export const AsyncMenuStory: StoryObj<AsyncMenuStoryType> = {
+  render: AsyncMenuRender,
+  args: {
+    delay: 2000,
+    isEmpty: false
+  },
+  argTypes: {
+    delay: {control: 'number'},
+    isEmpty: {control: 'boolean'}
+  },
+  name: 'Async loading menu'
 };
 
 export const HoldAffordance: Story = {
