@@ -256,7 +256,11 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
 // aka the difference between a slash command and using the + menu which won't have filter text
 const PromptCompletionAnchorContext = createContext<Position | null>(null);
 
-export function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
+export function matchMimeType(mimeType: string | undefined, acceptedMimeTypes: string[]): boolean {
+  if (!mimeType) {
+    return false;
+  }
+
   return acceptedMimeTypes.some(type => {
     if (type === '*/*') {
       return true;
