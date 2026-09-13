@@ -36,8 +36,8 @@ import {CollectionBuilder, createLeafComponent} from 'react-aria/CollectionBuild
 import {CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {LinkContext} from './Link';
 import intlMessages from '../intl/*.json';
+import {LinkContext} from './Link';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {StepListState, useStepListState} from 'react-stately/useStepListState';

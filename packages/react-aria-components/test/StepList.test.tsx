@@ -11,12 +11,19 @@
  */
 
 import {act} from '@testing-library/react';
+import {Link} from '../src/Link';
 import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {StepList, StepListItem} from '../src/StepList';
 import userEvent from '@testing-library/user-event';
 
-const items = [
+interface StepItem {
+  id: string;
+  value: string;
+}
+
+const items: Array<StepItem> = [
   {id: 'step-one', value: 'Step 1'},
   {id: 'step-two', value: 'Step 2'},
   {id: 'step-three', value: 'Step 3'},
@@ -28,9 +35,41 @@ type StepListProps = Omit<typeof StepList, 'children'>;
 function renderComponent(props: StepListProps = {} as StepListProps) {
   return render(
     <StepList id="steplist-id" aria-label="steplist-test" {...props} items={items}>
-      {item => <StepListItem id={item.id}>{item.value}</StepListItem>}
+      {(item: StepItem) => (
+        <StepListItem id={item.id}>
+          <Link>{item.value}</Link>
+        </StepListItem>
+      )}
     </StepList>
   );
+}
+
+function renderWithRouter(props: any = {}) {
+  let {defaultSelectedKey, onSelectionChange, ...rest} = props;
+  function Wrapper() {
+    let [selectedKey, setSelectedKey] = React.useState<string | undefined>(defaultSelectedKey);
+    let navigate = (href: string) => {
+      setSelectedKey(href);
+      onSelectionChange?.(href);
+    };
+    return (
+      <RouterProvider navigate={navigate}>
+        <StepList
+          id="steplist-id"
+          aria-label="steplist-test"
+          {...rest}
+          selectedKey={selectedKey}
+          items={items}>
+          {(item: StepItem) => (
+            <StepListItem id={item.id} href={item.id}>
+              <Link>{item.value}</Link>
+            </StepListItem>
+          )}
+        </StepList>
+      </RouterProvider>
+    );
+  }
+  return render(<Wrapper />);
 }
 
 describe('StepList', function () {
@@ -55,13 +94,13 @@ describe('StepList', function () {
     const stepOne = stepListItems[0];
     expect(stepOne).toHaveAttribute('aria-current', 'step');
     expect(stepOne).toHaveAttribute('tabIndex', '0');
-    expect(stepOne.firstElementChild!.textContent).not.toContain('Completed');
+    expect(stepOne.closest('li')!.textContent).not.toContain('Completed');
     expect(onSelectionChange).toHaveBeenCalled();
     expect(onSelectionChange).toHaveBeenCalledWith('step-one');
 
     for (let i = 1; i < stepListItems.length; i++) {
       expect(stepListItems[i]).toHaveAttribute('aria-disabled', 'true');
-      expect(stepListItems[i].firstElementChild!.textContent).toContain('Not');
+      expect(stepListItems[i].closest('li')!.textContent).toContain('Not');
       expect(stepListItems[i]).not.toHaveAttribute('tabindex');
     }
 
@@ -77,20 +116,18 @@ describe('StepList', function () {
     });
     const stepListItems = tree.getAllByRole('link');
 
-    // Verify the step state text is included in referenced elements
+    // Each step link is labelled by its containing item, which includes the visually hidden
+    // step state text, so the state is part of the link's accessible name.
     let currentStep = stepListItems[2];
-    let currentIds = currentStep.getAttribute('aria-labelledby')!.split(' ');
-    let stateEl = document.getElementById(currentIds[1]);
+    let stateEl = document.getElementById(currentStep.getAttribute('aria-labelledby')!);
     expect(stateEl!.textContent).toContain('Current');
 
     let completedStep = stepListItems[0];
-    let completedIds = completedStep.getAttribute('aria-labelledby')!.split(' ');
-    let completedStateEl = document.getElementById(completedIds[1]);
+    let completedStateEl = document.getElementById(completedStep.getAttribute('aria-labelledby')!);
     expect(completedStateEl!.textContent).toContain('Completed');
 
     let notCompletedStep = stepListItems[3];
-    let notCompletedIds = notCompletedStep.getAttribute('aria-labelledby')!.split(' ');
-    let notCompletedStateEl = document.getElementById(notCompletedIds[1]);
+    let notCompletedStateEl = document.getElementById(notCompletedStep.getAttribute('aria-labelledby')!);
     expect(notCompletedStateEl!.textContent).toContain('Not');
   });
 
@@ -102,75 +139,74 @@ describe('StepList', function () {
     expect(ref.current).toBe(stepList);
   });
 
-  it('allows user to click completed steps and immediate next step only', async function () {
-    const tree = renderComponent({
+  it('allows user to navigate to completed steps and the immediate next step only', async function () {
+    const tree = renderWithRouter({
       defaultLastCompletedStep: 'step-two',
       defaultSelectedKey: 'step-three',
       onSelectionChange
     });
     const stepList = tree.getByLabelText('steplist-test');
-    const stepListItems = within(stepList).getAllByRole('link');
+    // Steps switch between <a> and <span> as selection changes, so re-query after each nav.
+    const getSteps = () => within(stepList).getAllByRole('link');
 
-    // select previously completed step
-    const stepOne = stepListItems[0];
-    expect(stepOne).not.toHaveAttribute('aria-current');
-    expect(stepOne.firstElementChild!.textContent).toContain('Completed');
-    await user.click(stepOne);
-    expect(stepOne).toHaveAttribute('aria-current', 'step');
+    // navigate to a previously completed step
+    expect(getSteps()[0]).not.toHaveAttribute('aria-current');
+    expect(getSteps()[0].closest('li')!.textContent).toContain('Completed');
+    await user.click(getSteps()[0]);
+    expect(getSteps()[0]).toHaveAttribute('aria-current', 'step');
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(onSelectionChange).toHaveBeenLastCalledWith('step-one');
 
-    // select immediate next step (step after last completed step)
-    const stepThree = stepListItems[2];
-    expect(stepThree).not.toHaveAttribute('aria-current');
-    expect(stepOne.firstElementChild!.textContent).toContain('Current');
-    await user.click(stepThree);
-    expect(stepThree).toHaveAttribute('aria-current');
+    // navigate to the immediate next step (step after last completed step)
+    expect(getSteps()[2]).not.toHaveAttribute('aria-current');
+    await user.click(getSteps()[2]);
+    expect(getSteps()[2]).toHaveAttribute('aria-current');
     expect(onSelectionChange).toHaveBeenCalledTimes(2);
     expect(onSelectionChange).toHaveBeenLastCalledWith('step-three');
     onSelectionChange.mockReset();
 
-    // try to select step after immediate next step
-    const stepFour = stepListItems[3];
-    expect(stepFour).not.toHaveAttribute('aria-current');
-    await user.click(stepFour);
-    expect(stepFour).not.toHaveAttribute('aria-current');
+    // the step after the immediate next step is not navigable
+    expect(getSteps()[3]).not.toHaveAttribute('aria-current');
+    await user.click(getSteps()[3]);
+    expect(getSteps()[3]).not.toHaveAttribute('aria-current');
     expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
-  it('allows user to change selected step via tab key only', async function () {
-    const tree = renderComponent({
+  it('allows user to change selected step via keyboard', async function () {
+    const tree = renderWithRouter({
       defaultLastCompletedStep: 'step-two',
       defaultSelectedKey: 'step-three',
       onSelectionChange
     });
     const stepList = tree.getByLabelText('steplist-test');
-    const stepListItems = within(stepList).getAllByRole('link');
+    const getSteps = () => within(stepList).getAllByRole('link');
 
-    expect(stepListItems[2]).toHaveAttribute('aria-current', 'step');
+    expect(getSteps()[2]).toHaveAttribute('aria-current', 'step');
 
+    // Only completed steps and the current step are tabbable; upcoming steps are skipped.
     await user.tab();
-    expect(document.activeElement).toBe(stepListItems[0]);
+    expect(document.activeElement).toBe(getSteps()[0]);
     await user.tab();
-    expect(document.activeElement).toBe(stepListItems[1]);
+    expect(document.activeElement).toBe(getSteps()[1]);
     await user.tab();
-    expect(document.activeElement).toBe(stepListItems[2]);
+    expect(document.activeElement).toBe(getSteps()[2]);
 
     await user.tab({shift: true});
-    expect(document.activeElement).toBe(stepListItems[1]);
+    expect(document.activeElement).toBe(getSteps()[1]);
     await user.keyboard('{Enter}');
     expect(onSelectionChange).toHaveBeenCalled();
     expect(onSelectionChange).toHaveBeenCalledWith('step-two');
-    expect(stepListItems[1]).toHaveAttribute('aria-current');
+    expect(getSteps()[1]).toHaveAttribute('aria-current');
     onSelectionChange.mockReset();
 
+    // Arrow keys do not change selection in a step list of links.
     await user.keyboard('{ArrowUp}');
-    expect(stepListItems[1]).toHaveAttribute('aria-current');
+    expect(getSteps()[1]).toHaveAttribute('aria-current');
     expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
   it('should not allow user to click on disabled steps', async function () {
-    const tree = renderComponent({
+    const tree = renderWithRouter({
       defaultLastCompletedStep: 'step-two',
       defaultSelectedKey: 'step-three',
       disabledKeys: ['step-one'],
@@ -180,6 +216,7 @@ describe('StepList', function () {
     const stepListItems = within(stepList).getAllByRole('link');
 
     const stepOne = stepListItems[0];
+    expect(stepOne).toHaveAttribute('aria-disabled', 'true');
 
     await user.click(stepOne);
     expect(stepOne).not.toHaveAttribute('aria-current');
@@ -211,7 +248,7 @@ describe('StepList', function () {
   });
 
   it('should not allow user to click previous steps when step list is readonly', async function () {
-    const tree = renderComponent({
+    const tree = renderWithRouter({
       defaultSelectedKey: 'step-four',
       defaultLastCompletedStep: 'step-three',
       isReadOnly: true,
@@ -246,14 +283,18 @@ describe('StepList', function () {
         onSelectionChange={onSelectionChange}
         selectedKey="step-one"
         items={items}>
-        {item => <StepListItem id={item.id}>{item.value}</StepListItem>}
+        {(item: StepItem) => (
+          <StepListItem id={item.id}>
+            <Link>{item.value}</Link>
+          </StepListItem>
+        )}
       </StepList>
     );
     const stepList = getByLabelText('steplist-test');
     const stepListItems = within(stepList).getAllByRole('link');
 
     expect(stepListItems[0]).toHaveAttribute('aria-current');
-    expect(stepListItems[0].textContent).toContain('Current');
+    expect(stepListItems[0].closest('li')!.textContent).toContain('Current');
     expect(onLastCompletedStepChange).not.toHaveBeenCalled();
 
     rerender(
@@ -263,12 +304,16 @@ describe('StepList', function () {
         onLastCompletedStepChange={onLastCompletedStepChange}
         selectedKey="step-two"
         items={items}>
-        {item => <StepListItem id={item.id}>{item.value}</StepListItem>}
+        {(item: StepItem) => (
+          <StepListItem id={item.id}>
+            <Link>{item.value}</Link>
+          </StepListItem>
+        )}
       </StepList>
     );
 
     expect(onLastCompletedStepChange).not.toHaveBeenCalled();
-    expect(stepListItems[0].textContent).toContain('Completed');
+    expect(stepListItems[0].closest('li')!.textContent).toContain('Completed');
 
     rerender(
       <StepList
@@ -277,12 +322,16 @@ describe('StepList', function () {
         onLastCompletedStepChange={onLastCompletedStepChange}
         selectedKey="step-three"
         items={items}>
-        {item => <StepListItem id={item.id}>{item.value}</StepListItem>}
+        {(item: StepItem) => (
+          <StepListItem id={item.id}>
+            <Link>{item.value}</Link>
+          </StepListItem>
+        )}
       </StepList>
     );
 
     expect(onLastCompletedStepChange).toHaveBeenCalledWith('step-two');
-    expect(stepListItems[1].textContent).toContain('Completed');
+    expect(stepListItems[1].closest('li')!.textContent).toContain('Completed');
   });
 
   it('does not update selected step when last completed step is controlled', function () {
@@ -296,7 +345,11 @@ describe('StepList', function () {
         onSelectionChange={onSelectionChange}
         onLastCompletedStepChange={onLastCompletedStepChange}
         items={items}>
-        {item => <StepListItem id={item.id}>{item.value}</StepListItem>}
+        {(item: StepItem) => (
+          <StepListItem id={item.id}>
+            <Link>{item.value}</Link>
+          </StepListItem>
+        )}
       </StepList>
     );
     expect(onLastCompletedStepChange).toHaveBeenCalledTimes(0);
@@ -313,7 +366,11 @@ describe('StepList', function () {
         onSelectionChange={onSelectionChange}
         lastCompletedStep="step-two"
         items={items}>
-        {item => <StepListItem id={item.id}>{item.value}</StepListItem>}
+        {(item: StepItem) => (
+          <StepListItem id={item.id}>
+            <Link>{item.value}</Link>
+          </StepListItem>
+        )}
       </StepList>
     );
 
@@ -325,13 +382,17 @@ describe('StepList', function () {
         onSelectionChange={onSelectionChange}
         lastCompletedStep="step-three"
         items={items}>
-        {item => <StepListItem id={item.id}>{item.value}</StepListItem>}
+        {(item: StepItem) => (
+          <StepListItem id={item.id}>
+            <Link>{item.value}</Link>
+          </StepListItem>
+        )}
       </StepList>
     );
 
     expect(onLastCompletedStepChange).toHaveBeenCalledTimes(0);
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(stepListItems[1]).toHaveAttribute('aria-current');
-    expect(stepListItems[2].textContent).toContain('Completed');
+    expect(stepListItems[2].closest('li')!.textContent).toContain('Completed');
   });
 });

@@ -12,4 +12,8 @@
 
 export {useStepListState} from 'react-stately/private/steplist/useStepListState';
 
-export type {StepListProps, StepListStateOptions, StepListState} from 'react-stately/private/steplist/useStepListState';
+export type {
+  StepListProps,
+  StepListStateOptions,
+  StepListState
+} from 'react-stately/private/steplist/useStepListState';

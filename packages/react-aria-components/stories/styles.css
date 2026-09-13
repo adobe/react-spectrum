@@ -586,13 +586,7 @@
     }
 
     &:last-child {
-      clip-path: polygon(
-        0 0,
-        100% 0,
-        100% 100%,
-        0 100%,
-        var(--coworker-notch) 50%
-      );
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, var(--coworker-notch) 50%);
     }
 
     &[data-hovered] {
@@ -776,13 +770,7 @@
 
     &:last-child {
       padding-right: 16px;
-      clip-path: polygon(
-        0 0,
-        100% 0,
-        100% 100%,
-        0 100%,
-        var(--coworker-notch) 50%
-      );
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, var(--coworker-notch) 50%);
     }
 
     &[data-hovered] {

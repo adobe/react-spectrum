@@ -11,7 +11,7 @@
  */
 
 import {AriaLinkOptions} from 'react-aria/useLink';
-import {HTMLAttributes, useId} from 'react';
+import {HTMLAttributes} from 'react';
 import {Key, RefObject} from '@react-types/shared';
 import {SelectableItemStates} from '../selection/useSelectableItem';
 import {StepListState} from 'react-stately/private/steplist/useStepListState';
@@ -41,7 +41,6 @@ export function useStepListItem<T>(
   let {selectionManager: manager} = state;
 
   let isDisabled = !state.isSelectable(key);
-  let stepId = useId();
 
   let {itemProps, ...states} = useSelectableItem({
     isDisabled,
@@ -52,12 +51,11 @@ export function useStepListItem<T>(
 
   return {
     stepProps: {
-      id: stepId,
       ...itemProps,
       tabIndex: undefined
     },
     linkProps: {
-      'aria-labelledby': stepId,
+      'aria-labelledby': itemProps.id,
       isDisabled,
       'aria-current': states.isSelected ? 'step' : undefined
     },
