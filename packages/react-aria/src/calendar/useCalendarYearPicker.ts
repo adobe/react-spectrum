@@ -85,8 +85,9 @@ export function useCalendarYearPicker(
   let years: CalendarYearPickerItem[] = [];
   let date = minDate;
   let value = 0;
-  while (date.compare(maxDate) <= 0) {
-    if (isSameYear(date, state.focusedDate)) {
+  while (date.compare(maxDate) <= 0 || isSameYear(date, maxDate)) {
+    let itemDate = date.compare(maxDate) > 0 ? maxDate : date;
+    if (isSameYear(itemDate, state.focusedDate)) {
       value = years.length;
     }
 
@@ -96,8 +97,8 @@ export function useCalendarYearPicker(
       // store the year number, because in some calendars, such
       // as the Japanese, the era may also change.
       id: years.length,
-      date,
-      formatted: formatter.format(date.toDate(state.timeZone))
+      date: itemDate,
+      formatted: formatter.format(itemDate.toDate(state.timeZone))
     });
 
     date = date.add({years: 1});
