@@ -392,12 +392,10 @@ export function useGridCell<T, C extends GridCollection<T>>(
   // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault
   // on pointer down, so the browser will try to focus the cell which has a tabIndex applied.
   // To avoid this, remove the tabIndex from the cell briefly on pointer down.
-  if (
-    shouldSelectOnPressUp &&
-    gridCellProps.tabIndex != null &&
-    gridCellProps.onPointerDown == null
-  ) {
+  if (shouldSelectOnPressUp && gridCellProps.tabIndex != null) {
+    let baseOnPointerDown = gridCellProps.onPointerDown;
     gridCellProps.onPointerDown = e => {
+      baseOnPointerDown?.(e);
       let el = e.currentTarget;
       let tabindex = el.getAttribute('tabindex');
       el.removeAttribute('tabindex');
