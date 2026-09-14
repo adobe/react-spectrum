@@ -25,7 +25,9 @@ import {
   css,
   focusRing,
   iconStyle,
+  keyframes,
   lightDark,
+  scrollFade,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button, ButtonProps} from 'react-aria-components/Button';
@@ -42,7 +44,6 @@ import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
-import {keyframes, scrollFade} from './tokens.macro' with {type: 'macro'};
 import {matchMimeType} from './PromptField';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';

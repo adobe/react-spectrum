@@ -1153,3 +1153,153 @@ export function keyframes(this: MacroContext | void, css: string): string {
   }
   return name;
 }
+
+export interface ScrollFadeOptions {
+  top?: number;
+  bottom?: number;
+  start?: number;
+  end?: number;
+  x?: number;
+  y?: number;
+  inset?: number;
+}
+
+/**
+ * Generates a `mask-image` that fades out the edges of a scrollable element, animated via
+ * `animation-timeline: scroll()` so the fade only appears where there's more content to scroll to.
+ * Must be imported with `{type: 'macro'}`.
+ *
+ * @example
+ *   import {scrollFade, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ *   const styles = style({
+ *     overflow: 'auto',
+ *     ...scrollFade({y: 24})
+ *   });
+ *
+ * @param options - Fade sizes (in px) per edge, or `x`/`y` shorthands for both edges on an axis.
+ * @returns Style declarations to spread into a `style()` call.
+ */
+export function scrollFade(this: MacroContext | void, options: ScrollFadeOptions) {
+  let {x = 0, y = 0, top = y, bottom = y, start = x, end = x, inset = 0} = options;
+
+  let blockMask = '',
+    inlineMask = '';
+
+  if (top || bottom) {
+    blockMask = `linear-gradient(
+      to bottom,
+      transparent 0px ${inset > 0 ? `calc(var(--scroll-fade-top, ${inset}px) - ${top}px)` : ''},
+      black var(--scroll-fade-top, ${inset}px),
+      black var(--scroll-fade-bottom, calc(100% - ${bottom}px)),
+      transparent ${inset > 0 ? `calc(var(--scroll-fade-bottom, 100%) + ${inset}px)` : ''} 100%
+    )`;
+  }
+
+  if (start || end) {
+    // TODO: rtl
+    inlineMask = `linear-gradient(
+      to right,
+      transparent 0px ${inset > 0 ? `calc(var(--scroll-fade-left, ${inset}px) - ${start}px)` : ''},
+      black var(--scroll-fade-left, ${inset}px),
+      black var(--scroll-fade-right, calc(100% - ${end}px)),
+      transparent ${inset > 0 ? `calc(var(--scroll-fade-right, 100%) + ${end}px)` : ''} 100%
+    )`;
+  }
+
+  let topAnimation = scrollFadeKeyframes.call(
+    this,
+    'top',
+    '0px',
+    top ? `${top + inset}px` : '',
+    '0px'
+  );
+  let bottomAnimation = scrollFadeKeyframes.call(
+    this,
+    'bottom',
+    bottom ? `calc(100% - ${bottom + inset}px)` : '',
+    '100%',
+    '100%'
+  );
+  let leftAnimation = scrollFadeKeyframes.call(
+    this,
+    'left',
+    '0px',
+    start ? `${start + inset}px` : '',
+    '0px'
+  );
+  let rightAnimation = scrollFadeKeyframes.call(
+    this,
+    'right',
+    end ? `calc(100% - ${end + inset}px)` : '',
+    '100%',
+    '100%'
+  );
+  let animations = [topAnimation, bottomAnimation, leftAnimation, rightAnimation];
+  let timeline = ['scroll(self y)', 'scroll(self y)', 'scroll(self x)', 'scroll(self x)']
+    .filter((_, i) => animations[i])
+    .join(', ');
+  let range = [
+    `0px ${top}px`,
+    `calc(100% - ${bottom}px) 100%`,
+    `0px ${start}px`,
+    `calc(100% - ${end}px) 100%`
+  ]
+    .filter((_, i) => animations[i])
+    .join(', ');
+
+  if (blockMask || inlineMask) {
+    return css.call(
+      this,
+      `
+      mask-image: ${[blockMask, inlineMask].filter(Boolean).join(', ')};
+      mask-composite: intersect;
+      mask-repeat: no-repeat;
+
+      @supports (animation-timeline: scroll()) {
+        animation: ${animations.filter(Boolean).join(', ')};
+        animation-duration: 1ms;
+        animation-timing-function: ease-in-out;
+        animation-timeline: ${timeline};
+        animation-range: ${range};
+        animation-fill-mode: both;
+      }
+    `
+    );
+  }
+
+  return '';
+}
+
+function scrollFadeKeyframes(
+  this: MacroContext | void,
+  name: string,
+  start: string,
+  end: string,
+  initial: string
+) {
+  if (!start || !end) {
+    return '';
+  }
+
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: `
+    @property --scroll-fade-${name} {
+      syntax: "<length-percentage>";
+      inherits: false;
+      initial-value: ${initial};
+    }
+  `
+    });
+  }
+
+  return keyframes.call(
+    this,
+    `
+      from { --scroll-fade-${name}: ${start}; }
+      to { --scroll-fade-${name}: ${end}; }
+    `
+  );
+}
