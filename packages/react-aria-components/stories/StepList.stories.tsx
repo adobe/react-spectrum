@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -27,7 +27,6 @@ import {Router, Link as RouterLink} from '../../dev/s2-docs/pages/react-aria/Rou
 import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {Step, StepListTabList, StepListTabs, StepPanel, StepPanels} from '../src/StepListTabs';
 import {StepList, StepListItem} from '../src/StepList';
-// Reuse the same fake documentation router that NavigationTree.mdx uses.
 import styles from './styles.css';
 import {Text} from '../src/Text';
 
@@ -210,8 +209,7 @@ export const CoworkerStepListExample: StepListStory = {
                 }}
               </StepList>
             </div>
-            {/* Upcoming steps aren't selectable via click, so forward navigation goes through
-                the router as well — updating the route drives the controlled selectedKey. */}
+            {/* Upcoming steps aren't selectable via click, so provide a different mechanism to progress. */}
             <div style={{display: 'flex', gap: '12px'}}>
               <RouterLink href={prevItem.url}>Prev</RouterLink>
               <RouterLink href={nextItem.url}>Next</RouterLink>
@@ -242,8 +240,6 @@ let tabStepItems: Array<TabStepItem> = [
   {id: 'monitor', title: 'Monitor', stage: 5, Icon: Rocket}
 ];
 
-// The chevron marker/labels for a single step. Completed steps swap the icon for a check
-// via the [data-completed] hook that StepListTabs sets on each step's content.
 function TabStepContent({item}: {item: TabStepItem}) {
   let Icon = item.Icon;
   return (
@@ -264,7 +260,6 @@ function TabStepContent({item}: {item: TabStepItem}) {
   );
 }
 
-// Static children variant.
 export const TabBasedStepList: StepListStory = {
   render: (args: any) => (
     <div className={styles['coworker-StepListTabs']}>
@@ -274,7 +269,7 @@ export const TabBasedStepList: StepListStory = {
             aria-label="Coworker steps"
             className={styles['coworker-StepListTabList']}>
             {tabStepItems.map(item => (
-              <Step key={item.id} id={item.id}>
+              <Step id={item.id}>
                 <TabStepContent item={item} />
               </Step>
             ))}
@@ -282,7 +277,7 @@ export const TabBasedStepList: StepListStory = {
         </div>
         <StepPanels>
           {tabStepItems.map(item => (
-            <StepPanel key={item.id} id={item.id} className={styles['coworker-StepListTabPanel']}>
+            <StepPanel id={item.id} className={styles['coworker-StepListTabPanel']}>
               {`${item.title} — stage ${item.stage} content`}
             </StepPanel>
           ))}
@@ -344,7 +339,6 @@ export const DynamicTabBasedStepList: StepListStory = {
   render: (args: any) => <InteractiveStepListTabs {...args} defaultSelectedKey="plan" />
 };
 
-// Router-driven variant: each step is a link (href)
 interface RouterStepItem extends TabStepItem {
   url: string;
 }
