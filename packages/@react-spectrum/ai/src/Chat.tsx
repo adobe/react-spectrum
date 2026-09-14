@@ -375,7 +375,7 @@ const threadItemBase = style({
 
 export interface ThreadItemProps extends Pick<
   GridListItemProps,
-  'children' | 'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'
+  'textValue' | 'focusMode' | 'allowsArrowNavigation' | 'id'
 > {
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
@@ -385,6 +385,8 @@ export interface ThreadItemProps extends Pick<
   isStreaming?: boolean;
   /** Announce textValue on mount even when isStreaming is provided. */
   shouldAnnounceOnMount?: boolean;
+  /** The content to display in the ThreadItem. */
+  children: ReactNode;
 }
 
 /**

@@ -283,6 +283,54 @@ function Example(props) {
 }
 ```
 
+### Asynchronous loading
+
+Use the `loadingState` and `onLoadMore` props to enable async loading and infinite scrolling.
+
+```tsx render
+"use client";
+import {MenuTrigger, Menu, MenuItem} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
+
+interface Character {
+  name: string
+}
+
+function Example() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <MenuTrigger>
+      <ActionButton>Select Character</ActionButton>
+      <Menu
+        aria-label="Star Wars Characters"
+        items={list.items}
+        /*- begin highlight -*/
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}>
+        {/*- end highlight -*/}
+        {item => <MenuItem id={item.name}>{item.name}</MenuItem>}
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
 ### Links
 
 Use the `href` prop on a `<MenuItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework.
