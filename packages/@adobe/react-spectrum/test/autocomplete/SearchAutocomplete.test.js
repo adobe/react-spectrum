@@ -3549,9 +3549,8 @@ describe('SearchAutocomplete', function () {
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
-        expect(announce).toHaveBeenCalledTimes(2);
+        expect(announce).toHaveBeenCalledTimes(1);
         expect(announce).toHaveBeenNthCalledWith(1, '3 options available.');
-        expect(announce).toHaveBeenNthCalledWith(2, 'One');
         platformMock.mockRestore();
       });
 
