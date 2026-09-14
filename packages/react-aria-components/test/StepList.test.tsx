@@ -127,7 +127,9 @@ describe('StepList', function () {
     expect(completedStateEl!.textContent).toContain('Completed');
 
     let notCompletedStep = stepListItems[3];
-    let notCompletedStateEl = document.getElementById(notCompletedStep.getAttribute('aria-labelledby')!);
+    let notCompletedStateEl = document.getElementById(
+      notCompletedStep.getAttribute('aria-labelledby')!
+    );
     expect(notCompletedStateEl!.textContent).toContain('Not');
   });
 
