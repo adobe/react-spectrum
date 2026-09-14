@@ -48,6 +48,12 @@ describe('Link', () => {
     expect(link).toHaveAttribute('id', 'my-link-id');
   });
 
+  it('should support accessibility props', () => {
+    let {getByRole} = render(<Link aria-current="page">Test</Link>);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('aria-current', 'page');
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(<Link>{({isHovered}) => (isHovered ? 'Hovered' : 'Test')}</Link>);
     let link = getByRole('link');

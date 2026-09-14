@@ -28,7 +28,13 @@ import {usePress} from '../interactions/usePress';
 
 export interface LinkProps extends PressEvents, FocusableProps {}
 
-export interface AriaLinkProps extends LinkProps, LinkDOMProps, AriaLabelingProps {}
+export interface AriaLinkProps extends LinkProps, LinkDOMProps, AriaLabelingProps {
+  /**
+   * Indicates whether this element represents the current item within a container or set of related
+   * elements.
+   */
+  'aria-current'?: boolean | 'true' | 'false' | 'page' | 'step' | 'location' | 'date' | 'time';
+}
 
 export interface AriaLinkOptions extends AriaLinkProps {
   /** Whether the link is disabled. */
