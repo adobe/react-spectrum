@@ -166,6 +166,7 @@ export const CoworkerStepListExample: StepListStory = {
     <Router defaultSelectedRoute="/governance">
       {({selectedRoute}) => {
         let currentIndex = coworkerItems.findIndex(item => item.url === selectedRoute);
+        let currentItem = coworkerItems[Math.max(currentIndex, 0)];
         let prevItem = coworkerItems[Math.max(currentIndex - 1, 0)];
         let nextItem = coworkerItems[Math.min(currentIndex + 1, coworkerItems.length - 1)];
         return (
@@ -208,6 +209,13 @@ export const CoworkerStepListExample: StepListStory = {
                   );
                 }}
               </StepList>
+            </div>
+            {/* Content area driven by the current route: its contents change as the selected step changes. */}
+            <div className={styles['coworker-StepList-panel']}>
+              <h3 className={styles['coworker-StepList-panel-title']}>{currentItem.title}</h3>
+              <p className={styles['coworker-StepList-panel-body']}>
+                {`Stage ${currentItem.stage} of ${coworkerItems.length}. This content updates based on the current route (${selectedRoute}).`}
+              </p>
             </div>
             {/* Upcoming steps aren't selectable via click, so provide a different mechanism to progress. */}
             <div style={{display: 'flex', gap: '12px'}}>
