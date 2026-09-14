@@ -123,6 +123,21 @@ describe('Pressable', function () {
     );
   });
 
+  it('should not warn if focusable child is inside a hidden subtree', async function () {
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(
+      <div hidden>
+        <Pressable>
+          <span role="button">Button</span>
+        </Pressable>
+      </div>
+    );
+
+    expect(spy).not.toHaveBeenCalledWith(
+      '<Pressable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+    );
+  });
+
   it('supports isDisabled', async function () {
     using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole} = render(

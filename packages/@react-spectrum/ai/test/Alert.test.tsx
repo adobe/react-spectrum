@@ -11,6 +11,7 @@
  */
 
 import {Alert} from '@react-spectrum/ai';
+import {GridList, GridListItem} from 'react-aria-components';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -44,5 +45,20 @@ describeOrSkip('Alert', () => {
 
     await user.click(getByRole('button', {name: 'Dismiss'}));
     expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders without throwing when used inside a GridListItem (as ThreadItem is)', () => {
+    let {getByRole} = render(
+      <GridList aria-label="Chat" items={[{id: '1'}]}>
+        {() => (
+          <GridListItem textValue="Alert description">
+            <Alert>Alert description</Alert>
+          </GridListItem>
+        )}
+      </GridList>
+    );
+
+    expect(getByRole('alert')).toHaveTextContent('Alert description');
+    expect(getByRole('button', {name: 'Dismiss'})).toBeInTheDocument();
   });
 });

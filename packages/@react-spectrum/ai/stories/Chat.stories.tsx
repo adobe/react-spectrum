@@ -29,6 +29,7 @@ import {
   MessageSuggestionList,
   PromptField,
   PromptFieldSubmitButton,
+  PromptFieldToolbar,
   PromptFieldValue,
   PromptTokenField,
   ResponseStatus,
@@ -502,7 +503,8 @@ export function VirtualizedStreamingChat() {
           gap: 16,
           paddingX: 16,
           boxSizing: 'border-box',
-          minWidth: 0
+          minWidth: 0,
+          containerType: 'size'
         })}>
         <div
           className={style({
@@ -596,41 +598,42 @@ export function VirtualizedStreamingChat() {
           }}
           isGenerating={isGenerating}
           onStop={handleStop}>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-            <PromptTokenField
-              placeholder={
-                isGenerating
-                  ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
-                  : undefined
+          <PromptTokenField
+            placeholder={
+              isGenerating
+                ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+                : undefined
+            }
+            onKeyDown={e => {
+              if (!isGenerating) {
+                return;
               }
-              onKeyDown={e => {
-                if (!isGenerating) {
-                  return;
-                }
 
-                // TODO: we could make this even more realistic but for now just fire storybook event
-                // and add follow up message to queue
-                if (e.key === 'Enter' && !e.altKey) {
-                  e.preventDefault();
-                  if (promptValue.segments.length > 0) {
-                    action('onSteer')(promptValue.toString());
-                    setPromptValue(new PromptFieldValue([]));
-                  }
-                } else if (e.key === 'Enter' && e.altKey) {
-                  e.preventDefault();
-                  if (promptValue.segments.length > 0) {
-                    action('onFollowUp')(promptValue.toString());
-                    followUpMessage.current = promptValue;
-                    setPromptValue(new PromptFieldValue([]));
-                  }
-                } else if (e.key === 'Escape') {
-                  e.preventDefault();
-                  handleStop();
+              // TODO: we could make this even more realistic but for now just fire storybook event
+              // and add follow up message to queue
+              if (e.key === 'Enter' && !e.altKey) {
+                e.preventDefault();
+                if (promptValue.segments.length > 0) {
+                  action('onSteer')(promptValue.toString());
+                  setPromptValue(new PromptFieldValue([]));
                 }
-              }}
-            />
+              } else if (e.key === 'Enter' && e.altKey) {
+                e.preventDefault();
+                if (promptValue.segments.length > 0) {
+                  action('onFollowUp')(promptValue.toString());
+                  followUpMessage.current = promptValue;
+                  setPromptValue(new PromptFieldValue([]));
+                }
+              } else if (e.key === 'Escape') {
+                e.preventDefault();
+                handleStop();
+              }
+            }}
+          />
+          <PromptFieldToolbar>
+            <div />
             <PromptFieldSubmitButton />
-          </div>
+          </PromptFieldToolbar>
         </PromptField>
       </Chat>
     </div>
@@ -711,7 +714,8 @@ export function EmptyChat() {
           gap: 16,
           paddingX: 16,
           boxSizing: 'border-box',
-          minWidth: 0
+          minWidth: 0,
+          containerType: 'size'
         })}>
         <div
           className={style({
@@ -798,7 +802,7 @@ export function EmptyChat() {
             timeouts.current.forEach(clearTimeout);
             timeouts.current = [];
           }}>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <div className={style({display: 'flex', gap: 16, height: 'full'})}>
             <PromptTokenField />
             <PromptFieldSubmitButton />
           </div>
@@ -879,7 +883,8 @@ export function ChatPopover() {
             height: 'full',
             gap: 16,
             boxSizing: 'border-box',
-            minWidth: 0
+            minWidth: 0,
+            containerType: 'size'
           })}>
           <Thread
             items={messages}
@@ -910,8 +915,8 @@ export function ChatPopover() {
               );
             }}
           </Thread>
-          <PromptField onSubmit={() => {}}>
-            <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <PromptField size="S" onSubmit={() => {}}>
+            <div className={style({display: 'flex', gap: 16, height: 'full'})}>
               <PromptTokenField />
               <PromptFieldSubmitButton />
             </div>
@@ -1249,7 +1254,8 @@ export function AsyncLoadingChat() {
           gap: 16,
           paddingX: 16,
           boxSizing: 'border-box',
-          minWidth: 0
+          minWidth: 0,
+          containerType: 'size'
         })}>
         <div
           className={style({
@@ -1295,7 +1301,7 @@ export function AsyncLoadingChat() {
           </Thread>
         </div>
         <PromptField>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <div className={style({display: 'flex', gap: 16, height: 'full'})}>
             <PromptTokenField />
             <PromptFieldSubmitButton />
           </div>

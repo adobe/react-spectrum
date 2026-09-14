@@ -924,7 +924,7 @@ describe('Calendar', () => {
                   value={value}
                   onChange={e => onChange(e.target.value)}>
                   {items.map(item => (
-                    <option key={item.id} value={item.id}>
+                    <option key={item.id} value={item.id} data-date={item.date.toString()}>
                       {item.formatted}
                     </option>
                   ))}
@@ -967,6 +967,22 @@ describe('Calendar', () => {
         .getAllByRole('option')
         .map(o => o.textContent)
     ).toEqual(Array.from({length: 7}, (_, i) => String(i + 2020)));
+
+    tree.rerender(
+      <YearPickerExample
+        key="cross-year-range"
+        calendarProps={{
+          minValue: new CalendarDate(2024, 8, 3),
+          maxValue: new CalendarDate(2025, 2, 3),
+          focusedValue: new CalendarDate(2025, 2, 1)
+        }}
+      />
+    );
+    let yearPicker = tree.getByLabelText('year');
+    let options = within(yearPicker).getAllByRole('option');
+    expect(options.map(o => o.textContent)).toEqual(['2024', '2025']);
+    expect(yearPicker).toHaveValue('1');
+    expect(options[1]).toHaveAttribute('data-date', '2025-02-03');
 
     tree.rerender(
       <YearPickerExample
