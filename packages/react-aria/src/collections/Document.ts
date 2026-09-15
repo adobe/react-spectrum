@@ -472,11 +472,13 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      // Two connected elements with the same key would corrupt the linked list of sibling keys,
-      // which silently drops items or makes key traversal loop forever.
+      // Two elements with the same key would corrupt the linked list of sibling keys, which
+      // silently drops items or makes key traversal loop forever. Removed and hidden elements
+      // release their key in removeNode before any node is added, so a different owner here
+      // is a live duplicate.
       let key = element.node.key;
       let owner = this.keyOwners.get(key);
-      if (owner && owner !== element && owner.isConnected && !owner.isHidden) {
+      if (owner && owner !== element) {
         throw new Error(
           `Duplicate key "${String(key)}" found in collection. Every item in a collection must have a unique key.`
         );
@@ -502,7 +504,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     if (node.node) {
       let collection = this.getMutableCollection();
       collection.removeNode(node.node.key);
-      if (this.keyOwners.get(node.node.key) === node) {
+      if (process.env.NODE_ENV !== 'production' && this.keyOwners.get(node.node.key) === node) {
         this.keyOwners.delete(node.node.key);
       }
     }
