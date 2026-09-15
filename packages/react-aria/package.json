@@ -36,9 +36,7 @@
   "files": [
     "*",
     "!docs/**",
-    "!exports/**",
     "!intl/**",
-    "!src/**",
     "!stories/**",
     "!test/**"
   ],
