@@ -15,6 +15,7 @@ export default function InsertionIndicator(props: InsertionIndicatorProps): JSX.
   const {target, isPresentationOnly} = props;
 
   let ref = useRef<HTMLDivElement | null>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(props, dropState!, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 

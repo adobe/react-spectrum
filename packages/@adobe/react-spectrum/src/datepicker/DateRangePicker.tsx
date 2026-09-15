@@ -119,6 +119,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
+    // oxlint-disable-next-line react/react-compiler
     descriptionProps.id = undefined;
   }
 

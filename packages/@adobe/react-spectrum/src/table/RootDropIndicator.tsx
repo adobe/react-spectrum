@@ -17,6 +17,7 @@ import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 export function RootDropIndicator(): ReactNode | null {
   let {dropState, dragAndDropHooks, state} = useTableContext();
   let ref = useRef<HTMLDivElement | null>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
     {
       target: {type: 'root'}

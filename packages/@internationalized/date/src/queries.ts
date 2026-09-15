@@ -79,7 +79,7 @@ const DAY_MAP = {
   sat: 6
 };
 
-type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
+export type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 
 /**
  * Returns the day of week for the given date and locale. Days are numbered from zero to six,
@@ -298,7 +298,6 @@ function getWeekStart(locale: string): number {
       // @ts-ignore
       let localeInst = new Intl.Locale(locale);
       if ('getWeekInfo' in localeInst) {
-        // @ts-expect-error
         weekInfo = localeInst.getWeekInfo();
         if (weekInfo) {
           cachedWeekInfo.set(locale, weekInfo);
@@ -348,6 +347,11 @@ export function getWeeksInMonth(
 }
 
 /** Returns the lesser of the two provider dates. */
+export function minDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B;
+export function minDate<A extends DateValue, B extends DateValue>(
+  a?: A | null,
+  b?: B | null
+): A | B | null | undefined;
 export function minDate<A extends DateValue, B extends DateValue>(
   a?: A | null,
   b?: B | null

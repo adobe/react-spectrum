@@ -156,9 +156,11 @@ async function extractExamples() {
       "jsx": "preserve",
       "noUnusedLocals": true,
       "skipLibCheck": true,
+      "types": ["node", "jest"],
       "paths": {
         "vanilla-starter/*": ["../../starters/docs/src/*"],
-        "tailwind-starter/*": ["../../starters/tailwind/src/*"]
+        "tailwind-starter/*": ["../../starters/tailwind/src/*"],
+        "hooks-starter/*": ["../../starters/hooks/src/*"]
       }
     }
   }

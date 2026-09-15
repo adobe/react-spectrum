@@ -249,7 +249,7 @@ function balanceTime(time: Mutable<AnyTime>): number {
 }
 
 export function constrainTime(time: Mutable<AnyTime>): void {
-  time.millisecond = Math.max(0, Math.min(time.millisecond, 1000));
+  time.millisecond = Math.max(0, Math.min(time.millisecond, 999));
   time.second = Math.max(0, Math.min(time.second, 59));
   time.minute = Math.max(0, Math.min(time.minute, 59));
   time.hour = Math.max(0, Math.min(time.hour, 23));

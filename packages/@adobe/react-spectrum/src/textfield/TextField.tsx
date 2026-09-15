@@ -52,6 +52,7 @@ export const TextField = forwardRef(function TextField(
   props: SpectrumTextFieldProps,
   ref: Ref<TextFieldRef>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   props = useProviderProps(props);
   props = useFormProps(props);
 

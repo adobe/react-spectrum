@@ -9,7 +9,7 @@
     "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     "packages/@react-spectrum/s2/{s2wf-icons,spectrum-illustrations}/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     // Disable PostCSS from running over style macro output
-    "packages/@react-spectrum/s2/**/*.css": ["@parcel/transformer-css"],
+    "packages/@react-spectrum/{s2,ai}/**/*.css": ["@parcel/transformer-css"],
     "*.css": ["parcel-transformer-css-env", "..."],
     "*.svg": ["@parcel/transformer-svg-react"],
     "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [

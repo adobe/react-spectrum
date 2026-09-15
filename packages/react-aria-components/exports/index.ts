@@ -136,6 +136,7 @@ export {
 export {Keyboard, KeyboardContext} from '../src/Keyboard';
 export {Label, LabelContext} from '../src/Label';
 export {Link, LinkContext} from '../src/Link';
+export {PreviewTrigger} from '../src/PreviewTrigger';
 export {
   ListBoxLoadMoreItem,
   ListBox,
@@ -147,6 +148,7 @@ export {
 export {
   Menu,
   MenuItem,
+  MenuLoadMoreItem,
   MenuTrigger,
   MenuSection,
   MenuContext,
@@ -224,6 +226,8 @@ export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from '../src/Ta
 export {Text, TextContext} from '../src/Text';
 export {TextArea, TextAreaContext} from '../src/TextArea';
 export {TextField, TextFieldContext} from '../src/TextField';
+export {TokenField, TokenInput, Token, TokenFieldContext} from '../src/TokenField';
+export {TokenFieldValue} from 'react-stately/useTokenFieldState';
 export {
   UNSTABLE_Toast,
   UNSTABLE_ToastList,
@@ -239,6 +243,15 @@ export {
 } from '../src/ToggleButtonGroup';
 export {Toolbar, ToolbarContext} from '../src/Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from '../src/Tooltip';
+export {
+  NavigationTree,
+  NavigationTreeItem,
+  NavigationTreeItemContent,
+  NavigationTreeSection,
+  NavigationTreeHeader,
+  NavigationTreeContext,
+  NavigationTreeItemStateContext
+} from '../src/NavigationTree';
 export {
   TreeLoadMoreItem,
   Tree,
@@ -273,6 +286,7 @@ export {Focusable} from 'react-aria/Focusable';
 export {VisuallyHidden} from 'react-aria/VisuallyHidden';
 export {FormValidationContext} from 'react-stately/private/form/useFormValidationState';
 export {parseColor, getColorChannels} from 'react-stately/Color';
+export {setInteractionModality} from 'react-aria/useFocusVisible';
 export {ToastQueue as UNSTABLE_ToastQueue} from 'react-stately/useToastState';
 export {useListData} from 'react-stately/useListData';
 export {useTreeData} from 'react-stately/useTreeData';
@@ -375,6 +389,7 @@ export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
 export type {FileTriggerProps} from '../src/FileTrigger';
 export type {FormProps} from '../src/Form';
 export type {
+  GridListHeaderProps,
   GridListProps,
   GridListRenderProps,
   GridListItemProps,
@@ -389,6 +404,7 @@ export type {InputProps, InputRenderProps} from '../src/Input';
 export type {SectionProps, CollectionRenderer} from '../src/Collection';
 export type {LabelProps} from '../src/Label';
 export type {LinkProps, LinkRenderProps} from '../src/Link';
+export type {PreviewTriggerProps} from '../src/PreviewTrigger';
 export type {
   ListBoxProps,
   ListBoxRenderProps,
@@ -401,6 +417,7 @@ export type {
   MenuProps,
   MenuItemProps,
   MenuItemRenderProps,
+  MenuLoadMoreItemProps,
   MenuTriggerProps,
   SubmenuTriggerProps,
   MenuSectionProps
@@ -492,6 +509,14 @@ export type {
 } from '../src/TagGroup';
 export type {TextAreaProps} from '../src/TextArea';
 export type {TextFieldProps, TextFieldRenderProps} from '../src/TextField';
+export type {
+  TokenFieldProps,
+  TokenFieldRenderProps,
+  TokenInputProps,
+  TokenInputRenderProps,
+  TokenProps,
+  TokenRenderProps
+} from '../src/TokenField';
 export type {TextProps} from '../src/Text';
 export type {
   ToastRegionProps,
@@ -504,6 +529,16 @@ export type {ToggleButtonProps, ToggleButtonRenderProps} from '../src/ToggleButt
 export type {ToggleButtonGroupProps, ToggleButtonGroupRenderProps} from '../src/ToggleButtonGroup';
 export type {ToolbarProps, ToolbarRenderProps} from '../src/Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from '../src/Tooltip';
+export type {
+  NavigationTreeProps,
+  NavigationTreeRenderProps,
+  NavigationTreeItemProps,
+  NavigationTreeItemRenderProps,
+  NavigationTreeItemContentProps,
+  NavigationTreeItemContentRenderProps,
+  NavigationTreeSectionProps,
+  NavigationTreeHeaderProps
+} from '../src/NavigationTree';
 export type {
   TreeProps,
   TreeRenderProps,
@@ -522,7 +557,18 @@ export type {
   DropIndicatorProps,
   DropIndicatorRenderProps
 } from '../src/useDragAndDrop';
-export type {ContextValue, RenderProps, SlotProps, StyleRenderProps} from '../src/utils';
+export type {
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  DOMRenderProps,
+  PossibleLinkDOMRenderProps,
+  DOMRenderFunction,
+  ClassNameOrFunction,
+  StyleOrFunction,
+  ChildrenOrFunction
+} from '../src/utils';
 export type {VirtualizerProps} from '../src/Virtualizer';
 
 export type {DateValue} from 'react-stately/useDateFieldState';
@@ -556,7 +602,10 @@ export type {
   ItemDropTarget,
   RootDropTarget,
   TextDropItem,
-  PressEvent
+  PressEvent,
+  FocusableElement,
+  HoverEvent,
+  KeyboardEvent
 } from '@react-types/shared';
 export type {CalendarState} from 'react-stately/useCalendarState';
 export type {RangeCalendarState} from 'react-stately/useRangeCalendarState';
@@ -581,6 +630,7 @@ export type {DateRangePickerState} from 'react-stately/useDateRangePickerState';
 export type {DisclosureState} from 'react-stately/useDisclosureState';
 export type {DisclosureGroupState} from 'react-stately/useDisclosureGroupState';
 export type {ListState} from 'react-stately/useListState';
+export type {Modality} from 'react-aria/useFocusVisible';
 export type {NumberFieldState} from 'react-stately/useNumberFieldState';
 export type {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 export type {QueuedToast, ToastOptions, ToastState} from 'react-stately/useToastState';

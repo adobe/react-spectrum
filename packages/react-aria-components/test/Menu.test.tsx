@@ -16,6 +16,7 @@ import {
   mockClickDefault,
   pointerMap,
   render,
+  setupIntersectionObserverMock,
   within
 } from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
@@ -26,7 +27,15 @@ import {Heading} from '../src/Heading';
 import {Input} from '../src/Input';
 import {Keyboard} from '../src/Keyboard';
 import {Label} from '../src/Label';
-import {Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
+import {
+  Menu,
+  MenuContext,
+  MenuItem,
+  MenuLoadMoreItem,
+  MenuSection,
+  MenuTrigger,
+  SubmenuTrigger
+} from '../src/Menu';
 import {Popover} from '../src/Popover';
 import {Pressable} from 'react-aria/Pressable';
 import React, {useState} from 'react';
@@ -644,6 +653,95 @@ describe('Menu', () => {
 
     await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename', undefined);
+  });
+
+  it('should support a context menu trigger', async () => {
+    let onAction = jest.fn();
+    let {getByRole, getAllByRole, queryByRole} = render(
+      <MenuTrigger trigger="contextMenu">
+        <Button>Right click here</Button>
+        <Popover>
+          <Menu onAction={onAction}>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-haspopup');
+    expect(button).not.toHaveAttribute('aria-expanded');
+    expect(button).not.toHaveAttribute('aria-controls');
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    // A regular press should not open a context menu trigger.
+    await user.click(button);
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    // Right click opens the menu at the pointer position.
+    await user.pointer({target: button, keys: '[MouseRight]', coords: {clientX: 10, clientY: 20}});
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let menu = getByRole('menu');
+    expect(getAllByRole('menuitem')).toHaveLength(5);
+    expect(button).not.toHaveAttribute('aria-expanded');
+    expect(button).not.toHaveAttribute('aria-controls');
+
+    let popover = menu.closest('.react-aria-Popover');
+    expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
+
+    await user.click(getAllByRole('menuitem')[1]);
+    expect(onAction).toHaveBeenLastCalledWith('rename', undefined);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+  });
+
+  it('should close a context menu when right clicking outside', async () => {
+    let {getByRole, queryByRole} = render(
+      <MenuTrigger trigger="contextMenu">
+        <Button>Right click here</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    // Right click opens the menu at the pointer position.
+    await user.pointer({target: button, keys: '[MouseRight]'});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(getByRole('menu')).toBeInTheDocument();
+
+    // Right clicking inside the menu should not close it.
+    await user.pointer({target: getByRole('menu'), keys: '[MouseRight]'});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(getByRole('menu')).toBeInTheDocument();
+
+    // Right clicking outside (on the body) closes the menu so the browser's context menu can appear.
+    await user.pointer({target: document.body, keys: '[MouseRight]'});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(queryByRole('menu')).not.toBeInTheDocument();
   });
 
   it('should support onScroll', () => {
@@ -1998,6 +2096,110 @@ describe('Menu', () => {
         jest.runAllTimers();
       });
       expect(document.activeElement).toBe(menuTester.getOptions()[0]);
+    });
+  });
+
+  describe('async loading', () => {
+    let items = [{name: 'Foo'}, {name: 'Bar'}, {name: 'Baz'}];
+    let renderEmptyState = () => {
+      return <div>empty state</div>;
+    };
+    let AsyncMenu = (props: {
+      items?: typeof items;
+      isLoading?: boolean;
+      onLoadMore?: () => void;
+    }) => {
+      let {items, isLoading, onLoadMore} = props;
+      return (
+        <Menu aria-label="async menu" renderEmptyState={() => renderEmptyState()}>
+          <Collection items={items}>
+            {item => <MenuItem id={item.name}>{item.name}</MenuItem>}
+          </Collection>
+          <MenuLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
+            Loading...
+          </MenuLoadMoreItem>
+        </Menu>
+      );
+    };
+
+    let onLoadMore = jest.fn();
+    let observe = jest.fn();
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.runAllTimers();
+      jest.clearAllMocks();
+    });
+
+    it('should render the loading element when isLoading is true', () => {
+      let tree = render(<AsyncMenu isLoading items={items} />);
+
+      let menu = tree.getByRole('menu');
+      let menuTester = testUtilUser.createTester('Menu', {root: menu});
+      let options = menuTester.getOptions({element: menu});
+      expect(options).toHaveLength(4);
+      let loaderRow = options[3];
+      expect(loaderRow).toHaveTextContent('Loading...');
+
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(sentinel.parentElement).toHaveAttribute('inert');
+    });
+
+    it('should render the sentinel but not the loading indicator when not loading', () => {
+      let tree = render(<AsyncMenu items={items} />);
+
+      let menu = tree.getByRole('menu');
+      let menuTester = testUtilUser.createTester('Menu', {root: menu});
+      let options = menuTester.getOptions({element: menu});
+      expect(options).toHaveLength(3);
+      expect(tree.queryByText('Loading...')).toBeFalsy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('should properly render the renderEmptyState if menu is empty', () => {
+      let tree = render(<AsyncMenu items={[]} />);
+
+      let menu = tree.getByRole('menu');
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.getByRole('menu')});
+      let options = menuTester.getOptions({element: menu});
+      expect(options).toHaveLength(1);
+      expect(options[0]).toHaveTextContent('empty state');
+      expect(tree.queryByText('Loading...')).toBeFalsy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+
+      // Setting isLoading will render the loader even if the menu is empty
+      tree.rerender(<AsyncMenu items={[]} isLoading />);
+      options = menuTester.getOptions({element: menu});
+      expect(options).toHaveLength(2);
+      expect(options[1]).toHaveTextContent('empty state');
+      expect(tree.queryByText('Loading...')).toBeTruthy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('should only fire onLoadMore when intersection is detected regardless of loading state', () => {
+      let observer = setupIntersectionObserverMock({observe});
+
+      let tree = render(<AsyncMenu items={items} onLoadMore={onLoadMore} isLoading />);
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      act(() => {
+        observer.instance.triggerCallback([{isIntersecting: true}]);
+      });
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      observe.mockClear();
+
+      tree.rerender(<AsyncMenu items={items} onLoadMore={onLoadMore} />);
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        observer.instance.triggerCallback([{isIntersecting: true}]);
+      });
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
   });
 });

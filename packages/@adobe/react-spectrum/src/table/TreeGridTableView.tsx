@@ -30,6 +30,7 @@ export const TreeGridTableView = React.forwardRef(function TreeGridTableView<T e
     selectionStyle !== 'highlight'
   );
   let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
+  // oxlint-disable-next-line react/react-compiler
   let state = UNSTABLE_useTreeGridState({
     ...props,
     showSelectionCheckboxes,

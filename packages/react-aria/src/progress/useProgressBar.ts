@@ -94,7 +94,8 @@ export function useProgressBar(props: AriaProgressBarProps): ProgressBarAria {
   });
 
   value = clamp(value, minValue, maxValue);
-  let percentage = (value - minValue) / (maxValue - minValue);
+  let range = maxValue - minValue;
+  let percentage = range === 0 ? 0 : (value - minValue) / range;
   let formatter = useNumberFormatter(formatOptions);
 
   if (!isIndeterminate && !valueLabel) {

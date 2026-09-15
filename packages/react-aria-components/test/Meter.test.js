@@ -22,6 +22,7 @@ let TestMeter = props => (
       <>
         <Label>Storage space</Label>
         <span className="value">{valueText}</span>
+        <span className="percentage">{percentage}</span>
         <div className="bar" style={{width: percentage + '%'}} />
       </>
     )}
@@ -46,6 +47,45 @@ describe('Meter', () => {
 
     let bar = meter.querySelector('.bar');
     expect(bar).toHaveStyle('width: 25%');
+  });
+
+  it('supports a custom range', () => {
+    let {getByRole} = render(<TestMeter value={3} minValue={0} maxValue={6} />);
+
+    let meter = getByRole('meter');
+    expect(meter).toHaveAttribute('aria-valuenow', '3');
+    expect(meter).toHaveAttribute('aria-valuemin', '0');
+    expect(meter).toHaveAttribute('aria-valuemax', '6');
+    expect(meter).toHaveAttribute('aria-valuetext', '50%');
+
+    let value = meter.querySelector('.value');
+    expect(value).toHaveTextContent('50%');
+
+    let percentage = meter.querySelector('.percentage');
+    expect(percentage).toHaveTextContent('50');
+
+    let bar = meter.querySelector('.bar');
+    expect(bar).toHaveStyle('width: 50%');
+  });
+
+  it('renders 0 percent for an empty range', () => {
+    let {getByRole} = render(<TestMeter value={0} minValue={0} maxValue={0} />);
+
+    let meter = getByRole('meter');
+    expect(meter).toHaveAttribute('aria-valuenow', '0');
+    expect(meter).toHaveAttribute('aria-valuemin', '0');
+    expect(meter).toHaveAttribute('aria-valuemax', '0');
+    expect(meter).toHaveAttribute('aria-valuetext', '0%');
+    expect(meter).not.toHaveAttribute('aria-valuetext', 'NaN%');
+
+    let value = meter.querySelector('.value');
+    expect(value).toHaveTextContent('0%');
+
+    let percentage = meter.querySelector('.percentage');
+    expect(percentage).toHaveTextContent('0');
+
+    let bar = meter.querySelector('.bar');
+    expect(bar).toHaveStyle('width: 0%');
   });
 
   it('should support slot', () => {

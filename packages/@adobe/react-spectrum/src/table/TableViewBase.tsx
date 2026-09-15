@@ -185,6 +185,7 @@ interface TableBaseProps<T> extends SpectrumTableProps<T> {
 type View = ReusableView<GridNode<unknown>, ReactNode>;
 
 function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
+  // oxlint-disable-next-line react/react-compiler
   props = useProviderProps(props);
   let {
     isQuiet,
@@ -253,11 +254,13 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let dragState: DraggableCollectionState | null = null;
   let preview = useRef(null);
   if (isTableDraggable && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager,
       preview
     });
+    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, domRef);
   }
 
@@ -266,10 +269,12 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let droppableCollection: DroppableCollectionResult | null = null;
   let isRootDropTarget = false;
   if (isTableDroppable && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager
     });
+    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate: new ListKeyboardDelegate({
@@ -1034,6 +1039,7 @@ function ResizableTableColumnHeader(props) {
     let options: {label: string; id: string}[] = [];
     if (allowsSorting) {
       options.push({
+        // oxlint-disable-next-line react/react-compiler
         label: stringFormatter.format('sortAscending'),
         id: 'sort-asc'
       });
@@ -1320,6 +1326,7 @@ function TableRow({
 
   let draggableItem: DraggableItemResult | null = null;
   if (isTableDraggable && dragAndDropHooks && dragState) {
+    // oxlint-disable-next-line react/react-compiler
     draggableItem = dragAndDropHooks.useDraggableItem!(
       {key: item.key, hasDragButton: true},
       dragState
@@ -1335,6 +1342,7 @@ function TableRow({
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
 
+    // oxlint-disable-next-line react/react-compiler
     dropIndicator = dragAndDropHooks.useDropIndicator!({target}, dropState, dropIndicatorRef);
   }
 

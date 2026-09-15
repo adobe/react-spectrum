@@ -151,7 +151,7 @@ export const Focusable: React.ForwardRefExoticComponent<
         return;
       }
 
-      if (!props.isDisabled && !isFocusable(el)) {
+      if (!props.isDisabled && !isFocusable(el, {skipVisibilityCheck: true})) {
         console.warn(
           '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
         );
@@ -210,6 +210,7 @@ export const Focusable: React.ForwardRefExoticComponent<
     return React.cloneElement(child, {
       ...mergeProps(focusableProps, child.props),
       // @ts-ignore
+      // oxlint-disable-next-line react/react-compiler
       ref: mergeRefs(childRef, ref)
     });
   }

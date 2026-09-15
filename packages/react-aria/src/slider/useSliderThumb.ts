@@ -142,42 +142,37 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
 
+  let keyboardUpdate = cb => {
+    // remember to set this so that onChangeEnd is fired
+    state.setThumbDragging(index, true);
+    cb();
+    state.setThumbDragging(index, false);
+  };
+
   let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      let {
-        getThumbMaxValue,
-        getThumbMinValue,
-        decrementThumb,
-        incrementThumb,
-        setThumbValue,
-        setThumbDragging,
-        pageSize
-      } = state;
-      // these are the cases that useMove or useSlider don't handle
-      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
-        e.continuePropagation();
-        return;
+    shortcuts: {
+      PageUp: () => {
+        return keyboardUpdate(() => {
+          state.incrementThumb(index, state.pageSize);
+        });
+      },
+      PageDown: () => {
+        return keyboardUpdate(() => {
+          state.decrementThumb(index, state.pageSize);
+        });
+      },
+      Home: () => {
+        return keyboardUpdate(() => {
+          state.setThumbValue(index, state.getThumbMinValue(index));
+        });
+      },
+      End: () => {
+        return keyboardUpdate(() => {
+          state.setThumbValue(index, state.getThumbMaxValue(index));
+        });
       }
-      // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
-      e.preventDefault();
-      // remember to set this so that onChangeEnd is fired
-      setThumbDragging(index, true);
-      switch (e.key) {
-        case 'PageUp':
-          incrementThumb(index, pageSize);
-          break;
-        case 'PageDown':
-          decrementThumb(index, pageSize);
-          break;
-        case 'Home':
-          setThumbValue(index, getThumbMinValue(index));
-          break;
-        case 'End':
-          setThumbValue(index, getThumbMaxValue(index));
-          break;
-      }
-      setThumbDragging(index, false);
-    }
+    },
+    allowRepeats: true
   });
 
   let {moveProps} = useMove({
@@ -257,7 +252,8 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   }
 
   let interactions = !isDisabled
-    ? mergeProps(keyboardProps, moveProps, {
+    ? // oxlint-disable-next-line react/react-compiler
+      mergeProps(keyboardProps, moveProps, {
         onMouseDown: (e: React.MouseEvent) => {
           if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
             return;

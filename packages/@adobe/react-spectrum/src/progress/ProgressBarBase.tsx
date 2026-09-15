@@ -86,7 +86,8 @@ export const ProgressBarBase = React.forwardRef(function ProgressBarBase(
 
   let barStyle: CSSProperties = {};
   if (!isIndeterminate) {
-    let percentage = (value - minValue) / (maxValue - minValue);
+    let range = maxValue - minValue;
+    let percentage = range === 0 ? 0 : (value - minValue) / range;
     barStyle.width = `${Math.round(percentage * 100)}%`;
   }
 

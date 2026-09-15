@@ -74,6 +74,7 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(
   props: CheckboxGroupProps,
   ref: DOMRef<HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

@@ -181,12 +181,14 @@ export const ExampleRender = (args: CardViewProps<any> & {interactive?: React.Re
           {() => (
             <PhotoCard
               item={{
+                // oxlint-disable-next-line react/react-compiler
                 id: Math.random(),
                 user: {name: 'Devon Govett', profile_image: {small: ''}},
                 urls: {regular: ''},
                 description: 'This is a fake description. Kinda long so it wraps to a new line.',
                 alt_description: '',
                 width: 400,
+                // oxlint-disable-next-line react/react-compiler
                 height: 200 + Math.max(0, Math.round(Math.random() * 400))
               }}
               layout={args.layout || 'grid'}
@@ -281,6 +283,7 @@ const CollectionCardsRender = (args: CardViewProps<any>) => {
           {() => (
             <TopicCard
               topic={{
+                // oxlint-disable-next-line react/react-compiler
                 id: Math.random().toString(36),
                 title: 'Topic title',
                 total_photos: 80,
@@ -318,3 +321,80 @@ export const CardViewWithTextField: Story = {
     selectionMode: 'multiple'
   }
 };
+
+export function NestedCards() {
+  return (
+    <CardView aria-label="Nature photos" size="XL" styles={style({width: 'full', height: 600})}>
+      <ProjectCard />
+      <ProjectCard />
+    </CardView>
+  );
+}
+
+function ProjectCard() {
+  return (
+    <Card href="#">
+      <Content>
+        <Text slot="title">Firefly AI Acquisition</Text>
+        <Text slot="description">4 projects</Text>
+        <ActionMenu size="M">
+          <MenuItem>Test</MenuItem>
+        </ActionMenu>
+      </Content>
+      <div className={style({display: 'grid', gridTemplateColumns: ['auto', 'auto'], gap: 16})}>
+        <Card size="S" href="#" styles={style({width: 'auto'})}>
+          <CardPreview>
+            <Image
+              src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              width={600}
+              height={400}
+            />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Firefly launch hero</Text>
+            <Text slot="description">Stage 2 of 4</Text>
+          </Content>
+        </Card>
+        <Card size="S" href="#" styles={style({width: 'auto'})}>
+          <CardPreview>
+            <Image
+              src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              width={600}
+              height={400}
+            />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Firefly launch hero</Text>
+            <Text slot="description">Stage 2 of 4</Text>
+          </Content>
+        </Card>
+        <Card size="S" href="#" styles={style({width: 'auto'})}>
+          <CardPreview>
+            <Image
+              src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              width={600}
+              height={400}
+            />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Firefly launch hero</Text>
+            <Text slot="description">Stage 2 of 4</Text>
+          </Content>
+        </Card>
+        <Card size="S" href="#" styles={style({width: 'auto'})}>
+          <CardPreview>
+            <Image
+              src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              width={600}
+              height={400}
+            />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Firefly launch hero</Text>
+            <Text slot="description">Stage 2 of 4</Text>
+          </Content>
+        </Card>
+      </div>
+    </Card>
+  );
+}

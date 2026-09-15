@@ -213,6 +213,7 @@ export interface SliderStateOptions<T> extends SliderProps<T> {
  *
  * @param props
  */
+// oxlint-disable-next-line react/react-compiler
 export function useSliderState<T extends number | number[]>(
   props: SliderStateOptions<T>
 ): SliderState {

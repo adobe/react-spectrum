@@ -67,6 +67,7 @@ function Tree(props) {
 
   return (
     <div {...collectionProps} ref={ref} role="tree">
+      {/* oxlint-disable-next-line react/react-compiler */}
       {TreeNodes({nodes: state.collection, state})}
     </div>
   );
@@ -103,6 +104,7 @@ function TreeItem({node, state}) {
       <div className="title">{node.rendered}</div>
       {isExpanded && (
         <div className="children" role="group">
+          {/* oxlint-disable-next-line react/react-compiler */}
           {TreeNodes({nodes: node.childNodes, state})}
         </div>
       )}

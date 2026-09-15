@@ -1,13 +1,13 @@
 {
   "ascending": "昇順",
   "ascendingSort": "列 {columnName} を昇順で並べ替え",
+  "collapse": "折りたたむ",
   "columnSize": "{value} ピクセル",
   "descending": "降順",
   "descendingSort": "列 {columnName} を降順で並べ替え",
+  "expand": "展開",
   "resizerDescription": "Enter キーを押してサイズ変更を開始",
   "select": "選択",
   "selectAll": "すべて選択",
-  "sortable": "並べ替え可能な列",
-  "collapse": "折りたたむ",
-  "expand": "展開"
+  "sortable": "並べ替え可能な列"
 }

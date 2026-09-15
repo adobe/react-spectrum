@@ -54,6 +54,7 @@ export const ColorWheel = React.forwardRef(function ColorWheel(
   let [wheelRadius, setWheelRadius] = useState<number>(0);
   let [wheelThickness, setWheelThickness] = useState(WHEEL_THICKNESS);
 
+  // oxlint-disable-next-line react/react-compiler
   let resizeHandler = useCallback(() => {
     if (containerRef.current) {
       setWheelRadius(containerRef.current.offsetWidth / 2);

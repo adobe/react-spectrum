@@ -39,6 +39,9 @@ export interface DialogAria {
 
   /** Props for the dialog title element. */
   titleProps: DOMAttributes;
+
+  /** Props for the dialog content/description element. Used for aria-describedby on alertdialogs. */
+  contentProps: DOMAttributes;
 }
 
 /**
@@ -52,6 +55,9 @@ export function useDialog(
   let {role = 'dialog'} = props;
   let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
+
+  let contentId: string | undefined = useSlotId();
+  contentId = role === 'alertdialog' && !props['aria-describedby'] ? contentId : undefined;
 
   let isRefocusing = useRef(false);
 
@@ -105,6 +111,8 @@ export function useDialog(
     }
   });
 
+  let ariaDescribedby = props['aria-describedby'] ?? contentId;
+
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.
   // See https://bugs.webkit.org/show_bug.cgi?id=211934.
@@ -115,7 +123,8 @@ export function useDialog(
       ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId,
+      'aria-labelledby': props['aria-labelledby'] ?? titleId,
+      'aria-describedby': ariaDescribedby,
       // Prevent blur events from reaching useOverlay, which may cause
       // popovers to close. Since focus is contained within the dialog,
       // we don't want this to occur due to the above useEffect.
@@ -127,6 +136,9 @@ export function useDialog(
     },
     titleProps: {
       id: titleId
+    },
+    contentProps: {
+      id: contentId
     }
   };
 }

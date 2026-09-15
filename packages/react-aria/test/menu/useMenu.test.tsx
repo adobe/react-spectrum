@@ -11,13 +11,15 @@
  */
 
 import {AriaMenuProps, useMenu} from '../../src/menu/useMenu';
-
+import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {Item} from 'react-stately/Item';
-import {Key} from '@react-types/shared';
+import {Key, Node} from '@react-types/shared';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {Section} from 'react-stately/Section';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useMenuItem} from '../../src/menu/useMenuItem';
+import {useMenuSection} from '../../src/menu/useMenuSection';
 import userEvent from '@testing-library/user-event';
 
 function Menu<T extends object>(props: AriaMenuProps<T> & {onSelect: () => void}) {
@@ -81,6 +83,48 @@ function VirtualizedMenu<T extends object>(props: AriaMenuProps<T>) {
   );
 }
 
+function VirtualizedMenuSection<T extends {title?: React.ReactNode}>({
+  node,
+  state
+}: {
+  node: Node<T>;
+  state: TreeState<T>;
+}) {
+  let {itemProps, headingProps, groupProps} = useMenuSection({
+    heading: node.rendered,
+    'aria-label': node['aria-label']
+  });
+
+  return (
+    <div {...itemProps}>
+      {node.rendered && <span {...headingProps}>{node.rendered}</span>}
+      <div {...groupProps}>
+        {[...getChildNodes(node, state.collection)].map(item => (
+          <VirtualizedMenuItem key={item.key} item={item} state={state} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function VirtualizedMenuWithSections<T extends object>(props: AriaMenuProps<T>) {
+  let state = useTreeState(props);
+  let ref = React.useRef(null);
+  let {menuProps} = useMenu(props, state, ref);
+
+  return (
+    <ul {...menuProps} ref={ref}>
+      {[...state.collection].map(node =>
+        node.type === 'section' ? (
+          <VirtualizedMenuSection key={node.key} node={node} state={state} />
+        ) : (
+          <VirtualizedMenuItem key={node.key} item={node} state={state} />
+        )
+      )}
+    </ul>
+  );
+}
+
 describe('useMenuTrigger', function () {
   let user;
   beforeAll(() => {
@@ -136,5 +180,61 @@ describe('useMenuItem with isVirtualized', function () {
     expect(items[0]).toHaveAttribute('aria-setsize', '3');
     expect(items[1]).toHaveAttribute('aria-setsize', '3');
     expect(items[2]).toHaveAttribute('aria-setsize', '3');
+  });
+
+  it('sets global aria-posinset across sections', () => {
+    let {getAllByRole, getAllByRole: getAllByRole2} = render(
+      <VirtualizedMenuWithSections aria-label="test menu">
+        <Section title="Group 1">
+          <Item key="1">One</Item>
+          <Item key="2">Two</Item>
+        </Section>
+        <Section title="Group 2">
+          <Item key="3">Three</Item>
+          <Item key="4">Four</Item>
+        </Section>
+      </VirtualizedMenuWithSections>
+    );
+
+    // The sections must actually render as groups, mirroring the real
+    // sectioned menu structure, so this test locks the real DOM shape.
+    let groups = getAllByRole2('group');
+    expect(groups).toHaveLength(2);
+    // Each group is labelled by its section heading, which is present in the DOM.
+    for (let group of groups) {
+      let labelledBy = group.getAttribute('aria-labelledby');
+      expect(labelledBy).not.toBeNull();
+      let heading = document.getElementById(labelledBy!);
+      expect(heading).not.toBeNull();
+      expect(heading!.textContent).toMatch(/^Group [12]$/);
+    }
+
+    // aria-posinset should be global (1..4) and match aria-setsize, not restart
+    // per section (which would report 1..2 for both groups).
+    let items = getAllByRole('menuitem');
+    expect(items[0]).toHaveAttribute('aria-posinset', '1');
+    expect(items[1]).toHaveAttribute('aria-posinset', '2');
+    expect(items[2]).toHaveAttribute('aria-posinset', '3');
+    expect(items[3]).toHaveAttribute('aria-posinset', '4');
+    expect(items[0]).toHaveAttribute('aria-setsize', '4');
+    expect(items[3]).toHaveAttribute('aria-setsize', '4');
+  });
+
+  it('labels a section group via aria-label when the section has no heading', () => {
+    let {getAllByRole} = render(
+      <VirtualizedMenuWithSections aria-label="test menu">
+        <Section aria-label="Actions">
+          <Item key="1">One</Item>
+          <Item key="2">Two</Item>
+        </Section>
+      </VirtualizedMenuWithSections>
+    );
+
+    // With no heading, useMenuSection falls back to the aria-label for the
+    // group's accessible name instead of aria-labelledby.
+    let groups = getAllByRole('group');
+    expect(groups).toHaveLength(1);
+    expect(groups[0]).toHaveAttribute('aria-label', 'Actions');
+    expect(groups[0].getAttribute('aria-labelledby')).toBeNull();
   });
 });

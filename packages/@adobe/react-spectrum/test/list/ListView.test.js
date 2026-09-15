@@ -1225,6 +1225,11 @@ describe('ListView', function () {
       });
 
       it("should support single tap to perform row selection with screen reader if onAction isn't provided", async function () {
+        // oxlint-disable-next-line no-unused-vars
+        using uaMock = jest
+          .spyOn(navigator, 'userAgent', 'get')
+          .mockImplementation(() => 'Android');
+
         let tree = renderSelectionList({
           onSelectionChange,
           selectionMode: 'multiple',
@@ -1281,6 +1286,11 @@ describe('ListView', function () {
       });
 
       it('should support single tap to perform onAction with screen reader', async function () {
+        // oxlint-disable-next-line no-unused-vars
+        using uaMock = jest
+          .spyOn(navigator, 'userAgent', 'get')
+          .mockImplementation(() => 'Android');
+
         let tree = renderSelectionList({
           onSelectionChange,
           selectionMode: 'multiple',
@@ -1345,8 +1355,7 @@ describe('ListView', function () {
         await user.keyboard('[ControlLeft>]');
         await user.pointer({
           target: getRow(tree, 'Bar'),
-          keys: '[MouseLeft]',
-          coords: {pressure: 0.5}
+          keys: '[MouseLeft]'
         });
         await user.keyboard('[/ControlLeft]');
 
@@ -1486,7 +1495,7 @@ describe('ListView', function () {
         });
 
         let rows = tree.getAllByRole('row');
-        await user.pointer({target: rows[0], keys: '[MouseLeft]', coords: {pressure: 0.5}});
+        await user.pointer({target: rows[0], keys: '[MouseLeft]'});
         checkSelection(onSelectionChange, ['foo']);
         onSelectionChange.mockClear();
         expect(announce).toHaveBeenLastCalledWith('Foo selected.');

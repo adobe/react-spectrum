@@ -35,6 +35,7 @@ function getBackgroundColor(staticColor: StaticColor) {
 export function StaticColorProvider(props: {
   children: ReactNode;
   staticColor?: StaticColor;
+  hideColorPicker?: boolean;
 }): ReactElement {
   let [autoBg, setAutoBg] = useState('#5131c4');
   return (
@@ -48,7 +49,7 @@ export function StaticColorProvider(props: {
         }}>
         {props.children}
       </div>
-      {props.staticColor === 'auto' && (
+      {props.staticColor === 'auto' && !props.hideColorPicker && (
         <label
           className={style({
             display: 'flex',

@@ -101,6 +101,7 @@ export const Field = React.forwardRef(function Field(
 
   let fallbackLabelPropsId = useId();
   if (label && contextualHelp && !labelProps.id) {
+    // oxlint-disable-next-line react/react-compiler
     labelProps.id = fallbackLabelPropsId;
   }
 

@@ -536,10 +536,12 @@ export function InterfaceType({
       );
 
   // Default to showing required indicators if some properties are optional but not all.
+  // oxlint-disable-next-line react/react-compiler
   showRequired =
     showRequired || (!properties.every(p => p.optional) && !properties.every(p => !p.optional));
 
   // Show default values by default if any of the properties have one defined.
+  // oxlint-disable-next-line react/react-compiler
   showDefault = showDefault || properties.some(p => !!p.default);
 
   // Sort props so required ones are shown first.

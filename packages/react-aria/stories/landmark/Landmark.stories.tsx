@@ -408,6 +408,7 @@ function ApplicationExample() {
 }
 
 function IframeExample(): JSX.Element {
+  // oxlint-disable-next-line react/react-compiler
   let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {

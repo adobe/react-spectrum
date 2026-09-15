@@ -1,0 +1,160 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../src/FunctionAPI';
+import {InterfaceType} from '../../src/types';
+import docs from 'docs:@react-aria/dnd';
+import statelyDocs from 'docs:@react-stately/dnd';
+
+export const section = 'Interactions';
+export const description = 'Provides the behavior and accessibility implementation for dropping items onto a collection.';
+
+# useDroppableCollection
+
+<PageDescription>{docs.exports.useDroppableCollection.description}</PageDescription>
+
+```tsx render
+"use client";
+import React from 'react';
+import {useListBox, useOption} from 'react-aria/useListBox';
+import {useListState} from 'react-stately/useListState';
+import {Item} from 'react-stately/Item';
+import type {Node} from '@react-types/shared';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import {useDroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {useDroppableCollection, useDroppableItem, useDropIndicator} from 'react-aria/useDroppableCollection';
+import {useDrag} from 'react-aria/useDrag';
+import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
+import {ListDropTargetDelegate} from 'react-aria/ListDropTargetDelegate';
+import 'vanilla-starter/theme.css';
+
+function ListBox(props: Parameters<typeof useListState>[0] & Parameters<typeof useListBox>[0] & {label?: React.ReactNode, onItemDrop?: Parameters<typeof useDroppableCollection>[0]['onItemDrop']}) {
+  // Set up the list box as normal. See the useListBox docs for details.
+  let state = useListState(props);
+  let ref = React.useRef<HTMLUListElement>(null);
+  let {listBoxProps} = useListBox(props, state, ref);
+
+  // Set up the drop state and keyboard/drop target delegates.
+  let dropState = useDroppableCollectionState({
+    ...props,
+    collection: state.collection,
+    selectionManager: state.selectionManager
+  });
+  let {collectionProps} = useDroppableCollection({
+    ...props,
+    keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref)
+  }, dropState, ref);
+
+  let isDropTarget = dropState.isDropTarget({type: 'root'});
+
+  return (
+    <ul
+      {...mergeProps(listBoxProps, collectionProps)}
+      ref={ref}
+      style={{padding: 0, margin: 0, listStyle: 'none', width: 220, borderRadius: 8, color: 'var(--text-color)', border: `1px solid ${isDropTarget ? 'var(--focus-ring-color)' : 'var(--gray-300)'}`}}>
+      <DropIndicator target={{type: 'root'}} dropState={dropState} />
+      {[...state.collection].map(item => (
+        <Option key={item.key} item={item} state={state} dropState={dropState} />
+      ))}
+    </ul>
+  );
+}
+
+function Option({item, state, dropState}: {item: Node<unknown>, state: ReturnType<typeof useListState>, dropState: ReturnType<typeof useDroppableCollectionState>}) {
+  let ref = React.useRef<HTMLLIElement>(null);
+  let {optionProps} = useOption({key: item.key}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  // Register the item as a drop target.
+  let {dropProps, isDropTarget} = useDroppableItem(
+    {target: {type: 'item', key: item.key, dropPosition: 'on'}},
+    dropState,
+    ref
+  );
+
+  return (
+    <>
+      <DropIndicator target={{type: 'item', key: item.key, dropPosition: 'before'}} dropState={dropState} />
+      <li
+        {...mergeProps(optionProps, dropProps, focusProps)}
+        ref={ref}
+        style={{
+          padding: '8px 12px',
+          outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+          outlineOffset: -2,
+          background: isDropTarget ? 'var(--highlight-background)' : 'transparent',
+          color: isDropTarget ? 'var(--highlight-foreground)' : 'var(--text-color)'
+        }}>
+        {item.rendered}
+      </li>
+      {state.collection.getKeyAfter(item.key) == null &&
+        <DropIndicator target={{type: 'item', key: item.key, dropPosition: 'after'}} dropState={dropState} />}
+    </>
+  );
+}
+
+function DropIndicator(props: Parameters<typeof useDropIndicator>[0] & {dropState: ReturnType<typeof useDroppableCollectionState>}) {
+  // Drop indicators must use role="option" inside a listbox to keep the ARIA tree valid.
+  let ref = React.useRef<HTMLLIElement>(null);
+  let {dropIndicatorProps, isHidden, isDropTarget} = useDropIndicator(props, props.dropState, ref);
+  if (isHidden) {
+    return null;
+  }
+
+  return (
+    <li
+      {...dropIndicatorProps}
+      role="option"
+      ref={ref}
+      style={{width: '100%', height: 2, margin: '-1px 0', outline: 'none', background: isDropTarget ? 'var(--focus-ring-color)' : 'transparent'}} />
+  );
+}
+
+function Draggable() {
+  let {dragProps, isDragging} = useDrag({
+    getItems: () => [{'text/plain': 'budget.xls'}]
+  });
+
+  return (
+    <div
+      {...dragProps}
+      role="button"
+      tabIndex={0}
+      style={{padding: '8px 12px', borderRadius: 8, cursor: 'grab', width: 'fit-content', color: 'var(--text-color)', border: '1px solid var(--gray-300)', opacity: isDragging ? 0.5 : 1}}>
+      budget.xls
+    </div>
+  );
+}
+
+<div style={{display: 'flex', gap: 16, alignItems: 'start'}}>
+  <Draggable />
+  <ListBox
+    aria-label="Files"
+    selectionMode="single"
+    onItemDrop={e => alert(`Dropped on ${e.target.key}`)}>
+    <Item key="documents">Documents</Item>
+    <Item key="proposal">proposal.doc</Item>
+    <Item key="presentation">presentation.ppt</Item>
+  </ListBox>
+</div>
+```
+
+## API
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useDroppableCollectionState, links: statelyDocs.links},
+    {function: docs.exports.useDroppableCollection, links: docs.links},
+    {function: docs.exports.useDroppableItem, links: docs.links},
+    {function: docs.exports.useDropIndicator, links: docs.links},
+  ]}
+/>

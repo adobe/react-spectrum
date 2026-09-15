@@ -577,6 +577,12 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   subscribe(fn: () => void) {
     this.subscriptions.add(fn);
+    // Ensure that React reads the collection if we re-subscribe after updates were
+    // already queued. When a hidden Activity is revealed, child nodes re-attach and call
+    // queueUpdate before we can re-subscribe, so the notification is lost.
+    if (this.queuedRender) {
+      fn();
+    }
     return (): boolean => this.subscriptions.delete(fn);
   }
 

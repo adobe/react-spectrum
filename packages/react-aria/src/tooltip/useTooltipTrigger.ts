@@ -147,6 +147,7 @@ export function useTooltipTrigger(
   return {
     triggerProps: {
       'aria-describedby': state.isOpen ? tooltipId : undefined,
+      // oxlint-disable-next-line react/react-compiler
       ...mergeProps(focusableProps, hoverProps, {
         onPointerDown: onPressStart,
         onKeyDown: onPressStart

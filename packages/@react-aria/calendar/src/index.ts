@@ -11,6 +11,7 @@
  */
 
 export {useCalendar, useCalendarGrid, useCalendarCell} from 'react-aria/useCalendar';
+export {useCalendarMonthPicker, useCalendarYearPicker} from 'react-aria/useCalendar';
 
 export {useRangeCalendar} from 'react-aria/useRangeCalendar';
 export type {
@@ -20,6 +21,16 @@ export type {
   AriaCalendarCellProps,
   CalendarCellAria,
   CalendarAria
+} from 'react-aria/useCalendar';
+export type {
+  CalendarMonthPickerAria,
+  CalendarMonthPickerItem,
+  CalendarMonthPickerProps
+} from 'react-aria/useCalendar';
+export type {
+  CalendarYearPickerAria,
+  CalendarYearPickerItem,
+  CalendarYearPickerProps
 } from 'react-aria/useCalendar';
 export type {AriaRangeCalendarProps} from 'react-aria/useRangeCalendar';
 export type {CalendarProps, DateValue} from 'react-stately/useCalendarState';

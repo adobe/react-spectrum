@@ -64,6 +64,7 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
     state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
   let itemref = useRef<any>(null);
+  // oxlint-disable-next-line react/react-compiler
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(
     {
@@ -82,6 +83,7 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
   let endProps: DOMAttributes = {};
   if (endId) {
     endProps.id = endId;
+    // oxlint-disable-next-line react/react-compiler
     menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId]
       .filter(Boolean)
       .join(' ');

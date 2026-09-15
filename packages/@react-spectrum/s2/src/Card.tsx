@@ -408,6 +408,7 @@ const actionButtonSize = {
  * A Card summarizes an object that a user can select or navigate to.
  */
 export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+  // oxlint-disable-next-line react/react-compiler
   [props] = useSpectrumContextProps(props, ref, CardContext);
   let {ElementType, layout} = useContext(InternalCardViewContext);
   let domRef = useDOMRef(ref);
@@ -459,6 +460,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let press = pressScale(domRef, UNSAFE_style);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
@@ -530,24 +532,27 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
         variant === 'quiet' ? UNSAFE_style : press(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
-        <InternalCardContext.Provider
-          value={{
-            size,
-            isQuiet,
-            isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle',
-            isHovered,
-            isFocusVisible,
-            isSelected,
-            isPressed
-          }}>
-          {/* Selection indicator and checkbox move inside the preview for quiet cards */}
-          {!isQuiet && <SelectionIndicator />}
-          {!isQuiet && selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-            <CardCheckbox />
-          )}
-          {/* this makes the :first-child selector work even with the checkbox */}
-          <div className={style({display: 'contents'})}>{children}</div>
-        </InternalCardContext.Provider>
+        /* reset the element type to avoid error on nested GridListItems */
+        <InternalCardViewContext.Provider value={{ElementType: 'div', layout}}>
+          <InternalCardContext.Provider
+            value={{
+              size,
+              isQuiet,
+              isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle',
+              isHovered,
+              isFocusVisible,
+              isSelected,
+              isPressed
+            }}>
+            {/* Selection indicator and checkbox move inside the preview for quiet cards */}
+            {!isQuiet && <SelectionIndicator />}
+            {!isQuiet && selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+              <CardCheckbox />
+            )}
+            {/* this makes the :first-child selector work even with the checkbox */}
+            <div className={style({display: 'contents'})}>{children}</div>
+          </InternalCardContext.Provider>
+        </InternalCardViewContext.Provider>
       )}
     </ElementType>
   );
@@ -599,6 +604,7 @@ export const CardPreview = forwardRef(function CardPreview(
     useContext(InternalCardContext);
   let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
+  // oxlint-disable react/react-compiler
   return (
     <div
       {...filterDOMProps(props)}
@@ -611,6 +617,7 @@ export const CardPreview = forwardRef(function CardPreview(
       <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>{props.children}</div>
     </div>
   );
+  // oxlint-enable react/react-compiler
 });
 
 const collection = style({

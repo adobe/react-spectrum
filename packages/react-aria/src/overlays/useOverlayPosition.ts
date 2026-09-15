@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {addEvent} from '../utils/domHelpers';
 import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getActiveElement, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
+import {getPropagationTargets} from '../utils/shadowdom/DOMFunctions';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -201,9 +203,13 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let deps = [
     shouldUpdatePosition,
     placement,
+    // oxlint-disable-next-line react/react-compiler
     overlayRef.current,
+    // oxlint-disable-next-line react/react-compiler
     targetRef.current,
+    // oxlint-disable-next-line react/react-compiler
     arrowRef?.current,
+    // oxlint-disable-next-line react/react-compiler
     scrollRef.current,
     containerPadding,
     shouldFlip,
@@ -315,10 +321,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
   }, deps);
 
   // Update position when anything changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
   useLayoutEffect(updatePosition, deps);
 
   // Update position on window resize
@@ -362,9 +370,16 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     visualViewport?.addEventListener('resize', onResize);
     visualViewport?.addEventListener('scroll', onScroll);
+    let cleanup = addEvent(
+      // @ts-expect-error
+      getPropagationTargets(window),
+      'scroll',
+      onScroll
+    );
     return () => {
       visualViewport?.removeEventListener('resize', onResize);
       visualViewport?.removeEventListener('scroll', onScroll);
+      cleanup();
     };
   }, [updatePosition]);
 

@@ -60,8 +60,7 @@ const events = ['onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange',
 const meta: Meta<typeof TableView> = {
   component: TableView,
   parameters: {
-    layout: 'centered',
-    controls: {exclude: ['onResize']}
+    layout: 'centered'
   },
   tags: ['autodocs'],
   args: {...getActionArgs(events)},
@@ -2262,6 +2261,7 @@ function NestedInlineEditExample(args) {
               </EditableCell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
+              {/* oxlint-disable-next-line react/react-compiler */}
               <Collection items={item.children || []}>{renderItem}</Collection>
             </Row>
           );
@@ -2477,6 +2477,7 @@ function ReorderableTableWithNested(props) {
               <Cell>{item.value.title}</Cell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
+              {/* oxlint-disable-next-line react/react-compiler */}
               <Collection items={item.children ?? []}>{renderItem}</Collection>
             </Row>
           );

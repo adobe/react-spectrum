@@ -1,7 +1,7 @@
 {
   "buttonLabel": "Näytä ehdotukset",
-  "countAnnouncement": "{optionCount, plural, one {# vaihtoehto} other {# vaihtoehdot}} saatavilla.",
-  "focusAnnouncement": "{isGroupChange, select, true {Mentiin ryhmään {groupTitle}, {groupCount, plural, one {# vaihtoehdon} other {# vaihtoehdon}} kanssa.} other {}}{optionText}{isSelected, select, true {, valittu} other {}}",
+  "countAnnouncement": "{optionCount, plural, one {# vaihtoehto} other {# vaihtoehtoa}} saatavilla.",
+  "focusAnnouncement": "{isGroupChange, select, true {Siirtyi ryhmään {groupTitle}, jossa {groupCount, plural, one {# vaihtoehto} other {# vaihtoehtoa}}.} other {}}{optionText}{isSelected, select, true {, valittu} other {}}",
   "listboxLabel": "Ehdotukset",
   "selectedAnnouncement": "{optionText}, valittu"
 }

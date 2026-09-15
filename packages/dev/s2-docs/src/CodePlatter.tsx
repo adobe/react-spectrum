@@ -85,9 +85,12 @@ export function FileProvider(props: ProviderProps<FileProviderContextValue | nul
   return <FileProviderContext {...props} />;
 }
 
-const ShadcnContext = createContext<{type: 'vanilla' | 'tailwind'; component: string} | null>(null);
+const ShadcnContext = createContext<{
+  type: 'vanilla' | 'tailwind' | 'hooks';
+  component: string;
+} | null>(null);
 export function ShadcnProvider(
-  props: ProviderProps<{type: 'vanilla' | 'tailwind'; component: string} | null>
+  props: ProviderProps<{type: 'vanilla' | 'tailwind' | 'hooks'; component: string} | null>
 ) {
   return <ShadcnContext {...props} />;
 }
@@ -105,6 +108,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   let {library} = useContext(CodePlatterContext);
   if (!type) {
     if (library === 'react-aria') {
+      // oxlint-disable-next-line react/react-compiler
       type = 'vanilla';
     } else if (library === 'react-spectrum') {
       type = 's2';

@@ -129,6 +129,7 @@ export function useCalendarCell(
   // For performance, reuse the same date object as before if the new date prop is the same.
   // This allows subsequent useMemo results to be reused.
   date = useDeepMemo<CalendarDate>(date, isEqualDay);
+  // oxlint-disable-next-line react/react-compiler
   let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
@@ -171,8 +172,10 @@ export function useCalendarCell(
     dateFormatter,
     nativeDate,
     stringFormatter,
+    // oxlint-disable-next-line react/react-compiler
     isSelected,
     isDateToday,
+    // oxlint-disable-next-line react/react-compiler
     date,
     state,
     selectedDateDescription

@@ -119,6 +119,7 @@ export function useDraggableItem(
 
     // Remove the onClick handler from useDrag. Long pressing will be required on touch devices,
     // and NVDA/JAWS are always in forms mode within collection components.
+    // oxlint-disable-next-line react/react-compiler
     delete dragProps.onClick;
   } else {
     if (isSelected) {
@@ -138,16 +139,19 @@ export function useDraggableItem(
     let {onKeyDownCapture, onKeyUpCapture} = dragProps;
     if (modality === 'touch') {
       // Remove long press description if an action is present, because in that case long pressing selects the item.
+      // oxlint-disable-next-line react/react-compiler
       delete dragProps['aria-describedby'];
     }
 
     // Require Alt key if there is a conflicting action.
+    // oxlint-disable-next-line react/react-compiler
     dragProps.onKeyDownCapture = e => {
       if (e.altKey) {
         onKeyDownCapture?.(e);
       }
     };
 
+    // oxlint-disable-next-line react/react-compiler
     dragProps.onKeyUpCapture = e => {
       if (e.altKey) {
         onKeyUpCapture?.(e);

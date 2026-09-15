@@ -41,7 +41,7 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
   props: GridStateOptions<T, C>
 ): GridState<T, C> {
   let {collection, focusMode} = props;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
   let selectionState = props.UNSAFE_selectionState || useMultipleSelectionState(props);
   let disabledKeys = useMemo(
     () => (props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()),
@@ -49,6 +49,7 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
   );
 
   let setFocusedKey = selectionState.setFocusedKey;
+  // oxlint-disable-next-line react/react-compiler
   selectionState.setFocusedKey = (key, child) => {
     // If focusMode is cell and an item is focused, focus a child cell instead.
     if (focusMode === 'cell' && key != null) {
@@ -97,20 +98,21 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
         rows.length - 1
       );
       let newRow: GridNode<T> | null = null;
-      while (index >= 0) {
-        if (!selectionManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow') {
-          newRow = rows[index];
+      // Find the nearest focusable row at or after the deleted position...
+      for (let i = Math.max(0, index); i < rows.length; i++) {
+        if (!selectionManager.isDisabled(rows[i].key) && rows[i].type !== 'headerrow') {
+          newRow = rows[i];
           break;
         }
-        // Find next, not disabled row.
-        if (index < rows.length - 1) {
-          index++;
-          // Otherwise, find previous, not disabled row.
-        } else {
-          if (index > parentNode.index) {
-            index = parentNode.index;
+      }
+      // ...otherwise the nearest focusable row before it. (Mirrors useListState's
+      // getKeyAfter/getKeyBefore walk.)
+      if (newRow === null) {
+        for (let i = index - 1; i >= 0; i--) {
+          if (!selectionManager.isDisabled(rows[i].key) && rows[i].type !== 'headerrow') {
+            newRow = rows[i];
+            break;
           }
-          index--;
         }
       }
       if (newRow) {

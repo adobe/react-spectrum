@@ -241,6 +241,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
   };
 
   // Find the currently selected key for the ListBox
+  // oxlint-disable-next-line react/react-compiler
   const selectedKeys = useMemo(() => {
     for (const section of sections) {
       const item = section.items.find(item => item.name === selectedFont);

@@ -13,14 +13,7 @@
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps} from '../overlays/usePopover';
-import {
-  FocusableElement,
-  FocusStrategy,
-  KeyboardEvent,
-  Node,
-  PressEvent,
-  RefObject
-} from '@react-types/shared';
+import {FocusableElement, FocusStrategy, Node, PressEvent, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {
   getActiveElement,
@@ -33,6 +26,7 @@ import type {SubmenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useCallback, useRef} from 'react';
 import {useEvent} from '../utils/useEvent';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
@@ -134,46 +128,51 @@ export function useSubmenuTrigger<T>(
     };
   }, [cancelOpenTimeout]);
 
-  let submenuKeyDown = (e: KeyboardEvent) => {
-    // If focus is not within the menu, assume virtual focus is being used.
-    // This means some other input element is also within the popover, so we shouldn't close the menu.
-    if (!isFocusWithin(e.currentTarget)) {
-      return;
-    }
-
-    switch (e.key) {
-      case 'ArrowLeft':
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      ArrowLeft: e => {
+        // If focus is not within the menu, assume virtual focus is being used.
+        // This means some other input element is also within the popover, so we shouldn't close the menu.
+        if (!isFocusWithin(e.currentTarget)) {
+          return false;
+        }
         if (direction === 'ltr' && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          e.preventDefault();
-          e.stopPropagation();
           onSubmenuClose();
           if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
+          return;
         }
-        break;
-      case 'ArrowRight':
+        return false;
+      },
+      ArrowRight: e => {
+        if (!isFocusWithin(e.currentTarget)) {
+          return false;
+        }
         if (direction === 'rtl' && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          e.preventDefault();
-          e.stopPropagation();
           onSubmenuClose();
           if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
+          return;
         }
-        break;
-      case 'Escape':
-        // TODO: can remove this when we fix collection event leaks
+        return false;
+      },
+      Escape: e => {
+        if (!isFocusWithin(e.currentTarget)) {
+          return false;
+        }
         if (nodeContains(submenuRef.current, getEventTarget(e) as Element)) {
-          e.stopPropagation();
           onSubmenuClose();
           if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
+          return;
         }
-        break;
+        return false;
+      }
     }
-  };
+  });
 
   let submenuProps = {
     id: overlayId,
@@ -182,16 +181,15 @@ export function useSubmenuTrigger<T>(
     ...(type === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy ?? undefined,
-      onKeyDown: submenuKeyDown
+      ...keyboardProps
     })
   };
 
-  let submenuTriggerKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'ArrowRight':
+  let {keyboardProps: submenuTriggerKeyboardProps} = useKeyboard({
+    shortcuts: {
+      ArrowRight: () => {
         if (!isDisabled) {
           if (direction === 'ltr') {
-            e.preventDefault();
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
@@ -199,18 +197,19 @@ export function useSubmenuTrigger<T>(
             if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
+            return;
           } else if (state.isOpen) {
             onSubmenuClose();
+            return;
           } else {
-            e.continuePropagation();
+            return false;
           }
         }
-
-        break;
-      case 'ArrowLeft':
+        return false;
+      },
+      ArrowLeft: () => {
         if (!isDisabled) {
           if (direction === 'rtl') {
-            e.preventDefault();
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
@@ -218,18 +217,18 @@ export function useSubmenuTrigger<T>(
             if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
+            return;
           } else if (state.isOpen) {
             onSubmenuClose();
+            return;
           } else {
-            e.continuePropagation();
+            return false;
           }
         }
-        break;
-      default:
-        e.continuePropagation();
-        break;
+        return false;
+      }
     }
-  };
+  });
 
   let onPressStart = (e: PressEvent) => {
     if (!isDisabled && (e.pointerType === 'virtual' || e.pointerType === 'keyboard')) {
@@ -289,6 +288,8 @@ export function useSubmenuTrigger<T>(
 
   return {
     submenuTriggerProps: {
+      onKeyDown: submenuTriggerKeyboardProps.onKeyDown,
+      onKeyUp: submenuTriggerKeyboardProps.onKeyUp,
       id: submenuTriggerId,
       'aria-controls': state.isOpen ? overlayId : undefined,
       'aria-haspopup': !isDisabled ? type : undefined,
@@ -296,7 +297,6 @@ export function useSubmenuTrigger<T>(
       onPressStart,
       onPress,
       onHoverChange,
-      onKeyDown: submenuTriggerKeyDown,
       isOpen: state.isOpen
     },
     submenuProps,

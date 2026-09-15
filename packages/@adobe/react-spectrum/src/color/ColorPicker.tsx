@@ -56,6 +56,7 @@ export const ColorPicker = React.forwardRef(function ColorPicker(
   let labelId = useId();
   return (
     <AriaColorPicker {...props}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <DialogTrigger type="popover" mobileType="tray" targetRef={unwrapDOMRef(swatchRef)}>
         <Button
           ref={domRef}

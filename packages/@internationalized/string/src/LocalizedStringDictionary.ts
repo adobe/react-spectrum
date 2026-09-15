@@ -114,6 +114,15 @@ function getStringsForLocale<K extends string, T extends LocalizedString>(
   // This could be replaced with Intl.LocaleMatcher once it is supported.
   // https://github.com/tc39/proposal-intl-localematcher
   let language = getLanguage(locale);
+
+  // If the locale has an explicit script (e.g. sr-Latn-RS), prefer a
+  // language-script match (sr-Latn) over a language-only match (sr), since
+  // those may represent entirely different scripts.
+  let script = getScript(locale);
+  if (script && strings[`${language}-${script}`]) {
+    return strings[`${language}-${script}`];
+  }
+
   if (strings[language]) {
     return strings[language];
   }
@@ -136,4 +145,14 @@ function getLanguage(locale: string) {
   }
 
   return locale.split('-')[0];
+}
+
+function getScript(locale: string) {
+  // @ts-ignore
+  if (Intl.Locale) {
+    // @ts-ignore
+    return new Intl.Locale(locale).script;
+  }
+
+  return undefined;
 }

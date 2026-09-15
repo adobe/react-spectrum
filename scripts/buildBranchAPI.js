@@ -180,6 +180,34 @@ async function build() {
       .filter(Boolean)
   );
 
+  // similar to above, dev/* packages may contain pinned dependency versions (e.g. codemods pins to specific S2 versions)
+  // problem that arises is if we do a patch release since our weekly tsdiffer looks for the last MINOR instead
+  // this causes a miss match in the versions since the dev/* package gets copied over and might still have the updated S2 patch
+  // version whereas the workspace (aka the last minor baseline we checked out) has the last S2 minor version
+  // handle this by deleting the pinned versions so we resolve to the workspace's version
+  let devPackageJsons = glob.sync('dev/**/package.json', {
+    cwd: path.join(dir, 'packages'),
+    ignore: ['**/node_modules/**']
+  });
+  for (let p of devPackageJsons) {
+    let fullPath = path.join(dir, 'packages', p);
+    let json = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+    let changed = false;
+    for (let depField of ['dependencies', 'devDependencies']) {
+      if (json[depField]) {
+        for (let dep of Object.keys(json[depField])) {
+          if (workspacePackageNames.has(dep)) {
+            delete json[depField][dep];
+            changed = true;
+          }
+        }
+      }
+    }
+    if (changed) {
+      fs.writeFileSync(fullPath, JSON.stringify(json, false, 2));
+    }
+  }
+
   let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
   console.log('copying over');

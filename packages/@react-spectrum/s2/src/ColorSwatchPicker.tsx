@@ -90,6 +90,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
           getAllowedOverrides()
         )({density}, props.styles)
       }>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <InternalColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
         {props.children}
       </InternalColorSwatchContext.Provider>

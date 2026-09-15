@@ -13,7 +13,51 @@
 import {act} from 'react-dom/test-utils';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {getActiveElement} from '../../src/utils/shadowdom/DOMFunctions';
-import {getOwnerWindow} from '../../src/utils/domHelpers';
+import {getOwnerDocument, getOwnerWindow, setStyle} from '../../src/utils/domHelpers';
+
+describe('getOwnerDocument', () => {
+  beforeAll(() => {
+    enableShadowDOM();
+  });
+  test.each([null, undefined])('returns the document if the argument is %p', value => {
+    expect(getOwnerDocument(value)).toBe(document);
+  });
+
+  it('returns the document if the argument is the document', () => {
+    expect(getOwnerDocument(document)).toBe(document);
+  });
+
+  it('returns the document if the argument is the window', () => {
+    expect(getOwnerDocument(window)).toBe(document);
+  });
+
+  it("returns the element's document if the element is in the document", () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    expect(getOwnerDocument(div)).toBe(document);
+    div.remove();
+  });
+
+  it("returns the iframe's document if the argument is the iframe's document", () => {
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    expect(getOwnerDocument(iframe.contentWindow.document)).toBe(iframe.contentWindow.document);
+
+    iframe.remove();
+  });
+
+  it("returns the iframe's document if the element is in the iframe", () => {
+    const iframe = document.createElement('iframe');
+    const iframeDiv = document.createElement('div');
+    document.body.appendChild(iframe);
+    iframe.contentWindow.document.body.appendChild(iframeDiv);
+
+    expect(getOwnerDocument(iframeDiv)).toBe(iframe.contentWindow.document);
+
+    iframe.remove();
+  });
+});
 
 describe('getOwnerWindow', () => {
   beforeAll(() => {
@@ -145,5 +189,61 @@ describe('getActiveElement', () => {
 
     // Teardown
     iframe.remove();
+  });
+});
+
+describe('setStyle', () => {
+  it('returns a no-op cleanup and does not throw when the target is null', () => {
+    const cleanup = setStyle(null, 'opacity', '0');
+    expect(cleanup).toBeInstanceOf(Function);
+    expect(() => cleanup()).not.toThrow();
+  });
+
+  it('sets a CSS property on a single element and removes the property on cleanup when there was no initial value', () => {
+    const el = document.createElement('div');
+    const cleanup = setStyle(el, 'opacity', '0');
+    expect(el.style.getPropertyValue('opacity')).toBe('0');
+
+    cleanup();
+    expect(el.style.getPropertyValue('opacity')).toBe('');
+    expect(el.getAttribute('style')).toBeFalsy();
+  });
+
+  it('restores the previous value on cleanup when one existed', () => {
+    const el = document.createElement('div');
+    el.style.setProperty('opacity', '0.5');
+
+    const cleanup = setStyle(el, 'opacity', '0');
+    expect(el.style.getPropertyValue('opacity')).toBe('0');
+
+    cleanup();
+    expect(el.style.getPropertyValue('opacity')).toBe('0.5');
+  });
+
+  it('applies the given priority and restores the previous priority on cleanup', () => {
+    const el = document.createElement('div');
+    el.style.setProperty('color', 'red', 'important');
+
+    const cleanup = setStyle(el, 'color', 'blue', 'important');
+    expect(el.style.getPropertyValue('color')).toBe('blue');
+    expect(el.style.getPropertyPriority('color')).toBe('important');
+
+    cleanup();
+    expect(el.style.getPropertyValue('color')).toBe('red');
+    expect(el.style.getPropertyPriority('color')).toBe('important');
+  });
+
+  it('ets the property on every element in an array and restores on cleanup, preserving each prior value', () => {
+    const withPrior = document.createElement('div');
+    withPrior.style.setProperty('display', 'flex');
+    const withoutPrior = document.createElement('div');
+
+    const cleanup = setStyle([withPrior, withoutPrior], 'display', 'none');
+    expect(withPrior.style.getPropertyValue('display')).toBe('none');
+    expect(withoutPrior.style.getPropertyValue('display')).toBe('none');
+
+    cleanup();
+    expect(withPrior.style.getPropertyValue('display')).toBe('flex');
+    expect(withoutPrior.style.getPropertyValue('display')).toBe('');
   });
 });

@@ -90,12 +90,15 @@ export function Link(props: SpectrumLinkProps): JSX.Element {
     let mergedRef: MutableRefObject<any> | ForwardedRef<any> = ref;
     if (isOldReact) {
       // @ts-ignore
+      // oxlint-disable-next-line react/react-compiler
       mergedRef = mergeRefs(ref, wrappedChild.ref);
     } else {
       // @ts-ignore
+      // oxlint-disable-next-line react/react-compiler
       mergedRef = mergeRefs(ref, wrappedChild.props.ref);
     }
     link = React.cloneElement(wrappedChild, {
+      // oxlint-disable-next-line react/react-compiler
       ...mergeProps(wrappedChild.props, domProps),
       // @ts-ignore https://github.com/facebook/react/issues/8873
       ref: mergedRef

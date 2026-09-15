@@ -129,7 +129,14 @@ export const btnStyles = style<
       isJustified: 0
     },
     fontWeight: 'medium',
-    width: 'fit',
+    width: {
+      default: 'fit',
+      isInGroup: {
+        orientation: {
+          vertical: '100%'
+        }
+      }
+    },
     userSelect: 'none',
     transition: 'default',
     forcedColorAdjust: 'none',
@@ -280,7 +287,7 @@ export const btnStyles = style<
     },
     '--iconWidth': {
       type: 'width',
-      value: fontRelative(20)
+      value: '1lh'
     },
     '--badgePosition': {
       type: 'width',
@@ -306,15 +313,6 @@ export const btnStyles = style<
   getAllowedOverrides()
 );
 
-// Matching icon sizes. TBD.
-const avatarSize: Record<NonNullable<ActionButtonStyleProps['size']>, number> = {
-  XS: 14,
-  S: 16,
-  M: 20,
-  L: 22,
-  XL: 26
-} as const;
-
 interface ActionButtonContextProps extends Partial<ActionButtonProps> {
   holdAffordance?: boolean;
 }
@@ -331,6 +329,7 @@ export const ActionButton = forwardRef(function ActionButton(
   props: ActionButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -352,6 +351,7 @@ export const ActionButton = forwardRef(function ActionButton(
   let {isProgressVisible} = usePendingState(isPending);
   let {direction} = useLocale();
 
+  // oxlint-disable react/react-compiler
   return (
     <RACButton
       {...props}
@@ -400,7 +400,7 @@ export const ActionButton = forwardRef(function ActionButton(
                 {
                   render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon'})}),
                   styles: style({
-                    size: fontRelative(20),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     visibility: {
                       isProgressVisible: 'hidden'
@@ -411,7 +411,7 @@ export const ActionButton = forwardRef(function ActionButton(
               [
                 AvatarContext,
                 {
-                  size: avatarSize[size],
+                  size: '1lh',
                   styles: style({
                     marginStart: '--iconMargin',
                     gridArea: 'icon'
@@ -466,17 +466,7 @@ export const ActionButton = forwardRef(function ActionButton(
                   aria-label={stringFormatter.format('button.pending')}
                   size="S"
                   staticColor={staticColor}
-                  styles={style({
-                    size: {
-                      size: {
-                        XS: 12,
-                        S: 14,
-                        M: 18,
-                        L: 20,
-                        XL: 24
-                      }
-                    }
-                  })({size})}
+                  styles={style({size: '1lh'})}
                 />
               </div>
             )}
@@ -516,4 +506,5 @@ export const ActionButton = forwardRef(function ActionButton(
       )}
     </RACButton>
   );
+  // oxlint-enable react/react-compiler
 });

@@ -232,6 +232,97 @@ let EditableTable = ({
   </Table>
 );
 
+let TabModeTable = ({actionCellProps = {}, ...tableProps}) => (
+  <Table aria-label="Tab mode table" keyboardNavigationBehavior="tab" {...tableProps}>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Type</Column>
+      <Column>Tags</Column>
+      <Column>Notes</Column>
+    </TableHeader>
+    <TableBody>
+      <Row id="1" textValue="Games">
+        <Cell>Games</Cell>
+        <Cell>File folder</Cell>
+        <Cell>
+          <TagGroup aria-label="Games tags">
+            <TagList>
+              <Tag id="tag-action">Action</Tag>
+              <Tag id="tag-rpg">RPG</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
+        <Cell {...actionCellProps}>
+          <input aria-label="Games notes" />
+          <button>Button next to input</button>
+        </Cell>
+      </Row>
+      <Row id="2" textValue="Program Files">
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
+        <Cell>
+          <TagGroup aria-label="Program Files tags">
+            <TagList>
+              <Tag id="tag-office">Office</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
+        <Cell {...actionCellProps}>
+          <input aria-label="Program Files notes" />
+        </Cell>
+      </Row>
+      <Row id="3" textValue="bootmgr">
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>
+          <TagGroup aria-label="bootmgr tags">
+            <TagList>
+              <Tag id="tag-boot">Boot</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
+        <Cell {...actionCellProps}>
+          <input aria-label="bootmgr notes" />
+        </Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
+let ArrowModeTable = ({cellProps = {}, ...tableProps}) => (
+  <Table aria-label="Arrow mode table" {...tableProps}>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Col 2</Column>
+      <Column>Col 3</Column>
+    </TableHeader>
+    <TableBody>
+      <Row id="1" textValue="Row 1">
+        <Cell>Row 1</Cell>
+        <Cell {...cellProps}>
+          <button aria-label="R1C2 first">first</button>
+          <button aria-label="R1C2 last">last</button>
+        </Cell>
+        <Cell {...cellProps}>
+          <button aria-label="R1C3 first">first</button>
+          <button aria-label="R1C3 last">last</button>
+        </Cell>
+      </Row>
+      <Row id="2" textValue="Row 2">
+        <Cell>Row 2</Cell>
+        <Cell {...cellProps}>
+          <button aria-label="R2C2 first">first</button>
+          <button aria-label="R2C2 last">last</button>
+        </Cell>
+        <Cell {...cellProps}>
+          <button aria-label="R2C3 first">first</button>
+          <button aria-label="R2C3 last">last</button>
+        </Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
 let DraggableTable = props => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => [...keys].map(key => ({'text/plain': key})),
@@ -239,6 +330,38 @@ let DraggableTable = props => {
   });
 
   return <TestTable tableProps={{dragAndDropHooks}} />;
+};
+
+// A table that both accepts drops from other tables and supports reordering within itself,
+// like the "Multiple positions" example in the docs.
+let ReorderableTable = ({items, onInsert, ...props}) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys => [...keys].map(key => ({'custom-app-type': String(key)})),
+    acceptedDragTypes: ['custom-app-type'],
+    getDropOperation: () => 'move',
+    onInsert: onInsert ?? (() => {}),
+    onReorder: () => {},
+    onRootDrop: () => {}
+  });
+
+  return (
+    <Table {...props} dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column />
+        <Column isRowHeader>Name</Column>
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row>
+            <Cell>
+              <Button slot="drag">≡</Button>
+            </Cell>
+            <Cell>{item.name}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
 };
 
 let DisabledRowDraggableTable = () => {
@@ -330,6 +453,69 @@ describe('Table', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should restore focus to the associated dialog trigger inside a cell', async () => {
+    let tree = render(
+      <>
+        <button>Before</button>
+        <Table aria-label="Files" selectionMode="multiple">
+          <MyTableHeader>
+            <MyColumn id="name" isRowHeader>
+              Name
+            </MyColumn>
+            <MyColumn>Type</MyColumn>
+            <MyColumn>Date Modified</MyColumn>
+          </MyTableHeader>
+          <TableBody>
+            <MyRow id="1" textValue="Games">
+              <Cell>Games</Cell>
+              <Cell>File folder</Cell>
+              <Cell>
+                <DialogTrigger>
+                  <Button>Open 1</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 1</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+                <DialogTrigger>
+                  <Button>Open 2</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 2</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+                <DialogTrigger>
+                  <Button>Open 3</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox>
+                        <Label>Agree 3</Label>
+                      </Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+              </Cell>
+            </MyRow>
+          </TableBody>
+        </Table>
+        <button>After</button>
+      </>
+    );
+    await user.click(tree.getByRole('button', {name: 'Open 2'}));
+    let dialog = tree.getByRole('dialog');
+    expect(document.activeElement).toBe(dialog);
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    expect(dialog).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(tree.getByRole('button', {name: 'Open 2'}));
   });
 
   it('should render with default classes', () => {
@@ -486,6 +672,44 @@ describe('Table', () => {
       }
     }
   );
+
+  it('should support select all with Mod+A', async () => {
+    // eslint-disable-next-line no-unused-vars
+    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+    let onSelectionChange = jest.fn();
+    renderTable({
+      tableProps: {selectionMode: 'multiple', onSelectionChange}
+    });
+    await user.tab();
+    await user.keyboard('{Meta>}a{/Meta}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+  });
+
+  it('should support select all with Mod+A (Control) on Windows', async () => {
+    // eslint-disable-next-line no-unused-vars
+    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
+    let onSelectionChange = jest.fn();
+    renderTable({
+      tableProps: {selectionMode: 'multiple', onSelectionChange}
+    });
+    await user.tab();
+    await user.keyboard('{Control>}a{/Control}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+  });
+
+  it('should not select all with Mod+A when selection mode is single', async () => {
+    // eslint-disable-next-line no-unused-vars
+    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+    let onSelectionChange = jest.fn();
+    renderTable({
+      tableProps: {selectionMode: 'single', onSelectionChange}
+    });
+    await user.tab();
+    await user.keyboard('{Meta>}a{/Meta}');
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
 
   it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
     let onSelectionChange = jest.fn();
@@ -938,6 +1162,36 @@ describe('Table', () => {
     cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('bootmgr');
     expect(document.activeElement).toBe(cell);
+  });
+
+  it('does not hang restoring focus when no focusable row remains', async () => {
+    let {rerender, getByRole} = render(<DynamicTable tableBodyProps={{rows}} />);
+
+    let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowRight}');
+
+    let gridRows = tableTester.getRows();
+    let cell = within(gridRows[1]).getAllByRole('rowheader')[0];
+    expect(cell).toHaveTextContent('Program Files');
+    expect(document.activeElement).toBe(cell);
+
+    // Remove the focused row and disable every remaining row. Restoring focus
+    // previously infinite-looped (the search bounced between the focused index
+    // and the end and never terminated when no focusable row existed).
+    let remaining = [rows[0], ...rows.slice(2)];
+    rerender(
+      <DynamicTable
+        tableProps={{disabledBehavior: 'all', disabledKeys: remaining.map(r => r.id)}}
+        tableBodyProps={{items: remaining}}
+      />
+    );
+
+    // Completes without hanging; focus left the now-removed row.
+    gridRows = tableTester.getRows();
+    expect(gridRows).toHaveLength(3);
+    expect(document.activeElement).not.toBe(cell);
   });
 
   it('should support refs', () => {
@@ -1780,6 +2034,50 @@ describe('Table', () => {
       act(() => jest.runAllTimers());
       expect(tableTester.getRows()).toHaveLength(8);
       expect(tableTester.getSelectedRows()).toHaveLength(1);
+    });
+
+    it('should target the last row when dragging past the end of the table', async () => {
+      let onInsert = jest.fn();
+      let {getAllByRole} = render(
+        <>
+          <ReorderableTable aria-label="First table" items={[{id: 'a1', name: 'One'}]} />
+          <ReorderableTable
+            aria-label="Second table"
+            items={[
+              {id: 'b1', name: 'Two'},
+              {id: 'b2', name: 'Three'}
+            ]}
+            onInsert={onInsert}
+          />
+        </>
+      );
+      let grids = getAllByRole('grid');
+      let draggedRow = within(grids[0]).getAllByRole('row')[1];
+
+      let dataTransfer = new DataTransfer();
+      fireEvent(draggedRow, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+      act(() => jest.runAllTimers());
+
+      // Drag below the last row. Past the end of the table the drop target used to escalate to
+      // the <TableBody>, whose key is generated rather than provided by the user, so the item
+      // was never inserted. Several pointer paths reach that state; moving downward and moving
+      // horizontally each suffice, so exercise both.
+      fireEvent(grids[1], new DragEvent('dragenter', {dataTransfer, clientX: 100, clientY: 50}));
+      fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 100, clientY: 50}));
+      fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 70, clientY: 50}));
+      fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 70, clientY: 75}));
+
+      await act(async () =>
+        fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 70, clientY: 75}))
+      );
+      act(() => jest.runAllTimers());
+
+      expect(onInsert).toHaveBeenCalledTimes(1);
+      expect(onInsert.mock.calls[0][0].target).toEqual({
+        type: 'item',
+        key: 'b2',
+        dropPosition: 'after'
+      });
     });
   });
 
@@ -2908,12 +3206,12 @@ describe('Table', () => {
 
       await act(() => stories.makePromise([]));
 
-      expect(mockCollectionUpdate).toHaveBeenCalledTimes(1);
+      expect(mockCollectionUpdate).toHaveBeenCalledTimes(2);
 
       let button = tree.getByRole('button');
       await act(() => button.click());
 
-      expect(mockCollectionUpdate).toHaveBeenCalledTimes(2);
+      expect(mockCollectionUpdate).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -3466,6 +3764,291 @@ describe('Table', () => {
 
     expect(tableTester.getFooterRows()).toHaveLength(1);
     expect(tableTester.getFooterRows()[0]).toHaveTextContent('Blah');
+  });
+
+  describe("keyboardNavigationBehavior='tab' and textfields in row", () => {
+    it('Tab from a focused cell moves focus to the first tabbable child', async () => {
+      let {getByRole} = render(<TabModeTable />);
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
+      let row = tableTester.getRows()[0];
+      let cells = tableTester.getCells({element: row});
+      await user.tab();
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(cells[cells.length - 1]);
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('textbox', {name: 'Games notes'}));
+    });
+
+    it('Tab from a cell with no tabbable children or from the last child in a cell exits the table', async () => {
+      let {getAllByRole, getByRole} = render(
+        <div>
+          <button>Before</button>
+          <TabModeTable />
+          <button>After</button>
+        </div>
+      );
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
+      let rowheader = tableTester.getRowHeaders()[0];
+      let row = tableTester.getRows()[0];
+      let cells = tableTester.getCells({element: row});
+      await user.tab();
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(rowheader);
+      await user.tab();
+      let buttons = getAllByRole('button');
+      expect(document.activeElement).toBe(buttons[2]);
+
+      await user.tab({shift: true});
+      await user.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(cells[cells.length - 1]);
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('textbox', {name: 'Games notes'}));
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Button next to input'}));
+      await user.tab();
+      expect(document.activeElement).toBe(buttons[2]);
+    });
+
+    it('Shift+Tab from a child returns focus to the cell', async () => {
+      let {getByRole} = render(<TabModeTable />);
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
+      let row = tableTester.getRows()[0];
+      let cells = tableTester.getCells({element: row});
+      await user.tab();
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(cells[cells.length - 1]);
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('textbox', {name: 'Games notes'}));
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(cells[cells.length - 1]);
+    });
+
+    it('should not navigate to next cell when arrow keys are pressed while a text input child has focus', async () => {
+      let {getByRole} = render(<TabModeTable />);
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
+      let row = tableTester.getRows()[0];
+      let cells = tableTester.getCells({element: row});
+
+      await user.tab();
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(cells[cells.length - 1]);
+      await user.tab();
+      let input = getByRole('textbox', {name: 'Games notes'});
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(input);
+    });
+
+    it('should not trigger typeahead when typing in a text input child', async () => {
+      let {getByRole} = render(<TabModeTable />);
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
+      let row = tableTester.getRows()[0];
+      let cells = tableTester.getCells({element: row});
+
+      await user.tab();
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(cells[cells.length - 1]);
+      await user.tab();
+
+      let input = getByRole('textbox', {name: 'Games notes'});
+      expect(document.activeElement).toBe(input);
+      await user.type(input, 'Games');
+      expect(input).toHaveValue('Games');
+      expect(document.activeElement).toBe(input);
+    });
+
+    it('should not trigger selection when pressing Space or Enter in a text input child', async () => {
+      let {getByRole} = render(
+        <TabModeTable selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
+      let row = tableTester.getRows()[0];
+      let cells = tableTester.getCells({element: row});
+
+      await user.tab();
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(cells[cells.length - 1]);
+      await user.tab();
+      let input = getByRole('textbox', {name: 'Games notes'});
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard(' ');
+      expect(input).toHaveValue(' ');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      await user.keyboard('{Enter}');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger selection when clicking on a tabbable child element', async () => {
+      let {getByRole} = render(
+        <TabModeTable selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
+      let input = getByRole('textbox', {name: 'Games notes'});
+
+      await user.click(input);
+      expect(document.activeElement).toBe(input);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger row selection when clicking a TagGroup tag nested inside a cell', async () => {
+      let {getByRole} = render(
+        <TabModeTable selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
+
+      // click on actual grid cell since that mimics what would happen in browser
+      // note that grid cell is not tabbable nor has the data-collection/etc attributes since those
+      // are on a wrapping div
+      let tagGrid = getByRole('grid', {name: 'Games tags'});
+      let tagInnerCell = within(tagGrid).getAllByRole('gridcell')[0];
+
+      await user.click(tagInnerCell);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should still trigger selection when clicking on a row with no tabbable children ', async () => {
+      let {getByRole} = render(
+        <TabModeTable selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
+      let row = tableTester.getRows()[0];
+
+      await user.click(row);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+    });
+
+    describe("focusMode='child'", () => {
+      it('arrow navigating to a focusMode="child" cell focuses the child directly', async () => {
+        let {getByRole} = render(<TabModeTable actionCellProps={{focusMode: 'child'}} />);
+        await user.tab();
+        // ArrowLeft navigation uses childFocusStrategy='last', so focuses the last child (button)
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Button next to input'}));
+      });
+
+      it('allowsArrowNavigation allows arrow key row navigation when focused on child', async () => {
+        let {getByRole} = render(
+          <TabModeTable actionCellProps={{focusMode: 'child', allowsArrowNavigation: true}} />
+        );
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Button next to input'}));
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(getByRole('textbox', {name: 'Program Files notes'}));
+      });
+
+      it('Shift+Tab from a focusMode="child" child skips the cell and does not return to it', async () => {
+        let {getByRole} = render(<TabModeTable actionCellProps={{focusMode: 'child'}} />);
+        let button = getByRole('button', {name: 'Button next to input'});
+        let input = getByRole('textbox', {name: 'Games notes'});
+
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(button);
+
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(input);
+
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(document.body);
+      });
+    });
+  });
+
+  describe('cells with focusable children in arrow navigation mode', () => {
+    it('default focusMode: ArrowRight crosses from last child to first child of next cell, ArrowLeft reverses', async () => {
+      let {getByRole} = render(<ArrowModeTable />);
+      await user.tab();
+      // Tab → row, ArrowRight×2 → col2 first child (col1 is text-only, focuses cell then crosses)
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 first'}));
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 last'}));
+      // ArrowRight from last child crosses into first child of next cell
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'R1C3 first'}));
+      // ArrowLeft from first child crosses back to last child of previous cell
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 last'}));
+    });
+
+    describe("focusMode='cell'", () => {
+      it('arrow navigation with focusMode="cell": cell element stays focused on navigate, arrows enter/exit children within cell', async () => {
+        // walker.previousNode() from first child returns cell root → stays on same cell
+        // (contrast with default focusMode="child" which crosses to prev cell's last child)
+        let {getByRole, getAllByRole} = render(<ArrowModeTable cellProps={{focusMode: 'cell'}} />);
+        let rows = getAllByRole('row');
+        let col2Cell = within(rows[1]).getAllByRole('gridcell')[0];
+        let col3Cell = within(rows[1]).getAllByRole('gridcell')[1];
+
+        await user.tab();
+        // ArrowRight×2: row → col1 (text-only, focuses cell) → col2Cell (focusMode='cell' stays on cell element)
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(col2Cell);
+
+        // ArrowRight from cell element enters first child
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 first'}));
+
+        // ArrowRight within cell advances to next child
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 last'}));
+
+        // ArrowLeft within cell retreats to previous child
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 first'}));
+
+        // ArrowLeft from first child returns to same cell element (not previous cell's last child)
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(col2Cell);
+
+        // Navigate forward to reach col3: col2Cell → first → last → col3Cell
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        // ArrowRight from last child of col2 enters next cell element (not its first child)
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(col3Cell);
+
+        // ArrowRight from col3Cell enters its first child
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'R1C3 first'}));
+
+        // ArrowLeft from first child of col3 returns to col3Cell (same cell, not col2)
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(col3Cell);
+
+        // ArrowLeft from cell element moves to previous cell element
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(col2Cell);
+      });
+    });
   });
 });
 

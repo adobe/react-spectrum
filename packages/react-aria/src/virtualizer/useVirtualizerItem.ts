@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {isElementVisible} from '../utils/isElementVisible';
 import {Key, RefObject} from '@react-types/shared';
 import {LayoutInfo, Size} from 'react-stately/useVirtualizerState';
-import {useCallback} from 'react';
+import {useCallback, useEffect} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
 interface IVirtualizer {
@@ -23,24 +25,66 @@ export interface VirtualizerItemOptions {
   layoutInfo: LayoutInfo | null;
   virtualizer: IVirtualizer;
   ref: RefObject<HTMLElement | null>;
+  shouldObserveItemSize?: boolean;
 }
 
 export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize: () => void} {
-  let {layoutInfo, virtualizer, ref} = options;
+  let {layoutInfo, virtualizer, ref, shouldObserveItemSize} = options;
   let key = layoutInfo?.key;
 
   let updateSize = useCallback(() => {
     if (key != null && ref.current) {
+      // if the virtualized item is not visible (aka display none on virtualized collection),
+      // we want to avoid reporting size 0 otherwise we get into a state where the virtualizer renders 0 items
+      // when it is hidden and thus won't remeasure when it is is unhidden
+      if (!isElementVisible(ref.current)) {
+        return;
+      }
       let size = getSize(ref.current);
       virtualizer.updateItemSize(key, size);
     }
   }, [virtualizer, key, ref]);
 
+  let updateSizeEvent = useEffectEvent(updateSize);
+
   useLayoutEffect(() => {
     if (layoutInfo?.estimatedSize) {
-      updateSize();
+      updateSizeEvent();
     }
   });
+
+  // TODO: Consider using a MutationObserver in addition to ResizeObserver to detect
+  // when inner DOM structure changes cause an item's height to change.
+  // The current ResizeObserver only observes direct children,
+  // so mutations deeper in the tree won't trigger a remeasure, leading to stale cached heights and overlapping items.
+  // useResizeObserver observes one element via ref, but the wrapper height is fixed by layout
+  // and won't change when content grows. Observe direct children instead, then remeasure the
+  // wrapper in updateSize.
+  useEffect(() => {
+    if (!shouldObserveItemSize) {
+      return;
+    }
+
+    let el = ref.current;
+    if (!el || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    let resizeObserver = new ResizeObserver(entries => {
+      if (!entries.length) {
+        return;
+      }
+      updateSizeEvent();
+    });
+
+    for (let child of el.children) {
+      resizeObserver.observe(child);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [shouldObserveItemSize, ref, key]);
 
   return {updateSize};
 }

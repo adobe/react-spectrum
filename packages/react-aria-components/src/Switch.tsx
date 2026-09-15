@@ -32,7 +32,7 @@ import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/share
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
 import {ToggleState, useToggleState} from 'react-stately/useToggleState';
 import {useFocusRing} from 'react-aria/useFocusRing';
@@ -65,7 +65,7 @@ export interface SwitchProps
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: RefObject<HTMLInputElement | null>;
+  inputRef?: Ref<HTMLInputElement | null>;
 }
 
 export interface SwitchFieldProps
@@ -85,7 +85,7 @@ export interface SwitchFieldProps
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: RefObject<HTMLInputElement | null>;
+  inputRef?: Ref<HTMLInputElement | null>;
 }
 
 export interface SwitchButtonProps
@@ -225,7 +225,10 @@ export const Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(function Swit
   let {inputRef: userProvidedInputRef = null, ...otherProps} = props;
   [props, ref] = useContextProps(otherProps, ref, SwitchContext);
   let inputRef = useObjectRef(
-    mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null)
+    useMemo(
+      () => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null),
+      [userProvidedInputRef, props.inputRef]
+    )
   );
   let state = useToggleState(props);
   let aria = useSwitch(
@@ -276,7 +279,10 @@ export const SwitchField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useObjectRef(
-    mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null)
+    useMemo(
+      () => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null),
+      [userProvidedInputRef, props.inputRef]
+    )
   );
   let state = useToggleState(props);
   let aria = useSwitch(

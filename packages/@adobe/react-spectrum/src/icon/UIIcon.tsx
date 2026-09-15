@@ -38,7 +38,7 @@ export function UIIcon(props: UIIconProps): JSX.Element {
   let {styleProps} = useStyleProps(otherProps);
   let provider: undefined | ProviderContext;
   try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+    // oxlint-disable-next-line react/react-compiler
     provider = useProvider();
   } catch {
     // ignore

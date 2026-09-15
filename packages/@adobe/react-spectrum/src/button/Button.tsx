@@ -15,7 +15,7 @@ import {classNames} from '../utils/classNames';
 import {FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from 'react-aria/FocusRing';
 import intlMessages from '../../intl/button/*.json';
-import {isAppleDevice, isFirefox} from 'react-aria/private/utils/platform';
+import {isAppleDevice, isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressCircle} from '../progress/ProgressCircle';
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
@@ -120,6 +120,7 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
       }, 1000);
     } else {
       // Exit loading state when isPending is set to false. */
+      // oxlint-disable-next-line react/react-compiler
       setIsProgressVisible(false);
     }
     return () => {
@@ -142,7 +143,7 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
     : `${hasIcon ? iconId : ''} ${hasLabel ? textId : ''} ${spinnerId}`.trim();
 
   let ariaLive: 'off' | 'polite' | 'assertive' = 'polite';
-  if (isAppleDevice() && (!hasAriaLabel || isFirefox())) {
+  if (isAppleDevice() && (!hasAriaLabel || (!isWebKit() && isFirefox()))) {
     ariaLive = 'off';
   }
 

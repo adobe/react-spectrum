@@ -7,7 +7,7 @@ import {renderHTMLfromMarkdown, setLinks, TComponent, TInterface, TType, Type} f
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
-const GROUPS = {
+export const PROP_GROUPS = {
   Content: [
     'children',
     'items',
@@ -116,7 +116,9 @@ const GROUPS = {
   Advanced: ['UNSAFE_className', 'UNSAFE_style', 'slot', 'render']
 };
 
-const DEFAULT_EXPANDED = new Set(['Content', 'Selection', 'Value']);
+export const DEFAULT_EXPANDED = new Set(['Content', 'Selection', 'Value']);
+
+const GROUPS = PROP_GROUPS;
 
 const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}, wordBreak: 'break-word'});
 
@@ -143,6 +145,11 @@ export function PropTable({
   if (!properties) {
     return null;
   }
+
+  let hasProps =
+    Object.values(properties).filter(
+      prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected'
+    ).length > 0;
 
   let defaultClassName = properties.className?.default?.slice(1, -1);
   let renderProps: TType | null = null;
@@ -175,12 +182,14 @@ export function PropTable({
           {renderHTMLfromMarkdown(component.description, {forceInline: false, forceBlock: true})}
         </div>
       )}
-      <GroupedPropTable
-        properties={properties}
-        links={links}
-        propGroups={GROUPS}
-        defaultExpanded={DEFAULT_EXPANDED}
-      />
+      {hasProps && (
+        <GroupedPropTable
+          properties={properties}
+          links={links}
+          propGroups={GROUPS}
+          defaultExpanded={DEFAULT_EXPANDED}
+        />
+      )}
       {defaultClassName ? <DefaultClassName defaultClassName={defaultClassName} /> : null}
       {renderProps && renderProps.type === 'interface' ? (
         <StateTable
@@ -316,7 +325,7 @@ function Rows({
   ));
 }
 
-function groupProps(
+export function groupProps(
   props: TInterface['properties'],
   propGroups: {[name: string]: (string | RegExp)[]} = GROUPS
 ): [TInterface['properties'], {[name: string]: TInterface['properties']}] {
