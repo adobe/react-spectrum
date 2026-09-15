@@ -629,10 +629,11 @@ describe('ListBox', function () {
     });
 
     it('supports the space character in a search', function () {
-      let tree = renderComponent({autoFocus: 'first'});
+      // Start on the last option so that searching for "F" wraps around to first "Foo".
+      let tree = renderComponent({autoFocus: 'last'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
-      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[6]);
 
       fireEvent.keyDown(listbox, {key: 'F'});
       expect(document.activeElement).toBe(options[0]);
@@ -657,10 +658,10 @@ describe('ListBox', function () {
     });
 
     it('supports item selection using the Spacebar after search times out', function () {
-      let tree = renderComponent({autoFocus: 'first', onSelectionChange, selectionMode: 'single'});
+      let tree = renderComponent({autoFocus: 'last', onSelectionChange, selectionMode: 'single'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
-      expect(document.activeElement).toBe(options[0]);
+      expect(document.activeElement).toBe(options[6]);
 
       fireEvent.keyDown(listbox, {key: 'F'});
       expect(document.activeElement).toBe(options[0]);
@@ -727,7 +728,7 @@ describe('ListBox', function () {
       });
 
       fireEvent.keyDown(listbox, {key: 'B'});
-      expect(document.activeElement).toBe(options[1]);
+      expect(document.activeElement).toBe(options[2]);
     });
 
     it('wraps around when no items past the current one match', function () {
@@ -746,7 +747,7 @@ describe('ListBox', function () {
       });
 
       fireEvent.keyDown(listbox, {key: 'B'});
-      expect(document.activeElement).toBe(options[4]);
+      expect(document.activeElement).toBe(options[1]);
     });
   });
 

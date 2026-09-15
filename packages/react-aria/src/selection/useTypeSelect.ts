@@ -72,11 +72,9 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
 
       if (keyboardDelegate.getKeyForSearch != null) {
         // Use the delegate to find a key to focus.
-        // Prioritize items after the currently focused item, falling back to searching the whole list.
-        let key = keyboardDelegate.getKeyForSearch(
-          state.current.search,
-          selectionManager.focusedKey
-        );
+        // Prioritize items after the item that was focused when the search started,
+        // falling back to searching the whole list.
+        let key = keyboardDelegate.getKeyForSearch(state.current.search, state.current.startKey);
 
         // If no key found, search from the top.
         if (key == null) {
@@ -111,9 +109,9 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       return;
     }
 
-    let isFreshSearch = state.current.search.length === 0;
-
-    if (isFreshSearch || state.current.search.split('').every(c => c === character)) {
+    // Typing the same character repeatedly cycles through items starting with that character
+    // rather than searching for a longer string, matching native browser behavior.
+    if (state.current.search === '' || state.current.search === character) {
       state.current.search = character;
       state.current.startKey = selectionManager.focusedKey;
     } else {
@@ -122,31 +120,9 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
 
     if (keyboardDelegate.getKeyForSearch != null) {
       // Use the delegate to find a key to focus.
-      // Prioritize items after the starting focused item for the active search,
+      // Prioritize items after the item that was focused when the search started,
       // falling back to searching the whole list.
-      let key: Key | null = null;
-
-      if (
-        selectionManager.focusedKey != null &&
-        selectionManager.isFocused &&
-        (state.current.search.length > 1 || isFreshSearch)
-      ) {
-        let focusedItem = selectionManager.collection.getItem(selectionManager.focusedKey);
-        if (focusedItem?.textValue) {
-          let searchValue = state.current.search.toLowerCase();
-          let itemValue = focusedItem.textValue.slice(0, state.current.search.length).toLowerCase();
-          if (itemValue === searchValue) {
-            key = selectionManager.focusedKey;
-          }
-        }
-      }
-
-      if (key == null) {
-        key = keyboardDelegate.getKeyForSearch(
-          state.current.search,
-          state.current.startKey ?? selectionManager.focusedKey
-        );
-      }
+      let key = keyboardDelegate.getKeyForSearch(state.current.search, state.current.startKey);
 
       if (key == null) {
         key = keyboardDelegate.getKeyForSearch(state.current.search);
