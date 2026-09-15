@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {Avatar} from '../src/Avatar';
+import BookmarkIcon from '../s2wf-icons/S2_Icon_Bookmark_20_N.svg';
 import {Button} from '../src/Button';
 import {Form} from '../src/Form';
+import {Image} from '../src/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 import {TagField, TagFieldValue} from '../src/TagField';
+import {Text} from '../src/Content';
 
 const meta: Meta<typeof TagField> = {
   component: TagField,
@@ -95,5 +99,49 @@ export const Disabled: Story = {
   args: {
     defaultValue: tags,
     isDisabled: true
+  }
+};
+
+export const WithIcons: Story = {
+  args: {
+    defaultValue: tags,
+    children: segment => (
+      <>
+        <BookmarkIcon />
+        <Text>{segment.text}</Text>
+      </>
+    )
+  }
+};
+
+const people = new TagFieldValue([
+  {type: 'token', text: 'Alex Miller'},
+  {type: 'token', text: 'Sarah Jones'},
+  {type: 'token', text: 'David Kim'},
+  {type: 'token', text: 'Emma Watson'}
+]);
+
+export const WithAvatars: Story = {
+  args: {
+    label: 'People',
+    defaultValue: people,
+    children: segment => (
+      <>
+        <Avatar src="https://i.imgur.com/xIe7Wlb.png" alt="" />
+        <Text>{segment.text}</Text>
+      </>
+    )
+  }
+};
+
+export const WithImages: Story = {
+  args: {
+    defaultValue: tags,
+    children: segment => (
+      <>
+        <Image src="https://i.imgur.com/xIe7Wlb.png" alt="" />
+        <Text>{segment.text}</Text>
+      </>
+    )
   }
 };

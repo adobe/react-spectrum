@@ -18,10 +18,13 @@ import {
   TokenFieldValue,
   TokenInput,
   TokenInputRenderProps,
-  TokenRenderProps
+  TokenRenderProps,
+  TokenSegment
 } from 'react-aria-components/TokenField';
+import {AvatarContext} from './Avatar';
 import {baseColor, size, space, style} from '../style' with {type: 'macro'};
-import {ContextValue} from 'react-aria-components/slots';
+import {centerBaseline} from './CenterBaseline';
+import {ContextValue, Provider} from 'react-aria-components/slots';
 import {
   control,
   controlSize,
@@ -30,7 +33,7 @@ import {
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {
   DOMRef,
@@ -41,6 +44,10 @@ import {
 } from '@react-types/shared';
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
+import {IconContext} from './Icon';
+import {ImageContext} from './Image';
+import {TextContext as RACTextContext} from 'react-aria-components/Text';
+import {Text, TextContext} from './Content';
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -100,6 +107,12 @@ export interface TagFieldProps
    * field scroll once the wrapped tags exceed the given height.
    */
   styles?: StylesPropWithHeight;
+  /**
+   * A render function that returns the contents of each tag. Use it to customize the tag, for
+   * example by adding an [Icon](Icon), [Avatar](Avatar), or [Image](Image). Defaults to the
+   * segment's text.
+   */
+  children?: (segment: TokenSegment) => ReactNode;
 }
 
 export const TagFieldContext =
@@ -120,7 +133,15 @@ const inputStyles = style<TokenInputRenderProps & {size: TagFieldProps['size']}>
   flexGrow: 1,
   minWidth: 0,
   boxSizing: 'border-box',
-  padding: 16,
+  paddingX: 16,
+  paddingY: {
+    size: {
+      S: space(16 - gap.S / 2),
+      M: space(16 - gap.M / 2),
+      L: space(16 - gap.L / 2),
+      XL: space(16 - gap.XL / 2)
+    }
+  },
   outlineStyle: 'none',
   whiteSpace: 'pre-wrap',
   overflowWrap: 'break-word',
@@ -130,14 +151,6 @@ const inputStyles = style<TokenInputRenderProps & {size: TagFieldProps['size']}>
       M: size(itemHeight.default + gap.M),
       L: size(itemHeight.size.L + gap.L),
       XL: size(itemHeight.size.XL + gap.XL)
-    }
-  },
-  marginY: {
-    size: {
-      S: space(-gap.S / 2),
-      M: space(-gap.M / 2),
-      L: space(-gap.L / 2),
-      XL: space(-gap.XL / 2)
     }
   },
   color: {
@@ -180,7 +193,7 @@ const tokenStyles = style<TokenRenderProps & {size: TagFieldProps['size']}>({
   ...control({shape: 'default', icon: true}),
   display: 'inline-flex',
   alignItems: 'center',
-  verticalAlign: 'baseline',
+  verticalAlign: 'middle',
   boxSizing: 'border-box',
   maxWidth: 'full',
   borderStyle: 'none',
@@ -215,6 +228,59 @@ const tokenStyles = style<TokenRenderProps & {size: TagFieldProps['size']}>({
   cursor: 'default'
 });
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 24,
+  XL: 28
+} as const;
+
+const tokenTextStyles = style({order: 1, truncate: true});
+const tokenIconStyles = style({
+  size: '1lh',
+  marginStart: '--iconMargin',
+  flexShrink: 0,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
+});
+const tokenIconRender = centerBaseline({slot: 'icon', styles: style({order: 0})});
+const tokenAvatarStyles = style({order: 0});
+const tokenImageStyles = style({
+  size: '1lh',
+  flexShrink: 0,
+  order: 0,
+  aspectRatio: 'square',
+  objectFit: 'contain',
+  borderRadius: 'sm'
+});
+
+// Provides the icon, text, avatar, and image slots inside a tag so custom content
+// (e.g. icons, avatars, or images) aligns correctly, matching Tag from TagGroup.
+function TagToken({
+  size = 'M',
+  children
+}: {
+  size?: TagFieldProps['size'];
+  children: ReactNode;
+}): ReactNode {
+  return (
+    <Token className={renderProps => tokenStyles({...renderProps, size})}>
+      <Provider
+        values={[
+          [RACTextContext, undefined],
+          [TextContext, {styles: tokenTextStyles}],
+          [IconContext, {render: tokenIconRender, styles: tokenIconStyles}],
+          [AvatarContext, {size: avatarSize[size ?? 'M'], styles: tokenAvatarStyles}],
+          [ImageContext, {styles: tokenImageStyles}]
+        ]}>
+        {typeof children === 'string' ? <Text>{children}</Text> : children}
+      </Provider>
+    </Token>
+  );
+}
+
 /**
  * A TagField allows users to enter a list of tags, keywords, or categories. Tags wrap onto
  * multiple lines as they are added, and the field scrolls once it reaches a maximum height.
@@ -243,6 +309,7 @@ export const TagField = forwardRef(function TagField(
     contextualHelp,
     value,
     defaultValue,
+    children,
     UNSAFE_style,
     UNSAFE_className = '',
     styles,
@@ -296,9 +363,7 @@ export const TagField = forwardRef(function TagField(
               inputStyles({...renderProps, size}) + (placeholder ? ' ' + placeholderStyles : '')
             }>
             {segment => (
-              <Token className={renderProps => tokenStyles({...renderProps, size})}>
-                {segment.text}
-              </Token>
+              <TagToken size={size}>{children ? children(segment) : segment.text}</TagToken>
             )}
           </TokenInput>
         </FieldGroup>
