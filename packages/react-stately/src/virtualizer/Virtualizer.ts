@@ -74,7 +74,7 @@ export class Virtualizer<T extends object, V> {
 
   private _scrollAnchor: ScrollAnchorTracker;
   // Together they classify whether the changed content was at the anchored (e.g. bottom) edge to avoid
-  // following the edge when only a mid-list item resized while the user is scrolled away.
+  // following the edge when only a mid-list item resized in a short chat.
   private _hadItemResize: boolean;
   private _batchIncludedNewestContent: boolean;
 
@@ -200,7 +200,7 @@ export class Virtualizer<T extends object, V> {
     let rawContentSize = this.layout.getContentSize();
     (this as Mutable<this>).contentSize = new Size(rawContentSize.width, rawContentSize.height);
 
-    // Decide whether the change that triggered this relayout was at the newest edge. If items
+    // Decide whether the change that triggered this relayout was at the anchored edge. If items
     // resized but none of them were the newest content, we don't follow the edge and we keep the
     // user's reading position instead.
     let changeIsAtEdge = !this._hadItemResize || this._batchIncludedNewestContent;

@@ -198,9 +198,9 @@ export function resolveScrollAdjustment(
           previousVisibleRect.height
         );
 
-  // Two possible responses when content settles: "follow the edge" (keep the viewport pinned to the
-  // content edge, e.g. the bottom of a chat) or "preserve the anchor" (keep the item the user is
-  // looking at in place).
+  // Two possible responses when content settles: "preserve the anchor" (keep the item the user is
+  // looking at in place) or "follow the edge" (keep the viewport pinned to the
+  // content edge, e.g. the bottom of a chat)
   let followEdge =
     wasNearAnchorEdge &&
     !isScrolling &&
