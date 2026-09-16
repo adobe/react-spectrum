@@ -145,7 +145,7 @@ function StepState({stepKey, children}: {stepKey: Key | undefined; children: Rea
       style={{display: 'contents'}}
       data-current={isCurrent || undefined}
       data-completed={isCompleted || undefined}>
-      <VisuallyHidden elementType="span">{stateText}</VisuallyHidden>
+      {!isCurrent && <VisuallyHidden elementType="span">{stateText}</VisuallyHidden>}
       {children}
     </span>
   );

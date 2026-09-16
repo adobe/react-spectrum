@@ -52,10 +52,10 @@ export function useStepListItem<T>(
   return {
     stepProps: {
       ...itemProps,
+      role: 'listitem',
       tabIndex: undefined
     },
     linkProps: {
-      'aria-labelledby': itemProps.id,
       isDisabled,
       'aria-current': states.isSelected ? 'step' : undefined
     },
