@@ -10,6 +10,30 @@
   border-radius: 20px;
   animation-duration: 1s;
   z-index: 1;
+
+  animation-name: radius;
+  animation-timeline: --sheet-animation-timeline;
+  animation-direction: var(--sheet-animation-direction);
+  animation-range: var(--sheet-animation-range);
+  animation-fill-mode: both;
+
+  &[data-swipe-direction='vertical'],
+  &[data-swipe-direction='horizontal'] {
+    animation-name: radius2;
+  }
+}
+
+.sheet-container {
+  animation-name: backdropAnimation;
+  animation-timeline: --sheet-animation-timeline;
+  animation-direction: var(--sheet-animation-direction);
+  animation-range: var(--sheet-animation-range);
+  animation-fill-mode: both;
+
+  &[data-swipe-direction='vertical'],
+  &[data-swipe-direction='horizontal'] {
+    animation-name: backdropAnimation2;
+  }
 }
 
 .backdrop {
@@ -32,6 +56,17 @@
   }
 }
 
+@keyframes radius2 {
+  from,
+  to {
+    border-radius: 0;
+  }
+
+  50% {
+    border-radius: 40px;
+  }
+}
+
 @keyframes backdropAnimation {
   from {
     /* opacity: 0; */
@@ -40,6 +75,21 @@
   }
 
   to {
+    /* opacity: 1; */
+    background: rgb(0 0 0 / 0.4);
+    /* backdrop-filter: brightness(0.6); */
+  }
+}
+
+@keyframes backdropAnimation2 {
+  from,
+  to {
+    /* opacity: 0; */
+    background: rgb(0 0 0 / 0);
+    /* backdrop-filter: brightness(1); */
+  }
+
+  50% {
     /* opacity: 1; */
     background: rgb(0 0 0 / 0.4);
     /* backdrop-filter: brightness(0.6); */

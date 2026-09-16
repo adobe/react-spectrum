@@ -23,7 +23,13 @@ export default {
     position: {
       control: {
         type: 'inline-radio',
-        options: ['bottom', 'top', 'left', 'right']
+        options: ['bottom', 'top', 'left', 'right', 'center']
+      }
+    },
+    swipeDirection: {
+      control: {
+        type: 'inline-radio',
+        options: ['bottom', 'top', 'left', 'right', 'vertical', 'horizontal']
       }
     }
   }
@@ -35,7 +41,11 @@ export const SheetExample: SheetStory = args => (
   <>
     <DialogTrigger>
       <Button>Open sheet</Button>
-      <Sheet position="bottom" scrollAnimation="backdropAnimation" {...args}>
+      <Sheet
+        position="bottom"
+        className="sheet-container"
+        scrollAnimation="backdropAnimation"
+        {...args}>
         {/* <div className={styles.backdrop} /> */}
         {/* <SheetUnderlay className="backdrop" scrollAnimation="backdropAnimation" /> */}
         <SheetContent className="sheet" scrollAnimation="radius">
