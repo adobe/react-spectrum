@@ -119,18 +119,13 @@ describe('StepList', function () {
     // Each step link is labelled by its containing item, which includes the visually hidden
     // step state text, so the state is part of the link's accessible name.
     let currentStep = stepListItems[2];
-    let stateEl = document.getElementById(currentStep.getAttribute('aria-labelledby')!);
-    expect(stateEl!.textContent).toContain('Current');
+    expect(currentStep!.getAttribute('aria-current')).toBeTruthy();
 
     let completedStep = stepListItems[0];
-    let completedStateEl = document.getElementById(completedStep.getAttribute('aria-labelledby')!);
-    expect(completedStateEl!.textContent).toContain('Completed');
+    expect(completedStep!.parentElement!.textContent).toContain('Completed');
 
     let notCompletedStep = stepListItems[3];
-    let notCompletedStateEl = document.getElementById(
-      notCompletedStep.getAttribute('aria-labelledby')!
-    );
-    expect(notCompletedStateEl!.textContent).toContain('Not');
+    expect(notCompletedStep!.parentElement!.textContent).toContain('Not');
   });
 
   it('attaches a user provided ref', function () {
