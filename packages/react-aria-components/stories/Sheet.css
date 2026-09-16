@@ -1,0 +1,47 @@
+.sheet {
+  color-scheme: light dark;
+  background: Canvas;
+  color: CanvasText;
+  height: 50%;
+  /* padding-bottom: var(--sheet-padding);
+  margin-bottom: calc(-1 * var(--sheet-padding)); */
+  width: calc(100% - 16px);
+  max-width: 800px;
+  border-radius: 20px;
+  animation-duration: 1s;
+  z-index: 1;
+}
+
+.backdrop {
+  position: absolute;
+  top: -100dvh;
+  left: 0;
+  width: 100dvw;
+  height: 300dvh;
+  background: rgb(0 0 0 / 0.4);
+  z-index: 0;
+}
+
+@keyframes radius {
+  from {
+    border-radius: 0;
+  }
+
+  to {
+    border-radius: 40px;
+  }
+}
+
+@keyframes backdropAnimation {
+  from {
+    /* opacity: 0; */
+    background: rgb(0 0 0 / 0);
+    /* backdrop-filter: brightness(1); */
+  }
+
+  to {
+    /* opacity: 1; */
+    background: rgb(0 0 0 / 0.4);
+    /* backdrop-filter: brightness(0.6); */
+  }
+}

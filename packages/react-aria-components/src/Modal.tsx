@@ -39,6 +39,7 @@ import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/anim
 import {useIsSSR} from 'react-aria/SSRProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
 export interface ModalOverlayProps
   extends
@@ -62,6 +63,8 @@ export interface ModalOverlayProps
    * Whether the modal is currently performing an exit animation.
    */
   isExiting?: boolean;
+  onEnter?: (element: HTMLElement) => void;
+  onExit?: (element: HTMLElement) => void;
   /**
    * The container element in which the overlay portal will be placed. This may have unknown
    * behavior depending on where it is portalled to.
@@ -77,6 +80,7 @@ interface InternalModalContextValue {
   modalRef: RefObject<HTMLDivElement | null>;
   isExiting: boolean;
   isDismissable?: boolean;
+  onExitRef?: RefObject<ModalOverlayProps['onExit'] | null>;
 }
 
 export const ModalContext = createContext<ContextValue<ModalOverlayProps, HTMLDivElement>>(null);
@@ -176,6 +180,7 @@ interface ModalOverlayInnerProps extends ModalOverlayProps {
   modalRef: RefObject<HTMLDivElement | null>;
   state: OverlayTriggerState;
   isExiting: boolean;
+  onExitRef?: RefObject<ModalOverlayProps['onExit'] | null>;
 }
 
 function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -197,8 +202,11 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
 
   let objectRef = useObjectRef(ref);
   let modalRef = useRef<HTMLDivElement>(null);
-  let isOverlayExiting = useExitAnimation(objectRef, state.isOpen);
-  let isModalExiting = useExitAnimation(modalRef, state.isOpen);
+  let isOverlayExiting = useExitAnimation(objectRef, state.isOpen, props.onExit);
+  let onExitRef = useRef<ModalOverlayProps['onExit'] | null>(null);
+  let isModalExiting = useExitAnimation(modalRef, state.isOpen, element =>
+    onExitRef.current?.(element)
+  );
   let isExiting = isOverlayExiting || isModalExiting || props.isExiting || false;
   let isSSR = useIsSSR();
 
@@ -213,6 +221,7 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
       isExiting={isExiting}
       overlayRef={objectRef}
       modalRef={modalRef}
+      onExitRef={onExitRef}
     />
   );
 }
@@ -229,7 +238,8 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   let {state} = props;
   let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
 
-  let entering = useEnterAnimation(props.overlayRef) || props.isEntering || false;
+  let entering =
+    useEnterAnimation(props.overlayRef, true, props.onEnter) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ModalOverlay',
@@ -276,7 +286,13 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
           values={[
             [
               InternalModalContext,
-              {modalProps, modalRef, isExiting: props.isExiting, isDismissable: props.isDismissable}
+              {
+                modalProps,
+                modalRef,
+                isExiting: props.isExiting,
+                onExitRef: props.onExitRef,
+                isDismissable: props.isDismissable
+              }
             ],
             [OverlayTriggerStateContext, state]
           ]}>
@@ -298,15 +314,18 @@ interface ModalContentProps
    */
   className?: ClassNameOrFunction<ModalRenderProps>;
   modalRef: ForwardedRef<HTMLDivElement>;
+  onEnter?: (element: HTMLElement) => void;
+  onExit?: (element: HTMLElement) => void;
 }
 
 function ModalContent(props: ModalContentProps) {
-  let {modalProps, modalRef, isExiting, isDismissable} = useContext(InternalModalContext)!;
+  let {modalProps, modalRef, isExiting, onExitRef, isDismissable} =
+    useContext(InternalModalContext)!;
   let state = useContext(OverlayTriggerStateContext)!;
   let mergedRefs = useMemo(() => mergeRefs(props.modalRef, modalRef), [props.modalRef, modalRef]);
 
   let ref = useObjectRef(mergedRefs);
-  let entering = useEnterAnimation(ref);
+  let entering = useEnterAnimation(ref, true, props.onEnter);
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Modal',
@@ -314,6 +333,12 @@ function ModalContent(props: ModalContentProps) {
       isEntering: entering,
       isExiting,
       state
+    }
+  });
+
+  useLayoutEffect(() => {
+    if (onExitRef) {
+      onExitRef.current = props.onExit;
     }
   });
 
