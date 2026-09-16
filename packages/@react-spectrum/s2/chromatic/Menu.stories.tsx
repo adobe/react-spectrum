@@ -25,7 +25,6 @@ import {Menu, MenuItem, MenuSection, MenuTrigger} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {userEvent, within} from 'storybook/test';
-import {focusRing, style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Menu<any>> = {
   component: Menu,
