@@ -51,7 +51,9 @@ describe('ariaHideOutside', function () {
 
   it('should use the target document as the default root', function () {
     let iframe = document.createElement('iframe');
+    let iframeSibling = document.createElement('div');
     document.body.appendChild(iframe);
+    document.body.appendChild(iframeSibling);
     let iframeDocument = iframe.contentWindow.document;
     iframeDocument.body.innerHTML = '<div id="outside"></div><div id="target"></div>';
     let target = iframeDocument.getElementById('target');
@@ -61,11 +63,14 @@ describe('ariaHideOutside', function () {
 
     expect(outside).toHaveAttribute('aria-hidden', 'true');
     expect(target).not.toHaveAttribute('aria-hidden');
+    expect(iframe).not.toHaveAttribute('aria-hidden');
+    expect(iframeSibling).not.toHaveAttribute('aria-hidden');
     expect(document.body).not.toHaveAttribute('aria-hidden');
 
     revert();
     expect(outside).not.toHaveAttribute('aria-hidden');
     iframe.remove();
+    iframeSibling.remove();
   });
 
   it('should hide everything except multiple elements', function () {
