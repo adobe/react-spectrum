@@ -1,21 +1,13 @@
 import {flushSync} from 'react-dom';
 import {Modal, ModalOverlay, ModalOverlayProps} from './Modal';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {
-  createContext,
-  CSSProperties,
-  ReactNode,
-  useCallback,
-  useContext,
-  useRef
-} from 'react';
+import React, {createContext, ReactNode, useCallback, useContext, useRef} from 'react';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 
 interface SheetProps extends ModalOverlayProps {
   children: ReactNode;
   position?: 'bottom' | 'top' | 'left' | 'right' | 'center';
   swipeDirection: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
-  scrollAnimation?: string;
 }
 
 const SheetContext = createContext<SheetProps | null>(null);
@@ -60,13 +52,18 @@ export function Sheet(props: SheetProps) {
 
   let {axis, before, after, maxScroll, enteredScroll, containerOffset, length} =
     getSwipeConfig(swipeDirection);
-  // Length unit along the swipe axis (dvh for vertical, vw for horizontal).
-  let mainUnit = axis === 'y' ? 'dvh' : 'vw';
+  // The sheet crosses a single viewport edge (the swipe edge), so map the animation to just that
+  // crossing. In view-timeline terms `entry` is the scrollport's end edge (bottom/right, where the
+  // sheet appears from) and `exit` is the start edge (top/left). Dual directions cross both edges,
+  // so use `cover` (which expects symmetric keyframes with a 50% midpoint). Direction is chosen so
+  // progress 0 is the exited state and 1 is entered, matching keyframes authored from exited ->
+  // entered: `entry` already runs gone -> entered, while `exit` runs entered -> gone and is reversed.
+  let viewRange = before && after ? 'cover' : before ? 'exit' : 'entry';
+  let viewDirection = before && after ? 'normal' : before ? 'reverse' : 'normal';
   let alignment = getPositionAlignment(position);
   // The stage's main axis is the swipe axis (justify-content); the cross axis uses align-items.
   let justifyContent = axis === 'y' ? alignment.y : alignment.x;
   let alignItems = axis === 'y' ? alignment.x : alignment.y;
-  let animation = useScrollAnimation(props.scrollAnimation);
 
   return (
     <ModalOverlay
@@ -75,7 +72,6 @@ export function Sheet(props: SheetProps) {
       data-swipe-direction={swipeDirection}
       className={props.className}
       style={{
-        ...animation,
         position: 'absolute',
         top: axis === 'y' ? `${containerOffset}dvh` : 0,
         left: axis === 'x' ? `${containerOffset}vw` : 0,
@@ -87,13 +83,12 @@ export function Sheet(props: SheetProps) {
         overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
         overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
         scrollbarWidth: 'none',
+        // Hoist the sheet's view-timeline name into scope so the backdrop and overlay (which are not
+        // descendants of the sheet element that defines it) can reference it too.
         // @ts-ignore
-        scrollTimelineName: '--sheet-animation-timeline',
-        scrollTimelineAxis: axis,
-        '--sheet-animation-range': `0 ${maxScroll}${mainUnit}`,
-        // The scroll timeline runs forward from the exit position, except when the rest position is
-        // at scroll 0 (top/left), where the exit is at the far end and the timeline must be reversed.
-        '--sheet-animation-direction': before && !after ? 'reverse' : 'forward'
+        timelineScope: '--sheet-animation-timeline',
+        '--sheet-animation-range': viewRange,
+        '--sheet-animation-direction': viewDirection
       }}
       onEnter={element => {
         let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
@@ -251,29 +246,27 @@ function SnapPoint({point, align, axis}: SnapPointProps) {
   );
 }
 
-export function SheetUnderlay({scrollAnimation, ...otherProps}) {
-  let animation = useScrollAnimation(scrollAnimation);
-  return <div {...otherProps} style={animation} />;
+export function SheetUnderlay({...otherProps}) {
+  return <div {...otherProps} />;
 }
 
-const supportsScrollAnimation =
-  typeof CSS !== 'undefined' && CSS.supports('(animation-timeline: scroll())');
-
-interface SheetContentProps extends ModalOverlayProps {
-  scrollAnimation?: string;
-}
+interface SheetContentProps extends ModalOverlayProps {}
 
 export function SheetContent(props: SheetContentProps) {
   let ref = useRef(null);
-  let {scrollAnimation} = props;
   let {position = 'bottom', swipeDirection = position === 'center' ? 'vertical' : position} =
     useContext(SheetContext)!;
-  let prop = position[0].toUpperCase() + position.slice(1);
+
+  let {axis, before, after} = getSwipeConfig(swipeDirection);
+  // The animation is driven by a view-progress timeline on the sheet itself, so its range is scaled
+  // to the sheet's own size and position. The scroll container is 2 viewports along the swipe axis,
+  // so crop the timeline's scrollport with an inset to the visible half (the real viewport). The
+  // off-screen half is the one opposite `containerOffset`: the start half is visible unless the
+  // sheet rests at scroll 0 (top/left), where the end half is visible.
+  let viewInset = before && !after ? '50% 0' : '0 50%';
+
   let value = position === 'top' || position === 'bottom' ? '100vh' : '100vw';
   // let value = `calc(100lvh - 100svh + 58px)`;
-
-  let animation = useScrollAnimation(scrollAnimation);
-  console.log(swipeDirection);
 
   return (
     <Modal
@@ -282,36 +275,18 @@ export function SheetContent(props: SheetContentProps) {
       data-swipe-direction={swipeDirection}
       style={{
         ...props.style,
-        ...animation,
-        // maxHeight: '100%',
-        // ['margin' + prop]: `calc(-1 * ${value})`,
-        // ['padding' + prop]: value,
-        // height: `calc(50% + ${value})`,
+        // The sheet is the subject of the view-progress timeline that drives all sheet animations.
+        // The inset (set on the overlay) crops the oversized scroll container's scrollport down to
+        // the visible viewport so progress tracks the sheet's real on-screen travel.
+        // @ts-ignore
+        viewTimelineName: '--sheet-animation-timeline',
+        viewTimelineAxis: axis,
+        viewTimelineInset: viewInset,
         // @ts-ignore
         '--sheet-padding': value
       }}
     />
   );
-}
-
-function useScrollAnimation(scrollAnimation: string | null | undefined): CSSProperties {
-  let animation: CSSProperties = {};
-  if (scrollAnimation) {
-    if (supportsScrollAnimation) {
-      animation = {
-        // animationName: scrollAnimation,
-        // // @ts-ignore
-        // animationTimeline: '--sheet-animation-timeline',
-        // animationDirection: 'var(--sheet-animation-direction)',
-        // animationRange: 'var(--sheet-animation-range)',
-        // animationFillMode: 'both'
-      };
-    } else {
-      animation = {};
-    }
-  }
-
-  return animation;
 }
 
 function scrollAlongAxis(element: HTMLElement, axis: Axis, value: number, smooth = false) {
