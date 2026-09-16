@@ -898,9 +898,7 @@ const resizableMenuButtonWrapper = style({
   paddingX: 16,
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  fontSize: controlFont(),
-  fontFamily: 'sans',
-  fontWeight: 'bold'
+  font: 'title-sm'
 });
 
 const resizerHandleContainer = style({
@@ -950,13 +948,14 @@ const resizerHandle = style<{isFocusVisible: boolean; isResizing: boolean}>({
 const columnHeaderText = style({
   truncate: true,
   // Make it so the text doesn't completely disappear when column is resized to smallest width + both sort and chevron icon is rendered
-  minWidth: fontRelative(16),
+  minWidth: fontRelative(18),
   flexGrow: 0,
   flexShrink: 1,
   flexBasis: 'auto'
 });
 
 const moreVerticalIcon = style({
+  size: '1lh',
   marginStart: 'text-to-visual',
   minWidth: fontRelative(16),
   flexShrink: 0,
