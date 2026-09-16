@@ -54,12 +54,18 @@ export function Sheet(props: SheetProps) {
     getSwipeConfig(swipeDirection);
   // The sheet crosses a single viewport edge (the swipe edge), so map the animation to just that
   // crossing. In view-timeline terms `entry` is the scrollport's end edge (bottom/right, where the
-  // sheet appears from) and `exit` is the start edge (top/left). Dual directions cross both edges,
-  // so use `cover` (which expects symmetric keyframes with a 50% midpoint). Direction is chosen so
-  // progress 0 is the exited state and 1 is entered, matching keyframes authored from exited ->
-  // entered: `entry` already runs gone -> entered, while `exit` runs entered -> gone and is reversed.
+  // sheet appears from) and `exit` is the start edge (top/left). Direction is chosen so progress 0
+  // is the exited state and 1 is entered, matching keyframes authored from exited -> entered:
+  // `entry` already runs gone -> entered, while `exit` runs entered -> gone and is reversed.
+  //
+  // Dual directions cross both edges, so run the same keyframe over the full `cover` range twice
+  // (iteration count 2) with `alternate`: the view timeline splits its progress across the two
+  // iterations, so it plays exited -> entered -> exited around the centered rest position. This
+  // reuses a single exited -> entered keyframe rather than requiring an author to also write a
+  // symmetric (0%/50%/100%) variant.
   let viewRange = before && after ? 'cover' : before ? 'exit' : 'entry';
-  let viewDirection = before && after ? 'normal' : before ? 'reverse' : 'normal';
+  let viewDirection = before && after ? 'alternate' : before ? 'reverse' : 'normal';
+  let viewIterations = before && after ? 2 : 1;
   let alignment = getPositionAlignment(position);
   // The stage's main axis is the swipe axis (justify-content); the cross axis uses align-items.
   let justifyContent = axis === 'y' ? alignment.y : alignment.x;
@@ -88,7 +94,8 @@ export function Sheet(props: SheetProps) {
         // @ts-ignore
         timelineScope: '--sheet-animation-timeline',
         '--sheet-animation-range': viewRange,
-        '--sheet-animation-direction': viewDirection
+        '--sheet-animation-direction': viewDirection,
+        '--sheet-animation-iterations': viewIterations
       }}
       onEnter={element => {
         let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
