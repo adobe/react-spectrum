@@ -629,6 +629,7 @@ export const SidePanelExample = {
           {({isHidden}) => (
             <div className={style({display: 'flex', flexDirection: 'column', gap: 2})}>
               <AIButton
+                key={isHidden ? 'hidden' : 'visible'}
                 size="M"
                 brandColor="#FF0000"
                 aria-label="Ask Coworker"

@@ -260,7 +260,12 @@ const treeIcon = style({
   }
 });
 
-const treeContent = style<{isHidden?: boolean; isInSidePanel?: boolean; isReady?: boolean}>({
+const treeContent = style<{
+  isHidden?: boolean;
+  isInSidePanel?: boolean;
+  isReady?: boolean;
+  isTopLevel?: boolean;
+}>({
   gridArea: 'content',
   paddingY: `--centerPadding`,
   flexShrink: 1,
@@ -272,15 +277,19 @@ const treeContent = style<{isHidden?: boolean; isInSidePanel?: boolean; isReady?
   opacity: {
     default: 1,
     isHidden: 0,
-    '@starting-style': 0
+    isTopLevel: {
+      '@starting-style': 0
+    }
   },
   transition: {
     isInSidePanel: {
       default: 'none',
-      isReady: {
-        default: '[opacity, display]',
-        isHidden: 'none',
-        '@media (prefers-reduced-motion: reduce)': 'none'
+      isTopLevel: {
+        isReady: {
+          default: '[opacity, display]',
+          isHidden: 'none',
+          '@media (prefers-reduced-motion: reduce)': 'none'
+        }
       }
     }
   },
@@ -307,7 +316,13 @@ let treeRowFocusRing = style({
   pointerEvents: 'none'
 });
 
-const treeRowLink = style({
+const treeRowLink = style<{
+  isDisabled?: boolean;
+  isChild?: boolean;
+  isHidden?: boolean;
+  isInSidePanel?: boolean;
+  isReady?: boolean;
+}>({
   display: 'grid',
   gridArea: 'content',
   gridTemplateColumns: ['auto', '1fr', 'auto'],
@@ -320,7 +335,31 @@ const treeRowLink = style({
   cursor: {
     default: 'pointer',
     isDisabled: 'default'
-  }
+  },
+  // Child rows are only ever revealed once the panel is already expanded (by expanding their parent),
+  // so their whole content — icon and label together — fades in as one unit with matching timing.
+  // Top-level rows keep their persistent rail icon and fade only the label (see treeContent), so this
+  // is gated to child rows.
+  opacity: {
+    default: 1,
+    isChild: {
+      isHidden: 0,
+      '@starting-style': 0
+    }
+  },
+  transition: {
+    isChild: {
+      isInSidePanel: {
+        default: 'none',
+        isReady: {
+          default: 'opacity',
+          isHidden: 'none',
+          '@media (prefers-reduced-motion: reduce)': 'none'
+        }
+      }
+    }
+  },
+  transitionDuration: 150
 });
 
 const treeRowButton = style({
@@ -355,6 +394,7 @@ const hideUnmarkedChildren = css('& > *:not([data-do-not-hide]) {display: none;}
 const SideNavItemLinkContext = createContext<{
   hasChildItems?: boolean;
   isDisabled?: boolean;
+  isTopLevel?: boolean;
   onPressChange?: (isPressed: boolean) => void;
 }>({});
 
@@ -448,10 +488,12 @@ const SideNavItemContentInner = props => {
     isCurrentAncestor,
     isHovered,
     isFocusVisible,
+    level,
     scale,
     setLinkPressed,
     children
   } = props;
+  let isTopLevel = (level ?? 1) <= 1;
 
   return (
     <>
@@ -487,12 +529,13 @@ const SideNavItemContentInner = props => {
         />
         <Provider
           values={[
-            [TextContext, {styles: treeContent({isHidden, isInSidePanel, isReady})}],
+            [TextContext, {styles: treeContent({isHidden, isInSidePanel, isReady, isTopLevel})}],
             [
               SideNavItemLinkContext,
               {
                 hasChildItems,
                 isDisabled,
+                isTopLevel,
                 onPressChange: setLinkPressed
               }
             ],
@@ -752,7 +795,7 @@ let SideNavItemButton = (
 
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
-  let {hasChildItems = false, ...linkFocus} = useContext(SideNavItemLinkContext);
+  let {hasChildItems = false, isTopLevel = true, ...linkFocus} = useContext(SideNavItemLinkContext);
   let sidePanelContext = useContext(SidePanelContext);
   let {isCollapsed = false, setCollapsed, isHidden = false, isReady = false} = sidePanelContext;
   let isInSidePanel = sidePanelContext.isCollapsed !== undefined;
@@ -785,10 +828,16 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
       {...linkFocus}
       ref={linkRef}
       data-do-not-hide
-      className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
+      className={treeRowLink({
+        isDisabled: linkFocus.isDisabled,
+        isChild: !isTopLevel,
+        isHidden,
+        isInSidePanel,
+        isReady
+      })}>
       <Provider
         values={[
-          [TextContext, {styles: treeContent({isHidden, isInSidePanel, isReady})}],
+          [TextContext, {styles: treeContent({isHidden, isInSidePanel, isReady, isTopLevel})}],
           [
             IconContext,
             {
@@ -834,7 +883,6 @@ const sidePanelStyle = style(
       type: 'width',
       value: 42
     },
-    overflow: 'hidden',
     transition: {
       default: '[width]',
       '@media (prefers-reduced-motion: reduce)': 'none'
@@ -911,7 +959,7 @@ function PanelToggleButton({isCollapsed, setCollapsed, ...otherProps}: any) {
   let [isHovered, setHovered] = useState(false);
   let {hoverProps} = useHover({onHoverChange: setHovered});
   return (
-    <div {...hoverProps} className={style({display: 'contents'})}>
+    <div {...hoverProps} className={style({display: 'contents', marginBottom: 2})}>
       <ActionButton
         {...otherProps}
         isQuiet
