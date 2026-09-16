@@ -2,9 +2,9 @@
   color-scheme: light dark;
   background: Canvas;
   color: CanvasText;
-  height: 50%;
-  /* padding-bottom: var(--sheet-padding);
-  margin-bottom: calc(-1 * var(--sheet-padding)); */
+  height: 80%;
+  padding: var(--sheet-overscroll-padding);
+  margin: var(--sheet-overscroll-margin);
   width: calc(100% - 16px);
   max-width: 800px;
   border-radius: 20px;
@@ -50,14 +50,10 @@
 
 @keyframes backdropAnimation {
   from {
-    /* opacity: 0; */
     background: rgb(0 0 0 / 0);
-    /* backdrop-filter: brightness(1); */
   }
 
   to {
-    /* opacity: 1; */
     background: rgb(0 0 0 / 0.4);
-    /* backdrop-filter: brightness(0.6); */
   }
 }

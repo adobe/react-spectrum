@@ -41,18 +41,14 @@ export const SheetExample: SheetStory = args => (
   <>
     <DialogTrigger>
       <Button>Open sheet</Button>
-      <Sheet
-        position="bottom"
-        className="sheet-container"
-        scrollAnimation="backdropAnimation"
-        {...args}>
+      <Sheet position="bottom" className="sheet-container" {...args}>
         {/* <div className={styles.backdrop} /> */}
         {/* <SheetUnderlay className="backdrop" scrollAnimation="backdropAnimation" /> */}
-        <SheetContent className="sheet" scrollAnimation="radius">
+        <SheetContent className="sheet">
           <Dialog
             style={{
               padding: 30,
-              // paddingBottom: 'var(--sheet-padding)',
+              paddingBottom: 'var(--sheet-scroll-padding-y)',
               boxSizing: 'border-box',
               height: '100%',
               overflow: 'auto'

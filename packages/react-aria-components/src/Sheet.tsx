@@ -95,7 +95,8 @@ export function Sheet(props: SheetProps) {
         timelineScope: '--sheet-animation-timeline',
         '--sheet-animation-range': viewRange,
         '--sheet-animation-direction': viewDirection,
-        '--sheet-animation-iterations': viewIterations
+        '--sheet-animation-iterations': viewIterations,
+        '--sheet-scroll-padding-y': 'calc(100dvh - var(--visual-viewport-height))'
       }}
       onEnter={element => {
         let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
@@ -272,8 +273,30 @@ export function SheetContent(props: SheetContentProps) {
   // sheet rests at scroll 0 (top/left), where the end half is visible.
   let viewInset = before && !after ? '50% 0' : '0 50%';
 
-  let value = position === 'top' || position === 'bottom' ? '100vh' : '100vw';
-  // let value = `calc(100lvh - 100svh + 58px)`;
+  // Extra padding to allow overscrolling, and a negative margin to offset it.
+  let padding, margin;
+  switch (position) {
+    case 'top':
+      padding = '100vh 0 0 0';
+      margin = '-100vh 0 0 0';
+      break;
+    case 'bottom':
+      padding = '0 0 100vh 0';
+      margin = '0 0 -100vh 0';
+      break;
+    case 'left':
+      padding = '0 0 0 100vw';
+      margin = '0 0 0 -100vw';
+      break;
+    case 'right':
+      padding = '0 100vw 0 0';
+      margin = '0 -100vw 0 0';
+      break;
+    case 'center':
+    default:
+      padding = '0';
+      margin = '0';
+  }
 
   return (
     <Modal
@@ -290,7 +313,8 @@ export function SheetContent(props: SheetContentProps) {
         viewTimelineAxis: axis,
         viewTimelineInset: viewInset,
         // @ts-ignore
-        '--sheet-padding': value
+        '--sheet-overscroll-padding': padding,
+        '--sheet-overscroll-margin': margin
       }}
     />
   );
