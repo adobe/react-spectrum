@@ -25,6 +25,7 @@ import {
   renderPromptField,
   tokenTexts
 } from './utils/promptFieldTestUtils';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import userEvent from '@testing-library/user-event';
@@ -57,11 +58,13 @@ describeOrSkip('PromptField', () => {
   let user;
 
   beforeAll(() => {
-    user = userEvent.setup({delay: null});
+    installRangePolyfill();
+    user = userEvent.setup({advanceTimers: jest.advanceTimersByTime});
+    jest.useFakeTimers();
   });
 
-  beforeAll(() => {
-    installRangePolyfill();
+  afterEach(() => {
+    act(() => jest.runAllTimers());
   });
 
   describe('placeholder text', () => {
@@ -107,6 +110,34 @@ describeOrSkip('PromptField', () => {
       await user.keyboard('hello@');
 
       expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    });
+
+    it('renders async loaded items', async () => {
+      let renderCompletions = async function (): Promise<React.ReactNode[]> {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return [<MenuItem key="blah">blah</MenuItem>];
+      };
+
+      render(
+        <PromptField>
+          <PromptTokenField
+            completionTrigger={/(?<=^|\s)[@/]/}
+            renderCompletions={renderCompletions}
+          />
+        </PromptField>
+      );
+
+      await act(async () => {
+        await user.click(screen.getByRole('textbox'));
+        await user.keyboard('@');
+      });
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+
+      await act(async () => {
+        jest.advanceTimersByTime(500);
+      });
+
+      expect(await findMenuItem('blah')).toBeInTheDocument();
     });
   });
 
