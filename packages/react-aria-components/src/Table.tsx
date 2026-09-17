@@ -1957,10 +1957,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                     chevron: expandButtonProps,
                     drag: {
                       ...draggableItem?.dragButtonProps,
-                      ref: dragButtonRef,
-                      style: {
-                        pointerEvents: 'none'
-                      }
+                      ref: dragButtonRef
                     }
                   }
                 }
