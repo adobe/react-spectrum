@@ -698,6 +698,60 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('should support allowFocusWhenDisabled on items (focusable but not selectable)', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test" selectionMode="single" onSelectionChange={onSelectionChange}>
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog" isDisabled allowFocusWhenDisabled>
+          Dog
+        </ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+
+    let items = getAllByRole('option');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    // The disabled option is reachable via keyboard navigation (not skipped).
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[1]);
+    // But it cannot be selected.
+    await user.keyboard('{Enter}');
+    expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
+  it('should support allowFocusWhenDisabled with collection-level disabledKeys', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox
+        aria-label="Test"
+        selectionMode="single"
+        disabledKeys={['dog']}
+        onSelectionChange={onSelectionChange}>
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog" allowFocusWhenDisabled>
+          Dog
+        </ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+
+    let items = getAllByRole('option');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{Enter}');
+    expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
   it.each`
     interactionType
     ${'mouse'}
