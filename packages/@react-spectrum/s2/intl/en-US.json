@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Select…",
   "picker.selectedCount": "{count, plural, =0 {No items selected} one {# item selected} other {# items selected}}",
+  "sidepanel.collapse": "Collapse side panel",
+  "sidepanel.expand": "Expand side panel",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.cancel": "Cancel",
