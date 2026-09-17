@@ -82,4 +82,91 @@ describe('AlertDialog', () => {
     let content = document.getElementById(description!);
     expect(content).toHaveTextContent('Test content');
   });
+
+  it('fires onCancel once and closes the dialog when the Escape key is pressed', async () => {
+    let onCancelSpy = jest.fn();
+    let {getByRole} = render(
+      <DialogTrigger>
+        <ActionButton>Open dialog</ActionButton>
+        <AlertDialog
+          title="Test"
+          primaryActionLabel="Confirm"
+          cancelLabel="Cancel"
+          onCancel={onCancelSpy}>
+          Test content
+        </AlertDialog>
+      </DialogTrigger>
+    );
+
+    let trigger = getByRole('button');
+    await user.click(trigger);
+    act(() => {
+      jest.runAllTimers();
+    });
+    let dialog = getByRole('alertdialog');
+    expect(dialog).toBeVisible();
+
+    await user.keyboard('{Escape}');
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(dialog).not.toBeInTheDocument();
+    expect(onCancelSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('closes the dialog on Escape when onCancel is not provided', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <ActionButton>Open dialog</ActionButton>
+        <AlertDialog title="Test" primaryActionLabel="Confirm">
+          Test content
+        </AlertDialog>
+      </DialogTrigger>
+    );
+
+    let trigger = getByRole('button');
+    await user.click(trigger);
+    act(() => {
+      jest.runAllTimers();
+    });
+    let dialog = getByRole('alertdialog');
+    expect(dialog).toBeVisible();
+
+    await user.keyboard('{Escape}');
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('fires onCancel once when the cancel button is pressed', async () => {
+    let onCancelSpy = jest.fn();
+    let {getByRole, getByText} = render(
+      <DialogTrigger>
+        <ActionButton>Open dialog</ActionButton>
+        <AlertDialog
+          title="Test"
+          primaryActionLabel="Confirm"
+          cancelLabel="Cancel"
+          onCancel={onCancelSpy}>
+          Test content
+        </AlertDialog>
+      </DialogTrigger>
+    );
+
+    let trigger = getByRole('button');
+    await user.click(trigger);
+    act(() => {
+      jest.runAllTimers();
+    });
+    let dialog = getByRole('alertdialog');
+    expect(dialog).toBeVisible();
+
+    await user.click(getByText('Cancel'));
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(dialog).not.toBeInTheDocument();
+    expect(onCancelSpy).toHaveBeenCalledTimes(1);
+  });
 });
