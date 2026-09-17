@@ -394,13 +394,16 @@ export function useGridCell<T, C extends GridCollection<T>>(
   // To avoid this, remove the tabIndex from the cell briefly on pointer down.
   if (
     shouldSelectOnPressUp &&
-    gridCellProps.tabIndex != null &&
-    keyboardNavigationBehavior !== 'tab'
+    gridCellProps.tabIndex != null
   ) {
     let baseOnPointerDown = gridCellProps.onPointerDown;
 
     gridCellProps.onPointerDown = e => {
       baseOnPointerDown?.(e);
+
+      if (getEventTarget(e) !== e.currentTarget) {
+        return;
+      }
 
       let el = e.currentTarget;
       let tabindex = el.getAttribute('tabindex');
