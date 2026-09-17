@@ -60,6 +60,11 @@ import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
+/** Whether an attachment is still uploading, shared by Attachment and AttachmentGridItem. */
+export function isAttachmentLoading(uploadProgress?: number): boolean {
+  return uploadProgress != null && uploadProgress < 100;
+}
+
 const controlSizeM = {
   default: 32,
   size: {
@@ -540,7 +545,7 @@ interface AttachmentCardProps {
   children: ReactNode;
 }
 
-function AttachmentCard({
+export function AttachmentCard({
   size = 'M',
   isInvalid = false,
   isLoading = false,
@@ -620,7 +625,7 @@ export const Attachment = forwardRef(function Attachment(
     size = 'M'
   } = props;
   let domRef = useDOMRef(ref);
-  let isLoading = props.uploadProgress != null && props.uploadProgress < 100;
+  let isLoading = isAttachmentLoading(props.uploadProgress);
   return (
     <Tag
       id={id}
@@ -658,7 +663,7 @@ const attachmentPreviewWrapper = style({
   justifyContent: 'center'
 });
 
-const AttachmentPreviewContext = createContext({
+export const AttachmentPreviewContext = createContext({
   isInvalid: false,
   uploadProgress: 100,
   size: 'S' as 'XS' | 'S' | 'M' | 'L' | 'XL'
