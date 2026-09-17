@@ -115,6 +115,13 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
    * @default 'input'
    */
   menuTrigger?: MenuTriggerAction;
+  /**
+   * Whether to automatically focus the first item in the ComboBox's listbox when the
+   * user filters the list by typing into the input.
+   *
+   * @default false
+   */
+  autoFocusFirst?: boolean;
 }
 
 export interface ComboBoxState<T, M extends SelectionMode = 'single'>
@@ -200,7 +207,8 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     allowsEmptyCollection = false,
     allowsCustomValue,
     shouldCloseOnBlur = true,
-    selectionMode = 'single' as SelectionMode
+    selectionMode = 'single' as SelectionMode,
+    autoFocusFirst = false
   } = props;
 
   let [showAllItems, setShowAllItems] = useState(false);
@@ -409,6 +417,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
   let lastSelectedKeyText = useRef(
     selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : ''
   );
+  let shouldAutoFocusFirst = autoFocusFirst && inputValue !== '';
   // intentional omit dependency array, want this to happen on every render
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -422,7 +431,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       menuTrigger !== 'manual'
     ) {
       // oxlint-disable-next-line react/react-compiler
-      open(null, 'input');
+      open(shouldAutoFocusFirst ? 'first' : null, 'input');
     }
 
     // Close the menu if the collection is empty. Don't close menu if filtered collection size is 0
@@ -447,7 +456,9 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
 
     // Clear focused key when input value changes and display filtered collection again.
     if (inputValue !== lastValue) {
-      selectionManager.setFocusedKey(null);
+      selectionManager.setFocusedKey(
+        shouldAutoFocusFirst ? filteredCollection.getFirstKey() : null
+      );
       setShowAllItems(false);
 
       // Set value to null when the user clears the input.
