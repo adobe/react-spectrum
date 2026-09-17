@@ -88,6 +88,91 @@ function Trigger(props: {
   );
 }
 
+function GrowingContentTrigger(props: {placement: Placement}): JSX.Element {
+  const {placement} = props;
+  const targetRef = React.useRef<HTMLButtonElement>(null);
+  const state = useOverlayTriggerState({
+    defaultOpen: false
+  });
+  const {triggerProps, overlayProps} = useOverlayTrigger(
+    {
+      type: 'menu'
+    },
+    state,
+    targetRef
+  );
+
+  return (
+    // Pin the trigger to the right viewport edge regardless of story decorators,
+    // so the overlay has to fit its width against the page boundary (issue #10050).
+    <div style={{position: 'fixed', top: 8, right: 8}}>
+      <button ref={targetRef} {...triggerProps} onClick={() => state.toggle()}>
+        Trigger (open: {`${state.isOpen}`})
+      </button>
+      {state.isOpen &&
+        ReactDOM.createPortal(
+          <GrowingContentOverlay
+            targetRef={targetRef}
+            overlayProps={overlayProps}
+            placement={placement} />,
+          document.body
+        )}
+    </div>
+  );
+}
+
+// The overlay is a separate component that mounts when the trigger opens, like
+// usePopover-based components, so that useOverlayPosition's ResizeObserver is
+// attached to the overlay element and repositions it when its content changes.
+function GrowingContentOverlay(props: {
+  overlayProps: React.HTMLAttributes<HTMLElement>;
+  placement: Placement;
+  targetRef: React.RefObject<HTMLButtonElement | null>;
+}): JSX.Element {
+  const {targetRef, overlayProps, placement} = props;
+  const overlayRef = React.useRef<HTMLDivElement>(null);
+  const {overlayProps: overlayPositionProps} = useOverlayPosition({
+    targetRef,
+    overlayRef,
+    placement
+  });
+
+  // Simulate content that renders after the initial positioning pass,
+  // e.g. menu items with descriptions populating on a second render (issue #10050).
+  const [showDescriptions, setShowDescriptions] = React.useState(false);
+  React.useEffect(() => {
+    const timeout = setTimeout(() => setShowDescriptions(true), 1500);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  return (
+    <div
+      ref={overlayRef}
+      {...mergeProps(overlayProps, overlayPositionProps)}
+      style={{
+        ...overlayPositionProps.style,
+        boxShadow: '0 0 4px 0 rgba(0,0,0,0.25)',
+        backgroundColor: 'white',
+        overflow: 'auto'
+      }}>
+      <ul
+        style={{
+          padding: 10,
+          margin: 0,
+          listStyleType: 'none'
+        }}>
+        {[...Array(3)].map((_, i) => (
+          <li key={i}>
+            Menu item {i}
+            {showDescriptions &&
+              ' — a longer description that widens the overlay after it has been positioned'}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default {
   title: 'UseOverlayPosition'
 };
@@ -146,4 +231,20 @@ export const MaxHeight200ContainerTop: TriggerStory = () => (
 
 MaxHeight200ContainerTop.story = {
   name: 'maxHeight=200 container top'
+};
+
+export const GrowingContentRightEdge: StoryFn<typeof GrowingContentTrigger> = () => (
+  <GrowingContentTrigger placement="bottom end" />
+);
+
+GrowingContentRightEdge.story = {
+  name: 'growing content at right page edge (#10050)'
+};
+
+export const GrowingContentRightEdgeStart: StoryFn<typeof GrowingContentTrigger> = () => (
+  <GrowingContentTrigger placement="start top" />
+);
+
+GrowingContentRightEdgeStart.story = {
+  name: 'growing content at right page edge, start top (#10050)'
 };
