@@ -148,6 +148,7 @@ export {
 export {
   Menu,
   MenuItem,
+  MenuLoadMoreItem,
   MenuTrigger,
   MenuSection,
   MenuContext,
@@ -248,7 +249,8 @@ export {
   NavigationTreeItemContent,
   NavigationTreeSection,
   NavigationTreeHeader,
-  NavigationTreeContext
+  NavigationTreeContext,
+  NavigationTreeItemStateContext
 } from '../src/NavigationTree';
 export {
   TreeLoadMoreItem,
@@ -415,6 +417,7 @@ export type {
   MenuProps,
   MenuItemProps,
   MenuItemRenderProps,
+  MenuLoadMoreItemProps,
   MenuTriggerProps,
   SubmenuTriggerProps,
   MenuSectionProps

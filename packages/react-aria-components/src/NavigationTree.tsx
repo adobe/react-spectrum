@@ -82,7 +82,7 @@ interface NavigationTreeItemLinkContextValue {
 }
 const NavigationTreeItemLinkContext = createContext<NavigationTreeItemLinkContextValue>({});
 
-const NavigationTreeItemStateContext = createContext<{isCurrentAncestor: boolean}>({
+export const NavigationTreeItemStateContext = createContext<{isCurrentAncestor: boolean}>({
   isCurrentAncestor: false
 });
 
@@ -305,17 +305,7 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
   }
 );
 
-export interface NavigationTreeItemContentRenderProps extends TreeItemContentRenderProps {
-  /**
-   * Whether this item is the current route (its `href` matches the NavigationTree's
-   * `selectedRoute`).
-   *
-   * @selector [data-current]
-   */
-  isCurrent: boolean;
-  /** Whether this item is an ancestor of the current-route item. */
-  isCurrentAncestor: boolean;
-}
+export interface NavigationTreeItemContentRenderProps extends NavigationTreeItemRenderProps {}
 
 export interface NavigationTreeItemContentProps {
   /**
@@ -455,7 +445,7 @@ function NavigationTreeItemContentInner(props: NavigationTreeItemContentInnerPro
   // Provide onFocusChange so the link reports its focus up to NavigationTreeItem.
   let linkContextValue = {
     ...linkProps,
-    'aria-current': isCurrent ? 'page' : undefined,
+    'aria-current': isCurrent ? ('page' as const) : undefined,
     onFocusChange: setLinkFocused,
     onPress: linkProps.href == null && hasChildItems ? () => state.toggleKey(id) : undefined
   };

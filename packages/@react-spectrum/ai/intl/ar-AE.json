@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "رسالة جديدة",
   "chat.scrollToBottom": "التمرير إلى الأسفل",
   "messagefeedback.thumbDown": "استجابة  سيئة",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "جمع",
   "promptfield.label": "الموضوع",
   "promptfield.placeholder": "هل أنت مستعد للبدء؟ اطرح سؤالًا، أو شارك فكرة، أو أضف مهمة.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "توقف",
   "promptfield.submitButton": "أرسلني",
   "promptfield.uploading": "التحميل",
   "responsestatus.loading": "جارٍ التحميل",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "ابدأ التسجيل",
-  "voicebutton.stopListening": "أوقف التسجيل"
+  "voicebutton.stopListening": "أوقف التسجيل",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

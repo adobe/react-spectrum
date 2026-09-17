@@ -18,57 +18,61 @@
 // lib.dom and are not redeclared.
 // Spec: https://wicg.github.io/speech-api/
 
-interface SpeechRecognitionEvent extends Event {
-  readonly resultIndex: number;
-  readonly results: SpeechRecognitionResultList;
-}
+export {};
 
-interface SpeechRecognitionErrorEvent extends Event {
-  readonly error: SpeechRecognitionErrorCode;
-  readonly message: string;
-}
+declare global {
+  interface SpeechRecognitionEvent extends Event {
+    readonly resultIndex: number;
+    readonly results: SpeechRecognitionResultList;
+  }
 
-interface SpeechRecognition extends EventTarget {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  maxAlternatives: number;
-  start(): void;
-  stop(): void;
-  abort(): void;
-  onaudiostart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onsoundstart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onspeechstart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onspeechend: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onsoundend: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onaudioend: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
-  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
-  onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => void) | null;
-}
+  interface SpeechRecognitionErrorEvent extends Event {
+    readonly error: SpeechRecognitionErrorCode;
+    readonly message: string;
+  }
 
-interface SpeechRecognitionConstructor {
-  new (): SpeechRecognition;
-}
+  interface SpeechRecognition extends EventTarget {
+    lang: string;
+    continuous: boolean;
+    interimResults: boolean;
+    maxAlternatives: number;
+    start(): void;
+    stop(): void;
+    abort(): void;
+    onaudiostart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onsoundstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onspeechstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onspeechend: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onsoundend: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onaudioend: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+    onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+    onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
+    onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  }
 
-interface Window {
-  SpeechRecognition?: SpeechRecognitionConstructor;
-  webkitSpeechRecognition?: SpeechRecognitionConstructor;
-}
+  interface SpeechRecognitionConstructor {
+    new (): SpeechRecognition;
+  }
 
-// User-Agent Client Hints — present in Chromium, absent in Safari/Firefox.
-interface NavigatorUABrandVersion {
-  readonly brand: string;
-  readonly version: string;
-}
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  }
 
-interface NavigatorUAData {
-  readonly brands: ReadonlyArray<NavigatorUABrandVersion>;
-  readonly platform?: string;
-}
+  // User-Agent Client Hints — present in Chromium, absent in Safari/Firefox.
+  interface NavigatorUABrandVersion {
+    readonly brand: string;
+    readonly version: string;
+  }
 
-interface Navigator {
-  readonly userAgentData?: NavigatorUAData;
+  interface NavigatorUAData {
+    readonly brands: ReadonlyArray<NavigatorUABrandVersion>;
+    readonly platform?: string;
+  }
+
+  interface Navigator {
+    readonly userAgentData?: NavigatorUAData;
+  }
 }

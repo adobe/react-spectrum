@@ -13,18 +13,19 @@
 import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {Collection} from 'react-aria/Collection';
 import {Header} from '../src/Header';
 import {Heading} from '../src/Heading';
 import {Input} from '../src/Input';
 import {Keyboard} from '../src/Keyboard';
 import {Label} from '../src/Label';
-
 import {ListLayout} from 'react-stately/useVirtualizerState';
-
+import {LoadingSpinner, MyMenuItem} from './utils';
 import {
   Menu,
   MenuItem,
   MenuItemProps,
+  MenuLoadMoreItem,
   MenuSection,
   MenuTrigger,
   SubmenuTrigger,
@@ -32,13 +33,13 @@ import {
 } from '../src/Menu';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-import {MyMenuItem} from './utils';
 import {Popover} from '../src/Popover';
-import React, {createContext, JSX, ReactElement, useContext} from 'react';
+import React, {createContext, JSX, ReactElement, useContext, useRef} from 'react';
 import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
 import {TextField} from '../src/TextField';
+import {useAsyncList} from 'react-stately/useAsyncList';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
 
@@ -649,3 +650,108 @@ export const UnavailableMenuItemExample: MenuStory = () => (
     </Popover>
   </MenuTrigger>
 );
+
+interface Character {
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
+}
+
+const MyMenuLoaderIndicator = props => {
+  return (
+    <MenuLoadMoreItem
+      style={{
+        height: 30,
+        width: '100%',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      {...props}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </MenuLoadMoreItem>
+  );
+};
+
+type AsyncMenuArgs = {delay: number; isEmpty: boolean};
+
+function AsyncMenuRender(args: AsyncMenuArgs) {
+  let hasOpenedRef = useRef(false);
+
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (!hasOpenedRef.current) {
+        return {items: []};
+      }
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+
+  return (
+    <MenuTrigger
+      onOpenChange={open => {
+        if (open && !hasOpenedRef.current && !args.isEmpty) {
+          hasOpenedRef.current = true;
+          list.reload();
+        }
+      }}>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu
+          className={styles.menu}
+          aria-label="Star Wars characters"
+          renderEmptyState={() => (
+            <div style={{height: 30, width: '100%'}}>
+              {!args.isEmpty && isLoading ? (
+                <LoadingSpinner
+                  style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}}
+                />
+              ) : (
+                'No results'
+              )}
+            </div>
+          )}
+          onAction={action('onAction')}>
+          <Collection items={args.isEmpty ? [] : list.items}>
+            {(item: Character) => <MenuItem id={item.name}>{item.name}</MenuItem>}
+          </Collection>
+          {!args.isEmpty && (
+            <MyMenuLoaderIndicator
+              isLoading={list.loadingState === 'loadingMore'}
+              onLoadMore={list.loadMore}
+            />
+          )}
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+
+export const AsyncMenu: StoryObj<typeof AsyncMenuRender> = {
+  render: args => <AsyncMenuRender {...args} />,
+  args: {
+    delay: 2000,
+    isEmpty: false
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    },
+    isEmpty: {
+      control: 'boolean'
+    }
+  }
+};

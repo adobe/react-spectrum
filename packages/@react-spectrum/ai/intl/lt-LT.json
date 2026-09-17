@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Naujas pranešimas",
   "chat.scrollToBottom": "Slinkite žemyn",
   "messagefeedback.thumbDown": "Blogas atsakas",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "Pridėti",
   "promptfield.label": "Raginimas",
   "promptfield.placeholder": "Pasiruošę pradėti? Užduokite klausimą, pasidalykite idėja arba pridėkite užduotį.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Sustoti, sustok",
   "promptfield.submitButton": "Siųsti",
   "promptfield.uploading": "Įkėlimas",
   "responsestatus.loading": "Įkeliama",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Pradėkite įrašinėti",
-  "voicebutton.stopListening": "Sustabdyti įrašymą"
+  "voicebutton.stopListening": "Sustabdyti įrašymą",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }
