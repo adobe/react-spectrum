@@ -22,6 +22,7 @@ import {
   createContext,
   createRef,
   forwardRef,
+  Suspense,
   use,
   useCallback,
   useContext,
@@ -789,15 +790,13 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
   let {filterAnchor, items, isFocused, menuWidth} = props;
   let {inputRef, prompt} = useContext(PromptFieldContext);
 
-  let resolvedItems = items instanceof Promise ? use(items) : items;
+  let isPromise = items instanceof Promise;
+  // if not async then the user may have passed a static list of items
+  let staticItems = Array.isArray(items) ? items : null;
   let isOpen =
-    isFocused && filterAnchor != null && resolvedItems != null && resolvedItems.length > 0;
-
-  // Cache items so that popover content doesn't flicker to empty while animating out
-  let [menuItems, setMenuItems] = useState(resolvedItems);
-  if (resolvedItems !== menuItems && resolvedItems != null && resolvedItems.length > 0) {
-    setMenuItems(resolvedItems);
-  }
+    isFocused &&
+    filterAnchor != null &&
+    (isPromise || (staticItems != null && staticItems.length > 0));
 
   let key = 'popover';
   if (filterAnchor) {
@@ -825,10 +824,20 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
       <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
-        <Menu>{menuItems}</Menu>
+        <Suspense fallback={<Menu loadingState="loading">{null}</Menu>}>
+          <PromptCompletionMenu items={items} />
+        </Suspense>
       </PromptCompletionAnchorContext.Provider>
     </Popover>
   );
+}
+
+function PromptCompletionMenu(props: {
+  items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
+}) {
+  let {items} = props;
+  let resolvedItems = items instanceof Promise ? use(items) : items;
+  return <Menu>{resolvedItems}</Menu>;
 }
 
 export interface PromptTokenProps extends Omit<

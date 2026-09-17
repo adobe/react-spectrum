@@ -638,6 +638,7 @@ export const AsyncCompletions = () => (
   <PromptField>
     <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
       <PromptTokenField
+        menuWidth={150}
         shouldAnimatePixelLoader
         completionTrigger={/(?<=^|\s)[@/]/}
         renderCompletions={async filterValue => {
