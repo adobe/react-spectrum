@@ -228,11 +228,17 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       ? controlledValue[0]
       : controlledValue;
 
+  // Tracks a selection that has been reported to the user but that the controlled value hasn't
+  // reflected back yet. Form libraries commonly apply the update asynchronously (e.g. after running
+  // validation), so the rendered selection is stale until then and must not be reported back.
+  let pendingValueRef = useRef<Key | null | undefined>(undefined);
+
   let setValue = (value: Key | Key[] | null) => {
     if (selectionMode === 'single') {
       let key = Array.isArray(value) ? (value[0] ?? null) : value;
       setControlledValue(key);
       if (key !== displayValue) {
+        pendingValueRef.current = key;
         props.onSelectionChange?.(key);
       }
     } else {
@@ -491,6 +497,10 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       }
     }
 
+    if (displayValue !== lastValueRef.current) {
+      pendingValueRef.current = undefined;
+    }
+
     lastValueRef.current = displayValue;
     lastSelectedKeyText.current = selectedItemText;
   });
@@ -534,6 +544,13 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     // If multiple things are controlled, call onSelectionChange only when selecting the focused item,
     // or when inputValue needs to be synced back to the selected item on commit/blur.
     if (value !== undefined && props.inputValue !== undefined) {
+      if (pendingValueRef.current !== undefined) {
+        // Stop menu from reopening from useEffect
+        setLastValue(inputValue);
+        closeMenu();
+        return;
+      }
+
       let itemText = selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
       if (shouldForceSelectionChange || selectionMode === 'multiple' || inputValue !== itemText) {
         props.onSelectionChange?.(selectedKey);
@@ -565,7 +582,11 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
-      if (selectionManager.isSelected(selectionManager.focusedKey) && selectionMode === 'single') {
+      if (
+        (selectionManager.isSelected(selectionManager.focusedKey) ||
+          pendingValueRef.current === selectionManager.focusedKey) &&
+        selectionMode === 'single'
+      ) {
         commitSelection(true);
       } else {
         selectionManager.select(selectionManager.focusedKey);
