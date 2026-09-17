@@ -509,6 +509,53 @@ VirtualizedGridListGrid.story = {
   }
 };
 
+export function VirtualizedGridListGridSection(): JSX.Element {
+  let sections: {
+    id: string;
+    name: string;
+    children: {id: string; name: string}[];
+  }[] = [];
+  for (let s = 0; s < 10; s++) {
+    let items: {id: string; name: string}[] = [];
+    for (let i = 0; i < 25; i++) {
+      items.push({id: `item_${s}_${i}`, name: `Item ${s},${i}`});
+    }
+    sections.push({
+      id: `section_${s}`,
+      name: `Section ${s}`,
+      children: items
+    });
+  }
+
+  return (
+    <Virtualizer
+      layout={GridLayout}
+      layoutOptions={{
+        minItemSize: new Size(60, 60),
+        maxItemSize: new Size(60, 60),
+        minSpace: new Size(8, 8),
+        headingSize: 30
+      }}>
+      <GridList
+        className={styles.menu}
+        layout="grid"
+        selectionMode="multiple"
+        style={{height: 400, width: 400}}
+        aria-label="virtualized grid layout with sections"
+        items={sections}>
+        {section => (
+          <GridListSection>
+            <GridListHeader>{section.name}</GridListHeader>
+            <Collection items={section.children}>
+              {item => <MyGridListItem>{item.name}</MyGridListItem>}
+            </Collection>
+          </GridListSection>
+        )}
+      </GridList>
+    </Virtualizer>
+  );
+}
+
 function VirtualizedGridDnD() {
   let initialItems: {id: number; name: string}[] = [];
   for (let i = 0; i < 50; i++) {
