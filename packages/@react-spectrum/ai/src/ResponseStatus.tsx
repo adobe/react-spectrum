@@ -17,6 +17,8 @@ import {
   css,
   focusRing,
   iconStyle,
+  keyframes,
+  scrollFade,
   size,
   space,
   style
@@ -39,7 +41,6 @@ import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {keyframes, scrollFade} from './tokens.macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {PixelLoader} from '../exports';
 import {Provider} from 'react-aria-components/slots';
