@@ -531,6 +531,26 @@ describeOrSkip('PromptField', () => {
     expect(onKeyDown).toHaveBeenCalled();
   });
 
+  it('does not fire onKeyDown when selecting a virtually focused completion', async () => {
+    let onKeyDown = jest.fn();
+    let {getByRole} = render(
+      <PromptField>
+        <PromptTokenField
+          completionTrigger={/(?<=^|\s)@/}
+          onKeyDown={onKeyDown}
+          renderCompletions={() => [<MenuItem key="blah">blah</MenuItem>]}
+        />
+      </PromptField>
+    );
+
+    await user.click(getByRole('textbox'));
+    await user.keyboard('@{ArrowDown}');
+    onKeyDown.mockClear();
+    await user.keyboard('{Enter}');
+
+    expect(onKeyDown).not.toHaveBeenCalled();
+  });
+
   it('calls onAITermsPress when the AI User Guidelines link is pressed', async () => {
     let onAITermsPress = jest.fn();
     let {user} = renderPromptField({onAITermsPress});

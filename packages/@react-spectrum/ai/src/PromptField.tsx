@@ -557,7 +557,6 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   };
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown: onKeyDownProp,
     shortcuts: {
       Tab: () => tab(1),
       'Shift+Tab': () => tab(-1)
@@ -625,127 +624,132 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         />
       </CenterBaseline>
       <Autocomplete>
-        <TokenField
-          value={prompt}
-          onChange={setPrompt}
-          allowsNewlines
-          className={style({flexGrow: 1})}
-          aria-label={stringFormatter.format('promptfield.label')}
-          isReadOnly={isListening}
-          onSubmit={onSubmit}
-          onKeyDown={keyboardProps.onKeyDown}
-          onFocus={e => {
-            if (e.isTrusted) {
-              setFocused(true);
+        <div role="presentation" onKeyDown={onKeyDownProp}>
+          <TokenField
+            value={prompt}
+            onChange={setPrompt}
+            allowsNewlines
+            className={style({flexGrow: 1})}
+            aria-label={stringFormatter.format('promptfield.label')}
+            isReadOnly={isListening}
+            onSubmit={onSubmit}
+            onKeyDown={keyboardProps.onKeyDown}
+            onFocus={e => {
+              if (e.isTrusted) {
+                setFocused(true);
 
-              // If shift tabbing into the prompt field, select the last placeholder if any.
-              if (
-                e.relatedTarget &&
-                getInteractionModality() === 'keyboard' &&
-                e.currentTarget.compareDocumentPosition(e.relatedTarget) &
-                  Node.DOCUMENT_POSITION_FOLLOWING
-              ) {
-                let lastPlaceholder = prompt.segments.findLastIndex(s => s.type === 'token');
-                if (lastPlaceholder >= 0) {
-                  setPrompt(value =>
-                    value.withSelectedRange(
-                      new TokenFieldValue.SelectedRange(
-                        {index: lastPlaceholder, offset: 0},
-                        {index: lastPlaceholder, offset: 1}
+                // If shift tabbing into the prompt field, select the last placeholder if any.
+                if (
+                  e.relatedTarget &&
+                  getInteractionModality() === 'keyboard' &&
+                  e.currentTarget.compareDocumentPosition(e.relatedTarget) &
+                    Node.DOCUMENT_POSITION_FOLLOWING
+                ) {
+                  let lastPlaceholder = prompt.segments.findLastIndex(s => s.type === 'token');
+                  if (lastPlaceholder >= 0) {
+                    setPrompt(value =>
+                      value.withSelectedRange(
+                        new TokenFieldValue.SelectedRange(
+                          {index: lastPlaceholder, offset: 0},
+                          {index: lastPlaceholder, offset: 1}
+                        )
                       )
-                    )
-                  );
+                    );
+                  }
                 }
               }
-            }
-          }}
-          onBlur={e => {
-            if (e.isTrusted) {
-              setFocused(false);
-            }
-          }}
-          onPaste={
-            acceptedAttachmentTypes
-              ? e => {
-                  let clipboardData = e.clipboardData as DataTransfer;
-                  let attachments: PromptFieldAttachment[] = [];
-                  for (let item of clipboardData.items) {
-                    if (item.kind === 'file' && matchMimeType(item.type, acceptedAttachmentTypes)) {
-                      let file = item.getAsFile()!;
-                      attachments.push({
-                        id: crypto.randomUUID(),
-                        file,
-                        image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
-                      });
+            }}
+            onBlur={e => {
+              if (e.isTrusted) {
+                setFocused(false);
+              }
+            }}
+            onPaste={
+              acceptedAttachmentTypes
+                ? e => {
+                    let clipboardData = e.clipboardData as DataTransfer;
+                    let attachments: PromptFieldAttachment[] = [];
+                    for (let item of clipboardData.items) {
+                      if (
+                        item.kind === 'file' &&
+                        matchMimeType(item.type, acceptedAttachmentTypes)
+                      ) {
+                        let file = item.getAsFile()!;
+                        attachments.push({
+                          id: crypto.randomUUID(),
+                          file,
+                          image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+                        });
+                      }
+                    }
+                    if (attachments.length > 0) {
+                      onAddAttachments?.(attachments);
+                      setAttachments(prev => [...prev, ...attachments]);
                     }
                   }
-                  if (attachments.length > 0) {
-                    onAddAttachments?.(attachments);
-                    setAttachments(prev => [...prev, ...attachments]);
-                  }
-                }
-              : undefined
-          }>
-          <TokenInput
-            data-placeholder={
-              placeholder ||
-              stringFormatter.format(
-                size === 'S' ? 'promptfield.placeholder.small' : 'promptfield.placeholder'
-              )
-            }
-            ref={inputRef}
-            className={
-              css('&:empty::before { content: attr(data-placeholder); }') +
-              ' ' +
-              scrollFade({y: 16}) +
-              style<{size: 'S' | 'M'; isFocused: boolean}>({
-                font: {
-                  default: 'ui-lg',
-                  size: {
-                    M: 'ui-lg',
-                    S: 'ui'
-                  }
-                },
-                color: {
-                  default: 'neutral',
-                  ':empty': {
-                    default: 'transparent-overlay-1000/56',
-                    isFocused: 'transparent-overlay-1000/80',
-                    forcedColors: 'GrayText'
-                  }
-                },
-                width: 'full',
-                height: 'full',
-                minHeight: 'calc(1lh + 32px)',
-                maxHeight: '30cqh',
-                overflow: 'auto',
-                paddingY: 16,
-                paddingEnd: 16,
-                scrollPaddingY: 16,
-                boxSizing: 'border-box',
-                outlineStyle: 'none',
-                cursor: 'text',
-                transition: 'colors',
-                transitionDuration: 700,
-                transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
-              })({size, isFocused})
+                : undefined
             }>
-            {useCallback(
-              (token: TokenSegment<PromptFieldTokenValue>) => {
-                if (token.value?.type === 'anchor') {
-                  return <Token>{token.text}</Token>;
-                } else {
-                  return children ? (
-                    children(token)
-                  ) : (
-                    <PromptToken token={token}>{token.text}</PromptToken>
-                  );
-                }
-              },
-              [children]
-            )}
-          </TokenInput>
-        </TokenField>
+            <TokenInput
+              data-placeholder={
+                placeholder ||
+                stringFormatter.format(
+                  size === 'S' ? 'promptfield.placeholder.small' : 'promptfield.placeholder'
+                )
+              }
+              ref={inputRef}
+              className={
+                css('&:empty::before { content: attr(data-placeholder); }') +
+                ' ' +
+                scrollFade({y: 16}) +
+                style<{size: 'S' | 'M'; isFocused: boolean}>({
+                  font: {
+                    default: 'ui-lg',
+                    size: {
+                      M: 'ui-lg',
+                      S: 'ui'
+                    }
+                  },
+                  color: {
+                    default: 'neutral',
+                    ':empty': {
+                      default: 'transparent-overlay-1000/56',
+                      isFocused: 'transparent-overlay-1000/80',
+                      forcedColors: 'GrayText'
+                    }
+                  },
+                  width: 'full',
+                  height: 'full',
+                  minHeight: 'calc(1lh + 32px)',
+                  maxHeight: '30cqh',
+                  overflow: 'auto',
+                  paddingY: 16,
+                  paddingEnd: 16,
+                  scrollPaddingY: 16,
+                  boxSizing: 'border-box',
+                  outlineStyle: 'none',
+                  cursor: 'text',
+                  transition: 'colors',
+                  transitionDuration: 700,
+                  transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
+                })({size, isFocused})
+              }>
+              {useCallback(
+                (token: TokenSegment<PromptFieldTokenValue>) => {
+                  if (token.value?.type === 'anchor') {
+                    return <Token>{token.text}</Token>;
+                  } else {
+                    return children ? (
+                      children(token)
+                    ) : (
+                      <PromptToken token={token}>{token.text}</PromptToken>
+                    );
+                  }
+                },
+                [children]
+              )}
+            </TokenInput>
+          </TokenField>
+        </div>
         <PromptTokenFieldPopover
           filterAnchor={filterAnchor}
           items={useDeferredValue(items)}
