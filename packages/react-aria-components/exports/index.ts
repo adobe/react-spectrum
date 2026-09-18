@@ -195,6 +195,7 @@ export {
   SliderFillContext,
   SliderStateContext
 } from '../src/Slider';
+export {StepList, StepListContext, StepListStateContext, StepListItem} from '../src/StepList';
 export {Switch, SwitchField, SwitchButton, SwitchContext, SwitchFieldContext} from '../src/Switch';
 export {
   TableLoadMoreItem,
@@ -639,6 +640,7 @@ export type {RootMenuTriggerState} from 'react-stately/useMenuTriggerState';
 export type {SearchFieldState} from 'react-stately/useSearchFieldState';
 export type {SelectState} from 'react-stately/useSelectState';
 export type {SliderState} from 'react-stately/useSliderState';
+export type {StepListProps, StepListItemProps, StepListItemRenderProps} from '../src/StepList';
 export type {TableState} from 'react-stately/useTableState';
 export type {TabListState} from 'react-stately/useTabListState';
 export type {TimeFieldState} from 'react-stately/useTimeFieldState';
