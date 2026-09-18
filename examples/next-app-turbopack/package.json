@@ -1,0 +1,25 @@
+{
+  "name": "next-app-turbopack",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@react-aria/optimize-locales-plugin": "^2",
+    "next": "16.3.3",
+    "react": "^19",
+    "react-aria-components": "^1",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "typescript": "^7"
+  },
+  "packageManager": "yarn@4.2.2"
+}
