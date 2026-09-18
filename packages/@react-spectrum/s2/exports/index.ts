@@ -145,6 +145,7 @@ export {
   TableFooter
 } from '../src/TableView';
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from '../src/Tabs';
+export {TagField, TagFieldValue, TagFieldContext} from '../src/TagField';
 export {TagGroup, Tag, TagGroupContext} from '../src/TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from '../src/TextField';
 export {TimeField, TimeFieldContext} from '../src/TimeField';
@@ -289,6 +290,7 @@ export type {
   TableFooterProps
 } from '../src/TableView';
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from '../src/Tabs';
+export type {TagFieldProps} from '../src/TagField';
 export type {TagGroupProps, TagProps} from '../src/TagGroup';
 export type {TextFieldProps, TextAreaProps, TextFieldRef} from '../src/TextField';
 export type {TimeFieldProps} from '../src/TimeField';
