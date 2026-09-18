@@ -23,7 +23,8 @@ import {
   MenuTriggerProps as AriaMenuTriggerProps,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
-  MenuItemRenderProps
+  MenuItemRenderProps,
+  MenuStateContext
 } from 'react-aria-components/Menu';
 import {
   AsyncLoadable,
@@ -31,6 +32,7 @@ import {
   DOMRefValue,
   GlobalDOMAttributes,
   LoadingState,
+  Node,
   PressEvent
 } from '@react-types/shared';
 import {
@@ -57,6 +59,7 @@ import {
 } from './style-utils' with {type: 'macro'};
 import {
   createContext,
+  ForwardedRef,
   forwardRef,
   JSX,
   ReactElement,
@@ -65,6 +68,7 @@ import {
   useRef,
   useState
 } from 'react';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {divider} from './Divider';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
@@ -74,6 +78,7 @@ import {ImageContext} from './Image';
 import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg'; // chevron right removed??
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import intlMessages from '../intl/*.json';
+import {isSeparatorHidden, SeparatorNode} from './separator-utils';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/useOverlayPosition';
@@ -585,29 +590,35 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
-export function Divider(props: SeparatorProps): ReactNode {
-  return (
-    <Separator
-      {...props}
-      className={mergeStyles(
-        divider({
-          size: 'M',
-          orientation: 'horizontal',
-          isStaticColor: false
-        }),
-        style({
-          display: {
-            default: 'grid',
-            ':last-child': 'none'
-          },
-          gridColumnStart: 2,
-          gridColumnEnd: -2,
-          marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
-        })
-      )}
-    />
-  );
-}
+export const Divider = /*#__PURE__*/ createLeafComponent(
+  SeparatorNode,
+  function Divider(props: SeparatorProps, ref: ForwardedRef<HTMLElement>, node: Node<unknown>) {
+    let state = useContext(MenuStateContext)!;
+
+    if (isSeparatorHidden(node, state.collection)) {
+      return null;
+    }
+
+    return (
+      <Separator
+        {...props}
+        ref={ref}
+        className={mergeStyles(
+          divider({
+            size: 'M',
+            orientation: 'horizontal',
+            isStaticColor: false
+          }),
+          style({
+            gridColumnStart: 2,
+            gridColumnEnd: -2,
+            marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
+          })
+        )}
+      />
+    );
+  }
+);
 
 export interface MenuSectionProps<T> extends Omit<
   AriaMenuSectionProps<T>,
