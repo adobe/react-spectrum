@@ -57,7 +57,15 @@ function packageToLibrary(name) {
 }
 
 function nextVersionFilename(releasesDir) {
-  let entries = fs.readdirSync(releasesDir);
+  let entries;
+  try {
+    entries = exec(`git ls-files "${releasesDir}"`, {encoding: 'utf8'})
+      .split('\n')
+      .filter(Boolean)
+      .map(p => path.basename(p));
+  } catch {
+    entries = fs.readdirSync(releasesDir);
+  }
   let versions = [];
   for (let entry of entries) {
     let m = entry.match(/^v(\d+)-(\d+)-(\d+)\.mdx$/);

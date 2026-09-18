@@ -28,6 +28,7 @@ export function setupIntersectionObserverMock({
   class MockIntersectionObserver implements IntersectionObserver {
     root;
     rootMargin;
+    scrollMargin;
     thresholds;
     disconnect;
     observe;
@@ -44,6 +45,7 @@ export function setupIntersectionObserverMock({
       MockIntersectionObserver.instance = this;
       this.root = opts.root;
       this.rootMargin = opts.rootMargin;
+      this.scrollMargin = opts.scrollMargin;
       this.thresholds = opts.threshold;
       this.disconnect = disconnect;
       this.observe = observe;

@@ -11,6 +11,7 @@
  */
 
 import {HTMLAttributes, RefObject, useRef, useState} from 'react';
+import {isVirtualClick} from '../utils/isVirtualEvent';
 import {useEvent} from '../utils/useEvent';
 
 export interface TokenProps {}
@@ -54,7 +55,24 @@ export function useToken(
       suppressContentEditableWarning: true,
       style: {
         userSelect: 'all',
-        WebkitUserSelect: 'all'
+        WebkitUserSelect: 'all',
+        WebkitTapHighlightColor: 'transparent'
+      },
+      onClick(e) {
+        // Select the token when a screen reader clicks on it.
+        if (isSelected || !isVirtualClick(e.nativeEvent)) {
+          return;
+        }
+        let selection = window.getSelection();
+        let wrapper = ref.current?.parentElement;
+        if (!selection || !wrapper) {
+          return;
+        }
+        let range = document.createRange();
+        range.setStartBefore(wrapper);
+        range.setEndAfter(wrapper);
+        selection.removeAllRanges();
+        selection.addRange(range);
       }
     },
     isSelected

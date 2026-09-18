@@ -30,3 +30,9 @@ declare module '*.json' {
   const content: any;
   export default content;
 }
+
+declare module '*.mdx' {
+  import {ElementType, FunctionComponent} from 'react';
+  const MDXComponent: FunctionComponent<{components?: Record<string, ElementType>}>;
+  export default MDXComponent;
+}

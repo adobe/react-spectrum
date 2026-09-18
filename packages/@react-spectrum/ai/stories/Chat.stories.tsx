@@ -20,15 +20,16 @@ import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Collection} from 'react-aria-components';
 import {Content} from '@react-spectrum/s2/Content';
 import {DialogTrigger, Popover} from '@react-spectrum/s2/Popover';
-import {Image} from '@react-spectrum/s2/Image';
-import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
+  ExecutionTrace,
+  ExecutionTraceItem,
   MessageFeedback,
   MessageSource,
   MessageSuggestion,
   MessageSuggestionList,
   PromptField,
   PromptFieldSubmitButton,
+  PromptFieldToolbar,
   PromptFieldValue,
   PromptTokenField,
   ResponseStatus,
@@ -43,6 +44,8 @@ import {
   TokenFieldValue,
   UserMessage
 } from '@react-spectrum/ai';
+import {Image} from '@react-spectrum/s2/Image';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta} from '@storybook/react';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {prose} from '../src/style/prose' with {type: 'macro'};
@@ -147,15 +150,21 @@ let initialResponses = [
   }
 ] as Message[];
 
+interface ExecutionStep {
+  id: number;
+  label: string;
+  status: 'pending' | 'success';
+  detail?: string;
+}
+
 type StreamingMessage =
   | {id: number; type: 'user'; content: string}
   | {id: number; type: 'system'; content: string; isStreaming?: boolean; sources?: string[]}
   | {
       id: number;
       type: 'status';
-      label: string;
-      isStreaming: boolean;
-      details: string;
+      status: 'pending' | 'success';
+      steps: ExecutionStep[];
     }
   | {id: number; type: 'card'; title: string; description: string; imageUrl: string}
   | {id: number; type: 'suggestions'; title: string; suggestions: string[]};
@@ -208,6 +217,44 @@ function CardMessage({
   );
 }
 
+function StatusThreadItem({msg}: {msg: Extract<StreamingMessage, {type: 'status'}>}) {
+  let isStreaming = msg.status === 'pending';
+  let lastStep = msg.steps[msg.steps.length - 1];
+  let title = isStreaming
+    ? `${lastStep.label}…`
+    : msg.steps.length > 1
+      ? `Completed ${msg.steps.length} steps`
+      : lastStep.label;
+  let announcement = isStreaming ? `${lastStep.label}…` : `${title} complete`;
+  // TODO: might want to have ThreadItem be a part of the ResponseStatus by default?
+  // Ideally it would auto focus the ResponseStatus itself via focusMode=child, but we
+  // probably want to make that on a case by case basis
+  // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
+  return (
+    <ThreadItem textValue={announcement} isStreaming={isStreaming} shouldAnnounceOnMount>
+      <ResponseStatus status={isStreaming ? 'pending' : 'success'}>
+        <ResponseStatusTitle>{title}</ResponseStatusTitle>
+        <ResponseStatusPanel>
+          <ExecutionTrace>
+            {msg.steps.map(step => (
+              <ExecutionTraceItem
+                key={step.id}
+                status={step.status}
+                detail={
+                  step.detail && (
+                    <p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>
+                  )
+                }>
+                {step.label}
+              </ExecutionTraceItem>
+            ))}
+          </ExecutionTrace>
+        </ResponseStatusPanel>
+      </ResponseStatus>
+    </ThreadItem>
+  );
+}
+
 export function VirtualizedStreamingChat() {
   let [messages, setMessages] = useState<StreamingMessage[]>(
     initialResponses as StreamingMessage[]
@@ -226,38 +273,67 @@ export function VirtualizedStreamingChat() {
       {id: nextId.current++, type: 'user', content: prompt.toString()}
     ]);
 
-    function addTool(label: string, replaceStatus = false) {
-      setMessages(prev =>
-        replaceStatus
-          ? [
-              ...prev.slice(0, -1),
-              {
-                id: nextId.current++,
-                type: 'status',
-                label,
-                isStreaming: true,
-                details: ''
-              }
-            ]
-          : [
-              ...prev,
-              {
-                id: nextId.current++,
-                type: 'status',
-                label,
-                isStreaming: true,
-                details: ''
-              }
-            ]
-      );
+    // Starts a new grouped status message containing a single pending execution trace step.
+    function startToolGroup(label: string) {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: nextId.current++,
+          type: 'status',
+          status: 'pending',
+          steps: [{id: nextId.current++, label, status: 'pending'}]
+        }
+      ]);
     }
 
-    function completeTool(details: string) {
-      setMessages(prev =>
-        prev.map(m =>
-          m.type === 'status' && m.isStreaming ? {...m, isStreaming: false, details} : m
-        )
-      );
+    // Adds a new step to the trailing status group if one is still open, otherwise starts a new group.
+    function addStep(label: string) {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        let newStep: ExecutionStep = {id: nextId.current++, label, status: 'pending'};
+        if (last?.type === 'status' && last.status === 'pending') {
+          return [
+            ...prev.slice(0, -1),
+            {
+              ...last,
+              steps: [
+                ...last.steps.slice(0, -1),
+                {...last.steps[last.steps.length - 1], status: 'success'},
+                newStep
+              ]
+            }
+          ];
+        }
+        return [
+          ...prev,
+          {id: nextId.current++, type: 'status', status: 'pending', steps: [newStep]}
+        ];
+      });
+    }
+
+    // Completes the last step of the trailing status group, optionally updating its label.
+    function completeStep(detail: string, label?: string) {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        if (last?.type !== 'status') {
+          return prev;
+        }
+        let steps = last.steps.slice();
+        let step = steps[steps.length - 1];
+        steps[steps.length - 1] = {...step, label: label ?? step.label, status: 'success', detail};
+        return [...prev.slice(0, -1), {...last, steps}];
+      });
+    }
+
+    // Marks the trailing status group as complete once all of its steps have finished.
+    function completeGroup() {
+      setMessages(prev => {
+        let last = prev[prev.length - 1];
+        if (last?.type !== 'status') {
+          return prev;
+        }
+        return [...prev.slice(0, -1), {...last, status: 'success'}];
+      });
     }
 
     function streamText(content: string, sources?: string[]) {
@@ -299,39 +375,25 @@ export function VirtualizedStreamingChat() {
     let timestamp = 0;
     let toolCallDuration = 1000;
     // Status added after short delay so user message announcement plays first
-    addTimeout(
-      () => {
-        setMessages(prev => [
-          ...prev,
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Generating response',
-            isStreaming: true,
-            details: ''
-          }
-        ]);
-      },
-      (timestamp += 500)
-    );
-    addTimeout(() => addTool('Thinking', true), (timestamp += 500));
+    addTimeout(() => startToolGroup('Thinking'), (timestamp += 500));
     addTimeout(
       () =>
-        completeTool(
+        completeStep(
           'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
         ),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Loading tool'), (timestamp += 500));
+    addTimeout(() => addStep('Loading tool'), (timestamp += 500));
     addTimeout(
-      () => completeTool('Asset search tool loaded with access to the Hilton brand library.'),
+      () => completeStep('Asset search tool loaded with access to the Hilton brand library.'),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Searching'), (timestamp += 500));
+    addTimeout(() => addStep('Searching'), (timestamp += 500));
     addTimeout(
-      () => completeTool('Found 15 assets matching the brand criteria across 3 campaigns.'),
+      () => completeStep('Found 15 assets matching the brand criteria across 3 campaigns.'),
       (timestamp += toolCallDuration)
     );
+    addTimeout(() => completeGroup(), (timestamp += 200));
     addTimeout(
       () =>
         streamText(
@@ -341,49 +403,30 @@ export function VirtualizedStreamingChat() {
     );
 
     // then does searching, streaming more text, returning a card and sources
-    addTimeout(() => addTool('Searching'), (timestamp += 1000));
+    addTimeout(() => startToolGroup('Searching'), (timestamp += 1000));
     addTimeout(
       () =>
-        completeTool('Identified additional brand materials related to the presentation context.'),
+        completeStep('Identified additional brand materials related to the presentation context.'),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Querying database'), (timestamp += 1000));
+    addTimeout(() => addStep('Querying database'), (timestamp += 1000));
     addTimeout(
       () =>
-        completeTool(
+        completeStep(
           'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
         ),
       (timestamp += toolCallDuration)
     );
+    addTimeout(() => addStep('Generating response'), (timestamp += 500));
     addTimeout(
       () =>
-        setMessages(prev => [
-          ...prev,
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Generating response',
-            isStreaming: true,
-            details: ''
-          }
-        ]),
-      (timestamp += 500)
-    );
-    addTimeout(
-      () =>
-        setMessages(prev => [
-          ...prev.slice(0, -1),
-          {
-            id: nextId.current++,
-            type: 'status',
-            label: 'Response generated',
-            isStreaming: false,
-            details:
-              'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.'
-          }
-        ]),
+        completeStep(
+          'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.',
+          'Response generated'
+        ),
       (timestamp += 1000)
     );
+    addTimeout(() => completeGroup(), (timestamp += 200));
     let secondStreamContent =
       'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
       'layering in supporting visuals and data to reinforce the core message. The main themes ' +
@@ -422,11 +465,19 @@ export function VirtualizedStreamingChat() {
     timeouts.current.forEach(clearTimeout);
     timeouts.current = [];
     setMessages(prev =>
-      prev.map(m =>
-        (m.type === 'system' || m.type === 'status') && m.isStreaming
-          ? {...m, isStreaming: false}
-          : m
-      )
+      prev.map(m => {
+        if (m.type === 'system' && m.isStreaming) {
+          return {...m, isStreaming: false};
+        }
+        if (m.type === 'status' && m.status === 'pending') {
+          return {
+            ...m,
+            status: 'success',
+            steps: m.steps.map((s, i) => (i === m.steps.length - 1 ? {...s, status: 'success'} : s))
+          };
+        }
+        return m;
+      })
     );
     setGenerating(false);
   }
@@ -452,7 +503,8 @@ export function VirtualizedStreamingChat() {
           gap: 16,
           paddingX: 16,
           boxSizing: 'border-box',
-          minWidth: 0
+          minWidth: 0,
+          containerType: 'size'
         })}>
         <div
           className={style({
@@ -499,27 +551,7 @@ export function VirtualizedStreamingChat() {
                 );
               }
               if (msg.type === 'status') {
-                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
-                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
-                // TODO: might want to have ThreadItem be a part of the ResponseStatus by default?
-                // Ideally it would auto focus the ResponseStatus itself via focusMode=child, but we
-                // probably want to make that on a case by case basis
-                // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
-                return (
-                  <ThreadItem
-                    textValue={announcement}
-                    isStreaming={msg.isStreaming}
-                    shouldAnnounceOnMount>
-                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
-                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
-                      <ResponseStatusPanel>
-                        {msg.details && (
-                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
-                        )}
-                      </ResponseStatusPanel>
-                    </ResponseStatus>
-                  </ThreadItem>
-                );
+                return <StatusThreadItem msg={msg} />;
               }
               if (msg.type === 'card') {
                 return (
@@ -566,41 +598,42 @@ export function VirtualizedStreamingChat() {
           }}
           isGenerating={isGenerating}
           onStop={handleStop}>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-            <PromptTokenField
-              placeholder={
-                isGenerating
-                  ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
-                  : undefined
+          <PromptTokenField
+            placeholder={
+              isGenerating
+                ? 'Type to steer (Enter) or queue a follow-up (Option+Enter) · Esc to stop'
+                : undefined
+            }
+            onKeyDown={e => {
+              if (!isGenerating) {
+                return;
               }
-              onKeyDown={e => {
-                if (!isGenerating) {
-                  return;
-                }
 
-                // TODO: we could make this even more realistic but for now just fire storybook event
-                // and add follow up message to queue
-                if (e.key === 'Enter' && !e.altKey) {
-                  e.preventDefault();
-                  if (promptValue.segments.length > 0) {
-                    action('onSteer')(promptValue.toString());
-                    setPromptValue(new PromptFieldValue([]));
-                  }
-                } else if (e.key === 'Enter' && e.altKey) {
-                  e.preventDefault();
-                  if (promptValue.segments.length > 0) {
-                    action('onFollowUp')(promptValue.toString());
-                    followUpMessage.current = promptValue;
-                    setPromptValue(new PromptFieldValue([]));
-                  }
-                } else if (e.key === 'Escape') {
-                  e.preventDefault();
-                  handleStop();
+              // TODO: we could make this even more realistic but for now just fire storybook event
+              // and add follow up message to queue
+              if (e.key === 'Enter' && !e.altKey) {
+                e.preventDefault();
+                if (promptValue.segments.length > 0) {
+                  action('onSteer')(promptValue.toString());
+                  setPromptValue(new PromptFieldValue([]));
                 }
-              }}
-            />
+              } else if (e.key === 'Enter' && e.altKey) {
+                e.preventDefault();
+                if (promptValue.segments.length > 0) {
+                  action('onFollowUp')(promptValue.toString());
+                  followUpMessage.current = promptValue;
+                  setPromptValue(new PromptFieldValue([]));
+                }
+              } else if (e.key === 'Escape') {
+                e.preventDefault();
+                handleStop();
+              }
+            }}
+          />
+          <PromptFieldToolbar>
+            <div />
             <PromptFieldSubmitButton />
-          </div>
+          </PromptFieldToolbar>
         </PromptField>
       </Chat>
     </div>
@@ -681,7 +714,8 @@ export function EmptyChat() {
           gap: 16,
           paddingX: 16,
           boxSizing: 'border-box',
-          minWidth: 0
+          minWidth: 0,
+          containerType: 'size'
         })}>
         <div
           className={style({
@@ -727,23 +761,7 @@ export function EmptyChat() {
                 );
               }
               if (msg.type === 'status') {
-                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
-                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
-                return (
-                  <ThreadItem
-                    textValue={announcement}
-                    isStreaming={msg.isStreaming}
-                    shouldAnnounceOnMount>
-                    <ResponseStatus status={msg.isStreaming ? 'loading' : 'success'}>
-                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
-                      <ResponseStatusPanel>
-                        {msg.details && (
-                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
-                        )}
-                      </ResponseStatusPanel>
-                    </ResponseStatus>
-                  </ThreadItem>
-                );
+                return <StatusThreadItem msg={msg} />;
               }
               if (msg.type === 'card') {
                 return (
@@ -784,7 +802,7 @@ export function EmptyChat() {
             timeouts.current.forEach(clearTimeout);
             timeouts.current = [];
           }}>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <div className={style({display: 'flex', gap: 16, height: 'full'})}>
             <PromptTokenField />
             <PromptFieldSubmitButton />
           </div>
@@ -865,7 +883,8 @@ export function ChatPopover() {
             height: 'full',
             gap: 16,
             boxSizing: 'border-box',
-            minWidth: 0
+            minWidth: 0,
+            containerType: 'size'
           })}>
           <Thread
             items={messages}
@@ -896,8 +915,8 @@ export function ChatPopover() {
               );
             }}
           </Thread>
-          <PromptField onSubmit={() => {}}>
-            <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <PromptField size="S" onSubmit={() => {}}>
+            <div className={style({display: 'flex', gap: 16, height: 'full'})}>
               <PromptTokenField />
               <PromptFieldSubmitButton />
             </div>
@@ -1235,7 +1254,8 @@ export function AsyncLoadingChat() {
           gap: 16,
           paddingX: 16,
           boxSizing: 'border-box',
-          minWidth: 0
+          minWidth: 0,
+          containerType: 'size'
         })}>
         <div
           className={style({
@@ -1281,7 +1301,7 @@ export function AsyncLoadingChat() {
           </Thread>
         </div>
         <PromptField>
-          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <div className={style({display: 'flex', gap: 16, height: 'full'})}>
             <PromptTokenField />
             <PromptFieldSubmitButton />
           </div>

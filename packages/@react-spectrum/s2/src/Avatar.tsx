@@ -20,7 +20,7 @@ import {
   StylesPropWithoutWidth,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
-import {Image} from './Image';
+import {Image, ImageContext} from './Image';
 import {isDocsEnv} from './macros' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
@@ -38,7 +38,23 @@ export interface AvatarProps extends UnsafeStyles, DOMProps, SlotProps {
    *
    * @default 24
    */
-  size?: 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 80 | 96 | 112 | (number & {});
+  size?:
+    | 16
+    | 20
+    | 24
+    | 28
+    | 32
+    | 36
+    | 40
+    | 44
+    | 48
+    | 56
+    | 64
+    | 80
+    | 96
+    | 112
+    | (number & {})
+    | `${number}lh`;
   /** Whether the avatar is over a color background. */
   isOverBackground?: boolean;
 }
@@ -59,7 +75,9 @@ const imageStyles = style(
     outlineColor: '--s2-container-bg',
     outlineWidth: {
       default: 1,
-      isLarge: 2
+      isLarge: 2,
+      // if bigger than 64px, use 2px outline, otherwise use 1px outline
+      isLH: 'min(2px, max(1px, calc((((1lh / 64) - 1px) * 9999) + 1px)))'
     }
   },
   getAllowedOverrides({width: false})
@@ -90,22 +108,32 @@ export const Avatar = forwardRef(function Avatar(
   const domProps = filterDOMProps(otherProps);
 
   // In the docs build, we need to be able to simulate font scaling.
-  let remSize = isDocsEnv() ? `calc(${size / 16} * var(--rem, 1rem))` : `${size / 16}rem`;
-  let isLarge = size >= 64;
+  let remSize;
+  let isLarge = false;
+  let isLH = false;
+  if (typeof size === 'string') {
+    remSize = size;
+    isLH = size.endsWith('lh');
+  } else {
+    remSize = isDocsEnv() ? `calc(${size / 16} * var(--rem, 1rem))` : `${size / 16}rem`;
+    isLarge = size >= 64;
+  }
   return (
-    <Image
-      {...domProps}
-      ref={domRef}
-      slot={slot}
-      alt={alt}
-      UNSAFE_style={{
-        ...UNSAFE_style,
-        width: remSize,
-        height: remSize
-      }}
-      UNSAFE_className={UNSAFE_className + ' ' + centerBaselineBefore}
-      styles={imageStyles({isOverBackground, isLarge}, props.styles)}
-      src={src}
-    />
+    <ImageContext.Provider value={{}}>
+      <Image
+        {...domProps}
+        ref={domRef}
+        slot={slot}
+        alt={alt}
+        UNSAFE_style={{
+          ...UNSAFE_style,
+          width: remSize,
+          height: remSize
+        }}
+        UNSAFE_className={UNSAFE_className + ' ' + centerBaselineBefore}
+        styles={imageStyles({isOverBackground, isLarge, isLH}, props.styles)}
+        src={src}
+      />
+    </ImageContext.Provider>
   );
 });

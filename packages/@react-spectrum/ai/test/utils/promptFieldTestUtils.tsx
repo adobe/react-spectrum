@@ -25,7 +25,7 @@ import {
   PromptToken,
   PromptTokenField
 } from '../../src/PromptField';
-import {Attachment} from '../../src/AttachmentList';
+import {Attachment, AttachmentPreview} from '../../src/AttachmentList';
 import {
   Collection,
   Header,
@@ -36,7 +36,6 @@ import {
   SubmenuTrigger,
   Text
 } from '@react-spectrum/s2/Menu';
-import {Image} from '@react-spectrum/s2/Image';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useState} from 'react';
 import {TokenFieldValue} from 'react-aria-components';
@@ -197,6 +196,7 @@ export interface HarnessOptions {
   uploadProgress?: number;
   /** Renders every attachment in the invalid state. */
   invalid?: boolean;
+  onAITermsPress?: () => void;
 }
 
 export interface HarnessSpies {
@@ -226,7 +226,8 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
     valueRef,
     attachmentsRef,
     setValueRef,
-    spies
+    spies,
+    onAITermsPress
   } = props;
   let [value, setValue] = useState<PromptFieldValue>(initialValue);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>(initialAttachments);
@@ -250,14 +251,15 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
       onStop={spies.onStop}
       onSubmit={spies.onSubmit}
       acceptedAttachmentTypes={acceptedAttachmentTypes}
-      onRemoveAttachments={spies.onRemoveAttachments}>
+      onRemoveAttachments={spies.onRemoveAttachments}
+      onAITermsPress={onAITermsPress}>
       <PromptFieldAttachmentList dependencies={[uploadProgress, invalid]}>
         {attachment => (
           <Attachment
             textValue={attachment.file.name}
             isInvalid={invalid}
             uploadProgress={uploadProgress}>
-            {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+            {attachment.image && <AttachmentPreview mimeType="image/png" src={attachment.image} />}
           </Attachment>
         )}
       </PromptFieldAttachmentList>

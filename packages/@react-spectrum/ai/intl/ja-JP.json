@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "新規メッセージ",
   "chat.scrollToBottom": "下にスクロール",
   "messagefeedback.thumbDown": "無効な応答",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "追加",
   "promptfield.label": "プロンプト",
   "promptfield.placeholder": "開始する準備は整いましたか？質問をしたり、アイデアを共有したり、タスクを追加したりします。",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "停止",
   "promptfield.submitButton": "送信",
   "promptfield.uploading": "アップロード中",
   "responsestatus.loading": "読み込み中",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "記録を開始",
-  "voicebutton.stopListening": "記録の停止"
+  "voicebutton.stopListening": "記録の停止",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

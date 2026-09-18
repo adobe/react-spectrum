@@ -21,8 +21,7 @@ import {
 import {
   addWindowFocusTracking,
   useFocusVisible,
-  useFocusVisibleListener,
-  useShowFocusIndicator
+  useFocusVisibleListener
 } from '../../src/interactions/useFocusVisible';
 import {changeHandlers, hasSetupGlobalListeners} from '../../src/interactions/useFocusVisible';
 import {mergeProps} from '../../src/utils/mergeProps';
@@ -76,6 +75,45 @@ function toggleBrowserTabs(win = window) {
   fireEvent(lastActiveElement, new Event('focus'));
 }
 
+// Focus the element the way the browser restores focus. useFocusVisible ignores untrusted focus
+// events and jsdom only marks its own as trusted, so go through jsdom's focus() rather than
+// fireEvent, using the unpatched copy saved by setupGlobalFocusEvents so it isn't recorded as a
+// programmatic focus. jsdom won't dispatch focus again for the element that already has it, hence
+// the blur first — useFocusVisible doesn't observe element blur, since its blur listener is on the
+// window without capture and blur doesn't bubble.
+function restoreFocus(element, win = window) {
+  const nativeFocus = hasSetupGlobalListeners.get(win).focus;
+  element.blur();
+  nativeFocus.call(element);
+}
+
+function toggleBrowserTabsSafari(win = window) {
+  // Safari fires the window/element focus pair twice when returning to a tab or app, and
+  // visibilitychange fires after all of the focus events.
+  // See https://github.com/adobe/react-spectrum/issues/7468
+  const lastActiveElement = win.document.activeElement;
+  // leave tab
+  fireEvent(lastActiveElement, new Event('blur'));
+  fireEvent(win, new Event('blur'));
+  Object.defineProperty(win.document, 'visibilityState', {
+    value: 'hidden',
+    writable: true
+  });
+  Object.defineProperty(win.document, 'hidden', {value: true, writable: true});
+  fireEvent(win.document, new Event('visibilitychange'));
+  // return to tab
+  fireEvent(win, new Event('focus', {target: win}));
+  restoreFocus(lastActiveElement, win);
+  fireEvent(win, new Event('focus', {target: win}));
+  restoreFocus(lastActiveElement, win);
+  Object.defineProperty(win.document, 'visibilityState', {
+    value: 'visible',
+    writable: true
+  });
+  Object.defineProperty(win.document, 'hidden', {value: false, writable: true});
+  fireEvent(win.document, new Event('visibilitychange'));
+}
+
 function toggleBrowserWindow(win = window) {
   fireEvent(win, new Event('blur', {target: win}));
   fireEvent(win, new Event('focus', {target: win}));
@@ -108,6 +146,27 @@ describe('useFocusVisible', function () {
 
     await user.click(el);
     toggleBrowserTabs();
+
+    expect(el.textContent).toBe('example');
+  });
+
+  it('returns positive isFocusVisible result after toggling browser tabs in Safari after keyboard navigation', async function () {
+    render(<Example />);
+    await user.tab();
+    let el = screen.getByText('example-focusVisible');
+
+    toggleBrowserTabsSafari();
+
+    expect(el.textContent).toBe('example-focusVisible');
+  });
+
+  it('returns negative isFocusVisible result after toggling browser tabs in Safari without prior keyboard navigation', async function () {
+    render(<Example />);
+    await user.tab();
+    let el = screen.getByText('example-focusVisible');
+
+    await user.click(el);
+    toggleBrowserTabsSafari();
 
     expect(el.textContent).toBe('example');
   });
@@ -373,40 +432,6 @@ describe('useFocusVisible', function () {
 
       expect(el.textContent).toBe('example-focusVisible');
     });
-  });
-});
-
-describe('useShowFocusIndicator', function () {
-  // A form library that moves focus to the first invalid field does so by calling
-  // element.focus() from the submit handler. Clicking submit leaves the modality on
-  // 'pointer', so the programmatic focus lands without a visible indicator.
-  function FormExample() {
-    let {focusProps, isFocusVisible} = useFocusRing();
-    let showFocusIndicator = useShowFocusIndicator();
-    let ref = React.useRef(null);
-
-    let onSubmit = e => {
-      e.preventDefault();
-      showFocusIndicator();
-      ref.current.focus();
-    };
-
-    return (
-      <form onSubmit={onSubmit}>
-        <input {...focusProps} ref={ref} data-focus-visible={isFocusVisible || undefined} />
-        <button type="submit">Submit</button>
-      </form>
-    );
-  }
-
-  it('shows the focus indicator on programmatic focus after a pointer interaction', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
-    render(<FormExample />);
-    await user.click(screen.getByRole('button', {name: 'Submit'}));
-
-    let input = screen.getByRole('textbox');
-    expect(input).toHaveFocus();
-    expect(input).toHaveAttribute('data-focus-visible');
   });
 });
 

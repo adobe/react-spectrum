@@ -12,7 +12,7 @@
 
 import {Button} from '@react-spectrum/s2/Button';
 import type {Meta, StoryObj} from '@storybook/react';
-import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
+import {prose} from '../src/style/prose' with {type: 'macro'};
 import ProseExample from '../stories/prose.mdx';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 

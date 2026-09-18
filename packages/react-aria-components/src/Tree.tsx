@@ -1075,7 +1075,7 @@ export interface TreeLoadMoreItemProps
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element. A function may be provided to compute the class based on component state.
    *
-   * @default 'react-aria-TreeLoadMoreItem'
+   * @default 'react-aria-TreeLoader'
    */
   className?: ClassNameOrFunction<TreeLoadMoreItemRenderProps>;
   /**

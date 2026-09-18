@@ -59,6 +59,7 @@ import {
   CollectionRendererContext,
   DefaultCollectionRenderer
 } from 'react-aria-components/CollectionBuilder';
+import {ColorSchemeContext} from './Provider';
 import {ColumnSize} from 'react-stately/useTableState';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
@@ -97,6 +98,7 @@ import {Key} from '@react-types/shared';
 import {LayoutInfo, Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
+import MoreVertical from '../s2wf-icons/S2_Icon_MoreVertical_20_N.svg';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {ProgressCircle} from './ProgressCircle';
@@ -896,9 +898,7 @@ const resizableMenuButtonWrapper = style({
   paddingX: 16,
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  fontSize: controlFont(),
-  fontFamily: 'sans',
-  fontWeight: 'bold'
+  font: 'title-sm'
 });
 
 const resizerHandleContainer = style({
@@ -948,20 +948,24 @@ const resizerHandle = style<{isFocusVisible: boolean; isResizing: boolean}>({
 const columnHeaderText = style({
   truncate: true,
   // Make it so the text doesn't completely disappear when column is resized to smallest width + both sort and chevron icon is rendered
-  minWidth: fontRelative(16),
+  minWidth: fontRelative(18),
   flexGrow: 0,
   flexShrink: 1,
   flexBasis: 'auto'
 });
 
-const chevronIcon = style({
-  rotate: 90,
+const moreVerticalIcon = style({
+  size: '1lh',
   marginStart: 'text-to-visual',
   minWidth: fontRelative(16),
   flexShrink: 0,
   '--iconPrimary': {
     type: 'fill',
-    value: 'currentColor'
+    value: {
+      default: 'gray-700',
+      isHovered: 'gray-800',
+      isFocusVisible: 'gray-800'
+    }
   }
 });
 
@@ -1063,22 +1067,36 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
           className={renderProps =>
             resizableMenuButtonWrapper({...renderProps, align: buttonAlignment})
           }>
-          {allowsSorting && (
-            <Provider
-              values={[
-                [
-                  IconContext,
-                  {
-                    styles: sortIcon({isButton: true})
-                  }
-                ]
-              ]}>
-              {sortDirection != null &&
-                (sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />)}
-            </Provider>
+          {({isHovered, isFocusVisible}) => (
+            <>
+              {allowsSorting && (
+                <Provider
+                  values={[
+                    [
+                      IconContext,
+                      {
+                        styles: sortIcon({isButton: true})
+                      }
+                    ]
+                  ]}>
+                  {sortDirection != null &&
+                    (sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />)}
+                </Provider>
+              )}
+              <div className={columnHeaderText}>{children}</div>
+              <Provider
+                values={[
+                  [
+                    IconContext,
+                    {
+                      styles: moreVerticalIcon({isHovered, isFocusVisible})
+                    }
+                  ]
+                ]}>
+                <MoreVertical />
+              </Provider>
+            </>
           )}
-          <div className={columnHeaderText}>{children}</div>
-          <Chevron size="M" className={chevronIcon} />
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
           {items.length > 0 && (
@@ -1144,7 +1162,7 @@ const selectAllCheckboxColumn = style({
   },
   paddingEnd: {
     default: 0,
-    ':has(slot="selection")': 8
+    ':has([slot="selection"])': 8
   },
   paddingY: 0,
   height: 'full',
@@ -1657,6 +1675,7 @@ function EditableCellInner(
   let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
 
   let {density, keyboardNavigationBehavior} = useContext(InternalTableContext);
+  let colorScheme = useContext(ColorSchemeContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
   if (density === 'compact') {
     size = 'S';
@@ -1787,7 +1806,7 @@ function EditableCellInner(
               // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
               zIndex: undefined
             }}
-            className={editPopover}>
+            className={renderProps => editPopover({...renderProps, colorScheme})}>
             <Provider values={[[OverlayTriggerStateContext, null]]}>
               <Form
                 ref={formRef}

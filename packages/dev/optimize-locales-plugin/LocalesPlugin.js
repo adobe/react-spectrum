@@ -25,6 +25,10 @@ const LOCALE_EXTENSIONS = ['json', 'mjs', 'js', 'cjs'];
 
 const LOCALES_GLOB = `**/{${REACT_ARIA_PACKAGES.join(',')}}/**/??-??.{${LOCALE_EXTENSIONS.join(',')}}`;
 
+const localeSpecifierRegex = /[a-z]{2}-[A-Z]{2}/;
+const sourcePathRegex =
+  /[/\\](@react-stately|@react-aria|@react-spectrum|@adobe[/\\]react-spectrum|react-stately|react-aria|react-aria-components)[/\\]/;
+
 let plugin = createUnplugin(({locales}) => {
   locales = locales.map(l => new Intl.Locale(l));
   return {
@@ -32,25 +36,25 @@ let plugin = createUnplugin(({locales}) => {
     vite: {
       enforce: 'pre'
     },
-    resolveId(specifier, sourcePath, options) {
-      if (
-        !/[/\\](@react-stately|@react-aria|@react-spectrum|@adobe[/\\]react-spectrum|react-stately|react-aria|react-aria-components)[/\\]/.test(
-          sourcePath
-        ) ||
-        options?.ssr
-      ) {
-        return;
-      }
-
-      let match = specifier.match(/[a-z]{2}-[A-Z]{2}/);
-      if (match) {
-        let locale = new Intl.Locale(match[0]);
-        if (!locales.some(l => localeMatches(locale, l))) {
-          return path.join(__dirname, 'empty.js');
+    resolveId: {
+      filter: {
+        id: localeSpecifierRegex
+      },
+      handler(specifier, sourcePath, options) {
+        if (!sourcePathRegex.test(sourcePath) || options?.ssr) {
+          return;
         }
-      }
 
-      return null;
+        let match = specifier.match(localeSpecifierRegex);
+        if (match) {
+          let locale = new Intl.Locale(match[0]);
+          if (!locales.some(l => localeMatches(locale, l))) {
+            return path.join(__dirname, 'empty.js');
+          }
+        }
+
+        return null;
+      }
     }
   };
 });

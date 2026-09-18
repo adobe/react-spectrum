@@ -39,7 +39,15 @@ import {BaseCollection, CollectionNode} from 'react-aria/private/collections/Bas
 import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
-import {checkmark, description, icon, iconCenterWrapper, label, sectionHeading} from './Menu';
+import {
+  checkmark,
+  description,
+  icon,
+  iconCenterWrapper,
+  label,
+  loadingWrapperStyles,
+  sectionHeading
+} from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
@@ -210,24 +218,8 @@ const iconStyles = style({
   }
 });
 
-const loadingWrapperStyles = style({
-  gridColumnStart: '1',
-  gridColumnEnd: '-1',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginY: 8
-});
-
 const progressCircleStyles = style({
-  size: {
-    size: {
-      S: 16,
-      M: 20,
-      L: 22,
-      XL: 26
-    }
-  },
+  size: '1lh',
   marginStart: {
     isInput: 'text-to-visual'
   }
@@ -452,13 +444,6 @@ export interface ComboBoxItemProps
   children: ReactNode;
 }
 
-const avatarSize = {
-  S: 16,
-  M: 20,
-  L: 22,
-  XL: 26
-} as const;
-
 const checkmarkIconSize = {
   S: 'XS',
   M: 'M',
@@ -504,7 +489,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                   AvatarContext,
                   {
                     slots: {
-                      avatar: {size: avatarSize[size], styles: avatar}
+                      avatar: {size: '1lh', styles: avatar}
                     }
                   }
                 ],
@@ -667,7 +652,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
       <ProgressCircle
         isIndeterminate
         size="S"
-        styles={progressCircleStyles({size})}
+        styles={progressCircleStyles({})}
         // Same loading string as table
         aria-label={stringFormatter.format('table.loadingMore')}
       />
@@ -738,7 +723,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
               id={spinnerId}
               isIndeterminate
               size="S"
-              styles={progressCircleStyles({size, isInput: true})}
+              styles={progressCircleStyles({isInput: true})}
               aria-label={stringFormatter.format('table.loading')}
             />
           )}

@@ -1,4 +1,8 @@
 {
+  "alert.informative": "Informative",
+  "alert.negative": "Negative",
+  "alert.notice": "Notice",
+  "alert.positive": "Positive",
   "chat.newMessage": "Neue Nachricht",
   "chat.scrollToBottom": "Nach unten scrollen",
   "messagefeedback.thumbDown": "Fehlerhafte Antwort",
@@ -9,10 +13,14 @@
   "promptfield.insertButton": "Hinzufügen",
   "promptfield.label": "Aufforderung",
   "promptfield.placeholder": "Sind Sie bereit? Sie können Fragen stellen, Ideen teilen oder Aufgaben hinzufügen.",
+  "promptfield.placeholder.small": "Ask anything",
   "promptfield.stopButton": "Anhalten",
   "promptfield.submitButton": "Senden",
   "promptfield.uploading": "Hochladen",
   "responsestatus.loading": "Ladevorgang läuft",
+  "responsestatus.processing": "Processing...",
   "voicebutton.startListening": "Aufzeichnung starten",
-  "voicebutton.stopListening": "Aufzeichnung stoppen"
+  "voicebutton.stopListening": "Aufzeichnung stoppen",
+  "attachmentlist.previousAttachments": "Show previous attachments",
+  "attachmentlist.nextAttachments": "Show next attachments"
 }

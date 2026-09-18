@@ -298,7 +298,6 @@ function getWeekStart(locale: string): number {
       // @ts-ignore
       let localeInst = new Intl.Locale(locale);
       if ('getWeekInfo' in localeInst) {
-        // @ts-expect-error
         weekInfo = localeInst.getWeekInfo();
         if (weekInfo) {
           cachedWeekInfo.set(locale, weekInfo);

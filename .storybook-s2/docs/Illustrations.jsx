@@ -1,5 +1,5 @@
-import linearIllustrations from '@react-spectrum/s2/spectrum-illustrations/linear/*.tsx';
-import gradientIllustrations from '@react-spectrum/s2/spectrum-illustrations/gradient/*/*.tsx';
+import linearIllustrations from '../../packages/@react-spectrum/s2/spectrum-illustrations/linear/*.tsx';
+import gradientIllustrations from '../../packages/@react-spectrum/s2/spectrum-illustrations/gradient/*/*.tsx';
 import Paste from '@react-spectrum/s2/icons/Paste';
 import {style} from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
 import {ActionButton, Radio, RadioGroup} from '@react-spectrum/s2';
@@ -48,7 +48,8 @@ export function Illustrations() {
             marginTop: 32
           })}>
           {Object.keys(gradientIllustrations[gradientStyle]).map(icon => {
-            let Illustration = gradientIllustrations[gradientStyle][icon].default;
+            let Illustration = gradientIllustrations[gradientStyle][icon];
+            Illustration = Illustration.default || Illustration;
             return (
               <div
                 key={icon}
@@ -100,7 +101,8 @@ export function Illustrations() {
             marginTop: 48
           })}>
           {Object.keys(linearIllustrations).map(icon => {
-            let Illustration = linearIllustrations[icon].default;
+            let Illustration = linearIllustrations[icon];
+            Illustration = Illustration.default || Illustration;
             return (
               <div
                 key={icon}

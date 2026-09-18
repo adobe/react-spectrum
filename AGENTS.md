@@ -15,7 +15,7 @@ The repo is layered. Changes flow up from the lowest level:
 
 This repo does **not** use the conventional JS toolchain — use these, don't swap in defaults:
 
-- Format with `yarn format` (oxfmt), **not** Prettier. Lint with `yarn lint` (oxlint), **not** ESLint. Type-check with `yarn check-types` (tsgo), **not** tsc. Build with `yarn build` (Parcel), **not** rollup/tsc.
+- Format with `yarn format` (oxfmt), **not** Prettier. Lint with `yarn lint` (oxlint), **not** ESLint. Type-check with `yarn check-types` (tsc, TypeScript 7's native compiler). Build with `yarn build` (Parcel), **not** rollup/tsc.
 - **Don't run `yarn chromatic` / `yarn chromatic:forced-colors`** — maintainers run the VRT suites.
 - All commonly used commands live in the root `package.json` scripts.
 
@@ -23,6 +23,23 @@ This repo does **not** use the conventional JS toolchain — use these, don't sw
 
 - **Match the surrounding code** — follow the naming, structure, and patterns of neighboring files.
 - **Commit format** — use conventional-commit prefixes (`fix:`, `feat:`, `chore:`, `docs:`) as seen in the git history.
+
+## Filing GitHub issues
+
+This repository uses GitHub issue **forms** defined in [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/) (`Bug_Report.yml`, `Feature_Request.yml`, `Documentation.yml`, `Feedback.yml`). Blank issues are disabled, and `CONTRIBUTING.md` asks contributors to follow the templates. Please do the same when filing on a user's behalf:
+
+- **Search first.** Check existing open and closed issues to avoid duplicates.
+- **Prefer the web flow** so the correct form is applied: <https://github.com/adobe/react-spectrum/issues/new/choose>
+- **If filing via the `gh` CLI, replicate the template's fields in the body.** `gh issue create --template` does *not* render these YAML issue forms, so passing `--template` alone will not produce a valid issue. Instead, fill in the chosen template's fields manually. For a bug report (`Bug_Report.yml`), include:
+  - a general summary
+  - Expected Behavior
+  - Current Behavior
+  - Possible Solution (optional)
+  - Context (how it affects you / what you're trying to accomplish)
+  - Steps to Reproduce, a minimal repro, ideally a StackBlitz
+  - Version, Browsers, Operating System
+- **Questions and open-ended discussion** belong in [Discussions](https://github.com/adobe/react-spectrum/discussions), not the issue tracker.
+- **Security issues** must not be filed on the public tracker. Follow the process in `CONTRIBUTING.md`.
 
 ## Task-specific workflows
 

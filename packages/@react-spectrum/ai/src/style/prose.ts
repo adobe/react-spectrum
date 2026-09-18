@@ -100,8 +100,8 @@ export function prose(this: MacroContext | void) {
       listStyleType: 'decimal'
     },
     li: {
-      marginTop: '.25em',
-      marginBottom: '.25em'
+      marginTop: '.5em',
+      marginBottom: '.5em'
     },
     'li > p:last-child:not(:first-child)': {
       marginBottom: marginBottom.body
@@ -125,7 +125,7 @@ export function prose(this: MacroContext | void) {
     },
     'code:not(pre code)': {
       ...font('code'),
-      fontSize: 'inherit',
+      fontSize: '0.9em',
       backgroundColor: colorTokenToString(
         resolveColorToken(colorToken('background-layer-1-color'))
       ),

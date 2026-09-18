@@ -35,12 +35,70 @@ channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
   document.documentElement.dataset.colorScheme = isDark ? 'dark' : 'light';
 });
 
+const exclude = [
+  'key',
+  'ref',
+  'id',
+  'slot',
+  'onCopy',
+  'onCut',
+  'onPaste',
+  'onCompositionStart',
+  'onCompositionEnd',
+  'onCompositionUpdate',
+  'onSelect',
+  'onBeforeInput',
+  'onInput',
+  'onKeyDown',
+  'onKeyUp',
+  'onHoverStart',
+  'onHoverEnd',
+  'onHoverChange',
+  'onFocus',
+  'onBlur',
+  'onFocusChange',
+  'onClick',
+  'onAuxClick',
+  'onContextMenu',
+  'onDoubleClick',
+  'onMouseDown',
+  'onMouseEnter',
+  'onMouseLeave',
+  'onMouseMove',
+  'onMouseOut',
+  'onMouseOver',
+  'onMouseUp',
+  'onTouchCancel',
+  'onTouchEnd',
+  'onTouchMove',
+  'onTouchStart',
+  'onPointerDown',
+  'onPointerMove',
+  'onPointerUp',
+  'onPointerCancel',
+  'onPointerEnter',
+  'onPointerLeave',
+  'onPointerOver',
+  'onPointerOut',
+  'onGotPointerCapture',
+  'onLostPointerCapture',
+  'onScroll',
+  'onWheel',
+  'onAnimationStart',
+  'onAnimationEnd',
+  'onAnimationIteration',
+  'onTransitionCancel',
+  'onTransitionEnd',
+  'onTransitionRun',
+  'onTransitionStart'
+];
+
 /** @type {import('@storybook/react').Preview} */
 const preview = {
   parameters: {
     controls: {
       matchers: {},
-      exclude: ['key', 'ref']
+      exclude: new RegExp(`^(((${exclude.join('|')})(Capture)?)|aria-.*)$`)
     },
     docs: {
       container: props => {
