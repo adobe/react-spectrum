@@ -11,7 +11,6 @@
  */
 
 import {AriaModalOverlayProps, useModalOverlay} from 'react-aria/useModalOverlay';
-
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -34,9 +33,19 @@ import {
   useOverlayTriggerState
 } from 'react-stately/useOverlayTriggerState';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  useContext,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {runAfterKeyboard} from 'react-aria/private/utils/runAfterKeyboard';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsSSR} from 'react-aria/SSRProvider';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
 
@@ -75,6 +84,7 @@ export interface ModalOverlayProps
 interface InternalModalContextValue {
   modalProps: DOMAttributes;
   modalRef: RefObject<HTMLDivElement | null>;
+  isOpen: boolean;
   isExiting: boolean;
   isDismissable?: boolean;
 }
@@ -83,6 +93,13 @@ export const ModalContext = createContext<ContextValue<ModalOverlayProps, HTMLDi
 const InternalModalContext = createContext<InternalModalContextValue | null>(null);
 
 export interface ModalRenderProps {
+  /**
+   * Whether the modal is ready to be displayed. Use this to hide the modal while it is not yet
+   * ready to enter.
+   *
+   * @selector [data-open]
+   */
+  isOpen: boolean;
   /**
    * Whether the modal is currently entering. Use this to apply animations.
    *
@@ -229,11 +246,13 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   let {state} = props;
   let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
 
-  let entering = useEnterAnimation(props.overlayRef) || props.isEntering || false;
+  let [isOpen, setIsOpen] = useState(false);
+  let entering = useEnterAnimation(props.overlayRef, isOpen) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ModalOverlay',
     values: {
+      isOpen,
       isEntering: entering,
       isExiting: props.isExiting,
       state
@@ -262,6 +281,9 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
     '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
+  // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
+  useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
+
   // oxlint-disable react/react-compiler
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
@@ -270,13 +292,20 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
         {...renderProps}
         style={style}
         ref={props.overlayRef}
+        data-open={isOpen || undefined}
         data-entering={entering || undefined}
         data-exiting={props.isExiting || undefined}>
         <Provider
           values={[
             [
               InternalModalContext,
-              {modalProps, modalRef, isExiting: props.isExiting, isDismissable: props.isDismissable}
+              {
+                modalProps,
+                modalRef,
+                isExiting: props.isExiting,
+                isOpen,
+                isDismissable: props.isDismissable
+              }
             ],
             [OverlayTriggerStateContext, state]
           ]}>
@@ -301,16 +330,17 @@ interface ModalContentProps
 }
 
 function ModalContent(props: ModalContentProps) {
-  let {modalProps, modalRef, isExiting, isDismissable} = useContext(InternalModalContext)!;
+  let {modalProps, modalRef, isExiting, isOpen, isDismissable} = useContext(InternalModalContext)!;
   let state = useContext(OverlayTriggerStateContext)!;
   let mergedRefs = useMemo(() => mergeRefs(props.modalRef, modalRef), [props.modalRef, modalRef]);
 
   let ref = useObjectRef(mergedRefs);
-  let entering = useEnterAnimation(ref);
+  let entering = useEnterAnimation(ref, isOpen);
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Modal',
     values: {
+      isOpen,
       isEntering: entering,
       isExiting,
       state
@@ -322,6 +352,7 @@ function ModalContent(props: ModalContentProps) {
       {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
       {...renderProps}
       ref={ref}
+      data-open={isOpen || undefined}
       data-entering={entering || undefined}
       data-exiting={isExiting || undefined}>
       {isDismissable && <DismissButton onDismiss={state.close} />}
