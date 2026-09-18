@@ -456,4 +456,54 @@ describe('Slider', () => {
     );
     expect(fill).toHaveStyle({position: 'absolute', bottom: '50%', height: '30%', width: '100%'});
   });
+
+  describe('direction', () => {
+    it('positions SliderFill with insetInlineStart by default', () => {
+      let {getByRole} = render(<TestSlider sliderProps={{value: 30}} />);
+      let fill = getByRole('group').querySelector('.react-aria-SliderFill');
+      expect(fill).toHaveStyle({insetInlineStart: '0%', width: '30%'});
+      expect(fill.style.left).toBe('');
+      expect(fill.style.right).toBe('');
+    });
+
+    // insetInlineStart resolves against the document, but the thumb is positioned with the
+    // physical `left`. A track that pins its own direction must anchor the fill physically so
+    // the fill and the thumb stay on the same side.
+    it('positions SliderFill with a physical left when direction is ltr', () => {
+      let {getByRole} = render(<TestSlider sliderProps={{value: 30, direction: 'ltr'}} />);
+      let fill = getByRole('group').querySelector('.react-aria-SliderFill');
+      expect(fill).toHaveStyle({left: '0%', width: '30%'});
+      expect(fill.style.insetInlineStart).toBe('');
+      expect(fill.style.right).toBe('');
+    });
+
+    // The case a boolean could not express: content that reads right to left inside an LTR UI.
+    it('positions SliderFill with a physical right when direction is rtl', () => {
+      let {getByRole} = render(<TestSlider sliderProps={{value: 30, direction: 'rtl'}} />);
+      let fill = getByRole('group').querySelector('.react-aria-SliderFill');
+      expect(fill).toHaveStyle({right: '0%', width: '30%'});
+      expect(fill.style.insetInlineStart).toBe('');
+      expect(fill.style.left).toBe('');
+    });
+
+    it('does not affect vertical SliderFill when direction is ltr', () => {
+      let {getByRole} = render(
+        <TestSlider sliderProps={{value: 30, direction: 'ltr', orientation: 'vertical'}} />
+      );
+      let fill = getByRole('group').querySelector('.react-aria-SliderFill');
+      expect(fill).toHaveStyle({bottom: '0%', height: '30%'});
+      expect(fill.style.left).toBe('');
+      expect(fill.style.right).toBe('');
+    });
+
+    it('does not affect vertical SliderFill when direction is rtl', () => {
+      let {getByRole} = render(
+        <TestSlider sliderProps={{value: 30, direction: 'rtl', orientation: 'vertical'}} />
+      );
+      let fill = getByRole('group').querySelector('.react-aria-SliderFill');
+      expect(fill).toHaveStyle({bottom: '0%', height: '30%'});
+      expect(fill.style.left).toBe('');
+      expect(fill.style.right).toBe('');
+    });
+  });
 });
