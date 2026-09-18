@@ -96,6 +96,11 @@ export const SharedElement = forwardRef(function SharedElement(
     let scope = scopeRef.current;
     let prevSnapshot = scope[name];
     let frame: number | null = null;
+    // Values to restore the element's inline styles to once the transition
+    // has been given a chance to start (see below). Also used by the
+    // cleanup function so that a cancelled transition doesn't leave the
+    // element holding temporary override values - see comment there.
+    let values: [string, string][] | null = null;
 
     if (element && isVisible && prevSnapshot) {
       // Element is transitioning from a previous instance.
@@ -103,7 +108,7 @@ export const SharedElement = forwardRef(function SharedElement(
       let animations = element.getAnimations();
 
       // Set properties to animate from.
-      let values = prevSnapshot.style.map(([property, prevValue]) => {
+      values = prevSnapshot.style.map(([property, prevValue]) => {
         let value = element.style[property];
         if (property === 'translate') {
           let prevRect = prevSnapshot.rect;
@@ -127,7 +132,7 @@ export const SharedElement = forwardRef(function SharedElement(
       // Remove overrides after one frame to animate to the current values.
       frame = requestAnimationFrame(() => {
         frame = null;
-        for (let [property, value] of values) {
+        for (let [property, value] of values!) {
           element.style[property] = value;
         }
       });
@@ -160,6 +165,23 @@ export const SharedElement = forwardRef(function SharedElement(
     return () => {
       if (frame != null) {
         cancelAnimationFrame(frame);
+
+        // The scheduled frame above never ran, so the "from" values written
+        // synchronously earlier in this effect (element.style[property] =
+        // prevValue / element.style.translate = ...) are still applied to
+        // the element. If we only cancel the frame, those temporary values
+        // remain in place - and because no paint has occurred yet, a
+        // subsequent effect run (e.g. React StrictMode's mount -> cleanup
+        // -> mount replay after SSR hydration, or a fast prop change) will
+        // read them back via `element.style[property]` as if they were the
+        // element's real current values, propagating the stale override
+        // forward and leaving the indicator permanently offset. Restore
+        // the true values synchronously here instead.
+        if (values) {
+          for (let [property, value] of values) {
+            element.style[property] = value;
+          }
+        }
       }
 
       if (element && element.isConnected && !element.hasAttribute('data-exiting')) {
