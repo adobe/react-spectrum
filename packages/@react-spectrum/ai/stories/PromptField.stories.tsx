@@ -348,7 +348,7 @@ let prompts = [
 ];
 
 function EverythingRender(args) {
-  let {placeholder, menuWidth, ...otherArgs} = args;
+  let {placeholder, menuWidth = 200, ...otherArgs} = args;
   let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
   let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
@@ -642,7 +642,7 @@ export const AsyncCompletions = () => (
         shouldAnimatePixelLoader
         completionTrigger={/(?<=^|\s)[@/]/}
         renderCompletions={async filterValue => {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 1000));
           return renderCompletions(filterValue);
         }}>
         {token => (

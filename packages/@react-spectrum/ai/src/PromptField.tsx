@@ -40,6 +40,7 @@ import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Microphone from '@react-spectrum/s2/icons/Microphone';
@@ -78,6 +79,7 @@ import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 export interface PromptFieldAttachment {
   id: string;
   file: File;
@@ -797,10 +799,30 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
   let isPromise = items instanceof Promise;
   // if not async then the user may have passed a static list of items
   let staticItems = Array.isArray(items) ? items : null;
+
+  // now that the use() call is in the menu, we need to figure out if the promise gave us a empty array so we can close
+  // the popover if no results are returned
+  // however cant use use() here cuz we dont want to suspend the popover because we want the child menu
+  // to update and render a loading spinner
+  let [emptyItems, setEmptyItems] = useState<typeof items>(null);
+  useEffect(() => {
+    if (items instanceof Promise) {
+      let cancelled = false;
+      items.then(resolved => {
+        if (!cancelled && (resolved == null || resolved.length === 0)) {
+          setEmptyItems(items);
+        }
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [items]);
+
   let isOpen =
     isFocused &&
     filterAnchor != null &&
-    (isPromise || (staticItems != null && staticItems.length > 0));
+    ((isPromise && items !== emptyItems) || (staticItems != null && staticItems.length > 0));
 
   let key = 'popover';
   if (filterAnchor) {
@@ -822,16 +844,27 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       isNonModal
       hideArrow
       placement="bottom start"
-      UNSAFE_style={menuWidth != null ? {width: menuWidth} : undefined}
+      // since this is now virtualized we need a fallback width and padding is controled by virtualizeer
+      padding="none"
+      UNSAFE_style={{width: menuWidth ?? 150}}
       key={key}
       getTargetRect={target => {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
-      <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
-        <Suspense fallback={<Menu loadingState="loading">{null}</Menu>}>
-          <PromptCompletionMenu items={items} />
-        </Suspense>
-      </PromptCompletionAnchorContext.Provider>
+      <Suspense fallback={<Menu loadingState="loading">{null}</Menu>}>
+        <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
+          <Virtualizer
+            layout={ListLayout}
+            layoutOptions={{
+              estimatedRowHeight: 32,
+              estimatedHeadingHeight: 50,
+              padding: 8
+            }}
+            shouldObserveItemSize>
+            <PromptCompletionMenu items={items} />
+          </Virtualizer>
+        </PromptCompletionAnchorContext.Provider>
+      </Suspense>
     </Popover>
   );
 }
@@ -841,7 +874,14 @@ function PromptCompletionMenu(props: {
 }) {
   let {items} = props;
   let resolvedItems = items instanceof Promise ? use(items) : items;
-  return <Menu>{resolvedItems}</Menu>;
+
+  // Cache items so that popover content doesn't flicker to empty while animating out.
+  let [menuItems, setMenuItems] = useState(resolvedItems);
+  if (resolvedItems !== menuItems && resolvedItems != null && resolvedItems.length > 0) {
+    setMenuItems(resolvedItems);
+  }
+
+  return <Menu>{menuItems}</Menu>;
 }
 
 export interface PromptTokenProps extends Omit<

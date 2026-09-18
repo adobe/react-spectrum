@@ -23,7 +23,8 @@ import {
   MenuTriggerProps as AriaMenuTriggerProps,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
-  MenuItemRenderProps
+  MenuItemRenderProps,
+  MenuStateContext
 } from 'react-aria-components/Menu';
 import {
   AsyncLoadable,
@@ -31,8 +32,10 @@ import {
   DOMRefValue,
   GlobalDOMAttributes,
   LoadingState,
+  Node,
   PressEvent
 } from '@react-types/shared';
+import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {
   baseColor,
   centerPadding,
@@ -47,6 +50,10 @@ import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
+import {
+  CollectionRendererContext,
+  createLeafComponent
+} from 'react-aria-components/CollectionBuilder';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   control,
@@ -57,6 +64,7 @@ import {
 } from './style-utils' with {type: 'macro'};
 import {
   createContext,
+  ForwardedRef,
   forwardRef,
   JSX,
   ReactElement,
@@ -80,12 +88,13 @@ import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import {Separator, SeparatorProps} from 'react-aria-components/Separator';
+import {SeparatorProps} from 'react-aria-components/Separator';
 import {ToggleButtonContext} from './ToggleButton';
 import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useSeparator} from 'react-aria/useSeparator';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
@@ -149,6 +158,7 @@ const menuItemGrid = {
   }
 } as const;
 
+// TODO: this is baiscally Picker's "menu" styling now, but with maxWidths and stuff
 export let menu = style(
   {
     outlineStyle: 'none',
@@ -158,7 +168,9 @@ export let menu = style(
     maxHeight: 'inherit',
     width: 'full',
     overflow: {
-      isPopover: 'auto'
+      isPopover: 'auto',
+      // similar to Combobox/Picker, needs this for virtualized so we get scroll events for virtualizer
+      isVirtualized: 'auto'
     },
     maxWidth: {
       isPopover: 320
@@ -185,10 +197,21 @@ export let section = style({
   gridTemplateColumns: menuItemGrid
 });
 
-export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
+export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'; isVirtualized?: boolean}>({
   color: 'neutral',
   gridColumnStart: 2,
   gridColumnEnd: -2,
+  // also from Combobox/Picker, but we want to keep the non virtualized menu styling too
+  marginX: {
+    isVirtualized: {
+      size: {
+        S: `[${edgeToText(24)}]`,
+        M: `[${edgeToText(32)}]`,
+        L: `[${edgeToText(40)}]`,
+        XL: `[${edgeToText(48)}]`
+      }
+    }
+  },
   boxSizing: 'border-box',
   minHeight: controlSize(),
   paddingY: centerPadding()
@@ -207,6 +230,7 @@ export let menuitem = style<
     isLink?: boolean;
     hasSubmenu?: boolean;
     isOpen?: boolean;
+    isVirtualized?: boolean;
   }
 >(
   {
@@ -243,7 +267,11 @@ export let menuitem = style<
       '. checkmark icon label       value keyboard descriptor .',
       '. .         .    description .     .        .          .'
     ],
-    gridTemplateColumns: 'subgrid',
+    gridTemplateColumns: {
+      default: 'subgrid',
+      // cant use subgrid since virtualizer div wrapper
+      isVirtualized: menuItemGrid
+    },
     gridTemplateRows: {
       // min-content prevents second row from 'auto'ing to a size larger then 0 when empty
       default: 'auto minmax(0, min-content)',
@@ -414,10 +442,12 @@ let InternalMenuContext = createContext<{
   size: 'S' | 'M' | 'L' | 'XL';
   isSubmenu: boolean;
   hideLinkOutIcon: boolean;
+  isVirtualized: boolean;
 }>({
   size: 'M',
   isSubmenu: false,
-  hideLinkOutIcon: false
+  hideLinkOutIcon: false,
+  isVirtualized: false
 });
 
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
@@ -485,6 +515,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
   let inPopover = useContext(InPopoverContext);
+  let isVirtualized = !!useContext(CollectionRendererContext).isVirtualized;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   let menuLoadingCircle = (
@@ -523,10 +554,10 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 
   let isPopover = (ctx || isSubmenu) && !inPopover;
   let content = (
-    <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon}}>
+    <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon, isVirtualized}}>
       <Provider
         values={[
-          [HeaderContext, {styles: sectionHeader({size})}],
+          [HeaderContext, {styles: sectionHeader({size, isVirtualized})}],
           [
             HeadingContext,
             {
@@ -547,7 +578,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
         ]}>
         <AriaMenu
           {...props}
-          className={menu({size, isPopover}, isPopover ? null : styles)}
+          className={menu({size, isPopover, isVirtualized}, isPopover ? null : styles)}
           renderEmptyState={() =>
             loadingState === 'loading' ? (
               <div className={loadingWrapperStyles}>
@@ -585,29 +616,71 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
-export function Divider(props: SeparatorProps): ReactNode {
-  return (
-    <Separator
-      {...props}
-      className={mergeStyles(
-        divider({
-          size: 'M',
-          orientation: 'horizontal',
-          isStaticColor: false
-        }),
-        style({
-          display: {
-            default: 'grid',
-            ':last-child': 'none'
-          },
-          gridColumnStart: 2,
-          gridColumnEnd: -2,
-          marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
-        })
-      )}
-    />
-  );
+// same as combobox
+class SeparatorNode extends CollectionNode<any> {
+  static readonly type = 'separator';
+
+  filter(
+    collection: BaseCollection<any>,
+    newCollection: BaseCollection<any>
+  ): CollectionNode<any> | null {
+    let prevItem = newCollection.getItem(this.prevKey!);
+    if (prevItem && prevItem.type !== 'separator') {
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
+    }
+
+    return null;
+  }
 }
+
+let dividerPlacement = style<{size?: 'S' | 'M' | 'L' | 'XL'; isVirtualized?: boolean}>({
+  display: 'grid',
+  // for non virtualized
+  gridColumnStart: 2,
+  gridColumnEnd: -2,
+  marginX: {
+    isVirtualized: {
+      size: {
+        S: `[${edgeToText(24)}]`,
+        M: `[${edgeToText(32)}]`,
+        L: `[${edgeToText(40)}]`,
+        XL: `[${edgeToText(48)}]`
+      }
+    }
+  },
+  marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
+});
+
+export const Divider = /*#__PURE__*/ createLeafComponent(
+  SeparatorNode,
+  function Divider(props: SeparatorProps, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
+    let state = useContext(MenuStateContext)!;
+    let {size: ctxSize, isVirtualized} = useContext(InternalMenuContext);
+    let {separatorProps} = useSeparator({...props, elementType: 'div'});
+    let nextNode = node.nextKey != null ? state.collection.getItem(node.nextKey) : null;
+
+    if (node.prevKey == null || !nextNode || nextNode.type === 'separator') {
+      return null;
+    }
+
+    return (
+      <div
+        {...separatorProps}
+        ref={ref}
+        className={mergeStyles(
+          divider({
+            size: 'M',
+            orientation: 'horizontal',
+            isStaticColor: false
+          }),
+          dividerPlacement({size: ctxSize, isVirtualized})
+        )}
+      />
+    );
+  }
+);
 
 export interface MenuSectionProps<T> extends Omit<
   AriaMenuSectionProps<T>,
@@ -689,7 +762,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
-  let {size, hideLinkOutIcon} = useContext(InternalMenuContext);
+  let {size, hideLinkOutIcon, isVirtualized} = useContext(InternalMenuContext);
   let textValue =
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
@@ -711,7 +784,8 @@ export function MenuItem(props: MenuItemProps): ReactNode {
             ...renderProps,
             isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused,
             size,
-            isLink
+            isLink,
+            isVirtualized
           },
           props.styles
         )

@@ -61,10 +61,17 @@ describeOrSkip('PromptField', () => {
     installRangePolyfill();
     user = userEvent.setup({advanceTimers: jest.advanceTimersByTime});
     jest.useFakeTimers();
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
   });
 
   afterEach(() => {
     act(() => jest.runAllTimers());
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   describe('placeholder text', () => {
