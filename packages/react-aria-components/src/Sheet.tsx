@@ -1,13 +1,27 @@
+import {DialogContext} from './Dialog';
 import {flushSync} from 'react-dom';
 import {Modal, ModalOverlay, ModalOverlayProps} from './Modal';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ReactNode, useCallback, useContext, useRef} from 'react';
+import React, {createContext, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 
 interface SheetProps extends ModalOverlayProps {
   children: ReactNode;
   position?: 'bottom' | 'top' | 'left' | 'right' | 'center';
   swipeDirection: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
+  /**
+   * Additional resting positions ("detents") the sheet can snap to, expressed as the amount of the
+   * sheet that is visible along the swipe axis. A number is viewport relative (in viewport
+   * percent); a string is any CSS length (e.g. `'300px'`). The sheet opens at the first value. The
+   * dismiss and fully-entered snap positions are always present in addition to these.
+   *
+   * @example
+   *   [50]; // opens with half the viewport of sheet showing, expandable to full or swiped away
+   *
+   * @example
+   *   ['300px']; // opens with 300px of the sheet showing
+   */
+  snapPoints?: Array<number | string>;
 }
 
 const SheetContext = createContext<SheetProps | null>(null);
@@ -17,34 +31,50 @@ export function Sheet(props: SheetProps) {
     children,
     isDismissable = true,
     position = 'bottom',
-    swipeDirection = position === 'center' ? 'vertical' : position
+    swipeDirection = position === 'center' ? 'vertical' : position,
+    snapPoints,
+    style
   } = props;
   let contextState = useContext(OverlayTriggerStateContext);
   let onClose = useEffectEvent(() => {
     contextState!.close();
   });
 
+  let [isExpanded, setExpanded] = useState(false);
   let ref = useCallback(
     (element: HTMLDivElement) => {
       if (!element) {
         return;
       }
 
+      let {axis, enteredScroll} = getSwipeConfig(swipeDirection);
+
+      // Expose whether the sheet is resting at its fully-entered detent (all of it revealed). Apps
+      // can use `[data-expanded]` to only make the sheet's inner content scrollable once expanded,
+      // so that at a partial detent a swipe on the content expands the sheet instead (like iOS).
+      let updateExpanded = () => {
+        let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
+        let current = axis === 'y' ? element.scrollTop : element.scrollLeft;
+        setExpanded(Math.abs(current - (enteredScroll / 100) * vp) <= 1);
+      };
+
       // Only dismiss once the sheet has actually been entered. Directions that rest at scroll 0
       // (top/left) animate in by first jumping to the exit position, which can surface a scrollend
       // there before the enter animation runs — without this guard that would close immediately.
       let hasEntered = false;
       let onScrollEnd = () => {
-        if (!isExited(swipeDirection, element)) {
-          hasEntered = true;
+        if (isExited(swipeDirection, element)) {
+          if (hasEntered) {
+            flushSync(() => onClose());
+          }
           return;
         }
 
-        if (hasEntered) {
-          flushSync(() => onClose());
-        }
+        hasEntered = true;
+        updateExpanded();
       };
 
+      updateExpanded();
       return addScrollEndListener(element, onScrollEnd);
     },
     [onClose, swipeDirection]
@@ -71,11 +101,22 @@ export function Sheet(props: SheetProps) {
   let justifyContent = axis === 'y' ? alignment.y : alignment.x;
   let alignItems = axis === 'y' ? alignment.x : alignment.y;
 
+  // Expose each detent as a CSS length variable (`--sheet-snap-0`, …). Because the view timeline's
+  // `entry`/`exit` progress advances 1:1 with the sheet being revealed, these values can be used
+  // directly as `animation-range` offsets (e.g. `entry entry var(--sheet-snap-0)`) to keep the
+  // backdrop/radius animations in sync with the detents.
+  let snapVars: Record<string, string> = {};
+  snapPoints?.forEach((point, i) => {
+    snapVars[`--sheet-snap-${i}`] = toLength(point, axis);
+  });
+
   return (
     <ModalOverlay
       ref={ref}
       isDismissable={isDismissable}
+      data-position={position}
       data-swipe-direction={swipeDirection}
+      data-expanded={isExpanded || undefined}
       className={props.className}
       style={{
         position: 'absolute',
@@ -96,18 +137,38 @@ export function Sheet(props: SheetProps) {
         '--sheet-animation-range': viewRange,
         '--sheet-animation-direction': viewDirection,
         '--sheet-animation-iterations': viewIterations,
-        '--sheet-scroll-padding-y': 'calc(100dvh - var(--visual-viewport-height))'
+        '--sheet-scroll-padding-x': 'calc(100vw - var(--visual-viewport-width))',
+        '--sheet-scroll-padding-y': 'calc(100dvh - var(--visual-viewport-height))',
+        ...snapVars,
+        ...style
       }}
       onEnter={element => {
         let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
+        // Open at the first custom detent when provided, otherwise the fully-entered position. The
+        // detent marker snaps via scroll-margin, so scrollIntoView (which honors scroll-margin) lands
+        // exactly on its snap position — no manual math. Its start/end alignment matches the edge the
+        // sheet exits toward.
+        let initial = element.querySelector<HTMLElement>('[data-sheet-initial]');
+        let scrollToRest = (smooth: boolean) => {
+          if (initial) {
+            let behavior: ScrollBehavior = smooth ? 'smooth' : 'auto';
+            initial.scrollIntoView(
+              axis === 'y'
+                ? {behavior, block: after ? 'start' : 'end'}
+                : {behavior, inline: after ? 'start' : 'end', block: 'nearest'}
+            );
+          } else {
+            scrollAlongAxis(element, axis, (enteredScroll / 100) * vp, smooth);
+          }
+        };
         if (enteredScroll === 0) {
           // The rest position is at scroll 0, so the sheet mounts already entered. Jump to the exit
           // first, then animate back in on the next frame — doing both in the same task can leave
           // the browser stuck at the jumped-to position instead of running the smooth scroll.
           scrollAlongAxis(element, axis, (maxScroll / 100) * vp);
-          requestAnimationFrame(() => scrollAlongAxis(element, axis, 0, true));
+          requestAnimationFrame(() => scrollToRest(true));
         } else {
-          scrollAlongAxis(element, axis, (enteredScroll / 100) * vp, true);
+          scrollToRest(true);
         }
       }}
       onExit={element => {
@@ -137,6 +198,8 @@ export function Sheet(props: SheetProps) {
       <SnapPoint point={0} align="start" axis={axis} />
       {/* When the sheet can exit both ways, add a center snap for the rest position. */}
       {before && after && <SnapPoint point={100} align="start" axis={axis} />}
+      {/* Custom "amount visible" detents are rendered inside the sheet (see SheetContent), so their
+          snap position tracks the sheet's leading edge regardless of its size. */}
       <div
         style={{
           position: 'absolute',
@@ -230,21 +293,26 @@ function getPositionAlignment(position: NonNullable<SheetProps['position']>): {
 }
 
 interface SnapPointProps {
-  /** Offset along the swipe axis, in viewport percent. */
-  point: number;
+  /** Offset along the swipe axis: a number is viewport percent, a string is any CSS length. */
+  point: number | string;
   align: 'start' | 'end';
   axis: Axis;
 }
 
+// Converts a snap point value to a CSS length along the swipe axis: numbers are viewport relative.
+function toLength(point: number | string, axis: Axis): string {
+  return typeof point === 'number' ? `${point}${axis === 'y' ? 'dvh' : 'vw'}` : point;
+}
+
 function SnapPoint({point, align, axis}: SnapPointProps) {
   let mainUnit = axis === 'y' ? 'dvh' : 'vw';
+  let offset = toLength(point, axis);
   return (
     <div
       style={{
         position: 'absolute',
-        top: axis === 'y' ? `${point}${mainUnit}` : 0,
-        left: axis === 'x' ? `${point}${mainUnit}` : 0,
-        scrollSnapType: 'always',
+        top: axis === 'y' ? offset : 0,
+        left: axis === 'x' ? offset : 0,
         scrollSnapAlign: align,
         // A full viewport along the swipe axis so its start/end edge lands at the snap position.
         width: axis === 'x' ? `100${mainUnit}` : 1,
@@ -254,24 +322,66 @@ function SnapPoint({point, align, axis}: SnapPointProps) {
   );
 }
 
-export function SheetUnderlay({...otherProps}) {
-  return <div {...otherProps} />;
+interface DetentPointProps {
+  /**
+   * Amount of the sheet that is visible at this detent: a number is viewport percent, a string any
+   * CSS length.
+   */
+  point: number | string;
+  axis: Axis;
+  /**
+   * Whether the sheet exits toward the end edge (bottom/right); it is anchored to the opposite
+   * edge.
+   */
+  after: boolean;
+  /** Marks the detent the sheet opens at, so `onEnter` can resolve its scroll position. */
+  isInitial?: boolean;
+}
+
+// A snap marker anchored to the sheet's leading edge. Because it moves with the sheet, snapping it
+// with a `scroll-margin` of `viewport - visibleAmount` rests the sheet with exactly `visibleAmount`
+// of it on screen — the sheet's own size cancels out, so no measurement is needed. `after`
+// directions (bottom/right) anchor to the start edge and align start; `before` directions to the end.
+function DetentPoint({point, axis, after, isInitial}: DetentPointProps) {
+  let viewport = axis === 'y' ? '100dvh' : '100vw';
+  let margin = `calc(${viewport} - ${toLength(point, axis)})`;
+  let common: React.CSSProperties = {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    scrollSnapAlign: after ? 'start' : 'end'
+  };
+  let edge: React.CSSProperties =
+    axis === 'y'
+      ? after
+        ? {top: 0, left: 0, scrollMarginTop: margin}
+        : {bottom: 0, left: 0, scrollMarginBottom: margin}
+      : after
+        ? {top: 0, left: 0, scrollMarginLeft: margin}
+        : {top: 0, right: 0, scrollMarginRight: margin};
+  return <div data-sheet-initial={isInitial || undefined} style={{...common, ...edge}} />;
 }
 
 interface SheetContentProps extends ModalOverlayProps {}
 
 export function SheetContent(props: SheetContentProps) {
   let ref = useRef(null);
-  let {position = 'bottom', swipeDirection = position === 'center' ? 'vertical' : position} =
-    useContext(SheetContext)!;
+  let {
+    position = 'bottom',
+    swipeDirection = position === 'center' ? 'vertical' : position,
+    snapPoints
+  } = useContext(SheetContext)!;
 
   let {axis, before, after} = getSwipeConfig(swipeDirection);
   // The animation is driven by a view-progress timeline on the sheet itself, so its range is scaled
   // to the sheet's own size and position. The scroll container is 2 viewports along the swipe axis,
-  // so crop the timeline's scrollport with an inset to the visible half (the real viewport). The
-  // off-screen half is the one opposite `containerOffset`: the start half is visible unless the
-  // sheet rests at scroll 0 (top/left), where the end half is visible.
-  let viewInset = before && !after ? '50% 0' : '0 50%';
+  // so crop the timeline's scrollport by one viewport down to the visible viewport. The off-screen
+  // half is the one opposite `containerOffset`: the start half is visible unless the sheet rests at
+  // scroll 0 (top/left), where the end half is visible. Use an explicit viewport length rather than
+  // `50%`, since a percentage inset resolves against the block axis and would be wrong for the
+  // horizontal (x) timeline.
+  let viewportLength = axis === 'y' ? '100dvh' : '100vw';
+  let viewInset = before && !after ? `${viewportLength} 0` : `0 ${viewportLength}`;
 
   // Extra padding to allow overscrolling, and a negative margin to offset it.
   let padding, margin;
@@ -302,21 +412,43 @@ export function SheetContent(props: SheetContentProps) {
     <Modal
       {...props}
       ref={ref}
+      data-position={position}
       data-swipe-direction={swipeDirection}
       style={{
         ...props.style,
-        // The sheet is the subject of the view-progress timeline that drives all sheet animations.
-        // The inset (set on the overlay) crops the oversized scroll container's scrollport down to
-        // the visible viewport so progress tracks the sheet's real on-screen travel.
-        // @ts-ignore
-        viewTimelineName: '--sheet-animation-timeline',
-        viewTimelineAxis: axis,
-        viewTimelineInset: viewInset,
+        // Positioned so the detent markers below anchor to the sheet's own box.
+        position: 'relative',
         // @ts-ignore
         '--sheet-overscroll-padding': padding,
         '--sheet-overscroll-margin': margin
-      }}
-    />
+      }}>
+      {renderProps => (
+        <>
+          {/* Detents that rest the sheet with a given amount visible. Anchored here (inside the
+              sheet) so their snap position tracks the sheet's leading edge without measuring it. */}
+          {snapPoints?.map((point, i) => (
+            <DetentPoint key={i} point={point} axis={axis} after={after} isInitial={i === 0} />
+          ))}
+          <DialogContext.Provider
+            value={{
+              style: {
+                width: '100%',
+                height: '100%',
+                // The dialog is the subject of the view-progress timeline that drives all sheet animations.
+                // It is _not_ the Modal because that may have additional padding for overscroll and therefore never be entirely visible.
+                // The inset (set on the overlay) crops the oversized scroll container's scrollport down to
+                // the visible viewport so progress tracks the sheet's real on-screen travel.
+                // @ts-ignore
+                viewTimelineName: '--sheet-animation-timeline',
+                viewTimelineAxis: axis,
+                viewTimelineInset: viewInset
+              }
+            }}>
+            {typeof props.children === 'function' ? props.children(renderProps) : props.children}
+          </DialogContext.Provider>
+        </>
+      )}
+    </Modal>
   );
 }
 

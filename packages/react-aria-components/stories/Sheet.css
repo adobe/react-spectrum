@@ -11,12 +11,31 @@
   animation-duration: 1s;
   z-index: 1;
 
+  &[data-position='left'],
+  &[data-position='right'] {
+    width: 300px;
+    height: calc(100% - 16px);
+  }
+
   animation-name: radius;
   animation-timeline: --sheet-animation-timeline;
   animation-direction: var(--sheet-animation-direction);
   animation-range: var(--sheet-animation-range);
   animation-iteration-count: var(--sheet-animation-iterations);
   animation-fill-mode: both;
+
+  /* Corners finish rounding by the first detent, then stay rounded to full. The `entry`/`exit`
+     range mirrors per direction (exit runs reversed), and the `100%` fallback makes a sheet with
+     no detents use the whole range. */
+  &[data-swipe-direction='bottom'],
+  &[data-swipe-direction='right'] {
+    animation-range: entry entry var(--sheet-snap-0, 100%);
+  }
+
+  &[data-swipe-direction='top'],
+  &[data-swipe-direction='left'] {
+    animation-range: exit calc(100% - var(--sheet-snap-0, 100%)) exit 100%;
+  }
 }
 
 .sheet-container {
@@ -26,16 +45,32 @@
   animation-range: var(--sheet-animation-range);
   animation-iteration-count: var(--sheet-animation-iterations);
   animation-fill-mode: both;
+
+  /* Backdrop is clear up to the first detent, then fades in to full (mirrored for exit; `0%`
+     fallback makes a detent-less sheet fade across the whole range). */
+  &[data-swipe-direction='bottom'],
+  &[data-swipe-direction='right'] {
+    animation-range: entry var(--sheet-snap-0, 0%) entry 100%;
+  }
+
+  &[data-swipe-direction='top'],
+  &[data-swipe-direction='left'] {
+    animation-range: exit exit calc(100% - var(--sheet-snap-0, 0%));
+  }
 }
 
-.backdrop {
-  position: absolute;
-  top: -100dvh;
-  left: 0;
-  width: 100dvw;
-  height: 300dvh;
-  background: rgb(0 0 0 / 0.4);
-  z-index: 0;
+.sheet .react-aria-Dialog {
+  padding: 30px;
+  padding-bottom: var(--sheet-scroll-padding-y);
+  box-sizing: border-box;
+  height: 100%;
+  /* Only scroll the inner content once the sheet is fully expanded. At a partial detent a swipe on
+     the content chains out to the sheet's scroll container instead, expanding the sheet (like iOS). */
+  overflow: hidden;
+}
+
+.sheet-container[data-expanded] .react-aria-Dialog {
+  overflow: auto;
 }
 
 @keyframes radius {

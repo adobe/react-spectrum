@@ -42,17 +42,8 @@ export const SheetExample: SheetStory = args => (
     <DialogTrigger>
       <Button>Open sheet</Button>
       <Sheet position="bottom" className="sheet-container" {...args}>
-        {/* <div className={styles.backdrop} /> */}
-        {/* <SheetUnderlay className="backdrop" scrollAnimation="backdropAnimation" /> */}
         <SheetContent className="sheet">
-          <Dialog
-            style={{
-              padding: 30,
-              paddingBottom: 'var(--sheet-scroll-padding-y)',
-              boxSizing: 'border-box',
-              height: '100%',
-              overflow: 'auto'
-            }}>
+          <Dialog>
             {({close}) => (
               <form style={{display: 'flex', flexDirection: 'column'}}>
                 <Heading slot="title" style={{marginTop: 0}}>
@@ -67,60 +58,14 @@ export const SheetExample: SheetStory = args => (
                 <Button onPress={close} style={{marginTop: 10}}>
                   Submit
                 </Button>
-                <p>
-                  In an iPhone app, consider supporting the medium detent to allow progressive
-                  disclosure of the sheet’s content. For example, a share sheet displays the most
-                  relevant items within the medium detent, where they’re visible without resizing.
-                  To view more items, people can scroll or expand the sheet. In contrast, you might
-                  not want to support the medium detent if a sheet’s content is more useful when it
-                  displays at full height. For example, the compose sheets in Messages and Mail
-                  display only at full height to give people enough room to create content.
-                </p>
-                <p>
-                  In an iPhone app, consider supporting the medium detent to allow progressive
-                  disclosure of the sheet’s content. For example, a share sheet displays the most
-                  relevant items within the medium detent, where they’re visible without resizing.
-                  To view more items, people can scroll or expand the sheet. In contrast, you might
-                  not want to support the medium detent if a sheet’s content is more useful when it
-                  displays at full height. For example, the compose sheets in Messages and Mail
-                  display only at full height to give people enough room to create content.
-                </p>
-                <p>
-                  In an iPhone app, consider supporting the medium detent to allow progressive
-                  disclosure of the sheet’s content. For example, a share sheet displays the most
-                  relevant items within the medium detent, where they’re visible without resizing.
-                  To view more items, people can scroll or expand the sheet. In contrast, you might
-                  not want to support the medium detent if a sheet’s content is more useful when it
-                  displays at full height. For example, the compose sheets in Messages and Mail
-                  display only at full height to give people enough room to create content.
-                </p>
-                <p>
-                  In an iPhone app, consider supporting the medium detent to allow progressive
-                  disclosure of the sheet’s content. For example, a share sheet displays the most
-                  relevant items within the medium detent, where they’re visible without resizing.
-                  To view more items, people can scroll or expand the sheet. In contrast, you might
-                  not want to support the medium detent if a sheet’s content is more useful when it
-                  displays at full height. For example, the compose sheets in Messages and Mail
-                  display only at full height to give people enough room to create content.
-                </p>
-                <p>
-                  In an iPhone app, consider supporting the medium detent to allow progressive
-                  disclosure of the sheet’s content. For example, a share sheet displays the most
-                  relevant items within the medium detent, where they’re visible without resizing.
-                  To view more items, people can scroll or expand the sheet. In contrast, you might
-                  not want to support the medium detent if a sheet’s content is more useful when it
-                  displays at full height. For example, the compose sheets in Messages and Mail
-                  display only at full height to give people enough room to create content.
-                </p>
-                <p>
-                  In an iPhone app, consider supporting the medium detent to allow progressive
-                  disclosure of the sheet’s content. For example, a share sheet displays the most
-                  relevant items within the medium detent, where they’re visible without resizing.
-                  To view more items, people can scroll or expand the sheet. In contrast, you might
-                  not want to support the medium detent if a sheet’s content is more useful when it
-                  displays at full height. For example, the compose sheets in Messages and Mail
-                  display only at full height to give people enough room to create content.
-                </p>
+                {[...Array(8)].map((_, i) => (
+                  <p key={i}>
+                    In an iPhone app, consider supporting the medium detent to allow progressive
+                    disclosure of the sheet’s content. For example, a share sheet displays the most
+                    relevant items within the medium detent, where they’re visible without resizing.
+                    To view more items, people can scroll or expand the sheet.
+                  </p>
+                ))}
               </form>
             )}
           </Dialog>
@@ -129,4 +74,40 @@ export const SheetExample: SheetStory = args => (
     </DialogTrigger>
     {/* <div style={{position: 'absolute', top: 0, left: 0, width: '100%', height: 'calc(100lvh + 58px)', outline: '2px solid red', outlineOffset: -2}} /> */}
   </>
+);
+
+export const SheetDetents: SheetStory = args => (
+  <DialogTrigger>
+    <Button>Open sheet</Button>
+    {/* Opens with 180px of the sheet showing; drag up to full height or down to dismiss. */}
+    <Sheet position="bottom" className="sheet-container" snapPoints={['180px']} {...args}>
+      <SheetContent
+        className="sheet"
+        style={{height: '92dvh', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)'}}>
+        <Dialog>
+          {({close}) => (
+            <form style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+              <Heading slot="title" style={{marginTop: 0}}>
+                Details
+              </Heading>
+              <p style={{marginTop: 0}}>
+                Drag the handle up to expand this sheet to full height, or swipe it down to dismiss.
+                It opens at the medium detent so the most relevant content is visible without
+                resizing.
+              </p>
+              <Button onPress={close}>Done</Button>
+              {[...Array(8)].map((_, i) => (
+                <p key={i}>
+                  In an iPhone app, consider supporting the medium detent to allow progressive
+                  disclosure of the sheet’s content. For example, a share sheet displays the most
+                  relevant items within the medium detent, where they’re visible without resizing.
+                  To view more items, people can scroll or expand the sheet.
+                </p>
+              ))}
+            </form>
+          )}
+        </Dialog>
+      </SheetContent>
+    </Sheet>
+  </DialogTrigger>
 );
