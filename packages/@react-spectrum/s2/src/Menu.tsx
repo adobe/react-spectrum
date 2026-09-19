@@ -613,11 +613,6 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
-// Only meaningful when not virtualized (see menuitem's gridTemplateColumns comment) so it lines
-// up with the auto-sized checkmark/icon columns of its siblings. When virtualized, gridColumnStart
-// /End has no effect since the divider is no longer a direct grid item, so approximate the same
-// visual indent with a margin matching the item's leading gutter column instead (same as
-// sectionHeader, and ComboBox's listboxHeader/separatorWrapper).
 let dividerPlacement = style<{size?: 'S' | 'M' | 'L' | 'XL'; isVirtualized?: boolean}>({
   display: 'grid',
   gridColumnStart: 2,
