@@ -35,7 +35,6 @@ import {
   Node,
   PressEvent
 } from '@react-types/shared';
-import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {
   baseColor,
   centerPadding,
@@ -50,10 +49,7 @@ import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
-import {
-  CollectionRendererContext,
-  createLeafComponent
-} from 'react-aria-components/CollectionBuilder';
+import {CollectionRendererContext} from 'react-aria-components/CollectionBuilder';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   control,
@@ -73,6 +69,7 @@ import {
   useRef,
   useState
 } from 'react';
+import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {divider} from './Divider';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
@@ -82,19 +79,19 @@ import {ImageContext} from './Image';
 import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg'; // chevron right removed??
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import intlMessages from '../intl/*.json';
+import {isSeparatorHidden, SeparatorNode} from './separator-utils';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import {SeparatorProps} from 'react-aria-components/Separator';
+import {Separator, SeparatorProps} from 'react-aria-components/Separator';
 import {ToggleButtonContext} from './ToggleButton';
 import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useSeparator} from 'react-aria/useSeparator';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
@@ -616,28 +613,13 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
-// same as combobox
-class SeparatorNode extends CollectionNode<any> {
-  static readonly type = 'separator';
-
-  filter(
-    collection: BaseCollection<any>,
-    newCollection: BaseCollection<any>
-  ): CollectionNode<any> | null {
-    let prevItem = newCollection.getItem(this.prevKey!);
-    if (prevItem && prevItem.type !== 'separator') {
-      let clone = this.clone();
-      newCollection.addDescendants(clone, collection);
-      return clone;
-    }
-
-    return null;
-  }
-}
-
+// Only meaningful when not virtualized (see menuitem's gridTemplateColumns comment) so it lines
+// up with the auto-sized checkmark/icon columns of its siblings. When virtualized, gridColumnStart
+// /End has no effect since the divider is no longer a direct grid item, so approximate the same
+// visual indent with a margin matching the item's leading gutter column instead (same as
+// sectionHeader, and ComboBox's listboxHeader/separatorWrapper).
 let dividerPlacement = style<{size?: 'S' | 'M' | 'L' | 'XL'; isVirtualized?: boolean}>({
   display: 'grid',
-  // for non virtualized
   gridColumnStart: 2,
   gridColumnEnd: -2,
   marginX: {
@@ -655,19 +637,17 @@ let dividerPlacement = style<{size?: 'S' | 'M' | 'L' | 'XL'; isVirtualized?: boo
 
 export const Divider = /*#__PURE__*/ createLeafComponent(
   SeparatorNode,
-  function Divider(props: SeparatorProps, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
+  function Divider(props: SeparatorProps, ref: ForwardedRef<HTMLElement>, node: Node<unknown>) {
     let state = useContext(MenuStateContext)!;
     let {size: ctxSize, isVirtualized} = useContext(InternalMenuContext);
-    let {separatorProps} = useSeparator({...props, elementType: 'div'});
-    let nextNode = node.nextKey != null ? state.collection.getItem(node.nextKey) : null;
 
-    if (node.prevKey == null || !nextNode || nextNode.type === 'separator') {
+    if (isSeparatorHidden(node, state.collection)) {
       return null;
     }
 
     return (
-      <div
-        {...separatorProps}
+      <Separator
+        {...props}
         ref={ref}
         className={mergeStyles(
           divider({
