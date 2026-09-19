@@ -67,6 +67,35 @@ export const RadioGroupExample: RadioGroupStoryObj = {
   }
 };
 
+// Demonstrates stretching the hidden input over each visible radio so the
+// screen reader focus ring tracks the component. Requires each label (or a
+// positioned ancestor) to be a containing block.
+export const RadioGroupScreenReaderFocusRing: RadioGroupStoryObj = {
+  render: props => {
+    return (
+      <RadioGroup {...props} data-testid="radio-group-focus-ring">
+        <Label>Favorite pet</Label>
+        <Radio
+          onFocus={action('radio focus')}
+          onBlur={action('radio blur')}
+          value="dogs"
+          style={{position: 'relative'}}
+          hiddenInput="stretch-to-label">
+          Dog
+        </Radio>
+        <Radio
+          onFocus={action('radio focus')}
+          onBlur={action('radio blur')}
+          value="cats"
+          style={{position: 'relative'}}
+          hiddenInput="stretch-to-label">
+          Cat
+        </Radio>
+      </RadioGroup>
+    );
+  }
+};
+
 export const RadioGroupControlledExample: RadioGroupStory = props => {
   let [selected, setSelected] = useState<string | null>(null);
 

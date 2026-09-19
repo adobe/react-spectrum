@@ -755,6 +755,22 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(inputRef.current).toBe(radio);
   });
 
+  it('should support hiddenInput stretch-to-label', () => {
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio hiddenInput="stretch-to-label" value="a">
+          A
+        </Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(radio).toHaveStyle('position: absolute');
+    expect(radio).toHaveStyle('inset: 0');
+    expect(radio).toHaveStyle('width: 100%');
+    expect(radio).toHaveStyle('height: 100%');
+  });
+
   it('should support callback ref', () => {
     let cleanup = jest.fn();
     let onRef = jest.fn(() => cleanup);
@@ -902,5 +918,25 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     await user.keyboard('{Enter}');
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('RadioButton', function () {
+  it('should support hiddenInput stretch-to-label directly on RadioButton', () => {
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <RadioField>
+          <RadioButton hiddenInput="stretch-to-label" value="a">
+            A
+          </RadioButton>
+        </RadioField>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(radio).toHaveStyle('position: absolute');
+    expect(radio).toHaveStyle('inset: 0');
+    expect(radio).toHaveStyle('width: 100%');
+    expect(radio).toHaveStyle('height: 100%');
   });
 });
