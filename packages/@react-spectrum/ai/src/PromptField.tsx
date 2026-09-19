@@ -22,6 +22,7 @@ import {
   createContext,
   createRef,
   forwardRef,
+  Suspense,
   use,
   useCallback,
   useContext,
@@ -39,6 +40,7 @@ import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Microphone from '@react-spectrum/s2/icons/Microphone';
@@ -77,6 +79,7 @@ import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 export interface PromptFieldAttachment {
   id: string;
   file: File;
@@ -556,7 +559,6 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   };
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown: onKeyDownProp,
     shortcuts: {
       Tab: () => tab(1),
       'Shift+Tab': () => tab(-1)
@@ -624,127 +626,132 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         />
       </CenterBaseline>
       <Autocomplete>
-        <TokenField
-          value={prompt}
-          onChange={setPrompt}
-          allowsNewlines
-          className={style({flexGrow: 1})}
-          aria-label={stringFormatter.format('promptfield.label')}
-          isReadOnly={isListening}
-          onSubmit={onSubmit}
-          onKeyDown={keyboardProps.onKeyDown}
-          onFocus={e => {
-            if (e.isTrusted) {
-              setFocused(true);
+        <div role="presentation" onKeyDown={onKeyDownProp}>
+          <TokenField
+            value={prompt}
+            onChange={setPrompt}
+            allowsNewlines
+            className={style({flexGrow: 1})}
+            aria-label={stringFormatter.format('promptfield.label')}
+            isReadOnly={isListening}
+            onSubmit={onSubmit}
+            onKeyDown={keyboardProps.onKeyDown}
+            onFocus={e => {
+              if (e.isTrusted) {
+                setFocused(true);
 
-              // If shift tabbing into the prompt field, select the last placeholder if any.
-              if (
-                e.relatedTarget &&
-                getInteractionModality() === 'keyboard' &&
-                e.currentTarget.compareDocumentPosition(e.relatedTarget) &
-                  Node.DOCUMENT_POSITION_FOLLOWING
-              ) {
-                let lastPlaceholder = prompt.segments.findLastIndex(s => s.type === 'token');
-                if (lastPlaceholder >= 0) {
-                  setPrompt(value =>
-                    value.withSelectedRange(
-                      new TokenFieldValue.SelectedRange(
-                        {index: lastPlaceholder, offset: 0},
-                        {index: lastPlaceholder, offset: 1}
+                // If shift tabbing into the prompt field, select the last placeholder if any.
+                if (
+                  e.relatedTarget &&
+                  getInteractionModality() === 'keyboard' &&
+                  e.currentTarget.compareDocumentPosition(e.relatedTarget) &
+                    Node.DOCUMENT_POSITION_FOLLOWING
+                ) {
+                  let lastPlaceholder = prompt.segments.findLastIndex(s => s.type === 'token');
+                  if (lastPlaceholder >= 0) {
+                    setPrompt(value =>
+                      value.withSelectedRange(
+                        new TokenFieldValue.SelectedRange(
+                          {index: lastPlaceholder, offset: 0},
+                          {index: lastPlaceholder, offset: 1}
+                        )
                       )
-                    )
-                  );
+                    );
+                  }
                 }
               }
-            }
-          }}
-          onBlur={e => {
-            if (e.isTrusted) {
-              setFocused(false);
-            }
-          }}
-          onPaste={
-            acceptedAttachmentTypes
-              ? e => {
-                  let clipboardData = e.clipboardData as DataTransfer;
-                  let attachments: PromptFieldAttachment[] = [];
-                  for (let item of clipboardData.items) {
-                    if (item.kind === 'file' && matchMimeType(item.type, acceptedAttachmentTypes)) {
-                      let file = item.getAsFile()!;
-                      attachments.push({
-                        id: crypto.randomUUID(),
-                        file,
-                        image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
-                      });
+            }}
+            onBlur={e => {
+              if (e.isTrusted) {
+                setFocused(false);
+              }
+            }}
+            onPaste={
+              acceptedAttachmentTypes
+                ? e => {
+                    let clipboardData = e.clipboardData as DataTransfer;
+                    let attachments: PromptFieldAttachment[] = [];
+                    for (let item of clipboardData.items) {
+                      if (
+                        item.kind === 'file' &&
+                        matchMimeType(item.type, acceptedAttachmentTypes)
+                      ) {
+                        let file = item.getAsFile()!;
+                        attachments.push({
+                          id: crypto.randomUUID(),
+                          file,
+                          image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+                        });
+                      }
+                    }
+                    if (attachments.length > 0) {
+                      onAddAttachments?.(attachments);
+                      setAttachments(prev => [...prev, ...attachments]);
                     }
                   }
-                  if (attachments.length > 0) {
-                    onAddAttachments?.(attachments);
-                    setAttachments(prev => [...prev, ...attachments]);
-                  }
-                }
-              : undefined
-          }>
-          <TokenInput
-            data-placeholder={
-              placeholder ||
-              stringFormatter.format(
-                size === 'S' ? 'promptfield.placeholder.small' : 'promptfield.placeholder'
-              )
-            }
-            ref={inputRef}
-            className={
-              css('&:empty::before { content: attr(data-placeholder); }') +
-              ' ' +
-              scrollFade({y: 16}) +
-              style<{size: 'S' | 'M'; isFocused: boolean}>({
-                font: {
-                  default: 'ui-lg',
-                  size: {
-                    M: 'ui-lg',
-                    S: 'ui'
-                  }
-                },
-                color: {
-                  default: 'neutral',
-                  ':empty': {
-                    default: 'transparent-overlay-1000/56',
-                    isFocused: 'transparent-overlay-1000/80',
-                    forcedColors: 'GrayText'
-                  }
-                },
-                width: 'full',
-                height: 'full',
-                minHeight: 'calc(1lh + 32px)',
-                maxHeight: '30cqh',
-                overflow: 'auto',
-                paddingY: 16,
-                paddingEnd: 16,
-                scrollPaddingY: 16,
-                boxSizing: 'border-box',
-                outlineStyle: 'none',
-                cursor: 'text',
-                transition: 'colors',
-                transitionDuration: 700,
-                transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
-              })({size, isFocused})
+                : undefined
             }>
-            {useCallback(
-              (token: TokenSegment<PromptFieldTokenValue>) => {
-                if (token.value?.type === 'anchor') {
-                  return <Token>{token.text}</Token>;
-                } else {
-                  return children ? (
-                    children(token)
-                  ) : (
-                    <PromptToken token={token}>{token.text}</PromptToken>
-                  );
-                }
-              },
-              [children]
-            )}
-          </TokenInput>
-        </TokenField>
+            <TokenInput
+              data-placeholder={
+                placeholder ||
+                stringFormatter.format(
+                  size === 'S' ? 'promptfield.placeholder.small' : 'promptfield.placeholder'
+                )
+              }
+              ref={inputRef}
+              className={
+                css('&:empty::before { content: attr(data-placeholder); }') +
+                ' ' +
+                scrollFade({y: 16}) +
+                style<{size: 'S' | 'M'; isFocused: boolean}>({
+                  font: {
+                    default: 'ui-lg',
+                    size: {
+                      M: 'ui-lg',
+                      S: 'ui'
+                    }
+                  },
+                  color: {
+                    default: 'neutral',
+                    ':empty': {
+                      default: 'transparent-overlay-1000/56',
+                      isFocused: 'transparent-overlay-1000/80',
+                      forcedColors: 'GrayText'
+                    }
+                  },
+                  width: 'full',
+                  height: 'full',
+                  minHeight: 'calc(1lh + 32px)',
+                  maxHeight: '30cqh',
+                  overflow: 'auto',
+                  paddingY: 16,
+                  paddingEnd: 16,
+                  scrollPaddingY: 16,
+                  boxSizing: 'border-box',
+                  outlineStyle: 'none',
+                  cursor: 'text',
+                  transition: 'colors',
+                  transitionDuration: 700,
+                  transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
+                })({size, isFocused})
+              }>
+              {useCallback(
+                (token: TokenSegment<PromptFieldTokenValue>) => {
+                  if (token.value?.type === 'anchor') {
+                    return <Token>{token.text}</Token>;
+                  } else {
+                    return children ? (
+                      children(token)
+                    ) : (
+                      <PromptToken token={token}>{token.text}</PromptToken>
+                    );
+                  }
+                },
+                [children]
+              )}
+            </TokenInput>
+          </TokenField>
+        </div>
         <PromptTokenFieldPopover
           filterAnchor={filterAnchor}
           items={useDeferredValue(items)}
@@ -789,15 +796,33 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
   let {filterAnchor, items, isFocused, menuWidth} = props;
   let {inputRef, prompt} = useContext(PromptFieldContext);
 
-  let resolvedItems = items instanceof Promise ? use(items) : items;
-  let isOpen =
-    isFocused && filterAnchor != null && resolvedItems != null && resolvedItems.length > 0;
+  let isPromise = items instanceof Promise;
+  // if not async then the user may have passed a static list of items
+  let staticItems = Array.isArray(items) ? items : null;
 
-  // Cache items so that popover content doesn't flicker to empty while animating out
-  let [menuItems, setMenuItems] = useState(resolvedItems);
-  if (resolvedItems !== menuItems && resolvedItems != null && resolvedItems.length > 0) {
-    setMenuItems(resolvedItems);
-  }
+  // now that the use() call is in the menu, we need to figure out if the promise gave us a empty array so we can close
+  // the popover if no results are returned
+  // however cant use use() here cuz we dont want to suspend the popover because we want the child menu
+  // to update and render a loading spinner
+  let [emptyItems, setEmptyItems] = useState<typeof items>(null);
+  useEffect(() => {
+    if (items instanceof Promise) {
+      let cancelled = false;
+      items.then(resolved => {
+        if (!cancelled && (resolved == null || resolved.length === 0)) {
+          setEmptyItems(items);
+        }
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [items]);
+
+  let isOpen =
+    isFocused &&
+    filterAnchor != null &&
+    ((isPromise && items !== emptyItems) || (staticItems != null && staticItems.length > 0));
 
   let key = 'popover';
   if (filterAnchor) {
@@ -819,16 +844,44 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       isNonModal
       hideArrow
       placement="bottom start"
-      UNSAFE_style={menuWidth != null ? {width: menuWidth} : undefined}
+      // since this is now virtualized we need a fallback width and padding is controled by virtualizeer
+      padding="none"
+      UNSAFE_style={{width: menuWidth ?? 150}}
       key={key}
       getTargetRect={target => {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
-      <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
-        <Menu>{menuItems}</Menu>
-      </PromptCompletionAnchorContext.Provider>
+      <Suspense fallback={<Menu loadingState="loading">{null}</Menu>}>
+        <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
+          <Virtualizer
+            layout={ListLayout}
+            layoutOptions={{
+              estimatedRowHeight: 32,
+              estimatedHeadingHeight: 50,
+              padding: 8
+            }}
+            shouldObserveItemSize>
+            <PromptCompletionMenu items={items} />
+          </Virtualizer>
+        </PromptCompletionAnchorContext.Provider>
+      </Suspense>
     </Popover>
   );
+}
+
+function PromptCompletionMenu(props: {
+  items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
+}) {
+  let {items} = props;
+  let resolvedItems = items instanceof Promise ? use(items) : items;
+
+  // Cache items so that popover content doesn't flicker to empty while animating out.
+  let [menuItems, setMenuItems] = useState(resolvedItems);
+  if (resolvedItems !== menuItems && resolvedItems != null && resolvedItems.length > 0) {
+    setMenuItems(resolvedItems);
+  }
+
+  return <Menu>{menuItems}</Menu>;
 }
 
 export interface PromptTokenProps extends Omit<

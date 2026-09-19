@@ -25,6 +25,7 @@ import {
   renderPromptField,
   tokenTexts
 } from './utils/promptFieldTestUtils';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import userEvent from '@testing-library/user-event';
@@ -57,11 +58,20 @@ describeOrSkip('PromptField', () => {
   let user;
 
   beforeAll(() => {
-    user = userEvent.setup({delay: null});
+    installRangePolyfill();
+    user = userEvent.setup({advanceTimers: jest.advanceTimersByTime});
+    jest.useFakeTimers();
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
   });
 
-  beforeAll(() => {
-    installRangePolyfill();
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   describe('placeholder text', () => {
@@ -107,6 +117,34 @@ describeOrSkip('PromptField', () => {
       await user.keyboard('hello@');
 
       expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    });
+
+    it('renders async loaded items', async () => {
+      let renderCompletions = async function (): Promise<React.ReactNode[]> {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return [<MenuItem key="blah">blah</MenuItem>];
+      };
+
+      render(
+        <PromptField>
+          <PromptTokenField
+            completionTrigger={/(?<=^|\s)[@/]/}
+            renderCompletions={renderCompletions}
+          />
+        </PromptField>
+      );
+
+      await act(async () => {
+        await user.click(screen.getByRole('textbox'));
+        await user.keyboard('@');
+      });
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+
+      await act(async () => {
+        jest.advanceTimersByTime(500);
+      });
+
+      expect(await findMenuItem('blah')).toBeInTheDocument();
     });
   });
 
@@ -498,6 +536,26 @@ describeOrSkip('PromptField', () => {
     await user.keyboard('a');
 
     expect(onKeyDown).toHaveBeenCalled();
+  });
+
+  it('does not fire onKeyDown when selecting a virtually focused completion', async () => {
+    let onKeyDown = jest.fn();
+    let {getByRole} = render(
+      <PromptField>
+        <PromptTokenField
+          completionTrigger={/(?<=^|\s)@/}
+          onKeyDown={onKeyDown}
+          renderCompletions={() => [<MenuItem key="blah">blah</MenuItem>]}
+        />
+      </PromptField>
+    );
+
+    await user.click(getByRole('textbox'));
+    await user.keyboard('@{ArrowDown}');
+    onKeyDown.mockClear();
+    await user.keyboard('{Enter}');
+
+    expect(onKeyDown).not.toHaveBeenCalled();
   });
 
   it('calls onAITermsPress when the AI User Guidelines link is pressed', async () => {
