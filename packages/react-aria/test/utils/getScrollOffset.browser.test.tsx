@@ -122,10 +122,10 @@ function getNativeMaxScrollOffset(element: HTMLElement, axis: Axis): number {
   try {
     let key = axis === 'block' ? 'top' : 'left';
 
-    scrollingElement.scrollTo({[key]: Number.MAX_SAFE_INTEGER});
+    scrollingElement.scrollTo({[key]: 1e6});
     let max = getNativeScrollOffset(element, axis);
 
-    scrollingElement.scrollTo({[key]: Number.MIN_SAFE_INTEGER});
+    scrollingElement.scrollTo({[key]: -1e6});
     let min = getNativeScrollOffset(element, axis);
 
     return max !== 0 ? max : min;
