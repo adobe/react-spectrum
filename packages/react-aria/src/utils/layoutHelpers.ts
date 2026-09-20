@@ -95,8 +95,8 @@ export function getOverflowingElement(node: BoundingNode): Element {
   let ownerWindow = getOwnerWindow(node);
   let ownerDocument = getOwnerDocument(node);
 
-  // A node containing the body element shall assert as its document.
-  if (nodeContains(node, ownerDocument.body)) node = ownerDocument;
+  // A node containing the root element shall assert as its document.
+  if (nodeContains(node, ownerDocument.documentElement)) node = ownerDocument;
 
   if (isDocument(node) && ownerDocument.body == null) {
     return ownerDocument.documentElement;
@@ -128,8 +128,16 @@ export function getContainingElement(node: BoundingNode): Element | null {
   let ownerDocument = getOwnerDocument(node);
 
   // A node containing the body element shall return the initial containing block.
-  if (nodeContains(node, ownerDocument.body)) {
+  if (!isElement(node) || nodeContains(node, ownerDocument.body)) {
     return ownerDocument.documentElement;
+  }
+
+  // A top layer element is positioned relative to the initial containing block
+  // regardless of its ancestors, so it has no offset parent.
+  try {
+    if (node.matches(':popover-open, :modal')) return null;
+  } catch {
+    /** <noop> */
   }
 
   // The offsetParent of an element in most cases equals the containing block.
@@ -141,7 +149,7 @@ export function getContainingElement(node: BoundingNode): Element | null {
   if (offsetParent === ownerDocument.body) {
     let style = ownerWindow.getComputedStyle(offsetParent);
 
-    if (style.position === 'static' && !isContainingBlock(offsetParent)) {
+    if (style.position === 'static' && !isContainingBlock(offsetParent, node)) {
       offsetParent = ownerDocument.documentElement;
     }
   }
@@ -152,12 +160,11 @@ export function getContainingElement(node: BoundingNode): Element | null {
   // The offsetParent is null for 'position: fixed', among a few other cases.
   // Fixed positioned elements are still positioned relative to their
   // containing block, which is not always the viewport — walk the flat tree.
-  let currentNode: Node | null = offsetParent == null ? node : null;
+  // Also walk below a known offsetParent, as it is retargeted past shadow trees.
+  let currentNode: Node | null = node;
 
-  while (currentNode != null) {
-    currentNode = getParentNode(currentNode);
-
-    if (isElement(currentNode) && isContainingBlock(currentNode)) {
+  while ((currentNode = getParentNode(currentNode)) != null && currentNode !== offsetParent) {
+    if (isElement(currentNode) && isContainingBlock(currentNode, node)) {
       return currentNode;
     }
   }

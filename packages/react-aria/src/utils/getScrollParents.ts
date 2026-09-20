@@ -13,67 +13,39 @@
 import {getContainingElement, getScrollingElement} from './layoutHelpers';
 import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
 import {getParentNode, nodeContains} from './shadowdom/DOMFunctions';
-import {isDocument, isElement, isNode, isShadowRoot} from './typeHelpers';
+import {isElement, isNode, isShadowRoot} from './typeHelpers';
 import {isScrollable, ScrollableOptions} from './isScrollable';
 import {ScrollContainer} from '@react-types/shared';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 
-export interface ScrollParentOptions extends ScrollableOptions {
+export interface ScrollGeneratorOptions extends ScrollableOptions {
   /** The ancestor container to stop traversal at. */
   container?: Element | Document | ScrollContainer | null;
 }
 
-export interface ScrollTargetOptions extends ScrollableOptions {
+export interface ScrollParentOptions extends ScrollableOptions {
   /** The ancestor container to stop traversal at. */
-  container?: Element | Document;
+  container?: Element | Document | null;
 }
 
 /**
- * Returns the (scrollable) ancestor for a given scroll alignment query.
- *
- * @deprecated Use 'Array.from(genScrollParents(element))' instead.
+ * Returns all (scrollable) ancestors of a given element.
+ * https://drafts.csswg.org/cssom-view/#dom-htmlelement-scrollparent.
  */
-export function getScrollParents(element: Element, checkForOverflow?: boolean): Element[] {
+export function getScrollParents(element: Element, options?: ScrollParentOptions): Element[];
+/** @deprecated Use 'getScrollParents(element, {scrollable: true})' instead. */
+export function getScrollParents(element: Element, checkForOverflow?: boolean): Element[];
+export function getScrollParents(element: Element, options?: ScrollParentOptions | boolean) {
+  if (typeof options === 'undefined' || typeof options === 'boolean') {
+    return getScrollParents(element, {scrollable: options});
+  }
+
   let scrollGenerator = genScrollParents(element, {
-    scrollable: checkForOverflow,
-    container: 'all'
-  });
-
-  return Array.from(scrollGenerator);
-}
-
-/**
- * Returns the nearest container-bound (scrollable) ancestor of an event target.
- * This effectively translates to the element affected by a touch gesture.
- */
-export function getScrollTarget(
-  target: EventTarget,
-  options: ScrollTargetOptions = {}
-): Element | null {
-  let ownerDocument = getOwnerDocument(target);
-
-  // A scrollable document returns its scrolling element.
-  if (isDocument(target) && isScrollable(ownerDocument, options)) {
-    return getScrollingElement(ownerDocument);
-  }
-
-  if (isDocument(target) || !isElement(target)) {
-    return null;
-  }
-
-  // Similarly, a scrollable element returns itself.
-  if (isScrollable(target, options)) {
-    return target;
-  }
-
-  let scrollGenerator = genScrollParents(target, {
-    container: 'nearest',
+    container: 'all',
     ...options
   });
 
-  let scrollParent = scrollGenerator.next();
-
-  return scrollParent.value;
+  return Array.from(scrollGenerator);
 }
 
 /**
@@ -82,7 +54,7 @@ export function getScrollTarget(
  */
 export function* genScrollParents(
   element: Element,
-  options: ScrollParentOptions = {}
+  options: ScrollGeneratorOptions = {}
 ): Generator<Element, Element | null> {
   let {container = 'all'} = options;
 

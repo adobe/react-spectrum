@@ -10,25 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {genScrollParents} from './getScrollParents';
+import {genScrollParents, ScrollParentOptions} from './getScrollParents';
 import {getOwnerDocument} from './domHelpers';
 import {getScrollingElement} from './layoutHelpers';
 
 /**
  * Returns the nearest (scrollable) ancestor of a given element.
- *
- * @deprecated Use 'getScrollTarget(element.parentElement)' instead.
+ * https://drafts.csswg.org/cssom-view/#dom-htmlelement-scrollparent.
  */
-export function getScrollParent(element: Element, checkForOverflow?: boolean): Element {
+export function getScrollParent(element: Element, options?: ScrollParentOptions): Element;
+/** @deprecated Use 'getScrollParent(element, {scrollable: true})' instead. */
+export function getScrollParent(element: Element, checkForOverflow?: boolean): Element;
+export function getScrollParent(element: Element, options?: ScrollParentOptions | boolean) {
+  if (typeof options === 'undefined' || typeof options === 'boolean') {
+    return getScrollParent(element, {scrollable: options});
+  }
+
   let ownerDocument = getOwnerDocument(element);
 
-  let generator = genScrollParents(element, {
-    scrollable: checkForOverflow,
-    container: 'nearest'
+  let scrollGenerator = genScrollParents(element, {
+    container: 'nearest',
+    ...options
   });
 
-  let cursor = generator.next();
+  let scrollParent = scrollGenerator.next();
 
-  // Fallback is a bug, but is kept for backwards compatibility.
-  return cursor.value ?? getScrollingElement(ownerDocument);
+  // TODO(later): Fallback is a bug, remove after auditing call sites.
+  return scrollParent.value ?? getScrollingElement(ownerDocument);
 }

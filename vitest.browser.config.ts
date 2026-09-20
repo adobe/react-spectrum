@@ -198,6 +198,8 @@ declare module 'vitest/browser' {
     mouseDownOnElement: (selector: string, offsetX?: number, offsetY?: number) => Promise<void>;
     // Same as above
     mouseUp: () => Promise<void>;
+    // Wheel input at the current pointer position.
+    wheel: (deltaX: number, deltaY: number) => Promise<void>;
   }
 }
 
@@ -250,6 +252,8 @@ export default defineConfig({
   test: {
     globals: true,
     pool: 'threads',
+    reporters: ['tree'],
+    fileParallelism: false,
     setupFiles: ['./test/browser/setup.ts'],
     include: ['packages/**/test/**/*.browser.test.{ts,tsx}'],
     browser: {
@@ -324,14 +328,20 @@ export default defineConfig({
           offsetX: number = 5,
           offsetY?: number
         ) => {
-          const box = await iframe.locator(selector).boundingBox();
-          const x = box.x + offsetX;
-          const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY;
+          const locator = iframe.locator(selector);
+          const box = await locator.boundingBox();
+          const width = await locator.evaluate((el: Element) => el.getBoundingClientRect().width);
+          const scale = box.width / width;
+          const x = box.x + offsetX * scale;
+          const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY * scale;
           await page.mouse.move(x, y);
           await page.mouse.down();
         },
         mouseUp: async ({page}: any) => {
           await page.mouse.up();
+        },
+        wheel: async ({page}: any, deltaX: number, deltaY: number) => {
+          await page.mouse.wheel(deltaX, deltaY);
         }
       }
     },

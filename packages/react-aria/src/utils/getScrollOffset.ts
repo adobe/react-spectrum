@@ -11,8 +11,9 @@
  */
 
 import {Axis, BoundingNode} from '@react-types/shared';
+import {getOverflowingElement, getScrollingElement, getWritingElement} from './layoutHelpers';
 import {getOwnerDocument, getOwnerWindow} from './domHelpers';
-import {getScrollingElement, getWritingElement} from './layoutHelpers';
+import {isDocument} from './typeHelpers';
 import {nodeContains} from './shadowdom/DOMFunctions';
 
 export function getScrollLeft(node: BoundingNode): number {
@@ -58,24 +59,43 @@ function getScrollOffset(node: BoundingNode, axis: Axis): number {
 }
 
 function getMaxScrollOffset(node: BoundingNode, axis: Axis): number {
+  let ownerWindow = getOwnerWindow(node);
   let ownerDocument = getOwnerDocument(node);
 
-  let scrollingElement = getScrollingElement(node);
   let rootScrollingElement = getScrollingElement(ownerDocument);
+  let rootOverflowingElement = getOverflowingElement(ownerDocument);
 
   // A node containing the root scrolling element shall assert as its document.
-  let client = nodeContains(node, rootScrollingElement)
-    ? ownerDocument.documentElement
-    : (node as Element);
+  if (nodeContains(node, rootScrollingElement)) node = ownerDocument;
 
+  // Overflow on the body and root may be propagated to the viewport, so 'visible'
+  // becomes 'auto' and 'clip' turns into 'hidden'. If an element propagates
+  // its overflow, its own overflow is always a 'visible' used value, so bail out.
+  // https://drafts.csswg.org/css-overflow/#overflow-propagation
+  if (node === rootOverflowingElement) return 0;
+
+  let scrollingElement = getScrollingElement(node);
+  let overflowingElement = getOverflowingElement(node);
+
+  let style = ownerWindow.getComputedStyle(overflowingElement);
+  let [overflowX, overflowY = overflowX] = String(style.overflow).split(' ');
+
+  let isScrollableBlock = /(auto|scroll|hidden)/.test(overflowY + style.overflowY);
+  let isScrollableInline = /(auto|scroll|hidden)/.test(overflowX + style.overflowX);
+
+  // Bail if an element is not scrollable in the given axis.
+  if (axis === 'block' && !isScrollableBlock && !isDocument(node)) return 0;
+  if (axis === 'inline' && !isScrollableInline && !isDocument(node)) return 0;
+
+  // Otherwise, measure the scrollable range in the current direction.
   let scrollSize = axis === 'block' ? scrollingElement.scrollHeight : scrollingElement.scrollWidth;
-  let clientSize = axis === 'block' ? client.clientHeight : client.clientWidth;
+  let clientSize = axis === 'block' ? scrollingElement.clientHeight : scrollingElement.clientWidth;
 
   switch (getScrollDirection(node, axis)) {
     case 'ascending':
       return Math.max(0, scrollSize - clientSize);
     case 'descending':
-      return Math.max(0, scrollSize - clientSize) * -1;
+      return Math.min(0, clientSize - scrollSize);
   }
 }
 
@@ -83,21 +103,27 @@ function getScrollDirection(node: BoundingNode, axis: Axis): 'ascending' | 'desc
   let ownerWindow = getOwnerWindow(node);
   let ownerDocument = getOwnerDocument(node);
 
-  let scrollingElement = getScrollingElement(node);
   let rootScrollingElement = getScrollingElement(ownerDocument);
 
   // A node containing the root scrolling element shall assert as its document.
-  let style = nodeContains(node, rootScrollingElement)
-    ? ownerWindow.getComputedStyle(getWritingElement(ownerDocument))
-    : ownerWindow.getComputedStyle(getWritingElement(node));
+  if (nodeContains(node, rootScrollingElement)) node = ownerDocument;
+
+  let writingElement = getWritingElement(node);
+  let style = ownerWindow.getComputedStyle(writingElement);
 
   let isFlexDisplay = /flex/.test(style.display);
   let isFlexReverseBlock = /column-reverse/.test(style.flexDirection);
   let isFlexReverseInline = /row-reverse/.test(style.flexDirection);
 
-  // https://bugs.webkit.org/show_bug.cgi?id=313748
+  // A viewport is never a flex container, so it only follows the writing direction
+  // and any reversed content falls outside of its scrollable overflow region.
+  // https://drafts.csswg.org/css-overflow/#scrollable-overflow-region
   if (axis === 'block' && isFlexDisplay && isFlexReverseBlock) {
-    return scrollingElement === rootScrollingElement ? 'ascending' : 'descending';
+    return isDocument(node) ? 'ascending' : 'descending';
+  }
+
+  if (axis === 'inline' && isFlexDisplay && isFlexReverseInline && isDocument(node)) {
+    return style.direction === 'rtl' ? 'descending' : 'ascending';
   }
 
   if (axis === 'inline' && isFlexDisplay && isFlexReverseInline) {
