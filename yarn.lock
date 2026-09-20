@@ -6285,22 +6285,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/workers@npm:2.16.3":
-  version: 2.16.3
-  resolution: "@parcel/workers@npm:2.16.3"
-  dependencies:
-    "@parcel/diagnostic": "npm:2.16.3"
-    "@parcel/logger": "npm:2.16.3"
-    "@parcel/profiler": "npm:2.16.3"
-    "@parcel/types-internal": "npm:2.16.3"
-    "@parcel/utils": "npm:2.16.3"
-    nullthrows: "npm:^1.1.1"
-  peerDependencies:
-    "@parcel/core": ^2.16.3
-  checksum: 10c0/75a051d955ca9b6e58b93d0170638097bc1a8e979f9b952f5ec95addb3a00e05d339d7ee3b124ab55ef0709aef30d587b0fd2a493007055b2db26b4a289b6f8f
-  languageName: node
-  linkType: hard
-
 "@parcel/workers@npm:2.16.4":
   version: 2.16.4
   resolution: "@parcel/workers@npm:2.16.4"

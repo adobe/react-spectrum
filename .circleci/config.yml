@@ -678,23 +678,6 @@ jobs:
           paths:
             - '*/verdaccio/next'
 
-  v-next-turbopack:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - attach_workspace:
-          at: /tmp/verdaccio-workspace
-
-      - run:
-          name: build next-app-turbopack off verdaccio
-          command: |
-            ./scripts/verdaccio-ci.sh
-            ./scripts/verdaccio-build-next-turbopack.sh
-          environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
-
   v-rac-rsp-tailwind:
     executor: rsp-xlarge
     steps:
@@ -1065,9 +1048,6 @@ workflows:
           requires:
             - verdaccio
       - v-nextjs:
-          requires:
-            - verdaccio
-      - v-next-turbopack:
           requires:
             - verdaccio
       - v-rac-rsp-tailwind:
