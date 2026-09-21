@@ -508,7 +508,7 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   let isInteractionDisabled = isDisabled || isReadOnly;
 
   let domRef = useObjectRef(ref);
-  let uniqueId = React.useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  let uniqueId = `checkbox-${Math.random().toString(36).substr(2, 9)}`;
   useHiddenInputAnchor(domRef, inputRef, `--react-aria-checkbox-${uniqueId}`);
 
   let {hoverProps, isHovered} = useHover({

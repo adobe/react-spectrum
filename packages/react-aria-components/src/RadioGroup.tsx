@@ -475,7 +475,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let interactionDisabled = isDisabled || state.isReadOnly;
 
   let domRef = useObjectRef(ref);
-  let uniqueId = React.useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  let uniqueId = `radio-${Math.random().toString(36).substr(2, 9)}`;
   useHiddenInputAnchor(domRef, inputRef, `--react-aria-radio-${uniqueId}`);
 
   let {hoverProps, isHovered} = useHover({
