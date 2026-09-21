@@ -506,7 +506,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       ref={ref}
       style={{
         ...props.style, 
-        ['anchorName' as any]: props.style?.anchorName ?? `--react-aria-radio-${uniqueId}`
+        ['anchorName' as any]: (props.style as any)?.anchorName ?? `--react-aria-radio-${uniqueId}`
       }}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}
@@ -524,7 +524,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           style={{
             position: 'fixed',
             margin: 0,
-            ['positionAnchor' as any]: props.style?.anchorName ?? `--react-aria-radio-${uniqueId}`,
+            ['positionAnchor' as any]: (props.style as any)?.anchorName ?? `--react-aria-radio-${uniqueId}`,
             top: 'anchor(top)',
             left: 'anchor(left)',
             width: 'anchor-size(width)',
