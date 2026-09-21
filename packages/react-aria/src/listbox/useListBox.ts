@@ -152,7 +152,7 @@ export function useListBox<T>(
     ref,
     selectionManager: state.selectionManager,
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: props.isDisabled ? new Set(state.collection.getKeys()) : state.disabledKeys,
     linkBehavior
   });
 
@@ -166,6 +166,7 @@ export function useListBox<T>(
   let id = useId(props.id);
   listData.set(state, {
     id,
+    isDisabled: props.isDisabled,
     shouldUseVirtualFocus: props.shouldUseVirtualFocus,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp,
     shouldFocusOnHover: props.shouldFocusOnHover,
