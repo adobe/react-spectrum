@@ -106,8 +106,10 @@ it('the hidden input respects a custom anchor-name provided via CSS', async () =
 
   if (supportsAnchorPositioning()) {
     expect(getComputedStyle(label).getPropertyValue('anchor-name').trim()).toBe('--custom-anchor');
-    expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe('--custom-anchor');
-    
+    expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe(
+      '--custom-anchor'
+    );
+
     let labelRect = rect(label);
     let inputRect = rect(input);
     expect(covers(inputRect, labelRect)).toBe(true);
