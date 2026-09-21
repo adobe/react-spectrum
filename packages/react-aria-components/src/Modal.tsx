@@ -37,9 +37,9 @@ import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsSSR} from 'react-aria/SSRProvider';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
-import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
 export interface ModalOverlayProps
   extends

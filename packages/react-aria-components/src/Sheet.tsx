@@ -40,14 +40,15 @@ export function Sheet(props: SheetProps) {
     contextState!.close();
   });
 
+  let {axis, before, after, maxScroll, enteredScroll, containerOffset, length} =
+    getSwipeConfig(swipeDirection);
+
   let [isExpanded, setExpanded] = useState(false);
   let ref = useCallback(
     (element: HTMLDivElement) => {
       if (!element) {
         return;
       }
-
-      let {axis, enteredScroll} = getSwipeConfig(swipeDirection);
 
       // Expose whether the sheet is resting at its fully-entered detent (all of it revealed). Apps
       // can use `[data-expanded]` to only make the sheet's inner content scrollable once expanded,
@@ -77,11 +78,9 @@ export function Sheet(props: SheetProps) {
       updateExpanded();
       return addScrollEndListener(element, onScrollEnd);
     },
-    [onClose, swipeDirection]
+    [onClose, swipeDirection, axis, enteredScroll]
   );
 
-  let {axis, before, after, maxScroll, enteredScroll, containerOffset, length} =
-    getSwipeConfig(swipeDirection);
   // The sheet crosses a single viewport edge (the swipe edge), so map the animation to just that
   // crossing. In view-timeline terms `entry` is the scrollport's end edge (bottom/right, where the
   // sheet appears from) and `exit` is the start edge (top/left). Direction is chosen so progress 0
@@ -125,7 +124,7 @@ export function Sheet(props: SheetProps) {
         // The container is 2 viewports along the swipe axis and 1 viewport on the cross axis.
         height: axis === 'y' ? '200dvh' : '100dvh',
         width: axis === 'x' ? '200vw' : '100vw',
-        overflow: 'auto',
+        overflow: isDismissable ? 'auto' : 'hidden',
         scrollSnapType: `${axis} mandatory`,
         overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
         overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
@@ -470,12 +469,15 @@ function addScrollEndListener(element: Element, cb: () => void, options?: {once?
       }, 300);
     };
 
+    // TODO: This event doesn't bubble anyway so I don't understand this lint rule.
+    // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
     element.addEventListener('scroll', onScroll);
     return () => {
       element.removeEventListener('scroll', onScroll);
     };
   }
 
+  // oxlint-disable-next-line rsp-rules/no-non-composing-event-listener
   element.addEventListener('scrollend', cb, options);
   return () => element.removeEventListener('scrollend', cb);
 }

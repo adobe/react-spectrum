@@ -36,6 +36,10 @@
   &[data-swipe-direction='left'] {
     animation-range: exit calc(100% - var(--sheet-snap-0, 100%)) exit 100%;
   }
+
+  @supports not (animation-timeline: view()) {
+    animation: none;
+  }
 }
 
 .sheet-container {
@@ -56,6 +60,17 @@
   &[data-swipe-direction='top'],
   &[data-swipe-direction='left'] {
     animation-range: exit exit calc(100% - var(--sheet-snap-0, 0%));
+  }
+
+  @supports not (animation-timeline: view()) {
+    animation: none;
+    transition: background-color 300ms;
+    background: rgb(0 0 0 / 0.4);
+
+    &[data-entering],
+    &[data-exiting] {
+      background: rgb(0 0 0 / 0);
+    }
   }
 }
 

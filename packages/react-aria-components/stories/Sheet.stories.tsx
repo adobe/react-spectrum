@@ -13,7 +13,7 @@
 import {Button, Dialog, DialogTrigger, Heading} from 'react-aria-components';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Sheet, SheetContent, SheetUnderlay} from '../src/Sheet';
+import {Sheet, SheetContent} from '../src/Sheet';
 import './Sheet.css';
 
 export default {
