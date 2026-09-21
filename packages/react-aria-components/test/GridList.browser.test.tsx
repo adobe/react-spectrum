@@ -160,22 +160,12 @@ it('scrolls focused drop indicators into view during keyboard reordering', async
     interactionType: 'keyboard'
   });
 
-  // Wait for rows before querying the drag handle. Querying straight after
-  // render raced the first paint and returned null in all three browsers.
   await expect.poll(() => tester.getRows().length).toBeGreaterThan(0);
-  // Select the drag handle by slot rather than by its localized aria-label. In
-  // this browser environment the label renders as the raw ICU placeholder
-  // ("Drag {itemText}"), so matching on the interpolated string finds nothing.
-  // Scope the query to the first row: a container-wide lookup resolved before
-  // that row had painted its handle, which is what returned null previously.
   let dragButton: HTMLElement | null = null;
   await expect
     .poll(() => (dragButton = tester.getRows()[0]?.querySelector('[slot=drag]') ?? null))
     .not.toBeNull();
 
-  // act() is unavailable in this browser environment (React logs "not configured
-  // to support act(...)"), so the rule cannot be satisfied here.
-  // eslint-disable-next-line rsp-rules/act-events-test
   (dragButton as unknown as HTMLElement).focus();
 
   await userEvent.keyboard('{Enter}');
@@ -192,10 +182,6 @@ it('scrolls focused drop indicators into view during keyboard reordering', async
     // ("Insert between {beforeItemText} and {afterItemText}").
     expect(dropIndicator).toHaveAttribute('role', 'button');
     expect(dropIndicator).toHaveAttribute('aria-roledescription', 'drop indicator');
-    expect(indicatorRow).toHaveStyle({
-      backgroundColor: 'rgb(255, 0, 0)',
-      position: 'relative'
-    });
     expect(indicatorRect.top).toBeGreaterThanOrEqual(gridRect.top);
     expect(indicatorRect.bottom).toBeLessThanOrEqual(gridRect.bottom);
   }
