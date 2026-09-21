@@ -1115,11 +1115,9 @@ describe('getScrollParents (legacy)', () => {
 
       let expected = getNativeScrollParents(element);
       let actualPotential = getScrollParents(element);
-      let actual = getScrollParents(element, true);
 
       expect(expected).toEqual([]);
       expect(actualPotential).toEqual([rootRef.current]);
-      expect(actual).toEqual([rootRef.current]);
     });
 
     it('should return the root scrolling element under a scrollable root', async () => {
@@ -1839,6 +1837,35 @@ describe.skipIf(!supportsModernSignature())('getScrollParents', () => {
       let actual = getScrollParents(ref.current!, {container: containerRef.current});
 
       expect(actual).toEqual([nearestRef.current]);
+    });
+
+    it('should include the boundary itself', async () => {
+      let ref = createRef<HTMLDivElement>();
+      let nearestRef = createRef<HTMLDivElement>();
+      let containerRef = createRef<HTMLDivElement>();
+
+      await render(
+        <Document doctype="html">
+          <html lang="en-US">
+            <body>
+              <div className="content scroll-y" />
+              <div className="container overflow-auto" ref={containerRef}>
+                <div className="content scroll-y" />
+                <div className="container overflow-auto" ref={nearestRef}>
+                  <div className="content scroll-y" />
+                  <div ref={ref} />
+                </div>
+              </div>
+            </body>
+          </html>
+        </Document>
+      );
+
+      let expected = getNativeScrollParents(ref.current!);
+      let actual = getScrollParents(ref.current!, {container: containerRef.current});
+
+      expect(actual).toEqual([nearestRef.current, containerRef.current]);
+      expect(actual).toEqual(expected.slice(0, 2));
     });
   });
 
