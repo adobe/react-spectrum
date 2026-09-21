@@ -116,10 +116,14 @@ export function useDrag(options: DragOptions): DragResult {
   }).current;
   state.options = options;
   let isDraggingRef = useRef<Element | null>(null);
+  let isMounted = useRef(true);
   let [isDragging, setDraggingState] = useState(false);
   let setDragging = (element: Element | null) => {
     isDraggingRef.current = element;
-    setDraggingState(!!element);
+    // A virtual drag can finish after its source component unmounts.
+    if (isMounted.current) {
+      setDraggingState(!!element);
+    }
   };
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
   let modalityOnPointerDown = useRef<string>(null);
@@ -286,7 +290,9 @@ export function useDrag(options: DragOptions): DragResult {
   // when a tree's source branch collapses).
 
   useEffect(() => {
+    isMounted.current = true;
     return () => {
+      isMounted.current = false;
       // Check that the dragged element has actually unmounted from the DOM and not a React Strict Mode false positive.
       // https://github.com/facebook/react/issues/29585
       // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
