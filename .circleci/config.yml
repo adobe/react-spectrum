@@ -426,9 +426,9 @@ jobs:
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
             node scripts/testCJS.cjs
 
-      - run:
-          name: install ts-extractor dependencies
-          command: cd rsp-api-checker/ts-extractor && npm ci
+      # Type extraction now uses the repo's Parcel 3 binary
+      # (node_modules/.bin/parcel3 + @parcel/transformer-ts-doc), provided by the
+      # restored react-spectrum node_modules cache — no separate install step.
 
       - run:
           name: extract branch API
@@ -520,9 +520,9 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
       - attach_workspace:
           at: ~/react-spectrum
-      - run:
-          name: install ts-extractor dependencies
-          command: cd rsp-api-checker/ts-extractor && npm ci
+      # Type extraction now uses the repo's Parcel 3 binary
+      # (node_modules/.bin/parcel3 + @parcel/transformer-ts-doc), provided by the
+      # restored react-spectrum node_modules cache — no separate install step.
       - run:
           name: extract published API
           command: |

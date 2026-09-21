@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 
-use crate::workspace::run_extractor;
+use crate::extract::{discover_packages_fs, extract_packages, ExtractOpts, PackageEntry};
 use crate::workspaces::discover_workspaces;
 
 #[derive(Debug)]
@@ -44,51 +44,38 @@ pub async fn execute(opts: GetLocalOpts) -> Result<()> {
             .context("removing existing output directory")?;
     }
 
-    // Ask yarn for the authoritative set of workspace packages and pass the
-    // list through to the extractor. This avoids the extractor's fragile
-    // depth-4 fs-walk, which silently drops any package published outside the
-    // assumed layout. Fall back to fs-walk (workspaces_file = None) when yarn
-    // isn't available.
     std::fs::create_dir_all(&opts.output_dir)
         .context("creating output directory")?;
+
+    // Prefer yarn's workspace list (honors the repo's workspaces globs +
+    // private flag); fall back to a filesystem walk when yarn is unavailable.
     let t_discover = std::time::Instant::now();
-    let workspaces_file = match discover_workspaces(&opts.repo_root).await? {
+    let entries: Vec<PackageEntry> = match discover_workspaces(&opts.repo_root).await? {
         Some(workspaces) => {
-            println!(
-                "Using yarn workspaces list: {} public packages",
-                workspaces.len()
-            );
-            let path = opts.output_dir.join(".workspaces.json");
-            let json: Vec<serde_json::Value> = workspaces
-                .iter()
-                .map(|w| {
-                    serde_json::json!({
-                        "name": w.name,
-                        "location": w.location.to_string_lossy(),
-                    })
-                })
-                .collect();
-            std::fs::write(&path, serde_json::to_string(&json)?)
-                .context("writing workspaces file")?;
-            Some(path)
+            println!("Using yarn workspaces list: {} public packages", workspaces.len());
+            workspaces
+                .into_iter()
+                .map(|w| PackageEntry { name: w.name, dir: w.location, private: false })
+                .collect()
         }
         None => {
-            println!("yarn workspaces list unavailable — using extractor fs walk");
-            None
+            println!("yarn workspaces list unavailable — using filesystem walk");
+            discover_packages_fs(&packages_dir)
         }
     };
     let discover_elapsed = t_discover.elapsed();
 
-    // Run the TypeScript extractor directly on the local packages.
-    // Pass `check_build_freshness = true` so we fail loudly if any package's
-    // src/ is newer than its dist/types/ — that means `yarn build` is overdue
-    // and the diff would silently drop newly-added props.
+    // check_build_freshness = true: fail loudly if any package's src/ is newer
+    // than its dist/types/ — a stale build would silently drop new props.
     let t_extract = std::time::Instant::now();
-    run_extractor(
-        &packages_dir,
-        &opts.output_dir,
-        true,
-        workspaces_file.as_deref(),
+    extract_packages(
+        &entries,
+        &ExtractOpts {
+            repo_root: opts.repo_root.clone(),
+            output_dir: opts.output_dir.clone(),
+            check_build_freshness: true,
+            allow_empty: false,
+        },
     )
     .await?;
     let extract_elapsed = t_extract.elapsed();

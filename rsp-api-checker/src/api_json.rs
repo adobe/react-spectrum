@@ -23,7 +23,6 @@ pub enum TypeNode {
     Null,
     Undefined,
     Void,
-    Unknown,
     Never,
     This,
     Symbol,
@@ -113,6 +112,14 @@ pub enum TypeNode {
     },
     Link {
         id: Option<String>,
+    },
+    Reference {
+        #[serde(default)]
+        local: Option<String>,
+        #[serde(default)]
+        imported: Option<String>,
+        #[serde(default)]
+        specifier: Option<String>,
     },
 
     // ── Declarations ────────────────────────────────────────────────────
@@ -215,6 +222,17 @@ pub enum TypeNode {
         #[serde(default)]
         rest: bool,
     },
+
+    /// TypeScript's `unknown` type. Also serves as the catch-all for any
+    /// node `"type"` not otherwise modelled above (`#[serde(other)]`), so
+    /// an unrecognized future transformer-ts-doc node degrades gracefully
+    /// instead of failing deserialization of the whole package.
+    ///
+    /// Declared last (rather than grouped with the other primitives above)
+    /// because serde requires `#[serde(other)]` to be on the enum's final
+    /// variant.
+    #[serde(other)]
+    Unknown,
 }
 
 /// Parameters can come as either `[param, param, ...]` or `{ name: param, ... }`.
@@ -450,6 +468,25 @@ mod tests {
     fn test_link_no_id() {
         let node = parse_node(r#"{"type":"link"}"#);
         assert!(matches!(node, TypeNode::Link { id: None }));
+    }
+
+    #[test]
+    fn parses_reference_node() {
+        let node = parse_node(r#"{"type":"reference","local":"Foo","imported":"Foo","specifier":"@scope/pkg"}"#);
+        match node {
+            TypeNode::Reference { local, imported, specifier } => {
+                assert_eq!(local.as_deref(), Some("Foo"));
+                assert_eq!(imported.as_deref(), Some("Foo"));
+                assert_eq!(specifier.as_deref(), Some("@scope/pkg"));
+            }
+            other => panic!("expected Reference, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn unknown_node_type_falls_back_to_unknown() {
+        let node = parse_node(r#"{"type":"someFutureNode","foo":123}"#);
+        assert!(matches!(node, TypeNode::Unknown), "expected Unknown, got {node:?}");
     }
 
     // ── Declarations ──────────────────────────────────────────────────────

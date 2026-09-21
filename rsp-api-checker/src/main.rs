@@ -7,6 +7,7 @@
 //!
 //! - `get-published-api` — Download published packages from npm, extract `.d.ts` API
 //! - `get-local-api` — Extract API from a local build's `.d.ts` files
+//! - `get-ref-api` — Build an arbitrary git ref's API into a snapshot directory
 //! - `compare` — Diff two API snapshots and show changes
 
 use rsp_api_check::commands;
@@ -74,6 +75,40 @@ enum Commands {
         timing: bool,
     },
 
+    /// Build an arbitrary git ref's API into a snapshot directory.
+    ///
+    /// Snapshots the ref's tracked files via `git archive` (a pure read of
+    /// the object store — the working tree, root `node_modules`, and `.git`
+    /// are never touched), builds it in an isolated temp directory with its
+    /// own `yarn install` + `yarn build`, then extracts its type API the
+    /// same way `get-local-api` does. Lets you `compare` your branch against
+    /// a *built* ref instead of against published npm.
+    #[command(name = "get-ref-api")]
+    GetRefApi {
+        /// Root of the react-spectrum monorepo (source of the git ref).
+        #[arg(long, default_value = ".")]
+        repo_root: PathBuf,
+
+        /// Output directory for the extracted API files.
+        #[arg(long, short, default_value = "dist/base-api")]
+        output: PathBuf,
+
+        /// Git ref (branch, tag, or SHA) to build.
+        #[arg(long = "ref", default_value = "main")]
+        git_ref: String,
+
+        /// Run `git fetch` first, so e.g. `--ref origin/main` is truly latest.
+        /// Off by default; the only thing this flag is allowed to touch is
+        /// `.git`, and only remote-tracking refs.
+        #[arg(long)]
+        fetch: bool,
+
+        /// Keep the temp build directory instead of removing it when the
+        /// command finishes. Useful for debugging a failed build.
+        #[arg(long)]
+        keep: bool,
+    },
+
     /// Collect environment + per-package state so CI and local runs can be
     /// diffed to pinpoint cross-package TS resolution failures.
     ///
@@ -112,7 +147,13 @@ enum Commands {
         package: Option<String>,
 
         /// Only compare a specific interface name.
-        #[arg(long, name = "interface")]
+        // `long = "interface"` is the documented flag (README) and the original
+        // intent; the bare `#[arg(long)]` had derived `--interface-filter` from
+        // the field name, while `name = "interface"` only set the value-name
+        // placeholder (not the flag) — so `--interface` never actually worked.
+        // Keep `--interface-filter` as a hidden alias so the accidental flag
+        // that did work doesn't break for anyone relying on it.
+        #[arg(long = "interface", alias = "interface-filter", value_name = "interface")]
         interface_filter: Option<String>,
 
         /// Output GitHub-flavored markdown (for CI comments).
@@ -160,6 +201,17 @@ async fn main() -> anyhow::Result<()> {
                 repo_root,
                 output_dir: output,
                 timing,
+            })
+            .await?;
+        }
+
+        Commands::GetRefApi { repo_root, output, git_ref, fetch, keep } => {
+            commands::get_ref::execute(commands::get_ref::GetRefOpts {
+                repo_root,
+                output_dir: output,
+                git_ref,
+                fetch,
+                keep,
             })
             .await?;
         }

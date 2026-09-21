@@ -6,6 +6,12 @@ bottom.
 
 ## Summary
 
+> **Update (2026-09):** The Node `ts-extractor` has been replaced by the Parcel 3
+> `@parcel/transformer-ts-doc` binary (see
+> `docs/2026-09-21-parcel3-transformer-extractor-design.md`). Audit items that
+> referenced `extract-api.ts`/`utils.ts` line numbers (A1, B2, B3, C2, C5, D1–D3)
+> now apply to `src/extract.rs` or are obsolete.
+
 The tool is architecturally sound: single `ts.Program` reused across packages,
 symmetric discovery between Rust and TS, graceful error handling. The biggest
 opportunities are around **speed** (no caching between runs, no

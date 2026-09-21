@@ -1,12 +1,16 @@
 //! Helpers for setting up temporary workspaces and running subprocesses.
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Stdio;
 
 use anyhow::{bail, Context, Result};
 use tokio::process::Command;
 
 /// Run a command, inheriting stdio. Fails if exit code is non-zero.
+///
+/// For the long-running, chatty subprocesses (`git fetch`, `yarn install`,
+/// `yarn build`, …) where the user wants to see live output rather than a
+/// captured blob after the fact.
 pub async fn run(cmd: &str, args: &[&str], cwd: &Path) -> Result<()> {
     println!("  $ {} {}", cmd, args.join(" "));
     let status = Command::new(cmd)
@@ -134,94 +138,6 @@ pub async fn run_capture(cmd: &str, args: &[&str], cwd: &Path) -> Result<String>
         );
     }
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
-}
-
-/// Resolve the path to the ts-extractor script, looking in several locations.
-pub fn find_extractor_script() -> Result<PathBuf> {
-    // 1. Next to the binary
-    let exe = std::env::current_exe()?;
-    let exe_dir = exe.parent().unwrap();
-    let candidates = [
-        exe_dir.join("ts-extractor").join("extract-api.ts"),
-        exe_dir
-            .join("..")
-            .join("ts-extractor")
-            .join("extract-api.ts"),
-        // When running from the project directory
-        PathBuf::from("ts-extractor").join("extract-api.ts"),
-    ];
-
-    for candidate in &candidates {
-        if candidate.exists() {
-            return Ok(candidate.canonicalize()?);
-        }
-    }
-
-    bail!(
-        "Could not find ts-extractor/extract-api.ts. \
-         Looked in: {}",
-        candidates
-            .iter()
-            .map(|p| p.display().to_string())
-            .collect::<Vec<_>>()
-            .join(", ")
-    );
-}
-
-/// Run the TypeScript API extractor on a packages directory.
-///
-/// When `workspaces_file` is `Some`, its path is passed through as
-/// `--workspaces-file` so the extractor uses the yarn-supplied list instead
-/// of doing its own fs-walk.
-pub async fn run_extractor(
-    packages_dir: &Path,
-    output_dir: &Path,
-    check_build_freshness: bool,
-    workspaces_file: Option<&Path>,
-) -> Result<()> {
-    let script = find_extractor_script()?;
-    let script_dir = script.parent().unwrap();
-
-    // Resolve to absolute paths so they work regardless of subprocess cwd
-    let abs_packages = std::fs::canonicalize(packages_dir)
-        .context(format!("resolving packages dir: {}", packages_dir.display()))?;
-    let abs_output = std::env::current_dir()?.join(output_dir);
-    std::fs::create_dir_all(&abs_output)
-        .context(format!("creating output dir: {}", abs_output.display()))?;
-    let abs_output = std::fs::canonicalize(&abs_output)?;
-
-    // Ensure ts-extractor dependencies are installed
-    let node_modules = script_dir.join("node_modules");
-    if !node_modules.exists() {
-        println!("Installing ts-extractor dependencies...");
-        run("npm", &["install", "--no-audit", "--no-fund"], script_dir).await?;
-    }
-
-    println!("Running API extractor...");
-    let abs_packages_str = abs_packages.to_str().unwrap().to_string();
-    let abs_output_str = abs_output.to_str().unwrap().to_string();
-    let workspaces_str = workspaces_file.map(|p| p.to_string_lossy().into_owned());
-
-    let mut extractor_args: Vec<&str> = vec![
-        "tsx",
-        script.to_str().unwrap(),
-        "--packages-dir",
-        &abs_packages_str,
-        "--output-dir",
-        &abs_output_str,
-    ];
-    // Only meaningful against the local workspace — published tarballs are
-    // immutable, so mtimes there don't represent "out of date".
-    if check_build_freshness {
-        extractor_args.push("--check-build-freshness");
-    }
-    if let Some(ws) = &workspaces_str {
-        extractor_args.push("--workspaces-file");
-        extractor_args.push(ws);
-    }
-    run("npx", &extractor_args, script_dir).await?;
-
-    Ok(())
 }
 
 #[cfg(test)]

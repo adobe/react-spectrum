@@ -6,8 +6,9 @@ use std::path::{Path, PathBuf};
 use anyhow::{Context, Result};
 use tempfile::TempDir;
 
+use crate::extract::{extract_packages, ExtractOpts, PackageEntry};
 use crate::npm::get_published_packages;
-use crate::workspace::{run_extractor, run_npm_install, write_package_json};
+use crate::workspace::{run_npm_install, write_package_json};
 use crate::workspaces::discover_workspaces;
 
 #[derive(Debug)]
@@ -177,18 +178,32 @@ pub async fn execute(opts: GetPublishedOpts) -> Result<()> {
     .await?;
     let install_elapsed = t_install.elapsed();
 
-    // 3. Run the TypeScript extractor on the installed packages
-    //    The extractor looks for package.json files with `types` entries
-    //    under the given directory. npm installs into node_modules/.
+    // 3. Extract each installed package's .d.ts via the parcel3 driver.
+    //    Entries point at the tmp install's node_modules; transformer-ts-doc
+    //    resolves cross-package types from there, while its plugin + the
+    //    parcel3 binary resolve from the repo's node_modules (via repo_root).
+    //    check_build_freshness = false: published tarballs are immutable.
     let nm_dir = tmp_dir.join("node_modules");
-    // check_build_freshness = false: published tarballs are immutable, so
-    // their src/ vs dist/types/ mtime relationship doesn't mean the build
-    // is stale — it's whatever npm chose to include.
-    //
-    // No workspaces_file: the tmp node_modules isn't a yarn workspace — it's
-    // whatever npm installed. Fall back to the extractor's fs-walk.
+    let entries: Vec<PackageEntry> = published
+        .iter()
+        .map(|p| PackageEntry {
+            name: p.name.clone(),
+            dir: nm_dir.join(&p.name),
+            private: false,
+        })
+        .collect();
+
     let t_extract = std::time::Instant::now();
-    run_extractor(&nm_dir, &opts.output_dir, false, None).await?;
+    extract_packages(
+        &entries,
+        &ExtractOpts {
+            repo_root: opts.repo_root.clone(),
+            output_dir: opts.output_dir.clone(),
+            check_build_freshness: false,
+            allow_empty: false,
+        },
+    )
+    .await?;
     let extract_elapsed = t_extract.elapsed();
 
     println!(

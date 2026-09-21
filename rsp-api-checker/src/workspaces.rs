@@ -72,6 +72,13 @@ pub async fn discover_workspaces(repo_root: &Path) -> Result<Option<Vec<Workspac
         if loc == "." {
             continue;
         }
+        // Exclude dev tooling under packages/dev/ — it isn't part of the public
+        // API surface. `--no-private` still returns non-private dev packages
+        // (e.g. @react-aria/mcp, which builds via its own tsc), so we filter by
+        // location here to match the fs-walk fallbacks that skip `dev`.
+        if crate::extract::is_dev_package_location(std::path::Path::new(&loc)) {
+            continue;
+        }
         workspaces.push(Workspace {
             name,
             location: repo_root.join(loc),

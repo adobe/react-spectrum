@@ -1,6 +1,6 @@
 # rsp-api-check
 
-API comparison tool for the [react-spectrum](https://github.com/adobe/react-spectrum) monorepo. Replaces the Node.js scripts (`buildPublishedAPI.js`, `buildBranchAPI.js`, `compareAPIs.js`) with a Rust CLI + a standalone TypeScript extractor.
+API comparison tool for the [react-spectrum](https://github.com/adobe/react-spectrum) monorepo. Replaces the Node.js scripts (`buildPublishedAPI.js`, `buildBranchAPI.js`, `compareAPIs.js`) with a Rust CLI that extracts types via Parcel 3's `@parcel/transformer-ts-doc` plugin.
 
 ## Architecture
 
@@ -10,7 +10,7 @@ API comparison tool for the [react-spectrum](https://github.com/adobe/react-spec
 │                     │     │                       │
 │  npm registry HTTP  │     │  reads local build    │
 │  → npm install      │     │  .d.ts files          │
-│  → ts-extractor     │     │  → ts-extractor       │
+│  → parcel3          │     │  → parcel3            │
 │  → dist/base-api/   │     │  → dist/branch-api/   │
 └────────┬────────────┘     └───────────┬───────────┘
          │                              │
@@ -25,13 +25,15 @@ API comparison tool for the [react-spectrum](https://github.com/adobe/react-spec
               └─────────────────┘
 ```
 
-**Key difference from the old scripts:** the TypeScript type extraction now reads `.d.ts` files directly (via the TS compiler API in `ts-extractor/extract-api.ts`) instead of requiring a full Parcel build. This makes the published-API path dramatically faster since the `.d.ts` files already exist in the npm package.
+**Key difference from the old scripts:** type extraction now reads `.d.ts` files directly through Parcel 3's `@parcel/transformer-ts-doc` plugin (via the `parcel3` binary) instead of requiring a full Parcel build of the source. This makes the published-API path dramatically faster since the `.d.ts` files already exist in the npm package.
 
 ## Prerequisites
 
 - **Rust** (1.75+) — to build the CLI
-- **Node.js** (18+) — needed by the TypeScript extractor
-- **npm** — for installing packages in the published-API workflow
+- **The repo's `node_modules`** — the extractor invokes the `parcel3` binary and
+  the `@parcel/transformer-ts-doc` plugin from `<repo-root>/node_modules`, so run
+  `yarn install` at the monorepo root first. **No Node/tsc/tsx is used directly.**
+- **npm** — only for the published-API workflow (installing published tarballs).
 
 ## Build
 
@@ -51,7 +53,7 @@ All commands assume you're running from the react-spectrum monorepo root.
 rsp-api-check get-published-api --repo-root .
 ```
 
-This queries the npm registry, downloads all published packages, and runs the TypeScript extractor on their `.d.ts` files. Output goes to `dist/base-api/` by default.
+This queries the npm registry, downloads all published packages, and runs them through Parcel 3's `@parcel/transformer-ts-doc` plugin on their `.d.ts` files. Output goes to `dist/base-api/` by default.
 
 ### 2. Extract the local (branch) API
 
@@ -140,34 +142,22 @@ External types (React, DOM, etc.) are **not** flattened into the API surface. In
  }
 ```
 
-## TypeScript Extractor
+## Type extraction (Parcel 3)
 
-The `ts-extractor/` directory contains a standalone TypeScript script that uses the TS compiler API to walk `.d.ts` exports and produce `api.json` files. It handles:
+Type extraction reuses Parcel 3's Rust `@parcel/transformer-ts-doc` plugin — the
+same extractor that powers the repo's Storybook control args and s2-docs. For
+each package the tool feeds the package's `.d.ts` entry through a
+`docs:* → @parcel/transformer-ts-doc` pipeline (via the `parcel3` binary) and
+captures the emitted `{ exports, links }` JSON as that package's `api.json`.
 
-- Cross-package type resolution (via `node_modules`)
-- Generic type parameters and constraints
-- Interface inheritance (flattens internal types, preserves external extends)
-- Component detection (functions returning JSX.Element/ReactNode)
-- JSDoc `@default` tag extraction
-
-Install its dependencies once:
-
-```sh
-cd ts-extractor && npm install
-```
-
-It can also be run directly:
-
-```sh
-npx tsx ts-extractor/extract-api.ts --packages-dir ./packages --output-dir ./dist/branch-api
-```
+This works for published tarballs that ship only `.d.ts` (e.g.
+`react-aria-components`) and requires no Node/TypeScript of our own.
 
 ## Differences from the original scripts
 
-| Aspect | Old (Node.js) | New (Rust + TS extractor) |
+| Aspect | Old (Node.js) | New (Rust + Parcel 3) |
 |--------|---------------|---------------------------|
-| Published API extraction | Parcel build on downloaded source | TS compiler on `.d.ts` (no Parcel) |
-| Local API extraction | Parcel build in temp dir | TS compiler on local `.d.ts` |
+| Local/Published API extraction | Parcel build (downloaded source / temp dir) | Parcel 3 `transformer-ts-doc` (Rust) on `.d.ts` |
 | npm queries | `npm view` subprocesses (serial) | HTTP requests (parallel) |
 | Type rendering | 3 copies of `processType()` | Single `render_type()` in Rust |
 | Diff engine | JS `diff` library | Rust `similar` crate |

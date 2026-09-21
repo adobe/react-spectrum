@@ -234,6 +234,16 @@ pub fn render_type(node: &TypeNode, ctx: &mut RenderContext) -> String {
             }
         }
 
+        TypeNode::Reference {
+            local,
+            imported,
+            specifier,
+        } => local
+            .clone()
+            .or_else(|| imported.clone())
+            .or_else(|| specifier.clone())
+            .unwrap_or_else(|| "unknown".into()),
+
         // ── Declarations (appear when flattening) ───────────────────
         TypeNode::Function {
             parameters,
@@ -671,6 +681,16 @@ mod tests {
         render_type(&node, &mut ctx); // same dep twice
         let deps = ctx.dependencies.get("A").unwrap();
         assert_eq!(deps.iter().filter(|d| *d == "ButtonProps").count(), 1);
+    }
+
+    #[test]
+    fn renders_reference_by_local_name() {
+        let node = TypeNode::Reference {
+            local: Some("Foo".into()),
+            imported: Some("Bar".into()),
+            specifier: Some("@scope/pkg".into()),
+        };
+        assert_eq!(render(&node), "Foo");
     }
 
     // ── Function / Parameter ───────────────────────────────────────────────
