@@ -72,6 +72,12 @@ export function shortName(key: string, value: any): string {
     case 'hideStepper':
       returnVal = 'hidestep';
       break;
+    case 'isJustified':
+      returnVal = 'justified';
+      break;
+    case 'density':
+      returnVal = `density: ${value}`;
+      break;
   }
   return returnVal;
 }

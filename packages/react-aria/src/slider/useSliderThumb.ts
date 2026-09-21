@@ -171,7 +171,8 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
           state.setThumbValue(index, state.getThumbMaxValue(index));
         });
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let {moveProps} = useMove({

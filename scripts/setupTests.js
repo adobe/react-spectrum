@@ -41,7 +41,10 @@ const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   '`ReactDOMTestUtils.act` is deprecated in favor of `React.act`'
 ];
 
-const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = ['Browserslist: caniuse-lite is outdated'];
+const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
+  'Browserslist: caniuse-lite is outdated',
+  'Browserslist: browsers data (caniuse-lite) is 6 months old.'
+];
 
 function failTestOnConsoleError() {
   const error = console.error;

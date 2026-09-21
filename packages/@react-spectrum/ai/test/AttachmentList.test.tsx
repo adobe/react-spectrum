@@ -29,4 +29,30 @@ describeOrSkip('AttachmentList', () => {
 
     expect(getByRole('grid')).toBeInTheDocument();
   });
+
+  it('should switch to a carousel once attachments overflow the container width', () => {
+    let offsetWidthSpy = jest
+      .spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get')
+      .mockImplementation(() => 200);
+    let scrollWidthSpy = jest
+      .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
+      .mockImplementation(() => 800);
+
+    let {getByRole} = render(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="one.pdf" textValue="one.pdf">
+          <Image slot="thumbnail" src="https://example.com/image.png" />
+        </Attachment>
+        <Attachment aria-label="two.pdf" textValue="two.pdf">
+          <Image slot="thumbnail" src="https://example.com/image.png" />
+        </Attachment>
+      </AttachmentList>
+    );
+
+    expect(getByRole('button', {name: 'Show previous attachments'})).toBeInTheDocument();
+    expect(getByRole('button', {name: 'Show next attachments'})).toBeInTheDocument();
+
+    offsetWidthSpy.mockRestore();
+    scrollWidthSpy.mockRestore();
+  });
 });

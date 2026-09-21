@@ -10,7 +10,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['data', 'grid'];
 export const relatedPages = [
-  {title: 'useTable', url: 'Table/useTable.html'},
+  {title: 'useTable', url: './Table/useTable'},
   {title: 'Testing Table', url: './Table/testing'}
 ];
 export const description = 'Displays data in rows and columns and enables a user to navigate its contents via directional navigation keys.';
@@ -217,7 +217,7 @@ function FileTable() {
             <Row columns={visibleColumns}>
               {column => (
                 <Cell>
-                  {column.id === 'price' 
+                  {column.id === 'price'
                     ? item.price.toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})
                     : item[column.id]}
                 </Cell>
@@ -723,6 +723,50 @@ function subscribe(fn) {
   window.addEventListener('storage', onStorage);
   return () => window.removeEventListener('storage', onStorage);
 }
+```
+
+## Keyboard navigation
+
+By default, Table uses arrow key navigation to move focus into cells. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a cell.
+Use this when cells contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
+
+```tsx render files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css"]}
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {TextField} from 'vanilla-starter/TextField';
+
+///- begin collapse -///
+let files = [
+  {id: 'games', name: 'Games', type: 'Folder', date: '6/7/2023'},
+  {id: 'apps', name: 'Applications', type: 'Folder', date: '4/7/2025'},
+  {id: 'report', name: '2024 Financial Report', type: 'PDF Document', date: '12/30/2024'},
+  {id: 'job', name: 'Job Posting', type: 'Text Document', date: '1/18/2025'},
+];
+///- end collapse -///
+
+<Table
+  /*- begin highlight -*/
+  keyboardNavigationBehavior="tab"
+  /*- end highlight -*/
+  selectionMode="multiple"
+  aria-label="Shared files">
+  <TableHeader>
+    <Column id="name" isRowHeader>Name</Column>
+    <Column id="type">Type</Column>
+    <Column id="date">Date Modified</Column>
+    <Column id="notes">Notes</Column>
+  </TableHeader>
+  <TableBody items={files}>
+    {item => (
+      <Row id={item.id}>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.type}</Cell>
+        <Cell>{item.date}</Cell>
+        <Cell><TextField aria-label={`${item.name} notes`} placeholder="Enter notes" /></Cell>
+      </Row>
+    )}
+  </TableBody>
+</Table>
 ```
 
 ## Drag and drop

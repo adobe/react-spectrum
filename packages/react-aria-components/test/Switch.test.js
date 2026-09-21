@@ -342,6 +342,15 @@ describe.each(['Switch', 'SwitchField'])('%s', comp => {
     expect(inputRef.current).toBe(getByRole('switch'));
   });
 
+  it('should support callback ref', () => {
+    let cleanup = jest.fn();
+    let onRef = jest.fn(() => cleanup);
+    let {getByRole, unmount} = render(<Switch inputRef={onRef}>Test</Switch>);
+    expect(onRef).toHaveBeenCalledWith(getByRole('switch'));
+    unmount();
+    expect(cleanup).toHaveBeenCalledTimes(1);
+  });
+
   it('should support and merge input ref on context', () => {
     let inputRef = React.createRef();
     let contextInputRef = React.createRef();

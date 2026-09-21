@@ -110,7 +110,12 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpe
   // will prevent links with target="_blank" from opening. However, it does allow the event if the
   // Command/Control key is held, which opens the link in a background tab. This seems like the best we can do.
   // See https://bugzilla.mozilla.org/show_bug.cgi?id=257870 and https://bugzilla.mozilla.org/show_bug.cgi?id=746640.
-  if (isFirefox() && window.event?.type?.startsWith('key') && target.target === '_blank') {
+  if (
+    !isWebKit() &&
+    isFirefox() &&
+    window.event?.type?.startsWith('key') &&
+    target.target === '_blank'
+  ) {
     if (isMac()) {
       metaKey = true;
     } else {

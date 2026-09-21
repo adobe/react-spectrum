@@ -30,6 +30,7 @@ import {chain} from '../utils/chain';
 import {ComboBoxProps, ComboBoxState, SelectionMode} from 'react-stately/useComboBoxState';
 import {dispatchVirtualFocus} from '../focus/virtualFocus';
 import {
+  ElementType,
   FocusEvent,
   InputHTMLAttributes,
   TouchEvent,
@@ -48,6 +49,7 @@ import {isAppleDevice} from '../utils/platform';
 import {ListKeyboardDelegate} from '../selection/ListKeyboardDelegate';
 import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
+import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
@@ -78,6 +80,12 @@ export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> exte
   listBoxRef: RefObject<HTMLElement | null>;
   /** The ref for the optional list box popup trigger button. */
   buttonRef?: RefObject<Element | null>;
+  /**
+   * The HTML element used to render the label, e.g. 'label', or 'span'.
+   *
+   * @default 'label'
+   */
+  labelElementType?: ElementType;
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate;
   /**
@@ -232,7 +240,12 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         }
         state.revert();
         return {shouldContinuePropagation};
-      },
+      }
+    }
+  });
+
+  let {keyboardProps: repeatKeyboardProps} = useKeyboard({
+    shortcuts: {
       ArrowDown: () => {
         state.open('first', 'manual');
         return {shouldPreventDefault: false};
@@ -249,12 +262,14 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         state.selectionManager.setFocusedKey(null);
         return {shouldPreventDefault: false};
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
-    let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
+    let blurFromButton = nodeContains(buttonRef.current, e.relatedTarget as Element);
     let blurIntoPopover = nodeContains(popoverRef.current, e.relatedTarget);
+
     // Ignore blur if focused moved to the button(if exists) or into the popover.
     if (blurFromButton || blurIntoPopover) {
       return;
@@ -295,7 +310,12 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       onChange: state.setInputValue,
       onKeyDown: !isReadOnly
         ? // oxlint-disable-next-line react/react-compiler
-          chain(state.isOpen && collectionProps.onKeyDown, keyboardProps.onKeyDown, props.onKeyDown)
+          chain(
+            state.isOpen && collectionProps.onKeyDown,
+            keyboardProps.onKeyDown,
+            repeatKeyboardProps.onKeyDown,
+            props.onKeyDown
+          )
         : props.onKeyDown,
       onBlur,
       value: state.inputValue,
@@ -476,7 +496,17 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
   );
 
   return {
-    labelProps,
+    labelProps: {
+      ...labelProps,
+      // Focus the input in case the label is not a native <label> element.
+      onClick:
+        ('htmlFor' in labelProps && labelProps.htmlFor) || props.isDisabled
+          ? undefined
+          : () => {
+              inputRef.current?.focus();
+              setInteractionModality('keyboard');
+            }
+    },
     buttonProps: {
       ...menuTriggerProps,
       ...triggerLabelProps,

@@ -26,19 +26,13 @@ interface Message {
   isStreaming?: boolean;
 }
 
-function TestThread({
-  messages,
-  UNSTABLE_focusOnEntry
-}: {
-  messages: Message[];
-  UNSTABLE_focusOnEntry?: 'first' | 'last';
-}) {
+function TestThread({messages}: {messages: Message[]}) {
   return (
     <Chat>
       <ThreadScrollButton>
         <Button slot="scroll">Scroll to bottom</Button>
       </ThreadScrollButton>
-      <Thread items={messages} aria-label="Chat" UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry}>
+      <Thread items={messages} aria-label="Chat">
         {(item: Message) => (
           <ThreadItem textValue={item.text} isStreaming={item.isStreaming}>
             {item.text}
@@ -242,64 +236,6 @@ describeOrSkip('Thread', () => {
 
       await user.click(getByText('Scroll to bottom'));
       expect(scrollTo).toHaveBeenCalledWith({top: 0, behavior: 'smooth'});
-    });
-  });
-
-  describe('focus behavior', () => {
-    it('focuses the first item in the list when tabbing in if UNSTABLE_focusOnEntry="first"', async () => {
-      let {getByRole} = render(
-        <TestThread
-          UNSTABLE_focusOnEntry="first"
-          messages={[
-            {id: '1', text: 'Hello'},
-            {id: '2', text: 'World'}
-          ]}
-        />
-      );
-
-      let gridlist = getByRole('grid');
-      let rows = gridlist.querySelectorAll('[role="row"]');
-      await user.tab();
-      expect(document.activeElement).toBe(rows[0]);
-      expect(rows[0]).toHaveTextContent('Hello');
-
-      await user.keyboard('{ArrowDown}');
-      expect(document.activeElement).toBe(rows[1]);
-
-      await user.tab();
-      expect(document.activeElement).toBe(getByRole('textbox'));
-
-      // should always move to first item when entering the thread via tab regardless of last focused row
-      await user.tab({shift: true});
-      expect(document.activeElement).toBe(rows[0]);
-    });
-
-    it('focuses the last item in the list when tabbing in if UNSTABLE_focusOnEntry="last"', async () => {
-      let {getByRole} = render(
-        <TestThread
-          UNSTABLE_focusOnEntry="last"
-          messages={[
-            {id: '1', text: 'Hello'},
-            {id: '2', text: 'World'}
-          ]}
-        />
-      );
-
-      let gridlist = getByRole('grid');
-      let rows = gridlist.querySelectorAll('[role="row"]');
-      await user.tab();
-      expect(document.activeElement).toBe(rows[1]);
-      expect(rows[1]).toHaveTextContent('World');
-
-      await user.keyboard('{ArrowUp}');
-      expect(document.activeElement).toBe(rows[0]);
-
-      await user.tab();
-      expect(document.activeElement).toBe(getByRole('textbox'));
-
-      // should always move to last item when entering the thread via tab regardless of last focused row
-      await user.tab({shift: true});
-      expect(document.activeElement).toBe(rows[1]);
     });
   });
 });

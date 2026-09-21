@@ -86,7 +86,8 @@ export function useColorWheel(
         state.decrement(state.pageStep);
         state.setDragging(false);
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let moveHandler = {

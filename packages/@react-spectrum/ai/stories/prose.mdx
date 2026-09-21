@@ -1,0 +1,184 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+# An Example Article to Test Prose Styles
+
+*Published March 12, 2026 · 8 min read*
+
+When teams outgrow a handful of shared CSS variables, they usually need something stronger: a **design token pipeline** that turns brand decisions into typed, versioned values every component can consume. This article walks through how one product team migrated from scattered hex codes to a single source of truth—and what they learned along the way.
+
+A token pipeline is not just a JSON file in a repo. It is the contract between design and engineering: names, scales, semantic aliases, and the build steps that keep documentation, Figma libraries, and runtime themes in sync.
+
+---
+
+## Why tokens matter
+
+Hard-coded values drift. A button might use `#0265DC` in one package and `#1473E6` in another. Tokens replace that ambiguity with **stable names** like `color-accent-default` that map to platform-specific outputs.
+
+Good token systems share a few traits:
+
+- **Semantic naming** — components reference intent, not raw values
+- **Layered aliases** — global palette → semantic roles → component tokens
+- **Automated distribution** — one change propagates to CSS, Swift, and Android
+
+> "We stopped debating hex codes in pull requests once tokens became the only thing components were allowed to import."  
+> — *Maya Chen, Design Systems Lead*
+
+### From palette to semantics
+
+Start with a **global palette**: neutrals, brand hues, and status colors at fixed steps (`gray-100` through `gray-900`). Semantic tokens then *alias* those steps to roles such as `text-primary` or `border-focus`.
+
+#### Example alias chain
+
+A focus ring might resolve like this:
+
+1. `focus-ring-color` → `color-blue-800`
+2. `color-blue-800` → `#0265DC`
+3. Runtime theme overrides remap aliases without touching component code
+
+##### Naming conventions
+
+Keep names **lowercase**, **kebab-case**, and **role-oriented**. Avoid embedding the literal value in the name—`blue-600` is fine for palette steps; `primary-button-background` is better for semantics.
+
+###### Edge cases
+
+Even `h6`-level detail deserves a home: document when a token is *deprecated* versus *removed*, and link to the migration guide in the same PR that flips the alias.
+
+---
+
+## Planning the migration
+
+Before touching production components, the team audited every color, spacing, and typography value in the codebase. They grouped findings into three buckets:
+
+1. **Direct replacements** — values that already matched the new palette
+2. **Near matches** — values within one step on the scale
+3. **One-offs** — legacy colors that needed designer sign-off
+
+Nested decisions often appear in the same list:
+
+1. Choose a token format (DTCG JSON was the winner)
+   - Validate against the [Design Tokens Community Group spec](https://design-tokens.github.io/community-group/format/)
+   - Add JSON Schema in CI so bad exports fail fast
+2. Pick build tooling
+   - [Style Dictionary](https://amzn.github.io/style-dictionary/) for multi-platform output
+   - Custom transforms for Spectrum-style macro keys
+3. Roll out by package
+   - Start with primitives (`Button`, `Link`)
+   - Expand to form controls, then layout
+
+### Pre-migration checklist
+
+- [x] Inventory existing CSS variables and hard-coded literals
+- [x] Align Figma variables with token names
+- [ ] Enable lint rules blocking raw color literals in new code
+- [ ] Publish a changelog entry for breaking alias renames
+
+---
+
+## Implementation notes
+
+The build script reads `tokens.json`, resolves aliases, and emits platform files. A minimal Node entry point looks like this:
+
+```js
+import StyleDictionary from 'style-dictionary';
+
+StyleDictionary.extend({
+  source: ['tokens/**/*.json'],
+  platforms: {
+    css: {
+      transformGroup: 'css',
+      buildPath: 'dist/css/',
+      files: [{destination: 'variables.css', format: 'css/variables'}]
+    },
+    js: {
+      transformGroup: 'js',
+      buildPath: 'dist/js/',
+      files: [{destination: 'tokens.js', format: 'javascript/es6'}]
+    }
+  }
+}).buildAllPlatforms();
+```
+
+Run it after every token change:
+
+```bash
+yarn build:tokens && yarn test:tokens
+```
+
+Run this from the project root after every token change, or trigger your configured build task with <kbd>⌘ Enter</kbd>.
+
+Components then import semantic values instead of literals:
+
+```tsx
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+
+export function PrimaryButton() {
+  return (
+    <button
+      className={style({
+        backgroundColor: 'accent-default',
+        color: 'text-on-accent',
+        padding: 'size-100 size-200'
+      })}>
+      Save
+    </button>
+  );
+}
+```
+
+Inline code appears everywhere in real docs: set `backgroundColor: 'accent-default'` in macros, grep for `#0265DC`, or wrap paths like `tokens/color/semantic.json` in backticks inside list items and headings alike.
+
+---
+
+## Token reference
+
+The table below shows a trimmed set of semantic color tokens and their light-theme values. Dark theme swaps the alias targets, not the names components use.
+
+<table><thead><tr><th>Token</th><th>Role</th><th>Light value</th><th>Used by</th></tr></thead><tbody><tr><td><code>color-background-base</code></td><td>Page canvas</td><td><code>gray-50</code></td><td><code>Body</code>, layouts</td></tr><tr><td><code>color-text-primary</code></td><td>Default copy</td><td><code>gray-900</code></td><td><code>Text</code>, <code>Heading</code></td></tr><tr><td><code>color-accent-default</code></td><td>Primary actions</td><td><code>blue-800</code></td><td><code>Button</code>, <code>Link</code></td></tr><tr><td><code>color-border-focus</code></td><td>Focus ring</td><td><code>blue-800</code></td><td>All interactive controls</td></tr><tr><td><code>color-negative-default</code></td><td>Errors</td><td><code>red-700</code></td><td><code>FieldError</code>, <code>InlineAlert</code></td></tr></tbody></table>
+
+For spacing, the team standardized on a **4 px grid**: `size-100` (4px), `size-200` (8px), `size-300` (12px), and so on. Typography tokens pair `font-size` with `line-height` so prose blocks like this paragraph stay readable at every breakpoint.
+
+<figure>
+  <img src="https://picsum.photos/seed/design-tokens/960/480" alt="Design token pipeline diagram" />
+  <figcaption>Figure 1. Global palette values feed semantic aliases, which components consume through typed APIs.</figcaption>
+</figure>
+
+---
+
+## Communication and rollout
+
+Documentation is part of the pipeline. The team shipped:
+
+- A **migration guide** linked from the monorepo README
+
+  The guide covers alias renames, codemods, and before/after examples for each package. Teams were asked to land migrations behind a feature flag when touching more than one semantic token at a time.
+
+  A short *What's changing* section at the top reduced support questions. Link to the changelog for each release so readers know which tokens moved in which version.
+- Storybook stories that render swatches from live token output
+- Office hours for product squads still on legacy variables
+
+When announcing breaking renames, be explicit. <strike>`color-brand-primary`</strike> was retired in v3; use `color-accent-default` instead. Mix **bold**, *italic*, and ***bold italic*** emphasis sparingly so warnings stand out without shouting.
+
+External references helped the team stay aligned:
+
+- [Design Tokens Community Group format](https://design-tokens.github.io/community-group/format/)
+- [Adobe Spectrum design tokens documentation](https://spectrum.adobe.com/page/design-tokens/)
+- Internal RFC: *"Semantic color roles for Express mobile"*
+
+---
+
+## Closing thoughts
+
+A token pipeline pays off when **designers edit values**, **build tools propagate them**, and **components never hard-code literals**. The upfront audit is tedious, but the alternative—endless hex drift across packages—is worse.
+
+Start small: one palette file, one build target, one component migrated end to end. Measure success by the number of raw color literals left in `git grep`, not by how pretty the JSON looks on day one.
+
+---
+
+*Questions about this guide? Open a discussion in `#design-systems` or file an issue with the `tokens` label.*

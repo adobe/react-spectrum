@@ -48,15 +48,20 @@ export interface VirtualizerProps<O> {
   layout: LayoutClass<O> | ILayout<O>;
   /** Options for the layout. */
   layoutOptions?: O;
+  /**
+   * Whether to observe each item's size with a ResizeObserver and re-measure when it changes.
+   */
+  shouldObserveItemSize?: boolean;
 }
 
-interface LayoutContextValue {
+interface VirtualizerOptionsContextValue {
   layout: ILayout<any>;
   layoutOptions?: any;
+  shouldObserveItemSize?: boolean;
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
-const LayoutContext = createContext<LayoutContextValue | null>(null);
+const VirtualizerOptionsContext = createContext<VirtualizerOptionsContextValue | null>(null);
 
 /**
  * A Virtualizer renders a scrollable collection of data using customizable layouts.
@@ -64,7 +69,7 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
  * them as the user scrolls.
  */
 export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
-  let {children, layout: layoutProp, layoutOptions} = props;
+  let {children, layout: layoutProp, layoutOptions, shouldObserveItemSize} = props;
   let layout = useMemo(
     () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
     [layoutProp]
@@ -84,7 +89,9 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <LayoutContext.Provider value={{layout, layoutOptions}}>{children}</LayoutContext.Provider>
+      <VirtualizerOptionsContext.Provider value={{layout, layoutOptions, shouldObserveItemSize}}>
+        {children}
+      </VirtualizerOptionsContext.Provider>
     </CollectionRendererContext.Provider>
   );
 }
@@ -95,7 +102,7 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions} = useContext(LayoutContext)!;
+  let {layout, layoutOptions, shouldObserveItemSize} = useContext(VirtualizerOptionsContext)!;
   // oxlint-disable-next-line react/react-compiler
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
@@ -114,12 +121,13 @@ function CollectionRoot({
       }
     },
     persistedKeys,
-    layoutOptions: useMemo(() => {
-      if (layoutOptions && layoutOptions2) {
-        return {...layoutOptions, ...layoutOptions2};
-      }
-      return layoutOptions || layoutOptions2;
-    }, [layoutOptions, layoutOptions2])
+    layoutOptions: useMemo(
+      () =>
+        layoutOptions && layoutOptions2
+          ? {...layoutOptions, ...layoutOptions2}
+          : layoutOptions || layoutOptions2,
+      [layoutOptions, layoutOptions2]
+    )
   });
 
   let {contentProps} = useScrollView(
@@ -137,7 +145,7 @@ function CollectionRoot({
   return (
     <div {...contentProps}>
       <VirtualizerContext.Provider value={state}>
-        {renderChildren(null, state.visibleViews, renderDropIndicator)}
+        {renderChildren(null, state.visibleViews, renderDropIndicator, shouldObserveItemSize)}
       </VirtualizerContext.Provider>
     </div>
   );
@@ -146,28 +154,39 @@ function CollectionRoot({
 function CollectionBranch({parent, renderDropIndicator}: CollectionBranchProps) {
   let virtualizer = useContext(VirtualizerContext);
   let parentView = virtualizer!.virtualizer.getVisibleView(parent.key)!;
-  return renderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
+  let {shouldObserveItemSize} = useContext(VirtualizerOptionsContext)!;
+  return renderChildren(
+    parentView,
+    Array.from(parentView.children),
+    renderDropIndicator,
+    shouldObserveItemSize
+  );
 }
 
 function renderChildren(
   parent: View | null,
   children: View[],
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode,
+  shouldObserveItemSize?: boolean
 ) {
-  return children.map(view => renderWrapper(parent, view, renderDropIndicator));
+  return children.map(view =>
+    renderWrapper(parent, view, renderDropIndicator, shouldObserveItemSize)
+  );
 }
 
 function renderWrapper(
   parent: View | null,
   reusableView: View,
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode,
+  shouldObserveItemSize?: boolean
 ): ReactNode {
   let rendered = (
     <VirtualizerItem
       key={reusableView.key}
       layoutInfo={reusableView.layoutInfo!}
       virtualizer={reusableView.virtualizer}
-      parent={parent?.layoutInfo}>
+      parent={parent?.layoutInfo}
+      shouldObserveItemSize={shouldObserveItemSize}>
       {reusableView.rendered}
     </VirtualizerItem>
   );

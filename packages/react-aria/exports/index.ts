@@ -76,7 +76,7 @@ export {
 export {useNumberFormatter} from '../src/i18n/useNumberFormatter';
 export {useListFormatter} from '../src/i18n/useListFormatter';
 export {useFocus} from '../src/interactions/useFocus';
-export {useFocusVisible} from '../src/interactions/useFocusVisible';
+export {setInteractionModality, useFocusVisible} from '../src/interactions/useFocusVisible';
 export {useFocusWithin} from '../src/interactions/useFocusWithin';
 export {useHover} from '../src/interactions/useHover';
 export {useInteractOutside} from '../src/interactions/useInteractOutside';
@@ -165,6 +165,13 @@ export {useId} from '../src/utils/useId';
 export {useObjectRef} from '../src/utils/useObjectRef';
 export {RouterProvider} from '../src/utils/openLink';
 export {VisuallyHidden, useVisuallyHidden} from '../src/visually-hidden/VisuallyHidden';
+export {
+  useTokenField,
+  tokenFieldPositionToDOMRange,
+  setTokenFieldSelection,
+  getSelection
+} from '../src/tokenfield/useTokenField';
+export {useToken} from '../src/tokenfield/useToken';
 
 export type {
   AriaAutocompleteProps,
@@ -323,11 +330,16 @@ export type {
 } from '../src/dnd/useDroppableCollection';
 export type {DroppableItemOptions, DroppableItemResult} from '../src/dnd/useDroppableItem';
 export type {FocusProps, FocusResult} from '../src/interactions/useFocus';
-export type {FocusVisibleProps, FocusVisibleResult} from '../src/interactions/useFocusVisible';
+export type {
+  Modality,
+  FocusVisibleProps,
+  FocusVisibleResult
+} from '../src/interactions/useFocusVisible';
 export type {FocusWithinProps, FocusWithinResult} from '../src/interactions/useFocusWithin';
 export type {HoverProps, HoverResult} from '../src/interactions/useHover';
 export type {InteractOutsideProps} from '../src/interactions/useInteractOutside';
 export type {KeyboardProps, KeyboardResult} from '../src/interactions/useKeyboard';
+export type {KeyboardShortcutBindings} from '../src/interactions/createKeyboardShortcutHandler';
 export type {LongPressProps, LongPressResult} from '../src/interactions/useLongPress';
 export type {
   ContextMenuProps,
@@ -486,3 +498,5 @@ export type {AriaTreeProps, TreeProps, TreeAria, AriaTreeOptions} from '../src/t
 export type {AriaTreeItemOptions, TreeItemAria} from '../src/tree/useTreeItem';
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '../src/visually-hidden/VisuallyHidden';
 export type {Key, Orientation, RangeValue} from '@react-types/shared';
+export type {TokenProps, TokenAria} from '../src/tokenfield/useToken';
+export type {AriaTokenFieldProps, TokenFieldAria} from '../src/tokenfield/useTokenField';

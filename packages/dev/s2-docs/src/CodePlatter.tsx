@@ -85,9 +85,12 @@ export function FileProvider(props: ProviderProps<FileProviderContextValue | nul
   return <FileProviderContext {...props} />;
 }
 
-const ShadcnContext = createContext<{type: 'vanilla' | 'tailwind'; component: string} | null>(null);
+const ShadcnContext = createContext<{
+  type: 'vanilla' | 'tailwind' | 'hooks';
+  component: string;
+} | null>(null);
 export function ShadcnProvider(
-  props: ProviderProps<{type: 'vanilla' | 'tailwind'; component: string} | null>
+  props: ProviderProps<{type: 'vanilla' | 'tailwind' | 'hooks'; component: string} | null>
 ) {
   return <ShadcnContext {...props} />;
 }

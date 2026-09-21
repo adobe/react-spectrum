@@ -19,6 +19,7 @@ import {
   ValidationResult
 } from '@react-types/shared';
 import {ColorFieldProps, ColorFieldState} from 'react-stately/useColorFieldState';
+import {flushSync} from 'react-dom';
 import {InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useState} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
@@ -26,6 +27,7 @@ import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useFormattedTextField} from '../textfield/useFormattedTextField';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useScrollWheel} from '../interactions/useScrollWheel';
 import {useSpinButton} from '../spinbutton/useSpinButton';
 
@@ -70,10 +72,26 @@ export function useColorField(
   state: ColorFieldState,
   ref: RefObject<HTMLInputElement | null>
 ): ColorFieldAria {
-  let {isDisabled, isReadOnly, isRequired, isWheelDisabled, validationBehavior = 'aria'} = props;
+  let {
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    isWheelDisabled,
+    validationBehavior = 'aria',
+    onKeyDown,
+    onKeyUp
+  } = props;
 
-  let {colorValue, inputValue, increment, decrement, incrementToMax, decrementToMin, commit} =
-    state;
+  let {
+    colorValue,
+    inputValue,
+    increment,
+    decrement,
+    incrementToMax,
+    decrementToMin,
+    commit,
+    commitValidation
+  } = state;
 
   let inputId = useId();
   let {spinButtonProps} = useSpinButton({
@@ -110,6 +128,21 @@ export function useColorField(
   let scrollingDisabled = isWheelDisabled || isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
 
+  let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
+    shortcuts: {
+      Enter: () => {
+        flushSync(() => {
+          commit();
+        });
+        commitValidation();
+        return {shouldPreventDefault: false};
+      }
+    },
+    onKeyDown,
+    onKeyUp
+  });
+
   let onChange = value => {
     if (state.validate(value)) {
       state.setInputValue(value);
@@ -128,7 +161,9 @@ export function useColorField(
       [privateValidationStateProp]: state,
       type: 'text',
       autoComplete: 'off',
-      onChange
+      onChange,
+      onKeyDown: undefined,
+      onKeyUp: undefined
     },
     state,
     ref
@@ -136,7 +171,7 @@ export function useColorField(
 
   useFormReset(ref, state.defaultColorValue, state.setColorValue);
 
-  inputProps = mergeProps(inputProps, spinButtonProps, focusWithinProps, {
+  inputProps = mergeProps(keyboardProps, inputProps, spinButtonProps, focusWithinProps, {
     role: 'textbox',
     'aria-valuemax': null,
     'aria-valuemin': null,

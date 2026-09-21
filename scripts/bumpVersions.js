@@ -13,7 +13,6 @@
 const exec = require('child_process').execSync;
 const spawn = require('child_process').spawnSync;
 const fs = require('fs');
-const fetch = require('node-fetch');
 const semver = require('semver');
 const readline = require('readline');
 const chalk = require('chalk');
@@ -48,7 +47,9 @@ function isSkipped(pkg) {
     (pkg.name.includes('@react-aria') && pkg.dependencies?.['react-aria']) ||
     (pkg.name.includes('@react-stately') && pkg.dependencies?.['react-stately']) ||
     (pkg.name.includes('@react-types') && !pkg.name.includes('@react-types/shared')) ||
-    (pkg.name.includes('@react-spectrum') && pkg.dependencies?.['@adobe/react-spectrum'])
+    (pkg.name.includes('@react-spectrum') &&
+      pkg.dependencies?.['@adobe/react-spectrum'] &&
+      !pkg.name.includes('@react-spectrum/codemods'))
   );
 }
 

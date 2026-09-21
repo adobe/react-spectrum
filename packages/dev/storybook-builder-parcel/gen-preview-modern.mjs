@@ -3,6 +3,8 @@ import {Buffer} from 'node:buffer';
 import {createRequire} from 'node:module';
 import {loadPreviewOrConfigFile, normalizeStories} from 'storybook/internal/common';
 
+const PARCEL_V3 = Boolean(process.env.PARCEL_V3);
+
 // @parcel/utils is CJS-only; use createRequire to load it from ESM
 const _require = createRequire(import.meta.url);
 const {relativePath} = _require('@parcel/utils');
@@ -173,17 +175,44 @@ function processPreviewAnnotation(annotationPath) {
  * @param stories An array of absolute story paths.
  */
 async function toImportFn(stories, generatedEntries) {
-  const entries = stories.map(glob => {
-    return `...import(${JSON.stringify('story:' + btoa(relativePath(generatedEntries, glob)))})`;
-  });
+  let imports = [];
+  let entries = [];
+  for (let glob of stories) {
+    if (PARCEL_V3) {
+      let name = `entry_${imports.length}`;
+      imports.push(
+        `import ${name} from ${JSON.stringify(relativePath(generatedEntries, glob) + '?async=true&flat=true')};`
+      );
+      entries.push(`...${name}`);
+    } else {
+      entries.push(
+        `...import(${JSON.stringify('story:' + btoa(relativePath(generatedEntries, glob)))})`
+      );
+    }
+  }
+
+  let relative = relativePath(process.cwd(), generatedEntries);
 
   return `
+    ${imports.join('\n')}
+
+    function relative(from, to) {
+      let fromParts = from.split('/').filter(Boolean);
+      let toParts = to.split('/').filter(Boolean);
+      let i = 0;
+      while (i < fromParts.length && fromParts[i] === toParts[i]) {
+        i++;
+      }
+      return '../'.repeat(fromParts.length - i) + toParts.slice(i).join('/');
+    }
+
     const importers = {
       ${entries.join(',\n')}
     };
 
-    async function importFn(path) {
-      return importers[path]();
+    async function importFn(p) {
+      p = ${PARCEL_V3 ? `relative(${JSON.stringify(relative)}, p)` : 'p'};
+      return importers[p]();
     }
   `;
 }

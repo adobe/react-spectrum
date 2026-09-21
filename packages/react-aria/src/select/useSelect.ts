@@ -164,6 +164,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
         }
       }
     },
+    allowRepeats: true,
     onKeyDown: props.onKeyDown,
     onKeyUp: props.onKeyUp
   });

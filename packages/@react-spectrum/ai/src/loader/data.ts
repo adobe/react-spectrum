@@ -13,12 +13,10 @@
 export interface Cell {
   cx: number;
   cy: number;
-  // Retained from the source data; no longer affects rendering.
-  outer: boolean;
   stagger: number;
-  exitStart: number;
-  fadeIn: number[];
-  fadeOut: number[];
+  adjustX?: number;
+  adjustY?: number;
+  outer?: boolean;
 }
 
 type StaggerMode = 'individual' | 'grouped' | 'by-row';
@@ -33,18 +31,18 @@ interface BuildOptions {
 // ai-logo: original 12-cell diamond layout with hand-tuned timings.
 // ─────────────────────────────────────────────────────────────
 export const aiLogo: Cell[] = [
-  {cx: 240, cy: 360, outer: true, stagger: 0, exitStart: 47, fadeIn: [1, 4], fadeOut: [47, 59]},
-  {cx: 160, cy: 320, outer: true, stagger: 2, exitStart: 48, fadeIn: [4, 7], fadeOut: [48, 60]},
-  {cx: 320, cy: 320, outer: true, stagger: 4, exitStart: 49, fadeIn: [6, 9], fadeOut: [49, 61]},
-  {cx: 200, cy: 280, outer: false, stagger: 6, exitStart: 50, fadeIn: [9, 12], fadeOut: [50, 62]},
-  {cx: 280, cy: 280, outer: false, stagger: 8, exitStart: 51, fadeIn: [13, 16], fadeOut: [51, 63]},
-  {cx: 120, cy: 240, outer: true, stagger: 10, exitStart: 52, fadeIn: [14, 17], fadeOut: [52, 64]},
-  {cx: 360, cy: 240, outer: true, stagger: 14, exitStart: 54, fadeIn: [18, 21], fadeOut: [54, 66]},
-  {cx: 200, cy: 200, outer: false, stagger: 16, exitStart: 55, fadeIn: [21, 24], fadeOut: [55, 67]},
-  {cx: 280, cy: 200, outer: false, stagger: 18, exitStart: 56, fadeIn: [23, 26], fadeOut: [56, 68]},
-  {cx: 160, cy: 160, outer: true, stagger: 20, exitStart: 57, fadeIn: [26, 29], fadeOut: [57, 69]},
-  {cx: 320, cy: 160, outer: true, stagger: 22, exitStart: 58, fadeIn: [27, 30], fadeOut: [58, 70]},
-  {cx: 240, cy: 120, outer: true, stagger: 24, exitStart: 59, fadeIn: [31, 34], fadeOut: [59, 71]}
+  {cx: 240, cy: 360, adjustY: -0.5, stagger: 0, outer: true},
+  {cx: 160, cy: 320, stagger: 2, outer: true},
+  {cx: 320, cy: 320, stagger: 4, outer: true},
+  {cx: 200, cy: 280, stagger: 6},
+  {cx: 280, cy: 280, stagger: 8},
+  {cx: 120, cy: 240, adjustX: 0.5, stagger: 10, outer: true},
+  {cx: 360, cy: 240, adjustX: -0.5, stagger: 14, outer: true},
+  {cx: 200, cy: 200, stagger: 16},
+  {cx: 280, cy: 200, stagger: 18},
+  {cx: 160, cy: 160, stagger: 20, outer: true},
+  {cx: 320, cy: 160, stagger: 22, outer: true},
+  {cx: 240, cy: 120, adjustY: 0.5, stagger: 24, outer: true}
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -650,10 +648,161 @@ const adobeEPositions: number[][] = [
   [4, 2]
 ];
 
+const documentPositions: number[][] = [
+  [0, 6],
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [4, 6],
+  [5, 6],
+  [6, 6],
+  [0, 5],
+  [6, 5],
+  [0, 4],
+  [6, 4],
+  [0, 3],
+  [6, 3],
+  [0, 2],
+  [4, 2],
+  [5, 2],
+  [6, 2],
+  [0, 1],
+  [4, 1],
+  [5, 1],
+  [0, 0],
+  [1, 0],
+  [2, 0],
+  [3, 0],
+  [4, 0]
+];
+
+const graphPositions: number[][] = [
+  [0, 6],
+  [2, 6],
+  [4, 6],
+  [6, 6],
+  [0, 5],
+  [2, 5],
+  [4, 5],
+  [6, 5],
+  [2, 4],
+  [4, 4],
+  [6, 4],
+  [2, 3],
+  [6, 3],
+  [0, 2],
+  [4, 2],
+  [6, 2],
+  [1, 1],
+  [3, 1],
+  [5, 1],
+  [2, 0],
+  [6, 0]
+];
+
+const cartPositions: number[][] = [
+  [1, 6],
+  [4, 6],
+  [1, 4],
+  [2, 4],
+  [3, 4],
+  [4, 4],
+  [5, 4],
+  [1, 3],
+  [5, 3],
+  [1, 2],
+  [6, 2],
+  [1, 1],
+  [2, 1],
+  [3, 1],
+  [4, 1],
+  [5, 1],
+  [6, 1],
+  [0, 0],
+  [1, 0]
+];
+
+const shopPositions: number[][] = [
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [4, 6],
+  [5, 6],
+  [1, 5],
+  [2, 5],
+  [5, 5],
+  [1, 3],
+  [3, 3],
+  [5, 3],
+  [0, 2],
+  [2, 2],
+  [4, 2],
+  [6, 2],
+  [0, 1],
+  [2, 1],
+  [4, 1],
+  [6, 1],
+  [1, 0],
+  [2, 0],
+  [3, 0],
+  [4, 0],
+  [5, 0]
+];
+
+const journeyPositions: number[][] = [
+  [5, 6],
+  [4, 5],
+  [6, 5],
+  [3, 4],
+  [5, 4],
+  [1, 3],
+  [3, 3],
+  [0, 2],
+  [2, 2],
+  [3, 2],
+  [5, 2],
+  [1, 1],
+  [4, 1],
+  [6, 1],
+  [5, 0]
+];
+
+const floppyPositions: number[][] = [
+  [0, 6],
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [4, 6],
+  [5, 6],
+  [6, 6],
+  [0, 5],
+  [6, 5],
+  [0, 4],
+  [6, 4],
+  [0, 3],
+  [6, 3],
+  [0, 2],
+  [1, 2],
+  [2, 2],
+  [3, 2],
+  [4, 2],
+  [5, 2],
+  [6, 2],
+  [0, 1],
+  [1, 1],
+  [5, 1],
+  [6, 1],
+  [0, 0],
+  [1, 0],
+  [3, 0],
+  [5, 0]
+];
+
 // ─────────────────────────────────────────────────────────────
 // buildCells — turn a positions list ([col, row] coords on a 7×7 grid,
 // bottom-up/left-to-right within a row → stagger order) into a cells
-// array with per-cell timing (stagger, exitStart, fadeIn, fadeOut).
+// array with a per-cell entrance stagger. All other timing (settle, hold,
+// exit, group opacity) is derived from stagger at render time.
 //
 // stagger modes:
 //   'individual' — brush style. Each cell gets i * interval.
@@ -661,7 +810,7 @@ const adobeEPositions: number[][] = [
 //     with 1-cell overlap between consecutive rows (cleaner reads).
 //   'by-row' — all cells in a row share one stagger value.
 // ─────────────────────────────────────────────────────────────
-export function buildCells(positions: number[][], options: BuildOptions = {}): Cell[] {
+function buildCells(positions: number[][], options: BuildOptions = {}): Cell[] {
   const {staggerInterval = 2, rowOffset = 0, stagger: staggerMode = 'grouped'} = options;
   let staggers: number[];
   if (staggerMode === 'by-row') {
@@ -694,20 +843,12 @@ export function buildCells(positions: number[][], options: BuildOptions = {}): C
       `Unknown stagger mode: ${staggerMode}. Use 'individual', 'grouped', or 'by-row'.`
     );
   }
-  const maxStagger = Math.max(1, ...staggers);
-  return positions.map(([col, row], i) => {
-    const stagger = staggers[i];
-    const exitStart = 47 + (stagger / maxStagger) * 12;
-    return {
-      cx: 120 + col * 40,
-      cy: 120 + (row + rowOffset) * 40,
-      outer: false,
-      stagger,
-      exitStart,
-      fadeIn: [stagger + 1, stagger + 4],
-      fadeOut: [exitStart, exitStart + 12]
-    };
-  });
+  return positions.map(([col, row], i) => ({
+    cx: 120 + col * 40,
+    cy: 120 + (row + rowOffset) * 40,
+    outer: false,
+    stagger: staggers[i]
+  }));
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -838,6 +979,36 @@ export const adobeE = /* @__PURE__ */ buildCells(adobeEPositions, {
   rowOffset: -1
 });
 
+export const document = /* @__PURE__ */ buildCells(documentPositions, {
+  staggerInterval: 1,
+  stagger: 'grouped'
+});
+
+export const graph = /* @__PURE__ */ buildCells(graphPositions, {
+  staggerInterval: 2,
+  stagger: 'grouped'
+});
+
+export const cart = /* @__PURE__ */ buildCells(cartPositions, {
+  staggerInterval: 1,
+  stagger: 'grouped'
+});
+
+export const shop = /* @__PURE__ */ buildCells(shopPositions, {
+  staggerInterval: 1,
+  stagger: 'grouped'
+});
+
+export const journey = /* @__PURE__ */ buildCells(journeyPositions, {
+  staggerInterval: 2,
+  stagger: 'grouped'
+});
+
+export const floppy = /* @__PURE__ */ buildCells(floppyPositions, {
+  staggerInterval: 1,
+  stagger: 'grouped'
+});
+
 // ─────────────────────────────────────────────────────────────
 // Presets — sequences (`Cell[][]`) that loop through their icons.
 // Importing a preset pulls in only the icons it references.
@@ -888,6 +1059,26 @@ export const exp: Cell[][] = [
 ];
 
 export const analyze: Cell[][] = [flower, image, brush, eye, eyedrop, wand, lasso, crop];
+
+export const cxo: Cell[][] = [
+  aiLogo,
+  document,
+  graph,
+  cart,
+  shop,
+  dial,
+  image,
+  journey,
+  folder,
+  timeline,
+  comment,
+  floppy,
+  adobeA,
+  adobeD,
+  adobeO,
+  adobeB,
+  adobeE
+];
 
 export const mega: Cell[][] = [
   aiLogo,

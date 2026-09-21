@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {addEvent} from 'react-aria/private/utils/domHelpers';
+import {
+  getEventTarget,
+  getPropagationTargets,
+  nodeContains
+} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 
@@ -63,9 +68,6 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
       }
     };
 
-    window.addEventListener('scroll', onScroll, true);
-    return () => {
-      window.removeEventListener('scroll', onScroll, true);
-    };
+    return addEvent(getPropagationTargets(triggerRef.current), 'scroll', onScroll, true);
   }, [isOpen, onClose, triggerRef]);
 }

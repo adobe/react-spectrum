@@ -35,6 +35,18 @@ export interface AriaTableColumnHeaderProps<T> {
    * virtual scroller.
    */
   isVirtualized?: boolean;
+  /**
+   * Whether the column header or its first focusable child element should be focused when the
+   * column header is focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in
+   * tab keyboard navigation mode.
+   */
+  focusMode?: 'child' | 'cell';
+  /**
+   * Whether the column header should support arrow key navigation even when the containing table
+   * uses tab keyboard navigation. Allows users to navigate between columns with arrow keys while
+   * focus is on an interactive child element within the cell.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 export interface TableColumnHeaderAria {
@@ -58,8 +70,7 @@ export function useTableColumnHeader<T>(
 ): TableColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
-  // if there are no focusable children, the column header will focus the cell
-  let {gridCellProps} = useGridCell({...props, focusMode: 'child'}, state, ref);
+  let {gridCellProps} = useGridCell({focusMode: 'child', ...props}, state, ref);
 
   let isSelectionCellDisabled =
     node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';

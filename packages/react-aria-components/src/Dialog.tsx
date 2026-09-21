@@ -42,6 +42,7 @@ import React, {
 import {RootMenuTriggerStateContext} from './Menu';
 import {TextContext} from './Text';
 import {useId} from 'react-aria/useId';
+import {useIsHidden} from 'react-aria/private/collections/Hidden';
 import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
 
@@ -77,7 +78,7 @@ export const OverlayTriggerStateContext = createContext<OverlayTriggerState | nu
 /**
  * A DialogTrigger opens a dialog when a trigger element is pressed.
  */
-export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
+export function DialogTrigger(props: DialogTriggerProps): JSX.Element | null {
   // Use useMenuTriggerState instead of useOverlayTriggerState in case a menu is embedded in the dialog.
   // This is needed to handle submenus.
   let state = useMenuTriggerState(props);
@@ -93,6 +94,13 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
   triggerProps.id = useId();
   // oxlint-disable-next-line react/react-compiler
   overlayProps['aria-labelledby'] = triggerProps.id;
+
+  // If within a collection (e.g. Tabs), render nothing.
+  // Not using createHideableComponent for this because that also creates a forwardRef.
+  let isHidden = useIsHidden();
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <Provider

@@ -1,4 +1,4 @@
-import {color} from '@react-spectrum/s2/style';
+import {color, css} from '@react-spectrum/s2/style';
 import tokens from './tokens.merged.json';
 
 // Colors below this OKLCH chroma are treated as neutral (white/black/gray) and
@@ -68,23 +68,27 @@ export function brand(l: number, c: number, hueOffset: number, alpha = 1) {
 
 // Converts a single token color value to a brand-relative color, unless it's a
 // neutral (kept as-is) or not a color at all (e.g. an opacity number, kept as-is).
-function convertColor(value: any) {
+// An optional opacity (0-100) overrides the color's own alpha. Note: neutral
+// colors are returned untouched, so opacity is ignored for them.
+export function convertColor(value: any, opacity?: number) {
   if (typeof value !== 'string') {
     return value;
   }
-  let match = value.match(/rgba?\(([^)]+)\)/);
-  if (!match) {
-    return value;
-  }
-  let parts = match[1].split(',').map(x => parseFloat(x.trim()));
-  let [r, g, b] = parts;
-  let alpha = parts[3] ?? 1;
-  let [L, C, H] = rgbToOklch(r, g, b);
-  if (C < NEUTRAL_CHROMA) {
-    return value;
-  }
-  let offset = Math.round((H - BRAND_REF_HUE) * 10) / 10;
-  return brand(Math.round(L * 1e4) / 1e4, Math.round(C * 1e4) / 1e4, offset, alpha);
+  return value.replace(/rgba?\([^)]+\)/g, value => {
+    let match = value.match(/rgba?\(([^)]+)\)/);
+    if (!match) {
+      return value;
+    }
+    let parts = match[1].split(',').map(x => parseFloat(x.trim()));
+    let [r, g, b] = parts;
+    let alpha = opacity != null ? opacity / 100 : (parts[3] ?? 1);
+    let [L, C, H] = rgbToOklch(r, g, b);
+    if (C < NEUTRAL_CHROMA) {
+      return value;
+    }
+    let offset = Math.round((H - BRAND_REF_HUE) * 10) / 10;
+    return brand(Math.round(L * 1e4) / 1e4, Math.round(C * 1e4) / 1e4, offset, alpha);
+  });
 }
 
 export function token(name: string) {
@@ -109,7 +113,7 @@ export function token(name: string) {
 export function mix(gray: string, stop: string, opacity: string) {
   let stopColor = token(stop);
   let stopOpacity = token(opacity);
-  return `color-mix(in srgb, ${gray}, ${stopColor} ${stopOpacity}%)`;
+  return `color-mix(in oklch, ${gray}, ${stopColor} ${stopOpacity}%)`;
 }
 
 export function stop(gray: string, stop: string, opacity: string) {
@@ -164,5 +168,207 @@ function outerBorderStop(stop: number, variant: string, colorScheme: string, div
   if (colorScheme === 'light') {
     opacity = opacity / div;
   }
-  return `rgb(from ${token(`outer-border.gradient.ob-hue.stop-${stop}.${colorScheme}`)} r g b / ${opacity}%)`;
+  return `oklch(from ${token(`outer-border.gradient.ob-hue.stop-${stop}.${colorScheme}`)} l c h / ${opacity}%)`;
+}
+
+export function keyframes(this: any | void, css: string): string {
+  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+  // We also check if this is globalThis, which happens in non-strict mode bundles.
+  // Also allow style to be called as a normal function in tests.
+  // @ts-ignore
+
+  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
+    throw new Error('The keyframes macro must be imported with {type: "macro"}.');
+  }
+  let name = generateArbitraryValueSelector(css, true);
+  css = `@keyframes ${name} {
+  ${css}
+}`;
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: css
+    });
+  }
+  return name;
+}
+
+function generateArbitraryValueSelector(v: string, atStart = false) {
+  let c = toBase62(hash(v));
+  if (atStart && /^[0-9]/.test(c)) {
+    c = `_${c}`;
+  }
+  return c;
+}
+
+function toBase62(value: number) {
+  if (value === 0) {
+    return generateName(value);
+  }
+
+  let res = '';
+  while (value) {
+    let remainder = value % 62;
+    res += generateName(remainder);
+    value = Math.floor((value - remainder) / 62);
+  }
+
+  return res;
+}
+
+function generateName(index: number, atStart = false): string {
+  if (index < 26) {
+    // lower case letters
+    return String.fromCharCode(index + 97);
+  }
+
+  if (index < 52) {
+    // upper case letters
+    return String.fromCharCode(index - 26 + 65);
+  }
+
+  if (index < 62 && !atStart) {
+    // numbers
+    return String.fromCharCode(index - 52 + 48);
+  }
+
+  return '_' + generateName(index - (atStart ? 52 : 62));
+}
+
+// djb2 hash function.
+// http://www.cse.yorku.ca/~oz/hash.html
+function hash(v: string) {
+  let hash = 5381;
+  for (let i = 0; i < v.length; i++) {
+    hash = ((hash << 5) + hash + v.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+interface ScrollFadeOptions {
+  top?: number;
+  bottom?: number;
+  start?: number;
+  end?: number;
+  x?: number;
+  y?: number;
+  inset?: number;
+}
+
+export function scrollFade(this: any | void, options: ScrollFadeOptions) {
+  let {x = 0, y = 0, top = y, bottom = y, start = x, end = x, inset = 0} = options;
+
+  let blockMask = '',
+    inlineMask = '';
+
+  if (top || bottom) {
+    blockMask = `linear-gradient(
+      to bottom,
+      transparent 0px ${inset > 0 ? `calc(var(--scroll-fade-top, ${inset}px) - ${top}px)` : ''},
+      black var(--scroll-fade-top, ${inset}px),
+      black var(--scroll-fade-bottom, calc(100% - ${bottom}px)),
+      transparent ${inset > 0 ? `calc(var(--scroll-fade-bottom, 100%) + ${inset}px)` : ''} 100%
+    )`;
+  }
+
+  if (start || end) {
+    // TODO: rtl
+    inlineMask = `linear-gradient(
+      to right,
+      transparent 0px ${inset > 0 ? `calc(var(--scroll-fade-left, ${inset}px) - ${start}px)` : ''},
+      black var(--scroll-fade-left, ${inset}px),
+      black var(--scroll-fade-right, calc(100% - ${end}px)),
+      transparent ${inset > 0 ? `calc(var(--scroll-fade-right, 100%) + ${end}px)` : ''} 100%
+    )`;
+  }
+
+  let topAnimation = scrollFadeKeyframes.call(
+    this,
+    'top',
+    '0px',
+    top ? `${top + inset}px` : '',
+    '0px'
+  );
+  let bottomAnimation = scrollFadeKeyframes.call(
+    this,
+    'bottom',
+    bottom ? `calc(100% - ${bottom + inset}px)` : '',
+    '100%',
+    '100%'
+  );
+  let leftAnimation = scrollFadeKeyframes.call(
+    this,
+    'left',
+    '0px',
+    start ? `${start + inset}px` : '',
+    '0px'
+  );
+  let rightAnimation = scrollFadeKeyframes.call(
+    this,
+    'right',
+    end ? `calc(100% - ${end + inset}px)` : '',
+    '100%',
+    '100%'
+  );
+  let animations = [topAnimation, bottomAnimation, leftAnimation, rightAnimation];
+  let timeline = ['scroll(self y)', 'scroll(self y)', 'scroll(self x)', 'scroll(self x)']
+    .filter((_, i) => animations[i])
+    .join(', ');
+  let range = [
+    `0px ${top}px`,
+    `calc(100% - ${bottom}px) 100%`,
+    `0px ${start}px`,
+    `calc(100% - ${end}px) 100%`
+  ]
+    .filter((_, i) => animations[i])
+    .join(', ');
+
+  if (blockMask || inlineMask) {
+    return css.call(
+      this,
+      `
+      mask-image: ${[blockMask, inlineMask].filter(Boolean).join(', ')};
+      mask-composite: intersect;
+      mask-repeat: no-repeat;
+
+      @supports (animation-timeline: scroll()) {
+        animation: ${animations.filter(Boolean).join(', ')};
+        animation-duration: 1ms;
+        animation-timing-function: ease-in-out;
+        animation-timeline: ${timeline};
+        animation-range: ${range};
+        animation-fill-mode: both;
+      }
+    `
+    );
+  }
+
+  return '';
+}
+
+function scrollFadeKeyframes(this: any, name: string, start: string, end: string, initial: string) {
+  if (!start || !end) {
+    return '';
+  }
+
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: `
+    @property --scroll-fade-${name} {
+      syntax: "<length-percentage>";
+      inherits: false;
+      initial-value: ${initial};
+    }
+  `
+    });
+  }
+
+  return keyframes.call(
+    this,
+    `
+      from { --scroll-fade-${name}: ${start}; }
+      to { --scroll-fade-${name}: ${end}; }
+    `
+  );
 }

@@ -11,7 +11,7 @@ import {VersionBadge} from '../../src/VersionBadge';
 
 export const tags = ['list view'];
 export const relatedPages = [
-  {title: 'useGridList', url: 'GridList/useGridList.html'},
+  {title: 'useGridList', url: './GridList/useGridList'},
   {title: 'Testing GridList', url: './GridList/testing'}
 ];
 export const description = 'Displays a list of interactive items, with support for keyboard navigation, selection, and actions.';
@@ -732,11 +732,11 @@ let photos = [
   items={photos}
   selectionMode="multiple"
   aria-label="Shared files">
-    {item => (
+  {item => (
     <GridListItem textValue={item.title}>
       <img src={item.src} alt="" />
       <Text>
-        <TextField style={{paddingTop: 2, paddingBottom: 2}} aria-label="title" defaultValue={item.title} />
+        <TextField style={{paddingTop: 2, paddingBottom: 2}} aria-label="title" defaultValue={item.title} placeholder="Enter a title" />
       </Text>
       <Text slot="description">{item.description}</Text>
     </GridListItem>

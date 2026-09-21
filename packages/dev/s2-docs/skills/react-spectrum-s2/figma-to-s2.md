@@ -21,12 +21,23 @@ Real Figma files may pull components from **more than one library**. Use `search
 
 Source kits usually fall into one of these buckets:
 
-- **S2 / Web (Desktop scale)** — the canonical S2 library. The Figma nodes *are* the spec; use the S2 component directly rather than reconstructing visuals from primitives.
+- **S2 / Web** — the canonical S2 library. The Figma nodes *are* the spec; use the S2 component directly rather than reconstructing visuals from primitives. Size and style variants live as **properties on a single component set**, not as separate components (see [Component mapping](#component-mapping)).
+- **S2 / Web (deprecated)** — formerly `S2 / Web (Desktop scale)`. The previous S2 library. Still available, but no further updates will be made. Map instances to their current S2 component exactly as you would for `S2 / Web`; the only difference is its older **split naming**, where each size/style combination is its own component (`Button (M, Accent)`). When a component name resolves in both libraries, prefer the `S2 / Web` match. Real files may still mix the two.
 - **S1 (previous Spectrum library)** — `libraryName` starts with `S / ` (e.g. `S / Web (Desktop scale)`). Map each instance to its *equivalent* S2 component. If the user wants to upgrade their existing S1 components to S2, recommend the `migrate-react-spectrum-v3-to-s2` skill.
 - **S2 platform variants** (iOS, Android, etc.) — same React component as desktop S2; platform-specific affordances usually don't translate.
 - **Product or team-specific kits** — translate to the closest S2 component by name and visual or see if the user already has these components available.
 
 If the design contains only non-S2 components and the user has not yet committed to S2, ask before forcing the translation. The most common reason a user shares one of these files is "I want this *built in* S2," not "preserve this kit's visuals exactly."
+
+### Read the implementation-status flag in the component description
+
+`S2 / Web` components carry implementation-status flags in their Figma **description** (the `description` field returned by `search_design_system`). They tell you whether the component exists in code and, sometimes, exactly what to map to:
+
+- `🟢 RSP` — a React Spectrum (S2) implementation exists. This is the confirmation you want before mapping.
+- A parenthetical after the flag is a **direct mapping hint** — `🟢 RSP (use Dialog)` means map to `Dialog`.
+- `SWC` refers to Spectrum Web Components, a separate implementation. Ignore the SWC line for React Spectrum output.
+
+Examples seen in the library: `Button` → `🟢 RSP` / `🟢 SWC`; `Alert dialog` → `🟢 RSP (use Dialog)` / `⚪️ SWC (use Gen1)`. When you're unsure whether or how a Figma component maps to S2, call `search_design_system` and read its `description` before falling back to the [Component Decision Tree](component-decision-tree.md).
 
 ### Watch out for axis-order differences between S1 and S2
 
@@ -47,11 +58,13 @@ Names you'll see and what to do with them:
 
 ## Component mapping
 
-Figma splits S2 components by **size** and **style variant** into separate component sets. The Figma library shows `Button (M, Accent)`, `Button (S, Primary)`, `Action button (XS)`, `Action button (M)` as distinct components — but in code these all collapse onto a **single** S2 component with `size` and `variant` props.
+In the current **S2 / Web** library, components are **unified**: a single `Button` component set exposes `size` and `variant` as selectable properties. Read the instance's variant properties and feed them straight into the S2 component's `size` / `variant` props.
 
-Common patterns:
+The **deprecated S2 / Web (Desktop scale)** library used the older **split naming** instead — `Button (M, Accent)`, `Button (S, Primary)`, `Action button (XS)`, `Action button (M)` appear as distinct components. These still collapse onto the same **single** S2 component; parse the size/style out of the name rather than the variant properties. The table below reads either way — from the name in the deprecated library, or from variant properties in `S2 / Web`.
 
-| Figma component name                              | S2 component         | Props derived from the Figma name                                |
+Common patterns (name forms like `Button (S/M/L, …)` are the deprecated-library shape):
+
+| Figma component name                              | S2 component         | Props derived from the name or variant properties                |
 | ------------------------------------------------- | -------------------- | ---------------------------------------------------------------- |
 | `Button (S/M/L, Accent/Primary/Secondary/Negative)` | `Button`            | `size="S"\|"M"\|"L"`, `variant="accent"\|"primary"\|"secondary"\|"negative"` |
 | `Action button (XS/S/M/L/XL)`                     | `ActionButton`       | `size="XS"\|"S"\|"M"\|"L"\|"XL"`                                 |
@@ -88,7 +101,7 @@ When a Figma component name is ambiguous, fall back to the [Component Decision T
 The MCP's reference code is a **visual approximation** built for fidelity to the screenshot. It is dense with patterns that don't survive translation to S2:
 
 - **Absolute positioning is screenshot scaffolding.** `absolute left-[40px] top-[239px]` recreates the canvas layout pixel-for-pixel. Replace it with flex/grid so the result is fluid. Use the macro: `style({display: 'flex', flexDirection: 'column', gap: 8})`.
-- **Arbitrary pixel values snap to the 4px grid.** `gap-[8px]` → `gap: 8`. `p-[12px]` → `padding: 12`. Don't preserve off-grid values (`13px`, `41px`) — round to the nearest grid step.
+- **Arbitrary pixel values snap to the 4px grid.** `gap-[8px]` → `gap: 8`. `p-[12px]` → `padding: 12`. Don't preserve off-grid values (`13px`, `41px`) — round to the nearest grid step. Layout and iconography tokens are linked in `S2 / Web`, so `get_variable_defs` now returns **layout tokens** (e.g. `Form item/Gap/Medium/Regular`, group-gap) and **icon-sizing tokens** alongside color. When a spacing value comes through as a *named* layout token rather than a raw pixel, treat it as intentional — map it to the matching `style` macro spacing value.
 - **`rounded-[Npx]` → a `borderRadius` token.** `'none'`, `'sm'`, `'default'`, `'lg'`, `'xl'`, `'full'`, `'pill'`. There is no `'md'`. Don't keep the raw pixel value.
 - **Type goes through the `font` shorthand.** `font-['Adobe_Clean:Medium'] text-[16px]` is the S2 body family — write `font: 'body'`. Don't import Adobe Clean directly; the macro provides family, size, weight, line-height, and a default color via a single token. Pick the role first (`heading-*`, `title-*`, `body-*`, `detail-*`, `ui-*`, `code-*`) and size second.
 - **Colors collapse to semantic tokens.** `bg-[var(--palette/transparent-white/100,…)]` and the hex values from `get_variable_defs` are foundation values. Map by *intent*, not raw value: error/destructive → `negative`, success → `positive`, info → `informative`, brand/CTA → `accent`, generic UI surfaces → `neutral` / `gray-N`. Reach for raw hue tokens (`red-…`, `blue-…`) only for decorative or chart colors.

@@ -22,7 +22,18 @@ function fakeImporter(pkgName) {
   return `/repo/node_modules/${pkgName}/dist/intlStrings.mjs`;
 }
 
+function resolveId(plugin, ...args) {
+  return plugin.resolveId.handler(...args);
+}
+
 describe('@react-aria/optimize-locales-plugin', () => {
+  test('resolveId filters locale-looking specifiers', () => {
+    const plugin = createPlugin(['en-US']);
+
+    expect(plugin.resolveId.filter.id.test('./fr-FR.json')).toBe(true);
+    expect(plugin.resolveId.filter.id.test('./helpers')).toBe(false);
+  });
+
   describe('resolveId redirects non-included locales to empty.js for', () => {
     const cases = [
       ['@react-stately/combobox', fakeImporter('@react-stately/combobox')],
@@ -36,7 +47,7 @@ describe('@react-aria/optimize-locales-plugin', () => {
 
     test.each(cases)('importer under %s', (_label, sourcePath) => {
       const plugin = createPlugin(['en-US']);
-      const resolved = plugin.resolveId('./fr-FR.json', sourcePath, {});
+      const resolved = resolveId(plugin, './fr-FR.json', sourcePath, {});
       expect(resolved).toBe(EMPTY_JS);
     });
   });
@@ -44,32 +55,32 @@ describe('@react-aria/optimize-locales-plugin', () => {
   describe('resolveId leaves things alone when', () => {
     test('importer is outside React Spectrum / React Aria scopes', () => {
       const plugin = createPlugin(['en-US']);
-      const resolved = plugin.resolveId('./fr-FR.json', fakeImporter('some-other-pkg'), {});
+      const resolved = resolveId(plugin, './fr-FR.json', fakeImporter('some-other-pkg'), {});
       expect(resolved).toBeUndefined();
     });
 
     test('specifier targets an included locale', () => {
       const plugin = createPlugin(['en-US', 'fr-FR']);
-      const resolved = plugin.resolveId('./fr-FR.json', fakeImporter('@adobe/react-spectrum'), {});
+      const resolved = resolveId(plugin, './fr-FR.json', fakeImporter('@adobe/react-spectrum'), {});
       expect(resolved).toBeNull();
     });
 
     test('specifier targets a regional locale whose language is included without a region', () => {
       // Including a bare language ("fr") should keep every regional variant.
       const plugin = createPlugin(['en-US', 'fr']);
-      const resolved = plugin.resolveId('./fr-CA.json', fakeImporter('@react-aria/button'), {});
+      const resolved = resolveId(plugin, './fr-CA.json', fakeImporter('@react-aria/button'), {});
       expect(resolved).toBeNull();
     });
 
     test('specifier does not look like a locale', () => {
       const plugin = createPlugin(['en-US']);
-      const resolved = plugin.resolveId('./helpers', fakeImporter('@adobe/react-spectrum'), {});
+      const resolved = resolveId(plugin, './helpers', fakeImporter('@adobe/react-spectrum'), {});
       expect(resolved).toBeNull();
     });
 
     test('options.ssr is true', () => {
       const plugin = createPlugin(['en-US']);
-      const resolved = plugin.resolveId('./fr-FR.json', fakeImporter('@adobe/react-spectrum'), {
+      const resolved = resolveId(plugin, './fr-FR.json', fakeImporter('@adobe/react-spectrum'), {
         ssr: true
       });
       expect(resolved).toBeUndefined();
@@ -79,7 +90,7 @@ describe('@react-aria/optimize-locales-plugin', () => {
   test('handles Windows-style importer paths', () => {
     const plugin = createPlugin(['en-US']);
     const windowsImporter = 'C:\\repo\\node_modules\\@adobe\\react-spectrum\\dist\\intlStrings.mjs';
-    const resolved = plugin.resolveId('./fr-FR.json', windowsImporter, {});
+    const resolved = resolveId(plugin, './fr-FR.json', windowsImporter, {});
     expect(resolved).toBe(EMPTY_JS);
   });
 });

@@ -1,0 +1,26 @@
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@parcel/resolver-glob", "..."],
+  "transformers": {
+    "docs:*": ["@parcel/transformer-ts-doc"],
+    "*.stories.{ts,tsx,js,mjs,jsm,jsx,es6,cjs}": [
+      "@parcel/transformer-storybook-v3",
+      "..."
+    ],
+    "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
+    "packages/@adobe/**/*.css": [
+      "../parcel-v3/PostCSSTransformer.mjs",
+      {
+        "plugin": "@parcel/transformer-css",
+        "config": {
+          "cssModules": true,
+          "pseudoClasses": {
+            "focusVisible": "focus-ring",
+            "hover": "is-hovered"
+          }
+        }
+      }
+    ],
+    "raw:*": ["@parcel/transformer-raw"]
+  }
+}

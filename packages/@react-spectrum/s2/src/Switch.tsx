@@ -83,6 +83,7 @@ export const SwitchContext =
 const field = style(
   {
     display: 'grid',
+    position: 'relative',
     gridTemplateColumns: {
       default: ['max-content', '1fr'],
       isNoVisibleLabel: ['max-content']

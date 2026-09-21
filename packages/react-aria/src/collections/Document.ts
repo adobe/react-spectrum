@@ -13,7 +13,7 @@
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
 import {CollectionNodeClass} from './CollectionBuilder';
 import {CSSProperties, ForwardedRef, ReactElement, ReactNode} from 'react';
-import {Node} from '@react-types/shared';
+import {Key, Node} from '@react-types/shared';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
 // Portal to a fake DOM implementation. This gives us efficient access to the tree of rendered objects, and
@@ -432,6 +432,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   isSSR = false;
   nodeId = 0;
   nodesByProps: WeakMap<object, ElementNode<T>> = new WeakMap<object, ElementNode<T>>();
+  private keyOwners: Map<Key, ElementNode<T>> = new Map();
   private collection: C;
   private nextCollection: C | null = null;
   private subscriptions: Set<() => void> = new Set();
@@ -470,6 +471,21 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       return;
     }
 
+    if (process.env.NODE_ENV !== 'production') {
+      // Two elements with the same key would corrupt the linked list of sibling keys, which
+      // silently drops items or makes key traversal loop forever. Removed and hidden elements
+      // release their key in removeNode before any node is added, so a different owner here
+      // is a live duplicate.
+      let key = element.node.key;
+      let owner = this.keyOwners.get(key);
+      if (owner && owner !== element) {
+        throw new Error(
+          `Duplicate key "${String(key)}" found in collection. Every item in a collection must have a unique key.`
+        );
+      }
+      this.keyOwners.set(key, element);
+    }
+
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
       for (let child of element) {
@@ -488,6 +504,9 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     if (node.node) {
       let collection = this.getMutableCollection();
       collection.removeNode(node.node.key);
+      if (process.env.NODE_ENV !== 'production' && this.keyOwners.get(node.node.key) === node) {
+        this.keyOwners.delete(node.node.key);
+      }
     }
   }
 
@@ -577,6 +596,12 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   subscribe(fn: () => void) {
     this.subscriptions.add(fn);
+    // Ensure that React reads the collection if we re-subscribe after updates were
+    // already queued. When a hidden Activity is revealed, child nodes re-attach and call
+    // queueUpdate before we can re-subscribe, so the notification is lost.
+    if (this.queuedRender) {
+      fn();
+    }
     return (): boolean => this.subscriptions.delete(fn);
   }
 
@@ -586,6 +611,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       this.firstChild = null;
       this.lastChild = null;
       this.nodeId = 0;
+      this.keyOwners.clear();
     }
   }
 }

@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import type {EventMapType} from '@react-types/shared';
+
 export const getOwnerDocument = (target?: EventTarget | null): Document => {
   if (isWindow(target)) return target.document;
 
@@ -62,4 +64,68 @@ export function isDocument(value: unknown): value is Document {
 export function isShadowRoot(value: unknown): value is ShadowRoot {
   // 11 = DOCUMENT_FRAGMENT_NODE
   return isNode(value) && value.nodeType === 11 && 'host' in value;
+}
+
+/**
+ * Attaches an event listener on target(s) and returns a cleanup function.
+ */
+export function addEvent<T extends EventTarget, K extends keyof EventMapType<Exclude<T, null>>>(
+  target: T | EventTarget[] | null,
+  event: Extract<K, string> | (string & {}),
+  listener?: (this: T, ev: EventMapType<Exclude<T, null>>[K]) => any,
+  options?: boolean | AddEventListenerOptions
+): () => void {
+  if (listener == null || target == null) {
+    return () => {};
+  }
+
+  let eventTargets = Array.isArray(target) ? target : [target];
+
+  for (let eventTarget of eventTargets) {
+    eventTarget.addEventListener(event, listener as EventListener, options);
+  }
+
+  return () => {
+    for (let eventTarget of eventTargets) {
+      eventTarget.removeEventListener(event, listener as EventListener, options);
+    }
+  };
+}
+
+/**
+ * Sets a CSS property on an element and returns a cleanup function.
+ */
+export function setStyle(
+  target: HTMLElement | HTMLElement[] | null,
+  property: string,
+  value: string,
+  priority?: string
+): () => void {
+  if (target == null) {
+    return () => {};
+  }
+
+  let restore = new Array<Function>();
+  let styleTargets = Array.isArray(target) ? target : [target];
+
+  for (let styleTarget of styleTargets) {
+    let initialValue = styleTarget.style.getPropertyValue(property);
+    let initialPriority = styleTarget.style.getPropertyPriority(property);
+
+    styleTarget.style.setProperty(property, value, priority);
+
+    restore.unshift(() => {
+      if (initialValue) {
+        styleTarget.style.setProperty(property, initialValue, initialPriority);
+      } else {
+        styleTarget.style.removeProperty(property);
+      }
+    });
+  }
+
+  return () => {
+    for (let cleanup of restore) {
+      cleanup();
+    }
+  };
 }
