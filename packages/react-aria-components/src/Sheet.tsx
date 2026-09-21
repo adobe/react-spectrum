@@ -1,11 +1,11 @@
-import {DialogContext} from './Dialog';
+import {Dialog, DialogProps} from './Dialog';
 import {flushSync} from 'react-dom';
 import {Modal, ModalOverlay, ModalOverlayProps} from './Modal';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 
-interface SheetProps extends ModalOverlayProps {
+interface SheetOverlayProps extends ModalOverlayProps {
   children: ReactNode;
   position?: 'bottom' | 'top' | 'left' | 'right' | 'center';
   swipeDirection: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
@@ -24,9 +24,9 @@ interface SheetProps extends ModalOverlayProps {
   snapPoints?: Array<number | string>;
 }
 
-const SheetContext = createContext<SheetProps | null>(null);
+const SheetContext = createContext<SheetOverlayProps | null>(null);
 
-export function Sheet(props: SheetProps) {
+export function SheetOverlay(props: SheetOverlayProps) {
   let {
     children,
     isDismissable = true,
@@ -116,7 +116,7 @@ export function Sheet(props: SheetProps) {
       data-position={position}
       data-swipe-direction={swipeDirection}
       data-expanded={isExpanded || undefined}
-      className={props.className}
+      className={props.className || 'react-aria-SheetOverlay'}
       style={{
         position: 'absolute',
         top: axis === 'y' ? `${containerOffset}dvh` : 0,
@@ -244,7 +244,7 @@ interface SwipeConfig {
 // gesture natively. The container is always 2 viewports along the axis; a fixed 1-viewport window
 // (the actual browser viewport) looks onto it. The stage always sits 1 viewport into the content,
 // and snap markers at the content extremes define the entered/exited resting positions.
-function getSwipeConfig(swipeDirection: SheetProps['swipeDirection']): SwipeConfig {
+function getSwipeConfig(swipeDirection: SheetOverlayProps['swipeDirection']): SwipeConfig {
   let axis: Axis =
     swipeDirection === 'top' || swipeDirection === 'bottom' || swipeDirection === 'vertical'
       ? 'y'
@@ -272,7 +272,7 @@ function getSwipeConfig(swipeDirection: SheetProps['swipeDirection']): SwipeConf
 }
 
 // Maps a sheet position to its resting alignment on each axis, independent of the swipe direction.
-function getPositionAlignment(position: NonNullable<SheetProps['position']>): {
+function getPositionAlignment(position: NonNullable<SheetOverlayProps['position']>): {
   x: string;
   y: string;
 } {
@@ -361,26 +361,16 @@ function DetentPoint({point, axis, after, isInitial}: DetentPointProps) {
   return <div data-sheet-initial={isInitial || undefined} style={{...common, ...edge}} />;
 }
 
-interface SheetContentProps extends ModalOverlayProps {}
+interface SheetProps extends ModalOverlayProps {}
 
-export function SheetContent(props: SheetContentProps) {
+export function Sheet(props: SheetProps) {
   let ref = useRef(null);
   let {
     position = 'bottom',
     swipeDirection = position === 'center' ? 'vertical' : position,
     snapPoints
   } = useContext(SheetContext)!;
-
-  let {axis, before, after} = getSwipeConfig(swipeDirection);
-  // The animation is driven by a view-progress timeline on the sheet itself, so its range is scaled
-  // to the sheet's own size and position. The scroll container is 2 viewports along the swipe axis,
-  // so crop the timeline's scrollport by one viewport down to the visible viewport. The off-screen
-  // half is the one opposite `containerOffset`: the start half is visible unless the sheet rests at
-  // scroll 0 (top/left), where the end half is visible. Use an explicit viewport length rather than
-  // `50%`, since a percentage inset resolves against the block axis and would be wrong for the
-  // horizontal (x) timeline.
-  let viewportLength = axis === 'y' ? '100dvh' : '100vw';
-  let viewInset = before && !after ? `${viewportLength} 0` : `0 ${viewportLength}`;
+  let {axis, after} = getSwipeConfig(swipeDirection);
 
   // Extra padding to allow overscrolling, and a negative margin to offset it.
   let padding, margin;
@@ -413,6 +403,7 @@ export function SheetContent(props: SheetContentProps) {
       ref={ref}
       data-position={position}
       data-swipe-direction={swipeDirection}
+      className={props.className || 'react-aria-Sheet'}
       style={{
         ...props.style,
         // Positioned so the detent markers below anchor to the sheet's own box.
@@ -428,26 +419,45 @@ export function SheetContent(props: SheetContentProps) {
           {snapPoints?.map((point, i) => (
             <DetentPoint key={i} point={point} axis={axis} after={after} isInitial={i === 0} />
           ))}
-          <DialogContext.Provider
-            value={{
-              style: {
-                width: '100%',
-                height: '100%',
-                // The dialog is the subject of the view-progress timeline that drives all sheet animations.
-                // It is _not_ the Modal because that may have additional padding for overscroll and therefore never be entirely visible.
-                // The inset (set on the overlay) crops the oversized scroll container's scrollport down to
-                // the visible viewport so progress tracks the sheet's real on-screen travel.
-                // @ts-ignore
-                viewTimelineName: '--sheet-animation-timeline',
-                viewTimelineAxis: axis,
-                viewTimelineInset: viewInset
-              }
-            }}>
-            {typeof props.children === 'function' ? props.children(renderProps) : props.children}
-          </DialogContext.Provider>
+          {typeof props.children === 'function' ? props.children(renderProps) : props.children}
         </>
       )}
     </Modal>
+  );
+}
+
+export function SheetContent(props: DialogProps) {
+  let {position = 'bottom', swipeDirection = position === 'center' ? 'vertical' : position} =
+    useContext(SheetContext)!;
+  let {axis, before, after} = getSwipeConfig(swipeDirection);
+  // The animation is driven by a view-progress timeline on the sheet itself, so its range is scaled
+  // to the sheet's own size and position. The scroll container is 2 viewports along the swipe axis,
+  // so crop the timeline's scrollport by one viewport down to the visible viewport. The off-screen
+  // half is the one opposite `containerOffset`: the start half is visible unless the sheet rests at
+  // scroll 0 (top/left), where the end half is visible. Use an explicit viewport length rather than
+  // `50%`, since a percentage inset resolves against the block axis and would be wrong for the
+  // horizontal (x) timeline.
+  let viewportLength = axis === 'y' ? '100dvh' : '100vw';
+  let viewInset = before && !after ? `${viewportLength} 0` : `0 ${viewportLength}`;
+
+  return (
+    <Dialog
+      {...props}
+      className={props.className || 'react-aria-SheetContent'}
+      style={{
+        ...props.style,
+        width: '100%',
+        height: '100%',
+        // The dialog is the subject of the view-progress timeline that drives all sheet animations.
+        // It is _not_ the Modal because that may have additional padding for overscroll and therefore never be entirely visible.
+        // The inset (set on the overlay) crops the oversized scroll container's scrollport down to
+        // the visible viewport so progress tracks the sheet's real on-screen travel.
+        // @ts-ignore
+        viewTimelineName: '--sheet-animation-timeline',
+        viewTimelineAxis: axis,
+        viewTimelineInset: viewInset
+      }}
+    />
   );
 }
 
@@ -482,7 +492,7 @@ function addScrollEndListener(element: Element, cb: () => void, options?: {once?
   return () => element.removeEventListener('scrollend', cb);
 }
 
-function isExited(swipeDirection: SheetProps['swipeDirection'], element: HTMLElement) {
+function isExited(swipeDirection: SheetOverlayProps['swipeDirection'], element: HTMLElement) {
   let {axis, before, after, maxScroll} = getSwipeConfig(swipeDirection);
   let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
   let maxScrollPx = (maxScroll / 100) * vp;

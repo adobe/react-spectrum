@@ -1,10 +1,11 @@
-.sheet {
+.react-aria-Sheet {
   color-scheme: light dark;
   background: Canvas;
   color: CanvasText;
   height: 80%;
   padding: var(--sheet-overscroll-padding);
   margin: var(--sheet-overscroll-margin);
+  overflow: clip;
   width: calc(100% - 16px);
   max-width: 800px;
   border-radius: 20px;
@@ -42,7 +43,7 @@
   }
 }
 
-.sheet-container {
+.react-aria-SheetOverlay {
   animation-name: backdropAnimation;
   animation-timeline: --sheet-animation-timeline;
   animation-direction: var(--sheet-animation-direction);
@@ -74,7 +75,7 @@
   }
 }
 
-.sheet .react-aria-Dialog {
+.react-aria-SheetContent {
   padding: 30px;
   padding-bottom: var(--sheet-scroll-padding-y);
   box-sizing: border-box;
@@ -84,7 +85,7 @@
   overflow: hidden;
 }
 
-.sheet-container[data-expanded] .react-aria-Dialog {
+.react-aria-SheetOverlay[data-expanded] .react-aria-SheetContent {
   overflow: auto;
 }
 

@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Heading} from 'react-aria-components';
+import {Button, DialogTrigger, Heading} from 'react-aria-components';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Sheet, SheetContent} from '../src/Sheet';
+import {Sheet, SheetContent, SheetOverlay} from '../src/Sheet';
 import './Sheet.css';
 
 export default {
   title: 'React Aria Components/Sheet',
-  component: Sheet,
+  component: SheetOverlay,
   argTypes: {
     position: {
       control: {
@@ -33,17 +33,17 @@ export default {
       }
     }
   }
-} as Meta<typeof Sheet>;
+} as Meta<typeof SheetOverlay>;
 
-export type SheetStory = StoryFn<typeof Sheet>;
+export type SheetStory = StoryFn<typeof SheetOverlay>;
 
 export const SheetExample: SheetStory = args => (
   <>
     <DialogTrigger>
       <Button>Open sheet</Button>
-      <Sheet position="bottom" className="sheet-container" {...args}>
-        <SheetContent className="sheet">
-          <Dialog>
+      <SheetOverlay position="bottom" {...args}>
+        <Sheet>
+          <SheetContent>
             {({close}) => (
               <form style={{display: 'flex', flexDirection: 'column'}}>
                 <Heading slot="title" style={{marginTop: 0}}>
@@ -68,9 +68,9 @@ export const SheetExample: SheetStory = args => (
                 ))}
               </form>
             )}
-          </Dialog>
-        </SheetContent>
-      </Sheet>
+          </SheetContent>
+        </Sheet>
+      </SheetOverlay>
     </DialogTrigger>
     {/* <div style={{position: 'absolute', top: 0, left: 0, width: '100%', height: 'calc(100lvh + 58px)', outline: '2px solid red', outlineOffset: -2}} /> */}
   </>
@@ -80,11 +80,9 @@ export const SheetDetents: SheetStory = args => (
   <DialogTrigger>
     <Button>Open sheet</Button>
     {/* Opens with 180px of the sheet showing; drag up to full height or down to dismiss. */}
-    <Sheet position="bottom" className="sheet-container" snapPoints={['180px']} {...args}>
-      <SheetContent
-        className="sheet"
-        style={{height: '92dvh', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)'}}>
-        <Dialog>
+    <SheetOverlay position="bottom" className="sheet-container" snapPoints={['180px']} {...args}>
+      <Sheet className="sheet" style={{height: '92dvh', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)'}}>
+        <SheetContent>
           {({close}) => (
             <form style={{display: 'flex', flexDirection: 'column', gap: 12}}>
               <Heading slot="title" style={{marginTop: 0}}>
@@ -106,8 +104,8 @@ export const SheetDetents: SheetStory = args => (
               ))}
             </form>
           )}
-        </Dialog>
-      </SheetContent>
-    </Sheet>
+        </SheetContent>
+      </Sheet>
+    </SheetOverlay>
   </DialogTrigger>
 );
