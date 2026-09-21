@@ -40,7 +40,6 @@ import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
-import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Microphone from '@react-spectrum/s2/icons/Microphone';
@@ -79,7 +78,6 @@ import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
 export interface PromptFieldAttachment {
   id: string;
   file: File;
@@ -853,16 +851,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       }}>
       <Suspense fallback={<Menu loadingState="loading">{null}</Menu>}>
         <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
-          <Virtualizer
-            layout={ListLayout}
-            layoutOptions={{
-              estimatedRowHeight: 32,
-              estimatedHeadingHeight: 50,
-              padding: 8
-            }}
-            shouldObserveItemSize>
-            <PromptCompletionMenu items={items} />
-          </Virtualizer>
+          <PromptCompletionMenu items={items} />
         </PromptCompletionAnchorContext.Provider>
       </Suspense>
     </Popover>
@@ -881,7 +870,7 @@ function PromptCompletionMenu(props: {
     setMenuItems(resolvedItems);
   }
 
-  return <Menu>{menuItems}</Menu>;
+  return <Menu isVirtualized>{menuItems}</Menu>;
 }
 
 export interface PromptTokenProps extends Omit<

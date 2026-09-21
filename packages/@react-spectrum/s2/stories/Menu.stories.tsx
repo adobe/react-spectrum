@@ -18,6 +18,7 @@ import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
 import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
+import {Collection} from 'react-aria/Collection';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
 import CommunityIcon from '../s2wf-icons/S2_Icon_Community_20_N.svg';
@@ -537,5 +538,36 @@ export const HoldAffordance: Story = {
         </Menu>
       </MenuTrigger>
     </div>
+  )
+};
+
+let virtualizedSections = Array.from({length: 5}, (_, sectionIndex) => ({
+  id: `section-${sectionIndex}`,
+  title: `Section ${sectionIndex + 1}`,
+  items: Array.from({length: 50}, (_, itemIndex) => ({
+    id: `item-${sectionIndex}-${itemIndex}`,
+    name: `Item ${sectionIndex * 50 + itemIndex + 1}`
+  }))
+}));
+
+export const Virtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="virtualized menu">
+        <NewIcon />
+      </Button>
+      <Menu isVirtualized styles={style({width: 240})} items={virtualizedSections}>
+        {section => (
+          <MenuSection id={section.id} items={section.items}>
+            <Header>
+              <Heading>{section.title}</Heading>
+            </Header>
+            <Collection items={section.items}>
+              {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
+            </Collection>
+          </MenuSection>
+        )}
+      </Menu>
+    </MenuTrigger>
   )
 };

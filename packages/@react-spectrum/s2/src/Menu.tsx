@@ -49,7 +49,6 @@ import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
-import {CollectionRendererContext} from 'react-aria-components/CollectionBuilder';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   control,
@@ -81,6 +80,7 @@ import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import intlMessages from '../intl/*.json';
 import {isSeparatorHidden, SeparatorNode} from './separator-utils';
 import LinkOutIcon from '../ui-icons/LinkOut';
+import {ListLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
@@ -141,6 +141,12 @@ export interface MenuProps<T>
    * The current loading state of the Menu.
    */
   loadingState?: LoadingState;
+  /**
+   * Whether the Menu should be virtualized.
+   *
+   * @default false
+   */
+  isVirtualized?: boolean;
 }
 
 export const MenuContext =
@@ -173,7 +179,10 @@ export let menu = style(
       isPopover: 320
     },
     padding: {
-      isPopover: 8
+      isPopover: {
+        default: 8,
+        isVirtualized: 0
+      }
     },
     fontFamily: 'sans',
     fontSize: controlFont(),
@@ -181,6 +190,12 @@ export let menu = style(
   },
   getAllowedOverrides()
 );
+
+const virtualizedMenuWidth = style<{isVirtualized?: boolean}>({
+  width: {
+    isVirtualized: 150
+  }
+});
 
 export let section = style({
   gridColumnStart: 1,
@@ -490,6 +505,12 @@ const emptyStateText = style({
   paddingX: 'edge-to-text'
 });
 
+const virtualizedMenuLayoutOptions = {
+  estimatedRowSize: 32,
+  estimatedHeadingSize: 50,
+  padding: 8
+};
+
 /**
  * Menus display a list of actions or options that a user can choose.
  */
@@ -508,11 +529,11 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     hideLinkOutIcon = false,
     items,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    isVirtualized = false
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
   let inPopover = useContext(InPopoverContext);
-  let isVirtualized = !!useContext(CollectionRendererContext).isVirtualized;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   let menuLoadingCircle = (
@@ -550,6 +571,41 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   }
 
   let isPopover = (ctx || isSubmenu) && !inPopover;
+  let menuContent = (
+    <AriaMenu
+      {...props}
+      className={menu(
+        {size, isPopover, isVirtualized},
+        isPopover ? null : mergeStyles(virtualizedMenuWidth({isVirtualized}), styles)
+      )}
+      renderEmptyState={() =>
+        loadingState === 'loading' ? (
+          <div className={loadingWrapperStyles}>
+            <ProgressCircle
+              isIndeterminate
+              size="S"
+              styles={progressCircleStyles}
+              aria-label={stringFormatter.format('table.loading')}
+            />
+          </div>
+        ) : (
+          <span className={emptyStateText({size})}>
+            {stringFormatter.format('combobox.noResults')}
+          </span>
+        )
+      }>
+      {renderer}
+    </AriaMenu>
+  );
+
+  let menuWithVirtualizer = isVirtualized ? (
+    <Virtualizer layout={ListLayout} layoutOptions={virtualizedMenuLayoutOptions}>
+      {menuContent}
+    </Virtualizer>
+  ) : (
+    menuContent
+  );
+
   let content = (
     <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon, isVirtualized}}>
       <Provider
@@ -573,27 +629,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
           ],
           [InPopoverContext, false]
         ]}>
-        <AriaMenu
-          {...props}
-          className={menu({size, isPopover, isVirtualized}, isPopover ? null : styles)}
-          renderEmptyState={() =>
-            loadingState === 'loading' ? (
-              <div className={loadingWrapperStyles}>
-                <ProgressCircle
-                  isIndeterminate
-                  size="S"
-                  styles={progressCircleStyles}
-                  aria-label={stringFormatter.format('table.loading')}
-                />
-              </div>
-            ) : (
-              <span className={emptyStateText({size})}>
-                {stringFormatter.format('combobox.noResults')}
-              </span>
-            )
-          }>
-          {renderer}
-        </AriaMenu>
+        {menuWithVirtualizer}
       </Provider>
     </InternalMenuContext.Provider>
   );
@@ -603,7 +639,10 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
       <Popover ref={ref} padding="none" hideArrow>
         <div
           style={UNSAFE_style}
-          className={(UNSAFE_className || '') + mergeStyles(wrappingDiv, styles)}>
+          className={
+            (UNSAFE_className || '') +
+            mergeStyles(wrappingDiv, virtualizedMenuWidth({isVirtualized}), styles)
+          }>
           {content}
         </div>
       </Popover>
