@@ -8,10 +8,13 @@
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
-*/
+ */
 
 import ariaStyles from './resizing.css';
-import {AriaTableColumnResizeProps, useTableColumnResize} from '../../src/table/useTableColumnResize';
+import {
+  AriaTableColumnResizeProps,
+  useTableColumnResize
+} from '../../src/table/useTableColumnResize';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {ColumnSize} from 'react-stately/useTableState';
 import {FocusRing} from '../../src/focus/FocusRing';
@@ -30,18 +33,25 @@ import {useTableColumnHeader} from '../../src/table/useTableColumnHeader';
 import {useTableHeaderRow} from '../../src/table/useTableHeaderRow';
 import {useTableRow} from '../../src/table/useTableRow';
 import {useTableRowGroup} from '../../src/table/useTableRowGroup';
-import {useTableSelectAllCheckbox, useTableSelectionCheckbox} from '../../src/table/useTableSelectionCheckbox';
+import {
+  useTableSelectAllCheckbox,
+  useTableSelectionCheckbox
+} from '../../src/table/useTableSelectionCheckbox';
 import {useToggleState} from 'react-stately/useToggleState';
 import {VisuallyHidden} from '../../src/visually-hidden/VisuallyHidden';
 
-export function Table<T extends object>(props: TableProps<T> & {
-  selectionStyle?: 'highlight' | 'checkbox' | 'none',
-  onAction?: (key: Key) => void,
-  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
-  onResize?: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
-}): JSX.Element {
-  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
+export function Table<T extends object>(
+  props: TableProps<T> & {
+    selectionStyle?: 'highlight' | 'checkbox' | 'none';
+    onAction?: (key: Key) => void;
+    onResizeStart?: (widths: Map<Key, ColumnSize>) => void;
+    onResize?: (widths: Map<Key, ColumnSize>) => void;
+    onResizeEnd?: (widths: Map<Key, ColumnSize>) => void;
+  }
+): JSX.Element {
+  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(
+    props.selectionStyle !== 'highlight'
+  );
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
@@ -51,11 +61,14 @@ export function Table<T extends object>(props: TableProps<T> & {
   let [tableWidth, setTableWidth] = useState(0);
   let getDefaultWidth = useCallback(() => undefined, []);
   let getDefaultMinWidth = useCallback(() => 75, []);
-  let layoutState = useTableColumnResizeState({
-    getDefaultWidth,
-    getDefaultMinWidth,
-    tableWidth
-  }, state);
+  let layoutState = useTableColumnResizeState(
+    {
+      getDefaultWidth,
+      getDefaultMinWidth,
+      tableWidth
+    },
+    state
+  );
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -86,24 +99,54 @@ export function Table<T extends object>(props: TableProps<T> & {
 
   return (
     <table {...gridProps} ref={ref} className={classNames(ariaStyles, 'aria-table')}>
-      <TableRowGroup type="thead" className={classNames(ariaStyles, 'aria-table-rowGroup', 'aria-table-rowGroupHeader')}>
+      <TableRowGroup
+        type="thead"
+        className={classNames(ariaStyles, 'aria-table-rowGroup', 'aria-table-rowGroupHeader')}>
         {collection.headerRows.map(headerRow => (
-          <TableHeaderRow key={headerRow.key} item={headerRow} state={state} className={classNames(ariaStyles, 'aria-table-row', 'aria-table-headerRow')}>
+          <TableHeaderRow
+            key={headerRow.key}
+            item={headerRow}
+            state={state}
+            className={classNames(ariaStyles, 'aria-table-row', 'aria-table-headerRow')}>
             {[...state.collection.getChildren!(headerRow.key)].map(column =>
-              column.props.isSelectionCell
-                ? <TableSelectAllCell key={column.key} column={column} state={state} layout={layout} />
-                : <TableColumnHeader key={column.key} column={column} state={state} layout={layout} onResizeStart={props.onResizeStart} onResize={props.onResize} onResizeEnd={props.onResizeEnd} />
+              column.props.isSelectionCell ? (
+                <TableSelectAllCell
+                  key={column.key}
+                  column={column}
+                  state={state}
+                  layout={layout}
+                />
+              ) : (
+                <TableColumnHeader
+                  key={column.key}
+                  column={column}
+                  state={state}
+                  layout={layout}
+                  onResizeStart={props.onResizeStart}
+                  onResize={props.onResize}
+                  onResizeEnd={props.onResizeEnd}
+                />
+              )
             )}
           </TableHeaderRow>
         ))}
       </TableRowGroup>
-      <TableRowGroup type="tbody" ref={bodyRef} className={classNames(ariaStyles, 'aria-table-rowGroup')}>
+      <TableRowGroup
+        type="tbody"
+        ref={bodyRef}
+        className={classNames(ariaStyles, 'aria-table-rowGroup')}>
         {[...collection].map(row => (
-          <TableRow key={row.key} item={row} state={state} className={classNames(ariaStyles, 'aria-table-row')}>
+          <TableRow
+            key={row.key}
+            item={row}
+            state={state}
+            className={classNames(ariaStyles, 'aria-table-row')}>
             {[...state.collection.getChildren!(row.key)].map(cell =>
-              cell.props.isSelectionCell
-                ? <TableCheckboxCell key={cell.key} cell={cell} state={state} layout={layout} />
-                : <TableCell key={cell.key} cell={cell} state={state} layout={layout} />
+              cell.props.isSelectionCell ? (
+                <TableCheckboxCell key={cell.key} cell={cell} state={state} layout={layout} />
+              ) : (
+                <TableCell key={cell.key} cell={cell} state={state} layout={layout} />
+              )
             )}
           </TableRow>
         ))}
@@ -112,9 +155,9 @@ export function Table<T extends object>(props: TableProps<T> & {
   );
 }
 
-export const TableRowGroup:
-  React.ForwardRefExoticComponent<Omit<any, 'ref'> & React.RefAttributes<unknown>> =
-React.forwardRef((props: any, ref) => {
+export const TableRowGroup: React.ForwardRefExoticComponent<
+  Omit<any, 'ref'> & React.RefAttributes<unknown>
+> = React.forwardRef((props: any, ref) => {
   let {type: Element, style, children, className} = props;
   let {rowGroupProps} = useTableRowGroup();
   return (
@@ -124,7 +167,17 @@ React.forwardRef((props: any, ref) => {
   );
 });
 
-export function TableHeaderRow({item, state, children, className}: {item: any, state: any, children: ReactNode, className: string}): JSX.Element {
+export function TableHeaderRow({
+  item,
+  state,
+  children,
+  className
+}: {
+  item: any;
+  state: any;
+  children: ReactNode;
+  className: string;
+}): JSX.Element {
   let ref = useRef<HTMLTableRowElement | null>(null);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
@@ -134,15 +187,31 @@ export function TableHeaderRow({item, state, children, className}: {item: any, s
     </tr>
   );
 }
-function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}: {column: any, layout: any, onResizeStart: any, onResize: any, onResizeEnd: any}): JSX.Element {
+function Resizer({
+  column,
+  layout,
+  onResizeStart,
+  onResize,
+  onResizeEnd
+}: {
+  column: any;
+  layout: any;
+  onResizeStart: any;
+  onResize: any;
+  onResizeEnd: any;
+}): JSX.Element {
   let ref = useRef(null);
-  let {resizerProps, inputProps} = useTableColumnResize({
-    column,
-    'aria-label': 'Resizer',
-    onResizeStart,
-    onResize,
-    onResizeEnd
-  } as AriaTableColumnResizeProps<any>, layout, ref);
+  let {resizerProps, inputProps} = useTableColumnResize(
+    {
+      column,
+      'aria-label': 'Resizer',
+      onResizeStart,
+      onResize,
+      onResizeEnd
+    } as AriaTableColumnResizeProps<any>,
+    layout,
+    ref
+  );
 
   return (
     <>
@@ -162,16 +231,28 @@ function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}: {column
           }}
           {...resizerProps}>
           <VisuallyHidden>
-            <input
-              ref={ref}
-              {...inputProps} />
+            <input ref={ref} {...inputProps} />
           </VisuallyHidden>
         </div>
       </FocusRing>
     </>
   );
 }
-export function TableColumnHeader({column, state, layout, onResizeStart, onResize, onResizeEnd}: {column: any, state: any, layout: any, onResizeStart: any, onResize: any, onResizeEnd: any}): JSX.Element {
+export function TableColumnHeader({
+  column,
+  state,
+  layout,
+  onResizeStart,
+  onResize,
+  onResizeEnd
+}: {
+  column: any;
+  state: any;
+  layout: any;
+  onResizeStart: any;
+  onResize: any;
+  onResizeEnd: any;
+}): JSX.Element {
   let ref = useRef<HTMLTableHeaderCellElement | null>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -196,22 +277,42 @@ export function TableColumnHeader({column, state, layout, onResizeStart, onResiz
       <div style={{display: 'flex', position: 'relative'}}>
         <div style={{flex: '1 1 auto'}}>
           {column.rendered}
-          {column.props.allowsSorting &&
-            <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
+          {column.props.allowsSorting && (
+            <span
+              aria-hidden="true"
+              style={{
+                padding: '0 2px',
+                visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'
+              }}>
               {arrowIcon}
             </span>
-          }
+          )}
         </div>
-        {
-          column.props.allowsResizing &&
-          <Resizer column={column} layout={layout} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
-        }
+        {column.props.allowsResizing && (
+          <Resizer
+            column={column}
+            layout={layout}
+            onResizeStart={onResizeStart}
+            onResize={onResize}
+            onResizeEnd={onResizeEnd}
+          />
+        )}
       </div>
     </th>
   );
 }
 
-export function TableRow({item, children, state, className}: {item: any, children: ReactNode, state: any, className: string}): JSX.Element {
+export function TableRow({
+  item,
+  children,
+  state,
+  className
+}: {
+  item: any;
+  children: ReactNode;
+  state: any;
+  className: string;
+}): JSX.Element {
   let ref = useRef<HTMLTableRowElement | null>(null);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({node: item}, state, ref);
@@ -231,7 +332,15 @@ export function TableRow({item, children, state, className}: {item: any, childre
   );
 }
 
-export function TableCell({cell, state, layout}: {cell: any, state: any, layout: any}): JSX.Element {
+export function TableCell({
+  cell,
+  state,
+  layout
+}: {
+  cell: any;
+  state: any;
+  layout: any;
+}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -264,7 +373,15 @@ export function TableCell({cell, state, layout}: {cell: any, state: any, layout:
   );
 }
 
-export function TableCheckboxCell({cell, state, layout}: {cell: any, state: any, layout: any}): JSX.Element {
+export function TableCheckboxCell({
+  cell,
+  state,
+  layout
+}: {
+  cell: any;
+  state: any;
+  layout: any;
+}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
@@ -285,7 +402,15 @@ export function TableCheckboxCell({cell, state, layout}: {cell: any, state: any,
   );
 }
 
-export function TableSelectAllCell({column, state, layout}: {column: any, state: any, layout: any}): JSX.Element {
+export function TableSelectAllCell({
+  column,
+  state,
+  layout
+}: {
+  column: any;
+  state: any;
+  layout: any;
+}): JSX.Element {
   let ref = useRef<HTMLTableCellElement | null>(null);
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
@@ -308,13 +433,13 @@ export function TableSelectAllCell({column, state, layout}: {column: any, state:
           use a VisuallyHidden component to include the aria-label from the checkbox,
           which for single selection will be "Select."
         */
-        isSingleSelectionMode &&
-        <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+        isSingleSelectionMode && <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
       }
       <input
         {...inputProps}
         ref={inputRef}
-        style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined} />
+        style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined}
+      />
     </th>
   );
 }

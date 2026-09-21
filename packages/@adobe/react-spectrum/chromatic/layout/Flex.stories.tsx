@@ -74,7 +74,7 @@ HorizontalStackWithGap.story = {
 export const WrappingWithGap: FlexStory = () => (
   <View maxWidth="80%" borderWidth="thin" borderColor="dark">
     <Flex direction="row" gap="size-100" wrap>
-      {colors.map((color) => (
+      {colors.map(color => (
         <View key={String(color)} backgroundColor={color} width="size-800" height="size-800" />
       ))}
     </Flex>

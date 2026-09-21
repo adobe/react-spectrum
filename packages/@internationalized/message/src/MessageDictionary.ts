@@ -12,8 +12,8 @@
 
 export type LocalizedStrings = {
   [lang: string]: {
-    [key: string]: string
-  }
+    [key: string]: string;
+  };
 };
 
 /**
@@ -27,9 +27,7 @@ export class MessageDictionary {
   constructor(messages: LocalizedStrings, defaultLocale: string = 'en-US') {
     // Clone messages so we don't modify the original object.
     // Filter out entries with falsy values which may have been caused by applying optimize-locales-plugin.
-    this.messages = Object.fromEntries(
-      Object.entries(messages).filter(([, v]) => v)
-    );
+    this.messages = Object.fromEntries(Object.entries(messages).filter(([, v]) => v));
     this.defaultLocale = defaultLocale;
   }
 

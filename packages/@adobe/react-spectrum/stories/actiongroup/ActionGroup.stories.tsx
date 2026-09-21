@@ -40,22 +40,25 @@ import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
 
-
-const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}];
+const viewItems = [
+  {children: 'Grid view', name: '1'},
+  {children: 'List view', name: '2'},
+  {children: 'Gallery view', name: '3'}
+];
 let onSelectionChange = action('onSelectionChange');
 
 let iconMap = {
   'Document setup': DocumentIcon,
-  'Settings': SettingsIcon,
+  Settings: SettingsIcon,
   'Grid view': ViewGridIcon,
   'List view': ViewListIcon,
   'Gallery view': ViewCardIcon,
-  'Edit': DrawIcon,
-  'Copy': CopyIcon,
-  'Delete': DeleteIcon,
-  'Properties': PropertiesIcon,
-  'Info': InfoIcon,
-  'Keywords': BookIcon
+  Edit: DrawIcon,
+  Copy: CopyIcon,
+  Delete: DeleteIcon,
+  Properties: PropertiesIcon,
+  Info: InfoIcon,
+  Keywords: BookIcon
 };
 
 export default {
@@ -133,11 +136,11 @@ export type ActionGroupStory = StoryObj<typeof ActionGroup>;
 
 export const Default: ActionGroupStory = {
   args: {items: viewItems},
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const FalsyKeys: ActionGroupStory = {
-  render: (args) => (
+  render: args => (
     <ActionGroup {...args}>
       <Item key="add">Add</Item>
       <Item key="">Delete</Item>
@@ -158,7 +161,7 @@ export const SomeKeysDisabled: ActionGroupStory = {
 
 export const StaticColorWhite: ActionGroupStory = {
   args: {staticColor: 'white', defaultSelectedKeys: ['1'], items: viewItems},
-  render: (args) => (
+  render: args => (
     <View backgroundColor="static-blue-700" padding="size-1000">
       {render(args)}
     </View>
@@ -168,7 +171,7 @@ export const StaticColorWhite: ActionGroupStory = {
 
 export const StaticColorBlack: ActionGroupStory = {
   args: {staticColor: 'black', defaultSelectedKeys: ['1'], items: viewItems},
-  render: (args) => (
+  render: args => (
     <View backgroundColor="static-yellow-400" padding="size-1000">
       {render(args)}
     </View>
@@ -178,12 +181,12 @@ export const StaticColorBlack: ActionGroupStory = {
 
 export const WithTooltips: ActionGroupStory = {
   args: {items: viewItems},
-  render: (args) => renderTooltips(args)
+  render: args => renderTooltips(args)
 };
 
 export const Overflow: ActionGroupStory = {
   args: {disabledKeys: ['1', '5']},
-  render: (args) => renderOverflow(args),
+  render: args => renderOverflow(args),
   name: 'overflowMode'
 };
 
@@ -194,17 +197,28 @@ export const SummaryIcon: ActionGroupStory = {
 };
 
 export const VerticalOverflow: ActionGroupStory = {
-  render: (args) => (
+  render: args => (
     <Flex direction="column">
       <p>Note: this is currently unsupported by Spectrum. Container should scroll.</p>
-      <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderTools({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%', ...args})}
+      <div
+        style={{
+          padding: '10px',
+          resize: 'vertical',
+          overflow: 'auto',
+          width: 32,
+          backgroundColor: 'var(--spectrum-global-color-gray-50)'
+        }}>
+        {renderTools({
+          orientation: 'vertical',
+          buttonLabelBehavior: 'hide',
+          maxHeight: '100%',
+          ...args
+        })}
       </div>
     </Flex>
   ),
   name: 'special vertical overflow case'
 };
-
 
 function render(props) {
   return (
@@ -219,7 +233,11 @@ function render(props) {
 function renderText(props) {
   return (
     <ActionGroup {...props}>
-      {(item: any) => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
+      {(item: any) => (
+        <Item key={item.name} textValue={item.name}>
+          {item.children}
+        </Item>
+      )}
     </ActionGroup>
   );
 }
@@ -275,7 +293,14 @@ function renderTooltips(props) {
 
 function renderOverflow(props) {
   return (
-    <div style={{padding: '10px', resize: 'both', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+    <div
+      style={{
+        padding: '10px',
+        resize: 'both',
+        overflow: 'auto',
+        width: 250,
+        backgroundColor: 'var(--spectrum-global-color-gray-50)'
+      }}>
       <ActionGroup {...props} summaryIcon={<TextIcon />} maxHeight="100%">
         <Item key="1" data-testid="edit">
           <DrawIcon />

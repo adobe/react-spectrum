@@ -18,6 +18,4 @@ import App from './App';
 // logs will still point to your original source modules
 console.log('if you have sourcemaps enabled in your devtools, click on main.js:5 -->');
 
-ReactDOM.createRoot(document.querySelector('#root')).render(
-  <App/>
-);
+ReactDOM.createRoot(document.querySelector('#root')).render(<App />);

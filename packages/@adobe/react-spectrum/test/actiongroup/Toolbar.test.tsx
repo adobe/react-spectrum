@@ -78,7 +78,7 @@ describe('Toolbar', () => {
     );
 
     expect(screen.getAllByRole('separator')).toHaveLength(2);
-    screen.getAllByRole('separator').forEach((separator) => {
+    screen.getAllByRole('separator').forEach(separator => {
       expect(separator).toHaveAttribute('aria-orientation', 'vertical');
     });
 
@@ -106,7 +106,7 @@ describe('Toolbar', () => {
       </Provider>
     );
 
-    screen.getAllByRole('separator').forEach((separator) => {
+    screen.getAllByRole('separator').forEach(separator => {
       expect(separator).not.toHaveAttribute('aria-orientation');
     });
   });
@@ -182,7 +182,7 @@ describe('Toolbar', () => {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
-  it('supports keyboard navigation', async() => {
+  it('supports keyboard navigation', async () => {
     render(
       <Provider theme={defaultTheme}>
         <ActionButton>Before</ActionButton>

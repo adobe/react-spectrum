@@ -16,10 +16,23 @@ import {Meta} from '@storybook/react';
 const meta: Meta = {
   title: 'SearchAutocompleteRTL',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['ar-AE'], scales: ['medium', 'large']}
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark', 'lightest', 'darkest'],
+      locales: ['ar-AE'],
+      scales: ['medium', 'large']
+    }
   }
 };
 
 export default meta;
 
-export {PropDefaults, PropInputValue, PropAriaLabelled, PropLabelEnd, PropLabelSide, PropCustomWidth, PropIconFilter, PropIconNull} from './SearchAutocomplete.stories';
+export {
+  PropDefaults,
+  PropInputValue,
+  PropAriaLabelled,
+  PropLabelEnd,
+  PropLabelSide,
+  PropCustomWidth,
+  PropIconFilter,
+  PropIconNull
+} from './SearchAutocomplete.stories';

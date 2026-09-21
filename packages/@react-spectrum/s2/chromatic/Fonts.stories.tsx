@@ -21,53 +21,53 @@ const meta: Meta<any> = {
 export default meta;
 
 const messages = {
-  'en': {
-    'button': 'Edit',
-    'copy': 'Copy',
-    'cut': 'Cut',
-    'paste': 'Paste'
+  en: {
+    button: 'Edit',
+    copy: 'Copy',
+    cut: 'Cut',
+    paste: 'Paste'
   },
-  'ar': {
-    'button': 'يحرر',
-    'copy': 'ينسخ',
-    'cut': 'يقطع',
-    'paste': 'معجون'
+  ar: {
+    button: 'يحرر',
+    copy: 'ينسخ',
+    cut: 'يقطع',
+    paste: 'معجون'
   },
-  'he': {
-    'button': 'לַעֲרוֹך',
-    'copy': 'עותק',
-    'cut': 'גזירה',
-    'paste': 'לְהַדבִּיק'
+  he: {
+    button: 'לַעֲרוֹך',
+    copy: 'עותק',
+    cut: 'גזירה',
+    paste: 'לְהַדבִּיק'
   },
-  'ja': {
-    'button': '編集',
-    'copy': 'コピー',
-    'cut': '切る',
-    'paste': 'ペースト'
+  ja: {
+    button: '編集',
+    copy: 'コピー',
+    cut: '切る',
+    paste: 'ペースト'
   },
-  'ko': {
-    'button': '편집하다',
-    'copy': '복사',
-    'cut': '자르다',
-    'paste': '반죽'
+  ko: {
+    button: '편집하다',
+    copy: '복사',
+    cut: '자르다',
+    paste: '반죽'
   },
   'zh-Hans': {
-    'button': '编辑',
-    'copy': '复制',
-    'cut': '切',
-    'paste': '粘贴'
+    button: '编辑',
+    copy: '复制',
+    cut: '切',
+    paste: '粘贴'
   },
   'zh-HK': {
-    'button': '編輯',
-    'copy': '複製',
-    'cut': '切',
-    'paste': '粘貼'
+    button: '編輯',
+    copy: '複製',
+    cut: '切',
+    paste: '粘貼'
   },
   'zh-Hant': {
-    'button': '編輯',
-    'copy': '複製',
-    'cut': '切',
-    'paste': '粘貼'
+    button: '編輯',
+    copy: '複製',
+    cut: '切',
+    paste: '粘貼'
   }
 };
 

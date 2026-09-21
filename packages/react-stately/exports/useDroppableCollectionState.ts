@@ -10,5 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export type {DroppableCollectionStateOptions, DroppableCollectionState} from '../src/dnd/useDroppableCollectionState';
+export type {
+  DroppableCollectionStateOptions,
+  DroppableCollectionState
+} from '../src/dnd/useDroppableCollectionState';
 export {useDroppableCollectionState} from '../src/dnd/useDroppableCollectionState';

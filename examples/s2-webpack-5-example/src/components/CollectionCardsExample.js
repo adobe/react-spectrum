@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -11,11 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import React from "react";
-import { Card, CardView, Collection, CollectionCardPreview, Content, Image, SkeletonCollection, Text } from '@react-spectrum/s2';
+import React from 'react';
+import {
+  Card,
+  CardView,
+  Collection,
+  CollectionCardPreview,
+  Content,
+  Image,
+  SkeletonCollection,
+  Text
+} from '@react-spectrum/s2';
 import Folder from '@react-spectrum/s2/icons/Folder';
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
-import { useAsyncList } from 'react-stately';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useAsyncList} from 'react-stately';
 
 const cardViewStyles = style({
   width: 'full',
@@ -43,7 +51,7 @@ function TopicCard({topic}) {
   );
 }
 
-export const CollectionCardsExample = (props) => {
+export const CollectionCardsExample = props => {
   let list = useAsyncList({
     async load({signal, cursor}) {
       let page = cursor || 1;
@@ -51,7 +59,7 @@ export const CollectionCardsExample = (props) => {
         `https://api.unsplash.com/topics?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
         {signal}
       );
-      let items = (await res.json()).filter((topic) => !!topic.preview_photos);
+      let items = (await res.json()).filter(topic => !!topic.preview_photos);
       return {items, cursor: items.length ? page + 1 : null};
     }
   });
@@ -66,9 +74,7 @@ export const CollectionCardsExample = (props) => {
       loadingState={loadingState}
       onLoadMore={props.loadingState === 'idle' ? list.loadMore : undefined}
       styles={cardViewStyles}>
-      <Collection items={items}>
-        {topic => <TopicCard topic={topic} />}
-      </Collection>
+      <Collection items={items}>{topic => <TopicCard topic={topic} />}</Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         <SkeletonCollection>
           {() => (
@@ -84,7 +90,8 @@ export const CollectionCardsExample = (props) => {
                   {id: 'c', urls: {small: ''}},
                   {id: 'd', urls: {small: ''}}
                 ]
-              }} />
+              }}
+            />
           )}
         </SkeletonCollection>
       )}

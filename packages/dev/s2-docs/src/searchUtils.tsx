@@ -10,7 +10,7 @@ import {Key} from 'react-aria-components';
 
 import {type Library, TAB_DEFS} from './constants';
 // @ts-ignore
- 
+
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {Page, TocNode} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -24,13 +24,13 @@ import {useSettings} from './SettingsContext';
 function parseHexColor(hex: string): [number, number, number] | null {
   // Remove # if present and trim whitespace
   const cleanHex = hex.replace(/^#/, '').trim();
-  
+
   if (!/^[0-9A-Fa-f]+$/.test(cleanHex)) {
     return null;
   }
-  
+
   let r: number, g: number, b: number;
-  
+
   if (cleanHex.length === 3) {
     // #RGB format
     r = parseInt(cleanHex[0] + cleanHex[0], 16);
@@ -44,7 +44,7 @@ function parseHexColor(hex: string): [number, number, number] | null {
   } else {
     return null;
   }
-  
+
   return [r, g, b];
 }
 
@@ -77,7 +77,7 @@ function colorDistance(rgb1: [number, number, number], rgb2: [number, number, nu
   const weightR = 2 + rMean / 256;
   const weightG = 4;
   const weightB = 2 + (255 - rMean) / 256;
-  
+
   return Math.sqrt(weightR * dr * dr + weightG * dg * dg + weightB * db * db);
 }
 
@@ -86,47 +86,47 @@ function colorDistance(rgb1: [number, number, number], rgb2: [number, number, nu
  * Returns an array of color names sorted by distance (closest first).
  */
 function findClosestColors(
-  targetRgb: [number, number, number], 
+  targetRgb: [number, number, number],
   colorHexMap: Record<string, [number, number, number]>,
   maxResults = 10
-): Array<{name: string, distance: number}> {
-  const results: Array<{name: string, distance: number}> = [];
-  
+): Array<{name: string; distance: number}> {
+  const results: Array<{name: string; distance: number}> = [];
+
   for (const [name, rgb] of Object.entries(colorHexMap)) {
     const distance = colorDistance(targetRgb, rgb as [number, number, number]);
     results.push({name, distance});
   }
-  
+
   // Sort by distance and return top results
   return results.sort((a, b) => a.distance - b.distance).slice(0, maxResults);
 }
 
 export interface SearchableItem {
-  name: string,
-  tags: string[],
-  date?: string
+  name: string;
+  tags: string[];
+  date?: string;
 }
 
 export interface ComponentItem {
-  id: string,
-  name: string,
-  href: string,
-  section: string,
-  tags: string[],
-  description?: string,
-  date?: string
+  id: string;
+  name: string;
+  href: string;
+  section: string;
+  tags: string[];
+  description?: string;
+  date?: string;
 }
 
 export interface Section {
-  id: string,
-  name: string,
-  children: ComponentItem[]
+  id: string;
+  name: string;
+  children: ComponentItem[];
 }
 
 export interface Tag {
-  id: string,
-  name: string,
-  href?: string
+  id: string;
+  name: string;
+  href?: string;
 }
 
 /**
@@ -154,7 +154,17 @@ function getToCSubheadings(TocNode: TocNode, headings: string[]): string[] {
  */
 export function transformPageToComponentItem(page: Page): ComponentItem {
   // get all headings on a page and add them a tags for the search feature
-  let filterTags = new Set(['Content', 'Example', 'Examples', 'API', 'Accessibility', 'Events', 'Features', 'Introduction', 'Interface']);
+  let filterTags = new Set([
+    'Content',
+    'Example',
+    'Examples',
+    'API',
+    'Accessibility',
+    'Events',
+    'Features',
+    'Introduction',
+    'Interface'
+  ]);
   let Toc = page.tableOfContents;
   let headings: string[] = [];
   if (Toc) {
@@ -163,10 +173,10 @@ export function transformPageToComponentItem(page: Page): ComponentItem {
       headings.push(...subHeadings);
     }
   }
-  let allTags = (page.exports?.tags || page.exports?.keywords as string[]) || [];
-  let relatedPages = (page.exports?.relatedPages?.map(page => page.title)) || [];
+  let allTags = page.exports?.tags || (page.exports?.keywords as string[]) || [];
+  let relatedPages = page.exports?.relatedPages?.map(page => page.title) || [];
   allTags.push(...headings, ...relatedPages);
-  allTags = allTags.filter(tags => (!filterTags.has(tags) && !tags.startsWith('Testing')));
+  allTags = allTags.filter(tags => !filterTags.has(tags) && !tags.startsWith('Testing'));
 
   const title = getPageTitle(page);
   const section: string = getSearchSection(page);
@@ -191,9 +201,8 @@ const END_SECTIONS = ['blog', 'releases'];
  * Sorts sections with 'Components' first.
  */
 export function buildSectionsFromPages(pages: Page[], library: Library): Section[] {
-  const filteredPages = pages.filter(page =>
-    getLibraryFromPage(page) === library &&
-    !page.exports?.hideFromSearch
+  const filteredPages = pages.filter(
+    page => getLibraryFromPage(page) === library && !page.exports?.hideFromSearch
   );
 
   const components = filteredPages.map(transformPageToComponentItem);
@@ -216,10 +225,10 @@ export function buildSectionsFromPages(pages: Page[], library: Library): Section
       let ai = END_SECTIONS.indexOf(a.id);
       let bi = END_SECTIONS.indexOf(b.id);
       if (ai >= 0) {
-        return bi < 0 ? 1 : (ai - bi);
+        return bi < 0 ? 1 : ai - bi;
       }
       if (bi >= 0) {
-        return ai < 0 ? -1 : (bi - ai);
+        return ai < 0 ? -1 : bi - ai;
       }
       return a.name.localeCompare(b.name);
     });
@@ -264,7 +273,11 @@ export function filterSections(sections: Section[], searchValue: string): Sectio
   }
 
   const allItems = sections.flatMap(section => section.children);
-  const sortedItems = filterAndSortSearchItems(allItems, searchValue, createSearchOptions<ComponentItem>());
+  const sortedItems = filterAndSortSearchItems(
+    allItems,
+    searchValue,
+    createSearchOptions<ComponentItem>()
+  );
 
   const resultsBySection = new Map<string, ComponentItem[]>();
   sortedItems.forEach(item => {
@@ -287,10 +300,7 @@ export function filterSections(sections: Section[], searchValue: string): Sectio
  * Hook to build and manage sections for a library with search filtering.
  */
 export function useLibrarySections(pages: Page[], library: Library, searchValue: string) {
-  const sections = useMemo(
-    () => buildSectionsFromPages(pages, library),
-    [pages, library]
-  );
+  const sections = useMemo(() => buildSectionsFromPages(pages, library), [pages, library]);
 
   const filteredSections = useMemo(
     () => filterSections(sections, searchValue),
@@ -323,20 +333,20 @@ export interface SearchOptions<T> {
   /**
    * Function to extract the name from an item.
    */
-  getName: (item: T) => string,
+  getName: (item: T) => string;
   /**
    * Function to extract tags from an item.
    */
-  getTags: (item: T) => string[],
+  getTags: (item: T) => string[];
   /**
    * Optional function to extract date from an item for date-based sorting.
    */
-  getDate?: (item: T) => string | undefined,
+  getDate?: (item: T) => string | undefined;
   /**
    * Optional function to determine if an item should use date-based sorting.
    * If not provided, all items use alphabetical sorting.
    */
-  shouldUseDateSort?: (item: T) => boolean
+  shouldUseDateSort?: (item: T) => boolean;
 }
 
 export function filterSearchItems<T>(
@@ -459,7 +469,12 @@ export function getPageTitle(page: Page): string {
  * This allows pages to appear in a different section in search results than in navigation.
  */
 export function getSearchSection(page: Page): string {
-  return (page.exports?.searchSection as string) ?? (page.exports?.group as string) ?? (page.exports?.section as string) ?? 'Components';
+  return (
+    (page.exports?.searchSection as string) ??
+    (page.exports?.group as string) ??
+    (page.exports?.section as string) ??
+    'Components'
+  );
 }
 
 export function getOrderedLibraries(currentPage: Page) {
@@ -472,7 +487,6 @@ export function getOrderedLibraries(currentPage: Page) {
   }
   return allLibraries;
 }
-
 
 export function getResourceTags(library: Library): Tag[] {
   if (library === 'react-spectrum') {
@@ -497,34 +511,32 @@ export function useFilteredIcons(searchValue: string) {
 }
 
 export interface ColorSearchResult {
-  sections: typeof colorSections,
+  sections: typeof colorSections;
   /** Names of colors that exactly match the searched hex (distance = 0). */
-  exactMatches: Set<string>,
+  exactMatches: Set<string>;
   /** Names of the closest matching colors when no exact matches exist. */
-  closestMatches: Set<string>
+  closestMatches: Set<string>;
 }
 
 export function useFilteredColors(searchValue: string): ColorSearchResult {
   const {colorScheme} = useSettings();
   const colorHexMap = colorHexMaps[colorScheme];
-  
+
   return useMemo(() => {
     if (!searchValue.trim()) {
       return {sections: colorSections, exactMatches: new Set(), closestMatches: new Set()};
     }
-    
+
     // Check if user is searching for a hex color
     if (isHexColorSearch(searchValue)) {
       const targetRgb = parseHexColor(searchValue);
       if (targetRgb) {
         const closestColors = findClosestColors(targetRgb, colorHexMap, 20);
         const closestColorNames = new Set(closestColors.map(c => c.name));
-        
+
         // Find all exact matches (distance === 0)
-        const exactMatches = new Set(
-          closestColors.filter(c => c.distance === 0).map(c => c.name)
-        );
-        
+        const exactMatches = new Set(closestColors.filter(c => c.distance === 0).map(c => c.name));
+
         // If no exact matches, find all colors with the minimum distance
         let closestMatches = new Set<string>();
         if (exactMatches.size === 0 && closestColors.length > 0) {
@@ -533,18 +545,20 @@ export function useFilteredColors(searchValue: string): ColorSearchResult {
             closestColors.filter(c => c.distance === minDistance).map(c => c.name)
           );
         }
-        
+
         // Filter sections to only include colors that are in the closest matches
-        const filteredSections = colorSections.map(section => ({
-          ...section,
-          items: section.items.filter(item => closestColorNames.has(item.name))
-        })).filter(section => section.items.length > 0);
-        
+        const filteredSections = colorSections
+          .map(section => ({
+            ...section,
+            items: section.items.filter(item => closestColorNames.has(item.name))
+          }))
+          .filter(section => section.items.length > 0);
+
         // If we found matches, sort items within each section by distance
         // and sort sections by the minimum distance of their items (closest match section first)
         if (filteredSections.length > 0) {
           const distanceMap = new Map(closestColors.map(c => [c.name, c.distance]));
-          
+
           // Sort items within each section and calculate section min distance
           const sectionsWithSortedItems = filteredSections.map(section => {
             const sortedItems = [...section.items].sort((a, b) => {
@@ -553,23 +567,26 @@ export function useFilteredColors(searchValue: string): ColorSearchResult {
               return distA - distB;
             });
             // Min distance is the distance of the first (closest) item
-            const minDistance = sortedItems.length > 0 
-              ? (distanceMap.get(sortedItems[0].name) ?? Infinity) 
-              : Infinity;
+            const minDistance =
+              sortedItems.length > 0
+                ? (distanceMap.get(sortedItems[0].name) ?? Infinity)
+                : Infinity;
             return {
               ...section,
               items: sortedItems,
               minDistance
             };
           });
-          
+
           // Sort sections by minimum distance (section with closest color first)
           sectionsWithSortedItems.sort((a, b) => a.minDistance - b.minDistance);
-          
+
           // Remove the temporary minDistance property
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const sortedSections = sectionsWithSortedItems.map(({minDistance, ...section}) => section);
-          
+          const sortedSections = sectionsWithSortedItems.map(
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            ({minDistance, ...section}) => section
+          );
+
           return {
             sections: sortedSections,
             exactMatches,
@@ -578,16 +595,16 @@ export function useFilteredColors(searchValue: string): ColorSearchResult {
         }
       }
     }
-    
+
     // Default text search
     const searchLower = searchValue.toLowerCase();
     return {
-      sections: colorSections.map(section => ({
-        ...section,
-        items: section.items.filter(item => 
-          item.name.toLowerCase().includes(searchLower)
-        )
-      })).filter(section => section.items.length > 0),
+      sections: colorSections
+        .map(section => ({
+          ...section,
+          items: section.items.filter(item => item.name.toLowerCase().includes(searchLower))
+        }))
+        .filter(section => section.items.length > 0),
       exactMatches: new Set(),
       closestMatches: new Set()
     };
@@ -608,7 +625,10 @@ export function useSearchTagSelection(
   // Ensure selected tag is valid for the current library
   const baseSectionIds = sectionTags.map(s => s.id);
   const resourceTagIds = resourceTags.map(t => t.id);
-  const allBaseIds = useMemo(() => [...baseSectionIds, ...resourceTagIds], [baseSectionIds, resourceTagIds]);
+  const allBaseIds = useMemo(
+    () => [...baseSectionIds, ...resourceTagIds],
+    [baseSectionIds, resourceTagIds]
+  );
   const isResourceSelected = selectedTagId && resourceTagIds.includes(selectedTagId);
 
   // "All" tag is shown when search starts (first time search value is non-empty and no resource is selected)
@@ -625,8 +645,14 @@ export function useSearchTagSelection(
     return hasAllBeenShown ? ['all', ...allBaseIds] : allBaseIds;
   }, [hasAllBeenShown, allBaseIds]);
 
-  let defaultTagId = sectionIds.includes(initialTagId) ? initialTagId : sectionIds[0] || 'components';
-  if (!selectedTagId || !sectionIds.includes(selectedTagId) || (!isOpen && selectedTagId !== defaultTagId)) {
+  let defaultTagId = sectionIds.includes(initialTagId)
+    ? initialTagId
+    : sectionIds[0] || 'components';
+  if (
+    !selectedTagId ||
+    !sectionIds.includes(selectedTagId) ||
+    (!isOpen && selectedTagId !== defaultTagId)
+  ) {
     setSelectedTagId(defaultTagId);
   }
 
@@ -670,7 +696,10 @@ export function useSectionTagsForDisplay(
   }, [sections, hasAllBeenShown]);
 }
 
-export function sortItemsForDisplay<T extends {name: string, href: string, date?: string}>(items: T[], searchValue: string): T[] {
+export function sortItemsForDisplay<T extends {name: string; href: string; date?: string}>(
+  items: T[],
+  searchValue: string
+): T[] {
   if (searchValue.trim().length === 0) {
     return [...items].sort((a, b) => {
       const aIsIntro = a.href.endsWith('/');
@@ -701,7 +730,9 @@ export function sortItemsForDisplay<T extends {name: string, href: string, date?
   return items;
 }
 
-export function createSearchOptions<T extends {name: string, tags: string[], date?: string, section?: string}>() {
+export function createSearchOptions<
+  T extends {name: string; tags: string[]; date?: string; section?: string}
+>() {
   return {
     getName: (item: T) => item.name,
     getTags: (item: T) => item.tags,
@@ -713,19 +744,24 @@ export function createSearchOptions<T extends {name: string, tags: string[], dat
   };
 }
 
-export function SearchEmptyState({searchValue, libraryLabel}: {searchValue: string, libraryLabel: string}) {
+export function SearchEmptyState({
+  searchValue,
+  libraryLabel
+}: {
+  searchValue: string;
+  libraryLabel: string;
+}) {
   return (
     <IllustratedMessage styles={style({margin: 32})}>
       <NoSearchResults />
       <Heading>No results</Heading>
       {searchValue.trim().length > 0 ? (
         <Content>
-          No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {libraryLabel}.
+          No results found for{' '}
+          <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {libraryLabel}.
         </Content>
       ) : (
-        <Content>
-          No results found in {libraryLabel}.
-        </Content>
+        <Content>No results found in {libraryLabel}.</Content>
       )}
     </IllustratedMessage>
   );
@@ -740,49 +776,49 @@ export const LazyColorSearchView = React.lazy(() =>
 );
 
 export interface SearchMenuStateOptions {
-  pages: Page[],
-  currentPage: Page,
-  initialSearchValue?: string,
-  initialTag?: string,
-  isOpen: boolean
+  pages: Page[];
+  currentPage: Page;
+  initialSearchValue?: string;
+  initialTag?: string;
+  isOpen: boolean;
 }
 
 export interface SearchMenuState {
   // Library state
-  selectedLibrary: Library,
-  setSelectedLibrary: (library: Library) => void,
-  orderedLibraries: ReturnType<typeof getOrderedLibraries>,
+  selectedLibrary: Library;
+  setSelectedLibrary: (library: Library) => void;
+  orderedLibraries: ReturnType<typeof getOrderedLibraries>;
 
   // Search state
-  searchValue: string,
-  setSearchValue: (value: string) => void,
+  searchValue: string;
+  setSearchValue: (value: string) => void;
 
   // Section state
-  sections: Section[],
-  filteredSections: Section[],
-  sectionTags: Tag[],
-  sectionTagsForDisplay: Tag[],
+  sections: Section[];
+  filteredSections: Section[];
+  sectionTags: Tag[];
+  sectionTagsForDisplay: Tag[];
 
   // Resource tags (icons, etc.)
-  resourceTags: Tag[],
-  resourceTagIds: string[],
+  resourceTags: Tag[];
+  resourceTagIds: string[];
 
   // Tag selection
-  selectedTagId: string,
-  setSelectedTagId: (id: string) => void,
-  handleTagSelectionChange: (keys: Iterable<Key>) => void,
+  selectedTagId: string;
+  setSelectedTagId: (id: string) => void;
+  handleTagSelectionChange: (keys: Iterable<Key>) => void;
 
   // Icons
-  filteredIcons: typeof iconList,
-  iconFilter: ReturnType<typeof useIconFilter>,
-  isIconsSelected: boolean,
+  filteredIcons: typeof iconList;
+  iconFilter: ReturnType<typeof useIconFilter>;
+  isIconsSelected: boolean;
 
   // Computed items
-  selectedItems: ComponentItem[],
-  selectedSectionName: string,
+  selectedItems: ComponentItem[];
+  selectedSectionName: string;
 
   // Helpers
-  getPlaceholderText: (libraryLabel: string) => string
+  getPlaceholderText: (libraryLabel: string) => string;
 }
 
 export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuState {
@@ -810,10 +846,13 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
 
   // Compute initial selected section
   const initialSelectedSection = useMemo(() => {
-    const currentSection = sections.find(s =>
-      s.children.some(c => c.href === currentPage.url)
+    const currentSection = sections.find(s => s.children.some(c => c.href === currentPage.url));
+    return (
+      initialTag ||
+      currentSection?.id ||
+      currentPage.exports?.section?.toLowerCase() ||
+      'components'
     );
-    return initialTag || currentSection?.id || currentPage.exports?.section?.toLowerCase() || 'components';
   }, [initialTag, currentPage, sections]);
 
   // Tag selection
@@ -840,12 +879,15 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
   const isIconsSelected = selectedTagId === 'icons';
 
   // Handler for tag selection change (works with TagGroup's onSelectionChange)
-  const handleTagSelectionChange = useCallback((keys: Iterable<Key>) => {
-    const firstKey = Array.from(keys)[0] as string;
-    if (firstKey) {
-      setSelectedTagId(firstKey);
-    }
-  }, [setSelectedTagId]);
+  const handleTagSelectionChange = useCallback(
+    (keys: Iterable<Key>) => {
+      const firstKey = Array.from(keys)[0] as string;
+      if (firstKey) {
+        setSelectedTagId(firstKey);
+      }
+    },
+    [setSelectedTagId]
+  );
 
   // Computed selected items
   const selectedItems = useMemo(() => {
@@ -857,24 +899,27 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     if (selectedTagId === 'all') {
       return 'All';
     }
-    return (filteredSections.find(s => s.id === selectedTagId)?.name)
-      || (sections.find(s => s.id === selectedTagId)?.name)
-      || 'Items';
+    return (
+      filteredSections.find(s => s.id === selectedTagId)?.name ||
+      sections.find(s => s.id === selectedTagId)?.name ||
+      'Items'
+    );
   }, [filteredSections, sections, selectedTagId]);
 
   // Helper to get placeholder text based on selected resource tag
-  const getPlaceholderText = useCallback((libraryLabel: string) => {
-    const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
-    if (selectedTagId === 'colors') {
-      return 'Search color names or hex values';
-    }
-    if (selectedTagId === 'typography') {
-      return 'Search typography styles';
-    }
-    return selectedResourceTag
-      ? `Search ${selectedResourceTag.name}`
-      : `Search ${libraryLabel}`;
-  }, [resourceTags, selectedTagId]);
+  const getPlaceholderText = useCallback(
+    (libraryLabel: string) => {
+      const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
+      if (selectedTagId === 'colors') {
+        return 'Search color names or hex values';
+      }
+      if (selectedTagId === 'typography') {
+        return 'Search typography styles';
+      }
+      return selectedResourceTag ? `Search ${selectedResourceTag.name}` : `Search ${libraryLabel}`;
+    },
+    [resourceTags, selectedTagId]
+  );
 
   // Reset search value after search menu closes.
   if (!options.isOpen && searchValue) {

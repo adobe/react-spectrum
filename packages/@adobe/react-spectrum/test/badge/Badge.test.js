@@ -17,33 +17,45 @@ import {render} from '@react-spectrum/test-utils-internal';
 import {Text} from '../../src/text/Text';
 import {within} from '@testing-library/dom';
 
-
 describe('Badge', function () {
   it.each`
-    Name         | Component  | props
-    ${'Badge'}   | ${Badge}   | ${{}}
+    Name       | Component | props
+    ${'Badge'} | ${Badge}  | ${{}}
   `('$Name text-only', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} data-testid="badge">Badge of honor</Component>);
+    let {getByTestId} = render(
+      <Component {...props} data-testid="badge">
+        Badge of honor
+      </Component>
+    );
 
     let badge = getByTestId('badge');
     expect(within(badge).getByText('Badge of honor')).toBeInTheDocument();
   });
 
   it.each`
-    Name         | Component  | props
-    ${'Badge'}   | ${Badge}   | ${{}}
+    Name       | Component | props
+    ${'Badge'} | ${Badge}  | ${{}}
   `('$Name icon-only', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} data-testid="badge"><CheckmarkCircle /></Component>);
+    let {getByTestId} = render(
+      <Component {...props} data-testid="badge">
+        <CheckmarkCircle />
+      </Component>
+    );
 
     let badge = getByTestId('badge');
     expect(within(badge).getByRole('img', {hidden: true})).toBeInTheDocument();
   });
 
   it.each`
-    Name         | Component  | props
-    ${'Badge'}   | ${Badge}   | ${{}}
+    Name       | Component | props
+    ${'Badge'} | ${Badge}  | ${{}}
   `('$Name icon-text pair', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} data-testid="badge"><CheckmarkCircle /><Text>Badge of honor</Text></Component>);
+    let {getByTestId} = render(
+      <Component {...props} data-testid="badge">
+        <CheckmarkCircle />
+        <Text>Badge of honor</Text>
+      </Component>
+    );
 
     let badge = getByTestId('badge');
     expect(within(badge).getByRole('img', {hidden: true})).toBeInTheDocument();
@@ -51,11 +63,15 @@ describe('Badge', function () {
   });
 
   it.each`
-    Name         | Component  | props
-    ${'Badge'}   | ${Badge}   | ${{}}
+    Name       | Component | props
+    ${'Badge'} | ${Badge}  | ${{}}
   `('$Name forwards ref', function ({Component, props}) {
     let ref = React.createRef();
-    let {getByTestId} = render(<Component {...props} ref={ref} data-testid="badge">Badge of honor</Component>);
+    let {getByTestId} = render(
+      <Component {...props} ref={ref} data-testid="badge">
+        Badge of honor
+      </Component>
+    );
 
     let badge = getByTestId('badge');
     expect(badge).toBe(ref.current.UNSAFE_getDOMNode());

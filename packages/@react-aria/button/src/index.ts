@@ -13,6 +13,23 @@ export {useButton} from 'react-aria/useButton';
 
 export {useToggleButton} from 'react-aria/useToggleButton';
 export {useToggleButtonGroup, useToggleButtonGroupItem} from 'react-aria/useToggleButtonGroup';
-export type {ButtonProps, LinkButtonProps, AriaBaseButtonProps, AriaButtonProps, AriaButtonOptions, ButtonAria} from 'react-aria/useButton';
-export type {ToggleButtonProps, AriaToggleButtonProps, AriaToggleButtonOptions, ToggleButtonAria} from 'react-aria/useToggleButton';
-export type {AriaToggleButtonGroupProps, ToggleButtonGroupAria, AriaToggleButtonGroupItemProps, AriaToggleButtonGroupItemOptions} from 'react-aria/useToggleButtonGroup';
+export type {
+  ButtonProps,
+  LinkButtonProps,
+  AriaBaseButtonProps,
+  AriaButtonProps,
+  AriaButtonOptions,
+  ButtonAria
+} from 'react-aria/useButton';
+export type {
+  ToggleButtonProps,
+  AriaToggleButtonProps,
+  AriaToggleButtonOptions,
+  ToggleButtonAria
+} from 'react-aria/useToggleButton';
+export type {
+  AriaToggleButtonGroupProps,
+  ToggleButtonGroupAria,
+  AriaToggleButtonGroupItemProps,
+  AriaToggleButtonGroupItemOptions
+} from 'react-aria/useToggleButtonGroup';

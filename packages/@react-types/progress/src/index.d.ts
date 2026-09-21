@@ -10,5 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-export {ProgressBarBaseProps, AriaProgressBarBaseProps, AriaProgressBarProps} from '@react-aria/progress';
-export {ProgressCircleProps, AriaProgressCircleProps, SpectrumProgressCircleProps, SpectrumProgressBarBaseProps, SpectrumProgressBarProps} from '@react-spectrum/progress';
+export {
+  ProgressBarBaseProps,
+  AriaProgressBarBaseProps,
+  AriaProgressBarProps
+} from '@react-aria/progress';
+export {
+  ProgressCircleProps,
+  AriaProgressCircleProps,
+  SpectrumProgressCircleProps,
+  SpectrumProgressBarBaseProps,
+  SpectrumProgressBarProps
+} from '@react-spectrum/progress';

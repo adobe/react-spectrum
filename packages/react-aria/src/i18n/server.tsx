@@ -14,20 +14,22 @@ import type {LocalizedString} from '@internationalized/string';
 import React, {JSX} from 'react';
 
 type PackageLocalizedStrings = {
-  [packageName: string]: Record<string, LocalizedString>
+  [packageName: string]: Record<string, LocalizedString>;
 };
 
 interface PackageLocalizationProviderProps {
-  locale: string,
-  strings: PackageLocalizedStrings,
-  nonce?: string
+  locale: string;
+  strings: PackageLocalizedStrings;
+  nonce?: string;
 }
 
 /**
  * A PackageLocalizationProvider can be rendered on the server to inject the localized strings
  * needed by the client into the initial HTML.
  */
-export function PackageLocalizationProvider(props: PackageLocalizationProviderProps): JSX.Element | null {
+export function PackageLocalizationProvider(
+  props: PackageLocalizationProviderProps
+): JSX.Element | null {
   if (typeof document !== 'undefined') {
     console.log('PackageLocalizationProvider should only be rendered on the server.');
     return null;
@@ -36,13 +38,22 @@ export function PackageLocalizationProvider(props: PackageLocalizationProviderPr
   let {nonce, locale, strings} = props;
   // suppressHydrationWarning is necessary because the browser
   // remove the nonce parameter from the DOM before hydration
-  return <script nonce={typeof window === 'undefined' ? nonce : ''} suppressHydrationWarning dangerouslySetInnerHTML={{__html: getPackageLocalizationScript(locale, strings)}} />;
+  return (
+    <script
+      nonce={typeof window === 'undefined' ? nonce : ''}
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{__html: getPackageLocalizationScript(locale, strings)}}
+    />
+  );
 }
 
 /**
  * Returns the content for an inline `<script>` tag to inject localized strings into initial HTML.
  */
-export function getPackageLocalizationScript(locale: string, strings: PackageLocalizedStrings): string {
+export function getPackageLocalizationScript(
+  locale: string,
+  strings: PackageLocalizedStrings
+): string {
   return `window[Symbol.for('react-aria.i18n.locale')]=${JSON.stringify(locale)};{${serialize(strings)}}`;
 }
 

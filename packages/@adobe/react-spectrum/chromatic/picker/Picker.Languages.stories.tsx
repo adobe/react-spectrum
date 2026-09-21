@@ -21,7 +21,12 @@ export default {
   title: 'Languages/Picker',
   component: Picker,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], express: false, locales: ['en-US'], scales: ['large', 'medium']}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      express: false,
+      locales: ['en-US'],
+      scales: ['large', 'medium']
+    }
   }
 } as Meta<typeof Picker>;
 
@@ -43,7 +48,7 @@ const Template = (args: SpectrumPickerProps<object>): JSX.Element => (
 );
 
 export const ArabicPlaceholder: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: 'دولفين'},
 
   parameters: {
@@ -52,7 +57,7 @@ export const ArabicPlaceholder: PickerStory = {
 };
 
 export const ChineseSimplifiedPlaceholder: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: '海豚'},
 
   parameters: {
@@ -61,7 +66,7 @@ export const ChineseSimplifiedPlaceholder: PickerStory = {
 };
 
 export const ChineseTraditionalPlaceholder: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: '海豚'},
 
   parameters: {
@@ -70,7 +75,7 @@ export const ChineseTraditionalPlaceholder: PickerStory = {
 };
 
 export const JapanesePlaceholder: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: 'イルカ'},
 
   parameters: {
@@ -79,7 +84,7 @@ export const JapanesePlaceholder: PickerStory = {
 };
 
 export const KoreanPlaceholder: PickerStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {label: 'Pick your favorite', placeholder: '돌고래'},
 
   parameters: {

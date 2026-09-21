@@ -1,9 +1,9 @@
 import {SliderState} from 'react-stately/useSliderState';
 
 interface SliderData {
-  id: string,
-  'aria-describedby'?: string,
-  'aria-details'?: string
+  id: string;
+  'aria-describedby'?: string;
+  'aria-details'?: string;
 }
 
 export const sliderData: WeakMap<SliderState, SliderData> = new WeakMap<SliderState, SliderData>();

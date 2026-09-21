@@ -19,7 +19,12 @@ import React from 'react';
 import {defaultTheme as theme} from '../../src/theme-default/defaultTheme';
 import userEvent from '@testing-library/user-event';
 
-let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+let cellFormatter = new Intl.DateTimeFormat('en-US', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+});
 let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});
 
 describe('CalendarBase', () => {
@@ -39,11 +44,13 @@ describe('CalendarBase', () => {
 
   describe('basics', () => {
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{}}
     `('$Name shows the current month by default', ({Calendar, props}) => {
-      let {getByLabelText, getAllByLabelText, getByRole, getAllByRole} = render(<Calendar {...props} />);
+      let {getByLabelText, getAllByLabelText, getByRole, getAllByRole} = render(
+        <Calendar {...props} />
+      );
 
       let calendar = getByRole('application');
       expect(calendar).toBeVisible();
@@ -62,7 +69,9 @@ describe('CalendarBase', () => {
       expect(getByLabelText('Previous')).toBeVisible();
       expect(getAllByLabelText('Next')[0]).toBeVisible();
 
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      let gridCells = getAllByRole('gridcell').filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(gridCells.length).toBe(new GregorianCalendar().getDaysInMonth(today()));
       for (let cell of gridCells) {
         expect(cell.children[0]).toHaveAttribute('aria-label');
@@ -70,11 +79,13 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{isDisabled: true}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{isDisabled: true}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{isDisabled: true}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{isDisabled: true}}
     `('$Name should set aria-disabled when isDisabled', ({Calendar, props}) => {
-      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
+      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText} = render(
+        <Calendar {...props} />
+      );
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-disabled', 'true');
@@ -92,9 +103,9 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{isReadOnly: true}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{isReadOnly: true}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{isReadOnly: true}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{isReadOnly: true}}
     `('$Name should set aria-readonly when isReadOnly', ({Calendar, props}) => {
       let {getByRole} = render(<Calendar {...props} />);
       let grid = getByRole('grid');
@@ -103,45 +114,56 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
-    `('$Name should focus today if autoFocus is set and there is no selected value', ({Calendar}) => {
-      let {getByLabelText} = render(<Calendar autoFocus />);
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{}}
+    `(
+      '$Name should focus today if autoFocus is set and there is no selected value',
+      ({Calendar}) => {
+        let {getByLabelText} = render(<Calendar autoFocus />);
 
-      let cell = getByLabelText('today', {exact: false});
-      expect(cell.parentElement).toHaveAttribute('role', 'gridcell');
-      expect(cell).toHaveFocus();
-    });
-
-    it.each`
-      Name                    | Calendar              | props
-      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 2, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 2, 20)}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 2, 10), end: new CalendarDate(2019, 2, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 2, 20)}}
-    `('$Name should set aria-disabled on cells outside the valid date range', ({Calendar, props}) => {
-      let {getAllByRole} = render(<Calendar {...props} />);
-
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
-      expect(gridCells.length).toBe(18);
-    });
-
-    it.each`
-      Name                    | Calendar              | props
-      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 2, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 3, 20)}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 2, 10), end: new CalendarDate(2019, 2, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 3, 20)}}
-    `('$Name should disable the previous button if outside valid date range', ({Calendar, props}) => {
-      let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
-
-      expect(getByLabelText('Previous')).toHaveAttribute('disabled');
-      for (let next of getAllByLabelText('Next')) {
-        expect(next).not.toHaveAttribute('disabled');
+        let cell = getByLabelText('today', {exact: false});
+        expect(cell.parentElement).toHaveAttribute('role', 'gridcell');
+        expect(cell).toHaveFocus();
       }
-    });
+    );
 
     it.each`
-      Name                    | Calendar              | props
-      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 3, 20)}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 3, 20)}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 2, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 2, 20)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 2, 10), end: new CalendarDate(2019, 2, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 2, 20)}}
+    `(
+      '$Name should set aria-disabled on cells outside the valid date range',
+      ({Calendar, props}) => {
+        let {getAllByRole} = render(<Calendar {...props} />);
+
+        let gridCells = getAllByRole('gridcell').filter(
+          cell => cell.getAttribute('aria-disabled') !== 'true'
+        );
+        expect(gridCells.length).toBe(18);
+      }
+    );
+
+    it.each`
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 2, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 3, 20)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 2, 10), end: new CalendarDate(2019, 2, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 3, 20)}}
+    `(
+      '$Name should disable the previous button if outside valid date range',
+      ({Calendar, props}) => {
+        let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
+
+        expect(getByLabelText('Previous')).toHaveAttribute('disabled');
+        for (let next of getAllByLabelText('Next')) {
+          expect(next).not.toHaveAttribute('disabled');
+        }
+      }
+    );
+
+    it.each`
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 3, 20)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 3, 20)}}
     `('$Name should disable the next button if outside valid date range', ({Calendar, props}) => {
       let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
 
@@ -152,121 +174,147 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                    | Calendar              | props
-      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 2, 20)}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 2, 20)}}
-    `('$Name should disable both the next and previous buttons if outside valid date range', ({Calendar, props}) => {
-      let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 2, 20)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 2, 20)}}
+    `(
+      '$Name should disable both the next and previous buttons if outside valid date range',
+      ({Calendar, props}) => {
+        let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
 
-      expect(getByLabelText('Previous')).toHaveAttribute('disabled');
-      for (let next of getAllByLabelText('Next')) {
-        expect(next).toHaveAttribute('disabled');
+        expect(getByLabelText('Previous')).toHaveAttribute('disabled');
+        for (let next of getAllByLabelText('Next')) {
+          expect(next).toHaveAttribute('disabled');
+        }
       }
-    });
+    );
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name should change the month when previous or next buttons are clicked', async ({Calendar, props}) => {
-      let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<Calendar {...props} />);
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+    `(
+      '$Name should change the month when previous or next buttons are clicked',
+      async ({Calendar, props}) => {
+        let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(
+          <Calendar {...props} />
+        );
 
-      let heading = getByRole('heading');
-      expect(heading).toHaveTextContent('June 2019');
+        let heading = getByRole('heading');
+        expect(heading).toHaveTextContent('June 2019');
 
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
-      expect(gridCells.length).toBe(30);
-      expect(getAllByLabelText('selected', {exact: false}).length).toBeGreaterThan(0);
+        let gridCells = getAllByRole('gridcell').filter(
+          cell => cell.getAttribute('aria-disabled') !== 'true'
+        );
+        expect(gridCells.length).toBe(30);
+        expect(getAllByLabelText('selected', {exact: false}).length).toBeGreaterThan(0);
 
-      let nextButton = getAllByLabelText('Next')[0];
-      await user.click(nextButton);
+        let nextButton = getAllByLabelText('Next')[0];
+        await user.click(nextButton);
 
-      expect(() => {
-        getAllByLabelText('selected', {exact: false});
-      }).toThrow();
+        expect(() => {
+          getAllByLabelText('selected', {exact: false});
+        }).toThrow();
 
-      expect(heading).toHaveTextContent('July 2019');
-      gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
-      expect(gridCells.length).toBe(31);
+        expect(heading).toHaveTextContent('July 2019');
+        gridCells = getAllByRole('gridcell').filter(
+          cell => cell.getAttribute('aria-disabled') !== 'true'
+        );
+        expect(gridCells.length).toBe(31);
 
-      expect(nextButton).toHaveFocus();
+        expect(nextButton).toHaveFocus();
 
-      let prevButton = getByLabelText('Previous');
-      await user.click(prevButton);
+        let prevButton = getByLabelText('Previous');
+        await user.click(prevButton);
 
-      expect(heading).toHaveTextContent('June 2019');
-      gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
-      expect(gridCells.length).toBe(30);
-      expect(getAllByLabelText('selected', {exact: false}).length).toBeGreaterThan(0);
-      expect(prevButton).toHaveFocus();
-    });
-
-    it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name should change the month when previous or next buttons are clicked and multiple months are visible', async ({Calendar, props}) => {
-      let {getAllByRole, getByLabelText, getAllByLabelText} = render(<Calendar {...props} visibleMonths={3} />);
-
-      let grids = getAllByRole('grid');
-      expect(grids).toHaveLength(3);
-      expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
-      expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
-      expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
-
-      let nextButton = getAllByLabelText('Next')[0];
-      await user.click(nextButton);
-
-      grids = getAllByRole('grid');
-      expect(grids).toHaveLength(3);
-      expect(grids[0]).toHaveAttribute('aria-label', 'August 2019');
-      expect(grids[1]).toHaveAttribute('aria-label', 'September 2019');
-      expect(grids[2]).toHaveAttribute('aria-label', 'October 2019');
-
-      let prevButton = getByLabelText('Previous');
-      await user.click(prevButton);
-
-      grids = getAllByRole('grid');
-      expect(grids).toHaveLength(3);
-      expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
-      expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
-      expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
-    });
+        expect(heading).toHaveTextContent('June 2019');
+        gridCells = getAllByRole('gridcell').filter(
+          cell => cell.getAttribute('aria-disabled') !== 'true'
+        );
+        expect(gridCells.length).toBe(30);
+        expect(getAllByLabelText('selected', {exact: false}).length).toBeGreaterThan(0);
+        expect(prevButton).toHaveFocus();
+      }
+    );
 
     it.each`
-      Name                    | Calendar              | props
-      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
-    `('$Name should move focus when the previous or next buttons become disabled', async ({Calendar, props}) => {
-      let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+    `(
+      '$Name should change the month when previous or next buttons are clicked and multiple months are visible',
+      async ({Calendar, props}) => {
+        let {getAllByRole, getByLabelText, getAllByLabelText} = render(
+          <Calendar {...props} visibleMonths={3} />
+        );
 
-      let prevButton = getByLabelText('Previous');
-      let nextButton = getAllByLabelText('Next')[0];
+        let grids = getAllByRole('grid');
+        expect(grids).toHaveLength(3);
+        expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
+        expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
+        expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
 
-      expect(prevButton).not.toHaveAttribute('disabled');
-      expect(nextButton).not.toHaveAttribute('disabled');
+        let nextButton = getAllByLabelText('Next')[0];
+        await user.click(nextButton);
 
-      await user.click(prevButton);
-      expect(prevButton).toHaveAttribute('disabled');
-      expect(nextButton).not.toHaveAttribute('disabled');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Sunday, February 10, 2019')).toBe(true);
+        grids = getAllByRole('grid');
+        expect(grids).toHaveLength(3);
+        expect(grids[0]).toHaveAttribute('aria-label', 'August 2019');
+        expect(grids[1]).toHaveAttribute('aria-label', 'September 2019');
+        expect(grids[2]).toHaveAttribute('aria-label', 'October 2019');
 
-      await user.click(nextButton);
+        let prevButton = getByLabelText('Previous');
+        await user.click(prevButton);
 
-      expect(prevButton).not.toHaveAttribute('disabled');
-      expect(nextButton).not.toHaveAttribute('disabled');
-      expect(document.activeElement).toBe(nextButton);
-
-      await user.click(nextButton);
-      expect(prevButton).not.toHaveAttribute('disabled');
-      expect(nextButton).toHaveAttribute('disabled');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, April 10, 2019')).toBe(true);
-    });
+        grids = getAllByRole('grid');
+        expect(grids).toHaveLength(3);
+        expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
+        expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
+        expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
+      }
+    );
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
+    `(
+      '$Name should move focus when the previous or next buttons become disabled',
+      async ({Calendar, props}) => {
+        let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
+
+        let prevButton = getByLabelText('Previous');
+        let nextButton = getAllByLabelText('Next')[0];
+
+        expect(prevButton).not.toHaveAttribute('disabled');
+        expect(nextButton).not.toHaveAttribute('disabled');
+
+        await user.click(prevButton);
+        expect(prevButton).toHaveAttribute('disabled');
+        expect(nextButton).not.toHaveAttribute('disabled');
+        expect(
+          document.activeElement.getAttribute('aria-label').startsWith('Sunday, February 10, 2019')
+        ).toBe(true);
+
+        await user.click(nextButton);
+
+        expect(prevButton).not.toHaveAttribute('disabled');
+        expect(nextButton).not.toHaveAttribute('disabled');
+        expect(document.activeElement).toBe(nextButton);
+
+        await user.click(nextButton);
+        expect(prevButton).not.toHaveAttribute('disabled');
+        expect(nextButton).toHaveAttribute('disabled');
+        expect(
+          document.activeElement.getAttribute('aria-label').startsWith('Wednesday, April 10, 2019')
+        ).toBe(true);
+      }
+    );
+
+    it.each`
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should handle minimum dates in a calendar system', ({Calendar}) => {
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme} locale="en-US-u-ca-japanese">
@@ -290,11 +338,13 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should handle maximum dates in a calendar system', ({Calendar}) => {
-      let {getByRole, getAllByRole} = render(<Calendar defaultFocusedValue={new CalendarDate(9999, 12, 12)} />);
+      let {getByRole, getAllByRole} = render(
+        <Calendar defaultFocusedValue={new CalendarDate(9999, 12, 12)} />
+      );
 
       let grid = getByRole('grid');
       let cells = within(grid).getAllByRole('gridcell');
@@ -308,9 +358,9 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should show era for BC dates', ({Calendar}) => {
       let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate('BC', 2, 1, 5)} />);
 
@@ -322,133 +372,214 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name should change the month when keyboard navigating and multiple months are visible', async ({Calendar, props}) => {
-      let {getAllByRole, getByLabelText} = render(<Calendar {...props} visibleMonths={3} />);
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+    `(
+      '$Name should change the month when keyboard navigating and multiple months are visible',
+      async ({Calendar, props}) => {
+        let {getAllByRole, getByLabelText} = render(<Calendar {...props} visibleMonths={3} />);
 
-      let grids = getAllByRole('grid');
-      expect(grids).toHaveLength(3);
-      expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
-      expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
-      expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
+        let grids = getAllByRole('grid');
+        expect(grids).toHaveLength(3);
+        expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
+        expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
+        expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
 
-      act(() => getByLabelText('Wednesday, July 31, 2019').focus());
-      await user.keyboard('{ArrowRight}');
+        act(() => getByLabelText('Wednesday, July 31, 2019').focus());
+        await user.keyboard('{ArrowRight}');
 
-      grids = getAllByRole('grid');
-      expect(grids).toHaveLength(3);
-      expect(grids[0]).toHaveAttribute('aria-label', 'August 2019');
-      expect(grids[1]).toHaveAttribute('aria-label', 'September 2019');
-      expect(grids[2]).toHaveAttribute('aria-label', 'October 2019');
+        grids = getAllByRole('grid');
+        expect(grids).toHaveLength(3);
+        expect(grids[0]).toHaveAttribute('aria-label', 'August 2019');
+        expect(grids[1]).toHaveAttribute('aria-label', 'September 2019');
+        expect(grids[2]).toHaveAttribute('aria-label', 'October 2019');
 
-      await user.keyboard('{ArrowLeft}');
+        await user.keyboard('{ArrowLeft}');
 
-      grids = getAllByRole('grid');
-      expect(grids).toHaveLength(3);
-      expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
-      expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
-      expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
-    });
-
-    it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2021, 12, 15)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}}
-    `('$Name should set aria-disabled on cells for which isDateUnavailable returns true', async ({Calendar, props}) => {
-      const isDateUnavailable = (date) => {
-        const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
-        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-      };
-      let {getByRole, getAllByRole} = render(<Calendar {...props} isDateUnavailable={isDateUnavailable} />);
-
-      expect(getByRole('button', {name: 'Monday, December 6, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Tuesday, December 7, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Wednesday, December 8, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Thursday, December 9, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Friday, December 10, 2021'})).toHaveAttribute('aria-disabled', 'true');
-
-      expect(getByRole('button', {name: 'Wednesday, December 22, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Thursday, December 23, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Friday, December 24, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Saturday, December 25, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Sunday, December 26, 2021'})).toHaveAttribute('aria-disabled', 'true');
-
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
-      expect(gridCells.length).toBe(21);
-
-      let cell = getByRole('button', {name: 'Wednesday, December 22, 2021'});
-      await user.click(cell);
-      expect(cell.parentElement).not.toHaveAttribute('aria-selected');
-
-      cell = getByRole('button', {name: 'Sunday, December 12, 2021'});
-      await user.click(cell);
-      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
-    });
+        grids = getAllByRole('grid');
+        expect(grids).toHaveLength(3);
+        expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
+        expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
+        expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
+      }
+    );
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2021, 12, 15)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}}
+    `(
+      '$Name should set aria-disabled on cells for which isDateUnavailable returns true',
+      async ({Calendar, props}) => {
+        const isDateUnavailable = date => {
+          const disabledIntervals = [
+            [new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)],
+            [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]
+          ];
+          return disabledIntervals.some(
+            interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+          );
+        };
+        let {getByRole, getAllByRole} = render(
+          <Calendar {...props} isDateUnavailable={isDateUnavailable} />
+        );
+
+        expect(getByRole('button', {name: 'Monday, December 6, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+        expect(getByRole('button', {name: 'Tuesday, December 7, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+        expect(getByRole('button', {name: 'Wednesday, December 8, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+        expect(getByRole('button', {name: 'Thursday, December 9, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+        expect(getByRole('button', {name: 'Friday, December 10, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+
+        expect(getByRole('button', {name: 'Wednesday, December 22, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+        expect(getByRole('button', {name: 'Thursday, December 23, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+        expect(getByRole('button', {name: 'Friday, December 24, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+        expect(getByRole('button', {name: 'Saturday, December 25, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+        expect(getByRole('button', {name: 'Sunday, December 26, 2021'})).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
+
+        let gridCells = getAllByRole('gridcell').filter(
+          cell => cell.getAttribute('aria-disabled') !== 'true'
+        );
+        expect(gridCells.length).toBe(21);
+
+        let cell = getByRole('button', {name: 'Wednesday, December 22, 2021'});
+        await user.click(cell);
+        expect(cell.parentElement).not.toHaveAttribute('aria-selected');
+
+        cell = getByRole('button', {name: 'Sunday, December 12, 2021'});
+        await user.click(cell);
+        expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      }
+    );
+
+    it.each`
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should support defaultFocusedValue', async ({Calendar}) => {
       let onFocusChange = jest.fn();
-      let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate(2019, 6, 5)} autoFocus onFocusChange={onFocusChange} />);
+      let {getByRole} = render(
+        <Calendar
+          defaultFocusedValue={new CalendarDate(2019, 6, 5)}
+          autoFocus
+          onFocusChange={onFocusChange}
+        />
+      );
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'June 2019');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+      expect(
+        document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')
+      ).toBe(true);
 
       await user.keyboard('{ArrowRight}');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Thursday, June 6, 2019')).toBe(true);
+      expect(
+        document.activeElement.getAttribute('aria-label').startsWith('Thursday, June 6, 2019')
+      ).toBe(true);
       expect(onFocusChange).toHaveBeenCalledWith(new CalendarDate(2019, 6, 6));
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should support controlled focusedValue', async ({Calendar}) => {
       let onFocusChange = jest.fn();
-      let {getByRole} = render(<Calendar focusedValue={new CalendarDate(2019, 6, 5)} autoFocus onFocusChange={onFocusChange} />);
+      let {getByRole} = render(
+        <Calendar
+          focusedValue={new CalendarDate(2019, 6, 5)}
+          autoFocus
+          onFocusChange={onFocusChange}
+        />
+      );
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'June 2019');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+      expect(
+        document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')
+      ).toBe(true);
 
       await user.keyboard('{ArrowRight}');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+      expect(
+        document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')
+      ).toBe(true);
       expect(onFocusChange).toHaveBeenCalledWith(new CalendarDate(2019, 6, 6));
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should constrain defaultFocusedValue', ({Calendar}) => {
-      let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate(2019, 6, 5)} minValue={new CalendarDate(2019, 7, 5)} autoFocus />);
+      let {getByRole} = render(
+        <Calendar
+          defaultFocusedValue={new CalendarDate(2019, 6, 5)}
+          minValue={new CalendarDate(2019, 7, 5)}
+          autoFocus
+        />
+      );
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+      expect(
+        document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')
+      ).toBe(true);
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should constrain focusedValue', ({Calendar}) => {
-      let {getByRole} = render(<Calendar focusedValue={new CalendarDate(2019, 6, 5)} minValue={new CalendarDate(2019, 7, 5)} autoFocus />);
+      let {getByRole} = render(
+        <Calendar
+          focusedValue={new CalendarDate(2019, 6, 5)}
+          minValue={new CalendarDate(2019, 7, 5)}
+          autoFocus
+        />
+      );
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+      expect(
+        document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')
+      ).toBe(true);
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should support focusing via a ref', ({Calendar}) => {
       let ref = React.createRef();
       render(<Calendar ref={ref} />);
@@ -460,18 +591,18 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should pass through data attributes', ({Calendar}) => {
       let {getByTestId} = render(<Calendar data-testid="foo" />);
       expect(getByTestId('foo')).toHaveAttribute('role', 'application');
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should return the outer most DOM element from the ref', ({Calendar}) => {
       let ref = React.createRef();
       render(<Calendar ref={ref} />);
@@ -482,9 +613,9 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar
-      ${'v3 Calendar'}       | ${Calendar}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+      Name                  | Calendar
+      ${'v3 Calendar'}      | ${Calendar}
+      ${'v3 RangeCalendar'} | ${RangeCalendar}
     `('$Name should respond to provider props', ({Calendar}) => {
       let {getByRole, getAllByRole, getByLabelText, getAllByLabelText} = render(
         <Provider theme={theme} isDisabled>
@@ -508,11 +639,11 @@ describe('CalendarBase', () => {
 
   describe('labeling', () => {
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should be labeled by month heading by default', async ({Calendar, props}) => {
-      let {getByRole} = render(<Calendar  {...props} />);
+      let {getByRole} = render(<Calendar {...props} />);
       let calendar = getByRole('application');
       let body = getByRole('grid');
       expect(calendar).toHaveAttribute('id');
@@ -521,9 +652,9 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with aria-label', ({Calendar, props}) => {
       let {getByRole} = render(<Calendar {...props} aria-label="foo" />);
       let calendar = getByRole('application');
@@ -534,9 +665,9 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with aria-labelledby', ({Calendar, props}) => {
       let {getByRole} = render(<Calendar {...props} aria-labelledby="foo" />);
       let calendar = getByRole('application');
@@ -550,9 +681,9 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with aria-labelledby and aria-label', ({Calendar, props}) => {
       let {getByRole} = render(<Calendar {...props} aria-label="cal" aria-labelledby="foo" />);
       let calendar = getByRole('application');
@@ -566,11 +697,13 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with a custom id', ({Calendar, props}) => {
-      let {getByRole} = render(<Calendar {...props} id="hi" aria-label="cal" aria-labelledby="foo" />);
+      let {getByRole} = render(
+        <Calendar {...props} id="hi" aria-label="cal" aria-labelledby="foo" />
+      );
       let calendar = getByRole('application');
       let body = getByRole('grid');
       expect(calendar).toHaveAttribute('id', 'hi');
@@ -582,11 +715,13 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with multiple visible months', ({Calendar, props}) => {
-      let {getByRole, getAllByRole} = render(<Calendar {...props} aria-label="Calendar" visibleMonths={3} />);
+      let {getByRole, getAllByRole} = render(
+        <Calendar {...props} aria-label="Calendar" visibleMonths={3} />
+      );
       let calendar = getByRole('application');
       let months = getAllByRole('grid');
       expect(months).toHaveLength(3);
@@ -605,10 +740,14 @@ describe('CalendarBase', () => {
         defaultValue = {start: defaultValue, end: defaultValue};
       }
 
-      let {getAllByRole, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
+      let {getAllByRole, getAllByLabelText, unmount} = render(
+        <Calendar defaultValue={defaultValue} autoFocus {...props} />
+      );
       let grid = getAllByRole('grid')[0]; // get by role will see two, role=grid and implicit <table> which also has role=grid
 
-      let cell = getAllByLabelText('selected', {exact: false}).filter(cell => cell.role !== 'grid')[0];
+      let cell = getAllByLabelText('selected', {exact: false}).filter(
+        cell => cell.role !== 'grid'
+      )[0];
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(document.activeElement).toBe(cell);
 
@@ -635,98 +774,322 @@ describe('CalendarBase', () => {
     }
 
     it.each`
-      Name                    | Calendar          | props
-      ${'v3 Calendar'}        | ${Calendar}       | ${{}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
-    `('$Name should move the focused date by one day with the left/right arrows', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowLeft', 'Tuesday, June 4, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowRight', 'Thursday, June 6, 2019', 'June 2019', props);
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{}}
+    `(
+      '$Name should move the focused date by one day with the left/right arrows',
+      async ({Calendar, props}) => {
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'ArrowLeft',
+          'Tuesday, June 4, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'ArrowRight',
+          'Thursday, June 6, 2019',
+          'June 2019',
+          props
+        );
 
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 1), 'ArrowLeft', 'Friday, May 31, 2019', 'May 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 30), 'ArrowRight', 'Monday, July 1, 2019', 'July 2019', props);
-    });
-
-    it.each`
-      Name                    | Calendar          | props
-      ${'v3 Calendar'}        | ${Calendar}       | ${{}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
-    `('$Name should move the focused date by one week with the up/down arrows', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'ArrowUp', 'Wednesday, June 5, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'ArrowDown', 'Wednesday, June 19, 2019', 'June 2019', props);
-
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowUp', 'Wednesday, May 29, 2019', 'May 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 26), 'ArrowDown', 'Wednesday, July 3, 2019', 'July 2019', props);
-    });
-
-    it.each`
-      Name                    | Calendar          | props
-      ${'v3 Calendar'}        | ${Calendar}       | ${{}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
-    `('$Name should move the focused date to the start or end of the month with the home/end keys', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'Home', 'Saturday, June 1, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'End', 'Sunday, June 30, 2019', 'June 2019', props);
-    });
-
-    it.each`
-      Name                    | Calendar          | props
-      ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}
-    `('$Name should move the focused date to the start or end of the month with the home/end keys when multiple months are visible', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'Home', 'Saturday, June 1, 2019', 'May to July 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'End', 'Sunday, June 30, 2019', 'May to July 2019', props);
-    });
-
-    it.each`
-      Name                    | Calendar          | props
-      ${'v3 Calendar'}        | ${Calendar}       | ${{}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
-    `('$Name should move the focused date by one month with the page up/page down keys', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, May 5, 2019', 'May 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Friday, July 5, 2019', 'July 2019', props);
-    });
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 1),
+          'ArrowLeft',
+          'Friday, May 31, 2019',
+          'May 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 30),
+          'ArrowRight',
+          'Monday, July 1, 2019',
+          'July 2019',
+          props
+        );
+      }
+    );
 
     it.each`
-      Name                    | Calendar          | props
-      ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}
-    `('$Name should move the focused date by one month with the page up/page down keys when multiple months are visible', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, May 5, 2019', 'May to July 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Friday, July 5, 2019', 'May to July 2019', props);
-    });
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{}}
+    `(
+      '$Name should move the focused date by one week with the up/down arrows',
+      async ({Calendar, props}) => {
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 12),
+          'ArrowUp',
+          'Wednesday, June 5, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 12),
+          'ArrowDown',
+          'Wednesday, June 19, 2019',
+          'June 2019',
+          props
+        );
+
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'ArrowUp',
+          'Wednesday, May 29, 2019',
+          'May 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 26),
+          'ArrowDown',
+          'Wednesday, July 3, 2019',
+          'July 2019',
+          props
+        );
+      }
+    );
 
     it.each`
-      Name                    | Calendar          | props
-      ${'v3 Calendar'}        | ${Calendar}       | ${{}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{}}
-    `('$Name should move the focused date by one year with the shift + page up/shift + page down keys', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Tuesday, June 5, 2018', 'June 2018', props, {shiftKey: true});
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Friday, June 5, 2020', 'June 2020', props, {shiftKey: true});
-    });
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{}}
+    `(
+      '$Name should move the focused date to the start or end of the month with the home/end keys',
+      async ({Calendar, props}) => {
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 12),
+          'Home',
+          'Saturday, June 1, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 12),
+          'End',
+          'Sunday, June 30, 2019',
+          'June 2019',
+          props
+        );
+      }
+    );
 
     it.each`
-      Name                    | Calendar          | props
-      ${'v3 Calendar'}        | ${Calendar}       | ${{minValue: new CalendarDate(2019, 6, 2), maxValue: new CalendarDate(2019, 6, 8)}}
-      ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{minValue: new CalendarDate(2019, 6, 2), maxValue: new CalendarDate(2019, 6, 8)}}
-    `('$Name should not move the focused date outside the valid range', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 2), 'ArrowLeft', 'Sunday, June 2, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 8), 'ArrowRight', 'Saturday, June 8, 2019 selected', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowUp', 'Sunday, June 2, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'ArrowDown', 'Saturday, June 8, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'Home', 'Sunday, June 2, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'End', 'Saturday, June 8, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, June 2, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Saturday, June 8, 2019', 'June 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, June 2, 2019', 'June 2019', props, {shiftKey: true});
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Saturday, June 8, 2019', 'June 2019', props, {shiftKey: true});
-    });
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{visibleMonths: 3}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{visibleMonths: 3}}
+    `(
+      '$Name should move the focused date to the start or end of the month with the home/end keys when multiple months are visible',
+      async ({Calendar, props}) => {
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 12),
+          'Home',
+          'Saturday, June 1, 2019',
+          'May to July 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 12),
+          'End',
+          'Sunday, June 30, 2019',
+          'May to July 2019',
+          props
+        );
+      }
+    );
+
+    it.each`
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{}}
+    `(
+      '$Name should move the focused date by one month with the page up/page down keys',
+      async ({Calendar, props}) => {
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageUp',
+          'Sunday, May 5, 2019',
+          'May 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageDown',
+          'Friday, July 5, 2019',
+          'July 2019',
+          props
+        );
+      }
+    );
+
+    it.each`
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{visibleMonths: 3}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{visibleMonths: 3}}
+    `(
+      '$Name should move the focused date by one month with the page up/page down keys when multiple months are visible',
+      async ({Calendar, props}) => {
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageUp',
+          'Sunday, May 5, 2019',
+          'May to July 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageDown',
+          'Friday, July 5, 2019',
+          'May to July 2019',
+          props
+        );
+      }
+    );
+
+    it.each`
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{}}
+    `(
+      '$Name should move the focused date by one year with the shift + page up/shift + page down keys',
+      async ({Calendar, props}) => {
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageUp',
+          'Tuesday, June 5, 2018',
+          'June 2018',
+          props,
+          {shiftKey: true}
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageDown',
+          'Friday, June 5, 2020',
+          'June 2020',
+          props,
+          {shiftKey: true}
+        );
+      }
+    );
+
+    it.each`
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{minValue: new CalendarDate(2019, 6, 2), maxValue: new CalendarDate(2019, 6, 8)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{minValue: new CalendarDate(2019, 6, 2), maxValue: new CalendarDate(2019, 6, 8)}}
+    `(
+      '$Name should not move the focused date outside the valid range',
+      async ({Calendar, props}) => {
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 2),
+          'ArrowLeft',
+          'Sunday, June 2, 2019 selected',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 8),
+          'ArrowRight',
+          'Saturday, June 8, 2019 selected',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'ArrowUp',
+          'Sunday, June 2, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'ArrowDown',
+          'Saturday, June 8, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'Home',
+          'Sunday, June 2, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'End',
+          'Saturday, June 8, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageUp',
+          'Sunday, June 2, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageDown',
+          'Saturday, June 8, 2019',
+          'June 2019',
+          props
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageUp',
+          'Sunday, June 2, 2019',
+          'June 2019',
+          props,
+          {shiftKey: true}
+        );
+        await testKeyboard(
+          Calendar,
+          new CalendarDate(2019, 6, 5),
+          'PageDown',
+          'Saturday, June 8, 2019',
+          'June 2019',
+          props,
+          {shiftKey: true}
+        );
+      }
+    );
   });
 
   // These tests only apply to v3
   describe('internationalization', () => {
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{}}
     `('$Name should change the week start day based on the locale', ({Calendar}) => {
       let {getAllByRole, rerender} = render(
         <Provider theme={theme} locale="en-US">
@@ -748,9 +1111,9 @@ describe('CalendarBase', () => {
     });
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name should mirror arrow key movement in an RTL locale', async ({Calendar, props}) => {
       // LTR
       let {getByRole, getAllByRole, rerender} = render(
@@ -760,7 +1123,9 @@ describe('CalendarBase', () => {
       );
 
       let grid = getByRole('grid');
-      let selected = getAllByRole('button').find(cell => cell.tagName === 'SPAN' && cell.getAttribute('tabIndex') === '0');
+      let selected = getAllByRole('button').find(
+        cell => cell.tagName === 'SPAN' && cell.getAttribute('tabIndex') === '0'
+      );
       expect(document.activeElement).toBe(selected);
 
       await user.keyboard('{ArrowLeft}');
@@ -780,118 +1145,134 @@ describe('CalendarBase', () => {
       fireEvent.blur(grid);
       fireEvent.focus(grid);
 
-      selected = getAllByRole('button').find(cell => cell.tagName === 'SPAN' && cell.getAttribute('tabIndex') === '0');
+      selected = getAllByRole('button').find(
+        cell => cell.tagName === 'SPAN' && cell.getAttribute('tabIndex') === '0'
+      );
       expect(document.activeElement).toBe(selected);
 
       await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(selected.parentNode.nextSibling.children[0]);
-
 
       await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(selected);
     });
 
     it.each`
-      Name                   | Calendar         | props                                                                                       | locale
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'en-US'}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'en-US'}}
-    `('$Name should override start of week with firstDayOfWeek="mon" (en-US)', ({Calendar, props, locale = 'en-US'}) => {
-      let {getAllByRole, getByRole} = render(
-        <Provider theme={theme} locale={locale}>
-          <Calendar {...props} firstDayOfWeek="mon" />
-        </Provider>
-      );
+      Name                  | Calendar         | props                                                                                       | locale
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'en-US'}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'en-US'}
+    `(
+      '$Name should override start of week with firstDayOfWeek="mon" (en-US)',
+      ({Calendar, props, locale = 'en-US'}) => {
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme} locale={locale}>
+            <Calendar {...props} firstDayOfWeek="mon" />
+          </Provider>
+        );
 
-      let grid = getByRole('grid');
-      let headers = getAllByRole('columnheader', {hidden: true});
-      expect(headers.map(h => h.textContent)).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
+        let grid = getByRole('grid');
+        let headers = getAllByRole('columnheader', {hidden: true});
+        expect(headers.map(h => h.textContent)).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
 
-      let cells = within(grid).getAllByRole('gridcell');
-      expect(cells[0]).toHaveTextContent('1');
-    });
-
-    it.each`
-      Name                   | Calendar         | props                                                                                       | locale
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'en-US'}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'en-US'}}
-    `('$Name should override start of week with firstDayOfWeek="sat" (en-US)', ({Calendar, props, locale}) => {
-      let {getAllByRole, getByRole} = render(
-        <Provider theme={theme} locale={locale}>
-          <Calendar {...props} firstDayOfWeek="sat" />
-        </Provider>
-      );
-
-      let grid = getByRole('grid');
-      let headers = getAllByRole('columnheader', {hidden: true});
-      expect(headers.map(h => h.textContent)).toEqual(['S', 'S', 'M', 'T', 'W', 'T', 'F']);
-
-      let cells = within(grid).getAllByRole('gridcell');
-      expect(cells[2]).toHaveTextContent('1');
-    });
+        let cells = within(grid).getAllByRole('gridcell');
+        expect(cells[0]).toHaveTextContent('1');
+      }
+    );
 
     it.each`
-      Name                   | Calendar         | props                                                                                       | locale
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'fr-FR'}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'fr-FR'}}
-    `('$Name should override start of week with firstDayOfWeek="mon" (fr-FR)', ({Calendar, props, locale}) => {
-      let {getAllByRole, getByRole} = render(
-        <Provider theme={theme} locale={locale}>
-          <Calendar {...props} firstDayOfWeek="mon" />
-        </Provider>
-      );
+      Name                  | Calendar         | props                                                                                       | locale
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'en-US'}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'en-US'}
+    `(
+      '$Name should override start of week with firstDayOfWeek="sat" (en-US)',
+      ({Calendar, props, locale}) => {
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme} locale={locale}>
+            <Calendar {...props} firstDayOfWeek="sat" />
+          </Provider>
+        );
 
-      let grid = getByRole('grid');
-      let headers = getAllByRole('columnheader', {hidden: true});
-      expect(headers.map(h => h.textContent)).toEqual(['L', 'M', 'M', 'J', 'V', 'S', 'D']);
+        let grid = getByRole('grid');
+        let headers = getAllByRole('columnheader', {hidden: true});
+        expect(headers.map(h => h.textContent)).toEqual(['S', 'S', 'M', 'T', 'W', 'T', 'F']);
 
-      let cells = within(grid).getAllByRole('gridcell');
-      expect(cells[0]).toHaveTextContent('1');
-    });
-
-    it.each`
-      Name                   | Calendar         | props                                                                                       | locale
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'fr-FR'}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'fr-FR'}}
-    `('$Name should override start of week with firstDayOfWeek="sat" (fr-FR)', ({Calendar, props, locale}) => {
-      let {getAllByRole, getByRole} = render(
-        <Provider theme={theme} locale={locale}>
-          <Calendar {...props} firstDayOfWeek="sat" />
-        </Provider>
-      );
-
-      let grid = getByRole('grid');
-      let headers = getAllByRole('columnheader', {hidden: true});
-      expect(headers.map(h => h.textContent)).toEqual(['S', 'D', 'L', 'M', 'M', 'J', 'V']);
-
-      let cells = within(grid).getAllByRole('gridcell');
-      expect(cells[2]).toHaveTextContent('1');
-    });
+        let cells = within(grid).getAllByRole('gridcell');
+        expect(cells[2]).toHaveTextContent('1');
+      }
+    );
 
     it.each`
-      Name                   | Calendar         | props
-      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2025, 1, 1)}}
-      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2025, 1, 1), end: new CalendarDate(2025, 1, 1)}}}
-    `('should render enough weeks to display all days in month for firstDayOfWeek', ({Calendar, props}) => {
-      let {getAllByRole, getByRole} = render(
-        <Provider theme={theme}>
-          <Calendar {...props} firstDayOfWeek="thu" />
-        </Provider>
-      );
+      Name                  | Calendar         | props                                                                                       | locale
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'fr-FR'}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'fr-FR'}
+    `(
+      '$Name should override start of week with firstDayOfWeek="mon" (fr-FR)',
+      ({Calendar, props, locale}) => {
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme} locale={locale}>
+            <Calendar {...props} firstDayOfWeek="mon" />
+          </Provider>
+        );
 
-      let grid = getByRole('grid');
-      let headers = getAllByRole('columnheader', {hidden: true});
-      expect(headers.map(h => h.textContent)).toEqual(['T', 'F', 'S', 'S', 'M', 'T', 'W']);
+        let grid = getByRole('grid');
+        let headers = getAllByRole('columnheader', {hidden: true});
+        expect(headers.map(h => h.textContent)).toEqual(['L', 'M', 'M', 'J', 'V', 'S', 'D']);
 
-      let rows = within(grid).getAllByRole('row');
-      expect(rows).toHaveLength(6);
+        let cells = within(grid).getAllByRole('gridcell');
+        expect(cells[0]).toHaveTextContent('1');
+      }
+    );
 
-      let cells = within(grid).getAllByRole('gridcell');
-      expect(cells).toHaveLength(42);
+    it.each`
+      Name                  | Calendar         | props                                                                                       | locale
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'fr-FR'}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'fr-FR'}
+    `(
+      '$Name should override start of week with firstDayOfWeek="sat" (fr-FR)',
+      ({Calendar, props, locale}) => {
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme} locale={locale}>
+            <Calendar {...props} firstDayOfWeek="sat" />
+          </Provider>
+        );
 
-      expect(cells[35]).toHaveTextContent('30');
-      expect(cells[36]).toHaveTextContent('31');
-      expect(cells[cells.length - 1]).toHaveAttribute('aria-disabled', 'true');
-      expect(cells[cells.length - 1]).toHaveTextContent('5');
-    });
+        let grid = getByRole('grid');
+        let headers = getAllByRole('columnheader', {hidden: true});
+        expect(headers.map(h => h.textContent)).toEqual(['S', 'D', 'L', 'M', 'M', 'J', 'V']);
+
+        let cells = within(grid).getAllByRole('gridcell');
+        expect(cells[2]).toHaveTextContent('1');
+      }
+    );
+
+    it.each`
+      Name                  | Calendar         | props
+      ${'v3 Calendar'}      | ${Calendar}      | ${{defaultValue: new CalendarDate(2025, 1, 1)}}
+      ${'v3 RangeCalendar'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2025, 1, 1), end: new CalendarDate(2025, 1, 1)}}}
+    `(
+      'should render enough weeks to display all days in month for firstDayOfWeek',
+      ({Calendar, props}) => {
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme}>
+            <Calendar {...props} firstDayOfWeek="thu" />
+          </Provider>
+        );
+
+        let grid = getByRole('grid');
+        let headers = getAllByRole('columnheader', {hidden: true});
+        expect(headers.map(h => h.textContent)).toEqual(['T', 'F', 'S', 'S', 'M', 'T', 'W']);
+
+        let rows = within(grid).getAllByRole('row');
+        expect(rows).toHaveLength(6);
+
+        let cells = within(grid).getAllByRole('gridcell');
+        expect(cells).toHaveLength(42);
+
+        expect(cells[35]).toHaveTextContent('30');
+        expect(cells[36]).toHaveTextContent('31');
+        expect(cells[cells.length - 1]).toHaveAttribute('aria-disabled', 'true');
+        expect(cells[cells.length - 1]).toHaveTextContent('5');
+      }
+    );
   });
 });

@@ -11,16 +11,15 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Card {
-
   &.is-drop-target {
     border-color: var(--spectrum-card-border-color-key-focus);
     box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
     background-color: var(--spectrum-alias-highlight-selected);
   }
 
-   .spectrum-Card-checkboxWrapper {
-     background-color: var(--spectrum-quickactions-background-color);
-   }
+  .spectrum-Card-checkboxWrapper {
+    background-color: var(--spectrum-quickactions-background-color);
+  }
 
   .spectrum-Card-detail {
     color: var(--spectrum-card-description-text-color);
@@ -112,8 +111,9 @@ governing permissions and limitations under the License.
     transition: background-color var(--spectrum-global-animation-duration-100);
   }
   &:after {
-    transition: background-color var(--spectrum-global-animation-duration-100),
-                opacity var(--spectrum-global-animation-duration-100);
+    transition:
+      background-color var(--spectrum-global-animation-duration-100),
+      opacity var(--spectrum-global-animation-duration-100);
     opacity: 0;
   }
   .spectrum-Card-grid {
@@ -238,8 +238,9 @@ governing permissions and limitations under the License.
   .spectrum-Card-footer {
   }
   .spectrum-Card-decoration {
-    transition: background-color var(--spectrum-global-animation-duration-100),
-                opacity var(--spectrum-global-animation-duration-100);
+    transition:
+      background-color var(--spectrum-global-animation-duration-100),
+      opacity var(--spectrum-global-animation-duration-100);
     background-color: var(--spectrum-global-color-blue-400);
     opacity: 0;
   }
@@ -320,8 +321,9 @@ governing permissions and limitations under the License.
 
   .spectrum-Card-grid {
     &:after {
-      transition: background-color var(--spectrum-global-animation-duration-100),
-                  opacity var(--spectrum-global-animation-duration-100);
+      transition:
+        background-color var(--spectrum-global-animation-duration-100),
+        opacity var(--spectrum-global-animation-duration-100);
       opacity: 0;
     }
   }

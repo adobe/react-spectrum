@@ -30,8 +30,8 @@ export const HorizontalS: StepListStory = {
   args: {
     size: 'S'
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -44,8 +44,8 @@ export const HorizontalM: StepListStory = {
   args: {
     selectedKey: 'monkey'
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -60,8 +60,8 @@ export const HorizontalL: StepListStory = {
     selectedKey: 'monkey',
     disabledKeys: ['dog']
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -75,8 +75,8 @@ export const HorizontalXL: StepListStory = {
     size: 'XL',
     isDisabled: true
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -90,8 +90,8 @@ export const VerticalS: StepListStory = {
     size: 'S',
     orientation: 'vertical'
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -105,8 +105,8 @@ export const VerticalM: StepListStory = {
     orientation: 'vertical',
     selectedKey: 'monkey'
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -122,8 +122,8 @@ export const VerticalL: StepListStory = {
     selectedKey: 'monkey',
     disabledKeys: ['dog']
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -138,8 +138,8 @@ export const VerticalXL: StepListStory = {
     orientation: 'vertical',
     isDisabled: true
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -154,8 +154,8 @@ export const Emphasized: StepListStory = {
     selectedKey: 'monkey',
     disabledKeys: ['dog']
   },
-  render: (args) => (
-    <StepList {...args} >
+  render: args => (
+    <StepList {...args}>
       <Item key="cat">Cat</Item>
       <Item key="dog">Dog</Item>
       <Item key="monkey">Monkey</Item>
@@ -163,4 +163,3 @@ export const Emphasized: StepListStory = {
     </StepList>
   )
 };
-

@@ -18,7 +18,8 @@ export function ReduceMotion() {
     <UNSAFE_PortalProvider getContainer={() => ref.current}>
       <ToastContainer
         // @ts-ignore
-        PRIVATE_forceReducedMotion={reduceMotion} />
+        PRIVATE_forceReducedMotion={reduceMotion}
+      />
       <div
         ref={ref}
         className={style({
@@ -53,16 +54,10 @@ export function ReduceMotion() {
           },
           marginTop: 0
         })}>
-        <Button
-          size="L"
-          onPress={() => ToastQueue.positive('Toast complete!')}
-          variant="secondary">
+        <Button size="L" onPress={() => ToastQueue.positive('Toast complete!')} variant="secondary">
           Show toast
         </Button>
-        <Switch
-          size="XL"
-          isSelected={reduceMotion}
-          onChange={setReduceMotion}>
+        <Switch size="XL" isSelected={reduceMotion} onChange={setReduceMotion}>
           Reduce motion
         </Switch>
       </div>

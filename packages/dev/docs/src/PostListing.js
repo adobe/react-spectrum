@@ -24,11 +24,13 @@ export function PostListing({type}) {
   let prefix = type === 'releases' ? 'v3/releases' : type;
   let blogPages = pages
     .filter(page => page.name.startsWith(prefix) && !page.name.endsWith('index.html'))
-    .sort((a, b) => a.date < b.date ? 1 : -1);
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
 
   return (
     <>
-      {blogPages.map(page => <BlogPost key={page.name} {...page} />)}
+      {blogPages.map(page => (
+        <BlogPost key={page.name} {...page} />
+      ))}
     </>
   );
 }
@@ -39,13 +41,30 @@ function BlogPost({name, title, url, description, date, author}) {
   return (
     <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.blogArticle)}>
       <header className={docStyles.blogHeader}>
-        <h2 className={typographyStyles['spectrum-Heading3']}><a href={url} className={linkStyle['spectrum-Link']}>{title}</a></h2>
-        {author && <address className={typographyStyles['spectrum-Body4']}>By <a rel="author" href={authorParts[2]} className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} {...getAnchorProps(authorParts[2])}>{authorParts[1]}</a></address>}
+        <h2 className={typographyStyles['spectrum-Heading3']}>
+          <a href={url} className={linkStyle['spectrum-Link']}>
+            {title}
+          </a>
+        </h2>
+        {author && (
+          <address className={typographyStyles['spectrum-Body4']}>
+            By{' '}
+            <a
+              rel="author"
+              href={authorParts[2]}
+              className={clsx(
+                linkStyle['spectrum-Link'],
+                linkStyle['spectrum-Link--secondary'],
+                docStyles.link
+              )}
+              {...getAnchorProps(authorParts[2])}>
+              {authorParts[1]}
+            </a>
+          </address>
+        )}
         <Time date={date} />
       </header>
-      <p className={typographyStyles['spectrum-Body3']}>
-        {renderHTMLfromMarkdown(description)}
-      </p>
+      <p className={typographyStyles['spectrum-Body3']}>{renderHTMLfromMarkdown(description)}</p>
     </article>
   );
 }

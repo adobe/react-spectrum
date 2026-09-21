@@ -128,7 +128,7 @@ describe('Disclosure', () => {
   });
 
   it('should expand a disabled disclosure via isExpanded', () => {
-    const {getByTestId,  queryByText} = render(
+    const {getByTestId, queryByText} = render(
       <Disclosure data-testid="disclosure" isDisabled isExpanded>
         <Heading level={3}>
           <Button slot="trigger">Trigger</Button>
@@ -147,10 +147,7 @@ describe('Disclosure', () => {
   it('should support controlled isExpanded prop', async () => {
     const onExpandedChange = jest.fn();
     const {getByTestId, getByRole, queryByText} = render(
-      <Disclosure
-        data-testid="disclosure"
-        isExpanded
-        onExpandedChange={onExpandedChange}>
+      <Disclosure data-testid="disclosure" isExpanded onExpandedChange={onExpandedChange}>
         <Heading level={3}>
           <Button slot="trigger">Trigger</Button>
         </Heading>
@@ -206,9 +203,7 @@ describe('Disclosure', () => {
         {({isExpanded}) => (
           <>
             <Heading level={3}>
-              <Button slot="trigger">
-                {isExpanded ? 'Collapse' : 'Expand'}
-              </Button>
+              <Button slot="trigger">{isExpanded ? 'Collapse' : 'Expand'}</Button>
             </Heading>
             <DisclosurePanel>
               <p>Content</p>
@@ -230,9 +225,7 @@ describe('Disclosure', () => {
     const {getByTestId, getByRole} = render(
       <Disclosure
         data-testid="disclosure"
-        className={({isFocusVisibleWithin}) =>
-          isFocusVisibleWithin ? 'focus' : ''
-        }>
+        className={({isFocusVisibleWithin}) => (isFocusVisibleWithin ? 'focus' : '')}>
         <Heading level={3}>
           <Button slot="trigger">Trigger</Button>
         </Heading>
@@ -263,10 +256,14 @@ describe('Disclosure', () => {
     const {getByTestId, queryByText} = render(
       <Disclosure data-testid="disclosure">
         <Heading level={3}>
-          <Button slot="trigger" data-testid="disclosure-trigger">Trigger</Button>
+          <Button slot="trigger" data-testid="disclosure-trigger">
+            Trigger
+          </Button>
         </Heading>
         <MenuTrigger>
-          <Button aria-label="Menu" data-testid="menu-trigger">☰</Button>
+          <Button aria-label="Menu" data-testid="menu-trigger">
+            ☰
+          </Button>
           <Popover>
             <Menu data-testid="menu">
               <MenuItem id="open">Open</MenuItem>
@@ -496,9 +493,7 @@ describe('DisclosureGroup', () => {
       const [expandedKeys, setExpandedKeys] = React.useState(['item1']);
       return (
         <>
-          <button onClick={() => setExpandedKeys(['item2'])}>
-            Expand item2
-          </button>
+          <button onClick={() => setExpandedKeys(['item2'])}>Expand item2</button>
           <DisclosureGroup expandedKeys={expandedKeys}>
             <Disclosure id="item1">
               <Heading level={3}>
@@ -582,7 +577,7 @@ describe('DisclosureGroup', () => {
     );
 
     const buttons = getAllByRole('button');
-    buttons.forEach((button) => {
+    buttons.forEach(button => {
       expect(button).toHaveAttribute('data-disabled', 'true');
       expect(button).toHaveAttribute('disabled');
     });

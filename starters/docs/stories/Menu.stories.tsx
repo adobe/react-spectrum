@@ -13,7 +13,7 @@ const meta: Meta<typeof Menu> = {
 export default meta;
 type Story = StoryFn<typeof Menu>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <MenuTrigger>
     <Button>Edit</Button>
     <Menu {...args}>

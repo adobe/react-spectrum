@@ -114,17 +114,19 @@ export const ContainerWithTextAlignmentSetDescriptionAndSetError: HelpTextStory 
     validationState: 'invalid'
   },
   name: 'textAlign center errorMessage',
-  decorators: [(Story) => (
-    <Flex
-      direction="column"
-      gap="size-200"
-      UNSAFE_style={{
-        textAlign: 'center'
-      }}>
-      <TextField label="Username" description="Please use your email" />
-      <Story />
-    </Flex>
-  )]
+  decorators: [
+    Story => (
+      <Flex
+        direction="column"
+        gap="size-200"
+        UNSAFE_style={{
+          textAlign: 'center'
+        }}>
+        <TextField label="Username" description="Please use your email" />
+        <Story />
+      </Flex>
+    )
+  ]
 };
 
 function TextAlignDecorator(Story) {

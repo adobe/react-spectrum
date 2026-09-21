@@ -4,18 +4,23 @@
  * Generates Agent Skills for React Spectrum (S2), migration, and React Aria.
  *
  * This script creates skills in the Agent Skills format (https://agentskills.io/specification)
+ * and publishes a discovery index per the Agent Skills Discovery via Well-Known URIs RFC
+ * (https://github.com/cloudflare/agent-skills-discovery-rfc), currently at v0.2.0.
  *
  * Usage:
- *   node packages/dev/s2-docs/scripts/generateAgentSkills.mjs
+ * node packages/dev/s2-docs/scripts/generateAgentSkills.mjs.
  *
  * The script will:
- *   1. Run the markdown docs generation if dist doesn't exist
- *   2. Create .well-known/skills directories inside the docs dist output
- *   3. Copy relevant documentation to references/ subdirectories
- *   4. Generate .well-known/skills/index.json for discovery
+ * 1. Run the markdown docs generation if dist doesn't exist
+ * 2. Create .well-known/agent-skills directories inside the docs dist output
+ * 3. Copy relevant documentation to references/ subdirectories
+ * 4. Package each skill with supporting files as a `.tar.gz` archive
+ * 5. Generate .well-known/agent-skills/index.json for discovery, with a `type`, `url`, and
+ * SHA-256 `digest` per skill.
  */
 
-import {execSync} from 'child_process';
+import crypto from 'crypto';
+import {execFileSync, execSync} from 'child_process';
 import {fileURLToPath} from 'url';
 import fs from 'fs';
 import path from 'path';
@@ -28,19 +33,29 @@ const MARKDOWN_DOCS_DIST = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist');
 const MDX_PAGES_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const MARKDOWN_DOCS_SCRIPT = path.join(__dirname, 'generateMarkdownDocs.mjs');
 const MIGRATION_REFS_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/migration-references');
+const AUDIT_SKILL_SOURCE_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/spectrum-audit');
 const WELL_KNOWN_DIR = '.well-known';
-const WELL_KNOWN_SKILLS_DIR = 'skills';
+const WELL_KNOWN_SKILLS_DIR = 'agent-skills';
+const DISCOVERY_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json';
 
 // Skill definitions
 const SKILLS = {
   'react-spectrum-s2': {
     name: 'react-spectrum-s2',
     description:
-      'Build accessible UI components with React Spectrum S2 (Spectrum 2). Use when developers mention React Spectrum, Spectrum 2, S2, @react-spectrum/s2, or Adobe design system components. Provides documentation for buttons, forms, dialogs, tables, date/time pickers, color pickers, and other accessible components.',
+      "Build UIs with React Spectrum S2 (Spectrum 2), Adobe's component library for React. Use when developers are using `@react-spectrum/s2` or need Adobe design system components. Includes React Aria Components docs as a reference for building custom components on top of unstyled primitives.",
     license: 'Apache-2.0',
     sourceDir: 's2',
-    compatibility:
-      'Requires a React project with @react-spectrum/s2 installed.',
+    additionalReferenceLibraries: [
+      {
+        skillName: 'react-aria',
+        referenceSubdir: 'react-aria',
+        title: 'React Aria Components',
+        description:
+          'Documentation for unstyled accessible primitives. Use only when no React Spectrum S2 component fits the requirements.'
+      }
+    ],
+    compatibility: 'Requires a React project with @react-spectrum/s2 installed.',
     metadata: {
       author: 'Adobe',
       website: 'https://react-spectrum.adobe.com/'
@@ -66,19 +81,43 @@ const SKILLS = {
       'Build accessible UI components with React Aria Components. Use when developers mention React Aria, react-aria-components, accessible components, or need unstyled accessible primitives. Provides documentation for building custom accessible UI with hooks and components.',
     license: 'Apache-2.0',
     sourceDir: 'react-aria',
-    compatibility:
-      'Requires React project with react-aria-components installed.',
+    compatibility: 'Requires React project with react-aria-components installed.',
     metadata: {
       author: 'Adobe',
       website: 'https://react-aria.adobe.com/'
+    }
+  },
+  'spectrum-audit': {
+    name: 'spectrum-audit',
+    description:
+      'Audit a codebase for adherence to the Spectrum design system and React Spectrum S2 best practices. Use when a developer asks to audit, review, lint, or check a project for Spectrum/S2 correctness, configuration, styling, accessibility, or component-usage issues.',
+    kind: 'audit',
+    license: 'Apache-2.0',
+    sourceDir: 's2',
+    compatibility: 'Requires a React project using @react-spectrum/s2.',
+    metadata: {
+      author: 'Adobe',
+      website: 'https://react-spectrum.adobe.com/'
     }
   }
 };
 
 const CUSTOM_SKILL_CONTENT = {
   'react-spectrum-s2': {
-    skillNotesMarkdown:
+    skillNotesMarkdown: [
       'If the requirements do not clearly specify which React Spectrum component to use, consult the [Component Decision Tree](references/guides/component-decision-tree.md) before choosing a component.',
+      'If the request involves a Figma design, frame, or URL — or if the Figma MCP (`get_design_context`,`search_design_system`, etc.) is available — consult [Implementing Figma designs with React Spectrum S2](references/guides/figma-to-s2.md) before generating code.',
+      'When writing tests that exercise S2 components, consult [Testing with React Spectrum S2](references/guides/test-utils-guidance.md) and prefer the ARIA pattern testers from `@react-spectrum/test-utils` over hand-rolled role/selector queries.',
+      `## React Spectrum S2 vs React Aria Components
+
+React Spectrum S2 is built on top of React Aria Components. The S2 components add Spectrum 2 styling, behavior, and slot structure on top of the unstyled React Aria primitives. Always prefer S2 components for React Spectrum work because they are pre-styled, design-system compliant, and cover most common UI patterns.
+
+Only reach for React Aria Components directly when:
+- Building a custom component because no S2 component matches the requirements. Follow [Creating Custom Components](references/guides/creating-custom-components.md) and pair the React Aria primitive with the S2 \`style\` macro for Spectrum styling.
+- You need a utility such as \`FocusScope\`, \`VisuallyHidden\`, \`useFocusRing\`, \`mergeProps\`, etc.
+
+The React Aria Components documentation is bundled under \`references/react-aria/\`. Many unstyled React Aria Components share the same name as S2 components, so ensure that you're searching and accessing the correct docs where needed.`
+    ].join('\n\n'),
     embeddedMarkdownPaths: [
       path.join(
         REPO_ROOT,
@@ -95,13 +134,48 @@ const CUSTOM_SKILL_CONTENT = {
         ),
         description:
           'How to choose the right S2 component when requirements do not name one explicitly.'
+      },
+      {
+        title: 'Implementing Figma designs with React Spectrum S2',
+        path: 'figma-to-s2.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/figma-to-s2.md'
+        ),
+        description:
+          'How to translate Figma designs (via the Figma MCP) into S2 components and the `style` macro.'
+      },
+      {
+        title: 'Creating Custom Components',
+        path: 'creating-custom-components.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/creating-custom-components.md'
+        ),
+        description:
+          'How to build custom Spectrum 2 components using React Aria Components and the `style` macro.'
+      },
+      {
+        title: 'Testing with React Spectrum S2',
+        path: 'test-utils-guidance.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/test-utils-guidance.md'
+        ),
+        description:
+          'How to write tests for S2 components using ARIA pattern testers from `@react-spectrum/test-utils`.'
       }
+    ]
+  },
+  'react-aria': {
+    embeddedMarkdownPaths: [
+      path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/react-aria/test-utils-guidance.md')
     ]
   }
 };
 
 /**
- * Ensure markdown docs are generated
+ * Ensure markdown docs are generated.
  */
 function ensureMarkdownDocs() {
   const s2LlmsTxt = path.join(MARKDOWN_DOCS_DIST, 's2', 'llms.txt');
@@ -117,12 +191,7 @@ function ensureMarkdownDocs() {
 }
 
 function getWellKnownRootForLibrary(sourceDir) {
-  return path.join(
-    MARKDOWN_DOCS_DIST,
-    sourceDir,
-    WELL_KNOWN_DIR,
-    WELL_KNOWN_SKILLS_DIR
-  );
+  return path.join(MARKDOWN_DOCS_DIST, sourceDir, WELL_KNOWN_DIR, WELL_KNOWN_SKILLS_DIR);
 }
 
 function getCustomSkillContent(skillName) {
@@ -144,7 +213,7 @@ function readCustomEmbeddedMarkdown(skillName, replacements = {}) {
   }
 
   return customContent.embeddedMarkdownPaths
-    .flatMap((markdownPath) => {
+    .flatMap(markdownPath => {
       if (!fs.existsSync(markdownPath)) {
         console.warn(`Custom skill content not found at ${markdownPath}`);
         return [];
@@ -164,20 +233,42 @@ function getCustomSkillNotesMarkdown(skillName) {
   return getCustomSkillContent(skillName)?.skillNotesMarkdown ?? '';
 }
 
+function getAdditionalReferenceLibraries(skillConfig) {
+  return (skillConfig.additionalReferenceLibraries ?? []).flatMap(library => {
+    const referencedSkillConfig = SKILLS[library.skillName];
+    if (!referencedSkillConfig) {
+      console.warn(
+        `Additional reference skill "${library.skillName}" not found for ${skillConfig.name}`
+      );
+      return [];
+    }
+
+    return [
+      {
+        ...library,
+        skillConfig: referencedSkillConfig
+      }
+    ];
+  });
+}
+
 /**
- * Parse llms.txt to get documentation entries
+ * Parse llms.txt to get documentation entries.
  */
 function parseLlmsTxt(llmsTxtPath) {
   const content = fs.readFileSync(llmsTxtPath, 'utf8');
   const entries = [];
   const tree = unified().use(remarkParse).parse(content);
 
-  const toText = (node) => {
+  const toText = node => {
     if (!node) {
       return '';
     }
     if (node.type === 'text') {
       return node.value;
+    }
+    if (node.type === 'inlineCode') {
+      return '`' + node.value + '`';
     }
     if (Array.isArray(node.children)) {
       return node.children.map(toText).join('');
@@ -185,13 +276,13 @@ function parseLlmsTxt(llmsTxtPath) {
     return '';
   };
 
-  const extractEntry = (listItem) => {
-    const paragraph = listItem.children?.find((child) => child.type === 'paragraph');
+  const extractEntry = listItem => {
+    const paragraph = listItem.children?.find(child => child.type === 'paragraph');
     if (!paragraph || !Array.isArray(paragraph.children)) {
       return null;
     }
 
-    const linkIndex = paragraph.children.findIndex((child) => child.type === 'link');
+    const linkIndex = paragraph.children.findIndex(child => child.type === 'link');
     if (linkIndex === -1) {
       return null;
     }
@@ -220,7 +311,7 @@ function parseLlmsTxt(llmsTxtPath) {
     };
   };
 
-  const walk = (node) => {
+  const walk = node => {
     if (!node || !Array.isArray(node.children)) {
       return;
     }
@@ -241,9 +332,10 @@ function parseLlmsTxt(llmsTxtPath) {
 }
 
 /**
- * Extract the section export from an MDX file
- * @param {string} mdxPath - Path to the MDX file
- * @returns {string|null} - The section value or null if not found
+ * Extract the section export from an MDX file.
+ *
+ * @param {string} mdxPath - Path to the MDX file.
+ * @returns {string | null} - The section value or null if not found
  */
 function extractSectionFromMdx(mdxPath) {
   if (!fs.existsSync(mdxPath)) {
@@ -251,14 +343,13 @@ function extractSectionFromMdx(mdxPath) {
   }
 
   const content = fs.readFileSync(mdxPath, 'utf8');
-  const sectionMatch = content.match(
-    /export\s+const\s+section\s*=\s*['"]([^'"]+)['"]/
-  );
+  const sectionMatch = content.match(/export\s+const\s+section\s*=\s*['"]([^'"]+)['"]/);
   return sectionMatch ? sectionMatch[1] : null;
 }
 
 /**
- * Get the MDX file path for a given entry
+ * Get the MDX file path for a given entry.
+ *
  * @param {string} sourceDir - The source directory (e.g., "s2" or "react-aria")
  * @param {string} entryPath - The path from llms.txt (e.g., "Button.md")
  * @returns {string} - The full path to the MDX file
@@ -270,7 +361,7 @@ function getMdxPath(sourceDir, entryPath) {
 }
 
 /**
- * Map section names to category keys
+ * Map section names to category keys.
  */
 const SECTION_TO_CATEGORY = {
   // Guides
@@ -296,7 +387,7 @@ const SECTION_TO_CATEGORY = {
 };
 
 /**
- * Files to filter out per source directory
+ * Files to filter out per source directory.
  */
 const FILTERED_FILES = {
   s2: ['index.md', 'error.md'],
@@ -304,7 +395,7 @@ const FILTERED_FILES = {
 };
 
 /**
- * Categorize documentation entries by reading section exports from MDX files
+ * Categorize documentation entries by reading section exports from MDX files.
  */
 function categorizeEntries(entries, sourceDir) {
   const categories = {
@@ -348,9 +439,7 @@ function categorizeEntries(entries, sourceDir) {
         categories[categoryKey].push(entry);
       } else {
         // Unknown section, default to components
-        console.warn(
-          `Unknown section "${section}" for ${entry.path}, defaulting to components`
-        );
+        console.warn(`Unknown section "${section}" for ${entry.path}, defaulting to components`);
         categories.components.push(entry);
       }
     } else {
@@ -377,28 +466,24 @@ metadata:
 }
 
 /**
- * Generate the SKILL.md content
+ * Generate the SKILL.md content.
  */
 function generateDocsSkillMd(skillConfig, categories, isS2) {
   const customGuideEntries = getCustomGuideEntries(skillConfig.name);
   const customSkillNotesMarkdown = getCustomSkillNotesMarkdown(skillConfig.name);
+  const additionalReferenceLibraries = getAdditionalReferenceLibraries(skillConfig);
   const embeddedCustomMarkdown = readCustomEmbeddedMarkdown(skillConfig.name, {
     '{{guidesBase}}': 'references/guides/',
-    '{{componentsBase}}': 'references/components/'
+    '{{componentsBase}}': 'references/components/',
+    '{{testingBase}}': 'references/testing/'
   });
 
   let content = generateFrontmatter(skillConfig);
 
   if (isS2) {
-    content += `# React Spectrum S2 (Spectrum 2)
-
-React Spectrum S2 is Adobe's implementation of the Spectrum 2 design system in React. It provides a collection of accessible, adaptive, and high-quality UI components.
-`;
+    content += '# React Spectrum S2 (Spectrum 2)\n';
   } else {
-    content += `# React Aria Components
-
-React Aria Components is a library of unstyled, accessible UI components that you can style with any CSS solution. Built on top of React Aria hooks, it provides the accessibility and behavior without prescribing any visual design.
-`;
+    content += '# React Aria Components\n';
   }
 
   if (customSkillNotesMarkdown) {
@@ -423,18 +508,20 @@ The \`references/\` directory contains detailed documentation organized as follo
       content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
     for (const entry of categories.guides) {
-      content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
+      content += `- [${entry.title}](references/guides/${entry.path})\n`;
     }
     content += '\n';
   }
 
   if (categories.components.length > 0) {
+    const componentNames = categories.components.map(entry => entry.title).join(', ');
     content += `### Components
+
+Component documentation is in \`references/components/\` — one Markdown file per component (e.g. \`references/components/Button.md\`). Read the file for a component when you need its API, props, examples, or accessibility notes.
+
+Available components: ${componentNames}.
+
 `;
-    for (const entry of categories.components) {
-      content += `- [${entry.title}](references/components/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
-    }
-    content += '\n';
   }
 
   if (categories.interactions.length > 0) {
@@ -469,11 +556,11 @@ The \`references/\` directory contains detailed documentation organized as follo
     content += '\n';
   }
 
-  if (categories.testing.length > 0) {
-    content += `### Testing
+  if (additionalReferenceLibraries.length > 0) {
+    content += `### Additional References
 `;
-    for (const entry of categories.testing) {
-      content += `- [${entry.title}](references/testing/${entry.path})\n`;
+    for (const library of additionalReferenceLibraries) {
+      content += `- [${library.title}](references/${library.referenceSubdir}/llms.txt)${library.description ? `: ${library.description}` : ''}\n`;
     }
     content += '\n';
   }
@@ -482,7 +569,8 @@ The \`references/\` directory contains detailed documentation organized as follo
 }
 
 function generateMigrationSkillMd(skillConfig) {
-  return `${generateFrontmatter(skillConfig)}# React Spectrum v3 to S2 migration
+  return (
+    `${generateFrontmatter(skillConfig)}# React Spectrum v3 to S2 migration
 
 Upgrade React Spectrum v3 codebases to S2 by following these eight steps in order.
 
@@ -593,16 +681,153 @@ Use these when you need more component-by-component or API-level detail:
 - [Styling](references/docs-styling.md): style macro overview including runtime conditions, CSS variables, CSS optimization, and CSS resets.
 - [Style macro](references/docs-style-macro.md): exact style macro syntax and constraints.
 - [Toast](references/docs-toast.md): full S2 toast API and examples.
-`.trimEnd() + '\n';
+`.trimEnd() + '\n'
+  );
+}
+
+function generateAuditSkillMd(skillConfig) {
+  return (
+    `${generateFrontmatter(skillConfig)}# Spectrum Audit
+
+Audit a codebase for adherence to the Spectrum design system and React Spectrum S2 best practices, then produce a scored, prioritized report. This skill is **report-only** — it does not modify any files.
+
+## When to use
+
+Use when a developer asks to audit, review, lint, or check a project for Spectrum / S2 correctness, configuration, styling, accessibility, or component-usage issues.
+
+Requires a project with \`@react-spectrum/s2\` installed. If S2 is not a dependency, say so and stop.
+
+## How it works
+
+Run these phases in order.
+
+### Phase 0 — Scope
+
+- Identify the project — or, in a monorepo, the specific package — to audit. Audit the package, not the workspace root.
+- Detect the package manager from the lockfile, the bundler (Vite / webpack / Next.js / Parcel / Rollup / ESBuild), and read \`package.json\` dependencies.
+- Confirm \`@react-spectrum/s2\` is installed. Establish the source globs to scan (e.g. \`src/**/*.{tsx,jsx,ts,js}\`).
+- Check whether the \`react-spectrum-s2\` skill is available (listed among the agent's installed skills, or present under a local skills directory such as \`.cursor/skills/\` or \`.agents/skills/\`). Record whether it was found — the report template uses this.
+
+### Phase 1 — Run the checks
+
+Work through each check file in \`references/checks/\`, in order. For every violation, record a finding: \`{file:line, rule, severity, category, fix}\`. Cite only line numbers you actually read or grepped — never invent locations. Record **one finding per distinct root cause** at a \`file:line\` — if multiple check files cover the same issue (e.g. a missing collection \`aria-label\` or a third-party design system), assign it to the most specific check and do not duplicate it across categories.
+
+- [01 — Setup & configuration](references/checks/01-setup-config.md)
+- [02 — Component usage](references/checks/02-component-usage.md)
+- [03 — Styling](references/checks/03-styling.md)
+- [04 — Accessibility & correctness](references/checks/04-accessibility.md)
+- [05 — Versioning & maintenance](references/checks/05-versioning.md)
+- [06 — Testing](references/checks/06-testing.md)
+
+The canonical rules behind these checks live in the \`react-spectrum-s2\` skill — read its \`SKILL.md\` (implementation guidance) and \`references/guides/getting-started.md\`, \`references/guides/component-decision-tree.md\`, and \`references/components/\` as needed. If that skill is not installed, proceed using the check files alone, but note the limitation in the report (see Phase 3).
+
+### Phase 2 — Score
+
+Apply the [scoring rubric](references/scoring-rubric.md) to the recorded findings to compute per-category scores and the overall Spectrum Adherence Score. The score is arithmetic over counted findings — do not estimate it.
+
+### Phase 3 — Report
+
+Write \`SPECTRUM-AUDIT.md\` to the audited project following the [report template](references/report-template.md): headline score, grade, and severity counts; a summary; scores by category; findings grouped by severity (each with a clickable \`file:line\` and the check name that defines its rule); prioritized action items; what looks good; and — if \`react-spectrum-s2\` was not detected in Phase 0 — a recommendation to install it.
+
+### Phase 4 — Hand off
+
+This skill does not edit code. Recommend:
+
+- The \`react-spectrum-s2\` skill to implement the fixes. If it is not installed:
+
+  \`\`\`bash
+  npx skills add https://react-spectrum.adobe.com --skill react-spectrum-s2
+  \`\`\`
+
+- The \`migrate-react-spectrum-v3-to-s2\` skill if Spectrum 1 packages (\`@adobe/react-spectrum\`, \`@react-spectrum/*\`, \`@spectrum-icons/*\`) are present.
+`.trimEnd() + '\n'
+  );
 }
 
 /**
- * Copy documentation files to the skill's references directory
+ * Build a map from a doc's flat source-relative path (e.g. "forms.md",
+ * "internationalized/date/index.md") to the relative path it will be copied to
+ * inside a skill's `references/` directory (e.g. "guides/forms.md",
+ * "internationalized/date/index.md"). Used to rewrite cross-file links that were
+ * written for the docs site's flat URL structure so they resolve in the
+ * categorized `references/` layout the skill ships.
  */
-function copyDocsDocumentation(skillConfig, categories, skillDir) {
-  const refsDir = path.join(skillDir, 'references');
+function buildDestinationMap(categories, customGuideEntries) {
+  const destinationMap = new Map();
+
+  const addEntries = (entries, targetSubdir, stripPrefix = null) => {
+    for (const entry of entries) {
+      let targetRelPath = entry.path;
+      if (stripPrefix && targetRelPath.startsWith(stripPrefix)) {
+        targetRelPath = targetRelPath.slice(stripPrefix.length);
+      }
+      destinationMap.set(entry.path, path.posix.join(targetSubdir, targetRelPath));
+    }
+  };
+
+  addEntries(customGuideEntries, 'guides');
+  addEntries(categories.guides, 'guides');
+  addEntries(categories.components, 'components');
+  addEntries(categories.interactions, 'interactions');
+  addEntries(categories.utilities, 'utilities');
+  addEntries(categories.testing, 'testing');
+  addEntries(categories.internationalized, 'internationalized', 'internationalized/');
+  destinationMap.set('llms.txt', 'llms.txt');
+
+  return destinationMap;
+}
+
+const LINK_PATTERN = /(\]\()([^)\s]+)(\))/g;
+// Any URI with a scheme (http:, mailto:, cursor:, vscode:, s2:, etc.) is treated as opaque —
+// only extension-less/bare relative paths refer to files shipped inside the skill.
+const URI_SCHEME_PATTERN = /^[a-zA-Z][a-zA-Z0-9+.-]*:/;
+
+/**
+ * Rewrite relative Markdown links in `content` (a file whose flat source-relative
+ * path is `sourceRelPath`, being copied to `destRelPath` within `references/`) so
+ * that links pointing at other shipped docs resolve from the new, categorized
+ * location instead of the flat location they were authored for.
+ */
+function rewriteRelativeLinks(content, sourceRelPath, destRelPath, destinationMap) {
+  return content.replace(LINK_PATTERN, (match, prefix, href, suffix) => {
+    if (!href || href.startsWith('#') || URI_SCHEME_PATTERN.test(href)) {
+      return match;
+    }
+
+    const urlMatch = href.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
+    if (!urlMatch) {
+      return match;
+    }
+    const [, pathPart, queryPart = '', hashPart = ''] = urlMatch;
+    if (!pathPart) {
+      return match;
+    }
+
+    const resolvedSourcePath = path.posix.normalize(
+      path.posix.join(path.posix.dirname(sourceRelPath), pathPart)
+    );
+    const target = destinationMap.get(resolvedSourcePath);
+    if (!target) {
+      return match;
+    }
+
+    let newHref = path.posix.relative(path.posix.dirname(destRelPath), target);
+    if (!newHref.startsWith('.')) {
+      newHref = `./${newHref}`;
+    }
+
+    return `${prefix}${newHref}${queryPart}${hashPart}${suffix}`;
+  });
+}
+
+/**
+ * Copy documentation files to the skill's references directory.
+ */
+function copyDocsDocumentation(skillConfig, categories, skillDir, options = {}) {
+  const refsDir = path.join(skillDir, 'references', options.referenceSubdir ?? '');
   const sourceDir = path.join(MARKDOWN_DOCS_DIST, skillConfig.sourceDir);
   const customGuideEntries = getCustomGuideEntries(skillConfig.name);
+  const destinationMap = buildDestinationMap(categories, customGuideEntries);
 
   // Create subdirectories only if they have content
   const subdirs = [
@@ -634,7 +859,11 @@ function copyDocsDocumentation(skillConfig, categories, skillDir) {
 
     const targetPath = path.join(refsDir, targetSubdir, targetRelPath);
     fs.mkdirSync(path.dirname(targetPath), {recursive: true});
-    fs.copyFileSync(sourcePath, targetPath);
+
+    const destRelPath = path.posix.join(targetSubdir, targetRelPath);
+    const content = fs.readFileSync(sourcePath, 'utf8');
+    const rewritten = rewriteRelativeLinks(content, entry.path, destRelPath, destinationMap);
+    fs.writeFileSync(targetPath, rewritten);
   };
 
   // Copy guides
@@ -642,9 +871,7 @@ function copyDocsDocumentation(skillConfig, categories, skillDir) {
   for (const entry of customGuideEntries) {
     const sourcePath =
       entry.sourcePath ||
-      customContent?.embeddedMarkdownPaths?.find((markdownPath) =>
-        markdownPath.endsWith(entry.path)
-      );
+      customContent?.embeddedMarkdownPaths?.find(markdownPath => markdownPath.endsWith(entry.path));
     if (!sourcePath || !fs.existsSync(sourcePath)) {
       continue;
     }
@@ -655,7 +882,8 @@ function copyDocsDocumentation(skillConfig, categories, skillDir) {
       targetPath,
       renderCustomMarkdown(sourcePath, {
         '{{guidesBase}}': '',
-        '{{componentsBase}}': '../components/'
+        '{{componentsBase}}': '../components/',
+        '{{testingBase}}': '../testing/'
       }) + '\n'
     );
   }
@@ -696,7 +924,28 @@ function copyDocsDocumentation(skillConfig, categories, skillDir) {
   }
 }
 
+function copyAdditionalReferenceLibraries(skillConfig, skillDir) {
+  for (const library of getAdditionalReferenceLibraries(skillConfig)) {
+    const llmsTxtPath = path.join(MARKDOWN_DOCS_DIST, library.skillConfig.sourceDir, 'llms.txt');
+    if (!fs.existsSync(llmsTxtPath)) {
+      console.warn(`Warning: expected additional reference docs not found: ${llmsTxtPath}`);
+      continue;
+    }
+
+    const entries = parseLlmsTxt(llmsTxtPath);
+    const categories = categorizeEntries(entries, library.skillConfig.sourceDir);
+    copyDocsDocumentation(library.skillConfig, categories, skillDir, {
+      referenceSubdir: library.referenceSubdir
+    });
+    console.log(
+      `Copied ${library.title} documentation to ${path.relative(REPO_ROOT, path.join(skillDir, 'references', library.referenceSubdir))}`
+    );
+  }
+}
+
 function copyFocusedDocs(sourceDir, skillDir, docs) {
+  const destinationMap = new Map(docs);
+
   for (const [sourceName, outputName] of docs) {
     const sourcePath = path.join(MARKDOWN_DOCS_DIST, sourceDir, sourceName);
     if (!fs.existsSync(sourcePath)) {
@@ -706,16 +955,16 @@ function copyFocusedDocs(sourceDir, skillDir, docs) {
 
     const outputPath = path.join(skillDir, 'references', outputName);
     fs.mkdirSync(path.dirname(outputPath), {recursive: true});
-    fs.copyFileSync(sourcePath, outputPath);
+
+    const content = fs.readFileSync(sourcePath, 'utf8');
+    const rewritten = rewriteRelativeLinks(content, sourceName, outputName, destinationMap);
+    fs.writeFileSync(outputPath, rewritten);
   }
 }
 
 function writeMigrationReferences(skillDir, sourceDir) {
   // Copy focused reference docs from source files
-  const focusedRefs = [
-    'focused-prerequisites.md',
-    'focused-manual-fixes.md'
-  ];
+  const focusedRefs = ['focused-prerequisites.md', 'focused-manual-fixes.md'];
 
   for (const filename of focusedRefs) {
     const sourcePath = path.join(MIGRATION_REFS_DIR, filename);
@@ -739,10 +988,30 @@ function writeMigrationReferences(skillDir, sourceDir) {
   ]);
 }
 
+function writeAuditReferences(skillDir) {
+  const refsDir = path.join(skillDir, 'references');
+  fs.mkdirSync(refsDir, {recursive: true});
+
+  // Copy authored audit check files.
+  const checksSourceDir = path.join(AUDIT_SKILL_SOURCE_DIR, 'checks');
+  const checksTargetDir = path.join(refsDir, 'checks');
+  fs.mkdirSync(checksTargetDir, {recursive: true});
+  for (const file of fs.readdirSync(checksSourceDir)) {
+    if (file.endsWith('.md')) {
+      fs.copyFileSync(path.join(checksSourceDir, file), path.join(checksTargetDir, file));
+    }
+  }
+
+  // Copy the authored scoring rubric and report template.
+  for (const file of ['scoring-rubric.md', 'report-template.md']) {
+    fs.copyFileSync(path.join(AUDIT_SKILL_SOURCE_DIR, file), path.join(refsDir, file));
+  }
+}
+
 function collectSkillFiles(skillDir) {
   const files = [];
 
-  const walk = (currentDir) => {
+  const walk = currentDir => {
     const entries = fs.readdirSync(currentDir, {withFileTypes: true});
     for (const entry of entries) {
       const entryPath = path.join(currentDir, entry.name);
@@ -759,57 +1028,147 @@ function collectSkillFiles(skillDir) {
   walk(skillDir);
 
   return files
-    .map((filePath) => {
+    .map(filePath => {
       const relativePath = path.relative(skillDir, filePath);
       return relativePath.split(path.sep).join('/');
     })
     .sort((a, b) => {
-      if (a === 'SKILL.md') {return b === 'SKILL.md' ? 0 : -1;}
-      if (b === 'SKILL.md') {return 1;}
+      if (a === 'SKILL.md') {
+        return b === 'SKILL.md' ? 0 : -1;
+      }
+      if (b === 'SKILL.md') {
+        return 1;
+      }
       return a.localeCompare(b);
     });
 }
 
 /**
- * Validate that all references/ links in SKILL.md resolve to actual files.
- * Throws if any broken links are found.
+ * Validate that all relative links in every Markdown file that ships with the skill
+ * (SKILL.md and everything under references/) resolve to actual files, relative to
+ * the file that contains the link. Throws if any broken links are found.
  */
 function validateSkillLinks(skillDir) {
+  const markdownFiles = [];
+  const walk = currentDir => {
+    for (const dirent of fs.readdirSync(currentDir, {withFileTypes: true})) {
+      const entryPath = path.join(currentDir, dirent.name);
+      if (dirent.isDirectory()) {
+        walk(entryPath);
+      } else if (dirent.isFile() && dirent.name.endsWith('.md')) {
+        markdownFiles.push(entryPath);
+      }
+    }
+  };
+
   const skillMdPath = path.join(skillDir, 'SKILL.md');
-  if (!fs.existsSync(skillMdPath)) {
-    return;
+  if (fs.existsSync(skillMdPath)) {
+    markdownFiles.push(skillMdPath);
+  }
+  const referencesDir = path.join(skillDir, 'references');
+  if (fs.existsSync(referencesDir)) {
+    walk(referencesDir);
   }
 
-  const content = fs.readFileSync(skillMdPath, 'utf8');
-  const linkPattern = /\[([^\]]*)\]\((references\/[^)]+)\)/g;
+  const linkPattern = /\[([^\]]*)\]\(([^)\s]+)\)/g;
   const broken = [];
 
-  let match;
-  while ((match = linkPattern.exec(content)) !== null) {
-    const linkText = match[1];
-    const linkPath = match[2];
-    const resolvedPath = path.join(skillDir, linkPath);
-    if (!fs.existsSync(resolvedPath)) {
-      broken.push(`"${linkText}" -> ${linkPath}`);
+  for (const filePath of markdownFiles) {
+    const content = fs.readFileSync(filePath, 'utf8');
+
+    let match;
+    while ((match = linkPattern.exec(content)) !== null) {
+      const linkText = match[1];
+      let linkPath = match[2];
+
+      if (!linkPath || linkPath.startsWith('#') || URI_SCHEME_PATTERN.test(linkPath)) {
+        continue;
+      }
+
+      // Strip query params and hash fragments before resolving the file on disk
+      linkPath = linkPath.replace(/[?#].*$/, '');
+      if (!linkPath) {
+        continue;
+      }
+
+      // The legacy v3 docs site isn't part of this build, so its links can't be verified here.
+      if (/(^|\/)v3\//.test(linkPath)) {
+        continue;
+      }
+
+      const resolvedPath = path.resolve(path.dirname(filePath), linkPath);
+      if (fs.existsSync(resolvedPath)) {
+        continue;
+      }
+
+      // Some skills only bundle a curated subset of the full docs (e.g. blog posts, the site's
+      // own landing page, or a "focused" reference set). A link to a page that exists somewhere
+      // in the full generated docs corpus, just not in this skill's bundle, is a known, accepted
+      // gap rather than a broken/typo'd link.
+      const bareLinkPath = linkPath.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '');
+      const existsInFullCorpus = ['s2', 'react-aria'].some(lib =>
+        fs.existsSync(path.join(MARKDOWN_DOCS_DIST, lib, bareLinkPath))
+      );
+      if (!existsInFullCorpus) {
+        broken.push(`${path.relative(REPO_ROOT, filePath)}: "${linkText}" -> ${match[2]}`);
+      }
     }
   }
 
   if (broken.length > 0) {
-    throw new Error(
-      `Broken references in ${path.relative(REPO_ROOT, skillMdPath)}:\n  ${broken.join('\n  ')}`
-    );
+    throw new Error(`Broken links found:\n  ${broken.join('\n  ')}`);
   }
 }
 
 function writeIndexJson(wellKnownRoot, skills) {
   const indexPath = path.join(wellKnownRoot, 'index.json');
-  const payload = {skills};
+  const payload = {$schema: DISCOVERY_SCHEMA, skills};
   fs.writeFileSync(indexPath, JSON.stringify(payload, null, 2) + '\n');
   console.log(`Generated ${path.relative(REPO_ROOT, indexPath)}`);
 }
 
+function sha256Digest(filePath) {
+  const hash = crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
+  return `sha256:${hash}`;
+}
+
 /**
- * Generate a single skill
+ * Package a skill directory as a `.tar.gz` archive at the well-known root, with `SKILL.md`
+ * and any supporting files (references/, etc.) at the archive root — per the Archive
+ * Distribution section of the Agent Skills Discovery RFC.
+ */
+function createSkillArchive(skillDir, skillName, wellKnownRoot) {
+  const archivePath = path.join(wellKnownRoot, `${skillName}.tar.gz`);
+  const entries = fs.readdirSync(skillDir).filter(name => name !== '.DS_Store');
+  execFileSync('tar', ['--exclude=.DS_Store', '-czf', archivePath, '-C', skillDir, ...entries]);
+  return archivePath;
+}
+
+/**
+ * Build the discovery index entry's distribution fields (`type`, `url`, `digest`) for a
+ * generated skill. Skills consisting only of `SKILL.md` are published as `type: "skill-md"`;
+ * skills with supporting files (references/, etc.) are packaged as a `type: "archive"` tarball.
+ */
+function buildSkillArtifact(skillConfig, skillDir, wellKnownRoot, files) {
+  if (files.length === 1 && files[0] === 'SKILL.md') {
+    return {
+      type: 'skill-md',
+      url: `${skillConfig.name}/SKILL.md`,
+      digest: sha256Digest(path.join(skillDir, 'SKILL.md'))
+    };
+  }
+
+  const archivePath = createSkillArchive(skillDir, skillConfig.name, wellKnownRoot);
+  console.log(`Generated ${path.relative(REPO_ROOT, archivePath)}`);
+  return {
+    type: 'archive',
+    url: `${skillConfig.name}.tar.gz`,
+    digest: sha256Digest(archivePath)
+  };
+}
+
+/**
+ * Generate a single skill.
  */
 function generateSkill(skillConfig, wellKnownRoot) {
   const skillDir = path.join(wellKnownRoot, skillConfig.name);
@@ -820,9 +1179,7 @@ function generateSkill(skillConfig, wellKnownRoot) {
   if (skillConfig.kind === 'migration') {
     const skillMdContent = generateMigrationSkillMd(skillConfig);
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMdContent);
-    console.log(
-      `Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`
-    );
+    console.log(`Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`);
 
     writeMigrationReferences(skillDir, skillConfig.sourceDir);
     console.log(
@@ -832,14 +1189,22 @@ function generateSkill(skillConfig, wellKnownRoot) {
     return skillDir;
   }
 
+  if (skillConfig.kind === 'audit') {
+    fs.writeFileSync(path.join(skillDir, 'SKILL.md'), generateAuditSkillMd(skillConfig));
+    console.log(`Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`);
+
+    writeAuditReferences(skillDir);
+    console.log(
+      `Copied audit references to ${path.relative(REPO_ROOT, path.join(skillDir, 'references'))}`
+    );
+
+    return skillDir;
+  }
+
   const isS2 = skillConfig.name === 'react-spectrum-s2';
 
   // Parse documentation entries
-  const llmsTxtPath = path.join(
-    MARKDOWN_DOCS_DIST,
-    skillConfig.sourceDir,
-    'llms.txt'
-  );
+  const llmsTxtPath = path.join(MARKDOWN_DOCS_DIST, skillConfig.sourceDir, 'llms.txt');
   if (!fs.existsSync(llmsTxtPath)) {
     console.error(`llms.txt not found at ${llmsTxtPath}`);
     return;
@@ -851,24 +1216,20 @@ function generateSkill(skillConfig, wellKnownRoot) {
   // Generate SKILL.md
   const skillMdContent = generateDocsSkillMd(skillConfig, categories, isS2);
   fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMdContent);
-  console.log(
-    `Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`
-  );
+  console.log(`Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`);
 
   // Copy documentation to references
   copyDocsDocumentation(skillConfig, categories, skillDir);
   console.log(
     `Copied documentation to ${path.relative(REPO_ROOT, path.join(skillDir, 'references'))}`
   );
+  copyAdditionalReferenceLibraries(skillConfig, skillDir);
 
   return skillDir;
 }
 
-
 function main() {
-  console.log(
-    'Generating Agent Skills for React Spectrum (S2) and React Aria...\n'
-  );
+  console.log('Generating Agent Skills for React Spectrum (S2) and React Aria...\n');
 
   // Ensure markdown docs exist
   ensureMarkdownDocs();
@@ -894,21 +1255,19 @@ function main() {
       const skillDir = generateSkill(config, wellKnownRoot);
       validateSkillLinks(skillDir);
       const files = collectSkillFiles(skillDir);
+      const artifact = buildSkillArtifact(config, skillDir, wellKnownRoot, files);
       const entry = {
         name: config.name,
+        type: artifact.type,
         description: config.description,
-        files
+        url: artifact.url,
+        digest: artifact.digest
       };
-      if (config.kind) {
-        entry.kind = config.kind;
-      }
       indexEntries.push(entry);
     }
 
     writeIndexJson(wellKnownRoot, indexEntries);
-    console.log(
-      `Skills directory: ${path.relative(REPO_ROOT, wellKnownRoot)}`
-    );
+    console.log(`Skills directory: ${path.relative(REPO_ROOT, wellKnownRoot)}`);
   }
 
   console.log('\nAgent Skills generation complete!');

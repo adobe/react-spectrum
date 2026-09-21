@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import "@react-spectrum/s2/page.css";
+import '@react-spectrum/s2/page.css';
 import {
   ActionBar,
   ActionButton,
@@ -19,6 +19,7 @@ import {
   Button,
   ButtonGroup,
   Cell,
+  Collection,
   Column,
   Divider,
   Heading,
@@ -31,6 +32,10 @@ import {
   PickerItem,
   Provider,
   Row,
+  SideNav,
+  SideNavItem,
+  SideNavItemContent,
+  SideNavItemLink,
   SubmenuTrigger,
   TableBody,
   TableHeader,
@@ -41,31 +46,120 @@ import {
   TreeView,
   TreeViewItem,
   TreeViewItemContent
-} from "@react-spectrum/s2";
-import {CardViewExample} from "./components/CardViewExample";
-import {CollectionCardsExample} from "./components/CollectionCardsExample";
-import Edit from "@react-spectrum/s2/icons/Edit";
-import FileTxt from "@react-spectrum/s2/icons/FileText";
-import Folder from "@react-spectrum/s2/icons/Folder";
-import {LoadingState} from '@react-types/shared'
-import React, {useState} from "react";
-import Section from "./components/Section";
-import {style} from "@react-spectrum/s2/style" with { type: "macro" };
+} from '@react-spectrum/s2';
+import {CardViewExample} from './components/CardViewExample';
+import {CollectionCardsExample} from './components/CollectionCardsExample';
+import Delete from '@react-spectrum/s2/icons/Delete';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import File from '@react-spectrum/s2/icons/File';
+import FileTxt from '@react-spectrum/s2/icons/FileText';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import {RouterProvider} from 'react-aria-components';
+import {LoadingState} from '@react-types/shared';
+import React, {useState} from 'react';
+import Section from './components/Section';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const Lazy = React.lazy(() => import('./Lazy'));
 
+interface SideNavItemData {
+  id: number;
+  title: string;
+  type: 'directory' | 'file';
+  href?: string;
+  children?: SideNavItemData[];
+}
+
+let sideNavItems: SideNavItemData[] = [
+  {
+    id: 1,
+    title: 'Documents',
+    type: 'directory',
+    children: [
+      {
+        id: 2,
+        title: 'Project',
+        type: 'directory',
+        children: [
+          {id: 3, title: 'Notes', type: 'file', href: '/notes'},
+          {id: 4, title: 'Budget', type: 'file', href: '/budget'}
+        ]
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: 'Photos',
+    type: 'directory',
+    children: [
+      {id: 6, title: 'Image 1', type: 'file', href: '/image-1'},
+      {id: 7, title: 'Image 2', type: 'file', href: '/image-2'}
+    ]
+  }
+];
+
+// Wrap SideNav in a RouterProvider whose navigate only updates local state so
+// clicking a link selects the item without actually navigating the page.
+function SideNavExample() {
+  let [selectedRoute, setSelectedRoute] = useState('/notes');
+  return (
+    <RouterProvider navigate={href => setSelectedRoute(href)}>
+      <SideNav
+        aria-label="Files"
+        styles={style({height: 300, width: 210})}
+        selectedRoute={selectedRoute}
+        defaultExpandedKeys={[1, 2, 5]}
+        items={sideNavItems}>
+        {function renderItem(item: SideNavItemData) {
+          return (
+            <SideNavItem textValue={item.title} href={item.href}>
+              <SideNavItemContent>
+                {item.href ? (
+                  <SideNavItemLink>
+                    {item.type === 'directory' ? <Folder /> : <File />}
+                    <Text>{item.title}</Text>
+                  </SideNavItemLink>
+                ) : (
+                  <>
+                    {item.type === 'directory' ? <Folder /> : <File />}
+                    <Text>{item.title}</Text>
+                  </>
+                )}
+                <ActionMenu>
+                  <MenuItem>
+                    <Edit />
+                    <Text>Edit</Text>
+                  </MenuItem>
+                  <MenuItem>
+                    <Delete />
+                    <Text>Delete</Text>
+                  </MenuItem>
+                </ActionMenu>
+              </SideNavItemContent>
+              {item.children && <Collection items={item.children}>{renderItem}</Collection>}
+            </SideNavItem>
+          );
+        }}
+      </SideNav>
+    </RouterProvider>
+  );
+}
+
 function App() {
   let [isLazyLoaded, setLazyLoaded] = useState(false);
-  let [cardViewState, setCardViewState] = useState<{layout?: 'grid' | 'waterfall' , loadingState: LoadingState}>({
+  let [cardViewState, setCardViewState] = useState<{
+    layout?: 'grid' | 'waterfall';
+    loadingState: LoadingState;
+  }>({
     layout: 'grid',
-    loadingState: 'idle',
+    loadingState: 'idle'
   });
   let cardViewLoadingOptions = [
     {id: 'idle', label: 'Idle'},
     {id: 'loading', label: 'Loading'},
     {id: 'sorting', label: 'Sorting'},
     {id: 'loadingMore', label: 'Loading More'},
-    {id: 'error', label: 'Error'},
+    {id: 'error', label: 'Error'}
   ];
   let cardViewLayoutOptions = [
     {id: 'grid', label: 'Grid'},
@@ -73,43 +167,36 @@ function App() {
   ];
   return (
     <Provider elementType="main">
-      <Heading
-        styles={style({ font: "heading-xl", textAlign: "center" })}
-        level={1}
-      >
+      <Heading styles={style({font: 'heading-xl', textAlign: 'center'})} level={1}>
         Spectrum 2 + Webpack + Typescript
       </Heading>
       <div
         className={style({
           maxWidth: 288,
-          margin: "auto",
-        })}
-      >
+          margin: 'auto'
+        })}>
         <Divider />
       </div>
       <div
         className={style({
-          display: "flex",
-          flexDirection: "column",
+          display: 'flex',
+          flexDirection: 'column',
           gap: 16,
-          alignItems: "center"
-        })}
-      >
+          alignItems: 'center'
+        })}>
         <Section title="Buttons">
           <ButtonGroup align="center" styles={style({maxWidth: '[100vw]'})}>
             <Button variant="primary">Primary</Button>
-            <Button variant="secondary"><Text>Secondary</Text></Button>
+            <Button variant="secondary">
+              <Text>Secondary</Text>
+            </Button>
             <ActionButton>
               <Edit />
               <Text>Action Button</Text>
               <NotificationBadge value={2} />
             </ActionButton>
             <ToggleButton>Toggle Button</ToggleButton>
-            <LinkButton
-              variant="primary"
-              href="https://adobe.com"
-              target="_blank"
-            >
+            <LinkButton variant="primary" href="https://adobe.com" target="_blank">
               Link Button
             </LinkButton>
             <ActionButtonGroup density="compact">
@@ -135,7 +222,9 @@ function App() {
             label="CardView Loading State"
             items={cardViewLoadingOptions}
             selectedKey={cardViewState.loadingState}
-            onSelectionChange={loadingState => setCardViewState({...cardViewState, loadingState} as any)}>
+            onSelectionChange={loadingState =>
+              setCardViewState({...cardViewState, loadingState} as any)
+            }>
             {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
           </Picker>
           <Picker
@@ -150,18 +239,18 @@ function App() {
           <CollectionCardsExample loadingState={cardViewState.loadingState} />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>
-            <Menu onAction={(key) => alert(key.toString())}>
+            <Menu onAction={key => alert(key.toString())}>
               <MenuItem id="cut">Cut</MenuItem>
               <MenuItem id="copy">Copy</MenuItem>
               <MenuItem id="paste">Paste</MenuItem>
               <MenuItem id="replace">Replace</MenuItem>
               <SubmenuTrigger>
                 <MenuItem id="share">Share</MenuItem>
-                <Menu onAction={(key) => alert(key.toString())}>
+                <Menu onAction={key => alert(key.toString())}>
                   <MenuItem id="copy-ink">Copy Link</MenuItem>
                   <SubmenuTrigger>
                     <MenuItem id="email">Email</MenuItem>
-                    <Menu onAction={(key) => alert(key.toString())}>
+                    <Menu onAction={key => alert(key.toString())}>
                       <MenuItem id="attachment">Email as Attachment</MenuItem>
                       <MenuItem id="link">Email as Link</MenuItem>
                     </Menu>
@@ -175,7 +264,7 @@ function App() {
           <MenuTrigger>
             <ActionButton>Menu Trigger</ActionButton>
             <Menu>
-              <MenuItem href="/foo" routerOptions={{ scroll: false } as any}>
+              <MenuItem href="/foo" routerOptions={{scroll: false} as any}>
                 Link to /foo
               </MenuItem>
               <MenuItem>Cut</MenuItem>
@@ -191,7 +280,9 @@ function App() {
               <ActionBar>
                 <ActionButton onPress={() => console.log('edit', selectedKeys)}>Edit</ActionButton>
                 <ActionButton onPress={() => console.log('copy', selectedKeys)}>Copy</ActionButton>
-                <ActionButton onPress={() => console.log('delete', selectedKeys)}>Delete</ActionButton>
+                <ActionButton onPress={() => console.log('delete', selectedKeys)}>
+                  Delete
+                </ActionButton>
               </ActionBar>
             )}>
             <TableHeader>
@@ -263,12 +354,17 @@ function App() {
               </TreeViewItem>
             </TreeViewItem>
           </TreeView>
+          <SideNavExample />
         </Section>
 
-        {!isLazyLoaded && <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>}
-        {isLazyLoaded && <React.Suspense fallback={<>Loading</>}>
-          <Lazy />
-        </React.Suspense>}
+        {!isLazyLoaded && (
+          <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>
+        )}
+        {isLazyLoaded && (
+          <React.Suspense fallback={<>Loading</>}>
+            <Lazy />
+          </React.Suspense>
+        )}
       </div>
     </Provider>
   );

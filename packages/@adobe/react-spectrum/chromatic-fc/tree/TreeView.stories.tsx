@@ -20,7 +20,12 @@ import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from 'react-stately/Item';
 import React from 'react';
-import {SpectrumTreeViewProps, TreeView, TreeViewItem, TreeViewItemContent} from '../../src/tree/TreeView';
+import {
+  SpectrumTreeViewProps,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent
+} from '../../src/tree/TreeView';
 import {StoryFn} from '@storybook/react';
 import {Text} from '../../src/text/Text';
 
@@ -31,7 +36,11 @@ export default {
 function TestTree(props) {
   return (
     <div style={{width: '300px', height: '800px'}}>
-      <TreeView {...props} disabledKeys={['projects-1']} defaultExpandedKeys={['Photos', 'projects', 'projects-1']} aria-label="test static tree">
+      <TreeView
+        {...props}
+        disabledKeys={['projects-1']}
+        defaultExpandedKeys={['Photos', 'projects', 'projects-1']}
+        aria-label="test static tree">
         <TreeViewItem href="https://adobe.com/" id="Photos" textValue="Photos">
           <TreeViewItemContent>
             <Text>Photos</Text>
@@ -125,13 +134,9 @@ function TestTree(props) {
 
 type TreeViewStoryProps = StoryFn<SpectrumTreeViewProps<unknown>>;
 
-export const Default: TreeViewStoryProps = () => (
-  <TestTree />
-);
+export const Default: TreeViewStoryProps = () => <TestTree />;
 
-export const SelectionMode: TreeViewStoryProps = () => (
-  <TestTree selectionMode="multiple" />
-);
+export const SelectionMode: TreeViewStoryProps = () => <TestTree selectionMode="multiple" />;
 
 export const DisabledBehaviorAll: TreeViewStoryProps = () => (
   <TestTree disabledBehavior="all" selectionMode="multiple" />

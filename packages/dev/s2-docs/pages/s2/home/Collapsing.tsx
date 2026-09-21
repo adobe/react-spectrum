@@ -1,8 +1,8 @@
 'use client';
-import { Tag, TagGroup } from "@react-spectrum/s2";
-import { Resizable } from "./DarkMode";
-import { useRef } from "react";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import {Tag, TagGroup} from '@react-spectrum/s2';
+import {Resizable} from './DarkMode';
+import {useRef} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 let items: any[] = [];
 for (let i = 0; i < 100; i++) {
@@ -19,5 +19,5 @@ export function Collapsing() {
         </TagGroup>
       </Resizable>
     </div>
-  )
+  );
 }

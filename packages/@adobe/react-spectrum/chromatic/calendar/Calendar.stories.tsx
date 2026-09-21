@@ -19,7 +19,7 @@ export default {
   title: 'Calendar',
   parameters: {
     chromaticProvider: {
-      locales: ['en-US'/* , 'ar-EG', 'ja-JP' */]
+      locales: ['en-US' /* , 'ar-EG', 'ja-JP' */]
     }
   }
 } as Meta<typeof Calendar>;
@@ -31,22 +31,28 @@ const date = new CalendarDate(2022, 2, 3);
 export const Default: CalendarStory = () => <Calendar focusedValue={date} />;
 export const Selected: CalendarStory = () => <Calendar value={date} />;
 export const MinMax: CalendarStory = () => (
-  <Calendar
-    minValue={new CalendarDate(2022, 2, 10)}
-    maxValue={new CalendarDate(2022, 2, 20)} />
+  <Calendar minValue={new CalendarDate(2022, 2, 10)} maxValue={new CalendarDate(2022, 2, 20)} />
 );
 export const Disabled: CalendarStory = () => <Calendar isDisabled value={date} />;
 export const ReadOnly: CalendarStory = () => <Calendar isReadOnly value={date} />;
 export const Unavailable: CalendarStory = () => (
-  <Calendar
-    focusedValue={date}
-    isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
+  <Calendar focusedValue={date} isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
 );
 export const VisibleMonths2: CalendarStory = () => <Calendar value={date} visibleMonths={2} />;
 export const VisibleMonths3: CalendarStory = () => <Calendar value={date} visibleMonths={3} />;
 export const Invalid: CalendarStory = () => <Calendar value={date} isInvalid />;
-export const ErrorMessage: CalendarStory = () => <Calendar value={date} isInvalid errorMessage="Selection invalid." />;
-export const UnavailableInvalid: CalendarStory = () => <Calendar value={date} isDateUnavailable={d => d.compare(date) === 0} />;
-export const DisabledInvalid: CalendarStory = () => <Calendar value={date} minValue={new CalendarDate(2022, 2, 5)} />;
-export const CustomWeekStartMonday: CalendarStory = () => <Calendar value={date} firstDayOfWeek="mon" />;
-export const CustomWeekStartSaturday: CalendarStory = () => <Calendar value={date} firstDayOfWeek="sat" />;
+export const ErrorMessage: CalendarStory = () => (
+  <Calendar value={date} isInvalid errorMessage="Selection invalid." />
+);
+export const UnavailableInvalid: CalendarStory = () => (
+  <Calendar value={date} isDateUnavailable={d => d.compare(date) === 0} />
+);
+export const DisabledInvalid: CalendarStory = () => (
+  <Calendar value={date} minValue={new CalendarDate(2022, 2, 5)} />
+);
+export const CustomWeekStartMonday: CalendarStory = () => (
+  <Calendar value={date} firstDayOfWeek="mon" />
+);
+export const CustomWeekStartSaturday: CalendarStory = () => (
+  <Calendar value={date} firstDayOfWeek="sat" />
+);

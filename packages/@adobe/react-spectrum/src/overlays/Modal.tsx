@@ -25,16 +25,17 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 import {useStyleProps} from '../utils/styleProps';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
 
-interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
-  children: ReactNode,
-  state: OverlayTriggerState,
-  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover'
+interface ModalProps
+  extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
+  children: ReactNode;
+  state: OverlayTriggerState;
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover';
 }
 
 interface ModalWrapperProps extends ModalProps {
-  isOpen?: boolean,
-  wrapperRef: RefObject<HTMLDivElement | null>,
-  children: ReactNode
+  isOpen?: boolean;
+  wrapperRef: RefObject<HTMLDivElement | null>;
+  children: ReactNode;
 }
 
 export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
@@ -56,7 +57,10 @@ let typeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) {
+let ModalWrapper = forwardRef(function (
+  props: ModalWrapperProps,
+  ref: ForwardedRef<HTMLDivElement | null>
+) {
   let {type, children, state, isOpen, wrapperRef} = props;
   let typeVariant = type != null ? typeMap[type] : undefined;
   let {styleProps} = useStyleProps(props);
@@ -66,11 +70,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: Forwarded
   let wrapperClassName = classNames(
     modalStyles,
     'spectrum-Modal-wrapper',
-    classNames(
-      overrideStyles,
-      'spectrum-Modal-wrapper',
-      'react-spectrum-Modal-wrapper'
-    )
+    classNames(overrideStyles, 'spectrum-Modal-wrapper', 'react-spectrum-Modal-wrapper')
   );
 
   let modalClassName = classNames(
@@ -79,11 +79,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: Forwarded
     {
       'is-open': isOpen
     },
-    classNames(
-      overrideStyles,
-      'spectrum-Modal',
-      'react-spectrum-Modal'
-    ),
+    classNames(overrideStyles, 'spectrum-Modal', 'react-spectrum-Modal'),
     {[`spectrum-Modal--${typeVariant}`]: typeVariant},
     styleProps.className
   );

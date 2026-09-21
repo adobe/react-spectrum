@@ -25,7 +25,8 @@ export default function CalendarSystems() {
   ];
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8})}>
+    <div
+      className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8})}>
       <Picker label="Calendar system" items={calendars} value={calendar} onChange={setCalendar}>
         {item => <PickerItem>{item.name}</PickerItem>}
       </Picker>
@@ -33,5 +34,5 @@ export default function CalendarSystems() {
         <Calendar aria-label="Date" />
       </Provider>
     </div>
-  )
+  );
 }

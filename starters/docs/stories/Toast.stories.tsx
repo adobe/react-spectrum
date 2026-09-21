@@ -44,13 +44,16 @@ export default meta;
 type Story = StoryObj<ToastStoryArgs>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <>
       <MyToastRegion />
-      <Button onPress={() => queue.add(
-        {title: args.title, description: args.description},
-        args.timeout ? {timeout: args.timeout} : undefined
-      )}>
+      <Button
+        onPress={() =>
+          queue.add(
+            {title: args.title, description: args.description},
+            args.timeout ? {timeout: args.timeout} : undefined
+          )
+        }>
         {args.buttonLabel}
       </Button>
     </>

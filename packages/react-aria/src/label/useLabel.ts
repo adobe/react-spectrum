@@ -18,21 +18,23 @@ import {useLabels} from '../utils/useLabels';
 export interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
   /**
    * The HTML element used to render the label, e.g. 'label', or 'span'.
+   *
    * @default 'label'
    */
-  labelElementType?: ElementType
+  labelElementType?: ElementType;
 }
 
 export interface LabelAria {
   /** Props to apply to the label container element. */
-  labelProps: DOMAttributes | LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: DOMAttributes | LabelHTMLAttributes<HTMLLabelElement>;
   /** Props to apply to the field container element being labeled. */
-  fieldProps: AriaLabelingProps & DOMProps
+  fieldProps: AriaLabelingProps & DOMProps;
 }
 
 /**
  * Provides the accessibility implementation for labels and their associated elements.
  * Labels provide context for user inputs.
+ *
  * @param props - The props for labels and fields.
  */
 export function useLabel(props: LabelAriaProps): LabelAria {
@@ -54,7 +56,9 @@ export function useLabel(props: LabelAriaProps): LabelAria {
       htmlFor: labelElementType === 'label' ? id : undefined
     };
   } else if (!ariaLabelledby && !ariaLabel && process.env.NODE_ENV !== 'production') {
-    console.warn('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
+    console.warn(
+      'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
+    );
   }
 
   let fieldProps = useLabels({

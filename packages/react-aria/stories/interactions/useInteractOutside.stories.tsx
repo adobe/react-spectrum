@@ -24,7 +24,13 @@ export type DemoStory = StoryObj<typeof Demo>;
 
 export const OutsideBody: DemoStory = {
   render: () => <Demo />,
-  decorators: [(Story) => <BodyStyler><Story /></BodyStyler>]
+  decorators: [
+    Story => (
+      <BodyStyler>
+        <Story />
+      </BodyStyler>
+    )
+  ]
 };
 
 export const ClickingButtonShouldFireOnInteractOutside: DemoStory = {
@@ -35,13 +41,20 @@ function Demo(): JSX.Element {
   let ref = useRef(null);
   let onInteractOutside = action('outside');
   useInteractOutside({ref, onInteractOutside});
-  return <div ref={ref} style={{marginInlineStart: '50px', marginBlockStart: '50px'}}>Click anywhere but this text</div>;
+  return (
+    <div ref={ref} style={{marginInlineStart: '50px', marginBlockStart: '50px'}}>
+      Click anywhere but this text
+    </div>
+  );
 }
 
 function BodyStyler(props) {
   useEffect(() => {
     let story: HTMLElement = document.querySelector('.react-spectrum-story')!;
-    let prev = {body: {height: document.body.style.height, width: document.body.style.width}, story: {minHeight: story.style.minHeight}};
+    let prev = {
+      body: {height: document.body.style.height, width: document.body.style.width},
+      story: {minHeight: story.style.minHeight}
+    };
     document.body.style.height = 'fit-content';
     document.body.style.width = 'fit-content';
     story.style.minHeight = 'initial';
@@ -53,7 +66,6 @@ function BodyStyler(props) {
   });
   return props.children;
 }
-
 
 function MyButton() {
   let ref = React.useRef(null);
@@ -84,7 +96,8 @@ function App() {
           width: '100px',
           height: '100px',
           background: 'orange'
-        }} />
+        }}
+      />
       <MyButton />
     </div>
   );

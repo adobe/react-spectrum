@@ -2,6 +2,13 @@
   "name": "style-macro-chrome-plugin",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "parcel watch src/manifest.json --host localhost --config .parcelrc",
     "build": "parcel build src/manifest.json --config .parcelrc"
@@ -15,12 +22,5 @@
   },
   "rsp": {
     "type": "cli"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

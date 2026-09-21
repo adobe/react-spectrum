@@ -43,7 +43,15 @@ for (let link of links) {
         <Pressable>
           {/* eslint-disable jsx-a11y/click-events-have-key-events */}
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <a role="button" tabIndex={0} aria-haspopup="dialog" data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
+          <a
+            role="button"
+            tabIndex={0}
+            aria-haspopup="dialog"
+            data-link={link.dataset.link}
+            className={link.className}
+            onClick={e => e.preventDefault()}>
+            {link.textContent}
+          </a>
         </Pressable>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
@@ -61,7 +69,11 @@ function ImageModal({children}) {
   return (
     <>
       {trigger}
-      <Modal isDismissable state={state} onClose={() => state.close()} UNSAFE_style={{overflow: 'scroll'}}>
+      <Modal
+        isDismissable
+        state={state}
+        onClose={() => state.close()}
+        UNSAFE_style={{overflow: 'scroll'}}>
         <FocusScope contain restoreFocus autoFocus>
           {contents}
         </FocusScope>
@@ -107,7 +119,7 @@ function LinkPopover({id}) {
       // Links with [data-link] will open within the LinkPopover, so [aria-haspopup] is not appropriate.
       link.removeAttribute('aria-haspopup');
       // Add click event handler so that the link updates the content of the popover.
-      link.addEventListener('click', (e) => {
+      link.addEventListener('click', e => {
         e.preventDefault();
         setBreadcrumbs([...breadcrumbs, document.getElementById(link.dataset.link)]);
       });
@@ -115,22 +127,26 @@ function LinkPopover({id}) {
   }, [breadcrumbs]);
 
   return (
-    <Dialog aria-label={breadcrumbs[breadcrumbs.length - 1].dataset.title} UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
+    <Dialog
+      aria-label={breadcrumbs[breadcrumbs.length - 1].dataset.title}
+      UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`}
+      size="L">
       <View slot="heading">
         <Breadcrumbs
           ref={breadcrumbsRef}
-          onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}
+          onAction={key => setBreadcrumbs(breadcrumbs.slice(0, key))}
           autoFocusCurrent>
           {breadcrumbs.map((b, i) => (
-            <Item key={i + 1}>
-              {b.dataset.title}
-            </Item>
+            <Item key={i + 1}>{b.dataset.title}</Item>
           ))}
         </Breadcrumbs>
       </View>
       <Divider size="M" />
       <Content>
-        <div ref={ref} dangerouslySetInnerHTML={{__html: breadcrumbs[breadcrumbs.length -  1].innerHTML}} />
+        <div
+          ref={ref}
+          dangerouslySetInnerHTML={{__html: breadcrumbs[breadcrumbs.length - 1].innerHTML}}
+        />
       </Content>
     </Dialog>
   );

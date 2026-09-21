@@ -12,7 +12,15 @@
 
 import {ActionButton} from '../../src/button/ActionButton';
 
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  SpectrumTableProps,
+  TableBody,
+  TableHeader,
+  TableView
+} from '../../src/table/TableView';
 import {Content} from '../../src/view/Content';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {generatePowerset} from '@react-spectrum/story-utils';
@@ -55,7 +63,12 @@ const meta: Meta<SpectrumTableProps<object>> = {
   title: 'TableView',
   component: TableView,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true
+    },
     // large delay with the layout since there are so many tables
     chromatic: {delay: 4000}
   }
@@ -94,15 +107,21 @@ let hiddenColumns = [
 ];
 
 let nestedColumns = [
-  {name: 'Tiered One Header', key: 'tier1', children: [
-    {name: 'Tier Two Header A', key: 'tier2a', children: [
-      {name: 'Foo', key: 'foo'},
-      {name: 'Bar', key: 'bar'}
-    ]},
-    {name: 'Tier Two Header B', key: 'tier2b', children: [
-      {name: 'Baz', key: 'baz'}
-    ]}
-  ]}
+  {
+    name: 'Tiered One Header',
+    key: 'tier1',
+    children: [
+      {
+        name: 'Tier Two Header A',
+        key: 'tier2a',
+        children: [
+          {name: 'Foo', key: 'foo'},
+          {name: 'Bar', key: 'bar'}
+        ]
+      },
+      {name: 'Tier Two Header B', key: 'tier2b', children: [{name: 'Baz', key: 'baz'}]}
+    ]
+  }
 ];
 
 let items = [
@@ -113,32 +132,56 @@ let items = [
   {foo: 'Foo 5', bar: 'Baaaaaaaaaar 5', baz: 'Baz 1'}
 ];
 
-const Template = ({columns, items, ...args}: SpectrumTableProps<object> & {columns: any[], items: any[]}): JSX.Element => (
+const Template = ({
+  columns,
+  items,
+  ...args
+}: SpectrumTableProps<object> & {columns: any[]; items: any[]}): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']}>
+          <TableView
+            {...args}
+            {...c}
+            width="100%"
+            height="100%"
+            key={key}
+            aria-label={key}
+            selectedKeys={['Foo 3', 'Foo 1']}
+            disabledKeys={['Foo 2', 'Foo 4']}>
             <TableHeader columns={columns}>
               {(column: any) => (
-                <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>
+                <Column
+                  key={column.key}
+                  width={column.width}
+                  showDivider={column.showDivider}
+                  align={column.align}
+                  hideHeader={column.hideHeader}
+                  childColumns={column.children}>
                   {column.name}
                 </Column>
               )}
             </TableHeader>
             <TableBody items={items}>
-              {(item: any) =>
-                (<Row key={item.foo}>
+              {(item: any) => (
+                <Row key={item.foo}>
                   {key => {
-                    let button = <ActionButton isQuiet><Delete /></ActionButton>;
+                    let button = (
+                      <ActionButton isQuiet>
+                        <Delete />
+                      </ActionButton>
+                    );
                     return <Cell>{key === 'baz' ? button : item[key]}</Cell>;
                   }}
-                </Row>)
-              }
+                </Row>
+              )}
             </TableBody>
           </TableView>
         </View>
@@ -159,58 +202,57 @@ function renderEmptyState() {
   );
 }
 
-const EmptyTemplate = (args) =>
-  (
-    <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState}>
-      <TableHeader columns={columns}>
-        {(column: any) => (
-          <Column
-            key={column.key}
-            width={column.width}
-            showDivider={column.showDivider}
-            align={column.align}>
-            {column.name}
-          </Column>
-        )}
-      </TableHeader>
-      <TableBody>{[]}</TableBody>
-    </TableView>
-  );
+const EmptyTemplate = args => (
+  <TableView {...args} maxWidth={700} height={400} renderEmptyState={renderEmptyState}>
+    <TableHeader columns={columns}>
+      {(column: any) => (
+        <Column
+          key={column.key}
+          width={column.width}
+          showDivider={column.showDivider}
+          align={column.align}>
+          {column.name}
+        </Column>
+      )}
+    </TableHeader>
+    <TableBody>{[]}</TableBody>
+  </TableView>
+);
 
 export type TableViewStory = StoryObj<typeof Template>;
 
 export const Default: TableViewStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default items and columns',
   args: {columns, items}
 };
 
 export const ColumnAlign: TableViewStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'column alignment',
   args: {columns: alignColumns, items}
 };
 
 export const ColumnDividers: TableViewStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'columns dividers',
   args: {columns: dividerColumns, items}
 };
 
 export const ColumnWidth: TableViewStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'columns widths',
   args: {columns: customWidth, items}
 };
 
 export const HiddenColumns: TableViewStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'hidden columns',
   args: {columns: hiddenColumns, items}
 };
 
 export const NestedColumns: TableViewStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'nested columns',
   args: {columns: nestedColumns, items}
 };
@@ -221,13 +263,13 @@ export const MaxHeight: StoryFn<SpectrumTableProps<object>> = () => (
       {(column: any) => <Column key={column.key}>{column.name}</Column>}
     </TableHeader>
     <TableBody items={items}>
-      {(item: any) => <Row key={item.foo}>{(key) => <Cell>{item[key]}</Cell>}</Row>}
+      {(item: any) => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
     </TableBody>
   </TableView>
 );
 
 export const Empty: TableViewStory = {
-  render: (args) => <EmptyTemplate {...args} />,
+  render: args => <EmptyTemplate {...args} />,
   name: 'empty table',
   args: {}
 };

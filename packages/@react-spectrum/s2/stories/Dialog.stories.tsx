@@ -29,7 +29,17 @@ const meta: Meta<typeof Dialog> = {
   parameters: {
     layout: 'centered',
     docs: {
-      controls: {exclude: ['showHero', 'showHeading', 'showHeader', 'showFooter', 'showButtons', 'paragraphs', 'title']}
+      controls: {
+        exclude: [
+          'showHero',
+          'showHeading',
+          'showHeader',
+          'showFooter',
+          'showButtons',
+          'paragraphs',
+          'title'
+        ]
+      }
     }
   },
   argTypes: {
@@ -42,9 +52,9 @@ const meta: Meta<typeof Dialog> = {
 export default meta;
 
 interface ExampleRenderProps extends DialogProps {
-  type: 'popover' | 'dialog',
-  paragraphs: number,
-  title: string
+  type: 'popover' | 'dialog';
+  paragraphs: number;
+  title: string;
 }
 
 const ExampleRender = (args: ExampleRenderProps): ReactElement => (
@@ -53,21 +63,39 @@ const ExampleRender = (args: ExampleRenderProps): ReactElement => (
     <Dialog {...args}>
       {({close}) => (
         <>
-          {args.type !== 'popover' && <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />}
+          {args.type !== 'popover' && (
+            <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />
+          )}
           <Heading slot="title">Dialog title</Heading>
           <Header>Header</Header>
           <Content>
             <>
-              {[...Array(args.paragraphs)].map((_, i) =>
-                <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-              )}
+              {[...Array(args.paragraphs)].map((_, i) => (
+                <p
+                  key={i}
+                  style={{
+                    marginTop: i === 0 ? 0 : undefined,
+                    marginBottom: i === args.paragraphs - 1 ? 0 : undefined
+                  }}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                  irure dolor in
+                </p>
+              ))}
               <input type="text" defaultValue="Hello" />
             </>
           </Content>
-          <Footer><Checkbox>Don't show this again</Checkbox></Footer>
+          <Footer>
+            <Checkbox>Don't show this again</Checkbox>
+          </Footer>
           <ButtonGroup>
-            <Button onPress={close} variant="secondary">Cancel</Button>
-            <Button onPress={close} variant="accent">Save</Button>
+            <Button onPress={close} variant="secondary">
+              Cancel
+            </Button>
+            <Button onPress={close} variant="accent">
+              Save
+            </Button>
           </ButtonGroup>
         </>
       )}
@@ -77,7 +105,7 @@ const ExampleRender = (args: ExampleRenderProps): ReactElement => (
 
 export type ExampleStoryType = typeof ExampleRender;
 export const Example: StoryObj<typeof ExampleRender> = {
-  render: (args) => <ExampleRender {...args} />,
+  render: args => <ExampleRender {...args} />,
   argTypes: {
     type: {
       control: 'radio',
@@ -92,7 +120,7 @@ export const Example: StoryObj<typeof ExampleRender> = {
 };
 
 export const DialogTriggerExample: StoryObj<typeof ExampleDialog> = {
-  render: (args) => (
+  render: args => (
     <DialogTrigger {...args}>
       <Button variant="primary">Open dialog</Button>
       <ExampleDialog {...args} />
@@ -115,13 +143,13 @@ export const DialogTriggerExample: StoryObj<typeof ExampleDialog> = {
 };
 
 interface ExampleDialogProps extends DialogProps {
-  showHero?: boolean,
-  showHeading?: boolean,
-  showHeader?: boolean,
-  showFooter?: boolean,
-  showButtons?: boolean,
-  paragraphs: number,
-  title: string
+  showHero?: boolean;
+  showHeading?: boolean;
+  showHeader?: boolean;
+  showFooter?: boolean;
+  showButtons?: boolean;
+  paragraphs: number;
+  title: string;
 }
 
 function ExampleDialog(args: ExampleDialogProps): ReactElement {
@@ -129,21 +157,41 @@ function ExampleDialog(args: ExampleDialogProps): ReactElement {
     <Dialog {...args}>
       {({close}) => (
         <>
-          {args.showHero && <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />}
+          {args.showHero && (
+            <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />
+          )}
           {args.showHeading && <Heading slot="title">{args.title}</Heading>}
           {args.showHeader && <Header>Header</Header>}
           <Content>
-            {[...Array(args.paragraphs)].map((_, i) =>
-              <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-            )}
+            {[...Array(args.paragraphs)].map((_, i) => (
+              <p
+                key={i}
+                style={{
+                  marginTop: i === 0 ? 0 : undefined,
+                  marginBottom: i === args.paragraphs - 1 ? 0 : undefined
+                }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                irure dolor in
+              </p>
+            ))}
           </Content>
-          {args.showFooter && <Footer><Checkbox>Don't show this again</Checkbox></Footer>}
-          {args.showButtons &&
+          {args.showFooter && (
+            <Footer>
+              <Checkbox>Don't show this again</Checkbox>
+            </Footer>
+          )}
+          {args.showButtons && (
             <ButtonGroup>
-              <Button onPress={close} variant="secondary">Cancel</Button>
-              <Button onPress={close} variant="accent">Save</Button>
+              <Button onPress={close} variant="secondary">
+                Cancel
+              </Button>
+              <Button onPress={close} variant="accent">
+                Save
+              </Button>
             </ButtonGroup>
-          }
+          )}
         </>
       )}
     </Dialog>
@@ -155,18 +203,18 @@ function DialogContainerExampleRender(props: ExampleDialogProps): ReactElement {
 
   return (
     <>
-      <Button variant="accent" onPress={() => setOpen(true)}>Open dialog</Button>
+      <Button variant="accent" onPress={() => setOpen(true)}>
+        Open dialog
+      </Button>
       <DialogContainer onDismiss={() => setOpen(false)} {...props}>
-        {isOpen &&
-          <ExampleDialog {...props} />
-        }
+        {isOpen && <ExampleDialog {...props} />}
       </DialogContainer>
     </>
   );
 }
 
 export const DialogContainerExample: StoryObj<typeof DialogContainerExampleRender> = {
-  render: (args) => <DialogContainerExampleRender {...args} />,
+  render: args => <DialogContainerExampleRender {...args} />,
   args: DialogTriggerExample.args,
   parameters: {
     docs: {
@@ -189,7 +237,7 @@ let [isOpen, setOpen] = useState(false);
 };
 
 export const ColorScheme: StoryObj<typeof ExampleDialog> = {
-  render: (args) => (
+  render: args => (
     <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
       <DialogTrigger {...args}>
         <Button variant="primary">Open dialog</Button>

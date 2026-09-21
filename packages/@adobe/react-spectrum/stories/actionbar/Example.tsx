@@ -52,7 +52,9 @@ let defaultItems = [
 ];
 
 export function Example(props: any = {}): JSX.Element {
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(props.defaultSelectedKeys || new Set());
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(
+    props.defaultSelectedKeys || new Set()
+  );
   let [items, setItems] = useState(defaultItems);
 
   let ref = useRef(null);
@@ -65,16 +67,10 @@ export function Example(props: any = {}): JSX.Element {
         width={props.tableWidth}
         selectedKeys={selectedKeys}
         selectionMode="multiple"
-        onSelectionChange={(keys) => setSelectedKeys(keys)}>
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
+        onSelectionChange={keys => setSelectedKeys(keys)}>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
       <ActionBar
@@ -83,7 +79,7 @@ export function Example(props: any = {}): JSX.Element {
           setSelectedKeys(new Set());
         }}
         {...mergeProps(props, {
-          onAction: (key) => {
+          onAction: key => {
             if (key === 'delete') {
               let newItems = items;
               if (selectedKeys instanceof Set) {
@@ -122,7 +118,9 @@ export function Example(props: any = {}): JSX.Element {
 }
 
 export function Example2(props: any = {}): JSX.Element {
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(props.defaultSelectedKeys || new Set());
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(
+    props.defaultSelectedKeys || new Set()
+  );
   let [items, setItems] = useState(defaultItems);
 
   let ref = useRef(null);
@@ -135,16 +133,10 @@ export function Example2(props: any = {}): JSX.Element {
         width={props.tableWidth}
         selectedKeys={selectedKeys}
         selectionMode="multiple"
-        onSelectionChange={(keys) => setSelectedKeys(keys)}>
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
+        onSelectionChange={keys => setSelectedKeys(keys)}>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
       <ActionBar
@@ -153,7 +145,7 @@ export function Example2(props: any = {}): JSX.Element {
           setSelectedKeys(new Set());
         }}
         {...mergeProps(props, {
-          onAction: (key) => {
+          onAction: key => {
             if (key === 'delete') {
               let newItems = items;
               if (selectedKeys instanceof Set) {

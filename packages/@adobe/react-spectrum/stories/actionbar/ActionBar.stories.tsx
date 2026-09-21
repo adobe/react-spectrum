@@ -42,7 +42,7 @@ export default {
 export type ActionBarStory = StoryObj<any>;
 
 export const Default: ActionBarStory = {
-  render: (args) => <Example {...args} />,
+  render: args => <Example {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -55,7 +55,7 @@ export const Default: ActionBarStory = {
 
 export const FullWidthStory: ActionBarStory = {
   ...Default,
-  render: (args) => <FullWidth {...args} />
+  render: args => <FullWidth {...args} />
 };
 
 function FullWidth(props) {
@@ -65,7 +65,7 @@ function FullWidth(props) {
 
 export const DisabledKeysStory: ActionBarStory = {
   ...Default,
-  render: (args) => <DisabledKeys {...args} />
+  render: args => <DisabledKeys {...args} />
 };
 
 function DisabledKeys(props) {

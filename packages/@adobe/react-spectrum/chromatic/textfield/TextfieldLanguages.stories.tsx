@@ -45,13 +45,15 @@ Diacritics.story = {
   name: 'diacritics'
 };
 
-export const Value測試IconInfoLabelPositionSideValidationStateValid: TextFieldStory = () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'});
+export const Value測試IconInfoLabelPositionSideValidationStateValid: TextFieldStory = () =>
+  render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'});
 
 Value測試IconInfoLabelPositionSideValidationStateValid.story = {
   name: 'value: 測試, icon: Info, labelPosition: side, validationState: valid'
 };
 
-export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel: TextFieldStory = () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'});
+export const ValueاختبارIsRequiredFalseNecessityIndicatorLabel: TextFieldStory = () =>
+  render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'});
 
 ValueاختبارIsRequiredFalseNecessityIndicatorLabel.story = {
   name: 'value: اختبار, isRequired: false, necessityIndicator: label'

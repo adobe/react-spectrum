@@ -12,7 +12,16 @@
 
 import {action} from 'storybook/actions';
 import defaultConfig, {TableStory} from './Table.stories';
-import {DragBetweenTablesComplex, DragBetweenTablesOverride, DragExampleUtilHandlers, FinderDropUtilHandlers, InsertExampleUtilHandlers, ItemDropExampleUtilHandlers, ReorderExampleUtilHandlers, RootDropExampleUtilHandlers} from './TableDnDUtilExamples';
+import {
+  DragBetweenTablesComplex,
+  DragBetweenTablesOverride,
+  DragExampleUtilHandlers,
+  FinderDropUtilHandlers,
+  InsertExampleUtilHandlers,
+  ItemDropExampleUtilHandlers,
+  ReorderExampleUtilHandlers,
+  RootDropExampleUtilHandlers
+} from './TableDnDUtilExamples';
 import {Droppable} from '../../../../react-aria/stories/dnd/dnd.stories';
 import {Flex} from '../../src/layout/Flex';
 import {Meta} from '@storybook/react';
@@ -29,10 +38,13 @@ export const DragOutOfTable: TableStory = {
   args: {
     disabledKeys: ['2']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
       <Droppable />
-      <DragExampleUtilHandlers tableViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      <DragExampleUtilHandlers
+        tableViewProps={args}
+        dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+      />
     </Flex>
   ),
   name: 'drag out of table'
@@ -42,8 +54,11 @@ export const DragWithinTable: TableStory = {
   args: {
     disabledKeys: ['2']
   },
-  render: (args) => (
-    <ReorderExampleUtilHandlers tableViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+  render: args => (
+    <ReorderExampleUtilHandlers
+      tableViewProps={args}
+      dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+    />
   ),
   name: 'drag within table (reorder)'
 };
@@ -52,8 +67,11 @@ export const DragOntoRow: TableStory = {
   args: {
     disabledKeys: ['2']
   },
-  render: (args) => (
-    <ItemDropExampleUtilHandlers tableViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+  render: args => (
+    <ItemDropExampleUtilHandlers
+      tableViewProps={args}
+      dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+    />
   ),
   name: 'drop onto row/folder',
   parameters: {
@@ -67,14 +85,19 @@ export const DropOntoRoot: TableStory = {
   args: {
     disabledKeys: ['2', '8']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
-      <RootDropExampleUtilHandlers tableViewProps={args} firstTableDnDOptions={{onDragStart: action('dragStart')}} />
+      <RootDropExampleUtilHandlers
+        tableViewProps={args}
+        firstTableDnDOptions={{onDragStart: action('dragStart')}}
+      />
     </Flex>
   ),
   name: 'drop onto root',
   parameters: {
-    description: {data: 'Allows one way dragging from first table to root of second table. Copy and link operations shouldnt remove items from the first table'}
+    description: {
+      data: 'Allows one way dragging from first table to root of second table. Copy and link operations shouldnt remove items from the first table'
+    }
   }
 };
 
@@ -82,12 +105,17 @@ export const DropBetweenRows: TableStory = {
   args: {
     disabledKeys: ['2', '8']
   },
-  render: (args) => (
-    <InsertExampleUtilHandlers tableViewProps={args} firstTableDnDOptions={{onDragStart: action('dragStart')}} />
+  render: args => (
+    <InsertExampleUtilHandlers
+      tableViewProps={args}
+      firstTableDnDOptions={{onDragStart: action('dragStart')}}
+    />
   ),
   name: 'drop between rows',
   parameters: {
-    description: {data: 'Allows one way dragging from first table to between items of second table. Copy and link operations shouldnt remove items from the first table'}
+    description: {
+      data: 'Allows one way dragging from first table to between items of second table. Copy and link operations shouldnt remove items from the first table'
+    }
   }
 };
 
@@ -95,14 +123,16 @@ export const AllowsDirectoriesAndFilesFromFinder: TableStory = {
   args: {
     disabledKeys: ['2', '8']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
       <FinderDropUtilHandlers tableViewProps={args} />
     </Flex>
   ),
   name: 'allows directories and files from finder',
   parameters: {
-    description: {data: 'The first table should allow only directory drops (e.g. folders from finder). The second table should allow all drag type drops (directory/files from finder, any drag items).'}
+    description: {
+      data: 'The first table should allow only directory drops (e.g. folders from finder). The second table should allow all drag type drops (directory/files from finder, any drag items).'
+    }
   }
 };
 
@@ -110,7 +140,7 @@ export const ComplexDragBetweenTables: TableStory = {
   args: {
     disabledKeys: ['2', '8']
   },
-  render: (args) => (
+  render: args => (
     <DragBetweenTablesComplex
       tableViewProps={args}
       firstTableDnDOptions={{
@@ -118,11 +148,14 @@ export const ComplexDragBetweenTables: TableStory = {
       }}
       secondTableDnDOptions={{
         onDragStart: action('dragStartTable2')
-      }} />
+      }}
+    />
   ),
   name: 'complex drag between tables',
   parameters: {
-    description: {data: 'The first table should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second table should allow all operations and root drops should be placed at the top of the table. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either table if accompanied by other valid drag items.'}
+    description: {
+      data: 'The first table should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second table should allow all operations and root drops should be placed at the top of the table. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either table if accompanied by other valid drag items.'
+    }
   }
 };
 
@@ -130,23 +163,28 @@ export const UsingGetDropOperations: TableStory = {
   args: {
     disabledKeys: ['2', '8']
   },
-  render: (args) => (
+  render: args => (
     <DragBetweenTablesComplex
       tableViewProps={args}
       firstTableDnDOptions={{
         onDragStart: action('dragStartTable1'),
-        getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
+        getDropOperation: (_, __, allowedOperations) =>
+          allowedOperations.filter(op => op !== 'move')[0],
         getAllowedDropOperations: () => ['link']
       }}
       secondTableDnDOptions={{
         onDragStart: action('dragStartTable2'),
-        getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
+        getDropOperation: (_, __, allowedOperations) =>
+          allowedOperations.filter(op => op !== 'move')[0],
         getAllowedDropOperations: () => ['move', 'copy', 'link']
-      }} />
+      }}
+    />
   ),
   name: 'using getDropOperations to determine default drop operation',
   parameters: {
-    description: {data: 'Dragging from the first to the second table should automatically set a link operation and all other drop operations should be disabled. Dragging from the second to first table should support copy and link operations, with copy being the default.'}
+    description: {
+      data: 'Dragging from the first to the second table should automatically set a link operation and all other drop operations should be disabled. Dragging from the second to first table should support copy and link operations, with copy being the default.'
+    }
   }
 };
 
@@ -154,11 +192,11 @@ export const OverrideUtilHandlers: TableStory = {
   args: {
     disabledKeys: ['2', '8']
   },
-  render: (args) => (
-    <DragBetweenTablesOverride {...args} />
-  ),
+  render: args => <DragBetweenTablesOverride {...args} />,
   name: 'util handlers overridden by onDrop and getDropOperations',
   parameters: {
-    description: {data: 'The first table should be draggable, the second table should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'}
+    description: {
+      data: 'The first table should be draggable, the second table should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'
+    }
   }
 };

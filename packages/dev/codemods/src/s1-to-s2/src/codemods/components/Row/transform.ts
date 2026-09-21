@@ -6,26 +6,31 @@ import {updateKeyToId} from '../../shared/transforms';
 /**
  * Updates the function signature of the Row component.
  */
-function updateRowFunctionArg(
-  path: NodePath<t.JSXElement>
-): void {
+function updateRowFunctionArg(path: NodePath<t.JSXElement>): void {
   // Find the export function passed as a child
-  let functionChild = path.get('children').find(childPath =>
-    childPath.isJSXExpressionContainer() &&
-    childPath.get('expression').isArrowFunctionExpression()
+  let functionChild = path
+    .get('children')
+    .find(
+      childPath =>
+        childPath.isJSXExpressionContainer() &&
+        childPath.get('expression').isArrowFunctionExpression()
+    );
+
+  let tablePath = path.findParent(
+    p =>
+      t.isJSXElement(p.node) &&
+      t.isJSXIdentifier(p.node.openingElement.name) &&
+      getName(path, p.node.openingElement.name) === 'TableView'
   );
 
-  let tablePath = path.findParent((p) =>
-    t.isJSXElement(p.node) &&
-    t.isJSXIdentifier(p.node.openingElement.name) &&
-    getName(path, p.node.openingElement.name) === 'TableView'
-  );
-
-  let tableHeaderPath = tablePath?.get('children').find((child) =>
-    t.isJSXElement(child.node) &&
-    t.isJSXIdentifier(child.node.openingElement.name) &&
-    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
-  ) as NodePath<t.JSXElement> | undefined;
+  let tableHeaderPath = tablePath
+    ?.get('children')
+    .find(
+      child =>
+        t.isJSXElement(child.node) &&
+        t.isJSXIdentifier(child.node.openingElement.name) &&
+        getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+    ) as NodePath<t.JSXElement> | undefined;
 
   function findColumnKeyProp(path: NodePath<t.JSXElement>) {
     let columnKeyProp = 'id';
@@ -35,13 +40,17 @@ function updateRowFunctionArg(
           t.isArrowFunctionExpression(columnPath.parentPath.node) &&
           t.isJSXElement(columnPath.node) &&
           t.isJSXIdentifier(columnPath.node.openingElement.name) &&
-          getName(columnPath as NodePath<t.JSXElement>, columnPath.node.openingElement.name) === 'Column'
+          getName(columnPath as NodePath<t.JSXElement>, columnPath.node.openingElement.name) ===
+            'Column'
         ) {
           let openingElement = columnPath.get('openingElement');
-          let keyPropPath = openingElement.get('attributes').find(attr =>
-            t.isJSXAttribute(attr.node) &&
-            (attr.node.name.name === 'key' || attr.node.name.name === 'id')
-          );
+          let keyPropPath = openingElement
+            .get('attributes')
+            .find(
+              attr =>
+                t.isJSXAttribute(attr.node) &&
+                (attr.node.name.name === 'key' || attr.node.name.name === 'id')
+            );
           keyPropPath?.traverse({
             Identifier(innerPath) {
               if (
@@ -81,10 +90,7 @@ function updateRowFunctionArg(
             ) {
               // Replace with column key
               innerPath.replaceWith(
-                t.memberExpression(
-                  t.identifier('column'),
-                  t.identifier(columnKey ?? 'id')
-                )
+                t.memberExpression(t.identifier('column'), t.identifier(columnKey ?? 'id'))
               );
             }
           }

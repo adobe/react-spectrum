@@ -1,13 +1,13 @@
 {
   "ascending": "vzostupne",
   "ascendingSort": "zoradené zostupne podľa stĺpca {columnName}",
+  "collapse": "Zbaliť",
   "columnSize": "Počet pixelov: {value}",
   "descending": "zostupne",
   "descendingSort": "zoradené zostupne podľa stĺpca {columnName}",
+  "expand": "Rozbaliť",
   "resizerDescription": "Stlačením klávesu Enter začnete zmenu veľkosti",
   "select": "Vybrať",
   "selectAll": "Vybrať všetko",
-  "sortable": "zoraditeľný stĺpec",
-  "collapse": "Zbaliť",
-  "expand": "Rozbaliť"
+  "sortable": "zoraditeľný stĺpec"
 }

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Dynamic - Renames Item to PickerItem 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";

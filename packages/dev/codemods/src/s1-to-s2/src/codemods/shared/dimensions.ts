@@ -97,40 +97,12 @@ const dimensions = {
 };
 
 const spacingValues = [
-  0,
-  4,
-  8,
-  12,
-  16,
-  20,
-  24,
-  28,
-  32,
-  36,
-  40,
-  44,
-  48,
-  56,
-  64,
-  80,
-  96,
-  112,
-  128,
-  144,
-  160,
-  176,
-  192,
-  208,
-  224,
-  240,
-  256,
-  288,
-  320,
-  384
+  0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192,
+  208, 224, 240, 256, 288, 320, 384
 ];
 
 const sizing = {
-  'auto': 'auto',
+  auto: 'auto',
   '100vh': 'screen',
   'min-content': 'min',
   'max-content': 'max',
@@ -142,7 +114,10 @@ const FUNC_RE = /^\s*\w+\(/;
 // const SPECTRUM_VARIABLE_RE = /(static-)?size-\d+|single-line-(height|width)/g;
 const SIZING_RE = /auto|100vh|min-content|max-content|fit-content/;
 
-export function convertDimension(value: DimensionValue, type: 'size' | 'space' | 'px'): string | number | null {
+export function convertDimension(
+  value: DimensionValue,
+  type: 'size' | 'space' | 'px'
+): string | number | null {
   let pixelValue;
   if (typeof value === 'number') {
     pixelValue = value;
@@ -181,14 +156,20 @@ export function convertDimension(value: DimensionValue, type: 'size' | 'space' |
 }
 
 export function convertGridTrack(value: DimensionValue, toPixels = false): string | number | null {
-  if (typeof value === 'string' && /^max-content|min-content|minmax|auto|fit-content|repeat|\d+fr/.test(value)) {
+  if (
+    typeof value === 'string' &&
+    /^max-content|min-content|minmax|auto|fit-content|repeat|\d+fr/.test(value)
+  ) {
     return value;
   } else {
     return convertDimension(value, toPixels ? 'px' : 'space');
   }
 }
 
-export function convertUnsafeDimension(value: string | number, type: 'size' | 'space'): string | number | null {
+export function convertUnsafeDimension(
+  value: string | number,
+  type: 'size' | 'space'
+): string | number | null {
   if (typeof value === 'number') {
     return convertDimension(value, type);
   }

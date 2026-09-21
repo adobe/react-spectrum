@@ -1,1 +1,5 @@
-export {announce, clearAnnouncer, destroyAnnouncer} from '../../../src/live-announcer/LiveAnnouncer';
+export {
+  announce,
+  clearAnnouncer,
+  destroyAnnouncer
+} from '../../../src/live-announcer/LiveAnnouncer';

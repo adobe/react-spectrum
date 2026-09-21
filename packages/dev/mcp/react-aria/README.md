@@ -109,6 +109,10 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | `get_react_aria_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
 | `get_react_aria_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
 
+## Privacy Policy
+
+See [Adobe's privacy policy](https://www.adobe.com/privacy/policy.html).
+
 ## Development
 
 ### Testing locally
@@ -135,4 +139,19 @@ Update your MCP client configuration to use the local MCP server:
     }
   }
 }
+```
+
+## Bundling
+
+To build an [MCP Bundle (MCPB)](https://github.com/modelcontextprotocol/mcpb), first prepare the staging directory:
+
+```bash
+yarn workspace @react-spectrum/s2-docs generate:mcpb
+```
+
+Then validate and pack using the [`@anthropic-ai/mcpb`](https://www.npmjs.com/package/@anthropic-ai/mcpb) CLI (paths are printed by the script above):
+
+```bash
+npx @anthropic-ai/mcpb validate <staging-dir>
+npx @anthropic-ai/mcpb pack <staging-dir> <output-path>
 ```

@@ -10,11 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-export {useTableColumnResizeState, useTableState, UNSTABLE_useFilteredTableState, TableHeader, TableBody, Column, Row, Cell} from 'react-stately/useTableState';
+export {
+  useTableColumnResizeState,
+  useTableState,
+  UNSTABLE_useFilteredTableState,
+  TableHeader,
+  TableBody,
+  Column,
+  Row,
+  Cell
+} from 'react-stately/useTableState';
 export {TableCollection, buildHeaderRows} from 'react-stately/private/table/TableCollection';
 export {TableColumnLayout} from 'react-stately/private/table/TableColumnLayout';
 export {UNSTABLE_useTreeGridState} from 'react-stately/private/table/useTreeGridState';
-export type {TableColumnResizeState, TableColumnResizeStateProps, TableProps, TableState, TableStateProps, ColumnProps, ColumnSize, ColumnDynamicSize, ColumnStaticSize, ColumnElement, ColumnRenderer, TableHeaderProps, TableBodyProps, RowProps, RowElement, CellProps, CellElement, CellRenderer} from 'react-stately/useTableState';
+export type {
+  TableColumnResizeState,
+  TableColumnResizeStateProps,
+  TableProps,
+  TableState,
+  TableStateProps,
+  ColumnProps,
+  ColumnSize,
+  ColumnDynamicSize,
+  ColumnStaticSize,
+  ColumnElement,
+  ColumnRenderer,
+  TableHeaderProps,
+  TableBodyProps,
+  RowProps,
+  RowElement,
+  CellProps,
+  CellElement,
+  CellRenderer
+} from 'react-stately/useTableState';
 export type {CollectionBuilderContext} from 'react-stately/private/table/useTableState';
 export type {TreeGridState, TreeGridStateProps} from 'react-stately/private/table/useTreeGridState';
 export type {ITableCollection} from 'react-stately/private/table/TableCollection';

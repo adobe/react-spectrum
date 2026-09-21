@@ -55,8 +55,9 @@ governing permissions and limitations under the License.
 
   cursor: pointer;
 
-  transition: background-color var(--spectrum-global-animation-duration-100) ease-out,
-              color var(--spectrum-global-animation-duration-100) ease-out;
+  transition:
+    background-color var(--spectrum-global-animation-duration-100) ease-out,
+    color var(--spectrum-global-animation-duration-100) ease-out;
 
   &:focus {
     outline: none;
@@ -78,7 +79,6 @@ governing permissions and limitations under the License.
     margin-inline-end: var(--spectrum-sidenav-icon-gap);
   }
 }
-
 
 .spectrum-SideNav-heading {
   block-size: var(--spectrum-sidenav-header-height);
@@ -110,12 +110,18 @@ governing permissions and limitations under the License.
     .spectrum-SideNav-itemLink {
       font-weight: var(--spectrum-sidenav-item-font-weight);
 
-      padding-inline-start: calc(var(--spectrum-sidenav-multilevel-item-indentation-level1) + var(--spectrum-sidenav-item-padding-x));
+      padding-inline-start: calc(
+        var(--spectrum-sidenav-multilevel-item-indentation-level1) +
+          var(--spectrum-sidenav-item-padding-x)
+      );
     }
 
     .spectrum-SideNav {
       .spectrum-SideNav-itemLink {
-        padding-inline-start: calc(var(--spectrum-sidenav-multilevel-item-indentation-level2) + var(--spectrum-sidenav-item-padding-x));
+        padding-inline-start: calc(
+          var(--spectrum-sidenav-multilevel-item-indentation-level2) +
+            var(--spectrum-sidenav-item-padding-x)
+        );
       }
     }
   }

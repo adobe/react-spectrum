@@ -3,30 +3,30 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 3456",
-    "build": "next build",
+    "dev": "next dev --webpack -p 3456",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@react-spectrum/s2": "latest",
-    "next": "15.4.7",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "next": "16.2.9",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "eslint": "^8",
-    "eslint-config-next": "15.4.7",
+    "eslint-config-next": "16.2.9",
     "typescript": "^5",
     "unplugin-parcel-macros": "0.1.1"
   },
   "resolutions": {
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4"
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6"
   },
   "browserslist": "defaults"
 }

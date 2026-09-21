@@ -25,7 +25,13 @@ module.exports = new Resolver({
     });
   },
   async resolve({dependency, options, specifier, config: resolver}) {
-    if (dependency.specifier.startsWith('docs:') || dependency.specifier.startsWith('apiCheck:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json' || dependency.pipeline === 'apiCheck') {
+    if (
+      dependency.specifier.startsWith('docs:') ||
+      dependency.specifier.startsWith('apiCheck:') ||
+      dependency.pipeline === 'docs' ||
+      dependency.pipeline === 'docs-json' ||
+      dependency.pipeline === 'apiCheck'
+    ) {
       let resolved = await resolver.resolve({
         filename: specifier,
         specifierType: dependency.specifierType,
@@ -39,11 +45,19 @@ module.exports = new Resolver({
         // HACK: ensure source code is used to build types, not compiled code.
         // Parcel removes the source field from package.json when the code comes from node_modules.
         // these are full filepaths, so don't check if they start with the pattern, they won't
-        if ((
-          /@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum)/g.test(resolved.filePath)
-          || /react-aria-components/g.test(resolved.filePath)
-        ) && resolved.filePath.endsWith('.d.ts')) {
-          resolved.filePath = path.resolve(path.dirname(resolved.filePath), '..', 'src', 'index.ts');
+        if (
+          (/@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum)/g.test(
+            resolved.filePath
+          ) ||
+            /react-aria-components/g.test(resolved.filePath)) &&
+          resolved.filePath.endsWith('.d.ts')
+        ) {
+          resolved.filePath = path.resolve(
+            path.dirname(resolved.filePath),
+            '..',
+            'src',
+            'index.ts'
+          );
         }
 
         resolved.filePath = await options.inputFS.realpath(resolved.filePath);
@@ -52,12 +66,18 @@ module.exports = new Resolver({
       }
     }
 
-    if (/^(@(react-spectrum|react-aria)\/(.*?)|react-aria-components)\/docs\/(.*)$/.test(specifier)) {
+    if (
+      /^(@(react-spectrum|react-aria)\/(.*?)|react-aria-components)\/docs\/(.*)$/.test(specifier)
+    ) {
       let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
       return {filePath: path.join(options.projectRoot, baseDir, specifier)};
     }
 
-    if (/^((@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum))|react-aria-components|react-aria|react-stately)\/.*package.json$/.test(specifier)) {
+    if (
+      /^((@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum))|react-aria-components|react-aria|react-stately)\/.*package.json$/.test(
+        specifier
+      )
+    ) {
       let resolved = await resolver.resolve({
         filename: specifier,
         specifierType: dependency.specifierType,

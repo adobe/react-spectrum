@@ -35,7 +35,7 @@ export default meta;
 type Story = StoryObj<typeof RangeSlider>;
 
 export const Example: Story = {
-  render: (args) => <RangeSlider {...args} />,
+  render: args => <RangeSlider {...args} />,
   args: {
     label: 'Range',
     defaultValue: {
@@ -46,7 +46,7 @@ export const Example: Story = {
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <RangeSlider
       {...args}
       contextualHelp={
@@ -54,19 +54,19 @@ export const ContextualHelpExample: Story = {
           <Heading>What is a ice cream?</Heading>
           <Content>
             <Text>
-              A combination of sugar, eggs, milk, and cream is cooked to make
-              a custard base. Then, flavorings are added, and this flavored
-              mixture is carefully churned and frozen to make ice cream.
+              A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then,
+              flavorings are added, and this flavored mixture is carefully churned and frozen to
+              make ice cream.
             </Text>
           </Content>
           <Footer>
-            <Link
-              isStandalone
-              href="https://en.wikipedia.org/wiki/Ice_cream"
-              target="_blank">Learn more about ice cream</Link>
+            <Link isStandalone href="https://en.wikipedia.org/wiki/Ice_cream" target="_blank">
+              Learn more about ice cream
+            </Link>
           </Footer>
         </ContextualHelp>
-      } />
+      }
+    />
   ),
   args: {
     label: 'Range',

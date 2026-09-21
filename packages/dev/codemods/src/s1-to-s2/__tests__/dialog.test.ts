@@ -18,7 +18,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes divider', `
+test(
+  'Removes divider',
+  `
 import {Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <Dialog>
@@ -26,9 +28,12 @@ import {Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
   <Divider />
   <Content>Content</Content>
 </Dialog>
-`);
+`
+);
 
-test('Moves close function from DialogTrigger to Dialog', `
+test(
+  'Moves close function from DialogTrigger to Dialog',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger>
@@ -41,9 +46,12 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     </Dialog>
   }
 </DialogTrigger>
-`);
+`
+);
 
-test('bails when it cannot move the close function', `
+test(
+  'bails when it cannot move the close function',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger>
@@ -52,9 +60,12 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     <ReusableDialog />
   }
 </DialogTrigger>
-`);
+`
+);
 
-test('Comments out type="tray"', `
+test(
+  'Comments out type="tray"',
+  `
 import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} from '@adobe/react-spectrum';
 
 <DialogTrigger type="tray">
@@ -63,10 +74,12 @@ import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} fr
     50% disk space remaining.
   </Dialog>
 </DialogTrigger>
-`);
+`
+);
 
-
-test('Comments out if type might be "tray"', `
+test(
+  'Comments out if type might be "tray"',
+  `
 import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} from '@adobe/react-spectrum';
 
 <DialogTrigger type={true ? "tray" : "popover"}>
@@ -75,9 +88,12 @@ import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} fr
     50% disk space remaining.
   </Dialog>
 </DialogTrigger>
-`);
+`
+);
 
-test('Comments out mobileType', `
+test(
+  'Comments out mobileType',
+  `
 import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} from '@adobe/react-spectrum';
 
 <>
@@ -94,9 +110,12 @@ import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} fr
     </Dialog>
   </DialogTrigger>
 </>
-`);
+`
+);
 
-test('Removes onDismiss and leaves a comment', `
+test(
+  'Removes onDismiss and leaves a comment',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger>
@@ -109,9 +128,12 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     </Dialog>
   }
 </DialogTrigger>
-`);
+`
+);
 
-test('Moves isDismissable', `
+test(
+  'Moves isDismissable',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger isDismissable>
@@ -122,9 +144,12 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     <Content>Content</Content>
   </Dialog>
 </DialogTrigger>
-`);
+`
+);
 
-test('Replaces type="popover" with Popover component', `
+test(
+  'Replaces type="popover" with Popover component',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger type="popover" hideArrow>
@@ -135,9 +160,12 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     <Content>Content</Content>
   </Dialog>
 </DialogTrigger>
-`);
+`
+);
 
-test('Replaces type="fullscreen" with FullscreenDialog component', `
+test(
+  'Replaces type="fullscreen" with FullscreenDialog component',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger type="fullscreen" isKeyboardDismissDisabled>
@@ -148,9 +176,12 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     <Content>Content</Content>
   </Dialog>
 </DialogTrigger>
-`);
+`
+);
 
-test('Replaces type="fullscreenTakeover" with FullscreenDialog component', `
+test(
+  'Replaces type="fullscreenTakeover" with FullscreenDialog component',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger type="fullscreenTakeover">
@@ -161,9 +192,12 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     <Content>Content</Content>
   </Dialog>
 </DialogTrigger>
-`);
+`
+);
 
-test('Replaces type="fullscreenTakeover" with FullscreenDialog component and close function', `
+test(
+  'Replaces type="fullscreenTakeover" with FullscreenDialog component and close function',
+  `
 import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogTrigger type="fullscreenTakeover">
@@ -176,9 +210,12 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
     </Dialog>
   }
 </DialogTrigger>
-`);
+`
+);
 
-test('Moves isDismissable from DialogContainer', `
+test(
+  'Moves isDismissable from DialogContainer',
+  `
 import {DialogContainer, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogContainer isDismissable>
@@ -193,9 +230,12 @@ import {DialogContainer, Button, Dialog, Heading, Content, Divider} from '@adobe
     <Content>Content</Content>
   </Dialog>}
 </DialogContainer>
-`);
+`
+);
 
-test('Replaces type="fullscreen" with FullscreenDialog component in DialogContainer', `
+test(
+  'Replaces type="fullscreen" with FullscreenDialog component in DialogContainer',
+  `
 import {DialogContainer, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
 
 <DialogContainer type="fullscreen" isKeyboardDismissDisabled>
@@ -210,4 +250,5 @@ import {DialogContainer, Button, Dialog, Heading, Content, Divider} from '@adobe
     <Content>Content</Content>
   </Dialog>}
 </DialogContainer>
-`);
+`
+);

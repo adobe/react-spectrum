@@ -62,7 +62,11 @@ function shortName(key, value) {
 const meta: Meta<SpectrumComboBoxProps<object>> = {
   title: 'ComboBox',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['en-US'], scales: ['medium', 'large']}
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark', 'lightest', 'darkest'],
+      locales: ['en-US'],
+      scales: ['medium', 'large']
+    }
   }
 };
 
@@ -79,13 +83,20 @@ let items = [
 const Template = (args: SpectrumComboBoxProps<unknown>): JSX.Element => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
 
       return (
-        <ComboBox key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} defaultItems={items}>
+        <ComboBox
+          key={key}
+          {...args}
+          {...c}
+          label={args['aria-label'] ? undefined : key}
+          defaultItems={items}>
           {(item: any) => <Item>{item.name}</Item>}
         </ComboBox>
       );
@@ -96,59 +107,63 @@ const Template = (args: SpectrumComboBoxProps<unknown>): JSX.Element => (
 // Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
 const TemplateSideLabel = (args: SpectrumComboBoxProps<unknown>): JSX.Element => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={800}>
-    {combinations.filter(combo => !(combo.isReadOnly || combo.isDisabled)).map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
-      if (!key) {
-        key = 'empty';
-      }
+    {combinations
+      .filter(combo => !(combo.isReadOnly || combo.isDisabled))
+      .map(c => {
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
+        if (!key) {
+          key = 'empty';
+        }
 
-      return (
-        <ComboBox key={key} {...args} {...c} label={key} defaultItems={items}>
-          {(item: any) => <Item>{item.name}</Item>}
-        </ComboBox>
-      );
-    })}
+        return (
+          <ComboBox key={key} {...args} {...c} label={key} defaultItems={items}>
+            {(item: any) => <Item>{item.name}</Item>}
+          </ComboBox>
+        );
+      })}
   </Grid>
 );
 
 export const PropDefaults: ComboBoxStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
 export const PropSelectedKey: ComboBoxStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'selectedKey: 2',
   args: {selectedKey: '2'}
 };
 
 export const PropInputValue: ComboBoxStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'inputValue: Blah',
   args: {inputValue: 'Blah'}
 };
 
 export const PropAriaLabelled: ComboBoxStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'aria-label',
   args: {'aria-label': 'Label'}
 };
 
 export const PropLabelEnd: ComboBoxStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'label end',
   args: {...PropDefaults.args, labelAlign: 'end'}
 };
 
 export const PropLabelSide: ComboBoxStory = {
-  render: (args) => <TemplateSideLabel {...args} />,
+  render: args => <TemplateSideLabel {...args} />,
   name: 'label side',
   args: {...PropDefaults.args, labelPosition: 'side'}
 };
 
 export const PropCustomWidth: ComboBoxStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'custom width',
   args: {...PropDefaults.args, width: 'size-1600'},
 
@@ -160,7 +175,7 @@ export const PropCustomWidth: ComboBoxStory = {
 };
 
 export const PropContextualHelp: ComboBoxStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'contextual help',
   args: {
     ...PropDefaults.args,

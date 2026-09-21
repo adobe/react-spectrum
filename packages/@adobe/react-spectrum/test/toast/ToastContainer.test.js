@@ -85,7 +85,9 @@ describe('Toast Provider and Container', function () {
     const domProps = {
       'data-testid': testid
     };
-    let {getByRole, queryByTestId, getByTestId, queryByText} = renderComponent(<RenderToastButton {...domProps} actionLabel="Update" />);
+    let {getByRole, queryByTestId, getByTestId, queryByText} = renderComponent(
+      <RenderToastButton {...domProps} actionLabel="Update" />
+    );
     let button = getByRole('button');
 
     expect(queryByTestId(testid)).toBeNull();
@@ -96,7 +98,6 @@ describe('Toast Provider and Container', function () {
     expect(secondaryButton).toBeDefined();
     let closeButton = getByTestId('rsp-Toast-closeButton');
     expect(closeButton).toBeDefined();
-
   });
 
   it('should label icon by variant', async () => {
@@ -174,7 +175,9 @@ describe('Toast Provider and Container', function () {
   it('renders a toast with an action', async () => {
     let onAction = jest.fn();
     let onClose = jest.fn();
-    let {getByRole, queryByRole} = renderComponent(<RenderToastButton actionLabel="Action" onAction={onAction} onClose={onClose} />);
+    let {getByRole, queryByRole} = renderComponent(
+      <RenderToastButton actionLabel="Action" onAction={onAction} onClose={onClose} />
+    );
     let button = getByRole('button');
 
     expect(queryByRole('alertdialog')).toBeNull();
@@ -197,7 +200,14 @@ describe('Toast Provider and Container', function () {
   it('closes toast on action', async () => {
     let onAction = jest.fn();
     let onClose = jest.fn();
-    let {getByRole, queryByRole} = renderComponent(<RenderToastButton actionLabel="Action" onAction={onAction} onClose={onClose} shouldCloseOnAction />);
+    let {getByRole, queryByRole} = renderComponent(
+      <RenderToastButton
+        actionLabel="Action"
+        onAction={onAction}
+        onClose={onClose}
+        shouldCloseOnAction
+      />
+    );
     let button = getByRole('button');
 
     expect(queryByRole('alertdialog')).toBeNull();
@@ -262,7 +272,7 @@ describe('Toast Provider and Container', function () {
     await user.click(closeButton);
 
     expect(document.activeElement).toBe(button);
-    
+
     toast = getAllByRole('alertdialog')[0];
     closeButton = within(toast).getByRole('button');
     await user.click(closeButton);

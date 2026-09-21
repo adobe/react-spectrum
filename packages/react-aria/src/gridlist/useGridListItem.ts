@@ -11,11 +11,23 @@
  */
 
 import {chain} from '../utils/chain';
-
-import {Collection, DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
+import {
+  Collection,
+  DOMAttributes,
+  FocusableElement,
+  Key,
+  RefObject,
+  Node as RSNode
+} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
-import {getActiveElement, getEventTarget, isFocusWithin, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {
+  getActiveElement,
+  getEventTarget,
+  isFocusWithin,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {getRowId, listMap} from './utils';
 import {getScrollParent} from '../utils/getScrollParent';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
@@ -30,31 +42,47 @@ import {useSlotId} from '../utils/useId';
 import {useSyntheticLinkProps} from '../utils/openLink';
 
 export interface AriaGridListItemOptions {
-  /** An object representing the list item. Contains all the relevant information that makes up the list row. */
-  node: RSNode<unknown>,
+  /**
+   * An object representing the list item. Contains all the relevant information that makes up the
+   * list row.
+   */
+  node: RSNode<unknown>;
   /** Whether the list row is contained in a virtual scroller. */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean;
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean
+  hasChildItems?: boolean;
+  /**
+   * Whether the row or its first focusable child element should be focused when the row is
+   * focused.
+   *
+   * @default 'row'
+   */
+  focusMode?: 'child' | 'row';
+  /**
+   * Whether the row should support arrow key navigation even when the containing collection uses
+   * tab keyboard navigation. Allows users to navigate between rows with arrow keys while
+   * focus is on an interactive child element within the row.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 export interface GridListItemAria extends SelectableItemStates {
   /** Props for the list row element. */
-  rowProps: DOMAttributes,
+  rowProps: DOMAttributes;
   /** Props for the grid cell element within the list row. */
-  gridCellProps: DOMAttributes,
+  gridCellProps: DOMAttributes;
   /** Props for the list item description element, if any. */
-  descriptionProps: DOMAttributes
+  descriptionProps: DOMAttributes;
 }
 
 const EXPANSION_KEYS = {
-  'expand': {
+  expand: {
     ltr: 'ArrowRight',
     rtl: 'ArrowLeft'
   },
-  'collapse': {
+  collapse: {
     ltr: 'ArrowLeft',
     rtl: 'ArrowRight'
   }
@@ -62,32 +90,56 @@ const EXPANSION_KEYS = {
 
 /**
  * Provides the behavior and accessibility implementation for a row in a grid list.
+ *
  * @param props - Props for the row.
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement | null>): GridListItemAria {
+export function useGridListItem<T>(
+  props: AriaGridListItemOptions,
+  state: ListState<T> | TreeState<T>,
+  ref: RefObject<FocusableElement | null>
+): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
-  let {
-    node,
-    isVirtualized
-  } = props;
+  let {node, isVirtualized, focusMode = 'row', allowsArrowNavigation} = props;
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} = listMap.get(state)!;
+  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} =
+    listMap.get(state)!;
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
   let keyWhenFocused = useRef<Key | null>(null);
   let focus = () => {
+    if (ref.current === null) {
+      return;
+    }
+
+    if (focusMode === 'child') {
+      // If focus is already on a focusable child within the row, early return so we don't shift focus
+      if (
+        isFocusWithin(ref.current) &&
+        ref.current !== getActiveElement(getOwnerDocument(ref.current))
+      ) {
+        return;
+      }
+
+      let treeWalker = getFocusableTreeWalker(ref.current, {tabbable: true});
+      let focusable = treeWalker.firstChild() as FocusableElement;
+      if (focusable) {
+        focusSafely(focusable);
+        scrollIntoViewport(focusable, {containingElement: getScrollParent(focusable)});
+        return;
+      }
+    }
+
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
     if (
-      ref.current !== null &&
-      ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !isFocusWithin(ref.current))
+      (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
+      !isFocusWithin(ref.current)
     ) {
       focusSafely(ref.current);
     }
@@ -102,7 +154,12 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     let children = state.collection.getChildren?.(node.key);
     hasChildRows = hasChildRows || [...(children ?? [])].length > 1;
 
-    if (onAction == null && !hasLink && state.selectionManager.selectionMode === 'none' && hasChildRows) {
+    if (
+      onAction == null &&
+      !hasLink &&
+      state.selectionManager.selectionMode === 'none' &&
+      hasChildRows
+    ) {
       onAction = () => state.toggleKey(node.key);
     }
 
@@ -137,50 +194,50 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     ref,
     isVirtualized,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp || shouldSelectOnPressUp,
-    onAction: onAction || node.props?.onAction ? chain(node.props?.onAction, onAction ? () => onAction(node.key) : undefined) : undefined,
+    onAction:
+      onAction || node.props?.onAction
+        ? chain(node.props?.onAction, onAction ? () => onAction(node.key) : undefined)
+        : undefined,
     focus,
     linkBehavior
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
-    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || !ref.current || !activeElement) {
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
+    if (
+      !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
+      !ref.current ||
+      !activeElement
+    ) {
       return;
     }
 
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = activeElement;
 
-    if ('expandedKeys' in state && activeElement === ref.current) {
-      if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && !state.expandedKeys.has(node.key)) {
-        state.toggleKey(node.key);
-        e.stopPropagation();
-        return;
-      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key) {
-        // If item is collapsible, collapse it; else move to parent
-        if (hasChildRows && state.expandedKeys.has(node.key)) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-          return;
-        } else if (
-          !state.expandedKeys.has(node.key) &&
-          node.parentKey
-        ) {
-          // Item is a leaf or already collapsed, move focus to parent
-          state.selectionManager.setFocusedKey(node.parentKey);
-          e.stopPropagation();
-          return;
-        }
-      }
+    if (
+      handleTreeExpansionKeys(
+        e,
+        state,
+        node,
+        hasChildRows,
+        direction,
+        activeElement,
+        ref.current,
+        allowsArrowNavigation
+      )
+    ) {
+      return;
     }
 
     switch (e.key) {
       case 'ArrowLeft': {
         if (keyboardNavigationBehavior === 'arrow') {
           // Find the next focusable element within the row.
-          let focusable = direction === 'rtl'
-            ? walker.nextNode() as FocusableElement
-            : walker.previousNode() as FocusableElement;
+          let focusable =
+            direction === 'rtl'
+              ? (walker.nextNode() as FocusableElement)
+              : (walker.previousNode() as FocusableElement);
 
           if (focusable) {
             e.preventDefault();
@@ -197,6 +254,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
             } else {
               walker.currentNode = ref.current;
               let lastElement = last(walker);
+              // oxlint-disable-next-line max-depth
               if (lastElement) {
                 focusSafely(lastElement);
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
@@ -208,9 +266,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       }
       case 'ArrowRight': {
         if (keyboardNavigationBehavior === 'arrow') {
-          let focusable = direction === 'rtl'
-            ? walker.previousNode() as FocusableElement
-            : walker.nextNode() as FocusableElement;
+          let focusable =
+            direction === 'rtl'
+              ? (walker.previousNode() as FocusableElement)
+              : (walker.nextNode() as FocusableElement);
 
           if (focusable) {
             e.preventDefault();
@@ -226,6 +285,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
             } else {
               walker.currentNode = ref.current;
               let lastElement = last(walker);
+              // oxlint-disable-next-line max-depth
               if (lastElement) {
                 focusSafely(lastElement);
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
@@ -251,7 +311,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let onFocus = (e) => {
+  let onFocus = e => {
     keyWhenFocused.current = node.key;
     if (getEventTarget(e) !== ref.current) {
       // useSelectableItem only handles setting the focused key when
@@ -265,12 +325,62 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       }
       return;
     }
+
+    // if focus goes back to cell from child, make sure we don't refocus the cell if we are in focusMode=child
+    // since that would be a focus trap
+    if (
+      focusMode === 'child' &&
+      e.relatedTarget &&
+      nodeContains(ref.current, e.relatedTarget as Element)
+    ) {
+      return;
+    }
+
+    // If the cell itself is focused, wait a frame so that focus finishes propagating
+    // up to the tree, and move focus to a focusable child if possible.
+    requestAnimationFrame(() => {
+      if (
+        focusMode === 'child' &&
+        getActiveElement(getOwnerDocument(ref.current)) === ref.current
+      ) {
+        focus();
+      }
+    });
   };
 
-  let onKeyDown = (e) => {
-    let activeElement = getActiveElement();
-    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || !ref.current || !activeElement) {
+  let onKeyDown = (e: ReactKeyboardEvent) => {
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
+    if (
+      !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
+      !ref.current ||
+      !activeElement
+    ) {
       return;
+    }
+
+    if (keyboardNavigationBehavior === 'tab') {
+      // Stop propagation for all events that originate from the children of the gridlist item since we don't want to trigger
+      // grid level interactions (row navigation/typeselect/etc)
+      // exception made for Tab since that needs to propagate to useSelectableCollection to tab out of the gridlist, might be others?
+      if (getEventTarget(e) !== ref.current && e.key !== 'Tab') {
+        e.stopPropagation();
+        return;
+      }
+
+      if (
+        handleTreeExpansionKeys(
+          e,
+          state,
+          node,
+          hasChildRows,
+          direction,
+          activeElement,
+          ref.current,
+          allowsArrowNavigation
+        )
+      ) {
+        return;
+      }
     }
 
     switch (e.key) {
@@ -302,24 +412,50 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   //   });
   // }
 
+  // oxlint-disable-next-line react/react-compiler
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture,
-    onKeyDown,
+    onKeyDownCapture:
+      keyboardNavigationBehavior === 'arrow' || allowsArrowNavigation
+        ? onKeyDownCapture
+        : undefined,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node['aria-label'] || node.textValue || undefined,
-    'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
+    'aria-selected': state.selectionManager.canSelectItem(node.key)
+      ? state.selectionManager.isSelected(node.key)
+      : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
-    'aria-labelledby': descriptionId && (node['aria-label'] || node.textValue) ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
+    'aria-labelledby':
+      descriptionId && (node['aria-label'] || node.textValue)
+        ? `${getRowId(state, node.key)} ${descriptionId}`
+        : undefined,
     id: getRowId(state, node.key)
   });
+
+  if (focusMode === 'child' && allowsArrowNavigation && keyboardNavigationBehavior === 'tab') {
+    rowProps.tabIndex = -1;
+  }
+
+  // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
+  // is stopped. this also fixes space not working in a textfield in a tree parent row
+  let baseOnKeyDown = rowProps.onKeyDown;
+  rowProps.onKeyDown = (e: ReactKeyboardEvent<FocusableElement>) => {
+    onKeyDown(e as ReactKeyboardEvent);
+    if (!e.isPropagationStopped()) {
+      baseOnKeyDown?.(e);
+    }
+  };
 
   if (isVirtualized) {
     let {collection} = state;
     let nodes = [...collection];
     // TODO: refactor ListCollection to store an absolute index of a node's position?
-    rowProps['aria-rowindex'] = nodes.find(node => node.type === 'section') ? [...collection.getKeys()].filter((key) => collection.getItem(key)?.type !== 'section').findIndex((key) => key === node.key) + 1 : node.index + 1;
+    rowProps['aria-rowindex'] = nodes.find(node => node.type === 'section')
+      ? [...collection.getKeys()]
+          .filter(key => collection.getItem(key)?.type !== 'section')
+          .findIndex(key => key === node.key) + 1
+      : node.index + 1;
   }
 
   let gridCellProps = {
@@ -328,6 +464,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
+  // oxlint-disable react/react-compiler
   return {
     rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
@@ -336,6 +473,52 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     },
     ...itemStates
   };
+  // oxlint-enable react/react-compiler
+}
+
+function handleTreeExpansionKeys<T>(
+  e: ReactKeyboardEvent,
+  state: ListState<T> | TreeState<T>,
+  node: RSNode<unknown>,
+  hasChildRows: boolean | undefined,
+  direction: string,
+  activeElement: Element | null,
+  rowRef: FocusableElement | null,
+  allowsArrowNavigation: boolean | undefined
+): boolean {
+  if (!('expandedKeys' in state) || (!allowsArrowNavigation && activeElement !== rowRef)) {
+    return false;
+  }
+  if (
+    e.key === EXPANSION_KEYS['expand'][direction] &&
+    state.selectionManager.focusedKey === node.key &&
+    hasChildRows &&
+    !state.expandedKeys.has(node.key)
+  ) {
+    state.toggleKey(node.key);
+    e.stopPropagation();
+    return true;
+  } else if (
+    e.key === EXPANSION_KEYS['collapse'][direction] &&
+    state.selectionManager.focusedKey === node.key
+  ) {
+    // If item is collapsible, collapse it; else move to parent
+    if (hasChildRows && state.expandedKeys.has(node.key)) {
+      state.toggleKey(node.key);
+      e.stopPropagation();
+      return true;
+    } else if (
+      !state.expandedKeys.has(node.key) &&
+      node.parentKey &&
+      state.collection.getItem(node.parentKey)?.type === 'item'
+    ) {
+      // Item is a leaf or already collapsed, move focus to parent
+      state.selectionManager.setFocusedKey(node.parentKey);
+      e.stopPropagation();
+      return true;
+    }
+  }
+  return false;
 }
 
 function last(walker: TreeWalker) {
@@ -355,7 +538,7 @@ function getDirectChildren<T>(parent: RSNode<T>, collection: Collection<RSNode<T
   // Instead, get all children and start at the first node (rather than just using firstChildKey) and only look at its siblings
   let children = collection.getChildren?.(parent.key);
   let childArray = children ? Array.from(children) : [];
-  let node = childArray.length > 0 ?  childArray[0] : null;
+  let node = childArray.length > 0 ? childArray[0] : null;
   let siblings: RSNode<T>[] = [];
   while (node) {
     siblings.push(node);

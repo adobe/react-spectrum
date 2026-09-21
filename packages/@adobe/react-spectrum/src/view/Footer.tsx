@@ -22,7 +22,7 @@ export interface FooterProps extends DOMProps, StyleProps {
   /**
    * Footer content.
    */
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
@@ -30,18 +30,13 @@ export interface FooterProps extends DOMProps, StyleProps {
  */
 export const Footer = forwardRef(function Footer(props: FooterProps, ref: DOMRef) {
   props = useSlotProps(props, 'footer');
-  let {
-    children,
-    ...otherProps
-  } = props;
+  let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
   return (
     <footer {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
-      <ClearSlots>
-        {children}
-      </ClearSlots>
+      <ClearSlots>{children}</ClearSlots>
     </footer>
   );
 });

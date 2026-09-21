@@ -21,24 +21,22 @@ import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
 
 interface SpectrumBreadcrumbItemProps extends BreadcrumbItemProps {
-  isMenu?: boolean
+  isMenu?: boolean;
 }
 
 export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps): JSX.Element {
-  let {
-    children,
-    isCurrent,
-    isDisabled,
-    isMenu
-  } = props;
+  let {children, isCurrent, isDisabled, isMenu} = props;
 
   let {direction} = useLocale();
   let ref = useRef(null);
   let ElementType: React.ElementType = props.href ? 'a' : 'span';
-  let {itemProps} = useBreadcrumbItem({
-    ...props,
-    elementType: ElementType
-  }, ref);
+  let {itemProps} = useBreadcrumbItem(
+    {
+      ...props,
+      elementType: ElementType
+    },
+    ref
+  );
   let {hoverProps, isHovered} = useHover(props);
 
   // If this item contains a menu button, then it shouldn't be a link.
@@ -52,29 +50,19 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps): JSX.Element 
         <ElementType
           {...mergeProps(itemProps, hoverProps)}
           ref={ref}
-          className={
-            classNames(
-              styles,
-              {
-                'spectrum-Breadcrumbs-itemLink': !isMenu,
-                'is-disabled': !isCurrent && isDisabled,
-                'is-hovered': isHovered
-              }
-            )
-          }>
+          className={classNames(styles, {
+            'spectrum-Breadcrumbs-itemLink': !isMenu,
+            'is-disabled': !isCurrent && isDisabled,
+            'is-hovered': isHovered
+          })}>
           {children}
         </ElementType>
       </FocusRing>
       <ChevronRightSmall
-        UNSAFE_className={
-          classNames(
-            styles,
-            'spectrum-Breadcrumbs-itemSeparator',
-            {
-              'is-reversed': direction === 'rtl'
-            }
-          )
-        } />
+        UNSAFE_className={classNames(styles, 'spectrum-Breadcrumbs-itemSeparator', {
+          'is-reversed': direction === 'rtl'
+        })}
+      />
     </Fragment>
   );
 }

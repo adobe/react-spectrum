@@ -4,6 +4,10 @@ import {render} from '@testing-library/react';
 
 describe('smoke test', () => {
   it('should render', () => {
-    render(<Provider theme={defaultTheme}><Home /></Provider>);
+    render(
+      <Provider theme={defaultTheme}>
+        <Home />
+      </Provider>
+    );
   });
 });

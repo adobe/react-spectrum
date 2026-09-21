@@ -19,15 +19,19 @@ import styles from './styles.css';
 import {useDateSegment} from 'react-aria/useDateField';
 
 interface DatePickerSegmentProps extends AriaDatePickerProps<any> {
-  segment: DateSegment,
-  state: DateFieldState
+  segment: DateSegment;
+  state: DateFieldState;
 }
 
 interface LiteralSegmentProps {
-  segment: DateSegment
+  segment: DateSegment;
 }
 
-export function DatePickerSegment({segment, state, ...otherProps}: DatePickerSegmentProps): JSX.Element {
+export function DatePickerSegment({
+  segment,
+  state,
+  ...otherProps
+}: DatePickerSegmentProps): JSX.Element {
   switch (segment.type) {
     // A separator, e.g. punctuation
     case 'literal':
@@ -64,7 +68,15 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
       })}
       style={segmentProps.style}
       data-testid={segment.type}>
-      {segment.isPlaceholder ? <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span> : segment.text}
+      {segment.isPlaceholder ? (
+        <span
+          aria-hidden="true"
+          className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>
+          {segment.placeholder}
+        </span>
+      ) : (
+        segment.text
+      )}
     </span>
   );
 }

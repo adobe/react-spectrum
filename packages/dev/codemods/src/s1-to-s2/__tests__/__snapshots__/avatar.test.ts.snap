@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Updates size prop to pixel value 1`] = `
 "import { Avatar } from "@react-spectrum/s2";

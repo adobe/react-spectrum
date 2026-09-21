@@ -41,7 +41,6 @@ import {
 } from '..';
 import {isLocalTimeZoneOverridden} from '../src/queries';
 
-
 describe('queries', function () {
   describe('isSameDay', function () {
     it('works with two dates in the same calendar', function () {
@@ -49,18 +48,60 @@ describe('queries', function () {
       expect(isSameDay(new CalendarDate(2019, 2, 3), new CalendarDate(2020, 2, 3))).toBe(false);
       expect(isSameDay(new CalendarDate(2020, 3, 3), new CalendarDate(2020, 2, 3))).toBe(false);
       expect(isSameDay(new CalendarDate(2020, 2, 4), new CalendarDate(2020, 2, 3))).toBe(false);
-      expect(isSameDay(new CalendarDate('AD', 1, 1, 1), new CalendarDate('BC', 1, 1, 1))).toBe(false);
+      expect(isSameDay(new CalendarDate('AD', 1, 1, 1), new CalendarDate('BC', 1, 1, 1))).toBe(
+        false
+      );
     });
 
     it('works with two dates in different calendars', function () {
-      expect(isSameDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(true);
-      expect(isSameDay(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4), new CalendarDate(2021, 4, 16))).toBe(true);
-      expect(isSameDay(new CalendarDate(2019, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isSameDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1441, 9, 4))).toBe(false);
-      expect(isSameDay(new CalendarDate(2021, 5, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isSameDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4))).toBe(false);
-      expect(isSameDay(new CalendarDate(2021, 4, 17), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isSameDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3))).toBe(false);
+      expect(
+        isSameDay(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(true);
+      expect(
+        isSameDay(
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4),
+          new CalendarDate(2021, 4, 16)
+        )
+      ).toBe(true);
+      expect(
+        isSameDay(
+          new CalendarDate(2019, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameDay(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1441, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameDay(
+          new CalendarDate(2021, 5, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameDay(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameDay(
+          new CalendarDate(2021, 4, 17),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameDay(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3)
+        )
+      ).toBe(false);
     });
 
     it('works in Persian calendar', function () {
@@ -80,19 +121,69 @@ describe('queries', function () {
     });
 
     it('works with two dates in different calendars', function () {
-      expect(isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(true);
-      expect(isSameMonth(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4), new CalendarDate(2021, 4, 16))).toBe(true);
-      expect(isSameMonth(new CalendarDate(2019, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1441, 9, 4))).toBe(false);
-      expect(isSameMonth(new CalendarDate(2021, 5, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4))).toBe(false);
-      expect(isSameMonth(new CalendarDate(2021, 4, 17), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(true);
-      expect(isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3))).toBe(true);
+      expect(
+        isSameMonth(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(true);
+      expect(
+        isSameMonth(
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4),
+          new CalendarDate(2021, 4, 16)
+        )
+      ).toBe(true);
+      expect(
+        isSameMonth(
+          new CalendarDate(2019, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameMonth(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1441, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameMonth(
+          new CalendarDate(2021, 5, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameMonth(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameMonth(
+          new CalendarDate(2021, 4, 17),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(true);
+      expect(
+        isSameMonth(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3)
+        )
+      ).toBe(true);
     });
 
     it('works with months that span different eras', function () {
-      expect(isSameMonth(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3), new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10))).toBe(true);
-      expect(isSameMonth(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3), new CalendarDate(1989, 1, 10))).toBe(true);
+      expect(
+        isSameMonth(
+          new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3),
+          new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10)
+        )
+      ).toBe(true);
+      expect(
+        isSameMonth(
+          new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3),
+          new CalendarDate(1989, 1, 10)
+        )
+      ).toBe(true);
     });
   });
 
@@ -105,19 +196,69 @@ describe('queries', function () {
     });
 
     it('works with two dates in different calendars', function () {
-      expect(isSameYear(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(true);
-      expect(isSameYear(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4), new CalendarDate(2021, 4, 16))).toBe(true);
-      expect(isSameYear(new CalendarDate(2019, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isSameYear(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1441, 9, 4))).toBe(false);
-      expect(isSameYear(new CalendarDate(2021, 5, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(true);
-      expect(isSameYear(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4))).toBe(true);
-      expect(isSameYear(new CalendarDate(2021, 4, 17), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(true);
-      expect(isSameYear(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3))).toBe(true);
+      expect(
+        isSameYear(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(true);
+      expect(
+        isSameYear(
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4),
+          new CalendarDate(2021, 4, 16)
+        )
+      ).toBe(true);
+      expect(
+        isSameYear(
+          new CalendarDate(2019, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameYear(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1441, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isSameYear(
+          new CalendarDate(2021, 5, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(true);
+      expect(
+        isSameYear(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4)
+        )
+      ).toBe(true);
+      expect(
+        isSameYear(
+          new CalendarDate(2021, 4, 17),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(true);
+      expect(
+        isSameYear(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3)
+        )
+      ).toBe(true);
     });
 
     it('works with months that span different eras', function () {
-      expect(isSameYear(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3), new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10))).toBe(true);
-      expect(isSameYear(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3), new CalendarDate(1989, 1, 10))).toBe(true);
+      expect(
+        isSameYear(
+          new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3),
+          new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10)
+        )
+      ).toBe(true);
+      expect(
+        isSameYear(
+          new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3),
+          new CalendarDate(1989, 1, 10)
+        )
+      ).toBe(true);
     });
   });
 
@@ -130,8 +271,18 @@ describe('queries', function () {
     });
 
     it('does not work with two dates in different calendars', function () {
-      expect(isEqualDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isEqualDay(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4), new CalendarDate(2021, 4, 16))).toBe(false);
+      expect(
+        isEqualDay(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isEqualDay(
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4),
+          new CalendarDate(2021, 4, 16)
+        )
+      ).toBe(false);
     });
   });
 
@@ -144,13 +295,33 @@ describe('queries', function () {
     });
 
     it('does not work with two dates in different calendars', function () {
-      expect(isEqualMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isEqualMonth(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4), new CalendarDate(2021, 4, 16))).toBe(false);
+      expect(
+        isEqualMonth(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isEqualMonth(
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4),
+          new CalendarDate(2021, 4, 16)
+        )
+      ).toBe(false);
     });
 
     it('works with months that span different eras', function () {
-      expect(isEqualMonth(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3), new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10))).toBe(true);
-      expect(isEqualMonth(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3), new CalendarDate(1989, 1, 10))).toBe(false);
+      expect(
+        isEqualMonth(
+          new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3),
+          new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10)
+        )
+      ).toBe(true);
+      expect(
+        isEqualMonth(
+          new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3),
+          new CalendarDate(1989, 1, 10)
+        )
+      ).toBe(false);
     });
   });
 
@@ -163,45 +334,81 @@ describe('queries', function () {
     });
 
     it('does not work with two dates in different calendars', function () {
-      expect(isEqualYear(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
-      expect(isEqualYear(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4), new CalendarDate(2021, 4, 16))).toBe(false);
+      expect(
+        isEqualYear(
+          new CalendarDate(2021, 4, 16),
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+        )
+      ).toBe(false);
+      expect(
+        isEqualYear(
+          new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4),
+          new CalendarDate(2021, 4, 16)
+        )
+      ).toBe(false);
     });
 
     it('works with months that span different eras', function () {
-      expect(isEqualYear(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3), new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10))).toBe(true);
-      expect(isEqualYear(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3), new CalendarDate(1989, 1, 10))).toBe(false);
+      expect(
+        isEqualYear(
+          new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3),
+          new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10)
+        )
+      ).toBe(true);
+      expect(
+        isEqualYear(
+          new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3),
+          new CalendarDate(1989, 1, 10)
+        )
+      ).toBe(false);
     });
   });
 
   describe('startOfMonth', function () {
     it('moves the day to the first of the month', function () {
       expect(startOfMonth(new CalendarDate(2020, 2, 3))).toEqual(new CalendarDate(2020, 2, 1));
-      expect(startOfMonth(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toEqual(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 1));
+      expect(startOfMonth(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toEqual(
+        new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 1)
+      );
     });
 
     it('works in months that span eras', function () {
-      expect(startOfMonth(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3))).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 1));
-      expect(startOfMonth(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10))).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 1));
+      expect(startOfMonth(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3))).toEqual(
+        new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 1)
+      );
+      expect(startOfMonth(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10))).toEqual(
+        new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 1)
+      );
     });
 
     it('works with zoned date times', function () {
-      expect(startOfMonth(new ZonedDateTime(2021, 11, 10, 'America/Los_Angeles', -28800000, 1, 0, 0))).toEqual(new ZonedDateTime(2021, 11, 1, 'America/Los_Angeles', -25200000, 1, 0, 0));
+      expect(
+        startOfMonth(new ZonedDateTime(2021, 11, 10, 'America/Los_Angeles', -28800000, 1, 0, 0))
+      ).toEqual(new ZonedDateTime(2021, 11, 1, 'America/Los_Angeles', -25200000, 1, 0, 0));
     });
   });
 
   describe('endOfMonth', function () {
     it('moves the day to the last day of the month', function () {
       expect(endOfMonth(new CalendarDate(2020, 2, 3))).toEqual(new CalendarDate(2020, 2, 29));
-      expect(endOfMonth(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toEqual(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 30));
+      expect(endOfMonth(new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toEqual(
+        new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 30)
+      );
     });
 
     it('works in years that span eras', function () {
-      expect(endOfMonth(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3))).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 31));
-      expect(endOfMonth(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10))).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 31));
+      expect(endOfMonth(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3))).toEqual(
+        new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 31)
+      );
+      expect(endOfMonth(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 10))).toEqual(
+        new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 1, 31)
+      );
     });
 
     it('works with zoned date times', function () {
-      expect(endOfMonth(new ZonedDateTime(2021, 11, 5, 'America/Los_Angeles', -25200000, 1, 0, 0))).toEqual(new ZonedDateTime(2021, 11, 30, 'America/Los_Angeles', -28800000, 1, 0, 0));
+      expect(
+        endOfMonth(new ZonedDateTime(2021, 11, 5, 'America/Los_Angeles', -25200000, 1, 0, 0))
+      ).toEqual(new ZonedDateTime(2021, 11, 30, 'America/Los_Angeles', -28800000, 1, 0, 0));
     });
   });
 
@@ -211,12 +418,18 @@ describe('queries', function () {
     });
 
     it('works in years that span eras', function () {
-      expect(startOfYear(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3))).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 1));
-      expect(startOfYear(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 5, 10))).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 1));
+      expect(startOfYear(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3))).toEqual(
+        new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 1)
+      );
+      expect(startOfYear(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 5, 10))).toEqual(
+        new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 1)
+      );
     });
 
     it('works with zoned date times', function () {
-      expect(startOfYear(new ZonedDateTime(2021, 11, 5, 'America/Los_Angeles', -25200000, 1, 0, 0))).toEqual(new ZonedDateTime(2021, 1, 1, 'America/Los_Angeles', -28800000, 1, 0, 0));
+      expect(
+        startOfYear(new ZonedDateTime(2021, 11, 5, 'America/Los_Angeles', -25200000, 1, 0, 0))
+      ).toEqual(new ZonedDateTime(2021, 1, 1, 'America/Los_Angeles', -28800000, 1, 0, 0));
     });
   });
 
@@ -226,12 +439,18 @@ describe('queries', function () {
     });
 
     it('works in years that span eras', function () {
-      expect(endOfYear(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3))).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 12, 31));
-      expect(endOfYear(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 5, 10))).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 12, 31));
+      expect(endOfYear(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 3))).toEqual(
+        new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 12, 31)
+      );
+      expect(endOfYear(new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 5, 10))).toEqual(
+        new CalendarDate(new JapaneseCalendar(), 'heisei', 1, 12, 31)
+      );
     });
 
     it('works with zoned date times', function () {
-      expect(endOfYear(new ZonedDateTime(2021, 11, 5, 'America/Los_Angeles', -25200000, 1, 0, 0))).toEqual(new ZonedDateTime(2021, 12, 31, 'America/Los_Angeles', -28800000, 1, 0, 0));
+      expect(
+        endOfYear(new ZonedDateTime(2021, 11, 5, 'America/Los_Angeles', -25200000, 1, 0, 0))
+      ).toEqual(new ZonedDateTime(2021, 12, 31, 'America/Los_Angeles', -28800000, 1, 0, 0));
     });
   });
 
@@ -262,48 +481,82 @@ describe('queries', function () {
 
   describe('startOfWeek', function () {
     it('should return the start of week in en-US', function () {
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US')).toEqual(new CalendarDate(2021, 8, 1));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US')).toEqual(
+        new CalendarDate(2021, 8, 1)
+      );
     });
 
     it('should return the start of week in fr-FR', function () {
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR')).toEqual(new CalendarDate(2021, 8, 2));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR')).toEqual(
+        new CalendarDate(2021, 8, 2)
+      );
     });
 
     it('should return the start of the week with a custom firstDayOfWeek', function () {
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toEqual(new CalendarDate(2021, 8, 2));
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'tue')).toEqual(new CalendarDate(2021, 8, 3));
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(new CalendarDate(2021, 8, 1));
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'thu')).toEqual(new CalendarDate(2021, 7, 29));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toEqual(
+        new CalendarDate(2021, 8, 2)
+      );
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'tue')).toEqual(
+        new CalendarDate(2021, 8, 3)
+      );
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(
+        new CalendarDate(2021, 8, 1)
+      );
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'thu')).toEqual(
+        new CalendarDate(2021, 7, 29)
+      );
     });
 
     it('should return the start of the week in en-US-u-ca-iso8601', function () {
       // start of week is monday
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR-u-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601')).toEqual(
+        new CalendarDate(2021, 8, 2)
+      );
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR-u-ca-iso8601')).toEqual(
+        new CalendarDate(2021, 8, 2)
+      );
 
       // override first day of week
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue')).toEqual(new CalendarDate(2021, 8, 3));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue')).toEqual(
+        new CalendarDate(2021, 8, 3)
+      );
 
       // override applied if extension appears in the middle of other extensions
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-nu-thai-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-nu-thai-ca-iso8601-fw-tue')).toEqual(new CalendarDate(2021, 8, 3));
-      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue-nu-thai')).toEqual(new CalendarDate(2021, 8, 3));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-nu-thai-ca-iso8601')).toEqual(
+        new CalendarDate(2021, 8, 2)
+      );
+      expect(
+        startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-nu-thai-ca-iso8601-fw-tue')
+      ).toEqual(new CalendarDate(2021, 8, 3));
+      expect(
+        startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue-nu-thai')
+      ).toEqual(new CalendarDate(2021, 8, 3));
     });
   });
 
   describe('endOfWeek', function () {
     it('should return the end of week in en-US', function () {
-      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US')).toEqual(new CalendarDate(2021, 8, 7));
+      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US')).toEqual(
+        new CalendarDate(2021, 8, 7)
+      );
     });
 
     it('should return the end of week in fr-FR', function () {
-      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR')).toEqual(new CalendarDate(2021, 8, 8));
+      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR')).toEqual(
+        new CalendarDate(2021, 8, 8)
+      );
     });
 
     it('should return the end of the week with a custom firstDayOfWeek', function () {
-      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toEqual(new CalendarDate(2021, 8, 8));
-      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'tue')).toEqual(new CalendarDate(2021, 8, 9));
-      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(new CalendarDate(2021, 8, 7));
+      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toEqual(
+        new CalendarDate(2021, 8, 8)
+      );
+      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'tue')).toEqual(
+        new CalendarDate(2021, 8, 9)
+      );
+      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(
+        new CalendarDate(2021, 8, 7)
+      );
     });
   });
 
@@ -317,7 +570,9 @@ describe('queries', function () {
     });
 
     it('should work for other calendars', function () {
-      expect(getWeeksInMonth(new CalendarDate(new EthiopicCalendar(), 2013, 13, 4), 'en-US')).toBe(1);
+      expect(getWeeksInMonth(new CalendarDate(new EthiopicCalendar(), 2013, 13, 4), 'en-US')).toBe(
+        1
+      );
     });
 
     it('should support custom firstDayOfWeek', function () {
@@ -342,15 +597,23 @@ describe('queries', function () {
 
   describe('minDate', function () {
     it('should return the minimum date', function () {
-      expect(minDate(new CalendarDate(2020, 2, 3), new CalendarDate(2020, 5, 3))).toEqual(new CalendarDate(2020, 2, 3));
-      expect(minDate(new CalendarDate(2020, 5, 3), new CalendarDate(2020, 2, 3))).toEqual(new CalendarDate(2020, 2, 3));
+      expect(minDate(new CalendarDate(2020, 2, 3), new CalendarDate(2020, 5, 3))).toEqual(
+        new CalendarDate(2020, 2, 3)
+      );
+      expect(minDate(new CalendarDate(2020, 5, 3), new CalendarDate(2020, 2, 3))).toEqual(
+        new CalendarDate(2020, 2, 3)
+      );
     });
   });
 
   describe('maxDate', function () {
     it('should return the maximum date', function () {
-      expect(maxDate(new CalendarDate(2020, 2, 3), new CalendarDate(2020, 5, 3))).toEqual(new CalendarDate(2020, 5, 3));
-      expect(maxDate(new CalendarDate(2020, 5, 3), new CalendarDate(2020, 2, 3))).toEqual(new CalendarDate(2020, 5, 3));
+      expect(maxDate(new CalendarDate(2020, 2, 3), new CalendarDate(2020, 5, 3))).toEqual(
+        new CalendarDate(2020, 5, 3)
+      );
+      expect(maxDate(new CalendarDate(2020, 5, 3), new CalendarDate(2020, 2, 3))).toEqual(
+        new CalendarDate(2020, 5, 3)
+      );
     });
   });
 

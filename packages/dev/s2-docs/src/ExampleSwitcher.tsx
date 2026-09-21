@@ -1,6 +1,14 @@
 'use client';
 
-import {Content, ContextualHelp, Heading, Picker, PickerItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {
+  Content,
+  ContextualHelp,
+  Heading,
+  Picker,
+  PickerItem,
+  SegmentedControl,
+  SegmentedControlItem
+} from '@react-spectrum/s2';
 import {createContext, useState} from 'react';
 import {Key} from 'react-aria-components';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -17,15 +25,8 @@ const exampleStyle = style({
     lg: [24, '1fr', 'auto', 24]
   },
   gridTemplateAreas: {
-    default: [
-      '. switcher .',
-      '. theme .',
-      'example example example'
-    ],
-    lg: [
-      '. switcher theme .',
-      'example example example example'
-    ]
+    default: ['. switcher .', '. theme .', 'example example example'],
+    lg: ['. switcher theme .', 'example example example example']
   },
   paddingTop: {
     default: 12,
@@ -94,11 +95,18 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
   return (
     <div className={exampleStyle} data-example-switcher>
       <div className={switcher}>
-        <SegmentedControl aria-label={type || 'example'} selectedKey={selected} onSelectionChange={onSelectionChange}>
-          {examples.map(example => <SegmentedControlItem key={example} id={example}>{example}</SegmentedControlItem>)}
+        <SegmentedControl
+          aria-label={type || 'example'}
+          selectedKey={selected}
+          onSelectionChange={onSelectionChange}>
+          {examples.map(example => (
+            <SegmentedControlItem key={example} id={example}>
+              {example}
+            </SegmentedControlItem>
+          ))}
         </SegmentedControl>
       </div>
-      {selected === 'Vanilla CSS' &&
+      {selected === 'Vanilla CSS' && (
         <Picker
           label="Theme"
           labelPosition="side"
@@ -108,7 +116,10 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
           contextualHelp={
             <ContextualHelp>
               <Heading>Vanilla CSS theme</Heading>
-              <Content>This sets the <code className={style({font: 'code-sm'})}>--tint</code> CSS variable used by the Vanilla CSS examples.</Content>
+              <Content>
+                This sets the <code className={style({font: 'code-sm'})}>--tint</code> CSS variable
+                used by the Vanilla CSS examples.
+              </Content>
             </ContextualHelp>
           }>
           <PickerItem id="indigo">Indigo</PickerItem>
@@ -122,7 +133,7 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
           <PickerItem id="pink">Pink</PickerItem>
           <PickerItem id="purple">Purple</PickerItem>
         </Picker>
-      }
+      )}
       <div style={{gridArea: 'example'}}>
         <ExampleSwitcherContext.Provider value={selected}>
           {children[examples.indexOf(selected)]}

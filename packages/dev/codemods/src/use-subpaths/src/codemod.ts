@@ -1,12 +1,14 @@
 /* eslint-disable max-depth */
 import {API, FileInfo} from 'jscodeshift';
-import {getSpecifiersByPackage} from './specifiers';
+import {getSpecifiersByPackage, MONOPACKAGE_ROOTS} from './specifiers';
 import {parse} from '@babel/parser';
 import {parse as recastParse} from 'recast';
 import * as t from '@babel/types';
 
 function getImportedName(specifier: t.ImportSpecifier): string {
-  return specifier.imported.type === 'Identifier' ? specifier.imported.name : specifier.imported.value;
+  return specifier.imported.type === 'Identifier'
+    ? specifier.imported.name
+    : specifier.imported.value;
 }
 
 function getImportKey(specifier: t.ImportSpecifier): string {
@@ -64,6 +66,29 @@ function resolveTargetSource(
   return candidates[0];
 }
 
+function moduleAugmentsRouterConfig(body: t.TSModuleBlock): boolean {
+  for (let stmt of body.body) {
+    if (
+      stmt.type === 'TSInterfaceDeclaration' &&
+      stmt.id.type === 'Identifier' &&
+      stmt.id.name === 'RouterConfig'
+    ) {
+      return true;
+    }
+
+    if (
+      stmt.type === 'ExportNamedDeclaration' &&
+      stmt.declaration?.type === 'TSInterfaceDeclaration' &&
+      stmt.declaration.id.type === 'Identifier' &&
+      stmt.declaration.id.name === 'RouterConfig'
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export default function transformer(file: FileInfo, api: API): string {
   let specifiersByPackage = getSpecifiersByPackage(file.path);
   let j = api.jscodeshift.withParser({
@@ -102,6 +127,7 @@ export default function transformer(file: FileInfo, api: API): string {
   let program = root.get().node.program as t.Program;
   let uniqueSources = new Set<string>();
   let existingImports = new Map<string, t.ImportDeclaration>();
+  let didChange = false;
 
   for (let node of program.body) {
     if (node.type === 'ImportDeclaration') {
@@ -111,7 +137,7 @@ export default function transformer(file: FileInfo, api: API): string {
       }
 
       existingImports.set(getImportDeclarationKey(node), node);
-      
+
       if (source in specifiersByPackage) {
         let sourceMap = specifiersByPackage[source];
         for (let specifier of node.specifiers ?? []) {
@@ -121,27 +147,48 @@ export default function transformer(file: FileInfo, api: API): string {
 
           let importedName = getImportedName(specifier);
           let candidates = sourceMap[importedName];
-          if (candidates && (candidates.length === 1 || candidates[0] === `${source}/${importedName}`)) {
+          if (
+            candidates &&
+            (candidates.length === 1 || candidates[0] === `${source}/${importedName}`)
+          ) {
             let importKind = node.importKind || 'value';
             uniqueSources.add(importKind + ':' + candidates[0]);
           }
         }
       }
     }
+
+    if (node.type === 'TSModuleDeclaration' && node.declare && node.id.type === 'StringLiteral') {
+      let mod = node.id.value;
+      if (
+        !MONOPACKAGE_ROOTS.includes(mod) ||
+        node.body?.type !== 'TSModuleBlock' ||
+        !moduleAugmentsRouterConfig(node.body)
+      ) {
+        continue;
+      }
+
+      let target = `${mod}/Provider`;
+      let candidates = specifiersByPackage[mod]?.Provider;
+      if (!candidates?.includes(target)) {
+        continue;
+      }
+
+      node.id = t.stringLiteral(target);
+      didChange = true;
+    }
   }
 
-  let didChange = false;
-  
   program.body = program.body.flatMap(node => {
     if (node.type !== 'ImportDeclaration') {
       return [node];
     }
-    
+
     let source = node.source.value;
     if (typeof source !== 'string' || !(source in specifiersByPackage)) {
       return [node];
     }
-    
+
     let importDeclaration = node;
     let sourceMap = specifiersByPackage[node.source.value];
     let movedSpecifiersBySource = new Map<string, any[]>();
@@ -158,9 +205,14 @@ export default function transformer(file: FileInfo, api: API): string {
       }
 
       let importKind = node.importKind || 'value';
-      let targetSource = candidates.length === 1
-        ? importKind + ':' + candidates[0]
-        : resolveTargetSource(candidates.map(c => importKind + ':' + c), uniqueSources, existingImports);
+      let targetSource =
+        candidates.length === 1
+          ? importKind + ':' + candidates[0]
+          : resolveTargetSource(
+              candidates.map(c => importKind + ':' + c),
+              uniqueSources,
+              existingImports
+            );
 
       let movedSpecifiers = movedSpecifiersBySource.get(targetSource) ?? [];
       movedSpecifiers.push(t.cloneNode(specifier, true));
@@ -182,7 +234,11 @@ export default function transformer(file: FileInfo, api: API): string {
       let destinationImport = existingImports.get(targetSource);
 
       if (!destinationImport) {
-        destinationImport = createImportDeclaration(targetSource.slice(targetSource.indexOf(':') + 1), importDeclaration.importKind, []);
+        destinationImport = createImportDeclaration(
+          targetSource.slice(targetSource.indexOf(':') + 1),
+          importDeclaration.importKind,
+          []
+        );
         newDeclarations.push(destinationImport);
         existingImports.set(targetSource, destinationImport);
       }
@@ -201,4 +257,4 @@ export default function transformer(file: FileInfo, api: API): string {
   });
 
   return didChange ? root.toSource({quote: 'single'}) : file.source;
-};
+}

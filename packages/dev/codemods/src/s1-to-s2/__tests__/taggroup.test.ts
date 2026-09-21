@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static - Renames Item to Tag', `
+test(
+  'Static - Renames Item to Tag',
+  `
 import {TagGroup, Item} from '@adobe/react-spectrum';
 
 <div>
@@ -17,9 +19,12 @@ import {TagGroup, Item} from '@adobe/react-spectrum';
     <Item>Shopping</Item>
   </TagGroup>
 </div>
-`);
+`
+);
 
-test('Static - Renames key to id', `
+test(
+  'Static - Renames key to id',
+  `
 import {TagGroup, Item} from '@adobe/react-spectrum';
 
 let externalKey = 'travel';
@@ -31,9 +36,12 @@ let externalKey = 'travel';
     <Item>Shopping</Item>
   </TagGroup>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames Item to Tag', `
+test(
+  'Dynamic - Renames Item to Tag',
+  `
 import {TagGroup, Item} from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
@@ -47,9 +55,12 @@ const items = [
     {item => <Item>{item.name}</Item>}
   </TagGroup>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames key to id', `
+test(
+  'Dynamic - Renames key to id',
+  `
 import {TagGroup, Item} from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
@@ -69,9 +80,12 @@ const items = [
     {item => <Item>{item.name}</Item>}
   </TagGroup>
 </div>
-`);
+`
+);
 
-test('changes validationState to isInvalid or nothing', `
+test(
+  'changes validationState to isInvalid or nothing',
+  `
 import {TagGroup, Item} from '@adobe/react-spectrum';
 
 let validationState = 'invalid';
@@ -103,4 +117,5 @@ let props = {validationState: 'invalid'};
     <Item>News</Item>
   </TagGroup>
 </div>
-`);
+`
+);

@@ -65,44 +65,58 @@ describe('DocsTransformer - API', () => {
     // i was unable to find a jest matcher that could handle Object keys that varied, finding matches for the value was easy
     // "/Users/username/parcel/packages/test/src/index.tsx:Foo" -> "/test/src/index.tsx:Foo"
     const code = JSON.parse(
-      outputFS.readFileSync(join(inputFS.cwd(), 'test', 'dist', 'api.json'), 'utf8').replace(/(")(\/.*)(\/test\/.*?")/g, '$1$3')
+      outputFS
+        .readFileSync(join(inputFS.cwd(), 'test', 'dist', 'api.json'), 'utf8')
+        .replace(/(")(\/.*)(\/test\/.*?")/g, '$1$3')
     );
     return code;
   }
 
   describe('builtins', () => {
     it('writes export entry for static number', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     export let a: number = 4;
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for static string', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     export let b: string = "foo";
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for referenced string', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     let name = 'foo';
     export let c = name;
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for referenced function', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     function foo() {
       return 'foo';
     }
     export let d = foo();
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
@@ -110,26 +124,32 @@ describe('DocsTransformer - API', () => {
 
   describe('components', () => {
     it('writes export entry for React component', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     import React from 'react';
 
     export function App1(props) {
       return <div />;
     }
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for localName React component', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     import React from 'react';
 
     function App2(props) {
       return <div />;
     }
     export {App2 as AppReal};
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
@@ -137,33 +157,45 @@ describe('DocsTransformer - API', () => {
 
   describe('types', () => {
     it('writes export entry for type', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     export type Foo = number;
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for type union', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     export type Foo = number | string;
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for type regex', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     export type Foo = \`\${number}%\`;
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for complex type regex', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     export type Foo = \`\${number}.\${number} \${string}\`;
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
@@ -171,27 +203,36 @@ describe('DocsTransformer - API', () => {
 
   describe('interfaces', () => {
     it('writes export entry for interface', async () => {
-      await writeSourceFile('index', `
+      await writeSourceFile(
+        'index',
+        `
     export interface Foo {
       a: number
     };
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
     it('follows imported interfaces', async () => {
-      await writeSourceFile('component', `
+      await writeSourceFile(
+        'component',
+        `
     export interface Foo {
       a: number
     };
-    `);
-      await writeSourceFile('index', `
+    `
+      );
+      await writeSourceFile(
+        'index',
+        `
     import {Foo} from './component';
     export function Bar(props: Foo) {
       return null;
     }
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
@@ -199,18 +240,23 @@ describe('DocsTransformer - API', () => {
 
   describe('identifiers', () => {
     it('writes export entry for identifiers', async () => {
-      await writeSourceFile('column', `
+      await writeSourceFile(
+        'column',
+        `
     export interface SpectrumColumnProps<T> {id: string};
     export let Column = (props: {id: string}) => null;
-    `);
-      await writeSourceFile('index', `
+    `
+      );
+      await writeSourceFile(
+        'index',
+        `
     import {Column, SpectrumColumnProps} from './column';
     const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => React.JSX.Element;
     export {SpectrumColumn as Column};
-    `);
+    `
+      );
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
   });
-
 });

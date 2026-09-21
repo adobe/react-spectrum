@@ -1,33 +1,118 @@
 import '@react-spectrum/s2/page.css';
-import { themes } from 'storybook/theming';
-import { DARK_MODE_EVENT_NAME } from '@vueless/storybook-dark-mode';
-import { store } from '@vueless/storybook-dark-mode/dist/esm/Tool';
-import { addons } from 'storybook/preview-api';
-import React, { useEffect, useState } from 'react';
+import {themes} from 'storybook/theming';
+import {DARK_MODE_EVENT_NAME, useDarkMode} from '@vueless/storybook-dark-mode';
+import {addons} from 'storybook/preview-api';
+import React from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
-import {DocsContainer, Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/addon-docs/blocks';
+import {
+  DocsContainer,
+  Controls,
+  Description,
+  Primary,
+  Stories,
+  Subtitle,
+  Title
+} from '@storybook/addon-docs/blocks';
 import './global.css';
 
-const channel = addons.getChannel();
-document.documentElement.dataset.colorScheme = store().current === 'dark' ? 'dark' : 'light';
-channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.colorScheme = isDark ? 'dark' : 'light');
+const DARK_MODE_STORAGE_KEY = 'sb-addon-themes-3';
 
-/** @type { import('@storybook/react').Preview } */
+function getInitialColorScheme(): 'dark' | 'light' {
+  if (typeof window === 'undefined') return 'light';
+  try {
+    const stored = window.localStorage.getItem(DARK_MODE_STORAGE_KEY);
+    if (stored) {
+      const {current} = JSON.parse(stored);
+      return current === 'dark' ? 'dark' : 'light';
+    }
+  } catch {}
+  return 'light';
+}
+
+const channel = addons.getChannel();
+document.documentElement.dataset.colorScheme = getInitialColorScheme();
+channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
+  document.documentElement.dataset.colorScheme = isDark ? 'dark' : 'light';
+});
+
+const exclude = [
+  'key',
+  'ref',
+  'id',
+  'slot',
+  'onCopy',
+  'onCut',
+  'onPaste',
+  'onCompositionStart',
+  'onCompositionEnd',
+  'onCompositionUpdate',
+  'onSelect',
+  'onBeforeInput',
+  'onInput',
+  'onKeyDown',
+  'onKeyUp',
+  'onHoverStart',
+  'onHoverEnd',
+  'onHoverChange',
+  'onFocus',
+  'onBlur',
+  'onFocusChange',
+  'onClick',
+  'onAuxClick',
+  'onContextMenu',
+  'onDoubleClick',
+  'onMouseDown',
+  'onMouseEnter',
+  'onMouseLeave',
+  'onMouseMove',
+  'onMouseOut',
+  'onMouseOver',
+  'onMouseUp',
+  'onTouchCancel',
+  'onTouchEnd',
+  'onTouchMove',
+  'onTouchStart',
+  'onPointerDown',
+  'onPointerMove',
+  'onPointerUp',
+  'onPointerCancel',
+  'onPointerEnter',
+  'onPointerLeave',
+  'onPointerOver',
+  'onPointerOut',
+  'onGotPointerCapture',
+  'onLostPointerCapture',
+  'onScroll',
+  'onWheel',
+  'onAnimationStart',
+  'onAnimationEnd',
+  'onAnimationIteration',
+  'onTransitionCancel',
+  'onTransitionEnd',
+  'onTransitionRun',
+  'onTransitionStart'
+];
+
+/** @type {import('@storybook/react').Preview} */
 const preview = {
   parameters: {
     controls: {
       matchers: {},
-      exclude: ['key', 'ref']
+      exclude: new RegExp(`^(((${exclude.join('|')})(Capture)?)|aria-.*)$`)
     },
     docs: {
-      container: (props) => {
-        let [dark, setDark] = useState(store().current === 'dark');
-        useEffect(() => {
-          channel.on(DARK_MODE_EVENT_NAME, setDark);
-          return () => channel.removeListener(DARK_MODE_EVENT_NAME, setDark);
-        }, []);
-        var style = getComputedStyle(document.body)
-        return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: style.getPropertyValue('--s2-container-bg').trim()}} />;
+      container: props => {
+        const dark = useDarkMode();
+        var style = getComputedStyle(document.body);
+        return (
+          <DocsContainer
+            {...props}
+            theme={{
+              ...(dark ? themes.dark : themes.light),
+              appContentBg: style.getPropertyValue('--s2-container-bg').trim()
+            }}
+          />
+        );
       },
       codePanel: true,
       source: {
@@ -45,15 +130,16 @@ const preview = {
       },
       page: () => {
         return (
-        <>
-          <Title />
-          <Subtitle />
-          <Description />
-          <Primary />
-          <Controls />
-          <Stories includePrimary={false} />
-        </>
-      )}
+          <>
+            <Title />
+            <Subtitle />
+            <Description />
+            <Primary />
+            <Controls />
+            <Stories includePrimary={false} />
+          </>
+        );
+      }
     },
     darkMode: {
       light: {
@@ -69,7 +155,14 @@ const preview = {
     },
     options: {
       storySort: {
-        order: ['Intro', 'Style Macro', 'Workflow Icons', 'Illustrations', 'Migrating', 'Release Notes'],
+        order: [
+          'Intro',
+          'Style Macro',
+          'Workflow Icons',
+          'Illustrations',
+          'Migrating',
+          'Release Notes'
+        ],
         method: 'alphabetical'
       }
     }
@@ -77,15 +170,15 @@ const preview = {
   argTypes: {
     styles: {
       table: {category: 'Styles'},
-      control: {disable: true},
+      control: {disable: true}
     },
     UNSAFE_className: {
       table: {category: 'Styles'},
-      control: {disable: true},
+      control: {disable: true}
     },
     UNSAFE_style: {
       table: {category: 'Styles'},
-      control: {disable: true},
+      control: {disable: true}
     }
   }
 };
@@ -96,18 +189,14 @@ export const parameters = {
       rules: [
         {
           id: 'aria-hidden-focus',
-          selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])',
+          selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])'
         }
       ]
     }
   },
-  layout: 'fullscreen',
+  layout: 'fullscreen'
 };
 
-
-
-export const decorators = [
-  withProviderSwitcher
-];
+export const decorators = [withProviderSwitcher];
 
 export default preview;

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Comments out autoFocusCurrent 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";

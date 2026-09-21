@@ -25,7 +25,7 @@ export default {
 
 export type DisclosureStory = StoryFn<typeof Disclosure>;
 
-export const DisclosureExample: DisclosureStory = (args) => (
+export const DisclosureExample: DisclosureStory = args => (
   <Disclosure {...args}>
     {({isExpanded}) => (
       <>
@@ -40,7 +40,7 @@ export const DisclosureExample: DisclosureStory = (args) => (
   </Disclosure>
 );
 
-export const DisclosureControlledExample: DisclosureStory = (args) => {
+export const DisclosureControlledExample: DisclosureStory = args => {
   let [isExpanded, setExpanded] = React.useState(false);
   return (
     <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>

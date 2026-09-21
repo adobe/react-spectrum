@@ -52,7 +52,7 @@ export const LabelPositionSide: ProgressBarStory = {
 export const OverBackground: ProgressBarStory = {
   args: {...Default.args, variant: 'overBackground'},
   decorators: [
-    (Story) => (
+    Story => (
       <div style={grayedBoxStyle}>
         <Story />
       </div>
@@ -63,7 +63,7 @@ export const OverBackground: ProgressBarStory = {
 export const StaticColorWhite: ProgressBarStory = {
   args: {...Default.args, staticColor: 'white'},
   decorators: [
-    (Story) => (
+    Story => (
       <div style={grayedBoxStyle}>
         <Story />
       </div>
@@ -74,7 +74,7 @@ export const StaticColorWhite: ProgressBarStory = {
 export const StaticColorBlack: ProgressBarStory = {
   args: {...Default.args, staticColor: 'black'},
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>
         <Story />
       </div>

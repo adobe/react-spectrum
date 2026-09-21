@@ -13,7 +13,6 @@
 import React, {useEffect} from 'react';
 import {render, renderHook, screen} from '@react-spectrum/test-utils-internal';
 
- 
 import {useLayoutEffect} from '../../src/utils/useLayoutEffect';
 
 import {useObjectRef} from '../../src/utils/useObjectRef';
@@ -50,7 +49,7 @@ describe('useObjectRef', () => {
 
     let inputElem;
 
-    render(<TextField placeholder="Foo" ref={el => inputElem = el} />);
+    render(<TextField placeholder="Foo" ref={el => (inputElem = el)} />);
 
     expect(inputElem.placeholder).toBe('Foo');
   });

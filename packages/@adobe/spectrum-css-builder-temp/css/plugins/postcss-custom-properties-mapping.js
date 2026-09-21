@@ -48,7 +48,7 @@ module.exports = function () {
       await fetchVarsPromise;
 
       root.walkRules((rule, ruleIndex) => {
-        rule.walkDecls((decl) => {
+        rule.walkDecls(decl => {
           if (customPropertiesRegExp.test(decl.value)) {
             let value = valueParser(decl.value);
 

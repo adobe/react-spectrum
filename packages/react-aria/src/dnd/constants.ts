@@ -13,12 +13,12 @@
 import {DropOperation} from '@react-types/shared';
 
 export interface IDropOperation {
-  readonly none: 0,
-  readonly cancel: 0,
-  readonly move: number,
-  readonly copy: number,
-  readonly link: number,
-  readonly all: number
+  readonly none: 0;
+  readonly cancel: 0;
+  readonly move: number;
+  readonly copy: number;
+  readonly link: number;
+  readonly all: number;
 }
 
 export enum DROP_OPERATION {
@@ -30,11 +30,11 @@ export enum DROP_OPERATION {
   all = move | copy | link
 }
 interface DropOperationAllowed extends IDropOperation {
-  readonly copyMove: number,
-  readonly copyLink: number,
-  readonly linkMove: number,
-  readonly all: number,
-  readonly uninitialized: number
+  readonly copyMove: number;
+  readonly copyLink: number;
+  readonly linkMove: number;
+  readonly all: number;
+  readonly uninitialized: number;
 }
 // See https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/effectAllowed
 export const DROP_OPERATION_ALLOWED: DropOperationAllowed = {
@@ -47,17 +47,19 @@ export const DROP_OPERATION_ALLOWED: DropOperationAllowed = {
 };
 
 interface EffectAllowed {
-  0: 'none' | 'cancel',
-  1: 'move',
-  2: 'copy',
-  3: 'copyMove',
-  4: 'link',
-  5: 'linkMove',
-  6: 'copyLink',
-  7: 'all'
+  0: 'none' | 'cancel';
+  1: 'move';
+  2: 'copy';
+  3: 'copyMove';
+  4: 'link';
+  5: 'linkMove';
+  6: 'copyLink';
+  7: 'all';
 }
 
-export const EFFECT_ALLOWED: EffectAllowed = invert(DROP_OPERATION_ALLOWED) as unknown as EffectAllowed;
+export const EFFECT_ALLOWED: EffectAllowed = invert(
+  DROP_OPERATION_ALLOWED
+) as unknown as EffectAllowed;
 EFFECT_ALLOWED[DROP_OPERATION.all] = 'all'; // ensure we don't map to 'uninitialized'.
 
 type DropEffect = 'none' | 'link' | 'copy' | 'move';
@@ -69,9 +71,13 @@ export const DROP_EFFECT_TO_DROP_OPERATION: {[K in DropEffect]: DropOperation} =
   move: 'move'
 };
 
-export const DROP_OPERATION_TO_DROP_EFFECT: {[K in DropOperation]: DropEffect} = invert(DROP_EFFECT_TO_DROP_OPERATION);
+export const DROP_OPERATION_TO_DROP_EFFECT: {[K in DropOperation]: DropEffect} = invert(
+  DROP_EFFECT_TO_DROP_OPERATION
+);
 
-function invert<T extends string | number, C extends string | number>(object: Record<T, C>): Record<C, T> {
+function invert<T extends string | number, C extends string | number>(
+  object: Record<T, C>
+): Record<C, T> {
   let res: Record<C, T> = {} as Record<C, T>;
   for (let key in object) {
     res[object[key]] = key as T;

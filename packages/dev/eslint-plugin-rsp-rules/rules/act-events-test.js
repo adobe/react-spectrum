@@ -15,10 +15,7 @@ import path from 'path';
 function inTestcaseWithoutAct(context, node, actLocalName) {
   let foundAct = false;
   for (let n of context.sourceCode.getAncestors(node).reverse()) {
-    if (
-      n.type === 'ArrowFunctionExpression' ||
-      n.type === 'FunctionExpression'
-    ) {
+    if (n.type === 'ArrowFunctionExpression' || n.type === 'FunctionExpression') {
       let {parent} = n;
       if (
         parent.type === 'CallExpression' &&
@@ -57,9 +54,7 @@ function report(node, context, actLocalName) {
     fix(fixer) {
       let parent = context.sourceCode.getAncestors(node);
       parent = parent[parent.length - 1];
-      let source = context
-        .sourceCode
-        .getText().slice(parent.range[0], parent.range[1]);
+      let source = context.sourceCode.getText().slice(parent.range[0], parent.range[1]);
       return fixer.replaceTextRange(parent.range, `${actLocalName}(() => {${source}});`);
     }
   });
@@ -117,8 +112,7 @@ let plugin = {
             if (
               node.arguments.length === 0 &&
               node.callee.property.type === 'Identifier' &&
-              (node.callee.property.name === 'focus' ||
-                node.callee.property.name === 'blur')
+              (node.callee.property.name === 'focus' || node.callee.property.name === 'blur')
             ) {
               report(node, context, actLocalName);
             } else if (

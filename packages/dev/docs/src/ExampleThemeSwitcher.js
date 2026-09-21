@@ -34,9 +34,7 @@ export function ExampleThemeSwitcher({children}) {
           </Picker>
         </Flex>
         <Provider scale={scale}>
-          <Flex>
-            {children}
-          </Flex>
+          <Flex>{children}</Flex>
         </Provider>
       </Flex>
     </Example>

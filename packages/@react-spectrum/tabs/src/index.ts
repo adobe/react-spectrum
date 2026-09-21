@@ -14,5 +14,9 @@
 
 export {TabList, TabPanels, Tabs} from '@adobe/react-spectrum/Tabs';
 
-export type {SpectrumTabsProps, SpectrumTabListProps, SpectrumTabPanelsProps} from '@adobe/react-spectrum/Tabs';
+export type {
+  SpectrumTabsProps,
+  SpectrumTabListProps,
+  SpectrumTabPanelsProps
+} from '@adobe/react-spectrum/Tabs';
 export {Item} from 'react-stately/Item';

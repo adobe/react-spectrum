@@ -10,19 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {addEvent} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
-
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
-import {isIOS} from '../utils/platform';
+import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
+import {setStyle} from '../utils/domHelpers';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {willOpenKeyboard} from '../utils/keyboard';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 const visualViewport = typeof document !== 'undefined' && window.visualViewport;
@@ -46,8 +47,8 @@ export function usePreventScroll(options: PreventScrollOptions = {}): void {
 
     preventScrollCount++;
     if (preventScrollCount === 1) {
-      if (isIOS()) {
-        restore = preventScrollMobileSafari();
+      if (isIOS() && isWebKit()) {
+        restore = preventScrollMobileWebKit();
       } else {
         restore = preventScrollStandard();
       }
@@ -70,8 +71,8 @@ function preventScrollStandard() {
     scrollbarWidth > 0 &&
       // Use scrollbar-gutter when supported because it also works for fixed positioned elements.
       ('scrollbarGutter' in document.documentElement.style
-        ? setStyle(document.documentElement, 'scrollbarGutter', 'stable')
-        : setStyle(document.documentElement, 'paddingRight', `${scrollbarWidth}px`)),
+        ? setStyle(document.documentElement, 'scrollbar-gutter', 'stable')
+        : setStyle(document.documentElement, 'padding-right', `${scrollbarWidth}px`)),
     setStyle(document.documentElement, 'overflow', 'hidden')
   );
 }
@@ -96,10 +97,7 @@ function preventScrollStandard() {
 //    by preventing default in a `touchmove` event. This is best effort: we can't prevent default when pinch
 //    zooming or when an element contains text selection, which may allow scrolling in some cases.
 // 3. Prevent default on `touchend` events on input elements and handle focusing the element ourselves.
-// 4. When focus moves to an input, create an off screen input and focus that temporarily. This prevents
-//    Safari from scrolling the page. After a small delay, focus the real input and scroll it into view
-//    ourselves, without scrolling the whole page.
-function preventScrollMobileSafari() {
+function preventScrollMobileWebKit() {
   // Set overflow hidden so scrollIntoViewport() (useSelectableCollection) sees isScrollPrevented and
   // scrolls only scroll parents instead of calling native scrollIntoView() which moves the window.
   let restoreOverflow = setStyle(document.documentElement, 'overflow', 'hidden');
@@ -119,10 +117,7 @@ function preventScrollMobileSafari() {
     }
 
     // If this is a range input, allow touch move to allow user to adjust the slider value
-    if (e.composedPath().some((el) =>
-      el instanceof HTMLInputElement &&
-      el.type === 'range'
-    )) {
+    if (e.composedPath().some(el => el instanceof HTMLInputElement && el.type === 'range')) {
       allowTouchMove = true;
     }
 
@@ -172,7 +167,10 @@ function preventScrollMobileSafari() {
     // block horizontal scrolling too. In that case, adding `touch-action: pan-x` to
     // the element will prevent vertical page scrolling. We can't add that automatically
     // because it must be set before the touchstart event.
-    if (scrollable.scrollHeight === scrollable.clientHeight && scrollable.scrollWidth === scrollable.clientWidth) {
+    if (
+      scrollable.scrollHeight === scrollable.clientHeight &&
+      scrollable.scrollWidth === scrollable.clientWidth
+    ) {
       e.preventDefault();
     }
   };
@@ -197,18 +195,22 @@ function preventScrollMobileSafari() {
 
   // Override programmatic focus to scroll into view without scrolling the whole page.
   let focus = HTMLElement.prototype.focus;
-  HTMLElement.prototype.focus = function (opts) {
-    // Track whether the keyboard was already visible before.
-    let activeElement = getActiveElement();
-    let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
+  Reflect.defineProperty(HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: function (opts?: FocusOptions) {
+      // Track whether the keyboard was already visible before.
+      let activeElement = getActiveElement();
+      let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
 
-    // Focus the element without scrolling the page.
-    focus.call(this, {...opts, preventScroll: true});
+      // Focus the element without scrolling the page.
+      focus.call(this, {...opts, preventScroll: true});
 
-    if (!opts || !opts.preventScroll) {
-      scrollIntoViewWhenReady(this, wasKeyboardVisible);
+      if (!opts || !opts.preventScroll) {
+        scrollIntoViewWhenReady(this, wasKeyboardVisible);
+      }
     }
-  };
+  });
 
   let removeEvents = chain(
     addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
@@ -220,33 +222,11 @@ function preventScrollMobileSafari() {
     restoreOverflow();
     removeEvents();
     style.remove();
-    HTMLElement.prototype.focus = focus;
-  };
-}
-
-// Sets a CSS property on an element, and returns a function to revert it to the previous value.
-function setStyle(element: HTMLElement, style: string, value: string) {
-  let cur = element.style[style];
-  element.style[style] = value;
-
-  return () => {
-    element.style[style] = cur;
-  };
-}
-
-// Adds an event listener to an element, and returns a function to remove it.
-function addEvent<K extends keyof GlobalEventHandlersEventMap>(
-  target: Document | Window,
-  event: K,
-  handler: (this: Document | Window, ev: GlobalEventHandlersEventMap[K]) => any,
-  options?: boolean | AddEventListenerOptions
-) {
-  // internal function, so it's ok to ignore the difficult to fix type error
-  // @ts-ignore
-  target.addEventListener(event, handler, options);
-  return () => {
-    // @ts-ignore
-    target.removeEventListener(event, handler, options);
+    Reflect.defineProperty(HTMLElement.prototype, 'focus', {
+      configurable: true,
+      writable: true,
+      value: focus
+    });
   };
 }
 
@@ -267,20 +247,36 @@ function scrollIntoView(target: Element) {
   while (nextTarget && nextTarget !== root) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
     let scrollable = getScrollParent(nextTarget);
-    if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== nextTarget) {
+    if (
+      scrollable !== document.documentElement &&
+      scrollable !== document.body &&
+      scrollable !== nextTarget
+    ) {
       let scrollableRect = scrollable.getBoundingClientRect();
       let targetRect = nextTarget.getBoundingClientRect();
-      if (targetRect.top < scrollableRect.top || targetRect.bottom > scrollableRect.top + nextTarget.clientHeight) {
+      if (
+        targetRect.top < scrollableRect.top ||
+        targetRect.bottom > scrollableRect.top + nextTarget.clientHeight
+      ) {
         let bottom = scrollableRect.bottom;
         if (visualViewport) {
           bottom = Math.min(bottom, visualViewport.offsetTop + visualViewport.height);
         }
 
         // Center within the viewport.
-        let adjustment = (targetRect.top - scrollableRect.top) - ((bottom - scrollableRect.top) / 2 - targetRect.height / 2);
+        let adjustment =
+          targetRect.top -
+          scrollableRect.top -
+          ((bottom - scrollableRect.top) / 2 - targetRect.height / 2);
         scrollable.scrollTo({
           // Clamp to the valid range to prevent over-scrolling.
-          top: Math.max(0, Math.min(scrollable.scrollHeight - scrollable.clientHeight, scrollable.scrollTop + adjustment)),
+          top: Math.max(
+            0,
+            Math.min(
+              scrollable.scrollHeight - scrollable.clientHeight,
+              scrollable.scrollTop + adjustment
+            )
+          ),
           behavior: 'smooth'
         });
       }

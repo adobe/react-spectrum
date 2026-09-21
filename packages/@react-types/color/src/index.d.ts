@@ -10,6 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-export {ColorFormat, ColorSpace, ColorChannel, ColorAxes, ColorChannelRange, Color, ColorFieldProps, ColorWheelProps, ColorSliderProps, ColorAreaProps} from '@react-stately/color';
-export {AriaColorFieldProps, AriaColorWheelProps, AriaColorSliderProps, AriaColorAreaProps} from '@react-aria/color';
-export {SpectrumColorFieldProps, SpectrumColorWheelProps, SpectrumColorSliderProps, SpectrumColorAreaProps} from '@react-spectrum/color';
+export {
+  ColorFormat,
+  ColorSpace,
+  ColorChannel,
+  ColorAxes,
+  ColorChannelRange,
+  Color,
+  ColorFieldProps,
+  ColorWheelProps,
+  ColorSliderProps,
+  ColorAreaProps
+} from '@react-stately/color';
+export {
+  AriaColorFieldProps,
+  AriaColorWheelProps,
+  AriaColorSliderProps,
+  AriaColorAreaProps
+} from '@react-aria/color';
+export {
+  SpectrumColorFieldProps,
+  SpectrumColorWheelProps,
+  SpectrumColorSliderProps,
+  SpectrumColorAreaProps
+} from '@react-spectrum/color';

@@ -35,7 +35,7 @@ export default {
 export type DropzoneStory = StoryFn<typeof DropZone>;
 export type DropzoneStoryObj = StoryObj<typeof DropZone>;
 
-export const DropzoneExampleWithFileTriggerLink: DropzoneStory = (props) => (
+export const DropzoneExampleWithFileTriggerLink: DropzoneStory = props => (
   <div>
     <DropZone
       {...props}
@@ -52,7 +52,7 @@ export const DropzoneExampleWithFileTriggerLink: DropzoneStory = (props) => (
   </div>
 );
 
-export const DropzoneExampleWithFileTriggerButton: DropzoneStory = (props) => (
+export const DropzoneExampleWithFileTriggerButton: DropzoneStory = props => (
   <div>
     <DropZone
       {...props}
@@ -60,14 +60,14 @@ export const DropzoneExampleWithFileTriggerButton: DropzoneStory = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger onSelect={action('onSelect')} >
+      <FileTrigger onSelect={action('onSelect')}>
         <Button>Upload</Button>
       </FileTrigger>
     </DropZone>
   </div>
 );
 
-export const DropzoneExampleWithDraggableAndFileTrigger: DropzoneStory = (props) => (
+export const DropzoneExampleWithDraggableAndFileTrigger: DropzoneStory = props => (
   <div>
     <Draggable />
     <DropZone
@@ -76,7 +76,7 @@ export const DropzoneExampleWithDraggableAndFileTrigger: DropzoneStory = (props)
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <FileTrigger onSelect={action('onSelect')} >
+      <FileTrigger onSelect={action('onSelect')}>
         <Button>Browse</Button>
       </FileTrigger>
       Or drag into here
@@ -84,15 +84,15 @@ export const DropzoneExampleWithDraggableAndFileTrigger: DropzoneStory = (props)
   </div>
 );
 
-export const DropZoneOnlyAcceptPNGWithFileTrigger: DropzoneStory = (props) => (
+export const DropZoneOnlyAcceptPNGWithFileTrigger: DropzoneStory = props => (
   <div>
     <DropZone
       {...props}
-      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
+      getDropOperation={types => (types.has('image/png') ? 'copy' : 'cancel')}
       className={styles.dropzone}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')} >
+      onDropExit={action('OnDropExit')}>
       <FileTrigger onSelect={action('onSelect')} acceptedFileTypes={['image/png']}>
         <Button>Upload</Button>
       </FileTrigger>
@@ -100,15 +100,15 @@ export const DropZoneOnlyAcceptPNGWithFileTrigger: DropzoneStory = (props) => (
   </div>
 );
 
-export const DropZoneWithCaptureMobileOnly: DropzoneStory = (props) => (
+export const DropZoneWithCaptureMobileOnly: DropzoneStory = props => (
   <div>
     <DropZone
       {...props}
-      getDropOperation={(types) =>  types.has('image/png') ? 'copy' : 'cancel'}
+      getDropOperation={types => (types.has('image/png') ? 'copy' : 'cancel')}
       className={styles.dropzone}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')} >
+      onDropExit={action('OnDropExit')}>
       <FileTrigger onSelect={action('onSelect')} defaultCamera="environment">
         <Button>Upload</Button>
       </FileTrigger>
@@ -116,7 +116,7 @@ export const DropZoneWithCaptureMobileOnly: DropzoneStory = (props) => (
   </div>
 );
 
-export const DropzoneExampleWithDraggableObject: DropzoneStory = (props) => (
+export const DropzoneExampleWithDraggableObject: DropzoneStory = props => (
   <div>
     <Draggable />
     <DropZone
@@ -124,15 +124,13 @@ export const DropzoneExampleWithDraggableObject: DropzoneStory = (props) => (
       className={styles.dropzone}
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
-      onDropExit={action('OnDropExit')} >
-      <Text slot="label">
-        DropZone Area
-      </Text>
+      onDropExit={action('OnDropExit')}>
+      <Text slot="label">DropZone Area</Text>
     </DropZone>
   </div>
 );
 
-export const DropzoneExampleWithCopyableObject: DropzoneStory = (props) => (
+export const DropzoneExampleWithCopyableObject: DropzoneStory = props => (
   <div>
     <Copyable />
     <DropZone
@@ -141,14 +139,12 @@ export const DropzoneExampleWithCopyableObject: DropzoneStory = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      <Text slot="label">
-        DropZone Area
-      </Text>
+      <Text slot="label">DropZone Area</Text>
     </DropZone>
   </div>
 );
 
-const DropzoneWithRenderPropsExample = (props) => (
+const DropzoneWithRenderPropsExample = props => (
   <div>
     <Draggable />
     <Copyable />
@@ -161,9 +157,7 @@ const DropzoneWithRenderPropsExample = (props) => (
       onDropExit={action('OnDropExit')}>
       {({isHovered, isFocused, isFocusVisible, isDropTarget, isDisabled}) => (
         <div>
-          <Text slot="label">
-            DropzoneArea
-          </Text>
+          <Text slot="label">DropzoneArea</Text>
           <div>isHovered: {isHovered ? 'true' : 'false'}</div>
           <div>isFocused: {isFocused ? 'true' : 'false'}</div>
           <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
@@ -182,17 +176,18 @@ export const DropzoneWithRenderProps: DropzoneStoryObj = {
   argTypes: {
     isDisabled: {control: 'boolean'}
   },
-  render: (args) => (
-    <DropzoneWithRenderPropsExample {...args} />
-  )
+  render: args => <DropzoneWithRenderPropsExample {...args} />
 };
 
 const Draggable = () => {
   let buttonRef = useRef(null);
   let {dragProps, isDragging} = useDrag({
     getItems() {
-      return [{
-        'text/plain': 'hello world'}];
+      return [
+        {
+          'text/plain': 'hello world'
+        }
+      ];
     }
   });
   let {buttonProps} = useButton({elementType: 'div'}, buttonRef);
@@ -212,9 +207,11 @@ const Draggable = () => {
 const Copyable = () => {
   let {clipboardProps} = useClipboard({
     getItems() {
-      return [{
-        'text/plain': 'hello world'
-      }];
+      return [
+        {
+          'text/plain': 'hello world'
+        }
+      ];
     }
   });
 

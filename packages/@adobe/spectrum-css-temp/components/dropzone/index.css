@@ -30,7 +30,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Dropzone-backdrop {
     display: none;
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;

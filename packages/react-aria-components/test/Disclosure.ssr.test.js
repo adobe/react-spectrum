@@ -14,7 +14,9 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Disclosure SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {DisclosureGroup, Disclosure, DisclosurePanel, Heading, Button} from '../exports/index.ts';
 
       <React.StrictMode>
@@ -37,13 +39,15 @@ describe('Disclosure SSR', function () {
           </Disclosure>
         </DisclosureGroup>
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let triggers = screen.getAllByRole('button');
-      let panels = screen.getAllByRole('group', {hidden: true});
-      expect(triggers.map(o => o.textContent)).toEqual(['Trigger 1', 'Trigger 2']);
-      expect(panels.map(o => o.textContent)).toEqual(['Content 1', 'Content 2']);
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let triggers = screen.getAllByRole('button');
+        let panels = screen.getAllByRole('group', {hidden: true});
+        expect(triggers.map(o => o.textContent)).toEqual(['Trigger 1', 'Trigger 2']);
+        expect(panels.map(o => o.textContent)).toEqual(['Content 1', 'Content 2']);
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let triggers = screen.getAllByRole('button');

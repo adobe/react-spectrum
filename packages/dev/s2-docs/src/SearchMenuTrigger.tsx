@@ -1,7 +1,7 @@
 'use client';
 
 import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
-import {fontRelative, lightDark, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {fontRelative, lightDark, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getActiveElement} from '@react-aria/utils';
 import {getLibraryFromPage, getLibraryLabel} from './library';
 import {Provider, Button as S2Button, ButtonProps as S2ButtonProps} from '@react-spectrum/s2';
@@ -20,11 +20,11 @@ export async function preloadSearchMenu() {
 }
 
 export interface SearchMenuTriggerProps extends Omit<ButtonProps, 'children' | 'className'> {
-  onOpen: () => void,
-  onClose: () => void,
-  isSearchOpen: boolean,
-  overlayId: string,
-  staticColor?: 'auto' | 'white'
+  onOpen: () => void;
+  onClose: () => void;
+  isSearchOpen: boolean;
+  overlayId: string;
+  staticColor?: 'auto' | 'white';
 }
 
 let underlayStyle = style({
@@ -55,32 +55,45 @@ let modalStyle = style({
   height: '[90vh]'
 });
 
-export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overlayId, staticColor, ...props}: SearchMenuTriggerProps) {
+export default function SearchMenuTrigger({
+  onOpen,
+  onClose,
+  isSearchOpen,
+  overlayId,
+  staticColor,
+  ...props
+}: SearchMenuTriggerProps) {
   let {currentPage} = useRouter();
   let {colorScheme} = useSettings();
   let [initialSearchValue, setInitialSearchValue] = useState('');
-  let open = useCallback((value: string) => {
-    setInitialSearchValue(value);
-    onOpen();
-  }, [onOpen]);
+  let open = useCallback(
+    (value: string) => {
+      setInitialSearchValue(value);
+      onOpen();
+    },
+    [onOpen]
+  );
 
   useEffect(() => {
     preloadSearchMenu();
   }, []);
 
   // Type to search handler
-  let onKeyDown = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
-    // Ignore modifier keys, navigation keys, Enter, Escape, etc.
-    if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey && e.key !== ' ') {
-      e.preventDefault();
-      open(e.key);
-    }
+  let onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      // Ignore modifier keys, navigation keys, Enter, Escape, etc.
+      if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey && e.key !== ' ') {
+        e.preventDefault();
+        open(e.key);
+      }
 
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      open('');
-    }
-  }, [open]);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        open('');
+      }
+    },
+    [open]
+  );
 
   useEffect(() => {
     let isMac = /Mac/.test(navigator.platform);
@@ -89,7 +102,9 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         return false;
       }
       let h = el as HTMLElement;
-      return h.isContentEditable || !!el.closest('input, textarea, [contenteditable], [role="textbox"]');
+      return (
+        h.isContentEditable || !!el.closest('input, textarea, [contenteditable], [role="textbox"]')
+      );
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -101,10 +116,13 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
       if (e.key === 'Escape' && isSearchOpen) {
         e.preventDefault();
         onClose();
-      } else if (((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)))) {
+      } else if (e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)) {
         e.preventDefault();
         open('');
-      } else if (e.key === '/' && !(isTextInputLike(e.target as Element | null) || isTextInputLike(getActiveElement()))) {
+      } else if (
+        e.key === '/' &&
+        !(isTextInputLike(e.target as Element | null) || isTextInputLike(getActiveElement()))
+      ) {
         e.preventDefault();
         open('');
       }
@@ -137,7 +155,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
 
     isOpenRef.current = isSearchOpen;
   }, [isSearchOpen]);
-    
+
   return (
     <>
       <Button
@@ -149,74 +167,91 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         onPress={() => open('')}
         onHoverStart={() => preloadSearchMenu()}
         onKeyDown={onKeyDown}
-        className={({isHovered, isFocusVisible}) => style({
-          height: 40,
-          boxSizing: 'border-box',
-          paddingStart: 'pill',
-          paddingEnd: 8,
-          fontSize: 'ui-lg',
-          borderRadius: 'full',
-          borderWidth: 2,
-          borderStyle: 'solid',
-          transition: 'default',
-          borderColor: {
-            default: 'gray-300',
-            isHovered: 'gray-400',
-            isFocusVisible: 'gray-900',
-            staticColor: {
-              auto: {
-                default: lightDark('transparent-black-200', 'transparent-white-300'),
-                isHovered: lightDark('transparent-black-300', 'transparent-white-400'),
-                isFocusVisible: lightDark('transparent-black-900', 'transparent-white-900')
-              },
-              white: {
-                default: 'transparent-white-300',
-                isHovered: 'transparent-white-400',
-                isFocusVisible: 'transparent-white-900'
+        className={({isHovered, isFocusVisible}) =>
+          style({
+            height: 40,
+            boxSizing: 'border-box',
+            paddingStart: 'pill',
+            paddingEnd: 8,
+            fontSize: 'ui-lg',
+            borderRadius: 'full',
+            borderWidth: 2,
+            borderStyle: 'solid',
+            transition: 'default',
+            borderColor: {
+              default: 'gray-300',
+              isHovered: 'gray-400',
+              isFocusVisible: 'gray-900',
+              staticColor: {
+                auto: {
+                  default: lightDark('transparent-black-200', 'transparent-white-300'),
+                  isHovered: lightDark('transparent-black-300', 'transparent-white-400'),
+                  isFocusVisible: lightDark('transparent-black-900', 'transparent-white-900')
+                },
+                white: {
+                  default: 'transparent-white-300',
+                  isHovered: 'transparent-white-400',
+                  isFocusVisible: 'transparent-white-900'
+                }
               }
+            },
+            backgroundColor: {
+              default: 'gray-25',
+              staticColor: {
+                auto: 'transparent-white-50',
+                white: 'transparent-white-50'
+              }
+            },
+            color: {
+              default: 'neutral-subdued',
+              staticColor: {
+                auto: lightDark('transparent-black-600', 'transparent-white-800'),
+                white: 'transparent-white-800'
+              }
+            },
+            cursor: 'text',
+            width: '[500px]',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'text-to-visual',
+            outlineStyle: {
+              default: 'none',
+              isFocusVisible: 'solid'
+            },
+            outlineOffset: 2,
+            outlineColor: {
+              default: 'transparent',
+              isFocusVisible: 'focus-ring'
+            },
+            outlineWidth: {
+              default: 0,
+              isFocusVisible: 2
             }
-          },
-          backgroundColor: {
-            default: 'gray-25',
-            staticColor: {
-              auto: 'transparent-white-50',
-              white: 'transparent-white-50'
-            }
-          },
-          color: {
-            default: 'neutral-subdued',
-            staticColor: {
-              auto: lightDark('transparent-black-600', 'transparent-white-800'),
-              white: 'transparent-white-800'
-            }
-          },
-          cursor: 'text',
-          width: '[500px]',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'text-to-visual',
-          outlineStyle: {
-            default: 'none',
-            isFocusVisible: 'solid'
-          },
-          outlineOffset: 2,
-          outlineColor: {
-            default: 'transparent',
-            isFocusVisible: 'focus-ring'
-          },
-          outlineWidth: {
-            default: 0,
-            isFocusVisible: 2
-          }
-        })({isHovered, isFocusVisible, staticColor})}
+          })({isHovered, isFocusVisible, staticColor})
+        }
         style={{visibility: isSearchOpen ? 'hidden' : 'visible', backdropFilter: 'blur(8px)'}}>
         <Search
-          UNSAFE_className={String(style({
-            size: fontRelative(20),
-            '--iconPrimary': {type: 'fill', value: 'currentColor'},
-            flexShrink: 0
-          }))} />
-        <span className={style({font: 'ui-lg', color: {default: 'gray-600', staticColor: {auto: lightDark('transparent-black-600', 'transparent-white-800'), white: 'transparent-white-800'}}})({staticColor})}>Search {getLibraryLabel(getLibraryFromPage(currentPage))}</span>
+          UNSAFE_className={String(
+            style({
+              size: fontRelative(20),
+              '--iconPrimary': {type: 'fill', value: 'currentColor'},
+              flexShrink: 0
+            })
+          )}
+        />
+        <span
+          className={style({
+            font: 'ui-lg',
+            color: {
+              default: 'gray-600',
+              staticColor: {
+                auto: lightDark('transparent-black-600', 'transparent-white-800'),
+                white: 'transparent-white-800'
+              }
+            }
+          })({staticColor})}>
+          Search {getLibraryLabel(getLibraryFromPage(currentPage))}
+        </span>
         <kbd
           className={style({
             marginStart: 'auto',
@@ -249,12 +284,18 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             borderStyle: 'solid',
             pointerEvents: 'none',
             alignSelf: 'center'
-          })({staticColor})}>⌘K</kbd>
+          })({staticColor})}>
+          ⌘K
+        </kbd>
       </Button>
       <ModalOverlay
         isDismissable
         isOpen={isSearchOpen}
-        onOpenChange={(isOpen) => { if (!isOpen) { onClose(); } }}
+        onOpenChange={isOpen => {
+          if (!isOpen) {
+            onClose();
+          }
+        }}
         className={underlayStyle}
         // Keep in the DOM after it has opened once to preserve scroll position.
         isExiting={!isSearchOpen && wasOpen}
@@ -274,7 +315,8 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
               onClose={onClose}
               overlayId={overlayId}
               initialSearchValue={initialSearchValue}
-              isSearchOpen={isSearchOpen} />
+              isSearchOpen={isSearchOpen}
+            />
           </Modal>
         </Provider>
       </ModalOverlay>

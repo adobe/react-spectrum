@@ -42,20 +42,34 @@ let styles = style({
   }
 });
 
-export default function Chevron(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}): ReactNode {
+export default function Chevron(
+  props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}
+): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Chevron_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Chevron_M {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'L':
-      return <Chevron_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Chevron_L {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'XL':
-      return <Chevron_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Chevron_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'XXL':
-      return <Chevron_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Chevron_XXL {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'XS':
-      return <Chevron_XS {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Chevron_XS {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'S':
-      return <Chevron_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Chevron_S {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
   }
 }

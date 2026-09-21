@@ -11,4 +11,10 @@
  */
 export {useProgressBar} from 'react-aria/useProgressBar';
 
-export type {ProgressBarProps, ProgressBarBaseProps, AriaProgressBarBaseProps, AriaProgressBarProps, ProgressBarAria} from 'react-aria/useProgressBar';
+export type {
+  ProgressBarProps,
+  ProgressBarBaseProps,
+  AriaProgressBarBaseProps,
+  AriaProgressBarProps,
+  ProgressBarAria
+} from 'react-aria/useProgressBar';

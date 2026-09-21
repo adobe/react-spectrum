@@ -18,9 +18,16 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   private disabledKeys: Set<Key>;
   private tabDirection: boolean;
 
-  constructor(collection: Collection<Node<T>>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
+  constructor(
+    collection: Collection<Node<T>>,
+    direction: Direction,
+    orientation: Orientation,
+    disabledKeys: Set<Key> = new Set()
+  ) {
     this.collection = collection;
-    this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
+    // getKeyLeftOf/getKeyRightOf follow the locale's text direction regardless of orientation,
+    // so ArrowLeft always moves to the next tab in RTL. getKeyAbove/getKeyBelow are never flipped.
+    this.flipDirection = direction === 'rtl';
     this.disabledKeys = disabledKeys;
     this.tabDirection = orientation === 'horizontal';
   }
@@ -38,7 +45,6 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
     }
     return this.getNextKey(key);
   }
-
 
   private isDisabled(key: Key) {
     return this.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled;
@@ -81,7 +87,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
       if (key == null) {
         key = this.collection.getFirstKey();
       }
-    } while (key != null && this.isDisabled(key));
+    } while (key != null && this.isDisabled(key) && key !== startKey);
     return key;
   }
 
@@ -92,7 +98,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
       if (key == null) {
         key = this.collection.getLastKey();
       }
-    } while (key != null && this.isDisabled(key));
+    } while (key != null && this.isDisabled(key) && key !== startKey);
     return key;
   }
 }

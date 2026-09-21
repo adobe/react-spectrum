@@ -39,11 +39,13 @@ export default meta;
 type Story = StoryObj<typeof RadioGroup>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <RadioGroup {...args}>
       <Radio value="soccer">Soccer</Radio>
       <Radio value="baseball">Baseball</Radio>
-      <Radio value="football" isDisabled>Football</Radio>
+      <Radio value="football" isDisabled>
+        Football
+      </Radio>
       <Radio value="basketball">Basketball</Radio>
     </RadioGroup>
   ),
@@ -53,7 +55,7 @@ export const Example: Story = {
 };
 
 export const LongLabel: Story = {
-  render: (args) => (
+  render: args => (
     <RadioGroup styles={style({maxWidth: 128})} {...args}>
       <Radio value="longLabel">Radio with very long label so we can see wrapping</Radio>
     </RadioGroup>
@@ -66,18 +68,23 @@ export const LongLabel: Story = {
 };
 
 export const ErrorAndDescription: Story = {
-  render: (args) => (
+  render: args => (
     <RadioGroup {...args}>
-      <Radio value="soccer">Soccer</Radio>
-      <Radio value="baseball">Baseball</Radio>
-      <Radio value="football" isDisabled>Football</Radio>
-      <Radio value="basketball">Basketball</Radio>
+      <Radio value="standard" description="Delivers in 5-7 business days">
+        Standard Shipping (Free)
+      </Radio>
+      <Radio value="expedited" description="Delivers in 2-3 business days">
+        Expedited Shipping ($9.99)
+      </Radio>
+      <Radio value="overnight" description="Next day delivery">
+        Overnight Shipping ($19.99)
+      </Radio>
     </RadioGroup>
   ),
   args: {
-    label: 'Favorite sport',
-    description: 'A long description to test help text wrapping.',
-    errorMessage: 'A long error message to test help text wrapping. Only shows when invalid is set which makes it red too!'
+    label: 'Shipping options',
+    description: 'Optional radio group description',
+    errorMessage: 'Please choose a shipping option'
   },
   parameters: {
     docs: {
@@ -87,26 +94,25 @@ export const ErrorAndDescription: Story = {
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <RadioGroup
       {...args}
       contextualHelp={
         <ContextualHelp>
           <Heading>Sports</Heading>
           <Content>
-            <Text>
-              Social games we paly to have fun and stay healthy.
-            </Text>
+            <Text>Social games we paly to have fun and stay healthy.</Text>
           </Content>
           <Footer>
-            <Link
-              isStandalone
-              href="https://en.wikipedia.org/wiki/Sport"
-              target="_blank">Learn more about sports</Link>
+            <Link isStandalone href="https://en.wikipedia.org/wiki/Sport" target="_blank">
+              Learn more about sports
+            </Link>
           </Footer>
         </ContextualHelp>
       }>
-      <Radio isDisabled value="soccer">Soccer</Radio>
+      <Radio isDisabled value="soccer">
+        Soccer
+      </Radio>
       <Radio value="baseball">Baseball</Radio>
       <Radio value="football">Football</Radio>
       <Radio value="basketball">Basketball</Radio>

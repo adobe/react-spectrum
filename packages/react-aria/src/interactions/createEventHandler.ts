@@ -14,15 +14,18 @@ import {BaseEvent} from '@react-types/shared';
 import {SyntheticEvent} from 'react';
 
 /**
- * This function wraps a React event handler to make stopPropagation the default, and support continuePropagation instead.
+ * This function wraps a React event handler to make stopPropagation the default, and support
+ * continuePropagation instead.
  */
-export function createEventHandler<T extends SyntheticEvent>(handler?: (e: BaseEvent<T>) => void): ((e: T) => void) | undefined {
+export function createEventHandler<T extends SyntheticEvent>(
+  handler?: (e: BaseEvent<T>) => void
+): ((e: T) => void) | undefined {
   if (!handler) {
     return undefined;
   }
 
-  let shouldStopPropagation = true;
   return (e: T) => {
+    let shouldStopPropagation = true;
     let event: BaseEvent<T> = {
       ...e,
       preventDefault() {
@@ -33,13 +36,20 @@ export function createEventHandler<T extends SyntheticEvent>(handler?: (e: BaseE
       },
       stopPropagation() {
         if (shouldStopPropagation && process.env.NODE_ENV !== 'production') {
-          console.error('stopPropagation is now the default behavior for events in React Spectrum. You can use continuePropagation() to revert this behavior.');
+          console.error(
+            'stopPropagation is now the default behavior for events in React Spectrum. You can use continuePropagation() to revert this behavior.'
+          );
         } else {
           shouldStopPropagation = true;
         }
       },
       continuePropagation() {
         shouldStopPropagation = false;
+        // nested createEventHandler might have set continue propagation so we should continue
+        // propagation on wrappers
+        if (typeof (e as any).continuePropagation === 'function') {
+          (e as any).continuePropagation();
+        }
       },
       isPropagationStopped() {
         return shouldStopPropagation;
@@ -48,7 +58,11 @@ export function createEventHandler<T extends SyntheticEvent>(handler?: (e: BaseE
 
     handler(event);
 
-    if (shouldStopPropagation) {
+    // nested createEventHandler calls may already have stopped propagation
+    if (
+      shouldStopPropagation &&
+      !(typeof e.isPropagationStopped === 'function' && e.isPropagationStopped())
+    ) {
       e.stopPropagation();
     }
   };

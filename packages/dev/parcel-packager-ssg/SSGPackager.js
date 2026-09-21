@@ -35,10 +35,7 @@ module.exports = new Packager({
         if (entryBundle?.bundleBehavior === 'inline') {
           queue.add(async () => {
             if (!packagingBundles.has(entryBundle)) {
-              packagingBundles.set(entryBundle, getInlineBundleContents(
-                entryBundle,
-                bundleGraph
-              ));
+              packagingBundles.set(entryBundle, getInlineBundleContents(entryBundle, bundleGraph));
             }
 
             let packagedBundle = await packagingBundles.get(entryBundle);
@@ -54,16 +51,20 @@ module.exports = new Packager({
     });
 
     let assets = new Map(await queue.run());
-    let load = (id) => {
+    let load = id => {
       const cachedModule = moduleCache.get(id);
       if (cachedModule) {
         return cachedModule.exports;
       }
 
       let [asset, code] = assets.get(id);
-      let moduleFunction = vm.compileFunction(code, ['exports', 'require', 'module', '__dirname', '__filename', 'parcelRequire'], {
-        filename: asset.filePath
-      });
+      let moduleFunction = vm.compileFunction(
+        code,
+        ['exports', 'require', 'module', '__dirname', '__filename', 'parcelRequire'],
+        {
+          filename: asset.filePath
+        }
+      );
 
       let deps = new Map();
       for (let dep of bundleGraph.getDependencies(asset)) {
@@ -188,10 +189,8 @@ module.exports = new Packager({
         publicUrl: bundle.target.publicUrl
       };
 
-      parcelRequire.resolve = (url) => {
-        let bundle = bundleGraph
-          .getBundles()
-          .find(b => b.publicId === url || b.name === url);
+      parcelRequire.resolve = url => {
+        let bundle = bundleGraph.getBundles().find(b => b.publicId === url || b.name === url);
         if (bundle) {
           return urlJoin(bundle.target.publicUrl, bundle.name);
         } else {
@@ -211,7 +210,7 @@ module.exports = new Packager({
       };
 
       moduleCache.set(id, module);
-    
+
       moduleFunction(module.exports, require, module, dirname, asset.filePath, parcelRequire);
       return module.exports;
     };
@@ -246,13 +245,17 @@ module.exports = new Packager({
     let mainAsset = bundle.getMainEntry();
     let code = ReactDOMServer.renderToStaticMarkup(
       React.createElement(Component, {
-        scripts: bundles.filter(b => b.type === 'js').map(b => ({
-          type: b.env.outputFormat === 'esmodule' ? 'module' : undefined,
-          url: urlJoin(b.target.publicUrl, b.name)
-        })),
-        styles: bundles.filter(b => b.type === 'css').map(b => ({
-          url: urlJoin(b.target.publicUrl, b.name)
-        })),
+        scripts: bundles
+          .filter(b => b.type === 'js')
+          .map(b => ({
+            type: b.env.outputFormat === 'esmodule' ? 'module' : undefined,
+            url: urlJoin(b.target.publicUrl, b.name)
+          })),
+        styles: bundles
+          .filter(b => b.type === 'css')
+          .map(b => ({
+            url: urlJoin(b.target.publicUrl, b.name)
+          })),
         pages,
         currentPage: {
           filePath: mainAsset.filePath,
@@ -298,7 +301,10 @@ function getImageURL(image, bundleGraph, bundle) {
     return '';
   }
 
-  let dep = bundle.getMainEntry().getDependencies().find(d => d.id === image);
+  let dep = bundle
+    .getMainEntry()
+    .getDependencies()
+    .find(d => d.id === image);
   if (!dep) {
     return '';
   }

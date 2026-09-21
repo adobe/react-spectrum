@@ -21,137 +21,153 @@ import {singleParagraph} from './Dialog.stories';
 export default {
   title: 'Dialog/Alert',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true,
+      express: false
+    }
   },
   excludeStories: ['renderAlert']
 } as Meta<typeof AlertDialog>;
 
 export type AlertDialogStory = StoryFn<typeof AlertDialog>;
 
-export const Destructive: AlertDialogStory = () => renderAlert({
-  variant: 'destructive',
-  title: 'Warning Destructive',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel'
-});
+export const Destructive: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'destructive',
+    title: 'Warning Destructive',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel'
+  });
 
 Destructive.story = {
   name: 'destructive'
 };
 
-export const Confirmation: AlertDialogStory = () => renderAlert({
-  variant: 'confirmation',
-  title: 'Confirmation Required',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel'
-});
+export const Confirmation: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'confirmation',
+    title: 'Confirmation Required',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel'
+  });
 
 Confirmation.story = {
   name: 'confirmation'
 };
 
-export const Information: AlertDialogStory = () => renderAlert({
-  variant: 'information',
-  title: 'Informative Alert',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel'
-});
+export const Information: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'information',
+    title: 'Informative Alert',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel'
+  });
 
 Information.story = {
   name: 'information'
 };
 
-export const Error: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel'
-});
+export const Error: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel'
+  });
 
 Error.story = {
   name: 'error'
 };
 
-export const Warning: AlertDialogStory = () => renderAlert({
-  variant: 'warning',
-  title: 'This is a warning',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel'
-});
+export const Warning: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'warning',
+    title: 'This is a warning',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel'
+  });
 
 Warning.story = {
   name: 'warning'
 };
 
-export const PrimaryDisabled: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  isPrimaryActionDisabled: true
-});
+export const PrimaryDisabled: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    isPrimaryActionDisabled: true
+  });
 
 PrimaryDisabled.story = {
   name: 'primary disabled'
 };
 
-export const AutoFocusPrimary: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  secondaryActionLabel: 'Secondary button',
-  autoFocusButton: 'primary'
-});
+export const AutoFocusPrimary: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    secondaryActionLabel: 'Secondary button',
+    autoFocusButton: 'primary'
+  });
 
 AutoFocusPrimary.story = {
   name: 'autoFocus primary'
 };
 
-export const SecondaryDisabled: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  secondaryActionLabel: 'Secondary button',
-  cancelLabel: 'Cancel',
-  isSecondaryActionDisabled: true
-});
+export const SecondaryDisabled: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    secondaryActionLabel: 'Secondary button',
+    cancelLabel: 'Cancel',
+    isSecondaryActionDisabled: true
+  });
 
 SecondaryDisabled.story = {
   name: 'secondary disabled'
 };
 
-export const AutoFocusSecondary: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  secondaryActionLabel: 'Secondary button',
-  autoFocusButton: 'secondary'
-});
+export const AutoFocusSecondary: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    secondaryActionLabel: 'Secondary button',
+    autoFocusButton: 'secondary'
+  });
 
 AutoFocusSecondary.story = {
   name: 'autoFocus secondary'
 };
 
-export const AutoFocusCancel: AlertDialogStory = () => renderAlert({
-  variant: 'error',
-  title: 'Error: Danger Will Robinson',
-  children: singleParagraph(),
-  primaryActionLabel: 'Accept',
-  cancelLabel: 'Cancel',
-  secondaryActionLabel: 'Secondary button',
-  autoFocusButton: 'cancel'
-});
+export const AutoFocusCancel: AlertDialogStory = () =>
+  renderAlert({
+    variant: 'error',
+    title: 'Error: Danger Will Robinson',
+    children: singleParagraph(),
+    primaryActionLabel: 'Accept',
+    cancelLabel: 'Cancel',
+    secondaryActionLabel: 'Secondary button',
+    autoFocusButton: 'cancel'
+  });
 
 AutoFocusCancel.story = {
   name: 'autoFocus cancel'

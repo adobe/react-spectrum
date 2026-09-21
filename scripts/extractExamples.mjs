@@ -25,7 +25,9 @@ try {
 } catch (err) {}
 fs.mkdirSync(distDir, {recursive: true});
 
-for (let file of globSync('packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/**/*.mdx')) {
+for (let file of globSync(
+  'packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/**/*.mdx'
+)) {
   console.log(`Extracting ${file}...`);
   let contents = fs.readFileSync(file);
   let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);
@@ -47,14 +49,17 @@ for (let file of globSync('packages/{@react-{spectrum,aria,stately}/*,react-aria
     code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m, a, s) => {
       if (s.slice(1, -1) !== 'your-component-library') {
         if (a.startsWith('{')) {
-          let filtered = a.slice(1, -1).split(/\s*,\s+/).filter(s => {
-            if (!imports.has(s)) {
-              imports.add(s);
-              return true;
-            }
+          let filtered = a
+            .slice(1, -1)
+            .split(/\s*,\s+/)
+            .filter(s => {
+              if (!imports.has(s)) {
+                imports.add(s);
+                return true;
+              }
 
-            return false;
-          });
+              return false;
+            });
 
           if (filtered.length) {
             exampleCode.push(`import {${filtered.join(', ')}} from ${s};`);
@@ -79,7 +84,10 @@ for (let file of globSync('packages/{@react-{spectrum,aria,stately}/*,react-aria
         let name = code.match(/function (.*?)\s*(?:<.*?)?\(/)[1];
         code = `${code}\nReactDOM.createRoot(document.getElementById("root")).render(<${name} />);`;
       } else if (/^<(.|\n)*>$/m.test(code)) {
-        code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.createRoot(document.getElementById("root")).render(<>$1</>);`);
+        code = code.replace(
+          /^(<(.|\n)*>)$/m,
+          `ReactDOM.createRoot(document.getElementById("root")).render(<>$1</>);`
+        );
       }
     }
 
@@ -108,7 +116,9 @@ import ReactDOM from 'react-dom/client';
 
 fs.copyFileSync('lib/svg.d.ts', `${distDir}/svg.d.ts`);
 fs.copyFileSync('lib/css.d.ts', `${distDir}/css.d.ts`);
-fs.writeFileSync(`${distDir}/tsconfig.json`, `{
+fs.writeFileSync(
+  `${distDir}/tsconfig.json`,
+  `{
   "compilerOptions": {
     "target": "es2018",
     "lib": [
@@ -129,4 +139,5 @@ fs.writeFileSync(`${distDir}/tsconfig.json`, `{
     "noUnusedLocals": true
   }
 }
-`);
+`
+);

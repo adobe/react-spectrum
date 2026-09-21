@@ -5,7 +5,15 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function ColorSwatch({name}) {
   return (
-    <div className={style({display: 'flex', gap: 8, marginBottom: 4, font: 'ui', alignItems: 'center', breakInside: 'avoid'})}>
+    <div
+      className={style({
+        display: 'flex',
+        gap: 8,
+        marginBottom: 4,
+        font: 'ui',
+        alignItems: 'center',
+        breakInside: 'avoid'
+      })}>
       <div
         className={style({
           backgroundColor: {
@@ -43,7 +51,8 @@ function ColorSwatch({name}) {
           borderWidth: 1,
           borderColor: 'gray-1000/15',
           borderStyle: 'solid'
-        })({color: name})} />
+        })({color: name})}
+      />
       <div>{name}</div>
     </div>
   );
@@ -52,7 +61,7 @@ function ColorSwatch({name}) {
 export function IconColors({colors}: {colors: string[]}) {
   return (
     <div style={{columnWidth: 100}}>
-      {colors.map((color) => (
+      {colors.map(color => (
         <ColorSwatch key={color} name={color} />
       ))}
     </div>

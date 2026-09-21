@@ -13,4 +13,8 @@ export {useCheckbox} from 'react-aria/useCheckbox';
 
 export {useCheckboxGroup, useCheckboxGroupItem} from 'react-aria/useCheckboxGroup';
 export type {CheckboxAria, CheckboxProps, AriaCheckboxProps} from 'react-aria/useCheckbox';
-export type {AriaCheckboxGroupProps, CheckboxGroupAria, AriaCheckboxGroupItemProps} from 'react-aria/useCheckboxGroup';
+export type {
+  AriaCheckboxGroupProps,
+  CheckboxGroupAria,
+  AriaCheckboxGroupItemProps
+} from 'react-aria/useCheckboxGroup';

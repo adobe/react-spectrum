@@ -1,4 +1,4 @@
-import { Html, Head, Main, NextScript } from 'next/document'
+import {Html, Head, Main, NextScript} from 'next/document';
 import {LocalizedStringProvider} from '@adobe/react-spectrum/i18n';
 
 export default function Document(props: any) {
@@ -11,5 +11,5 @@ export default function Document(props: any) {
         <NextScript />
       </body>
     </Html>
-  )
+  );
 }

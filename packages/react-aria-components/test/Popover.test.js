@@ -20,7 +20,7 @@ import React, {useRef} from 'react';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
 
-let TestPopover = (props) => (
+let TestPopover = props => (
   <DialogTrigger>
     <Button />
     <Popover {...props}>
@@ -56,9 +56,29 @@ describe('Popover', () => {
     expect(dialog).toBeInTheDocument();
     expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DialogTrigger');
 
+    expect(button).toHaveAttribute('aria-controls');
+    expect(dialog).toHaveAttribute('id', button.getAttribute('aria-controls'));
+
     await user.click(document.body);
 
     expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('applies overlay id to standalone popover', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button />
+        <Popover aria-label="Popover">Popover content</Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(button).toHaveAttribute('aria-controls');
+    expect(dialog).toHaveAttribute('id', button.getAttribute('aria-controls'));
   });
 
   it('should handle focus', async () => {
@@ -99,7 +119,9 @@ describe('Popover', () => {
   });
 
   it('should support custom render function', async () => {
-    let {getByRole} =  render(<TestPopover render={props => <div {...props} data-custom="true" />} />);
+    let {getByRole} = render(
+      <TestPopover render={props => <div {...props} data-custom="true" />} />
+    );
     let button = getByRole('button');
     await user.click(button);
     let dialog = getByRole('dialog').parentElement;
@@ -109,12 +131,14 @@ describe('Popover', () => {
   it('should support being used standalone', () => {
     let triggerRef = React.createRef();
     let onOpenChange = jest.fn();
-    let {getByRole} = render(<>
-      <span ref={triggerRef}>Trigger</span>
-      <Popover isOpen triggerRef={triggerRef} onOpenChange={onOpenChange}>
-        <Dialog aria-label="Popover">A popover</Dialog>
-      </Popover>
-    </>);
+    let {getByRole} = render(
+      <>
+        <span ref={triggerRef}>Trigger</span>
+        <Popover isOpen triggerRef={triggerRef} onOpenChange={onOpenChange}>
+          <Dialog aria-label="Popover">A popover</Dialog>
+        </Popover>
+      </>
+    );
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('A popover');
@@ -128,14 +152,16 @@ describe('Popover', () => {
 
   it('isOpen and defaultOpen should override state from context', () => {
     let onOpenChange = jest.fn();
-    let {getByRole} = render(<>
-      <DialogTrigger>
-        <Button />
-        <Popover isOpen onOpenChange={onOpenChange}>
-          <Dialog>A popover</Dialog>
-        </Popover>
-      </DialogTrigger>
-    </>);
+    let {getByRole} = render(
+      <>
+        <DialogTrigger>
+          <Button />
+          <Popover isOpen onOpenChange={onOpenChange}>
+            <Dialog>A popover</Dialog>
+          </Popover>
+        </DialogTrigger>
+      </>
+    );
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('A popover');
@@ -221,14 +247,14 @@ describe('Popover', () => {
       );
     }
     it('should render the dialog in the portal container set by the PortalProvider', async () => {
-      let {getByRole, getByTestId} = render(
-        <App />
-      );
+      let {getByRole, getByTestId} = render(<App />);
 
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
     });
   });
 
@@ -259,14 +285,14 @@ describe('Popover', () => {
       );
     }
     it('should render the dialog in the portal container', async () => {
-      let {getByRole, getByTestId} = render(
-        <App />
-      );
+      let {getByRole, getByTestId} = render(<App />);
 
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
     });
   });
 

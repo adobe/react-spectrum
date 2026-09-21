@@ -18,7 +18,9 @@ const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').execSync;
 
-const workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+const workspacePackages = JSON.parse(
+  exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n')
+);
 const incomingDeps = new Map();
 
 for (let pkg in workspacePackages) {
@@ -32,7 +34,12 @@ for (let pkg in workspacePackages) {
 }
 
 for (let pkg in workspacePackages) {
-  let json = JSON.parse(fs.readFileSync(path.join(__dirname, '..', workspacePackages[pkg].location, 'package.json'), 'utf8'));
+  let json = JSON.parse(
+    fs.readFileSync(
+      path.join(__dirname, '..', workspacePackages[pkg].location, 'package.json'),
+      'utf8'
+    )
+  );
   if (!json.private && json.peerDependencies) {
     for (let peer in json.peerDependencies) {
       addPeers(pkg, peer, json.peerDependencies[peer]);

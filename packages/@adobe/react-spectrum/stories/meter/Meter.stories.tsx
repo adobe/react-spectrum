@@ -56,7 +56,7 @@ export default {
       options: ['top', 'side']
     }
   }
-}as Meta<typeof Meter>;
+} as Meta<typeof Meter>;
 
 export const Default: MeterStory = {
   args: {label: 'Meter', value: 50},
@@ -93,7 +93,7 @@ export const ParentWidth100: MeterStory = {
   ...Default,
   args: {...Default.args, value: 32},
   decorators: [
-    (Story) => (
+    Story => (
       <span style={{width: '100%'}}>
         <Story />
       </span>
@@ -106,7 +106,7 @@ export const ParentWidth100Px: MeterStory = {
   ...Default,
   args: {...Default.args, value: 32},
   decorators: [
-    (Story) => (
+    Story => (
       <span style={{width: '100px'}}>
         <Story />
       </span>
@@ -129,12 +129,25 @@ export const Width30Px: MeterStory = {
 
 export const UsingRawValuesForMinValueMaxValueAndValue: MeterStory = {
   ...Default,
-  args: {...Default.args, showValueLabel: true, labelPosition: 'top', maxValue: 2147483648, value: 715827883},
+  args: {
+    ...Default.args,
+    showValueLabel: true,
+    labelPosition: 'top',
+    maxValue: 2147483648,
+    value: 715827883
+  },
   name: 'Using raw values for minValue, maxValue, and value'
 };
 
 export const UsingRawValuesWithNumberFormatter: MeterStory = {
   ...Default,
-  args: {...Default.args, showValueLabel: true, labelPosition: 'top', maxValue: 2147483648, value: 715827883, formatOptions},
+  args: {
+    ...Default.args,
+    showValueLabel: true,
+    labelPosition: 'top',
+    maxValue: 2147483648,
+    value: 715827883,
+    formatOptions
+  },
   name: 'Using raw values with number formatter'
 };

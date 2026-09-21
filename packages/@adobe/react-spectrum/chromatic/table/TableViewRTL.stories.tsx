@@ -16,7 +16,12 @@ import {Meta} from '@storybook/react';
 const meta: Meta = {
   title: 'TableViewRTL',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['medium'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['ar-AE'],
+      scales: ['medium'],
+      disableAnimations: true
+    },
     // large delay with the layout since there are so many tables
     chromatic: {delay: 4000}
   }

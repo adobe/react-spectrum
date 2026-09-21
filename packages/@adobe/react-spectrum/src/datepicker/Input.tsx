@@ -42,34 +42,37 @@ export const Input = React.forwardRef(function Input(props: any, ref: any) {
   // When constrained, don't reserve space because adding it only when invalid will
   // not cause a layout shift.
   let [reservePadding, setReservePadding] = useValueEffect(false);
-  let onResize = useCallback(() => setReservePadding(function *(reservePadding) {
-    if (inputRef.current && inputRef.current.parentElement) {
-      if (reservePadding) {
-        // Try to collapse padding if the content is clipped.
-        if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
-          let width = inputRef.current.parentElement.offsetWidth;
-          yield false;
+  let onResize = useCallback(
+    () =>
+      setReservePadding(function* (reservePadding) {
+        if (inputRef.current && inputRef.current.parentElement) {
+          if (reservePadding) {
+            // Try to collapse padding if the content is clipped.
+            if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
+              let width = inputRef.current.parentElement.offsetWidth;
+              yield false;
 
-          // If removing padding causes a layout shift, add it back.
-          if (inputRef.current.parentElement.offsetWidth !== width) {
-            yield true;
+              // If removing padding causes a layout shift, add it back.
+              if (inputRef.current.parentElement.offsetWidth !== width) {
+                yield true;
+              }
+            }
+          } else {
+            // Try to add padding if the content is not clipped.
+            if (inputRef.current.offsetWidth >= inputRef.current.scrollWidth) {
+              let width = inputRef.current.parentElement.offsetWidth;
+              yield true;
+
+              // If adding padding does not change the width (i.e. width is constrained), remove it again.
+              if (inputRef.current.parentElement.offsetWidth === width) {
+                yield false;
+              }
+            }
           }
         }
-      } else {
-        // Try to add padding if the content is not clipped.
-        if (inputRef.current.offsetWidth >= inputRef.current.scrollWidth) {
-          let width = inputRef.current.parentElement.offsetWidth;
-          yield true;
-
-          // If adding padding does not change the width (i.e. width is constrained), remove it again.
-          if (inputRef.current.parentElement.offsetWidth === width) {
-            yield false;
-          }
-        }
-      }
-    }
-
-  }), [inputRef, setReservePadding]);
+      }),
+    [inputRef, setReservePadding]
+  );
 
   useLayoutEffect(onResize, [onResize]);
   useResizeObserver({
@@ -114,10 +117,7 @@ export const Input = React.forwardRef(function Input(props: any, ref: any) {
     inputClassName
   );
 
-  let iconClass = classNames(
-    textfieldStyles,
-    'spectrum-Textfield-validationIcon'
-  );
+  let iconClass = classNames(textfieldStyles, 'spectrum-Textfield-validationIcon');
 
   let validationIcon: ReactElement | null = null;
   if (validationState === 'invalid' && !isDisabled) {
@@ -127,7 +127,11 @@ export const Input = React.forwardRef(function Input(props: any, ref: any) {
   }
 
   return (
-    <div role="presentation" {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
+    <div
+      role="presentation"
+      {...mergeProps(fieldProps, focusProps)}
+      className={textfieldClass}
+      style={style}>
       <div role="presentation" className={inputClass}>
         <div
           role="presentation"

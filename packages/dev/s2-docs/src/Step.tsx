@@ -33,20 +33,24 @@ export function Counter() {
   return (
     <span
       data-step
-      className={css('&::before { content: counter(step) }') + style({
-        fontWeight: 'normal',
-        borderRadius: 'full',
-        aspectRatio: 'square',
-        backgroundColor: 'neutral',
-        display: 'inline-block',
-        height: '[1lh]',
-        textAlign: 'center',
-        color: 'gray-25',
-        marginStart: {
-          default: 0,
-          md: 'calc(-1lh - 8px)'
-        },
-        marginEnd: 8
-      })} />
+      className={
+        css('&::before { content: counter(step) }') +
+        style({
+          fontWeight: 'normal',
+          borderRadius: 'full',
+          aspectRatio: 'square',
+          backgroundColor: 'neutral',
+          display: 'inline-block',
+          height: '[1lh]',
+          textAlign: 'center',
+          color: 'gray-25',
+          marginStart: {
+            default: 0,
+            md: 'calc(-1lh - 8px)'
+          },
+          marginEnd: 8
+        })
+      }
+    />
   );
 }

@@ -14,12 +14,27 @@ import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 export interface HeadingProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'h1', undefined> {
-  level?: number
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
+   * @default 'react-aria-Heading'
+   */
+  className?: string;
+  /**
+   * The heading level.
+   *
+   * @default 3
+   */
+  level?: number;
 }
 
 export const HeadingContext = createContext<ContextValue<HeadingProps, HTMLHeadingElement>>({});
 
-export const Heading = forwardRef(function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
+export const Heading = forwardRef(function Heading(
+  props: HeadingProps,
+  ref: ForwardedRef<HTMLHeadingElement>
+) {
   [props, ref] = useContextProps(props, ref, HeadingContext);
   let {children, level = 3, className, ...domProps} = props;
   let Element = dom[`h${level}`];

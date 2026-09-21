@@ -41,8 +41,8 @@ export const BreadcrumbsExample: BreadcrumbsStory = {
 };
 
 interface ItemValue {
-  id: string,
-  url: string
+  id: string;
+  url: string;
 }
 let items: Array<ItemValue> = [
   {id: 'Home', url: '/'},

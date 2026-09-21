@@ -39,7 +39,7 @@ describe('useFormReset', () => {
       const ref = useRef<HTMLInputElement>(null);
       useFormReset(ref, '', onReset);
       return (
-        <form onReset={(e) => e.stopPropagation()}>
+        <form onReset={e => e.stopPropagation()}>
           <input ref={ref} type="text" />
           <button type="reset">Reset</button>
         </form>
@@ -82,7 +82,7 @@ describe('useFormReset', () => {
       const ref = useRef<HTMLInputElement>(null);
       useFormReset(ref, '', onReset);
       return (
-        <form onReset={(e) => e.preventDefault()}>
+        <form onReset={e => e.preventDefault()}>
           <input ref={ref} type="text" />
           <button type="reset">Reset</button>
         </form>
@@ -100,7 +100,7 @@ describe('useFormReset', () => {
       const ref = useRef<HTMLInputElement>(null);
       useFormReset(ref, '', onReset);
       return (
-        <form onResetCapture={(e) => e.preventDefault()}>
+        <form onResetCapture={e => e.preventDefault()}>
           <input ref={ref} type="text" />
           <button type="reset">Reset</button>
         </form>
@@ -121,7 +121,7 @@ describe('useFormReset', () => {
       const ref2 = useRef<HTMLInputElement>(null);
       useFormReset(ref2, '', onReset2);
       return (
-        <form onResetCapture={(e) => e.preventDefault()}>
+        <form onResetCapture={e => e.preventDefault()}>
           <input ref={ref1} type="text" />
           <input ref={ref2} type="text" />
           <button type="reset">Reset</button>

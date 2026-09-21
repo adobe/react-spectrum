@@ -1,5 +1,5 @@
-import { type Meta } from '@storybook/react';
-import { Tree, TreeItem } from '../src/Tree';
+import {type Meta} from '@storybook/react';
+import {Tree, TreeItem} from '../src/Tree';
 import React from 'react';
 
 const meta: Meta<typeof Tree> = {
@@ -13,17 +13,17 @@ const meta: Meta<typeof Tree> = {
 export default meta;
 
 export const Example = (args: any) => (
-<Tree aria-label="Files" style={{height: '400px', width: '300px'}} {...args}>
-  <TreeItem title="Documents">
-    <TreeItem title="Project">
-      <TreeItem title="Weekly Report" />
+  <Tree aria-label="Files" style={{height: '400px', width: '300px'}} {...args}>
+    <TreeItem title="Documents">
+      <TreeItem title="Project">
+        <TreeItem title="Weekly Report" />
+      </TreeItem>
     </TreeItem>
-  </TreeItem>
-  <TreeItem title="Photos">
-    <TreeItem title="Image 1" />
-    <TreeItem title="Image 2" />
-  </TreeItem>
-</Tree>
+    <TreeItem title="Photos">
+      <TreeItem title="Image 1" />
+      <TreeItem title="Image 2" />
+    </TreeItem>
+  </Tree>
 );
 
 Example.args = {

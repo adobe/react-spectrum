@@ -41,7 +41,9 @@ describe('FocusScope', function () {
 
   afterEach(() => {
     // make sure to clean up any raf's that may be running to restore focus on unmount
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     // Iframe teardown
     iframe.remove();
@@ -60,7 +62,11 @@ describe('FocusScope', function () {
       );
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('input[data-testid="input1"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('input[data-testid="input1"]')
+        ).toBeTruthy();
       });
 
       const iframeDocument = iframe.contentWindow.document;
@@ -69,7 +75,9 @@ describe('FocusScope', function () {
       const input2 = iframeDocument.querySelector('input[data-testid="input2"]');
       const input3 = iframeDocument.querySelector('input[data-testid="input3"]');
 
-      act(() => {input1.focus();});
+      act(() => {
+        input1.focus();
+      });
       expect(iframeDocument.activeElement).toBe(input1);
 
       await user.tab();
@@ -103,14 +111,20 @@ describe('FocusScope', function () {
       );
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('input[data-testid="input1"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('input[data-testid="input1"]')
+        ).toBeTruthy();
       });
 
       const iframeDocument = iframe.contentWindow.document;
       const input1 = iframeDocument.querySelector('input[data-testid="input1"]');
       const input2 = iframeDocument.querySelector('input[data-testid="input2"]');
 
-      act(() => {input1.focus();});
+      act(() => {
+        input1.focus();
+      });
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(iframeDocument.activeElement).toBe(input1);
 
@@ -132,13 +146,13 @@ describe('FocusScope', function () {
           <div>
             <input data-testid="outside" />
             <IframeExample>
-              {show &&
+              {show && (
                 <FocusScope restoreFocus autoFocus>
                   <input data-testid="input1" />
                   <input data-testid="input2" />
                   <input data-testid="input3" />
                 </FocusScope>
-              }
+              )}
             </IframeExample>
           </div>
         );
@@ -147,12 +161,18 @@ describe('FocusScope', function () {
       let {getByTestId, rerender} = render(<Test />);
 
       let outside = getByTestId('outside');
-      act(() => {outside.focus();});
+      act(() => {
+        outside.focus();
+      });
 
       rerender(<Test show />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('input[data-testid="input1"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('input[data-testid="input1"]')
+        ).toBeTruthy();
       });
       const iframeDocument = iframe.contentWindow.document;
       const input1 = iframeDocument.querySelector('input[data-testid="input1"]');
@@ -161,7 +181,9 @@ describe('FocusScope', function () {
       rerender(<Test />);
       iframe.remove();
 
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(document.activeElement).toBe(outside);
     });
@@ -172,9 +194,15 @@ describe('FocusScope', function () {
           <IframeExample>
             <FocusScope contain>
               <div role="dialog" data-testid="focusable" tabIndex={-1}>
-                <Item data-testid="tabbable1" autoFocus tabIndex={null}>Remove me!</Item>
-                <Item data-testid="item1" tabIndex={0}>Remove me, too!</Item>
-                <Item data-testid="item2" tabIndex={-1}>Remove me, three!</Item>
+                <Item data-testid="tabbable1" autoFocus tabIndex={null}>
+                  Remove me!
+                </Item>
+                <Item data-testid="item1" tabIndex={0}>
+                  Remove me, too!
+                </Item>
+                <Item data-testid="item2" tabIndex={-1}>
+                  Remove me, three!
+                </Item>
               </div>
             </FocusScope>
           </IframeExample>
@@ -195,7 +223,11 @@ describe('FocusScope', function () {
         }
 
         await waitFor(() => {
-          expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="focusable"]')).toBeTruthy();
+          expect(
+            document
+              .querySelector('iframe')
+              .contentWindow.document.body.querySelector('div[data-testid="focusable"]')
+          ).toBeTruthy();
         });
         const iframeDocument = iframe.contentWindow.document;
         const focusable = iframeDocument.querySelector('div[data-testid="focusable"]');
@@ -230,10 +262,16 @@ describe('FocusScope', function () {
         </IframeExample>
       );
 
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('input[data-testid="input1"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('input[data-testid="input1"]')
+        ).toBeTruthy();
       });
       const iframeDocument = iframe.contentWindow.document;
 
@@ -254,7 +292,11 @@ describe('FocusScope', function () {
       );
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('input[data-testid="input2"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('input[data-testid="input2"]')
+        ).toBeTruthy();
       });
       const iframeDocument = iframe.contentWindow.document;
 
@@ -289,14 +331,20 @@ describe('FocusScope', function () {
       render(<Test />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="item1"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="item1"]')
+        ).toBeTruthy();
       });
       const iframeDocument = iframe.contentWindow.document;
       const item1 = iframeDocument.querySelector('div[data-testid="item1"]');
       const item2 = iframeDocument.querySelector('div[data-testid="item2"]');
       const item3 = iframeDocument.querySelector('div[data-testid="item3"]');
 
-      act(() => {item1.focus();});
+      act(() => {
+        item1.focus();
+      });
 
       fireEvent.click(item1);
       expect(iframeDocument.activeElement).toBe(item2);
@@ -333,14 +381,20 @@ describe('FocusScope', function () {
       render(<Test />);
 
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="item1"]')).toBeTruthy();
+        expect(
+          document
+            .querySelector('iframe')
+            .contentWindow.document.body.querySelector('div[data-testid="item1"]')
+        ).toBeTruthy();
       });
       const iframeDocument = iframe.contentWindow.document;
       const item1 = iframeDocument.querySelector('div[data-testid="item1"]');
       const item2 = iframeDocument.querySelector('div[data-testid="item2"]');
       const item3 = iframeDocument.querySelector('div[data-testid="item3"]');
 
-      act(() => {item1.focus();});
+      act(() => {
+        item1.focus();
+      });
 
       fireEvent.click(item1);
       expect(iframeDocument.activeElement).toBe(item2);

@@ -57,19 +57,27 @@ describe('Form', () => {
     expect(input).not.toHaveAttribute('aria-describedby');
 
     await user.click(getByRole('button'));
-    act(() => {form.checkValidity();});
+    act(() => {
+      form.checkValidity();
+    });
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Invalid name.'
+    );
     expect(input.validity.valid).toBe(false);
     expect(document.activeElement).toBe(input);
 
     // Clicking twice doesn't clear server errors.
     await user.click(getByRole('button'));
-    act(() => {form.checkValidity();});
+    act(() => {
+      form.checkValidity();
+    });
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Invalid name.'
+    );
     expect(input.validity.valid).toBe(false);
     expect(document.activeElement).toBe(input);
 
@@ -120,7 +128,6 @@ describe('Form', () => {
       );
     }
 
-
     let {getByTestId, getByRole} = render(<Test />);
 
     let form = getByTestId('form');
@@ -145,7 +152,6 @@ describe('Form', () => {
         </Form>
       );
     }
-
 
     let {getByTestId, getByRole} = render(<Test />);
 
@@ -172,7 +178,6 @@ describe('Form', () => {
       );
     }
 
-
     let {getByTestId, getByRole} = render(<Test />);
 
     let form = getByTestId('form');
@@ -194,6 +199,41 @@ describe('Form', () => {
     expect(form).toHaveAttribute('data-custom', 'true');
   });
 
+  (parseInt(React.version, 10) >= 19 ? it : it.skip)(
+    'shows focus-visible when a form library moves focus to the first invalid field on submit',
+    async () => {
+      function Test() {
+        return (
+          <form data-testid="form">
+            <Input aria-label="Name" name="name" required />
+            <Button type="submit">Submit</Button>
+          </form>
+        );
+      }
+
+      let {getByRole} = render(<Test />);
+      let input = getByRole('textbox');
+      let button = getByRole('button');
+
+      await user.click(button);
+      expect(input).not.toHaveAttribute('data-focus-visible');
+
+      // On submit the form is invalid, so the browser fires an invalid event on
+      // the required field. react-hook-form (shouldFocusError) then moves focus
+      // to the first invalid field with a plain ref.focus().
+      act(() => {
+        input.checkValidity();
+        input.focus();
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      expect(document.activeElement).toBe(input);
+      expect(input).toHaveAttribute('data-focus-visible');
+    }
+  );
+
   it('should not throw when form contains elements without validity property', async () => {
     function Test() {
       return (
@@ -214,7 +254,7 @@ describe('Form', () => {
 
     // Mock form.elements to include an element without validity property (simulates Web Component)
     let originalElements = form.elements;
-    let mockElement = {name: 'custom-element'};  // No validity property
+    let mockElement = {name: 'custom-element'}; // No validity property
     Object.defineProperty(form, 'elements', {
       get: () => ({
         length: originalElements.length + 1,

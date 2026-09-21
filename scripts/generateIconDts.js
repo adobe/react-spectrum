@@ -16,11 +16,16 @@ const path = require('path');
 
 // Generate types for each icon/illustration so TypeScript's import autocomplete works.
 for (let file of glob('packages/@react-spectrum/s2/{icons,illustrations/**}/*.mjs')) {
-  let relative = path.relative(path.dirname(file), 'packages/@react-spectrum/s2/dist/types/exports/Icon').replaceAll('\\', '/');
-  fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '${relative}';
+  let relative = path
+    .relative(path.dirname(file), 'packages/@react-spectrum/s2/dist/types/exports/Icon')
+    .replaceAll('\\', '/');
+  fs.writeFileSync(
+    file.replace('.mjs', '.d.ts'),
+    `import type {IconProps} from '${relative}';
 import type {ReactNode} from 'react';
 
 declare function Icon(props: IconProps): ReactNode;
 export default Icon;
-`);
+`
+  );
 }

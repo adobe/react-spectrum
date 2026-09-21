@@ -12,10 +12,7 @@
 
 import React from 'react';
 import '@react-spectrum/s2/page.css';
-import {
-  ActionButton,
-  Text
-} from '@react-spectrum/s2';
+import {ActionButton, Text} from '@react-spectrum/s2';
 import AlignRight from '@react-spectrum/icon-library-test/AlignRight';
 import ThreeD from '@react-spectrum/icon-library-test/S2_lin_3D_48';
 

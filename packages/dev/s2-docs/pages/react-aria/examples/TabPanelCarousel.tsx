@@ -1,5 +1,5 @@
-import {ReactNode, useCallback, useContext, useEffect, useLayoutEffect, useRef} from "react";
-import {TabListStateContext} from "react-aria-components";
+import {ReactNode, useCallback, useContext, useEffect, useLayoutEffect, useRef} from 'react';
+import {TabListStateContext} from 'react-aria-components';
 
 export function TabPanelCarousel({children}: {children: ReactNode}) {
   let state = useContext(TabListStateContext)!;
@@ -43,10 +43,12 @@ export function TabPanelCarousel({children}: {children: ReactNode}) {
     <div
       ref={ref}
       className="overflow-auto snap-x snap-mandatory flex relative"
-      style={{
-        scrollTimeline: '--scroll x',
-        scrollbarWidth: 'none'
-      } as any}
+      style={
+        {
+          scrollTimeline: '--scroll x',
+          scrollbarWidth: 'none'
+        } as any
+      }
       onScrollEnd={onScrollEnd}>
       {children}
     </div>

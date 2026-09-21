@@ -24,20 +24,20 @@ export default meta;
 export type LinkStory = StoryObj<SpectrumLinkProps>;
 
 export const Default: LinkStory = {
-  render: (args) => <Link {...args}>This is a React Spectrum Link</Link>
+  render: args => <Link {...args}>This is a React Spectrum Link</Link>
 };
 
 export const Secondary: LinkStory = {
-  render: (args) => <Link {...args}>This is a React Spectrum Link</Link>,
+  render: args => <Link {...args}>This is a React Spectrum Link</Link>,
   args: {variant: 'secondary'}
 };
 
 export const Quiet: LinkStory = {
-  render: (args) => <Link {...args}>This is a React Spectrum Link</Link>,
+  render: args => <Link {...args}>This is a React Spectrum Link</Link>,
   args: {isQuiet: true}
 };
 
 export const QuietSecondary: LinkStory = {
-  render: (args) => <Link {...args}>This is a React Spectrum Link</Link>,
+  render: args => <Link {...args}>This is a React Spectrum Link</Link>,
   args: {...Secondary.args, ...Quiet.args}
 };

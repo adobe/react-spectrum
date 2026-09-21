@@ -13,5 +13,11 @@
 export {useDraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 
 export {useDroppableCollectionState} from 'react-stately/useDroppableCollectionState';
-export type {DraggableCollectionStateOptions, DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
-export type {DroppableCollectionStateOptions, DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+export type {
+  DraggableCollectionStateOptions,
+  DraggableCollectionState
+} from 'react-stately/useDraggableCollectionState';
+export type {
+  DroppableCollectionStateOptions,
+  DroppableCollectionState
+} from 'react-stately/useDroppableCollectionState';

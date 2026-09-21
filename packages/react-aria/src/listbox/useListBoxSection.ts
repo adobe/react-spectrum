@@ -16,25 +16,26 @@ import {useId} from '../utils/useId';
 
 export interface AriaListBoxSectionProps {
   /** The heading for the section. */
-  heading?: ReactNode,
+  heading?: ReactNode;
   /** An accessibility label for the section. Required if `heading` is not present. */
-  'aria-label'?: string
+  'aria-label'?: string;
 }
 
 export interface ListBoxSectionAria {
   /** Props for the wrapper list item. */
-  itemProps: DOMAttributes,
+  itemProps: DOMAttributes;
 
   /** Props for the heading element, if any. */
-  headingProps: DOMAttributes,
+  headingProps: DOMAttributes;
 
   /** Props for the group element. */
-  groupProps: DOMAttributes
+  groupProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a section in a listbox.
  * See `useListBox` for more details about listboxes.
+ *
  * @param props - Props for the section.
  */
 export function useListBoxSection(props: AriaListBoxSectionProps): ListBoxSectionAria {
@@ -45,17 +46,19 @@ export function useListBoxSection(props: AriaListBoxSectionProps): ListBoxSectio
     itemProps: {
       role: 'presentation'
     },
-    headingProps: heading ? {
-      // Technically, listbox cannot contain headings according to ARIA.
-      // We hide the heading from assistive technology, using role="presentation",
-      // and only use it as a visual label for the nested group.
-      id: headingId,
-      role: 'presentation',
-      onMouseDown: (e) => {
-        // Prevent DOM focus from moving on mouse down when using virtual focus
-        e.preventDefault();
-      }
-    } : {},
+    headingProps: heading
+      ? {
+          // Technically, listbox cannot contain headings according to ARIA.
+          // We hide the heading from assistive technology, using role="presentation",
+          // and only use it as a visual label for the nested group.
+          id: headingId,
+          role: 'presentation',
+          onMouseDown: e => {
+            // Prevent DOM focus from moving on mouse down when using virtual focus
+            e.preventDefault();
+          }
+        }
+      : {},
     groupProps: {
       role: 'group',
       'aria-label': ariaLabel,

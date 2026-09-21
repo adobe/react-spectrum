@@ -29,7 +29,12 @@ import {
   useDraggableCollection,
   useDraggableItem
 } from 'react-aria/useDraggableCollection';
-import {DraggableCollectionProps, DroppableCollectionProps, Key, RefObject} from '@react-types/shared';
+import {
+  DraggableCollectionProps,
+  DroppableCollectionProps,
+  Key,
+  RefObject
+} from '@react-types/shared';
 import {
   DraggableCollectionState,
   DraggableCollectionStateOptions,
@@ -48,59 +53,96 @@ import {ListDropTargetDelegate} from 'react-aria/ListDropTargetDelegate';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
 
-interface DraggableCollectionStateOpts<T = object> extends Omit<DraggableCollectionStateOptions<T>, 'getItems'> {}
+interface DraggableCollectionStateOpts<T = object> extends Omit<
+  DraggableCollectionStateOptions<T>,
+  'getItems'
+> {}
 
 interface DragHooks<T = object> {
-  useDraggableCollectionState?: (props: DraggableCollectionStateOpts<T>) => DraggableCollectionState,
-  useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement | null>) => void,
-  useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
-  DragPreview?: typeof DragPreview,
-  renderDragPreview?: (items: DragItem[]) => JSX.Element | {element: JSX.Element, x: number, y: number},
-  isVirtualDragging?: () => boolean
+  useDraggableCollectionState?: (
+    props: DraggableCollectionStateOpts<T>
+  ) => DraggableCollectionState;
+  useDraggableCollection?: (
+    props: DraggableCollectionOptions,
+    state: DraggableCollectionState,
+    ref: RefObject<HTMLElement | null>
+  ) => void;
+  useDraggableItem?: (
+    props: DraggableItemProps,
+    state: DraggableCollectionState
+  ) => DraggableItemResult;
+  DragPreview?: typeof DragPreview;
+  renderDragPreview?: (
+    items: DragItem[]
+  ) => JSX.Element | {element: JSX.Element; x: number; y: number};
+  isVirtualDragging?: () => boolean;
 }
 
 interface DropHooks {
-  useDroppableCollectionState?: (props: DroppableCollectionStateOptions) => DroppableCollectionState,
-  useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableCollectionResult,
-  useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableItemResult,
-  useDropIndicator?: (props: AriaDropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DropIndicatorAria,
-  renderDropIndicator?: (target: DropTarget) => JSX.Element,
-  dropTargetDelegate?: DropTargetDelegate,
-  ListDropTargetDelegate: typeof ListDropTargetDelegate
+  useDroppableCollectionState?: (
+    props: DroppableCollectionStateOptions
+  ) => DroppableCollectionState;
+  useDroppableCollection?: (
+    props: DroppableCollectionOptions,
+    state: DroppableCollectionState,
+    ref: RefObject<HTMLElement | null>
+  ) => DroppableCollectionResult;
+  useDroppableItem?: (
+    options: DroppableItemOptions,
+    state: DroppableCollectionState,
+    ref: RefObject<HTMLElement | null>
+  ) => DroppableItemResult;
+  useDropIndicator?: (
+    props: AriaDropIndicatorProps,
+    state: DroppableCollectionState,
+    ref: RefObject<HTMLElement | null>
+  ) => DropIndicatorAria;
+  renderDropIndicator?: (target: DropTarget) => JSX.Element;
+  dropTargetDelegate?: DropTargetDelegate;
+  ListDropTargetDelegate: typeof ListDropTargetDelegate;
 }
 
-export type DragAndDropHooks<T = object> = DragHooks<T> & DropHooks
+export type DragAndDropHooks<T = object> = DragHooks<T> & DropHooks;
 
 export interface DragAndDrop<T = object> {
-  /** Drag and drop hooks for the collection element.  */
-  dragAndDropHooks: DragAndDropHooks<T>
+  /** Drag and drop hooks for the collection element. */
+  dragAndDropHooks: DragAndDropHooks<T>;
 }
 
-export interface DragAndDropOptions<T = object> extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
+export interface DragAndDropOptions<T = object>
+  extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
   /**
-   * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
+   * A function that returns the items being dragged. If not specified, we assume that the
+   * collection is not draggable.
+   *
    * @default () => []
    */
-  getItems?: (keys: Set<Key>, items: T[]) => DragItem[],
+  getItems?: (keys: Set<Key>, items: T[]) => DragItem[];
   /**
    * A function that renders a drag preview, which is shown under the user's cursor while dragging.
    * By default, a copy of the dragged element is rendered.
    */
-  renderDragPreview?: (items: DragItem[]) => JSX.Element | {element: JSX.Element, x: number, y: number},
+  renderDragPreview?: (
+    items: DragItem[]
+  ) => JSX.Element | {element: JSX.Element; x: number; y: number};
   /**
    * A function that renders a drop indicator element between two items in a collection.
    * This should render a `<DropIndicator>` element. If this function is not provided, a
    * default DropIndicator is provided.
    */
-  renderDropIndicator?: (target: DropTarget) => JSX.Element,
-  /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
-  dropTargetDelegate?: DropTargetDelegate,
+  renderDropIndicator?: (target: DropTarget) => JSX.Element;
+  /**
+   * A custom delegate object that provides drop targets for pointer coordinates within the
+   * collection.
+   */
+  dropTargetDelegate?: DropTargetDelegate;
   /** Whether the drag and drop events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 /**
- * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible collection component.
+ * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible
+ * collection component.
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
   let dragAndDropHooks = useMemo(() => {
@@ -122,10 +164,18 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
 
     let hooks = {} as DragAndDropHooks;
     if (isDraggable) {
-      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOpts) {
-        return useDraggableCollectionState({...props, ...options} as DraggableCollectionStateOptions);
+      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(
+        props: DraggableCollectionStateOpts
+      ) {
+        // oxlint-disable-next-line react/react-compiler
+        return useDraggableCollectionState({
+          ...props,
+          ...options
+        } as DraggableCollectionStateOptions);
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDraggableCollection = useDraggableCollection;
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDraggableItem = useDraggableItem;
       hooks.DragPreview = DragPreview;
       hooks.renderDragPreview = renderDragPreview;
@@ -133,13 +183,23 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
     }
 
     if (isDroppable) {
-      hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(props: DroppableCollectionStateOptions) {
+      hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(
+        props: DroppableCollectionStateOptions
+      ) {
+        // oxlint-disable-next-line react/react-compiler
         return useDroppableCollectionState({...props, ...options});
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDroppableItem = useDroppableItem;
-      hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) {
+      hooks.useDroppableCollection = function useDroppableCollectionOverride(
+        props: DroppableCollectionOptions,
+        state: DroppableCollectionState,
+        ref: RefObject<HTMLElement | null>
+      ) {
+        // oxlint-disable-next-line react/react-compiler
         return useDroppableCollection({...props, ...options}, state, ref);
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDropIndicator = useDropIndicator;
       hooks.renderDropIndicator = renderDropIndicator;
       hooks.dropTargetDelegate = dropTargetDelegate;

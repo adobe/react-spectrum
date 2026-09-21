@@ -52,11 +52,17 @@ export default meta;
 type Story = StoryObj<typeof Form>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <Form {...args}>
       <TextField label="First Name" name="firstName" placeholder="John" />
       <TextField label="Last Name" name="lastName" placeholder="Doe" />
-      <TextField label="Email" name="email" type="email" description="Enter an email" placeholder="abc@123.com" />
+      <TextField
+        label="Email"
+        name="email"
+        type="email"
+        description="Enter an email"
+        placeholder="abc@123.com"
+      />
       <CheckboxGroup label="Favorite sports">
         <Checkbox value="soccer">Soccer</Checkbox>
         <Checkbox value="baseball">Baseball</Checkbox>
@@ -65,27 +71,49 @@ export const Example: Story = {
       <RadioGroup label="Favorite pet">
         <Radio value="cat">Cat</Radio>
         <Radio value="dog">Dog</Radio>
-        <Radio value="plant" isDisabled>Plant</Radio>
+        <Radio value="plant" isDisabled>
+          Plant
+        </Radio>
       </RadioGroup>
-      <TextField label="City" name="city" description="A long description to test help text wrapping." placeholder="Some city" />
-      <TextField label="A long label to test wrapping behavior" name="long" placeholder="looooooooooong" />
+      <TextField
+        label="City"
+        name="city"
+        description="A long description to test help text wrapping."
+        placeholder="Some city"
+      />
+      <TextField
+        label="A long label to test wrapping behavior"
+        name="long"
+        placeholder="looooooooooong"
+      />
       <SearchField label="Search" name="search" />
       <TextArea label="Comment" name="comment" placeholder="Enter your comment here" />
       <Switch>Wi-Fi</Switch>
       <Checkbox>I agree to the terms</Checkbox>
-      <Slider label="Cookies"  defaultValue={30} />
-      <RangeSlider label="Range"  defaultValue={{start: 30, end: 60}} />
-      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+      <Slider label="Cookies" defaultValue={30} />
+      <RangeSlider label="Range" defaultValue={{start: 30, end: 60}} />
+      <Button
+        type="submit"
+        variant="primary"
+        styles={style({gridColumnStart: 'field', width: 'fit'})}>
+        Submit
+      </Button>
     </Form>
   )
 };
 
 export const MixedForm: Story = {
-  render: (args) => (
+  render: args => (
     <Form {...args}>
       <TextField label="First Name" name="firstName" placeholder="John" />
       <TextField label="Last Name" name="lastName" placeholder="Doe" />
-      <TextField label="Email" name="email" type="email" description="Enter an email" placeholder="abc@123.com" />
+      <TextField
+        label="Email"
+        name="email"
+        type="email"
+        description="Enter an email"
+        placeholder="abc@123.com"
+      />
       <CheckboxGroup aria-label="Favorite sports">
         <Checkbox value="soccer">Soccer</Checkbox>
         <Checkbox value="baseball">Baseball</Checkbox>
@@ -94,7 +122,9 @@ export const MixedForm: Story = {
       <RadioGroup aria-label="Favorite pet">
         <Radio value="cat">Cat</Radio>
         <Radio value="dog">Dog</Radio>
-        <Radio value="plant" isDisabled>Plant</Radio>
+        <Radio value="plant" isDisabled>
+          Plant
+        </Radio>
       </RadioGroup>
       <SearchField label="Search" name="search" />
     </Form>
@@ -110,19 +140,25 @@ const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
   const [isSortAscending, setIsSortAscending] = useState(true);
   return (
     <Form {...args}>
-      <div role="group" aria-labelledby="sortOrder" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
+      <div
+        role="group"
+        aria-labelledby="sortOrder"
+        className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
         <span id="sortOrder">Sort order</span>
-        <ActionButton aria-label="Sort direction" onPress={() => setIsSortAscending(!isSortAscending)}>
-          {
-            isSortAscending ? <SortUp /> : <SortDown />
-          }
+        <ActionButton
+          aria-label="Sort direction"
+          onPress={() => setIsSortAscending(!isSortAscending)}>
+          {isSortAscending ? <SortUp /> : <SortDown />}
         </ActionButton>
         <Picker aria-label="Sort by" styles={style({width: 208})}>
           <PickerItem id="name">Name</PickerItem>
           <PickerItem id="created">Created</PickerItem>
         </Picker>
       </div>
-      <div role="group" aria-labelledby="filterTerms" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
+      <div
+        role="group"
+        aria-labelledby="filterTerms"
+        className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
         <span id="filterTerms">Filter terms</span>
         <TagGroup aria-label="Keywords" styles={style({minWidth: 208})}>
           <Tag>keyword 1</Tag>
@@ -130,20 +166,22 @@ const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
         </TagGroup>
       </div>
       <Divider size="S" />
-      <div role="group" aria-labelledby="colorLabel" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
+      <div
+        role="group"
+        aria-labelledby="colorLabel"
+        className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
         <span id="colorLabel">Color settings</span>
-        <ToggleButton>
-          Enable color
-        </ToggleButton>
+        <ToggleButton>Enable color</ToggleButton>
         <ColorField aria-label="Fill color" styles={style({width: 144})} placeholder="######" />
         <ColorSlider channel="alpha" defaultValue="#000" />
       </div>
       <Divider size="S" />
-      <div role="group" aria-labelledby="searchLabel" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
+      <div
+        role="group"
+        aria-labelledby="searchLabel"
+        className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
         <span id="searchLabel">Search</span>
-        <ToggleButton>
-          Enable search
-        </ToggleButton>
+        <ToggleButton>Enable search</ToggleButton>
         <TextField aria-label="Query" styles={style({width: 144})} placeholder="Search here" />
         <ComboBox aria-label="Search terms" styles={style({width: 144})}>
           <ComboBoxItem>search term 1</ComboBoxItem>
@@ -151,25 +189,39 @@ const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
         </ComboBox>
         <NumberField aria-label="Number of results" defaultValue={50} styles={style({width: 96})} />
       </div>
-      <div role="group" aria-labelledby="searchParameters" className={style({display: 'flex', alignItems: 'center', gap: 16, font: 'ui'})}>
+      <div
+        role="group"
+        aria-labelledby="searchParameters"
+        className={style({display: 'flex', alignItems: 'center', gap: 16, font: 'ui'})}>
         <span id="searchParameters">Search parameters</span>
         <RadioGroup aria-label="Search range" orientation="horizontal" styles={style({width: 208})}>
           <Radio value="text">Text</Radio>
           <Radio value="images">Images</Radio>
           <Radio value="video">Video</Radio>
         </RadioGroup>
-        <CheckboxGroup aria-label="Content display" orientation="horizontal" styles={style({width: 256})}>
+        <CheckboxGroup
+          aria-label="Content display"
+          orientation="horizontal"
+          styles={style({width: 256})}>
           <Checkbox value="summary">Summary</Checkbox>
           <Checkbox value="date">Date</Checkbox>
           <Checkbox value="author">Author</Checkbox>
         </CheckboxGroup>
       </div>
       <Divider size="S" />
-      <div role="group" aria-label="Progress" className={style({display: 'flex', alignItems: 'center', gap: 16, font: 'ui'})}>
+      <div
+        role="group"
+        aria-label="Progress"
+        className={style({display: 'flex', alignItems: 'center', gap: 16, font: 'ui'})}>
         <span>28% complete</span>
         <ProgressBar aria-label="Percent complete" value={28} styles={style({width: 144})} />
         <span>44% confidence</span>
-        <Meter aria-label="Search confidence" variant="positive" value={44} styles={style({width: 144})} />
+        <Meter
+          aria-label="Search confidence"
+          variant="positive"
+          value={44}
+          styles={style({width: 144})}
+        />
       </div>
       <Divider size="S" />
       <div role="group" aria-labelledby="sliders" className={style({font: 'ui'})}>
@@ -183,7 +235,8 @@ const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
               <Heading>Help</Heading>
               <Content>Help content</Content>
             </ContextualHelp>
-          } />
+          }
+        />
         <Slider
           aria-label="Days to search"
           labelPosition="side"
@@ -192,15 +245,21 @@ const CustomLabelsExampleRender = (args: FormProps): ReactElement => {
               <Heading>Help</Heading>
               <Content>Help content</Content>
             </ContextualHelp>
-          } />
+          }
+        />
       </div>
-      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+      <Button
+        type="submit"
+        variant="primary"
+        styles={style({gridColumnStart: 'field', width: 'fit'})}>
+        Submit
+      </Button>
     </Form>
   );
 };
 
 export const CustomLabelsExample: StoryObj<typeof CustomLabelsExampleRender> = {
-  render: (args) => <CustomLabelsExampleRender {...args} />,
+  render: args => <CustomLabelsExampleRender {...args} />,
   parameters: {
     docs: {
       disable: true

@@ -20,7 +20,11 @@ describe('ToggleButton', function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let onChange = jest.fn();
-    let {getByRole} = render(<ToggleButton onPress={onPress} onChange={onChange}>Click Me</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton onPress={onPress} onChange={onChange}>
+        Click Me
+      </ToggleButton>
+    );
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-pressed', 'false');
@@ -35,7 +39,11 @@ describe('ToggleButton', function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let onChange = jest.fn();
-    let {getByRole} = render(<ToggleButton defaultSelected onPress={onPress} onChange={onChange}>Click Me</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton defaultSelected onPress={onPress} onChange={onChange}>
+        Click Me
+      </ToggleButton>
+    );
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-pressed', 'true');
@@ -50,7 +58,11 @@ describe('ToggleButton', function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let onChange = jest.fn();
-    let {getByRole} = render(<ToggleButton isSelected onPress={onPress} onChange={onChange}>Click Me</ToggleButton>);
+    let {getByRole} = render(
+      <ToggleButton isSelected onPress={onPress} onChange={onChange}>
+        Click Me
+      </ToggleButton>
+    );
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-pressed', 'true');

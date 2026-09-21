@@ -11,4 +11,9 @@
  */
 export {useToast, useToastRegion} from 'react-aria/useToast';
 
-export type {AriaToastRegionProps, ToastRegionAria, AriaToastProps, ToastAria} from 'react-aria/useToast';
+export type {
+  AriaToastRegionProps,
+  ToastRegionAria,
+  AriaToastProps,
+  ToastAria
+} from 'react-aria/useToast';

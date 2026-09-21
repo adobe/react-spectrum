@@ -14,7 +14,9 @@ const importMap = {
   '@adobe/react-spectrum': buildImportMap('packages/@adobe/react-spectrum/src/index.ts')
 };
 
-for (let pkg of fs.globSync(['packages/@react-aria/*', 'packages/@react-spectrum/*', 'packages/@react-stately/*']).sort()) {
+for (let pkg of fs
+  .globSync(['packages/@react-aria/*', 'packages/@react-spectrum/*', 'packages/@react-stately/*'])
+  .sort()) {
   if (fs.statSync(pkg).isDirectory()) {
     let name = pkg.split('/').slice(1).join('/');
     if (skipped.includes(path.basename(pkg))) {
@@ -110,73 +112,73 @@ standalone.delete('useToolbar');
 
 // Public but grouped with a parent component/hook.
 let parentFile = {
-  'useBreadcrumbItem': 'useBreadcrumbs',
-  'useCalendarCell': 'useCalendar',
-  'useCalendarGrid': 'useCalendar',
-  'useCheckboxGroupItem': 'useCheckboxGroup',
+  useBreadcrumbItem: 'useBreadcrumbs',
+  useCalendarCell: 'useCalendar',
+  useCalendarGrid: 'useCalendar',
+  useCheckboxGroupItem: 'useCheckboxGroup',
   // 'CollectionBuilder': '',
-  'useColorChannelField': 'useColorField',
-  'useDateSegment': 'useDateField',
-  'useDraggableItem': 'useDraggableCollection',
-  'useDropIndicator': 'useDroppableCollection',
-  'useDroppableItem': 'useDroppableCollection',
+  useColorChannelField: 'useColorField',
+  useDateSegment: 'useDateField',
+  useDraggableItem: 'useDraggableCollection',
+  useDropIndicator: 'useDroppableCollection',
+  useDroppableItem: 'useDroppableCollection',
   // 'utils': '',
-  'useGridListItem': 'useGridList',
-  'useGridListSection': 'useGridList',
-  'useGridListSelectionCheckbox': 'useGridList',
+  useGridListItem: 'useGridList',
+  useGridListSection: 'useGridList',
+  useGridListSelectionCheckbox: 'useGridList',
   // 'useFocusable': '',
   // 'useInteractOutside': '',
   // 'useScrollWheel': '',
-  'useListBoxSection': 'useListBox',
-  'useOption': 'useListBox',
-  'useMenuItem': 'useMenu',
-  'useMenuSection': 'useMenu',
-  'useMenuTrigger': 'useMenu',
-  'useSubmenuTrigger': 'useMenu',
-  'DismissButton': 'Overlay',
+  useListBoxSection: 'useListBox',
+  useOption: 'useListBox',
+  useMenuItem: 'useMenu',
+  useMenuSection: 'useMenu',
+  useMenuTrigger: 'useMenu',
+  useSubmenuTrigger: 'useMenu',
+  DismissButton: 'Overlay',
   // 'useModal': '',
   // 'useOverlay': '',
   // 'useOverlayPosition': '',
   // 'useOverlayTrigger': '',
   // 'usePreventScroll': '',
-  'useRadio': 'useRadioGroup',
-  'HiddenSelect': 'useSelect',
-  'useSliderThumb': 'useSlider',
-  'useTableCell': 'useTable',
-  'useTableColumnHeader': 'useTable',
-  'useTableColumnResize': 'useTable',
-  'useTableHeaderRow': 'useTable',
-  'useTableRow': 'useTable',
-  'useTableRowGroup': 'useTable',
-  'useTableSelectionCheckbox': 'useTable',
-  'useTab': 'useTabList',
-  'useTabPanel': 'useTabList',
-  'useTag': 'useTagGroup',
-  'useToastRegion': 'useToast',
-  'useTooltip': 'useTooltipTrigger',
-  'ToastContainer': 'Toast',
+  useRadio: 'useRadioGroup',
+  HiddenSelect: 'useSelect',
+  useSliderThumb: 'useSlider',
+  useTableCell: 'useTable',
+  useTableColumnHeader: 'useTable',
+  useTableColumnResize: 'useTable',
+  useTableHeaderRow: 'useTable',
+  useTableRow: 'useTable',
+  useTableRowGroup: 'useTable',
+  useTableSelectionCheckbox: 'useTable',
+  useTab: 'useTabList',
+  useTabPanel: 'useTabList',
+  useTag: 'useTagGroup',
+  useToastRegion: 'useToast',
+  useTooltip: 'useTooltipTrigger',
+  ToastContainer: 'Toast',
   // 'useTree': '',
   // 'chain': '',
   // 'openLink': '',
-  'ActionBarContainer': 'ActionBar',
-  'useDialogContainer': 'DialogContainer',
-  'Radio': 'RadioGroup',
+  ActionBarContainer: 'ActionBar',
+  useDialogContainer: 'DialogContainer',
+  Radio: 'RadioGroup',
   // 'TableViewWrapper': '',
-  'TooltipTrigger': 'Tooltip',
+  TooltipTrigger: 'Tooltip',
   // 'types': '',
   // 'useCollection': '',
-  'useColorChannelFieldState': 'useColorFieldState',
+  useColorChannelFieldState: 'useColorFieldState',
   // 'useFormValidationState': '',
-  'useSubmenuTriggerState': 'useMenuTriggerState',
+  useSubmenuTriggerState: 'useMenuTriggerState',
   // 'types': '',
-  'useTableColumnResizeState': 'useTableState',
-  'Layout': 'Virtualizer',
-  'LayoutInfo': 'Virtualizer',
-  'Point': 'Virtualizer',
-  'Rect': 'Virtualizer',
-  'Size': 'Virtualizer',
-  'DateSegmentType': 'useDateFieldState',
-  'DragAndDrop': 'useDragAndDrop',
+  useTableColumnResizeState: 'useTableState',
+  Layout: 'Virtualizer',
+  LayoutInfo: 'Virtualizer',
+  Point: 'Virtualizer',
+  Rect: 'Virtualizer',
+  Size: 'Virtualizer',
+  DateSegmentType: 'useDateFieldState',
+  DragAndDrop: 'useDragAndDrop',
   parseColor: 'Color',
   useLocale: 'I18nProvider',
   ColorEditor: 'ColorPicker',
@@ -213,7 +215,13 @@ const privateNames = new Set([
 ]);
 
 let publicFiles = new Set();
-for (let pkg of ['react-aria', 'react-stately', 'react-aria-components', '@react-spectrum/s2', '@adobe/react-spectrum']) {
+for (let pkg of [
+  'react-aria',
+  'react-stately',
+  'react-aria-components',
+  '@react-spectrum/s2',
+  '@adobe/react-spectrum'
+]) {
   for (let exp in importMap[pkg]) {
     let [specifier, imported] = importMap[pkg][exp];
     if (!importMap[specifier] || !importMap[specifier][imported]) {
@@ -224,8 +232,8 @@ for (let pkg of ['react-aria', 'react-stately', 'react-aria-components', '@react
       continue;
     }
     let p = `${specifier}/${s.slice(2)}`;
-    publicFiles.add(p);    
-}
+    publicFiles.add(p);
+  }
 }
 
 migrateScope('@react-aria', 'react-aria');
@@ -270,7 +278,7 @@ function prepareMonopackage(monopackage) {
     };
   }
 
-  Object.assign(monopackageJSON.exports ??= {}, {
+  Object.assign((monopackageJSON.exports ??= {}), {
     '.': {
       source: './exports/index.ts',
       types: './dist/types/exports/index.d.ts',
@@ -296,18 +304,18 @@ function prepareMonopackage(monopackage) {
     module: false,
     types: false,
     'exports-module': {
-      'source': ['exports/**/*.ts'],
-      'distDir': 'dist',
-      'isLibrary': true,
-      'outputFormat': 'esmodule',
-      'includeNodeModules': includeNodeModules
+      source: ['exports/**/*.ts'],
+      distDir: 'dist',
+      isLibrary: true,
+      outputFormat: 'esmodule',
+      includeNodeModules: includeNodeModules
     },
     'exports-main': {
-      'source': ['exports/**/*.ts'],
-      'distDir': 'dist',
-      'isLibrary': true,
-      'outputFormat': 'commonjs',
-      'includeNodeModules': includeNodeModules
+      source: ['exports/**/*.ts'],
+      distDir: 'dist',
+      isLibrary: true,
+      outputFormat: 'commonjs',
+      includeNodeModules: includeNodeModules
     }
   };
 
@@ -316,7 +324,9 @@ function prepareMonopackage(monopackage) {
     if (depScope) {
       let p = depScope[1] === 'react-spectrum' ? '@adobe/react-spectrum' : depScope[1];
       if (!monopackageJSON.dependencies[p]) {
-        monopackageJSON.dependencies[p] = JSON.parse(fs.readFileSync(`packages/${p}/package.json`, 'utf8')).version;
+        monopackageJSON.dependencies[p] = JSON.parse(
+          fs.readFileSync(`packages/${p}/package.json`, 'utf8')
+        ).version;
       }
       delete monopackageJSON.dependencies[dep];
     }
@@ -328,7 +338,10 @@ function prepareMonopackage(monopackage) {
   }
 
   fs.mkdirSync(`packages/${monopackage}/exports`, {recursive: true});
-  fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
+  fs.writeFileSync(
+    `packages/${monopackage}/package.json`,
+    JSON.stringify(monopackageJSON, false, 2) + '\n'
+  );
   fs.rmSync(`packages/${monopackage}/index.ts`);
 }
 
@@ -344,25 +357,31 @@ function migratePackage(scope, name, monopackage) {
   moveTree(scope, name, 'chromatic-fc', monopackage);
   moveTree(scope, name, 'docs', monopackage);
   moveTree(scope, name, 'intl', monopackage);
-  
+
   for (let dep in packageJSON.dependencies || {}) {
     let depScope = dep.match(/@(react-aria|react-spectrum|react-stately)/);
     if (!depScope && !monopackageJSON.dependencies[dep]) {
       monopackageJSON.dependencies[dep] = packageJSON.dependencies[dep];
     } else if (depScope && depScope[0] !== scope && !monopackageJSON.dependencies[depScope[1]]) {
-      monopackageJSON.dependencies[depScope[1]] = JSON.parse(fs.readFileSync(`packages/${depScope[1]}/package.json`, 'utf8')).version;
+      monopackageJSON.dependencies[depScope[1]] = JSON.parse(
+        fs.readFileSync(`packages/${depScope[1]}/package.json`, 'utf8')
+      ).version;
     }
 
     if (depScope) {
       let p = depScope[1] === 'react-spectrum' ? '@adobe/react-spectrum' : depScope[1];
       if (!packageJSON.dependencies[p]) {
-        packageJSON.dependencies[p] = '^' + JSON.parse(fs.readFileSync(`packages/${p}/package.json`, 'utf8')).version;
+        packageJSON.dependencies[p] =
+          '^' + JSON.parse(fs.readFileSync(`packages/${p}/package.json`, 'utf8')).version;
       }
       delete packageJSON.dependencies[dep];
     }
   }
 
-  fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
+  fs.writeFileSync(
+    `packages/${monopackage}/package.json`,
+    JSON.stringify(monopackageJSON, false, 2) + '\n'
+  );
 
   packageJSON.source = 'src/index.ts';
   packageJSON.dependencies[monopackage] = '^' + monopackageJSON.version;
@@ -377,14 +396,17 @@ function migratePackage(scope, name, monopackage) {
   }
   packageJSON.exports['./package.json'] = './package.json';
 
-  Object.assign(packageJSON.peerDependencies ??= {}, {
+  Object.assign((packageJSON.peerDependencies ??= {}), {
     react: '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1',
     'react-dom': '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1'
   });
 
   delete packageJSON.peerDependencies['@react-spectrum/provider'];
-  
-  fs.writeFileSync(`packages/${scope}/${name}/package.json`, JSON.stringify(packageJSON, false, 2) + '\n');
+
+  fs.writeFileSync(
+    `packages/${scope}/${name}/package.json`,
+    JSON.stringify(packageJSON, false, 2) + '\n'
+  );
   fs.rmSync(`packages/${scope}/${name}/index.ts`);
 
   createPublicExports(`packages/${monopackage}/src/${name}/index.ts`, monopackage, scope, name);
@@ -395,9 +417,14 @@ function moveTree(scope, name, tree, monopackage) {
     let monopackageTree = tree;
     fs.rmSync(`packages/${monopackage}/${monopackageTree}/${name}`, {recursive: true, force: true});
     fs.mkdirSync(`packages/${monopackage}/${monopackageTree}`, {recursive: true});
-    fs.renameSync(`packages/${scope}/${name}/${tree}`, `packages/${monopackage}/${monopackageTree}/${name}`);
+    fs.renameSync(
+      `packages/${scope}/${name}/${tree}`,
+      `packages/${monopackage}/${monopackageTree}/${name}`
+    );
 
-    for (let file of fs.globSync(`packages/${monopackage}/${monopackageTree}/${name}/**/*.{ts,tsx,js,jsx,mdx}`)) {
+    for (let file of fs.globSync(
+      `packages/${monopackage}/${monopackageTree}/${name}/**/*.{ts,tsx,js,jsx,mdx}`
+    )) {
       // rewriteImports(file, scope, name);
       rewriteMonopackageImports(file, `${scope}/${name}`, name);
     }
@@ -416,7 +443,9 @@ function migrateToMonopackage(pkg) {
     if (depScope) {
       let p = depScope[1] === 'react-spectrum' ? '@adobe/react-spectrum' : depScope[1];
       if (!packageJSON.dependencies[p]) {
-        packageJSON.dependencies[p] = JSON.parse(fs.readFileSync(`packages/${p}/package.json`, 'utf8')).version;
+        packageJSON.dependencies[p] = JSON.parse(
+          fs.readFileSync(`packages/${p}/package.json`, 'utf8')
+        ).version;
       }
       delete packageJSON.dependencies[dep];
     }
@@ -454,23 +483,23 @@ function migrateToMonopackage(pkg) {
   if (packageJSON.targets) {
     delete packageJSON.targets['style-types'];
   }
-  Object.assign(packageJSON.targets ??= {}, {
+  Object.assign((packageJSON.targets ??= {}), {
     main: false,
     module: false,
     types: false,
     'exports-module': {
-      'source': 'exports/*.ts',
-      'distDir': 'dist',
-      'isLibrary': true,
-      'outputFormat': 'esmodule',
-      'includeNodeModules': false
+      source: 'exports/*.ts',
+      distDir: 'dist',
+      isLibrary: true,
+      outputFormat: 'esmodule',
+      includeNodeModules: false
     },
     'exports-main': {
-      'source': 'exports/*.ts',
-      'distDir': 'dist',
-      'isLibrary': true,
-      'outputFormat': 'commonjs',
-      'includeNodeModules': false
+      source: 'exports/*.ts',
+      distDir: 'dist',
+      isLibrary: true,
+      outputFormat: 'commonjs',
+      includeNodeModules: false
     }
   });
 
@@ -497,7 +526,10 @@ function buildImportMap(file) {
   for (let node of ast.program.body) {
     if (node.type === 'ExportNamedDeclaration' && node.source) {
       for (let specifier of node.specifiers) {
-        let name = specifier.exported.type === 'Identifier' ? specifier.exported.name : specifier.exported.value;
+        let name =
+          specifier.exported.type === 'Identifier'
+            ? specifier.exported.name
+            : specifier.exported.value;
         map[name] = [node.source.value, specifier.local.name];
       }
     }
@@ -529,11 +561,16 @@ function rewriteMonopackageImports(file, pkg, subpath) {
 
   let hadImports = false;
   ast.program.body = ast.program.body.flatMap(node => {
-    if (!((node.type === 'ImportDeclaration' || node.type === 'ExportNamedDeclaration') && node.source)) {
+    if (
+      !(
+        (node.type === 'ImportDeclaration' || node.type === 'ExportNamedDeclaration') &&
+        node.source
+      )
+    ) {
       return [node];
     }
 
-    let source; 
+    let source;
     if (node.source) {
       source = node.source.value;
       // if (/\.\/?$/.test(source)) {
@@ -554,22 +591,35 @@ function rewriteMonopackageImports(file, pkg, subpath) {
       // }
     }
 
-
     if (importMap[source]) {
       hadImports = true;
       return getImportStatements(node, file);
     } else if (source.startsWith('.') && pkg) {
       hadImports = true;
-      if (source === '.' || source === './' || source === './index' || source === '../' || source === '..' || source === '../index' || source === '../src') {
+      if (
+        source === '.' ||
+        source === './' ||
+        source === './index' ||
+        source === '../' ||
+        source === '..' ||
+        source === '../index' ||
+        source === '../src'
+      ) {
         node.source = t.stringLiteral(pkg);
         return getImportStatements(node, file);
       } else if (source === '../package.json' && subpath) {
         source = '../../package.json';
       } else if (subpath) {
-        source = source.replace(/\.\.\/(src|stories|chromatic|intl)/, (_, tree) => `../../${tree}/${subpath}`);
+        source = source.replace(
+          /\.\.\/(src|stories|chromatic|intl)/,
+          (_, tree) => `../../${tree}/${subpath}`
+        );
       }
       node.source = t.stringLiteral(source);
-    } else if (source.startsWith('/packages/') && !source.startsWith('/packages/@internationalized/')) {
+    } else if (
+      source.startsWith('/packages/') &&
+      !source.startsWith('/packages/@internationalized/')
+    ) {
       hadImports = true;
       let parts = source.slice('/packages/'.length).split('/');
       let scope = parts.shift();
@@ -630,7 +680,7 @@ function rewriteMonopackageImports(file, pkg, subpath) {
 
   t.traverseFast(ast.program, node => {
     if (
-      node.type === 'CallExpression' && 
+      node.type === 'CallExpression' &&
       node.callee.type === 'MemberExpression' &&
       node.callee.object.type === 'Identifier' &&
       node.callee.object.name === 'jest' &&
@@ -640,10 +690,14 @@ function rewriteMonopackageImports(file, pkg, subpath) {
       // Hard coding special cases here
       switch (node.arguments[0].value) {
         case '@react-aria/live-announcer':
-          node.arguments[0].value = file.startsWith('packages/react-aria/') ? '../../src/live-announcer/LiveAnnouncer' : 'react-aria/src/live-announcer/LiveAnnouncer';
+          node.arguments[0].value = file.startsWith('packages/react-aria/')
+            ? '../../src/live-announcer/LiveAnnouncer'
+            : 'react-aria/src/live-announcer/LiveAnnouncer';
           break;
         case '@react-aria/utils/src/scrollIntoView':
-          node.arguments[0].value = file.startsWith('packages/react-aria/') ? '../../src/utils/scrollIntoView' : 'react-aria/src/utils/scrollIntoView';
+          node.arguments[0].value = file.startsWith('packages/react-aria/')
+            ? '../../src/utils/scrollIntoView'
+            : 'react-aria/src/utils/scrollIntoView';
           break;
         case '@react-aria/utils':
           node.arguments[0].value = '../../src/utils/focusWithoutScrolling';
@@ -664,13 +718,21 @@ function rewriteMonopackageImports(file, pkg, subpath) {
 
 function rewriteMdx(file) {
   let contents = fs.readFileSync(file, 'utf8');
-  contents = contents.replace(/\/packages\/@(react-aria|react-spectrum|react-stately)\/(.+?)\/docs\/(.+\.svg)/g, (_, scope, pkg, file) => {
-    let monopackage = scope === 'react-spectrum' ? '@adobe/react-spectrum' : scope;
-    return `/packages/${monopackage}/docs/${pkg}/${file}`;
-  }).replace(/(['"])@(react-aria|react-spectrum|react-stately)\/(.+?)\/docs\/(.+\.svg)/g, (_, q, scope, pkg, file) => {
-    let monopackage = scope === 'react-spectrum' ? '@adobe/react-spectrum' : scope;
-    return `${q}/packages/${monopackage}/docs/${pkg}/${file}`;
-  });
+  contents = contents
+    .replace(
+      /\/packages\/@(react-aria|react-spectrum|react-stately)\/(.+?)\/docs\/(.+\.svg)/g,
+      (_, scope, pkg, file) => {
+        let monopackage = scope === 'react-spectrum' ? '@adobe/react-spectrum' : scope;
+        return `/packages/${monopackage}/docs/${pkg}/${file}`;
+      }
+    )
+    .replace(
+      /(['"])@(react-aria|react-spectrum|react-stately)\/(.+?)\/docs\/(.+\.svg)/g,
+      (_, q, scope, pkg, file) => {
+        let monopackage = scope === 'react-spectrum' ? '@adobe/react-spectrum' : scope;
+        return `${q}/packages/${monopackage}/docs/${pkg}/${file}`;
+      }
+    );
 
   fs.writeFileSync(file, contents);
 }
@@ -679,7 +741,8 @@ function getImportStatements(node, file, relative = true) {
   let source = node.source.value;
   let groups = {};
   for (let specifier of node.specifiers) {
-    let importedName = specifier.type === 'ImportSpecifier' ? specifier.imported.name : specifier.local.name;
+    let importedName =
+      specifier.type === 'ImportSpecifier' ? specifier.imported.name : specifier.local.name;
     if (!importedName) {
       continue;
     }
@@ -687,19 +750,39 @@ function getImportStatements(node, file, relative = true) {
     let importSource = source;
     let src, imported;
     if (source === '@react-spectrum/theme-default') {
-      src = file.includes('@adobe/react-spectrum') ? path.relative(path.dirname(file), 'packages/@adobe/react-spectrum/src/theme-default/defaultTheme') : '@adobe/react-spectrum/defaultTheme';
+      src = file.includes('@adobe/react-spectrum')
+        ? path.relative(
+            path.dirname(file),
+            'packages/@adobe/react-spectrum/src/theme-default/defaultTheme'
+          )
+        : '@adobe/react-spectrum/defaultTheme';
       imported = 'defaultTheme';
       local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
     } else if (source === '@react-spectrum/theme-dark') {
-      src = file.includes('@adobe/react-spectrum') ? path.relative(path.dirname(file), 'packages/@adobe/react-spectrum/src/theme-dark/darkTheme') : '@adobe/react-spectrum/darkTheme';
+      src = file.includes('@adobe/react-spectrum')
+        ? path.relative(
+            path.dirname(file),
+            'packages/@adobe/react-spectrum/src/theme-dark/darkTheme'
+          )
+        : '@adobe/react-spectrum/darkTheme';
       imported = 'darkTheme';
       local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
     } else if (source === '@react-spectrum/theme-light') {
-      src = file.includes('@adobe/react-spectrum') ? path.relative(path.dirname(file), 'packages/@adobe/react-spectrum/src/theme-light/lightTheme') : '@adobe/react-spectrum/lightTheme';
+      src = file.includes('@adobe/react-spectrum')
+        ? path.relative(
+            path.dirname(file),
+            'packages/@adobe/react-spectrum/src/theme-light/lightTheme'
+          )
+        : '@adobe/react-spectrum/lightTheme';
       imported = 'lightTheme';
       local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
     } else if (source === '@react-spectrum/theme-express') {
-      src = file.includes('@adobe/react-spectrum') ? path.relative(path.dirname(file), 'packages/@adobe/react-spectrum/src/theme-express/expressTheme') : '@adobe/react-spectrum/private/theme-express/expressTheme';
+      src = file.includes('@adobe/react-spectrum')
+        ? path.relative(
+            path.dirname(file),
+            'packages/@adobe/react-spectrum/src/theme-express/expressTheme'
+          )
+        : '@adobe/react-spectrum/private/theme-express/expressTheme';
       imported = 'expressTheme';
       local = file.includes('@react-spectrum') ? t.identifier('theme') : local;
     } else if (!importMap[source][importedName]) {
@@ -723,7 +806,7 @@ function getImportStatements(node, file, relative = true) {
       groups[src].push(t.exportSpecifier(t.identifier(imported), local));
     }
   }
-  
+
   let res = Object.entries(groups).map(([source, specifiers]) => {
     if (node.type === 'ImportDeclaration') {
       let decl = t.importDeclaration(specifiers, t.stringLiteral(source));
@@ -773,10 +856,12 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
 
   let [fromPkg] = parsePackage(from);
   if (relative && fromPkg === monopackage) {
-    let subpath = pkg === monopackage || monopackage === '@react-spectrum/s2' ? name : `${pkg}/${name}`;
-    let fullPath = monopackage === 'react-aria-components' || monopackage === '@react-spectrum/s2'
-      ? `packages/${monopackage}/src/${subpath}`
-      : `packages/${monopackage}/src/${subpath}`;
+    let subpath =
+      pkg === monopackage || monopackage === '@react-spectrum/s2' ? name : `${pkg}/${name}`;
+    let fullPath =
+      monopackage === 'react-aria-components' || monopackage === '@react-spectrum/s2'
+        ? `packages/${monopackage}/src/${subpath}`
+        : `packages/${monopackage}/src/${subpath}`;
     let relative = path.relative(path.dirname(from), fullPath);
     if (!relative.startsWith('.')) {
       relative = './' + relative;
@@ -802,8 +887,17 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
 
   let isPrivate = importedName == null || privateNames.has(importedName);
   if (
-    ((monopackage === 'react-aria' || monopackage === 'react-stately') && (name === 'Virtualizer' || parentFile[name] === 'Virtualizer')) ||
-    (monopackage === '@adobe/react-spectrum' && (name === 'CardView' || name === 'Card' || name === 'Overlay' || name === 'Popover' || name === 'Modal' || name === 'StepList' || name === 'SearchAutocomplete' || name === 'Label'))
+    ((monopackage === 'react-aria' || monopackage === 'react-stately') &&
+      (name === 'Virtualizer' || parentFile[name] === 'Virtualizer')) ||
+    (monopackage === '@adobe/react-spectrum' &&
+      (name === 'CardView' ||
+        name === 'Card' ||
+        name === 'Overlay' ||
+        name === 'Popover' ||
+        name === 'Modal' ||
+        name === 'StepList' ||
+        name === 'SearchAutocomplete' ||
+        name === 'Label'))
   ) {
     isPrivate = true;
   }
@@ -870,7 +964,10 @@ function createPublicExports(file, monopackage, scope, pkg) {
       if (node.source.value.startsWith('./') && node.specifiers.length > 0) {
         let source = node.source.value.slice(2);
         node.source.value = pkg ? `../src/${pkg}/${source}` : `../src/${source}`;
-        if (standalone.has(source) || (monopackage === 'react-aria-components' && source === 'utils')) {
+        if (
+          standalone.has(source) ||
+          (monopackage === 'react-aria-components' && source === 'utils')
+        ) {
           groups[source] ||= [];
           groups[source].push(node);
         } else if (parentFile[source]) {
@@ -886,7 +983,10 @@ function createPublicExports(file, monopackage, scope, pkg) {
       for (let key in groups) {
         let n = t.cloneNode(node, true);
         if (n.source.value.startsWith('../')) {
-          n.source.value = path.relative(`packages/${monopackage}/exports`, `packages/${monopackage}/src/${n.source.value.slice(3)}`);
+          n.source.value = path.relative(
+            `packages/${monopackage}/exports`,
+            `packages/${monopackage}/src/${n.source.value.slice(3)}`
+          );
         }
         groups[key].push(n);
       }
@@ -901,19 +1001,28 @@ function createPublicExports(file, monopackage, scope, pkg) {
     } else {
       groups[source][0].comments = ast.program.body[0].leadingComments;
     }
-    let content = recast.print({
-      type: 'Program',
-      body
-    }, {objectCurlySpacing: false, quote: 'single'}).code;
+    let content = recast.print(
+      {
+        type: 'Program',
+        body
+      },
+      {objectCurlySpacing: false, quote: 'single'}
+    ).code;
     fs.writeFileSync(f, content);
   }
 
   if (scope) {
     fs.rmSync(file);
-    
+
     let imports = [];
     if (specifiers.length) {
-      imports.push(...getImportStatements(t.exportNamedDeclaration(null, specifiers, t.stringLiteral(`${scope}/${pkg}`)), `packages/${scope}/${pkg}/src/index.ts`, false));
+      imports.push(
+        ...getImportStatements(
+          t.exportNamedDeclaration(null, specifiers, t.stringLiteral(`${scope}/${pkg}`)),
+          `packages/${scope}/${pkg}/src/index.ts`,
+          false
+        )
+      );
     }
     if (typeSpecifiers.length) {
       let decl = t.exportNamedDeclaration(null, typeSpecifiers, t.stringLiteral(`${scope}/${pkg}`));
@@ -929,10 +1038,13 @@ function createPublicExports(file, monopackage, scope, pkg) {
     }
 
     imports[0].comments = ast.program.body[0].leadingComments;
-    let index = recast.print({
-      type: 'Program',
-      body: imports
-    }, {objectCurlySpacing: false, quote: 'single'}).code;
+    let index = recast.print(
+      {
+        type: 'Program',
+        body: imports
+      },
+      {objectCurlySpacing: false, quote: 'single'}
+    ).code;
     fs.mkdirSync(`packages/${scope}/${pkg}/src`);
     fs.writeFileSync(`packages/${scope}/${pkg}/src/index.ts`, index);
   }
@@ -952,11 +1064,15 @@ function writePrivateExports() {
     });
 
     for (let item of ast.program.body) {
-      if (item.type === 'ImportDeclaration' || (item.type === 'ExportNamedDeclaration' && item.source)) {
+      if (
+        item.type === 'ImportDeclaration' ||
+        (item.type === 'ExportNamedDeclaration' && item.source)
+      ) {
         if (item.source.value.includes('/private/')) {
           privateExports[item.source.value] ??= new Set();
           for (let specifier of item.specifiers) {
-            let importedName = specifier.type === 'ImportSpecifier' ? specifier.imported.name : specifier.local.name;
+            let importedName =
+              specifier.type === 'ImportSpecifier' ? specifier.imported.name : specifier.local.name;
             privateExports[item.source.value].add(importedName);
           }
         }
@@ -964,7 +1080,7 @@ function writePrivateExports() {
     }
   }
 
-  console.log(privateExports)
+  console.log(privateExports);
   for (let specifier in privateExports) {
     let file = `packages/${specifier.replace('/private/', '/exports/private/')}.ts`;
     fs.mkdirSync(path.dirname(file), {recursive: true});
@@ -976,7 +1092,32 @@ function writePrivateExports() {
         contents += ', ';
       }
       first = false;
-      if ((!/^(use|UNSTABLE_use)/.test(exp) && /(Aria|Props|State|Options)$/.test(exp) && exp !== 'filterDOMProps' && exp !== 'getSyntheticLinkProps' && exp !== 'baseStyleProps' && exp !== 'viewStyleProps' && exp !== 'convertStyleProps') || exp === 'LayoutNode' || exp === 'MultipleSelectionManager' || exp === 'RectCorner' || exp === 'InvalidationContext' || exp === 'CollectionBuilderContext' || exp === 'PartialNode' || exp === 'Modality' || exp === 'SelectableItemStates' || exp === 'RTLOffsetType' || exp === 'FormatMessage' || exp === 'FocusVisibleHandler' || exp === 'IconPropsWithoutChildren' || exp === 'IllustrationPropsWithoutChildren' || exp === 'UIIconPropsWithoutChildren' || exp === 'StyleHandlers' || exp === 'Filter' || exp === 'Locale') {
+      if (
+        (!/^(use|UNSTABLE_use)/.test(exp) &&
+          /(Aria|Props|State|Options)$/.test(exp) &&
+          exp !== 'filterDOMProps' &&
+          exp !== 'getSyntheticLinkProps' &&
+          exp !== 'baseStyleProps' &&
+          exp !== 'viewStyleProps' &&
+          exp !== 'convertStyleProps') ||
+        exp === 'LayoutNode' ||
+        exp === 'MultipleSelectionManager' ||
+        exp === 'RectCorner' ||
+        exp === 'InvalidationContext' ||
+        exp === 'CollectionBuilderContext' ||
+        exp === 'PartialNode' ||
+        exp === 'Modality' ||
+        exp === 'SelectableItemStates' ||
+        exp === 'RTLOffsetType' ||
+        exp === 'FormatMessage' ||
+        exp === 'FocusVisibleHandler' ||
+        exp === 'IconPropsWithoutChildren' ||
+        exp === 'IllustrationPropsWithoutChildren' ||
+        exp === 'UIIconPropsWithoutChildren' ||
+        exp === 'StyleHandlers' ||
+        exp === 'Filter' ||
+        exp === 'Locale'
+      ) {
         contents += 'type ';
       }
       contents += exp;

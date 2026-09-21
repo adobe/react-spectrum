@@ -36,11 +36,16 @@ const meta: Meta<typeof ToggleButton> = {
 export default meta;
 
 export const Example: StoryObj<typeof ToggleButton> = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', gap: 8}}>
-      <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
+      <ToggleButton aria-label="Press me" {...args}>
+        <NewIcon />
+      </ToggleButton>
       <ToggleButton {...args}>Press me</ToggleButton>
-      <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
+      <ToggleButton {...args}>
+        <NewIcon />
+        <Text>Press me</Text>
+      </ToggleButton>
     </div>
   )
 };

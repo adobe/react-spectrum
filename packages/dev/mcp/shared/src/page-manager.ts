@@ -24,11 +24,15 @@ export async function buildPageIndex(library: Library): Promise<PageInfo[]> {
   const re = /^\s*-\s*\[([^\]]+)\]\(([^)]+)\)(?:\s*:\s*(.*))?\s*$/;
   for (const line of txt.split(/\r?\n/)) {
     const m = line.match(re);
-    if (!m) {continue;}
+    if (!m) {
+      continue;
+    }
     const display = (m[1] || '').trim();
     const href = (m[2] || '').trim();
     const description = (m[3] || '').trim() || undefined;
-    if (!href || !/\.md$/i.test(href)) {continue;}
+    if (!href || !/\.md$/i.test(href)) {
+      continue;
+    }
     const hrefWithoutExt = href.replace(/\.md$/i, '').replace(/\\/g, '/');
     const key = `${library}/${hrefWithoutExt}`;
     const name = display || path.basename(hrefWithoutExt);
@@ -72,16 +76,26 @@ export async function resolvePageRef(library: Library, pageName: string): Promis
       throw new Error(`Page '${pageName}' is not in the '${library}' library.`);
     }
     const maybe = pageCache.get(normalized);
-    if (maybe) {return maybe;}
+    if (maybe) {
+      return maybe;
+    }
     const filePath = `${baseUrl}/${normalized}.md`;
-    const stub: PageInfo = {key: normalized, name: path.basename(normalized), description: undefined, filePath, sections: []};
+    const stub: PageInfo = {
+      key: normalized,
+      name: path.basename(normalized),
+      description: undefined,
+      filePath,
+      sections: []
+    };
     pageCache.set(stub.key, stub);
     return stub;
   }
 
   const key = `${library}/${pageName}`;
   const maybe = pageCache.get(key);
-  if (maybe) {return maybe;}
+  if (maybe) {
+    return maybe;
+  }
   const filePath = `${baseUrl}/${key}.md`;
   const stub: PageInfo = {key, name: pageName, description: undefined, filePath, sections: []};
   pageCache.set(stub.key, stub);

@@ -14,7 +14,7 @@ function ProviderUpdater(props) {
 
   useEffect(() => {
     let channel = addons.getChannel();
-    let providerUpdate = (event) => {
+    let providerUpdate = event => {
       setLocale(event.locale);
     };
 
@@ -25,11 +25,7 @@ function ProviderUpdater(props) {
     };
   }, []);
 
-  return (
-    <Provider locale={localeValue}>
-      {props.children}
-    </Provider>
-  );
+  return <Provider locale={localeValue}>{props.children}</Provider>;
 }
 
 export const withProviderSwitcher = makeDecorator({

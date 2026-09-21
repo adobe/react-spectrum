@@ -23,7 +23,11 @@ describe('AlertDialog', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme}>
-        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
+        <AlertDialog
+          variant="confirmation"
+          title="the title"
+          primaryActionLabel="confirm"
+          onPrimaryAction={onPrimaryAction}>
           Content body
         </AlertDialog>
       </Provider>
@@ -44,7 +48,13 @@ describe('AlertDialog', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
-        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" onPrimaryAction={onPrimaryAction} onCancel={onCancelSpy}>
+        <AlertDialog
+          variant="confirmation"
+          title="the title"
+          primaryActionLabel="confirm"
+          cancelLabel="cancel"
+          onPrimaryAction={onPrimaryAction}
+          onCancel={onCancelSpy}>
           Content body
         </AlertDialog>
       </Provider>
@@ -73,7 +83,15 @@ describe('AlertDialog', function () {
     let onSecondaryAction = jest.fn();
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
-        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" secondaryActionLabel="secondary" onPrimaryAction={onPrimaryAction} onSecondaryAction={onSecondaryAction} onCancel={onCancelSpy}>
+        <AlertDialog
+          variant="confirmation"
+          title="the title"
+          primaryActionLabel="confirm"
+          cancelLabel="cancel"
+          secondaryActionLabel="secondary"
+          onPrimaryAction={onPrimaryAction}
+          onSecondaryAction={onSecondaryAction}
+          onCancel={onCancelSpy}>
           Content body
         </AlertDialog>
       </Provider>
@@ -106,7 +124,12 @@ describe('AlertDialog', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
-        <AlertDialog variant="confirmation" isPrimaryActionDisabled title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
+        <AlertDialog
+          variant="confirmation"
+          isPrimaryActionDisabled
+          title="the title"
+          primaryActionLabel="confirm"
+          onPrimaryAction={onPrimaryAction}>
           Content body
         </AlertDialog>
       </Provider>
@@ -123,7 +146,11 @@ describe('AlertDialog', function () {
   it('autofocus its confirm button', function () {
     let {getByText} = render(
       <Provider theme={theme}>
-        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" autoFocusButton="primary">
+        <AlertDialog
+          variant="confirmation"
+          title="the title"
+          primaryActionLabel="confirm"
+          autoFocusButton="primary">
           Content body
         </AlertDialog>
       </Provider>
@@ -136,7 +163,12 @@ describe('AlertDialog', function () {
   it('autofocus its cancel button', function () {
     let {getByText} = render(
       <Provider theme={theme}>
-        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" autoFocusButton="cancel" >
+        <AlertDialog
+          variant="confirmation"
+          title="the title"
+          primaryActionLabel="confirm"
+          cancelLabel="cancel"
+          autoFocusButton="cancel">
           Content body
         </AlertDialog>
       </Provider>
@@ -151,7 +183,13 @@ describe('AlertDialog', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
-        <AlertDialog variant="confirmation" isSecondaryActionDisabled title="the title" primaryActionLabel="confirm" secondaryActionLabel="secondary" onPrimaryAction={onPrimaryAction}>
+        <AlertDialog
+          variant="confirmation"
+          isSecondaryActionDisabled
+          title="the title"
+          primaryActionLabel="confirm"
+          secondaryActionLabel="secondary"
+          onPrimaryAction={onPrimaryAction}>
           Content body
         </AlertDialog>
       </Provider>
@@ -168,7 +206,12 @@ describe('AlertDialog', function () {
   it('autofocus its secondary button', function () {
     let {getByText} = render(
       <Provider theme={theme}>
-        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" secondaryActionLabel="secondary" autoFocusButton="secondary">
+        <AlertDialog
+          variant="confirmation"
+          title="the title"
+          primaryActionLabel="confirm"
+          secondaryActionLabel="secondary"
+          autoFocusButton="secondary">
           Content body
         </AlertDialog>
       </Provider>
@@ -202,5 +245,38 @@ describe('AlertDialog', function () {
     expect(secondaryBtn).toBeDefined();
     let primaryBtn = getByTestId('rsp-AlertDialog-confirmButton');
     expect(primaryBtn).toBeDefined();
+  });
+
+  it('should have aria-describedby pointing to the content', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm">
+          Content body
+        </AlertDialog>
+      </Provider>
+    );
+
+    let dialog = getByRole('alertdialog');
+    expect(dialog).toHaveAttribute('aria-describedby');
+    let contentId = dialog.getAttribute('aria-describedby');
+    let content = document.getElementById(contentId);
+    expect(content).not.toBeNull();
+    expect(content.textContent).toBe('Content body');
+  });
+
+  it('accepts custom aria-describedby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <AlertDialog
+          aria-describedby="content-id"
+          variant="confirmation"
+          title="the title"
+          primaryActionLabel="confirm">
+          Content body
+        </AlertDialog>
+      </Provider>
+    );
+
+    expect(getByRole('alertdialog')).toHaveAttribute('aria-describedby', 'content-id');
   });
 });

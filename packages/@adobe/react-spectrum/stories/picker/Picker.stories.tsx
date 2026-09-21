@@ -62,16 +62,8 @@ let falsyKey = [
 ];
 
 let withSection = [
-  {name: 'Animals', children: [
-    {name: 'Aardvark'},
-    {name: 'Kangaroo'},
-    {name: 'Snake'}
-  ]},
-  {name: 'People', children: [
-    {name: 'Danni'},
-    {name: 'Devon'},
-    {name: 'Ross'}
-  ]}
+  {name: 'Animals', children: [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]},
+  {name: 'People', children: [{name: 'Danni'}, {name: 'Devon'}, {name: 'Ross'}]}
 ];
 
 export type PickerStory = StoryObj<typeof Picker>;
@@ -81,7 +73,7 @@ export default {
   component: Picker,
   excludeStories: [],
   args: {
-    'label': 'Test',
+    label: 'Test',
     onSelectionChange: action('onSelectionChange'),
     onOpenChange: action('onOpenChange')
   },
@@ -176,7 +168,7 @@ export default {
 
 export type DefaultStory = StoryObj<typeof DefaultPicker>;
 export const Default: DefaultStory = {
-  render: (args) => <DefaultPicker {...args} />
+  render: args => <DefaultPicker {...args} />
 };
 
 // Need to interact with picker for the aXe plugin to catch the 'aria-hidden-focus' false positive
@@ -189,7 +181,7 @@ Default.play = async ({canvasElement}) => {
 };
 
 export const Disabled: DefaultStory = {
-  render: (args) => <DefaultPicker {...args} disabledKeys={['Short']} />,
+  render: args => <DefaultPicker {...args} disabledKeys={['Short']} />,
   name: 'disabled keys'
 };
 
@@ -215,12 +207,10 @@ export const Dynamic: PickerStory = {
 
 export const DynamicSections: PickerStory = {
   args: {
-    children: (
-      (item: any) => (
-        <Section key={item.name} items={item.children} title={item.name}>
-          {(item: any) => <Item key={item.name}>{item.name}</Item>}
-        </Section>
-      )
+    children: (item: any) => (
+      <Section key={item.name} items={item.children} title={item.name}>
+        {(item: any) => <Item key={item.name}>{item.name}</Item>}
+      </Section>
     ),
     items: withSection
   },
@@ -229,13 +219,13 @@ export const DynamicSections: PickerStory = {
 
 export type ComplexItemsStory = StoryObj<typeof ComplexItemsPicker>;
 export const ComplexItems: ComplexItemsStory = {
-  render: (args) => <ComplexItemsPicker {...args} />,
+  render: args => <ComplexItemsPicker {...args} />,
   name: 'complex items'
 };
 
 export const WithAvatars: PickerStory = {
   args: {label: 'Select a user'},
-  render: (args) => (
+  render: args => (
     <Picker {...args}>
       <Item textValue="User 1">
         <Avatar src="https://i.imgur.com/kJOwAdv.png" />
@@ -288,10 +278,13 @@ export const LabelledBy: LabelledByStory = {
       control: 'boolean'
     }
   },
-  render: (args) => (
+  render: args => (
     <>
       <div id="test">Test label</div>
-      <Picker {...args} aria-labelledby={args['aria-labelledby'] ? 'test' : undefined} items={flatOptions}>
+      <Picker
+        {...args}
+        aria-labelledby={args['aria-labelledby'] ? 'test' : undefined}
+        items={flatOptions}>
         {(item: any) => <Item>{item.name}</Item>}
       </Picker>
     </>
@@ -311,7 +304,10 @@ export const ContextualHelpPicker: PickerStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },
@@ -347,17 +343,24 @@ export const Loading: PickerStory = {
 
 export type AsyncLoadingStory = StoryObj<typeof AsyncLoadingExample>;
 export const AsyncLoading: AsyncLoadingStory = {
-  render: (args) => <AsyncLoadingExample {...args} />,
+  render: args => <AsyncLoadingExample {...args} />,
   name: 'async loading'
 };
 
 export type FocusStory = StoryObj<any>;
 export const Focus: FocusStory = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <label htmlFor="focus-before">Focus before</label>
       <input id="focus-before" data-testid="before" />
-      <Picker {...args} label="Focus-Test" items={flatOptions} onFocus={action('focus')} onBlur={action('blur')} onKeyDown={action('keydown')} onKeyUp={action('keyup')}>
+      <Picker
+        {...args}
+        label="Focus-Test"
+        items={flatOptions}
+        onFocus={action('focus')}
+        onBlur={action('blur')}
+        onKeyDown={action('keydown')}
+        onKeyUp={action('keyup')}>
         {(item: any) => <Item>{item.name}</Item>}
       </Picker>
       <label htmlFor="focus-after">Focus after</label>
@@ -369,13 +372,13 @@ export const Focus: FocusStory = {
 
 export type ResizePickerStory = StoryObj<typeof ResizePicker>;
 export const Resize: ResizePickerStory = {
-  render: (args) => <ResizePicker {...args} />,
+  render: args => <ResizePicker {...args} />,
   name: 'resize'
 };
 
 export type ScrollingStory = StoryObj<any>;
 export const Scrolling: ScrollingStory = {
-  render: (args) => (
+  render: args => (
     <View width="300px" height="size-500" overflow="auto">
       <View width="500px">
         <Picker {...args} label="Test">
@@ -390,7 +393,7 @@ export const Scrolling: ScrollingStory = {
 };
 
 export const Links: PickerStory = {
-  render: (args) => (
+  render: args => (
     <Picker {...args}>
       <Item key="foo">Foo</Item>
       <Item key="bar">Bar</Item>
@@ -420,32 +423,20 @@ export const Quiet: PickerStory = {
         </Picker>
       </View>
       <hr />
-      <View
-        width={200}>
+      <View width={200}>
         <h4>Quiet picker with label and fixed width (200px)</h4>
-        <Picker
-          isQuiet
-          label="Choose frequency"
-          defaultSelectedKey="sometimes">
+        <Picker isQuiet label="Choose frequency" defaultSelectedKey="sometimes">
           <Item key="rarely">Rarely</Item>
-          <Item key="sometimes">
-            This text is very long and will overflow the container
-          </Item>
+          <Item key="sometimes">This text is very long and will overflow the container</Item>
           <Item key="always">Always</Item>
         </Picker>
       </View>
       <hr />
-      <View
-        width={600}>
+      <View width={600}>
         <h4>Quiet picker with label and fixed width (600px)</h4>
-        <Picker
-          isQuiet
-          label="Choose frequency"
-          defaultSelectedKey="sometimes">
+        <Picker isQuiet label="Choose frequency" defaultSelectedKey="sometimes">
           <Item key="rarely">Rarely</Item>
-          <Item key="sometimes">
-            This text is very long the picker should expand to fit
-          </Item>
+          <Item key="sometimes">This text is very long the picker should expand to fit</Item>
           <Item key="always">Always</Item>
         </Picker>
       </View>
@@ -458,7 +449,9 @@ function DefaultPicker(props: SpectrumPickerProps<object>): JSX.Element {
     <Picker {...props}>
       <Item key="Short">Short</Item>
       <Item key="Normal">Normal</Item>
-      <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
+      <Item key="This item is very long and word wraps poorly">
+        This item is very long and word wraps poorly
+      </Item>
     </Picker>
   );
 }
@@ -501,8 +494,8 @@ function ComplexItemsPicker(props: SpectrumPickerProps<object>): JSX.Element {
 
 function AsyncLoadingExample(props: SpectrumPickerProps<object>): JSX.Element {
   interface Pokemon {
-    name: string,
-    url: string
+    name: string;
+    url: string;
   }
 
   let list = useAsyncList<Pokemon>({
@@ -519,7 +512,12 @@ function AsyncLoadingExample(props: SpectrumPickerProps<object>): JSX.Element {
   });
 
   return (
-    <Picker {...props} label="Pick a Pokemon" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+    <Picker
+      {...props}
+      label="Pick a Pokemon"
+      items={list.items}
+      isLoading={list.isLoading}
+      onLoadMore={list.loadMore}>
       {(item: any) => <Item key={item.name}>{item.name}</Item>}
     </Picker>
   );

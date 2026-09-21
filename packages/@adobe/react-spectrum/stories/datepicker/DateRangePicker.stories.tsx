@@ -12,7 +12,14 @@
 
 import {action} from 'storybook/actions';
 import {ActionButton} from '../../src/button/ActionButton';
-import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
+import {
+  CalendarDate,
+  getLocalTimeZone,
+  isWeekend,
+  parseDate,
+  today,
+  toZoned
+} from '@internationalized/date';
 import {chain} from 'react-aria/chain';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {DateRange} from '@adobe/react-spectrum/DateRangePicker';
@@ -38,25 +45,32 @@ export default {
 
 export type DateRangePickerStory = StoryFn<typeof DateRangePicker>;
 
-export const Default: DateRangePickerStory = (args) => render(args);
+export const Default: DateRangePickerStory = args => render(args);
 
 Default.story = {
   name: 'default'
 };
 
-export const DefaultValue: DateRangePickerStory = () => render({defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+export const DefaultValue: DateRangePickerStory = () =>
+  render({defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
 
 DefaultValue.story = {
   name: 'defaultValue'
 };
 
-export const ControlledValue: DateRangePickerStory = (args) => <ControlledExample {...args} />;
+export const ControlledValue: DateRangePickerStory = args => <ControlledExample {...args} />;
 
 ControlledValue.story = {
   name: 'controlled value'
 };
 
-export const DefaultValueZoned: DateRangePickerStory = () => render({defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-05'), 'America/Los_Angeles')}});
+export const DefaultValueZoned: DateRangePickerStory = () =>
+  render({
+    defaultValue: {
+      start: toZoned(parseDate('2020-02-03'), 'America/New_York'),
+      end: toZoned(parseDate('2020-02-05'), 'America/Los_Angeles')
+    }
+  });
 
 DefaultValueZoned.story = {
   name: 'defaultValue, zoned'
@@ -74,37 +88,56 @@ GranularitySecond.story = {
   name: 'granularity: second'
 };
 
-export const HourCycle12: DateRangePickerStory = () => render({granularity: 'minute', hourCycle: 12});
+export const HourCycle12: DateRangePickerStory = () =>
+  render({granularity: 'minute', hourCycle: 12});
 
 HourCycle12.story = {
   name: 'hourCycle: 12'
 };
 
-export const HourCycle24: DateRangePickerStory = () => render({granularity: 'minute', hourCycle: 24});
+export const HourCycle24: DateRangePickerStory = () =>
+  render({granularity: 'minute', hourCycle: 24});
 
 HourCycle24.story = {
   name: 'hourCycle: 24'
 };
 
-export const ForceLeadingZeros: DateRangePickerStory = () => render({defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}, shouldForceLeadingZeros: true});
+export const ForceLeadingZeros: DateRangePickerStory = () =>
+  render({
+    defaultValue: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)},
+    shouldForceLeadingZeros: true
+  });
 
 ForceLeadingZeros.story = {
   name: 'shouldForceLeadingZeros'
 };
 
-export const IsDisabled: DateRangePickerStory = () => render({isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+export const IsDisabled: DateRangePickerStory = () =>
+  render({
+    isDisabled: true,
+    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+  });
 
 IsDisabled.story = {
   name: 'isDisabled'
 };
 
-export const IsQuietIsDisabled: DateRangePickerStory = () => render({isQuiet: true, isDisabled: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+export const IsQuietIsDisabled: DateRangePickerStory = () =>
+  render({
+    isQuiet: true,
+    isDisabled: true,
+    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+  });
 
 IsQuietIsDisabled.story = {
   name: 'isQuiet, isDisabled'
 };
 
-export const IsReadOnly: DateRangePickerStory = () => render({isReadOnly: true, value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+export const IsReadOnly: DateRangePickerStory = () =>
+  render({
+    isReadOnly: true,
+    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+  });
 
 IsReadOnly.story = {
   name: 'isReadOnly'
@@ -116,29 +149,48 @@ AutoFocus.story = {
   name: 'autoFocus'
 };
 
-export const ValidationStateInvalid: DateRangePickerStory = () => render({validationState: 'invalid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+export const ValidationStateInvalid: DateRangePickerStory = () =>
+  render({
+    validationState: 'invalid',
+    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+  });
 
 ValidationStateInvalid.story = {
   name: 'validationState: invalid'
 };
 
-export const ValidationStateValid: DateRangePickerStory = () => render({validationState: 'valid', value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}});
+export const ValidationStateValid: DateRangePickerStory = () =>
+  render({
+    validationState: 'valid',
+    value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}
+  });
 
 ValidationStateValid.story = {
   name: 'validationState: valid'
 };
 
-export const MinDate201011MaxDate202011: DateRangePickerStory = () => render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)});
+export const MinDate201011MaxDate202011: DateRangePickerStory = () =>
+  render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)});
 
 MinDate201011MaxDate202011.story = {
   name: 'minDate: 2010/1/1, maxDate: 2020/1/1'
 };
 
 export const IsDateUnavailable: DateRangePickerStory = () => {
-  const disabledRanges = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+  const disabledRanges = [
+    [today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})],
+    [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]
+  ];
   let [value, setValue] = React.useState<DateRange | null>(null);
-  let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
-  let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  let isInvalid =
+    value &&
+    disabledRanges.some(
+      interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0
+    );
+  let isDateUnavailable = date =>
+    disabledRanges.some(
+      interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+    );
   return render({
     value,
     onChange: setValue,
@@ -152,46 +204,63 @@ IsDateUnavailable.story = {
   name: 'isDateUnavailable'
 };
 
-export const IsDateAvailableAllowsNonContiguousRanges: DateRangePickerStory = (args) => {
+export const IsDateAvailableAllowsNonContiguousRanges: DateRangePickerStory = args => {
   let {locale} = useLocale();
-  return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, ...args});
+  return render({
+    isDateUnavailable: (date: DateValue) => isWeekend(date, locale),
+    allowsNonContiguousRanges: true,
+    ...args
+  });
 };
 
 IsDateAvailableAllowsNonContiguousRanges.story = {
   name: 'isDateAvailable, allowsNonContiguousRanges'
 };
 
-export const PlaceholderValue198011: DateRangePickerStory = (args) => render({placeholderValue: new CalendarDate(1980, 1, 1), ...args});
+export const PlaceholderValue198011: DateRangePickerStory = args =>
+  render({placeholderValue: new CalendarDate(1980, 1, 1), ...args});
 
 PlaceholderValue198011.story = {
   name: 'placeholderValue: 1980/1/1'
 };
 
-export const MaxVisibleMonths2: DateRangePickerStory = (args) => render({maxVisibleMonths: 2, granularity: 'minute', ...args});
+export const MaxVisibleMonths2: DateRangePickerStory = args =>
+  render({maxVisibleMonths: 2, granularity: 'minute', ...args});
 
 MaxVisibleMonths2.story = {
   name: 'maxVisibleMonths: 2'
 };
 
-export const MaxVisibleMonths3: DateRangePickerStory = (args) => render({maxVisibleMonths: 3, granularity: 'minute', ...args});
+export const MaxVisibleMonths3: DateRangePickerStory = args =>
+  render({maxVisibleMonths: 3, granularity: 'minute', ...args});
 
 MaxVisibleMonths3.story = {
   name: 'maxVisibleMonths: 3'
 };
 
-export const ShowFormatHelpText: DateRangePickerStory = (args) => render({showFormatHelpText: true, ...args});
+export const ShowFormatHelpText: DateRangePickerStory = args =>
+  render({showFormatHelpText: true, ...args});
 
 ShowFormatHelpText.story = {
   name: 'showFormatHelpText'
 };
 
-export const AllTheEvents: DateRangePickerStory = (args) => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange'), ...args});
+export const AllTheEvents: DateRangePickerStory = args =>
+  render({
+    onBlur: action('onBlur'),
+    onFocus: action('onFocus'),
+    onFocusChange: action('onFocusChange'),
+    onKeyDown: action('onKeyDown'),
+    onKeyUp: action('onKeyUp'),
+    onOpenChange: action('onOpenChange'),
+    ...args
+  });
 
 AllTheEvents.story = {
   name: 'all the events'
 };
 
-export const CustomCalendar: DateRangePickerStory = (args) => <CustomExample {...args} />;
+export const CustomCalendar: DateRangePickerStory = args => <CustomExample {...args} />;
 
 export function render(props = {}): JSX.Element {
   return (
@@ -200,7 +269,8 @@ export function render(props = {}): JSX.Element {
         label="Date range"
         onChange={action('change')}
         maxWidth="calc(100vw - 40px)"
-        {...props} />
+        {...props}
+      />
     </div>
   );
 }
@@ -208,14 +278,49 @@ export function render(props = {}): JSX.Element {
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
   {locale: '', label: 'Default', ordering: 'gregory'},
-  {label: 'Arabic (Algeria)', locale: 'ar-DZ', territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE', ordering: 'gregory islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (United Arab Emirates)', locale: 'ar-AE', territories: 'AE BH KW QA', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Egypt)', locale: 'AR-EG', territories: 'EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Saudi Arabia)', locale: 'ar-SA', territories: 'SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
-  {label: 'Farsi (Afghanistan)', locale: 'fa-AF', territories: 'AF IR', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
+  {
+    label: 'Arabic (Algeria)',
+    locale: 'ar-DZ',
+    territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE',
+    ordering: 'gregory islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (United Arab Emirates)',
+    locale: 'ar-AE',
+    territories: 'AE BH KW QA',
+    ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (Egypt)',
+    locale: 'AR-EG',
+    territories: 'EG',
+    ordering: 'gregory coptic islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (Saudi Arabia)',
+    locale: 'ar-SA',
+    territories: 'SA',
+    ordering: 'islamic-umalqura gregory islamic islamic-rgsa'
+  },
+  {
+    label: 'Farsi (Afghanistan)',
+    locale: 'fa-AF',
+    territories: 'AF IR',
+    ordering: 'persian gregory islamic islamic-civil islamic-tbla'
+  },
   // {territories: 'CN CX HK MO SG', ordering: 'gregory chinese'},
-  {label: 'Amharic (Ethiopia)', locale: 'am-ET', territories: 'ET', ordering: 'gregory ethiopic ethioaa'},
-  {label: 'Hebrew (Israel)', locale: 'he-IL', territories: 'IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
+  {
+    label: 'Amharic (Ethiopia)',
+    locale: 'am-ET',
+    territories: 'ET',
+    ordering: 'gregory ethiopic ethioaa'
+  },
+  {
+    label: 'Hebrew (Israel)',
+    locale: 'he-IL',
+    territories: 'IL',
+    ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'
+  },
   {label: 'Hindi (India)', locale: 'hi-IN', territories: 'IN', ordering: 'gregory indian'},
   // {label: 'Marathi (India)', locale: 'mr-IN', territories: 'IN', ordering: 'gregory indian'},
   {label: 'Bengali (India)', locale: 'bn-IN', territories: 'IN', ordering: 'gregory indian'},
@@ -247,8 +352,20 @@ function Example(props) {
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);
-  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(v => v != null) : [calendars[0]], [pref]);
-  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
+  let preferredCalendars = React.useMemo(
+    () =>
+      pref
+        ? pref.ordering
+            .split(' ')
+            .map(p => calendars.find(c => c.key === p))
+            .filter(v => v != null)
+        : [calendars[0]],
+    [pref]
+  );
+  let otherCalendars = React.useMemo(
+    () => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)),
+    [preferredCalendars]
+  );
 
   let updateLocale = locale => {
     setLocale(locale);
@@ -259,7 +376,11 @@ function Example(props) {
   return (
     <Flex direction="column" gap="size-600" alignItems="center">
       <Flex direction="row" gap="size-150" wrap justifyContent="center">
-        <Picker label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
+        <Picker
+          label="Locale"
+          items={preferences}
+          selectedKey={locale}
+          onSelectionChange={updateLocale}>
           {item => <Item key={item.locale}>{item.label}</Item>}
         </Picker>
         <Picker label="Calendar" selectedKey={calendar} onSelectionChange={setCalendar}>
@@ -271,7 +392,11 @@ function Example(props) {
           </Section>
         </Picker>
       </Flex>
-      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
+      <Provider
+        locale={
+          (locale || defaultLocale) +
+          (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')
+        }>
         <DateRangePicker {...props} />
       </Provider>
     </Flex>
@@ -283,8 +408,19 @@ function ControlledExample(props) {
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">
-      <DateRangePicker label="Controlled" {...props} granularity="minute" value={value} onChange={chain(setValue, action('onChange'))} />
-      <ActionButton onPress={() => setValue({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)})}>Change value</ActionButton>
+      <DateRangePicker
+        label="Controlled"
+        {...props}
+        granularity="minute"
+        value={value}
+        onChange={chain(setValue, action('onChange'))}
+      />
+      <ActionButton
+        onPress={() =>
+          setValue({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)})
+        }>
+        Change value
+      </ActionButton>
       <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
     </Flex>
   );
@@ -301,7 +437,8 @@ function CustomExample(props) {
         value={value}
         onChange={chain(setValue, action('onChange'))}
         createCalendar={() => new Custom454Calendar()}
-        maxVisibleMonths={3} />
+        maxVisibleMonths={3}
+      />
     </Flex>
   );
 }

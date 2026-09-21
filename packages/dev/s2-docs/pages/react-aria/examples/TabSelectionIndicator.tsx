@@ -1,5 +1,5 @@
-import {useContext, useId} from "react";
-import {TabListStateContext} from "react-aria-components";
+import {useContext, useId} from 'react';
+import {TabListStateContext} from 'react-aria-components';
 
 export function TabSelectionIndicator() {
   let state = useContext(TabListStateContext);
@@ -9,7 +9,7 @@ export function TabSelectionIndicator() {
   let animationId = useId();
   let keyframes: string[] = [];
   for (let item of state.collection) {
-    keyframes.push(`${Math.round(item.index / (state.collection.size - 1) * 100)}% {
+    keyframes.push(`${Math.round((item.index / (state.collection.size - 1)) * 100)}% {
       top: anchor(--tab-${item.key} start);
       left: anchor(--tab-${item.key} start);
       bottom: anchor(--tab-${item.key} end);
@@ -26,12 +26,15 @@ export function TabSelectionIndicator() {
       </style>
       <div
         className="absolute z-10 bg-white forced-color-adjust-none rounded-full mix-blend-difference contain-strict transition-[inset]"
-        style={{
-          animationName: animationId,
-          animationTimingFunction: 'linear',
-          animationTimeline: '--scroll',
-          animationFillMode: 'both'
-        } as any} />
+        style={
+          {
+            animationName: animationId,
+            animationTimingFunction: 'linear',
+            animationTimeline: '--scroll',
+            animationFillMode: 'both'
+          } as any
+        }
+      />
     </>
   );
 }

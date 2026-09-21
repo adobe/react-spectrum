@@ -7,15 +7,22 @@ import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from '.
 const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 interface StateTableProps {
-  properties: TInterface['properties'],
-  links?: any,
-  showOptional?: boolean,
-  hideSelector?: boolean,
-  cssVariables?: {[name: string]: string},
-  style?: CSSProperties
+  properties: TInterface['properties'];
+  links?: any;
+  showOptional?: boolean;
+  hideSelector?: boolean;
+  cssVariables?: {[name: string]: string};
+  style?: CSSProperties;
 }
 
-export function StateTable({properties, links, showOptional, hideSelector, cssVariables, style: styleProp}: StateTableProps) {
+export function StateTable({
+  properties,
+  links,
+  showOptional,
+  hideSelector,
+  cssVariables,
+  style: styleProp
+}: StateTableProps) {
   if (links) {
     setLinks(links);
   }
@@ -26,7 +33,7 @@ export function StateTable({properties, links, showOptional, hideSelector, cssVa
   }
   let showSelector = !hideSelector && props.some(prop => prop.type === 'property' && prop.selector);
 
-  let table =  (
+  let table = (
     <Table style={styleProp}>
       <TableHeader>
         <TableRow>
@@ -43,13 +50,26 @@ export function StateTable({properties, links, showOptional, hideSelector, cssVa
                   <span className={codeStyles.property}>{prop.name}</span>
                 </code>
               </TableCell>
-              {showSelector && <TableCell hideBorder>
-                <strong className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>CSS Selector: </strong>
-                {prop.type === 'property' && prop.selector ? <span className={codeStyle}><Code lang="css">{prop.selector}</Code></span> : <code className={codeStyle}>—</code>}
-              </TableCell>}
+              {showSelector && (
+                <TableCell hideBorder>
+                  <strong
+                    className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>
+                    CSS Selector:{' '}
+                  </strong>
+                  {prop.type === 'property' && prop.selector ? (
+                    <span className={codeStyle}>
+                      <Code lang="css">{prop.selector}</Code>
+                    </span>
+                  ) : (
+                    <code className={codeStyle}>—</code>
+                  )}
+                </TableCell>
+              )}
             </TableRow>
             <TableRow>
-              <TableCell colSpan={2}>{prop.description && renderHTMLfromMarkdown(prop.description, {forceInline: true})}</TableCell>
+              <TableCell colSpan={2}>
+                {prop.description && renderHTMLfromMarkdown(prop.description, {forceInline: true})}
+              </TableCell>
             </TableRow>
           </Fragment>
         ))}

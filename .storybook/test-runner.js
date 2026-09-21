@@ -1,11 +1,10 @@
 const {configureAxe, checkA11y, injectAxe} = require('axe-playwright');
 const {getStoryContext} = require('storybook/test-runner');
 
-
 /*
-* See https://storybook.js.org/docs/react/writing-tests/test-runner#test-hook-api-experimental
-* to learn more about the test-runner hooks API.
-*/
+ * See https://storybook.js.org/docs/react/writing-tests/test-runner#test-hook-api-experimental
+ * to learn more about the test-runner hooks API.
+ */
 module.exports = {
   async preRender(page) {
     await injectAxe(page);
@@ -22,7 +21,7 @@ module.exports = {
       rules: [
         {
           id: 'aria-hidden-focus',
-          selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])',
+          selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])'
         },
         ...(storyContext.parameters?.a11y?.config?.rules ?? [])
       ]
@@ -31,9 +30,9 @@ module.exports = {
     await checkA11y(page, '#root', {
       detailedReport: true,
       detailedReportOptions: {
-        html: true,
+        html: true
       },
-      axeOptions: storyContext.parameters?.a11y?.options,
+      axeOptions: storyContext.parameters?.a11y?.options
     });
-  },
+  }
 };

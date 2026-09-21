@@ -34,11 +34,15 @@ export default {
   component: ColorField
 } as Meta<typeof ColorField>;
 
-export type ColorFieldStory = StoryObj<(props: ColorFieldProps & {label: string}) => ReturnType<typeof ColorField>>;
+export type ColorFieldStory = StoryObj<
+  (props: ColorFieldProps & {label: string}) => ReturnType<typeof ColorField>
+>;
 
 export const ColorFieldExample: ColorFieldStory = {
-  render: (args) => (
-    <ColorField {...args} validate={(v) => (v?.getChannelValue('red') === 0 ? 'Invalid value' : null)}>
+  render: args => (
+    <ColorField
+      {...args}
+      validate={v => (v?.getChannelValue('red') === 0 ? 'Invalid value' : null)}>
       <Label>{args.label}</Label>
       <Input style={{display: 'block'}} />
       <FieldError />

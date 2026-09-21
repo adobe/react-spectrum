@@ -14,7 +14,7 @@ export const description = 'Allows a user to select an individual option.';
 <VisualExample
   component={Checkbox}
   docs={docs.exports.Checkbox}
-  props={['children', 'size', 'isEmphasized', 'isIndeterminate', 'isDisabled']}
+  props={['children', 'size', 'description', 'isEmphasized', 'isIndeterminate', 'isDisabled']}
   initialProps={{children: 'Unsubscribe'}}
   importSource="@react-spectrum/s2/Checkbox"
   type="s2" />
@@ -64,9 +64,10 @@ import {Form} from '@react-spectrum/s2/Form';
     ///- begin highlight -///
     name="terms"
     value="agree"
-    isRequired>
+    isRequired
+    description="By clicking this checkbox, you agree to the terms and conditions.">
     {/*- end highlight -*/}
-    I agree to the terms
+    Accept terms and conditions
   </Checkbox>
   <Button type="submit">Submit</Button>
 </Form>

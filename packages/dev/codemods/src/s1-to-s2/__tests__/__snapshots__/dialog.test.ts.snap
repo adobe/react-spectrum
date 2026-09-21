@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Comments out if type might be "tray" 1`] = `
 "import { DialogTrigger, ActionButton, Dialog } from "@react-spectrum/s2";

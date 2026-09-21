@@ -1,8 +1,8 @@
-import { type Meta } from '@storybook/react';
+import {type Meta} from '@storybook/react';
 import React from 'react';
-import { Form } from 'react-aria-components/Form';
-import { Button } from '../src/Button';
-import { Select, SelectItem, SelectSection } from '../src/Select';
+import {Form} from 'react-aria-components/Form';
+import {Button} from '../src/Button';
+import {Select, SelectItem, SelectSection} from '../src/Select';
 
 const meta: Meta<typeof Select> = {
   component: Select,
@@ -63,7 +63,9 @@ Sections.args = {
 export const Validation = (args: any) => (
   <Form className="flex flex-col gap-2 items-start">
     <Example {...args} />
-    <Button type="submit" variant="secondary">Submit</Button>
+    <Button type="submit" variant="secondary">
+      Submit
+    </Button>
   </Form>
 );
 

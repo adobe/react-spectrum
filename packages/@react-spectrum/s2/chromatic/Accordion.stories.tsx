@@ -22,7 +22,7 @@ import {ActionButton} from '../src/ActionButton';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {TextField} from '../src/TextField';
 
 const meta: Meta<typeof Accordion> = {
@@ -37,24 +37,22 @@ export default meta;
 type Story = StoryObj<typeof Accordion>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
           <AccordionItem id="files">
-            <AccordionItemTitle>
-              Files
-            </AccordionItemTitle>
-            <AccordionItemPanel>
-              Files content
-            </AccordionItemPanel>
+            <AccordionItemTitle>Files</AccordionItemTitle>
+            <AccordionItemPanel>Files content</AccordionItemPanel>
           </AccordionItem>
           <AccordionItem id="people">
-            <AccordionItemTitle>
-              People
-            </AccordionItemTitle>
+            <AccordionItemTitle>People</AccordionItemTitle>
             <AccordionItemPanel>
-              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
+              <TextField
+                label="Name"
+                styles={style({maxWidth: 176})}
+                placeholder="Enter your name"
+              />
             </AccordionItemPanel>
           </AccordionItem>
         </Accordion>
@@ -64,33 +62,21 @@ export const Example: Story = {
 };
 
 export const WithLongTitle: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 224})}>
         <Accordion styles={style({maxWidth: 224})} {...args}>
           <AccordionItem>
-            <AccordionItemTitle>
-              Files
-            </AccordionItemTitle>
-            <AccordionItemPanel>
-              Files content
-            </AccordionItemPanel>
+            <AccordionItemTitle>Files</AccordionItemTitle>
+            <AccordionItemPanel>Files content</AccordionItemPanel>
           </AccordionItem>
           <AccordionItem>
-            <AccordionItemTitle>
-              People
-            </AccordionItemTitle>
-            <AccordionItemPanel>
-              People content
-            </AccordionItemPanel>
+            <AccordionItemTitle>People</AccordionItemTitle>
+            <AccordionItemPanel>People content</AccordionItemPanel>
           </AccordionItem>
           <AccordionItem>
-            <AccordionItemTitle>
-              Very very very very very long title that wraps
-            </AccordionItemTitle>
-            <AccordionItemPanel>
-              Accordion content
-            </AccordionItemPanel>
+            <AccordionItemTitle>Very very very very very long title that wraps</AccordionItemTitle>
+            <AccordionItemPanel>Accordion content</AccordionItemPanel>
           </AccordionItem>
         </Accordion>
       </div>
@@ -99,22 +85,16 @@ export const WithLongTitle: Story = {
 };
 
 export const WithDisabledItem: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
           <AccordionItem>
-            <AccordionItemTitle>
-              Files
-            </AccordionItemTitle>
-            <AccordionItemPanel>
-              Files content
-            </AccordionItemPanel>
+            <AccordionItemTitle>Files</AccordionItemTitle>
+            <AccordionItemPanel>Files content</AccordionItemPanel>
           </AccordionItem>
           <AccordionItem isDisabled>
-            <AccordionItemTitle>
-              People
-            </AccordionItemTitle>
+            <AccordionItemTitle>People</AccordionItemTitle>
             <AccordionItemPanel>
               <TextField label="Name" placeholder="Enter your name" />
             </AccordionItemPanel>
@@ -138,30 +118,32 @@ WithDisabledItem.parameters = {
 };
 
 export const WithActionButton: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
           <AccordionItem id="files">
             <AccordionItemHeader>
-              <AccordionItemTitle>
-                Files
-              </AccordionItemTitle>
-              <ActionButton aria-label="Add new file"><NewIcon /></ActionButton>
+              <AccordionItemTitle>Files</AccordionItemTitle>
+              <ActionButton aria-label="Add new file">
+                <NewIcon />
+              </ActionButton>
             </AccordionItemHeader>
-            <AccordionItemPanel>
-              Files content
-            </AccordionItemPanel>
+            <AccordionItemPanel>Files content</AccordionItemPanel>
           </AccordionItem>
           <AccordionItem id="people">
             <AccordionItemHeader>
-              <AccordionItemTitle>
-                People
-              </AccordionItemTitle>
-              <ActionButton aria-label="Add new person"><NewIcon /></ActionButton>
+              <AccordionItemTitle>People</AccordionItemTitle>
+              <ActionButton aria-label="Add new person">
+                <NewIcon />
+              </ActionButton>
             </AccordionItemHeader>
             <AccordionItemPanel>
-              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
+              <TextField
+                label="Name"
+                styles={style({maxWidth: 176})}
+                placeholder="Enter your name"
+              />
             </AccordionItemPanel>
           </AccordionItem>
         </Accordion>

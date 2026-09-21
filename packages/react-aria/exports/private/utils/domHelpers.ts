@@ -1,1 +1,7 @@
-export {getOwnerDocument, getOwnerWindow, isShadowRoot} from '../../../src/utils/domHelpers';
+export {
+  addEvent,
+  getOwnerDocument,
+  getOwnerWindow,
+  isDocument,
+  isShadowRoot
+} from '../../../src/utils/domHelpers';

@@ -17,40 +17,40 @@ import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 type ToastAction = 'add' | 'remove' | 'clear';
 export interface ToastStateProps {
   /** The maximum number of toasts to display at a time. */
-  maxVisibleToasts?: number,
+  maxVisibleToasts?: number;
   /** Function to wrap updates in (i.e. document.startViewTransition()). */
-  wrapUpdate?: (fn: () => void, action: ToastAction) => void
+  wrapUpdate?: (fn: () => void, action: ToastAction) => void;
 }
 
 export interface ToastOptions {
   /** Handler that is called when the toast is closed, either by the user or after a timeout. */
-  onClose?: () => void,
+  onClose?: () => void;
   /** A timeout to automatically close the toast after, in milliseconds. */
-  timeout?: number
+  timeout?: number;
 }
 
 export interface QueuedToast<T> extends ToastOptions {
   /** The content of the toast. */
-  content: T,
+  content: T;
   /** A unique key for the toast. */
-  key: string,
+  key: string;
   /** A timer for the toast, if a timeout was set. */
-  timer?: Timer
+  timer?: Timer;
 }
 
 export interface ToastState<T> {
   /** Adds a new toast to the queue. */
-  add(content: T, options?: ToastOptions): string,
+  add(content: T, options?: ToastOptions): string;
   /**
    * Closes a toast.
    */
-  close(key: string): void,
+  close(key: string): void;
   /** Pauses the timers for all visible toasts. */
-  pauseAll(): void,
+  pauseAll(): void;
   /** Resumes the timers for all visible toasts. */
-  resumeAll(): void,
+  resumeAll(): void;
   /** The visible toasts. */
-  visibleToasts: QueuedToast<T>[]
+  visibleToasts: QueuedToast<T>[];
 }
 
 /**
@@ -59,7 +59,10 @@ export interface ToastState<T> {
  */
 export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {
   let {maxVisibleToasts = 1, wrapUpdate} = props;
-  let queue = useMemo(() => new ToastQueue<T>({maxVisibleToasts, wrapUpdate}), [maxVisibleToasts, wrapUpdate]);
+  let queue = useMemo(
+    () => new ToastQueue<T>({maxVisibleToasts, wrapUpdate}),
+    [maxVisibleToasts, wrapUpdate]
+  );
   return useToastQueue(queue);
 }
 

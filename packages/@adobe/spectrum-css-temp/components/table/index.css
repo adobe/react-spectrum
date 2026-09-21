@@ -38,8 +38,9 @@ svg.spectrum-Table-sortedIcon {
 
   vertical-align: middle;
 
-  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
-              color var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition:
+    transform var(--spectrum-global-animation-duration-100) ease-in-out,
+    color var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
 .spectrum-Table-menuChevron.spectrum-Table-menuChevron {
@@ -127,7 +128,7 @@ svg.spectrum-Table-sortedIcon {
   user-select: none;
 
   &::after {
-    content: "";
+    content: '';
     display: block;
     box-sizing: border-box;
     inline-size: 1px;
@@ -233,14 +234,16 @@ svg.spectrum-Table-sortedIcon {
   font-size: var(--spectrum-table-cell-text-size);
   font-weight: var(--spectrum-table-cell-text-font-weight);
   /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
-  line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
+  line-height: calc(
+    calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px
+  );
   padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
 
   &.spectrum-Table-cell--hasExpandCollapseButton {
     display: grid;
     grid-template-columns: var(--spectrum-global-dimension-size-400) 1fr;
     grid-template-rows: 1fr;
-    grid-template-areas: "expand-button contents";
+    grid-template-areas: 'expand-button contents';
   }
 }
 
@@ -332,14 +335,18 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-headCellButton--alignCenter {
   justify-content: center;
   padding-block-start: var(--spectrum-table-header-padding-y);
-  padding-inline-end: calc(var(--spectrum-table-header-padding-x) - var(--spectrum-table-column-resizer-placeholder-width));
+  padding-inline-end: calc(
+    var(--spectrum-table-header-padding-x) - var(--spectrum-table-column-resizer-placeholder-width)
+  );
   padding-block-end: var(--spectrum-table-header-padding-y);
   padding-inline-start: var(--spectrum-table-header-padding-x);
 }
 .spectrum-Table-headCellButton--alignEnd {
   justify-content: flex-end;
   padding-block-start: var(--spectrum-table-header-padding-y);
-  padding-inline-end: calc(var(--spectrum-table-header-padding-x) - var(--spectrum-table-column-resizer-placeholder-width));
+  padding-inline-end: calc(
+    var(--spectrum-table-header-padding-x) - var(--spectrum-table-column-resizer-placeholder-width)
+  );
   padding-block-end: var(--spectrum-table-header-padding-y);
   padding-inline-start: 0;
 }
@@ -451,7 +458,7 @@ svg.spectrum-Table-sortedIcon {
 }
 
 /* the CSS logical properties postcss plugin doesn't seem to work with :focus-visible. */
-[dir="rtl"] .spectrum-Table-row:focus-visible:before {
+[dir='rtl'] .spectrum-Table-row:focus-visible:before {
   right: 0;
 }
 

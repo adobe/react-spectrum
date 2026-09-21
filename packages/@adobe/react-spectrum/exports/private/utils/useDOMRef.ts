@@ -1,1 +1,8 @@
-export {useFocusableRef, unwrapDOMRef, createDOMRef, createFocusableRef, useDOMRef, useUnwrapDOMRef} from '../../../src/utils/useDOMRef';
+export {
+  useFocusableRef,
+  unwrapDOMRef,
+  createDOMRef,
+  createFocusableRef,
+  useDOMRef,
+  useUnwrapDOMRef
+} from '../../../src/utils/useDOMRef';

@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, FocusableElement, FocusableProps, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  FocusableElement,
+  FocusableProps,
+  LinkDOMProps,
+  PressEvents,
+  RefObject
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {handleLinkClick, useLinkProps, useRouter} from '../utils/openLink';
 import {mergeProps} from '../utils/mergeProps';
@@ -20,23 +28,30 @@ import {usePress} from '../interactions/usePress';
 
 export interface LinkProps extends PressEvents, FocusableProps {}
 
-export interface AriaLinkProps extends LinkProps, LinkDOMProps, AriaLabelingProps { }
+export interface AriaLinkProps extends LinkProps, LinkDOMProps, AriaLabelingProps {
+  /**
+   * Indicates whether this element represents the current item within a container or set of related
+   * elements.
+   */
+  'aria-current'?: boolean | 'true' | 'false' | 'page' | 'step' | 'location' | 'date' | 'time';
+}
 
 export interface AriaLinkOptions extends AriaLinkProps {
   /** Whether the link is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /**
    * The HTML element used to render the link, e.g. 'a', or 'span'.
+   *
    * @default 'a'
    */
-  elementType?: string
+  elementType?: string;
 }
 
 export interface LinkAria {
   /** Props for the link element. */
-  linkProps: DOMAttributes,
+  linkProps: DOMAttributes;
   /** Whether the link is currently pressed. */
-  isPressed: boolean
+  isPressed: boolean;
 }
 
 /**
@@ -50,6 +65,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement 
     onPress,
     onPressStart,
     onPressEnd,
+    onPressChange,
     onClick,
     isDisabled,
     ...otherProps
@@ -63,7 +79,15 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement 
     };
   }
   let {focusableProps} = useFocusable(props, ref);
-  let {pressProps, isPressed} = usePress({onPress, onPressStart, onPressEnd, onClick, isDisabled, ref});
+  let {pressProps, isPressed} = usePress({
+    onPress,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onClick,
+    isDisabled,
+    ref
+  });
   let domProps = filterDOMProps(otherProps, {labelable: true});
   let interactionHandlers = mergeProps(focusableProps, pressProps);
   let router = useRouter();

@@ -11,7 +11,13 @@
  */
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
-import {act, fireEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render
+} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {CalendarDate, isWeekend} from '@internationalized/date';
 import {RangeCalendar} from '../../src/calendar/RangeCalendar';
@@ -19,7 +25,12 @@ import React from 'react';
 import {useLocale} from 'react-aria/I18nProvider';
 import userEvent from '@testing-library/user-event';
 
-let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+let cellFormatter = new Intl.DateTimeFormat('en-US', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+});
 
 describe('RangeCalendar', () => {
   /** @type {ReturnType<typeof userEvent['setup']>} */
@@ -36,15 +47,17 @@ describe('RangeCalendar', () => {
 
   describe('basics', () => {
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name should render a calendar with a defaultValue', ({RangeCalendar, props}) => {
       let {getAllByLabelText, getByRole, getAllByRole} = render(<RangeCalendar {...props} />);
 
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent('June 2019');
 
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      let gridCells = getAllByRole('gridcell').filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(gridCells.length).toBe(30);
 
       let selectedDates = getAllByLabelText('Selected', {exact: false});
@@ -67,15 +80,17 @@ describe('RangeCalendar', () => {
     });
 
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name should render a calendar with a value', ({RangeCalendar, props}) => {
       let {getAllByLabelText, getByRole, getAllByRole} = render(<RangeCalendar {...props} />);
 
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent('June 2019');
 
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      let gridCells = getAllByRole('gridcell').filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(gridCells.length).toBe(30);
 
       let selectedDates = getAllByLabelText('Selected', {exact: false});
@@ -98,30 +113,41 @@ describe('RangeCalendar', () => {
     });
 
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 18)}}}
-    `('$Name should focus the first selected date if autoFocus is set', ({RangeCalendar, props}) => {
-      let {getByRole, getAllByLabelText} = render(<RangeCalendar {...props} autoFocus />);
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 18)}}}
+    `(
+      '$Name should focus the first selected date if autoFocus is set',
+      ({RangeCalendar, props}) => {
+        let {getByRole, getAllByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
-      let cells = getAllByLabelText('selected', {exact: false});
-      let grid = getByRole('grid');
+        let cells = getAllByLabelText('selected', {exact: false});
+        let grid = getByRole('grid');
 
-      expect(cells[0].parentElement).toHaveAttribute('role', 'gridcell');
-      expect(cells[0].parentElement).toHaveAttribute('aria-selected', 'true');
-      expect(cells[0]).toHaveFocus();
-      expect(grid).not.toHaveAttribute('aria-activedescendant');
-    });
+        expect(cells[0].parentElement).toHaveAttribute('role', 'gridcell');
+        expect(cells[0].parentElement).toHaveAttribute('aria-selected', 'true');
+        expect(cells[0]).toHaveFocus();
+        expect(grid).not.toHaveAttribute('aria-activedescendant');
+      }
+    );
 
     it('should show selected dates across multiple months', async () => {
-      let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<RangeCalendar value={{start: new CalendarDate(2019, 6, 20), end: new CalendarDate(2019, 7, 10)}} />);
+      let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(
+        <RangeCalendar
+          value={{start: new CalendarDate(2019, 6, 20), end: new CalendarDate(2019, 7, 10)}}
+        />
+      );
 
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent('June 2019');
 
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      let gridCells = getAllByRole('gridcell').filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(gridCells.length).toBe(30);
 
-      let selected = getAllByLabelText('selected', {exact: false}).filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      let selected = getAllByLabelText('selected', {exact: false}).filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(selected.length).toBe(11);
       let juneLabels = [
         'Selected Range: Thursday, June 20 to Wednesday, July 10, 2019, Thursday, June 20, 2019 selected',
@@ -146,7 +172,9 @@ describe('RangeCalendar', () => {
       let nextButton = getAllByLabelText('Next')[0];
       await user.click(nextButton);
 
-      selected = getAllByLabelText('selected', {exact: false}).filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      selected = getAllByLabelText('selected', {exact: false}).filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(selected.length).toBe(10);
       let julyLabels = [
         'Monday, July 1, 2019 selected',
@@ -168,7 +196,9 @@ describe('RangeCalendar', () => {
       }
 
       expect(heading).toHaveTextContent('July 2019');
-      gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      gridCells = getAllByRole('gridcell').filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(gridCells.length).toBe(31);
 
       expect(nextButton).toHaveFocus();
@@ -177,10 +207,14 @@ describe('RangeCalendar', () => {
       await user.click(prevButton);
 
       expect(heading).toHaveTextContent('June 2019');
-      gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      gridCells = getAllByRole('gridcell').filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(gridCells.length).toBe(30);
 
-      selected = getAllByLabelText('selected', {exact: false}).filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      selected = getAllByLabelText('selected', {exact: false}).filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(selected.length).toBe(11);
       i = 0;
       for (let cell of selected) {
@@ -192,7 +226,12 @@ describe('RangeCalendar', () => {
     });
 
     it('should center the selected range if multiple months are visible', () => {
-      let {getAllByRole, getAllByLabelText} = render(<RangeCalendar value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 10)}} visibleMonths={3} />);
+      let {getAllByRole, getAllByLabelText} = render(
+        <RangeCalendar
+          value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 10)}}
+          visibleMonths={3}
+        />
+      );
 
       let grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
@@ -202,12 +241,28 @@ describe('RangeCalendar', () => {
     });
 
     it.each([
-      {name: 'at the start', alignment: 'start', expected: ['February 2020', 'March 2020', 'April 2020']},
-      {name: 'in the center', alignment: 'center', expected: ['January 2020', 'February 2020', 'March 2020']},
-      {name: 'at the end', alignment: 'end', expected: ['December 2019', 'January 2020', 'February 2020']}
+      {
+        name: 'at the start',
+        alignment: 'start',
+        expected: ['February 2020', 'March 2020', 'April 2020']
+      },
+      {
+        name: 'in the center',
+        alignment: 'center',
+        expected: ['January 2020', 'February 2020', 'March 2020']
+      },
+      {
+        name: 'at the end',
+        alignment: 'end',
+        expected: ['December 2019', 'January 2020', 'February 2020']
+      }
     ])('should align the initial value $name', async ({alignment, expected}) => {
       const {getAllByRole} = render(
-        <RangeCalendar visibleMonths={3} defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 10)}} selectionAlignment={alignment} />
+        <RangeCalendar
+          visibleMonths={3}
+          defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 10)}}
+          selectionAlignment={alignment}
+        />
       );
 
       let grids = getAllByRole('grid');
@@ -219,7 +274,13 @@ describe('RangeCalendar', () => {
     });
 
     it('should constrain the visible region depending on the minValue', () => {
-      let {getAllByRole, getAllByLabelText} = render(<RangeCalendar value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 10)}} minValue={new CalendarDate(2019, 2, 1)} visibleMonths={3} />);
+      let {getAllByRole, getAllByLabelText} = render(
+        <RangeCalendar
+          value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 2, 10)}}
+          minValue={new CalendarDate(2019, 2, 1)}
+          visibleMonths={3}
+        />
+      );
 
       let grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
@@ -229,7 +290,12 @@ describe('RangeCalendar', () => {
     });
 
     it('should start align the selected range if it would go out of view when centered', () => {
-      let {getAllByRole, getAllByLabelText} = render(<RangeCalendar value={{start: new CalendarDate(2019, 1, 3), end: new CalendarDate(2019, 3, 10)}} visibleMonths={3} />);
+      let {getAllByRole, getAllByLabelText} = render(
+        <RangeCalendar
+          value={{start: new CalendarDate(2019, 1, 3), end: new CalendarDate(2019, 3, 10)}}
+          visibleMonths={3}
+        />
+      );
 
       let grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
@@ -239,16 +305,23 @@ describe('RangeCalendar', () => {
     });
 
     it('should show era for BC dates', () => {
-      let {getAllByLabelText} = render(<RangeCalendar value={{start: new CalendarDate('BC', 1, 12, 14), end: new CalendarDate(1, 1, 22)}} />);
+      let {getAllByLabelText} = render(
+        <RangeCalendar
+          value={{start: new CalendarDate('BC', 1, 12, 14), end: new CalendarDate(1, 1, 22)}}
+        />
+      );
       let cell = getAllByLabelText('selected', {exact: false})[0];
-      expect(cell).toHaveAttribute('aria-label', 'Selected Range: Thursday, December 14, 1 BC to Monday, January 22, 1 AD, Thursday, December 14, 1 BC selected');
+      expect(cell).toHaveAttribute(
+        'aria-label',
+        'Selected Range: Thursday, December 14, 1 BC to Monday, January 22, 1 AD, Thursday, December 14, 1 BC selected'
+      );
     });
   });
 
   describe('selection', () => {
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{}}
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{}}
     `('$Name adds a range selection prompt to the focused cell', ({RangeCalendar, props}) => {
       let {getByRole, getByLabelText} = render(<RangeCalendar {...props} autoFocus />);
 
@@ -257,79 +330,81 @@ describe('RangeCalendar', () => {
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
       expect(cell).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent('Click to start selecting date range');
+      expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Click to start selecting date range'
+      );
 
       // enter selection mode
       fireEvent.keyDown(grid, {key: 'Enter'});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).toHaveAttribute('aria-selected');
-      expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} selected`);
-      expect(cell).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent('Click to finish selecting date range');
-    });
-
-    it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name can select a range with the keyboard (uncontrolled)', async ({RangeCalendar, props}) => {
-      let onChange = jest.fn();
-      let {getAllByLabelText} = render(
-        <RangeCalendar
-          {...props}
-          autoFocus
-          onChange={onChange} />
+      expect(cell).toHaveAttribute(
+        'aria-label',
+        `Today, ${cellFormatter.format(new Date())} selected`
       );
-
-      let selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('5');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
-
-      // Select a new date
-      await user.keyboard('{ArrowLeft}');
-
-      // Begin selecting
-      await user.keyboard('{Enter}');
-
-      // Auto advances by one day
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('4');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('5');
-      expect(onChange).toHaveBeenCalledTimes(0);
-
-      // Move focus
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
-
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('4');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('9');
-      expect(onChange).toHaveBeenCalledTimes(0);
-
-      // End selection
-      await user.keyboard('[Space]');
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('4'); // uncontrolled
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('9');
-      expect(onChange).toHaveBeenCalledTimes(1);
-
-      let {start, end} = onChange.mock.calls[0][0];
-      expect(start).toEqual(new CalendarDate(2019, 6, 4));
-      expect(end).toEqual(new CalendarDate(2019, 6, 9));
+      expect(cell).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Click to finish selecting date range'
+      );
     });
 
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+    `(
+      '$Name can select a range with the keyboard (uncontrolled)',
+      async ({RangeCalendar, props}) => {
+        let onChange = jest.fn();
+        let {getAllByLabelText} = render(
+          <RangeCalendar {...props} autoFocus onChange={onChange} />
+        );
+
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('5');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
+
+        // Select a new date
+        await user.keyboard('{ArrowLeft}');
+
+        // Begin selecting
+        await user.keyboard('{Enter}');
+
+        // Auto advances by one day
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('4');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('5');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        // Move focus
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('4');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('9');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        // End selection
+        await user.keyboard('[Space]');
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('4'); // uncontrolled
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('9');
+        expect(onChange).toHaveBeenCalledTimes(1);
+
+        let {start, end} = onChange.mock.calls[0][0];
+        expect(start).toEqual(new CalendarDate(2019, 6, 4));
+        expect(end).toEqual(new CalendarDate(2019, 6, 9));
+      }
+    );
+
+    it.each`
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name can select a range with the keyboard (controlled)', async ({RangeCalendar, props}) => {
       let onChange = jest.fn();
-      let {getAllByLabelText} = render(
-        <RangeCalendar
-          {...props}
-          autoFocus
-          onChange={onChange} />
-      );
+      let {getAllByLabelText} = render(<RangeCalendar {...props} autoFocus onChange={onChange} />);
 
       let selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('5');
@@ -388,15 +463,11 @@ describe('RangeCalendar', () => {
     });
 
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name selects a range with the mouse (uncontrolled)', async ({RangeCalendar, props}) => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(
-        <RangeCalendar
-          {...props}
-          onChange={onChange} />
-      );
+      let {getAllByLabelText, getByText} = render(<RangeCalendar {...props} onChange={onChange} />);
 
       await user.click(getByText('17'));
 
@@ -426,15 +497,11 @@ describe('RangeCalendar', () => {
     });
 
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
     `('$Name selects a range with the mouse (controlled)', async ({RangeCalendar, props}) => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(
-        <RangeCalendar
-          {...props}
-          onChange={onChange} />
-      );
+      let {getAllByLabelText, getByText} = render(<RangeCalendar {...props} onChange={onChange} />);
 
       await user.click(getByText('17'));
 
@@ -465,7 +532,12 @@ describe('RangeCalendar', () => {
 
     it('selects by dragging with the mouse', () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}
+        />
+      );
 
       fireEvent.mouseDown(getByText('17'), {detail: 1});
 
@@ -501,7 +573,12 @@ describe('RangeCalendar', () => {
 
     it('allows dragging the start of the highlighted range to modify it', () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       fireEvent.mouseDown(getByText('10'), {detail: 1});
 
@@ -538,7 +615,12 @@ describe('RangeCalendar', () => {
 
     it('allows dragging the end of the highlighted range to modify it', () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       fireEvent.mouseDown(getByText('20'), {detail: 1});
 
@@ -575,7 +657,12 @@ describe('RangeCalendar', () => {
 
     it('releasing drag outside calendar commits it', () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       fireEvent.mouseDown(getByText('22'), {detail: 1});
 
@@ -608,7 +695,12 @@ describe('RangeCalendar', () => {
 
       it('selects by dragging with touch', () => {
         let onChange = jest.fn();
-        let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
+        let {getAllByLabelText, getByText} = render(
+          <RangeCalendar
+            onChange={onChange}
+            defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}
+          />
+        );
 
         fireEvent.pointerDown(getByText('17'), {pointerType: 'touch'});
 
@@ -651,7 +743,16 @@ describe('RangeCalendar', () => {
 
       it('does not allow dragging the end of an invalid range', async () => {
         let onChange = jest.fn();
-        let {getAllByLabelText, getByText} = render(<RangeCalendar isInvalid onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+        let {getAllByLabelText, getByText} = render(
+          <RangeCalendar
+            isInvalid
+            onChange={onChange}
+            defaultValue={{
+              start: new CalendarDate(2019, 6, 10),
+              end: new CalendarDate(2019, 6, 20)
+            }}
+          />
+        );
 
         fireEvent.pointerDown(getByText('20'), {pointerType: 'touch'});
 
@@ -704,7 +805,7 @@ describe('RangeCalendar', () => {
         expect(end).toEqual(new CalendarDate(2019, 6, 20));
       });
 
-      it('selection isn\'t prematurely finalized when touching a day cell to scroll through the calendar', async () => {
+      it("selection isn't prematurely finalized when touching a day cell to scroll through the calendar", async () => {
         let onChange = jest.fn();
 
         let {getAllByLabelText, getByText} = render(
@@ -713,7 +814,8 @@ describe('RangeCalendar', () => {
               start: new CalendarDate(2019, 6, 15),
               end: new CalendarDate(2019, 6, 20)
             }}
-            onChange={onChange} />
+            onChange={onChange}
+          />
         );
 
         // start a range selection
@@ -741,7 +843,7 @@ describe('RangeCalendar', () => {
         });
       });
 
-      it('selection isn\'t prematurely finalized when touching a disabled day cell to scroll through the calendar', async () => {
+      it("selection isn't prematurely finalized when touching a disabled day cell to scroll through the calendar", async () => {
         let onChange = jest.fn();
 
         let {getAllByLabelText, getByText} = render(
@@ -750,7 +852,8 @@ describe('RangeCalendar', () => {
               start: new CalendarDate(2019, 6, 15),
               end: new CalendarDate(2019, 6, 20)
             }}
-            onChange={onChange} />
+            onChange={onChange}
+          />
         );
 
         // start a range selection
@@ -778,7 +881,7 @@ describe('RangeCalendar', () => {
         });
       });
 
-      it('selection isn\'t prematurely finalized when touching a weekday header to scroll through the calendar', async () => {
+      it("selection isn't prematurely finalized when touching a weekday header to scroll through the calendar", async () => {
         let onChange = jest.fn();
 
         let {getAllByLabelText, getByText} = render(
@@ -787,7 +890,8 @@ describe('RangeCalendar', () => {
               start: new CalendarDate(2019, 6, 15),
               end: new CalendarDate(2019, 6, 20)
             }}
-            onChange={onChange} />
+            onChange={onChange}
+          />
         );
 
         // start a range selection
@@ -815,7 +919,7 @@ describe('RangeCalendar', () => {
         });
       });
 
-      it('selection isn\'t prematurely finalized when touching the header to scroll through the calendar', async () => {
+      it("selection isn't prematurely finalized when touching the header to scroll through the calendar", async () => {
         let onChange = jest.fn();
 
         let {getAllByLabelText, getByText, getByRole} = render(
@@ -824,7 +928,8 @@ describe('RangeCalendar', () => {
               start: new CalendarDate(2019, 6, 15),
               end: new CalendarDate(2019, 6, 20)
             }}
-            onChange={onChange} />
+            onChange={onChange}
+          />
         );
 
         // start a range selection
@@ -855,7 +960,12 @@ describe('RangeCalendar', () => {
 
     it('clicking outside calendar commits selection', async () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       await user.click(getByText('22'));
 
@@ -885,7 +995,12 @@ describe('RangeCalendar', () => {
 
     it('clicking on next/previous buttons does not commit selection', async () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       await user.click(getByText('22'));
 
@@ -904,19 +1019,25 @@ describe('RangeCalendar', () => {
       let next = getAllByLabelText('Next')[0];
       await user.click(next);
 
-      selectedDates = getAllByLabelText('selected', {exact: false}).filter(d => !d.hasAttribute('aria-disabled'));
+      selectedDates = getAllByLabelText('selected', {exact: false}).filter(
+        d => !d.hasAttribute('aria-disabled')
+      );
       expect(selectedDates[0].textContent).toBe('1');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
       expect(onChange).toHaveBeenCalledTimes(0);
 
       fireEvent.pointerEnter(getByText('10'));
-      selectedDates = getAllByLabelText('selected', {exact: false}).filter(d => !d.hasAttribute('aria-disabled'));
+      selectedDates = getAllByLabelText('selected', {exact: false}).filter(
+        d => !d.hasAttribute('aria-disabled')
+      );
       expect(selectedDates[0].textContent).toBe('1');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
       expect(onChange).toHaveBeenCalledTimes(0);
 
       await user.click(getByText('10').parentElement);
-      selectedDates = getAllByLabelText('selected', {exact: false}).filter(d => !d.hasAttribute('aria-disabled'));
+      selectedDates = getAllByLabelText('selected', {exact: false}).filter(
+        d => !d.hasAttribute('aria-disabled')
+      );
       expect(selectedDates[0].textContent).toBe('1');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -928,7 +1049,12 @@ describe('RangeCalendar', () => {
 
     it('clicking on the start of the highlighted range starts a new selection', async () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       fireEvent.mouseDown(getByText('10'), {detail: 1});
 
@@ -973,7 +1099,12 @@ describe('RangeCalendar', () => {
 
     it('clicking on the end of the highlighted range starts a new selection', async () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       fireEvent.mouseDown(getByText('20'), {detail: 1});
 
@@ -1018,7 +1149,12 @@ describe('RangeCalendar', () => {
 
     it('mouse down in the middle of the highlighted range starts a new selection', async () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       fireEvent.mouseDown(getByText('15'), {detail: 1});
 
@@ -1070,7 +1206,13 @@ describe('RangeCalendar', () => {
     });
 
     it('does not enter selection mode with the mouse on range end if isReadOnly', async () => {
-      let {getAllByLabelText, getByText} = render(<RangeCalendar isReadOnly autoFocus defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(
+        <RangeCalendar
+          isReadOnly
+          autoFocus
+          defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}}
+        />
+      );
 
       let cell = getByText('10').closest('[role="button"]');
       expect(document.activeElement).toBe(cell);
@@ -1092,15 +1234,11 @@ describe('RangeCalendar', () => {
     });
 
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{isDisabled: true}}
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{isDisabled: true}}
     `('$Name does not select a date on click if isDisabled', async ({RangeCalendar, props}) => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(
-        <RangeCalendar
-          {...props}
-          onChange={onChange} />
-      );
+      let {getAllByLabelText, getByText} = render(<RangeCalendar {...props} onChange={onChange} />);
 
       let newDate = getByText('17');
       await user.click(newDate);
@@ -1112,92 +1250,102 @@ describe('RangeCalendar', () => {
     });
 
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 2, 8), end: new CalendarDate(2019, 2, 15)}, minValue: new CalendarDate(2019, 2, 5), maxValue: new CalendarDate(2019, 2, 15)}}
-    `('$Name does not select a date on click if outside the valid date range', async ({RangeCalendar, props}) => {
-      let onChange = jest.fn();
-      let {getByLabelText, getAllByLabelText} = render(
-        <RangeCalendar
-          onChange={onChange}
-          {...props} />
-      );
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 2, 8), end: new CalendarDate(2019, 2, 15)}, minValue: new CalendarDate(2019, 2, 5), maxValue: new CalendarDate(2019, 2, 15)}}
+    `(
+      '$Name does not select a date on click if outside the valid date range',
+      async ({RangeCalendar, props}) => {
+        let onChange = jest.fn();
+        let {getByLabelText, getAllByLabelText} = render(
+          <RangeCalendar onChange={onChange} {...props} />
+        );
 
-      await user.click(getByLabelText('Sunday, February 3, 2019'));
+        await user.click(getByLabelText('Sunday, February 3, 2019'));
 
-      let selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('8');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
-      expect(onChange).not.toHaveBeenCalled();
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('8');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
+        expect(onChange).not.toHaveBeenCalled();
 
-      await user.click(getByLabelText('Sunday, February 17, 2019'));
+        await user.click(getByLabelText('Sunday, February 17, 2019'));
 
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('8');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
-      expect(onChange).not.toHaveBeenCalled();
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('8');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
+        expect(onChange).not.toHaveBeenCalled();
 
-      await user.click(getByLabelText('Tuesday, February 5, 2019, First available date'));
+        await user.click(getByLabelText('Tuesday, February 5, 2019, First available date'));
 
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('5');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('5');
-      expect(onChange).not.toHaveBeenCalled();
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('5');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('5');
+        expect(onChange).not.toHaveBeenCalled();
 
-      await user.click(getByLabelText('Friday, February 15, 2019, Last available date'));
+        await user.click(getByLabelText('Friday, February 15, 2019, Last available date'));
 
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('5');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
-      expect(onChange).toHaveBeenCalledTimes(1);
-    });
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('5');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
+        expect(onChange).toHaveBeenCalledTimes(1);
+      }
+    );
 
     it.each`
-      Name          | RangeCalendar    | props
-      ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name cancels the selection when the escape key is pressed', async ({RangeCalendar, props}) => {
-      let onChange = jest.fn();
-      let {getByText, getAllByLabelText} = render(
-        <RangeCalendar
-          autoFocus
-          onChange={onChange}
-          {...props} />
-      );
+      Name    | RangeCalendar    | props
+      ${'v3'} | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
+    `(
+      '$Name cancels the selection when the escape key is pressed',
+      async ({RangeCalendar, props}) => {
+        let onChange = jest.fn();
+        let {getByText, getAllByLabelText} = render(
+          <RangeCalendar autoFocus onChange={onChange} {...props} />
+        );
 
-      // start a selection
-      await user.click(getByText('17'));
+        // start a selection
+        await user.click(getByText('17'));
 
-      let selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('17');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('17');
-      expect(onChange).not.toHaveBeenCalled();
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('17');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('17');
+        expect(onChange).not.toHaveBeenCalled();
 
-      // highlight some dates
-      fireEvent.pointerEnter(getByText('10'));
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('10');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('17');
-      expect(onChange).not.toHaveBeenCalled();
+        // highlight some dates
+        fireEvent.pointerEnter(getByText('10'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('10');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('17');
+        expect(onChange).not.toHaveBeenCalled();
 
-      // Cancel
-      await user.keyboard('{Escape}');
+        // Cancel
+        await user.keyboard('{Escape}');
 
-      // Should revert selection
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('5');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
-      expect(onChange).not.toHaveBeenCalled();
-    });
+        // Should revert selection
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('5');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
+        expect(onChange).not.toHaveBeenCalled();
+      }
+    );
 
     it('disables dates not reachable from start date if isDateUnavailable is provided', async () => {
-      const isDateUnavailable = (date) => {
-        const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
-        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      const isDateUnavailable = date => {
+        const disabledIntervals = [
+          [new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)],
+          [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]
+        ];
+        return disabledIntervals.some(
+          interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+        );
       };
 
       let {getByRole, getAllByLabelText} = render(
         <RangeCalendar
-          defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
-          isDateUnavailable={isDateUnavailable} />
+          defaultValue={{
+            start: new CalendarDate(2021, 12, 15),
+            end: new CalendarDate(2021, 12, 15)
+          }}
+          isDateUnavailable={isDateUnavailable}
+        />
       );
 
       let cellBefore = getByRole('button', {name: 'Sunday, December 5, 2021'});
@@ -1233,7 +1381,9 @@ describe('RangeCalendar', () => {
       expect(nextButton).not.toHaveAttribute('disabled');
 
       // Clicking on one of the selected dates should also disable the dates outside the available range.
-      cell = getByRole('button', {name: 'Selected Range: Sunday, December 12 to Tuesday, December 14, 2021, Sunday, December 12, 2021 selected'});
+      cell = getByRole('button', {
+        name: 'Selected Range: Sunday, December 12 to Tuesday, December 14, 2021, Sunday, December 12, 2021 selected'
+      });
       await user.click(cell);
 
       expect(cellBefore).not.toHaveAttribute('tabIndex');
@@ -1245,15 +1395,18 @@ describe('RangeCalendar', () => {
     });
 
     it('disables the previous button if the last day of the previous month is unavailable', async () => {
-      const isDateUnavailable = (date) => {
+      const isDateUnavailable = date => {
         const disabledIntervals = [[new CalendarDate(2022, 4, 25), new CalendarDate(2022, 4, 30)]];
-        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+        return disabledIntervals.some(
+          interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+        );
       };
 
       let {getByRole, getAllByLabelText} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 5, 10), end: new CalendarDate(2022, 5, 12)}}
-          isDateUnavailable={isDateUnavailable} />
+          isDateUnavailable={isDateUnavailable}
+        />
       );
 
       let cell = getByRole('button', {name: /Wednesday, May 4, 2022/});
@@ -1268,15 +1421,18 @@ describe('RangeCalendar', () => {
     });
 
     it('disables the next button if the first day of the next month is unavailable', async () => {
-      const isDateUnavailable = (date) => {
+      const isDateUnavailable = date => {
         const disabledIntervals = [[new CalendarDate(2022, 5, 1), new CalendarDate(2022, 5, 4)]];
-        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+        return disabledIntervals.some(
+          interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+        );
       };
 
       let {getByRole, getAllByLabelText} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 4, 10), end: new CalendarDate(2022, 4, 12)}}
-          isDateUnavailable={isDateUnavailable} />
+          isDateUnavailable={isDateUnavailable}
+        />
       );
 
       let cell = getByRole('button', {name: /Thursday, April 28, 2022/});
@@ -1290,15 +1446,18 @@ describe('RangeCalendar', () => {
     });
 
     it('updates the unavailable dates when navigating', async () => {
-      const isDateUnavailable = (date) => {
+      const isDateUnavailable = date => {
         const disabledIntervals = [[new CalendarDate(2022, 5, 2), new CalendarDate(2022, 5, 4)]];
-        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+        return disabledIntervals.some(
+          interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+        );
       };
 
       let {getByRole, getAllByLabelText} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 4, 10), end: new CalendarDate(2022, 4, 12)}}
-          isDateUnavailable={isDateUnavailable} />
+          isDateUnavailable={isDateUnavailable}
+        />
       );
 
       let cell = getByRole('button', {name: /Thursday, April 28, 2022/});
@@ -1322,15 +1481,24 @@ describe('RangeCalendar', () => {
     });
 
     it('advances selection backwards when starting a selection at the end of an available range', async () => {
-      const isDateUnavailable = (date) => {
-        const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
-        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      const isDateUnavailable = date => {
+        const disabledIntervals = [
+          [new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)],
+          [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]
+        ];
+        return disabledIntervals.some(
+          interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+        );
       };
 
       let {getByRole} = render(
         <RangeCalendar
-          defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
-          isDateUnavailable={isDateUnavailable} />
+          defaultValue={{
+            start: new CalendarDate(2021, 12, 15),
+            end: new CalendarDate(2021, 12, 15)
+          }}
+          isDateUnavailable={isDateUnavailable}
+        />
       );
 
       let cell = getByRole('button', {name: 'Tuesday, December 21, 2021'});
@@ -1347,29 +1515,42 @@ describe('RangeCalendar', () => {
         let {locale} = useLocale();
         return (
           <RangeCalendar
-            defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
+            defaultValue={{
+              start: new CalendarDate(2021, 12, 15),
+              end: new CalendarDate(2021, 12, 15)
+            }}
             isDateUnavailable={date => isWeekend(date, locale)}
-            allowsNonContiguousRanges />
+            allowsNonContiguousRanges
+          />
         );
       }
 
       let {getByRole} = render(<Example />);
 
-      expect(getByRole('button', {name: 'Sunday, December 5, 2021'})).toHaveAttribute('aria-disabled', 'true');
-      expect(getByRole('button', {name: 'Monday, December 6, 2021'})).not.toHaveAttribute('aria-disabled');
+      expect(getByRole('button', {name: 'Sunday, December 5, 2021'})).toHaveAttribute(
+        'aria-disabled',
+        'true'
+      );
+      expect(getByRole('button', {name: 'Monday, December 6, 2021'})).not.toHaveAttribute(
+        'aria-disabled'
+      );
 
       let cell = getByRole('button', {name: 'Tuesday, December 7, 2021'});
       await user.click(cell);
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
 
-      expect(getByRole('button', {name: 'Monday, December 13, 2021'})).not.toHaveAttribute('aria-disabled');
+      expect(getByRole('button', {name: 'Monday, December 13, 2021'})).not.toHaveAttribute(
+        'aria-disabled'
+      );
 
       cell = getByRole('button', {name: 'Tuesday, December 14, 2021'});
       expect(cell).not.toHaveAttribute('aria-disabled');
       await user.click(cell);
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
 
-      expect(getByRole('button', {name: 'Sunday, December 5, 2021'}).parentElement).not.toHaveAttribute('aria-selected', 'true');
+      expect(
+        getByRole('button', {name: 'Sunday, December 5, 2021'}).parentElement
+      ).not.toHaveAttribute('aria-selected', 'true');
     });
 
     it('selects the nearest available date when blurring the calendar', async () => {
@@ -1381,7 +1562,8 @@ describe('RangeCalendar', () => {
             defaultValue={{start: new CalendarDate(2022, 3, 1), end: new CalendarDate(2022, 3, 5)}}
             isDateUnavailable={date => isWeekend(date, locale)}
             allowsNonContiguousRanges
-            onChange={onChange} />
+            onChange={onChange}
+          />
         );
       }
 
@@ -1400,14 +1582,18 @@ describe('RangeCalendar', () => {
 
       act(() => cell.blur());
 
-      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2022, 3, 9), end: new CalendarDate(2022, 4, 8)});
+      expect(onChange).toHaveBeenCalledWith({
+        start: new CalendarDate(2022, 3, 9),
+        end: new CalendarDate(2022, 4, 8)
+      });
     });
 
     it('should support invalid state', () => {
       let {getByRole} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}
-          isInvalid />
+          isInvalid
+        />
       );
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
@@ -1415,12 +1601,20 @@ describe('RangeCalendar', () => {
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
 
-      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      let description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Selected dates unavailable.');
 
       act(() => cell.focus());
 
-      description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Selected dates unavailable. Click to start selecting date range');
     });
 
@@ -1429,7 +1623,8 @@ describe('RangeCalendar', () => {
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}
           isInvalid
-          errorMessage="Selection dates cannot include weekends." />
+          errorMessage="Selection dates cannot include weekends."
+        />
       );
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
@@ -1437,20 +1632,31 @@ describe('RangeCalendar', () => {
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
 
-      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      let description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Selection dates cannot include weekends.');
 
       act(() => cell.focus());
 
-      description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selection dates cannot include weekends. Click to start selecting date range');
+      description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
+      expect(description).toBe(
+        'Selection dates cannot include weekends. Click to start selecting date range'
+      );
     });
 
     it('does not show error message without isInvalid', () => {
       let {getByRole} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}
-          errorMessage="Selection dates cannot include weekends." />
+          errorMessage="Selection dates cannot include weekends."
+        />
       );
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
@@ -1461,7 +1667,11 @@ describe('RangeCalendar', () => {
       expect(cell).not.toHaveAttribute('aria-describedby');
       act(() => cell.focus());
 
-      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      let description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Click to start selecting date range');
     });
 
@@ -1472,7 +1682,8 @@ describe('RangeCalendar', () => {
           <RangeCalendar
             defaultValue={{start: new CalendarDate(2022, 3, 1), end: new CalendarDate(2022, 3, 5)}}
             isDateUnavailable={date => isWeekend(date, locale)}
-            allowsNonContiguousRanges />
+            allowsNonContiguousRanges
+          />
         );
       }
 
@@ -1483,12 +1694,20 @@ describe('RangeCalendar', () => {
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
 
-      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      let description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Selected dates unavailable.');
 
       act(() => cell.focus());
 
-      description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Selected dates unavailable. Click to start selecting date range');
     });
   });
@@ -1496,7 +1715,11 @@ describe('RangeCalendar', () => {
   // These tests only work against v3
   describe('announcing', () => {
     it('announces when the current month changes', async () => {
-      let {getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
+      let {getAllByLabelText} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}
+        />
+      );
 
       let nextButton = getAllByLabelText('Next')[0];
       await user.click(nextButton);
@@ -1506,17 +1729,30 @@ describe('RangeCalendar', () => {
     });
 
     it('announces when the selected date range changes', async () => {
-      let {getByText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
+      let {getByText} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}
+        />
+      );
 
       await user.click(getByText('17'));
       await user.click(getByText('10'));
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Range: Monday, June 10 to Monday, June 17, 2019', 'polite', 4000);
+      expect(announce).toHaveBeenCalledWith(
+        'Selected Range: Monday, June 10 to Monday, June 17, 2019',
+        'polite',
+        4000
+      );
     });
 
     it('ensures that the active descendant is announced when the focused date changes', async () => {
-      let {getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} autoFocus />);
+      let {getAllByLabelText} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}
+          autoFocus
+        />
+      );
 
       let selectedDates = getAllByLabelText('selected', {exact: false});
 
@@ -1527,13 +1763,24 @@ describe('RangeCalendar', () => {
     });
 
     it('includes era in BC dates', async () => {
-      let {getByText, getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate('BC', 5, 2, 3), end: new CalendarDate('BC', 5, 18, 3)}} />);
+      let {getByText, getAllByLabelText} = render(
+        <RangeCalendar
+          defaultValue={{
+            start: new CalendarDate('BC', 5, 2, 3),
+            end: new CalendarDate('BC', 5, 18, 3)
+          }}
+        />
+      );
 
       await user.click(getByText('17'));
       await user.click(getByText('23'));
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Range: Saturday, February 17 to Friday, February 23, 5 BC', 'polite', 4000);
+      expect(announce).toHaveBeenCalledWith(
+        'Selected Range: Saturday, February 17 to Friday, February 23, 5 BC',
+        'polite',
+        4000
+      );
 
       announce.mockReset();
       let nextButton = getAllByLabelText('Next')[0];
@@ -1554,9 +1801,13 @@ describe('RangeCalendar', () => {
 
       let {getByText, getAllByText} = render(
         <RangeCalendar
-          defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+          defaultValue={{
+            start: new CalendarDate(2025, 11, 13),
+            end: new CalendarDate(2025, 11, 15)
+          }}
           onChange={onChange}
-          commitBehavior="select" />
+          commitBehavior="select"
+        />
       );
 
       await user.click(getByText('25'));
@@ -1565,16 +1816,23 @@ describe('RangeCalendar', () => {
       await user.click(getAllByText('November 2025')[0]);
 
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2025, 11, 20), end: new CalendarDate(2025, 11, 25)});
+      expect(onChange).toHaveBeenCalledWith({
+        start: new CalendarDate(2025, 11, 20),
+        end: new CalendarDate(2025, 11, 25)
+      });
     });
 
     it('should clear the selection when commitBehavior is "clear"', async () => {
       const onChange = jest.fn();
       let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
-          defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+          defaultValue={{
+            start: new CalendarDate(2025, 11, 13),
+            end: new CalendarDate(2025, 11, 15)
+          }}
           onChange={onChange}
-          commitBehavior="clear" />
+          commitBehavior="clear"
+        />
       );
 
       let startCell = getByRole('gridcell', {name: '25'});
@@ -1595,9 +1853,7 @@ describe('RangeCalendar', () => {
     it('should clear the selection when commitBehavior is "clear" no default selected range', async () => {
       const onChange = jest.fn();
       let {getByText, getByRole} = render(
-        <RangeCalendar
-          onChange={onChange}
-          commitBehavior="clear" />
+        <RangeCalendar onChange={onChange} commitBehavior="clear" />
       );
 
       let startCell = getByRole('gridcell', {name: '25'});
@@ -1618,9 +1874,13 @@ describe('RangeCalendar', () => {
       const onChange = jest.fn();
       let {getByText, getAllByText, getByRole} = render(
         <RangeCalendar
-          defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+          defaultValue={{
+            start: new CalendarDate(2025, 11, 13),
+            end: new CalendarDate(2025, 11, 15)
+          }}
           onChange={onChange}
-          commitBehavior="reset" />
+          commitBehavior="reset"
+        />
       );
 
       let originalStartCell = getByRole('gridcell', {name: '13'});
@@ -1651,7 +1911,8 @@ describe('RangeCalendar', () => {
         <RangeCalendar
           value={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
           onChange={onChange}
-          commitBehavior="reset" />
+          commitBehavior="reset"
+        />
       );
 
       let originalStartCell = getByRole('gridcell', {name: '13'});
@@ -1677,9 +1938,13 @@ describe('RangeCalendar', () => {
         const onChange = jest.fn();
         let {getByText, getByRole} = render(
           <RangeCalendar
-            defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+            defaultValue={{
+              start: new CalendarDate(2025, 11, 13),
+              end: new CalendarDate(2025, 11, 15)
+            }}
             onChange={onChange}
-            commitBehavior="select" />
+            commitBehavior="select"
+          />
         );
 
         let startCell = getByRole('gridcell', {name: '13'});
@@ -1694,7 +1959,10 @@ describe('RangeCalendar', () => {
         await user.tab();
 
         expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2025, 11, 20), end: new CalendarDate(2025, 11, 25)});
+        expect(onChange).toHaveBeenCalledWith({
+          start: new CalendarDate(2025, 11, 20),
+          end: new CalendarDate(2025, 11, 25)
+        });
         expect(startCell).not.toHaveAttribute('aria-selected', 'true');
         expect(endCell).not.toHaveAttribute('aria-selected', 'true');
         expect(newStartCell).toHaveAttribute('aria-selected', 'true');
@@ -1705,9 +1973,13 @@ describe('RangeCalendar', () => {
         const onChange = jest.fn();
         let {getByText, getByRole} = render(
           <RangeCalendar
-            defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+            defaultValue={{
+              start: new CalendarDate(2025, 11, 13),
+              end: new CalendarDate(2025, 11, 15)
+            }}
             onChange={onChange}
-            commitBehavior="clear" />
+            commitBehavior="clear"
+          />
         );
 
         let startCell = getByRole('gridcell', {name: '13'});
@@ -1731,9 +2003,13 @@ describe('RangeCalendar', () => {
         const onChange = jest.fn();
         let {getByText, getByRole} = render(
           <RangeCalendar
-            defaultValue={{start: new CalendarDate(2025, 11, 13), end: new CalendarDate(2025, 11, 15)}}
+            defaultValue={{
+              start: new CalendarDate(2025, 11, 13),
+              end: new CalendarDate(2025, 11, 15)
+            }}
             onChange={onChange}
-            commitBehavior="reset" />
+            commitBehavior="reset"
+          />
         );
 
         let originalStartCell = getByRole('gridcell', {name: '13'});

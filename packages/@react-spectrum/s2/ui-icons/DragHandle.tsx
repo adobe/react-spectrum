@@ -36,16 +36,26 @@ let styles = style({
   }
 });
 
-export default function DragHandle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}): ReactNode {
+export default function DragHandle(
+  props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}
+): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <DragHandle_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <DragHandle_M {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'L':
-      return <DragHandle_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <DragHandle_L {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'XL':
-      return <DragHandle_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <DragHandle_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
     case 'S':
-      return <DragHandle_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <DragHandle_S {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
   }
 }

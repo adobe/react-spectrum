@@ -20,7 +20,7 @@ import {SearchField, SearchFieldContext} from '../src/SearchField';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-let TestSearchField = (props) => (
+let TestSearchField = props => (
   <SearchField defaultValue="test" data-foo="bar" {...props}>
     <Label>Test</Label>
     <Input />
@@ -50,7 +50,13 @@ describe('SearchField', () => {
     expect(label).toHaveTextContent('Test');
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      input
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Clear search');
@@ -88,7 +94,9 @@ describe('SearchField', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} =  render(<TestSearchField render={props => <div {...props} data-custom="true" />} />);
+    let {getByRole} = render(
+      <TestSearchField render={props => <div {...props} data-custom="true" />} />
+    );
     let field = getByRole('searchbox').closest('.react-aria-SearchField');
     expect(field).toHaveAttribute('data-custom', 'true');
   });
@@ -123,10 +131,14 @@ describe('SearchField', () => {
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input.validity.valid).toBe(false);
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
     expect(document.activeElement).toBe(input);
 
     expect(input.parentElement).toHaveAttribute('data-invalid');
@@ -158,9 +170,7 @@ describe('SearchField', () => {
   });
 
   it('should support form prop', () => {
-    let {getByRole} = render(
-      <TestSearchField form="test" />
-    );
+    let {getByRole} = render(<TestSearchField form="test" />);
 
     let input = getByRole('searchbox');
     expect(input).toHaveAttribute('form', 'test');

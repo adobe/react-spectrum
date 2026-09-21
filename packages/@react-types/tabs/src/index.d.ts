@@ -12,4 +12,8 @@
 
 export {TabListProps} from '@react-stately/tabs';
 export {AriaTabListProps, AriaTabProps, AriaTabPanelProps} from '@react-aria/tabs';
-export {SpectrumTabsProps, SpectrumTabListProps, SpectrumTabPanelsProps} from '@react-spectrum/tabs';
+export {
+  SpectrumTabsProps,
+  SpectrumTabListProps,
+  SpectrumTabPanelsProps
+} from '@react-spectrum/tabs';

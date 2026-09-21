@@ -1,0 +1,53 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'June 18, 2026';
+export const title = 'v1.5.0';
+export const description = 'This release supports full interactions with embedded text fields and other interactive elements in ListView and TreeView and additional bug fixes!';
+export const isSubpage = true;
+
+# v1.5.0
+
+This release adds support for full interaction with embedded text fields and other interactive elements in [ListView](../ListView#keyboard-navigation) and [TreeView](../TreeView#keyboard-navigation) with the new `keyboardNavigationBehavior` prop. Menu exposes a `dependencies` prop for dynamic item collections, and `CenterBaseline` is now exported from Spectrum 2 to help make custom styles even easier.
+
+## Changelog
+
+### General Changes
+- Export `CenterBaseline` component from Spectrum 2 for aligning inline icons with text baseline - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10162), [PR](https://github.com/adobe/react-spectrum/pull/10216)
+
+### ButtonGroup
+- Fix overflow detection for buttons whose labels contain no line-break - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10186), [PR](https://github.com/adobe/react-spectrum/pull/10210)
+
+### ListView
+- Add `keyboardNavigationBehavior` prop to support textfield's and other interactive elements inside rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10206)
+
+### Menu
+- Expose `dependencies` prop on Menu to allow dynamic item collections to re-render in response to external state changes - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
+
+### Popover
+- Expose `isNonModal` prop on Popover for use cases where focus should not be trapped when the popover is open - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
+
+### TableView
+- Improve focus ring styling - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10096)
+
+### Tabs
+- Fix infinite render loop when Tabs are rendered inside a DropZone - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10090)
+
+### TreeView
+- Add `keyboardNavigationBehavior` prop to support textfield's and other interactive elements inside rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10206)

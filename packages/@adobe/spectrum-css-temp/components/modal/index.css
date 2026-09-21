@@ -80,25 +80,34 @@ governing permissions and limitations under the License.
   pointer-events: auto;
 
   /* Exit animations */
-  transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
-              visibility 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration)),
-              transform 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration));
+  transition:
+    opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1)
+      var(--spectrum-dialog-exit-animation-delay),
+    visibility 0ms linear
+      calc(
+        var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration)
+      ),
+    transform 0ms linear
+      calc(
+        var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration)
+      );
 }
 
 .is-open {
   composes: spectrum-overlay--open;
 
   /* Entry animations */
-  transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
-              opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
+  transition:
+    transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.4, 1)
+      var(--spectrum-dialog-entry-animation-delay),
+    opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.4, 1)
+      var(--spectrum-dialog-entry-animation-delay);
 
   transform: translateY(0);
 }
 
 /* Responsive modals will fill the screen on small viewports */
-@media
-only screen and (max-device-width: 400px),
-only screen and (max-device-height: 350px) {
+@media only screen and (max-device-width: 400px), only screen and (max-device-height: 350px) {
   .spectrum-Modal--responsive {
     width: 100%;
     height: 100%;

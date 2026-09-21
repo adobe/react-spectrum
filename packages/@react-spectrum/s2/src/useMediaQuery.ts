@@ -16,9 +16,7 @@ import {useIsSSR} from 'react-aria/SSRProvider';
 export function useMediaQuery(query: string): boolean {
   let supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
   let [matches, setMatches] = useState(() =>
-    supportsMatchMedia
-      ? window.matchMedia(query).matches
-      : false
+    supportsMatchMedia ? window.matchMedia(query).matches : false
   );
 
   useEffect(() => {
@@ -27,7 +25,7 @@ export function useMediaQuery(query: string): boolean {
     }
 
     let mq = window.matchMedia(query);
-    let onChange = (evt) => {
+    let onChange = evt => {
       setMatches(evt.matches);
     };
 

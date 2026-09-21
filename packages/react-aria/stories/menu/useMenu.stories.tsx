@@ -55,7 +55,9 @@ export const DoubleMenuFiresOnInteractOutside: StoryObj<typeof MenuButton> = {
   name: 'double menu fires onInteractOutside'
 };
 
-function MenuButton(props: AriaMenuTriggerProps & CollectionBase<unknown> & {label: string}): JSX.Element {
+function MenuButton(
+  props: AriaMenuTriggerProps & CollectionBase<unknown> & {label: string}
+): JSX.Element {
   // Create state based on the incoming props
   let state = useMenuTriggerState(props);
 
@@ -79,7 +81,8 @@ function MenuButton(props: AriaMenuTriggerProps & CollectionBase<unknown> & {lab
           {...props}
           domProps={menuProps}
           autoFocus={state.focusStrategy}
-          onClose={() => state.close()} />
+          onClose={() => state.close()}
+        />
       )}
     </div>
   );
@@ -128,13 +131,14 @@ function MenuPopup(props) {
             border: '1px solid gray',
             background: 'lightgray'
           }}>
-          {[...state.collection].map((item) => (
+          {[...state.collection].map(item => (
             <MenuItem
               key={item.key}
               item={item}
               state={state}
               onClose={props.onClose}
-              onAction={props.onAction} />
+              onAction={props.onAction}
+            />
           ))}
         </ul>
         <DismissButton onDismiss={props.onClose} />

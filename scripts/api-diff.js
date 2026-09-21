@@ -53,7 +53,44 @@ merge(require('../dist/branch-api/@react-spectrum/tag/dist/api.json'));
 merge(require('../dist/branch-api/@react-spectrum/textfield/dist/api.json'));
 merge(require('../dist/branch-api/@react-spectrum/tooltip/dist/api.json'));
 
-const styleProps = new Set(['margin', 'marginStart', 'marginEnd', 'marginTop', 'marginBottom', 'marginX', 'marginY', 'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 'flex', 'flexGrow', 'flexShrink', 'flexBasis', 'justifySelf', 'alignSelf', 'order', 'gridArea', 'gridColumn', 'gridRow', 'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'position', 'zIndex', 'top', 'bottom', 'start', 'end', 'left', 'right', 'isHidden']);
+const styleProps = new Set([
+  'margin',
+  'marginStart',
+  'marginEnd',
+  'marginTop',
+  'marginBottom',
+  'marginX',
+  'marginY',
+  'width',
+  'height',
+  'minWidth',
+  'minHeight',
+  'maxWidth',
+  'maxHeight',
+  'flex',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'justifySelf',
+  'alignSelf',
+  'order',
+  'gridArea',
+  'gridColumn',
+  'gridRow',
+  'gridColumnStart',
+  'gridColumnEnd',
+  'gridRowStart',
+  'gridRowEnd',
+  'position',
+  'zIndex',
+  'top',
+  'bottom',
+  'start',
+  'end',
+  'left',
+  'right',
+  'isHidden'
+]);
 const skipStyleProps = process.argv.includes('--skip-style-props');
 const skipSame = process.argv.includes('--skip-same');
 let depth = 0;
@@ -221,13 +258,15 @@ function processType(value) {
   if (value.type === 'object') {
     if (value.properties) {
       return `${value.exact ? '{\\' : '{'}
-  ${Object.values(value.properties).map(property => {
-    depth += 2;
-    let result = ' '.repeat(depth);
-    result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
-    depth -= 2;
-    return result;
-  }).join('\n')}
+  ${Object.values(value.properties)
+    .map(property => {
+      depth += 2;
+      let result = ' '.repeat(depth);
+      result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
+      depth -= 2;
+      return result;
+    })
+    .join('\n')}
 ${value.exact ? '\\}' : '}'}`;
     }
     return '{}';

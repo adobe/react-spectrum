@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { ColorThumb as AriaColorThumb, type ColorThumbProps } from 'react-aria-components/ColorThumb';
-import { tv } from 'tailwind-variants';
+import {ColorThumb as AriaColorThumb, type ColorThumbProps} from 'react-aria-components/ColorThumb';
+import {tv} from 'tailwind-variants';
 
 const thumbStyles = tv({
   base: 'w-4.5 h-4.5 top-[50%] left-[50%] rounded-full border-2 border-white box-border',
@@ -22,11 +22,12 @@ export function ColorThumb(props: ColorThumbProps) {
   return (
     <AriaColorThumb
       {...props}
-      style={({ defaultStyle, isDisabled }) => ({
+      style={({defaultStyle, isDisabled}) => ({
         ...defaultStyle,
         backgroundColor: isDisabled ? undefined : defaultStyle.backgroundColor,
-        boxShadow: '0 0 0 1px black, inset 0 0 0 1px black'}
-      )}
-      className={thumbStyles} />
+        boxShadow: '0 0 0 1px black, inset 0 0 0 1px black'
+      })}
+      className={thumbStyles}
+    />
   );
 }

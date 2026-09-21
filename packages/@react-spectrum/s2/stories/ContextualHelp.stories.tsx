@@ -20,21 +20,23 @@ export default meta;
 type Story = StoryObj<typeof ContextualHelp>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <ContextualHelp {...args}>
         <Heading>What is a segment?</Heading>
         <Content>
           <Text>
-            Segments identify who your visitors are, what devices and services they
-            use, where they navigated from, and much more.
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
           </Text>
         </Content>
         <Footer>
           <Link
             isStandalone
             href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-            target="_blank">Learn more about segments</Link>
+            target="_blank">
+            Learn more about segments
+          </Link>
         </Footer>
       </ContextualHelp>
     );

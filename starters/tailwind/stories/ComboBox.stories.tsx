@@ -1,8 +1,8 @@
-import { type Meta } from '@storybook/react';
+import {type Meta} from '@storybook/react';
 import React from 'react';
-import { Form } from 'react-aria-components/Form';
-import { Button } from '../src/Button';
-import { ComboBox, ComboBoxItem, ComboBoxSection } from '../src/ComboBox';
+import {Form} from 'react-aria-components/Form';
+import {Button} from '../src/Button';
+import {ComboBox, ComboBoxItem, ComboBoxSection} from '../src/ComboBox';
 
 const meta: Meta<typeof ComboBox> = {
   component: ComboBox,
@@ -54,7 +54,7 @@ export const Sections = (args: any) => (
       <ComboBoxItem id="Cauliflower">Cauliflower</ComboBoxItem>
       <ComboBoxItem id="Potatoes">Potatoes</ComboBoxItem>
     </ComboBoxSection>
-    </ComboBox>
+  </ComboBox>
 );
 
 Sections.args = {
@@ -64,7 +64,9 @@ Sections.args = {
 export const Validation = (args: any) => (
   <Form className="flex flex-col gap-2 items-start">
     <Example {...args} />
-    <Button type="submit" variant="secondary">Submit</Button>
+    <Button type="submit" variant="secondary">
+      Submit
+    </Button>
   </Form>
 );
 

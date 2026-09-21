@@ -12,5 +12,8 @@
 /// <reference types="css-module-types" />
 export {ActionBar, ActionBarContainer} from '@adobe/react-spectrum/ActionBar';
 
-export type {SpectrumActionBarContainerProps, SpectrumActionBarProps} from '@adobe/react-spectrum/ActionBar';
+export type {
+  SpectrumActionBarContainerProps,
+  SpectrumActionBarProps
+} from '@adobe/react-spectrum/ActionBar';
 export {Item} from 'react-stately/Item';

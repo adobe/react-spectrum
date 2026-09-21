@@ -36,8 +36,13 @@ export function announce(
     // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
     // https://github.com/reactwg/react-18/discussions/102
     // if we're in a test environment, announce without waiting
-    // @ts-ignore
-    if (!(typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined')) {
+    if (
+      // @ts-ignore
+      !(typeof IS_REACT_ACT_ENVIRONMENT === 'boolean'
+        ? // @ts-ignore
+          IS_REACT_ACT_ENVIRONMENT
+        : typeof jest !== 'undefined')
+    ) {
       setTimeout(() => {
         if (liveAnnouncer?.isAttached()) {
           liveAnnouncer?.announce(message, assertiveness, timeout);

@@ -5,9 +5,9 @@ import {createContext, useContext} from 'react';
 export type ColorScheme = 'light' | 'dark';
 
 interface SettingsContextValue {
-  colorScheme: ColorScheme,
-  toggleColorScheme: () => void,
-  systemColorScheme: ColorScheme
+  colorScheme: ColorScheme;
+  toggleColorScheme: () => void;
+  systemColorScheme: ColorScheme;
 }
 
 export const SettingsContext = createContext<SettingsContextValue>({

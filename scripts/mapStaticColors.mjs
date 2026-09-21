@@ -76,7 +76,7 @@ const staticColors = {
   'static-seafoam-400': 'rgb(0, 166, 160)',
   'static-seafoam-500': 'rgb(0, 145, 139)',
   'static-seafoam-600': 'rgb(0, 124, 118)',
-  'static-seafoam-700': 'rgb(0, 103, 99)',
+  'static-seafoam-700': 'rgb(0, 103, 99)'
 };
 
 function colorToken(token) {
@@ -116,7 +116,7 @@ const s2Colors = {
   ...colorScale('turquoise'),
   ...colorScale('brown'),
   ...colorScale('silver'),
-  ...colorScale('cinnamon'),
+  ...colorScale('cinnamon')
 };
 
 function buildMapping(colorScheme) {
@@ -148,4 +148,4 @@ for (let key in light) {
   };
 }
 
-console.log(merged)
+console.log(merged);

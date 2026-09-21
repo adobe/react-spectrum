@@ -44,7 +44,9 @@ TypeFullscreen.story = {
   name: 'type: fullscreen'
 };
 
-export const TypeFullscreenTakeover: DialogContainerStory = () => <MenuExample type="fullscreenTakeover" />;
+export const TypeFullscreenTakeover: DialogContainerStory = () => (
+  <MenuExample type="fullscreenTakeover" />
+);
 
 TypeFullscreenTakeover.story = {
   name: 'type: fullscreenTakeover'
@@ -56,7 +58,9 @@ IsDismissable.story = {
   name: 'isDismissable'
 };
 
-export const IsKeyboardDismissDisabled: DialogContainerStory = () => <MenuExample isKeyboardDismissDisabled />;
+export const IsKeyboardDismissDisabled: DialogContainerStory = () => (
+  <MenuExample isKeyboardDismissDisabled />
+);
 
 IsKeyboardDismissDisabled.story = {
   name: 'isKeyboardDismissDisabled'

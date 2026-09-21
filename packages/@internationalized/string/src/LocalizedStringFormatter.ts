@@ -13,7 +13,9 @@
 import type {LocalizedStringDictionary} from './LocalizedStringDictionary';
 
 export type Variables = Record<string, string | number | boolean> | undefined;
-export type LocalizedString = string | ((args: Variables, formatter?: LocalizedStringFormatter<any, any>) => string);
+export type LocalizedString =
+  | string
+  | ((args: Variables, formatter?: LocalizedStringFormatter<any, any>) => string);
 type InternalString = string | (() => string);
 
 const pluralRulesCache = new Map<string, Intl.PluralRules>();
@@ -23,7 +25,10 @@ const numberFormatCache = new Map<string, Intl.NumberFormat>();
  * Formats localized strings from a LocalizedStringDictionary. Supports interpolating variables,
  * selecting the correct pluralization, and formatting numbers for the locale.
  */
-export class LocalizedStringFormatter<K extends string = string, T extends LocalizedString = string> {
+export class LocalizedStringFormatter<
+  K extends string = string,
+  T extends LocalizedString = string
+> {
   private locale: string;
   private strings: LocalizedStringDictionary<K, T>;
 
@@ -38,7 +43,11 @@ export class LocalizedStringFormatter<K extends string = string, T extends Local
     return typeof message === 'function' ? message(variables, this) : message;
   }
 
-  protected plural(count: number, options: Record<string, InternalString>, type: Intl.PluralRuleType = 'cardinal'): string {
+  protected plural(
+    count: number,
+    options: Record<string, InternalString>,
+    type: Intl.PluralRuleType = 'cardinal'
+  ): string {
     let opt = options['=' + count];
     if (opt) {
       return typeof opt === 'function' ? opt() : opt;

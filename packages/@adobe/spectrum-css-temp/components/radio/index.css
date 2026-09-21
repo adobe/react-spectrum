@@ -14,7 +14,10 @@ governing permissions and limitations under the License.
 
 .spectrum-Radio {
   --spectrum-radio-radius: calc(var(--spectrum-radio-circle-diameter) / 2);
-  --spectrum-radio-border-width-checked: calc(calc(var(--spectrum-radio-circle-diameter) / 2) - calc(var(--spectrum-radio-circle-dot-size) / 2));
+  --spectrum-radio-border-width-checked: calc(
+    calc(var(--spectrum-radio-circle-diameter) / 2) -
+      calc(var(--spectrum-radio-circle-dot-size) / 2)
+  );
 
   --spectrum-radio-labelbelow-label-margin: var(--spectrum-global-dimension-size-40) 0 0 0;
   --spectrum-radio-labelbelow-height: auto;
@@ -29,14 +32,22 @@ governing permissions and limitations under the License.
 
   --spectrum-radio-emphasized-circle-border-color: var(--spectrum-alias-toggle-color-default);
   --spectrum-radio-emphasized-circle-border-color-hover: var(--spectrum-alias-toggle-color-hover);
-  --spectrum-radio-emphasized-circle-border-color-key-focus: var(--spectrum-alias-toggle-color-key-focus);
+  --spectrum-radio-emphasized-circle-border-color-key-focus: var(
+    --spectrum-alias-toggle-color-key-focus
+  );
   --spectrum-radio-quiet-circle-border-color-selected: var(--spectrum-alias-toggle-color-selected);
-  --spectrum-radio-quiet-circle-border-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
-  --spectrum-radio-quiet-circle-border-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
+  --spectrum-radio-quiet-circle-border-color-selected-hover: var(
+    --spectrum-alias-toggle-color-selected-hover
+  );
+  --spectrum-radio-quiet-circle-border-color-selected-key-focus: var(
+    --spectrum-alias-toggle-color-selected-key-focus
+  );
 
   --spectrum-radio-emphasized-circle-border-color-selected: var(--spectrum-accent-color-900);
   --spectrum-radio-emphasized-circle-border-color-selected-hover: var(--spectrum-accent-color-1000);
-  --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(--spectrum-accent-color-1000);
+  --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(
+    --spectrum-accent-color-1000
+  );
   --spectrum-radio-emphasized-circle-border-color-selected-down: var(--spectrum-accent-color-1100);
 }
 
@@ -81,7 +92,7 @@ governing permissions and limitations under the License.
   inline-size: calc(100% + var(--spectrum-radio-cursor-hit-x) * 2);
   block-size: 100%;
 
-  opacity: .0001;
+  opacity: 0.0001;
   z-index: 1;
 
   cursor: default;
@@ -140,8 +151,9 @@ governing permissions and limitations under the License.
     border-width: var(--spectrum-radio-circle-border-size);
     border-style: solid;
 
-    transition: border var(--spectrum-global-animation-duration-100) ease-in-out,
-                box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+    transition:
+      border var(--spectrum-global-animation-duration-100) ease-in-out,
+      box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
   }
 
   &:after {
@@ -154,10 +166,11 @@ governing permissions and limitations under the License.
     bottom: 0;
     top: 0;
     margin: var(--spectrum-alias-focus-ring-gap);
-    transform: translateX(0);  /* Forces FF to render on the pixel grid */
+    transform: translateX(0); /* Forces FF to render on the pixel grid */
 
-    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
-                margin var(--spectrum-global-animation-duration-100) ease-out;
+    transition:
+      box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+      margin var(--spectrum-global-animation-duration-100) ease-out;
   }
 }
 

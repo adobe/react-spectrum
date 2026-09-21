@@ -2,25 +2,25 @@
   "name": "@parcel/transformer-storybook",
   "version": "0.0.2",
   "private": true,
-  "main": "dist/StoryTransformer.js",
   "source": "StoryTransformer.ts",
-  "engines": {
-    "parcel": "^2.8.0"
-  },
+  "main": "dist/StoryTransformer.js",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf dist && swc . -d dist --config-file ../../.swcrc",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@babel/parser": "^7.23.0",
     "@babel/types": "^7.23.0",
     "@parcel/plugin": "^2.16.3",
     "@parcel/source-map": "^2.1.1",
-    "react-docgen-typescript": "^2.2.2",
-    "storybook": "^9.0.18",
-    "typescript": "^5.5.0"
+    "react-docgen-typescript": "patch:react-docgen-typescript@npm%3A2.4.0#~/.yarn/patches/react-docgen-typescript-npm-2.4.0-9669bef2f0.patch",
+    "storybook": "^10.0.0",
+    "typescript": "^6.0.3"
   },
-  "scripts": {
-    "build": "rm -rf dist && swc . -d dist --config-file ../../.swcrc",
-    "clean": "rm -rf dist"
+  "engines": {
+    "parcel": "^2.8.0"
   }
 }

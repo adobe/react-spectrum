@@ -1,6 +1,13 @@
-
 import {action} from 'storybook/actions';
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  SpectrumTableProps,
+  TableBody,
+  TableHeader,
+  TableView
+} from '../../src/table/TableView';
 import {chain} from 'react-aria/chain';
 import {DragEndEvent, DragStartEvent, DropEvent, ItemDropTarget, Key} from '@react-types/shared';
 import {Flex} from '../../src/layout/Flex';
@@ -30,28 +37,112 @@ let columnsWithOutRowHeader = [
 ];
 
 export let items = [
-  {id: 'a', first_name: 'Vin', last_name: 'Charlet', email: 'vcharlet0@123-reg.co.uk', ip_address: '18.45.175.130', department: 'Services', job_title: 'Analog Circuit Design manager'},
-  {id: 'b', first_name: 'Lexy', last_name: 'Maddison', email: 'lmaddison1@xinhuanet.com', ip_address: '238.210.151.48', department: 'Research and Development', job_title: 'Analog Circuit Design manager'},
-  {id: 'c', first_name: 'Robbi', last_name: 'Persence', email: 'rpersence2@hud.gov', ip_address: '130.2.120.99', department: 'Business Development', job_title: 'Analog Circuit Design manager'},
-  {id: 'd', first_name: 'Dodie', last_name: 'Hurworth', email: 'dhurworth3@webs.com', ip_address: '235.183.154.184', department: 'Training', job_title: 'Account Coordinator'},
-  {id: 'e', first_name: 'Audrye', last_name: 'Hember', email: 'ahember4@blogtalkradio.com', ip_address: '136.25.192.37', department: 'Legal', job_title: 'Operator'},
-  {id: 'f', first_name: 'Beau', last_name: 'Oller', email: 'boller5@nytimes.com', ip_address: '93.111.22.12', department: 'Business Development', job_title: 'Speech Pathologist'},
-  {id: 'g', first_name: 'Roarke', last_name: 'Gration', email: 'rgration6@purevolume.com', ip_address: '234.221.23.241', department: 'Product Management', job_title: 'Electrical Engineer'},
-  {id: 'h', first_name: 'Cathy', last_name: 'Lishman', email: 'clishman7@constantcontact.com', ip_address: '181.158.213.202', department: 'Research and Development', job_title: 'Assistant Professor'},
-  {id: 'i', first_name: 'Enrika', last_name: 'Soitoux', email: 'esoitoux8@google.com.hk', ip_address: '51.244.20.173', department: 'Support', job_title: 'Teacher'},
-  {id: 'j', first_name: 'Aloise', last_name: 'Tuxsell', email: 'atuxsell9@jigsy.com', ip_address: '253.46.84.168', department: 'Training', job_title: 'Financial Advisor'}
+  {
+    id: 'a',
+    first_name: 'Vin',
+    last_name: 'Charlet',
+    email: 'vcharlet0@123-reg.co.uk',
+    ip_address: '18.45.175.130',
+    department: 'Services',
+    job_title: 'Analog Circuit Design manager'
+  },
+  {
+    id: 'b',
+    first_name: 'Lexy',
+    last_name: 'Maddison',
+    email: 'lmaddison1@xinhuanet.com',
+    ip_address: '238.210.151.48',
+    department: 'Research and Development',
+    job_title: 'Analog Circuit Design manager'
+  },
+  {
+    id: 'c',
+    first_name: 'Robbi',
+    last_name: 'Persence',
+    email: 'rpersence2@hud.gov',
+    ip_address: '130.2.120.99',
+    department: 'Business Development',
+    job_title: 'Analog Circuit Design manager'
+  },
+  {
+    id: 'd',
+    first_name: 'Dodie',
+    last_name: 'Hurworth',
+    email: 'dhurworth3@webs.com',
+    ip_address: '235.183.154.184',
+    department: 'Training',
+    job_title: 'Account Coordinator'
+  },
+  {
+    id: 'e',
+    first_name: 'Audrye',
+    last_name: 'Hember',
+    email: 'ahember4@blogtalkradio.com',
+    ip_address: '136.25.192.37',
+    department: 'Legal',
+    job_title: 'Operator'
+  },
+  {
+    id: 'f',
+    first_name: 'Beau',
+    last_name: 'Oller',
+    email: 'boller5@nytimes.com',
+    ip_address: '93.111.22.12',
+    department: 'Business Development',
+    job_title: 'Speech Pathologist'
+  },
+  {
+    id: 'g',
+    first_name: 'Roarke',
+    last_name: 'Gration',
+    email: 'rgration6@purevolume.com',
+    ip_address: '234.221.23.241',
+    department: 'Product Management',
+    job_title: 'Electrical Engineer'
+  },
+  {
+    id: 'h',
+    first_name: 'Cathy',
+    last_name: 'Lishman',
+    email: 'clishman7@constantcontact.com',
+    ip_address: '181.158.213.202',
+    department: 'Research and Development',
+    job_title: 'Assistant Professor'
+  },
+  {
+    id: 'i',
+    first_name: 'Enrika',
+    last_name: 'Soitoux',
+    email: 'esoitoux8@google.com.hk',
+    ip_address: '51.244.20.173',
+    department: 'Support',
+    job_title: 'Teacher'
+  },
+  {
+    id: 'j',
+    first_name: 'Aloise',
+    last_name: 'Tuxsell',
+    email: 'atuxsell9@jigsy.com',
+    ip_address: '253.46.84.168',
+    department: 'Training',
+    job_title: 'Financial Advisor'
+  }
 ] as const;
 
 let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
 
-export function DragExample(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, dragHookOptions?: any}): JSX.Element {
+export function DragExample(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  dragHookOptions?: any;
+}): JSX.Element {
   let {tableViewProps, dragHookOptions} = props;
-  let getItems = (keys) => [...keys].map(key => {
-    let item = items.find(item => item.id === key)!;
-    return {
-      'text/plain': `${item.first_name} ${item.last_name}`
-    };
-  });
+  let getItems = keys =>
+    [...keys].map(key => {
+      let item = items.find(item => item.id === key)!;
+      return {
+        'text/plain': `${item.first_name} ${item.last_name}`
+      };
+    });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
@@ -63,29 +154,38 @@ export function DragExample(props: {tableViewProps?: Omit<SpectrumTableProps<unk
   });
 
   return (
-    <TableView aria-label="TableView with dragging enabled" selectionMode="multiple" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView
+      aria-label="TableView with dragging enabled"
+      selectionMode="multiple"
+      width={400}
+      height={300}
+      onSelectionChange={s => onSelectionChange([...s])}
+      dragAndDropHooks={dragAndDropHooks}
+      {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column minWidth={100} isRowHeader={column.isRowHeader}>{column.name}</Column>}
-      </TableHeader>
-      <TableBody items={items}>
-        {item => (
-          <Row>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>
+        {column => (
+          <Column minWidth={100} isRowHeader={column.isRowHeader}>
+            {column.name}
+          </Column>
         )}
-      </TableBody>
+      </TableHeader>
+      <TableBody items={items}>{item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}</TableBody>
     </TableView>
   );
 }
 
-export function DragWithoutRowHeaderExample(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, dragHookOptions?: any}): JSX.Element {
+export function DragWithoutRowHeaderExample(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  dragHookOptions?: any;
+}): JSX.Element {
   let {tableViewProps, dragHookOptions} = props;
-  let getItems = (keys) => [...keys].map(key => {
-    let item = items.find(item => item.id === key)!;
-    return {
-      'text/plain': `${item.first_name} ${item.last_name}`
-    };
-  });
+  let getItems = keys =>
+    [...keys].map(key => {
+      let item = items.find(item => item.id === key)!;
+      return {
+        'text/plain': `${item.first_name} ${item.last_name}`
+      };
+    });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
@@ -97,23 +197,30 @@ export function DragWithoutRowHeaderExample(props: {tableViewProps?: Omit<Spectr
   });
 
   return (
-    <TableView aria-label="TableView with dragging enabled" selectionMode="multiple" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView
+      aria-label="TableView with dragging enabled"
+      selectionMode="multiple"
+      width={400}
+      height={300}
+      onSelectionChange={s => onSelectionChange([...s])}
+      dragAndDropHooks={dragAndDropHooks}
+      {...tableViewProps}>
       <TableHeader columns={columnsWithOutRowHeader}>
         {column => <Column minWidth={100}>{column.name}</Column>}
       </TableHeader>
-      <TableBody items={items}>
-        {item => (
-          <Row>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>
-        )}
-      </TableBody>
+      <TableBody items={items}>{item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}</TableBody>
     </TableView>
   );
 }
 
 let randomDragTypeReorderExample = `keys-${Math.random().toString(36).slice(2)}`;
-export function ReorderExample(props: {onDrop?: (e: DropEvent) => void, onDragStart?: (e: DragStartEvent) => void, onDragEnd?: (e: DragEndEvent) => void, tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, items?: any[]}): JSX.Element {
+export function ReorderExample(props: {
+  onDrop?: (e: DropEvent) => void;
+  onDragStart?: (e: DragStartEvent) => void;
+  onDragEnd?: (e: DragEndEvent) => void;
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  items?: any[];
+}): JSX.Element {
   let {onDrop, onDragStart, onDragEnd, tableViewProps} = props;
   let list = useListData({
     initialItems: props.items || (items as unknown as any[]),
@@ -178,28 +285,34 @@ export function ReorderExample(props: {onDrop?: (e: DropEvent) => void, onDragSt
   });
 
   return (
-    <TableView aria-label="Reorderable TableView" selectionMode="multiple" width={400} height={300} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView
+      aria-label="Reorderable TableView"
+      selectionMode="multiple"
+      width={400}
+      height={300}
+      dragAndDropHooks={dragAndDropHooks}
+      {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column minWidth={100} isRowHeader={column.isRowHeader}>{column.name}</Column>}
+        {column => (
+          <Column minWidth={100} isRowHeader={column.isRowHeader}>
+            {column.name}
+          </Column>
+        )}
       </TableHeader>
       <TableBody items={list.items}>
-        {item => (
-          <Row>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>
-        )}
+        {item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   );
 }
 
 let randomDragTypeDragOntoRowExample = `keys-${Math.random().toString(36).slice(2)}`;
-export function DragOntoRowExample(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, dragHookOptions?: any, dropHookOptions?: {onDrop?: (e: DropEvent) => void}}): JSX.Element {
-  let {
-    tableViewProps = {},
-    dragHookOptions = {},
-    dropHookOptions = {}
-  } = props;
+export function DragOntoRowExample(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  dragHookOptions?: any;
+  dropHookOptions?: {onDrop?: (e: DropEvent) => void};
+}): JSX.Element {
+  let {tableViewProps = {}, dragHookOptions = {}, dropHookOptions = {}} = props;
   let {onDragStart, onDragEnd} = dragHookOptions;
   let {onDrop} = dropHookOptions;
   let onDropAction = chain(action('onDrop'), onDrop);
@@ -232,8 +345,11 @@ export function DragOntoRowExample(props: {tableViewProps?: Omit<SpectrumTablePr
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
     let folderItem = list.getItem(target.key)!;
-    let draggedItems = keys.map((key) => list.getItem(key));
-    list.update(target.key, {...folderItem, childNodes: [...(folderItem.childNodes || []), ...draggedItems]});
+    let draggedItems = keys.map(key => list.getItem(key));
+    list.update(target.key, {
+      ...folderItem,
+      childNodes: [...(folderItem.childNodes || []), ...draggedItems]
+    });
     list.remove(...keys);
   };
 
@@ -277,7 +393,12 @@ export function DragOntoRowExample(props: {tableViewProps?: Omit<SpectrumTablePr
       }
     },
     getDropOperation(target) {
-      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key)?.childNodes || disabledKeys.includes(target.key)) {
+      if (
+        target.type === 'root' ||
+        target.dropPosition !== 'on' ||
+        !list.getItem(target.key)?.childNodes ||
+        disabledKeys.includes(target.key)
+      ) {
         return 'cancel';
       }
 
@@ -286,9 +407,18 @@ export function DragOntoRowExample(props: {tableViewProps?: Omit<SpectrumTablePr
   });
 
   return (
-    <TableView aria-label="Drag onto table row example" selectionMode="multiple" disabledKeys={disabledKeys} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView
+      aria-label="Drag onto table row example"
+      selectionMode="multiple"
+      disabledKeys={disabledKeys}
+      dragAndDropHooks={dragAndDropHooks}
+      {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column minWidth={column.width} isRowHeader={column.key === 'name'}>{column.name}</Column>}
+        {column => (
+          <Column minWidth={column.width} isRowHeader={column.key === 'name'}>
+            {column.name}
+          </Column>
+        )}
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
@@ -296,9 +426,7 @@ export function DragOntoRowExample(props: {tableViewProps?: Omit<SpectrumTablePr
             <Cell>{item.id}</Cell>
             <Cell>{item.type}</Cell>
             <Cell>{item.name}</Cell>
-            <Cell>
-              {item.type === 'folder' ? `${item.childNodes?.length} dropped items` : '-'}
-            </Cell>
+            <Cell>{item.type === 'folder' ? `${item.childNodes?.length} dropped items` : '-'}</Cell>
           </Row>
         )}
       </TableBody>
@@ -332,7 +460,14 @@ let itemColumns = [
 
 let randomDragTypeDragBetweenTablesExample = `keys-${Math.random().toString(36).slice(2)}`;
 
-export function DragBetweenTablesExample(props: {onDragStart?: (e: DragStartEvent) => void, onDragEnd?: (e: DragEndEvent) => void, onDrop?: (e: DropEvent) => void, tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, items1?: any[], items2?: any[]}): JSX.Element {
+export function DragBetweenTablesExample(props: {
+  onDragStart?: (e: DragStartEvent) => void;
+  onDragEnd?: (e: DragEndEvent) => void;
+  onDrop?: (e: DropEvent) => void;
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  items1?: any[];
+  items2?: any[];
+}): JSX.Element {
   let {onDragStart, onDragEnd, onDrop} = props;
   let onDropAction = chain(action('onDrop'), onDrop);
   onDragStart = chain(action('dragStart'), onDragStart);
@@ -351,7 +486,7 @@ export function DragBetweenTablesExample(props: {onDragStart?: (e: DragStartEven
     let destinationList = list1.getItem(target.key) ? list1 : list2;
 
     if (sourceList === destinationList) {
-        // Handle dragging within same list
+      // Handle dragging within same list
       if (target.dropPosition === 'before') {
         sourceList.moveBefore(target.key, keys);
       } else {
@@ -421,31 +556,41 @@ export function DragBetweenTablesExample(props: {onDragStart?: (e: DragStartEven
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooks} {...props}>
+        <TableView
+          aria-label="First TableView"
+          selectionMode="multiple"
+          width={400}
+          dragAndDropHooks={dragAndDropHooks}
+          {...props}>
           <TableHeader columns={itemColumns}>
-            {column => <Column minWidth={100} isRowHeader={column.key === 'name'}>{column.name}</Column>}
+            {column => (
+              <Column minWidth={100} isRowHeader={column.key === 'name'}>
+                {column.name}
+              </Column>
+            )}
           </TableHeader>
           <TableBody items={list1.items}>
-            {(item: any) => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {(item: any) => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooks} {...props}>
+        <TableView
+          aria-label="Second TableView"
+          selectionMode="multiple"
+          width={400}
+          dragAndDropHooks={dragAndDropHooks}
+          {...props}>
           <TableHeader columns={itemColumns}>
-            {column => <Column minWidth={100} isRowHeader={column.key === 'name'}>{column.name}</Column>}
+            {column => (
+              <Column minWidth={100} isRowHeader={column.key === 'name'}>
+                {column.name}
+              </Column>
+            )}
           </TableHeader>
           <TableBody items={list2.items}>
-            {(item: any) => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {(item: any) => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
@@ -453,12 +598,17 @@ export function DragBetweenTablesExample(props: {onDragStart?: (e: DragStartEven
   );
 }
 
-export function DragBetweenTablesRootOnlyExample(props: {tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>, items1?: any[], items2?: any[], dragHookOptions?: {onDragStart?: (e: DragStartEvent) => void, onDragEnd?: (e: DragEndEvent) => void}, dropHookOptions?: {onDrop?: (e: DropEvent) => void}}): JSX.Element {
-  let {
-    tableViewProps = {},
-    dragHookOptions = {},
-    dropHookOptions = {}
-  } = props;
+export function DragBetweenTablesRootOnlyExample(props: {
+  tableViewProps?: Omit<SpectrumTableProps<unknown>, 'children'>;
+  items1?: any[];
+  items2?: any[];
+  dragHookOptions?: {
+    onDragStart?: (e: DragStartEvent) => void;
+    onDragEnd?: (e: DragEndEvent) => void;
+  };
+  dropHookOptions?: {onDrop?: (e: DropEvent) => void};
+}): JSX.Element {
+  let {tableViewProps = {}, dragHookOptions = {}, dropHookOptions = {}} = props;
   let {onDragStart, onDragEnd} = dragHookOptions;
   let {onDrop} = dropHookOptions;
   let onDropAction = chain(action('onDrop'), onDrop);
@@ -484,7 +634,7 @@ export function DragBetweenTablesRootOnlyExample(props: {tableViewProps?: Omit<S
       return [...keys].map(key => {
         key = JSON.stringify(key);
         return {
-          'list1': key,
+          list1: key,
           'text/plain': key
         };
       });
@@ -530,7 +680,7 @@ export function DragBetweenTablesRootOnlyExample(props: {tableViewProps?: Omit<S
       return [...keys].map(key => {
         key = JSON.stringify(key);
         return {
-          'list2': key,
+          list2: key,
           'text/plain': key
         };
       });
@@ -575,31 +725,41 @@ export function DragBetweenTablesRootOnlyExample(props: {tableViewProps?: Omit<S
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooksFirst} {...tableViewProps}>
+        <TableView
+          aria-label="First TableView"
+          selectionMode="multiple"
+          width={400}
+          dragAndDropHooks={dragAndDropHooksFirst}
+          {...tableViewProps}>
           <TableHeader columns={itemColumns}>
-            {column => <Column minWidth={100} isRowHeader={column.key === 'name'}>{column.name}</Column>}
+            {column => (
+              <Column minWidth={100} isRowHeader={column.key === 'name'}>
+                {column.name}
+              </Column>
+            )}
           </TableHeader>
           <TableBody items={list1.items}>
-            {(item: any) => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {(item: any) => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooksSecond} {...tableViewProps}>
+        <TableView
+          aria-label="Second TableView"
+          selectionMode="multiple"
+          width={400}
+          dragAndDropHooks={dragAndDropHooksSecond}
+          {...tableViewProps}>
           <TableHeader columns={itemColumns}>
-            {column => <Column minWidth={100} isRowHeader={column.key === 'name'}>{column.name}</Column>}
+            {column => (
+              <Column minWidth={100} isRowHeader={column.key === 'name'}>
+                {column.name}
+              </Column>
+            )}
           </TableHeader>
           <TableBody items={list2.items}>
-            {(item: any) => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
-            )}
+            {(item: any) => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>

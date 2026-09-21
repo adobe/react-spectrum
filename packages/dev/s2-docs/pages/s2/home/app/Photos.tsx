@@ -1,12 +1,21 @@
 'use client';
 import ViewGridFluid from '@react-spectrum/s2/icons/ViewGridFluid';
 import ViewGrid from '@react-spectrum/s2/icons/ViewGrid';
-import { style } from "@react-spectrum/s2/style" with { type: 'macro' };
-import { Card, CardPreview, CardView, Collection, SkeletonCollection, Image, SegmentedControl, SegmentedControlItem } from '@react-spectrum/s2';
-import { useLocale } from 'react-aria';
-import { useAsyncList } from 'react-stately';
-import { useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  Card,
+  CardPreview,
+  CardView,
+  Collection,
+  SkeletonCollection,
+  Image,
+  SegmentedControl,
+  SegmentedControlItem
+} from '@react-spectrum/s2';
+import {useLocale} from 'react-aria';
+import {useAsyncList} from 'react-stately';
+import {useRef, useState} from 'react';
+import {flushSync} from 'react-dom';
 
 const pages = [
   () => import('./photos-1.json'),
@@ -29,18 +38,30 @@ export function Photos(props: any) {
       let nextItems: any[] = await next();
       // Filter duplicates which might be returned by the API.
       let existingKeys = new Set(items.map(i => i.id));
-      nextItems = nextItems.filter((i: any) => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      nextItems = nextItems.filter(
+        (i: any) => !existingKeys.has(i.id) && (i.description || i.alt_description)
+      );
       return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
     }
   });
 
   return (
     <>
-      <div className={style({display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8})}>
+      <div
+        className={style({
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 8
+        })}>
         <div className={style({font: 'heading'})}>{direction === 'rtl' ? 'الصور' : 'Photos'}</div>
         <SegmentedControl selectedKey={layout} onSelectionChange={setLayout as any}>
-          <SegmentedControlItem id="waterfall" aria-label="Waterfall"><ViewGridFluid /></SegmentedControlItem>
-          <SegmentedControlItem id="grid" aria-label="Grid"><ViewGrid /></SegmentedControlItem>
+          <SegmentedControlItem id="waterfall" aria-label="Waterfall">
+            <ViewGridFluid />
+          </SegmentedControlItem>
+          <SegmentedControlItem id="grid" aria-label="Grid">
+            <ViewGrid />
+          </SegmentedControlItem>
         </SegmentedControl>
       </div>
       <CardView
@@ -71,7 +92,8 @@ export function Photos(props: any) {
                   width: 400,
                   height: 200 + Math.max(0, Math.round(Math.random() * 400))
                 }}
-                layout={layout} />
+                layout={layout}
+              />
             )}
           </SkeletonCollection>
         )}
@@ -87,18 +109,21 @@ export function PhotoCard({item, layout, onAction, styles}: any) {
       id={item.id}
       styles={styles}
       textValue={item.description || item.alt_description}
-      onAction={onAction && (() => {
-        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          onAction([item, imgRef.current]);
-          return;
-        }
+      onAction={
+        onAction &&
+        (() => {
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            onAction([item, imgRef.current]);
+            return;
+          }
 
-        imgRef.current!.style.viewTransitionName = 'photo';
-        document.startViewTransition(() => {
-          imgRef.current!.style.viewTransitionName = '';
-          flushSync(() => onAction([item, imgRef.current]));
+          imgRef.current!.style.viewTransitionName = 'photo';
+          document.startViewTransition(() => {
+            imgRef.current!.style.viewTransitionName = '';
+            flushSync(() => onAction([item, imgRef.current]));
+          });
         })
-      })}>
+      }>
       <CardPreview>
         <Image
           ref={imgRef}
@@ -108,7 +133,8 @@ export function PhotoCard({item, layout, onAction, styles}: any) {
           height={item.height}
           UNSAFE_style={{
             aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : undefined
-          }} />
+          }}
+        />
       </CardPreview>
     </Card>
   );

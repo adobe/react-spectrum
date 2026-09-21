@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render as render_, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  pointerMap,
+  render as render_,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Button} from '../../src/button/Button';
 import {Form} from '../../src/form/Form';
 import {parseTime, parseZonedDateTime, Time} from '@internationalized/date';
@@ -24,11 +30,7 @@ function render(el) {
   if (el.type === Provider) {
     return render_(el);
   }
-  let res = render_(
-    <Provider theme={theme}>
-      {el}
-    </Provider>
-  );
+  let res = render_(<Provider theme={theme}>{el}</Provider>);
   return {
     ...res,
     rerender(el) {
@@ -49,7 +51,11 @@ describe('TimeField', function () {
     let group = getByRole('group');
     expect(group).toHaveAttribute('aria-describedby');
 
-    let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    let description = group
+      .getAttribute('aria-describedby')
+      .split(' ')
+      .map(d => document.getElementById(d).textContent)
+      .join(' ');
     expect(description).toBe('Selected Time: 8:45 AM');
 
     let segments = getAllByRole('spinbutton');
@@ -119,7 +125,14 @@ describe('TimeField', function () {
     });
 
     it('should focus field and switching segments via tab does not change focus', async function () {
-      let {getAllByRole} = render(<TimeField label="Time" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let {getAllByRole} = render(
+        <TimeField
+          label="Time"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+        />
+      );
       let segments = getAllByRole('spinbutton');
 
       expect(onBlurSpy).not.toHaveBeenCalled();
@@ -141,7 +154,14 @@ describe('TimeField', function () {
     });
 
     it('should call blur when focus leaves', async function () {
-      let {getAllByRole} = render(<TimeField label="Time" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let {getAllByRole} = render(
+        <TimeField
+          label="Time"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+        />
+      );
       let segments = getAllByRole('spinbutton');
       // workaround bug in userEvent.tab(). hidden inputs aren't focusable.
       document.querySelector('input[type=hidden]').tabIndex = -1;
@@ -185,7 +205,9 @@ describe('TimeField', function () {
     });
 
     it('should trigger right arrow key event for segment navigation', async function () {
-      let {getAllByRole} = render(<TimeField label="Time" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
+      let {getAllByRole} = render(
+        <TimeField label="Time" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />
+      );
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
@@ -205,7 +227,12 @@ describe('TimeField', function () {
 
     describe('timeZone', function () {
       it('should have a timeZone when set by defaultValue', function () {
-        let {getByRole} = render(<TimeField label="Time" defaultValue={parseZonedDateTime('2023-07-01T00:45-07:00[America/Los_Angeles]')} />);
+        let {getByRole} = render(
+          <TimeField
+            label="Time"
+            defaultValue={parseZonedDateTime('2023-07-01T00:45-07:00[America/Los_Angeles]')}
+          />
+        );
         let timezone = getByRole('textbox');
 
         expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
@@ -213,7 +240,12 @@ describe('TimeField', function () {
       });
 
       it('should keep timeZone from defaultValue when minute segment cleared', async function () {
-        let {getAllByRole, getByRole} = render(<TimeField label="Time" defaultValue={parseZonedDateTime('2023-07-01T01:05-07:00[America/Los_Angeles]')} />);
+        let {getAllByRole, getByRole} = render(
+          <TimeField
+            label="Time"
+            defaultValue={parseZonedDateTime('2023-07-01T01:05-07:00[America/Los_Angeles]')}
+          />
+        );
         let timezone = getByRole('textbox');
         let segments = getAllByRole('spinbutton');
 
@@ -234,7 +266,12 @@ describe('TimeField', function () {
       });
 
       it('should keep timeZone from defaultValue when minute segment cleared then set', async function () {
-        let {getAllByRole, getByRole} = render(<TimeField label="Time" defaultValue={parseZonedDateTime('2023-07-01T01:05-07:00[America/Los_Angeles]')} />);
+        let {getAllByRole, getByRole} = render(
+          <TimeField
+            label="Time"
+            defaultValue={parseZonedDateTime('2023-07-01T01:05-07:00[America/Los_Angeles]')}
+          />
+        );
         let timezone = getByRole('textbox');
         let segments = getAllByRole('spinbutton');
 
@@ -263,7 +300,10 @@ describe('TimeField', function () {
 
       it('should support cycling through DST fall back transitions with ZonedDateTime placeholder', async function () {
         let {getByLabelText} = render(
-          <TimeField label="Time" placeholderValue={parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')} />
+          <TimeField
+            label="Time"
+            placeholderValue={parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')}
+          />
         );
         let minute = getByLabelText('minute,');
         expect(minute).toHaveAttribute('aria-valuetext', 'Empty');
@@ -271,7 +311,9 @@ describe('TimeField', function () {
         expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
 
         let segment = getByLabelText('hour,');
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
         // first arrow up sets value to the placeholder hour
         await user.keyboard('{ArrowUp}');
         expect(hour.textContent).toBe('1');
@@ -295,30 +337,46 @@ describe('TimeField', function () {
       it('should support cycling through DST fall back transitions with ZonedDateTime defaultValue', async function () {
         let onChange = jest.fn();
         let {getAllByRole} = render(
-          <TimeField label="Time" defaultValue={parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')} onChange={onChange} />
+          <TimeField
+            label="Time"
+            defaultValue={parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')}
+            onChange={onChange}
+          />
         );
         let segments = getAllByRole('spinbutton');
 
-        act(() => {segments[0].focus();});
+        act(() => {
+          segments[0].focus();
+        });
         await user.keyboard('{ArrowUp}');
         expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
+        expect(onChange).toHaveBeenCalledWith(
+          parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]')
+        );
 
         await user.keyboard('{ArrowUp}');
         expect(onChange).toHaveBeenCalledTimes(2);
-        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T02:45:00-08:00[America/Los_Angeles]'));
+        expect(onChange).toHaveBeenCalledWith(
+          parseZonedDateTime('2021-11-07T02:45:00-08:00[America/Los_Angeles]')
+        );
 
         await user.keyboard('{ArrowDown}');
         expect(onChange).toHaveBeenCalledTimes(3);
-        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
+        expect(onChange).toHaveBeenCalledWith(
+          parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]')
+        );
 
         await user.keyboard('{ArrowDown}');
         expect(onChange).toHaveBeenCalledTimes(4);
-        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]'));
+        expect(onChange).toHaveBeenCalledWith(
+          parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')
+        );
 
         await user.keyboard('{ArrowDown}');
         expect(onChange).toHaveBeenCalledTimes(5);
-        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]'));
+        expect(onChange).toHaveBeenCalledWith(
+          parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')
+        );
       });
     });
   });
@@ -340,7 +398,12 @@ describe('TimeField', function () {
       let input = document.querySelector('input[name=time]');
       let segments = getAllByRole('spinbutton');
 
-      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      let getDescription = () =>
+        group
+          .getAttribute('aria-describedby')
+          .split(' ')
+          .map(d => document.getElementById(d).textContent)
+          .join(' ');
       expect(getDescription()).toBe('Selected Time: 8:30 AM');
 
       expect(input).toHaveValue('08:30:00');
@@ -396,10 +459,17 @@ describe('TimeField', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
@@ -417,18 +487,32 @@ describe('TimeField', function () {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <TimeField label="Date" name="date" minValue={new Time(9)} maxValue={new Time(17)} defaultValue={new Time(8)} validationBehavior="native" />
+                <TimeField
+                  label="Date"
+                  name="date"
+                  minValue={new Time(9)}
+                  maxValue={new Time(17)}
+                  defaultValue={new Time(8)}
+                  validationBehavior="native"
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           let input = document.querySelector('input[name=date]');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(input.validity.valid).toBe(false);
           expect(getDescription()).not.toContain('Value must be 9:00 AM or later.');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Value must be 9:00 AM or later.');
@@ -448,7 +532,9 @@ describe('TimeField', function () {
           expect(input.validity.valid).toBe(false);
           await user.tab();
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
@@ -464,18 +550,31 @@ describe('TimeField', function () {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <TimeField name="date" label="Value" defaultValue={new Time(8)} validationBehavior="native" validate={v => v.hour < 9 ? 'Invalid value' : null} />
+                <TimeField
+                  name="date"
+                  label="Value"
+                  defaultValue={new Time(8)}
+                  validationBehavior="native"
+                  validate={v => (v.hour < 9 ? 'Invalid value' : null)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           let input = document.querySelector('input[name=date]');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).not.toContain('Invalid value');
           expect(input.validity.valid).toBe(false);
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Invalid value');
@@ -505,8 +604,15 @@ describe('TimeField', function () {
             return (
               <Provider theme={theme}>
                 <Form onSubmit={onSubmit} validationErrors={serverErrors}>
-                  <TimeField name="date" label="Value" defaultValue={new Time(9)} validationBehavior="native" />
-                  <Button type="submit" data-testid="submit">Submit</Button>
+                  <TimeField
+                    name="date"
+                    label="Value"
+                    defaultValue={new Time(9)}
+                    validationBehavior="native"
+                  />
+                  <Button type="submit" data-testid="submit">
+                    Submit
+                  </Button>
                 </Form>
               </Provider>
             );
@@ -516,7 +622,12 @@ describe('TimeField', function () {
 
           let group = getByRole('group');
           let input = document.querySelector('input[name=date]');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).not.toContain('Invalid value');
 
           await user.click(getByTestId('submit'));
@@ -535,7 +646,15 @@ describe('TimeField', function () {
           let {getByTestId, getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <TimeField name="date" label="Value" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+                <TimeField
+                  name="date"
+                  label="Value"
+                  isRequired
+                  validationBehavior="native"
+                  errorMessage={e =>
+                    e.validationDetails.valueMissing ? 'Please enter a value' : null
+                  }
+                />
               </Form>
             </Provider>
           );
@@ -543,9 +662,13 @@ describe('TimeField', function () {
           let group = getByRole('group');
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
           expect(group).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+            'Please enter a value'
+          );
         });
 
         it('clears validation on form reset', async () => {
@@ -553,7 +676,9 @@ describe('TimeField', function () {
             <Provider theme={theme}>
               <Form data-testid="form">
                 <TimeField label="Date" name="date" isRequired validationBehavior="native" />
-                <Button type="reset" data-testid="reset">Reset</Button>
+                <Button type="reset" data-testid="reset">
+                  Reset
+                </Button>
               </Form>
             </Provider>
           );
@@ -564,10 +689,17 @@ describe('TimeField', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
 
           await user.click(getByTestId('reset'));
@@ -581,13 +713,24 @@ describe('TimeField', function () {
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <TimeField label="Date" name="date" minValue={new Time(9)} maxValue={new Time(17)} defaultValue={new Time(8)} />
+                <TimeField
+                  label="Date"
+                  name="date"
+                  minValue={new Time(9)}
+                  maxValue={new Time(17)}
+                  defaultValue={new Time(8)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Value must be 9:00 AM or later.');
 
           await user.keyboard('[Tab][ArrowUp]');
@@ -604,14 +747,23 @@ describe('TimeField', function () {
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <TimeField label="Value" defaultValue={new Time(8)} validate={v => v.hour < 9 ? 'Invalid value' : null} />
+                <TimeField
+                  label="Value"
+                  defaultValue={new Time(8)}
+                  validate={v => (v.hour < 9 ? 'Invalid value' : null)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Invalid value');
 
           await user.keyboard('[Tab]10');
@@ -629,7 +781,12 @@ describe('TimeField', function () {
 
           let group = getByRole('group');
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Invalid value');
 
           await user.keyboard('[Tab][ArrowUp][Tab][Tab][Tab]');

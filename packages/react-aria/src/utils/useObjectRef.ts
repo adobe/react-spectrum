@@ -21,7 +21,9 @@ import {MutableRefObject, useCallback, useMemo, useRef} from 'react';
  * @returns An object ref that updates the given ref.
  * @see https://react.dev/reference/react/forwardRef
  */
-export function useObjectRef<T>(ref?: ((instance: T | null) => (() => void) | void) | MutableRefObject<T | null> | null): MutableRefObject<T | null> {
+export function useObjectRef<T>(
+  ref?: ((instance: T | null) => (() => void) | void) | MutableRefObject<T | null> | null
+): MutableRefObject<T | null> {
   const objRef: MutableRefObject<T | null> = useRef<T>(null);
   const cleanupRef: MutableRefObject<(() => void) | void> = useRef(undefined);
 
@@ -38,6 +40,7 @@ export function useObjectRef<T>(ref?: ((instance: T | null) => (() => void) | vo
           }
         };
       } else if (ref) {
+        // oxlint-disable-next-line react/react-compiler
         ref.current = instance;
         return () => {
           ref.current = null;
@@ -64,6 +67,7 @@ export function useObjectRef<T>(ref?: ((instance: T | null) => (() => void) | vo
         }
       }
     }),
+    // oxlint-disable-next-line react/react-compiler
     [refEffect]
   );
 }

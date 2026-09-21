@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static - Renames Item to ComboBoxItem', `
+test(
+  'Static - Renames Item to ComboBoxItem',
+  `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 <div>
   <ComboBox label="Favorite Animal">
@@ -14,9 +16,12 @@ import {ComboBox, Item} from '@adobe/react-spectrum';
     <Item>Cat</Item>
   </ComboBox>
 </div>
-`);
+`
+);
 
-test('Static - Renames key to id', `
+test(
+  'Static - Renames key to id',
+  `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 let externalKey = 'travel';
 <div>
@@ -25,9 +30,12 @@ let externalKey = 'travel';
     <Item key="cat">Cat</Item>
   </ComboBox>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames Item to ComboBoxItem', `
+test(
+  'Dynamic - Renames Item to ComboBoxItem',
+  `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 let options = [
   {id: 1, name: 'Aerospace'},
@@ -40,9 +48,12 @@ let options = [
     {item => <Item>{item.name}</Item>}
   </ComboBox>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames key to id', `
+test(
+  'Dynamic - Renames key to id',
+  `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
@@ -67,9 +78,12 @@ const items = [
     {item => <Item>{item.name}</Item>}
   </ComboBox>
 </div>
-`);
+`
+);
 
-test('changes validationState to isInvalid or nothing', `
+test(
+  'changes validationState to isInvalid or nothing',
+  `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
@@ -100,9 +114,12 @@ let props = {validationState: 'invalid'};
     <Item>News</Item>
   </ComboBox>
 </div>
-`);
+`
+);
 
-test('Static - Converts menuWidth to px value', `
+test(
+  'Static - Converts menuWidth to px value',
+  `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 let menuWidth = 'size-10';
 let props = {menuWidth: 'size-10'};
@@ -132,9 +149,12 @@ let props = {menuWidth: 'size-10'};
     <Item>Cat</Item>
   </ComboBox>
 </div>
-`);
+`
+);
 
-test('Removes isQuiet', `
+test(
+  'Removes isQuiet',
+  `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
@@ -164,9 +184,12 @@ let props = {isQuiet: true};
     <Item>Cat</Item>
   </ComboBox>
 </div>
-`);
+`
+);
 
-test('changes validationState to isInvalid or nothing', `
+test(
+  'changes validationState to isInvalid or nothing',
+  `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
@@ -188,9 +211,12 @@ let props = {validationState: 'invalid'};
     <Item>Cat</Item>
   </ComboBox>
 </div>
-`);
+`
+);
 
-test('handles sections', `
+test(
+  'handles sections',
+  `
 import {ComboBox, Section, Item} from '@adobe/react-spectrum';
 <ComboBox>
   <Section title="Section title">
@@ -198,9 +224,12 @@ import {ComboBox, Section, Item} from '@adobe/react-spectrum';
     <Item>Item two</Item>
   </Section>
 </ComboBox>
-`);
+`
+);
 
-test('Keeps loadingState and onLoadMore', `
+test(
+  'Keeps loadingState and onLoadMore',
+  `
   import {ComboBox, Section, Item} from '@adobe/react-spectrum';
   <>
     <ComboBox loadingState="loading" onLoadMore={() => {}}>
@@ -212,4 +241,5 @@ test('Keeps loadingState and onLoadMore', `
       <Item>Cat</Item>
     </ComboBox>
   </>
-  `);
+  `
+);

@@ -17,11 +17,23 @@ import React from 'react';
 const meta: Meta = {
   title: 'MenuTriggerRTL',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['medium'], disableAnimations: true, express: false},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['ar-AE'],
+      scales: ['medium'],
+      disableAnimations: true,
+      express: false
+    },
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {pauseAnimationAtEnd: true, delay: 300}
   },
-  decorators: [Story => <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}><Story /></div>]
+  decorators: [
+    Story => (
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export default meta;

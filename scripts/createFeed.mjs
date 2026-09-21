@@ -12,7 +12,7 @@
 
 import {globSync} from 'glob';
 import fs from 'fs';
-import xml from "xml";
+import xml from 'xml';
 import process from 'process';
 import {parseArgs} from 'node:util';
 
@@ -26,7 +26,6 @@ let options = {
 };
 
 (async function createRssFeed() {
-
   let args = parseArgs({options, allowPositionals: true});
 
   if (args.positionals.length < 1) {
@@ -40,50 +39,60 @@ let options = {
     process.exit(1);
   }
 
-  let titleType = type === 'releases' ? 'Releases' : 'Blog'
+  let titleType = type === 'releases' ? 'Releases' : 'Blog';
   let posts = getFeed(type);
   const feedObject = {
     rss: [
-      {_attr: {
-          version: "2.0",
-          "xmlns:atom": "http://www.w3.org/2005/Atom",
-        },
+      {
+        _attr: {
+          version: '2.0',
+          'xmlns:atom': 'http://www.w3.org/2005/Atom'
+        }
       },
-      {channel: [
-          {"atom:link": {
+      {
+        channel: [
+          {
+            'atom:link': {
               _attr: {
                 href: `https://react-spectrum.adobe.com/${type}/${type}-feed.rss`,
-                rel: "self",
-                type: "application/rss+xml",
-              },
-            },
+                rel: 'self',
+                type: 'application/rss+xml'
+              }
+            }
           },
           {title: `Adobe React Spectrum ${titleType}`},
           {link: `https://react-spectrum.adobe.com/${type}`},
-          {description: "A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences."},
-          {language: "en-US"},
+          {
+            description:
+              'A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.'
+          },
+          {language: 'en-US'},
           ...buildFeed(type, posts)
-        ],
-      },
-    ],
+        ]
+      }
+    ]
   };
 
   const feed = xml(feedObject, {declaration: true});
-  await fs.writeFile(`scripts/${type}-feed.rss`, feed, (err) => console.log(err === null ? 'Success' : err));
+  await fs.writeFile(`scripts/${type}-feed.rss`, feed, err =>
+    console.log(err === null ? 'Success' : err)
+  );
 })();
 
 function getFeed(type) {
-  let files = globSync(`packages/dev/docs/pages/${type}/*.mdx`, {ignore: [`packages/dev/docs/pages/${type}/index.mdx`]});
+  let files = globSync(`packages/dev/docs/pages/${type}/*.mdx`, {
+    ignore: [`packages/dev/docs/pages/${type}/index.mdx`]
+  });
   let posts = [];
 
   for (let file of files) {
-    let contents = fs.readFileSync(file, 'utf8').split("\n");
+    let contents = fs.readFileSync(file, 'utf8').split('\n');
 
     let date = '';
     let description = '';
     let title = '';
     let index = 0;
-    while (date === '' || description === '' || title === '' && index < contents.length) {
+    while (date === '' || description === '' || (title === '' && index < contents.length)) {
       if (contents[index].startsWith('description')) {
         description = contents[index].replace('description:', '').trim();
       } else if (contents[index].startsWith('date:')) {
@@ -101,7 +110,7 @@ function getFeed(type) {
     posts.push(post);
   }
 
-  posts = posts.sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 5);
+  posts = posts.sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5);
   return posts;
 }
 
@@ -113,17 +122,19 @@ function buildFeed(type, posts) {
       const feedItem = {
         item: [
           {title: post.title},
-          {pubDate: new Date(post.date).toUTCString(),},
-          {guid: [
-              { _attr: { isPermaLink: true } },
-              `https://react-spectrum.adobe.com/${type}/${post.fileName}.html`,
-            ],
+          {pubDate: new Date(post.date).toUTCString()},
+          {
+            guid: [
+              {_attr: {isPermaLink: true}},
+              `https://react-spectrum.adobe.com/${type}/${post.fileName}.html`
+            ]
           },
-          {description: {
-              _cdata: post.description,
-            },
-          },
-        ],
+          {
+            description: {
+              _cdata: post.description
+            }
+          }
+        ]
       };
       return feedItem;
     })
@@ -131,4 +142,3 @@ function buildFeed(type, posts) {
 
   return feedItems;
 }
-

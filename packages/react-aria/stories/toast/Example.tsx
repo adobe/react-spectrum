@@ -18,7 +18,10 @@ import {useToastRegion} from '../../src/toast/useToastRegion';
 
 const ToastContext = createContext<ToastState<string> | null>(null);
 
-export function ToastContainer({children, ...otherProps}: ToastStateProps & {children: (state: ToastState<string>) => React.ReactNode}): JSX.Element {
+export function ToastContainer({
+  children,
+  ...otherProps
+}: ToastStateProps & {children: (state: ToastState<string>) => React.ReactNode}): JSX.Element {
   let state = useToastState<string>(otherProps);
   return (
     <ToastContext.Provider value={state}>
@@ -33,7 +36,17 @@ function ToastRegion() {
   let ref = useRef(null);
   let {regionProps} = useToastRegion({}, state, ref);
   return (
-    <div {...regionProps} ref={ref} style={{position: 'fixed', bottom: 0, right: 0, display: 'flex', flexDirection: 'column', gap: 10}}>
+    <div
+      {...regionProps}
+      ref={ref}
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        right: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10
+      }}>
       {state.visibleToasts.map(toast => (
         <Toast key={toast.key} toast={toast} />
       ))}
@@ -53,7 +66,9 @@ function Toast(props) {
       <div {...contentProps}>
         <div {...titleProps}>{props.toast.content}</div>
       </div>
-      <button {...buttonProps} ref={buttonRef}>x</button>
+      <button {...buttonProps} ref={buttonRef}>
+        x
+      </button>
     </div>
   );
 }

@@ -22,8 +22,8 @@ export default {
   warn,
   error
 } as {
-  info: typeof info,
-  success: typeof success,
-  warn: typeof warn,
-  error: typeof error
+  info: typeof info;
+  success: typeof success;
+  warn: typeof warn;
+  error: typeof error;
 };

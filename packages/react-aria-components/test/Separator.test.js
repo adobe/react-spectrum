@@ -35,7 +35,7 @@ describe('Separator', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} =  render(<Separator render={props => <hr {...props} data-custom="true" />} />);
+    let {getByRole} = render(<Separator render={props => <hr {...props} data-custom="true" />} />);
     let separator = getByRole('separator');
     expect(separator).toHaveAttribute('data-custom', 'true');
   });

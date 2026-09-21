@@ -19,37 +19,46 @@ import {useDOMRef} from '../utils/useDOMRef';
 import {useProviderProps} from '../provider/Provider';
 import {useStyleProps} from '../utils/styleProps';
 
-
 export interface SpectrumStatusLightProps extends DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display as the label. */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * The variant changes the color of the status light.
    * When status lights have a semantic meaning, they should use the variant for semantic colors.
    */
-  variant: 'positive' | 'negative' | 'notice' | 'info' | 'neutral' | 'celery' | 'chartreuse' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'indigo' | 'seafoam',
+  variant:
+    | 'positive'
+    | 'negative'
+    | 'notice'
+    | 'info'
+    | 'neutral'
+    | 'celery'
+    | 'chartreuse'
+    | 'yellow'
+    | 'magenta'
+    | 'fuchsia'
+    | 'purple'
+    | 'indigo'
+    | 'seafoam';
   /** Whether the status light is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /**
    * An accessibility role for the status light. Should be set when the status
    * can change at runtime, and no more than one status light will update simultaneously.
    * For cases where multiple statuses can change at the same time, use a Toast instead.
    */
-  role?: 'status'
+  role?: 'status';
 }
 
 /**
  * Status lights are used to color code categories and labels commonly found in data visualization.
  * When status lights have a semantic meaning, they should use semantic variant colors.
  */
-export const StatusLight = forwardRef(function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement>) {
-  let {
-    variant,
-    children,
-    isDisabled,
-    role,
-    ...otherProps
-  } = useProviderProps(props);
+export const StatusLight = forwardRef(function StatusLight(
+  props: SpectrumStatusLightProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {variant, children, isDisabled, role, ...otherProps} = useProviderProps(props);
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
@@ -57,7 +66,11 @@ export const StatusLight = forwardRef(function StatusLight(props: SpectrumStatus
     console.warn('If no children are provided, an aria-label must be specified');
   }
 
-  if (!role && (props['aria-label'] || props['aria-labelledby']) && process.env.NODE_ENV !== 'production') {
+  if (
+    !role &&
+    (props['aria-label'] || props['aria-labelledby']) &&
+    process.env.NODE_ENV !== 'production'
+  ) {
     console.warn('A labelled StatusLight must have a role.');
   }
 

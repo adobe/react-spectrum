@@ -1,13 +1,13 @@
 {
   "ascending": "crescătoare",
   "ascendingSort": "sortate după coloana {columnName} în ordine crescătoare",
+  "collapse": "Restrângeți",
   "columnSize": "{value} pixeli",
   "descending": "descrescătoare",
   "descendingSort": "sortate după coloana {columnName} în ordine descrescătoare",
+  "expand": "Extindeți",
   "resizerDescription": "Apăsați pe Enter pentru a începe redimensionarea",
   "select": "Selectare",
   "selectAll": "Selectare totală",
-  "sortable": "coloană sortabilă",
-  "collapse": "Restrângeți",
-  "expand": "Extindeți"
+  "sortable": "coloană sortabilă"
 }

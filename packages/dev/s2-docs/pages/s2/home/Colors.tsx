@@ -1,8 +1,8 @@
 'use client';
 
-import {Fragment, useState} from "react";
+import {Fragment, useState} from 'react';
 import {ListBox, ListBoxItem} from 'react-aria-components';
-import {style} from "@react-spectrum/s2/style" with {type: 'macro'};
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export function Colors({scales}: {scales: [string, string][][]}) {
   let [current, setCurrent] = useState<string>('red-400');
@@ -17,23 +17,26 @@ export function Colors({scales}: {scales: [string, string][][]}) {
             aria-label={name as string}
             onHoverStart={() => setCurrent(name)}
             onFocus={() => setCurrent(name)}
-            onAction={() => setCurrent(name)} />
+            onAction={() => setCurrent(name)}
+          />
         ))}
       </Fragment>
-    )
+    );
   });
 
   return (
     <>
       <pre className={style({font: 'code-sm', marginTop: 0})}>
-        {current && <code style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
-          <span className={styles.function}>style</span>
-          {'({'}
-          <span className={styles.property}>color</span>
-          {': '}
-          <span className={styles.string}>{`'${current}'`}</span>
-          {'})'}
-        </code>}
+        {current && (
+          <code style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
+            <span className={styles.function}>style</span>
+            {'({'}
+            <span className={styles.property}>color</span>
+            {': '}
+            <span className={styles.string}>{`'${current}'`}</span>
+            {'})'}
+          </code>
+        )}
         {!current && <br />}
       </pre>
       <ListBox

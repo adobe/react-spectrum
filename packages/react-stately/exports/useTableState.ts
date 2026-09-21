@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export type {TableColumnResizeState, TableColumnResizeStateProps} from '../src/table/useTableColumnResizeState';
+export type {
+  TableColumnResizeState,
+  TableColumnResizeStateProps
+} from '../src/table/useTableColumnResizeState';
 export type {TableProps, TableState, TableStateProps} from '../src/table/useTableState';
 
 export {useTableColumnResizeState} from '../src/table/useTableColumnResizeState';
@@ -19,7 +22,14 @@ export {useTableState, UNSTABLE_useFilteredTableState} from '../src/table/useTab
 export type {CellProps, CellElement, CellRenderer} from '../src/table/Cell';
 export {Cell} from '../src/table/Cell';
 
-export type {ColumnProps, ColumnSize, ColumnDynamicSize, ColumnStaticSize, ColumnElement, ColumnRenderer} from '../src/table/Column';
+export type {
+  ColumnProps,
+  ColumnSize,
+  ColumnDynamicSize,
+  ColumnStaticSize,
+  ColumnElement,
+  ColumnRenderer
+} from '../src/table/Column';
 export {Column} from '../src/table/Column';
 
 export type {RowProps, RowElement} from '../src/table/Row';

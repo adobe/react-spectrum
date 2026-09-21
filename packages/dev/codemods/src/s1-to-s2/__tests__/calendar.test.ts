@@ -6,10 +6,13 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Does nothing', `
+test(
+  'Does nothing',
+  `
 import {Calendar} from '@adobe/react-spectrum';
 
 <div>
   <Calendar aria-label="Event date" />
 </div>
-`);
+`
+);

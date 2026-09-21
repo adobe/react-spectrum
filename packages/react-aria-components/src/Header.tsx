@@ -15,15 +15,19 @@ import {createLeafComponent} from 'react-aria/CollectionBuilder';
 import {HeaderNode} from 'react-aria/private/collections/BaseCollection';
 import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 
-export interface HeaderProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'header', undefined> {}
+export interface HeaderProps
+  extends HTMLAttributes<HTMLElement>, DOMRenderProps<'header', undefined> {}
 
 export const HeaderContext = createContext<ContextValue<HeaderProps, HTMLElement>>({});
 
-export const Header = /*#__PURE__*/ createLeafComponent(HeaderNode, function Header(props: HeaderProps, ref: ForwardedRef<HTMLElement>) {
-  [props, ref] = useContextProps(props, ref, HeaderContext);
-  return (
-    <dom.header className="react-aria-Header" {...props} ref={ref}>
-      {props.children}
-    </dom.header>
-  );
-});
+export const Header = /*#__PURE__*/ createLeafComponent(
+  HeaderNode,
+  function Header(props: HeaderProps, ref: ForwardedRef<HTMLElement>) {
+    [props, ref] = useContextProps(props, ref, HeaderContext);
+    return (
+      <dom.header className="react-aria-Header" {...props} ref={ref}>
+        {props.children}
+      </dom.header>
+    );
+  }
+);

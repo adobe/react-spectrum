@@ -14,7 +14,15 @@ export {Pressable} from 'react-aria/Pressable';
 
 export {PressResponder, ClearPressResponder} from 'react-aria/private/interactions/PressResponder';
 export {useFocus} from 'react-aria/useFocus';
-export {isFocusVisible, getInteractionModality, setInteractionModality, getPointerType, addWindowFocusTracking, useInteractionModality, useFocusVisibleListener} from 'react-aria/private/interactions/useFocusVisible';
+export {
+  isFocusVisible,
+  getInteractionModality,
+  setInteractionModality,
+  getPointerType,
+  addWindowFocusTracking,
+  useInteractionModality,
+  useFocusVisibleListener
+} from 'react-aria/private/interactions/useFocusVisible';
 export {useFocusVisible} from 'react-aria/useFocusVisible';
 export {useFocusWithin} from 'react-aria/useFocusWithin';
 export {useHover} from 'react-aria/useHover';
@@ -41,4 +49,17 @@ export type {LongPressProps, LongPressResult} from 'react-aria/useLongPress';
 export type {ScrollWheelProps} from 'react-aria/private/interactions/useScrollWheel';
 export type {FocusableProviderProps} from 'react-aria/private/interactions/useFocusable';
 export type {FocusableAria, FocusableOptions} from 'react-aria/useFocusable';
-export type {PressEvent, PressEvents, LongPressEvent, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
+export type {
+  PressEvent,
+  PressEvents,
+  LongPressEvent,
+  MoveStartEvent,
+  MoveMoveEvent,
+  MoveEndEvent,
+  MoveEvent,
+  MoveEvents,
+  HoverEvent,
+  HoverEvents,
+  FocusEvents,
+  KeyboardEvents
+} from '@react-types/shared';

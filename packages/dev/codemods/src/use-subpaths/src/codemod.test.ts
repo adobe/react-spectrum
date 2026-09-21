@@ -146,3 +146,93 @@ import {RangeCalendar, CalendarCell, Heading} from 'react-aria-components';
 import { RangeCalendar, CalendarCell, Heading } from 'react-aria-components/RangeCalendar';
 `
 );
+
+test(
+  'rewrites declare module for RouterConfig on @react-spectrum/s2 to Provider subpath',
+  `
+declare module '@react-spectrum/s2' {
+  interface RouterConfig {
+    routerOptions: { x: string };
+  }
+}
+`,
+  `
+declare module '@react-spectrum/s2/Provider' {
+  interface RouterConfig {
+    routerOptions: { x: string };
+  }
+}
+`
+);
+
+test(
+  'rewrites declare module for RouterConfig on @adobe/react-spectrum to Provider subpath',
+  `
+declare module '@adobe/react-spectrum' {
+  interface RouterConfig {
+    routerOptions: { x: string };
+  }
+}
+`,
+  `
+declare module '@adobe/react-spectrum/Provider' {
+  interface RouterConfig {
+    routerOptions: { x: string };
+  }
+}
+`
+);
+
+test(
+  'leaves declare module on an existing Provider subpath unchanged',
+  `
+declare module '@react-spectrum/s2/Provider' {
+  interface RouterConfig {
+    routerOptions: { x: string };
+  }
+}
+`,
+  `
+declare module '@react-spectrum/s2/Provider' {
+  interface RouterConfig {
+    routerOptions: { x: string };
+  }
+}
+`
+);
+
+test(
+  'does not rewrite react-aria-components declare module when there is no Provider subpath',
+  `
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: { x: string };
+  }
+}
+`,
+  `
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: { x: string };
+  }
+}
+`
+);
+
+test(
+  'does not rewrite declare module on root package when not augmenting RouterConfig',
+  `
+declare module '@react-spectrum/s2' {
+  interface SomethingElse {
+    x: string;
+  }
+}
+`,
+  `
+declare module '@react-spectrum/s2' {
+  interface SomethingElse {
+    x: string;
+  }
+}
+`
+);

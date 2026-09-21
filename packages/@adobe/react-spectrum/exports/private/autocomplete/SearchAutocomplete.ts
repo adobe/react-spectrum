@@ -1,1 +1,4 @@
-export {SearchAutocomplete, type SpectrumSearchAutocompleteProps} from '../../../src/autocomplete/SearchAutocomplete';
+export {
+  SearchAutocomplete,
+  type SpectrumSearchAutocompleteProps
+} from '../../../src/autocomplete/SearchAutocomplete';

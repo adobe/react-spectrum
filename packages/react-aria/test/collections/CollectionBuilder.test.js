@@ -1,4 +1,9 @@
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '../../src/collections/CollectionBuilder';
+import {
+  Collection,
+  CollectionBuilder,
+  createBranchComponent,
+  createLeafComponent
+} from '../../src/collections/CollectionBuilder';
 import {CollectionNode} from '../../src/collections/BaseCollection';
 import React from 'react';
 import {render} from '@testing-library/react';
@@ -15,12 +20,35 @@ const ItemsOld = createLeafComponent('item', () => {
   return <div />;
 });
 
-const SectionOld = createBranchComponent('section', () =>  {
+const SectionOld = createBranchComponent('section', () => {
   return <div />;
 });
 
 const renderItems = (items, spyCollection) => (
-  <CollectionBuilder content={<Collection>{items.map((item) => <Item key={item} />)}</Collection>}>
+  <CollectionBuilder
+    content={
+      <Collection>
+        {items.map(item => (
+          <Item key={item} />
+        ))}
+      </Collection>
+    }>
+    {collection => {
+      spyCollection.current = collection;
+      return null;
+    }}
+  </CollectionBuilder>
+);
+
+const renderItemsWithIds = (items, spyCollection) => (
+  <CollectionBuilder
+    content={
+      <Collection>
+        {items.map(item => (
+          <Item key={item.key} id={item.id} />
+        ))}
+      </Collection>
+    }>
     {collection => {
       spyCollection.current = collection;
       return null;
@@ -33,7 +61,7 @@ const renderItemsOld = (items, spyCollection) => (
     content={
       <Collection>
         <SectionOld>
-          {items.map((item) => (
+          {items.map(item => (
             <ItemsOld key={item} />
           ))}
         </SectionOld>
@@ -60,6 +88,56 @@ describe('CollectionBuilder', () => {
     expect(spyCollection.current.frozen).toBe(true);
     expect(spyCollection.current.firstKey).toBe(null);
     expect(spyCollection.current.lastKey).toBe(null);
+  });
+
+  it('should throw when two items share a key', () => {
+    let spyCollection = {};
+    let adjacent = [
+      {key: 1, id: 'a'},
+      {key: 2, id: 'a'},
+      {key: 3, id: 'b'}
+    ];
+    expect(() => render(renderItemsWithIds(adjacent, spyCollection))).toThrow(
+      'Duplicate key "a" found in collection. Every item in a collection must have a unique key.'
+    );
+
+    let separated = [
+      {key: 1, id: 'a'},
+      {key: 2, id: 'x'},
+      {key: 3, id: 'a'}
+    ];
+    expect(() => render(renderItemsWithIds(separated, spyCollection))).toThrow(
+      'Duplicate key "a" found in collection.'
+    );
+  });
+
+  it('should allow a new item to reuse the key of an item removed in the same render', () => {
+    let spyCollection = {};
+    const {rerender} = render(
+      renderItemsWithIds(
+        [
+          {key: 1, id: 'a'},
+          {key: 2, id: 'b'}
+        ],
+        spyCollection
+      )
+    );
+    expect([...spyCollection.current.getKeys()]).toEqual(['a', 'b']);
+
+    rerender(
+      renderItemsWithIds(
+        [
+          {key: 1, id: 'a'},
+          {key: 3, id: 'c'},
+          {key: 4, id: 'b'}
+        ],
+        spyCollection
+      )
+    );
+    expect([...spyCollection.current.getKeys()]).toEqual(['a', 'c', 'b']);
+
+    rerender(renderItemsWithIds([{key: 5, id: 'a'}], spyCollection));
+    expect([...spyCollection.current.getKeys()]).toEqual(['a']);
   });
 
   it('should still support using strings for the collection node class in createLeafComponent/createBranchComponent', () => {

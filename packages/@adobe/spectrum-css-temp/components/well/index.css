@@ -24,7 +24,7 @@ governing permissions and limitations under the License.
   display: block;
   min-inline-size: var(--spectrum-well-min-width);
   padding: var(--spectrum-well-padding);
-  margin-top: var( --spectrum-well-margin-top);
+  margin-top: var(--spectrum-well-margin-top);
   border-width: var(--spectrum-well-border-width);
   border-style: solid;
   border-radius: var(--spectrum-border-radius);

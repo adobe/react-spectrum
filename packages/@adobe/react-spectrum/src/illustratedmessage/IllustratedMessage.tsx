@@ -22,19 +22,19 @@ import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumIllustratedMessageProps extends DOMProps, StyleProps {
   /** The contents of the IllustratedMessage. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
  * An IllustratedMessage displays an illustration and a message, usually
  * for an empty state or an error page.
  */
-export const IllustratedMessage = forwardRef(function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+export const IllustratedMessage = forwardRef(function IllustratedMessage(
+  props: SpectrumIllustratedMessageProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   props = useSlotProps(props, 'illustration');
-  let {
-    children,
-    ...otherProps
-  } = props;
+  let {children, ...otherProps} = props;
 
   let {styleProps} = useStyleProps(otherProps);
   let headingClassName = classNames(styles, 'spectrum-IllustratedMessage-heading');
@@ -50,16 +50,10 @@ export const IllustratedMessage = forwardRef(function IllustratedMessage(props: 
       {...filterDOMProps(otherProps)}
       UNSAFE_style={styleProps.style}
       isHidden={styleProps.hidden}
-      UNSAFE_className={classNames(
-        styles,
-        'spectrum-IllustratedMessage',
-        styleProps.className
-      )}
+      UNSAFE_className={classNames(styles, 'spectrum-IllustratedMessage', styleProps.className)}
       ref={ref}>
       <ClearSlots>
-        <SlotProvider slots={slots}>
-          {children}
-        </SlotProvider>
+        <SlotProvider slots={slots}>{children}</SlotProvider>
       </ClearSlots>
     </Flex>
   );

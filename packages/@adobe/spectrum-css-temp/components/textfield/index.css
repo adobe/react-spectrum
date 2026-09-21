@@ -58,7 +58,8 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-textfield-border-radius);
 
   /* Apply padding by default to center text, giving consistency between input and textfield */
-  padding: var(--spectrum-textfield-padding-top) var(--spectrum-textfield-padding-x) var(--spectrum-textfield-padding-bottom) calc(var(--spectrum-textfield-padding-x) - 1px);
+  padding: var(--spectrum-textfield-padding-top) var(--spectrum-textfield-padding-x)
+    var(--spectrum-textfield-padding-bottom) calc(var(--spectrum-textfield-padding-x) - 1px);
   /* Use padding instead of text-indent because text-indent does not left align the text in Edge browser  */
   text-indent: 0;
 
@@ -79,8 +80,9 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-textfield-height);
   text-overflow: ellipsis;
 
-  transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out,
-              box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition:
+    border-color var(--spectrum-global-animation-duration-100) ease-in-out,
+    box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
   outline: none;
 
@@ -117,13 +119,18 @@ governing permissions and limitations under the License.
   /* placeholder gets clipped for synthetic italics, we rely on font-synthesis once
    * chrome supports it https://bugs.chromium.org/p/chromium/issues/detail?id=509989
    */
-  &:lang(ja), &:lang(zh), &:lang(ko), &:lang(ar), &:lang(he) {
+  &:lang(ja),
+  &:lang(zh),
+  &:lang(ko),
+  &:lang(ar),
+  &:lang(he) {
     &::placeholder,
     &.is-placeholder {
-       font-style: normal;
+      font-style: normal;
     }
-    &::-ms-input-placeholder { /* added to work with Edge, same as above */
-       font-style: normal;
+    &::-ms-input-placeholder {
+      /* added to work with Edge, same as above */
+      font-style: normal;
     }
   }
 
@@ -168,7 +175,10 @@ governing permissions and limitations under the License.
   .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
-    padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) calc(var(--spectrum-textfield-multiline-padding-x) - 1px);
+    padding: var(--spectrum-textfield-multiline-padding-top)
+      var(--spectrum-textfield-multiline-padding-x)
+      var(--spectrum-textfield-multiline-padding-bottom)
+      calc(var(--spectrum-textfield-multiline-padding-x) - 1px);
     resize: none;
 
     /* Remove the default vertical scrollbar for textarea in IE. */
@@ -185,19 +195,28 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield--valid & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
+    padding-inline-end: calc(
+      var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) +
+        var(--spectrum-textfield-icon-margin-left)
+    );
   }
 
   .spectrum-Textfield--invalid & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+    padding-inline-end: calc(
+      var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) +
+        var(--spectrum-textfield-icon-margin-left)
+    );
   }
 
   .spectrum-Textfield--loadable & {
-    padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+    padding-inline-end: calc(
+      var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) +
+        var(--spectrum-textfield-icon-margin-left)
+    );
   }
 }
 
-.spectrum-Textfield-wrapper.spectrum-Textfield-wrapper--quiet{
+.spectrum-Textfield-wrapper.spectrum-Textfield-wrapper--quiet {
   grid-template-rows: auto;
 }
 
@@ -229,7 +248,9 @@ governing permissions and limitations under the License.
   */
   box-sizing: content-box;
   position: absolute;
-  padding-inline-end: calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2);
+  padding-inline-end: calc(
+    var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2
+  );
   pointer-events: all;
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
 
@@ -241,13 +262,22 @@ governing permissions and limitations under the License.
 .spectrum-Textfield--invalid .spectrum-Textfield-validationIcon {
   width: var(--spectrum-icon-alert-medium-width);
   height: var(--spectrum-icon-alert-medium-height);
-  top: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-height) / 2));
-  inset-inline-end: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-width) / 2));
+  top: calc(
+    calc(var(--spectrum-textfield-icon-frame) / 2) -
+      calc(var(--spectrum-icon-alert-medium-height) / 2)
+  );
+  inset-inline-end: calc(
+    calc(var(--spectrum-textfield-icon-frame) / 2) -
+      calc(var(--spectrum-icon-alert-medium-width) / 2)
+  );
 }
 .spectrum-Textfield--valid .spectrum-Textfield-validationIcon {
   width: var(--spectrum-icon-checkmark-medium-width);
   height: var(--spectrum-icon-checkmark-medium-height);
-  top: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-checkmark-medium-height) / 2));
+  top: calc(
+    calc(var(--spectrum-textfield-icon-frame) / 2) -
+      calc(var(--spectrum-icon-checkmark-medium-height) / 2)
+  );
   inset-inline-end: var(--spectrum-global-dimension-size-150);
 }
 
@@ -268,13 +298,14 @@ governing permissions and limitations under the License.
   /* Use padding instead of text-indent so long strings don't overlap the icon */
   /* These values have real names in a spectrum-css update, when we update, use those. */
   padding-inline-start: calc(
-    var(--spectrum-global-dimension-size-150) +
-    var(--spectrum-global-dimension-size-225) +
-    var(--spectrum-global-dimension-size-65)
+    var(--spectrum-global-dimension-size-150) + var(--spectrum-global-dimension-size-225) +
+      var(--spectrum-global-dimension-size-65)
   );
 
   .spectrum-Textfield--quiet & {
-    padding-inline-start: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-info-medium-width));
+    padding-inline-start: calc(
+      var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-info-medium-width)
+    );
 
     /* Since quiet button has no left padding, push the icon all the way to the left */
     & ~ .spectrum-Textfield-icon {
@@ -288,13 +319,21 @@ governing permissions and limitations under the License.
   }
 }
 
-
 /* same positioning as invalid icon */
 .spectrum-Textfield--loadable .spectrum-Textfield-circleLoader {
   position: absolute;
-  top: calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-loader-circle-small-width) / 2));
+  top: calc(
+    calc(var(--spectrum-textfield-icon-frame) / 2) -
+      calc(var(--spectrum-loader-circle-small-width) / 2)
+  );
   /* can't use padding right since it breaks the circle loader so add here */
-  inset-inline-end: calc(calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-width) / 2)) + calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2));
+  inset-inline-end: calc(
+    calc(
+        calc(var(--spectrum-textfield-icon-frame) / 2) -
+          calc(var(--spectrum-icon-alert-medium-width) / 2)
+      ) +
+      calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2)
+  );
 
   .spectrum-Textfield--quiet& {
     padding-inline-end: 0;

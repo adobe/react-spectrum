@@ -70,7 +70,8 @@ IsDisabled.story = {
   name: 'isDisabled'
 };
 
-export const IsDisabledOnOneCheckbox: CheckboxGroupStory = () => render({}, [{}, {isDisabled: true}, {}]);
+export const IsDisabledOnOneCheckbox: CheckboxGroupStory = () =>
+  render({}, [{}, {isDisabled: true}, {}]);
 
 IsDisabledOnOneCheckbox.story = {
   name: 'isDisabled on one checkbox'
@@ -146,7 +147,8 @@ ValidationStateInvalidOnOneCheckbox.story = {
   name: 'validationState: "invalid" on one checkbox'
 };
 
-export const WithDescription: CheckboxGroupStory = () => render({description: 'Please select some pets.'});
+export const WithDescription: CheckboxGroupStory = () =>
+  render({description: 'Please select some pets.'});
 
 WithDescription.story = {
   name: 'with description'
@@ -173,7 +175,7 @@ WithErrorMessageAndErrorIcon.story = {
   name: 'with error message and error icon'
 };
 
-export const _ContextualHelp: CheckboxGroupStory = (args) =>
+export const _ContextualHelp: CheckboxGroupStory = args =>
   render({
     ...args,
     contextualHelp: (
@@ -197,7 +199,8 @@ NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const AutoFocusOnOneCheckbox: CheckboxGroupStory = () => render({}, [{}, {autoFocus: true}, {}]);
+export const AutoFocusOnOneCheckbox: CheckboxGroupStory = () =>
+  render({}, [{}, {autoFocus: true}, {}]);
 
 AutoFocusOnOneCheckbox.story = {
   name: 'autoFocus on one checkbox'
@@ -216,12 +219,21 @@ ShowErrorIcon.story = {
   name: 'show error icon'
 };
 
-function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkboxProps: any[] = []) {
+function render(
+  props: Omit<SpectrumCheckboxGroupProps, 'children'> = {},
+  checkboxProps: any[] = []
+) {
   return (
     <CheckboxGroup label="Pets" {...props}>
-      <Checkbox value="dogs" {...checkboxProps[0]}>Dogs</Checkbox>
-      <Checkbox value="cats" {...checkboxProps[1]}>Cats</Checkbox>
-      <Checkbox value="dragons" {...checkboxProps[2]}>Dragons</Checkbox>
+      <Checkbox value="dogs" {...checkboxProps[0]}>
+        Dogs
+      </Checkbox>
+      <Checkbox value="cats" {...checkboxProps[1]}>
+        Cats
+      </Checkbox>
+      <Checkbox value="dragons" {...checkboxProps[2]}>
+        Dragons
+      </Checkbox>
     </CheckboxGroup>
   );
 }

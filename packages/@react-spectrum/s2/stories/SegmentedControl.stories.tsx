@@ -22,7 +22,6 @@ import {SegmentedControl, SegmentedControlItem} from '../src/SegmentedControl';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
-
 const meta: Meta<typeof SegmentedControl> = {
   component: SegmentedControl,
   parameters: {
@@ -46,7 +45,7 @@ const justifiedStyle = style({
 });
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
       <SegmentedControlItem id="day">Day</SegmentedControlItem>
       <SegmentedControlItem id="week">Week</SegmentedControlItem>
@@ -60,11 +59,20 @@ export const Example: Story = {
 };
 
 export const WithIcons: Story = {
-  render: (args) => (
+  render: args => (
     <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
-      <SegmentedControlItem id="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
-      <SegmentedControlItem id="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
-      <SegmentedControlItem id="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
+      <SegmentedControlItem id="unordered">
+        <ListBulleted />
+        <Text>Unordered</Text>
+      </SegmentedControlItem>
+      <SegmentedControlItem id="ordered">
+        <ListNumbered />
+        <Text>Ordered</Text>
+      </SegmentedControlItem>
+      <SegmentedControlItem id="task list">
+        <ListMultiSelect />
+        <Text>Task List</Text>
+      </SegmentedControlItem>
     </SegmentedControl>
   ),
   args: {
@@ -73,11 +81,17 @@ export const WithIcons: Story = {
 };
 
 export const OnlyIcons: Story = {
-  render: (args) => (
+  render: args => (
     <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
-      <SegmentedControlItem aria-label="Align bottom" id="align bottom"><AlignBottom /></SegmentedControlItem>
-      <SegmentedControlItem aria-label="Align center" id="align center"><AlignCenter /></SegmentedControlItem>
-      <SegmentedControlItem aria-label="Align left" id="align left"><AlignLeft /></SegmentedControlItem>
+      <SegmentedControlItem aria-label="Align bottom" id="align bottom">
+        <AlignBottom />
+      </SegmentedControlItem>
+      <SegmentedControlItem aria-label="Align center" id="align center">
+        <AlignCenter />
+      </SegmentedControlItem>
+      <SegmentedControlItem aria-label="Align left" id="align left">
+        <AlignLeft />
+      </SegmentedControlItem>
     </SegmentedControl>
   ),
   args: {

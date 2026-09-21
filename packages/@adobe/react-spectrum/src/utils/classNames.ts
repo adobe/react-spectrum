@@ -19,13 +19,16 @@ export function keepSpectrumClassNames(): void {
   if (process.env.NODE_ENV !== 'production') {
     console.warn(
       'Legacy spectrum-prefixed class names enabled for backward compatibility. ' +
-      'We recommend replacing instances of CSS overrides targeting spectrum selectors ' +
-      'in your app with custom class names of your own, and disabling this flag.'
+        'We recommend replacing instances of CSS overrides targeting spectrum selectors ' +
+        'in your app with custom class names of your own, and disabling this flag.'
     );
   }
 }
 
-export function classNames(cssModule: {[key: string]: string}, ...values: Array<string | Object | undefined>): string {
+export function classNames(
+  cssModule: {[key: string]: string},
+  ...values: Array<string | Object | undefined>
+): string {
   let classes: Array<{} | undefined> = [];
   for (let value of values) {
     if (typeof value === 'object' && value) {

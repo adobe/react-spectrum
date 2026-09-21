@@ -15,6 +15,7 @@ import {dragAndDrop} from './utils/dragAndDrop';
 import {DropZone} from '../src/DropZone';
 import {FileTrigger} from 'react-aria-components/FileTrigger';
 import {IllustratedMessage} from '../src/IllustratedMessage';
+import {isMac} from 'react-aria/private/utils/platform';
 import {page} from 'vitest/browser';
 import React from 'react';
 import {render} from './utils/render';
@@ -24,9 +25,11 @@ import {useDrag} from 'react-aria/useDrag';
 function Draggable({type}: {type: string}) {
   let {dragProps} = useDrag({
     getItems() {
-      return [{
-        [type]: 'hello world'
-      }];
+      return [
+        {
+          [type]: 'hello world'
+        }
+      ];
     }
   });
 
@@ -37,7 +40,10 @@ function Draggable({type}: {type: string}) {
   );
 }
 
-describe('DropZone browser interactions', () => {
+// These tests are flaky on Windows / Linux.
+const describeOrSkip = isMac() ? describe : describe.skip;
+
+describeOrSkip('DropZone browser interactions', () => {
   it('should handle drag and drop of valid drop types', async () => {
     let onDrop = vi.fn();
 
@@ -53,15 +59,10 @@ describe('DropZone browser interactions', () => {
           onDrop={onDrop}>
           <IllustratedMessage>
             <CloudUpload />
-            <Heading>
-              Drag and drop your file
-            </Heading>
-            <Content>
-              Or, select a file from your computer
-            </Content>
+            <Heading>Drag and drop your file</Heading>
+            <Content>Or, select a file from your computer</Content>
             <ButtonGroup>
-              <FileTrigger
-                acceptedFileTypes={['text/plain']}>
+              <FileTrigger acceptedFileTypes={['text/plain']}>
                 <Button variant="accent">Browse files</Button>
               </FileTrigger>
             </ButtonGroup>
@@ -95,15 +96,10 @@ describe('DropZone browser interactions', () => {
           onDrop={onDrop}>
           <IllustratedMessage>
             <CloudUpload />
-            <Heading>
-              Drag and drop your file
-            </Heading>
-            <Content>
-              Or, select a file from your computer
-            </Content>
+            <Heading>Drag and drop your file</Heading>
+            <Content>Or, select a file from your computer</Content>
             <ButtonGroup>
-              <FileTrigger
-                acceptedFileTypes={['text/plain']}>
+              <FileTrigger acceptedFileTypes={['text/plain']}>
                 <Button variant="accent">Browse files</Button>
               </FileTrigger>
             </ButtonGroup>

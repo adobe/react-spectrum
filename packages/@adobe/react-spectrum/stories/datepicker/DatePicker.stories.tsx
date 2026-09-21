@@ -12,7 +12,18 @@
 
 import {action} from 'storybook/actions';
 import {ActionButton} from '../../src/button/ActionButton';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, today, toZoned} from '@internationalized/date';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  getLocalTimeZone,
+  parseAbsolute,
+  parseAbsoluteToLocal,
+  parseDate,
+  parseDateTime,
+  parseZonedDateTime,
+  today,
+  toZoned
+} from '@internationalized/date';
 import {chain} from 'react-aria/chain';
 import {Content} from '../../src/view/Content';
 import {ContextualHelp} from '../../src/contextualhelp/ContextualHelp';
@@ -194,7 +205,7 @@ export default {
 } as Meta<typeof DatePicker>;
 
 export const Default: DatePickerStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const DefaultValue: DatePickerStory = {
@@ -204,7 +215,7 @@ export const DefaultValue: DatePickerStory = {
 
 export const ControlledValue: DatePickerStory = {
   args: {value: new CalendarDate(2020, 2, 3)},
-  render: (args) => <ControlledExample {...args} />
+  render: args => <ControlledExample {...args} />
 };
 
 export const DefaultValueZoned: DatePickerStory = {
@@ -232,7 +243,6 @@ export const DateTimeValueAbsoluteZoned: DatePickerStory = {
   ...Default,
   args: {defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')}
 };
-
 
 export const MinMaxValue: DatePickerStory = {
   ...Default,
@@ -262,8 +272,13 @@ export const DateUnavailable: DatePickerStory = {
   ...Default,
   args: {
     isDateUnavailable: (date: DateValue) => {
-      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+      const disabledIntervals = [
+        [today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})],
+        [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]
+      ];
+      return disabledIntervals.some(
+        interval => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0
+      );
     }
   },
   name: 'isDateUnavailable'
@@ -271,7 +286,14 @@ export const DateUnavailable: DatePickerStory = {
 
 export const AllEvents: DatePickerStory = {
   ...Default,
-  args: {onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'),  onOpenChange: action('onOpenChange')},
+  args: {
+    onBlur: action('onBlur'),
+    onFocus: action('onFocus'),
+    onFocusChange: action('onFocusChange'),
+    onKeyDown: action('onKeyDown'),
+    onKeyUp: action('onKeyUp'),
+    onOpenChange: action('onOpenChange')
+  },
   name: 'all the events'
 };
 
@@ -281,7 +303,10 @@ export const ContextualHelpStory: DatePickerStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },
@@ -290,29 +315,59 @@ export const ContextualHelpStory: DatePickerStory = {
 
 export const CustomCalendar: DatePickerStory = {
   args: {value: new CalendarDate(2024, 2, 13), createCalendar: () => new Custom454Calendar()},
-  render: (args) => <CustomExample {...args} />
+  render: args => <CustomExample {...args} />
 };
 
 function render(props = {}) {
-  return (
-    <Example
-      label="Date"
-      maxWidth="calc(100vw - 40px)"
-      {...props} />
-  );
+  return <Example label="Date" maxWidth="calc(100vw - 40px)" {...props} />;
 }
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
   {locale: '', label: 'Default', ordering: 'gregory'},
-  {label: 'Arabic (Algeria)', locale: 'ar-DZ', territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE', ordering: 'gregory islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (United Arab Emirates)', locale: 'ar-AE', territories: 'AE BH KW QA', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Egypt)', locale: 'AR-EG', territories: 'EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Saudi Arabia)', locale: 'ar-SA', territories: 'SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
-  {label: 'Farsi (Afghanistan)', locale: 'fa-AF', territories: 'AF IR', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
+  {
+    label: 'Arabic (Algeria)',
+    locale: 'ar-DZ',
+    territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE',
+    ordering: 'gregory islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (United Arab Emirates)',
+    locale: 'ar-AE',
+    territories: 'AE BH KW QA',
+    ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (Egypt)',
+    locale: 'AR-EG',
+    territories: 'EG',
+    ordering: 'gregory coptic islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (Saudi Arabia)',
+    locale: 'ar-SA',
+    territories: 'SA',
+    ordering: 'islamic-umalqura gregory islamic islamic-rgsa'
+  },
+  {
+    label: 'Farsi (Afghanistan)',
+    locale: 'fa-AF',
+    territories: 'AF IR',
+    ordering: 'persian gregory islamic islamic-civil islamic-tbla'
+  },
   // {territories: 'CN CX HK MO SG', ordering: 'gregory chinese'},
-  {label: 'Amharic (Ethiopia)', locale: 'am-ET', territories: 'ET', ordering: 'gregory ethiopic ethioaa'},
-  {label: 'Hebrew (Israel)', locale: 'he-IL', territories: 'IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
+  {
+    label: 'Amharic (Ethiopia)',
+    locale: 'am-ET',
+    territories: 'ET',
+    ordering: 'gregory ethiopic ethioaa'
+  },
+  {
+    label: 'Hebrew (Israel)',
+    locale: 'he-IL',
+    territories: 'IL',
+    ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'
+  },
   {label: 'Hindi (India)', locale: 'hi-IN', territories: 'IN', ordering: 'gregory indian'},
   // {label: 'Marathi (India)', locale: 'mr-IN', territories: 'IN', ordering: 'gregory indian'},
   {label: 'Bengali (India)', locale: 'bn-IN', territories: 'IN', ordering: 'gregory indian'},
@@ -344,8 +399,20 @@ function Example(props) {
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);
-  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(v => v != null) : [calendars[0]], [pref]);
-  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
+  let preferredCalendars = React.useMemo(
+    () =>
+      pref
+        ? pref.ordering
+            .split(' ')
+            .map(p => calendars.find(c => c.key === p))
+            .filter(v => v != null)
+        : [calendars[0]],
+    [pref]
+  );
+  let otherCalendars = React.useMemo(
+    () => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)),
+    [preferredCalendars]
+  );
 
   let updateLocale = locale => {
     setLocale(locale);
@@ -356,7 +423,11 @@ function Example(props) {
   return (
     <Flex direction="column" gap="size-600" alignItems="center">
       <Flex direction="row" gap="size-150" wrap justifyContent="center">
-        <Picker label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
+        <Picker
+          label="Locale"
+          items={preferences}
+          selectedKey={locale}
+          onSelectionChange={updateLocale}>
           {item => <Item key={item.locale}>{item.label}</Item>}
         </Picker>
         <Picker label="Calendar" selectedKey={calendar} onSelectionChange={setCalendar}>
@@ -368,7 +439,11 @@ function Example(props) {
           </Section>
         </Picker>
       </Flex>
-      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
+      <Provider
+        locale={
+          (locale || defaultLocale) +
+          (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')
+        }>
         <DatePicker {...props} />
       </Provider>
     </Flex>
@@ -380,8 +455,15 @@ function ControlledExample(props) {
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">
-      <Example label="Controlled" {...props} value={value} onChange={chain(setValue, props?.onChange)} />
-      <ActionButton onPress={() => setValue(new CalendarDate(2020, 2, 3))}>Change value</ActionButton>
+      <Example
+        label="Controlled"
+        {...props}
+        value={value}
+        onChange={chain(setValue, props?.onChange)}
+      />
+      <ActionButton onPress={() => setValue(new CalendarDate(2020, 2, 3))}>
+        Change value
+      </ActionButton>
       <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
     </Flex>
   );
@@ -392,7 +474,12 @@ function CustomExample(props) {
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">
-      <DatePicker label="Custom 4-5-4 calendar" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
+      <DatePicker
+        label="Custom 4-5-4 calendar"
+        {...props}
+        value={value}
+        onChange={chain(setValue, action('onChange'))}
+      />
     </Flex>
   );
 }

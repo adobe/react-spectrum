@@ -14,19 +14,20 @@ import Add from '../Add';
 import Alert from '@spectrum-icons/express/Alert';
 import React from 'react';
 import {Flex} from '@react-spectrum/layout';
-import { Meta, StoryFn } from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 
 export default {
   title: 'Icons/Express',
   parameters: {
-    chromaticProvider: {express: true},
+    chromaticProvider: {express: true}
   }
 } as Meta<typeof Add>;
 
-export const IconAddWithSizes: StoryFn<typeof Add> = () => renderIconSizes(Add, { 'aria-label': 'Add' });
+export const IconAddWithSizes: StoryFn<typeof Add> = () =>
+  renderIconSizes(Add, {'aria-label': 'Add'});
 
 IconAddWithSizes.story = {
-  name: 'icon: Add with sizes',
+  name: 'icon: Add with sizes'
 };
 
 export const Colors: StoryFn<typeof Alert> = () => (
@@ -43,7 +44,7 @@ function renderIconSizes(Component, props) {
   let sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
   return (
     <div>
-      {sizes.map((size) => {
+      {sizes.map(size => {
         return <Component margin="15px" size={size} {...props} />;
       })}
     </div>

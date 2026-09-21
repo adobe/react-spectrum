@@ -210,12 +210,12 @@ describe('Form', function () {
               name="picker"
               defaultSelectedKey="one"
               label="Test Picker"
-              contextualHelp={(
+              contextualHelp={
                 <ContextualHelp>
                   <Heading>What is it good for?</Heading>
                   <Content>Absolutely nothing.</Content>
                 </ContextualHelp>
-              )}>
+              }>
               <Item key="one">One</Item>
               <Item key="two">Two</Item>
               <Item key="three">Three</Item>
@@ -234,8 +234,12 @@ describe('Form', function () {
       expect(document.activeElement).toBe(dismissButton);
 
       await user.click(dismissButton);
-      act(() => {jest.runAllTimers();});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(document.activeElement).toBe(button);
     });

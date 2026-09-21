@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-
-import "@react-spectrum/s2/page.css";
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
-import { Button, Provider } from "@react-spectrum/s2";
+import '@react-spectrum/s2/page.css';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button, Provider} from '@react-spectrum/s2';
 
 function App() {
   return (
     <Provider elementType="main">
       <Button
         styles={style({
-          marginStart: 16,
-        })}
-      >
+          marginStart: 16
+        })}>
         Hello Spectrum 2!
       </Button>
     </Provider>

@@ -21,8 +21,8 @@ import {useMenuSection} from 'react-aria/useMenu';
 import {useSeparator} from 'react-aria/useSeparator';
 
 interface MenuSectionProps<T> {
-  item: Node<T>,
-  state: TreeState<T>
+  item: Node<T>;
+  state: TreeState<T>;
 }
 
 /** @private */
@@ -39,53 +39,34 @@ export function MenuSection<T>(props: MenuSectionProps<T>): JSX.Element {
 
   let firstSectionKey = state.collection.getFirstKey();
   let lastSectionKey = [...state.collection].filter(node => node.type === 'section').at(-1)?.key;
-  let sectionIsFirst = firstSectionKey === item.key && state.collection.getFirstKey() === firstSectionKey;
+  let sectionIsFirst =
+    firstSectionKey === item.key && state.collection.getFirstKey() === firstSectionKey;
   let lastKey = state.collection.getLastKey();
-  let sectionIsLast = lastSectionKey === item.key && lastKey != null && state.collection.getItem(lastKey)!.parentKey === lastSectionKey;
+  let sectionIsLast =
+    lastSectionKey === item.key &&
+    lastKey != null &&
+    state.collection.getItem(lastKey)!.parentKey === lastSectionKey;
 
   return (
     <Fragment>
-      {item.key !== state.collection.getFirstKey() &&
-        <div
-          {...separatorProps}
-          className={classNames(
-            styles,
-            'spectrum-Menu-divider'
-          )} />
-      }
+      {item.key !== state.collection.getFirstKey() && (
+        <div {...separatorProps} className={classNames(styles, 'spectrum-Menu-divider')} />
+      )}
       <div {...itemProps}>
-        {item.rendered &&
-          <span
-            {...headingProps}
-            className={
-              classNames(
-                styles,
-                'spectrum-Menu-sectionHeading'
-              )
-            }>
+        {item.rendered && (
+          <span {...headingProps} className={classNames(styles, 'spectrum-Menu-sectionHeading')}>
             {item.rendered}
           </span>
-        }
+        )}
         <div
           {...groupProps}
-          className={
-            classNames(
-              styles,
-                'spectrum-Menu',
-              {
-                'spectrum-Menu-section--noHeading': item.rendered == null,
-                'spectrum-Menu-section--isFirst': sectionIsFirst,
-                'spectrum-Menu-section--isLast': sectionIsLast
-              }
-            )
-          }>
+          className={classNames(styles, 'spectrum-Menu', {
+            'spectrum-Menu-section--noHeading': item.rendered == null,
+            'spectrum-Menu-section--isFirst': sectionIsFirst,
+            'spectrum-Menu-section--isLast': sectionIsLast
+          })}>
           {[...getChildNodes(item, state.collection)].map(node => {
-            let item = (
-              <MenuItem
-                key={node.key}
-                item={node}
-                state={state} />
-            );
+            let item = <MenuItem key={node.key} item={node} state={state} />;
 
             if (node.wrapper) {
               item = node.wrapper(item);

@@ -13,9 +13,9 @@
 import {isMac} from './platform';
 
 interface Event {
-  altKey: boolean,
-  ctrlKey: boolean,
-  metaKey: boolean
+  altKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
 }
 
 export function isCtrlKeyPressed(e: Event): boolean {

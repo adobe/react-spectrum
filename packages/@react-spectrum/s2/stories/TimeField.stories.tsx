@@ -39,7 +39,7 @@ const meta: Meta<typeof TimeField> = {
   args: {...getActionArgs(events)},
   title: 'TimeField',
   decorators: [
-    (Story) => (
+    Story => (
       <CalendarSwitcher>
         <Story />
       </CalendarSwitcher>
@@ -63,10 +63,12 @@ export const AriaLabel: Story = {
 };
 
 export const Validation: Story = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TimeField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -76,34 +78,33 @@ export const Validation: Story = {
 };
 
 export const CustomWidth: Story = {
-  render: (args) => (
-    <TimeField {...args} styles={style({width: 384})} />
-  ),
+  render: args => <TimeField {...args} styles={style({width: 384})} />,
   args: {
     label: 'Launch time'
   }
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <TimeField
       {...args}
       contextualHelp={
         <ContextualHelp>
           <Heading>Quantity</Heading>
           <Content>
-            <Text>
-              Enter a date, any date. May I recommend today?
-            </Text>
+            <Text>Enter a date, any date. May I recommend today?</Text>
           </Content>
           <Footer>
             <Link
               isStandalone
               href="https://en.wikipedia.org/wiki/Wikipedia:On_this_day/Today"
-              target="_blank">Learn more about what happened on this date.</Link>
+              target="_blank">
+              Learn more about what happened on this date.
+            </Link>
           </Footer>
         </ContextualHelp>
-      } />
+      }
+    />
   ),
   args: {
     label: 'On this day'

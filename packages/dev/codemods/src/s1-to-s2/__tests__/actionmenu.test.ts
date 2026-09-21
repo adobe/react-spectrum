@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static - no change', `
+test(
+  'Static - no change',
+  `
 import {ActionMenu, Item} from '@adobe/react-spectrum';
 
 <div>
@@ -16,9 +18,12 @@ import {ActionMenu, Item} from '@adobe/react-spectrum';
     <Item>Paste</Item>
   </ActionMenu>
 </div>
-`);
+`
+);
 
-test('Dynamic - no change', `
+test(
+  'Dynamic - no change',
+  `
 import {ActionMenu, Item} from '@adobe/react-spectrum';
 let actionMenuItems = [
   {name: 'Cut'},
@@ -32,9 +37,12 @@ let actionMenuItems = [
     {item => <Item key={item.name}>{item.name}</Item>}
   </ActionMenu>
 </div>
-`);
+`
+);
 
-test('Renames closeOnSelect to shouldCloseOnSelect', `
+test(
+  'Renames closeOnSelect to shouldCloseOnSelect',
+  `
 import {ActionMenu, Item} from '@adobe/react-spectrum';
 
 <div>
@@ -44,4 +52,5 @@ import {ActionMenu, Item} from '@adobe/react-spectrum';
     <Item>Paste</Item>
   </ActionMenu>
 </div>
-`);
+`
+);

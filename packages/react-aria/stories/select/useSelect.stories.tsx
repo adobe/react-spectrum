@@ -35,5 +35,5 @@ const Template = (): JSX.Element => (
 );
 
 export const ScrollTesting: TemplateStory = {
-  render: (args) => <Template {...args} />
+  render: args => <Template {...args} />
 };

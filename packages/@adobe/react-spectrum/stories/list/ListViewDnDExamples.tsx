@@ -15,13 +15,18 @@ import React, {JSX} from 'react';
 import {Text} from '../../src/text/Text';
 import {useListData} from 'react-stately/useListData';
 
-export function DragExample(props: {listViewProps: SpectrumListViewProps<any>, dragHookOptions: DragAndDropOptions, getAllowedDropOperationsAction?: () => void}): JSX.Element {
+export function DragExample(props: {
+  listViewProps: SpectrumListViewProps<any>;
+  dragHookOptions: DragAndDropOptions;
+  getAllowedDropOperationsAction?: () => void;
+}): JSX.Element {
   let {listViewProps, dragHookOptions} = props;
-  let getItems = (keys, items) => items.map(item => {
-    return {
-      'text/plain': item.name
-    };
-  });
+  let getItems = (keys, items) =>
+    items.map(item => {
+      return {
+        'text/plain': item.name
+      };
+    });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
@@ -45,12 +50,9 @@ export function DragExample(props: {listViewProps: SpectrumListViewProps<any>, d
         <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' && <Folder />}
           {item.key === 'a' && <File />}
-          <Text>
-            {item.name}
-          </Text>
+          <Text>{item.name}</Text>
           {item.key === 'b' && <Text slot="description">Beta</Text>}
-          <ActionMenu
-            onAction={action('onAction')}>
+          <ActionMenu onAction={action('onAction')}>
             <Item key="edit" textValue="Edit">
               <Edit />
               <Text>Edit</Text>
@@ -85,7 +87,10 @@ let itemList2 = [
 ];
 
 let randomDragTypeReorderExample = `keys-${Math.random().toString(36).slice(2)}`;
-export function ReorderExample(props: SpectrumListViewProps<any> & DragAndDropOptions & {getAllowedDropOperationsAction?: () => void}): JSX.Element {
+export function ReorderExample(
+  props: SpectrumListViewProps<any> &
+    DragAndDropOptions & {getAllowedDropOperationsAction?: () => void}
+): JSX.Element {
   let {items, onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
   let list = useListData({
     initialItems: items ? [...items] : itemList1
@@ -148,7 +153,6 @@ export function ReorderExample(props: SpectrumListViewProps<any> & DragAndDropOp
     }
   });
 
-
   return (
     <ListView
       aria-label="reorderable list view"
@@ -159,22 +163,19 @@ export function ReorderExample(props: SpectrumListViewProps<any> & DragAndDropOp
       disabledKeys={disabledKeys}
       dragAndDropHooks={dragAndDropHooks}
       {...otherprops}>
-      {(item: any) => (
-        <Item>
-          {item.textValue}
-        </Item>
-      )}
+      {(item: any) => <Item>{item.textValue}</Item>}
     </ListView>
   );
 }
 
 let randomDragTypeDragIntoItemExample = `keys-${Math.random().toString(36).slice(2)}`;
-export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps<any>, dragHookOptions?: DragAndDropOptions, dropHookOptions?: DragAndDropOptions, getAllowedDropOperationsAction?: () => void}): JSX.Element {
-  let {
-    listViewProps = {},
-    dragHookOptions = {},
-    dropHookOptions = {}
-  } = props;
+export function DragIntoItemExample(props: {
+  listViewProps: SpectrumListViewProps<any>;
+  dragHookOptions?: DragAndDropOptions;
+  dropHookOptions?: DragAndDropOptions;
+  getAllowedDropOperationsAction?: () => void;
+}): JSX.Element {
+  let {listViewProps = {}, dragHookOptions = {}, dropHookOptions = {}} = props;
   let {onDragStart, onDragEnd} = dragHookOptions;
   let {onDrop} = dropHookOptions;
   let onDropAction = chain(action('onDrop'), onDrop);
@@ -200,8 +201,11 @@ export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
     let folderItem = list.getItem(target.key)!;
-    let draggedItems = keys.map((key) => list.getItem(key));
-    list.update(target.key, {...folderItem, childNodes: [...(folderItem.childNodes || []), ...draggedItems]});
+    let draggedItems = keys.map(key => list.getItem(key));
+    list.update(target.key, {
+      ...folderItem,
+      childNodes: [...(folderItem.childNodes || []), ...draggedItems]
+    });
     list.remove(...keys);
   };
 
@@ -245,7 +249,12 @@ export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps
       }
     },
     getDropOperation(target) {
-      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key)!.childNodes || disabledKeys.includes(target.key)) {
+      if (
+        target.type === 'root' ||
+        target.dropPosition !== 'on' ||
+        !list.getItem(target.key)!.childNodes ||
+        disabledKeys.includes(target.key)
+      ) {
         return 'cancel';
       }
 
@@ -264,13 +273,17 @@ export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps
       {...listViewProps}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
-          <Text>{item.type === 'folder' ? `${item.textValue} (Drop items here)` : `Item ${item.textValue}`}</Text>
-          {item.type === 'folder' &&
+          <Text>
+            {item.type === 'folder'
+              ? `${item.textValue} (Drop items here)`
+              : `Item ${item.textValue}`}
+          </Text>
+          {item.type === 'folder' && (
             <>
               <Folder />
               <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
             </>
-          }
+          )}
         </Item>
       )}
     </ListView>
@@ -279,7 +292,14 @@ export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps
 
 let randomDragTypeDragBetweenListsExample = `keys-${Math.random().toString(36).slice(2)}`;
 
-export function DragBetweenListsExample(props: SpectrumListViewProps<any> & DragAndDropOptions & {getAllowedDropOperationsAction?: () => void, items1?: any[], items2?: any[]}): JSX.Element {
+export function DragBetweenListsExample(
+  props: SpectrumListViewProps<any> &
+    DragAndDropOptions & {
+      getAllowedDropOperationsAction?: () => void;
+      items1?: any[];
+      items2?: any[];
+    }
+): JSX.Element {
   let {onDragStart, onDragEnd, onDrop} = props;
   let onDropAction = chain(action('onDrop'), onDrop);
   onDragStart = chain(action('dragStart'), onDragStart);
@@ -298,7 +318,7 @@ export function DragBetweenListsExample(props: SpectrumListViewProps<any> & Drag
     let destinationList = list1.getItem(target.key) ? list1 : list2;
 
     if (sourceList === destinationList) {
-        // Handle dragging within same list
+      // Handle dragging within same list
       if (target.dropPosition === 'before') {
         sourceList.moveBefore(target.key, keys);
       } else {
@@ -376,11 +396,7 @@ export function DragBetweenListsExample(props: SpectrumListViewProps<any> & Drag
           disabledKeys={['2']}
           dragAndDropHooks={dragAndDropHooks}
           {...props}>
-          {(item: any) => (
-            <Item>
-              {item.textValue}
-            </Item>
-        )}
+          {(item: any) => <Item>{item.textValue}</Item>}
         </ListView>
       </Flex>
       <Flex direction="column" margin="size-100">
@@ -393,11 +409,7 @@ export function DragBetweenListsExample(props: SpectrumListViewProps<any> & Drag
           disabledKeys={['2']}
           dragAndDropHooks={dragAndDropHooks}
           {...props}>
-          {(item: any) => (
-            <Item>
-              {item.textValue}
-            </Item>
-        )}
+          {(item: any) => <Item>{item.textValue}</Item>}
         </ListView>
       </Flex>
     </>
@@ -405,11 +417,7 @@ export function DragBetweenListsExample(props: SpectrumListViewProps<any> & Drag
 }
 
 export function DragBetweenListsRootOnlyExample(props: any): JSX.Element {
-  let {
-    listViewProps = {},
-    dragHookOptions = {},
-    dropHookOptions = {}
-  } = props;
+  let {listViewProps = {}, dragHookOptions = {}, dropHookOptions = {}} = props;
   let {onDragStart, onDragEnd} = dragHookOptions;
   let {onDrop} = dropHookOptions;
   let onDropAction = chain(action('onDrop'), onDrop);
@@ -435,7 +443,7 @@ export function DragBetweenListsRootOnlyExample(props: any): JSX.Element {
       return [...keys].map(key => {
         key = JSON.stringify(key);
         return {
-          'list1': key,
+          list1: key,
           'text/plain': key
         };
       });
@@ -481,7 +489,7 @@ export function DragBetweenListsRootOnlyExample(props: any): JSX.Element {
       return [...keys].map(key => {
         key = JSON.stringify(key);
         return {
-          'list2': key,
+          list2: key,
           'text/plain': key
         };
       });
@@ -534,11 +542,7 @@ export function DragBetweenListsRootOnlyExample(props: any): JSX.Element {
           disabledKeys={['2']}
           dragAndDropHooks={dragAndDropHooksFirst}
           {...listViewProps}>
-          {(item: any) => (
-            <Item>
-              {item.textValue}
-            </Item>
-        )}
+          {(item: any) => <Item>{item.textValue}</Item>}
         </ListView>
       </Flex>
       <Flex direction="column" margin="size-100">
@@ -551,11 +555,7 @@ export function DragBetweenListsRootOnlyExample(props: any): JSX.Element {
           disabledKeys={['2']}
           dragAndDropHooks={dragAndDropHooksSecond}
           {...listViewProps}>
-          {(item: any) => (
-            <Item>
-              {item.textValue}
-            </Item>
-        )}
+          {(item: any) => <Item>{item.textValue}</Item>}
         </ListView>
       </Flex>
     </>

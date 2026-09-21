@@ -14,7 +14,9 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Select SSR', function () {
   it('should render text of default selected key', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Select, Label, Button, SelectValue, Popover, ListBox, ListBoxItem} from '../exports/index.ts';
 
       <React.StrictMode>
@@ -32,11 +34,13 @@ describe('Select SSR', function () {
           </Popover>
         </Select>
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let button = screen.getByRole('button');
-      expect(button.textContent).toBe('Dog');
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let button = screen.getByRole('button');
+        expect(button.textContent).toBe('Dog');
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let button = screen.getByRole('button');

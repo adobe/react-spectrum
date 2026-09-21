@@ -49,7 +49,7 @@ export default meta;
 type Story = StoryObj<typeof TagGroup>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -91,8 +91,8 @@ export const Example: Story = {
 };
 
 interface ITagItem {
-  name: string,
-  id: string
+  name: string;
+  id: string;
 }
 let items: Array<ITagItem> = [
   {name: 'Chocolate', id: 'chocolate'},
@@ -102,7 +102,7 @@ let items: Array<ITagItem> = [
   {name: 'Coffee', id: 'coffee'}
 ];
 export const Dynamic: Story = {
-  render: (args) => {
+  render: args => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -126,7 +126,7 @@ const SRC_URL_1 =
   'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 
 export const Disabled: Story = {
-  render: (args) => {
+  render: args => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -134,22 +134,22 @@ export const Disabled: Story = {
 
     return (
       <TagGroup {...props} disabledKeys={new Set(['mint', 'vanilla'])} styles={style({width: 320})}>
-        <Tag id="chocolate" textValue="chocolate"><NewIcon /><Text>Chocolate</Text></Tag>
+        <Tag id="chocolate" textValue="chocolate">
+          <NewIcon />
+          <Text>Chocolate</Text>
+        </Tag>
         <Tag id="mint">Mint</Tag>
         <Tag id="strawberry">
           <Avatar alt="default adobe" src={SRC_URL_1} />
-          <Text>
-            Strawberry
-          </Text>
+          <Text>Strawberry</Text>
         </Tag>
         <Tag id="vanilla">Vanilla</Tag>
         <Tag id="coffee">
           <Image
             src="https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg"
-            alt="Shiba Inu with glasses" />
-          <Text>
-            Coffee
-          </Text>
+            alt="Shiba Inu with glasses"
+          />
+          <Text>Coffee</Text>
         </Tag>
       </TagGroup>
     );
@@ -167,30 +167,26 @@ function renderEmptyState() {
   );
 }
 export const Empty: Story = {
-  render: (args) => {
+  render: args => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
     }
 
-    return (
-      <TagGroup {...props} renderEmptyState={renderEmptyState} />
-    );
+    return <TagGroup {...props} renderEmptyState={renderEmptyState} />;
   },
   args: {
     label: 'Ice cream flavor'
   }
 };
 export const DefaultEmpty: Story = {
-  render: (args) => {
+  render: args => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
     }
 
-    return (
-      <TagGroup {...props} />
-    );
+    return <TagGroup {...props} />;
   },
   args: {
     label: 'Ice cream flavor'
@@ -198,16 +194,20 @@ export const DefaultEmpty: Story = {
 };
 
 export const Links: Story = {
-  render: (args) => {
+  render: args => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
     }
     return (
       <TagGroup {...props} disabledKeys={new Set(['google'])}>
-        <Tag id="adobe" href="https://adobe.com">Adobe</Tag>
+        <Tag id="adobe" href="https://adobe.com">
+          Adobe
+        </Tag>
         <Tag id="google">Google</Tag>
-        <Tag id="apple" href="https://apple.com">Apple</Tag>
+        <Tag id="apple" href="https://apple.com">
+          Apple
+        </Tag>
       </TagGroup>
     );
   },
@@ -218,7 +218,7 @@ export const Links: Story = {
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => {
+  render: args => {
     let props = {...args};
     if (args.onRemove) {
       props.onRemove = action('remove');
@@ -231,16 +231,15 @@ export const ContextualHelpExample: Story = {
             <Heading>What is a ice cream?</Heading>
             <Content>
               <Text>
-                A combination of sugar, eggs, milk, and cream is cooked to make
-                a custard base. Then, flavorings are added, and this flavored
-                mixture is carefully churned and frozen to make ice cream.
+                A combination of sugar, eggs, milk, and cream is cooked to make a custard base.
+                Then, flavorings are added, and this flavored mixture is carefully churned and
+                frozen to make ice cream.
               </Text>
             </Content>
             <Footer>
-              <Link
-                isStandalone
-                href="https://en.wikipedia.org/wiki/Ice_cream"
-                target="_blank">Learn more about ice cream</Link>
+              <Link isStandalone href="https://en.wikipedia.org/wiki/Ice_cream" target="_blank">
+                Learn more about ice cream
+              </Link>
             </Footer>
           </ContextualHelp>
         }>

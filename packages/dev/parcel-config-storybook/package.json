@@ -3,11 +3,12 @@
   "version": "0.0.2",
   "private": true,
   "main": "storybook-config.json",
-  "engines": {
-    "parcel": "^2.8.0"
-  },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "build": "true",
+    "clean": "true"
   },
   "dependencies": {
     "@parcel/config-default": "^2.16.3",
@@ -17,8 +18,7 @@
     "@parcel/transformer-react-refresh-wrap": "^2.16.3",
     "@parcel/transformer-storybook": "^0.0.2"
   },
-  "scripts": {
-    "build": "true",
-    "clean": "true"
+  "engines": {
+    "parcel": "^2.8.0"
   }
 }

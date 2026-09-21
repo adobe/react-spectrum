@@ -39,11 +39,19 @@ const mark = style({
 });
 
 function Highlight({tokens}) {
-  return <mark className={mark}><CodeClient tokens={tokens} /></mark>;
+  return (
+    <mark className={mark}>
+      <CodeClient tokens={tokens} />
+    </mark>
+  );
 }
 
 function Focus({tokens}) {
-  return <span><CodeClient tokens={tokens} /></span>;
+  return (
+    <span>
+      <CodeClient tokens={tokens} />
+    </span>
+  );
 }
 
 const groupings = {
@@ -54,12 +62,12 @@ const groupings = {
 
 type Links = {[name: string]: string};
 export interface ICodeProps {
-  children: string,
-  lang?: string,
-  isFencedBlock?: boolean,
-  hideImports?: boolean,
-  links?: Links,
-  styles?: StyleString
+  children: string;
+  lang?: string;
+  isFencedBlock?: boolean;
+  hideImports?: boolean;
+  links?: Links;
+  styles?: StyleString;
 }
 
 // Check if a language is supported by tree-sitter for syntax highlighting
@@ -68,7 +76,14 @@ function isSupportedLanguage(lang: string): boolean {
   return supported.includes(lang.toLowerCase());
 }
 
-export function Code({children, lang, isFencedBlock, hideImports = true, links, styles}: ICodeProps) {
+export function Code({
+  children,
+  lang,
+  isFencedBlock,
+  hideImports = true,
+  links,
+  styles
+}: ICodeProps) {
   // If language is provided and is a supported syntax highlighting language
   if (lang && isSupportedLanguage(lang)) {
     return (
@@ -114,61 +129,64 @@ export function Code({children, lang, isFencedBlock, hideImports = true, links, 
   );
 }
 
-const highlightCode = cache((children: string, lang: string, hideImports = true, links?: Links): Token[] => {
-  // @ts-ignore
-  let highlighted = highlightHast(children, Language[lang === 'json' ? 'JS' : lang.toUpperCase()]);
-  let lineNodes = lines(highlighted);
-  let idx = lineNodes.findIndex(line => !/^(["']use client["']|(\s*$))/.test(text(line)));
-  if (idx > 0) {
-    lineNodes = lineNodes.slice(idx);
-  }
+const highlightCode = cache(
+  (children: string, lang: string, hideImports = true, links?: Links): Token[] => {
+    let highlighted = highlightHast(
+      children,
+      // @ts-ignore
+      Language[lang === 'json' ? 'JS' : lang.toUpperCase()]
+    );
+    let lineNodes = lines(highlighted);
+    let idx = lineNodes.findIndex(line => !/^(["']use client["']|(\s*$))/.test(text(line)));
+    if (idx > 0) {
+      lineNodes = lineNodes.slice(idx);
+    }
 
-  if (hideImports) {
-    // Group into hidden and visible nodes.
-    // Hidden nodes will include all import statements. If a highlighted block is seen,
-    // then we'll hide all the lines up until 2 lines before this.
-    let hidden: HastNode[] = [];
-    let visible: HastNode[] = [];
-    let seenNonImportLine = false;
-    let hasHighlight = false;
-    for (let line of lineNodes) {
-      if (!seenNonImportLine && /^(["']use client["']|@?import|(\s*$))/.test(text(line))) {
-        hidden.push(line);
-      } else {
-        seenNonImportLine = true;
-        visible.push(line);
+    if (hideImports) {
+      // Group into hidden and visible nodes.
+      // Hidden nodes will include all import statements. If a highlighted block is seen,
+      // then we'll hide all the lines up until 2 lines before this.
+      let hidden: HastNode[] = [];
+      let visible: HastNode[] = [];
+      let seenNonImportLine = false;
+      let hasHighlight = false;
+      for (let line of lineNodes) {
+        if (!seenNonImportLine && /^(["']use client["']|@?import|(\s*$))/.test(text(line))) {
+          hidden.push(line);
+        } else {
+          seenNonImportLine = true;
+          visible.push(line);
+        }
+
+        if ((line.tagName === 'highlight' || line.tagName === 'focus') && !hasHighlight) {
+          hasHighlight = true;
+          // Center highlighted lines within collapsed window (~8 lines).
+          let highlightedLines = line.children.length;
+          let contextLines = highlightedLines < 6 ? Math.floor((8 - highlightedLines) / 2) : 2;
+          contextLines++;
+          hidden.push(...visible.slice(0, -contextLines));
+          visible = visible.slice(-contextLines);
+        }
       }
 
-      if ((line.tagName === 'highlight' || line.tagName === 'focus') && !hasHighlight) {
-        hasHighlight = true;
-        // Center highlighted lines within collapsed window (~8 lines).
-        let highlightedLines = line.children.length;
-        let contextLines = highlightedLines < 6
-          ? Math.floor((8 - highlightedLines) / 2)
-          : 2;
-        contextLines++;
-        hidden.push(...visible.slice(0, -contextLines));
-        visible = visible.slice(-contextLines);
+      if (hidden.length && visible.length) {
+        lineNodes = [
+          {
+            type: 'element',
+            tagName: 'span',
+            children: hidden,
+            properties: {
+              className: 'import'
+            }
+          },
+          ...visible
+        ];
       }
     }
 
-    if (hidden.length && visible.length) {
-      lineNodes = [
-        {
-          type: 'element',
-          tagName: 'span',
-          children: hidden,
-          properties: {
-            className: 'import'
-          }
-        },
-        ...visible
-      ];
-    }
+    return renderChildren(lineNodes, '0', links);
   }
-
-  return renderChildren(lineNodes, '0', links);
-});
+);
 
 function lines(node: HastNode) {
   let resultLines: HastNode[] = [];
@@ -253,7 +271,12 @@ function lines(node: HastNode) {
 
 // Renders a Hast Node to a list of tokens. A token is either a string, a React element, or a token type (number) + string.
 // These are flattened into an array that gets sent to the client. This format significantly reduces the payload size vs JSX.
-function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, indent = ''): Token | Token[] {
+function renderHast(
+  node: HastNode | HastTextNode,
+  key: string,
+  links?: Links,
+  indent = ''
+): Token | Token[] {
   if (node.type === 'element' && 'children' in node) {
     let childArray: Token[] = renderChildren(node.children, key, links);
     if (node.tagName === 'div') {
@@ -264,18 +287,29 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
       }
     }
 
-    let tokenType = node.properties?.className.split(' ').map(c => TokenType[c]).filter(v => v != null) || [];
+    let tokenType =
+      node.properties?.className
+        .split(' ')
+        .map(c => TokenType[c])
+        .filter(v => v != null) || [];
     if (node.properties?.className === 'comment' && text(node) === '/* PROPS */') {
       return <CodeProps key={key} indent={indent} />;
     }
 
     // CodeProps includes the indent and newlines in case there are no props to show.
-    if (node.tagName === 'div' && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) && React.isValidElement(childArray[1]) && childArray[1].type === CodeProps) {
+    if (
+      node.tagName === 'div' &&
+      typeof childArray[0] === 'string' &&
+      /^\s+$/.test(childArray[0]) &&
+      React.isValidElement(childArray[1]) &&
+      childArray[1].type === CodeProps
+    ) {
       // If the only thing after CodeProps is the newline from div processing, exclude it (CodeProps handles its own newlines).
       // Otherwise, include all trailing content.
-      childArray = childArray.length === 3 && childArray[2] === '\n'
-      ? childArray.slice(1, 2)
-      : childArray.slice(1);
+      childArray =
+        childArray.length === 3 && childArray[2] === '\n'
+          ? childArray.slice(1, 2)
+          : childArray.slice(1);
     }
 
     let children = childArray.length === 1 ? childArray[0] : childArray;
@@ -284,22 +318,20 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
     if (links && typeof children === 'string' && links[children]) {
       let link = links[children];
       return (
-        <CodeLink
-          key={key}
-          className={styles[properties?.className]}
-          href={link}>
+        <CodeLink key={key} className={styles[properties?.className]} href={link}>
           {children}
         </CodeLink>
       );
     }
 
     // Link to imported files.
-    if (properties?.className === 'string' && typeof children === 'string' && /^['"]\.\//.test(children)) {
+    if (
+      properties?.className === 'string' &&
+      typeof children === 'string' &&
+      /^['"]\.\//.test(children)
+    ) {
       return (
-        <TabLink
-          key={key}
-          className={styles.string}
-          name={children.slice(3, -1)}>
+        <TabLink key={key} className={styles.string} name={children.slice(3, -1)}>
           <CodeClient tokens={childArray} />
         </TabLink>
       );
@@ -319,7 +351,12 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
       return [tokenType[0], children];
     }
 
-    let className = node.properties?.className.split(' ').map(c => styles[c]).filter(Boolean).join(' ') || undefined;
+    let className =
+      node.properties?.className
+        .split(' ')
+        .map(c => styles[c])
+        .filter(Boolean)
+        .join(' ') || undefined;
     return React.createElement(type, {...properties, className, key, tokens: childArray});
   } else {
     // @ts-ignore
@@ -327,12 +364,19 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
   }
 }
 
-function renderChildren(children: (HastNode | HastTextNode)[], key: string, links?: Links): Token[] {
+function renderChildren(
+  children: (HastNode | HastTextNode)[],
+  key: string,
+  links?: Links
+): Token[] {
   let childArray: Token[] = [];
   let type = -1;
   let stringIndex = -1;
   for (let [i, child] of children.entries()) {
-    let indent = i === 1 && stringIndex >= 0 && /^\s+$/.test(childArray[stringIndex] as string) ? childArray[stringIndex] as string : '';
+    let indent =
+      i === 1 && stringIndex >= 0 && /^\s+$/.test(childArray[stringIndex] as string)
+        ? (childArray[stringIndex] as string)
+        : '';
     let childNode = renderHast(child, `${key}.${i}`, links, indent);
     let childNodes = Array.isArray(childNode) ? childNode : [childNode];
     let childIndex = 0;
@@ -385,9 +429,17 @@ function highlightDiff(code: string) {
   let result: ReactNode[] = [];
   for (let line of lines) {
     if (line[0] === '-') {
-      result.push(<span key={result.length} className={style({color: 'red-1000'})}>{line}</span>);
+      result.push(
+        <span key={result.length} className={style({color: 'red-1000'})}>
+          {line}
+        </span>
+      );
     } else if (line[0] === '+') {
-      result.push(<span key={result.length} className={style({color: 'green-1000'})}>{line}</span>);
+      result.push(
+        <span key={result.length} className={style({color: 'green-1000'})}>
+          {line}
+        </span>
+      );
     } else {
       result.push(line);
     }

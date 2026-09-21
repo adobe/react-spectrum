@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static TableView', `
+test(
+  'Static TableView',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView>
@@ -25,10 +27,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);
 
-
-test('Dynamic TableView', `
+test(
+  'Dynamic TableView',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 let columns = [
@@ -54,9 +58,12 @@ let items = [
     }
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Keep key if array.map used', `
+test(
+  'Keep key if array.map used',
+  `
   import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
   
   let columns = [
@@ -82,9 +89,12 @@ test('Keep key if array.map used', `
       )}
     </TableBody>
   </TableView>
-  `);
+  `
+);
 
-test('Leave a comment for nested columns', `
+test(
+  'Leave a comment for nested columns',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView>
@@ -110,9 +120,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Leave a comment for dragAndDropHooks', `
+test(
+  'Leave a comment for dragAndDropHooks',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView dragAndDropHooks={() => {}}>
@@ -131,9 +144,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Leave a comment for selectionStyle', `
+test(
+  'Leave a comment for selectionStyle',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView selectionStyle="highlight">
@@ -152,9 +168,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Leave a comment for UNSTABLE_defaultExpandedKeys', `
+test(
+  'Leave a comment for UNSTABLE_defaultExpandedKeys',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView UNSTABLE_defaultExpandedKeys={['1', '2']}>
@@ -173,9 +192,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Leave a comment for UNSTABLE_expandedKeys', `
+test(
+  'Leave a comment for UNSTABLE_expandedKeys',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView UNSTABLE_expandedKeys={['1', '2']}>
@@ -194,9 +216,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Leave a comment for UNSTABLE_onExpandedChange', `
+test(
+  'Leave a comment for UNSTABLE_onExpandedChange',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView UNSTABLE_onExpandedChange={() => {}}>
@@ -215,9 +240,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Leave a comment for UNSTABLE_allowsExpandableRows', `
+test(
+  'Leave a comment for UNSTABLE_allowsExpandableRows',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView UNSTABLE_allowsExpandableRows>
@@ -236,9 +264,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Leave comment to add id to Row if no id in items', `
+test(
+  'Leave comment to add id to Row if no id in items',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 let columns = [
@@ -264,9 +295,12 @@ let items = [
     }
   </TableBody>
 </TableView>
-`);
+`
+);
 
-test('Move loadingState and onLoadMore from TableBody to TableView', `
+test(
+  'Move loadingState and onLoadMore from TableBody to TableView',
+  `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
 <TableView>
@@ -285,4 +319,5 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
     </Row>
   </TableBody>
 </TableView>
-`);
+`
+);

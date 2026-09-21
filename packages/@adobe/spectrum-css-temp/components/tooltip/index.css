@@ -136,7 +136,9 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tooltip-typeIcon {
-  margin-inline-start: calc(var(--spectrum-tooltip-icon-margin-x) - var(--spectrum-tooltip-padding-x));
+  margin-inline-start: calc(
+    var(--spectrum-tooltip-icon-margin-x) - var(--spectrum-tooltip-padding-x)
+  );
   margin-inline-end: var(--spectrum-tooltip-icon-margin-x);
   inline-size: var(--spectrum-tooltip-icon-size);
   block-size: var(--spectrum-tooltip-icon-size);

@@ -19,22 +19,26 @@ import {useId} from '../utils/useId';
 
 export interface OverlayTriggerProps {
   /** Type of overlay that is opened by the trigger. */
-  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid'
+  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid';
 }
 
 export interface OverlayTriggerAria {
   /** Props for the trigger element. */
-  triggerProps: AriaButtonProps,
+  triggerProps: AriaButtonProps;
 
   /** Props for the overlay container element. */
-  overlayProps: DOMProps
+  overlayProps: DOMProps;
 }
 
 /**
  * Handles the behavior and accessibility for an overlay trigger, e.g. a button
  * that opens a popover, menu, or other overlay that is positioned relative to the trigger.
  */
-export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTriggerState, ref?: RefObject<Element | null>): OverlayTriggerAria {
+export function useOverlayTrigger(
+  props: OverlayTriggerProps,
+  state: OverlayTriggerState,
+  ref?: RefObject<Element | null>
+): OverlayTriggerAria {
   let {type} = props;
   let {isOpen} = state;
 

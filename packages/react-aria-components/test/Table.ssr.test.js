@@ -14,7 +14,9 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Table SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Table, TableHeader, Column, TableBody, Row, Cell} from '../exports/index.ts';
 
       function Test() {
@@ -53,20 +55,38 @@ describe('Table SSR', function () {
       <React.StrictMode>
         <Test />
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let rows = screen.getAllByRole('row');
-      expect(rows.map(o => o.textContent)).toEqual(['FooBar', 'Foo 1Bar 1', 'Foo 2Bar 2', 'Foo 4Bar 4']);
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let rows = screen.getAllByRole('row');
+        expect(rows.map(o => o.textContent)).toEqual([
+          'FooBar',
+          'Foo 1Bar 1',
+          'Foo 2Bar 2',
+          'Foo 4Bar 4'
+        ]);
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let button = screen.getByRole('button');
     let rows = screen.getAllByRole('row');
-    expect(rows.map(o => o.textContent)).toEqual(['FooBar', 'Foo 1Bar 1', 'Foo 2Bar 2', 'Foo 4Bar 4']);
+    expect(rows.map(o => o.textContent)).toEqual([
+      'FooBar',
+      'Foo 1Bar 1',
+      'Foo 2Bar 2',
+      'Foo 4Bar 4'
+    ]);
 
     // And that it updates correctly.
     fireEvent.click(button);
     rows = screen.getAllByRole('row');
-    expect(rows.map(o => o.textContent)).toEqual(['FooBar', 'Foo 1Bar 1', 'Foo 2Bar 2', 'Foo 3Bar 3', 'Foo 4Bar 4']);
+    expect(rows.map(o => o.textContent)).toEqual([
+      'FooBar',
+      'Foo 1Bar 1',
+      'Foo 2Bar 2',
+      'Foo 3Bar 3',
+      'Foo 4Bar 4'
+    ]);
   });
 });

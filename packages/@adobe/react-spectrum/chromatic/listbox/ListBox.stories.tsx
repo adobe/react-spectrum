@@ -40,16 +40,22 @@ let iconMap = {
 };
 
 let hardModeProgrammatic = [
-  {name: 'Section 1', children: [
-    {name: 'Copy', icon: 'Copy'},
-    {name: 'Cut', icon: 'Cut'},
-    {name: 'Paste', icon: 'Paste'}
-  ]},
-  {name: 'Section 2', children: [
-    {name: 'Puppy', icon: 'AlignLeft'},
-    {name: 'Doggo', icon: 'AlignCenter'},
-    {name: 'Floof', icon: 'AlignRight'}
-  ]}
+  {
+    name: 'Section 1',
+    children: [
+      {name: 'Copy', icon: 'Copy'},
+      {name: 'Cut', icon: 'Cut'},
+      {name: 'Paste', icon: 'Paste'}
+    ]
+  },
+  {
+    name: 'Section 2',
+    children: [
+      {name: 'Puppy', icon: 'AlignLeft'},
+      {name: 'Doggo', icon: 'AlignCenter'},
+      {name: 'Floof', icon: 'AlignRight'}
+    ]
+  }
 ];
 
 let flatOptions = [
@@ -62,16 +68,8 @@ let flatOptions = [
 ];
 
 let withSection = [
-  {name: 'Animals', children: [
-    {name: 'Aardvark'},
-    {name: 'Kangaroo'},
-    {name: 'Snake'}
-  ]},
-  {name: 'People', children: [
-    {name: 'Danni'},
-    {name: 'Devon'},
-    {name: 'Ross'}
-  ]}
+  {name: 'Animals', children: [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]},
+  {name: 'People', children: [{name: 'Danni'}, {name: 'Devon'}, {name: 'Ross'}]}
 ];
 
 const meta: Meta<SpectrumListBoxProps<object>> = {
@@ -81,21 +79,30 @@ const meta: Meta<SpectrumListBoxProps<object>> = {
     // noticed a small shifting before final layout, delaying so chromatic doesn't hit that
     chromatic: {delay: 600}
   },
-  decorators: [Story => (
-    <div style={{display: 'flex', flexDirection: 'column'}}>
-      <Label id="label">Choose an item</Label>
-      <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 600}}>
-        <Story />
+  decorators: [
+    Story => (
+      <div style={{display: 'flex', flexDirection: 'column'}}>
+        <Label id="label">Choose an item</Label>
+        <div
+          style={{
+            display: 'flex',
+            minWidth: '200px',
+            background: 'var(--spectrum-global-color-gray-50)',
+            border: '1px solid lightgray',
+            maxHeight: 600
+          }}>
+          <Story />
+        </div>
       </div>
-    </div>
-  )]
+    )
+  ]
 };
 
 export default meta;
 
 const Template = (args: SpectrumListBoxProps<object>): JSX.Element => (
   <ListBox {...args} flexGrow={1} items={flatOptions}>
-    {(item) => <Item key={item.name}>{item.name}</Item>}
+    {item => <Item key={item.name}>{item.name}</Item>}
   </ListBox>
 );
 
@@ -141,7 +148,7 @@ const TemplateComplex = (args: SpectrumListBoxProps<object>): JSX.Element => (
 
 const TemplateAvatars = (args: SpectrumListBoxProps<object>): JSX.Element => (
   <ListBox {...args} flexGrow={1} items={flatOptions}>
-    {(item) => (
+    {item => (
       <Item key={item.name}>
         <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
         <Text>{item.name}</Text>
@@ -151,30 +158,30 @@ const TemplateAvatars = (args: SpectrumListBoxProps<object>): JSX.Element => (
 );
 
 export const Default: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'flat list with selection',
   args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
 };
 
 export const Sections: StoryObj<typeof TemplateWithSections> = {
-  render: (args) => <TemplateWithSections {...args} />,
+  render: args => <TemplateWithSections {...args} />,
   name: 'with sections',
   args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
 };
 
 export const SectionsNoTitle: StoryObj<typeof TemplateNoTitle> = {
-  render: (args) => <TemplateNoTitle {...args} />,
+  render: args => <TemplateNoTitle {...args} />,
   name: 'sections without titles',
   args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
 };
 
 export const ComplexItems: StoryObj<typeof TemplateComplex> = {
-  render: (args) => <TemplateComplex {...args} />,
+  render: args => <TemplateComplex {...args} />,
   name: 'complex items',
   args: {selectedKeys: ['Puppy', 'Cut'], disabledKeys: ['Paste'], selectionMode: 'multiple'}
 };
 
 export const WithAvatar: StoryObj<typeof TemplateAvatars> = {
-  render: (args) => <TemplateAvatars {...args} />,
+  render: args => <TemplateAvatars {...args} />,
   name: 'with avatar'
 };

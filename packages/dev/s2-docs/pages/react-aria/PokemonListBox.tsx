@@ -3,15 +3,15 @@ import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {DragAndDropHooks, Text} from 'react-aria-components';
 
 export interface Pokemon {
-  id: number,
-  name: string,
-  type: string,
-  level?: number
+  id: number;
+  name: string;
+  type: string;
+  level?: number;
 }
 
 interface PokemonListBoxProps {
-  items?: Pokemon[],
-  dragAndDropHooks?: DragAndDropHooks<Pokemon>
+  items?: Pokemon[];
+  dragAndDropHooks?: DragAndDropHooks<Pokemon>;
 }
 
 ///- begin collapse -///
@@ -33,7 +33,7 @@ export function PokemonListBox(props: PokemonListBoxProps) {
       items={items}
       renderEmptyState={() => 'Drop items here'}
       dragAndDropHooks={dragAndDropHooks}>
-      {(item) => (
+      {item => (
         <ListBoxItem textValue={item.name}>
           <Text slot="label">{item.name}</Text>
           <Text slot="description">{item.type}</Text>

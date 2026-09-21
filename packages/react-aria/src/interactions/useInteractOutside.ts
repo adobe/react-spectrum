@@ -23,11 +23,11 @@ import {useEffect, useRef} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 
 export interface InteractOutsideProps {
-  ref: RefObject<Element | null>,
-  onInteractOutside?: (e: PointerEvent) => void,
-  onInteractOutsideStart?: (e: PointerEvent) => void,
+  ref: RefObject<Element | null>;
+  onInteractOutside?: (e: PointerEvent) => void;
+  onInteractOutsideStart?: (e: PointerEvent) => void;
   /** Whether the interact outside events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 /**
@@ -41,7 +41,7 @@ export function useInteractOutside(props: InteractOutsideProps): void {
     ignoreEmulatedMouseEvents: false
   });
 
-  let onPointerDown = useEffectEvent((e) => {
+  let onPointerDown = useEffectEvent(e => {
     if (onInteractOutside && isValidEvent(e, ref)) {
       if (onInteractOutsideStart) {
         onInteractOutsideStart(e);
@@ -67,7 +67,7 @@ export function useInteractOutside(props: InteractOutsideProps): void {
 
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
-      let onClick = (e) => {
+      let onClick = e => {
         if (state.isPointerDown && isValidEvent(e, ref)) {
           triggerInteractOutside(e);
         }
@@ -85,7 +85,7 @@ export function useInteractOutside(props: InteractOutsideProps): void {
         documentObject.removeEventListener('click', onClick, true);
       };
     } else if (process.env.NODE_ENV === 'test') {
-      let onMouseUp = (e) => {
+      let onMouseUp = e => {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
         } else if (state.isPointerDown && isValidEvent(e, ref)) {
@@ -94,7 +94,7 @@ export function useInteractOutside(props: InteractOutsideProps): void {
         state.isPointerDown = false;
       };
 
-      let onTouchEnd = (e) => {
+      let onTouchEnd = e => {
         state.ignoreEmulatedMouseEvents = true;
         if (state.isPointerDown && isValidEvent(e, ref)) {
           triggerInteractOutside(e);

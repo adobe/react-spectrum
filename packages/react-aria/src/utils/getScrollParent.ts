@@ -24,4 +24,3 @@ export function getScrollParent(node: Element, checkForOverflow?: boolean): Elem
 
   return scrollableNode || document.scrollingElement || document.documentElement;
 }
-

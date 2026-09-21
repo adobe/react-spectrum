@@ -125,7 +125,7 @@ governing permissions and limitations under the License.
     &.is-selected,
     &.spectrum-FieldButton--invalid {
       &:before {
-         border-color: var(--spectrum-textfield-quiet-border-color);
+        border-color: var(--spectrum-textfield-quiet-border-color);
       }
     }
 
@@ -148,7 +148,7 @@ governing permissions and limitations under the License.
   &:hover:not(.spectrum-InputGroup--invalid):not(.is-focused):not(.is-disabled) {
     .spectrum-FieldButton {
       &:before {
-         border-color: var(--spectrum-textfield-quiet-border-color-hover);
+        border-color: var(--spectrum-textfield-quiet-border-color-hover);
       }
     }
   }
@@ -225,15 +225,15 @@ governing permissions and limitations under the License.
     &:focus-visible {
       .spectrum-FieldButton {
         &:before {
-           border-color: var(--spectrum-dropdown-border-color-key-focus);
+          border-color: var(--spectrum-dropdown-border-color-key-focus);
         }
         box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
       }
     }
     .spectrum-FieldButton {
       &:before {
-         border-color: var(--spectrum-dropdown-border-color-error);
-       }
+        border-color: var(--spectrum-dropdown-border-color-error);
+      }
       &.spectrum-FieldButton--invalid {
         &:focus-visible {
           border-color: var(--spectrum-dropdown-border-color-key-focus);
@@ -250,8 +250,8 @@ governing permissions and limitations under the License.
         .spectrum-FieldButton {
           box-shadow: none;
           &:before {
-             border-color: var(--spectrum-dropdown-border-color-key-focus);
-           }
+            border-color: var(--spectrum-dropdown-border-color-key-focus);
+          }
           &.spectrum-FieldButton--invalid {
             &:focus-visible {
               box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
@@ -302,10 +302,11 @@ governing permissions and limitations under the License.
       background-clip: unset;
     }
 
-    &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
+    &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet)
+      .spectrum-FieldButton {
       &:before {
-         border-color: GrayText;
-       }
+        border-color: GrayText;
+      }
     }
   }
 
@@ -319,16 +320,16 @@ governing permissions and limitations under the License.
         &:disabled,
         &:disabled:hover {
           &:before {
-             border-color: var(--spectrum-textfield-quiet-border-color);
-           }
+            border-color: var(--spectrum-textfield-quiet-border-color);
+          }
         }
       }
     }
     &.is-disabled {
       .spectrum-FieldButton {
         &:before {
-           border-color: GrayText;
-         }
+          border-color: GrayText;
+        }
       }
     }
   }
@@ -347,22 +348,21 @@ governing permissions and limitations under the License.
       }
       &.spectrum-InputGroup--quiet .spectrum-FieldButton {
         &:before {
-           border-color: GrayText;
-         }
+          border-color: GrayText;
+        }
       }
     }
     &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
       &:before {
-         border-color: GrayText;
-       }
+        border-color: GrayText;
+      }
     }
   }
 
   .spectrum-InputGroup {
-    &:focus-visible
-    {
+    &:focus-visible {
       &:not(.spectrum-InputGroup--quiet) {
-        outline:2px solid Highlight;
+        outline: 2px solid Highlight;
       }
       &.spectrum-InputGroup--quiet {
         box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);

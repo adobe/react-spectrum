@@ -24,6 +24,9 @@ export type {GridCellAria, GridCellProps} from 'react-aria/private/grid/useGridC
 export type {GridRowGroupAria} from 'react-aria/private/grid/useGridRowGroup';
 export type {GridRowProps, GridRowAria} from 'react-aria/private/grid/useGridRow';
 export type {GridKeyboardDelegateOptions} from 'react-aria/private/grid/GridKeyboardDelegate';
-export type {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from 'react-aria/private/grid/useGridSelectionCheckbox';
+export type {
+  AriaGridSelectionCheckboxProps,
+  GridSelectionCheckboxAria
+} from 'react-aria/private/grid/useGridSelectionCheckbox';
 export type {HighlightSelectionDescriptionProps} from 'react-aria/private/grid/useHighlightSelectionDescription';
 export type {GridSelectionAnnouncementProps} from 'react-aria/private/grid/useGridSelectionAnnouncement';

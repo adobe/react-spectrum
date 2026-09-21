@@ -12,12 +12,18 @@
 
 :root {
   --spectrum-helptext-neutral-texticon-text-color: var(--spectrum-alias-label-text-color);
-  --spectrum-helptext-neutral-texticon-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-helptext-neutral-texticon-text-color-disabled: var(
+    --spectrum-alias-text-color-disabled
+  );
 
   /* Override: DNA uses --spectrum-semantic-negative-text-color-small */
-  --spectrum-helptext-negative-texticon-text-color: var(--spectrum-semantic-negative-color-text-small);
+  --spectrum-helptext-negative-texticon-text-color: var(
+    --spectrum-semantic-negative-color-text-small
+  );
   /* Override: DNA uses --spectrum-semantic-negative-icon-color */
-  --spectrum-helptext-negative-texticon-icon-color: var(--spectrum-semantic-negative-color-text-small);
+  --spectrum-helptext-negative-texticon-icon-color: var(
+    --spectrum-semantic-negative-color-text-small
+  );
 }
 
 .spectrum-HelpText--neutral {

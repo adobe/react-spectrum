@@ -31,7 +31,15 @@ for (let i = 0; i < 50; i++) {
 
 function ResizableContainer({children}) {
   return (
-    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+    <div
+      style={{
+        width: '200px',
+        height: '200px',
+        padding: '10px',
+        resize: 'horizontal',
+        overflow: 'auto',
+        backgroundColor: 'var(--spectrum-global-color-gray-50)'
+      }}>
       {children}
       <p>Use the resize handle to resize the container.</p>
     </div>
@@ -111,8 +119,13 @@ export type TagGroupStory = StoryObj<any>;
 export const Default: TagGroupStory = {};
 
 export const WithIcons: TagGroupStory = {
-  args: {items: [{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]},
-  render: (args) => (
+  args: {
+    items: [
+      {key: '1', label: 'Cool Tag 1'},
+      {key: '2', label: 'Cool Tag 2'}
+    ]
+  },
+  render: args => (
     <TagGroup aria-label="Tag group with icons" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
@@ -125,16 +138,16 @@ export const WithIcons: TagGroupStory = {
 };
 
 export const OnRemove: TagGroupStory = {
-  render: (args) => <OnRemoveExample {...args} />,
+  render: args => <OnRemoveExample {...args} />,
   name: 'onRemove'
 };
 
 export const Wrapping: TagGroupStory = {
-  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>]
+  decorators: [Story => <ResizableContainer>{<Story />}</ResizableContainer>]
 };
 
 export const LabelTruncation: TagGroupStory = {
-  render: (args) => (
+  render: args => (
     <div style={{width: '100px'}}>
       <TagGroup aria-label="Tag group with label truncation" {...args}>
         <Item key="1">Cool Tag 1 with a really long label</Item>
@@ -147,37 +160,42 @@ export const LabelTruncation: TagGroupStory = {
 
 export const MaxRows: TagGroupStory = {
   args: {maxRows: 2},
-  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  decorators: [Story => <ResizableContainer>{<Story />}</ResizableContainer>],
   name: 'maxRows'
 };
 
 export const MaxRowsManyTags: TagGroupStory = {
   args: {maxRows: 2},
-  render: (args) => (
+  render: args => (
     <TagGroup aria-label="Tag group with 50 tags" items={manyItems} {...args}>
-      {(item: any) => (
-        <Item key={item.key}>{`Tag ${item.key}`}</Item>
-      )}
+      {(item: any) => <Item key={item.key}>{`Tag ${item.key}`}</Item>}
     </TagGroup>
   ),
-  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  decorators: [Story => <ResizableContainer>{<Story />}</ResizableContainer>],
   name: 'maxRows with many tags'
 };
 
 export const MaxRowsOnRemove: TagGroupStory = {
   args: {maxRows: 2},
-  render: (args) => <OnRemoveExample {...args} />,
-  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  render: args => <OnRemoveExample {...args} />,
+  decorators: [Story => <ResizableContainer>{<Story />}</ResizableContainer>],
   name: 'maxRows + onRemove'
 };
 
 export const WithAvatar: TagGroupStory = {
-  args: {items: [{key: '1', label: 'Cool Person 1'}, {key: '2', label: 'Cool Person 2'}]},
-  render: (args) => (
+  args: {
+    items: [
+      {key: '1', label: 'Cool Person 1'},
+      {key: '2', label: 'Cool Person 2'}
+    ]
+  },
+  render: args => (
     <TagGroup aria-label="Tag group with avatars" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
-          {item.key === '1' && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}
+          {item.key === '1' && (
+            <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          )}
           <Text>{item.label}</Text>
         </Item>
       )}
@@ -187,7 +205,7 @@ export const WithAvatar: TagGroupStory = {
 };
 
 export const WithAvatarOnRemove: TagGroupStory = {
-  render: (args) => <OnRemoveExample withAvatar {...args} />,
+  render: args => <OnRemoveExample withAvatar {...args} />,
   name: 'with avatar + onRemove'
 };
 
@@ -202,7 +220,7 @@ export const WithActionAndMaxRows: TagGroupStory = {
     onAction: action('clear'),
     actionLabel: 'Clear'
   },
-  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  decorators: [Story => <ResizableContainer>{<Story />}</ResizableContainer>],
   name: 'with action and maxRows'
 };
 
@@ -217,7 +235,7 @@ export const WithLabelDescriptionContextualHelp: TagGroupStory = {
       </ContextualHelp>
     )
   },
-  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  decorators: [Story => <ResizableContainer>{<Story />}</ResizableContainer>],
   name: 'with label, description, contextual help'
 };
 
@@ -234,12 +252,12 @@ export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
       </ContextualHelp>
     )
   },
-  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  decorators: [Story => <ResizableContainer>{<Story />}</ResizableContainer>],
   name: 'with label, description, contextual help + action'
 };
 
 export const EmptyState: TagGroupStory = {
-  render: (args) => (
+  render: args => (
     <TagGroup label="Tag group with empty state" {...args}>
       {[]}
     </TagGroup>
@@ -250,7 +268,15 @@ export const EmptyState: TagGroupStory = {
 export const CustomEmptyState: TagGroupStory = {
   ...EmptyState,
   args: {
-    renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+    renderEmptyState: () => (
+      <span>
+        No tags.{' '}
+        <Link>
+          <a href="//react-spectrum.com">Click here</a>
+        </Link>{' '}
+        to add some.
+      </span>
+    )
   },
   name: 'Custom empty state'
 };
@@ -266,16 +292,22 @@ function OnRemoveExample(props) {
     {id: 6, label: 'Shy tag'}
   ]);
 
-  let onRemove = (keys) => {
-    setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
+  let onRemove = keys => {
+    setItems(prevItems => prevItems.filter(item => !keys.has(item.id)));
     action('onRemove')(keys);
   };
 
   return (
-    <TagGroup aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
+    <TagGroup
+      aria-label="Tag group with removable tags"
+      items={items}
+      onRemove={key => onRemove(key)}
+      {...otherProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
-          {withAvatar && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}
+          {withAvatar && (
+            <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          )}
           <Text>{item.label}</Text>
         </Item>
       )}
@@ -284,7 +316,7 @@ function OnRemoveExample(props) {
 }
 
 export const Links: TagGroupStory = {
-  render: (args) => (
+  render: args => (
     <TagGroup aria-label="Tag group with links" {...args}>
       <Item href="https://adobe.com">Adobe</Item>
       <Item href="https://google.com">Google</Item>

@@ -17,16 +17,23 @@ import React, {JSX, ReactElement} from 'react';
 
 export interface TableHeaderProps<T> {
   /** A list of table columns. */
-  columns?: readonly T[],
-  /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
-  children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
+  columns?: readonly T[];
+  /**
+   * A list of `Column(s)` or a function. If the latter, a list of columns must be provided using
+   * the `columns` prop.
+   */
+  children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>;
 }
 
-function TableHeader<T>(props: TableHeaderProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TableHeader<T>(props: TableHeaderProps<T>): ReactElement | null {
   return null;
 }
 
-TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeaderProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, any> {
+TableHeader.getCollectionNode = function* getCollectionNode<T>(
+  props: TableHeaderProps<T>,
+  context: CollectionBuilderContext<T>
+): Generator<PartialNode<T>, void, any> {
   let {children, columns} = props;
 
   // Clear columns so they aren't double added in strict mode.
@@ -58,8 +65,9 @@ TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeade
 };
 
 /**
- * A TableHeader is a container for the Column elements in a Table. Columns can be statically defined
- * as children, or generated dynamically using a function based on the data passed to the `columns` prop.
+ * A TableHeader is a container for the Column elements in a Table. Columns can be statically
+ * defined as children, or generated dynamically using a function based on the data passed to the
+ * `columns` prop.
  */
 // We don't want getCollectionNode to show up in the type definition
 let _TableHeader = TableHeader as <T>(props: TableHeaderProps<T>) => JSX.Element;

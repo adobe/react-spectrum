@@ -28,13 +28,11 @@ export function Select<T extends object>(props: AriaSelectProps<T>): JSX.Element
 
   // Get props for child elements from useSelect
   let ref = React.useRef(null);
-  let {
-    labelProps,
-    triggerProps,
-    valueProps,
-    menuProps,
-    hiddenSelectProps
-  } = useSelect(props, state, ref);
+  let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps} = useSelect(
+    props,
+    state,
+    ref
+  );
 
   // Get props for the button based on the trigger props from useSelect
   let {buttonProps} = useButton(triggerProps, ref);
@@ -43,50 +41,38 @@ export function Select<T extends object>(props: AriaSelectProps<T>): JSX.Element
     <div style={{position: 'relative', display: 'inline-block'}}>
       <div {...labelProps}>{props.label}</div>
       <HiddenSelect {...hiddenSelectProps} />
-      <button
-        {...buttonProps}
-        ref={ref}
-        style={{height: 30, fontSize: 14}}>
+      <button {...buttonProps} ref={ref} style={{height: 30, fontSize: 14}}>
         <span {...valueProps}>
-          {state.selectedItem
-            ? state.selectedItem.rendered
-            : 'Select an option'
-          }
+          {state.selectedItem ? state.selectedItem.rendered : 'Select an option'}
         </span>
-        <span
-          aria-hidden="true"
-          style={{paddingLeft: 5}}>
+        <span aria-hidden="true" style={{paddingLeft: 5}}>
           ▼
         </span>
       </button>
-      {state.isOpen &&
+      {state.isOpen && (
         <Popover isOpen={state.isOpen} onClose={state.close}>
-          <ListBox
-            {...menuProps}
-            state={state} />
+          <ListBox {...menuProps} state={state} />
         </Popover>
-      }
+      )}
     </div>
   );
 }
 
 function Popover(props) {
   let ref = React.useRef(undefined);
-  let {
-    popoverRef = ref,
-    isOpen,
-    onClose,
-    children
-  } = props;
+  let {popoverRef = ref, isOpen, onClose, children} = props;
 
   // Handle events that should cause the popup to close,
   // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    isOpen,
-    onClose,
-    shouldCloseOnBlur: true,
-    isDismissable: true
-  }, popoverRef);
+  let {overlayProps} = useOverlay(
+    {
+      isOpen,
+      onClose,
+      shouldCloseOnBlur: true,
+      isDismissable: true
+    },
+    popoverRef
+  );
 
   // Add a hidden <DismissButton> component at the end of the popover
   // to allow screen reader users to dismiss the popup easily.
@@ -109,7 +95,6 @@ function Popover(props) {
   );
 }
 
-
 function ListBox(props) {
   let ref = React.useRef(undefined);
   let {listBoxRef = ref, state} = props;
@@ -127,10 +112,7 @@ function ListBox(props) {
         overflow: 'auto'
       }}>
       {[...state.collection].map(item => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state} />
+        <Option key={item.key} item={item} state={state} />
       ))}
     </ul>
   );

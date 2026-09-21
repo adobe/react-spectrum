@@ -3,12 +3,12 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
-import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
+import Anatomy from './MenuAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['dropdown'];
 export const relatedPages = [
-  {title: 'useMenu', url: 'Menu/useMenu.html'},
+  {title: 'useMenu', url: './Menu/useMenu'},
   {title: 'Testing Menu', url: './Menu/testing'}
 ];
 export const description = 'Displays a list of actions or options that a user can choose.';
@@ -30,41 +30,41 @@ export const description = 'Displays a list of actions or options that a user ca
     </Button>
     <Menu>
       <MenuSection>
-        <MenuItem onAction={() => alert('open')}>
+        <MenuItem onAction={() => alert('open')} textValue="Open">
           <FolderOpen />
           <Text slot="label">Open</Text>
           <Keyboard>⌘O</Keyboard>
         </MenuItem>
-        <MenuItem onAction={() => alert('rename')}>
+        <MenuItem onAction={() => alert('rename')} textValue="Rename">
           <Pencil />
           <Text slot="label">Rename…</Text>
           <Keyboard>⌘R</Keyboard>
         </MenuItem>
-        <MenuItem onAction={() => alert('duplicate')}>
+        <MenuItem onAction={() => alert('duplicate')} textValue="Duplicate">
           <Copy />
           <Text slot="label">Duplicate</Text>
           <Keyboard>⌘D</Keyboard>
         </MenuItem>
-        <MenuItem onAction={() => alert('delete')}>
+        <MenuItem onAction={() => alert('delete')} textValue="Delete">
           <Trash />
           <Text slot="label">Delete…</Text>
           <Keyboard>⌘⌫</Keyboard>
         </MenuItem>
         <SubmenuTrigger>
-          <MenuItem>
+          <MenuItem textValue="Share">
             <Share />
             <Text slot="label">Share</Text>
           </MenuItem>
           <Menu>
-            <MenuItem>
+            <MenuItem textValue="Email">
               <Mail />
               <Text slot="label">Email</Text>
             </MenuItem>
-            <MenuItem>
+            <MenuItem textValue="SMS">
               <Smartphone />
               <Text slot="label">SMS</Text>
             </MenuItem>
-            <MenuItem>
+            <MenuItem textValue="Instagram">
               <Instagram />
               <Text slot="label">Instagram</Text>
             </MenuItem>
@@ -279,6 +279,52 @@ import {Button} from 'vanilla-starter/Button';
 </MenuTrigger>
 ```
 
+### Asynchronous loading
+
+Use [renderEmptyState](#empty-state) to display a loading indicator during initial load. To enable infinite scrolling, render a `<MenuLoadMoreItem>` at the end of the menu. Use whatever data fetching library you prefer — this example uses `useAsyncList` from `react-stately`.
+
+```tsx render
+"use client";
+import {MenuTrigger, Menu, MenuItem, MenuLoadMoreItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
+
+interface Character {
+  name: string;
+  birth_year: string;
+}
+
+function AsyncMenuExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) cursor = cursor.replace(/^http:\/\//i, 'https://');
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+      return {items: json.results, cursor: json.next};
+    }
+  });
+
+  return (
+    <MenuTrigger>
+      <Button>Select Character</Button>
+      <Menu
+        aria-label="Characters"
+        renderEmptyState={() => list.loadingState === 'loading' ? 'Loading…' : 'No characters found'}>
+        <Collection items={list.items}>
+          {(item) => <MenuItem id={item.name}>{item.name}</MenuItem>}
+        </Collection>
+        {/*- begin highlight -*/}
+        <MenuLoadMoreItem
+          onLoadMore={list.loadMore}
+          isLoading={list.loadingState === 'loadingMore'} />
+        {/*- end highlight -*/}
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
 ### Links
 
 Use the `href` prop on a `<MenuItem>` to create a link.
@@ -311,6 +357,23 @@ By default, links are rendered as an `<a>` element. Use the `render` prop to int
       ? <RouterLink {...domProps} />
       : <div {...domProps} />
   } />
+```
+
+### Empty state
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+
+<MenuTrigger>
+  <Button>Actions</Button>
+  <Menu
+    aria-label="Actions"
+    renderEmptyState={() => 'No actions available.'}>
+    {[]}
+  </Menu>
+</MenuTrigger>
 ```
 
 ### Autocomplete
@@ -498,6 +561,59 @@ import {ChevronDown} from 'lucide-react';
 </MenuTrigger>
 ```
 
+### Context menu
+
+Use `trigger="contextMenu"` to open the menu when right clicking with a mouse, long pressing on touch, or via OS and screen reader specific keyboard shortcuts. The menu is positioned at the point the user clicked.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, SubmenuTrigger, Separator} from 'vanilla-starter/Menu';
+import {Button} from 'react-aria-components/Button';
+
+<MenuTrigger trigger="contextMenu">
+  <Button className="context-menu-trigger">
+    Right click here
+  </Button>
+  <Menu>
+    <MenuItem>Open</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem>Open with</MenuItem>
+      <Menu>
+        <MenuItem>Preview</MenuItem>
+        <MenuItem>Photoshop</MenuItem>
+        <MenuItem>Safari</MenuItem>
+      </Menu>
+    </SubmenuTrigger>
+    <Separator />
+    <MenuItem>Get Info</MenuItem>
+    <MenuItem>Rename</MenuItem>
+    <MenuItem>Duplicate</MenuItem>
+    <MenuItem>Move to Trash</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+```css render hidden
+.context-menu-trigger {
+  width: 250px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--gray-400);
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+}
+```
+
 ## Examples
 
 <ExampleList tag="menu" pages={props.pages} />
@@ -506,7 +622,7 @@ import {ChevronDown} from 'lucide-react';
 
 <Anatomy />
 
-```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Popover: 'Popover', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection#animated-selectionindicator'}}
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Popover: 'Popover', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection#animated-selectionindicator', MenuLoadMoreItem: '#menuloadmoreitem'}}
 <MenuTrigger>
   <Button />
   <Popover>
@@ -528,6 +644,7 @@ import {ChevronDown} from 'lucide-react';
           <Menu />
         </Popover>
       </SubmenuTrigger>
+      <MenuLoadMoreItem />
     </Menu>
   </Popover>
 </MenuTrigger>
@@ -552,3 +669,7 @@ import {ChevronDown} from 'lucide-react';
 ### SubmenuTrigger
 
 <PropTable component={docs.exports.SubmenuTrigger} links={docs.links} showDescription />
+
+### MenuLoadMoreItem
+
+<PropTable component={docs.exports.MenuLoadMoreItem} links={docs.links} showDescription />

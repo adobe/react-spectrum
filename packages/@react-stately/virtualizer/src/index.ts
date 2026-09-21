@@ -10,5 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-export {Layout, LayoutInfo, Point, Rect, Size, ReusableView, useVirtualizerState} from 'react-stately/useVirtualizerState';
-export type {InvalidationContext, VirtualizerState, RectCorner} from 'react-stately/useVirtualizerState';
+export {
+  Layout,
+  LayoutInfo,
+  Point,
+  Rect,
+  Size,
+  ReusableView,
+  useVirtualizerState
+} from 'react-stately/useVirtualizerState';
+export type {
+  InvalidationContext,
+  VirtualizerState,
+  RectCorner
+} from 'react-stately/useVirtualizerState';

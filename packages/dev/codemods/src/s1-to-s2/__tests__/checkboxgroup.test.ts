@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes showErrorIcon', `
+test(
+  'Removes showErrorIcon',
+  `
 import {Checkbox, CheckboxGroup} from '@adobe/react-spectrum';
 let showErrorIcon = true;
 let props = {showErrorIcon: true};
@@ -27,4 +29,5 @@ let props = {showErrorIcon: true};
     <Checkbox value="soccer">Soccer</Checkbox>
   </CheckboxGroup>
 </div>
-`);
+`
+);

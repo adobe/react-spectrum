@@ -23,7 +23,9 @@ import userEvent from '@testing-library/user-event';
 function TestTooltip(props) {
   return (
     <TooltipTrigger delay={0}>
-      <Button><span aria-hidden="true">✏️</span></Button>
+      <Button>
+        <span aria-hidden="true">✏️</span>
+      </Button>
       <Tooltip data-test="tooltip" {...props}>
         <OverlayArrow>
           <svg width={8} height={8}>
@@ -36,7 +38,7 @@ function TestTooltip(props) {
   );
 }
 
-let renderTooltip = (props) => render(<TestTooltip {...props} />);
+let renderTooltip = props => render(<TestTooltip {...props} />);
 
 describe('Tooltip', () => {
   let user;
@@ -103,7 +105,9 @@ describe('Tooltip', () => {
   it('should support render props', async () => {
     const {getByRole} = render(
       <TooltipTrigger delay={0}>
-        <Button><span aria-hidden="true">✏️</span></Button>
+        <Button>
+          <span aria-hidden="true">✏️</span>
+        </Button>
         <Tooltip placement="bottom start">{({placement}) => `Content at ${placement}`}</Tooltip>
       </TooltipTrigger>
     );
@@ -177,7 +181,9 @@ describe('Tooltip', () => {
         data-testid="scroll-container">
         {new Array(10).fill().map((_, idx) => (
           <TooltipTrigger delay={0} key={idx}>
-            <Button aria-label={`trigger-${idx}`}><span aria-hidden="true">✏️</span></Button>
+            <Button aria-label={`trigger-${idx}`}>
+              <span aria-hidden="true">✏️</span>
+            </Button>
             <Tooltip>{`Tooltip-${idx}`}</Tooltip>
           </TooltipTrigger>
         ))}
@@ -204,7 +210,9 @@ describe('Tooltip', () => {
     function InfoTooltip(props) {
       return (
         <TooltipTrigger delay={0}>
-          <Button><span aria-hidden="true">✏️</span></Button>
+          <Button>
+            <span aria-hidden="true">✏️</span>
+          </Button>
           <Tooltip data-test="tooltip" {...props}>
             <OverlayArrow>
               <svg width={8} height={8}>
@@ -235,7 +243,9 @@ describe('Tooltip', () => {
       await user.hover(button);
       act(() => jest.runAllTimers());
 
-      expect(getByRole('tooltip').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('tooltip').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
 
       await user.unhover(button);
       act(() => jest.runAllTimers());
@@ -247,7 +257,9 @@ describe('Tooltip', () => {
     function InfoTooltip(props) {
       return (
         <TooltipTrigger delay={0}>
-          <Button><span aria-hidden="true">✏️</span></Button>
+          <Button>
+            <span aria-hidden="true">✏️</span>
+          </Button>
           <Tooltip UNSTABLE_portalContainer={props.container} data-test="tooltip" {...props}>
             <OverlayArrow>
               <svg width={8} height={8}>
@@ -276,7 +288,9 @@ describe('Tooltip', () => {
       await user.hover(button);
       act(() => jest.runAllTimers());
 
-      expect(getByRole('tooltip').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('tooltip').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
 
       await user.unhover(button);
       act(() => jest.runAllTimers());
@@ -347,9 +361,7 @@ describe('Tooltip', () => {
   it('should not override child properties for excludeFromTabOrder', async () => {
     let {getByRole} = render(
       <TooltipTrigger>
-        <Button excludeFromTabOrder>
-          Check my tabindex
-        </Button>
+        <Button excludeFromTabOrder>Check my tabindex</Button>
         <Tooltip>hello world</Tooltip>
       </TooltipTrigger>
     );
@@ -361,9 +373,7 @@ describe('Tooltip', () => {
   it('should not override child properties', async () => {
     let {getByRole} = render(
       <TooltipTrigger>
-        <Button>
-          Check my tabindex
-        </Button>
+        <Button>Check my tabindex</Button>
         <Tooltip>hello world</Tooltip>
       </TooltipTrigger>
     );

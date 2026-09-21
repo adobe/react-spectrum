@@ -2,11 +2,17 @@ const path = require('path');
 import installPackage from './installPackage';
 import logger from './logger';
 
-export async function addMacroSupport(): Promise<{isMacroPluginInstalled: boolean, isMacroSupportEnabled: boolean}> {
+export async function addMacroSupport(): Promise<{
+  isMacroPluginInstalled: boolean;
+  isMacroSupportEnabled: boolean;
+}> {
   const packageJson = require(path.join(process.cwd(), 'package.json'));
-  const parcelVersion = packageJson && (packageJson.dependencies?.parcel || packageJson.devDependencies?.parcel);
+  const parcelVersion =
+    packageJson && (packageJson.dependencies?.parcel || packageJson.devDependencies?.parcel);
   if (parcelVersion) {
-    logger.success('Parcel detected in package.json. Macros are supported by default in v2.12.0 and newer.');
+    logger.success(
+      'Parcel detected in package.json. Macros are supported by default in v2.12.0 and newer.'
+    );
     return {isMacroPluginInstalled: false, isMacroSupportEnabled: false};
   }
 

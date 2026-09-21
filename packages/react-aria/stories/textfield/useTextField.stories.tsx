@@ -3,9 +3,9 @@ import React, {JSX, useRef} from 'react';
 import {useTextField} from '../../src/textfield/useTextField';
 
 interface TextFieldProps {
-  label: string,
-  value?: string,
-  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
+  label: string;
+  value?: string;
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters';
 }
 
 const TextInputField = (props: TextFieldProps): JSX.Element => {
@@ -39,7 +39,7 @@ export default {
 } as Meta;
 
 export const WithHTMLInputElement: StoryObj<typeof TextInputField> = {
-  render: (args) => <TextInputField {...args} />,
+  render: args => <TextInputField {...args} />,
   args: {
     label: 'Test label',
     value: 'Test value'
@@ -47,7 +47,7 @@ export const WithHTMLInputElement: StoryObj<typeof TextInputField> = {
 };
 
 export const WithHTMLTextAreaElement: StoryObj<typeof TextAreaField> = {
-  render: (args) => <TextAreaField {...args} />,
+  render: args => <TextAreaField {...args} />,
   args: {
     label: 'Test label',
     value: 'Test value'
@@ -55,7 +55,7 @@ export const WithHTMLTextAreaElement: StoryObj<typeof TextAreaField> = {
 };
 
 export const WithAutoCapitalization: StoryObj<typeof TextInputField> = {
-  render: (args) => <TextInputField {...args} />,
+  render: args => <TextInputField {...args} />,
   args: {
     label: 'Test label',
     autoCapitalize: undefined
@@ -66,4 +66,3 @@ export const WithAutoCapitalization: StoryObj<typeof TextInputField> = {
     }
   }
 };
-

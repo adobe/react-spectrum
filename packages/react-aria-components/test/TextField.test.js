@@ -20,7 +20,7 @@ import {TextArea} from '../src/TextArea';
 import {TextField, TextFieldContext} from '../src/TextField';
 import userEvent from '@testing-library/user-event';
 
-let TestTextField = (props) => (
+let TestTextField = props => (
   <TextField defaultValue="test" data-testid="text-field-test" data-foo="bar" {...props}>
     <Label>Test</Label>
     <props.input {...props.inputProps} />
@@ -37,11 +37,10 @@ describe('TextField', () => {
 
   describe.each([
     {name: 'Input', component: Input},
-    {name: 'TextArea', component: TextArea}]
-  )('$name', ({name, component}) => {
+    {name: 'TextArea', component: TextArea}
+  ])('$name', ({name, component}) => {
     it('provides slots', () => {
       let {getByRole} = render(<TestTextField input={component} />);
-
 
       let input = getByRole('textbox');
       expect(input).toHaveValue('test');
@@ -60,7 +59,13 @@ describe('TextField', () => {
       expect(label).toHaveTextContent('Test');
 
       expect(input).toHaveAttribute('aria-describedby');
-      expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+      expect(
+        input
+          .getAttribute('aria-describedby')
+          .split(' ')
+          .map(id => document.getElementById(id).textContent)
+          .join(' ')
+      ).toBe('Description Error');
     });
 
     it('should support slot', () => {
@@ -76,7 +81,9 @@ describe('TextField', () => {
     });
 
     it('should support custom render function', () => {
-      let {getByRole} = render(<TestTextField input={component} render={props => <div {...props} data-custom="true" />} />);
+      let {getByRole} = render(
+        <TestTextField input={component} render={props => <div {...props} data-custom="true" />} />
+      );
       let field = getByRole('textbox').closest('.react-aria-TextField');
       expect(field).toHaveAttribute('data-custom', 'true');
     });
@@ -85,7 +92,17 @@ describe('TextField', () => {
       let hoverStartSpy = jest.fn();
       let hoverChangeSpy = jest.fn();
       let hoverEndSpy = jest.fn();
-      let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverChange: hoverChangeSpy, onHoverEnd: hoverEndSpy}} />);
+      let {getByRole} = render(
+        <TestTextField
+          input={component}
+          inputProps={{
+            className: ({isHovered}) => (isHovered ? 'hover' : ''),
+            onHoverStart: hoverStartSpy,
+            onHoverChange: hoverChangeSpy,
+            onHoverEnd: hoverEndSpy
+          }}
+        />
+      );
       let input = getByRole('textbox');
 
       expect(input).not.toHaveAttribute('data-hovered');
@@ -105,7 +122,12 @@ describe('TextField', () => {
     });
 
     it('should support focus visible state', async () => {
-      let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
+      let {getByRole} = render(
+        <TestTextField
+          input={component}
+          inputProps={{className: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}}
+        />
+      );
       let input = getByRole('textbox');
 
       expect(input).not.toHaveAttribute('data-focus-visible');
@@ -122,9 +144,7 @@ describe('TextField', () => {
     });
 
     it('should support read-only state', async () => {
-      let {getByRole, rerender} = render(
-        <TestTextField input={component} />
-      );
+      let {getByRole, rerender} = render(<TestTextField input={component} />);
 
       let input = getByRole('textbox');
 
@@ -134,9 +154,7 @@ describe('TextField', () => {
     });
 
     it('should support required state', async () => {
-      let {getByRole, rerender} = render(
-        <TestTextField input={component} />
-      );
+      let {getByRole, rerender} = render(<TestTextField input={component} />);
 
       let input = getByRole('textbox');
 
@@ -170,10 +188,14 @@ describe('TextField', () => {
       expect(input).not.toHaveAttribute('aria-describedby');
       expect(input.validity.valid).toBe(false);
 
-      act(() => {getByTestId('form').checkValidity();});
+      act(() => {
+        getByTestId('form').checkValidity();
+      });
 
       expect(input).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+      expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Constraints not satisfied'
+      );
       expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-invalid');
       expect(document.activeElement).toBe(input);
 
@@ -212,7 +234,9 @@ describe('TextField', () => {
           <TextField isRequired>
             <Label>Test</Label>
             <Component />
-            <FieldError>{e => e.validationDetails.valueMissing ? 'Please enter a name' : null}</FieldError>
+            <FieldError>
+              {e => (e.validationDetails.valueMissing ? 'Please enter a name' : null)}
+            </FieldError>
           </TextField>
         </form>
       );
@@ -223,10 +247,14 @@ describe('TextField', () => {
       expect(input).not.toHaveAttribute('aria-describedby');
       expect(input.validity.valid).toBe(false);
 
-      act(() => {getByTestId('form').checkValidity();});
+      act(() => {
+        getByTestId('form').checkValidity();
+      });
 
       expect(input).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a name');
+      expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Please enter a name'
+      );
       expect(document.activeElement).toBe(input);
 
       await user.keyboard('Devon');
@@ -239,9 +267,7 @@ describe('TextField', () => {
     });
 
     it('should render the id attribute only on the input element', async () => {
-      let {getAllByTestId, getByRole} = render(
-        <TestTextField id="name" input={component} />
-      );
+      let {getAllByTestId, getByRole} = render(<TestTextField id="name" input={component} />);
       let outerEl = getAllByTestId('text-field-test');
       let input = getByRole('textbox');
 
@@ -270,9 +296,7 @@ describe('TextField', () => {
     });
 
     it('should support form prop', () => {
-      let {getByRole} = render(
-        <TestTextField form="test" input={component} />
-      );
+      let {getByRole} = render(<TestTextField form="test" input={component} />);
 
       let input = getByRole('textbox');
       expect(input).toHaveAttribute('form', 'test');
@@ -282,7 +306,10 @@ describe('TextField', () => {
       it('resets to defaultValue when submitting form action', async () => {
         const Component = component;
         function Test() {
-          const [value, formAction] = React.useActionState((_, formData) => formData.get('value'), 'initial');
+          const [value, formAction] = React.useActionState(
+            (_, formData) => formData.get('value'),
+            'initial'
+          );
 
           return (
             <form action={formAction}>

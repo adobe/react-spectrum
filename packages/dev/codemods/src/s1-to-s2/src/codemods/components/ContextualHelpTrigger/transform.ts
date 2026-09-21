@@ -11,7 +11,7 @@ let availableComponents = getComponents();
  * - Replace the old Dialog with ContextualHelpPopover.
  */
 export default function transformContextualHelpTrigger(path: NodePath<t.JSXElement>): void {
-  let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+  let program = path.findParent(p => t.isProgram(p.node)) as NodePath<t.Program>;
   let localName = addComponentImport(program, 'UnavailableMenuItemTrigger');
 
   // replace ContextualHelpTrigger with UnavailableMenuItemTrigger

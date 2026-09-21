@@ -10,7 +10,9 @@ let message = 'Your browser may not support this set of format options.';
 
 export default {
   title: 'Slider (hooks)',
-  decorators: [(story: any): JSX.Element => <ErrorBoundary message={message}>{story()}</ErrorBoundary>] as const
+  decorators: [
+    (story: any): JSX.Element => <ErrorBoundary message={message}>{story()}</ErrorBoundary>
+  ] as const
 };
 
 export type SliderStory = StoryFn<typeof StorySlider>;
@@ -20,7 +22,8 @@ export const Single: SliderStory = () => (
     label="Size"
     onChange={action('onChange')}
     onChangeEnd={action('onChangeEnd')}
-    showTip />
+    showTip
+  />
 );
 
 Single.story = {
@@ -33,7 +36,8 @@ export const SingleWithBigSteps: SliderStory = () => (
     onChange={action('onChange')}
     onChangeEnd={action('onChangeEnd')}
     step={10}
-    showTip />
+    showTip
+  />
 );
 
 SingleWithBigSteps.story = {
@@ -49,7 +53,8 @@ export const SingleWithOrigin: SliderStory = () => (
     step={0.1}
     onChange={action('onChange')}
     onChangeEnd={action('onChangeEnd')}
-    showTip />
+    showTip
+  />
 );
 
 SingleWithOrigin.story = {
@@ -61,7 +66,8 @@ export const SingleWithAriaLabel: SliderStory = () => (
     aria-label="Size"
     onChange={action('onChange')}
     onChangeEnd={action('onChangeEnd')}
-    showTip />
+    showTip
+  />
 );
 
 SingleWithAriaLabel.story = {
@@ -81,7 +87,8 @@ export const Range: SliderStory = () => (
         unit: 'celsius',
         unitDisplay: 'narrow'
       } as any
-   } />
+    }
+  />
 );
 
 Range.story = {
@@ -101,7 +108,8 @@ export const RangeWithAriaLabel: SliderStory = () => (
         unit: 'celsius',
         unitDisplay: 'narrow'
       } as any
-    } />
+    }
+  />
 );
 
 RangeWithAriaLabel.story = {

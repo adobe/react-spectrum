@@ -19,7 +19,15 @@ export default {
 
 export function Example() {
   return (
-    <div className={style({backgroundColor: 'orange-500', color: 'black', fontSize: 'lg', paddingX: 8, paddingY: 4, borderRadius: 'default'})()}>
+    <div
+      className={style({
+        backgroundColor: 'orange-500',
+        color: 'black',
+        fontSize: 'lg',
+        paddingX: 8,
+        paddingY: 4,
+        borderRadius: 'default'
+      })()}>
       Test
     </div>
   );

@@ -11,7 +11,7 @@
  */
 
 export function walk(obj, fn, k = null) {
-  let recurse = (obj) => {
+  let recurse = obj => {
     if (Array.isArray(obj)) {
       return obj.map((item, i) => walk(item, fn, k));
     } else if (obj && typeof obj === 'object') {
@@ -44,23 +44,21 @@ export function getUsedLinks(obj, links, usedLinks = {}) {
 const BASE_URL = {
   dev: {
     'react-aria': 'http://localhost:1234',
-    'v3': 'http://localhost:1234/v3'
+    v3: 'http://localhost:1234/v3'
   },
   stage: {
     'react-aria': 'https://d5iwopk28bdhl.cloudfront.net',
-    'v3': 'https://d1pzu54gtk2aed.cloudfront.net/v3'
+    v3: 'https://d1pzu54gtk2aed.cloudfront.net/v3'
   },
   prod: {
     'react-aria': 'https://react-aria.adobe.com',
-    'v3': 'https://react-spectrum.adobe.com/v3'
+    v3: 'https://react-spectrum.adobe.com/v3'
   }
 };
 
 export function getBaseUrl(library) {
   let env = process.env.DOCS_ENV;
-  let base = env
-    ? BASE_URL[env][library]
-    : `http://localhost:1234/${library}`;
+  let base = env ? BASE_URL[env][library] : `http://localhost:1234/${library}`;
   let publicUrl = process.env.PUBLIC_URL;
   if (publicUrl) {
     let url = new URL(base);
@@ -76,7 +74,12 @@ export function getAnchorProps(href) {
     return {href: getBaseUrl(url.protocol.slice(0, -1)) + '/' + url.pathname};
   }
 
-  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|^#/.test(href)) {
+  if (
+    !/^http/.test(href) ||
+    /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|^#/.test(
+      href
+    )
+  ) {
     return {};
   }
 

@@ -53,14 +53,13 @@ const meta: Meta<SpectrumColorAreaProps> = {
 
 export default meta;
 
-const Template: StoryFn<SpectrumColorAreaProps> = (args) => (
-  <ColorAreaExample {...args} />
-);
+const Template: StoryFn<SpectrumColorAreaProps> = args => <ColorAreaExample {...args} />;
 
 function ColorAreaExample(props: SpectrumColorAreaProps) {
   let {locale} = useLocale();
   let {xChannel, yChannel, isDisabled, 'aria-label': ariaLabel} = props;
-  let defaultValue = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
+  let defaultValue =
+    typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
   let [color, setColor] = useState(defaultValue || parseColor('#ff00ff'));
   let xyChannels = {xChannel, yChannel};
   let colorSpace = color.getColorSpace();
@@ -76,13 +75,13 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
   }
 
   return (
-    <div role="group" aria-label={`${ariaLabel ? `${ariaLabel} ` : ''}${colorSpace.toUpperCase()} Color Picker`}>
+    <div
+      role="group"
+      aria-label={`${ariaLabel ? `${ariaLabel} ` : ''}${colorSpace.toUpperCase()} Color Picker`}>
       <Flex gap="size-500" alignItems="start">
         {isHue ? (
           <Flex direction="column" gap={0} alignItems="center">
-            <View
-              position="relative"
-              width="size-2400">
+            <View position="relative" width="size-2400">
               <Grid
                 position="absolute"
                 justifyContent="center"
@@ -94,14 +93,16 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
                   {...props}
                   value={color}
                   onChange={onChange}
-                  onChangeEnd={props.onChangeEnd} />
+                  onChangeEnd={props.onChangeEnd}
+                />
               </Grid>
               <ColorWheel
                 size={'size-2400'}
                 value={color}
                 onChange={onChange}
                 onChangeEnd={props.onChangeEnd}
-                isDisabled={isDisabled} />
+                isDisabled={isDisabled}
+              />
             </View>
           </Flex>
         ) : (
@@ -111,13 +112,15 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
               value={color}
               onChange={onChange}
               onChangeEnd={props.onChangeEnd}
-              isDisabled={isDisabled} />
+              isDisabled={isDisabled}
+            />
             <ColorSlider
               value={color}
               onChange={onChange}
               onChangeEnd={props.onChangeEnd}
               channel={zChannel}
-              isDisabled={isDisabled} />
+              isDisabled={isDisabled}
+            />
           </Flex>
         )}
         <Flex direction="column" alignItems="start" gap="size-100" minWidth="size-1200">
@@ -127,11 +130,11 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
             value={color}
             onChange={onChange}
             onKeyDown={event =>
-              event.key === 'Enter' &&
-              onChange((event.target as HTMLInputElement).value)
+              event.key === 'Enter' && onChange((event.target as HTMLInputElement).value)
             }
             isDisabled={isDisabled}
-            width="size-1200" />
+            width="size-1200"
+          />
           <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
       </Flex>

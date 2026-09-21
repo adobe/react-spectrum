@@ -5,7 +5,7 @@ import {
   type SelectProps as AriaSelectProps,
   SelectValue,
   type ValidationResult,
-  type ListBoxProps,
+  type ListBoxProps
 } from 'react-aria-components/Select';
 import {Button} from './Button';
 import {DropdownItem, DropdownListBox} from './ListBox';
@@ -14,7 +14,10 @@ import {Popover} from './Popover';
 import {Label, FieldError, Description} from './Form';
 import './Select.css';
 
-export interface SelectProps<T extends object, M extends 'single' | 'multiple'> extends Omit<AriaSelectProps<T, M>, 'children'> {
+export interface SelectProps<T, M extends 'single' | 'multiple'> extends Omit<
+  AriaSelectProps<T, M>,
+  'children'
+> {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
@@ -22,30 +25,31 @@ export interface SelectProps<T extends object, M extends 'single' | 'multiple'> 
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function Select<T extends object, M extends 'single' | 'multiple' = 'single'>(
-  { label, description, errorMessage, children, items, ...props }: SelectProps<T, M>
-) {
+export function Select<T, M extends 'single' | 'multiple' = 'single'>({
+  label,
+  description,
+  errorMessage,
+  children,
+  items,
+  ...props
+}: SelectProps<T, M>) {
   return (
-    (
-      <AriaSelect {...props}>
-        {label && <Label>{label}</Label>}
-        <Button>
-          <SelectValue />
-          <ChevronDown />
-        </Button>
-        {description && <Description>{description}</Description>}
-        <FieldError>{errorMessage}</FieldError>
-        <Popover hideArrow className="select-popover">
-          <SelectListBox items={items}>
-            {children}
-          </SelectListBox>
-        </Popover>
-      </AriaSelect>
-    )
+    <AriaSelect {...props}>
+      {label && <Label>{label}</Label>}
+      <Button>
+        <SelectValue />
+        <ChevronDown />
+      </Button>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+      <Popover hideArrow className="select-popover">
+        <SelectListBox items={items}>{children}</SelectListBox>
+      </Popover>
+    </AriaSelect>
   );
 }
 
-export function SelectListBox<T extends object>(props: ListBoxProps<T>) {
+export function SelectListBox<T>(props: ListBoxProps<T>) {
   return <DropdownListBox {...props} />;
 }
 

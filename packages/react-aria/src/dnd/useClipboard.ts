@@ -20,20 +20,20 @@ import {useFocus} from '../interactions/useFocus';
 
 export interface ClipboardProps {
   /** A function that returns the items to copy. */
-  getItems?: (details: {action: 'cut' | 'copy'}) => DragItem[],
+  getItems?: (details: {action: 'cut' | 'copy'}) => DragItem[];
   /** Handler that is called when the user triggers a copy interaction. */
-  onCopy?: () => void,
+  onCopy?: () => void;
   /** Handler that is called when the user triggers a cut interaction. */
-  onCut?: () => void,
+  onCut?: () => void;
   /** Handler that is called when the user triggers a paste interaction. */
-  onPaste?: (items: DropItem[]) => void,
+  onPaste?: (items: DropItem[]) => void;
   /** Whether the clipboard is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface ClipboardResult {
   /** Props for the element that will handle clipboard events. */
-  clipboardProps: DOMAttributes
+  clipboardProps: DOMAttributes;
 }
 
 const globalEvents = new Map();
@@ -41,7 +41,7 @@ function addGlobalEventListener(event, fn) {
   let eventData = globalEvents.get(event);
   if (!eventData) {
     let handlers = new Set<(e: Event) => void>();
-    let listener = (e) => {
+    let listener = e => {
       for (let handler of handlers) {
         handler(e);
       }
@@ -71,7 +71,7 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
   let {isDisabled} = options;
   let isFocusedRef = useRef(false);
   let {focusProps} = useFocus({
-    onFocusChange: (isFocused) => {
+    onFocusChange: isFocused => {
       isFocusedRef.current = isFocused;
     }
   });

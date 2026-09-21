@@ -35,7 +35,7 @@ let defaultItems = [
 ];
 
 export const Default: TagGroupStory = {
-  render: (args) => (
+  render: args => (
     <TagGroup {...args} aria-label="Tag group">
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
@@ -69,7 +69,7 @@ export const CustomAction: TagGroupStory = {
 };
 
 export const WithIcon: TagGroupStory = {
-  render: (args) => (
+  render: args => (
     <TagGroup {...args} aria-label="Tag group">
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
@@ -87,7 +87,7 @@ export const WithIcon: TagGroupStory = {
 export const LabelWrapping: TagGroupStory = {
   ...Default,
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{width: '100px'}}>
         <Story />
       </div>
@@ -102,7 +102,7 @@ export const MaxRows: TagGroupStory = {
     maxRows: 2
   },
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{width: '200px'}}>
         <Story />
       </div>
@@ -118,7 +118,7 @@ export const MaxRowsCustomAction: TagGroupStory = {
     actionLabel: 'Clear'
   },
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{width: '200px'}}>
         <Story />
       </div>
@@ -127,7 +127,7 @@ export const MaxRowsCustomAction: TagGroupStory = {
 };
 
 export const EmptyState: TagGroupStory = {
-  render: (args) => (
+  render: args => (
     <TagGroup label="Tag group with empty state" {...args}>
       {[]}
     </TagGroup>
@@ -138,7 +138,15 @@ export const EmptyState: TagGroupStory = {
 export const CustomEmptyState: TagGroupStory = {
   ...EmptyState,
   args: {
-    renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
+    renderEmptyState: () => (
+      <span>
+        No tags.{' '}
+        <Link>
+          <a href="//react-spectrum.com">Click here</a>
+        </Link>{' '}
+        to add some.
+      </span>
+    )
   },
   name: 'Custom empty state'
 };

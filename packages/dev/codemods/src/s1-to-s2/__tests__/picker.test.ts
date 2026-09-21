@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static - Renames Item to PickerItem', `
+test(
+  'Static - Renames Item to PickerItem',
+  `
 import {Picker, Item} from '@adobe/react-spectrum';
 <div>
   <Picker label="Ice Cream">
@@ -14,9 +16,12 @@ import {Picker, Item} from '@adobe/react-spectrum';
     <Item>Vanilla</Item>
   </Picker>
 </div>
-`);
+`
+);
 
-test('Static - Renames key to id', `
+test(
+  'Static - Renames key to id',
+  `
 import {Picker, Item} from '@adobe/react-spectrum';
 <div>
   <Picker label="Ice Cream">
@@ -24,9 +29,12 @@ import {Picker, Item} from '@adobe/react-spectrum';
     <Item key="vanilla">Vanilla</Item>
   </Picker>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames Item to PickerItem', `
+test(
+  'Dynamic - Renames Item to PickerItem',
+  `
 import {Picker, Item} from '@adobe/react-spectrum';
 let options = [
   {id: 1, name: 'Chocolate'},
@@ -49,9 +57,12 @@ let options = [
     {(item) => <Item>{item.name}</Item>}
   </Picker>
 </div>
-`);
+`
+);
 
-test('Static - Converts menuWidth to px value', `
+test(
+  'Static - Converts menuWidth to px value',
+  `
 import {Picker, Item} from '@adobe/react-spectrum';
 let menuWidth = 'size-10';
 let props = {menuWidth: 'size-10'};
@@ -81,9 +92,12 @@ let props = {menuWidth: 'size-10'};
     <Item>Vanilla</Item>
   </Picker>
 </div>
-`);
+`
+);
 
-test('Static - Removes isQuiet', `
+test(
+  'Static - Removes isQuiet',
+  `
 import {Picker, Item} from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
@@ -109,9 +123,12 @@ let props = {isQuiet: true};
     <Item>Vanilla</Item>
   </Picker>
 </div>
-`);
+`
+);
 
-test('changes validationState to isInvalid or nothing', `
+test(
+  'changes validationState to isInvalid or nothing',
+  `
 import {Picker, Item} from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
@@ -137,9 +154,12 @@ let props = {validationState: 'invalid'};
     <Item>Vanilla</Item>
   </Picker>
 </div>
-`);
+`
+);
 
-test('handles sections', `
+test(
+  'handles sections',
+  `
 import {Picker, Section, Item} from '@adobe/react-spectrum';
 <Picker>
   <Section title="Section title">
@@ -147,9 +167,12 @@ import {Picker, Section, Item} from '@adobe/react-spectrum';
     <Item>Item two</Item>
   </Section>
 </Picker>
-`);
+`
+);
 
-test('replaces isLoading with loadingState and keeps onLoadMore', `
+test(
+  'replaces isLoading with loadingState and keeps onLoadMore',
+  `
   import {Picker, Section, Item} from '@adobe/react-spectrum';
     <>
       <Picker label="Ice Cream" isLoading onLoadMore={() => {}}>
@@ -161,9 +184,12 @@ test('replaces isLoading with loadingState and keeps onLoadMore', `
         <Item>Cat</Item>
       </Picker>
     </>
-`);
+`
+);
 
-test('renames deprecated selection props', `
+test(
+  'renames deprecated selection props',
+  `
 import {Picker, Item} from '@adobe/react-spectrum';
 let selectedKey = 'cat';
 <div>
@@ -180,4 +206,5 @@ let selectedKey = 'cat';
     <Item key="cat">Cat</Item>
   </Picker>
 </div>
-`);
+`
+);

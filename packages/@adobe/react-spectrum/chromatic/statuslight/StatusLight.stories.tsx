@@ -16,7 +16,22 @@ import React from 'react';
 import {SpectrumStatusLightProps, StatusLight} from '../../src/statuslight/StatusLight';
 import {View} from '../../src/view/View';
 
-let variants = ['celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple', 'neutral', 'info', 'positive', 'notice', 'negative', 'positive'] as SpectrumStatusLightProps['variant'][];
+let variants = [
+  'celery',
+  'yellow',
+  'fuchsia',
+  'indigo',
+  'seafoam',
+  'chartreuse',
+  'magenta',
+  'purple',
+  'neutral',
+  'info',
+  'positive',
+  'notice',
+  'negative',
+  'positive'
+] as SpectrumStatusLightProps['variant'][];
 
 export default {
   title: 'StatusLight'
@@ -32,7 +47,9 @@ AllVariants.story = {
 
 export const Multiline: StatusLightStory = () => (
   <View width="size-3000">
-    <StatusLight variant="celery">Super long status light label. Sample text. Arma virumque cano, Troiae qui primus ab oris.</StatusLight>
+    <StatusLight variant="celery">
+      Super long status light label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
+    </StatusLight>
   </View>
 );
 
@@ -46,7 +63,9 @@ function render() {
       {variants.map((variant: SpectrumStatusLightProps['variant']) => (
         <>
           <StatusLight variant={variant}>Status light {variant}</StatusLight>
-          <StatusLight variant={variant} isDisabled>Disabled {variant}</StatusLight>
+          <StatusLight variant={variant} isDisabled>
+            Disabled {variant}
+          </StatusLight>
         </>
       ))}
     </Flex>

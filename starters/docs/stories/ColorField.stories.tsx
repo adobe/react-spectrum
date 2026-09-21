@@ -15,7 +15,7 @@ const meta: Meta<typeof ColorField> = {
 export default meta;
 type Story = StoryFn<typeof ColorField>;
 
-export const Example: Story = (args) => <ColorField {...args} />;
+export const Example: Story = args => <ColorField {...args} />;
 
 Example.args = {
   label: 'Color'

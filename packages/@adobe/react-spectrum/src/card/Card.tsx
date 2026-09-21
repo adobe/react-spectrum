@@ -18,15 +18,12 @@ import React, {forwardRef, ForwardRefExoticComponent, PropsWithoutRef, RefAttrib
 import {SpectrumCardProps} from './types';
 import {useCardViewContext} from './CardViewContext';
 
-
 let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
   let context = useCardViewContext();
   if (context !== null) {
     return null;
   } else {
-    return (
-      <CardBase {...props} ref={ref} />
-    );
+    return <CardBase {...props} ref={ref} />;
   }
 });
 
@@ -44,5 +41,9 @@ Card.getCollectionNode = function* getCollectionNode<T>(props: any): Generator<P
   };
 };
 
-let _Card = Card as ForwardRefExoticComponent<ItemProps<SpectrumCardProps> & PropsWithoutRef<SpectrumCardProps> & RefAttributes<DOMRefValue<HTMLDivElement>>>;
+let _Card = Card as ForwardRefExoticComponent<
+  ItemProps<SpectrumCardProps> &
+    PropsWithoutRef<SpectrumCardProps> &
+    RefAttributes<DOMRefValue<HTMLDivElement>>
+>;
 export {_Card as Card};

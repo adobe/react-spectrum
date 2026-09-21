@@ -80,7 +80,7 @@ export default {
 
 export const Default: ColorSliderStory = {
   args: {defaultValue: '#800000', channel: 'red'},
-  render: (args) => <ColorSlider {...args} />
+  render: args => <ColorSlider {...args} />
 };
 
 export const Controlled: ColorSliderStory = {
@@ -96,7 +96,10 @@ export const ContextualHelpStory: ColorSliderStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is Hue?</Heading>
-        <Content>Hue is a degree on the color wheel from 0 to 360. 0 (or 360) is red, 120 is green, 240 is blue.</Content>
+        <Content>
+          Hue is a degree on the color wheel from 0 to 360. 0 (or 360) is red, 120 is green, 240 is
+          blue.
+        </Content>
       </ContextualHelp>
     )
   },
@@ -104,21 +107,21 @@ export const ContextualHelpStory: ColorSliderStory = {
 };
 
 export const RGBA: ColorSliderStory = {
-  render: (args) => <RGBASlider {...args} />
+  render: args => <RGBASlider {...args} />
 };
 
 export const HSLA: ColorSliderStory = {
-  render: (args) => <HSLASlider {...args} />
+  render: args => <HSLASlider {...args} />
 };
 
 export const HSBA: ColorSliderStory = {
-  render: (args) => <HSBASlider {...args} />
+  render: args => <HSBASlider {...args} />
 };
 
 function RGBASlider(props) {
   let {locale} = useLocale();
   let [color, setColor] = useState(parseColor('#ff00ff'));
-  let onChange = (v) => {
+  let onChange = v => {
     setColor(v);
     props?.onChange?.(v);
   };
@@ -145,7 +148,7 @@ function RGBASlider(props) {
 function HSLASlider(props) {
   let {locale} = useLocale();
   let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
-  let onChange = (v) => {
+  let onChange = v => {
     setColor(v);
     props?.onChange?.(v);
   };
@@ -171,7 +174,7 @@ function HSLASlider(props) {
 function HSBASlider(props) {
   let {locale} = useLocale();
   let [color, setColor] = useState(parseColor('hsb(0, 100%, 50%)'));
-  let onChange = (v) => {
+  let onChange = v => {
     setColor(v);
     props?.onChange?.(v);
   };

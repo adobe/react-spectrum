@@ -11,7 +11,14 @@
  */
 
 import {action} from 'storybook/actions';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today} from '@internationalized/date';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  getLocalTimeZone,
+  isWeekend,
+  parseZonedDateTime,
+  today
+} from '@internationalized/date';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from 'react-stately/useCalendarState';
 import {Flex} from '../../src/layout/Flex';
@@ -93,7 +100,7 @@ export default {
 } as Meta<typeof RangeCalendar>;
 
 export const Default: RangeCalendarStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const DefaultValue: RangeCalendarStory = {
@@ -107,11 +114,11 @@ export const ControlledValue: RangeCalendarStory = {
 };
 
 export const WithTime: RangeCalendarStory = {
-  render: (args) => <RangeCalendarWithTime {...args} />
+  render: args => <RangeCalendarWithTime {...args} />
 };
 
 export const ZonedTime: RangeCalendarStory = {
-  render: (args) => <RangeCalendarWithZonedTime {...args} />,
+  render: args => <RangeCalendarWithZonedTime {...args} />,
   name: 'with zoned time'
 };
 
@@ -123,16 +130,27 @@ export const OneWeek: RangeCalendarStory = {
 
 export const DefaultMinMax: RangeCalendarStory = {
   ...Default,
-  args: {defaultValue: {start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 12)}, minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)},
+  args: {
+    defaultValue: {start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 12)},
+    minValue: new CalendarDate(2019, 6, 5),
+    maxValue: new CalendarDate(2019, 6, 20)
+  },
   name: 'defaultValue + minValue + maxValue'
 };
 
 export const DateUnavailable: RangeCalendarStory = {
   ...Default,
-  args: {isDateUnavailable: (date: DateValue) => {
-    const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-    return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
-  }},
+  args: {
+    isDateUnavailable: (date: DateValue) => {
+      const disabledIntervals = [
+        [today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})],
+        [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]
+      ];
+      return disabledIntervals.some(
+        interval => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0
+      );
+    }
+  },
   name: 'isDateUnavailable'
 };
 
@@ -144,19 +162,22 @@ export const MinValue: RangeCalendarStory = {
 
 export const DefaultValVisibleMonths: RangeCalendarStory = {
   ...Default,
-  args: {visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}},
+  args: {
+    visibleMonths: 3,
+    defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}
+  },
   name: 'defaultValue, visibleMonths: 3'
 };
 
 export const DateUnavailableInvalid: RangeCalendarStory = {
-  render: (args) => <DateUnavailableAndInvalid {...args} />,
+  render: args => <DateUnavailableAndInvalid {...args} />,
   name: 'isDateUnavailable, invalid'
 };
 
 export const Custom454Story: RangeCalendarStory = {
   ...Default,
   name: 'Custom calendar',
-  render: (args) => <Custom454RangedCalendar {...args} />
+  render: args => <Custom454RangedCalendar {...args} />
 };
 
 function render(props) {
@@ -168,8 +189,11 @@ function render(props) {
 }
 
 function RangeCalendarWithTime(props) {
-  let [value, setValue] = useState({start: new CalendarDateTime(2019, 6, 5, 8), end: new CalendarDateTime(2019, 6, 10, 12)});
-  let onChange = (v) => {
+  let [value, setValue] = useState({
+    start: new CalendarDateTime(2019, 6, 5, 8),
+    end: new CalendarDateTime(2019, 6, 10, 12)
+  });
+  let onChange = v => {
     setValue(v);
     props?.onChange?.(v);
   };
@@ -178,16 +202,27 @@ function RangeCalendarWithTime(props) {
     <Flex direction="column">
       <RangeCalendar {...props} value={value} onChange={onChange} />
       <Flex gap="size-100">
-        <TimeField label="Start time" value={value.start} onChange={v => onChange({...value, start: v})} />
-        <TimeField label="End time" value={value.end} onChange={v => onChange({...value, end: v})} />
+        <TimeField
+          label="Start time"
+          value={value.start}
+          onChange={v => onChange({...value, start: v})}
+        />
+        <TimeField
+          label="End time"
+          value={value.end}
+          onChange={v => onChange({...value, end: v})}
+        />
       </Flex>
     </Flex>
   );
 }
 
 function RangeCalendarWithZonedTime(props) {
-  let [value, setValue] = useState({start: parseZonedDateTime('2021-03-10T00:45-05:00[America/New_York]'), end: parseZonedDateTime('2021-03-26T18:05-07:00[America/Los_Angeles]')});
-  let onChange = (v) => {
+  let [value, setValue] = useState({
+    start: parseZonedDateTime('2021-03-10T00:45-05:00[America/New_York]'),
+    end: parseZonedDateTime('2021-03-26T18:05-07:00[America/Los_Angeles]')
+  });
+  let onChange = v => {
     setValue(v);
     props?.onChange?.(v);
   };
@@ -196,8 +231,16 @@ function RangeCalendarWithZonedTime(props) {
     <Flex direction="column">
       <RangeCalendar {...props} value={value} onChange={onChange} />
       <Flex gap="size-100">
-        <TimeField label="Start time" value={value.start} onChange={v => onChange({...value, start: v})} />
-        <TimeField label="End time" value={value.end} onChange={v => onChange({...value, end: v})} />
+        <TimeField
+          label="Start time"
+          value={value.start}
+          onChange={v => onChange({...value, start: v})}
+        />
+        <TimeField
+          label="End time"
+          value={value.end}
+          onChange={v => onChange({...value, end: v})}
+        />
       </Flex>
     </Flex>
   );
@@ -205,11 +248,19 @@ function RangeCalendarWithZonedTime(props) {
 
 function DateUnavailableAndInvalid(props) {
   let {locale} = useLocale();
-  return (
-    render({...props, isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, defaultValue: {start: new CalendarDate(2021, 10, 3), end: new CalendarDate(2021, 10, 16)}})
-  );
+  return render({
+    ...props,
+    isDateUnavailable: (date: DateValue) => isWeekend(date, locale),
+    allowsNonContiguousRanges: true,
+    defaultValue: {start: new CalendarDate(2021, 10, 3), end: new CalendarDate(2021, 10, 16)}
+  });
 }
 
 function Custom454RangedCalendar(props) {
-  return render({...props, createCalendar: () => new Custom454Calendar(), visibleMonths: 3, defaultValue: {start: new CalendarDate(2023, 8, 6), end: new CalendarDate(2023, 10, 7)}});
+  return render({
+    ...props,
+    createCalendar: () => new Custom454Calendar(),
+    visibleMonths: 3,
+    defaultValue: {start: new CalendarDate(2023, 8, 6), end: new CalendarDate(2023, 10, 7)}
+  });
 }

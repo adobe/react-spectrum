@@ -59,7 +59,11 @@ module.exports = async function processCSS(cssCode, asset, options, minimal = fa
           // get all css blocks and concat
           let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);
           visit(ast, 'code', node => {
-            if (node.lang !== 'css' || node?.meta?.includes('render=false') || node?.meta?.includes('hidden')) {
+            if (
+              node.lang !== 'css' ||
+              node?.meta?.includes('render=false') ||
+              node?.meta?.includes('hidden')
+            ) {
               return;
             }
             let code = node.value;
@@ -72,34 +76,43 @@ module.exports = async function processCSS(cssCode, asset, options, minimal = fa
         return result;
       }
     },
-    visitor: minimal ? null : {
-      Rule: {
-        media(m) {
-          // Convert dark mode media query to use docs color scheme.
-          let mediaQueries = m.value.query.mediaQueries;
-          let condition = mediaQueries[0].condition;
-          let isDarkMode = mediaQueries.length === 1
-            && condition.type === 'feature'
-            && condition.value.type === 'plain'
-            && condition.value.name === 'prefers-color-scheme'
-            && condition.value.value.value === 'dark';
-          if (isDarkMode) {
-            return {
-              type: 'style',
-              value: {
-                // Generates this selector: `:root[style*="color-scheme: dark"]`
-                selectors: [[
-                  {type: 'pseudo-class', kind: 'root'},
-                  {type: 'attribute', name: 'style', operation: {operator: 'substring', value: 'color-scheme: dark'}}
-                ]],
-                loc: m.value.loc,
-                declarations: m.value.rules[0].value.declarations
+    visitor: minimal
+      ? null
+      : {
+          Rule: {
+            media(m) {
+              // Convert dark mode media query to use docs color scheme.
+              let mediaQueries = m.value.query.mediaQueries;
+              let condition = mediaQueries[0].condition;
+              let isDarkMode =
+                mediaQueries.length === 1 &&
+                condition.type === 'feature' &&
+                condition.value.type === 'plain' &&
+                condition.value.name === 'prefers-color-scheme' &&
+                condition.value.value.value === 'dark';
+              if (isDarkMode) {
+                return {
+                  type: 'style',
+                  value: {
+                    // Generates this selector: `:root[style*="color-scheme: dark"]`
+                    selectors: [
+                      [
+                        {type: 'pseudo-class', kind: 'root'},
+                        {
+                          type: 'attribute',
+                          name: 'style',
+                          operation: {operator: 'substring', value: 'color-scheme: dark'}
+                        }
+                      ]
+                    ],
+                    loc: m.value.loc,
+                    declarations: m.value.rules[0].value.declarations
+                  }
+                };
               }
-            };
+            }
           }
         }
-      }
-    }
   });
 
   return transformed.code.toString();

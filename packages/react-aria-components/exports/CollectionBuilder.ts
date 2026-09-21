@@ -14,6 +14,10 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {createLeafComponent, createBranchComponent, CollectionBuilder} from 'react-aria/CollectionBuilder';
+export {
+  createLeafComponent,
+  createBranchComponent,
+  CollectionBuilder
+} from 'react-aria/CollectionBuilder';
 export {CollectionRendererContext, DefaultCollectionRenderer} from '../src/Collection';
 export type {CollectionRenderer} from '../src/Collection';

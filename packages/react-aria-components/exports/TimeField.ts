@@ -14,8 +14,21 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {DateInput, DateSegment, TimeField, TimeFieldContext, TimeFieldStateContext} from '../src/DateField';
-export type {DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from '../src/DateField';
+export {
+  DateInput,
+  DateSegment,
+  TimeField,
+  TimeFieldContext,
+  TimeFieldStateContext
+} from '../src/DateField';
+export type {
+  DateFieldRenderProps,
+  DateInputProps,
+  DateInputRenderProps,
+  DateSegmentProps,
+  DateSegmentRenderProps,
+  TimeFieldProps
+} from '../src/DateField';
 export type {TimeValue, TimeFieldState} from 'react-stately/useTimeFieldState';
 
 export {Label} from '../src/Label';

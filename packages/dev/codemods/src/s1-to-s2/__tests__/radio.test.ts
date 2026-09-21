@@ -6,10 +6,13 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Does nothing', `
+test(
+  'Does nothing',
+  `
 import {Radio} from '@adobe/react-spectrum';
 
 <div>
   <Radio>Unsubscribe</Radio>
 </div>
-`);
+`
+);

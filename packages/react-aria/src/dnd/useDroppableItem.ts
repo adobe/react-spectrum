@@ -13,28 +13,37 @@
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import {DropTarget, FocusableElement, RefObject} from '@react-types/shared';
-import {getDroppableCollectionRef, getTypes, globalDndState, isInternalDropOperation} from './utils';
+import {
+  getDroppableCollectionRef,
+  getTypes,
+  globalDndState,
+  isInternalDropOperation
+} from './utils';
 import {HTMLAttributes, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DroppableItemOptions {
   /** The drop target represented by the item. */
-  target: DropTarget,
+  target: DropTarget;
   /** The ref to the activate button. */
-  activateButtonRef?: RefObject<FocusableElement | null>
+  activateButtonRef?: RefObject<FocusableElement | null>;
 }
 
 export interface DroppableItemResult {
   /** Props for the droppable element. */
-  dropProps: HTMLAttributes<HTMLElement>,
+  dropProps: HTMLAttributes<HTMLElement>;
   /** Whether the item is currently the active drop target. */
-  isDropTarget: boolean
+  isDropTarget: boolean;
 }
 
 /**
  * Handles drop interactions for an item within a collection component.
  */
-export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>): DroppableItemResult {
+export function useDroppableItem(
+  options: DroppableItemOptions,
+  state: DroppableCollectionState,
+  ref: RefObject<HTMLElement | null>
+): DroppableItemResult {
   let {dropProps} = useVirtualDrop();
   let droppableCollectionRef = getDroppableCollectionRef(state);
   useEffect(() => {
@@ -61,13 +70,15 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
   let dragSession = DragManager.useDragSession();
   let {draggingKeys} = globalDndState;
   let isInternal = isInternalDropOperation(droppableCollectionRef);
-  let isValidDropTarget = dragSession && state.getDropOperation({
-    target: options.target,
-    types: getTypes(dragSession.dragTarget.items),
-    allowedOperations: dragSession.dragTarget.allowedDropOperations,
-    isInternal,
-    draggingKeys
-  }) !== 'cancel';
+  let isValidDropTarget =
+    dragSession &&
+    state.getDropOperation({
+      target: options.target,
+      types: getTypes(dragSession.dragTarget.items),
+      allowedOperations: dragSession.dragTarget.allowedDropOperations,
+      isInternal,
+      draggingKeys
+    }) !== 'cancel';
 
   let isDropTarget = state.isDropTarget(options.target);
   useEffect(() => {

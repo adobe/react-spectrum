@@ -17,7 +17,7 @@ import {InlineAlert, SpectrumInlineAlertProps} from '../../src/inlinealert/Inlin
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 
-type StoryArgs = SpectrumInlineAlertProps & {title: string, content: string};
+type StoryArgs = SpectrumInlineAlertProps & {title: string; content: string};
 
 const meta: Meta<StoryArgs> = {
   title: 'InlineAlert',
@@ -45,7 +45,7 @@ export default meta;
 export type InlineAlertStory = StoryObj<StoryArgs>;
 
 export const Default: InlineAlertStory = {
-  render: (args) => (
+  render: args => (
     <InlineAlert {...args}>
       <Heading>{args.title}</Heading>
       <Content>{args.content}</Content>
@@ -54,7 +54,7 @@ export const Default: InlineAlertStory = {
 };
 
 export const Dynamic: InlineAlertStory = {
-  render: (args) => <DynamicExample {...args} />
+  render: args => <DynamicExample {...args} />
 };
 
 function DynamicExample(args) {
@@ -62,13 +62,15 @@ function DynamicExample(args) {
 
   return (
     <>
-      <Button variant="primary" onPress={() => setShown(!shown)}>{shown ? 'Hide Alert' : 'Show Alert'}</Button>
-      {shown &&
+      <Button variant="primary" onPress={() => setShown(!shown)}>
+        {shown ? 'Hide Alert' : 'Show Alert'}
+      </Button>
+      {shown && (
         <InlineAlert {...args} autoFocus>
           <Heading>{args.title}</Heading>
           <Content>{args.content}</Content>
         </InlineAlert>
-      }
+      )}
     </>
   );
 }

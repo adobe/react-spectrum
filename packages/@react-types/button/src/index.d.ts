@@ -13,8 +13,21 @@
 import {AriaButtonProps} from '@react-aria/button';
 import {ElementType} from 'react';
 
-export {LinkButtonProps, AriaButtonProps, AriaToggleButtonProps, AriaToggleButtonGroupItemProps} from '@react-aria/button';
-export {SpectrumButtonProps, SpectrumActionButtonProps, SpectrumLogicButtonProps, SpectrumToggleButtonProps} from '@react-spectrum/button';
+export {
+  LinkButtonProps,
+  AriaButtonProps,
+  AriaToggleButtonProps,
+  AriaToggleButtonGroupItemProps
+} from '@react-aria/button';
+export {
+  SpectrumButtonProps,
+  SpectrumActionButtonProps,
+  SpectrumLogicButtonProps,
+  SpectrumToggleButtonProps
+} from '@react-spectrum/button';
 
 // Backward compatibility.
-export type AriaButtonElementTypeProps<T extends ElementType = 'button'> = Pick<AriaButtonProps<T>, 'elementType'>;
+export type AriaButtonElementTypeProps<T extends ElementType = 'button'> = Pick<
+  AriaButtonProps<T>,
+  'elementType'
+>;

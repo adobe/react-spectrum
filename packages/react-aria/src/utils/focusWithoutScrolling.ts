@@ -23,9 +23,9 @@ import {FocusableElement} from '@react-types/shared';
 // See https://github.com/calvellido/focus-options-polyfill
 
 interface ScrollableElement {
-  element: HTMLElement,
-  scrollTop: number,
-  scrollLeft: number
+  element: HTMLElement;
+  scrollTop: number;
+  scrollLeft: number;
 }
 
 export function focusWithoutScrolling(element: FocusableElement): void {
@@ -64,10 +64,7 @@ function getScrollableElements(element: FocusableElement): ScrollableElement[] {
   let rootScrollingElement = document.scrollingElement || document.documentElement;
 
   while (parent instanceof HTMLElement && parent !== rootScrollingElement) {
-    if (
-      parent.offsetHeight < parent.scrollHeight ||
-      parent.offsetWidth < parent.scrollWidth
-    ) {
+    if (parent.offsetHeight < parent.scrollHeight || parent.offsetWidth < parent.scrollWidth) {
       scrollableElements.push({
         element: parent,
         scrollTop: parent.scrollTop,

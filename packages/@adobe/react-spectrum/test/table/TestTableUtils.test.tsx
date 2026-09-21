@@ -30,12 +30,14 @@ let columns = [
 
 // getComputedStyle is very slow in our version of jsdom.
 // These tests only care about direct inline styles. We can avoid parsing other stylesheets.
-window.getComputedStyle = (el) => (el as HTMLElement).style;
+window.getComputedStyle = el => (el as HTMLElement).style;
 
 describe('Table ', function () {
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
-  let testUtilRealTimer = new User({advanceTimer: (waitTime) => new Promise((resolve) => setTimeout(resolve, waitTime))});
+  let testUtilRealTimer = new User({
+    advanceTimer: waitTime => new Promise(resolve => setTimeout(resolve, waitTime))
+  });
 
   beforeAll(function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
@@ -43,25 +45,32 @@ describe('Table ', function () {
     jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
   });
 
-  let TableExample = (props) => {
+  let TableExample = props => {
     let [sort, setSort] = useState({});
-    let setSortDescriptor = (sort) => {
+    let setSortDescriptor = sort => {
       setSort(sort);
       onSortChange(sort);
     };
 
     return (
       <Provider theme={theme}>
-        <TableView aria-label="Table" selectionMode="multiple" data-testid="test" sortDescriptor={sort} onSortChange={setSortDescriptor} onSelectionChange={onSelectionChange} {...props}>
+        <TableView
+          aria-label="Table"
+          selectionMode="multiple"
+          data-testid="test"
+          sortDescriptor={sort}
+          onSortChange={setSortDescriptor}
+          onSelectionChange={onSelectionChange}
+          {...props}>
           <TableHeader columns={columns}>
-            {column => <Column allowsSorting allowsResizing={props.allowsResizing}>{column.name}</Column>}
+            {column => (
+              <Column allowsSorting allowsResizing={props.allowsResizing}>
+                {column.name}
+              </Column>
+            )}
           </TableHeader>
           <TableBody items={manyItems}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
+            {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Provider>
@@ -96,7 +105,7 @@ describe('Table ', function () {
 
       await tableTester.toggleSelectAll();
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      expect((onSelectionChange.mock.calls[2][0])).toEqual('all');
+      expect(onSelectionChange.mock.calls[2][0]).toEqual('all');
 
       await tableTester.toggleSort({column: 2});
       expect(onSortChange).toHaveBeenCalledTimes(1);
@@ -110,7 +119,6 @@ describe('Table ', function () {
       expect(onSortChange).toHaveBeenCalledTimes(3);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'descending'});
     });
-
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
@@ -160,7 +168,10 @@ describe('Table ', function () {
 
     it('highlight selection should switch to selection mode on long press', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let tableTester = testUtilRealTimer.createTester('Table', {root: screen.getByTestId('test'), interactionType: 'touch'});
+      let tableTester = testUtilRealTimer.createTester('Table', {
+        root: screen.getByTestId('test'),
+        interactionType: 'touch'
+      });
       tableTester.setInteractionType('touch');
       await tableTester.toggleRowSelection({row: 2, needsLongPress: true});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -204,7 +215,7 @@ describe('Table ', function () {
 
       await tableTester.toggleSelectAll();
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      expect((onSelectionChange.mock.calls[2][0])).toEqual('all');
+      expect(onSelectionChange.mock.calls[2][0]).toEqual('all');
 
       await tableTester.toggleSort({column: 2});
       expect(onSortChange).toHaveBeenCalledTimes(1);
@@ -218,7 +229,6 @@ describe('Table ', function () {
       expect(onSortChange).toHaveBeenCalledTimes(3);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'descending'});
     });
-
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
@@ -244,11 +254,12 @@ describe('Table ', function () {
 
       // touch always acts as toggle
       if (interactionType === 'touch') {
-        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Foo 3', 'Foo 4']));
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
+          new Set(['Foo 3', 'Foo 4'])
+        );
       } else {
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Foo 4']));
       }
-
 
       await tableTester.toggleSort({column: 2});
       expect(onSortChange).toHaveBeenCalledTimes(1);
@@ -273,7 +284,9 @@ describe('Table ', function () {
       // a modifier key
       if (interactionType === 'keyboard') {
         expect(onSelectionChange).toHaveBeenCalledTimes(2);
-        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Foo 1', 'Foo 3']));
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
+          new Set(['Foo 1', 'Foo 3'])
+        );
       } else {
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Foo 3']));
@@ -282,17 +295,24 @@ describe('Table ', function () {
       await tableTester.toggleRowSelection({row: 'Foo 4', selectionBehavior: 'replace'});
       if (interactionType === 'keyboard') {
         expect(onSelectionChange).toHaveBeenCalledTimes(3);
-        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Foo 1', 'Foo 3', 'Foo 4']));
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
+          new Set(['Foo 1', 'Foo 3', 'Foo 4'])
+        );
       } else {
         expect(onSelectionChange).toHaveBeenCalledTimes(2);
-        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Foo 3', 'Foo 4']));
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
+          new Set(['Foo 3', 'Foo 4'])
+        );
       }
     });
   });
 
   describe('long press, fake timers', () => {
     installPointerEvent();
-    let testUtilFakeTimer = new User({interactionType: 'touch', advanceTimer: jest.advanceTimersByTime});
+    let testUtilFakeTimer = new User({
+      interactionType: 'touch',
+      advanceTimer: jest.advanceTimersByTime
+    });
     beforeAll(function () {
       jest.useFakeTimers();
     });

@@ -4,7 +4,13 @@ html.toast-remove,
 html.toast-expand,
 html.toast-collapse,
 html.toast-clear,
-html:active-view-transition-type(toast-add, toast-remove, toast-expand, toast-collapse, toast-clear) {
+html:active-view-transition-type(
+  toast-add,
+  toast-remove,
+  toast-expand,
+  toast-collapse,
+  toast-clear
+) {
   view-transition-name: none;
 
   .toast-controls {
@@ -63,21 +69,21 @@ html:active-view-transition-type(toast-add, toast-remove) {
     --slideX: 0;
     --slideY: calc(100% + 12px);
   }
-  
+
   &::view-transition-group(.toast.top) {
     --slideX: 0;
     --slideY: calc(-100% - 12px);
   }
-  
+
   &::view-transition-group(.toast.start) {
     --slideX: calc(-100% - 12px);
     --slideY: 0;
   }
-  
+
   &::view-transition-group(.toast.end) {
     --slideX: calc(100% + 12px);
     --slideY: 0;
-  }  
+  }
 }
 
 /* Make the "Show all" button animate slightly faster/slower than other components when expanding/collapsing.

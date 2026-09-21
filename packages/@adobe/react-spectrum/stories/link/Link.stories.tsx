@@ -46,8 +46,14 @@ export let OverBackground: LinkStory = {
   ...Default,
   args: {...Default.args, variant: 'overBackground'},
   decorators: [
-    (Story) => (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+    Story => (
+      <div
+        style={{
+          backgroundColor: 'rgb(15, 121, 125)',
+          color: 'rgb(15, 121, 125)',
+          padding: '15px 20px',
+          display: 'inline-block'
+        }}>
         <Story />
       </div>
     )
@@ -75,12 +81,24 @@ export let WithHref: LinkStory = {
 
 export let WithChildren: LinkStory = {
   ...Default,
-  args: {children: <a href="//example.com" target="_self">This is a React Spectrum Link</a>},
+  args: {
+    children: (
+      <a href="//example.com" target="_self">
+        This is a React Spectrum Link
+      </a>
+    )
+  },
   name: 'children: a'
 };
 
 export let BlockNavigation: LinkStory = {
-  args: {children: <a href="//example.com" target="_self" onClick={(e) => e.preventDefault()}>This is a React Spectrum Link</a>}
+  args: {
+    children: (
+      <a href="//example.com" target="_self" onClick={e => e.preventDefault()}>
+        This is a React Spectrum Link
+      </a>
+    )
+  }
 };
 
 export let OnClick: LinkStory = {

@@ -30,61 +30,75 @@ try {
   // ignore.
 }
 
-export async function testSSR(filename: string, source: string, runAfterServer?: () => void): Promise<void> {
+export async function testSSR(
+  filename: string,
+  source: string,
+  runAfterServer?: () => void
+): Promise<void> {
   // Transform the code with babel so JSX becomes JS.
-  source = babel.transformSync(source, {filename, plugins: ['@babel/plugin-syntax-import-attributes']}).code;
+  source = babel.transformSync(source, {
+    filename,
+    plugins: ['@babel/plugin-syntax-import-attributes']
+  }).code;
 
   // Send the HTML along with the source code to the worker to be hydrated in a DOM environment.
   return new Promise((resolve, reject) => {
-    let req = http.request({
-      hostname: 'localhost',
-      port: 18235,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }, res => {
-      let body = '';
-      res.setEncoding('utf8');
-      res.on('data', (chunk) => {
-        body += chunk;
-      });
-
-      res.on('end', () => {
-        if (res.statusCode !== 200) {
-          let data = JSON.parse(body);
-          reject(new Error(data.errors[0]));
-          return;
+    let req = http.request(
+      {
+        hostname: 'localhost',
+        port: 18235,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         }
+      },
+      res => {
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', chunk => {
+          body += chunk;
+        });
 
-        // Capture React errors/warning and make them fail the tests.
-        let errors: string[] = [];
-        console.error = console.warn = (...messages) => {
-          errors.push(util.format(...messages));
-        };
-
-        // Evaluate the code to get a React element, and hydrate into the dom.
-        try {
-          document.body.innerHTML = `<div id="root">${body}</div>`;
-          let container = document.querySelector('#root');
-          runAfterServer?.();
-          let element = evaluate(source, filename);
-          if (ReactDOMClient) {
-            act(() => ReactDOMClient.hydrateRoot(container, <SSRProvider>{element}</SSRProvider>));
-          } else {
-            act(() => {(ReactDOM as any).hydrate(<SSRProvider>{element}</SSRProvider>, container);});
+        res.on('end', () => {
+          if (res.statusCode !== 200) {
+            let data = JSON.parse(body);
+            reject(new Error(data.errors[0]));
+            return;
           }
-        } catch (err: any) {
-          errors.push(err.stack);
-        }
 
-        if (errors.length > 0) {
-          reject(new Error(errors[0]));
-        } else {
-          resolve();
-        }
-      });
-    });
+          // Capture React errors/warning and make them fail the tests.
+          let errors: string[] = [];
+          console.error = console.warn = (...messages) => {
+            errors.push(util.format(...messages));
+          };
+
+          // Evaluate the code to get a React element, and hydrate into the dom.
+          try {
+            document.body.innerHTML = `<div id="root">${body}</div>`;
+            let container = document.querySelector('#root');
+            runAfterServer?.();
+            let element = evaluate(source, filename);
+            if (ReactDOMClient) {
+              act(() =>
+                ReactDOMClient.hydrateRoot(container, <SSRProvider>{element}</SSRProvider>)
+              );
+            } else {
+              act(() => {
+                (ReactDOM as any).hydrate(<SSRProvider>{element}</SSRProvider>, container);
+              });
+            }
+          } catch (err: any) {
+            errors.push(err.stack);
+          }
+
+          if (errors.length > 0) {
+            reject(new Error(errors[0]));
+          } else {
+            resolve();
+          }
+        });
+      }
+    );
 
     req.write(JSON.stringify({filename, source}));
     req.end();

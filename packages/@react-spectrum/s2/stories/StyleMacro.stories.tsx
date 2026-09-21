@@ -24,7 +24,15 @@ export default {
 
 export function Example(): ReactElement {
   return (
-    <div className={style({backgroundColor: 'orange-500', color: 'black', font: 'body', paddingX: 8, paddingY: 4, borderRadius: 'lg'})}>
+    <div
+      className={style({
+        backgroundColor: 'orange-500',
+        color: 'black',
+        font: 'body',
+        paddingX: 8,
+        paddingY: 4,
+        borderRadius: 'lg'
+      })}>
       Test
     </div>
   );
@@ -46,7 +54,11 @@ export function Well(): ReactElement {
         borderColor: 'transparent-black-75',
         font: 'body-sm'
       })}>
-      S2 style macro equivalent to v3 <Link href="https://react-spectrum.adobe.com/react-spectrum/Well.html" target="_blank">Well</Link>.
+      S2 style macro equivalent to v3{' '}
+      <Link href="https://react-spectrum.adobe.com/react-spectrum/Well.html" target="_blank">
+        Well
+      </Link>
+      .
     </div>
   );
 }

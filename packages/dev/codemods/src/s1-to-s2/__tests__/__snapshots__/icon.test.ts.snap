@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Does not affect existing S2 icons 1`] = `
 "import Add from '@react-spectrum/s2/icons/Add';

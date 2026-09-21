@@ -22,7 +22,11 @@ async function run() {
       });
 
       // Check if it is a merge commit from the github "Branch from fork action"
-      if (commit && commit.data?.parents?.length === 2 && commit.data.message.indexOf('Merge') > -1) {
+      if (
+        commit &&
+        commit.data?.parents?.length === 2 &&
+        commit.data.message.indexOf('Merge') > -1
+      ) {
         // Unfortunately listPullRequestsAssociatedWithCommit doesn't return fork prs so have to use search api
         // to find the fork PR the original commit lives in
         const forkHeadCommit = commit.data.parents[1].sha;
@@ -31,14 +35,20 @@ async function run() {
         });
 
         // Look for a PR that is from a fork and has a matching head commit as the current branch
-        const pullNumbers = searchRes.data.items.filter(i => i.pull_request !== undefined).map(j => j.number);
+        const pullNumbers = searchRes.data.items
+          .filter(i => i.pull_request !== undefined)
+          .map(j => j.number);
         for (let pull_number of pullNumbers) {
           const {data} = await octokit.pulls.get({
             owner: 'adobe',
             repo: 'react-spectrum',
             pull_number
           });
-          if (data && data.head.repo.full_name !== 'adobe/react-spectrum' && data.head.sha === forkHeadCommit) {
+          if (
+            data &&
+            data.head.repo.full_name !== 'adobe/react-spectrum' &&
+            data.head.sha === forkHeadCommit
+          ) {
             pr = pull_number;
             break;
           }
@@ -57,7 +67,7 @@ async function run() {
     try {
       diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
     } catch (e) {
-      console.log('No TS Diff output to run on.')
+      console.log('No TS Diff output to run on.');
       return;
     }
     if (diffs.length > 0) {
@@ -70,7 +80,7 @@ async function run() {
           body: `${commentKey}## API Changes
 ${diffs}
 `
-        })
+        });
       }
       // create new comment
       await octokit.issues.createComment({

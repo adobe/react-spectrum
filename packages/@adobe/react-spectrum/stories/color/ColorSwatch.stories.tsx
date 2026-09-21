@@ -34,15 +34,13 @@ export default {
 
 export type ColorSwatchStory = StoryFn<typeof ColorSwatch>;
 
-export const Default: ColorSwatchStory = (args) => (
-  <ColorSwatch {...args} />
-);
+export const Default: ColorSwatchStory = args => <ColorSwatch {...args} />;
 
 Default.args = {
   color: 'rgb(255, 0, 0)'
 };
 
-export const NoValue: ColorSwatchStory = (args) => <ColorSwatch {...args} />;
+export const NoValue: ColorSwatchStory = args => <ColorSwatch {...args} />;
 
-export const CustomWidth: ColorSwatchStory = (args) => <ColorSwatch {...args} width="size-1000" />;
+export const CustomWidth: ColorSwatchStory = args => <ColorSwatch {...args} width="size-1000" />;
 CustomWidth.args = Default.args;

@@ -12,7 +12,10 @@
 
 import type {Collection, Node} from '@react-types/shared';
 
-export function getChildNodes<T>(node: Node<T>, collection: Collection<Node<T>>): Iterable<Node<T>> {
+export function getChildNodes<T>(
+  node: Node<T>,
+  collection: Collection<Node<T>>
+): Iterable<Node<T>> {
   // New API: call collection.getChildren with the node key.
   if (typeof collection.getChildren === 'function') {
     return collection.getChildren(node.key);
@@ -50,7 +53,11 @@ export function getLastItem<T>(iterable: Iterable<T>): T | undefined {
   return lastItem;
 }
 
-export function compareNodeOrder<T>(collection: Collection<Node<T>>, a: Node<T>, b: Node<T>): number {
+export function compareNodeOrder<T>(
+  collection: Collection<Node<T>>,
+  a: Node<T>,
+  b: Node<T>
+): number {
   // If the two nodes have the same parent, compare their indices.
   if (a.parentKey === b.parentKey) {
     return a.index - b.index;
@@ -61,7 +68,9 @@ export function compareNodeOrder<T>(collection: Collection<Node<T>>, a: Node<T>,
   // ancestor of the same level
   let aAncestors = [...getAncestors(collection, a), a];
   let bAncestors = [...getAncestors(collection, b), b];
-  let firstNonMatchingAncestor = aAncestors.slice(0, bAncestors.length).findIndex((a, i) => a !== bAncestors[i]);
+  let firstNonMatchingAncestor = aAncestors
+    .slice(0, bAncestors.length)
+    .findIndex((a, i) => a !== bAncestors[i]);
   if (firstNonMatchingAncestor !== -1) {
     // Compare the indices of two children within the common ancestor.
     a = aAncestors[firstNonMatchingAncestor];

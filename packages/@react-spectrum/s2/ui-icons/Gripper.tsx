@@ -31,6 +31,8 @@ export default function Gripper(props: SVGProps<SVGSVGElement> & {size?: 'M'}): 
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <Gripper_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
+      return (
+        <Gripper_M {...otherProps} className={(otherProps.className || '') + styles({size})} />
+      );
   }
 }

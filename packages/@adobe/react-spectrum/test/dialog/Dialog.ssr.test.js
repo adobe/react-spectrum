@@ -14,13 +14,16 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Dialog SSR', function () {
   it('Dialog should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Dialog} from '../../exports/index.ts';
 
       <Dialog aria-label="The label">
         contents
       </Dialog>
-    `);
+    `
+    );
   });
 
   // TODO: AlertDialog, DialogTrigger

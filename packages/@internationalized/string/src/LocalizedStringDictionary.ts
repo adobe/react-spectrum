@@ -13,27 +13,31 @@
 import type {LocalizedString} from './LocalizedStringFormatter';
 
 export type LocalizedStrings<K extends string, T extends LocalizedString> = {
-  [lang: string]: Record<K, T>
+  [lang: string]: Record<K, T>;
 };
 
 const localeSymbol = Symbol.for('react-aria.i18n.locale');
 const stringsSymbol = Symbol.for('react-aria.i18n.strings');
-let cachedGlobalStrings: {[packageName: string]: LocalizedStringDictionary<any, any>} | null | undefined = undefined;
+let cachedGlobalStrings:
+  | {[packageName: string]: LocalizedStringDictionary<any, any>}
+  | null
+  | undefined = undefined;
 
 /**
  * Stores a mapping of localized strings. Can be used to find the
  * closest available string for a given locale.
  */
-export class LocalizedStringDictionary<K extends string = string, T extends LocalizedString = string> {
+export class LocalizedStringDictionary<
+  K extends string = string,
+  T extends LocalizedString = string
+> {
   private strings: LocalizedStrings<K, T>;
   private defaultLocale: string;
 
   constructor(messages: LocalizedStrings<K, T>, defaultLocale: string = 'en-US') {
     // Clone messages so we don't modify the original object.
     // Filter out entries with falsy values which may have been caused by applying optimize-locales-plugin.
-    this.strings = Object.fromEntries(
-      Object.entries(messages).filter(([, v]) => v)
-    );
+    this.strings = Object.fromEntries(Object.entries(messages).filter(([, v]) => v));
     this.defaultLocale = defaultLocale;
   }
 
@@ -59,7 +63,10 @@ export class LocalizedStringDictionary<K extends string = string, T extends Loca
     return strings;
   }
 
-  static getGlobalDictionaryForPackage<K extends string = string, T extends LocalizedString = string>(packageName: string): LocalizedStringDictionary<K, T> | null {
+  static getGlobalDictionaryForPackage<
+    K extends string = string,
+    T extends LocalizedString = string
+  >(packageName: string): LocalizedStringDictionary<K, T> | null {
     if (typeof window === 'undefined') {
       return null;
     }
@@ -73,20 +80,29 @@ export class LocalizedStringDictionary<K extends string = string, T extends Loca
 
       cachedGlobalStrings = {};
       for (let pkg in globalStrings) {
-        cachedGlobalStrings[pkg] = new LocalizedStringDictionary({[locale]: globalStrings[pkg]}, locale);
+        cachedGlobalStrings[pkg] = new LocalizedStringDictionary(
+          {[locale]: globalStrings[pkg]},
+          locale
+        );
       }
     }
 
     let dictionary = cachedGlobalStrings?.[packageName];
     if (!dictionary) {
-      throw new Error(`Strings for package "${packageName}" were not included by LocalizedStringProvider. Please add it to the list passed to createLocalizedStringDictionary.`);
+      throw new Error(
+        `Strings for package "${packageName}" were not included by LocalizedStringProvider. Please add it to the list passed to createLocalizedStringDictionary.`
+      );
     }
 
     return dictionary;
   }
 }
 
-function getStringsForLocale<K extends string, T extends LocalizedString>(locale: string, strings: LocalizedStrings<K, T>, defaultLocale = 'en-US') {
+function getStringsForLocale<K extends string, T extends LocalizedString>(
+  locale: string,
+  strings: LocalizedStrings<K, T>,
+  defaultLocale = 'en-US'
+) {
   // If there is an exact match, use it.
   if (strings[locale]) {
     return strings[locale];
@@ -98,6 +114,15 @@ function getStringsForLocale<K extends string, T extends LocalizedString>(locale
   // This could be replaced with Intl.LocaleMatcher once it is supported.
   // https://github.com/tc39/proposal-intl-localematcher
   let language = getLanguage(locale);
+
+  // If the locale has an explicit script (e.g. sr-Latn-RS), prefer a
+  // language-script match (sr-Latn) over a language-only match (sr), since
+  // those may represent entirely different scripts.
+  let script = getScript(locale);
+  if (script && strings[`${language}-${script}`]) {
+    return strings[`${language}-${script}`];
+  }
+
   if (strings[language]) {
     return strings[language];
   }
@@ -120,4 +145,14 @@ function getLanguage(locale: string) {
   }
 
   return locale.split('-')[0];
+}
+
+function getScript(locale: string) {
+  // @ts-ignore
+  if (Intl.Locale) {
+    // @ts-ignore
+    return new Intl.Locale(locale).script;
+  }
+
+  return undefined;
 }

@@ -1,4 +1,3 @@
-
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 import {useEffectEvent} from './useEffectEvent';
@@ -8,12 +7,14 @@ function hasResizeObserver() {
 }
 
 type useResizeObserverOptionsType<T> = {
-  ref: RefObject<T | undefined | null> | undefined,
-  box?: ResizeObserverBoxOptions,
-  onResize: () => void
-}
+  ref: RefObject<T | undefined | null> | undefined;
+  box?: ResizeObserverBoxOptions;
+  onResize: () => void;
+};
 
-export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>): void {
+export function useResizeObserver<T extends Element>(
+  options: useResizeObserverOptionsType<T>
+): void {
   // Only call onResize from inside the effect, otherwise we'll void our assumption that
   // useEffectEvents are safe to pass in.
   const {ref, box, onResize} = options;
@@ -31,8 +32,7 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
         window.removeEventListener('resize', onResizeEvent, false);
       };
     } else {
-
-      const resizeObserverInstance = new window.ResizeObserver((entries) => {
+      const resizeObserverInstance = new window.ResizeObserver(entries => {
         if (!entries.length) {
           return;
         }
@@ -47,6 +47,5 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
         }
       };
     }
-
   }, [ref, box]);
 }

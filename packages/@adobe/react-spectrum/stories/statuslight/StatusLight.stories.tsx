@@ -22,7 +22,21 @@ export default {
     variant: {
       control: {
         type: 'select',
-        options: ['positive', 'negative', 'notice', 'info', 'neutral', 'celery', 'chartreuse', 'yellow', 'magenta', 'fuchsia', 'purple', 'indigo', 'seafoam']
+        options: [
+          'positive',
+          'negative',
+          'notice',
+          'info',
+          'neutral',
+          'celery',
+          'chartreuse',
+          'yellow',
+          'magenta',
+          'fuchsia',
+          'purple',
+          'indigo',
+          'seafoam'
+        ]
       }
     },
     isDisabled: {

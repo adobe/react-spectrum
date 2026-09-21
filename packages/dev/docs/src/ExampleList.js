@@ -18,7 +18,12 @@ import styles from '@react-spectrum/docs/src/docs.css';
 export function ExampleList({tag, style}) {
   let {pages} = React.useContext(PageContext);
   let examples = pages
-    .filter(page => page.name.startsWith('react-aria/examples/') && !page.name.endsWith('index.html') && (!tag || page.keywords.includes(tag)))
+    .filter(
+      page =>
+        page.name.startsWith('react-aria/examples/') &&
+        !page.name.endsWith('index.html') &&
+        (!tag || page.keywords.includes(tag))
+    )
     .sort((a, b) => a.title.localeCompare(b.title));
 
   return (
@@ -30,7 +35,8 @@ export function ExampleList({tag, style}) {
           preview={page.image}
           title={page.title}
           description={page.description}
-          cover />
+          cover
+        />
       ))}
     </section>
   );

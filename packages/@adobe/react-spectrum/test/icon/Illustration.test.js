@@ -14,14 +14,22 @@ import {Illustration} from '../../src/icon/Illustration';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
-let CustomIllustration = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
+let CustomIllustration = props => (
+  <svg {...props}>
+    <path d="M 10,150 L 70,10 L 130,150 z" />
+  </svg>
+);
 
 describe('Illustration', function () {
   it.each`
-    Name      | Component
+    Name              | Component
     ${'Illustration'} | ${Illustration}
   `('$Name handles aria label', function ({Component}) {
-    let {getByRole} = render(<Component aria-label="custom illustration"><CustomIllustration /></Component>);
+    let {getByRole} = render(
+      <Component aria-label="custom illustration">
+        <CustomIllustration />
+      </Component>
+    );
 
     let illustration = getByRole('img');
     expect(illustration).toHaveAttribute('focusable', 'false');
@@ -29,10 +37,14 @@ describe('Illustration', function () {
   });
 
   it.each`
-    Name      | Component
+    Name              | Component
     ${'Illustration'} | ${Illustration}
   `('$Name handles no aria label', function ({Component}) {
-    let {container} = render(<Component><CustomIllustration /></Component>);
+    let {container} = render(
+      <Component>
+        <CustomIllustration />
+      </Component>
+    );
 
     let illustration = container.querySelector('svg');
     expect(illustration).not.toHaveAttribute('aria-label');
@@ -40,16 +52,24 @@ describe('Illustration', function () {
   });
 
   it.each`
-    Name      | Component
+    Name              | Component
     ${'Illustration'} | ${Illustration}
   `('$Name supports aria-hidden prop', function ({Component}) {
-    let {getByRole, rerender} = render(<Component aria-label="explicitly hidden aria-label" aria-hidden><CustomIllustration /></Component>);
+    let {getByRole, rerender} = render(
+      <Component aria-label="explicitly hidden aria-label" aria-hidden>
+        <CustomIllustration />
+      </Component>
+    );
 
     let illustration = getByRole('img', {hidden: true});
     expect(illustration).toHaveAttribute('aria-label', 'explicitly hidden aria-label');
     expect(illustration).toHaveAttribute('aria-hidden', 'true');
 
-    rerender(<Component aria-label="explicitly not hidden aria-label" aria-hidden={false}><CustomIllustration /></Component>);
+    rerender(
+      <Component aria-label="explicitly not hidden aria-label" aria-hidden={false}>
+        <CustomIllustration />
+      </Component>
+    );
     illustration = getByRole('img');
     expect(illustration).toHaveAttribute('aria-label', 'explicitly not hidden aria-label');
     expect(illustration).not.toHaveAttribute('aria-hidden');

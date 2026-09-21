@@ -1,1 +1,4 @@
-export {useVirtualizerItem, type VirtualizerItemOptions} from '../../../src/virtualizer/useVirtualizerItem';
+export {
+  useVirtualizerItem,
+  type VirtualizerItemOptions
+} from '../../../src/virtualizer/useVirtualizerItem';

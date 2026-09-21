@@ -12,4 +12,9 @@
 export {useTextField} from 'react-aria/useTextField';
 
 export {useFormattedTextField} from 'react-aria/private/textfield/useFormattedTextField';
-export type {TextFieldAria, AriaTextFieldOptions, TextFieldProps, AriaTextFieldProps} from 'react-aria/useTextField';
+export type {
+  TextFieldAria,
+  AriaTextFieldOptions,
+  TextFieldProps,
+  AriaTextFieldProps
+} from 'react-aria/useTextField';

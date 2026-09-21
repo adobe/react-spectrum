@@ -28,7 +28,12 @@ export class MessageFormatter {
     this.cache = {};
   }
 
-  format<T = void>(key: string, variables: Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>> | undefined): string | T | (string | T)[] {
+  format<T = void>(
+    key: string,
+    variables:
+      | Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>>
+      | undefined
+  ): string | T | (string | T)[] {
     let message = this.cache[key];
     if (!message) {
       let msg = this.messages.getStringForLocale(key, this.locale);
@@ -39,7 +44,9 @@ export class MessageFormatter {
       message = new IntlMessageFormat(msg, this.locale);
       this.cache[key] = message;
     }
-    let varCopy: Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>> | undefined;
+    let varCopy:
+      | Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>>
+      | undefined;
     if (variables) {
       varCopy = Object.keys(variables).reduce((acc, key) => {
         acc[key] = variables[key] == null ? false : variables[key];

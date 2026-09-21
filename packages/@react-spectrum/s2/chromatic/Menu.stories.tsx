@@ -10,16 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {BlendModes, DynamicExample, Example, KeyboardShortcuts, PublishAndExport, UnavailableMenuItem} from '../stories/Menu.stories';
+import {
+  BlendModes,
+  DynamicExample,
+  Example,
+  KeyboardShortcuts,
+  PublishAndExport,
+  UnavailableMenuItem
+} from '../stories/Menu.stories';
+import {Button} from '../src/Button';
 import {expect} from '@storybook/jest';
-import {Menu} from '../src/Menu';
+import {Header, Heading} from '../src/Content';
+import {Menu, MenuItem, MenuSection, MenuTrigger} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<typeof Menu<any>> = {
   component: Menu,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    },
+    chromatic: {ignoreSelectors: ['[role="progressbar"]']}
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Menu'
@@ -40,22 +56,22 @@ export const Default: Story = {
 
 export const WithKeyboardShortcuts: Story = {
   ...KeyboardShortcuts,
-  play: async (context) => await Default.play!(context)
+  play: async context => await Default.play!(context)
 };
 
 export const WithIcons: Story = {
   ...PublishAndExport,
-  play: async (context) => await Default.play!(context)
+  play: async context => await Default.play!(context)
 };
 
 export const WithImages: Story = {
   ...BlendModes,
-  play: async (context) => await Default.play!(context)
+  play: async context => await Default.play!(context)
 };
 
 export const Dynamic: Story = {
   ...DynamicExample,
-  play: async (context) => await Default.play!(context)
+  play: async context => await Default.play!(context)
 };
 
 export const WithUnavailableItem: Story = {
@@ -70,5 +86,132 @@ export const WithUnavailableItem: Story = {
     await userEvent.keyboard('{ArrowRight}');
     let menus = await within(body).findAllByRole('dialog');
     expect(menus).toHaveLength(2);
+  }
+};
+
+export const WithEmptyState: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test" items={[]}>
+        {() => <MenuItem>Never rendered</MenuItem>}
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let menu = await within(body).findByRole('menu');
+    await within(menu).findByText('No results');
+  }
+};
+
+export const WithInitialLoading: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test" items={[]} loadingState="loading">
+        {() => <MenuItem>Never rendered</MenuItem>}
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let menu = await within(body).findByRole('menu');
+    await within(menu).findByRole('progressbar', {hidden: true});
+  }
+};
+
+export const WithLoadMore: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test" loadingState="loadingMore">
+        <MenuItem>Cut</MenuItem>
+        <MenuItem>Copy</MenuItem>
+        <MenuItem>Paste</MenuItem>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let menu = await within(body).findByRole('menu');
+    await within(menu).findByRole('progressbar', {hidden: true});
+  }
+};
+
+export const WithSections: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test">
+        <MenuSection>
+          <Header>
+            <Heading>Section 1</Heading>
+          </Header>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+        </MenuSection>
+        <MenuSection>
+          <Header>
+            <Heading>Section 2</Heading>
+          </Header>
+          <MenuItem>Paste</MenuItem>
+          <MenuItem>Delete</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
+};
+
+export const WithSectionsAndLoadMore: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test" loadingState="loadingMore">
+        <MenuSection>
+          <Header>
+            <Heading>Section 1</Heading>
+          </Header>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+        </MenuSection>
+        <MenuSection>
+          <Header>
+            <Heading>Section 2</Heading>
+          </Header>
+          <MenuItem>Paste</MenuItem>
+          <MenuItem>Delete</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let menu = await within(body).findByRole('menu');
+    await within(menu).findByRole('progressbar', {hidden: true});
   }
 };

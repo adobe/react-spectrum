@@ -7,11 +7,11 @@ import {
   type DateInputProps,
   DateSegment,
   type DateValue,
-  type ValidationResult,
+  type ValidationResult
 } from 'react-aria-components/DateField';
-import { tv } from 'tailwind-variants';
-import { Description, FieldError, Label, fieldGroupStyles } from './Field';
-import { composeTailwindRenderProps } from './utils';
+import {tv} from 'tailwind-variants';
+import {Description, FieldError, Label, fieldGroupStyles} from './Field';
+import {composeTailwindRenderProps} from './utils';
 
 export interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<T> {
   label?: string;
@@ -19,11 +19,16 @@ export interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function DateField<T extends DateValue>(
-  { label, description, errorMessage, ...props }: DateFieldProps<T>
-) {
+export function DateField<T extends DateValue>({
+  label,
+  description,
+  errorMessage,
+  ...props
+}: DateFieldProps<T>) {
   return (
-    <AriaDateField {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
+    <AriaDateField
+      {...props}
+      className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
       {label && <Label>{label}</Label>}
       <DateInput />
       {description && <Description>{description}</Description>}
@@ -49,8 +54,16 @@ const segmentStyles = tv({
 
 export function DateInput(props: Omit<DateInputProps, 'children'>) {
   return (
-    <AriaDateInput className={renderProps => fieldGroupStyles({...renderProps, class: 'inline min-w-[150px] px-3 h-9 text-sm leading-8.5 font-sans cursor-text disabled:cursor-default whitespace-nowrap overflow-x-auto [scrollbar-width:none]'})} {...props}>
-      {(segment) => <DateSegment segment={segment} className={segmentStyles} />}
+    <AriaDateInput
+      className={renderProps =>
+        fieldGroupStyles({
+          ...renderProps,
+          class:
+            'inline min-w-[150px] px-3 h-9 text-sm leading-8.5 font-sans cursor-text disabled:cursor-default whitespace-nowrap overflow-x-auto [scrollbar-width:none]'
+        })
+      }
+      {...props}>
+      {segment => <DateSegment segment={segment} className={segmentStyles} />}
     </AriaDateInput>
   );
 }

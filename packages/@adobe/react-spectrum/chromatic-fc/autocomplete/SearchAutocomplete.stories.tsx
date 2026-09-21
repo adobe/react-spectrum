@@ -21,7 +21,7 @@ export default {
 export type SearchAutocompleteStory = StoryObj<typeof Template>;
 
 export const PropInputValue: SearchAutocompleteStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'inputValue: Blah',
   args: {inputValue: 'Blah'}
 };

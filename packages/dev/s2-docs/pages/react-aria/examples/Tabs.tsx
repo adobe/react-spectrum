@@ -18,9 +18,9 @@ export function Tabs(props: TabsProps) {
       // Define a scroll timeline at the top level of the tabs component
       // so it can be shared between the TabList and TabPanelCarousel.
       style={{timelineScope: '--scroll'} as any}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => tabsStyles({...renderProps, className})
-      )} />
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        tabsStyles({...renderProps, className})
+      )}
+    />
   );
 }

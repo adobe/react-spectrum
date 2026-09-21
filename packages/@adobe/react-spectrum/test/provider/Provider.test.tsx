@@ -14,8 +14,7 @@ import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-int
 import {ActionButton} from '../../src/button/ActionButton';
 import {Button} from '../../src/button/Button';
 import {Checkbox} from '../../src/checkbox/Checkbox';
-import MatchMediaMock from 'jest-matchmedia-mock';
-
+import {cleanup, setMedia} from 'mock-match-media';
 import {Provider} from '../../src/provider/Provider';
 import React, {useRef} from 'react';
 import {Switch} from '../../src/switch/Switch';
@@ -31,43 +30,53 @@ let theme = {
   medium: {'spectrum--medium': 'spectrum--medium'},
   large: {'spectrum--large': 'spectrum--large'}
 };
-let mediaQueryLight = '(prefers-color-scheme: light)';
-let mediaQueryDark = '(prefers-color-scheme: dark)';
-let mediaQueryMinXSmall = '(min-width: 190px)';
-let mediaQueryMinSmall = '(min-width: 640px)';
-let mediaQueryMinMedium = '(min-width: 768px)';
-let mediaQueryMinLarge = '(min-width: 1024px)';
+// `as const` narrows the string to the literal union setMedia expects.
+let mediaQueryLight = {prefersColorScheme: 'light'} as const;
+let mediaQueryDark = {prefersColorScheme: 'dark'} as const;
+// mock-match-media drives (min-width: *) queries via viewport `width`, not a `minWidth` media key.
+let mediaQueryBelowS = {width: 300};
+let mediaQueryAtS = {width: 700};
+let mediaQueryAtM = {width: 900};
+let mediaQueryAtL = {width: 1100};
 
 describe('Provider', () => {
   let user;
-  let matchMedia;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
-  beforeEach(() => {
-    matchMedia = new MatchMediaMock();
-  });
   afterEach(() => {
-    matchMedia.clear();
+    cleanup();
   });
 
   it('Uses OS theme by default - dark', () => {
-    matchMedia.useMediaQuery(mediaQueryDark);
-    let {getByTestId} = render(<Provider theme={theme} data-testid="testid"><div>hello</div></Provider>);
+    setMedia(mediaQueryDark);
+    let {getByTestId} = render(
+      <Provider theme={theme} data-testid="testid">
+        <div>hello</div>
+      </Provider>
+    );
     let provider = getByTestId('testid');
     expect(provider.classList.contains('spectrum--dark')).toBeTruthy();
   });
 
   it('Uses OS theme by default - light', () => {
-    matchMedia.useMediaQuery(mediaQueryLight);
-    let {getByTestId} = render(<Provider theme={theme} data-testid="testid"><div>hello</div></Provider>);
+    setMedia(mediaQueryLight);
+    let {getByTestId} = render(
+      <Provider theme={theme} data-testid="testid">
+        <div>hello</div>
+      </Provider>
+    );
     let provider = getByTestId('testid');
     expect(provider.classList.contains('spectrum--light')).toBeTruthy();
   });
 
   it('Can be set to dark regardless of OS setting', () => {
-    matchMedia.useMediaQuery(mediaQueryLight);
-    let {getByTestId} = render(<Provider theme={theme} colorScheme="dark" data-testid="testid"><div>hello</div></Provider>);
+    setMedia(mediaQueryLight);
+    let {getByTestId} = render(
+      <Provider theme={theme} colorScheme="dark" data-testid="testid">
+        <div>hello</div>
+      </Provider>
+    );
     let provider = getByTestId('testid');
     expect(provider.classList.contains('spectrum--dark')).toBeTruthy();
   });
@@ -95,7 +104,7 @@ describe('Provider', () => {
   });
 
   it('Nested providers follow their ancestors by default, not the OS', () => {
-    matchMedia.useMediaQuery(mediaQueryLight);
+    setMedia(mediaQueryLight);
     let {getByTestId} = render(
       <Provider theme={theme} colorScheme="dark" data-testid="testid1">
         <Provider data-testid="testid2">
@@ -110,8 +119,8 @@ describe('Provider', () => {
   });
 
   it('Nested providers can update to follow their ancestors', () => {
-    matchMedia.useMediaQuery(mediaQueryDark);
-    let NestedProviders = (props) => (
+    setMedia(mediaQueryDark);
+    let NestedProviders = props => (
       <Provider theme={theme} colorScheme={props.colorScheme} data-testid="testid1">
         <Provider data-testid="testid2">
           <div>hello</div>
@@ -132,7 +141,7 @@ describe('Provider', () => {
   });
 
   it('Nested providers can be explicitly set to something else', () => {
-    matchMedia.useMediaQuery(mediaQueryLight);
+    setMedia(mediaQueryLight);
     let {getByTestId} = render(
       <Provider theme={theme} colorScheme="dark" data-testid="testid1">
         <Provider colorScheme="light" data-testid="testid2">
@@ -163,7 +172,7 @@ describe('Provider', () => {
   });
 
   it('will render an available color scheme automatically if the previous does not exist on the new theme', () => {
-    matchMedia.useMediaQuery(mediaQueryDark);
+    setMedia(mediaQueryDark);
     let {getByTestId} = render(
       <Provider theme={theme} data-testid="testid1">
         <Provider
@@ -185,7 +194,7 @@ describe('Provider', () => {
   });
 
   it('Provider will rerender if the OS preferred changes and it is on auto', () => {
-    matchMedia.useMediaQuery(mediaQueryLight);
+    setMedia(mediaQueryLight);
     let {getByTestId} = render(
       <Provider theme={theme} data-testid="testid1">
         <Provider data-testid="testid2">
@@ -199,7 +208,7 @@ describe('Provider', () => {
     expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
 
     act(() => {
-      matchMedia.useMediaQuery(mediaQueryDark);
+      setMedia(mediaQueryDark);
     });
 
     expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
@@ -210,22 +219,20 @@ describe('Provider', () => {
     let breakpoints = {S: 480, M: 640, L: 1024};
     // jsdom/cssstyle doesn't support var() yet, so we need to use other values
     it.each`
-      name                    | mediaquery               | props                   | expected
-      ${'default'}            | ${mediaQueryMinXSmall}   | ${{}}                   | ${'192px'}
-      ${'default'}            | ${mediaQueryMinSmall}    | ${{}}                   | ${'1000px'}
-      ${'default'}            | ${mediaQueryMinMedium}   | ${{}}                   | ${'2000px'}
-      ${'default'}            | ${mediaQueryMinLarge}    | ${{}}                   | ${'3000px'}
-      ${'custom breakpoints'} | ${mediaQueryMinXSmall}   | ${{breakpoints}}        | ${'192px'}
-      ${'custom breakpoints'} | ${'(min-width: 480px)'}  | ${{breakpoints}}        | ${'1000px'}
-      ${'custom breakpoints'} | ${'(min-width: 640px)'}  | ${{breakpoints}}        | ${'2000px'}
-      ${'custom breakpoints'} | ${'(min-width: 1024px)'} | ${{breakpoints}}        | ${'3000px'}
+      name                    | mediaquery          | props            | expected
+      ${'default'}            | ${mediaQueryBelowS} | ${{}}            | ${'192px'}
+      ${'default'}            | ${mediaQueryAtS}    | ${{}}            | ${'1000px'}
+      ${'default'}            | ${mediaQueryAtM}    | ${{}}            | ${'2000px'}
+      ${'default'}            | ${mediaQueryAtL}    | ${{}}            | ${'3000px'}
+      ${'custom breakpoints'} | ${mediaQueryBelowS} | ${{breakpoints}} | ${'192px'}
+      ${'custom breakpoints'} | ${{width: 500}}     | ${{breakpoints}} | ${'1000px'}
+      ${'custom breakpoints'} | ${{width: 800}}     | ${{breakpoints}} | ${'2000px'}
+      ${'custom breakpoints'} | ${{width: 1100}}    | ${{breakpoints}} | ${'3000px'}
     `('$name $mediaquery', function ({mediaquery, props, expected}) {
-      matchMedia.useMediaQuery(mediaquery);
+      setMedia(mediaquery);
       let {getByTestId} = render(
         <Provider theme={theme} data-testid="testid1" {...props}>
-          <TextField
-            label="foo"
-            width={{base: '192px', S: '1000px', M: '2000px', L: '3000px'}} />
+          <TextField label="foo" width={{base: '192px', S: '1000px', M: '2000px', L: '3000px'}} />
         </Provider>
       );
       // use provider to get at the outer div, any props on TextField will end up on the input
@@ -235,18 +242,16 @@ describe('Provider', () => {
     });
 
     it.each`
-      mediaquery             | expected
-      ${mediaQueryMinXSmall} | ${'192px'}
-      ${mediaQueryMinSmall}  | ${'192px'}
-      ${mediaQueryMinMedium} | ${'192px'}
-      ${mediaQueryMinLarge}  | ${'3000px'}
+      mediaquery          | expected
+      ${mediaQueryBelowS} | ${'192px'}
+      ${mediaQueryAtS}    | ${'192px'}
+      ${mediaQueryAtM}    | ${'192px'}
+      ${mediaQueryAtL}    | ${'3000px'}
     `('omitted sizes $mediaquery', function ({mediaquery, expected}) {
-      matchMedia.useMediaQuery(mediaquery);
+      setMedia(mediaquery);
       let {getByTestId} = render(
         <Provider theme={theme} data-testid="testid1">
-          <TextField
-            label="foo"
-            width={{base: '192px', L: '3000px'}} />
+          <TextField label="foo" width={{base: '192px', L: '3000px'}} />
         </Provider>
       );
       let provider = getByTestId('testid1');
@@ -269,7 +274,7 @@ describe('Provider', () => {
         return <button {...otherProps}>push me</button>;
       }
 
-      matchMedia.useMediaQuery('(min-width: 768px)');
+      setMedia(mediaQueryAtM);
 
       let onBreakpointChange = jest.fn();
       render(
@@ -280,7 +285,7 @@ describe('Provider', () => {
       expect(onBreakpointChange).toHaveBeenCalledTimes(1);
       expect(onBreakpointChange).toHaveBeenNthCalledWith(1, 'M');
 
-      matchMedia.useMediaQuery('(min-width: 1024px)');
+      setMedia(mediaQueryAtL);
       fireEvent(window, new Event('resize'));
 
       expect(onBreakpointChange).toHaveBeenCalledTimes(2);

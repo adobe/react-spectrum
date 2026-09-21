@@ -37,9 +37,8 @@ const SRC_URL_1 =
   'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
 
-
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <AvatarGroup aria-label="Online users" {...args}>
       <Avatar alt="default adobe" src={SRC_URL_1} />
       <Avatar alt="default adobe" src={SRC_URL_1} />
@@ -50,7 +49,7 @@ export const Example: Story = {
 };
 
 export const WithLabel: Story = {
-  render: (args) => (
+  render: args => (
     <AvatarGroup label="145 members" {...args}>
       <Avatar alt="default adobe" src={SRC_URL_1} />
       <Avatar alt="default adobe" src={SRC_URL_1} />
@@ -61,7 +60,7 @@ export const WithLabel: Story = {
 };
 
 export const WithProviderBackground: Story = {
-  render: (args) => (
+  render: args => (
     <Provider background="layer-1" styles={style({padding: 40})}>
       <AvatarGroup label="145 members" {...args}>
         <Avatar alt="default adobe" src={SRC_URL_1} />

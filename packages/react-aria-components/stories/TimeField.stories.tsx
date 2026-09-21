@@ -29,7 +29,12 @@ export const TimeFieldExample: TimeFieldStory = () => (
   <TimeField data-testid="time-field-example">
     <Label style={{display: 'block'}}>Time</Label>
     <DateInput className={styles.field}>
-      {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+      {segment => (
+        <DateSegment
+          segment={segment}
+          className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+        />
+      )}
     </DateInput>
   </TimeField>
 );

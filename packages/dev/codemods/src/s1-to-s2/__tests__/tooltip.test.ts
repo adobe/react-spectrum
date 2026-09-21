@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes variant', `
+test(
+  'Removes variant',
+  `
 import {ActionButton, TooltipTrigger, Tooltip} from '@adobe/react-spectrum';
 
 <div>
@@ -23,17 +25,23 @@ import {ActionButton, TooltipTrigger, Tooltip} from '@adobe/react-spectrum';
     <Tooltip variant="negative">Change Name</Tooltip>
   </TooltipTrigger>
 </div>
-`);
+`
+);
 
-test('Removes variant in wrapped tooltip', `
+test(
+  'Removes variant in wrapped tooltip',
+  `
 import {Tooltip} from '@adobe/react-spectrum';
 
 function MyTooltip(props) {
   return <Tooltip {...props} variant="positive" />;
 }
-`);
+`
+);
 
-test('moves placement to trigger and replaces with simplified placement', `
+test(
+  'moves placement to trigger and replaces with simplified placement',
+  `
 import {ActionButton, TooltipTrigger, Tooltip} from '@adobe/react-spectrum';
 
 <div>
@@ -105,17 +113,23 @@ import {ActionButton, TooltipTrigger, Tooltip} from '@adobe/react-spectrum';
     <Tooltip placement="end bottom">Change Name</Tooltip>
   </TooltipTrigger>
 </div>
-`);
+`
+);
 
-test('Alerts users to placement change in wrapped tooltip', `
+test(
+  'Alerts users to placement change in wrapped tooltip',
+  `
 import {Tooltip} from '@adobe/react-spectrum';
 
 function MyTooltip(props) {
   return <Tooltip {...props} placement="bottom left" />;
 }
-`);
+`
+);
 
-test('Removes showIcon', `
+test(
+  'Removes showIcon',
+  `
 import {ActionButton, TooltipTrigger, Tooltip} from '@adobe/react-spectrum';
 
 let showIcon = true;
@@ -146,9 +160,12 @@ let props = {showIcon: true};
     <Tooltip {...props}>Change Name</Tooltip>
   </TooltipTrigger>
 </div>
-`);
+`
+);
 
-test('moves isOpen to trigger', `
+test(
+  'moves isOpen to trigger',
+  `
 import {ActionButton, TooltipTrigger, Tooltip} from '@adobe/react-spectrum';
 
 let isOpen = true;
@@ -179,12 +196,16 @@ let props = {isOpen: true};
     <Tooltip {...props}>Change Name</Tooltip>
   </TooltipTrigger>
 </div>
-`);
+`
+);
 
-test('Alerts users to isOpen change in wrapped tooltip', `
+test(
+  'Alerts users to isOpen change in wrapped tooltip',
+  `
 import {Tooltip} from '@adobe/react-spectrum';
 
 function MyTooltip(props) {
   return <Tooltip {...props} isOpen />;
 }
-`);
+`
+);

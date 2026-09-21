@@ -8,7 +8,10 @@ describe('Avatar', () => {
   it('renders an avatar image', () => {
     render(<Avatar src="http://localhost/some_image.png" />);
     expect(screen.getByRole(isOldReact ? 'img' : 'presentation')).toBeInTheDocument();
-    expect(screen.getByRole(isOldReact ? 'img' : 'presentation')).toHaveAttribute('src', 'http://localhost/some_image.png');
+    expect(screen.getByRole(isOldReact ? 'img' : 'presentation')).toHaveAttribute(
+      'src',
+      'http://localhost/some_image.png'
+    );
   });
 
   it('can render an avatar image with an alt', () => {
@@ -36,12 +39,17 @@ describe('Avatar', () => {
 
   it('supports custom class names', () => {
     render(<Avatar src="http://localhost/some_image.png" UNSAFE_className="my-class" />);
-    expect(screen.getByRole(isOldReact ? 'img' : 'presentation')).toHaveAttribute('class', expect.stringContaining('my-class'));
+    expect(screen.getByRole(isOldReact ? 'img' : 'presentation')).toHaveAttribute(
+      'class',
+      expect.stringContaining('my-class')
+    );
   });
 
   it('supports style props', () => {
     render(<Avatar src="http://localhost/some_image.png" isHidden />);
-    expect(screen.getByRole(isOldReact ? 'img' : 'presentation', {hidden: true})).toBeInTheDocument();
+    expect(
+      screen.getByRole(isOldReact ? 'img' : 'presentation', {hidden: true})
+    ).toBeInTheDocument();
   });
 
   it('supports custom DOM props', () => {
@@ -52,7 +60,10 @@ describe('Avatar', () => {
   describe('when isDisabled = true', () => {
     it('renders a disabled avatar image', () => {
       render(<Avatar src="http://localhost/some_image.png" isDisabled />);
-      expect(screen.getByRole(isOldReact ? 'img' : 'presentation')).toHaveAttribute('class', expect.stringMatching(/disabled/i));
+      expect(screen.getByRole(isOldReact ? 'img' : 'presentation')).toHaveAttribute(
+        'class',
+        expect.stringMatching(/disabled/i)
+      );
     });
   });
 });

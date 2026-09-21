@@ -1,8 +1,8 @@
-import { type Meta } from '@storybook/react';
-import { MoreHorizontal } from 'lucide-react';
+import {type Meta} from '@storybook/react';
+import {MoreHorizontal} from 'lucide-react';
 import React from 'react';
-import { Button } from '../src/Button';
-import { MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection, MenuSeparator } from '../src/Menu';
+import {Button} from '../src/Button';
+import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection, MenuSeparator} from '../src/Menu';
 
 const meta: Meta<typeof Menu> = {
   component: Menu,

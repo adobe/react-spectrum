@@ -44,11 +44,13 @@ describe('TooltipTrigger', function () {
   afterEach(() => {
     onOpenChange.mockClear();
     // there's global state, so we need to make sure to run out the cooldown for every test
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   describe('immediate', () => {
-    it('opens for focus',  () => {
+    it('opens for focus', () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -78,7 +80,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('opens for hover',  async () => {
+    it('opens for hover', async () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -111,7 +113,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('if hovered and focused, will hide if hover leaves',  async () => {
+    it('if hovered and focused, will hide if hover leaves', async () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -156,7 +158,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('if hovered and focused, will hide if focus leaves',  async () => {
+    it('if hovered and focused, will hide if focus leaves', async () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -199,7 +201,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('can be keyboard force closed',  async () => {
+    it('can be keyboard force closed', async () => {
       let {queryByRole, getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -230,7 +232,7 @@ describe('TooltipTrigger', function () {
       expect(queryByRole('tooltip')).toBeNull();
     });
 
-    it('can be keyboard force closed from anywhere',  async () => {
+    it('can be keyboard force closed from anywhere', async () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -268,7 +270,7 @@ describe('TooltipTrigger', function () {
       expect(queryByRole('tooltip')).toBeNull();
     });
 
-    it('is closed if the trigger is clicked',  async () => {
+    it('is closed if the trigger is clicked', async () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -300,7 +302,7 @@ describe('TooltipTrigger', function () {
     });
   });
 
-  it('is closed if the trigger is clicked with the keyboard',  async () => {
+  it('is closed if the trigger is clicked with the keyboard', async () => {
     let {getByRole, queryByRole, getByLabelText} = render(
       <Provider theme={theme}>
         <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -331,7 +333,7 @@ describe('TooltipTrigger', function () {
     expect(queryByRole('tooltip')).toBeNull();
   });
 
-  it('does not close if the trigger is clicked when shouldCloseOnPress is false',  async () => {
+  it('does not close if the trigger is clicked when shouldCloseOnPress is false', async () => {
     let {getByRole, getByLabelText} = render(
       <Provider theme={theme}>
         <TooltipTrigger onOpenChange={onOpenChange} delay={0} shouldCloseOnPress={false}>
@@ -352,7 +354,7 @@ describe('TooltipTrigger', function () {
     expect(tooltip).toBeVisible();
   });
 
-  it('does not close if the trigger is clicked with the keyboard when shouldCloseOnPress is false',  async () => {
+  it('does not close if the trigger is clicked with the keyboard when shouldCloseOnPress is false', async () => {
     let {getByRole, getByLabelText} = render(
       <Provider theme={theme}>
         <TooltipTrigger onOpenChange={onOpenChange} delay={0} shouldCloseOnPress={false}>
@@ -374,7 +376,7 @@ describe('TooltipTrigger', function () {
   });
 
   describe('delay', () => {
-    it('opens immediately for focus',  () => {
+    it('opens immediately for focus', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
@@ -401,7 +403,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('opens for hover',  () => {
+    it('opens for hover', () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
@@ -419,11 +421,15 @@ describe('TooltipTrigger', function () {
       expect(onOpenChange).not.toHaveBeenCalled();
       expect(queryByRole('tooltip')).toBeNull();
       // run half way through the timers and see if it's appeared
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       expect(onOpenChange).not.toHaveBeenCalled();
       expect(queryByRole('tooltip')).toBeNull();
       // finish the full amount of time, now it should be visible
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
@@ -442,7 +448,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('never opens if blurred before it opens',  () => {
+    it('never opens if blurred before it opens', () => {
       let {queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
@@ -458,7 +464,9 @@ describe('TooltipTrigger', function () {
       expect(onOpenChange).not.toHaveBeenCalled();
       expect(queryByRole('tooltip')).toBeNull();
       // run half way through the timers and see if it's appeared
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       expect(onOpenChange).not.toHaveBeenCalled();
       expect(queryByRole('tooltip')).toBeNull();
       fireEvent.mouseLeave(button);
@@ -469,7 +477,7 @@ describe('TooltipTrigger', function () {
       expect(queryByRole('tooltip')).toBeNull();
     });
 
-    it('opens for focus even if the delay was already in process',  () => {
+    it('opens for focus even if the delay was already in process', () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
@@ -484,7 +492,9 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseMove(button);
       expect(queryByRole('tooltip')).toBeNull();
       // run half way through the timers and see if it's appeared
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       expect(queryByRole('tooltip')).toBeNull();
       // halfway through, now add a focus
       // trigger modality to keyboard first
@@ -497,7 +507,9 @@ describe('TooltipTrigger', function () {
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
       // finish the full amount of time started by hover
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       expect(tooltip).toBeVisible();
       act(() => {
         button.blur();
@@ -509,7 +521,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('once opened, it can be closed and opened instantly for a period of time',  () => {
+    it('once opened, it can be closed and opened instantly for a period of time', () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger>
@@ -526,10 +538,14 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseMove(button);
       expect(queryByRole('tooltip')).toBeNull();
       // run half way through the timers and see if it's appeared
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       expect(queryByRole('tooltip')).toBeNull();
       // finish the full amount of time, now it should be visible
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
       fireEvent.mouseLeave(button);
@@ -559,9 +575,13 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
       expect(queryByRole('tooltip')).toBeNull();
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       expect(queryByRole('tooltip')).toBeNull();
-      act(() => {jest.advanceTimersByTime(TOOLTIP_DELAY / 2);});
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
       tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
 
@@ -575,7 +595,7 @@ describe('TooltipTrigger', function () {
   });
 
   describe('custom delay', () => {
-    it('opens immediately for focus',  () => {
+    it('opens immediately for focus', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={350}>
@@ -602,7 +622,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('opens for hover',  () => {
+    it('opens for hover', () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={350}>
@@ -620,11 +640,15 @@ describe('TooltipTrigger', function () {
       expect(onOpenChange).not.toHaveBeenCalled();
       expect(queryByRole('tooltip')).toBeNull();
       // run half way through the timers and see if it's appeared
-      act(() => {jest.advanceTimersByTime(350 / 2);});
+      act(() => {
+        jest.advanceTimersByTime(350 / 2);
+      });
       expect(onOpenChange).not.toHaveBeenCalled();
       expect(queryByRole('tooltip')).toBeNull();
       // finish the full amount of time, now it should be visible, note this is still way before the default opening time
-      act(() => {jest.advanceTimersByTime(350 / 2);});
+      act(() => {
+        jest.advanceTimersByTime(350 / 2);
+      });
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
@@ -643,7 +667,6 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
   });
-
 
   describe('multiple tooltips', () => {
     it('can only show one tooltip at a time', () => {
@@ -1079,7 +1102,9 @@ describe('TooltipTrigger', function () {
         button.focus();
       });
 
-      expect(getByTestId('content').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
       act(() => {
         button.blur();
       });
@@ -1125,7 +1150,9 @@ describe('TooltipTrigger', function () {
         button.focus();
       });
 
-      expect(getByTestId('content').closest('[data-testid="custom-container"]')).not.toBe(getByTestId('custom-container'));
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).not.toBe(
+        getByTestId('custom-container')
+      );
       act(() => {
         button.blur();
       });

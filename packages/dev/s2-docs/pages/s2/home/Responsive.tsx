@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useRef } from "react";
-import { Resizable } from "./DarkMode";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { ExampleApp } from "./ExampleApp";
+import React, {useRef} from 'react';
+import {Resizable} from './DarkMode';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ExampleApp} from './ExampleApp';
 
 export function Responsive() {
   let containerRef = useRef(null);
@@ -57,8 +57,8 @@ export function Responsive() {
           display: {
             default: 'none',
             sm: 'block'
-          }}
-        )}>
+          }
+        })}>
         <Resizable minWidth={330} containerRef={containerRef}>
           <ExampleApp />
         </Resizable>
@@ -70,15 +70,15 @@ export function Responsive() {
           display: {
             default: 'block',
             sm: 'none'
-          }}
-        )}>
+          }
+        })}>
         <ExampleApp />
       </div>
     </div>
   );
 }
 
-function Tick({name, pos}: {name: string, pos: number}) {
+function Tick({name, pos}: {name: string; pos: number}) {
   return (
     <div
       style={{insetInlineStart: (pos - 1) / 16 + 'rem'}}
@@ -117,7 +117,8 @@ function MiniTicks() {
           borderColor: 'cinnamon-700',
           borderStyle: 'solid',
           bottom: 0
-        })} />
+        })}
+      />
     );
   }
 

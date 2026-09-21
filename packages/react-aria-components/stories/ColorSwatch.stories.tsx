@@ -33,11 +33,12 @@ export const ColorSwatchExampleRender = (args: ColorSwatchProps): JSX.Element =>
       background: `
         linear-gradient(${color}, ${color}),
         repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
-    })} />
+    })}
+  />
 );
 
 export const ColorSwatchExample: ColorSwatchStory = {
-  render: (args) => <ColorSwatchExampleRender {...args} />,
+  render: args => <ColorSwatchExampleRender {...args} />,
   args: {
     color: 'rgb(255, 0, 0)'
   },

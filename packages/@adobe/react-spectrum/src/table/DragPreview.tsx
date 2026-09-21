@@ -17,61 +17,43 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 
 interface DragPreviewProps {
-  itemText: string,
-  itemCount: number,
-  height: number,
-  maxWidth: number
+  itemText: string;
+  itemCount: number;
+  height: number;
+  maxWidth: number;
 }
 
 export function DragPreview(props: DragPreviewProps): ReactNode {
-  let {
-    itemText,
-    itemCount,
-    height,
-    maxWidth
-  } = props;
+  let {itemText, itemCount, height, maxWidth} = props;
   let isDraggingMultiple = itemCount > 1;
   return (
     <Flex
       justifyContent="space-between"
       height={height}
       maxWidth={maxWidth}
-      UNSAFE_className={
+      UNSAFE_className={classNames(
+        styles,
+        'spectrum-Table-row',
         classNames(
-          styles,
-          'spectrum-Table-row',
-          classNames(
-            stylesOverrides,
-            'react-spectrum-Table-row',
-            'react-spectrum-Table-row-dragPreview',
-            {'react-spectrum-Table-row-dragPreview--multiple': isDraggingMultiple}
-          )
+          stylesOverrides,
+          'react-spectrum-Table-row',
+          'react-spectrum-Table-row-dragPreview',
+          {'react-spectrum-Table-row-dragPreview--multiple': isDraggingMultiple}
         )
-      }>
+      )}>
       <div
-        className={
-        classNames(
+        className={classNames(
           styles,
           'spectrum-Table-cell',
-          classNames(
-            stylesOverrides,
-            'react-spectrum-Table-cell'
-          )
-        )
-      }>
-        <span
-          className={
-            classNames(
-              styles,
-              'spectrum-Table-cellContents'
-            )
-        }>
-          {itemText}
-        </span>
+          classNames(stylesOverrides, 'react-spectrum-Table-cell')
+        )}>
+        <span className={classNames(styles, 'spectrum-Table-cellContents')}>{itemText}</span>
       </div>
-      {isDraggingMultiple &&
-        <div className={classNames(stylesOverrides, 'react-spectrum-Table-row-badge')}>{itemCount}</div>
-      }
+      {isDraggingMultiple && (
+        <div className={classNames(stylesOverrides, 'react-spectrum-Table-row-badge')}>
+          {itemCount}
+        </div>
+      )}
     </Flex>
   );
 }

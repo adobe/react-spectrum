@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-@import "@adobe/spectrum-css-temp/components/commons/focus-ring.css";
+@import '@adobe/spectrum-css-temp/components/commons/focus-ring.css';
 
 .react-spectrum-ToastContainer {
   composes: spectrum-FocusRing;
@@ -34,19 +34,19 @@
     pointer-events: all;
   }
 
-  &[data-position=top] {
+  &[data-position='top'] {
     top: 0;
     flex-direction: column;
     --slide-from: translateY(-100%);
   }
 
-  &[data-position=bottom] {
+  &[data-position='bottom'] {
     bottom: 0;
     flex-direction: column-reverse;
     --slide-from: translateY(100%);
   }
 
-  &[data-placement=start] {
+  &[data-placement='start'] {
     align-items: flex-start;
     --slide-from: translateX(-100%);
 
@@ -55,11 +55,11 @@
     }
   }
 
-  &[data-placement=center] {
+  &[data-placement='center'] {
     align-items: center;
   }
 
-  &[data-placement=end] {
+  &[data-placement='end'] {
     align-items: flex-end;
     --slide-from: translateX(100%);
 

@@ -1,6 +1,8 @@
 :root {
   /* redefine this var so it can be used in skin.css */
-  --spectrum-colorhandle-background-offset: calc(-1 * var(--spectrum-global-dimension-static-size-25));
+  --spectrum-colorhandle-background-offset: calc(
+    -1 * var(--spectrum-global-dimension-static-size-25)
+  );
   --spectrum-colorhandle-checkerboard-size: var(--spectrum-global-dimension-static-size-100);
 
   /* todo: update DNA so this is no longer required */
@@ -9,7 +11,8 @@
 
 .spectrum-ColorHandle {
   border-color: var(--spectrum-colorhandle-inner-border-color);
-  box-shadow: 0 0 0 var(--spectrum-colorhandle-outer-border-size) var(--spectrum-colorhandle-outer-border-color);
+  box-shadow: 0 0 0 var(--spectrum-colorhandle-outer-border-size)
+    var(--spectrum-colorhandle-outer-border-color);
   background: repeating-conic-gradient(#e6e6e6 0% 25%, white 0% 50%) 50% 50% / 16px 16px;
 
   &.is-disabled {
@@ -24,7 +27,8 @@
 }
 
 .spectrum-ColorHandle-color {
-  box-shadow: inset 0 0 0 var(--spectrum-colorhandle-outer-border-size) var(--spectrum-colorhandle-outer-border-color);
+  box-shadow: inset 0 0 0 var(--spectrum-colorhandle-outer-border-size)
+    var(--spectrum-colorhandle-outer-border-color);
 }
 
 @media (forced-colors: active) {

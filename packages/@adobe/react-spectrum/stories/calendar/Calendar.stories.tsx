@@ -12,7 +12,14 @@
 import {action} from 'storybook/actions';
 import {ActionButton} from '../../src/button/ActionButton';
 import {Calendar} from '../../src/calendar/Calendar';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  getLocalTimeZone,
+  parseZonedDateTime,
+  today,
+  ZonedDateTime
+} from '@internationalized/date';
 import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from 'react-stately/useCalendarState';
 import {Flex} from '../../src/layout/Flex';
@@ -103,7 +110,7 @@ export default {
 } as Meta<typeof Calendar>;
 
 export const Default: CalendarStory = {
-  render: (args) => <Example {...args} />
+  render: args => <Example {...args} />
 };
 
 export const DefaultValue: CalendarStory = {
@@ -117,11 +124,11 @@ export const ControlledValue: CalendarStory = {
 };
 
 export const WithTime: CalendarStory = {
-  render: (args) => <CalendarWithTime {...args} />
+  render: args => <CalendarWithTime {...args} />
 };
 
 export const ZonedTime: CalendarStory = {
-  render: (args) => <CalendarWithZonedTime {...args} />,
+  render: args => <CalendarWithZonedTime {...args} />,
   name: 'with zoned time'
 };
 
@@ -133,19 +140,29 @@ export const OneWeek: CalendarStory = {
 
 export const DefaultMinMax: CalendarStory = {
   ...Default,
-  args: {defaultValue: new CalendarDate(2019, 6, 10), minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)},
+  args: {
+    defaultValue: new CalendarDate(2019, 6, 10),
+    minValue: new CalendarDate(2019, 6, 5),
+    maxValue: new CalendarDate(2019, 6, 20)
+  },
   name: 'defaultValue + minValue + maxValue'
 };
 
 export const DateUnavailable: CalendarStory = {
-  render: (args) => (
+  render: args => (
     <Example
       {...args}
       defaultValue={today(getLocalTimeZone()).add({days: 1})}
       isDateUnavailable={(date: DateValue) => {
-        const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-        return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
-      }} />
+        const disabledIntervals = [
+          [today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})],
+          [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]
+        ];
+        return disabledIntervals.some(
+          interval => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0
+        );
+      }}
+    />
   ),
   name: 'isDateUnavailable'
 };
@@ -169,27 +186,62 @@ export const DefaultFocusedValue: CalendarStory = {
 };
 
 export const FocusedValue: CalendarStory = {
-  render: (args) => <ControlledFocus {...args} />,
+  render: args => <ControlledFocus {...args} />,
   name: 'focusedValue'
 };
 
-export const Custom454Example : CalendarStory = {
+export const Custom454Example: CalendarStory = {
   ...Default,
   name: 'Custom calendar',
-  render: (args) => <CustomCalendar {...args} />
+  render: args => <CustomCalendar {...args} />
 };
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
   {locale: '', label: 'Default', ordering: 'gregory'},
-  {label: 'Arabic (Algeria)', locale: 'ar-DZ', territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE', ordering: 'gregory islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (United Arab Emirates)', locale: 'ar-AE', territories: 'AE BH KW QA', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Egypt)', locale: 'AR-EG', territories: 'EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Saudi Arabia)', locale: 'ar-SA', territories: 'SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
-  {label: 'Farsi (Afghanistan)', locale: 'fa-AF', territories: 'AF IR', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
+  {
+    label: 'Arabic (Algeria)',
+    locale: 'ar-DZ',
+    territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE',
+    ordering: 'gregory islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (United Arab Emirates)',
+    locale: 'ar-AE',
+    territories: 'AE BH KW QA',
+    ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (Egypt)',
+    locale: 'AR-EG',
+    territories: 'EG',
+    ordering: 'gregory coptic islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (Saudi Arabia)',
+    locale: 'ar-SA',
+    territories: 'SA',
+    ordering: 'islamic-umalqura gregory islamic islamic-rgsa'
+  },
+  {
+    label: 'Farsi (Afghanistan)',
+    locale: 'fa-AF',
+    territories: 'AF IR',
+    ordering: 'persian gregory islamic islamic-civil islamic-tbla'
+  },
   // {territories: 'CN CX HK MO SG', ordering: 'gregory chinese'},
-  {label: 'Amharic (Ethiopia)', locale: 'am-ET', territories: 'ET', ordering: 'gregory ethiopic ethioaa'},
-  {label: 'Hebrew (Israel)', locale: 'he-IL', territories: 'IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
+  {
+    label: 'Amharic (Ethiopia)',
+    locale: 'am-ET',
+    territories: 'ET',
+    ordering: 'gregory ethiopic ethioaa'
+  },
+  {
+    label: 'Hebrew (Israel)',
+    locale: 'he-IL',
+    territories: 'IL',
+    ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'
+  },
   {label: 'Hindi (India)', locale: 'hi-IN', territories: 'IN', ordering: 'gregory indian'},
   {label: 'Japanese (Japan)', locale: 'ja-JP', territories: 'JP', ordering: 'gregory japanese'},
   // {territories: 'KR', ordering: 'gregory dangi'},
@@ -219,8 +271,20 @@ function Example(props) {
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale)!;
-  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
-  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p!.key === c.key)), [preferredCalendars]);
+  let preferredCalendars = React.useMemo(
+    () =>
+      pref
+        ? pref.ordering
+            .split(' ')
+            .map(p => calendars.find(c => c.key === p))
+            .filter(Boolean)
+        : [calendars[0]],
+    [pref]
+  );
+  let otherCalendars = React.useMemo(
+    () => calendars.filter(c => !preferredCalendars.some(p => p!.key === c.key)),
+    [preferredCalendars]
+  );
 
   let updateLocale = locale => {
     setLocale(locale);
@@ -233,7 +297,11 @@ function Example(props) {
   return (
     <Flex direction="column" gap="size-600" alignItems="center">
       <Flex direction="column" gap="size-150" wrap>
-        <Picker label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
+        <Picker
+          label="Locale"
+          items={preferences}
+          selectedKey={locale}
+          onSelectionChange={updateLocale}>
           {item => <Item key={item.locale}>{item.label}</Item>}
         </Picker>
         <Picker label="Calendar" selectedKey={calendar} onSelectionChange={setCalendar}>
@@ -245,7 +313,11 @@ function Example(props) {
           </Section>
         </Picker>
       </Flex>
-      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars![0]!.key ? '-u-ca-' + calendar : '')}>
+      <Provider
+        locale={
+          (locale || defaultLocale) +
+          (calendar && calendar !== preferredCalendars![0]!.key ? '-u-ca-' + calendar : '')
+        }>
         <View maxWidth="100vw" padding="size-10" overflow="auto">
           <Calendar {...props} />
         </View>
@@ -270,7 +342,9 @@ function CalendarWithTime(props) {
 }
 
 function CalendarWithZonedTime(props) {
-  let [value, setValue] = useState<ZonedDateTime | null>(parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]'));
+  let [value, setValue] = useState<ZonedDateTime | null>(
+    parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]')
+  );
   let onChange = (v: ZonedDateTime | null) => {
     setValue(v);
     props?.onChange?.(v);
@@ -289,7 +363,9 @@ function ControlledFocus(props) {
   let [focusedDate, setFocusedDate] = useState(defaultFocusedDate);
   return (
     <Flex direction="column" alignItems="start" gap="size-200">
-      <ActionButton onPress={() => setFocusedDate(defaultFocusedDate)}>Reset focused date</ActionButton>
+      <ActionButton onPress={() => setFocusedDate(defaultFocusedDate)}>
+        Reset focused date
+      </ActionButton>
       <Calendar {...props} focusedValue={focusedDate} onFocusChange={setFocusedDate} />
     </Flex>
   );
@@ -297,6 +373,10 @@ function ControlledFocus(props) {
 
 function CustomCalendar(props) {
   return (
-    <ControlledFocus {...props} createCalendar={() => new Custom454Calendar()} focusedValue={new CalendarDate(2023, 2, 5)} />
+    <ControlledFocus
+      {...props}
+      createCalendar={() => new Custom454Calendar()}
+      focusedValue={new CalendarDate(2023, 2, 5)}
+    />
   );
 }

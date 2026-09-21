@@ -10,18 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
- .react-spectrum-Table {
+.react-spectrum-Table {
   --spectrum-table-droptarget-background-color: var(--spectrum-alias-highlight-selected);
   --spectrum-table-dropindicator-border-color: var(--spectrum-dropzone-border-color-selected-hover);
-  --spectrum-table-dropindicator-circle-border-color: var(--spectrum-dropindicator-circle-border-color);
+  --spectrum-table-dropindicator-circle-border-color: var(
+    --spectrum-dropindicator-circle-border-color
+  );
 
   --spectrum-table-dropindicator-circle-size: var(--spectrum-dropindicator-circle-size);
   --spectrum-table-dropindicator-border-size: var(--spectrum-dropindicator-border-size);
 
-  --spectrum-table-dropzone-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
+  --spectrum-table-dropzone-border-color-selected-hover: var(
+    --spectrum-dropzone-border-color-selected-hover
+  );
 
-  --spectrum-table-item-draghandle-border-color-key-focus: var(--spectrum-table-item-border-color-key-focus);
- }
+  --spectrum-table-item-draghandle-border-color-key-focus: var(
+    --spectrum-table-item-border-color-key-focus
+  );
+}
 
 .react-spectrum-Table {
   user-select: none;
@@ -156,7 +162,10 @@
     &:after {
       content: '';
       position: absolute;
-      top: calc(var(--spectrum-table-dropindicator-circle-size) * -1 / 2 + var(--spectrum-table-dropindicator-border-size) / 2);
+      top: calc(
+        var(--spectrum-table-dropindicator-circle-size) * -1 / 2 +
+          var(--spectrum-table-dropindicator-border-size) / 2
+      );
       width: var(--spectrum-table-dropindicator-circle-size);
       height: var(--spectrum-table-dropindicator-circle-size);
       border-radius: 50%;
@@ -207,7 +216,8 @@
 .react-spectrum-Table-row {
   &.react-spectrum-Table-row--dropTarget {
     border: 1px var(--spectrum-table-dropindicator-border-color);
-    box-shadow: inset 2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
+    box-shadow:
+      inset 2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
       inset -2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
       inset 0 -3px 0 0 var(--spectrum-table-dropindicator-border-color),
       inset 0 2px 0 0 var(--spectrum-table-dropindicator-border-color);

@@ -14,11 +14,7 @@ import React, {ReactNode, StrictMode} from 'react';
 
 export function StrictModeWrapper(props: {children?: ReactNode}): ReactNode {
   if (process.env.STRICT_MODE) {
-    return (
-      <StrictMode>
-        {props.children}
-      </StrictMode>
-    );
+    return <StrictMode>{props.children}</StrictMode>;
   }
 
   return props.children;

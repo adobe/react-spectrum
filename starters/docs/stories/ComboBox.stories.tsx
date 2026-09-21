@@ -15,7 +15,7 @@ const meta: Meta<typeof ComboBox> = {
 export default meta;
 type Story = StoryFn<typeof ComboBox>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <ComboBox {...args}>
     <ComboBoxItem>Chocolate</ComboBoxItem>
     <ComboBoxItem>Mint</ComboBoxItem>

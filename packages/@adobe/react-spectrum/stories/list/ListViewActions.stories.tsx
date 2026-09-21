@@ -18,9 +18,7 @@ import {useListData} from 'react-stately/useListData';
 export default {
   title: 'ListView/Actions',
   component: ListView,
-  excludeStories: [
-    'FocusExample'
-  ],
+  excludeStories: ['FocusExample'],
   args: {
     isQuiet: false,
     density: 'regular',
@@ -59,74 +57,100 @@ export default {
 export type ListViewStory = StoryObj<typeof ListView>;
 
 export const ActionButtons: ListViewStory = {
-  render: (args) => renderActionsExample(props => <ActionButton {...props} aria-label="copy"><Copy /></ActionButton>, args),
+  render: args =>
+    renderActionsExample(
+      props => (
+        <ActionButton {...props} aria-label="copy">
+          <Copy />
+        </ActionButton>
+      ),
+      args
+    ),
   name: 'ActionButton'
 };
 
 export const ActionGroups: ListViewStory = {
-  render: (args) => renderActionsExample(() => (
-    <ActionGroup buttonLabelBehavior="hide" onAction={action('actionGroupAction')}>
-      <Item key="add">
-        <Add />
-        <Text>Add</Text>
-      </Item>
-      <Item key="delete">
-        <Delete />
-        <Text>Delete</Text>
-      </Item>
-    </ActionGroup>
-  ), args),
+  render: args =>
+    renderActionsExample(
+      () => (
+        <ActionGroup buttonLabelBehavior="hide" onAction={action('actionGroupAction')}>
+          <Item key="add">
+            <Add />
+            <Text>Add</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+      ),
+      args
+    ),
   name: 'ActionGroup'
 };
 
 export const ActionMenus: ListViewStory = {
-  render: (args) => renderActionsExample(() => (
-    <ActionMenu onAction={action('actionMenuAction')}>
-      <Item key="add">
-        <Add />
-        <Text>Add</Text>
-      </Item>
-      <Item key="delete">
-        <Delete />
-        <Text>Delete</Text>
-      </Item>
-    </ActionMenu>
-  ), args),
+  render: args =>
+    renderActionsExample(
+      () => (
+        <ActionMenu onAction={action('actionMenuAction')}>
+          <Item key="add">
+            <Add />
+            <Text>Add</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionMenu>
+      ),
+      args
+    ),
   name: 'ActionMenu'
 };
 
 export const ActionMenusGroup: ListViewStory = {
-  render: (args) => renderActionsExample(() => (
-    <>
-      <ActionGroup buttonLabelBehavior="hide" onAction={action('actionGroupAction')}>
-        <Item key="info">
-          <Info />
-          <Text>Info</Text>
-        </Item>
-      </ActionGroup>
-      <ActionMenu onAction={action('actionMenuACtion')}>
-        <Item key="add">
-          <Add />
-          <Text>Add</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionMenu>
-    </>
-  ), args),
+  render: args =>
+    renderActionsExample(
+      () => (
+        <>
+          <ActionGroup buttonLabelBehavior="hide" onAction={action('actionGroupAction')}>
+            <Item key="info">
+              <Info />
+              <Text>Info</Text>
+            </Item>
+          </ActionGroup>
+          <ActionMenu onAction={action('actionMenuACtion')}>
+            <Item key="add">
+              <Add />
+              <Text>Add</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
+        </>
+      ),
+      args
+    ),
   name: 'ActionGroup + ActionMenu'
 };
 
 export const Focus: ListViewStory = {
-  render: (args) => <FocusExample {...args} />,
+  render: args => <FocusExample {...args} />,
   name: 'Restore focus after item removal (disabledBehavior: "selection")'
 };
 
 function renderActionsExample(renderActions, props?) {
   return (
-    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')} aria-label="render actions ListView">
+    <ListView
+      width="300px"
+      selectionMode="single"
+      {...props}
+      onAction={action('onAction')}
+      onSelectionChange={action('onSelectionChange')}
+      aria-label="render actions ListView">
       <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
@@ -172,11 +196,20 @@ export const FocusExample = (args: Omit<SpectrumListViewProps<any>, 'children'>)
   });
 
   return (
-    <ListView aria-label="listview with removable items" width="250px" items={list.items} disabledKeys={['5']} {...args}>
+    <ListView
+      aria-label="listview with removable items"
+      width="250px"
+      items={list.items}
+      disabledKeys={['5']}
+      {...args}>
       {(item: any) => (
         <Item key={item.id} textValue={item.name}>
           <Text>{item.name}</Text>
-          <ActionButton aria-label={`Remove ${item.name}`} isQuiet onPress={() => list.remove(item.id)} isDisabled={item.isDisabled}>
+          <ActionButton
+            aria-label={`Remove ${item.name}`}
+            isQuiet
+            onPress={() => list.remove(item.id)}
+            isDisabled={item.isDisabled}>
             <RemoveCircle />
           </ActionButton>
         </Item>

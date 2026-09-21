@@ -39,17 +39,17 @@ function Cell({
   isSelectionStart,
   isSelectionEnd
 }: {
-  isToday: boolean,
-  isSelected: boolean,
-  isFocused: boolean,
-  isHovered: boolean,
-  isPressed: boolean,
-  isDisabled: boolean,
-  isRangeStart: boolean,
-  isRangeEnd: boolean,
-  isRangeSelection: boolean,
-  isSelectionStart: boolean,
-  isSelectionEnd: boolean
+  isToday: boolean;
+  isSelected: boolean;
+  isFocused: boolean;
+  isHovered: boolean;
+  isPressed: boolean;
+  isDisabled: boolean;
+  isRangeStart: boolean;
+  isRangeEnd: boolean;
+  isRangeSelection: boolean;
+  isSelectionStart: boolean;
+  isSelectionEnd: boolean;
 }): JSX.Element {
   return (
     <span
@@ -74,14 +74,28 @@ function Cell({
 export const Default: CellStory = {
   render: () => (
     <Grid columns={repeat(10, 100)}>
-      {generatePowerset(states, (merged) =>
-        (merged.isDisabled && (merged.isFocused || merged.isHovered || merged.isPressed)) ||
-        (!merged.isSelected && (merged.isRangeSelection || merged.isSelectionStart || merged.isSelectionEnd || merged.isRangeStart || merged.isRangeEnd)) ||
-        ((merged.isRangeStart || merged.isRangeEnd) && !merged.isRangeSelection) ||
-        (merged.isRangeStart && merged.isRangeEnd) ||
-        (merged.isSelectionStart && !merged.isRangeStart) ||
-        (merged.isSelectionEnd && !merged.isRangeEnd)
-      ).map(props => <div>{Object.keys(props).join(' ')}<div style={{position: 'relative', width: 40, height: 40, textAlign: 'center'}}><Cell {...props} /></div></div>)}
+      {generatePowerset(
+        states,
+        merged =>
+          (merged.isDisabled && (merged.isFocused || merged.isHovered || merged.isPressed)) ||
+          (!merged.isSelected &&
+            (merged.isRangeSelection ||
+              merged.isSelectionStart ||
+              merged.isSelectionEnd ||
+              merged.isRangeStart ||
+              merged.isRangeEnd)) ||
+          ((merged.isRangeStart || merged.isRangeEnd) && !merged.isRangeSelection) ||
+          (merged.isRangeStart && merged.isRangeEnd) ||
+          (merged.isSelectionStart && !merged.isRangeStart) ||
+          (merged.isSelectionEnd && !merged.isRangeEnd)
+      ).map(props => (
+        <div>
+          {Object.keys(props).join(' ')}
+          <div style={{position: 'relative', width: 40, height: 40, textAlign: 'center'}}>
+            <Cell {...props} />
+          </div>
+        </div>
+      ))}
     </Grid>
   )
 };

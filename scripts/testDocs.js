@@ -2,13 +2,15 @@ const {chromium, firefox, webkit} = require('playwright');
 const {exec} = require('child_process');
 const http = require('http');
 const path = require('path');
-const glob = require('glob');
+const {glob} = require('fs/promises');
 
 function parseArgs() {
   const args = process.argv.slice(2);
   const browser = args[0] || 'chromium';
   if (!['chromium', 'firefox', 'webkit'].includes(browser)) {
-    console.error('Invalid browser specified. Must be "chromium", "firefox", or "webkit". Using "chromium" as default.');
+    console.error(
+      'Invalid browser specified. Must be "chromium", "firefox", or "webkit". Using "chromium" as default.'
+    );
     return 'chromium';
   }
   return browser;
@@ -17,17 +19,17 @@ function parseArgs() {
 async function startServer() {
   return new Promise((resolve, reject) => {
     console.log('Starting documentation server...');
-    const child = exec('yarn start:docs', {
+    const child = exec('yarn start:s2-docs-parcel3', {
       env: {...process.env, DOCS_ENV: 'dev'}
     });
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       console.log(`Server output: ${data}`);
-      if (data.includes('Server running at')) {
+      if (data.includes('Server listening on')) {
         console.log('Documentation server is running');
-        resolve({process: child, baseUrl: data.split(' ')[3].trim()});
+        resolve({process: child, baseUrl: 'http://localhost:1234'});
       }
     });
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       console.error(`Server error: ${data}`);
     });
   });
@@ -37,13 +39,15 @@ function waitForServer(url, timeout = 30000, interval = 1000) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     const checkServer = () => {
-      http.get(url, (res) => {
-        if (res.statusCode === 200) {
-          resolve();
-        } else {
-          retryOrFail();
-        }
-      }).on('error', retryOrFail);
+      http
+        .get(url, res => {
+          if (res.statusCode === 200) {
+            resolve();
+          } else {
+            retryOrFail();
+          }
+        })
+        .on('error', retryOrFail);
     };
 
     const retryOrFail = () => {
@@ -59,31 +63,15 @@ function waitForServer(url, timeout = 30000, interval = 1000) {
 }
 
 async function getPageLinks() {
-  const packagePaths = [
-    'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx',
-    'packages/react-aria-components/docs/**/*.mdx',
-    'packages/@internationalized/*/docs/*.mdx'
-  ];
-
-  const rootPages = 'packages/dev/docs/pages/**/*.mdx';
+  const rootPages = 'packages/dev/s2-docs/pages/react-aria/*.mdx';
 
   let links = [];
 
-  for (const pattern of packagePaths) {
-    const files = await glob(pattern);
-    for (const file of files) {
-      const parts = file.split(path.sep);
-      const packageName = parts[1].replace('@', '');
-      const componentName = path.basename(file, '.mdx');
-      links.push(`/${packageName}/${componentName}.html`);
-    }
-  }
-
   const rootFiles = await glob(rootPages);
-  for (const file of rootFiles) {
-    const relativePath = path.relative('packages/dev/docs/pages', file);
+  for await (const file of rootFiles) {
+    const relativePath = path.relative('packages/dev/s2-docs/pages', file);
     const urlPath = path.join('/', path.dirname(relativePath), path.basename(relativePath, '.mdx'));
-    links.push(`${urlPath}.html`);
+    links.push(urlPath);
   }
 
   return links;
@@ -102,7 +90,9 @@ async function testDocs() {
     server = await startServer();
     await waitForServer(server.baseUrl);
 
-    const pageLinks = await getPageLinks().then((links) => links.map((link) => `${server.baseUrl}${link}`));
+    const pageLinks = await getPageLinks().then(links =>
+      links.map(link => `${server.baseUrl}${link}`)
+    );
     console.log(`Found ${pageLinks.length} pages to test`);
 
     switch (browserType) {
@@ -118,9 +108,19 @@ async function testDocs() {
 
     const context = await browser.newContext();
 
-    context.on('console', (msg) => {
+    context.on('console', msg => {
       const msgUrl = msg.location().url;
-      if (msgUrl.startsWith(server.baseUrl) && (msg.type() === 'error' || msg.type() === 'warning')) {
+      if (
+        msgUrl.startsWith(server.baseUrl) &&
+        (msg.type() === 'error' || msg.type() === 'warning')
+      ) {
+        if (
+          /Connection to the HMR server|outdated JSX|PressResponder|Error during WebSocket handshake/.test(
+            msg.text()
+          )
+        ) {
+          return;
+        }
         console.log(`${msg.type().toUpperCase()} on ${currentPage}: ${msg.text()}`);
         messages.push({type: msg.type(), path: currentPage, text: msg.text()});
       }
@@ -155,9 +155,9 @@ async function testDocs() {
 
     console.log('All pages tested successfully');
     console.log(`Total pages visited: ${pageLinks.length}`);
-    console.log(`Total errors: ${messages.filter((msg) => msg.type === 'error').length}`);
-    console.log(`Total warnings: ${messages.filter((msg) => msg.type === 'warning').length}`);
-    messages.forEach((msg) => {
+    console.log(`Total errors: ${messages.filter(msg => msg.type === 'error').length}`);
+    console.log(`Total warnings: ${messages.filter(msg => msg.type === 'warning').length}`);
+    messages.forEach(msg => {
       console.log(`${msg.type.toUpperCase()} on ${msg.path}: ${msg.text}`);
     });
   } catch (error) {

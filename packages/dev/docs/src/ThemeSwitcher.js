@@ -20,7 +20,10 @@ import {theme} from '@react-spectrum/theme-default';
 
 function useCurrentColorScheme() {
   let mq = useMemo(() => window.matchMedia('(prefers-color-scheme: dark)'), []);
-  let getCurrentColorScheme = useCallback(() => localStorage.theme || (mq.matches ? 'dark' : 'light'), [mq]);
+  let getCurrentColorScheme = useCallback(
+    () => localStorage.theme || (mq.matches ? 'dark' : 'light'),
+    [mq]
+  );
   let [colorScheme, setColorScheme] = useState(() => getCurrentColorScheme());
 
   useEffect(() => {
@@ -39,11 +42,20 @@ function useCurrentColorScheme() {
   return colorScheme;
 }
 
-export function ThemeProvider({children, colorScheme: colorSchemeProp, UNSAFE_className, isHidden}) {
+export function ThemeProvider({
+  children,
+  colorScheme: colorSchemeProp,
+  UNSAFE_className,
+  isHidden
+}) {
   let colorScheme = useCurrentColorScheme();
 
   return (
-    <Provider theme={theme} colorScheme={colorSchemeProp || colorScheme} UNSAFE_className={UNSAFE_className} isHidden={isHidden}>
+    <Provider
+      theme={theme}
+      colorScheme={colorSchemeProp || colorScheme}
+      UNSAFE_className={UNSAFE_className}
+      isHidden={isHidden}>
       {children}
     </Provider>
   );
@@ -56,9 +68,7 @@ export function Snippet({children}) {
 export function Example({children, colorScheme, isHidden}) {
   return (
     <ThemeProvider colorScheme={colorScheme} UNSAFE_className={styles.example} isHidden={isHidden}>
-      <ErrorBoundary>
-        {children}
-      </ErrorBoundary>
+      <ErrorBoundary>{children}</ErrorBoundary>
     </ThemeProvider>
   );
 }
@@ -66,16 +76,14 @@ export function Example({children, colorScheme, isHidden}) {
 export function ThemeSwitcher() {
   let colorScheme = useCurrentColorScheme();
   let onPress = () => {
-    localStorage.theme = (colorScheme === 'dark' ? 'light' : 'dark');
+    localStorage.theme = colorScheme === 'dark' ? 'light' : 'dark';
     window.dispatchEvent(new Event('storage'));
   };
   let label = colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
 
   return (
     <div title={label} role="presentation">
-      <ActionButton
-        aria-label={label}
-        onPress={onPress}>
+      <ActionButton aria-label={label} onPress={onPress}>
         {colorScheme === 'dark' ? <Light /> : <Moon />}
       </ActionButton>
     </div>

@@ -17,7 +17,7 @@ export function DraggableListBox() {
         return {
           'text/plain': `${item.name} – ${item.type}`,
           'text/html': `<strong>${item.name}</strong> – <em>${item.type}</em>`,
-          'pokemon': JSON.stringify(item)
+          pokemon: JSON.stringify(item)
         };
       });
     }

@@ -14,8 +14,8 @@ import 'vitest-browser-react';
 import {beforeEach} from 'vitest';
 
 // Track console errors and warnings per test
-let consoleErrors: Array<{message: unknown, args: unknown[]}> = [];
-let consoleWarnings: Array<{message: unknown, args: unknown[]}> = [];
+let consoleErrors: Array<{message: unknown; args: unknown[]}> = [];
+let consoleWarnings: Array<{message: unknown; args: unknown[]}> = [];
 
 // Reset console error/warning tracking before each test
 beforeEach(() => {
@@ -26,12 +26,10 @@ beforeEach(() => {
 // Fail test if there were any console errors
 afterEach(() => {
   if (consoleErrors.length > 0) {
-    const errorMessages = consoleErrors.map(e => 
-      typeof e.message === 'string' ? e.message : String(e.message)
-    ).join('\n');
-    throw new Error(
-      `Test failed due to console errors:\n${errorMessages}\n\n`
-    );
+    const errorMessages = consoleErrors
+      .map(e => (typeof e.message === 'string' ? e.message : String(e.message)))
+      .join('\n');
+    throw new Error(`Test failed due to console errors:\n${errorMessages}\n\n`);
   }
 });
 

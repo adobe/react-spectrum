@@ -17,7 +17,7 @@ import {TooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 import {useHover} from '../interactions/useHover';
 
 export interface TooltipProps {
-  isOpen?: boolean
+  isOpen?: boolean;
 }
 
 export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingProps {}
@@ -26,7 +26,7 @@ export interface TooltipAria {
   /**
    * Props for the tooltip element.
    */
-  tooltipProps: DOMAttributes
+  tooltipProps: DOMAttributes;
 }
 
 /**

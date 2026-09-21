@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "main": "BuildResolver.js",
-  "engines": {
-    "parcel": "^2.0.0"
-  },
   "dependencies": {
     "@parcel/core": "^2.16.3",
     "@parcel/node-resolver-core": "^3.7.3",
     "@parcel/plugin": "^2.16.3"
+  },
+  "engines": {
+    "parcel": "^2.0.0"
   }
 }

@@ -6,37 +6,54 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('should replace named imports', `
+test(
+  'should replace named imports',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 <Button>Test</Button>
-`);
+`
+);
 
-test('should replace named imports from individual packages', `
+test(
+  'should replace named imports from individual packages',
+  `
 import {Button} from '@react-spectrum/button';
 
 <Button>Test</Button>
-`);
+`
+);
 
-test('should handle empty files safely', `
-`);
+test(
+  'should handle empty files safely',
+  `
+`
+);
 
-test('should leave unimplemented components untouched', `
+test(
+  'should leave unimplemented components untouched',
+  `
 import {Button, Fake} from '@adobe/react-spectrum';
 
 <>
   <Button>Test</Button>
   <Fake>Foo</Fake>
 </>
-`);
+`
+);
 
-test('should keep import aliases', `
+test(
+  'should keep import aliases',
+  `
 import {Button as RSPButton} from '@adobe/react-spectrum';
 
 <RSPButton>Test</RSPButton>
-`);
+`
+);
 
-test('should not replace shadowed imports', `
+test(
+  'should not replace shadowed imports',
+  `
 import {Button} from '@adobe/react-spectrum';
 
 function Test() {
@@ -45,33 +62,48 @@ function Test() {
 }
 
 <Button>Foo</Button>
-`);
+`
+);
 
 // TODO: Could pre problematic if user is only upgrading a subset of components
-test('should keep namespace imports', `
+test(
+  'should keep namespace imports',
+  `
 import * as RSP from '@adobe/react-spectrum';
 
 <RSP.Button>Test</RSP.Button>
-`);
+`
+);
 
-test('should leave unimplemented components untouched in namespace imports', `
+test(
+  'should leave unimplemented components untouched in namespace imports',
+  `
 import * as RSP from '@adobe/react-spectrum';
 
 <>
   <RSP.Button>Test</RSP.Button>
   <RSP.Fake>Foo</RSP.Fake>
 </>
-`);
+`
+);
 
-test('leaves a comment on dynamic imports', `
+test(
+  'leaves a comment on dynamic imports',
+  `
 const LazyButton = React.lazy(() => import('@react-spectrum/button'))
-`);
+`
+);
 
-test('does not leave a comment on dynamic s2 imports', `
+test(
+  'does not leave a comment on dynamic s2 imports',
+  `
 const LazyButton = React.lazy(() => import('@react-spectrum/s2'))
-`);
+`
+);
 
-test('should not import Item from S2', `
+test(
+  'should not import Item from S2',
+  `
 import {Menu, ListBox, Item} from '@adobe/react-spectrum';
 
 <div>
@@ -86,9 +118,12 @@ import {Menu, ListBox, Item} from '@adobe/react-spectrum';
     <Item>Right</Item>
   </ListBox>
 </div>
-`);
+`
+);
 
-test('should not import Section from S2', `
+test(
+  'should not import Section from S2',
+  `
 import {Menu, Section, Item, ListBox} from '@adobe/react-spectrum';
 
 <div>
@@ -105,9 +140,12 @@ import {Menu, Section, Item, ListBox} from '@adobe/react-spectrum';
     </Section>
   </ListBox>
 </div>
-`);
+`
+);
 
-test('should use unique alias if newly imported component name is already in scope', `
+test(
+  'should use unique alias if newly imported component name is already in scope',
+  `
 import {TagGroup, Item} from '@adobe/react-spectrum';
 
 const Tag = 'something else';
@@ -120,9 +158,12 @@ const Tag = 'something else';
     <Item>Shopping</Item>
   </TagGroup>
 </div>
-`);
+`
+);
 
-test('should preserve leading comment if first line is removed', `
+test(
+  'should preserve leading comment if first line is removed',
+  `
 /*
  * Some comment
  */
@@ -132,9 +173,12 @@ import {Button, StatusLight} from '@adobe/react-spectrum';
   <Button>Test</Button>
   <StatusLight variant="positive">Test</StatusLight>
 </>
-`);
+`
+);
 
-test('should remove unused Item/Section import even if name taken in different scope', `
+test(
+  'should remove unused Item/Section import even if name taken in different scope',
+  `
 import {Menu, Section, Item} from '@adobe/react-spectrum';
 
 function foo() {
@@ -150,9 +194,12 @@ function foo() {
     </Section>
   </Menu>
 </div>
-`);
+`
+);
 
-test('should remove unused Item/Section import if aliased', `
+test(
+  'should remove unused Item/Section import if aliased',
+  `
 import {Menu, Section as RSPSection, Item as RSPItem} from '@adobe/react-spectrum';
 import {Section, Item} from 'elsewhere';
 
@@ -167,4 +214,5 @@ import {Section, Item} from 'elsewhere';
     </RSPSection>
   </Menu>
 </div>
-`);
+`
+);

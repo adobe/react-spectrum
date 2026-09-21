@@ -1,18 +1,18 @@
 {
-  "packageManager": "yarn@4.2.2",
-  "devDependencies": {
-    "parcel": "^2.16.3",
-    "process": "^0.11.10"
+  "scripts": {
+    "dev": "parcel src/index.html",
+    "build": "parcel build src/index.html"
   },
   "dependencies": {
     "@react-spectrum/s2": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "scripts": {
-    "dev": "parcel src/index.html",
-    "build": "parcel build src/index.html"
+  "devDependencies": {
+    "parcel": "^2.16.3",
+    "process": "^0.11.10"
   },
+  "packageManager": "yarn@4.2.2",
   "@parcel/bundler-default": {
     "manualSharedBundles": [
       {

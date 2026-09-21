@@ -40,7 +40,7 @@ export const NumberFieldExample: NumberFieldStory = {
     isRequired: false,
     commitBehavior: 'snap'
   },
-  render: (args) => (
+  render: args => (
     <NumberField {...args}>
       <Label>Test</Label>
       <Group style={{display: 'flex'}}>
@@ -56,7 +56,11 @@ export const NumberFieldExample: NumberFieldStory = {
 function NumberFieldControlled(props: NumberFieldProps) {
   const [value, setValue] = useState(props.defaultValue);
   return (
-    <NumberField {...props} validate={(v) => (v & 1 ? 'Invalid value' : null)} value={value} onChange={setValue}>
+    <NumberField
+      {...props}
+      validate={v => (v & 1 ? 'Invalid value' : null)}
+      value={value}
+      onChange={setValue}>
       <Label>Test</Label>
       <Group style={{display: 'flex'}}>
         <Button slot="decrement">-</Button>
@@ -77,9 +81,7 @@ export const NumberFieldControlledExample = {
     formatOptions: {style: 'currency', currency: 'USD'},
     isWheelDisabled: false
   },
-  render: (args) => (
-    <NumberFieldControlled {...args} />
-  )
+  render: args => <NumberFieldControlled {...args} />
 };
 
 export const ArabicNumberFieldExample = {
@@ -87,9 +89,9 @@ export const ArabicNumberFieldExample = {
     defaultValue: 0,
     formatOptions: {style: 'unit', unit: 'day', unitDisplay: 'long'}
   },
-  render: (args) => (
+  render: args => (
     <I18nProvider locale="ar-AE">
-      <NumberField {...args} validate={(v) => (v & 1 ? 'Invalid value' : null)}>
+      <NumberField {...args} validate={v => (v & 1 ? 'Invalid value' : null)}>
         <Label>Test</Label>
         <Group style={{display: 'flex'}}>
           <Button slot="decrement">-</Button>

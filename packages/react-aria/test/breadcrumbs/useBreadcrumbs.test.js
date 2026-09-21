@@ -15,7 +15,7 @@ import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useBreadcrumbs} from '../../src/breadcrumbs/useBreadcrumbs';
 
 describe('useBreadcrumbs', function () {
-  let renderLinkHook = (props) => {
+  let renderLinkHook = props => {
     let {result} = renderHook(() => useBreadcrumbs(props));
     return result.current;
   };
@@ -29,5 +29,4 @@ describe('useBreadcrumbs', function () {
     let {navProps} = renderLinkHook({'aria-label': 'test-label'});
     expect(navProps['aria-label']).toBe('test-label');
   });
-
 });

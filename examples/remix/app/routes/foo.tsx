@@ -1,3 +1,3 @@
 export default function Foo() {
-  return <h1>Foo</h1>
+  return <h1>Foo</h1>;
 }

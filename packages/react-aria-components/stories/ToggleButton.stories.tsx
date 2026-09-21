@@ -26,7 +26,6 @@ export default {
 export type ToggleButtonStory = StoryFn<typeof ToggleButton>;
 
 export const ToggleButtonExample: ToggleButtonStory = () => {
-
   const [textColor, setTextColor] = useState('black');
 
   return (

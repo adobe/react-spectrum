@@ -25,18 +25,21 @@ export const InputTypeButton: InputButtonStory = {
 };
 
 interface InputButtonProps extends AriaButtonProps<'input'> {
-  value?: string
+  value?: string;
 }
 
 function InputButton(props: InputButtonProps): JSX.Element {
-  let {
-    value = 'Test'
-  } = props;
+  let {value = 'Test'} = props;
 
   let ref = useRef(null);
   let {buttonProps, isPressed} = useButton({...props, elementType: 'input'}, ref);
 
   return (
-    <input ref={ref} value={value} style={{background: isPressed ? 'darkred' : 'red'}} {...buttonProps} />
+    <input
+      ref={ref}
+      value={value}
+      style={{background: isPressed ? 'darkred' : 'red'}}
+      {...buttonProps}
+    />
   );
 }

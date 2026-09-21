@@ -1,9 +1,9 @@
-import { type Meta } from '@storybook/react';
+import {type Meta} from '@storybook/react';
 import React from 'react';
-import { DialogTrigger } from 'react-aria-components/Dialog';
-import { AlertDialog } from '../src/AlertDialog';
-import { Button } from '../src/Button';
-import { Modal } from '../src/Modal';
+import {DialogTrigger} from 'react-aria-components/Dialog';
+import {AlertDialog} from '../src/AlertDialog';
+import {Button} from '../src/Button';
+import {Modal} from '../src/Modal';
 
 const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog,
@@ -26,7 +26,8 @@ export const Example = (args: any) => (
 
 Example.args = {
   title: 'Delete folder',
-  children: 'Are you sure you want to delete "Documents"? All contents will be permanently destroyed.',
+  children:
+    'Are you sure you want to delete "Documents"? All contents will be permanently destroyed.',
   variant: 'destructive',
   actionLabel: 'Delete'
 };

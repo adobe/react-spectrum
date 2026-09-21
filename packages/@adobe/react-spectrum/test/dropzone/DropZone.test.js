@@ -32,7 +32,9 @@ describe('DropZone', () => {
           <Heading>No files</Heading>
           <Content>
             <FileTrigger>
-              <Button data-testid="foo" variant="primary">Select a file</Button>
+              <Button data-testid="foo" variant="primary">
+                Select a file
+              </Button>
             </FileTrigger>
           </Content>
         </IllustratedMessage>
@@ -77,7 +79,12 @@ describe('drag and drop', function () {
       let tree = render(
         <>
           <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-          <DropZone data-testid="foo" isFilled onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove} >
+          <DropZone
+            data-testid="foo"
+            isFilled
+            onDropEnter={onDropEnter}
+            onDrop={onDrop}
+            onDropMove={onDropMove}>
             <IllustratedMessage>
               <Heading>No files</Heading>
               <Content>
@@ -171,7 +178,6 @@ describe('drag and drop', function () {
       });
 
       expect(dropzone).not.toHaveAttribute('data-drop-target');
-
     });
   });
 });

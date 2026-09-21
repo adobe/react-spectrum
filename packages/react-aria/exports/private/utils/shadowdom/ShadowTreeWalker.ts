@@ -1,1 +1,4 @@
-export {createShadowTreeWalker, ShadowTreeWalker} from '../../../../src/utils/shadowdom/ShadowTreeWalker';
+export {
+  createShadowTreeWalker,
+  ShadowTreeWalker
+} from '../../../../src/utils/shadowdom/ShadowTreeWalker';

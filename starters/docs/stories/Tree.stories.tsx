@@ -13,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof Tree>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <Tree aria-label="Files" {...args}>
     <TreeItem title="Documents">
       <TreeItem title="Project">
@@ -28,6 +28,6 @@ export const Example: Story = (args) => (
 );
 
 Example.args = {
-  style: { height: '300px' },
+  style: {height: '300px'},
   defaultExpandedKeys: ['documents', 'photos', 'project']
 };

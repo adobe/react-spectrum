@@ -44,13 +44,13 @@ export default {
 
 export type ColorPickerStory = StoryFn<typeof ColorPicker>;
 
-export const Default: ColorPickerStory = (args) => (
+export const Default: ColorPickerStory = args => (
   <ColorPicker defaultValue="#f00" {...args}>
     <ColorEditor />
   </ColorPicker>
 );
 
-export const Custom: ColorPickerStory = (args) => (
+export const Custom: ColorPickerStory = args => (
   <ColorPicker defaultValue="#f00" {...args}>
     <ColorWheel />
     <ColorArea
@@ -60,11 +60,12 @@ export const Custom: ColorPickerStory = (args) => (
       size="size-400"
       position="absolute"
       top="calc(50% - size-400)"
-      left="calc(50% - size-400)" />
+      left="calc(50% - size-400)"
+    />
   </ColorPicker>
 );
 
-export const Swatches: ColorPickerStory = (args) => (
+export const Swatches: ColorPickerStory = args => (
   <ColorPicker defaultValue="#A00" {...args}>
     <Flex direction="column" gap="size-300">
       <ColorEditor />

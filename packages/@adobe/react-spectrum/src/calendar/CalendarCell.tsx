@@ -23,12 +23,17 @@ import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
 
 interface CalendarCellProps extends AriaCalendarCellProps {
-  state: CalendarState | RangeCalendarState,
-  currentMonth: CalendarDate,
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+  state: CalendarState | RangeCalendarState;
+  currentMonth: CalendarDate;
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 }
 
-export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: CalendarCellProps): JSX.Element {
+export function CalendarCell({
+  state,
+  currentMonth,
+  firstDayOfWeek,
+  ...props
+}: CalendarCellProps): JSX.Element {
   let ref = useRef<HTMLElement>(null);
   let {
     cellProps,
@@ -39,27 +44,40 @@ export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: Ca
     isFocused,
     isInvalid,
     formattedDate
-  } = useCalendarCell({
-    ...props,
-    isDisabled: !isSameMonth(props.date, currentMonth)
-  }, state, ref);
+  } = useCalendarCell(
+    {
+      ...props,
+      isDisabled: !isSameMonth(props.date, currentMonth)
+    },
+    state,
+    ref
+  );
   let isUnavailable = state.isCellUnavailable(props.date) && !isDisabled;
-  let isLastSelectedBeforeDisabled = !isDisabled && !isInvalid && state.isCellUnavailable(props.date.add({days: 1}));
-  let isFirstSelectedAfterDisabled = !isDisabled && !isInvalid && state.isCellUnavailable(props.date.subtract({days: 1}));
+  let isLastSelectedBeforeDisabled =
+    !isDisabled && !isInvalid && state.isCellUnavailable(props.date.add({days: 1}));
+  let isFirstSelectedAfterDisabled =
+    !isDisabled && !isInvalid && state.isCellUnavailable(props.date.subtract({days: 1}));
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
-  let isSelectionStart = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.start);
-  let isSelectionEnd = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
+  let isSelectionStart =
+    isSelected && highlightedRange && isSameDay(props.date, highlightedRange.start);
+  let isSelectionEnd =
+    isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
   let dayOfWeek = getDayOfWeek(props.date, locale, firstDayOfWeek);
-  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
-  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
+  let isRangeStart =
+    isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
+  let isRangeEnd =
+    isSelected &&
+    (isLastSelectedBeforeDisabled ||
+      dayOfWeek === 6 ||
+      props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable || state.isReadOnly});
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: isDisabled || isUnavailable || state.isReadOnly
+  });
 
   return (
-    <td
-      {...cellProps}
-      className={classNames(styles, 'spectrum-Calendar-tableCell')}>
+    <td {...cellProps} className={classNames(styles, 'spectrum-Calendar-tableCell')}>
       <span
         {...mergeProps(buttonProps, hoverProps, focusProps)}
         ref={ref}

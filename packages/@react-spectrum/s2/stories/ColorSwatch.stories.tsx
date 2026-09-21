@@ -27,17 +27,17 @@ export default meta;
 type Story = StoryObj<typeof ColorSwatch>;
 
 export const Example: Story = {
-  render: (args) => <ColorSwatch {...args} />,
+  render: args => <ColorSwatch {...args} />,
   args: {
     color: 'rgb(255, 0, 0)'
   }
 };
 
 export const NoValue: Story = {
-  render: (args) => <ColorSwatch {...args} />
+  render: args => <ColorSwatch {...args} />
 };
 
 export const CustomWidth: Story = {
-  render: (args) => <ColorSwatch {...args} styles={style({width: 96})} />,
+  render: args => <ColorSwatch {...args} styles={style({width: 96})} />,
   args: Example.args
 };

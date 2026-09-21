@@ -63,7 +63,8 @@ const directionItems = [
   {
     key: 'end',
     label: 'End'
-  }];
+  }
+];
 const alignItems = [
   {
     key: 'start',
@@ -88,78 +89,90 @@ function DirectionAlignment() {
   const [direction, setDirection] = useState<Direction>('bottom');
   const [shouldFlip, setShouldFlip] = useState(true);
 
-  const handleAlignChange = (key) => {
+  const handleAlignChange = key => {
     if (isOfAlignment(key)) {
       setAlignment(key);
     }
   };
 
-  const handleDirectionChange = (key) => {
+  const handleDirectionChange = key => {
     if (isOfDirection(key)) {
       setDirection(key);
     }
   };
 
-  return (<Flex alignItems="end" gap={10} wrap>
-    <Picker label="Align" items={alignItems} selectedKey={align} onSelectionChange={handleAlignChange}>
-      {(item) => <Item key={item.key}>{item.label}</Item>}
-    </Picker>
-    <Picker label="Direction" items={directionItems} selectedKey={direction} onSelectionChange={handleDirectionChange}>
-      {(item) => <Item key={item.key}>{item.label}</Item>}
-    </Picker>
-    <Checkbox isSelected={shouldFlip} onChange={setShouldFlip}>Should Flip</Checkbox>
-    <ActionMenu
-      onAction={action('action')}
-      align={align}
-      direction={direction}
-      shouldFlip={shouldFlip}>
-      <Item key="one">One</Item>
-      <Item key="two">Two</Item>
-      <Item key="three">Three</Item>
-    </ActionMenu>
-  </Flex>);
+  return (
+    <Flex alignItems="end" gap={10} wrap>
+      <Picker
+        label="Align"
+        items={alignItems}
+        selectedKey={align}
+        onSelectionChange={handleAlignChange}>
+        {item => <Item key={item.key}>{item.label}</Item>}
+      </Picker>
+      <Picker
+        label="Direction"
+        items={directionItems}
+        selectedKey={direction}
+        onSelectionChange={handleDirectionChange}>
+        {item => <Item key={item.key}>{item.label}</Item>}
+      </Picker>
+      <Checkbox isSelected={shouldFlip} onChange={setShouldFlip}>
+        Should Flip
+      </Checkbox>
+      <ActionMenu
+        onAction={action('action')}
+        align={align}
+        direction={direction}
+        shouldFlip={shouldFlip}>
+        <Item key="one">One</Item>
+        <Item key="two">Two</Item>
+        <Item key="three">Three</Item>
+      </ActionMenu>
+    </Flex>
+  );
 }
 
 export type ActionMenuStoryFn = StoryFn<typeof Template>;
 export type ActionMenuStory = StoryObj<typeof Template>;
 
 export const Default: ActionMenuStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {}
 };
 
 export const AriaLabel: ActionMenuStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {'aria-label': 'Some more actions'}
 };
 
 export const DOMId: ActionMenuStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {id: 'my-action-menu'}
 };
 
 export const Quiet: ActionMenuStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {isQuiet: true}
 };
 
 export const Disabled: ActionMenuStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {isDisabled: true}
 };
 
 export const DisabledKeys: ActionMenuStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {disabledKeys: ['two']}
 };
 
 export const AutoFocus: ActionMenuStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {autoFocus: true}
 };
 
 export const DefaultOpen: ActionMenuStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {onOpenChange: action('openChange'), defaultOpen: true}
 };
 
@@ -167,10 +180,7 @@ export const ControlledOpen: ActionMenuStoryFn = () => {
   let [open, setOpen] = React.useState(false);
 
   return (
-    <ActionMenu
-      isOpen={open}
-      onOpenChange={setOpen}
-      onAction={action('action')}>
+    <ActionMenu isOpen={open} onOpenChange={setOpen} onAction={action('action')}>
       <Item key="cut">Cut</Item>
       <Item key="copy">Copy</Item>
       <Item key="paste">Paste</Item>
@@ -198,13 +208,5 @@ export const Dynamic: ActionMenuStoryFn = () => {
     {key: 'paste', label: 'Paste'}
   ];
 
-  return (
-    <ActionMenu items={items}>
-      {(item) => (
-        <Item key={item.key}>
-          {item.label}
-        </Item>
-      )}
-    </ActionMenu>
-  );
+  return <ActionMenu items={items}>{item => <Item key={item.key}>{item.label}</Item>}</ActionMenu>;
 };

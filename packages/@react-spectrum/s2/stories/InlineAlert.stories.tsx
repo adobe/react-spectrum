@@ -34,11 +34,12 @@ export default meta;
 type Story = StoryObj<typeof InlineAlert>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <InlineAlert {...args}>
       <Heading>Payment Information</Heading>
       <Content>
-        There was an error processing your payment. Please check that your card information is correct, then try again.
+        There was an error processing your payment. Please check that your card information is
+        correct, then try again.
       </Content>
     </InlineAlert>
   )
@@ -49,42 +50,44 @@ const DynamicExampleRender = (args: InlineAlertProps): ReactElement => {
 
   return (
     <>
-      <Button variant="primary" onPress={() => setShown(!shown)}>{shown ? 'Hide Alert' : 'Show Alert'}</Button>
-      {shown &&
+      <Button variant="primary" onPress={() => setShown(!shown)}>
+        {shown ? 'Hide Alert' : 'Show Alert'}
+      </Button>
+      {shown && (
         <InlineAlert {...args} autoFocus>
           <Heading>Payment Information</Heading>
           <Content>
-            There was an error processing your payment. Please check that your card information is correct, then try again.
+            There was an error processing your payment. Please check that your card information is
+            correct, then try again.
           </Content>
         </InlineAlert>
-      }
+      )}
     </>
   );
 };
 
 export const DynamicExample: StoryObj<typeof DynamicExampleRender> = {
-  render: (args) => <DynamicExampleRender {...args} />
+  render: args => <DynamicExampleRender {...args} />
 };
 
-let NoHeadingExample = (args: InlineAlertProps & {showHeading: boolean, content: string}): ReactElement => {
+let NoHeadingExample = (
+  args: InlineAlertProps & {showHeading: boolean; content: string}
+): ReactElement => {
   let {showHeading = false, content} = args;
   return (
     <InlineAlert {...args}>
       {showHeading && <Heading>Payment Information</Heading>}
-      <Content>
-        {content}
-      </Content>
+      <Content>{content}</Content>
     </InlineAlert>
   );
 };
 
 export const NoHeading: StoryObj<typeof NoHeadingExample> = {
-  render: (args) => (
-    <NoHeadingExample {...args} styles={style({width: 400})} />
-  ),
+  render: args => <NoHeadingExample {...args} styles={style({width: 400})} />,
   args: {
     showHeading: false,
-    content: 'There was an error processing your payment. Please check that your card information is correct, then try again.'
+    content:
+      'There was an error processing your payment. Please check that your card information is correct, then try again.'
   },
   parameters: {
     docs: {

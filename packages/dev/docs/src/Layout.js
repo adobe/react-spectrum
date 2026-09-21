@@ -39,55 +39,128 @@ import {VersionBadge} from './VersionBadge';
 
 const ENABLE_PAGE_TYPES = true;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
-const TLD = process.env.DOCS_ENV === 'production'
-  ? 'react-spectrum.adobe.com'
-  : 'reactspectrum.blob.core.windows.net';
+const TLD =
+  process.env.DOCS_ENV === 'production'
+    ? 'react-spectrum.adobe.com'
+    : 'reactspectrum.blob.core.windows.net';
 const HERO = {
   'react-spectrum': heroImageSpectrum,
   'react-aria': heroImageAria,
   'react-stately': heroImageStately,
-  'internationalized': heroImageInternationalized
+  internationalized: heroImageInternationalized
 };
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
-    <h1 {...props} className={clsx(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'], docStyles['articleHeader'])}>
+    <h1
+      {...props}
+      className={clsx(
+        typographyStyles['spectrum-Heading1--display'],
+        typographyStyles['spectrum-Article'],
+        docStyles['articleHeader']
+      )}>
       {children}
     </h1>
   ),
   h2: ({children, ...props}) => (
     <>
-      <h2 {...props} className={clsx(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
+      <h2
+        {...props}
+        className={clsx(
+          typographyStyles['spectrum-Heading3'],
+          docStyles['sectionHeader'],
+          docStyles['docsHeader']
+        )}
+        data-hover={docStyles['is-hovered']}>
         {children}
         <span className={clsx(docStyles['headingAnchor'])}>
-          <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+          <a
+            className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)}
+            data-hover={docStyles['is-hovered']}
+            href={`#${props.id}`}
+            aria-label={`Direct link to ${children}`}>
+            #
+          </a>
         </span>
       </h2>
       <Divider marginBottom="33px" />
     </>
   ),
   h3: ({children, ...props}) => (
-    <h3 {...props} className={clsx(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
+    <h3
+      {...props}
+      className={clsx(
+        typographyStyles['spectrum-Heading4'],
+        docStyles['sectionHeader'],
+        docStyles['docsHeader']
+      )}
+      data-hover={docStyles['is-hovered']}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+        <a
+          className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)}
+          data-hover={docStyles['is-hovered']}
+          href={`#${props.id}`}
+          aria-label={`Direct link to ${children}`}>
+          #
+        </a>
       </span>
     </h3>
   ),
   h4: ({children, ...props}) => (
-    <h4 {...props} className={clsx(typographyStyles['spectrum-Heading5'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
+    <h4
+      {...props}
+      className={clsx(
+        typographyStyles['spectrum-Heading5'],
+        docStyles['sectionHeader'],
+        docStyles['docsHeader']
+      )}
+      data-hover={docStyles['is-hovered']}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+        <a
+          className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)}
+          data-hover={docStyles['is-hovered']}
+          href={`#${props.id}`}
+          aria-label={`Direct link to ${children}`}>
+          #
+        </a>
       </span>
     </h4>
   ),
-  p: ({children, ...props}) => <p className={typographyStyles['spectrum-Body3']} {...props}>{children}</p>,
-  ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
-  ol: ({children, ...props}) => <ol {...props} className={typographyStyles['spectrum-Body3']}>{children}</ol>,
-  code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>
+  p: ({children, ...props}) => (
+    <p className={typographyStyles['spectrum-Body3']} {...props}>
+      {children}
+    </p>
+  ),
+  ul: ({children, ...props}) => (
+    <ul {...props} className={typographyStyles['spectrum-Body3']}>
+      {children}
+    </ul>
+  ),
+  ol: ({children, ...props}) => (
+    <ol {...props} className={typographyStyles['spectrum-Body3']}>
+      {children}
+    </ol>
+  ),
+  code: ({children, ...props}) => (
+    <code {...props} className={typographyStyles['spectrum-Code4']}>
+      {children}
+    </code>
+  ),
+  inlineCode: ({children, ...props}) => (
+    <code {...props} className={typographyStyles['spectrum-Code4']}>
+      {children}
+    </code>
+  ),
+  a: ({children, ...props}) => (
+    <a
+      {...props}
+      className={clsx(linkStyle['spectrum-Link'], docStyles.link)}
+      {...getAnchorProps(props.href)}>
+      {children}
+    </a>
+  )
 };
 
 const sectionTitles = {
@@ -120,11 +193,20 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
     pageSection = sectionTitles[parts[0]];
   }
 
-  let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
-  let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
-  let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
+  let keywords = [
+    ...new Set(
+      currentPage.keywords
+        .concat([currentPage.category, currentPage.title, pageSection])
+        .filter(k => !!k)
+    )
+  ];
+  let description =
+    stripMarkdown(currentPage.description) ||
+    `Documentation for ${currentPage.title} in the ${pageSection} package.`;
+  let title =
+    currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
-  let heroUrl = `https://${TLD}${currentPage.image || (publicUrl + path.basename(hero))}`;
+  let heroUrl = `https://${TLD}${currentPage.image || publicUrl + path.basename(hero)}`;
   let githubLink = pathToPage;
   if (githubLink.startsWith('/tmp/')) {
     githubLink = githubLink.slice(5);
@@ -144,7 +226,8 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
         theme.medium['spectrum--medium'],
         typographyStyles.spectrum,
         docStyles.provider,
-        highlightCss.spectrum)}>
+        highlightCss.spectrum
+      )}>
       <head>
         <title>{title}</title>
         <meta charSet="utf-8" />
@@ -156,7 +239,8 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
             possible during loading. It also handles when the media queries update, or
             local storage is updated. */}
         <script
-          dangerouslySetInnerHTML={{__html: `(() => {
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
             let classList = document.documentElement.classList;
             let style = document.documentElement.style;
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -197,13 +281,39 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
             small.addListener(update);
             window.addEventListener('storage', update);
           })();
-        `.replace(/\n|\s{2,}/g, '')}} />
-        <link rel="preload" as="font" href="https://use.typekit.net/af/eaf09c/000000000000000000017703/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3" crossOrigin="" />
-        <link rel="preload" as="font" href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3" crossOrigin="" />
-        <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
-        <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
-        {styles.map(s => <link key={s.url} rel="stylesheet" href={s.url} />)}
-        {scripts.map(s => <script key={s.url} type={s.type} src={s.url} defer />)}
+        `.replace(/\n|\s{2,}/g, '')
+          }}
+        />
+        <link
+          rel="preload"
+          as="font"
+          href="https://use.typekit.net/af/eaf09c/000000000000000000017703/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3"
+          crossOrigin=""
+        />
+        <link
+          rel="preload"
+          as="font"
+          href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3"
+          crossOrigin=""
+        />
+        <link
+          rel="preload"
+          as="font"
+          href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3"
+          crossOrigin=""
+        />
+        <link
+          rel="preload"
+          as="font"
+          href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3"
+          crossOrigin=""
+        />
+        {styles.map(s => (
+          <link key={s.url} rel="stylesheet" href={s.url} />
+        ))}
+        {scripts.map(s => (
+          <script key={s.url} type={s.type} src={s.url} defer />
+        ))}
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -218,8 +328,8 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
         <meta data-github-src={githubLink} />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{__html: JSON.stringify(
-            {
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
               '@context': 'http://schema.org',
               '@type': 'Article',
               author: 'Adobe Inc',
@@ -232,20 +342,24 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
                 name: 'Adobe',
                 logo: 'https://www.adobe.com/favicon.ico'
               }
-            }
-          )}} />
+            })
+          }}
+        />
       </head>
       <body>
         {children}
         <script
-          dangerouslySetInnerHTML={{__html: `
+          dangerouslySetInnerHTML={{
+            __html: `
             window.addEventListener('load', () => {
               let script = document.createElement('script');
               script.async = true;
               script.src = 'https://assets.adobedtm.com/a7d65461e54e/01d650a3ee55/launch-4d5498348926.min.js';
               document.head.appendChild(script);
             });
-          `}} />
+          `
+          }}
+        />
       </body>
     </html>
   );
@@ -368,19 +482,23 @@ function Nav({currentPage, pages}) {
   function SideNavItem({name, url, title, preRelease}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
     return (
-      <li className={clsx(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)})}>
+      <li
+        className={clsx(sideNavStyles['spectrum-SideNav-item'], {
+          [sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)
+        })}>
         <a
           className={clsx(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
           data-hover={sideNavStyles['is-hovered']}
           href={url}
           aria-current={isCurrentPage ? 'page' : null}
-          {...getAnchorProps(url)}>{title}
+          {...getAnchorProps(url)}>
+          {title}
           <VersionBadge version={preRelease} />
         </a>
       </li>
     );
   }
-  let isActive = (pageMap) => {
+  let isActive = pageMap => {
     for (let key in pageMap) {
       if (pageMap[key].some(p => p.name === currentPageName)) {
         return true;
@@ -389,7 +507,11 @@ function Nav({currentPage, pages}) {
   };
 
   let sections = [];
-  if ((currentPage.filePath?.includes('@react-aria') || currentPage.filePath?.includes('@react-stately')) && ENABLE_PAGE_TYPES) {
+  if (
+    (currentPage.filePath?.includes('@react-aria') ||
+      currentPage.filePath?.includes('@react-stately')) &&
+    ENABLE_PAGE_TYPES
+  ) {
     let statelyPages = {};
     let ariaOtherPages = {};
 
@@ -397,7 +519,9 @@ function Nav({currentPage, pages}) {
     for (let category in pagesByType.other) {
       let categoryPages = pagesByType.other[category];
 
-      let statelyPagesInCategory = categoryPages.filter(p => p.filePath?.includes('@react-stately'));
+      let statelyPagesInCategory = categoryPages.filter(p =>
+        p.filePath?.includes('@react-stately')
+      );
       let ariaPagesInCategory = categoryPages.filter(p => p.filePath?.includes('@react-aria'));
 
       if (statelyPagesInCategory.length > 0) {
@@ -408,8 +532,19 @@ function Nav({currentPage, pages}) {
       }
     }
     // we only want the component hooks for now, so get rid of the top level pages and non component hooks
-    // eslint-disable-next-line no-unused-vars
-    let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...ariaHooks} = ariaOtherPages;
+    /* eslint-disable no-unused-vars */
+    let {
+      Introduction,
+      Concepts,
+      Guides,
+      Interactions,
+      Focus,
+      Internationalization,
+      'Server Side Rendering': ssr,
+      Utilities,
+      ...ariaHooks
+    } = ariaOtherPages;
+    /* eslint-enable no-unused-vars */
     ariaHooks = {...ariaHooks, ...pagesByType.hook};
 
     // same sidebar structure for both react-aria and react-stately, aria first then stately
@@ -453,28 +588,34 @@ function Nav({currentPage, pages}) {
             <polygon points="11.1,0 0,0 0,26" />
             <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
           </svg>
-          <h2 className={typographyStyles['spectrum-Heading4']}>
-            {title}
-          </h2>
+          <h2 className={typographyStyles['spectrum-Heading4']}>{title}</h2>
         </span>
       </header>
       {sections.map((section, i) => {
-        let contents = categories.filter(c => section.pages[c]?.length).map(key => {
-          const headingId = `${section.title ? section.title.toLowerCase() + '-' : ''}${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
-          return (
-            <React.Fragment key={headingId}>
-              <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
-              <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {section.pages[key].sort((a, b) => {
-                  if (a.order !== b.order) {
-                    return (a.order || 0) - (b.order || 0);
-                  }
-                  return a.title < b.title ? -1 : 1;
-                }).map(p => <SideNavItem key={p.title} {...p} />)}
-              </ul>
-            </React.Fragment>
-          );
-        });
+        let contents = categories
+          .filter(c => section.pages[c]?.length)
+          .map(key => {
+            const headingId = `${section.title ? section.title.toLowerCase() + '-' : ''}${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
+            return (
+              <React.Fragment key={headingId}>
+                <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>
+                  {key}
+                </h3>
+                <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
+                  {section.pages[key]
+                    .sort((a, b) => {
+                      if (a.order !== b.order) {
+                        return (a.order || 0) - (b.order || 0);
+                      }
+                      return a.title < b.title ? -1 : 1;
+                    })
+                    .map(p => (
+                      <SideNavItem key={p.title} {...p} />
+                    ))}
+                </ul>
+              </React.Fragment>
+            );
+          });
 
         if (section.title) {
           return (
@@ -497,22 +638,76 @@ function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className={docStyles.pageFooter}>
-      <hr className={clsx(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
+      <hr
+        className={clsx(
+          ruleStyles['spectrum-Rule'],
+          ruleStyles['spectrum-Rule--small'],
+          ruleStyles['spectrum-Rule--horizontal']
+        )}
+      />
       <ul>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
-        <li><a className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy.html">Privacy</a></li>
-        <li><a className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
-        <li><a className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
-        <li><a className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
+        <li>
+          <a
+            className={clsx(
+              linkStyle['spectrum-Link'],
+              linkStyle['spectrum-Link--secondary'],
+              docStyles.link
+            )}
+            href="//www.adobe.com/privacy.html">
+            Privacy
+          </a>
+        </li>
+        <li>
+          <a
+            className={clsx(
+              linkStyle['spectrum-Link'],
+              linkStyle['spectrum-Link--secondary'],
+              docStyles.link
+            )}
+            href="//www.adobe.com/legal/terms.html">
+            Terms of Use
+          </a>
+        </li>
+        <li>
+          <a
+            className={clsx(
+              linkStyle['spectrum-Link'],
+              linkStyle['spectrum-Link--secondary'],
+              docStyles.link
+            )}
+            href="//www.adobe.com/privacy/cookies.html">
+            Cookies
+          </a>
+        </li>
+        <li>
+          <a
+            className={clsx(
+              linkStyle['spectrum-Link'],
+              linkStyle['spectrum-Link--secondary'],
+              docStyles.link
+            )}
+            href="//www.adobe.com/privacy/ca-rights.html">
+            Do not sell my personal information
+          </a>
+        </li>
       </ul>
     </footer>
   );
 }
 export const PageContext = React.createContext();
 export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
-  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
+  let pathToPage = currentPage.filePath.substring(
+    currentPage.filePath.indexOf('packages/'),
+    currentPage.filePath.length
+  );
   return (
-    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
+    <Page
+      scripts={scripts}
+      styles={styles}
+      publicUrl={publicUrl}
+      currentPage={currentPage}
+      pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
         <Nav currentPage={currentPage} pages={pages} />
@@ -545,9 +740,16 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
 export function Layout(props) {
   return (
     <BaseLayout {...props}>
-      <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(props.currentPage.name)})}>
+      <article
+        className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {
+          [docStyles.inCategory]: !INDEX_RE.test(props.currentPage.name)
+        })}>
         <MigrationBanner currentPage={props.currentPage} />
-        <VersionBadge version={props.currentPage.preRelease} size="large" style={{display: 'block'}} />
+        <VersionBadge
+          version={props.currentPage.preRelease}
+          size="large"
+          style={{display: 'block'}}
+        />
         {props.children}
       </article>
     </BaseLayout>
@@ -557,7 +759,12 @@ export function Layout(props) {
 export function BlogLayout(props) {
   return (
     <BaseLayout {...props}>
-      <div className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, docStyles.inCategory)}>
+      <div
+        className={clsx(
+          typographyStyles['spectrum-Typography'],
+          docStyles.article,
+          docStyles.inCategory
+        )}>
         {props.children}
       </div>
     </BaseLayout>
@@ -573,10 +780,21 @@ export function BlogPostLayout(props) {
   if (date) {
     components = {
       ...mdxComponents,
-      h1: (props) => (
+      h1: props => (
         <header className={docStyles.blogHeader}>
           {mdxComponents.h1(props)}
-          {author && <address className={typographyStyles['spectrum-Body4']}>By <a rel="author" href={authorParts[2]} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(authorParts[2])}>{authorParts[1]}</a></address>}
+          {author && (
+            <address className={typographyStyles['spectrum-Body4']}>
+              By{' '}
+              <a
+                rel="author"
+                href={authorParts[2]}
+                className={clsx(linkStyle['spectrum-Link'], docStyles.link)}
+                {...getAnchorProps(authorParts[2])}>
+                {authorParts[1]}
+              </a>
+            </address>
+          )}
           <Time date={date} />
         </header>
       )
@@ -585,9 +803,7 @@ export function BlogPostLayout(props) {
 
   return (
     <Layout {...props}>
-      <MDXProvider components={components}>
-        {props.children}
-      </MDXProvider>
+      <MDXProvider components={components}>{props.children}</MDXProvider>
     </Layout>
   );
 }
@@ -600,18 +816,24 @@ export function Time({date}) {
   // treat date as local time rather than UTC
   let localDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
   return (
-    <time
-      dateTime={date.toISOString().slice(0, 10)}
-      className={typographyStyles['spectrum-Body4']}>
+    <time dateTime={date.toISOString().slice(0, 10)} className={typographyStyles['spectrum-Body4']}>
       {localDate.toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
     </time>
   );
 }
 
 export function ExampleLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
-  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
+  let pathToPage = currentPage.filePath.substring(
+    currentPage.filePath.indexOf('packages/'),
+    currentPage.filePath.length
+  );
   return (
-    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
+    <Page
+      scripts={scripts}
+      styles={styles}
+      publicUrl={publicUrl}
+      currentPage={currentPage}
+      pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
         <div className={docStyles.exampleHeader} />
         <main className={docStyles.examplePage}>
@@ -620,11 +842,30 @@ export function ExampleLayout({scripts, styles, pages, currentPage, publicUrl, c
               <LinkProvider>
                 <PageContext.Provider value={{pages, currentPage}}>
                   <SlotProvider slots={{keyboard: {UNSAFE_className: docStyles['keyboard']}}}>
-                    <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(currentPage.name)})}>
+                    <article
+                      className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {
+                        [docStyles.inCategory]: !INDEX_RE.test(currentPage.name)
+                      })}>
                       <div style={{display: 'flex', alignItems: 'center'}}>
-                        <a href="../" className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)}>React Aria</a>
+                        <a
+                          href="../"
+                          className={clsx(
+                            linkStyle['spectrum-Link'],
+                            linkStyle['spectrum-Link--secondary'],
+                            docStyles.link
+                          )}>
+                          React Aria
+                        </a>
                         <ChevronRight size="XS" />
-                        <a href="./" className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)}>Examples</a>
+                        <a
+                          href="./"
+                          className={clsx(
+                            linkStyle['spectrum-Link'],
+                            linkStyle['spectrum-Link--secondary'],
+                            docStyles.link
+                          )}>
+                          Examples
+                        </a>
                       </div>
                       {children}
                     </article>
@@ -633,7 +874,9 @@ export function ExampleLayout({scripts, styles, pages, currentPage, publicUrl, c
               </LinkProvider>
             </ImageContext.Provider>
           </MDXProvider>
-          {!pathToPage.includes('index.mdx') && <div id="edit-page" className={docStyles.editPageContainer} />}
+          {!pathToPage.includes('index.mdx') && (
+            <div id="edit-page" className={docStyles.editPageContainer} />
+          )}
           <Footer />
         </main>
       </div>

@@ -16,12 +16,15 @@ export function getScrollParents(node: Element, checkForOverflow?: boolean): Ele
   let parentElements: Element[] = [];
   let root = document.scrollingElement || document.documentElement;
 
-  do {
+  while (node) {
     if (isScrollable(node, checkForOverflow)) {
       parentElements.push(node);
     }
+    if (node === root) {
+      break;
+    }
     node = node.parentElement as Element;
-  } while (node && node !== root);
+  }
 
   return parentElements;
 }

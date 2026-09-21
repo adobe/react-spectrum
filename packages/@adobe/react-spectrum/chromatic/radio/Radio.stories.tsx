@@ -32,7 +32,8 @@ ControlledDragons.story = {
   name: 'controlled: dragons'
 };
 
-export const LabelAlignEnd: RadioGroupStory = () => renderLabelPositions({labelAlign: 'end', value: 'dragons'});
+export const LabelAlignEnd: RadioGroupStory = () =>
+  renderLabelPositions({labelAlign: 'end', value: 'dragons'});
 
 LabelAlignEnd.story = {
   name: 'labelAlign: end'
@@ -103,7 +104,7 @@ ShowErrorIcon.story = {
   name: 'show error icon'
 };
 
-export const _ContextualHelp: RadioGroupStory = (args) =>
+export const _ContextualHelp: RadioGroupStory = args =>
   render({
     ...args,
     contextualHelp: (

@@ -26,20 +26,26 @@ describe('Calendar', () => {
     jest.useFakeTimers();
   });
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   describe('basics', () => {
     it.each`
-      Name      | Calendar
-      ${'v3'}   | ${Calendar}
+      Name    | Calendar
+      ${'v3'} | ${Calendar}
     `('$Name should render a calendar with a defaultValue', ({Calendar}) => {
-      let {getByLabelText, getByRole, getAllByRole} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
+      let {getByLabelText, getByRole, getAllByRole} = render(
+        <Calendar defaultValue={new CalendarDate(2019, 6, 5)} />
+      );
 
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent('June 2019');
 
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      let gridCells = getAllByRole('gridcell').filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(gridCells.length).toBe(30);
 
       let selectedDate = getByLabelText('Selected', {exact: false});
@@ -49,15 +55,19 @@ describe('Calendar', () => {
     });
 
     it.each`
-      Name      | Calendar
-      ${'v3'}   | ${Calendar}
+      Name    | Calendar
+      ${'v3'} | ${Calendar}
     `('$Name should render a calendar with a value', ({Calendar}) => {
-      let {getByLabelText, getByRole, getAllByRole} = render(<Calendar value={new CalendarDate(2019, 6, 5)} />);
+      let {getByLabelText, getByRole, getAllByRole} = render(
+        <Calendar value={new CalendarDate(2019, 6, 5)} />
+      );
 
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent('June 2019');
 
-      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      let gridCells = getAllByRole('gridcell').filter(
+        cell => cell.getAttribute('aria-disabled') !== 'true'
+      );
       expect(gridCells.length).toBe(30);
 
       let selectedDate = getByLabelText('Selected', {exact: false});
@@ -67,10 +77,12 @@ describe('Calendar', () => {
     });
 
     it.each`
-      Name      | Calendar
-      ${'v3'}   | ${Calendar}
+      Name    | Calendar
+      ${'v3'} | ${Calendar}
     `('$Name should focus the selected date if autoFocus is set', ({Calendar}) => {
-      let {getByRole, getByLabelText} = render(<Calendar value={new CalendarDate(2019, 2, 3)} autoFocus />);
+      let {getByRole, getByLabelText} = render(
+        <Calendar value={new CalendarDate(2019, 2, 3)} autoFocus />
+      );
 
       let cell = getByLabelText('selected', {exact: false});
 
@@ -82,7 +94,9 @@ describe('Calendar', () => {
     });
 
     it('should center the selected date if multiple months are visible', () => {
-      let {getAllByRole, getByLabelText} = render(<Calendar value={new CalendarDate(2019, 2, 3)} visibleMonths={3} />);
+      let {getAllByRole, getByLabelText} = render(
+        <Calendar value={new CalendarDate(2019, 2, 3)} visibleMonths={3} />
+      );
 
       let grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
@@ -92,25 +106,46 @@ describe('Calendar', () => {
     });
 
     it.each([
-      {name: 'at the start', alignment: 'start', expected: ['February 2020', 'March 2020', 'April 2020']},
-      {name: 'in the center', alignment: 'center', expected: ['January 2020', 'February 2020', 'March 2020']},
-      {name: 'at the end', alignment: 'end', expected: ['December 2019', 'January 2020', 'February 2020']}
+      {
+        name: 'at the start',
+        alignment: 'start',
+        expected: ['February 2020', 'March 2020', 'April 2020']
+      },
+      {
+        name: 'in the center',
+        alignment: 'center',
+        expected: ['January 2020', 'February 2020', 'March 2020']
+      },
+      {
+        name: 'at the end',
+        alignment: 'end',
+        expected: ['December 2019', 'January 2020', 'February 2020']
+      }
     ])('should align the initial value $name', async ({alignment, expected}) => {
       const {getAllByRole} = render(
-        <Calendar visibleMonths={3} defaultValue={new CalendarDate(2020, 2, 3)} selectionAlignment={alignment} />
+        <Calendar
+          visibleMonths={3}
+          defaultValue={new CalendarDate(2020, 2, 3)}
+          selectionAlignment={alignment}
+        />
       );
-  
+
       let grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
-  
+
       expect(grids[0]).toHaveAttribute('aria-label', expected[0]);
       expect(grids[1]).toHaveAttribute('aria-label', expected[1]);
       expect(grids[2]).toHaveAttribute('aria-label', expected[2]);
     });
-  
 
     it('should constrain the visible region depending on the minValue', () => {
-      let {getAllByRole, getByLabelText} = render(<Calendar value={new CalendarDate(2019, 2, 3)} minValue={new CalendarDate(2019, 2, 1)} visibleMonths={3} />);
+      let {getAllByRole, getByLabelText} = render(
+        <Calendar
+          value={new CalendarDate(2019, 2, 3)}
+          minValue={new CalendarDate(2019, 2, 1)}
+          visibleMonths={3}
+        />
+      );
 
       let grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
@@ -128,16 +163,13 @@ describe('Calendar', () => {
 
   describe('selection', () => {
     it.each`
-      Name      | Calendar
-      ${'v3'}   | ${Calendar}
+      Name    | Calendar
+      ${'v3'} | ${Calendar}
     `('$Name selects a date on keyDown Enter/Space (uncontrolled)', async ({Calendar}) => {
       let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText} = render(
-        <Calendar
-          defaultValue={new CalendarDate(2019, 6, 5)}
-          autoFocus
-          onChange={onChange} />
+        <Calendar defaultValue={new CalendarDate(2019, 6, 5)} autoFocus onChange={onChange} />
       );
 
       let selectedDate = getByLabelText('selected', {exact: false});
@@ -160,16 +192,13 @@ describe('Calendar', () => {
     });
 
     it.each`
-      Name      | Calendar
-      ${'v3'}   | ${Calendar}
+      Name    | Calendar
+      ${'v3'} | ${Calendar}
     `('$Name selects a date on keyDown Enter/Space (controlled)', async ({Calendar}) => {
       let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText} = render(
-        <Calendar
-          value={new CalendarDate(2019, 6, 5)}
-          autoFocus
-          onChange={onChange} />
+        <Calendar value={new CalendarDate(2019, 6, 5)} autoFocus onChange={onChange} />
       );
 
       let selectedDate = getByLabelText('selected', {exact: false});
@@ -192,45 +221,47 @@ describe('Calendar', () => {
     });
 
     it.each`
-      Name      | Calendar      | props
-      ${'v3'}   | ${Calendar}   | ${{isReadOnly: true}}
-    `('$Name does not select a date on keyDown Enter/Space if isReadOnly', async ({Calendar, props}) => {
-      let user = userEvent.setup({delay: null, pointerMap});
-      let onChange = jest.fn();
-      let {getByLabelText} = render(
-        <Calendar
-          defaultValue={new CalendarDate(2019, 6, 5)}
-          autoFocus
-          onChange={onChange}
-          {...props} />
-      );
+      Name    | Calendar    | props
+      ${'v3'} | ${Calendar} | ${{isReadOnly: true}}
+    `(
+      '$Name does not select a date on keyDown Enter/Space if isReadOnly',
+      async ({Calendar, props}) => {
+        let user = userEvent.setup({delay: null, pointerMap});
+        let onChange = jest.fn();
+        let {getByLabelText} = render(
+          <Calendar
+            defaultValue={new CalendarDate(2019, 6, 5)}
+            autoFocus
+            onChange={onChange}
+            {...props}
+          />
+        );
 
-      let selectedDate = getByLabelText('selected', {exact: false});
-      expect(selectedDate.textContent).toBe('5');
+        let selectedDate = getByLabelText('selected', {exact: false});
+        expect(selectedDate.textContent).toBe('5');
 
-      await user.keyboard('{ArrowLeft}');
-      await user.keyboard('{Enter}');
-      selectedDate = getByLabelText('selected', {exact: false});
-      expect(selectedDate.textContent).toBe('5');
-      expect(onChange).not.toHaveBeenCalled();
+        await user.keyboard('{ArrowLeft}');
+        await user.keyboard('{Enter}');
+        selectedDate = getByLabelText('selected', {exact: false});
+        expect(selectedDate.textContent).toBe('5');
+        expect(onChange).not.toHaveBeenCalled();
 
-      await user.keyboard('{ArrowLeft}');
-      await user.keyboard('[Space]');
-      selectedDate = getByLabelText('selected', {exact: false});
-      expect(selectedDate.textContent).toBe('5');
-      expect(onChange).not.toHaveBeenCalled();
-    });
+        await user.keyboard('{ArrowLeft}');
+        await user.keyboard('[Space]');
+        selectedDate = getByLabelText('selected', {exact: false});
+        expect(selectedDate.textContent).toBe('5');
+        expect(onChange).not.toHaveBeenCalled();
+      }
+    );
 
     it.each`
-      Name      | Calendar
-      ${'v3'}   | ${Calendar}
+      Name    | Calendar
+      ${'v3'} | ${Calendar}
     `('$Name selects a date on click (uncontrolled)', async ({Calendar}) => {
       let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
-        <Calendar
-          defaultValue={new CalendarDate(2019, 6, 5)}
-          onChange={onChange} />
+        <Calendar defaultValue={new CalendarDate(2019, 6, 5)} onChange={onChange} />
       );
 
       let newDate = getByText('17');
@@ -243,15 +274,13 @@ describe('Calendar', () => {
     });
 
     it.each`
-      Name      | Calendar
-      ${'v3'}   | ${Calendar}
+      Name    | Calendar
+      ${'v3'} | ${Calendar}
     `('$Name selects a date on click (controlled)', async ({Calendar}) => {
       let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
-        <Calendar
-          value={new CalendarDate(2019, 6, 5)}
-          onChange={onChange} />
+        <Calendar value={new CalendarDate(2019, 6, 5)} onChange={onChange} />
       );
 
       let newDate = getByText('17');
@@ -264,16 +293,13 @@ describe('Calendar', () => {
     });
 
     it.each`
-      Name      | Calendar      | props
-      ${'v3'}   | ${Calendar}   | ${{isDisabled: true}}
+      Name    | Calendar    | props
+      ${'v3'} | ${Calendar} | ${{isDisabled: true}}
     `('$Name does not select a date on click if isDisabled', async ({Calendar, props}) => {
       let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(
-        <Calendar
-          value={new CalendarDate(2019, 6, 5)}
-          onChange={onChange}
-          {...props} />
+        <Calendar value={new CalendarDate(2019, 6, 5)} onChange={onChange} {...props} />
       );
 
       let newDate = getByText('17');
@@ -286,16 +312,13 @@ describe('Calendar', () => {
     });
 
     it.each`
-      Name      | Calendar      | props
-      ${'v3'}   | ${Calendar}   | ${{isReadOnly: true}}
+      Name    | Calendar    | props
+      ${'v3'} | ${Calendar} | ${{isReadOnly: true}}
     `('$Name does not select a date on click if isReadOnly', async ({Calendar, props}) => {
       let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
-        <Calendar
-          value={new CalendarDate(2019, 6, 5)}
-          onChange={onChange}
-          {...props} />
+        <Calendar value={new CalendarDate(2019, 6, 5)} onChange={onChange} {...props} />
       );
 
       let newDate = getByText('17');
@@ -307,55 +330,54 @@ describe('Calendar', () => {
     });
 
     it.each`
-      Name      | Calendar      | props
-      ${'v3'}   | ${Calendar}   | ${{defaultValue: new CalendarDate(2019, 2, 8), minValue: new CalendarDate(2019, 2, 5), maxValue: new CalendarDate(2019, 2, 15)}}
-    `('$Name does not select a date on click if outside the valid date range', async ({Calendar, props}) => {
-      let user = userEvent.setup({delay: null, pointerMap});
-      let onChange = jest.fn();
-      let {getByLabelText} = render(
-        <Calendar
-          onChange={onChange}
-          {...props} />
-      );
+      Name    | Calendar    | props
+      ${'v3'} | ${Calendar} | ${{defaultValue: new CalendarDate(2019, 2, 8), minValue: new CalendarDate(2019, 2, 5), maxValue: new CalendarDate(2019, 2, 15)}}
+    `(
+      '$Name does not select a date on click if outside the valid date range',
+      async ({Calendar, props}) => {
+        let user = userEvent.setup({delay: null, pointerMap});
+        let onChange = jest.fn();
+        let {getByLabelText} = render(<Calendar onChange={onChange} {...props} />);
 
-      await user.click(getByLabelText('Sunday, February 3, 2019'));
+        await user.click(getByLabelText('Sunday, February 3, 2019'));
 
-      let selectedDate = getByLabelText('selected', {exact: false});
-      expect(selectedDate.textContent).toBe('8');
-      expect(onChange).not.toHaveBeenCalled();
+        let selectedDate = getByLabelText('selected', {exact: false});
+        expect(selectedDate.textContent).toBe('8');
+        expect(onChange).not.toHaveBeenCalled();
 
-      await user.click(getByLabelText('Sunday, February 17, 2019'));
+        await user.click(getByLabelText('Sunday, February 17, 2019'));
 
-      selectedDate = getByLabelText('selected', {exact: false});
-      expect(selectedDate.textContent).toBe('8');
-      expect(onChange).not.toHaveBeenCalled();
+        selectedDate = getByLabelText('selected', {exact: false});
+        expect(selectedDate.textContent).toBe('8');
+        expect(onChange).not.toHaveBeenCalled();
 
-      await user.click(getByLabelText('Tuesday, February 5, 2019, First available date'));
+        await user.click(getByLabelText('Tuesday, February 5, 2019, First available date'));
 
-      selectedDate = getByLabelText('selected', {exact: false});
-      expect(selectedDate.textContent).toBe('5');
-      expect(onChange).toHaveBeenCalledTimes(1);
+        selectedDate = getByLabelText('selected', {exact: false});
+        expect(selectedDate.textContent).toBe('5');
+        expect(onChange).toHaveBeenCalledTimes(1);
 
-      await user.click(getByLabelText('Friday, February 15, 2019, Last available date'));
+        await user.click(getByLabelText('Friday, February 15, 2019, Last available date'));
 
-      selectedDate = getByLabelText('selected', {exact: false});
-      expect(selectedDate.textContent).toBe('15');
-      expect(onChange).toHaveBeenCalledTimes(2);
-    });
+        selectedDate = getByLabelText('selected', {exact: false});
+        expect(selectedDate.textContent).toBe('15');
+        expect(onChange).toHaveBeenCalledTimes(2);
+      }
+    );
 
     it('should support invalid state', () => {
-      let {getByRole} = render(
-        <Calendar
-          defaultValue={new CalendarDate(2022, 3, 11)}
-          isInvalid />
-      );
+      let {getByRole} = render(<Calendar defaultValue={new CalendarDate(2022, 3, 11)} isInvalid />);
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
       expect(cell).toHaveAttribute('aria-invalid', 'true');
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
 
-      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      let description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Selected date unavailable.');
     });
 
@@ -364,7 +386,8 @@ describe('Calendar', () => {
         <Calendar
           defaultValue={new CalendarDate(2022, 3, 11)}
           isInvalid
-          errorMessage="Selection dates cannot include weekends." />
+          errorMessage="Selection dates cannot include weekends."
+        />
       );
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
@@ -372,7 +395,11 @@ describe('Calendar', () => {
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
 
-      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      let description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Selection dates cannot include weekends.');
     });
 
@@ -380,7 +407,8 @@ describe('Calendar', () => {
       let {getByRole} = render(
         <Calendar
           defaultValue={new CalendarDate(2022, 3, 11)}
-          errorMessage="Selection dates cannot include weekends." />
+          errorMessage="Selection dates cannot include weekends."
+        />
       );
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
@@ -396,7 +424,8 @@ describe('Calendar', () => {
           <Calendar
             defaultValue={new CalendarDate(2022, 3, 5)}
             isDateUnavailable={date => isWeekend(date, locale)}
-            allowsNonContiguousRanges />
+            allowsNonContiguousRanges
+          />
         );
       }
 
@@ -407,7 +436,11 @@ describe('Calendar', () => {
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
       expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
 
-      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      let description = cell
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ');
       expect(description).toBe('Selected date unavailable.');
     });
   });
@@ -419,7 +452,9 @@ describe('Calendar', () => {
 
       let nextButton = getAllByLabelText('Next')[0];
       await user.click(nextButton);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('July 2019');
@@ -431,7 +466,9 @@ describe('Calendar', () => {
 
       let newDate = getByText('17');
       await user.click(newDate);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('Selected Date: Monday, June 17, 2019', 'polite', 4000);
@@ -439,31 +476,45 @@ describe('Calendar', () => {
 
     it('ensures that the active descendant is announced when the focused date changes', async () => {
       let user = userEvent.setup({delay: null, pointerMap});
-      let {getByLabelText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} autoFocus />);
+      let {getByLabelText} = render(
+        <Calendar defaultValue={new CalendarDate(2019, 6, 5)} autoFocus />
+      );
 
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate).toHaveFocus();
 
       await user.keyboard('{ArrowRight}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(getByLabelText('Thursday, June 6, 2019', {exact: false})).toHaveFocus();
     });
 
     it('includes era in BC dates', async () => {
       let user = userEvent.setup({delay: null, pointerMap});
-      let {getByText, getAllByLabelText} = render(<Calendar defaultValue={new CalendarDate('BC', 5, 2, 3)} />);
+      let {getByText, getAllByLabelText} = render(
+        <Calendar defaultValue={new CalendarDate('BC', 5, 2, 3)} />
+      );
 
       let newDate = getByText('17');
       await user.click(newDate);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Date: Saturday, February 17, 5 BC', 'polite', 4000);
+      expect(announce).toHaveBeenCalledWith(
+        'Selected Date: Saturday, February 17, 5 BC',
+        'polite',
+        4000
+      );
 
       announce.mockReset();
       let nextButton = getAllByLabelText('Next')[0];
       await user.click(nextButton);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('March 5 BC');

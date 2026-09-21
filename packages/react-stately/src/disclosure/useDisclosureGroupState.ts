@@ -16,32 +16,32 @@ import {useEffect, useMemo} from 'react';
 
 export interface DisclosureGroupProps {
   /** Whether multiple items can be expanded at the same time. */
-  allowsMultipleExpanded?: boolean,
+  allowsMultipleExpanded?: boolean;
   /** Whether all items are disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** The currently expanded keys in the group (controlled). */
-  expandedKeys?: Iterable<Key>,
+  expandedKeys?: Iterable<Key>;
   /** The initial expanded keys in the group (uncontrolled). */
-  defaultExpandedKeys?: Iterable<Key>,
+  defaultExpandedKeys?: Iterable<Key>;
   /** Handler that is called when items are expanded or collapsed. */
-  onExpandedChange?: (keys: Set<Key>) => any
+  onExpandedChange?: (keys: Set<Key>) => any;
 }
 
 export interface DisclosureGroupState {
   /** Whether multiple items can be expanded at the same time. */
-  readonly allowsMultipleExpanded: boolean,
+  readonly allowsMultipleExpanded: boolean;
 
   /** Whether all items are disabled. */
-  readonly isDisabled: boolean,
+  readonly isDisabled: boolean;
 
   /** A set of keys for items that are expanded. */
-  readonly expandedKeys: Set<Key>,
+  readonly expandedKeys: Set<Key>;
 
   /** Toggles the expanded state for an item by its key. */
-  toggleKey(key: Key): void,
+  toggleKey(key: Key): void;
 
   /** Replaces the set of expanded keys. */
-  setExpandedKeys(keys: Set<Key>): void
+  setExpandedKeys(keys: Set<Key>): void;
 }
 
 /**
@@ -51,8 +51,14 @@ export interface DisclosureGroupState {
 export function useDisclosureGroupState(props: DisclosureGroupProps): DisclosureGroupState {
   let {allowsMultipleExpanded = false, isDisabled = false} = props;
   let [expandedKeys, setExpandedKeys] = useControlledState(
-    useMemo(() => props.expandedKeys ? new Set(props.expandedKeys) : undefined, [props.expandedKeys]),
-    useMemo(() => props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(), [props.defaultExpandedKeys]),
+    useMemo(
+      () => (props.expandedKeys ? new Set(props.expandedKeys) : undefined),
+      [props.expandedKeys]
+    ),
+    useMemo(
+      () => (props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set()),
+      [props.defaultExpandedKeys]
+    ),
     props.onExpandedChange
   );
 

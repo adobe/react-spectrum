@@ -16,7 +16,10 @@ import {Grid, repeat} from '../../src/layout/Grid';
 import {Item} from 'react-stately/Item';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import {SearchAutocomplete, SpectrumSearchAutocompleteProps} from '../../src/autocomplete/SearchAutocomplete';
+import {
+  SearchAutocomplete,
+  SpectrumSearchAutocompleteProps
+} from '../../src/autocomplete/SearchAutocomplete';
 
 // Skipping focus styles because don't have a way of applying it via classnames
 // No controlled open state also means no menu
@@ -81,13 +84,20 @@ let items = [
 export const Template = (args: SpectrumSearchAutocompleteProps<object>): JSX.Element => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
 
       return (
-        <SearchAutocomplete key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} defaultItems={items}>
+        <SearchAutocomplete
+          key={key}
+          {...args}
+          {...c}
+          label={args['aria-label'] ? undefined : key}
+          defaultItems={items}>
           {(item: any) => <Item>{item.name}</Item>}
         </SearchAutocomplete>
       );
@@ -98,53 +108,57 @@ export const Template = (args: SpectrumSearchAutocompleteProps<object>): JSX.Ele
 // Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
 const TemplateSideLabel = (args: SpectrumSearchAutocompleteProps<object>): JSX.Element => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={800}>
-    {combinations.filter(combo => !(combo.isReadOnly || combo.isDisabled)).map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
-      if (!key) {
-        key = 'empty';
-      }
+    {combinations
+      .filter(combo => !(combo.isReadOnly || combo.isDisabled))
+      .map(c => {
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
+        if (!key) {
+          key = 'empty';
+        }
 
-      return (
-        <SearchAutocomplete key={key} {...args} {...c} label={key} defaultItems={items}>
-          {(item: any) => <Item>{item.name}</Item>}
-        </SearchAutocomplete>
-      );
-    })}
+        return (
+          <SearchAutocomplete key={key} {...args} {...c} label={key} defaultItems={items}>
+            {(item: any) => <Item>{item.name}</Item>}
+          </SearchAutocomplete>
+        );
+      })}
   </Grid>
 );
 
 export const PropDefaults: SearchAutocompleteStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
 export const PropInputValue: SearchAutocompleteStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'inputValue: Blah',
   args: {inputValue: 'Blah'}
 };
 
 export const PropAriaLabelled: SearchAutocompleteStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'aria-label',
   args: {'aria-label': 'Label'}
 };
 
 export const PropLabelEnd: SearchAutocompleteStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'label end',
   args: {...PropDefaults.args, labelAlign: 'end'}
 };
 
 export const PropLabelSide: SearchAutocompleteStory = {
-  render: (args) => <TemplateSideLabel {...args} />,
+  render: args => <TemplateSideLabel {...args} />,
   name: 'label side',
   args: {...PropDefaults.args, labelPosition: 'side'}
 };
 
 export const PropCustomWidth: SearchAutocompleteStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'custom width',
   args: {...PropDefaults.args, width: 'size-1600'},
 
@@ -156,13 +170,13 @@ export const PropCustomWidth: SearchAutocompleteStory = {
 };
 
 export const PropIconFilter: SearchAutocompleteStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'icon: Filter',
   args: {...PropDefaults.args, icon: <Filter />}
 };
 
 export const PropIconNull: SearchAutocompleteStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'icon: null',
   args: {...PropDefaults.args, icon: null}
 };

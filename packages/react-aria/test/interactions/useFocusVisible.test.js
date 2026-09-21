@@ -9,8 +9,20 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, pointerMap, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils-internal';
-import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener} from '../../src/interactions/useFocusVisible';
+import {
+  act,
+  fireEvent,
+  pointerMap,
+  render,
+  renderHook,
+  screen,
+  waitFor
+} from '@react-spectrum/test-utils-internal';
+import {
+  addWindowFocusTracking,
+  useFocusVisible,
+  useFocusVisibleListener
+} from '../../src/interactions/useFocusVisible';
 import {changeHandlers, hasSetupGlobalListeners} from '../../src/interactions/useFocusVisible';
 import {mergeProps} from '../../src/utils/mergeProps';
 import React from 'react';
@@ -20,8 +32,12 @@ import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   const {isFocusVisible} = useFocusVisible();
-  // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-  return <div tabIndex={0} {...props}>example{isFocusVisible && '-focusVisible'}</div>;
+  return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+    <div tabIndex={0} {...props}>
+      example{isFocusVisible && '-focusVisible'}
+    </div>
+  );
 }
 
 function ButtonExample(props) {
@@ -29,7 +45,11 @@ function ButtonExample(props) {
   const {buttonProps} = useButton({}, ref);
   const {focusProps, isFocusVisible} = useFocusRing();
 
-  return <button {...mergeProps(props, buttonProps, focusProps)} ref={ref}>example{isFocusVisible && '-focusVisible'}</button>;
+  return (
+    <button {...mergeProps(props, buttonProps, focusProps)} ref={ref}>
+      example{isFocusVisible && '-focusVisible'}
+    </button>
+  );
 }
 
 function toggleBrowserTabs(win = window) {
@@ -53,6 +73,45 @@ function toggleBrowserTabs(win = window) {
   fireEvent(win.document, new Event('visibilitychange'));
   fireEvent(win, new Event('focus', {target: win}));
   fireEvent(lastActiveElement, new Event('focus'));
+}
+
+// Focus the element the way the browser restores focus. useFocusVisible ignores untrusted focus
+// events and jsdom only marks its own as trusted, so go through jsdom's focus() rather than
+// fireEvent, using the unpatched copy saved by setupGlobalFocusEvents so it isn't recorded as a
+// programmatic focus. jsdom won't dispatch focus again for the element that already has it, hence
+// the blur first — useFocusVisible doesn't observe element blur, since its blur listener is on the
+// window without capture and blur doesn't bubble.
+function restoreFocus(element, win = window) {
+  const nativeFocus = hasSetupGlobalListeners.get(win).focus;
+  element.blur();
+  nativeFocus.call(element);
+}
+
+function toggleBrowserTabsSafari(win = window) {
+  // Safari fires the window/element focus pair twice when returning to a tab or app, and
+  // visibilitychange fires after all of the focus events.
+  // See https://github.com/adobe/react-spectrum/issues/7468
+  const lastActiveElement = win.document.activeElement;
+  // leave tab
+  fireEvent(lastActiveElement, new Event('blur'));
+  fireEvent(win, new Event('blur'));
+  Object.defineProperty(win.document, 'visibilityState', {
+    value: 'hidden',
+    writable: true
+  });
+  Object.defineProperty(win.document, 'hidden', {value: true, writable: true});
+  fireEvent(win.document, new Event('visibilitychange'));
+  // return to tab
+  fireEvent(win, new Event('focus', {target: win}));
+  restoreFocus(lastActiveElement, win);
+  fireEvent(win, new Event('focus', {target: win}));
+  restoreFocus(lastActiveElement, win);
+  Object.defineProperty(win.document, 'visibilityState', {
+    value: 'visible',
+    writable: true
+  });
+  Object.defineProperty(win.document, 'hidden', {value: false, writable: true});
+  fireEvent(win.document, new Event('visibilitychange'));
 }
 
 function toggleBrowserWindow(win = window) {
@@ -87,6 +146,27 @@ describe('useFocusVisible', function () {
 
     await user.click(el);
     toggleBrowserTabs();
+
+    expect(el.textContent).toBe('example');
+  });
+
+  it('returns positive isFocusVisible result after toggling browser tabs in Safari after keyboard navigation', async function () {
+    render(<Example />);
+    await user.tab();
+    let el = screen.getByText('example-focusVisible');
+
+    toggleBrowserTabsSafari();
+
+    expect(el.textContent).toBe('example-focusVisible');
+  });
+
+  it('returns negative isFocusVisible result after toggling browser tabs in Safari without prior keyboard navigation', async function () {
+    render(<Example />);
+    await user.tab();
+    let el = screen.getByText('example-focusVisible');
+
+    await user.click(el);
+    toggleBrowserTabsSafari();
 
     expect(el.textContent).toBe('example');
   });
@@ -128,10 +208,32 @@ describe('useFocusVisible', function () {
       iframe.remove();
     });
 
+    // Regression test for https://github.com/adobe/react-spectrum/issues/9649
+    it('does not throw when HTMLElement.prototype.focus is an accessor-only property', function () {
+      const HTMLElementProto = iframe.contentWindow.HTMLElement.prototype;
+      const original = Object.getOwnPropertyDescriptor(HTMLElementProto, 'focus');
+      Object.defineProperty(HTMLElementProto, 'focus', {
+        configurable: true,
+        get() {
+          return original?.value;
+        }
+      });
+
+      try {
+        expect(() => addWindowFocusTracking(iframeRoot)).not.toThrow();
+      } finally {
+        if (original) {
+          Object.defineProperty(HTMLElementProto, 'focus', original);
+        }
+      }
+    });
+
     it('sets up focus listener in a different window', async function () {
       render(<Example id="iframe-example" />, {container: iframeRoot});
       await waitFor(() => {
-        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(
+          iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')
+        ).toBeTruthy();
       });
       const el = iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]');
 
@@ -236,7 +338,9 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(
+          iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')
+        ).toBeTruthy();
       });
       await user.tab();
 
@@ -255,7 +359,9 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(
+          iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')
+        ).toBeTruthy();
       });
       await user.tab();
 
@@ -273,7 +379,9 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(
+          iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')
+        ).toBeTruthy();
       });
       await user.tab();
 
@@ -291,7 +399,9 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(
+          iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')
+        ).toBeTruthy();
       });
       await user.tab();
 
@@ -310,7 +420,9 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(iframe.contentWindow.document.body.querySelector('button[id="iframe-example"]')).toBeTruthy();
+        expect(
+          iframe.contentWindow.document.body.querySelector('button[id="iframe-example"]')
+        ).toBeTruthy();
       });
 
       const el = iframe.contentWindow.document.body.querySelector('button[id="iframe-example"]');
@@ -376,7 +488,14 @@ describe('useFocusVisibleListener', function () {
       const {buttonProps} = useButton({}, ref);
       const {focusProps, isFocusVisible} = useFocusRing();
 
-      return <button {...mergeProps(props, buttonProps, focusProps)} data-focus-visible={isFocusVisible || undefined} ref={ref}>example</button>;
+      return (
+        <button
+          {...mergeProps(props, buttonProps, focusProps)}
+          data-focus-visible={isFocusVisible || undefined}
+          ref={ref}>
+          example
+        </button>
+      );
     }
     it('does not call changeHandlers when unneeded', async function () {
       // Save original methods

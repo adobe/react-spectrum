@@ -1,1 +1,5 @@
-export {type IllustrationPropsWithoutChildren, Illustration, type IllustrationProps} from '../../../src/icon/Illustration';
+export {
+  type IllustrationPropsWithoutChildren,
+  Illustration,
+  type IllustrationProps
+} from '../../../src/icon/Illustration';

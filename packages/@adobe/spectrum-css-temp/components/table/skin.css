@@ -14,13 +14,24 @@ governing permissions and limitations under the License.
   --spectrum-table-header-sort-icon-color-hover: var(--spectrum-global-color-gray-700);
 }
 .spectrum-Table {
-  --spectrum-table-col-resize-indicator-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
-  --spectrum-table-col-resize-nubbin-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
+  --spectrum-table-col-resize-indicator-background-color: xvar(
+    --spectrum-legacy-color-blue-400,
+    var(--spectrum-global-color-blue-400)
+  );
+  --spectrum-table-col-resize-nubbin-background-color: xvar(
+    --spectrum-legacy-color-blue-400,
+    var(--spectrum-global-color-blue-400)
+  );
   --spectrum-table-col-resize-nubbin-icon-color: var(--spectrum-global-color-static-white);
-  --spectrum-table-body-resize-indicator-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
+  --spectrum-table-body-resize-indicator-background-color: xvar(
+    --spectrum-legacy-color-blue-400,
+    var(--spectrum-global-color-blue-400)
+  );
   --spectrum-table-row-border-color-selected: var(--spectrum-global-color-blue-500);
   --spectrum-table-cell-border-color-selected: var(--spectrum-global-color-blue-500);
-  --spectrum-table-row-focus-indicator-color: var(--spectrum-selectlist-option-focus-indicator-color);
+  --spectrum-table-row-focus-indicator-color: var(
+    --spectrum-selectlist-option-focus-indicator-color
+  );
 }
 
 .spectrum-Table-headWrapper {
@@ -104,7 +115,7 @@ governing permissions and limitations under the License.
 
   &:focus-visible {
     &::after {
-      content: "";
+      content: '';
       height: 100%;
       position: absolute;
       width: 100%;
@@ -232,17 +243,24 @@ tbody.spectrum-Table-body {
 
     /* Box shadow for bottom, left, and right border for selected rows. */
     &:after {
-      box-shadow: inset 1px 0 0 0 var(--spectrum-table-row-border-color-selected), inset -1px 0 0 0 var(--spectrum-table-row-border-color-selected), inset 0 -1px 0 0 var(--spectrum-table-row-border-color-selected);
+      box-shadow:
+        inset 1px 0 0 0 var(--spectrum-table-row-border-color-selected),
+        inset -1px 0 0 0 var(--spectrum-table-row-border-color-selected),
+        inset 0 -1px 0 0 var(--spectrum-table-row-border-color-selected);
     }
   }
 
   /* Box shadow for bottom, left, right, and top border for first row when selected. When the row isn't selected, it doesn't need
    * a top border.
    */
-   &.spectrum-Table-row--firstRow {
+  &.spectrum-Table-row--firstRow {
     &.is-selected {
       &:after {
-        box-shadow: inset 1px 0 0 0 var(--spectrum-table-row-border-color-selected), inset -1px 0 0 0 var(--spectrum-table-row-border-color-selected), inset 0 1px 0 0 var(--spectrum-table-row-border-color-selected), inset 0 -1px 0 0 var(--spectrum-table-row-border-color-selected);
+        box-shadow:
+          inset 1px 0 0 0 var(--spectrum-table-row-border-color-selected),
+          inset -1px 0 0 0 var(--spectrum-table-row-border-color-selected),
+          inset 0 1px 0 0 var(--spectrum-table-row-border-color-selected),
+          inset 0 -1px 0 0 var(--spectrum-table-row-border-color-selected);
       }
     }
   }

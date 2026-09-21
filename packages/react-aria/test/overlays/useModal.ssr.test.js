@@ -14,7 +14,9 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('OverlayContainer SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {OverlayContainer, OverlayProvider} from '../../exports/index.ts';
       import React from 'react';
 
@@ -23,6 +25,7 @@ describe('OverlayContainer SSR', function () {
           <div data-testid="modal"></div>
         </OverlayContainer>
       </OverlayProvider>
-    `);
+    `
+    );
   });
 });

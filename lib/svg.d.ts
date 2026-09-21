@@ -22,11 +22,17 @@ declare module 'url:*' {
 
 declare module '*.svg' {
   import {FunctionComponent, SVGProps} from 'react';
-  const content: FunctionComponent<SVGProps<SVGSVGElement>> ;
+  const content: FunctionComponent<SVGProps<SVGSVGElement>>;
   export default content;
 }
 
 declare module '*.json' {
   const content: any;
   export default content;
+}
+
+declare module '*.mdx' {
+  import {ElementType, FunctionComponent} from 'react';
+  const MDXComponent: FunctionComponent<{components?: Record<string, ElementType>}>;
+  export default MDXComponent;
 }

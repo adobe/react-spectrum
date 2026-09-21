@@ -23,7 +23,8 @@ function FakeToast(props: SpectrumToastValue) {
         toast={{
           key: 'toast',
           content: props
-        }} />
+        }}
+      />
     </UNSTABLE_ToastStateContext.Provider>
   );
 }
@@ -31,7 +32,12 @@ function FakeToast(props: SpectrumToastValue) {
 const meta: Meta<typeof FakeToast> = {
   component: FakeToast,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Toast'
@@ -79,14 +85,16 @@ export const WithAction: Story = {
 export const LongContent: Story = {
   args: {
     variant: 'info',
-    children: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    children:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
   }
 };
 
 export const LongContentWithAction: Story = {
   args: {
     variant: 'positive',
-    children: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    children:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     actionLabel: 'Undo'
   }
 };
@@ -94,6 +102,7 @@ export const LongContentWithAction: Story = {
 export const LongWord: Story = {
   args: {
     variant: 'info',
-    children: 'LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimaminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipeacommodoconsequat.'
+    children:
+      'LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimaminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipeacommodoconsequat.'
   }
 };

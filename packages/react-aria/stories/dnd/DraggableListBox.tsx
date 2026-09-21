@@ -26,29 +26,30 @@ export function DraggableListBox(props: any): JSX.Element {
     ...props,
     collection: state.collection,
     selectionManager: state.selectionManager,
-    getItems: props.getItems || ((keys) => (
-      [...keys].map((key) => {
-        let item = state.collection.getItem(key);
-        if (!item) {
-          return null;
-        }
+    getItems:
+      props.getItems ||
+      (keys =>
+        [...keys].map(key => {
+          let item = state.collection.getItem(key);
+          if (!item) {
+            return null;
+          }
 
-        return {
-          'text/plain': item.textValue
-        };
-      })
-    ))
+          return {
+            'text/plain': item.textValue
+          };
+        }))
   });
   useDraggableCollection({}, dragState, ref);
 
   return (
-    <ul {...listBoxProps} ref={ref} className={dndStyles['draggable-listbox']} aria-label="example draggable listbox">
-      {[...state.collection].map((item) => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state}
-          dragState={dragState} />
+    <ul
+      {...listBoxProps}
+      ref={ref}
+      className={dndStyles['draggable-listbox']}
+      aria-label="example draggable listbox">
+      {[...state.collection].map(item => (
+        <Option key={item.key} item={item} state={state} dragState={dragState} />
       ))}
     </ul>
   );
@@ -56,23 +57,25 @@ export function DraggableListBox(props: any): JSX.Element {
 
 function Option({item, state, dragState}) {
   let ref = React.useRef<HTMLLIElement | null>(null);
-  let {optionProps, isPressed, hasAction} = useOption(
-    {key: item.key},
-    state,
-    ref
-  );
+  let {optionProps, isPressed, hasAction} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
-  let {dragProps} = useDraggableItem({
-    key: item.key,
-    hasAction
-  }, dragState);
+  let {dragProps} = useDraggableItem(
+    {
+      key: item.key,
+      hasAction
+    },
+    dragState
+  );
 
   return (
     <li
       {...mergeProps(dragProps, optionProps, focusProps)}
       ref={ref}
-      className={classNames(dndStyles, 'option', {'focus-visible': isFocusVisible, 'pressed': isPressed})}>
+      className={classNames(dndStyles, 'option', {
+        'focus-visible': isFocusVisible,
+        pressed: isPressed
+      })}>
       {item.rendered}
     </li>
   );

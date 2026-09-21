@@ -22,7 +22,6 @@ import {setInteractionModality} from '../../src/interactions/useFocusVisible';
 import * as stories from '../../stories/table/useTable.stories';
 import {within} from '@testing-library/dom';
 
-
 let {TableWithSomeResizingFRsControlled} = composeStories(stories);
 
 // I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
@@ -37,7 +36,9 @@ function getColumn(tree, name) {
 }
 
 function resizeCol(tree, col, delta) {
-  act(() => {setInteractionModality('pointer');});
+  act(() => {
+    setInteractionModality('pointer');
+  });
   let column = getColumn(tree, col);
   let resizer = within(column).getByRole('slider');
 
@@ -52,30 +53,31 @@ function resizeCol(tree, col, delta) {
 function resizeTable(clientWidth, newValue) {
   clientWidth.mockImplementation(() => newValue);
   fireEvent(window, new Event('resize'));
-  act(() => {jest.runAllTimers();});
+  act(() => {
+    jest.runAllTimers();
+  });
 }
 
 describe('Aria Table', () => {
-  resizingTests(render, (tree, ...args) => tree.rerender(...args), Table, TableWithSomeResizingFRsControlled, resizeCol, resizeTable);
+  resizingTests(
+    render,
+    (tree, ...args) => tree.rerender(...args),
+    Table,
+    TableWithSomeResizingFRsControlled,
+    resizeCol,
+    resizeTable
+  );
 });
 
-function Table(props: {columns: {id: Key, name: string}[], rows: Record<string, string>[]}) {
+function Table(props: {columns: {id: Key; name: string}[]; rows: Record<string, string>[]}) {
   let {columns, rows, ...args} = props;
   return (
     <ResizingTable {...args}>
       <TableHeader columns={columns}>
-        {column => (
-          <Column {...column}>
-            {column.name}
-          </Column>
-        )}
+        {column => <Column {...column}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={rows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </ResizingTable>
   );

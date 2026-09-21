@@ -1,4 +1,9 @@
-import {Tab as RACTab, SelectionIndicator, TabProps, composeRenderProps} from 'react-aria-components';
+import {
+  Tab as RACTab,
+  SelectionIndicator,
+  TabProps,
+  composeRenderProps
+} from 'react-aria-components';
 import {tv} from 'tailwind-variants';
 import {focusRing} from 'tailwind-starter/utils';
 import {CSSProperties} from 'react';
@@ -17,16 +22,17 @@ export function Tab(props: TabProps) {
   return (
     <RACTab
       {...props}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => tabProps({...renderProps, className: (className || '') + ' tab'})
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        tabProps({...renderProps, className: (className || '') + ' tab'})
       )}
       style={{anchorName: `--tab-${props.id}`} as CSSProperties}>
-      {composeRenderProps(props.children, children => (<>
-        {children}
-        {/* Graceful fallback in case scroll-timeline is not supported (e.g. Firefox). */}
-        <SelectionIndicator className="absolute top-0 left-0 w-full h-full z-10 bg-white rounded-full mix-blend-difference motion-safe:transition-[translate,width,height] supports-animation-timeline:hidden" />
-      </>))}
+      {composeRenderProps(props.children, children => (
+        <>
+          {children}
+          {/* Graceful fallback in case scroll-timeline is not supported (e.g. Firefox). */}
+          <SelectionIndicator className="absolute top-0 left-0 w-full h-full z-10 bg-white rounded-full mix-blend-difference motion-safe:transition-[translate,width,height] supports-animation-timeline:hidden" />
+        </>
+      ))}
     </RACTab>
   );
 }

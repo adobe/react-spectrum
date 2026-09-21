@@ -19,7 +19,12 @@ const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog,
   parameters: {
     layout: 'centered',
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
   },
   title: 'S2 Chromatic/AlertDialog'
 };

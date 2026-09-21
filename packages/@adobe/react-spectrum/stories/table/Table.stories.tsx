@@ -16,7 +16,15 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs} from '../../src/breadcrumbs/Breadcrumbs';
 import {Button} from '../../src/button/Button';
 import {ButtonGroup} from '../../src/buttongroup/ButtonGroup';
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  SpectrumTableProps,
+  TableBody,
+  TableHeader,
+  TableView
+} from '../../src/table/TableView';
 import {Content} from '../../src/view/Content';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';
@@ -133,7 +141,6 @@ export default {
 
 export type TableStory = StoryObj<Omit<typeof TableView, 'children'>>;
 
-
 // Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 export const Static: TableStory = {
   args: {
@@ -141,7 +148,7 @@ export const Static: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
@@ -188,17 +195,11 @@ export const Dynamic: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
-      <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
-      </TableHeader>
+      <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
       <TableBody items={items}>
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -216,17 +217,11 @@ export const DynamicFalsyRowKeys: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
-      <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
-      </TableHeader>
+      <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
       <TableBody items={itemsWithFalsyId}>
-        {item =>
-          (<Row>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -239,17 +234,11 @@ export const HorizontalScrollingOnly: TableStory = {
     width: 200,
     height: 220
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
-      <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
-      </TableHeader>
+      <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
       <TableBody items={items.slice(0, 3)}>
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -262,17 +251,11 @@ export const HorizontalScrollingOnlyFlushBottom: TableStory = {
     width: 200,
     height: 174
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
-      <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
-      </TableHeader>
+      <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
       <TableBody items={items.slice(0, 3)}>
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -294,17 +277,13 @@ export const DynamicShowDividers: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader columns={columns}>
         {column => <Column showDivider>{column.name}</Column>}
       </TableHeader>
       <TableBody items={items}>
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -332,7 +311,7 @@ export const StaticNestedColumns: TableStory = {
     width: 500,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
         <Column key="test">Test</Column>
@@ -367,16 +346,22 @@ export const StaticNestedColumns: TableStory = {
 
 let nestedColumns = [
   {name: 'Test', key: 'test'},
-  {name: 'Tiered One Header', key: 'tier1', children: [
-    {name: 'Tier Two Header A', key: 'tier2a', children: [
-      {name: 'Foo', key: 'foo'},
-      {name: 'Bar', key: 'bar'}
-    ]},
-    {name: 'Yay', key: 'yay'},
-    {name: 'Tier Two Header B', key: 'tier2b', children: [
-      {name: 'Baz', key: 'baz'}
-    ]}
-  ]}
+  {
+    name: 'Tiered One Header',
+    key: 'tier1',
+    children: [
+      {
+        name: 'Tier Two Header A',
+        key: 'tier2a',
+        children: [
+          {name: 'Foo', key: 'foo'},
+          {name: 'Bar', key: 'bar'}
+        ]
+      },
+      {name: 'Yay', key: 'yay'},
+      {name: 'Tier Two Header B', key: 'tier2b', children: [{name: 'Baz', key: 'baz'}]}
+    ]
+  }
 ];
 
 export const DynamicNestedColumns: TableStory = {
@@ -385,19 +370,17 @@ export const DynamicNestedColumns: TableStory = {
     width: 700,
     height: 300
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader columns={nestedColumns}>
-        {column =>
-          <Column childColumns={column.children} textValue={column.name}>{column.name}</Column>
-        }
+        {column => (
+          <Column childColumns={column.children} textValue={column.name}>
+            {column.name}
+          </Column>
+        )}
       </TableHeader>
       <TableBody items={items}>
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -410,25 +393,22 @@ export const DynamicNestedColumnsWithResizing: TableStory = {
     width: 700,
     height: 300
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader columns={nestedColumns}>
-        {column =>
-          <Column allowsResizing childColumns={column.children}>{column.name}</Column>
-        }
+        {column => (
+          <Column allowsResizing childColumns={column.children}>
+            {column.name}
+          </Column>
+        )}
       </TableHeader>
       <TableBody items={items}>
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
   name: 'dynamic with nested columns with resizing'
 };
-
 
 let timeTableColumns = [
   {name: 'Time', key: 'time', isRowHeader: true},
@@ -439,15 +419,46 @@ let timeTableColumns = [
   {name: 'Friday', key: 'friday'}
 ];
 
-
 let timeTableRows = [
   {id: 9, time: '09:00 - 10:00', name: 'Break', type: 'break'},
-  {id: 1, time: '08:00 - 09:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
+  {
+    id: 1,
+    time: '08:00 - 09:00',
+    monday: 'Math',
+    tuesday: 'History',
+    wednesday: 'Science',
+    thursday: 'English',
+    friday: 'Art'
+  },
   {id: 2, time: '09:00 - 10:00', name: 'Break', type: 'break'},
-  {id: 3, time: '10:00 - 11:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
-  {id: 4, time: '11:00 - 12:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
+  {
+    id: 3,
+    time: '10:00 - 11:00',
+    monday: 'Math',
+    tuesday: 'History',
+    wednesday: 'Science',
+    thursday: 'English',
+    friday: 'Art'
+  },
+  {
+    id: 4,
+    time: '11:00 - 12:00',
+    monday: 'Math',
+    tuesday: 'History',
+    wednesday: 'Science',
+    thursday: 'English',
+    friday: 'Art'
+  },
   {id: 5, time: '12:00 - 13:00', name: 'Break', type: 'break'},
-  {id: 6, time: '13:00 - 14:00', monday: 'History', tuesday: 'Math', wednesday: 'English', thursday: 'Science', friday: 'Art'}
+  {
+    id: 6,
+    time: '13:00 - 14:00',
+    monday: 'History',
+    tuesday: 'Math',
+    wednesday: 'English',
+    thursday: 'Science',
+    friday: 'Art'
+  }
 ];
 
 export type TableStoryFn = StoryFn<Omit<typeof TableView, 'children'>>;
@@ -456,25 +467,21 @@ export const TableColSpanExample: TableStoryFn = () => {
   return (
     <TableView aria-label="Timetable">
       <TableHeader columns={timeTableColumns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-        )}
+        {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={timeTableRows}>
-        {(item) => (
+        {item => (
           <Row key={item.id}>
-            {item.type === 'break' ? (
-            [
-              <Cell>{item.time}</Cell>,
-              <Cell colSpan={5}>{item.name}</Cell>
-            ]) : ([
-              <Cell>{item.time}</Cell>,
-              <Cell>{item.monday}</Cell>,
-              <Cell>{item.tuesday}</Cell>,
-              <Cell>{item.wednesday}</Cell>,
-              <Cell>{item.thursday}</Cell>,
-              <Cell>{item.friday}</Cell>]
-            )}
+            {item.type === 'break'
+              ? [<Cell>{item.time}</Cell>, <Cell colSpan={5}>{item.name}</Cell>]
+              : [
+                  <Cell>{item.time}</Cell>,
+                  <Cell>{item.monday}</Cell>,
+                  <Cell>{item.tuesday}</Cell>,
+                  <Cell>{item.wednesday}</Cell>,
+                  <Cell>{item.thursday}</Cell>,
+                  <Cell>{item.friday}</Cell>
+                ]}
           </Row>
         )}
       </TableBody>
@@ -487,9 +494,9 @@ export const TableCellColSpanWithVariousSpansExample: TableStoryFn = () => {
     <TableView aria-label="Table with various colspans">
       <TableHeader>
         <Column isRowHeader>Col 1</Column>
-        <Column >Col 2</Column>
-        <Column >Col 3</Column>
-        <Column >Col 4</Column>
+        <Column>Col 2</Column>
+        <Column>Col 3</Column>
+        <Column>Col 4</Column>
       </TableHeader>
       <TableBody>
         <Row>
@@ -536,7 +543,7 @@ export const FocusableCells: TableStory = {
     width: 450,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="column">
       <label htmlFor="focus-before">Focus before</label>
       <input id="focus-before" />
@@ -548,22 +555,49 @@ export const FocusableCells: TableStory = {
         </TableHeader>
         <TableBody>
           <Row>
-            <Cell><Switch aria-label="Foo" /></Cell>
-            <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+            <Cell>
+              <Switch aria-label="Foo" />
+            </Cell>
+            <Cell>
+              <Link>
+                <a href="https://yahoo.com" target="_blank">
+                  Yahoo
+                </a>
+              </Link>
+            </Cell>
             <Cell>Three</Cell>
           </Row>
           <Row>
-            <Cell><Switch aria-label="Foo" /><Switch aria-label="Bar" /></Cell>
-            <Cell><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
+            <Cell>
+              <Switch aria-label="Foo" />
+              <Switch aria-label="Bar" />
+            </Cell>
+            <Cell>
+              <Link>
+                <a href="https://google.com" target="_blank">
+                  Google
+                </a>
+              </Link>
+            </Cell>
             <Cell>Three</Cell>
           </Row>
           <Row>
-            <Cell><Switch aria-label="Foo" /></Cell>
-            <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+            <Cell>
+              <Switch aria-label="Foo" />
+            </Cell>
+            <Cell>
+              <Link>
+                <a href="https://yahoo.com" target="_blank">
+                  Yahoo
+                </a>
+              </Link>
+            </Cell>
             <Cell>Three</Cell>
           </Row>
           <Row>
-            <Cell><Switch aria-label="Foo" /></Cell>
+            <Cell>
+              <Switch aria-label="Foo" />
+            </Cell>
             <Cell>
               <Picker aria-label="Search engine" placeholder="Search with:" width={'100%'} isQuiet>
                 <Item key="Yahoo">Yahoo</Item>
@@ -583,8 +617,8 @@ export const FocusableCells: TableStory = {
 };
 
 interface ItemValue {
-  name: string,
-  key: string
+  name: string;
+  key: string;
 }
 
 let manyColunns: Array<ItemValue> = [];
@@ -593,8 +627,8 @@ for (let i = 0; i < 100; i++) {
 }
 
 interface RowValue {
-  key: string,
-  [key: string]: string
+  key: string;
+  [key: string]: string;
 }
 
 let manyRows: Array<RowValue> = [];
@@ -613,22 +647,16 @@ export const ManyColumnsAndRows: TableStory = {
     width: 700,
     height: 500
   },
-  render: (args) => (
+  render: args => (
     <>
       <label htmlFor="focus-before">Focus before</label>
       <input id="focus-before" />
       <TableView {...args}>
         <TableHeader columns={manyColunns}>
-          {column =>
-            <Column minWidth={100}>{column.name}</Column>
-          }
+          {column => <Column minWidth={100}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={manyRows}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
       <label htmlFor="focus-after">Focus after</label>
@@ -638,14 +666,20 @@ export const ManyColumnsAndRows: TableStory = {
   name: 'many columns and rows'
 };
 
-const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsResizing: boolean}): JSX.Element => {
+const TableViewFilledCellWidths = (
+  props: SpectrumTableProps<unknown> & {allowsResizing: boolean}
+): JSX.Element => {
   let {allowsResizing, ...otherProps} = props;
   return (
     <TableView {...otherProps}>
       <TableHeader>
         <Column allowsResizing={allowsResizing}>File Name</Column>
-        <Column allowsResizing={allowsResizing} align="center">Type</Column>
-        <Column allowsResizing={allowsResizing} align="end">Size</Column>
+        <Column allowsResizing={allowsResizing} align="center">
+          Type
+        </Column>
+        <Column allowsResizing={allowsResizing} align="end">
+          Size
+        </Column>
         <Column allowsResizing={allowsResizing}>Description</Column>
       </TableHeader>
       <TableBody>
@@ -657,7 +691,18 @@ const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsR
         </Row>
         <Row>
           <Cell>
+            <View width="100%" backgroundColor="gray-200">
+              100%
+            </View>
+          </Cell>
+          <Cell>
             <View
+              UNSAFE_style={{
+                margin: 'auto',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
               width="100%"
               backgroundColor="gray-200">
               100%
@@ -665,15 +710,12 @@ const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsR
           </Cell>
           <Cell>
             <View
-              UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
-              width="100%"
-              backgroundColor="gray-200">
-              100%
-            </View>
-          </Cell>
-          <Cell>
-            <View
-              UNSAFE_style={{marginInlineStart: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+              UNSAFE_style={{
+                marginInlineStart: 'auto',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
               width="100%"
               backgroundColor="gray-200">
               100%
@@ -699,7 +741,12 @@ const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsR
           </Cell>
           <Cell>
             <View
-              UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+              UNSAFE_style={{
+                margin: 'auto',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
               width="70%"
               backgroundColor="gray-200">
               70% div
@@ -707,7 +754,12 @@ const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsR
           </Cell>
           <Cell>
             <View
-              UNSAFE_style={{float: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+              UNSAFE_style={{
+                float: 'right',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
               width="70%"
               backgroundColor="gray-200">
               70% div
@@ -755,13 +807,12 @@ export const ShouldFillCellWidth: StoryObj<typeof TableViewFilledCellWidths> = {
     width: 500,
     height: 200
   },
-  render: (args) => <TableViewFilledCellWidths {...args} />,
+  render: args => <TableViewFilledCellWidths {...args} />,
   name: 'should fill cell width',
   argTypes: {
     allowsResizing: {type: 'boolean'}
   }
 };
-
 
 export const ColumnWidthsAndDividers: TableStory = {
   args: {
@@ -769,10 +820,12 @@ export const ColumnWidthsAndDividers: TableStory = {
     width: 500,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
-        <Column width={250} showDivider>File Name</Column>
+        <Column width={250} showDivider>
+          File Name
+        </Column>
         <Column>Type</Column>
         <Column align="end">Size</Column>
       </TableHeader>
@@ -793,23 +846,26 @@ export const ColumnWidthsAndDividers: TableStory = {
   name: 'column widths and dividers'
 };
 
-
 export const CellWithLongContent: TableStory = {
   args: {
     'aria-label': 'TableView with column widths and dividers',
     width: 500,
     height: 300
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
-        <Column width={250} showDivider>File Name</Column>
+        <Column width={250} showDivider>
+          File Name
+        </Column>
         <Column>Type</Column>
         <Column align="end">Size</Column>
       </TableHeader>
       <TableBody>
         <Row>
-          <Cell>2018 Proposal with very very very very very very long long long long long filename</Cell>
+          <Cell>
+            2018 Proposal with very very very very very very long long long long long filename
+          </Cell>
           <Cell>PDF</Cell>
           <Cell>214 KB</Cell>
         </Row>
@@ -835,7 +891,7 @@ export const CustomRowHeaderLabeling: TableStory = {
     width: 500,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
         <Column isRowHeader>First Name</Column>
@@ -865,7 +921,7 @@ export const CustomRowHeaderLabeling: TableStory = {
 };
 
 export const CRUD: TableStory = {
-  render: (args) => <CRUDExample {...args} />,
+  render: args => <CRUDExample {...args} />,
   name: 'CRUD'
 };
 
@@ -876,10 +932,13 @@ function DeletableRowsTable(props: Omit<SpectrumTableProps<unknown>, 'children'>
       {id: 2, firstName: 'Julia', lastName: 'Jones', birthday: 'February 10'}
     ]
   });
-  let onSelectionChange = useCallback((keys) => {
-    props.onSelectionChange?.(keys);
-    list.setSelectedKeys(keys);
-  }, [props, list]);
+  let onSelectionChange = useCallback(
+    keys => {
+      props.onSelectionChange?.(keys);
+      list.setSelectedKeys(keys);
+    },
+    [props, list]
+  );
 
   return (
     <TableView
@@ -888,24 +947,31 @@ function DeletableRowsTable(props: Omit<SpectrumTableProps<unknown>, 'children'>
       onSelectionChange={onSelectionChange}
       renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
       <TableHeader>
-        <Column isRowHeader key="firstName">First Name</Column>
-        <Column isRowHeader key="lastName">Last Name</Column>
+        <Column isRowHeader key="firstName">
+          First Name
+        </Column>
+        <Column isRowHeader key="lastName">
+          Last Name
+        </Column>
         <Column key="birthday">Birthday</Column>
-        <Column key="actions" align="end">Actions</Column>
+        <Column key="actions" align="end">
+          Actions
+        </Column>
       </TableHeader>
       <TableBody items={list.items}>
-        {item =>
-          (<Row>
-            {column =>
-              (<Cell>
-                {column === 'actions'
-                  ? <ActionButton onPress={() => list.remove(item.id)}>Delete</ActionButton>
-                  : item[column]
-                }
-              </Cell>)
-            }
-          </Row>)
-        }
+        {item => (
+          <Row>
+            {column => (
+              <Cell>
+                {column === 'actions' ? (
+                  <ActionButton onPress={() => list.remove(item.id)}>Delete</ActionButton>
+                ) : (
+                  item[column]
+                )}
+              </Cell>
+            )}
+          </Row>
+        )}
       </TableBody>
     </TableView>
   );
@@ -917,12 +983,12 @@ export const InlineDeleteButtons: TableStory = {
     width: 500,
     height: 300
   },
-  render: (args) => <DeletableRowsTable {...args} />,
+  render: args => <DeletableRowsTable {...args} />,
   name: 'Inline delete buttons'
 };
 
 export const HidingColumnsExample: TableStory = {
-  render: (args) => <HidingColumns {...args} />,
+  render: args => <HidingColumns {...args} />,
   name: 'hiding columns'
 };
 
@@ -932,19 +998,13 @@ export const IsLoading: TableStory = {
     width: 700,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader columns={manyColunns}>
-        {column =>
-          <Column minWidth={100}>{column.name}</Column>
-        }
+        {column => <Column minWidth={100}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={[] as Array<{foo: string}>} loadingState="loading">
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -957,19 +1017,13 @@ export const IsLoadingMore: TableStory = {
     width: 700,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader columns={manyColunns}>
-        {column =>
-          <Column minWidth={100}>{column.name}</Column>
-        }
+        {column => <Column minWidth={100}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={[] as Array<{foo: string}>} loadingState="loadingMore">
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -982,19 +1036,13 @@ export const Filtering: TableStory = {
     width: 700,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader columns={columns}>
-        {column =>
-          <Column minWidth={100}>{column.name}</Column>
-        }
+        {column => <Column minWidth={100}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={items} loadingState="filtering">
-        {item =>
-          (<Row key={item.foo}>
-            {key => <Cell>{item[key]}</Cell>}
-          </Row>)
-        }
+        {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   ),
@@ -1008,30 +1056,50 @@ function renderEmptyState() {
         <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
       </svg>
       <Heading>No results</Heading>
-      <Content>No results found, press <Link onPress={action('linkPress')}>here</Link> for more info.</Content>
+      <Content>
+        No results found, press <Link onPress={action('linkPress')}>here</Link> for more info.
+      </Content>
     </IllustratedMessage>
   );
 }
 
-export let EmptyStateTable = (props: Omit<SpectrumTableProps<unknown>, 'children'> & {items: any[], columns: any[], allowsSorting: boolean}): JSX.Element => {
+export let EmptyStateTable = (
+  props: Omit<SpectrumTableProps<unknown>, 'children'> & {
+    items: any[];
+    columns: any[];
+    allowsSorting: boolean;
+  }
+): JSX.Element => {
   let {items, columns, allowsSorting, ...otherProps} = props;
   let [show, setShow] = useState(false);
   let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>();
   return (
     <Flex direction="column">
-      <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <TableView aria-label="TableView with empty state" width={700} height={400} renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} {...otherProps}>
+      <ActionButton width="100px" onPress={() => setShow(show => !show)}>
+        Toggle items
+      </ActionButton>
+      <TableView
+        aria-label="TableView with empty state"
+        width={700}
+        height={400}
+        renderEmptyState={renderEmptyState}
+        selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        onSortChange={setSortDescriptor}
+        {...otherProps}>
         <TableHeader columns={columns ?? manyColunns}>
-          {(column: any) =>
-            <Column allowsResizing allowsSorting={allowsSorting} minWidth={100}>{column.name}</Column>
-          }
+          {(column: any) => (
+            <Column allowsResizing allowsSorting={allowsSorting} minWidth={100}>
+              {column.name}
+            </Column>
+          )}
         </TableHeader>
-        <TableBody items={show ? items ?? manyRows : []}>
-          {(item: any) =>
-            (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
+        <TableBody items={show ? (items ?? manyRows) : []}>
+          {(item: any) => (
+            <Row key={item.foo} UNSTABLE_childItems={item.childRows}>
               {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+            </Row>
+          )}
         </TableBody>
       </TableView>
     </Flex>
@@ -1039,23 +1107,22 @@ export let EmptyStateTable = (props: Omit<SpectrumTableProps<unknown>, 'children
 };
 
 export const EmptyStateStory: StoryObj<typeof EmptyStateTable> = {
-  render: (args) => <EmptyStateTable {...args} />,
+  render: args => <EmptyStateTable {...args} />,
   name: 'renderEmptyState'
 };
-
 
 function AsyncLoadingExample(props) {
   const {isResizable} = props;
   interface Item {
     data: {
-      id: string,
-      url: string,
-      title: string
-    }
+      id: string;
+      url: string;
+      title: string;
+    };
   }
 
   let list = useAsyncList<Item>({
-    getKey: (item) => item.data.id,
+    getKey: item => item.data.id,
     async load({signal, cursor}) {
       let url = new URL('https://www.reddit.com/r/upliftingnews.json');
       if (cursor) {
@@ -1080,24 +1147,47 @@ function AsyncLoadingExample(props) {
 
   return (
     <div>
-      <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <TableView {...props} sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>
+        Remove first item
+      </ActionButton>
+      <TableView
+        {...props}
+        sortDescriptor={list.sortDescriptor}
+        onSortChange={list.sort}
+        selectedKeys={list.selectedKeys}
+        onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
-          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Score</Column>
-          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting>Title</Column>
-          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting>Author</Column>
-          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Comments</Column>
+          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting>
+            Score
+          </Column>
+          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting>
+            Title
+          </Column>
+          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting>
+            Author
+          </Column>
+          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting>
+            Comments
+          </Column>
         </TableHeader>
         <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
-          {item =>
-            (<Row key={item.data.id}>
+          {item => (
+            <Row key={item.data.id}>
               {key =>
-                key === 'title'
-                  ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
-                  : <Cell>{item.data[key]}</Cell>
+                key === 'title' ? (
+                  <Cell textValue={item.data.title}>
+                    <Link isQuiet>
+                      <a href={item.data.url} target="_blank">
+                        {item.data.title}
+                      </a>
+                    </Link>
+                  </Cell>
+                ) : (
+                  <Cell>{item.data[key]}</Cell>
+                )
               }
-            </Row>)
-          }
+            </Row>
+          )}
         </TableBody>
       </TableView>
     </div>
@@ -1111,31 +1201,135 @@ export const AsyncLoading: TableStory = {
     width: 1000,
     height: 400
   },
-  render: (args) => <AsyncLoadingExample {...args} />,
+  render: args => <AsyncLoadingExample {...args} />,
   name: 'async loading'
 };
 
 async function fakeFetch() {
-  return new Promise(
-    (resolve) => {
-      setTimeout(() => resolve({json: async function () {
-        return {data: {children: [
-          {data: {id: 'foo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: 'fooo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: 'foooo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: 'fooooo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: 'foooooo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: 'doo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: '1', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: '2', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: '3', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: '4', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: '5', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
-          {data: {id: '6', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}}
-        ]}};
-      }}), 1000);
-    }
-  );
+  return new Promise(resolve => {
+    setTimeout(
+      () =>
+        resolve({
+          json: async function () {
+            return {
+              data: {
+                children: [
+                  {
+                    data: {
+                      id: 'foo',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: 'fooo',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: 'foooo',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: 'fooooo',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: 'foooooo',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: 'doo',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: '1',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: '2',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: '3',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: '4',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: '5',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  },
+                  {
+                    data: {
+                      id: '6',
+                      thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg',
+                      ups: '7',
+                      title: 'cats',
+                      created: Date.now()
+                    }
+                  }
+                ]
+              }
+            };
+          }
+        }),
+      1000
+    );
+  });
 }
 
 export const AsyncLoadingQuarryTest: TableStory = {
@@ -1145,7 +1339,7 @@ export const AsyncLoadingQuarryTest: TableStory = {
     height: 400,
     width: '100%'
   },
-  render: (args) => <AsyncLoadingExampleQuarryTest {...args} />,
+  render: args => <AsyncLoadingExampleQuarryTest {...args} />,
   name: 'async reload on sort'
 };
 
@@ -1169,17 +1363,17 @@ function AsyncLoadingExampleQuarryTest(props) {
     }
   ];
   interface Post {
-    id: string,
-    key: string,
-    preview?: string,
-    ups: number,
-    title: string,
-    created: string,
-    url: string
+    id: string;
+    key: string;
+    preview?: string;
+    ups: number;
+    title: string;
+    created: string;
+    url: string;
   }
 
   let list = useAsyncList<Post>({
-    getKey: (item) => item.id,
+    getKey: item => item.id,
     async load({cursor}) {
       const url = new URL('https://www.reddit.com/r/aww.json');
 
@@ -1190,7 +1384,7 @@ function AsyncLoadingExampleQuarryTest(props) {
       const res = await fakeFetch();
       // @ts-ignore
       const json = await res.json();
-      const items = json.data.children.map((item) => {
+      const items = json.data.children.map(item => {
         return {
           id: item.data.id,
           preview: item.data.thumbnail,
@@ -1216,7 +1410,6 @@ function AsyncLoadingExampleQuarryTest(props) {
 
           return cmp;
         })
-
       };
     }
   });
@@ -1228,24 +1421,38 @@ function AsyncLoadingExampleQuarryTest(props) {
   }, reloadDeps);
 
   return (
-    <TableView {...props} width="90vw" sortDescriptor={list.sortDescriptor} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onSortChange={setFilters}>
+    <TableView
+      {...props}
+      width="90vw"
+      sortDescriptor={list.sortDescriptor}
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      onSortChange={setFilters}>
       <TableHeader columns={rColumns}>
-        {(column) => (
+        {column => (
           <Column key={column.key} allowsSorting>
             {column.label}
           </Column>
         )}
       </TableHeader>
       <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
-        {item =>
-          (<Row key={item.id}>
+        {item => (
+          <Row key={item.id}>
             {key =>
-              key === 'title'
-                ? <Cell textValue={item.title}><Link isQuiet><a href={item.url} target="_blank">{item.title}</a></Link></Cell>
-                : <Cell>{item[key]}</Cell>
+              key === 'title' ? (
+                <Cell textValue={item.title}>
+                  <Link isQuiet>
+                    <a href={item.url} target="_blank">
+                      {item.title}
+                    </a>
+                  </Link>
+                </Cell>
+              ) : (
+                <Cell>{item[key]}</Cell>
+              )
             }
-          </Row>)
-        }
+          </Row>
+        )}
       </TableBody>
     </TableView>
   );
@@ -1259,7 +1466,7 @@ function useMountEffect(fn: () => void, deps: Array<unknown>): void {
     } else {
       mounted.current = true;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
 
@@ -1269,12 +1476,10 @@ export const HideHeader: TableStory = {
     width: 350,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
-        <Column key="foo">
-          Foo
-        </Column>
+        <Column key="foo">Foo</Column>
         <Column key="addAction" hideHeader>
           Add Info
         </Column>
@@ -1426,7 +1631,7 @@ async function getCollectionItems(): Promise<any> {
       ownerName: 'cc'
     }
   ];
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(() => {
       resolve(result);
     }, 5);
@@ -1435,9 +1640,9 @@ async function getCollectionItems(): Promise<any> {
 
 function ProjectListTable(props) {
   interface Item {
-    id: string,
-    name: string,
-    ownerName: string
+    id: string;
+    name: string;
+    ownerName: string;
   }
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -1448,8 +1653,11 @@ function ProjectListTable(props) {
       return {items: projects};
     }
   });
-  let filteredItems = React.useMemo(() => list.items.filter(item => contains(item.name, filterText)), [list.items, filterText, contains]);
-  const onChange = (value) => {
+  let filteredItems = React.useMemo(
+    () => list.items.filter(item => contains(item.name, filterText)),
+    [list.items, filterText, contains]
+  );
+  const onChange = value => {
     setFilterText(value);
   };
 
@@ -1462,7 +1670,8 @@ function ProjectListTable(props) {
         width={'size-3600'}
         aria-label={'Search by name'}
         value={filterText}
-        onChange={(onChange)} />
+        onChange={onChange}
+      />
       <View flexGrow={1} height={700} overflow="hidden">
         <TableView
           aria-label={'Project list'}
@@ -1471,17 +1680,13 @@ function ProjectListTable(props) {
           sortDescriptor={list.sortDescriptor}
           onSortChange={list.sort}>
           <TableHeader columns={COLUMNS}>
-            {(column) => {
+            {column => {
               const {name, ...columnProps} = column;
               return <Column {...columnProps}>{name}</Column>;
             }}
           </TableHeader>
-          <TableBody
-            items={filteredItems}
-            loadingState={list.loadingState}>
-            {(item) => (
-              <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
-            )}
+          <TableBody items={filteredItems} loadingState={list.loadingState}>
+            {item => <Row key={item.id}>{key => <Cell>{item[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </View>
@@ -1490,14 +1695,14 @@ function ProjectListTable(props) {
 }
 
 export const AsyncLoadingClientFiltering: TableStory = {
-  render: (args) => <ProjectListTable {...args} />,
+  render: args => <ProjectListTable {...args} />,
   name: 'async client side filter loading'
 };
 
 interface StarWarsItem {
-  name: string,
-  height: string,
-  mass: string
+  name: string;
+  height: string;
+  mass: string;
 }
 
 function AsyncServerFilterTable(props) {
@@ -1518,13 +1723,15 @@ function AsyncServerFilterTable(props) {
   ];
 
   let list = useAsyncList<StarWarsItem>({
-    getKey: (item) => item.name,
+    getKey: item => item.name,
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
 
       return {
@@ -1534,7 +1741,7 @@ function AsyncServerFilterTable(props) {
     }
   });
 
-  const onChange = (value) => {
+  const onChange = value => {
     list.setFilterText(value);
   };
 
@@ -1547,7 +1754,8 @@ function AsyncServerFilterTable(props) {
         width={'size-3600'}
         aria-label={'Search by name'}
         defaultValue={list.filterText}
-        onChange={(onChange)} />
+        onChange={onChange}
+      />
       <TableView
         aria-label={'Star Wars Characters'}
         height={200}
@@ -1556,18 +1764,13 @@ function AsyncServerFilterTable(props) {
         sortDescriptor={list.sortDescriptor}
         onSortChange={list.sort}>
         <TableHeader columns={columns}>
-          {(column) => {
+          {column => {
             const {name, ...columnProps} = column;
             return <Column {...columnProps}>{name}</Column>;
           }}
         </TableHeader>
-        <TableBody
-          items={list.items}
-          loadingState={list.loadingState}
-          onLoadMore={list.loadMore}>
-          {(item) => (
-            <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
-          )}
+        <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
+          {item => <Row key={item.name}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     </div>
@@ -1575,7 +1778,7 @@ function AsyncServerFilterTable(props) {
 }
 
 export const AsyncLoadingServerFiltering: TableStory = {
-  render: (args) => <AsyncServerFilterTable {...args} />,
+  render: args => <AsyncServerFilterTable {...args} />,
   name: 'async server side filter loading'
 };
 
@@ -1583,7 +1786,7 @@ export const AsyncLoadingServerFilteringLoadMore: TableStory = {
   args: {
     height: 500
   },
-  render: (args) => <AsyncServerFilterTable {...args} />,
+  render: args => <AsyncServerFilterTable {...args} />,
   name: 'loads more on scroll when contentSize.height < rect.height * 2'
 };
 
@@ -1593,7 +1796,7 @@ export const WithDialogTrigger: TableStory = {
     width: 300,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
@@ -1606,7 +1809,9 @@ export const WithDialogTrigger: TableStory = {
           <Cell>Two</Cell>
           <Cell>
             <DialogTrigger>
-              <ActionButton aria-label="Add"><Add /></ActionButton>
+              <ActionButton aria-label="Add">
+                <Add />
+              </ActionButton>
               {close => (
                 <Dialog>
                   <Heading>The Heading</Heading>
@@ -1615,8 +1820,12 @@ export const WithDialogTrigger: TableStory = {
                     <TextField label="Last Words" />
                   </Content>
                   <ButtonGroup>
-                    <Button variant="secondary" onPress={close}>Cancel</Button>
-                    <Button variant="cta" onPress={close}>Confirm</Button>
+                    <Button variant="secondary" onPress={close}>
+                      Cancel
+                    </Button>
+                    <Button variant="cta" onPress={close}>
+                      Confirm
+                    </Button>
                   </ButtonGroup>
                 </Dialog>
               )}
@@ -1629,7 +1838,6 @@ export const WithDialogTrigger: TableStory = {
   name: 'with dialog trigger'
 };
 
-
 function TableWithBreadcrumbs(props) {
   const fs = [
     {key: 'a', name: 'Folder A', type: 'folder'},
@@ -1641,21 +1849,24 @@ function TableWithBreadcrumbs(props) {
   const [loadingState, setLoadingState] = useState<LoadingState>('idle' as const);
   const [selection, setSelection] = useState<'all' | Iterable<Key>>(new Set([]));
   const [items, setItems] = useState(() => fs.filter(item => !item.parent));
-  const changeFolder = (folder) => {
+  const changeFolder = folder => {
     setItems([]);
     setLoadingState('loading' as const);
 
     // mimic loading behavior
     setTimeout(() => {
       setLoadingState('idle');
-      setItems(fs.filter(item =>  folder ? item.parent === folder : !item.parent));
+      setItems(fs.filter(item => (folder ? item.parent === folder : !item.parent)));
     }, 700);
     setSelection(new Set([]));
   };
 
   return (
     <Flex direction="column" width="400px">
-      <div>The TableView should not error if row selection changes due to items changes from external navigation (breadcrumbs).</div>
+      <div>
+        The TableView should not error if row selection changes due to items changes from external
+        navigation (breadcrumbs).
+      </div>
       <Breadcrumbs
         onAction={item => {
           if (item === 'root') {
@@ -1671,21 +1882,21 @@ function TableWithBreadcrumbs(props) {
         aria-label="table"
         {...props}
         selectedKeys={selection}
-        onSelectionChange={(sel) => setSelection(sel)}>
+        onSelectionChange={sel => setSelection(sel)}>
         <TableHeader>
-          <Column key="name" isRowHeader>Name</Column>
+          <Column key="name" isRowHeader>
+            Name
+          </Column>
           <Column key="value">Value</Column>
         </TableHeader>
         <TableBody items={items} loadingState={loadingState}>
-          {(item) => (
+          {item => (
             <Row key={item.key}>
-              {(column) => {
+              {column => {
                 if (item.type === 'folder' && column === 'name') {
                   return (
                     <Cell textValue={item[column]}>
-                      <Link onPress={() => changeFolder(item.key)}>
-                        {item[column]}
-                      </Link>
+                      <Link onPress={() => changeFolder(item.key)}>{item[column]}</Link>
                     </Cell>
                   );
                 }
@@ -1695,7 +1906,12 @@ function TableWithBreadcrumbs(props) {
           )}
         </TableBody>
       </TableView>
-      <ActionButton onPress={() => setSelection(items.some(item => item.key === 'd') ? new Set(['d']) : new Set([]))}>Select D</ActionButton>
+      <ActionButton
+        onPress={() =>
+          setSelection(items.some(item => item.key === 'd') ? new Set(['d']) : new Set([]))
+        }>
+        Select D
+      </ActionButton>
     </Flex>
   );
 }
@@ -1706,7 +1922,7 @@ export const WithBreadcrumbNavigation: TableStory = {
     // our tests using this component expect the non-onAction behavior
     onAction: undefined
   },
-  render: (args) => <TableWithBreadcrumbs {...args} />,
+  render: args => <TableWithBreadcrumbs {...args} />,
   name: 'table with breadcrumb navigation'
 };
 
@@ -1716,16 +1932,24 @@ export const ResizingUncontrolledDynamicWidths: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <>
       <label htmlFor="focusable-before">Focusable before</label>
       <input id="focusable-before" />
       <TableView {...args}>
         <TableHeader>
-          <Column allowsResizing defaultWidth="1fr">File Name</Column>
-          <Column allowsResizing defaultWidth="2fr">Type</Column>
-          <Column allowsResizing defaultWidth="2fr">Size</Column>
-          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+          <Column allowsResizing defaultWidth="1fr">
+            File Name
+          </Column>
+          <Column allowsResizing defaultWidth="2fr">
+            Type
+          </Column>
+          <Column allowsResizing defaultWidth="2fr">
+            Size
+          </Column>
+          <Column allowsResizing defaultWidth="1fr">
+            Weight
+          </Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1755,12 +1979,18 @@ export const ResizingUncontrolledStaticWidths: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
-        <Column allowsResizing defaultWidth="50%">File Name</Column>
-        <Column allowsResizing defaultWidth="20%">Type</Column>
-        <Column allowsResizing defaultWidth={239}>Size</Column>
+        <Column allowsResizing defaultWidth="50%">
+          File Name
+        </Column>
+        <Column allowsResizing defaultWidth="20%">
+          Type
+        </Column>
+        <Column allowsResizing defaultWidth={239}>
+          Size
+        </Column>
       </TableHeader>
       <TableBody>
         <Row>
@@ -1785,11 +2015,15 @@ export const ResizingUncontrolledColumnDivider: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
-        <Column allowsResizing showDivider>File Name</Column>
-        <Column allowsResizing defaultWidth="3fr">Type</Column>
+        <Column allowsResizing showDivider>
+          File Name
+        </Column>
+        <Column allowsResizing defaultWidth="3fr">
+          Type
+        </Column>
         <Column allowsResizing>Size</Column>
       </TableHeader>
       <TableBody>
@@ -1815,12 +2049,18 @@ export const ResizingUncontrolledMinMax: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
-        <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>File Name</Column>
-        <Column allowsResizing defaultWidth="1fr" minWidth={175} maxWidth={500}>Size</Column>
-        <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>Type</Column>
+        <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>
+          File Name
+        </Column>
+        <Column allowsResizing defaultWidth="1fr" minWidth={175} maxWidth={500}>
+          Size
+        </Column>
+        <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>
+          Type
+        </Column>
       </TableHeader>
       <TableBody>
         <Row>
@@ -1845,13 +2085,15 @@ export const ResizingUncontrolledSomeNotAllowed: TableStory = {
     width: 800,
     height: 200
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
-        <Column allowsResizing >File Name</Column>
+        <Column allowsResizing>File Name</Column>
         <Column defaultWidth="1fr">Type</Column>
         <Column defaultWidth="2fr">Size</Column>
-        <Column allowsResizing defaultWidth="2fr">Weight</Column>
+        <Column allowsResizing defaultWidth="2fr">
+          Weight
+        </Column>
       </TableHeader>
       <TableBody>
         <Row>
@@ -1876,13 +2118,21 @@ export const ResizingUncontrolledNoHeightWidth: TableStory = {
   args: {
     'aria-label': 'TableView with resizable columns and no width or height set'
   },
-  render: (args) => (
+  render: args => (
     <TableView {...args}>
       <TableHeader>
-        <Column allowsResizing defaultWidth={150}>File Name</Column>
-        <Column allowsResizing defaultWidth={100}>Type</Column>
-        <Column allowsResizing defaultWidth={100}>Size</Column>
-        <Column allowsResizing defaultWidth={100}>Weight</Column>
+        <Column allowsResizing defaultWidth={150}>
+          File Name
+        </Column>
+        <Column allowsResizing defaultWidth={100}>
+          Type
+        </Column>
+        <Column allowsResizing defaultWidth={100}>
+          Size
+        </Column>
+        <Column allowsResizing defaultWidth={100}>
+          Weight
+        </Column>
       </TableHeader>
       <TableBody>
         <Row>
@@ -1908,7 +2158,7 @@ export const ResizingUncontrolledSortableColumns: TableStory = {
     width: 1000,
     height: 400
   },
-  render: (args) => <AsyncLoadingExample isResizable {...args} />,
+  render: args => <AsyncLoadingExample isResizable {...args} />,
   name: 'allowsResizing, uncontrolled, sortable columns'
 };
 
@@ -1918,22 +2168,20 @@ export const ResizingManyColumnsRows: TableStory = {
     width: 700,
     height: 500
   },
-  render: (args) => (
+  render: args => (
     <>
       <label htmlFor="focusable-before">Focusable before</label>
       <input id="focusable-before" />
       <TableView {...args}>
         <TableHeader columns={manyColunns}>
-          {column =>
-            <Column allowsResizing minWidth={100}>{column.name}</Column>
-          }
+          {column => (
+            <Column allowsResizing minWidth={100}>
+              {column.name}
+            </Column>
+          )}
         </TableHeader>
         <TableBody items={manyRows}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
       <label htmlFor="focusable-after">Focusable after</label>
@@ -1944,7 +2192,7 @@ export const ResizingManyColumnsRows: TableStory = {
 };
 
 export const ResizingHidingColumns: TableStory = {
-  render: (args) => <HidingColumnsAllowsResizing {...args} />,
+  render: args => <HidingColumnsAllowsResizing {...args} />,
   name: 'allowsResizing, hiding columns'
 };
 
@@ -1962,11 +2210,7 @@ function ZoomResizing(props) {
 
   return (
     <div className="App" style={{height: '100vh'}}>
-      <RadioGroup
-        label="Child type"
-        orientation="horizontal"
-        value={child}
-        onChange={setChild}>
+      <RadioGroup label="Child type" orientation="horizontal" value={child} onChange={setChild}>
         <Radio value="loader">Loading state</Radio>
         <Radio value="empty">Empty state</Radio>
       </RadioGroup>
@@ -1979,10 +2223,8 @@ function ZoomResizing(props) {
           <TableHeader>
             <Column>column</Column>
           </TableHeader>
-          <TableBody
-            items={[]}
-            loadingState={child === 'loader' ? 'loading' : undefined}>
-            {(item) => <Row>{(column) => <Cell>{item[column]}</Cell>}</Row>}
+          <TableBody items={[]} loadingState={child === 'loader' ? 'loading' : undefined}>
+            {item => <Row>{column => <Cell>{item[column]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       </Flex>
@@ -1991,13 +2233,17 @@ function ZoomResizing(props) {
 }
 
 export const ResizingZoom: TableStory = {
-  render: (args) => (
+  render: args => (
     <div style={{position: 'absolute', height: 'calc(100vh-32px)', width: 'calc(100vw - 32px)'}}>
       <ZoomResizing {...args} />
     </div>
   ),
   name: 'zoom resizing table',
-  parameters: {description: {data: 'Using browser zoom should not trigger an infinite resizing loop. CMD+"+" to zoom in and CMD+"-" to zoom out.'}}
+  parameters: {
+    description: {
+      data: 'Using browser zoom should not trigger an infinite resizing loop. CMD+"+" to zoom in and CMD+"-" to zoom out.'
+    }
+  }
 };
 
 let uncontrolledColumns: PokemonColumn[] = [
@@ -2009,13 +2255,16 @@ let uncontrolledColumns: PokemonColumn[] = [
 ];
 
 export const ResizingControlledNoInitialWidths: TableStory = {
-  render: (args) =>
-    <ControllingResize {...args} width={900} columns={uncontrolledColumns} />,
+  render: args => <ControllingResize {...args} width={900} columns={uncontrolledColumns} />,
   name: 'allowsResizing, controlled, no widths',
-  parameters: {description: {data: `
+  parameters: {
+    description: {
+      data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will notice that the entire table reverts, this is because no columns are controlled.
-  `}}
+  `
+    }
+  }
 };
 
 let columnsSomeFR: PokemonColumn[] = [
@@ -2027,17 +2276,19 @@ let columnsSomeFR: PokemonColumn[] = [
 ];
 
 export const ResizingControlledSomeInitialWidths: TableStory = {
-  render: (args) => (
-    <ControllingResize {...args} width={900} columns={columnsSomeFR} />
-  ),
+  render: args => <ControllingResize {...args} width={900} columns={columnsSomeFR} />,
   name: 'allowsResizing, controlled, some widths',
-  parameters: {description: {data: `
+  parameters: {
+    description: {
+      data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will see a quick flash because the entire table is re-rendered. This
     mimics what would happen if an app reloaded the whole page and restored a saved
     column width state. This is a "some widths" controlled story. It cannot restore
     the widths of the columns that it does not manage. Height and weight are uncontrolled.
-  `}}
+  `
+    }
+  }
 };
 
 let columnsFR: PokemonColumn[] = [
@@ -2047,32 +2298,36 @@ let columnsFR: PokemonColumn[] = [
 ];
 
 export const ResizingControlledAllInitialWidths: TableStory = {
-  render: (args) => (
-    <ControllingResize {...args} width={900} columns={columnsFR} />
-  ),
+  render: args => <ControllingResize {...args} width={900} columns={columnsFR} />,
   name: 'allowsResizing, controlled, all widths',
-  parameters: {description: {data: `
+  parameters: {
+    description: {
+      data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will see a quick flash because the entire table is re-rendered. This
     mimics what would happen if an app reloaded the whole page and restored a saved
     column width state.
-  `}}
+  `
+    }
+  }
 };
 
 let columnsFRHideHeaders: PokemonColumn[] = [
   {name: 'Name', uid: 'name', hideHeader: true},
-  {name: 'Type', uid: 'type', width: 300,  hideHeader: true},
+  {name: 'Type', uid: 'type', width: 300, hideHeader: true},
   {name: 'Level', uid: 'level', width: '4fr'}
 ];
 
 export const ResizingControlledHideHeader: TableStory = {
-  render: (args) => (
-    <ControllingResize {...args} width={900} columns={columnsFRHideHeaders} />
-  ),
+  render: args => <ControllingResize {...args} width={900} columns={columnsFRHideHeaders} />,
   name: 'allowsResizing, controlled, hideHeader',
-  parameters: {description: {data: `
+  parameters: {
+    description: {
+      data: `
     Hide headers columns should not be resizable.
-  `}}
+  `
+    }
+  }
 };
 
 let typeAheadColumns = [
@@ -2082,23 +2337,30 @@ let typeAheadColumns = [
   {name: 'Edit', id: 'edit'}
 ];
 let typeAheadRows = [
-  ...Array.from({length: 100}, (v, i) => ({id: i, firstname: 'Aubrey', lastname: 'Sheppard', birthday: 'May 7'})),
+  ...Array.from({length: 100}, (v, i) => ({
+    id: i,
+    firstname: 'Aubrey',
+    lastname: 'Sheppard',
+    birthday: 'May 7'
+  })),
   {id: 101, firstname: 'John', lastname: 'Doe', birthday: 'May 7'}
 ];
 
 export const TypeaheadWithDialog: TableStory = {
-  render: (args) => (
+  render: args => (
     <div style={{height: '90vh'}}>
       <TableView aria-label="Table" selectionMode="none" height="100%" {...args}>
         <TableHeader columns={typeAheadColumns}>
-          {(col) => (
-            <Column key={col.id} isRowHeader={col.isRowHeader}>{col.name}</Column>
+          {col => (
+            <Column key={col.id} isRowHeader={col.isRowHeader}>
+              {col.name}
+            </Column>
           )}
         </TableHeader>
         <TableBody items={typeAheadRows}>
-          {(item) => (
+          {item => (
             <Row key={item.id}>
-              {(key) =>
+              {key =>
                 key === 'edit' ? (
                   <Cell>
                     <DialogTrigger>
@@ -2126,9 +2388,12 @@ export const TypeaheadWithDialog: TableStory = {
   )
 };
 
-export const Links: TableStoryFn = (args) => {
+export const Links: TableStoryFn = args => {
   return (
-    <TableView {...args} aria-label="Bookmarks table" onSelectionChange={action('onSelectionChange')}>
+    <TableView
+      {...args}
+      aria-label="Bookmarks table"
+      onSelectionChange={action('onSelectionChange')}>
       <TableHeader>
         <Column>Name</Column>
         <Column>URL</Column>
@@ -2191,15 +2456,13 @@ function LoadingTable(): JSX.Element {
     <TableView aria-label="Table" selectionMode="multiple" onSortChange={onSortChange} height={300}>
       <TableHeader>
         <Column key="name">Name</Column>
-        <Column key="height" allowsSorting>Height</Column>
+        <Column key="height" allowsSorting>
+          Height
+        </Column>
         <Column key="birthday">Birthday</Column>
       </TableHeader>
       <TableBody items={items} loadingState={loadingState}>
-        {item => (
-          <Row key={item.key}>
-            {column => <Cell>{item[column]}</Cell>}
-          </Row>
-        )}
+        {item => <Row key={item.key}>{column => <Cell>{item[column]}</Cell>}</Row>}
       </TableBody>
     </TableView>
   );
@@ -2219,10 +2482,7 @@ function AsyncLoadOverflowWrapRepro() {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(
-        cursor || 'https://swapi.py4e.com/api/people/?search=',
-        {signal}
-      );
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
 
       return {
@@ -2233,26 +2493,14 @@ function AsyncLoadOverflowWrapRepro() {
   });
 
   return (
-    <TableView
-      aria-label="example async loading table"
-      height="size-3000"
-      overflowMode="wrap">
+    <TableView aria-label="example async loading table" height="size-3000" overflowMode="wrap">
       <TableHeader columns={columns}>
-        {(column) => (
-          <Column align={column.key !== 'name' ? 'end' : 'start'}>
-            {column.name}
-          </Column>
-        )}
+        {column => <Column align={column.key !== 'name' ? 'end' : 'start'}>{column.name}</Column>}
       </TableHeader>
-      <TableBody
-        items={list.items}
-        loadingState={list.loadingState}
-        onLoadMore={list.loadMore}>
-        {(item) => (
+      <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
+        {item => (
           <Row key={item.name}>
-            {(key) => (
-              <Cell>{`${item[key]}++++${item[key]}++++${item[key]}++++`}</Cell>
-            )}
+            {key => <Cell>{`${item[key]}++++${item[key]}++++${item[key]}++++`}</Cell>}
           </Row>
         )}
       </TableBody>
@@ -2261,11 +2509,15 @@ function AsyncLoadOverflowWrapRepro() {
 }
 
 export const AsyncLoadOverflowWrapReproStory: TableStory = {
-  render: (args) => <AsyncLoadOverflowWrapRepro {...args} />,
+  render: args => <AsyncLoadOverflowWrapRepro {...args} />,
   name: 'async, overflow wrap scroll jumping reproduction',
-  parameters: {description: {data: `
+  parameters: {
+    description: {
+      data: `
     Rapidly scrolling down through this table should not cause the scroll position to jump to the top.
-  `}}
+  `
+    }
+  }
 };
 
 export {Performance} from './Performance';

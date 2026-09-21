@@ -15,7 +15,7 @@ import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useBreadcrumbItem} from '../../src/breadcrumbs/useBreadcrumbItem';
 
 describe('useBreadcrumbItem', function () {
-  let renderLinkHook = (props) => {
+  let renderLinkHook = props => {
     let {result} = renderHook(() => useBreadcrumbItem(props));
     return result.current;
   };

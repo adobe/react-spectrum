@@ -13,7 +13,15 @@
 import {action} from 'storybook/actions';
 import defaultConfig, {TableStory} from './Table.stories';
 import {Divider} from '../../src/divider/Divider';
-import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, DragWithoutRowHeaderExample, items, ReorderExample} from './TableDnDExamples';
+import {
+  DragBetweenTablesExample,
+  DragBetweenTablesRootOnlyExample,
+  DragExample,
+  DragOntoRowExample,
+  DragWithoutRowHeaderExample,
+  items,
+  ReorderExample
+} from './TableDnDExamples';
 import {Droppable} from '../../../../react-aria/stories/dnd/dnd.stories';
 import {Flex} from '../../src/layout/Flex';
 import {Meta} from '@storybook/react';
@@ -31,24 +39,26 @@ export const DragOutOfTable: TableStory = {
   args: {
     disabledKeys: ['Foo 2']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center" gap="size-200">
       <Droppable />
       <DragExample
         dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
-        tableViewProps={args} />
+        tableViewProps={args}
+      />
     </Flex>
   ),
   name: 'Drag out of table'
 };
 
 export const DragOutOfTableWithoutTableHeader: TableStory = {
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center" gap="size-200">
       <Droppable />
       <DragWithoutRowHeaderExample
         dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
-        tableViewProps={args} />
+        tableViewProps={args}
+      />
     </Flex>
   ),
   name: 'Drag out of table without table header'
@@ -58,7 +68,7 @@ export const CustomDragPreview: TableStory = {
   args: {
     disabledKeys: ['Foo 2']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center" gap="size-200">
       <Droppable />
       <DragExample
@@ -66,14 +76,21 @@ export const CustomDragPreview: TableStory = {
           onDragStart: action('dragStart'),
           onDragEnd: action('dragEnd'),
           renderPreview: (keys, draggedKey) => (
-            <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+            <View
+              backgroundColor="gray-50"
+              padding="size-100"
+              borderRadius="medium"
+              borderWidth="thin"
+              borderColor="blue-500">
               <strong>Custom Preview</strong>
               <Divider size="S" />
               <div>Keys: [{[...keys].join(', ')}]</div>
               <div>Dragged: {draggedKey}</div>
             </View>
-          )}}
-        tableViewProps={args} />
+          )
+        }}
+        tableViewProps={args}
+      />
     </Flex>
   ),
   name: 'Custom drag preview'
@@ -83,15 +100,28 @@ export const DragWithinTable: TableStory = {
   args: {
     disabledKeys: ['Foo 2']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
-      <ReorderExample tableViewProps={args} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+      <ReorderExample
+        tableViewProps={args}
+        onDrop={action('drop')}
+        onDragStart={action('dragStart')}
+        onDragEnd={action('dragEnd')}
+      />
     </Flex>
   ),
   name: 'Drag within table (Reorder)'
 };
 
-let manyItems: Array<{id: string, first_name: string, last_name: string, email: string, ip_address: string, department: string, job_title: string}> = [];
+let manyItems: Array<{
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  ip_address: string;
+  department: string;
+  job_title: string;
+}> = [];
 for (let i = 0; i < 100; i++) {
   manyItems.push({...items[i % 10], id: `${i}`});
 }
@@ -100,9 +130,15 @@ export const DragWithinTableManyItems: TableStory = {
   args: {
     disabledKeys: ['Foo 2']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
-      <ReorderExample items={manyItems} tableViewProps={args} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+      <ReorderExample
+        items={manyItems}
+        tableViewProps={args}
+        onDrop={action('drop')}
+        onDragStart={action('dragStart')}
+        onDragEnd={action('dragEnd')}
+      />
     </Flex>
   ),
   name: 'Drag within table many items'
@@ -112,7 +148,7 @@ export const DragOntoRow: TableStory = {
   args: {
     disabledKeys: ['1']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
       <DragOntoRowExample tableViewProps={args} />
     </Flex>
@@ -129,7 +165,7 @@ export const DragBetweenTables: TableStory = {
   args: {
     disabledKeys: ['2', '8']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
       <DragBetweenTablesExample {...args} />
     </Flex>
@@ -141,7 +177,7 @@ export const DragBetweenTablesRootOnly: TableStory = {
   args: {
     disabledKeys: ['2', '8']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
       <DragBetweenTablesRootOnlyExample tableViewProps={args} />
     </Flex>
@@ -153,15 +189,27 @@ export const DraggableRowsCopyLink: TableStory = {
   args: {
     disabledKeys: ['Foo 2']
   },
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
       <Droppable />
-      <DragExample tableViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd'), getAllowedDropOperations: () => { getAllowedDropOperationsAction(); return ['copy', 'link', 'cancel'];}}} />
+      <DragExample
+        tableViewProps={{onAction: action('onAction'), ...args}}
+        dragHookOptions={{
+          onDragStart: action('dragStart'),
+          onDragEnd: action('dragEnd'),
+          getAllowedDropOperations: () => {
+            getAllowedDropOperationsAction();
+            return ['copy', 'link', 'cancel'];
+          }
+        }}
+      />
     </Flex>
   ),
   name: 'draggable rows, allow copy and link',
   parameters: {
-    description: {data: 'Allows copy, link, and cancel operations. Copy should be the default operation, and link should be the operation when the CTRL key is held while dragging.'}
+    description: {
+      data: 'Allows copy, link, and cancel operations. Copy should be the default operation, and link should be the operation when the CTRL key is held while dragging.'
+    }
   }
 };
 

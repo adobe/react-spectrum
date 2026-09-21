@@ -13,5 +13,10 @@
 export {ToggleStateOptions, ToggleProps} from '@react-stately/toggle';
 export {AriaToggleProps} from '@react-aria/toggle';
 export {CheckboxGroupProps} from '@react-stately/checkbox';
-export {CheckboxProps, AriaCheckboxProps, AriaCheckboxGroupProps, AriaCheckboxGroupItemProps} from '@react-aria/checkbox';
+export {
+  CheckboxProps,
+  AriaCheckboxProps,
+  AriaCheckboxGroupProps,
+  AriaCheckboxGroupItemProps
+} from '@react-aria/checkbox';
 export {SpectrumCheckboxProps, SpectrumCheckboxGroupProps} from '@react-spectrum/checkbox';

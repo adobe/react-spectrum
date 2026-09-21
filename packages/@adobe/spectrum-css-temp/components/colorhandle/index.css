@@ -1,6 +1,8 @@
 :root {
   /* redefine this var so it can be used in skin.css */
-  --spectrum-colorhandle-background-offset: calc(-1 * var(--spectrum-global-dimension-static-size-25));
+  --spectrum-colorhandle-background-offset: calc(
+    -1 * var(--spectrum-global-dimension-static-size-25)
+  );
   --spectrum-colorhandle-checkerboard-size: var(--spectrum-global-dimension-static-size-100);
 
   --spectrum-colorhandle-animation-duration: var(--spectrum-global-animation-duration-100);
@@ -24,21 +26,40 @@
   border-width: var(--spectrum-colorhandle-inner-border-size);
   border-style: solid;
 
-  background-size:
-    var(--spectrum-global-dimension-static-size-200)
+  background-size: var(--spectrum-global-dimension-static-size-200)
     var(--spectrum-global-dimension-static-size-200);
   background-position:
     var(--spectrum-colorhandle-background-offset) var(--spectrum-colorhandle-background-offset),
-    var(--spectrum-colorhandle-background-offset) calc(var(--spectrum-colorhandle-checkerboard-size) + var(--spectrum-colorhandle-background-offset)),
-    calc(var(--spectrum-colorhandle-checkerboard-size) + var(--spectrum-colorhandle-background-offset)) calc(-1 * var(--spectrum-colorhandle-checkerboard-size) + var(--spectrum-colorhandle-background-offset)),
-    calc(-1 * var(--spectrum-colorhandle-checkerboard-size) + var(--spectrum-colorhandle-background-offset)) var(--spectrum-colorhandle-background-offset);
+    var(--spectrum-colorhandle-background-offset)
+      calc(
+        var(--spectrum-colorhandle-checkerboard-size) +
+          var(--spectrum-colorhandle-background-offset)
+      ),
+    calc(
+        var(--spectrum-colorhandle-checkerboard-size) +
+          var(--spectrum-colorhandle-background-offset)
+      )
+      calc(
+        -1 * var(--spectrum-colorhandle-checkerboard-size) +
+          var(--spectrum-colorhandle-background-offset)
+      ),
+    calc(
+        -1 * var(--spectrum-colorhandle-checkerboard-size) +
+          var(--spectrum-colorhandle-background-offset)
+      )
+      var(--spectrum-colorhandle-background-offset);
 
   transition:
-    width var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing),
-    height var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing),
-    border-width var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing),
-    margin-left var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing),
-    margin-top var(--spectrum-colorhandle-animation-duration) var(--spectrum-colorhandle-animation-easing);
+    width var(--spectrum-colorhandle-animation-duration)
+      var(--spectrum-colorhandle-animation-easing),
+    height var(--spectrum-colorhandle-animation-duration)
+      var(--spectrum-colorhandle-animation-easing),
+    border-width var(--spectrum-colorhandle-animation-duration)
+      var(--spectrum-colorhandle-animation-easing),
+    margin-left var(--spectrum-colorhandle-animation-duration)
+      var(--spectrum-colorhandle-animation-easing),
+    margin-top var(--spectrum-colorhandle-animation-duration)
+      var(--spectrum-colorhandle-animation-easing);
 
   &,
   &:after {

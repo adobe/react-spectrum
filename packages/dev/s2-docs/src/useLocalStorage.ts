@@ -1,6 +1,9 @@
 import {useState, useSyncExternalStore} from 'react';
 
-export function useLocalStorage(key: string, defaultValue: string): [string, (value: string) => void] {
+export function useLocalStorage(
+  key: string,
+  defaultValue: string
+): [string, (value: string) => void] {
   let [store] = useState(() => new Store(key, defaultValue));
   let value = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   return [value, store.setValue];
@@ -38,7 +41,7 @@ class Store {
     if (!this.key) {
       return this.defaultValue;
     }
-    
+
     let search = new URLSearchParams(location.search);
     return search.get(this.key) ?? localStorage.getItem(this.key) ?? this.defaultValue;
   };
@@ -62,10 +65,12 @@ class Store {
       history.replaceState(null, '', url.toString());
     }
 
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: this.key,
-      oldValue,
-      newValue: value
-    }));
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: this.key,
+        oldValue,
+        newValue: value
+      })
+    );
   };
 }

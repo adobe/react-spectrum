@@ -23,8 +23,8 @@ describe('ActionButton', function () {
   });
 
   it.each`
-    Name              | Component        | props
-    ${'ActionButton'} | ${ActionButton}  | ${{onPress: onPressSpy}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{onPress: onPressSpy}}
   `('$Name handles defaults', async function ({Component, props}) {
     let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
@@ -37,10 +37,14 @@ describe('ActionButton', function () {
   });
 
   it.each`
-    Name              | Component        | props
-    ${'ActionButton'} | ${ActionButton}  | ${{}}
+    Name              | Component       | props
+    ${'ActionButton'} | ${ActionButton} | ${{}}
   `('$Name allows custom props to be passed through to the button', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} data-foo="bar">Click Me</Component>);
+    let {getByRole} = render(
+      <Component {...props} data-foo="bar">
+        Click Me
+      </Component>
+    );
 
     let button = getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('data-foo', 'bar');

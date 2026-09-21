@@ -11,13 +11,40 @@
  */
 export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from 'react-aria/private/utils/constants';
 
-export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAndroid, isFirefox} from 'react-aria/private/utils/platform';
-export {openLink, getSyntheticLinkProps, useSyntheticLinkProps, RouterProvider, shouldClientNavigate, useRouter, useLinkProps, handleLinkClick} from 'react-aria/private/utils/openLink';
+export {
+  isMac,
+  isIPhone,
+  isIPad,
+  isIOS,
+  isAppleDevice,
+  isWebKit,
+  isChrome,
+  isAndroid,
+  isFirefox
+} from 'react-aria/private/utils/platform';
+export {
+  openLink,
+  getSyntheticLinkProps,
+  useSyntheticLinkProps,
+  RouterProvider,
+  shouldClientNavigate,
+  useRouter,
+  useLinkProps,
+  handleLinkClick
+} from 'react-aria/private/utils/openLink';
 export {useId} from 'react-aria/useId';
 export {mergeIds, useSlotId} from 'react-aria/private/utils/useId';
 export {chain} from 'react-aria/chain';
-export {createShadowTreeWalker, ShadowTreeWalker} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
-export {getActiveElement, getEventTarget, nodeContains, isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+export {
+  createShadowTreeWalker,
+  ShadowTreeWalker
+} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
+export {
+  getActiveElement,
+  getEventTarget,
+  nodeContains,
+  isFocusWithin
+} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 export {getOwnerDocument, getOwnerWindow, isShadowRoot} from 'react-aria/private/utils/domHelpers';
 export {mergeProps} from 'react-aria/mergeProps';
 export {mergeRefs} from 'react-aria/mergeRefs';
@@ -47,7 +74,10 @@ export {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 export {useDeepMemo} from 'react-aria/private/utils/useDeepMemo';
 export {useFormReset} from 'react-aria/private/utils/useFormReset';
 export {useLoadMore} from 'react-aria/private/utils/useLoadMore';
-export {useLoadMoreSentinel, useLoadMoreSentinel as UNSTABLE_useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
+export {
+  useLoadMoreSentinel,
+  useLoadMoreSentinel as UNSTABLE_useLoadMoreSentinel
+} from 'react-aria/private/utils/useLoadMoreSentinel';
 export {inertValue} from 'react-aria/private/utils/inertValue';
 export {isCtrlKeyPressed, willOpenKeyboard} from 'react-aria/private/utils/keyboard';
 export {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';

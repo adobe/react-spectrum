@@ -33,99 +33,71 @@ export type AccordionStory = StoryObj<Partial<SpectrumAccordionProps>>;
 export const Template = (args: Partial<SpectrumAccordionProps>): JSX.Element => (
   <Accordion {...args}>
     <Disclosure id="files">
-      <DisclosureTitle>
-        Your files
-      </DisclosureTitle>
-      <DisclosurePanel>
-        files
-      </DisclosurePanel>
+      <DisclosureTitle>Your files</DisclosureTitle>
+      <DisclosurePanel>files</DisclosurePanel>
     </Disclosure>
     <Disclosure id="shared">
-      <DisclosureTitle>
-        Shared with you
-      </DisclosureTitle>
-      <DisclosurePanel>
-        shared
-      </DisclosurePanel>
+      <DisclosureTitle>Shared with you</DisclosureTitle>
+      <DisclosurePanel>shared</DisclosurePanel>
     </Disclosure>
     <Disclosure id="last">
-      <DisclosureTitle>
-        Last item
-      </DisclosureTitle>
-      <DisclosurePanel>
-        last
-      </DisclosurePanel>
+      <DisclosureTitle>Last item</DisclosureTitle>
+      <DisclosurePanel>last</DisclosurePanel>
     </Disclosure>
   </Accordion>
 );
 
 export const Default: AccordionStory = {
-  render: (args) => <Template {...args} />
+  render: args => <Template {...args} />
 };
 
 export const WithExpandedKeys: AccordionStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {defaultExpandedKeys: ['shared']}
 };
 
 export const WithDisabledDisclosure: AccordionStory = {
-  render: (args) => (
+  render: args => (
     <Accordion {...args}>
       <Disclosure id="files">
-        <DisclosureTitle>
-          Your files
-        </DisclosureTitle>
-        <DisclosurePanel>
-          files
-        </DisclosurePanel>
+        <DisclosureTitle>Your files</DisclosureTitle>
+        <DisclosurePanel>files</DisclosurePanel>
       </Disclosure>
       <Disclosure id="shared">
-        <DisclosureTitle>
-          Shared with you
-        </DisclosureTitle>
-        <DisclosurePanel>
-          shared
-        </DisclosurePanel>
+        <DisclosureTitle>Shared with you</DisclosureTitle>
+        <DisclosurePanel>shared</DisclosurePanel>
       </Disclosure>
       <Disclosure id="last" isDisabled>
-        <DisclosureTitle>
-          Last item
-        </DisclosureTitle>
-        <DisclosurePanel>
-          last
-        </DisclosurePanel>
+        <DisclosureTitle>Last item</DisclosureTitle>
+        <DisclosurePanel>last</DisclosurePanel>
       </Disclosure>
-    </Accordion>)
+    </Accordion>
+  )
 };
 
 export const Disabled: AccordionStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {isDisabled: true}
 };
 
 export const Quiet: AccordionStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {isQuiet: true}
 };
 
 export const WithWrappingTitle: AccordionStory = {
-  render: (args) => (
+  render: args => (
     <Accordion maxWidth="size-3000" {...args}>
       <Disclosure id="files">
         <DisclosureTitle>
-          Long long long long long long long long long long long long long  long long long wrapping title
+          Long long long long long long long long long long long long long long long long wrapping
+          title
         </DisclosureTitle>
-        <DisclosurePanel>
-          Files content
-        </DisclosurePanel>
+        <DisclosurePanel>Files content</DisclosurePanel>
       </Disclosure>
       <Disclosure id="people">
-        <DisclosureTitle>
-          People
-        </DisclosureTitle>
-        <DisclosurePanel>
-          People content
-        </DisclosurePanel>
+        <DisclosureTitle>People</DisclosureTitle>
+        <DisclosurePanel>People content</DisclosurePanel>
       </Disclosure>
     </Accordion>
   )

@@ -1,4 +1,11 @@
-import {fireEvent, installMouseEvent, installPointerEvent, render, renderHook, screen} from '@react-spectrum/test-utils-internal';
+import {
+  fireEvent,
+  installMouseEvent,
+  installPointerEvent,
+  render,
+  renderHook,
+  screen
+} from '@react-spectrum/test-utils-internal';
 import * as React from 'react';
 import {useRef} from 'react';
 import {useSlider} from '../../src/slider/useSlider';
@@ -14,11 +21,14 @@ describe('useSlider', () => {
         let inputRef = useRef(null);
         let state = useSliderState({...sliderProps, numberFormatter});
         let props = useSlider(sliderProps, state, trackRef);
-        let {inputProps} = useSliderThumb({
-          index: 0,
-          trackRef,
-          inputRef
-        }, state);
+        let {inputProps} = useSliderThumb(
+          {
+            index: 0,
+            trackRef,
+            inputRef
+          },
+          state
+        );
         return {state, props, trackRef, inputProps};
       }).result;
     }
@@ -29,7 +39,9 @@ describe('useSlider', () => {
         label: 'Slider'
       });
 
-      let {props: {labelProps, groupProps}} = result.current;
+      let {
+        props: {labelProps, groupProps}
+      } = result.current;
 
       expect(groupProps.role).toBe('group');
       expect(labelProps.htmlFor).toBe(undefined); // https://bugs.webkit.org/show_bug.cgi?id=172464
@@ -52,7 +64,9 @@ describe('useSlider', () => {
   describe('interactions on track', () => {
     let widthStub;
     beforeAll(() => {
-      widthStub = jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+      widthStub = jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
     afterAll(() => {
       widthStub.mockReset();
@@ -73,7 +87,14 @@ describe('useSlider', () => {
     it('should allow you to set value of closest thumb by clicking on track', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[10, 80]}
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.mouseDown(track, {clientX: 20, pageX: 20});
@@ -95,7 +116,14 @@ describe('useSlider', () => {
     it('should allow you to set value of closest thumb by dragging on track', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[10, 80]}
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.mouseDown(track, {clientX: 20, pageX: 20});
@@ -121,7 +149,15 @@ describe('useSlider', () => {
     it('should not allow you to set value if disabled', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} isDisabled />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[10, 80]}
+          isDisabled
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.mouseDown(track, {clientX: 20, pageX: 20});
@@ -143,7 +179,15 @@ describe('useSlider', () => {
     it('should allow you to set value of closest thumb by dragging on track (vertical)', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} orientation="vertical" />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[10, 80]}
+          orientation="vertical"
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.mouseDown(track, {clientY: 80, pageY: 80});
@@ -170,7 +214,9 @@ describe('useSlider', () => {
   describe('interactions on track using pointerEvents', () => {
     let widthStub;
     beforeAll(() => {
-      widthStub = jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+      widthStub = jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
     afterAll(() => {
       widthStub.mockReset();
@@ -191,7 +237,14 @@ describe('useSlider', () => {
     it('should allow you to set value of closest thumb by clicking on track', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[10, 80]}
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
@@ -214,7 +267,14 @@ describe('useSlider', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
 
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[10, 80]}
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
@@ -241,7 +301,14 @@ describe('useSlider', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
 
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[40, 40]}
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.pointerDown(track, {pageX: 20, clientX: 20});
@@ -254,7 +321,14 @@ describe('useSlider', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
 
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[40, 40]} />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[40, 40]}
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.pointerDown(track, {pageX: 60, clientX: 60});
@@ -267,7 +341,14 @@ describe('useSlider', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
 
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[25, 25, 50, 75, 75]}
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.pointerDown(track, {pageX: 70, clientX: 70});
@@ -288,7 +369,14 @@ describe('useSlider', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
 
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[25, 25, 50, 75, 75]} />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[25, 25, 50, 75, 75]}
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.pointerDown(track, {pageX: 80, clientX: 80});
@@ -308,7 +396,15 @@ describe('useSlider', () => {
     it('should not allow you to set value if disabled', () => {
       let onChangeSpy = jest.fn();
       let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} isDisabled />);
+      render(
+        <Example
+          onChange={onChangeSpy}
+          onChangeEnd={onChangeEndSpy}
+          aria-label="Slider"
+          defaultValue={[10, 80]}
+          isDisabled
+        />
+      );
 
       let track = screen.getByTestId('track');
       fireEvent.pointerDown(track, {pageX: 20, clientX: 20});

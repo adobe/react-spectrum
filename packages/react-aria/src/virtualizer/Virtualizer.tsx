@@ -26,22 +26,29 @@ type RenderWrapper<T extends object, V> = (
   renderChildren: (views: ReusableView<T, V>[]) => ReactElement[]
 ) => ReactElement | null;
 
-interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'onScroll'> {
-  children: (type: string, content: T) => V,
-  renderWrapper?: RenderWrapper<T, V>,
-  layout: Layout<T, O>,
-  collection: Collection<T>,
-  persistedKeys?: Set<Key> | null,
-  scrollDirection?: 'horizontal' | 'vertical' | 'both',
-  isLoading?: boolean,
-  onLoadMore?: () => void,
-  layoutOptions?: O,
-  onScroll?: (e: Event) => void
+interface VirtualizerProps<T extends object, V, O> extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'children' | 'onScroll'
+> {
+  children: (type: string, content: T) => V;
+  renderWrapper?: RenderWrapper<T, V>;
+  layout: Layout<T, O>;
+  collection: Collection<T>;
+  persistedKeys?: Set<Key> | null;
+  scrollDirection?: 'horizontal' | 'vertical' | 'both';
+  isLoading?: boolean;
+  onLoadMore?: () => void;
+  layoutOptions?: O;
+  onScroll?: (e: Event) => void;
 }
 
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-export const Virtualizer = React.forwardRef(function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
+export const Virtualizer = React.forwardRef(function Virtualizer<
+  T extends object,
+  V extends ReactNode,
+  O
+>(props: VirtualizerProps<T, V, O>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     children: renderView,
     renderWrapper,
@@ -72,9 +79,12 @@ export const Virtualizer = React.forwardRef(function Virtualizer<T extends objec
   });
 
   useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, ref);
-  let onVisibleRectChange = useCallback((rect: Rect) => {
-    state.setVisibleRect(rect);
-  }, [state]);
+  let onVisibleRectChange = useCallback(
+    (rect: Rect) => {
+      state.setVisibleRect(rect);
+    },
+    [state]
+  );
 
   return (
     <ScrollView
@@ -87,15 +97,18 @@ export const Virtualizer = React.forwardRef(function Virtualizer<T extends objec
       {renderChildren(null, state.visibleViews, renderWrapper || defaultRenderWrapper)}
     </ScrollView>
   );
-}) as <T extends object, V, O>(props: VirtualizerProps<T, V, O> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
+}) as <T extends object, V, O>(
+  props: VirtualizerProps<T, V, O> & {ref?: RefObject<HTMLDivElement | null>}
+) => ReactElement;
 
-function renderChildren<T extends object, V>(parent: ReusableView<T, V> | null, views: ReusableView<T, V>[], renderWrapper: RenderWrapper<T, V>) {
+function renderChildren<T extends object, V>(
+  parent: ReusableView<T, V> | null,
+  views: ReusableView<T, V>[],
+  renderWrapper: RenderWrapper<T, V>
+) {
   return views.map(view => {
-    return renderWrapper(
-      parent,
-      view,
-      view.children ? Array.from(view.children) : [],
-      childViews => renderChildren(view, childViews, renderWrapper)
+    return renderWrapper(parent, view, view.children ? Array.from(view.children) : [], childViews =>
+      renderChildren(view, childViews, renderWrapper)
     );
   });
 }

@@ -24,13 +24,10 @@
     // Import non-ES modules as default imports.
     "esModuleInterop": true,
     // if 'target' is updated, this should be updated as well
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "skipLibCheck": false,
     "strict": true,
+    "types": ["node", "jest"],
     "paths": {
       "vanilla-starter/*": ["./starters/docs/src/*"],
       "tailwind-starter/*": ["./starters/tailwind/src/*"],

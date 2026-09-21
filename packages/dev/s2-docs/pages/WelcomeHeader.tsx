@@ -25,16 +25,20 @@ export function WelcomeHeader() {
         },
         marginBottom: 48
       })}>
-      <h1 className={style({font: 'heading-2xl', color: 'white'})}>
-        React Spectrum Libraries
-      </h1>
+      <h1 className={style({font: 'heading-2xl', color: 'white'})}>React Spectrum Libraries</h1>
     </header>
   );
 }
 
 export function LibraryCards() {
   return (
-    <div className={style({display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: {default: 'center', lg: 'start'}})}>
+    <div
+      className={style({
+        display: 'flex',
+        gap: 20,
+        flexWrap: 'wrap',
+        justifyContent: {default: 'center', lg: 'start'}
+      })}>
       <ProductCard size="L">
         {TAB_DEFS['react-spectrum'].icon}
         <Content>
@@ -42,7 +46,9 @@ export function LibraryCards() {
           <Text slot="description">{TAB_DEFS['react-spectrum'].description}</Text>
         </Content>
         <Footer>
-          <LinkButton href="s2/" variant="accent">Get started</LinkButton>
+          <LinkButton href="s2/" variant="accent">
+            Get started
+          </LinkButton>
         </Footer>
       </ProductCard>
 
@@ -53,7 +59,9 @@ export function LibraryCards() {
           <Text slot="description">{TAB_DEFS['react-aria'].description}</Text>
         </Content>
         <Footer>
-          <LinkButton href="react-aria/" variant="accent">Explore</LinkButton>
+          <LinkButton href="react-aria/" variant="accent">
+            Explore
+          </LinkButton>
         </Footer>
       </ProductCard>
     </div>

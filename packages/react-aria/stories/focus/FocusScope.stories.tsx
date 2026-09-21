@@ -18,8 +18,8 @@ import ReactDOM from 'react-dom';
 const dialogsRoot = 'dialogsRoot';
 
 interface StoryProps {
-  isPortaled: boolean,
-  contain: boolean
+  isPortaled: boolean;
+  contain: boolean;
 }
 
 const meta = {
@@ -37,21 +37,26 @@ export default meta;
 export type FocusScopeStory = StoryFn<typeof Example>;
 export type FocusScopeStoryObj = StoryObj<typeof Example>;
 
-function MaybePortal({children, isPortaled}: {children: ReactNode, isPortaled: boolean}) {
+function MaybePortal({children, isPortaled}: {children: ReactNode; isPortaled: boolean}) {
   if (!isPortaled) {
     return <>{children}</>;
   }
 
-  return ReactDOM.createPortal(
-    <>{children}</>,
-    document.getElementById(dialogsRoot)!
-  );
+  return ReactDOM.createPortal(<>{children}</>, document.getElementById(dialogsRoot)!);
 }
 
-function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, isPortaled: boolean, contain: boolean}) {
+function NestedDialog({
+  onClose,
+  isPortaled,
+  contain
+}: {
+  onClose: VoidFunction;
+  isPortaled: boolean;
+  contain: boolean;
+}) {
   let [open, setOpen] = useState(false);
   let [showNew, setShowNew] = useState(false);
-  let onKeyDown = (e) => {
+  let onKeyDown = e => {
     if (e.key === 'Escape') {
       e.stopPropagation();
       onClose();
@@ -59,11 +64,11 @@ function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, is
   };
 
   return (
-    (<MaybePortal isPortaled={isPortaled}>
+    <MaybePortal isPortaled={isPortaled}>
       <FocusScope contain={contain} restoreFocus autoFocus>
         {!showNew && (
           // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-          (<div role="dialog" onKeyDown={onKeyDown}>
+          <div role="dialog" onKeyDown={onKeyDown}>
             <input />
             <input />
             <input />
@@ -74,19 +79,25 @@ function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, is
             <button type="button" onClick={onClose}>
               close
             </button>
-            {open && <NestedDialog contain={contain} onClose={() => setOpen(false)} isPortaled={isPortaled} />}
-          </div>)
+            {open && (
+              <NestedDialog
+                contain={contain}
+                onClose={() => setOpen(false)}
+                isPortaled={isPortaled}
+              />
+            )}
+          </div>
         )}
         {showNew && (
           // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-          (<div role="dialog" onKeyDown={onKeyDown}>
+          <div role="dialog" onKeyDown={onKeyDown}>
             <input />
             <input autoFocus />
             <input />
-          </div>)
+          </div>
         )}
       </FocusScope>
-    </MaybePortal>)
+    </MaybePortal>
   );
 }
 
@@ -100,14 +111,16 @@ export let Example = ({isPortaled, contain}: FocusScopeProps & StoryProps): JSX.
         Open dialog
       </button>
       <input aria-label="input after" />
-      {open && <NestedDialog onClose={() => setOpen(false)} isPortaled={isPortaled} contain={contain} />}
+      {open && (
+        <NestedDialog onClose={() => setOpen(false)} isPortaled={isPortaled} contain={contain} />
+      )}
 
       <div id={dialogsRoot} />
     </div>
   );
 };
 
-export let ExampleStory: FocusScopeStory = (args) => <Example {...args} />;
+export let ExampleStory: FocusScopeStory = args => <Example {...args} />;
 ExampleStory.storyName = 'Example';
 
 function FocusableFirstInScopeExample() {
@@ -118,24 +131,38 @@ function FocusableFirstInScopeExample() {
     return (
       <>
         <h1 id={`heading-${index}`}>Dialog {index + 1}</h1>
-        {index === 2 ?
-          (
-            <>
-              <p>The end of the road.</p>
-              <button id={`button-${index}`} key={`button-${index}`} onClick={(e) => {(e.target as Element).remove(); setButtonRemoved(true);}}>Remove Me</button>
-              {buttonRemoved &&
-                <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
-              }
-            </>
-          ) :
-          (
-            <>
-              <p>Content that will be replaced by <strong>Dialog {nextIndex + 1}</strong>.</p>
-              <button id={`button-${index}`} key={`button-${index}`} onClick={() => setContentIndex(nextIndex)}>Go to Dialog {nextIndex + 1}</button>
-            </>
-          )
-        }
-
+        {index === 2 ? (
+          <>
+            <p>The end of the road.</p>
+            <button
+              id={`button-${index}`}
+              key={`button-${index}`}
+              onClick={e => {
+                (e.target as Element).remove();
+                setButtonRemoved(true);
+              }}>
+              Remove Me
+            </button>
+            {buttonRemoved && (
+              <p>
+                With no tabbable elements within the scope, FocusScope will try to focus the first
+                focusable element within the scope, in this case, the dialog itself.
+              </p>
+            )}
+          </>
+        ) : (
+          <>
+            <p>
+              Content that will be replaced by <strong>Dialog {nextIndex + 1}</strong>.
+            </p>
+            <button
+              id={`button-${index}`}
+              key={`button-${index}`}
+              onClick={() => setContentIndex(nextIndex)}>
+              Go to Dialog {nextIndex + 1}
+            </button>
+          </>
+        )}
       </>
     );
   }
@@ -145,7 +172,16 @@ function FocusableFirstInScopeExample() {
   }
   return (
     <FocusScope contain>
-      <div role="dialog" tabIndex={-1} aria-labelledby={`heading-${contentIndex}`} style={{border: '1px solid currentColor', borderRadius: '5px', padding: '0 1.5rem 1.5rem', width: '15rem'}}>
+      <div
+        role="dialog"
+        tabIndex={-1}
+        aria-labelledby={`heading-${contentIndex}`}
+        style={{
+          border: '1px solid currentColor',
+          borderRadius: '5px',
+          padding: '0 1.5rem 1.5rem',
+          width: '15rem'
+        }}>
         {contents[contentIndex]}
       </div>
     </FocusScope>
@@ -155,7 +191,7 @@ function FocusableFirstInScopeExample() {
 function IgnoreRestoreFocusExample() {
   const [display, setDisplay] = useState(false);
   useEffect(() => {
-    let handleKeyDown = (e) => {
+    let handleKeyDown = e => {
       if (e.key === 'Escape') {
         setDisplay(false);
       }
@@ -174,36 +210,36 @@ function IgnoreRestoreFocusExample() {
       <button type="button" onClick={() => setDisplay(state => !state)}>
         {display ? 'Close dialog 2' : 'Open dialog 2'}
       </button>
-      {display &&
+      {display && (
         <FocusScope restoreFocus>
           <div role="dialog">
-            <input  />
-            <input  />
-            <input  />
+            <input />
+            <input />
+            <input />
           </div>
         </FocusScope>
-      }
+      )}
     </div>
   );
 }
 
 export const KeyboardNavigation: FocusScopeStoryObj = {
-  render: (args) => <Example {...args} />,
+  render: args => <Example {...args} />,
   args: {isPortaled: false}
 };
 
 export const KeyboardNavigationInsidePortal: FocusScopeStoryObj = {
-  render: (args) => <Example {...args} />,
+  render: args => <Example {...args} />,
   args: {isPortaled: true}
 };
 
 export const KeyboardNavigationNoContain: FocusScopeStoryObj = {
-  render: (args) => <Example {...args} />,
+  render: args => <Example {...args} />,
   args: {isPortaled: false, contain: false}
 };
 
 export const KeyboardNavigationInsidePortalNoContain: FocusScopeStoryObj = {
-  render: (args) => <Example {...args} />,
+  render: args => <Example {...args} />,
   args: {isPortaled: true, contain: false}
 };
 
@@ -214,7 +250,6 @@ export const IgnoreRestoreFocus: FocusScopeStoryObj = {
 export const FocusableFirstInScope: FocusScopeStoryObj = {
   render: () => <FocusableFirstInScopeExample />
 };
-
 
 function FocusableInputFormExample(args) {
   let [isOpen, setOpen] = React.useState(false);
@@ -246,7 +281,7 @@ function FocusableInputFormExample(args) {
 
 export const FocusableInputForm: FocusScopeStoryObj = {
   name: 'FocusableInputForm',
-  render: (args) => <FocusableInputFormExample {...args} />,
+  render: args => <FocusableInputFormExample {...args} />,
   args: {
     contain: true,
     restoreFocus: true,
@@ -280,7 +315,7 @@ export const FocusableInputForm: FocusScopeStoryObj = {
 };
 
 export let ContainsHiddenElement: FocusScopeStoryObj = {
-  render: (args) => (
+  render: args => (
     <FocusScope {...args}>
       <input />
       <input style={{visibility: 'hidden'}} />

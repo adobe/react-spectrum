@@ -1,12 +1,12 @@
 'use client';
 
-import { Provider } from "@react-spectrum/s2";
-import { focusRing, style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { useRef, useState } from "react";
-import { mergeProps, useFocusRing, useMove } from "react-aria";
+import {Provider} from '@react-spectrum/s2';
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useRef, useState} from 'react';
+import {mergeProps, useFocusRing, useMove} from 'react-aria';
 // @ts-ignore
 import Nubbin from '../../../../../@react-spectrum/s2/ui-icons/S2_MoveHorizontalTableWidget.svg';
-import { AppFrame } from "./ExampleApp";
+import {AppFrame} from './ExampleApp';
 
 export function DarkMode() {
   let containerRef = useRef(null);
@@ -24,8 +24,8 @@ export function DarkMode() {
         },
         marginTop: 0,
         borderTopStartRadius: {
-            default: 'none',
-            sm: 'lg'
+          default: 'none',
+          sm: 'lg'
         },
         '--app-frame-radius-top': {
           type: 'borderTopStartRadius',
@@ -62,9 +62,13 @@ export function Resizable({children, containerRef, isClipped, minWidth = 0}: any
       pos.current = ref.current!.getBoundingClientRect().width;
     },
     onMove(e) {
-      let newPos = pos.current + (e.pointerType === 'keyboard' ? (e.deltaX || -e.deltaY) * 20 : e.deltaX);
+      let newPos =
+        pos.current + (e.pointerType === 'keyboard' ? (e.deltaX || -e.deltaY) * 20 : e.deltaX);
       let constrainedPos = Math.max(minWidth, newPos);
-      let percent = Math.max(0, Math.min(100, constrainedPos / containerRef.current!.getBoundingClientRect().width * 100));
+      let percent = Math.max(
+        0,
+        Math.min(100, (constrainedPos / containerRef.current!.getBoundingClientRect().width) * 100)
+      );
       setPercent(percent);
       pos.current = newPos;
     }
@@ -103,7 +107,7 @@ export function Resizable({children, containerRef, isClipped, minWidth = 0}: any
         })}
         style={{
           left: `max(${minWidth}px, ${percent}%)`,
-          zIndex: isClipped ? 4 : undefined,
+          zIndex: isClipped ? 4 : undefined
         }}>
         <div
           className={style({
@@ -114,7 +118,8 @@ export function Resizable({children, containerRef, isClipped, minWidth = 0}: any
               forcedColors: 'Highlight'
             },
             borderRadius: '[4px]'
-          })} />
+          })}
+        />
         <div
           className={style({
             ...focusRing(),

@@ -17,7 +17,15 @@ import Add from '@spectrum-icons/workflow/Add';
 import {AlertDialog} from '../../src/dialog/AlertDialog';
 import {Button} from '../../src/button/Button';
 import {ButtonGroup} from '../../src/buttongroup/ButtonGroup';
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  SpectrumTableProps,
+  TableBody,
+  TableHeader,
+  TableView
+} from '../../src/table/TableView';
 import {Content} from '../../src/view/Content';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Dialog} from '../../src/dialog/Dialog';
@@ -46,8 +54,8 @@ export function CRUDExample(props: Omit<SpectrumTableProps<object>, 'children'>)
     ]
   });
 
-  let [dialog, setDialog] = useState<{action: Key, item?: any} | null>(null);
-  let createItem = (item) => {
+  let [dialog, setDialog] = useState<{action: Key; item?: any} | null>(null);
+  let createItem = item => {
     list.prepend({...item, id: Date.now()});
   };
 
@@ -56,11 +64,14 @@ export function CRUDExample(props: Omit<SpectrumTableProps<object>, 'children'>)
   return (
     <Flex direction="column">
       <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
-        <Item key="add" aria-label="Add item"><Add /></Item>
-        {selectedCount > 0
-          ? <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
-          : null
-        }
+        <Item key="add" aria-label="Add item">
+          <Add />
+        </Item>
+        {selectedCount > 0 ? (
+          <Item key="bulk-delete" aria-label="Delete selected items">
+            <Delete />
+          </Item>
+        ) : null}
       </ActionGroup>
       <TableView
         aria-label="People"
@@ -72,44 +83,47 @@ export function CRUDExample(props: Omit<SpectrumTableProps<object>, 'children'>)
         onSelectionChange={list.setSelectedKeys}
         renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
         <TableHeader>
-          <Column isRowHeader key="firstName">First Name</Column>
-          <Column isRowHeader key="lastName">Last Name</Column>
+          <Column isRowHeader key="firstName">
+            First Name
+          </Column>
+          <Column isRowHeader key="lastName">
+            Last Name
+          </Column>
           <Column key="birthday">Birthday</Column>
-          <Column key="actions" align="end">Actions</Column>
+          <Column key="actions" align="end">
+            Actions
+          </Column>
         </TableHeader>
         <TableBody items={list.items}>
-          {item =>
-            (<Row>
-              {column =>
-                (<Cell>
-                  {column === 'actions'
-                    ? <MenuTrigger align="end">
-                      <ActionButton isQuiet aria-label="Actions"><More /></ActionButton>
+          {item => (
+            <Row>
+              {column => (
+                <Cell>
+                  {column === 'actions' ? (
+                    <MenuTrigger align="end">
+                      <ActionButton isQuiet aria-label="Actions">
+                        <More />
+                      </ActionButton>
                       <Menu onAction={action => setDialog({action, item})}>
                         <Item key="edit">Edit...</Item>
                         <Item key="delete">Delete...</Item>
                       </Menu>
                     </MenuTrigger>
-                    : item[column]
-                  }
-                </Cell>)
-              }
-            </Row>)
-          }
+                  ) : (
+                    item[column]
+                  )}
+                </Cell>
+              )}
+            </Row>
+          )}
         </TableBody>
       </TableView>
       <DialogContainer onDismiss={() => setDialog(null)}>
-        {dialog?.action === 'add' &&
-          <EditDialog
-            item={null}
-            onConfirm={createItem} />
-        }
-        {dialog?.action === 'edit' &&
-          <EditDialog
-            item={dialog.item}
-            onConfirm={item => list.update(dialog.item.id, item)} />
-        }
-        {dialog?.action === 'delete' &&
+        {dialog?.action === 'add' && <EditDialog item={null} onConfirm={createItem} />}
+        {dialog?.action === 'edit' && (
+          <EditDialog item={dialog.item} onConfirm={item => list.update(dialog.item.id, item)} />
+        )}
+        {dialog?.action === 'delete' && (
           <AlertDialog
             title="Delete"
             variant="destructive"
@@ -121,16 +135,17 @@ export function CRUDExample(props: Omit<SpectrumTableProps<object>, 'children'>)
             }}>
             Are you sure you want to delete {dialog.item.firstName} {dialog.item.lastName}?
           </AlertDialog>
-        }
-        {dialog?.action === 'bulk-delete' &&
+        )}
+        {dialog?.action === 'bulk-delete' && (
           <AlertDialog
             title="Delete"
             variant="destructive"
             primaryActionLabel="Delete"
             onPrimaryAction={() => list.removeSelectedItems()}>
-            Are you sure you want to delete {selectedCount === 1 ? '1 item' : `${selectedCount} items`}?
+            Are you sure you want to delete{' '}
+            {selectedCount === 1 ? '1 item' : `${selectedCount} items`}?
           </AlertDialog>
-        }
+        )}
       </DialogContainer>
     </Flex>
   );
@@ -151,14 +166,36 @@ function EditDialog({item, onConfirm}) {
       <Divider />
       <Content>
         <Form labelPosition="side" width="100%">
-          <TextField autoFocus label="First Name" value={state.firstName} onChange={firstName => setState({...state, firstName})} />
-          <TextField label="Last Name" value={state.lastName} onChange={lastName => setState({...state, lastName})} />
-          <TextField label="Birthday" value={state.birthday} onChange={birthday => setState({...state, birthday})} />
+          <TextField
+            autoFocus
+            label="First Name"
+            value={state.firstName}
+            onChange={firstName => setState({...state, firstName})}
+          />
+          <TextField
+            label="Last Name"
+            value={state.lastName}
+            onChange={lastName => setState({...state, lastName})}
+          />
+          <TextField
+            label="Birthday"
+            value={state.birthday}
+            onChange={birthday => setState({...state, birthday})}
+          />
         </Form>
       </Content>
       <ButtonGroup>
-        <Button variant="secondary" onPress={dialog.dismiss}>Cancel</Button>
-        <Button variant="cta" onPress={() => {dialog.dismiss(); onConfirm(state);}}>{!item ? 'Create' : 'Save'}</Button>
+        <Button variant="secondary" onPress={dialog.dismiss}>
+          Cancel
+        </Button>
+        <Button
+          variant="cta"
+          onPress={() => {
+            dialog.dismiss();
+            onConfirm(state);
+          }}>
+          {!item ? 'Create' : 'Save'}
+        </Button>
       </ButtonGroup>
     </Dialog>
   );

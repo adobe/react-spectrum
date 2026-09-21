@@ -57,9 +57,9 @@ describe('SSRProvider', function () {
 
     let divs = tree.getAllByTestId('test');
     if (React.useId) {
-      expect(new Set(divs.map((div) => div.id)).size).toBe(5);
+      expect(new Set(divs.map(div => div.id)).size).toBe(5);
     } else {
-      expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
+      expect(divs.map(div => div.id)).toMatchInlineSnapshot(`
         [
           "react-aria-1",
           "react-aria-2-1",

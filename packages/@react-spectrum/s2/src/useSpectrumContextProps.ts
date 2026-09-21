@@ -18,7 +18,11 @@ import {mergeStyles} from '../style/runtime';
 import {RefObject} from '@react-types/shared';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
-export function useSpectrumContextProps<T, U extends SlotProps, E>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
+export function useSpectrumContextProps<T, U extends SlotProps, E>(
+  props: T & SlotProps,
+  ref: ForwardedRef<E>,
+  context: Context<ContextValue<U, E>>
+): [T, RefObject<E | null>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   let {ref: contextRef, ...contextProps} = ctx as any;
   let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));

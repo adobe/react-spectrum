@@ -16,7 +16,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode} from 'react';
 import {shortName} from './utils';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Badge> = {
   component: Badge,
@@ -32,42 +32,87 @@ type Story = StoryObj<typeof Template>;
 let states = [
   {size: ['S', 'M', 'L', 'XL']},
   {fillStyle: ['bold', 'subtle', 'outline']},
-  {variant: ['accent', 'informative', 'neutral', 'positive', 'notice', 'negative', 'gray', 'red', 'orange', 'yellow', 'chartreuse', 'celery', 'green', 'seafoam', 'cyan', 'blue', 'indigo', 'purple', 'fuchsia', 'magenta', 'pink', 'turquoise', 'brown', 'cinnamon', 'silver']}
+  {
+    variant: [
+      'accent',
+      'informative',
+      'neutral',
+      'positive',
+      'notice',
+      'negative',
+      'gray',
+      'red',
+      'orange',
+      'yellow',
+      'chartreuse',
+      'celery',
+      'green',
+      'seafoam',
+      'cyan',
+      'blue',
+      'indigo',
+      'purple',
+      'fuchsia',
+      'magenta',
+      'pink',
+      'turquoise',
+      'brown',
+      'cinnamon',
+      'silver'
+    ]
+  }
 ];
 
 let combinations = generatePowerset(states);
 let chunkSize = Math.ceil(combinations.length / 3);
 
-const Template = ({combos, ...args}: {combos: any[], args: BadgeProps}): ReactNode => {
+const Template = ({combos, ...args}: {combos: any[]; args: BadgeProps}): ReactNode => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
+    <div
+      className={style({
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, minmax(0, 250px))',
+        gridAutoFlow: 'row',
+        alignItems: 'center',
+        justifyItems: 'start',
+        gap: 24,
+        width: '100vw'
+      })}>
       {combos.map(c => {
-        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        let fullComboName = Object.keys(c)
+          .map(k => `${k}: ${c[k]}`)
+          .join(' ');
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
         if (!key) {
           key = 'default';
         }
 
-        return <Badge key={key} data-testid={fullComboName} {...args} {...c}>{key}</Badge>;
+        return (
+          <Badge key={key} data-testid={fullComboName} {...args} {...c}>
+            {key}
+          </Badge>
+        );
       })}
     </div>
   );
 };
 
 export const Default: Story = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'all visual option combos 1 of 3',
   args: {combos: combinations.slice(0, chunkSize)}
 };
 
 export const ComboPt2: Story = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {combos: combinations.slice(chunkSize, chunkSize * 2)},
   name: 'all visual option combos 2 of 3'
 };
 
 export const ComboPt3: Story = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {combos: combinations.slice(chunkSize * 2, chunkSize * 3)},
   name: 'all visual option combos 3 of 3'
 };

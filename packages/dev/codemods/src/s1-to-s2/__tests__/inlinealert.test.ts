@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Change variant info to informative', `
+test(
+  'Change variant info to informative',
+  `
 import {InlineAlert, Heading, Content} from '@adobe/react-spectrum';
 let variant = 'info';
 let props = {variant: 'info'};
@@ -40,4 +42,5 @@ let props = {variant: 'info'};
     </Content>
   </InlineAlert>
 </div>
-`);
+`
+);

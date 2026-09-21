@@ -2,8 +2,8 @@ import {ActionButton, DialogTrigger, NotificationBadge, Popover} from '@react-sp
 import Bell from '@react-spectrum/s2/icons/Bell';
 import {Comment} from '../Typography';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import { PopoverContextProvider } from './AccountMenu';
-import { useLocale } from 'react-aria';
+import {PopoverContextProvider} from './AccountMenu';
+import {useLocale} from 'react-aria';
 
 const COMMENTS = [
   {
@@ -67,7 +67,12 @@ export function Notifications() {
               flexGrow: 1,
               minHeight: 0
             })}>
-            <h3 className={style({font: 'title-lg', color: {default: 'title', forcedColors: 'ButtonText'}, marginY: 0})}>
+            <h3
+              className={style({
+                font: 'title-lg',
+                color: {default: 'title', forcedColors: 'ButtonText'},
+                marginY: 0
+              })}>
               {locale === 'ar-AE' ? 'إشعارات' : 'Notifications'}
             </h3>
             {comments.map((comment, i) => (

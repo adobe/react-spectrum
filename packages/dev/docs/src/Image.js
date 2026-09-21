@@ -15,10 +15,19 @@ import docStyles from './docs.css';
 import path from 'path';
 import React from 'react';
 
-
 export const ImageContext = React.createContext();
 
-export function Hero({wide, narrow, wide2x, narrow2x, wideWebp, narrowWebp, wide2xWebp, narrow2xWebp, alt}) {
+export function Hero({
+  wide,
+  narrow,
+  wide2x,
+  narrow2x,
+  wideWebp,
+  narrowWebp,
+  wide2xWebp,
+  narrow2xWebp,
+  alt
+}) {
   // Temporary fix for parcel issue with relative urls in server rendering.
   let publicUrl = React.useContext(ImageContext);
   let baseUrl = publicUrl.replace(/\/$/, '');
@@ -34,10 +43,26 @@ export function Hero({wide, narrow, wide2x, narrow2x, wideWebp, narrowWebp, wide
   return (
     <div className={docStyles.heroImage}>
       <picture>
-        <source srcSet={` ${wideWebpUrl} 967w,  ${wide2xWebpUrl} 2x`} type="image/webp" media="(min-width: 600px)" />
-        <source srcSet={`${narrowWebpUrl} 600w, ${narrow2xWebpUrl} 2x`} type="image/webp" media="(max-width: 600px)" />
-        <source srcSet={` ${wideUrl} 967w,  ${wide2xUrl} 2x`} type="image/png" media="(min-width: 600px)" />
-        <source srcSet={`${narrowUrl} 600w, ${narrow2xUrl} 2x`} type="image/png" media="(max-width: 600px)" />
+        <source
+          srcSet={` ${wideWebpUrl} 967w,  ${wide2xWebpUrl} 2x`}
+          type="image/webp"
+          media="(min-width: 600px)"
+        />
+        <source
+          srcSet={`${narrowWebpUrl} 600w, ${narrow2xWebpUrl} 2x`}
+          type="image/webp"
+          media="(max-width: 600px)"
+        />
+        <source
+          srcSet={` ${wideUrl} 967w,  ${wide2xUrl} 2x`}
+          type="image/png"
+          media="(min-width: 600px)"
+        />
+        <source
+          srcSet={`${narrowUrl} 600w, ${narrow2xUrl} 2x`}
+          type="image/png"
+          media="(max-width: 600px)"
+        />
         <img src={wideUrl} alt={alt} />
       </picture>
     </div>
@@ -49,14 +74,16 @@ export function Image({src, expandable, ...otherProps}) {
   let baseUrl = publicUrl.replace(/\/$/, '');
   let url = baseUrl + '/' + path.basename(src);
 
-  let className = clsx(
-    docStyles.video,
-    expandable && docStyles.expandableImage
-  );
+  let className = clsx(docStyles.video, expandable && docStyles.expandableImage);
 
   return (
     // eslint-disable-next-line jsx-a11y/alt-text
-    <img src={url} className={className} data-img={expandable ? 'expand-img' : null} {...otherProps} />
+    <img
+      src={url}
+      className={className}
+      data-img={expandable ? 'expand-img' : null}
+      {...otherProps}
+    />
   );
 }
 
@@ -76,7 +103,5 @@ export function Track({src, srclang: srcLang, ...otherProps}) {
   let baseUrl = publicUrl.replace(/\/$/, '');
   let url = baseUrl + '/' + path.basename(src);
 
-  return (
-    <track src={url} {...otherProps} srcLang={srcLang} />
-  );
+  return <track src={url} {...otherProps} srcLang={srcLang} />;
 }

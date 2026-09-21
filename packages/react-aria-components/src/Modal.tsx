@@ -28,7 +28,11 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {isScrollable} from 'react-aria/private/utils/isScrollable';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
+import {
+  OverlayTriggerProps,
+  OverlayTriggerState,
+  useOverlayTriggerState
+} from 'react-stately/useOverlayTriggerState';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
@@ -36,33 +40,43 @@ import {useIsSSR} from 'react-aria/SSRProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
 
-export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ModalOverlayProps
+  extends
+    AriaModalOverlayProps,
+    OverlayTriggerProps,
+    RenderProps<ModalRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ModalOverlay'
    */
-  className?: ClassNameOrFunction<ModalRenderProps>,
+  className?: ClassNameOrFunction<ModalRenderProps>;
   /**
    * Whether the modal is currently performing an entry animation.
    */
-  isEntering?: boolean,
+  isEntering?: boolean;
   /**
    * Whether the modal is currently performing an exit animation.
    */
-  isExiting?: boolean,
+  isExiting?: boolean;
   /**
-   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
-   * @default document.body
+   * The container element in which the overlay portal will be placed. This may have unknown
+   * behavior depending on where it is portalled to.
+   *
    * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
+   * @default document.body
    */
-  UNSTABLE_portalContainer?: Element
+  UNSTABLE_portalContainer?: Element;
 }
 
 interface InternalModalContextValue {
-  modalProps: DOMAttributes,
-  modalRef: RefObject<HTMLDivElement | null>,
-  isExiting: boolean,
-  isDismissable?: boolean
+  modalProps: DOMAttributes;
+  modalRef: RefObject<HTMLDivElement | null>;
+  isExiting: boolean;
+  isDismissable?: boolean;
 }
 
 export const ModalContext = createContext<ContextValue<ModalOverlayProps, HTMLDivElement>>(null);
@@ -71,34 +85,58 @@ const InternalModalContext = createContext<InternalModalContextValue | null>(nul
 export interface ModalRenderProps {
   /**
    * Whether the modal is currently entering. Use this to apply animations.
+   *
    * @selector [data-entering]
    */
-  isEntering: boolean,
+  isEntering: boolean;
   /**
    * Whether the modal is currently exiting. Use this to apply animations.
+   *
    * @selector [data-exiting]
    */
-  isExiting: boolean,
+  isExiting: boolean;
   /**
    * State of the modal.
    */
-  state: OverlayTriggerState
+  state: OverlayTriggerState;
 }
 
 /**
  * A modal is an overlay element which blocks interaction with elements outside it.
  */
-export const Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(function Modal(
+  props: ModalOverlayProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   let ctx = useContext(InternalModalContext);
 
   if (ctx) {
-    if (process.env.NODE_ENV !== 'production' && (props.onOpenChange || props.defaultOpen !== undefined || props.isOpen !== undefined)) {
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      (props.onOpenChange || props.defaultOpen !== undefined || props.isOpen !== undefined)
+    ) {
       // create a list of props that are passed in but not allowed when using an external ModalOverlay
-      const invalidSet = new Set(['isDismissable', 'isKeyboardDismissDisabled', 'isOpen', 'defaultOpen', 'onOpenChange', 'isEntering', 'isExiting', 'UNSTABLE_portalContainer', 'shouldCloseOnInteractOutside']);
+      const invalidSet = new Set([
+        'isDismissable',
+        'isKeyboardDismissDisabled',
+        'isOpen',
+        'defaultOpen',
+        'onOpenChange',
+        'isEntering',
+        'isExiting',
+        'UNSTABLE_portalContainer',
+        'shouldCloseOnInteractOutside'
+      ]);
       const invalidProps = Object.keys(props).filter(key => invalidSet.has(key));
-      console.warn(`This modal is already wrapped in a ModalOverlay, props [${invalidProps.join(', ')}] should be placed on the ModalOverlay instead.`);
+      console.warn(
+        `This modal is already wrapped in a ModalOverlay, props [${invalidProps.join(', ')}] should be placed on the ModalOverlay instead.`
+      );
     }
-    return <ModalContent {...props} modalRef={ref}>{props.children}</ModalContent>;
+    return (
+      <ModalContent {...props} modalRef={ref}>
+        {props.children}
+      </ModalContent>
+    );
   }
 
   let {
@@ -134,20 +172,26 @@ export const Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(function Modal
 });
 
 interface ModalOverlayInnerProps extends ModalOverlayProps {
-  overlayRef: RefObject<HTMLDivElement | null>,
-  modalRef: RefObject<HTMLDivElement | null>,
-  state: OverlayTriggerState,
-  isExiting: boolean
+  overlayRef: RefObject<HTMLDivElement | null>;
+  modalRef: RefObject<HTMLDivElement | null>;
+  state: OverlayTriggerState;
+  isExiting: boolean;
 }
 
 function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ModalContext);
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
-  let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
+  let state =
+    props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
   if (state === contextState) {
-    if (process.env.NODE_ENV !== 'production' && (props.onOpenChange || props.defaultOpen !== undefined || props.isOpen !== undefined)) {
-      console.warn('This modals state is controlled by a trigger, place onOpenChange on the trigger instead.');
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      (props.onOpenChange || props.defaultOpen !== undefined || props.isOpen !== undefined)
+    ) {
+      console.warn(
+        'This modals state is controlled by a trigger, place onOpenChange on the trigger instead.'
+      );
     }
   }
 
@@ -168,14 +212,17 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
       state={state}
       isExiting={isExiting}
       overlayRef={objectRef}
-      modalRef={modalRef} />
+      modalRef={modalRef}
+    />
   );
 }
 
 /**
  * A ModalOverlay is a wrapper for a Modal which allows customizing the backdrop element.
  */
-export const ModalOverlay = /*#__PURE__*/ (forwardRef as forwardRefType)(ModalOverlayWithForwardRef);
+export const ModalOverlay = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  ModalOverlayWithForwardRef
+);
 
 function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInnerProps) {
   let modalRef = props.modalRef;
@@ -197,7 +244,9 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   let pageWidth: number | undefined = undefined;
   let pageHeight: number | undefined = undefined;
   if (typeof document !== 'undefined') {
-    let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
+    let scrollingElement = isScrollable(document.body)
+      ? document.body
+      : document.scrollingElement || document.documentElement;
     // Prevent Firefox from adding scrollbars when the page has a fractional width/height.
     let fractionalWidthDifference = scrollingElement.getBoundingClientRect().width % 1;
     let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
@@ -213,6 +262,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
     '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
+  // oxlint-disable react/react-compiler
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
       <dom.div
@@ -224,7 +274,10 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
         data-exiting={props.isExiting || undefined}>
         <Provider
           values={[
-            [InternalModalContext, {modalProps, modalRef, isExiting: props.isExiting, isDismissable: props.isDismissable}],
+            [
+              InternalModalContext,
+              {modalProps, modalRef, isExiting: props.isExiting, isDismissable: props.isDismissable}
+            ],
             [OverlayTriggerStateContext, state]
           ]}>
           {renderProps.children}
@@ -232,15 +285,19 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
       </dom.div>
     </Overlay>
   );
+  // oxlint-enable react/react-compiler
 }
 
-interface ModalContentProps extends RenderProps<ModalRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+interface ModalContentProps
+  extends RenderProps<ModalRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ModalContent'
    */
-  className?: ClassNameOrFunction<ModalRenderProps>,
-  modalRef: ForwardedRef<HTMLDivElement>
+  className?: ClassNameOrFunction<ModalRenderProps>;
+  modalRef: ForwardedRef<HTMLDivElement>;
 }
 
 function ModalContent(props: ModalContentProps) {
@@ -267,9 +324,7 @@ function ModalContent(props: ModalContentProps) {
       ref={ref}
       data-entering={entering || undefined}
       data-exiting={isExiting || undefined}>
-      {isDismissable &&
-        <DismissButton onDismiss={state.close} />
-      }
+      {isDismissable && <DismissButton onDismiss={state.close} />}
       {renderProps.children}
     </dom.div>
   );

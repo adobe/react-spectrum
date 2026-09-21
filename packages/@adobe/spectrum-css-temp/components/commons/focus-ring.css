@@ -3,7 +3,10 @@
   --spectrum-focus-ring-gap: var(--spectrum-alias-input-focusring-gap);
   --spectrum-focus-ring-size: var(--spectrum-alias-input-focusring-size);
   --spectrum-focus-ring-border-size: 0px;
-  --spectrum-focus-ring-color: xvar(--spectrum-high-contrast-focus-ring-color, var(--spectrum-alias-focus-ring-color));
+  --spectrum-focus-ring-color: xvar(
+    --spectrum-high-contrast-focus-ring-color,
+    var(--spectrum-alias-focus-ring-color)
+  );
 
   &:after {
     border-radius: calc(var(--spectrum-focus-ring-border-radius) + var(--spectrum-focus-ring-gap));
@@ -17,8 +20,9 @@
     margin: calc(-1 * var(--spectrum-focus-ring-border-size));
     pointer-events: none;
 
-    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
-                margin var(--spectrum-global-animation-duration-100) ease-out;
+    transition:
+      box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+      margin var(--spectrum-global-animation-duration-100) ease-out;
   }
 }
 
@@ -40,7 +44,8 @@
 
   &:focus-visible {
     &:after {
-      margin: 0 0 calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size)) 0;
+      margin: 0 0 calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size))
+        0;
       box-shadow: 0 var(--spectrum-focus-ring-size) 0 var(--spectrum-focus-ring-color);
     }
   }
@@ -50,7 +55,10 @@
   .spectrum-FocusRing,
   .spectrum-FocusRing-ring,
   .spectrum-FocusRing--quiet {
-    --spectrum-high-contrast-focus-ring-color: xvar(--spectrum-high-contrast-focus-ring-color, Highlight);
+    --spectrum-high-contrast-focus-ring-color: xvar(
+      --spectrum-high-contrast-focus-ring-color,
+      Highlight
+    );
     &:after {
       forced-color-adjust: none;
     }

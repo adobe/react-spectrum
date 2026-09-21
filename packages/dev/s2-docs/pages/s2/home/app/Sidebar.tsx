@@ -3,13 +3,17 @@ import Add from '@react-spectrum/s2/icons/Add';
 import Home from '@react-spectrum/s2/icons/Home';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import Lightbulb from '@react-spectrum/s2/icons/Lightbulb';
-import { focusRing, size, style } from "@react-spectrum/s2/style" with { type: 'macro' };
-import { ActionButton, Button, pressScale, createIcon } from '@react-spectrum/s2';
-import { useRef, useState } from 'react';
-import { ToggleButtonGroup as RACToggleButtonGroup, ToggleButton as RACToggleButton, useLocale } from 'react-aria-components';
+import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ActionButton, Button, pressScale, createIcon} from '@react-spectrum/s2';
+import {useRef, useState} from 'react';
+import {
+  ToggleButtonGroup as RACToggleButtonGroup,
+  ToggleButton as RACToggleButton,
+  useLocale
+} from 'react-aria-components';
 
-const SM = `@container (min-width: ${(640 / 16)}rem)`;
-const LG = `@container (width > ${(1024 / 16)}rem)`;
+const SM = `@container (min-width: ${640 / 16}rem)`;
+const LG = `@container (width > ${1024 / 16}rem)`;
 
 const textStyle = style({
   opacity: {
@@ -54,8 +58,16 @@ export function Sidebar({page, onPageChange}: any) {
       {/* This button is actually kinda custom to support the expand/collapsed state... */}
       <Button
         variant="accent"
-        styles={style({marginBottom: 8, width: {default: 32, [LG]: 80, state: {expanded: 80, collapsed: 32}}})({state})}
-        UNSAFE_style={{alignItems: 'center', justifyContent: 'start', overflow: 'clip', transition: 'all 300ms'}}>
+        styles={style({
+          marginBottom: 8,
+          width: {default: 32, [LG]: 80, state: {expanded: 80, collapsed: 32}}
+        })({state})}
+        UNSAFE_style={{
+          alignItems: 'center',
+          justifyContent: 'start',
+          overflow: 'clip',
+          transition: 'all 300ms'
+        }}>
         <span className={style({marginStart: size(6)})}>
           <Add />
         </span>
@@ -84,7 +96,7 @@ export function Sidebar({page, onPageChange}: any) {
       <div className={style({flexGrow: 1})} />
       <PanelToggleButton state={state} setState={setState} />
     </div>
-  )
+  );
 }
 
 function PanelToggleButton({state, setState}: any) {
@@ -96,10 +108,10 @@ function PanelToggleButton({state, setState}: any) {
       styles={style({alignSelf: 'start'})}
       // @ts-ignore - should we expose this?
       onHoverChange={setHovered}
-      onPress={(e) => {
+      onPress={e => {
         if (state == null) {
           let container = e.target.closest('[data-container]') as HTMLElement;
-          setState(container?.offsetWidth > 1024 ? 'collapsed' : 'expanded')
+          setState(container?.offsetWidth > 1024 ? 'collapsed' : 'expanded');
         } else {
           setState(state === 'expanded' ? 'collapsed' : 'expanded');
         }
@@ -115,7 +127,10 @@ const PanelIcon = createIcon(props => {
   let {state, isHovered, ...otherProps} = props as any;
   return (
     <svg viewBox="0 0 20 20" fill="var(--iconPrimary)" {...otherProps}>
-      <path d="M15.75 18H4.25C3.00977 18 2 16.9907 2 15.75V4.25C2 3.00928 3.00977 2 4.25 2H15.75C16.9902 2 18 3.00928 18 4.25V15.75C18 16.9907 16.9902 18 15.75 18ZM4.25 3.5C3.83691 3.5 3.5 3.83643 3.5 4.25V15.75C3.5 16.1636 3.83691 16.5 4.25 16.5H15.75C16.1631 16.5 16.5 16.1636 16.5 15.75V4.25C16.5 3.83643 16.1631 3.5 15.75 3.5H4.25Z" fill="var(--iconPrimary)" />
+      <path
+        d="M15.75 18H4.25C3.00977 18 2 16.9907 2 15.75V4.25C2 3.00928 3.00977 2 4.25 2H15.75C16.9902 2 18 3.00928 18 4.25V15.75C18 16.9907 16.9902 18 15.75 18ZM4.25 3.5C3.83691 3.5 3.5 3.83643 3.5 4.25V15.75C3.5 16.1636 3.83691 16.5 4.25 16.5H15.75C16.1631 16.5 16.5 16.1636 16.5 15.75V4.25C16.5 3.83643 16.1631 3.5 15.75 3.5H4.25Z"
+        fill="var(--iconPrimary)"
+      />
       <rect
         x={5}
         y={5}
@@ -140,7 +155,8 @@ const PanelIcon = createIcon(props => {
               }
             }
           }
-        })({state, isHovered})} />
+        })({state, isHovered})}
+      />
     </svg>
   );
 });
@@ -157,12 +173,13 @@ function SideNav(props: any) {
         gap: 8,
         boxSizing: 'border-box',
         width: 'full'
-      })} />
+      })}
+    />
   );
 }
 
 function SideNavItem(props: any) {
-  let ref = useRef(null)
+  let ref = useRef(null);
   return (
     <RACToggleButton
       {...props}
@@ -188,22 +205,25 @@ function SideNavItem(props: any) {
         borderRadius: 'default',
         transition: 'default'
       })}>
-      {(renderProps) => (<>
-        <span
-          className={style({
-            flexShrink: 0,
-            width: 2,
-            height: '[1lh]',
-            borderRadius: 'full',
-            transition: 'default',
-            backgroundColor: {
-              default: 'transparent',
-              isHovered: 'gray-400',
-              isSelected: 'gray-800'
-            }
-          })(renderProps)} />
-        {props.children}
-      </>)}
+      {renderProps => (
+        <>
+          <span
+            className={style({
+              flexShrink: 0,
+              width: 2,
+              height: '[1lh]',
+              borderRadius: 'full',
+              transition: 'default',
+              backgroundColor: {
+                default: 'transparent',
+                isHovered: 'gray-400',
+                isSelected: 'gray-800'
+              }
+            })(renderProps)}
+          />
+          {props.children}
+        </>
+      )}
     </RACToggleButton>
   );
 }

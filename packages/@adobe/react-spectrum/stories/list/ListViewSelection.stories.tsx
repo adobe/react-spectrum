@@ -15,8 +15,7 @@ import {Text} from '../../src/text/Text';
 export default {
   title: 'ListView/Selection',
   component: ListView,
-  excludeStories: [
-  ],
+  excludeStories: [],
   args: {
     isQuiet: false,
     density: 'regular',
@@ -55,8 +54,14 @@ export default {
 export type ListViewStory = StoryObj<typeof ListView>;
 
 export const Default: ListViewStory = {
-  render: (args) => (
-    <ListView aria-label="default selection ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} {...args}>
+  render: args => (
+    <ListView
+      aria-label="default selection ListView"
+      width="250px"
+      height={400}
+      onSelectionChange={action('onSelectionChange')}
+      items={items}
+      {...args}>
       {(item: any) => (
         <Item textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
@@ -69,8 +74,15 @@ export const Default: ListViewStory = {
 };
 
 export const DisableFolders: ListViewStory = {
-  render: (args) => (
-    <ListView aria-label="disabled folders ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} {...args}>
+  render: args => (
+    <ListView
+      aria-label="disabled folders ListView"
+      width="250px"
+      height={400}
+      onSelectionChange={action('onSelectionChange')}
+      items={items}
+      disabledKeys={['c', 'e', 'm']}
+      {...args}>
       {(item: any) => (
         <Item textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
@@ -83,8 +95,16 @@ export const DisableFolders: ListViewStory = {
 };
 
 export const DisableFolderSelection: ListViewStory = {
-  render: (args) => (
-    <ListView aria-label="disabled folder selection ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} disabledBehavior="selection" {...args}>
+  render: args => (
+    <ListView
+      aria-label="disabled folder selection ListView"
+      width="250px"
+      height={400}
+      onSelectionChange={action('onSelectionChange')}
+      items={items}
+      disabledKeys={['c', 'e', 'm']}
+      disabledBehavior="selection"
+      {...args}>
       {(item: any) => (
         <Item textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
@@ -106,49 +126,56 @@ export const DisableFolderSelection: ListViewStory = {
   name: 'disable folders selection'
 };
 
-export const Links: StoryFn<typeof ListView> = (args) => {
+export const Links: StoryFn<typeof ListView> = args => {
   return (
-    <ListView aria-label="ListView with links" width="250px" height={400} onSelectionChange={action('onSelectionChange')} {...args}>
-      <Item key="https://adobe.com/" href="https://adobe.com/">Adobe</Item>
-      <Item key="https://google.com/" href="https://google.com/">Google</Item>
-      <Item key="https://apple.com/" href="https://apple.com/">Apple</Item>
-      <Item key="https://nytimes.com/" href="https://nytimes.com/">New York Times</Item>
+    <ListView
+      aria-label="ListView with links"
+      width="250px"
+      height={400}
+      onSelectionChange={action('onSelectionChange')}
+      {...args}>
+      <Item key="https://adobe.com/" href="https://adobe.com/">
+        Adobe
+      </Item>
+      <Item key="https://google.com/" href="https://google.com/">
+        Google
+      </Item>
+      <Item key="https://apple.com/" href="https://apple.com/">
+        Apple
+      </Item>
+      <Item key="https://nytimes.com/" href="https://nytimes.com/">
+        New York Times
+      </Item>
     </ListView>
   );
 };
 
 export const OnAction: ListViewStory = {
-  render: (args) => (
-    <NavigationExample {...args} />
-  ),
+  render: args => <NavigationExample {...args} />,
   name: 'onAction'
 };
 
 export const OnActionDisableFolders: ListViewStory = {
-  render: (args) => (
+  render: args => (
     <NavigationExample disabledType="folder" disabledBehavior="selection" {...args} />
   ),
   name: 'onAction, disable folder selection'
 };
 
 export const onActionDisableFoldersRowActions: ListViewStory = {
-  render: (args) => (
+  render: args => (
     <NavigationExample disabledType="folder" disabledBehavior="selection" showActions {...args} />
   ),
   name: 'onAction, disable folder selection, with row action'
 };
 
 export const onActionDisableFiles: ListViewStory = {
-  render: (args) => (
-    <NavigationExample disabledType="file" {...args} />
-  ),
+  render: args => <NavigationExample disabledType="file" {...args} />,
   name: 'onAction, disable files'
 };
 
 export const onActionDisableFilesRowActions: ListViewStory = {
-  render: (args) => (
-    <NavigationExample disabledType="file" showActions {...args} />
-  ),
+  render: args => <NavigationExample disabledType="file" showActions {...args} />,
   name: 'onAction, disable files, with row actions'
 };
 
@@ -182,7 +209,9 @@ function NavigationExample(props) {
   return (
     <div>
       <Breadcrumbs onAction={onBreadcrumbAction}>
-        {breadcrumbs.map(item => <Item key={item.key}>{item.name}</Item>)}
+        {breadcrumbs.map(item => (
+          <Item key={item.key}>{item.name}</Item>
+        ))}
       </Breadcrumbs>
       <ListView
         aria-label={name}
@@ -193,14 +222,18 @@ function NavigationExample(props) {
         selectionStyle="checkbox"
         selectedKeys={selectedKeys}
         items={children}
-        disabledKeys={props.disabledType ? children.filter(item => item.type === props.disabledType).map(item => item.key) : null}
+        disabledKeys={
+          props.disabledType
+            ? children.filter(item => item.type === props.disabledType).map(item => item.key)
+            : null
+        }
         onAction={chain(onAction, action('onAction'))}
         {...props}>
         {(item: any) => (
           <Item hasChildItems={item.type === 'folder'} textValue={item.name}>
             {item.type === 'folder' ? <Folder /> : null}
             <Text>{item.name}</Text>
-            {props.showActions &&
+            {props.showActions && (
               <ActionMenu>
                 <Item key="add">
                   <Add />
@@ -211,7 +244,7 @@ function NavigationExample(props) {
                   <Text>Delete</Text>
                 </Item>
               </ActionMenu>
-            }
+            )}
           </Item>
         )}
       </ListView>

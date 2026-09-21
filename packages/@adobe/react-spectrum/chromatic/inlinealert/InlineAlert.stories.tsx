@@ -88,11 +88,14 @@ export const LongContent: InlineAlertStory = {
   args: {
     variant: 'info'
   },
-  render: (args) => (
+  render: args => (
     <div style={{width: '300px'}}>
       <InlineAlert {...args}>
         <Heading>In-line Alert Heading that goes on and on my friend</Heading>
-        <Content>This is a React Spectrum InlineAlert that started announcing without knowing what it was. This is the inline alert that doesn't end. Yes, it goes on and on, my friend.</Content>
+        <Content>
+          This is a React Spectrum InlineAlert that started announcing without knowing what it was.
+          This is the inline alert that doesn't end. Yes, it goes on and on, my friend.
+        </Content>
       </InlineAlert>
     </div>
   )

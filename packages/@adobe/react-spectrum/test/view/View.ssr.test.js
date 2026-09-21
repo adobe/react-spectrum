@@ -14,9 +14,12 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('View SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {View} from '../../exports/index.ts';
       <View />
-    `);
+    `
+    );
   });
 });

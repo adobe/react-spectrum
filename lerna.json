@@ -4,10 +4,7 @@
   "useWorkspaces": true,
   "command": {
     "publish": {
-      "allowBranch": [
-        "main",
-        "release"
-      ]
+      "allowBranch": ["main", "release"]
     }
   }
 }

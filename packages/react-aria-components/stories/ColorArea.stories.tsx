@@ -56,9 +56,7 @@ export const ColorAreaExampleRender = (props: ColorAreaProps): JSX.Element => (
     })}>
     <ColorThumb
       style={({color, isDisabled, isFocusVisible}) => ({
-        background: isDisabled
-          ? 'rgb(142, 142, 142)'
-          : color.toString(),
+        background: isDisabled ? 'rgb(142, 142, 142)' : color.toString(),
         border: `2px solid ${isDisabled ? 'rgb(142, 142, 142)' : 'white'}`,
         borderRadius: '50%',
         boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
@@ -66,14 +64,13 @@ export const ColorAreaExampleRender = (props: ColorAreaProps): JSX.Element => (
         height: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE,
         transform: 'translate(-50%, -50%)',
         width: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE
-      })} />
+      })}
+    />
   </ColorArea>
 );
 
 export const ColorAreaExample: ColorAreaStory = {
-  render: (args) => (
-    <ColorAreaExampleRender {...args} />
-  ),
+  render: args => <ColorAreaExampleRender {...args} />,
   args: {
     defaultValue: 'rgb(100, 149, 237)',
     xChannel: 'red',

@@ -17,7 +17,11 @@ import {render} from '@react-spectrum/test-utils-internal';
 import {defaultTheme as theme} from '../../src/theme-default/defaultTheme';
 
 function _ExampleOverlay(props, ref) {
-  return <span data-testid="contents" ref={ref}>Overlay</span>;
+  return (
+    <span data-testid="contents" ref={ref}>
+      Overlay
+    </span>
+  );
 }
 let ExampleOverlay = React.forwardRef(_ExampleOverlay);
 

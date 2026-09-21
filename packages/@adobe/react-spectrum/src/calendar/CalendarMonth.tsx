@@ -21,26 +21,20 @@ import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useCalendarGrid} from 'react-aria/useCalendar';
 
 interface CalendarMonthProps extends CalendarPropsBase, DOMProps, StyleProps {
-  state: CalendarState | RangeCalendarState,
-  startDate: CalendarDate
+  state: CalendarState | RangeCalendarState;
+  startDate: CalendarDate;
 }
 
 export function CalendarMonth(props: CalendarMonthProps): JSX.Element {
-  let {
-    state,
-    startDate,
-    firstDayOfWeek
-  } = props;
+  let {state, startDate, firstDayOfWeek} = props;
 
-  let {
-    gridProps,
-    headerProps,
-    weekDays,
-    weeksInMonth
-  } = useCalendarGrid({
-    ...props,
-    endDate: endOfMonth(startDate)
-  }, state);
+  let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(
+    {
+      ...props,
+      endDate: endOfMonth(startDate)
+    },
+    state
+  );
 
   return (
     <table
@@ -49,12 +43,8 @@ export function CalendarMonth(props: CalendarMonthProps): JSX.Element {
       <thead {...headerProps}>
         <tr>
           {weekDays.map((day, index) => (
-            <th
-              key={index}
-              className={classNames(styles, 'spectrum-Calendar-tableCell')}>
-              <span className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
-                {day}
-              </span>
+            <th key={index} className={classNames(styles, 'spectrum-Calendar-tableCell')}>
+              <span className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>{day}</span>
             </th>
           ))}
         </tr>
@@ -62,16 +52,21 @@ export function CalendarMonth(props: CalendarMonthProps): JSX.Element {
       <tbody>
         {[...new Array(weeksInMonth).keys()].map(weekIndex => (
           <tr key={weekIndex}>
-            {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (
-              date ? (
-                <CalendarCell
-                  key={i}
-                  state={state}
-                  date={date}
-                  currentMonth={startDate}
-                  firstDayOfWeek={firstDayOfWeek} />
-              ) : <td key={i} />
-            ))}
+            {state
+              .getDatesInWeek(weekIndex, startDate)
+              .map((date, i) =>
+                date ? (
+                  <CalendarCell
+                    key={i}
+                    state={state}
+                    date={date}
+                    currentMonth={startDate}
+                    firstDayOfWeek={firstDayOfWeek}
+                  />
+                ) : (
+                  <td key={i} />
+                )
+              )}
           </tr>
         ))}
       </tbody>

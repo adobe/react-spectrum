@@ -4,27 +4,27 @@
 
 // Generate the crc32 table instead of hardcoding it to avoid having a giant constant
 // in the minified output...
-const CRC32_TABLE = function () {
+const CRC32_TABLE = (function () {
   let tbl = new Int32Array(256);
   let c: number;
   for (let n = 0; n < 256; n++) {
     c = n;
     for (let k = 0; k < 8; k++) {
-      c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
+      c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
     }
 
     tbl[n] = c;
   }
 
   return tbl;
-}();
+})();
 
 function crc32(arr: Uint8Array) {
   let crc = -1;
   for (let i = 0; i < arr.length; i++) {
-    crc = (crc >>> 8) ^ CRC32_TABLE[(crc ^ arr[i]) & 0xFF];
+    crc = (crc >>> 8) ^ CRC32_TABLE[(crc ^ arr[i]) & 0xff];
   }
-  return (crc ^ (-1)) >>> 0;
+  return (crc ^ -1) >>> 0;
 }
 
 function putUint32s(arr: Uint8Array, offset: number, ...values: number[]) {
@@ -77,7 +77,7 @@ export function zip(files: {[name: string]: string}): Blob {
 
   // Push all accrued CD records..
   records.push(...cdrs);
-		
+
   // Add EOCD record...
   let eocd = new Uint8Array(22);
   putUint32s(eocd, 0, 0x06054b50);

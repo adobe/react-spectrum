@@ -34,7 +34,11 @@ describe('Slots', function () {
     let ref = useRef();
     let {pressProps} = usePress({onPress: internalResults.onPress, ref});
     let id = useId(internalResults.id);
-    return <button id={id} {...pressProps} ref={ref}>push me</button>;
+    return (
+      <button id={id} {...pressProps} ref={ref}>
+        push me
+      </button>
+    );
   }
 
   it('sets props', function () {
@@ -127,7 +131,9 @@ describe('Slots', function () {
       let id = useId(props.id);
       return (
         <>
-          <div role="presentation" aria-controls={id}>nowhere</div>
+          <div role="presentation" aria-controls={id}>
+            nowhere
+          </div>
           <SlotProvider slots={{slotname: {...props.slots, id}}}>
             <Component id="bar" />
           </SlotProvider>
@@ -144,7 +150,9 @@ describe('Slots', function () {
       let id = useId();
       return (
         <>
-          <div role="presentation" aria-controls={id}>nowhere</div>
+          <div role="presentation" aria-controls={id}>
+            nowhere
+          </div>
           <SlotProvider slots={{slotname: {...props.slots, id}}}>
             <Component id="bar" />
           </SlotProvider>
@@ -161,7 +169,9 @@ describe('Slots', function () {
       let id = useSlotId();
       return (
         <>
-          <div role="presentation" aria-controls={id}>nowhere</div>
+          <div role="presentation" aria-controls={id}>
+            nowhere
+          </div>
           <SlotProvider slots={{slotname: {id}}}>
             <Component id="bar" />
           </SlotProvider>
@@ -185,7 +195,9 @@ describe('Slots', function () {
 
       return (
         <>
-          <div role="presentation" aria-controls={id1}>nowhere</div>
+          <div role="presentation" aria-controls={id1}>
+            nowhere
+          </div>
           <SlotProvider slots={{slotname: {id: id1}}}>
             <Component id={id2} />
           </SlotProvider>
@@ -203,7 +215,7 @@ describe('Slots', function () {
     };
     let renderCount = 0;
 
-    const TestComponent = (props) => {
+    const TestComponent = props => {
       useSlotProps(props, 'slotname');
       React.useEffect(() => {
         renderCount++;
@@ -222,24 +234,18 @@ describe('Slots', function () {
       return (
         <StrictMode>
           <SlotProvider>
-            <MemoizedComponent>
-              {StableTestComponent}
-            </MemoizedComponent>
+            <MemoizedComponent>{StableTestComponent}</MemoizedComponent>
           </SlotProvider>
         </StrictMode>
       );
     };
 
-    const {rerender} = render(
-      <FullComponentTree slots={slots} />
-    );
+    const {rerender} = render(<FullComponentTree slots={slots} />);
 
     let renderCountBeforeRerender = renderCount;
 
     // Trigger a rerender with the same stable props
-    rerender(
-      <FullComponentTree slots={slots} />
-    );
+    rerender(<FullComponentTree slots={slots} />);
 
     expect(renderCount).toEqual(renderCountBeforeRerender);
   });
@@ -250,7 +256,7 @@ describe('Slots', function () {
     };
     let renderCount = 0;
 
-    const TestComponent = (props) => {
+    const TestComponent = props => {
       useSlotProps(props, 'slotname');
       React.useEffect(() => {
         renderCount++;
@@ -270,25 +276,19 @@ describe('Slots', function () {
         <StrictMode>
           <SlotProvider>
             <MemoizedComponent>
-              <ClearSlots>
-                {StableTestComponent}
-              </ClearSlots>
+              <ClearSlots>{StableTestComponent}</ClearSlots>
             </MemoizedComponent>
           </SlotProvider>
         </StrictMode>
       );
     };
 
-    const {rerender} = render(
-      <FullComponentTree slots={slots} />
-    );
+    const {rerender} = render(<FullComponentTree slots={slots} />);
 
     let renderCountBeforeRerender = renderCount;
 
     // Trigger a rerender with the same stable props
-    rerender(
-      <FullComponentTree slots={slots} />
-    );
+    rerender(<FullComponentTree slots={slots} />);
 
     expect(renderCount).toEqual(renderCountBeforeRerender);
   });

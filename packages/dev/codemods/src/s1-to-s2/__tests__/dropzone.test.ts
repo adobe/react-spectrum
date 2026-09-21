@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Rewrites illustration import to S2', `
+test(
+  'Rewrites illustration import to S2',
+  `
 import {DropZone, IllustratedMessage, Heading} from '@adobe/react-spectrum';
 import Upload from '@spectrum-icons/illustrations/Upload';
 
@@ -20,4 +22,5 @@ import Upload from '@spectrum-icons/illustrations/Upload';
     </IllustratedMessage>
   </DropZone>
 </div>
-`);
+`
+);

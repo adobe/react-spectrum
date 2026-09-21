@@ -16,10 +16,23 @@ import {Meta} from '@storybook/react';
 const meta: Meta = {
   title: 'ComboBoxRTL',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light', 'dark', 'lightest', 'darkest'], locales: ['ar-AE'], scales: ['medium', 'large']}
+    chromaticProvider: {
+      colorSchemes: ['light', 'dark', 'lightest', 'darkest'],
+      locales: ['ar-AE'],
+      scales: ['medium', 'large']
+    }
   }
 };
 
 export default meta;
 
-export {PropDefaults, PropSelectedKey, PropInputValue, PropAriaLabelled, PropLabelEnd, PropLabelSide, PropCustomWidth, PropContextualHelp} from './ComboBox.stories';
+export {
+  PropDefaults,
+  PropSelectedKey,
+  PropInputValue,
+  PropAriaLabelled,
+  PropLabelEnd,
+  PropLabelSide,
+  PropCustomWidth,
+  PropContextualHelp
+} from './ComboBox.stories';

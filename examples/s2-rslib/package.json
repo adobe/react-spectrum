@@ -1,0 +1,36 @@
+{
+  "name": "s2-rslib",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch"
+  },
+  "dependencies": {
+    "@react-spectrum/s2": "latest",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-react": "^1.4.5",
+    "@rslib/core": "^0.19.6",
+    "@types/react": "^19.2.14",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3",
+    "unplugin-parcel-macros": "^0.2.0"
+  },
+  "resolutions": {
+    "unplugin@npm:^1.9.0": "patch:unplugin@npm%3A1.16.1#~/.yarn/patches/unplugin-npm-1.16.1-77bc28083a.patch"
+  }
+}

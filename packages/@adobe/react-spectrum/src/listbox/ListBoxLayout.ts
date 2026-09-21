@@ -1,13 +1,20 @@
-import {InvalidationContext, LayoutInfo, LayoutNode, ListLayout, ListLayoutOptions, Rect} from 'react-stately/useVirtualizerState';
+import {
+  InvalidationContext,
+  LayoutInfo,
+  LayoutNode,
+  ListLayout,
+  ListLayoutOptions,
+  Rect
+} from 'react-stately/useVirtualizerState';
 import {Node} from '@react-types/shared';
 
 interface ListBoxLayoutProps extends ListLayoutOptions {
-  isLoading?: boolean
+  isLoading?: boolean;
 }
 
 interface ListBoxLayoutOptions extends ListLayoutOptions {
-  placeholderHeight: number,
-  paddingY: number
+  placeholderHeight: number;
+  paddingY: number;
 }
 
 export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
@@ -43,7 +50,12 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
     }
 
     if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer!.visibleRect.width, this.placeholderHeight ?? this.virtualizer!.visibleRect.height);
+      let rect = new Rect(
+        0,
+        y,
+        this.virtualizer!.visibleRect.width,
+        this.placeholderHeight ?? this.virtualizer!.visibleRect.height
+      );
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       let node = {
         layoutInfo: placeholder,

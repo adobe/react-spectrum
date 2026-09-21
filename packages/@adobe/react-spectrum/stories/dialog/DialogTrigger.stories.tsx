@@ -110,71 +110,72 @@ export default {
 
 export type DialogTriggerStory = StoryFn<typeof DialogTrigger>;
 
-export const Default: DialogTriggerStory = (args) => render(args);
+export const Default: DialogTriggerStory = args => render(args);
 
 Default.story = {
   name: 'default'
 };
 
-export const TypePopover: DialogTriggerStory = (args) => renderPopover({type: 'popover', ...args});
+export const TypePopover: DialogTriggerStory = args => renderPopover({type: 'popover', ...args});
 
 TypePopover.story = {
   name: 'type: popover'
 };
 
-export const TypeModal: DialogTriggerStory = (args) => render({type: 'modal', ...args});
+export const TypeModal: DialogTriggerStory = args => render({type: 'modal', ...args});
 
 TypeModal.story = {
   name: 'type: modal'
 };
 
-export const TypeModalIsDismissable: DialogTriggerStory = (args) =>
+export const TypeModalIsDismissable: DialogTriggerStory = args =>
   render({type: 'modal', isDismissable: true, ...args});
 
 TypeModalIsDismissable.story = {
   name: 'type: modal isDismissable'
 };
 
-export const TypeFullscreen: DialogTriggerStory = (args) => render({type: 'fullscreen', ...args});
+export const TypeFullscreen: DialogTriggerStory = args => render({type: 'fullscreen', ...args});
 
 TypeFullscreen.story = {
   name: 'type: fullscreen'
 };
 
-export const TypeFullscreenTakeover: DialogTriggerStory = (args) => render({type: 'fullscreenTakeover', ...args});
+export const TypeFullscreenTakeover: DialogTriggerStory = args =>
+  render({type: 'fullscreenTakeover', ...args});
 
 TypeFullscreenTakeover.story = {
   name: 'type: fullscreenTakeover'
 };
 
-export const TypeTray: DialogTriggerStory = (args) => renderPopover({type: 'tray', ...args});
+export const TypeTray: DialogTriggerStory = args => renderPopover({type: 'tray', ...args});
 
 TypeTray.story = {
   name: 'type: tray'
 };
 
-export const MobileTypeFullscreen: DialogTriggerStory = (args) =>
+export const MobileTypeFullscreen: DialogTriggerStory = args =>
   render({type: 'modal', mobileType: 'fullscreen', ...args});
 
 MobileTypeFullscreen.story = {
   name: 'mobileType: fullscreen'
 };
 
-export const MobileTypeFullscreenTakeover: DialogTriggerStory = (args) =>
+export const MobileTypeFullscreenTakeover: DialogTriggerStory = args =>
   render({type: 'modal', mobileType: 'fullscreenTakeover', ...args});
 
 MobileTypeFullscreenTakeover.story = {
   name: 'mobileType: fullscreenTakeover'
 };
 
-export const PopoverWithMobileTypeModal: DialogTriggerStory = (args) =>
+export const PopoverWithMobileTypeModal: DialogTriggerStory = args =>
   renderPopover({type: 'popover', mobileType: 'modal', ...args});
 
 PopoverWithMobileTypeModal.story = {
   name: 'popover with mobileType: modal'
 };
 
-export const PopoverWithMobileTypeTray: DialogTriggerStory = (args) =>
+export const PopoverWithMobileTypeTray: DialogTriggerStory = args =>
   renderPopover({type: 'popover', mobileType: 'tray', ...args});
 
 PopoverWithMobileTypeTray.story = {
@@ -214,7 +215,7 @@ NestedModals.story = {
 export const NestedModalsFullscreentakeover: DialogTriggerStory = () => (
   <DialogTrigger type="fullscreenTakeover">
     <ActionButton>Trigger</ActionButton>
-    {(close) => (
+    {close => (
       <Dialog>
         <Heading>The Heading</Heading>
         <Header>The Header</Header>
@@ -326,7 +327,7 @@ PopoverInsideScrollView.story = {
   }
 };
 
-export const ShouldFlipWithWidth: DialogTriggerStory = (args) =>
+export const ShouldFlipWithWidth: DialogTriggerStory = args =>
   renderPopover({type: 'popover', width: 'calc(100vh - 100px)', ...args});
 
 ShouldFlipWithWidth.story = {
@@ -337,7 +338,7 @@ export const CloseFunctionWithButtonPopover: DialogTriggerStory = () => (
   <div style={{display: 'flex', margin: '100px 0'}}>
     <DialogTrigger type="popover" onOpenChange={action('open change')}>
       <ActionButton>Trigger</ActionButton>
-      {(close) => (
+      {close => (
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
@@ -367,13 +368,13 @@ CloseFunctionWithButtonPopover.story = {
   name: 'Close function with button: popover'
 };
 
-export const TargetRef: DialogTriggerStory = (args) => <TriggerWithRef type="popover" {...args} />;
+export const TargetRef: DialogTriggerStory = args => <TriggerWithRef type="popover" {...args} />;
 
 TargetRef.story = {
   name: 'targetRef'
 };
 
-export const _AlertDialog: DialogTriggerStory = (args) => renderAlert(args);
+export const _AlertDialog: DialogTriggerStory = args => renderAlert(args);
 
 _AlertDialog.story = {
   name: 'alert dialog'
@@ -433,7 +434,8 @@ CrossoffsetExamples.story = {
   name: 'crossoffset examples'
 };
 
-export const TriggerVisibleThroughUnderlay: DialogTriggerStory = (args) => renderTriggerNotCentered(args);
+export const TriggerVisibleThroughUnderlay: DialogTriggerStory = args =>
+  renderTriggerNotCentered(args);
 
 TriggerVisibleThroughUnderlay.story = {
   name: 'trigger visible through underlay'
@@ -534,11 +536,11 @@ WithTooltipTrigger.story = {
 function CustomDialog({close}) {
   return (
     <Dialog>
-      <Content>
-        Dialog content
-      </Content>
+      <Content>Dialog content</Content>
       <ButtonGroup>
-        <Button variant="cta" onPress={close}>Close</Button>
+        <Button variant="cta" onPress={close}>
+          Close
+        </Button>
       </ButtonGroup>
     </Dialog>
   );
@@ -548,17 +550,17 @@ export const WithTranslations: DialogTriggerStory = () => <TranslateDialogRender
 
 WithTranslations.story = {
   name: 'with translations',
-  parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
+  parameters: {
+    description: {
+      data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'
+    }
+  }
 };
 
 export const TriggersOnEdges: DialogTriggerStory = () => (
   <View width="100%" overflow="auto">
     <Grid
-      areas={[
-        'top    top',
-        'start  end',
-        'bottom bottom'
-      ]}
+      areas={['top    top', 'start  end', 'bottom bottom']}
       columns={['auto', 'auto']}
       rows={['size-450', 'auto', 'size-450']}
       height="1600px"
@@ -569,151 +571,215 @@ export const TriggersOnEdges: DialogTriggerStory = () => (
       <View gridArea="top" justifySelf="center">
         <DialogTrigger type="popover" placement="end" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement Start</Content></Dialog>
+          <Dialog>
+            <Content>Placement Start</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="end top" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement End Top</Content></Dialog>
+          <Dialog>
+            <Content>Placement End Top</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="end bottom" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement End Bottom</Content></Dialog>
+          <Dialog>
+            <Content>Placement End Bottom</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="start" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement End</Content></Dialog>
+          <Dialog>
+            <Content>Placement End</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="start top" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement Start Top</Content></Dialog>
+          <Dialog>
+            <Content>Placement Start Top</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="start bottom" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement Start Bottom</Content></Dialog>
+          <Dialog>
+            <Content>Placement Start Bottom</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="bottom" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement Bottom</Content></Dialog>
+          <Dialog>
+            <Content>Placement Bottom</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>No Placement (default is bottom)</Content></Dialog>
+          <Dialog>
+            <Content>No Placement (default is bottom)</Content>
+          </Dialog>
         </DialogTrigger>
       </View>
       <View gridArea="start" justifySelf="start" alignSelf="center" paddingStart="20px">
         <DialogTrigger type="popover" placement="top" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Top</Content></Dialog>
+          <Dialog>
+            <Content>Placement Top</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="top start" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Top Start</Content></Dialog>
+          <Dialog>
+            <Content>Placement Top Start</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="top end" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Top End</Content></Dialog>
+          <Dialog>
+            <Content>Placement Top End</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="bottom" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Bottom</Content></Dialog>
+          <Dialog>
+            <Content>Placement Bottom</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="bottom start" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Bottom Start</Content></Dialog>
+          <Dialog>
+            <Content>Placement Bottom Start</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="bottom end" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Bottom End</Content></Dialog>
+          <Dialog>
+            <Content>Placement Bottom End</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="end" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement End</Content></Dialog>
+          <Dialog>
+            <Content>Placement End</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>No Placement (default is bottom)</Content></Dialog>
+          <Dialog>
+            <Content>No Placement (default is bottom)</Content>
+          </Dialog>
         </DialogTrigger>
       </View>
       <View gridArea="end" justifySelf="end" alignSelf="center" paddingEnd="20px">
         <DialogTrigger type="popover" placement="top" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Top</Content></Dialog>
+          <Dialog>
+            <Content>Placement Top</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="top end" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Top End</Content></Dialog>
+          <Dialog>
+            <Content>Placement Top End</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="top start" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Top Start</Content></Dialog>
+          <Dialog>
+            <Content>Placement Top Start</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="bottom" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Bottom</Content></Dialog>
+          <Dialog>
+            <Content>Placement Bottom</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="bottom end" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Bottom End</Content></Dialog>
+          <Dialog>
+            <Content>Placement Bottom End</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="bottom start" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Bottom Start</Content></Dialog>
+          <Dialog>
+            <Content>Placement Bottom Start</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" placement="start" shouldFlip={false}>
           <ActionButton>T</ActionButton>
-          <Dialog><Content>Placement Start</Content></Dialog>
+          <Dialog>
+            <Content>Placement Start</Content>
+          </Dialog>
         </DialogTrigger>
         <br />
         <DialogTrigger type="popover" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>No Placement (default is bottom)</Content></Dialog>
+          <Dialog>
+            <Content>No Placement (default is bottom)</Content>
+          </Dialog>
         </DialogTrigger>
       </View>
       <View gridArea="bottom" justifySelf="center">
         <DialogTrigger type="popover" placement="end" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement End</Content></Dialog>
+          <Dialog>
+            <Content>Placement End</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="end bottom" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement End Bottom</Content></Dialog>
+          <Dialog>
+            <Content>Placement End Bottom</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="end top" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement End Top</Content></Dialog>
+          <Dialog>
+            <Content>Placement End Top</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="start" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement Start</Content></Dialog>
+          <Dialog>
+            <Content>Placement Start</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="start bottom" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement Start Bottom</Content></Dialog>
+          <Dialog>
+            <Content>Placement Start Bottom</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="start top" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement Start top</Content></Dialog>
+          <Dialog>
+            <Content>Placement Start top</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" placement="top" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>Placement top</Content></Dialog>
+          <Dialog>
+            <Content>Placement top</Content>
+          </Dialog>
         </DialogTrigger>
         <DialogTrigger type="popover" shouldFlip={false}>
           <ActionButton>Trigger</ActionButton>
-          <Dialog><Content>No Placement (default is bottom)</Content></Dialog>
+          <Dialog>
+            <Content>No Placement (default is bottom)</Content>
+          </Dialog>
         </DialogTrigger>
       </View>
     </Grid>
@@ -731,17 +797,31 @@ function render(props) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
-        {(close) => (
+        {close => (
           <Dialog>
             <Heading id="foo">The Heading</Heading>
             <Header>The Header</Header>
             <Divider />
-            <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
-            {!props.isDismissable &&
+            <Content>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique
+                risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis
+                parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non
+                condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum
+                elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque
+                lectus commodo ornare.
+              </Text>
+            </Content>
+            {!props.isDismissable && (
               <ButtonGroup>
-                <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
-                <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm</Button>
-              </ButtonGroup>}
+                <Button variant="secondary" onPress={chain(close, action('cancel'))}>
+                  Cancel
+                </Button>
+                <Button variant="cta" onPress={chain(close, action('confirm'))}>
+                  Confirm
+                </Button>
+              </ButtonGroup>
+            )}
           </Dialog>
         )}
       </DialogTrigger>
@@ -754,14 +834,33 @@ function renderTriggerNotCentered(props) {
 
   return (
     <div style={{position: 'absolute', top: '100px', left: '100px'}}>
-      <div>action button shouldn't get any events if the underlay is up and you try to click it through the underlay</div>
+      <div>
+        action button shouldn't get any events if the underlay is up and you try to click it through
+        the underlay
+      </div>
       <DialogTrigger {...otherProps} isDismissable onOpenChange={action('open change')}>
-        <ActionButton height={buttonHeight} width={buttonWidth} onPressStart={action('onPressStart')} onPress={action('onPress')} onPressEnd={action('onPressEnd')}>Trigger</ActionButton>
+        <ActionButton
+          height={buttonHeight}
+          width={buttonWidth}
+          onPressStart={action('onPressStart')}
+          onPress={action('onPress')}
+          onPressEnd={action('onPressEnd')}>
+          Trigger
+        </ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
           <Divider />
-          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+          <Content>
+            <Text>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique
+              risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis
+              parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non
+              condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum
+              elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque
+              lectus commodo ornare.
+            </Text>
+          </Content>
         </Dialog>
       </DialogTrigger>
     </div>
@@ -774,37 +873,60 @@ function renderPopover(props, withMargin = true) {
   return (
     <div style={{display: 'flex', width, margin: withMargin ? '100px 0' : undefined}}>
       <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
-        <ActionButton height={buttonHeight} width={buttonWidth}>Trigger</ActionButton>
+        <ActionButton height={buttonHeight} width={buttonWidth}>
+          Trigger
+        </ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
           <Divider />
-          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+          <Content>
+            <Text>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique
+              risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis
+              parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non
+              condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum
+              elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque
+              lectus commodo ornare.
+            </Text>
+          </Content>
         </Dialog>
       </DialogTrigger>
     </div>
   );
 }
 
-let TriggerWithRef = (props) => {
+let TriggerWithRef = props => {
   let {buttonHeight, buttonWidth, ...otherProps} = props;
   let ref = React.useRef(null);
   return (
     <div style={{display: 'flex'}}>
       <DialogTrigger {...otherProps} targetRef={ref} onOpenChange={action('open change')}>
-        <ActionButton height={buttonHeight} width={buttonWidth}>Trigger</ActionButton>
+        <ActionButton height={buttonHeight} width={buttonWidth}>
+          Trigger
+        </ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
           <Divider />
-          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+          <Content>
+            <Text>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique
+              risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis
+              parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non
+              condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum
+              elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque
+              lectus commodo ornare.
+            </Text>
+          </Content>
         </Dialog>
       </DialogTrigger>
-      <span ref={ref} style={{marginInlineStart: '200px'}}>Popover appears over here</span>
+      <span ref={ref} style={{marginInlineStart: '200px'}}>
+        Popover appears over here
+      </span>
     </div>
   );
 };
-
 
 function renderAlert(props) {
   let {buttonHeight, buttonWidth, width = 'auto', ...otherProps} = props;
@@ -812,10 +934,24 @@ function renderAlert(props) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
-        <ActionButton height={buttonHeight} width={buttonWidth}>Trigger</ActionButton>
-        {(close) => (
-          <AlertDialog title="Alert! Danger!" variant="error" primaryActionLabel="Accept" secondaryActionLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onPrimaryAction={chain(close, action('primary'))} onSecondaryAction={chain(close, action('secondary'))}>
-            <Text>Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.</Text>
+        <ActionButton height={buttonHeight} width={buttonWidth}>
+          Trigger
+        </ActionButton>
+        {close => (
+          <AlertDialog
+            title="Alert! Danger!"
+            variant="error"
+            primaryActionLabel="Accept"
+            secondaryActionLabel="Whoa"
+            cancelLabel="Cancel"
+            onCancel={chain(close, action('cancel'))}
+            onPrimaryAction={chain(close, action('primary'))}
+            onSecondaryAction={chain(close, action('secondary'))}>
+            <Text>
+              Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other
+              test subjects begging me to help them escape. You know, it's not like this place is
+              about to EXPLODE.
+            </Text>
           </AlertDialog>
         )}
       </DialogTrigger>
@@ -824,7 +960,10 @@ function renderAlert(props) {
 }
 
 function AdjustableDialog() {
-  let headingStrings = ['The Heading', 'The Heading of Maximum Truth That is Really Long to Go On and On a a a a a Again and Wraps'];
+  let headingStrings = [
+    'The Heading',
+    'The Heading of Maximum Truth That is Really Long to Go On and On a a a a a Again and Wraps'
+  ];
   let [showHero, setShowHero] = useState(false);
   let [heading, setHeading] = useState(headingStrings[0]);
   let [showHeader, setShowHeader] = useState(false);
@@ -837,7 +976,12 @@ function AdjustableDialog() {
     <Flex gap="size-200">
       <Flex direction="column" width="size-2000" gap="size-100">
         <Checkbox onChange={setShowHero}>Show Hero</Checkbox>
-        <Checkbox onChange={(isChecked) => {isChecked ? setHeading(headingStrings[1]) : setHeading(headingStrings[0]);}}>Toggle Heading Values</Checkbox>
+        <Checkbox
+          onChange={isChecked => {
+            isChecked ? setHeading(headingStrings[1]) : setHeading(headingStrings[0]);
+          }}>
+          Toggle Heading Values
+        </Checkbox>
         <Checkbox onChange={setShowHeader}>Show Header</Checkbox>
         <Checkbox onChange={setShowTypeIcon}>Show TypeIcon</Checkbox>
         <Checkbox onChange={setIsDismissable}>Show Dismissable</Checkbox>
@@ -846,20 +990,37 @@ function AdjustableDialog() {
       </Flex>
       <DialogTrigger isDismissable={isDismissable}>
         <ActionButton>Trigger</ActionButton>
-        {(close) => (
+        {close => (
           <Dialog>
-            {showHero && <Image slot="hero" alt="" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />}
+            {showHero && (
+              <Image slot="hero" alt="" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+            )}
             <Heading>{heading}</Heading>
             {showHeader && <Header>This is a long header</Header>}
-            {showTypeIcon && <AlertMedium
-              slot="typeIcon"
-              aria-label="Alert" />}
+            {showTypeIcon && <AlertMedium slot="typeIcon" aria-label="Alert" />}
             <Divider />
-            <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
-            {showFooter && <Footer><Checkbox>I have read and accept the terms of use and privacy policy</Checkbox></Footer>}
+            <Content>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique
+                risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis
+                parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non
+                condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum
+                elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque
+                lectus commodo ornare.
+              </Text>
+            </Content>
+            {showFooter && (
+              <Footer>
+                <Checkbox>I have read and accept the terms of use and privacy policy</Checkbox>
+              </Footer>
+            )}
             <ButtonGroup>
-              <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel {longButtonLabels && 'and close this dialog'}</Button>
-              <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm {longButtonLabels && 'and close this dialog'}</Button>
+              <Button variant="secondary" onPress={chain(close, action('cancel'))}>
+                Cancel {longButtonLabels && 'and close this dialog'}
+              </Button>
+              <Button variant="cta" onPress={chain(close, action('confirm'))}>
+                Confirm {longButtonLabels && 'and close this dialog'}
+              </Button>
             </ButtonGroup>
           </Dialog>
         )}

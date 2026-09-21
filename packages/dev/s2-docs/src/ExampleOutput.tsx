@@ -5,13 +5,18 @@ import {Content, Heading, InlineAlert} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface ExampleOutputProps {
-  component?: any,
-  props?: Record<string, any>,
-  align?: 'start' | 'center' | 'end',
-  orientation?: 'horizontal' | 'vertical'
+  component?: any;
+  props?: Record<string, any>;
+  align?: 'start' | 'center' | 'end';
+  orientation?: 'horizontal' | 'vertical';
 }
 
-export function ExampleOutput({component, props = {}, align = 'center', orientation = 'horizontal'}: ExampleOutputProps) {
+export function ExampleOutput({
+  component,
+  props = {},
+  align = 'center',
+  orientation = 'horizontal'
+}: ExampleOutputProps) {
   return (
     <div
       role="group"
@@ -48,9 +53,15 @@ export function ExampleOutput({component, props = {}, align = 'center', orientat
         },
         boxSizing: 'border-box'
       })({align, orientation})}
-      style={{background: getBackgroundColor(props.staticColor || (props.isOverBackground ? 'white' : undefined))}}>
+      style={{
+        background: getBackgroundColor(
+          props.staticColor || (props.isOverBackground ? 'white' : undefined)
+        )
+      }}>
       <ErrorBoundary>
-        {isValidElement(component) ? cloneElement(component, props) : createElement(component, props)}
+        {isValidElement(component)
+          ? cloneElement(component, props)
+          : createElement(component, props)}
       </ErrorBoundary>
     </div>
   );

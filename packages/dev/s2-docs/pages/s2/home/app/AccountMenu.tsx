@@ -1,14 +1,26 @@
 'use client';
 import Settings from '@react-spectrum/s2/icons/Settings';
 import Org from '@react-spectrum/s2/icons/Buildings';
-import { style } from "@react-spectrum/s2/style" with { type: 'macro' };
-import { Text, ActionButton, Avatar, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem } from '@react-spectrum/s2';
-import { useLocale } from 'react-aria';
-import { useContext } from 'react';
-import { useMediaQuery } from '@react-spectrum/utils';
-import { PopoverContext } from 'react-aria-components';
-import { HCMContext } from '../HCM';
-import { ColorSchemeContext } from '../ExampleApp';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  Text,
+  ActionButton,
+  Avatar,
+  MenuTrigger,
+  Popover,
+  Switch,
+  Divider,
+  Menu,
+  MenuSection,
+  SubmenuTrigger,
+  MenuItem
+} from '@react-spectrum/s2';
+import {useLocale} from 'react-aria';
+import {useContext} from 'react';
+import {useMediaQuery} from '@react-spectrum/utils';
+import {PopoverContext} from 'react-aria-components';
+import {HCMContext} from '../HCM';
+import {ColorSchemeContext} from '../ExampleApp';
 
 export function AccountMenu() {
   let {locale} = useLocale();
@@ -22,13 +34,29 @@ export function AccountMenu() {
       </ActionButton>
       <PopoverContextProvider>
         <Popover hideArrow placement="bottom end">
-          <div className={style({paddingTop: 4, display: 'flex', flexDirection: 'column', gap: 12})}>
+          <div
+            className={style({paddingTop: 4, display: 'flex', flexDirection: 'column', gap: 12})}>
             <div className={style({display: 'flex', gap: 12, alignItems: 'center', marginX: 12})}>
               <Avatar src="https://i.imgur.com/xIe7Wlb.png" size={56} />
               <div>
-                <div className={style({font: 'title', color: {default: 'title', forcedColors: 'ButtonText'}})}>Devon Govett</div>
-                <div className={style({font: 'ui', color: {default: 'body', forcedColors: 'ButtonText'}})}>user@example.com</div>
-                <Switch isSelected={isDark} onChange={isSelected => setColorScheme(isSelected ? 'dark' : 'light')} styles={style({marginTop: 4})}>
+                <div
+                  className={style({
+                    font: 'title',
+                    color: {default: 'title', forcedColors: 'ButtonText'}
+                  })}>
+                  Devon Govett
+                </div>
+                <div
+                  className={style({
+                    font: 'ui',
+                    color: {default: 'body', forcedColors: 'ButtonText'}
+                  })}>
+                  user@example.com
+                </div>
+                <Switch
+                  isSelected={isDark}
+                  onChange={isSelected => setColorScheme(isSelected ? 'dark' : 'light')}
+                  styles={style({marginTop: 4})}>
                   {locale === 'ar-AE' ? 'المظهر الداكن' : 'Dark theme'}
                 </Switch>
               </div>

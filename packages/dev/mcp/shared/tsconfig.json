@@ -14,10 +14,5 @@
     "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "s2/dist",
-    "react-aria/dist"
-  ]
+  "exclude": ["dist", "node_modules", "s2/dist", "react-aria/dist"]
 }

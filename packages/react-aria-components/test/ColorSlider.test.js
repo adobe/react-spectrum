@@ -29,7 +29,8 @@ let TestColorSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
   </ColorSlider>
 );
 
-let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) => render(<TestColorSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
+let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) =>
+  render(<TestColorSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
 
 describe('ColorSlider', () => {
   let user;
@@ -55,12 +56,20 @@ describe('ColorSlider', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'}, {'data-output': 'output'});
+    let {getByRole} = renderSlider(
+      {'data-foo': 'bar'},
+      {'data-bar': 'foo'},
+      {'data-test': 'test'},
+      {'data-output': 'output'}
+    );
     let slider = getByRole('group').parentElement;
     expect(slider).toHaveAttribute('data-foo', 'bar');
     expect(slider.querySelector('.react-aria-ColorThumb')).toHaveAttribute('data-bar', 'foo');
     expect(slider.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
-    expect(slider.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
+    expect(slider.querySelector('.react-aria-SliderOutput')).toHaveAttribute(
+      'data-output',
+      'output'
+    );
   });
 
   it('should support custom render function', () => {
@@ -107,7 +116,10 @@ describe('ColorSlider', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = renderSlider({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
+    let {getByRole} = renderSlider(
+      {},
+      {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`}
+    );
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
 
@@ -125,7 +137,10 @@ describe('ColorSlider', () => {
   });
 
   it('should support dragging state', () => {
-    let {getByRole} = renderSlider({}, {className: ({isDragging}) => `thumb ${isDragging ? 'dragging' : ''}`});
+    let {getByRole} = renderSlider(
+      {},
+      {className: ({isDragging}) => `thumb ${isDragging ? 'dragging' : ''}`}
+    );
     let thumb = getByRole('slider').closest('.thumb');
 
     expect(thumb).not.toHaveAttribute('data-dragging');
@@ -147,7 +162,21 @@ describe('ColorSlider', () => {
     let hoverStartThumbSpy = jest.fn();
     let hoverChangeThumbSpy = jest.fn();
     let hoverEndThumbSpy = jest.fn();
-    let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartThumbSpy, onHoverChange: hoverChangeThumbSpy, onHoverEnd: hoverEndThumbSpy}, {className: ({isHovered}) => `track ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartTrackSpy, onHoverChange: hoverChangeTrackSpy, onHoverEnd: hoverEndTrackSpy});
+    let {getByRole} = renderSlider(
+      {},
+      {
+        className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`,
+        onHoverStart: hoverStartThumbSpy,
+        onHoverChange: hoverChangeThumbSpy,
+        onHoverEnd: hoverEndThumbSpy
+      },
+      {
+        className: ({isHovered}) => `track ${isHovered ? 'hovered' : ''}`,
+        onHoverStart: hoverStartTrackSpy,
+        onHoverChange: hoverChangeTrackSpy,
+        onHoverEnd: hoverEndTrackSpy
+      }
+    );
     let thumb = getByRole('slider').closest('.thumb');
     let track = getByRole('slider').closest('.track');
 
@@ -182,7 +211,10 @@ describe('ColorSlider', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = renderSlider({isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''}, {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`});
+    let {getByRole} = renderSlider(
+      {isDisabled: true, className: ({isDisabled}) => (isDisabled ? 'disabled' : '')},
+      {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`}
+    );
     let wrapper = getByRole('group').parentElement;
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
@@ -196,7 +228,10 @@ describe('ColorSlider', () => {
   });
 
   it('should support orientation', () => {
-    let {getByRole} = renderSlider({orientation: 'vertical', className: ({orientation}) => orientation});
+    let {getByRole} = renderSlider({
+      orientation: 'vertical',
+      className: ({orientation}) => orientation
+    });
     let wrapper = getByRole('group').parentElement;
     let slider = getByRole('slider');
 

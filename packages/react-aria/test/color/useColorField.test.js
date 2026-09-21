@@ -25,11 +25,17 @@ describe('useColorField', function () {
     ref.current = document.createElement('input');
   });
 
-  let renderColorFieldHook = (props) => {
-    let {result} = renderHook(() => useColorField({
-      'aria-label': 'Primary Color',
-      ...props
-    }, useColorFieldState(props), ref));
+  let renderColorFieldHook = props => {
+    let {result} = renderHook(() =>
+      useColorField(
+        {
+          'aria-label': 'Primary Color',
+          ...props
+        },
+        useColorFieldState(props),
+        ref
+      )
+    );
     return result.current;
   };
 

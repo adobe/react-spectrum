@@ -2,6 +2,8 @@
   "name": "esbuild-rainbow",
   "version": "1.0.0",
   "description": "Test app using macros",
+  "license": "ISC",
+  "author": "",
   "main": "index.js",
   "scripts": {
     "build": "node build.mjs -build",
@@ -9,8 +11,6 @@
     "test": "test",
     "postinstall": "patch-package"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@react-spectrum/s2": "latest",
     "react": "^18.2.0",

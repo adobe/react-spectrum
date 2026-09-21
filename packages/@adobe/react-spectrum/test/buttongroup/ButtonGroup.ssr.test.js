@@ -14,7 +14,9 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('ButtonGroup SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {ButtonGroup} from '../../exports/index.ts';
       import {Button} from '@react-spectrum/button';
       import {Provider} from '@react-spectrum/provider';
@@ -25,6 +27,7 @@ describe('ButtonGroup SSR', function () {
           <Button variant="primary">Test</Button>
         </ButtonGroup>
       </Provider>
-    `);
+    `
+    );
   });
 });

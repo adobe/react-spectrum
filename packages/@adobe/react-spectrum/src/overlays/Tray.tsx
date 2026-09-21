@@ -26,15 +26,16 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 import {useStyleProps} from '../utils/styleProps';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
 
-interface TrayProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
-  children: ReactNode,
-  state: OverlayTriggerState,
-  isFixedHeight?: boolean
+interface TrayProps
+  extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
+  children: ReactNode;
+  state: OverlayTriggerState;
+  isFixedHeight?: boolean;
 }
 
 interface TrayWrapperProps extends TrayProps {
-  isOpen?: boolean,
-  wrapperRef: RefObject<HTMLDivElement | null>
+  isOpen?: boolean;
+  wrapperRef: RefObject<HTMLDivElement | null>;
 }
 
 export const Tray = forwardRef(function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
@@ -51,21 +52,22 @@ export const Tray = forwardRef(function Tray(props: TrayProps, ref: DOMRef<HTMLD
   );
 });
 
-let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) {
-  let {
-    children,
-    isOpen,
-    isFixedHeight,
-    state,
-    wrapperRef
-  } = props;
+let TrayWrapper = forwardRef(function (
+  props: TrayWrapperProps,
+  ref: ForwardedRef<HTMLDivElement | null>
+) {
+  let {children, isOpen, isFixedHeight, state, wrapperRef} = props;
   let {styleProps} = useStyleProps(props);
   let objRef = useObjectRef(ref);
 
-  let {modalProps, underlayProps} = useModalOverlay({
-    ...props,
-    isDismissable: true
-  }, state, objRef);
+  let {modalProps, underlayProps} = useModalOverlay(
+    {
+      ...props,
+      isDismissable: true
+    },
+    state,
+    objRef
+  );
 
   // We need to measure the window's height in JS rather than using percentages in CSS
   // so that contents (e.g. menu) can inherit the max-height properly. Using percentages
@@ -83,10 +85,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: ForwardedRe
     top: typeof window !== 'undefined' ? window.scrollY : 0
   };
 
-  let wrapperClassName = classNames(
-    trayStyles,
-    'spectrum-Tray-wrapper'
-  );
+  let wrapperClassName = classNames(trayStyles, 'spectrum-Tray-wrapper');
 
   let className = classNames(
     trayStyles,
@@ -95,11 +94,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: ForwardedRe
       'is-open': isOpen,
       'spectrum-Tray--fixedHeight': isFixedHeight
     },
-    classNames(
-      overrideStyles,
-      'spectrum-Tray',
-      'react-spectrum-Tray'
-    ),
+    classNames(overrideStyles, 'spectrum-Tray', 'react-spectrum-Tray'),
     styleProps.className
   );
 
@@ -108,12 +103,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: ForwardedRe
     <div ref={wrapperRef}>
       <Underlay {...underlayProps} isOpen={isOpen} />
       <div className={wrapperClassName} style={wrapperStyle}>
-        <div
-          {...styleProps}
-          {...modalProps}
-          className={className}
-          ref={objRef}
-          data-testid="tray">
+        <div {...styleProps} {...modalProps} className={className} ref={objRef} data-testid="tray">
           <DismissButton onDismiss={state.close} />
           {children}
           <DismissButton onDismiss={state.close} />

@@ -1,6 +1,9 @@
 name: Manual nightly deploy
 on: workflow_dispatch
 
+permissions:
+  contents: read
+
 jobs:
   trigger-circleci:
     runs-on: ubuntu-latest

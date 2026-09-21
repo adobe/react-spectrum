@@ -14,9 +14,12 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Grid SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Grid} from '../../exports/index.ts';
       <Grid />
-    `);
+    `
+    );
   });
 });

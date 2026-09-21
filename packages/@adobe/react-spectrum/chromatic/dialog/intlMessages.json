@@ -49,7 +49,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm"
   },
-  "he-IL":{
+  "he-IL": {
     "koji": "קוג'י",
     "kojiFoods": "מזונות קוג'י",
     "foodsMakeWithKoji": "אוכל יפני, תבלינים ומשקאות עשויים עם קוג'י",
@@ -73,8 +73,7 @@
     "riceWineVinegarDescription": "חומץ עשוי מיין אורז.",
     "cancel": "לְבַטֵל",
     "confirm": "לְאַשֵׁר"
-  }
-  ,
+  },
   "ja-JP": {
     "koji": "麹",
     "kojiFoods": "麹食品",

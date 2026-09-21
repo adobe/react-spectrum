@@ -21,72 +21,68 @@ const ruleTester = new RuleTester({
 });
 
 // Throws error if the tests in ruleTester.run() do not pass
-ruleTester.run(
-  'faster-node-contains',
-  fasterNodeContainsRule,
-  {
-    // 'valid' checks cases that should pass
-    valid: [
-      {
-        code: `
+ruleTester.run('faster-node-contains', fasterNodeContainsRule, {
+  // 'valid' checks cases that should pass
+  valid: [
+    {
+      code: `
 if (nodeContains(element, other)) {
   console.log('contained');
 }`
-      }
-    ],
-    // 'invalid' checks cases that should not pass
-    invalid: [
-      {
-        code: `
+    }
+  ],
+  // 'invalid' checks cases that should not pass
+  invalid: [
+    {
+      code: `
 if (nodeContains(element, document.activeElement)) {
   console.log('contained');
 }`,
-        output: `
+      output: `
 import {isFocusWithin} from '@react-aria/utils';
 if (isFocusWithin(element)) {
   console.log('contained');
 }`,
-        errors: 1
-      },
-      {
-        code: `
+      errors: 1
+    },
+    {
+      code: `
 if (nodeContains(document, other)) {
   console.log('connected');
 }`,
-        output: `
+      output: `
 if (other.isConnected) {
   console.log('connected');
 }`,
-        errors: 1
-      },
-      // When @react-aria/utils is already imported, add isFocusWithin to that import
-      {
-        code: `
+      errors: 1
+    },
+    // When @react-aria/utils is already imported, add isFocusWithin to that import
+    {
+      code: `
 import {nodeContains} from '@react-aria/utils';
 if (nodeContains(element, document.activeElement)) {
   console.log('contained');
 }`,
-        output: `
+      output: `
 import {isFocusWithin, nodeContains} from '@react-aria/utils';
 if (isFocusWithin(element)) {
   console.log('contained');
 }`,
-        errors: 1
-      },
-      // When isFocusWithin is already imported, only replace the call
-      {
-        code: `
+      errors: 1
+    },
+    // When isFocusWithin is already imported, only replace the call
+    {
+      code: `
 import {isFocusWithin, nodeContains} from '@react-aria/utils';
 if (nodeContains(element, document.activeElement)) {
   console.log('contained');
 }`,
-        output: `
+      output: `
 import {isFocusWithin, nodeContains} from '@react-aria/utils';
 if (isFocusWithin(element)) {
   console.log('contained');
 }`,
-        errors: 1
-      }
-    ]
-  }
-);
+      errors: 1
+    }
+  ]
+});

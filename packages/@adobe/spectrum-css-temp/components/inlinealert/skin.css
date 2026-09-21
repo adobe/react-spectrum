@@ -20,46 +20,76 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InLineAlert {
-  background-color:var(--highcontrast-inlinealert-background-color, var(--spectrum-inlinealert-background-color));
-  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color));
+  background-color: var(
+    --highcontrast-inlinealert-background-color,
+    var(--spectrum-inlinealert-background-color)
+  );
+  border-color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color)
+  );
 }
 
 .spectrum-InLineAlert-heading {
-  color:var(--highcontrast-inlinealert-heading-color, var(--spectrum-inlinealert-heading-color));
+  color: var(--highcontrast-inlinealert-heading-color, var(--spectrum-inlinealert-heading-color));
 }
 
 .spectrum-InLineAlert-content {
- color:var(--highcontrast-inlinealert-content-color, var(--spectrum-inlinealert-content-color));
+  color: var(--highcontrast-inlinealert-content-color, var(--spectrum-inlinealert-content-color));
 }
 
 .spectrum-InLineAlert--info {
-  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-info));
+  border-color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color-info)
+  );
 }
 
 .spectrum-InLineAlert--info .spectrum-InLineAlert-icon {
-  color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-info));
+  color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color-info)
+  );
 }
 
 .spectrum-InLineAlert--notice {
-  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-notice));
+  border-color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color-notice)
+  );
 }
 
 .spectrum-InLineAlert--notice .spectrum-InLineAlert-icon {
-  color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-notice));
+  color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color-notice)
+  );
 }
 
 .spectrum-InLineAlert--positive {
-  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-positive));
+  border-color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color-positive)
+  );
 }
 
 .spectrum-InLineAlert--positive .spectrum-InLineAlert-icon {
-  color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-positive));
+  color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color-positive)
+  );
 }
 
 .spectrum-InLineAlert--negative {
-  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-negative));
+  border-color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color-negative)
+  );
 }
 
 .spectrum-InLineAlert--negative .spectrum-InLineAlert-icon {
-  color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-negative));
+  color: var(
+    --highcontrast-inlinealert-border-and-icon-color,
+    var(--spectrum-inlinealert-border-and-icon-color-negative)
+  );
 }

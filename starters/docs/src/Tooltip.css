@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Tooltip {
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
@@ -11,7 +11,9 @@
   max-width: 150px;
   /* fixes FF gap */
   transform: translate3d(0, 0, 0);
-  transition: transform 200ms, opacity 200ms;
+  transition:
+    transform 200ms,
+    opacity 200ms;
   font: var(--font-size) system-ui;
 
   &[data-entering],
@@ -20,12 +22,12 @@
     opacity: 0;
   }
 
-  &[data-placement=top] {
+  &[data-placement='top'] {
     margin-bottom: 10px;
     --origin: translateY(4px);
   }
 
-  &[data-placement=bottom] {
+  &[data-placement='bottom'] {
     margin-top: 10px;
     --origin: translateY(-4px);
     & .react-aria-OverlayArrow svg {
@@ -33,7 +35,7 @@
     }
   }
 
-  &[data-placement=right] {
+  &[data-placement='right'] {
     margin-left: 10px;
     --origin: translateX(-4px);
     & .react-aria-OverlayArrow svg {
@@ -41,7 +43,7 @@
     }
   }
 
-  &[data-placement=left] {
+  &[data-placement='left'] {
     margin-right: 10px;
     --origin: translateX(4px);
     & .react-aria-OverlayArrow svg {

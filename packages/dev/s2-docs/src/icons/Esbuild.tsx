@@ -13,7 +13,8 @@ export default createIcon(props => {
           d="M47.5 52.5L95 100l-47.5 47.5m60-95L155 100l-47.5 47.5"
           fill="none"
           stroke="black"
-          strokeWidth="24" />
+          strokeWidth="24"
+        />
       </mask>
       <circle cx="100" cy="100" r="100" fill="var(--iconPrimary)" mask={`url(#${mask})`} />
     </svg>

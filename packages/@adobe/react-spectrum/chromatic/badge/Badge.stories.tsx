@@ -17,8 +17,18 @@ import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {Text} from '../../src/text/Text';
 
-let variants: SpectrumBadgeProps['variant'][] =
-  ['positive', 'info', 'negative', 'neutral', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'magenta', 'purple'];
+let variants: SpectrumBadgeProps['variant'][] = [
+  'positive',
+  'info',
+  'negative',
+  'neutral',
+  'yellow',
+  'fuchsia',
+  'indigo',
+  'seafoam',
+  'magenta',
+  'purple'
+];
 
 export type BadgeStory = StoryObj<typeof Badge>;
 
@@ -28,32 +38,48 @@ export default {
   excludeStories: ['RenderVariants']
 } as Meta<typeof Badge>;
 
-export const RenderVariants = (args) => (
+export const RenderVariants = args => (
   <Flex wrap gap={8}>
-    {variants.map((variant) => <Badge key={variant} {...args} variant={variant} />)}
+    {variants.map(variant => (
+      <Badge key={variant} {...args} variant={variant} />
+    ))}
   </Flex>
 );
 
 export const TextOnly: BadgeStory = {
   args: {children: 'Badge text'},
-  render: (args) => <RenderVariants {...args} />
+  render: args => <RenderVariants {...args} />
 };
 
 export const IconOnly: BadgeStory = {
   args: {children: <CheckmarkCircle />},
-  render: (args) => <RenderVariants {...args} />
+  render: args => <RenderVariants {...args} />
 };
 
 export const IconText: BadgeStory = {
   name: 'Icon & text',
-  args: {children: <><CheckmarkCircle /><Text>Badge text</Text></>},
-  render: (args) => <RenderVariants {...args} />
+  args: {
+    children: (
+      <>
+        <CheckmarkCircle />
+        <Text>Badge text</Text>
+      </>
+    )
+  },
+  render: args => <RenderVariants {...args} />
 };
 
 export const TextIcon: BadgeStory = {
   name: 'Text & icon',
-  args: {children: <><Text>Badge text</Text><CheckmarkCircle /></>},
-  render: (args) => <RenderVariants {...args} />
+  args: {
+    children: (
+      <>
+        <Text>Badge text</Text>
+        <CheckmarkCircle />
+      </>
+    )
+  },
+  render: args => <RenderVariants {...args} />
 };
 
 export const Overflow: BadgeStory = {
@@ -61,5 +87,14 @@ export const Overflow: BadgeStory = {
 };
 
 export const OverflowWithIcon: BadgeStory = {
-  args: {children: <><CheckmarkCircle /><Text>24 days left in trial</Text></>, variant: 'positive', UNSAFE_style: {width: '74px'}}
+  args: {
+    children: (
+      <>
+        <CheckmarkCircle />
+        <Text>24 days left in trial</Text>
+      </>
+    ),
+    variant: 'positive',
+    UNSAFE_style: {width: '74px'}
+  }
 };

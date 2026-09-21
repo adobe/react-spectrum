@@ -12,7 +12,7 @@
 
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ProgrammaticSetValueExampleRender} from '../../stories/datepicker/useDatePicker.stories';
-import React, {} from 'react';
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('useDatePicker', function () {

@@ -53,7 +53,7 @@ export const SizeM: BreadcrumbsStory = {
 
 export const Truncated: BreadcrumbsStory = {
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{width: '100px'}}>
         <Story />
       </div>

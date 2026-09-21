@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../../src/table/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  SpectrumTableProps,
+  TableBody,
+  TableHeader,
+  TableView
+} from '../../src/table/TableView';
 import {Checkbox} from '../../src/checkbox/Checkbox';
 import {Flex} from '../../src/layout/Flex';
 import {Form} from '../../src/form/Form';
@@ -25,17 +33,61 @@ let columns = [
 ];
 
 let data = [
-  {id: 1, planName: 'Plan 1: $300k, digital', audienceType: 'Strategic', netBudget: '$300,000', targetOTP: '7.4%', reach: '11.52%'},
-  {id: 2, planName: 'Plan 2: $500k, digital', audienceType: 'Strategic', netBudget: '$500,000', targetOTP: '22.5%', reach: '11.5%'},
-  {id: 3, planName: 'Plan 3: $800k, digital', audienceType: 'Strategic', netBudget: '$800,000', targetOTP: '22.5%', reach: '11.5%'},
-  {id: 4, planName: 'Plan 4: $300k, MRI', audienceType: 'Demo+strategic', netBudget: '$300,000', targetOTP: '22.5%', reach: '11.5%'},
-  {id: 5, planName: 'Plan 5: $500k, MRI', audienceType: 'Demo+strategic', netBudget: '$500,000', targetOTP: '22.5%', reach: '11.5%'},
-  {id: 6, planName: 'Plan 6: $800k, MRI', audienceType: 'Demo+strategic', netBudget: '$800,000', targetOTP: '22.5%', reach: '11.5%'}
+  {
+    id: 1,
+    planName: 'Plan 1: $300k, digital',
+    audienceType: 'Strategic',
+    netBudget: '$300,000',
+    targetOTP: '7.4%',
+    reach: '11.52%'
+  },
+  {
+    id: 2,
+    planName: 'Plan 2: $500k, digital',
+    audienceType: 'Strategic',
+    netBudget: '$500,000',
+    targetOTP: '22.5%',
+    reach: '11.5%'
+  },
+  {
+    id: 3,
+    planName: 'Plan 3: $800k, digital',
+    audienceType: 'Strategic',
+    netBudget: '$800,000',
+    targetOTP: '22.5%',
+    reach: '11.5%'
+  },
+  {
+    id: 4,
+    planName: 'Plan 4: $300k, MRI',
+    audienceType: 'Demo+strategic',
+    netBudget: '$300,000',
+    targetOTP: '22.5%',
+    reach: '11.5%'
+  },
+  {
+    id: 5,
+    planName: 'Plan 5: $500k, MRI',
+    audienceType: 'Demo+strategic',
+    netBudget: '$500,000',
+    targetOTP: '22.5%',
+    reach: '11.5%'
+  },
+  {
+    id: 6,
+    planName: 'Plan 6: $800k, MRI',
+    audienceType: 'Demo+strategic',
+    netBudget: '$800,000',
+    targetOTP: '22.5%',
+    reach: '11.5%'
+  }
 ];
 
-export function HidingColumnsAllowsResizing(props: Omit<SpectrumTableProps<object>, 'children'>): JSX.Element {
+export function HidingColumnsAllowsResizing(
+  props: Omit<SpectrumTableProps<object>, 'children'>
+): JSX.Element {
   let [visibleColumns, setVisibleColumns] = React.useState(new Set(columns.map(c => c.key)));
-  let toggleColumn = (key) => {
+  let toggleColumn = key => {
     let columns = new Set(visibleColumns);
     if (columns.has(key)) {
       columns.delete(key);
@@ -49,21 +101,20 @@ export function HidingColumnsAllowsResizing(props: Omit<SpectrumTableProps<objec
   return (
     <Flex>
       <Form>
-        {columns.slice(1).map(c =>
-          <Checkbox key={c.key} isSelected={visibleColumns.has(c.key)} onChange={() => toggleColumn(c.key)}>{c.title}</Checkbox>
-        )}
+        {columns.slice(1).map(c => (
+          <Checkbox
+            key={c.key}
+            isSelected={visibleColumns.has(c.key)}
+            onChange={() => toggleColumn(c.key)}>
+            {c.title}
+          </Checkbox>
+        ))}
       </Form>
       <TableView aria-label="Table with hideable columns" width={900} height={500} {...props}>
         <TableHeader columns={columns.filter(c => visibleColumns.has(c.key))}>
           {column => <Column allowsResizing={column.allowsResizing}>{column.title}</Column>}
         </TableHeader>
-        <TableBody items={data}>
-          {item => (
-            <Row>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>
-          )}
-        </TableBody>
+        <TableBody items={data}>{item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}</TableBody>
       </TableView>
     </Flex>
   );

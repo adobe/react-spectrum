@@ -14,8 +14,14 @@ import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useAsyncList} from '../../src/data/useAsyncList';
 
-const ITEMS = [{id: 1, name: '1'}, {id: 2, name: '2'}];
-const ITEMS2 = [{id: 2, name: '1'}, {id: 1, name: '2'}];
+const ITEMS = [
+  {id: 1, name: '1'},
+  {id: 2, name: '2'}
+];
+const ITEMS2 = [
+  {id: 2, name: '1'},
+  {id: 1, name: '2'}
+];
 
 function getItems() {
   return new Promise(resolve => {
@@ -73,9 +79,7 @@ describe('useAsyncList', () => {
 
   it('should call load function when loadMore is called', async () => {
     let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.loadingState).toBe('loading');
@@ -114,9 +118,7 @@ describe('useAsyncList', () => {
 
   it('should call load if sort callback function is not provided', async () => {
     let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.loadingState).toBe('loading');
@@ -157,11 +159,13 @@ describe('useAsyncList', () => {
   it('should call sort callback function', async () => {
     let load = jest.fn().mockImplementation(getItems);
     let sort = jest.fn().mockImplementation(getItems2);
-    let {result} = renderHook(() => useAsyncList({
-      load,
-      sort,
-      initialSortDescriptor: {direction: 'ASC'}
-    }));
+    let {result} = renderHook(() =>
+      useAsyncList({
+        load,
+        sort,
+        initialSortDescriptor: {direction: 'ASC'}
+      })
+    );
 
     expect(load).toHaveBeenCalledTimes(1);
     let args = load.mock.calls[0][0];
@@ -198,9 +202,11 @@ describe('useAsyncList', () => {
 
   it('should return error in case fetch throws an error', async () => {
     let loadSpyThatThrows = jest.fn().mockRejectedValue(new Error('error'));
-    let {result} = renderHook(() => useAsyncList({
-      load: loadSpyThatThrows
-    }));
+    let {result} = renderHook(() =>
+      useAsyncList({
+        load: loadSpyThatThrows
+      })
+    );
 
     expect(result.current.loadingState).toBe('loading');
 
@@ -216,9 +222,11 @@ describe('useAsyncList', () => {
 
   it('should return error in case fetch throws an error during loadMore', async () => {
     let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(() => useAsyncList({
-      load
-    }));
+    let {result} = renderHook(() =>
+      useAsyncList({
+        load
+      })
+    );
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -246,9 +254,7 @@ describe('useAsyncList', () => {
 
   it('should support reloading data', async () => {
     let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -283,19 +289,20 @@ describe('useAsyncList', () => {
   it('should abort duplicate concurrent loads', async () => {
     let load = jest.fn().mockImplementation(getItems2);
     let isAborted;
-    let sort = jest.fn().mockImplementation(({signal}) => new Promise((resolve, reject) => {
-      isAborted = false;
-      signal.addEventListener('abort', () => {
-        isAborted = true;
-        reject();
-      });
+    let sort = jest.fn().mockImplementation(
+      ({signal}) =>
+        new Promise((resolve, reject) => {
+          isAborted = false;
+          signal.addEventListener('abort', () => {
+            isAborted = true;
+            reject();
+          });
 
-      setTimeout(() => resolve({items: ITEMS}), 100);
-    }));
-
-    let {result} = renderHook(
-      () => useAsyncList({load, sort})
+          setTimeout(() => resolve({items: ITEMS}), 100);
+        })
     );
+
+    let {result} = renderHook(() => useAsyncList({load, sort}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -336,9 +343,7 @@ describe('useAsyncList', () => {
 
   it('should prevent loadMore from firing if in the middle of a load', async () => {
     let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -383,13 +388,14 @@ describe('useAsyncList', () => {
     expect(result.current.items).toEqual(ITEMS);
   });
 
-
   it('should ignore duplicate loads where first resolves first', async () => {
     let load = jest.fn().mockImplementation(getItems2);
-    let sort = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS2}), 100)));
-    let {result} = renderHook(
-      () => useAsyncList({load, sort})
-    );
+    let sort = jest
+      .fn()
+      .mockImplementation(
+        () => new Promise(resolve => setTimeout(() => resolve({items: ITEMS2}), 100))
+      );
+    let {result} = renderHook(() => useAsyncList({load, sort}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -409,7 +415,9 @@ describe('useAsyncList', () => {
     expect(result.current.isLoading).toBe(true);
     expect(result.current.items).toEqual(ITEMS2);
 
-    sort.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 500)));
+    sort.mockImplementation(
+      () => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 500))
+    );
 
     await act(async () => {
       result.current.sort({column: 'id'});
@@ -436,10 +444,12 @@ describe('useAsyncList', () => {
 
   it('should ignore duplicate loads where second resolves first', async () => {
     let load = jest.fn().mockImplementation(getItems2);
-    let sort = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS2}), 500)));
-    let {result} = renderHook(
-      () => useAsyncList({load, sort})
-    );
+    let sort = jest
+      .fn()
+      .mockImplementation(
+        () => new Promise(resolve => setTimeout(() => resolve({items: ITEMS2}), 500))
+      );
+    let {result} = renderHook(() => useAsyncList({load, sort}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -459,7 +469,9 @@ describe('useAsyncList', () => {
     expect(result.current.isLoading).toBe(true);
     expect(result.current.items).toEqual(ITEMS2);
 
-    sort.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 100)));
+    sort.mockImplementation(
+      () => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 100))
+    );
 
     await act(async () => {
       result.current.sort({column: 'id'});
@@ -487,9 +499,7 @@ describe('useAsyncList', () => {
   it('should abort loadMore when a sort happens', async () => {
     let load = jest.fn().mockImplementation(getItems2);
     let sort = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load, sort})
-    );
+    let {result} = renderHook(() => useAsyncList({load, sort}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -503,14 +513,17 @@ describe('useAsyncList', () => {
     expect(result.current.items).toEqual(ITEMS2);
 
     let isAborted = false;
-    load.mockImplementation(({signal}) => new Promise((resolve, reject) => {
-      signal.addEventListener('abort', () => {
-        isAborted = true;
-        reject();
-      });
+    load.mockImplementation(
+      ({signal}) =>
+        new Promise((resolve, reject) => {
+          signal.addEventListener('abort', () => {
+            isAborted = true;
+            reject();
+          });
 
-      setTimeout(() => resolve({items: ITEMS}), 100);
-    }));
+          setTimeout(() => resolve({items: ITEMS}), 100);
+        })
+    );
 
     await act(async () => {
       result.current.loadMore();
@@ -540,10 +553,12 @@ describe('useAsyncList', () => {
 
   it('should ignore loadMore when a sort happens and the sort loads first', async () => {
     let load = jest.fn().mockImplementation(getItems2);
-    let sort = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 100)));
-    let {result} = renderHook(
-      () => useAsyncList({load, sort})
-    );
+    let sort = jest
+      .fn()
+      .mockImplementation(
+        () => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 100))
+      );
+    let {result} = renderHook(() => useAsyncList({load, sort}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -556,7 +571,9 @@ describe('useAsyncList', () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS2);
 
-    load.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 500)));
+    load.mockImplementation(
+      () => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 500))
+    );
 
     await act(async () => {
       result.current.loadMore();
@@ -590,10 +607,12 @@ describe('useAsyncList', () => {
 
   it('should ignore loadMore when a sort happens and the loadMore loads first', async () => {
     let load = jest.fn().mockImplementation(getItems2);
-    let sort = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 500)));
-    let {result} = renderHook(
-      () => useAsyncList({load, sort})
-    );
+    let sort = jest
+      .fn()
+      .mockImplementation(
+        () => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 500))
+      );
+    let {result} = renderHook(() => useAsyncList({load, sort}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -606,7 +625,9 @@ describe('useAsyncList', () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS2);
 
-    load.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 100)));
+    load.mockImplementation(
+      () => new Promise(resolve => setTimeout(() => resolve({items: ITEMS}), 100))
+    );
 
     await act(async () => {
       result.current.loadMore();
@@ -640,9 +661,7 @@ describe('useAsyncList', () => {
 
   it('should support updating the list', async () => {
     let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -665,9 +684,7 @@ describe('useAsyncList', () => {
 
   it('should get an item by key', async function () {
     let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -684,9 +701,7 @@ describe('useAsyncList', () => {
 
   it('should allow updates to the list while loading', async () => {
     let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -709,12 +724,8 @@ describe('useAsyncList', () => {
   });
 
   it('should allow updates to the list while loading more', async () => {
-    let load = jest.fn()
-      .mockImplementationOnce(getItems)
-      .mockImplementationOnce(getItems2);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let load = jest.fn().mockImplementationOnce(getItems).mockImplementationOnce(getItems2);
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -736,7 +747,7 @@ describe('useAsyncList', () => {
     expect(result.current.isLoading).toBe(true);
     expect(result.current.items).toEqual(ITEMS);
 
-    await act(async() => {
+    await act(async () => {
       result.current.insert(1, {name: 'Test', id: 5});
       result.current.setSelectedKeys(new Set(['selected key']));
     });
@@ -758,20 +769,22 @@ describe('useAsyncList', () => {
   });
 
   it('should handle multiple loadMore operations called in quick succession', async () => {
-    let load = jest.fn()
+    let load = jest
+      .fn()
       .mockImplementationOnce(getItems)
-      .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
-        signal.addEventListener('abort', () => {
-          reject();
-        });
+      .mockImplementationOnce(
+        ({signal}) =>
+          new Promise((resolve, reject) => {
+            signal.addEventListener('abort', () => {
+              reject();
+            });
 
-        setTimeout(() => resolve({items: ITEMS2}), 100);
-      }))
+            setTimeout(() => resolve({items: ITEMS2}), 100);
+          })
+      )
       .mockImplementationOnce(getItems)
       .mockImplementationOnce(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -799,20 +812,22 @@ describe('useAsyncList', () => {
   });
 
   it('should handle multiple loadMore/filtering operations called in quick succession', async () => {
-    let load = jest.fn()
+    let load = jest
+      .fn()
       .mockImplementationOnce(getItems)
-      .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
-        signal.addEventListener('abort', () => {
-          reject();
-        });
+      .mockImplementationOnce(
+        ({signal}) =>
+          new Promise((resolve, reject) => {
+            signal.addEventListener('abort', () => {
+              reject();
+            });
 
-        setTimeout(() => resolve({items: ITEMS}), 100);
-      }))
+            setTimeout(() => resolve({items: ITEMS}), 100);
+          })
+      )
       .mockImplementationOnce(getItems2)
       .mockImplementationOnce(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -846,12 +861,8 @@ describe('useAsyncList', () => {
   });
 
   it('should maintain all selection through a loadMore call', async () => {
-    let load = jest.fn()
-      .mockImplementationOnce(getItems)
-      .mockImplementationOnce(getItems2);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let load = jest.fn().mockImplementationOnce(getItems).mockImplementationOnce(getItems2);
+    let {result} = renderHook(() => useAsyncList({load}));
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(result.current.isLoading).toBe(true);
@@ -876,20 +887,14 @@ describe('useAsyncList', () => {
   });
 
   it('should accept all for initialSelectedKeys', () => {
-    let load = jest.fn()
-      .mockImplementationOnce(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load, initialSelectedKeys: 'all'})
-    );
+    let load = jest.fn().mockImplementationOnce(getItems);
+    let {result} = renderHook(() => useAsyncList({load, initialSelectedKeys: 'all'}));
     expect(result.current.selectedKeys).toEqual('all');
   });
 
   it('should maintain all selection if last visible item removed and unloaded items still exist', async () => {
-    let load = jest.fn()
-      .mockImplementationOnce(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let load = jest.fn().mockImplementationOnce(getItems);
+    let {result} = renderHook(() => useAsyncList({load}));
     await act(async () => {
       result.current.loadMore();
       jest.runAllTimers();
@@ -904,11 +909,8 @@ describe('useAsyncList', () => {
   });
 
   it('should change selection to empty set if last item removed with no unloaded items left', async () => {
-    let load = jest.fn()
-      .mockImplementationOnce(getItemsEnd);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let load = jest.fn().mockImplementationOnce(getItemsEnd);
+    let {result} = renderHook(() => useAsyncList({load}));
     await act(async () => {
       result.current.loadMore();
       jest.runAllTimers();
@@ -921,11 +923,8 @@ describe('useAsyncList', () => {
   });
 
   it('should change selection to empty set if all items removed', async () => {
-    let load = jest.fn()
-      .mockImplementationOnce(getItemsEnd);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+    let load = jest.fn().mockImplementationOnce(getItemsEnd);
+    let {result} = renderHook(() => useAsyncList({load}));
     await act(async () => {
       result.current.loadMore();
       jest.runAllTimers();
@@ -937,9 +936,19 @@ describe('useAsyncList', () => {
   });
 
   describe('filtering', function () {
-    const filterItems = [{id: 1, name: 'Bob'}, {id: 2, name: 'Joe'}, {id: 3, name: 'Bob Joe'}];
-    const itemsFirstCall = [{id: 1, name: 'Bob'}, {id: 3, name: 'Bob Joe'}];
-    const itemsSecondCall = [{id: 2, name: 'Joe'}, {id: 3, name: 'Bob Joe'}];
+    const filterItems = [
+      {id: 1, name: 'Bob'},
+      {id: 2, name: 'Joe'},
+      {id: 3, name: 'Bob Joe'}
+    ];
+    const itemsFirstCall = [
+      {id: 1, name: 'Bob'},
+      {id: 3, name: 'Bob Joe'}
+    ];
+    const itemsSecondCall = [
+      {id: 2, name: 'Joe'},
+      {id: 3, name: 'Bob Joe'}
+    ];
 
     function getFilterItems() {
       return new Promise(resolve => {
@@ -1059,14 +1068,17 @@ describe('useAsyncList', () => {
       let load = jest
         .fn()
         .mockImplementationOnce(mockFirstCall)
-        .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
-          signal.addEventListener('abort', () => {
-            isAborted = true;
-            reject();
-          });
+        .mockImplementationOnce(
+          ({signal}) =>
+            new Promise((resolve, reject) => {
+              signal.addEventListener('abort', () => {
+                isAborted = true;
+                reject();
+              });
 
-          setTimeout(() => resolve({items: filterItems}), 100);
-        }))
+              setTimeout(() => resolve({items: filterItems}), 100);
+            })
+        )
         .mockImplementationOnce(mockSecondCall);
       let {result} = renderHook(() => useAsyncList({load}));
 
@@ -1113,19 +1125,22 @@ describe('useAsyncList', () => {
       expect(result.current.filterText).toBe('Jo');
     });
 
-    it('shouldn\'t call loadMore if filtering is happening (server side filtering)', async () => {
+    it("shouldn't call loadMore if filtering is happening (server side filtering)", async () => {
       let isAborted = false;
       let load = jest
         .fn()
         .mockImplementationOnce(getFilterItems)
-        .mockImplementationOnce(({signal}) => new Promise((resolve, reject) => {
-          signal.addEventListener('abort', () => {
-            isAborted = true;
-            reject();
-          });
+        .mockImplementationOnce(
+          ({signal}) =>
+            new Promise((resolve, reject) => {
+              signal.addEventListener('abort', () => {
+                isAborted = true;
+                reject();
+              });
 
-          setTimeout(() => resolve({items: itemsSecondCall}), 100);
-        }))
+              setTimeout(() => resolve({items: itemsSecondCall}), 100);
+            })
+        )
         .mockImplementationOnce(mockFirstCall);
 
       let {result} = renderHook(() => useAsyncList({load}));

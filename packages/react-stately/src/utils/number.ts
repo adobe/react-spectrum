@@ -11,7 +11,8 @@
  */
 
 /**
- * Takes a value and forces it to the closest min/max if it's outside. Also forces it to the closest valid step.
+ * Takes a value and forces it to the closest min/max if it's outside. Also forces it to the closest
+ * valid step.
  */
 export function clamp(value: number, min: number = -Infinity, max: number = Infinity): number {
   let newValue = Math.min(Math.max(value, min), max);
@@ -39,13 +40,21 @@ export function roundToStepPrecision(value: number, step: number): number {
   return roundedValue;
 }
 
-export function snapValueToStep(value: number, min: number | undefined, max: number | undefined, step: number): number {
+export function snapValueToStep(
+  value: number,
+  min: number | undefined,
+  max: number | undefined,
+  step: number
+): number {
   min = Number(min);
   max = Number(max);
-  let remainder = ((value - (isNaN(min) ? 0 : min)) % step);
-  let snappedValue = roundToStepPrecision(Math.abs(remainder) * 2 >= step
-    ? value + Math.sign(remainder) * (step - Math.abs(remainder))
-    : value - remainder, step);
+  let remainder = (value - (isNaN(min) ? 0 : min)) % step;
+  let snappedValue = roundToStepPrecision(
+    Math.abs(remainder) * 2 >= step
+      ? value + Math.sign(remainder) * (step - Math.abs(remainder))
+      : value - remainder,
+    step
+  );
 
   if (!isNaN(min)) {
     if (snappedValue < min) {
