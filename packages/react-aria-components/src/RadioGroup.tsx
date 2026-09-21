@@ -44,11 +44,11 @@ import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
+import {useHiddenInputAnchor} from './hiddenInputAnchor';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
-import {useHiddenInputAnchor} from './hiddenInputAnchor';
 
 export interface RadioGroupProps
   extends

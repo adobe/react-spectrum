@@ -41,12 +41,12 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
+import {useHiddenInputAnchor} from './hiddenInputAnchor';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useToggleState} from 'react-stately/useToggleState';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
-import {useHiddenInputAnchor} from './hiddenInputAnchor';
 
 export interface CheckboxGroupProps
   extends
