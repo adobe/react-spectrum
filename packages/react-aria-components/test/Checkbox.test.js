@@ -423,17 +423,20 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
   });
 
-  it('should support hiddenInput stretch-to-label', () => {
-    let {getByRole} = render(
-      <Checkbox hiddenInput="stretch-to-label">
-        Test
-      </Checkbox>
-    );
+  it('should anchor the hidden input to the component in supporting browsers', () => {
+    let {getByRole} = render(<Checkbox>Test</Checkbox>);
     let checkbox = getByRole('checkbox');
-    expect(checkbox).toHaveStyle('position: absolute');
-    expect(checkbox).toHaveStyle('inset: 0');
-    expect(checkbox).toHaveStyle('width: 100%');
-    expect(checkbox).toHaveStyle('height: 100%');
+    if (
+      typeof CSS !== 'undefined' &&
+      typeof CSS.supports === 'function' &&
+      CSS.supports('anchor-name: --test')
+    ) {
+      expect(checkbox).toHaveStyle('position: fixed');
+      expect(checkbox).toHaveStyle('position-anchor: --react-aria-checkbox-1');
+      expect(checkbox).toHaveStyle('top: anchor(top)');
+      expect(checkbox).toHaveStyle('width: anchor-size(width)');
+      expect(checkbox).toHaveStyle('height: anchor-size(height)');
+    }
   });
 
   it('should support callback ref', () => {
@@ -506,18 +509,13 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
 });
 
 describe('CheckboxButton', function () {
-  it('should support hiddenInput stretch-to-label directly on CheckboxButton', () => {
+  it('renders the hidden input inside VisuallyHidden by default', () => {
     let {getByRole} = render(
       <CheckboxField>
-        <CheckboxButton hiddenInput="stretch-to-label">
-          Test
-        </CheckboxButton>
+        <CheckboxButton>Test</CheckboxButton>
       </CheckboxField>
     );
     let checkbox = getByRole('checkbox');
-    expect(checkbox).toHaveStyle('position: absolute');
-    expect(checkbox).toHaveStyle('inset: 0');
-    expect(checkbox).toHaveStyle('width: 100%');
-    expect(checkbox).toHaveStyle('height: 100%');
+    expect(checkbox).not.toHaveStyle('position: fixed');
   });
 });

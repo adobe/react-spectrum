@@ -755,20 +755,25 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(inputRef.current).toBe(radio);
   });
 
-  it('should support hiddenInput stretch-to-label', () => {
+  it('should anchor the hidden input to the component in supporting browsers', () => {
     let {getByRole} = render(
       <RadioGroup>
         <Label>Test</Label>
-        <Radio hiddenInput="stretch-to-label" value="a">
-          A
-        </Radio>
+        <Radio value="a">A</Radio>
       </RadioGroup>
     );
     let radio = getByRole('radio');
-    expect(radio).toHaveStyle('position: absolute');
-    expect(radio).toHaveStyle('inset: 0');
-    expect(radio).toHaveStyle('width: 100%');
-    expect(radio).toHaveStyle('height: 100%');
+    if (
+      typeof CSS !== 'undefined' &&
+      typeof CSS.supports === 'function' &&
+      CSS.supports('anchor-name: --test')
+    ) {
+      expect(radio).toHaveStyle('position: fixed');
+      expect(radio).toHaveStyle('position-anchor: --react-aria-radio-1');
+      expect(radio).toHaveStyle('top: anchor(top)');
+      expect(radio).toHaveStyle('width: anchor-size(width)');
+      expect(radio).toHaveStyle('height: anchor-size(height)');
+    }
   });
 
   it('should support callback ref', () => {
@@ -922,21 +927,16 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
 });
 
 describe('RadioButton', function () {
-  it('should support hiddenInput stretch-to-label directly on RadioButton', () => {
+  it('renders the hidden input inside VisuallyHidden by default', () => {
     let {getByRole} = render(
       <RadioGroup>
         <Label>Test</Label>
         <RadioField>
-          <RadioButton hiddenInput="stretch-to-label" value="a">
-            A
-          </RadioButton>
+          <RadioButton value="a">A</RadioButton>
         </RadioField>
       </RadioGroup>
     );
     let radio = getByRole('radio');
-    expect(radio).toHaveStyle('position: absolute');
-    expect(radio).toHaveStyle('inset: 0');
-    expect(radio).toHaveStyle('width: 100%');
-    expect(radio).toHaveStyle('height: 100%');
+    expect(radio).not.toHaveStyle('position: fixed');
   });
 });

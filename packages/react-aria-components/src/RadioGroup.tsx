@@ -40,17 +40,11 @@ import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {RadioGroupState, useRadioGroupState} from 'react-stately/useRadioGroupState';
-import React, {
-  createContext,
-  ForwardedRef,
-  forwardRef,
-  Ref,
-  useContext,
-  useMemo
-} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
+import {useHiddenInputAnchor} from './hiddenInputAnchor';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useObjectRef} from 'react-aria/useObjectRef';
@@ -97,13 +91,6 @@ export interface RadioProps
    * A ref for the HTML input element.
    */
   inputRef?: Ref<HTMLInputElement | null>;
-  /**
-   * Stretches the hidden native input and its VisuallyHidden wrapper to cover the visible
-   * label, so the screen reader focus ring (VoiceOver/NVDA draw the ring around the native
-   * input) matches the visual focus. Requires the label (or an ancestor) to be a positioned
-   * containing block (`position: relative`). No change in behavior by default.
-   */
-  hiddenInput?: 'stretch-to-label';
 }
 
 export interface RadioFieldProps
@@ -123,13 +110,6 @@ export interface RadioFieldProps
    * A ref for the HTML input element.
    */
   inputRef?: Ref<HTMLInputElement | null>;
-  /**
-   * Stretches the hidden native input and its VisuallyHidden wrapper to cover the visible
-   * label, so the screen reader focus ring (VoiceOver/NVDA draw the ring around the native
-   * input) matches the visual focus. Requires the label (or an ancestor) to be a positioned
-   * containing block (`position: relative`). No change in behavior by default.
-   */
-  hiddenInput?: 'stretch-to-label';
 }
 
 export interface RadioButtonProps
@@ -145,13 +125,6 @@ export interface RadioButtonProps
    * @default 'react-aria-RadioButton'
    */
   className?: ClassNameOrFunction<RadioButtonRenderProps>;
-  /**
-   * Stretches the hidden native input and its VisuallyHidden wrapper to cover the visible
-   * label, so the screen reader focus ring (VoiceOver/NVDA draw the ring around the native
-   * input) matches the visual focus. Requires the label (or an ancestor) to be a positioned
-   * containing block (`position: relative`). No change in behavior by default.
-   */
-  hiddenInput?: 'stretch-to-label';
 }
 
 export interface RadioGroupRenderProps {
@@ -395,8 +368,7 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
       value={{
         ...aria,
         inputRef,
-        defaultClassName: 'react-aria-Radio',
-        hiddenInput: props.hiddenInput
+        defaultClassName: 'react-aria-Radio'
       }}>
       <RadioButton {...props} ref={ref} />
     </InternalRadioContext.Provider>
@@ -406,7 +378,6 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
 interface InternalRadioContextValue extends RadioAria {
   inputRef: RefObject<HTMLInputElement | null>;
   defaultClassName: string;
-  hiddenInput?: 'stretch-to-label';
 }
 
 const InternalRadioContext = createContext<InternalRadioContextValue | null>(null);
@@ -472,8 +443,7 @@ export const RadioField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             {
               ...aria,
               inputRef,
-              defaultClassName: 'react-aria-RadioButton',
-              hiddenInput: props.hiddenInput
+              defaultClassName: 'react-aria-RadioButton'
             }
           ],
           [
@@ -498,23 +468,15 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   props: RadioButtonProps,
   ref: ForwardedRef<HTMLLabelElement>
 ) {
-  let {
-    labelProps,
-    inputProps,
-    isSelected,
-    isDisabled,
-    isPressed,
-    defaultClassName,
-    inputRef,
-    hiddenInput
-  } = useContext(InternalRadioContext)!;
+  let {labelProps, inputProps, isSelected, isDisabled, isPressed, defaultClassName, inputRef} =
+    useContext(InternalRadioContext)!;
   let state = React.useContext(RadioGroupStateContext)!;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
-  // Allow hiddenInput to be passed directly to RadioButton, taking precedence
-  // over the value inherited from a wrapping Radio/RadioField.
-  hiddenInput = props.hiddenInput ?? hiddenInput;
+  let domRef = useObjectRef(ref);
+  let uniqueId = React.useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  useHiddenInputAnchor(domRef, inputRef, `--react-aria-radio-${uniqueId}`);
 
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -544,7 +506,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   return (
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
-      ref={ref}
+      ref={domRef}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
@@ -554,14 +516,8 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       data-readonly={state.isReadOnly || undefined}
       data-invalid={state.isInvalid || undefined}
       data-required={state.isRequired || undefined}>
-      <VisuallyHidden
-        elementType="span"
-        style={hiddenInput === 'stretch-to-label' ? {inset: 0, width: 'auto', height: 'auto'} : undefined}>
-        <input
-          {...mergeProps(inputProps, focusProps)}
-          ref={inputRef}
-          style={hiddenInput === 'stretch-to-label' ? {position: 'absolute', inset: 0, width: '100%', height: '100%'} : undefined}
-        />
+      <VisuallyHidden elementType="span">
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>

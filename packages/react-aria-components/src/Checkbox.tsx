@@ -39,15 +39,9 @@ import {HoverEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {
-  createContext,
-  ForwardedRef,
-  forwardRef,
-  Ref,
-  useContext,
-  useMemo
-} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
+import {useHiddenInputAnchor} from './hiddenInputAnchor';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useObjectRef} from 'react-aria/useObjectRef';
@@ -97,13 +91,6 @@ export interface CheckboxProps
    * A ref for the HTML input element.
    */
   inputRef?: Ref<HTMLInputElement | null>;
-  /**
-   * Stretches the hidden native input and its VisuallyHidden wrapper to cover the visible
-   * label, so the screen reader focus ring (VoiceOver/NVDA draw the ring around the native
-   * input) matches the visual focus. Requires the label (or an ancestor) to be a positioned
-   * containing block (`position: relative`). No change in behavior by default.
-   */
-  hiddenInput?: 'stretch-to-label';
 }
 
 export interface CheckboxFieldProps
@@ -124,13 +111,6 @@ export interface CheckboxFieldProps
    * A ref for the HTML input element.
    */
   inputRef?: Ref<HTMLInputElement | null>;
-  /**
-   * Stretches the hidden native input and its VisuallyHidden wrapper to cover the visible
-   * label, so the screen reader focus ring (VoiceOver/NVDA draw the ring around the native
-   * input) matches the visual focus. Requires the label (or an ancestor) to be a positioned
-   * containing block (`position: relative`). No change in behavior by default.
-   */
-  hiddenInput?: 'stretch-to-label';
 }
 
 export interface CheckboxButtonProps
@@ -146,13 +126,6 @@ export interface CheckboxButtonProps
    * @default 'react-aria-CheckboxButton'
    */
   className?: ClassNameOrFunction<CheckboxButtonRenderProps>;
-  /**
-   * Stretches the hidden native input and its VisuallyHidden wrapper to cover the visible
-   * label, so the screen reader focus ring (VoiceOver/NVDA draw the ring around the native
-   * input) matches the visual focus. Requires the label (or an ancestor) to be a positioned
-   * containing block (`position: relative`). No change in behavior by default.
-   */
-  hiddenInput?: 'stretch-to-label';
 }
 
 export interface CheckboxGroupRenderProps {
@@ -371,7 +344,6 @@ interface InternalCheckboxContextValue extends CheckboxAria {
   defaultClassName: string;
   isIndeterminate?: boolean;
   isRequired?: boolean;
-  hiddenInput?: 'stretch-to-label';
 }
 
 const InternalCheckboxContext = createContext<InternalCheckboxContextValue | null>(null);
@@ -435,8 +407,7 @@ export const CheckboxField = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
               inputRef,
               defaultClassName: 'react-aria-CheckboxButton',
               isIndeterminate: props.isIndeterminate,
-              isRequired: props.isRequired,
-              hiddenInput: props.hiddenInput
+              isRequired: props.isRequired
             }
           ],
           [
@@ -506,8 +477,7 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
         inputRef,
         defaultClassName: 'react-aria-Checkbox',
         isIndeterminate: props.isIndeterminate,
-        isRequired: props.isRequired,
-        hiddenInput: props.hiddenInput
+        isRequired: props.isRequired
       }}>
       <CheckboxButton {...props} ref={ref} />
     </InternalCheckboxContext.Provider>
@@ -532,15 +502,14 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
     inputRef,
     defaultClassName,
     isIndeterminate,
-    isRequired,
-    hiddenInput
+    isRequired
   } = useContext(InternalCheckboxContext)!;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
-  // Allow hiddenInput to be passed directly to CheckboxButton, taking precedence
-  // over the value inherited from a wrapping Checkbox/CheckboxField.
-  hiddenInput = props.hiddenInput ?? hiddenInput;
+  let domRef = useObjectRef(ref);
+  let uniqueId = React.useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  useHiddenInputAnchor(domRef, inputRef, `--react-aria-checkbox-${uniqueId}`);
 
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -571,7 +540,7 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   return (
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
-      ref={ref}
+      ref={domRef}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={isIndeterminate || undefined}
@@ -583,14 +552,8 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
       data-readonly={isReadOnly || undefined}
       data-invalid={isInvalid || undefined}
       data-required={isRequired || undefined}>
-      <VisuallyHidden
-        elementType="span"
-        style={hiddenInput === 'stretch-to-label' ? {inset: 0, width: 'auto', height: 'auto'} : undefined}>
-        <input
-          {...mergeProps(inputProps, focusProps)}
-          ref={inputRef}
-          style={hiddenInput === 'stretch-to-label' ? {position: 'absolute', inset: 0, width: '100%', height: '100%'} : undefined}
-        />
+      <VisuallyHidden elementType="span">
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>
