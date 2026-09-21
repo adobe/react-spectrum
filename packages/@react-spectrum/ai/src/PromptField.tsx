@@ -986,7 +986,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   } = useVoiceInput({lang, onError, onListeningChange: setListening});
 
   let restoreFocus = useEffectEvent(() => {
-    if (!inputRef.current) {
+    if (!inputRef.current || isDisabled) {
       return;
     }
     // similar to useInsertPromptSegment, calling programatic focus on the input causes the caret positioning
@@ -1015,7 +1015,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   }, [isVoiceListening]);
 
   let applyVoiceTranscript = useEffectEvent(() => {
-    if (!transcript || !isVoiceListening) {
+    if (!transcript || !isVoiceListening || isDisabled) {
       return;
     }
 

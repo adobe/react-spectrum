@@ -620,10 +620,19 @@ export const Everything: Story = {
 };
 
 function BasicRender({placeholder, ...args}: any) {
+  let [isSubmitting, setIsSubmitting] = useState(false);
+
   return (
-    <PromptField {...args}>
+    <PromptField
+      {...args}
+      onSubmit={(prompt, attachments) => {
+        args.onSubmit?.(prompt, attachments);
+        setIsSubmitting(true);
+        setTimeout(() => setIsSubmitting(false), 1500);
+      }}>
       <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
         <PromptTokenField placeholder={placeholder} shouldAnimatePixelLoader />
+        <PromptFieldVoiceButton isDisabled={isSubmitting} onToggle={action('onToggle')} />
         <PromptFieldSubmitButton />
       </div>
     </PromptField>
