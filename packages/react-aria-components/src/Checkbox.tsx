@@ -539,8 +539,9 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
       style={{
-        ...props.style, 
-        ['anchorName' as any]: (props.style as any)?.anchorName ?? `--react-aria-checkbox-${uniqueId}`
+        ...props.style,
+        ['anchorName' as any]:
+          (props.style as any)?.anchorName ?? `--react-aria-checkbox-${uniqueId}`
       }}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
@@ -560,7 +561,8 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
           style={{
             position: 'fixed',
             margin: 0,
-            ['positionAnchor' as any]: (props.style as any)?.anchorName ?? `--react-aria-checkbox-${uniqueId}`,
+            ['positionAnchor' as any]:
+              (props.style as any)?.anchorName ?? `--react-aria-checkbox-${uniqueId}`,
             top: 'anchor(top)',
             left: 'anchor(left)',
             width: 'anchor-size(width)',
