@@ -39,9 +39,9 @@ import {
   TreeLoadMoreItem,
   TreeSection
 } from '../src/Tree';
+import {TreeData, useTreeData} from 'react-stately/useTreeData';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
-import {useTreeData} from 'react-stately/useTreeData';
 import {Virtualizer} from '../src/Virtualizer';
 
 let {
@@ -2280,6 +2280,115 @@ describe('Tree', () => {
       let {getAllByRole} = render(<DraggableTree />);
       let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-label', 'Drag Projects');
+    });
+
+    describe('collapsing the drag source branch', () => {
+      type DragTreeItem = {id: string; name: string; childItems?: DragTreeItem[]};
+      function renderMovingItem(item: TreeData<DragTreeItem>['items'][number]) {
+        return (
+          <TreeItem id={item.key} textValue={item.value.name}>
+            <TreeItemContent>
+              {({hasChildItems, isExpanded}) => (
+                <>
+                  <Button slot="drag">≡</Button>
+                  {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+                  <Text>{item.value.name}</Text>
+                </>
+              )}
+            </TreeItemContent>
+            <Collection items={item.children ?? []}>{renderMovingItem}</Collection>
+          </TreeItem>
+        );
+      }
+
+      function MovingTree({onMove, onDragEnd}: {onMove: jest.Mock; onDragEnd: jest.Mock}) {
+        let tree = useTreeData<DragTreeItem>({
+          initialItems: rows,
+          getKey: item => item.id,
+          getChildren: item => item.childItems ?? []
+        });
+        let {dragAndDropHooks} = useDragAndDrop({
+          getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
+          getAllowedDropOperations: () => ['move'],
+          onDragEnd,
+          onMove: event => {
+            onMove(event);
+            if (event.target.dropPosition === 'before') {
+              tree.moveBefore(event.target.key, event.keys);
+            } else if (event.target.dropPosition === 'after') {
+              tree.moveAfter(event.target.key, event.keys);
+            }
+          }
+        });
+        return (
+          <Tree
+            aria-label="Movable tree"
+            items={tree.items}
+            defaultExpandedKeys={['projects', 'reports']}
+            dragAndDropHooks={dragAndDropHooks}>
+            {renderMovingItem}
+          </Tree>
+        );
+      }
+
+      afterEach(async () => {
+        await user.keyboard('{Escape}');
+        act(() => jest.runAllTimers());
+      });
+
+      it.each(['Enter', 'Escape'])('keeps the drag usable until %s', async key => {
+        let onMove = jest.fn();
+        let onDragEnd = jest.fn();
+        let {getByRole} = render(<MovingTree onMove={onMove} onDragEnd={onDragEnd} />);
+
+        await user.tab();
+        await user.keyboard('{ArrowDown}{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Drag Project 1'}));
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        for (
+          let i = 0;
+          i < 8 && document.activeElement?.getAttribute('aria-label') !== 'Drop on Projects';
+          i++
+        ) {
+          await user.keyboard('{ArrowUp}');
+        }
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Projects');
+
+        await user.keyboard('{ArrowLeft}');
+        act(() => jest.runAllTimers());
+        expect(onDragEnd).not.toHaveBeenCalled();
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Projects');
+
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toHaveAttribute(
+          'aria-label',
+          'Insert between Projects and Reports'
+        );
+        await user.keyboard(`{${key}}`);
+        act(() => jest.runAllTimers());
+
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith(
+          expect.objectContaining({
+            keys: new Set(['project-1']),
+            dropOperation: key === 'Enter' ? 'move' : 'cancel'
+          })
+        );
+        expect(onMove).toHaveBeenCalledTimes(key === 'Enter' ? 1 : 0);
+        expect(document.activeElement?.closest('[role="row"]')).toHaveAttribute(
+          'data-key',
+          key === 'Enter' ? 'project-1' : 'projects'
+        );
+        expect(
+          [...document.querySelectorAll('[role="row"][aria-level="1"]')].map(row =>
+            row.getAttribute('data-key')
+          )
+        ).toEqual(key === 'Enter' ? ['projects', 'project-1', 'reports'] : ['projects', 'reports']);
+        let event = new KeyboardEvent('keydown', {key: 'a', bubbles: true, cancelable: true});
+        document.activeElement?.dispatchEvent(event);
+        expect(event.defaultPrevented).toBe(false);
+      });
     });
 
     it('should render drop indicators', async () => {

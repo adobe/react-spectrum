@@ -70,6 +70,24 @@ describe('useDrag and useDrop', function () {
   });
 
   describe('native drag and drop', () => {
+    it('ends a native drag once when its source unmounts without a dragend event', () => {
+      let onDragEnd = jest.fn();
+      let {getByText, unmount} = render(<Draggable onDragEnd={onDragEnd} />);
+      let source = getByText('Drag me');
+      let dataTransfer = new DataTransfer();
+      fireEvent(source, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+      expect(source).toHaveAttribute('data-dragging', 'true');
+      unmount();
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 0,
+        y: 0,
+        dropOperation: 'cancel'
+      });
+    });
+
     it('should perform basic drag and drop', async () => {
       let onDragStart = jest.fn();
       let onDragMove = jest.fn();

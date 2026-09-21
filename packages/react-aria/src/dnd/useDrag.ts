@@ -281,7 +281,9 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
-  // In this case, we need to manually call onDragEnd on cleanup
+  // In this case, we need to manually call onDragEnd on cleanup. Virtual drags
+  // are owned by DragManager and may continue after the source unmounts (e.g.
+  // when a tree's source branch collapses).
 
   useEffect(() => {
     return () => {
@@ -290,6 +292,7 @@ export function useDrag(options: DragOptions): DragResult {
       // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
       if (
         isDraggingRef.current &&
+        !DragManager.isVirtualDragging() &&
         (!isDraggingRef.current.isConnected || parseInt(ReactVersion, 10) < 17)
       ) {
         if (typeof state.options.onDragEnd === 'function') {
