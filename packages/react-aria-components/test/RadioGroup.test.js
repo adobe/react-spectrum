@@ -936,7 +936,8 @@ describe('RadioButton', function () {
         </RadioField>
       </RadioGroup>
     );
-    let radio = getByRole('radio');
-    expect(radio).not.toHaveStyle('position: fixed');
+    let radioInput = getByRole('radio');
+    let radioLabel = radioInput.closest('label');
+    expect(radioLabel).not.toHaveStyle('position: fixed');
   });
 });
