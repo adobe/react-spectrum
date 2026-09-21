@@ -36,6 +36,8 @@ import {useLabel} from '../label/useLabel';
 import {useSelectableList} from '../selection/useSelectableList';
 
 export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, FocusEvents {
+  /** Whether the listbox is disabled. */
+  isDisabled?: boolean;
   /** Whether to auto focus the listbox or an option. */
   autoFocus?: boolean | FocusStrategy;
   /** Whether focus should wrap around when the end/start is reached. */
@@ -194,6 +196,7 @@ export function useListBox<T>(
         : {},
       {
         role: 'listbox',
+        'aria-disabled': props.isDisabled || undefined,
         'aria-orientation': orientation,
         ...mergeProps(fieldProps, listProps)
       }

@@ -21,6 +21,8 @@ import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {useCollection} from '../collections/useCollection';
 
 export interface ListProps<T> extends CollectionStateBase<T>, MultipleSelectionStateProps {
+  /** Whether the entire list is disabled. */
+  isDisabled?: boolean;
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>;
   /** @private */
@@ -50,12 +52,6 @@ export interface ListState<T> {
 export function useListState<T>(props: ListProps<T>): ListState<T> {
   let {filter, layoutDelegate} = props;
 
-  let selectionState = useMultipleSelectionState(props);
-  let disabledKeys = useMemo(
-    () => (props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()),
-    [props.disabledKeys]
-  );
-
   let factory = useCallback(
     nodes =>
       filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>),
@@ -67,6 +63,19 @@ export function useListState<T>(props: ListProps<T>): ListState<T> {
   );
 
   let collection = useCollection(props, factory, context);
+
+  let disabledKeys = useMemo(() => {
+    let disabledKeys = props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>();
+    if (props.isDisabled) {
+      for (let key of collection.getKeys()) {
+        disabledKeys.add(key);
+      }
+    }
+
+    return disabledKeys;
+  }, [collection, props.disabledKeys, props.isDisabled]);
+
+  let selectionState = useMultipleSelectionState({...props, disabledKeys});
 
   let selectionManager = useMemo(
     () => new SelectionManager(collection, selectionState, {layoutDelegate}),
