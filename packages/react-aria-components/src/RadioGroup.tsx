@@ -48,7 +48,6 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
-import {useHiddenInputAnchor} from './hiddenInputAnchor';
 
 export interface RadioGroupProps
   extends
@@ -474,9 +473,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
-  let domRef = useObjectRef(ref);
   let uniqueId = `radio-${Math.random().toString(36).substr(2, 9)}`;
-  useHiddenInputAnchor(domRef, inputRef, `--react-aria-radio-${uniqueId}`);
 
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -506,7 +503,8 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   return (
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
-      ref={domRef}
+      ref={ref}
+      style={{...props.style, ['anchorName' as any]: `--react-aria-radio-${uniqueId}`}}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
@@ -517,7 +515,19 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       data-invalid={state.isInvalid || undefined}
       data-required={state.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+        <input
+          {...mergeProps(inputProps, focusProps)}
+          ref={inputRef}
+          style={{
+            position: 'fixed',
+            margin: 0,
+            ['positionAnchor' as any]: `--react-aria-radio-${uniqueId}`,
+            top: 'anchor(top)',
+            left: 'anchor(left)',
+            width: 'anchor-size(width)',
+            height: 'anchor-size(height)'
+          }}
+        />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>

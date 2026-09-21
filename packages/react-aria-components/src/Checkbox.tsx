@@ -46,7 +46,6 @@ import {useHover} from 'react-aria/useHover';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useToggleState} from 'react-stately/useToggleState';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
-import {useHiddenInputAnchor} from './hiddenInputAnchor';
 
 export interface CheckboxGroupProps
   extends
@@ -507,9 +506,7 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
-  let domRef = useObjectRef(ref);
   let uniqueId = `checkbox-${Math.random().toString(36).substr(2, 9)}`;
-  useHiddenInputAnchor(domRef, inputRef, `--react-aria-checkbox-${uniqueId}`);
 
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -540,7 +537,8 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   return (
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
-      ref={domRef}
+      ref={ref}
+      style={{...props.style, ['anchorName' as any]: `--react-aria-checkbox-${uniqueId}`}}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={isIndeterminate || undefined}
@@ -553,7 +551,19 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
       data-invalid={isInvalid || undefined}
       data-required={isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+        <input
+          {...mergeProps(inputProps, focusProps)}
+          ref={inputRef}
+          style={{
+            position: 'fixed',
+            margin: 0,
+            ['positionAnchor' as any]: `--react-aria-checkbox-${uniqueId}`,
+            top: 'anchor(top)',
+            left: 'anchor(left)',
+            width: 'anchor-size(width)',
+            height: 'anchor-size(height)'
+          }}
+        />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>

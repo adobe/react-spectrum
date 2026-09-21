@@ -93,3 +93,23 @@ it('Radio: the hidden input covers the component via anchor positioning', async 
     expect(inputRect.height).toBeLessThanOrEqual(labelRect.height + 2);
   }
 });
+
+it('the hidden input respects a custom anchor-name provided via CSS', async () => {
+  let screen = await render(
+    <Checkbox style={{position: 'relative', ['anchorName' as any]: '--custom-anchor'}}>
+      Test
+    </Checkbox>
+  );
+
+  let input = screen.container.querySelector('input')!;
+  let label = screen.container.querySelector('label')!;
+
+  if (supportsAnchorPositioning()) {
+    expect(getComputedStyle(label).getPropertyValue('anchor-name').trim()).toBe('--custom-anchor');
+    expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe('--custom-anchor');
+    
+    let labelRect = rect(label);
+    let inputRect = rect(input);
+    expect(covers(inputRect, labelRect)).toBe(true);
+  }
+});
