@@ -515,7 +515,8 @@ describe('CheckboxButton', function () {
         <CheckboxButton>Test</CheckboxButton>
       </CheckboxField>
     );
-    let checkbox = getByRole('checkbox');
-    expect(checkbox).not.toHaveStyle('position: fixed');
+    let checkboxInput = getByRole('checkbox');
+    let checkboxLabel = checkboxInput.closest('label');
+    expect(checkboxLabel).not.toHaveStyle('position: fixed');
   });
 });
