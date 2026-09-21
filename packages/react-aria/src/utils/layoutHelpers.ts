@@ -111,8 +111,8 @@ export function getOverflowingElement(node: BoundingNode): Element {
   let ownerWindow = getOwnerWindow(node);
   let ownerDocument = getOwnerDocument(node);
 
-  // A node containing the body element shall assert as its document.
-  if (nodeContains(node, ownerDocument.body)) node = ownerDocument;
+  // A node containing the root element shall assert as its document.
+  if (nodeContains(node, ownerDocument.documentElement)) node = ownerDocument;
 
   if (isDocument(node) && ownerDocument.body == null) {
     return ownerDocument.documentElement;
@@ -144,8 +144,16 @@ export function getContainingElement(node: BoundingNode): Element | null {
   let ownerDocument = getOwnerDocument(node);
 
   // A node containing the body element shall return the initial containing block.
-  if (isDocument(node) || nodeContains(node, ownerDocument.body)) {
+  if (!isElement(node) || nodeContains(node, ownerDocument.body)) {
     return ownerDocument.documentElement;
+  }
+
+  // A top layer element is positioned relative to the initial containing block
+  // regardless of its ancestors, so it has no offset parent.
+  try {
+    if (node.matches(':popover-open, :modal')) return null;
+  } catch {
+    /** <noop> */
   }
 
   // The offsetParent of an element in most cases equals the containing block.
@@ -157,7 +165,7 @@ export function getContainingElement(node: BoundingNode): Element | null {
   if (offsetParent === ownerDocument.body) {
     let style = ownerWindow.getComputedStyle(offsetParent);
 
-    if (style.position === 'static' && !isContainingBlock(offsetParent)) {
+    if (style.position === 'static' && !isContainingBlock(offsetParent, node)) {
       offsetParent = ownerDocument.documentElement;
     }
   }
@@ -168,12 +176,11 @@ export function getContainingElement(node: BoundingNode): Element | null {
   // The offsetParent is null for 'position: fixed', among a few other cases.
   // Fixed positioned elements are still positioned relative to their
   // containing block, which is not always the viewport — walk the flat tree.
-  let currentNode: Node | null = offsetParent == null ? node : null;
+  // Also walk below a known offsetParent, as it is retargeted past shadow trees.
+  let currentNode: Node | null = node;
 
-  while (currentNode != null) {
-    currentNode = getParentNode(currentNode);
-
-    if (isElement(currentNode) && isContainingBlock(currentNode)) {
+  while ((currentNode = getParentNode(currentNode)) != null && currentNode !== offsetParent) {
+    if (isElement(currentNode) && isContainingBlock(currentNode, node)) {
       return currentNode;
     }
   }
@@ -182,33 +189,36 @@ export function getContainingElement(node: BoundingNode): Element | null {
 }
 
 function getBoundingScale(node: BoundingNode, axis: Axis): number {
+  let size = new DOMRect();
+
   let ownerWindow = getOwnerWindow(node);
   let stylingElement = getStylingElement(node);
 
   let style = ownerWindow.getComputedStyle(stylingElement);
   let rect = stylingElement.getBoundingClientRect();
 
-  let width = parseFloat(style.width) || 0;
-  let height = parseFloat(style.height) || 0;
-
-  if (axis === 'block' && style.boxSizing === 'content-box') {
-    height += parseFloat(style.paddingTop) || 0;
-    height += parseFloat(style.paddingBottom) || 0;
-    height += parseFloat(style.borderTopWidth) || 0;
-    height += parseFloat(style.borderBottomWidth) || 0;
-  }
-
-  if (axis === 'inline' && style.boxSizing === 'content-box') {
-    width += parseFloat(style.paddingLeft) || 0;
-    width += parseFloat(style.paddingRight) || 0;
-    width += parseFloat(style.borderLeftWidth) || 0;
-    width += parseFloat(style.borderRightWidth) || 0;
+  // Prefer standardized offset values when available, since engines don't agree
+  // on whether or not to include scrollbar gutters in the computed size.
+  if (isHTMLElement(stylingElement)) {
+    size.height = stylingElement.offsetHeight;
+    size.width = stylingElement.offsetWidth;
+  } else if (style.boxSizing === 'content-box') {
+    size.height = parseFloat(style.height) || 0;
+    size.height += parseFloat(style.paddingTop) || 0;
+    size.height += parseFloat(style.paddingBottom) || 0;
+    size.height += parseFloat(style.borderTopWidth) || 0;
+    size.height += parseFloat(style.borderBottomWidth) || 0;
+    size.width = parseFloat(style.width) || 0;
+    size.width += parseFloat(style.paddingLeft) || 0;
+    size.width += parseFloat(style.paddingRight) || 0;
+    size.width += parseFloat(style.borderLeftWidth) || 0;
+    size.width += parseFloat(style.borderRightWidth) || 0;
   }
 
   switch (axis) {
     case 'block':
-      return height > 0 && rect.height > 0 ? rect.height / height : 1;
+      return size.height > 0 && rect.height > 0 ? rect.height / size.height : 1;
     case 'inline':
-      return width > 0 && rect.width > 0 ? rect.width / width : 1;
+      return size.width > 0 && rect.width > 0 ? rect.width / size.width : 1;
   }
 }

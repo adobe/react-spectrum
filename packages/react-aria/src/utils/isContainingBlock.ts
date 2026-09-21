@@ -12,18 +12,24 @@
 
 import {getOwnerWindow} from './domHelpers';
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
-export function isContainingBlock(element: Element): boolean {
-  let ownerWindow = getOwnerWindow(element);
-  let style = ownerWindow.getComputedStyle(element);
+/**
+ * Returns whether a container establishes a containing block (of an element).
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block.
+ */
+export function isContainingBlock(container: Element, element?: Element): boolean {
+  let ownerWindow = getOwnerWindow(container);
+
+  let containerStyle = ownerWindow.getComputedStyle(container);
+  let contentStyle = element ? ownerWindow.getComputedStyle(element) : null;
 
   return (
-    style.transform !== 'none' ||
-    style.perspective !== 'none' ||
-    style.filter !== 'none' ||
-    /(transform|perspective|filter)/.test(style.willChange) ||
-    /(layout|paint|strict|content)/.test(style.contain) ||
-    ('backdropFilter' in style && style.backdropFilter !== 'none') ||
-    ('WebkitBackdropFilter' in style && style.WebkitBackdropFilter !== 'none')
+    containerStyle.transform !== 'none' ||
+    containerStyle.perspective !== 'none' ||
+    containerStyle.filter !== 'none' ||
+    /(transform|perspective|filter)/.test(containerStyle.willChange) ||
+    /(layout|paint|strict|content)/.test(containerStyle.contain) ||
+    ('backdropFilter' in containerStyle && containerStyle.backdropFilter !== 'none') ||
+    ('WebkitBackdropFilter' in containerStyle && containerStyle.WebkitBackdropFilter !== 'none') ||
+    (contentStyle?.position === 'absolute' && containerStyle.position !== 'static')
   );
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BoxChangeEvent, DOMBox, DOMBoxAnchor, DOMResizableBox} from '../../src/utils/layout';
+import {BoxChangeEvent, DOMAnchorBox, DOMBox, DOMResizableBox} from '../../src/utils/layout';
 import {Meta} from '@storybook/react';
 import React, {useEffect, useRef, useState} from 'react';
 
@@ -155,8 +155,8 @@ export function ResizableBox() {
   );
 }
 
-export function BoxAnchor() {
-  let [ref, rect] = useBoxChange(el => new DOMBoxAnchor(el, {model: 'border-box'}));
+export function AnchorBox() {
+  let [ref, rect] = useBoxChange(el => new DOMAnchorBox(el, {model: 'border-box'}));
   let [transformed, setTransformed] = useState(false);
 
   return (

@@ -22,7 +22,7 @@ import {SyntheticEventTarget} from './events';
 /**
  * https://github.com/orgs/adobe/projects/19/views/30?filterQuery=overlay&pane=issue&itemId=5247317.
  *
- * Disclaimer: "DOMResizableBox" and "DOMBoxAnchor" are experimental preview to understand the
+ * Disclaimer: "DOMResizableBox" and "DOMAnchorBox" are experimental preview to understand the
  * context of why this has been built using OOP. Only "DOMBox" is required for scroll utilities!
  *
  * This file aims to provide the primitives for a smaller, more accurate and faster alternative
@@ -32,7 +32,7 @@ import {SyntheticEventTarget} from './events';
  * with #10102s work on interactive widgets, is able to directly plug into the existing codebase and
  * fix most open issues attributed to useResizeObserver, useViewportSize and useOverlayPosition.
  *
- * Here is an outline over "DOMBox", "DOMResizableBox" and "DOMBoxAnchor":
+ * Here is an outline over "DOMBox", "DOMResizableBox" and "DOMAnchorBox":
  *
  * 1. A "DOMBox" is built via two bounding box implementations to cover either viewport or element
  *    bounding targets. Due to issues in Chrome, these currently vary enough to warrant an internal
@@ -40,12 +40,12 @@ import {SyntheticEventTarget} from './events';
  * 2. On top, a "DOMResizableBox" implements an event emitter, which fires on resize. All box models
  *    may be supported through a ResizeObserver and a set of inline CSS transitions. This basically
  *    notifies us of changes in either size or box style (e.g. padding, scroll-padding).
- * 3. A "DOMBoxAnchor" extends "DOMResizableBox" by position tracking. This is done through a hidden,
+ * 3. A "DOMAnchorBox" extends "DOMResizableBox" by position tracking. This is done through a hidden,
  *    non-layout-thrashing fixpos sentinel, which is positioned at the ICB origin and anchored to
  *    the target so its width & height correspond to the top & left coordinates. Position changes
  *    done in composite, e.g. transforms or scroll, are listened to or already followed natively.
  *
- * Hint: "DOMBoxAnchor" has only recently been enabled by CSS anchor positioning entering baseline,
+ * Hint: "DOMAnchorBox" has only recently been enabled by CSS anchor positioning entering baseline,
  * which coincides with RSPs required browser support range (last 2 majors).
  *
  * Fixes: Issue#7142, Issue#10036, Issue#10131, PR#9318 and more.
@@ -569,7 +569,7 @@ export class DOMResizableBox<T extends BoundingNode>
  * An event emitter for position or size changes of a bounding box inside a layout.
  * Similar to the `ResizeObserver`, but extended by position tracking of all box models.
  */
-export class DOMBoxAnchor<T extends HTMLElement> extends DOMResizableBox<T> {
+export class DOMAnchorBox<T extends HTMLElement> extends DOMResizableBox<T> {
   private static sentinels: WeakMap<HTMLElement, HTMLElement> = new WeakMap();
   private static count: number = 0;
 
@@ -578,11 +578,11 @@ export class DOMBoxAnchor<T extends HTMLElement> extends DOMResizableBox<T> {
 
     // Yield a hidden sentinel in the top-layer to anchor to this target. This effectively
     // converts offsets, e.g. top/left, into resize observable values, e.g. width/height.
-    let sentinel = DOMBoxAnchor.sentinels.get(target);
+    let sentinel = DOMAnchorBox.sentinels.get(target);
 
     if (sentinel == null) {
       sentinel = target.ownerDocument.createElement('div');
-      sentinel.id = `react-aria-anchor-${++DOMBoxAnchor.count}`;
+      sentinel.id = `react-aria-anchor-${++DOMAnchorBox.count}`;
       sentinel.popover = 'manual';
       sentinel.style.all = 'initial';
       sentinel.style.display = 'block';
@@ -596,11 +596,14 @@ export class DOMBoxAnchor<T extends HTMLElement> extends DOMResizableBox<T> {
       sentinel[BOX_SYMBOL] = 0;
     }
 
-    DOMBoxAnchor.sentinels.set(target, sentinel);
+    DOMAnchorBox.sentinels.set(target, sentinel);
   }
 
   protected override connect(): void {
-    let anchorTarget = DOMBoxAnchor.sentinels.get(this.target);
+    let ownerWindow = getOwnerWindow(this.target);
+    let ownerDocument = getOwnerDocument(this.target);
+
+    let anchorTarget = DOMAnchorBox.sentinels.get(this.target);
 
     // Constrained to "border-box" model until we actually need more.
     // Support for remaining box models can be added through (discrete) CSS transitions.
@@ -614,17 +617,19 @@ export class DOMBoxAnchor<T extends HTMLElement> extends DOMResizableBox<T> {
     }
 
     if (!anchorTarget.isConnected && typeof anchorTarget.showPopover === 'function') {
-      this.target.ownerDocument.documentElement.appendChild(anchorTarget);
+      ownerDocument.documentElement.appendChild(anchorTarget);
       anchorTarget.showPopover();
     } else if (!anchorTarget.isConnected) {
-      this.target.ownerDocument.documentElement.appendChild(anchorTarget);
+      ownerDocument.documentElement.appendChild(anchorTarget);
     }
 
     if (anchorTarget[BOX_SYMBOL] === 0) {
-      let anchorName = this.target.style.getPropertyValue('anchor-name');
+      let style = ownerWindow.getComputedStyle(this.target);
+
+      let anchorName = style.getPropertyValue('anchor-name');
       let anchorNames = anchorName.split(',').map(name => name.trim());
 
-      let filtered = anchorNames.filter(name => name);
+      let filtered = anchorNames.filter(name => name && name !== 'none');
 
       this.target.style.setProperty(
         'anchor-name',
