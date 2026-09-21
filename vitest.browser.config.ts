@@ -252,7 +252,6 @@ export default defineConfig({
   test: {
     globals: true,
     pool: 'threads',
-    reporters: ['tree'],
     fileParallelism: false,
     setupFiles: ['./test/browser/setup.ts'],
     include: ['packages/**/test/**/*.browser.test.{ts,tsx}'],

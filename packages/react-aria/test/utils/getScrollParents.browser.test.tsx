@@ -126,8 +126,10 @@ const ShadowRoot = forwardRef<HTMLDivElement, ShadowRootProps>((props, forwarded
   );
 });
 
-const Shadow = forwardRef<null, React.PropsWithChildren>(props => {
+const Shadow = forwardRef<null, React.PropsWithChildren>((props, ref) => {
   let ctx = React.useContext(ShadowRootContext);
+
+  useImperativeHandle(ref, () => null, []);
 
   if (ctx == null) return null;
 
