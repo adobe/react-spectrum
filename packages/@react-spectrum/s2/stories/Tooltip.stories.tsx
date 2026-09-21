@@ -193,6 +193,86 @@ export const LongLabel: Story = {
   }
 };
 
+export const Variants: Story = {
+  render: (args: any) => {
+    let {
+      trigger,
+      isOpen,
+      onOpenChange,
+      defaultOpen,
+      isDisabled,
+      delay,
+      containerPadding,
+      crossOffset,
+      offset,
+      placement,
+      shouldFlip,
+      variant: _variant,
+      ...tooltipProps
+    } = args;
+    let triggerProps = {
+      trigger,
+      isOpen: isOpen ?? true,
+      onOpenChange,
+      defaultOpen,
+      isDisabled,
+      delay,
+      containerPadding,
+      crossOffset,
+      offset,
+      placement: placement ?? 'top',
+      shouldFlip
+    };
+    return (
+      <div
+        className={style({
+          display: 'flex',
+          flexDirection: 'row',
+          columnGap: 96
+        })}>
+        {(['neutral', 'informative', 'negative'] as const).map(variant => (
+          <TooltipTrigger key={variant} {...triggerProps}>
+            <ActionButton aria-label="Lasso">
+              <LassoSelect />
+            </ActionButton>
+            <Tooltip {...tooltipProps} variant={variant}>
+              Tooltip label
+            </Tooltip>
+          </TooltipTrigger>
+        ))}
+      </div>
+    );
+  },
+  argTypes: {
+    isOpen: {
+      control: 'select',
+      options: [true, false, undefined]
+    },
+    variant: {control: false}
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+<TooltipTrigger placement="top">
+  <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
+  <Tooltip variant="neutral">Tooltip label</Tooltip>
+</TooltipTrigger>
+<TooltipTrigger placement="top">
+  <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
+  <Tooltip variant="informative">Tooltip label</Tooltip>
+</TooltipTrigger>
+<TooltipTrigger placement="top">
+  <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
+  <Tooltip variant="negative">Tooltip label</Tooltip>
+</TooltipTrigger>`;
+        }
+      }
+    }
+  }
+};
+
 export const ColorScheme: Story = {
   render: (args: any) => (
     <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>

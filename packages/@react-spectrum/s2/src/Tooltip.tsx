@@ -48,6 +48,8 @@ export interface TooltipTriggerProps
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom';
 }
 
+export type TooltipVariant = 'neutral' | 'informative' | 'negative';
+
 export interface TooltipProps
   extends
     Omit<
@@ -75,9 +77,23 @@ export interface TooltipProps
     UnsafeStyles {
   /** The content of the tooltip. */
   children: ReactNode;
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/tooltip/#Semantic-variants) of the Tooltip.
+   *
+   * @default 'neutral'
+   */
+  variant?: TooltipVariant;
+  /**
+   * Whether the tooltip's directional arrow is rendered.
+   *
+   * @default false
+   */
+  hideArrow?: boolean;
 }
 
-const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
+const tooltip = style<
+  TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null; variant: TooltipVariant}
+>({
   ...setColorScheme(),
   justifyContent: 'center',
   alignItems: 'center',
@@ -98,7 +114,13 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   borderColor: {
     forcedColors: 'transparent'
   },
-  backgroundColor: 'neutral',
+  backgroundColor: {
+    variant: {
+      neutral: 'neutral',
+      informative: 'informative',
+      negative: 'negative'
+    }
+  },
   borderRadius: 'default',
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
@@ -140,9 +162,15 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   }
 });
 
-const arrowStyles = style<TooltipRenderProps>({
+const arrowStyles = style<TooltipRenderProps & {variant: TooltipVariant}>({
   display: 'block',
-  fill: 'gray-800',
+  fill: {
+    variant: {
+      neutral: 'bg-neutral',
+      informative: 'bg-informative',
+      negative: 'bg-negative'
+    }
+  },
   width: 10,
   height: 5,
   rotate: {
@@ -170,7 +198,14 @@ export const Tooltip = forwardRef(function Tooltip(
   props: TooltipProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, UNSAFE_style, UNSAFE_className = ''} = props;
+  let {
+    children,
+    UNSAFE_style,
+    UNSAFE_className = '',
+    variant = 'neutral',
+    hideArrow = false,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let {
     containerPadding,
@@ -202,7 +237,7 @@ export const Tooltip = forwardRef(function Tooltip(
 
   return (
     <AriaTooltip
-      {...props}
+      {...otherProps}
       arrowBoundaryOffset={borderRadius}
       containerPadding={containerPadding}
       crossOffset={crossOffset}
@@ -211,17 +246,19 @@ export const Tooltip = forwardRef(function Tooltip(
       shouldFlip={shouldFlip}
       ref={tooltipRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + tooltip({...renderProps, colorScheme})}>
+      className={renderProps => UNSAFE_className + tooltip({...renderProps, colorScheme, variant})}>
       {renderProps => (
         <>
-          <OverlayArrow className="">
-            <svg
-              className={arrowStyles(renderProps)}
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 10 5">
-              <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
-            </svg>
-          </OverlayArrow>
+          {!hideArrow && (
+            <OverlayArrow className="">
+              <svg
+                className={arrowStyles({...renderProps, variant})}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 10 5">
+                <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
+              </svg>
+            </OverlayArrow>
+          )}
           {children}
         </>
       )}
