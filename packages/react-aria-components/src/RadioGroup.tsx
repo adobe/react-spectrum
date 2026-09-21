@@ -504,7 +504,10 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
-      style={{...props.style, ['anchorName' as any]: `--react-aria-radio-${uniqueId}`}}
+      style={{
+        ...props.style, 
+        ['anchorName' as any]: props.style?.anchorName ?? `--react-aria-radio-${uniqueId}`
+      }}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
@@ -521,7 +524,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           style={{
             position: 'fixed',
             margin: 0,
-            ['positionAnchor' as any]: `--react-aria-radio-${uniqueId}`,
+            ['positionAnchor' as any]: props.style?.anchorName ?? `--react-aria-radio-${uniqueId}`,
             top: 'anchor(top)',
             left: 'anchor(left)',
             width: 'anchor-size(width)',
