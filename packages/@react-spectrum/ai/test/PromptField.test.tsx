@@ -456,6 +456,39 @@ describeOrSkip('PromptField', () => {
       await user.click(stop);
       expect(onStop).toHaveBeenCalledTimes(1);
     });
+
+    it('switches back to submit while typing during generation', async () => {
+      let {user, textbox, onSubmit, onStop} = renderPromptField({isGenerating: true});
+      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
+
+      await user.click(textbox);
+      await user.keyboard('a');
+
+      let submit = screen.getByRole('button', {name: 'Send'});
+      expect(submit).toBeEnabled();
+      await user.keyboard('{Backspace}');
+      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
+
+      await user.keyboard('a');
+      submit = screen.getByRole('button', {name: 'Send'});
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onStop).not.toHaveBeenCalled();
+    });
+
+    it('makes the field read only while generating when enabled', async () => {
+      let {user, textbox, getValue} = renderPromptField({
+        isGenerating: true,
+        isReadOnlyWhileGenerating: true
+      });
+
+      await user.click(textbox);
+      await user.keyboard('a');
+
+      expect(getValue().toString()).toBe('');
+      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
+      expect(textbox).toHaveAttribute('data-readonly');
+    });
   });
 
   describe('attachments', () => {

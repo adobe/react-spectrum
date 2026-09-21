@@ -95,6 +95,12 @@ export interface PromptFieldProps {
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
   onSubmit?: (prompt: PromptFieldValue, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
+  /**
+   * Whether the field should be read only while a response is generating.
+   *
+   * @default false
+   */
+  isReadOnlyWhileGenerating?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
@@ -125,6 +131,7 @@ interface PromptFieldState {
   onSubmit?: () => void;
   onStop?: () => void;
   isGenerating: boolean;
+  isReadOnlyWhileGenerating: boolean;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   isListening: boolean;
@@ -247,6 +254,7 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false,
+  isReadOnlyWhileGenerating: false,
   isListening: false,
   setListening: () => {},
   size: 'M'
@@ -280,7 +288,8 @@ export const PromptField = forwardRef(function PromptField(
   let {
     children,
     acceptedAttachmentTypes,
-    isGenerating,
+    isGenerating = false,
+    isReadOnlyWhileGenerating = false,
     onStop,
     styles,
     onAddAttachments,
@@ -358,7 +367,8 @@ export const PromptField = forwardRef(function PromptField(
         setPrompt,
         inputRef,
         onSubmit,
-        isGenerating: isGenerating ?? false,
+        isGenerating,
+        isReadOnlyWhileGenerating,
         isListening,
         setListening,
         onStop,
@@ -488,6 +498,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     inputRef,
     onSubmit,
     isGenerating,
+    isReadOnlyWhileGenerating,
     isListening,
     size
   } = useContext(PromptFieldContext);
@@ -631,7 +642,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             allowsNewlines
             className={style({flexGrow: 1})}
             aria-label={stringFormatter.format('promptfield.label')}
-            isReadOnly={isListening}
+            isReadOnly={isListening || (isGenerating && isReadOnlyWhileGenerating)}
             onSubmit={onSubmit}
             onKeyDown={keyboardProps.onKeyDown}
             onFocus={e => {
@@ -976,7 +987,9 @@ export interface PromptFieldSubmitButtonProps {}
 /** PromptFieldSubmitButton submits the PromptField. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
-  let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  let {prompt, isGenerating, isReadOnlyWhileGenerating, onSubmit, onStop} =
+    useContext(PromptFieldContext);
+  let showSubmit = !isGenerating || (!isReadOnlyWhileGenerating && prompt.segments.length > 0);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Button
@@ -984,14 +997,14 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
       staticColor="auto"
       styles={style({alignSelf: 'end'})}
       // TODO: should it be possible to submit a prompt with only attachments?
-      isDisabled={prompt.segments.length === 0 && !isGenerating}
+      isDisabled={prompt.segments.length === 0 && showSubmit}
       aria-label={
-        isGenerating
-          ? stringFormatter.format('promptfield.stopButton')
-          : stringFormatter.format('promptfield.submitButton')
+        showSubmit
+          ? stringFormatter.format('promptfield.submitButton')
+          : stringFormatter.format('promptfield.stopButton')
       }
-      onPress={isGenerating ? onStop : onSubmit}>
-      {isGenerating ? <Stop /> : <Send />}
+      onPress={showSubmit ? onSubmit : onStop}>
+      {showSubmit ? <Send /> : <Stop />}
     </Button>
   );
 }
