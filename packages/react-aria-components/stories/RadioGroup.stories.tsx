@@ -75,12 +75,8 @@ export const RadioGroupScreenReaderFocusRing: RadioGroupStoryObj = {
     return (
       <RadioGroup {...props} data-testid="radio-group-focus-ring">
         <Label>Favorite pet</Label>
-        <Radio onFocus={action('radio focus')} onBlur={action('radio blur')} value="dogs">
-          Dog
-        </Radio>
-        <Radio onFocus={action('radio focus')} onBlur={action('radio blur')} value="cats">
-          Cat
-        </Radio>
+        <Radio value="dogs">Dog</Radio>
+        <Radio value="cats">Cat</Radio>
       </RadioGroup>
     );
   }

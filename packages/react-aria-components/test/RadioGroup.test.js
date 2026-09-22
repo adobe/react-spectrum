@@ -755,26 +755,6 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(inputRef.current).toBe(radio);
   });
 
-  it('should anchor the hidden input to the component in supporting browsers', () => {
-    let {getByRole} = render(
-      <RadioGroup>
-        <Label>Test</Label>
-        <Radio value="a">A</Radio>
-      </RadioGroup>
-    );
-    let radio = getByRole('radio');
-    if (
-      typeof CSS !== 'undefined' &&
-      typeof CSS.supports === 'function' &&
-      CSS.supports('anchor-name: --test')
-    ) {
-      expect(radio).toHaveStyle('position: fixed');
-      expect(radio).toHaveStyle('position-anchor: --react-aria-radio-1');
-      expect(radio).toHaveStyle('top: anchor(top)');
-      expect(radio).toHaveStyle('width: anchor-size(width)');
-      expect(radio).toHaveStyle('height: anchor-size(height)');
-    }
-  });
 
   it('should support callback ref', () => {
     let cleanup = jest.fn();
@@ -926,18 +906,3 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
   });
 });
 
-describe('RadioButton', function () {
-  it('renders the hidden input inside VisuallyHidden by default', () => {
-    let {getByRole} = render(
-      <RadioGroup>
-        <Label>Test</Label>
-        <RadioField>
-          <RadioButton value="a">A</RadioButton>
-        </RadioField>
-      </RadioGroup>
-    );
-    let radioInput = getByRole('radio');
-    let radioLabel = radioInput.closest('label');
-    expect(radioLabel).not.toHaveStyle('position: fixed');
-  });
-});

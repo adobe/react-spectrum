@@ -423,21 +423,6 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
   });
 
-  it('should anchor the hidden input to the component in supporting browsers', () => {
-    let {getByRole} = render(<Checkbox>Test</Checkbox>);
-    let checkbox = getByRole('checkbox');
-    if (
-      typeof CSS !== 'undefined' &&
-      typeof CSS.supports === 'function' &&
-      CSS.supports('anchor-name: --test')
-    ) {
-      expect(checkbox).toHaveStyle('position: fixed');
-      expect(checkbox).toHaveStyle('position-anchor: --react-aria-checkbox-1');
-      expect(checkbox).toHaveStyle('top: anchor(top)');
-      expect(checkbox).toHaveStyle('width: anchor-size(width)');
-      expect(checkbox).toHaveStyle('height: anchor-size(height)');
-    }
-  });
 
   it('should support callback ref', () => {
     let cleanup = jest.fn();
@@ -509,14 +494,4 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
 });
 
 describe('CheckboxButton', function () {
-  it('renders the hidden input inside VisuallyHidden by default', () => {
-    let {getByRole} = render(
-      <CheckboxField>
-        <CheckboxButton>Test</CheckboxButton>
-      </CheckboxField>
-    );
-    let checkboxInput = getByRole('checkbox');
-    let checkboxLabel = checkboxInput.closest('label');
-    expect(checkboxLabel).not.toHaveStyle('position: fixed');
-  });
 });

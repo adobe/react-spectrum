@@ -34,7 +34,7 @@ import {
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
-import {useHiddenInputAnchor} from './hiddenInputAnchor';
+import {hiddenInputAnchorStyles, useHiddenInputAnchor} from './hiddenInputAnchor';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
@@ -519,7 +519,11 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       data-invalid={state.isInvalid || undefined}
       data-required={state.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+        <input
+          {...mergeProps(inputProps, focusProps)}
+          ref={inputRef}
+          style={hiddenInputAnchorStyles}
+        />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>
