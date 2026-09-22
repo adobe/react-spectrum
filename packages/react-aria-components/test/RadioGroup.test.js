@@ -755,7 +755,6 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(inputRef.current).toBe(radio);
   });
 
-
   it('should support callback ref', () => {
     let cleanup = jest.fn();
     let onRef = jest.fn(() => cleanup);
@@ -905,4 +904,3 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });
-

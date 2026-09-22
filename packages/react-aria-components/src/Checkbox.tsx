@@ -34,13 +34,22 @@ import {
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
-import {hiddenInputAnchorStyles, useHiddenInputAnchor} from './hiddenInputAnchor';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {hiddenInputAnchorStyles, useHiddenInputAnchor} from './hiddenInputAnchor';
 import {HoverEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo, useRef, useState} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  Ref,
+  useContext,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';

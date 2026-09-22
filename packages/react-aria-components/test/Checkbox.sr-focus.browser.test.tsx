@@ -145,4 +145,3 @@ it('the hidden input respects a custom anchor-name provided via a stylesheet cla
 
   style.remove();
 });
-

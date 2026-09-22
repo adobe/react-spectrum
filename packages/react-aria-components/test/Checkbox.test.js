@@ -423,7 +423,6 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
   });
 
-
   it('should support callback ref', () => {
     let cleanup = jest.fn();
     let onRef = jest.fn(() => cleanup);
@@ -493,5 +492,4 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
   });
 });
 
-describe('CheckboxButton', function () {
-});
+describe('CheckboxButton', function () {});
