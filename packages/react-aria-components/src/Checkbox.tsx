@@ -34,12 +34,13 @@ import {
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
+import {useHiddenInputAnchor} from './hiddenInputAnchor';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
@@ -506,7 +507,10 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
-  let uniqueId = `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+  let [anchorNameId] = useState(() => Math.random().toString(36).slice(2, 11));
+  let anchorRef = useRef<HTMLLabelElement | null>(null);
+  useHiddenInputAnchor(anchorRef, inputRef, `--react-aria-checkbox-${anchorNameId}`);
+  let setLabelRef = useMemo(() => mergeRefs(ref, anchorRef), [ref]);
 
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -537,12 +541,8 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   return (
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
-      ref={ref}
-      style={{
-        ...props.style,
-        ['anchorName' as any]:
-          (props.style as any)?.anchorName ?? `--react-aria-checkbox-${uniqueId}`
-      }}
+      ref={setLabelRef}
+      style={{...props.style}}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={isIndeterminate || undefined}
@@ -555,20 +555,7 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
       data-invalid={isInvalid || undefined}
       data-required={isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input
-          {...mergeProps(inputProps, focusProps)}
-          ref={inputRef}
-          style={{
-            position: 'fixed',
-            margin: 0,
-            ['positionAnchor' as any]:
-              (props.style as any)?.anchorName ?? `--react-aria-checkbox-${uniqueId}`,
-            top: 'anchor(top)',
-            left: 'anchor(left)',
-            width: 'anchor-size(width)',
-            height: 'anchor-size(height)'
-          }}
-        />
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>

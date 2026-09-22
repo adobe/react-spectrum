@@ -115,3 +115,34 @@ it('the hidden input respects a custom anchor-name provided via CSS', async () =
     expect(covers(inputRect, labelRect)).toBe(true);
   }
 });
+
+it('the hidden input respects a custom anchor-name provided via a stylesheet class', async () => {
+  let style = document.createElement('style');
+  style.textContent = '.custom-anchor-host { anchor-name: --from-stylesheet; }';
+  document.head.appendChild(style);
+
+  let screen = await render(<Checkbox className="custom-anchor-host">Test</Checkbox>);
+
+  let input = screen.container.querySelector('input')!;
+  let label = screen.container.querySelector('label')!;
+
+  if (supportsAnchorPositioning()) {
+    // The name set in a stylesheet is readable via getComputedStyle, so the
+    // component can adopt a consumer anchor-name declared outside of inline
+    // styles.
+    expect(getComputedStyle(label).getPropertyValue('anchor-name').trim()).toBe(
+      '--from-stylesheet'
+    );
+    // The component uses the consumer's name instead of applying its default.
+    expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe(
+      '--from-stylesheet'
+    );
+
+    let labelRect = rect(label);
+    let inputRect = rect(input);
+    expect(covers(inputRect, labelRect)).toBe(true);
+  }
+
+  style.remove();
+});
+

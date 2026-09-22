@@ -34,13 +34,14 @@ import {
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
+import {useHiddenInputAnchor} from './hiddenInputAnchor';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {HoverEvents, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {RadioGroupState, useRadioGroupState} from 'react-stately/useRadioGroupState';
-import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo, useRef, useState} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
@@ -473,7 +474,10 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
-  let uniqueId = `radio-${Math.random().toString(36).substr(2, 9)}`;
+  let [anchorNameId] = useState(() => Math.random().toString(36).slice(2, 11));
+  let anchorRef = useRef<HTMLLabelElement | null>(null);
+  useHiddenInputAnchor(anchorRef, inputRef, `--react-aria-radio-${anchorNameId}`);
+  let setLabelRef = useMemo(() => mergeRefs(ref, anchorRef), [ref]);
 
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -503,11 +507,8 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   return (
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
-      ref={ref}
-      style={{
-        ...props.style,
-        ['anchorName' as any]: (props.style as any)?.anchorName ?? `--react-aria-radio-${uniqueId}`
-      }}
+      ref={setLabelRef}
+      style={{...props.style}}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
@@ -518,20 +519,7 @@ export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       data-invalid={state.isInvalid || undefined}
       data-required={state.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input
-          {...mergeProps(inputProps, focusProps)}
-          ref={inputRef}
-          style={{
-            position: 'fixed',
-            margin: 0,
-            ['positionAnchor' as any]:
-              (props.style as any)?.anchorName ?? `--react-aria-radio-${uniqueId}`,
-            top: 'anchor(top)',
-            left: 'anchor(left)',
-            width: 'anchor-size(width)',
-            height: 'anchor-size(height)'
-          }}
-        />
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>
