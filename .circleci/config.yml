@@ -561,6 +561,11 @@ jobs:
       - run:
           name: build main API baseline (fork point)
           command: |
+            # `get-ref-api --fetch` shells out to `git fetch` over SSH, so
+            # github.com has to be a known host or the fetch stalls on the
+            # host-key prompt. Same keyscan the old ts-build-fork-point job did.
+            mkdir -p ~/.ssh
+            ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
             cd rsp-api-checker
             target/release/rsp-api-check get-ref-api --repo-root .. --ref origin/main --fetch --output ../dist/base-api
       - store_artifacts:

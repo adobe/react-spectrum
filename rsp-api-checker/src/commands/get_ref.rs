@@ -49,7 +49,17 @@ pub async fn execute(opts: GetRefOpts) -> Result<()> {
         // Non-fatal: the user may be offline, or `--ref` may already resolve
         // locally. Bailing here would defeat the point of `--fetch` being
         // opt-in, so just warn and continue with whatever refs we have.
-        if let Err(e) = run("git", &["fetch", "--quiet"], &repo_root).await {
+        //
+        // `BatchMode=yes` keeps ssh from blocking on an interactive prompt
+        // (unknown host key, passphrase) — in CI that would stall the job
+        // instead of failing into the warning path below.
+        if let Err(e) = run(
+            "git",
+            &["-c", "core.sshCommand=ssh -o BatchMode=yes", "fetch", "--quiet"],
+            &repo_root,
+        )
+        .await
+        {
             eprintln!("warning: `git fetch` failed, continuing with local refs: {e}");
         }
     }
