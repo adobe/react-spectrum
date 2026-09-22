@@ -10,44 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
-import { ActionButton } from "../src/ActionButton";
+import {ActionButton} from '../src/ActionButton';
 
-import { Button } from "../src/Button";
-import { CombinedTooltip } from "../src/Tooltip";
-import Crop from "../s2wf-icons/S2_Icon_Crop_20_N.svg";
-import LassoSelect from "../s2wf-icons/S2_Icon_LassoSelect_20_N.svg";
-import type { Meta, StoryObj } from "@storybook/react";
-import { Provider } from "../src/Provider";
-import { style } from "../style" with { type: "macro" };
-import { Tooltip, TooltipTrigger } from "../src/Tooltip";
+import {Button} from '../src/Button';
+import {CombinedTooltip} from '../src/Tooltip';
+import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
+import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
+import type {Meta, StoryObj} from '@storybook/react';
+import {Provider} from '../src/Provider';
+import {style} from '../style' with {type: 'macro'};
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 
 const meta: Meta<typeof CombinedTooltip> = {
   component: CombinedTooltip,
   parameters: {
-    layout: "centered",
+    layout: 'centered'
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    onOpenChange: { table: { category: "Events" } },
-    children: { table: { disable: true } },
+    onOpenChange: {table: {category: 'Events'}},
+    children: {table: {disable: true}}
   },
   decorators: [
-    (Story) => (
+    Story => (
       <div
         style={{
-          height: "100px",
-          width: "200px",
-          display: "flex",
-          alignItems: "end",
-          justifyContent: "center",
-          paddingBottom: 10,
-        }}
-      >
+          height: '100px',
+          width: '200px',
+          display: 'flex',
+          alignItems: 'end',
+          justifyContent: 'center',
+          paddingBottom: 10
+        }}>
         <Story />
       </div>
-    ),
+    )
   ],
-  title: "Tooltip",
+  title: 'Tooltip'
 };
 
 export default meta;
@@ -78,17 +77,16 @@ const ExampleRender = (args: any) => {
     crossOffset,
     offset,
     placement,
-    shouldFlip,
+    shouldFlip
   };
 
   return (
     <div
       className={style({
-        display: "flex",
-        flexDirection: "row",
-        columnGap: 12,
-      })}
-    >
+        display: 'flex',
+        flexDirection: 'row',
+        columnGap: 12
+      })}>
       <TooltipTrigger {...triggerProps}>
         <Button aria-label="Crop">
           <Crop />
@@ -108,12 +106,12 @@ const ExampleRender = (args: any) => {
 type Story = StoryObj<typeof CombinedTooltip>;
 
 export const Example: Story = {
-  render: (args) => <ExampleRender {...args} />,
+  render: args => <ExampleRender {...args} />,
   argTypes: {
     isOpen: {
-      control: "select",
-      options: [true, false, undefined],
-    },
+      control: 'select',
+      options: [true, false, undefined]
+    }
   },
   parameters: {
     docs: {
@@ -128,10 +126,10 @@ export const Example: Story = {
   <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
   <Tooltip>Lasso</Tooltip>
 </TooltipTrigger>`;
-        },
-      },
-    },
-  },
+        }
+      }
+    }
+  }
 };
 
 const LongLabelRender = (args: any) => {
@@ -160,27 +158,25 @@ const LongLabelRender = (args: any) => {
     crossOffset,
     offset,
     placement,
-    shouldFlip,
+    shouldFlip
   };
   return (
     <TooltipTrigger {...triggerProps}>
       <ActionButton aria-label="Lasso">
         <LassoSelect />
       </ActionButton>
-      <Tooltip {...tooltipProps}>
-        Checkbox with very long label so we can see wrapping
-      </Tooltip>
+      <Tooltip {...tooltipProps}>Checkbox with very long label so we can see wrapping</Tooltip>
     </TooltipTrigger>
   );
 };
 
 export const LongLabel: Story = {
-  render: (args) => <LongLabelRender {...args} />,
+  render: args => <LongLabelRender {...args} />,
   argTypes: {
     isOpen: {
-      control: "select",
-      options: [true, false, undefined],
-    },
+      control: 'select',
+      options: [true, false, undefined]
+    }
   },
   parameters: {
     docs: {
@@ -191,32 +187,28 @@ export const LongLabel: Story = {
   <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
   <Tooltip>Checkbox with very long label so we can see wrapping</Tooltip>
 </TooltipTrigger>`;
-        },
-      },
-    },
-  },
+        }
+      }
+    }
+  }
 };
 
 export const ColorScheme: Story = {
   args: {
-    variant: "negative",
+    variant: 'negative'
   },
 
   render: (args: any) => (
-    <Provider
-      colorScheme="dark"
-      background="base"
-      styles={style({ padding: 48 })}
-    >
+    <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
       <ExampleRender {...args} />
     </Provider>
   ),
 
   argTypes: {
     isOpen: {
-      control: "select",
-      options: [true, false, undefined],
-    },
+      control: 'select',
+      options: [true, false, undefined]
+    }
   },
 
   parameters: {
@@ -234,8 +226,8 @@ export const ColorScheme: Story = {
     <Tooltip>Lasso</Tooltip>
   </TooltipTrigger>
 </Provider>`;
-        },
-      },
-    },
-  },
+        }
+      }
+    }
+  }
 };
