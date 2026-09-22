@@ -933,7 +933,7 @@ export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function S
           })}>
           {children}
         </div>
-        <div className={style({flexGrow: 0, flexShrink: 0})}>
+        <div className={style({flexGrow: 0, flexShrink: 0, marginBottom: 4, marginTop: 4})}>
           <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
         </div>
       </div>

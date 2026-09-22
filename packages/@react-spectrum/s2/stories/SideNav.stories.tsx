@@ -614,8 +614,7 @@ export const SidePanelExample = {
           gridArea: 'header',
           display: 'flex',
           alignItems: 'center',
-          paddingX: 12,
-          paddingY: 16
+          padding: 16
         })}>
         <AdobeLogo size={28} />
       </div>
