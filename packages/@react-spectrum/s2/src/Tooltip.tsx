@@ -78,7 +78,7 @@ export interface TooltipProps
   /** The content of the tooltip. */
   children: ReactNode;
   /**
-   * The [visual style](https://spectrum.adobe.com/page/tooltip/#Semantic-variants) of the Tooltip.
+   * The visual style of the Tooltip.
    *
    * @default 'neutral'
    */
@@ -117,8 +117,8 @@ const tooltip = style<
   backgroundColor: {
     variant: {
       neutral: 'neutral',
-      informative: 'informative',
-      negative: 'negative'
+      informative: 'blue-900',
+      negative: 'red-900'
     }
   },
   borderRadius: 'default',
@@ -166,9 +166,9 @@ const arrowStyles = style<TooltipRenderProps & {variant: TooltipVariant}>({
   display: 'block',
   fill: {
     variant: {
-      neutral: 'bg-neutral',
-      informative: 'bg-informative',
-      negative: 'bg-negative'
+      neutral: 'gray-800',
+      informative: 'blue-900',
+      negative: 'red-900'
     }
   },
   width: 10,
