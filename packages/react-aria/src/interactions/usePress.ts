@@ -383,6 +383,26 @@ export function usePress(props: PressHookProps): PressResult {
     [isDisabled, onClick]
   );
 
+  let cancelOnWindowBlur = useCallback(() => {
+    let state = ref.current;
+    if (state.target) {
+      cancel({
+        currentTarget: state.target,
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false,
+        altKey: false
+      });
+    }
+  }, [cancel]);
+
+  let addWindowBlurListener = useCallback(
+    (target: Element) => {
+      addGlobalListener(getOwnerWindow(target), 'blur', cancelOnWindowBlur, false);
+    },
+    [addGlobalListener, cancelOnWindowBlur]
+  );
+
   let pressProps = useMemo(() => {
     let state = ref.current;
     let pressProps: DOMAttributes = {
@@ -404,6 +424,7 @@ export function usePress(props: PressHookProps): PressResult {
             state.isPressed = true;
             state.pointerType = 'keyboard';
             shouldStopPropagation = triggerPressStart(e, 'keyboard');
+            addWindowBlurListener(e.currentTarget as Element);
           }
 
           // Focus may move before the key up event, so register the event on the document
@@ -588,6 +609,7 @@ export function usePress(props: PressHookProps): PressResult {
             onPointerCancel,
             false
           );
+          addWindowBlurListener(e.currentTarget as Element);
         }
 
         if (shouldStopPropagation) {
@@ -739,6 +761,7 @@ export function usePress(props: PressHookProps): PressResult {
           }
         }
         addGlobalListener(getOwnerDocument(e.currentTarget), 'mouseup', onMouseUp, false);
+        addWindowBlurListener(e.currentTarget as Element);
       };
 
       pressProps.onMouseEnter = e => {
@@ -837,6 +860,7 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
         addGlobalListener(getOwnerWindow(e.currentTarget), 'scroll', onScroll, true);
+        addWindowBlurListener(e.currentTarget as Element);
       };
 
       pressProps.onTouchMove = e => {
@@ -950,6 +974,7 @@ export function usePress(props: PressHookProps): PressResult {
     return pressProps;
   }, [
     addGlobalListener,
+    addWindowBlurListener,
     isDisabled,
     preventFocusOnPress,
     removeAllGlobalListeners,
