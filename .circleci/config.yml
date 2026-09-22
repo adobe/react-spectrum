@@ -505,14 +505,16 @@ jobs:
           paths:
             - rsp-api-checker/target/release/rsp-api-check
 
-  # Fetch the last published release from npm and extract its type API.
-  # Runs in parallel with test-build (which does the branch-side extraction
-  # right after `make build` completes).
+  # Fetch the last published release from npm and extract its type API (the
+  # npm baseline).
   #
-  # Future fork-point support: to compare against a specific git ref rather
-  # than the npm release, add a ts-build-main job that checks out that ref,
-  # runs `yarn build`, then `rsp-api-check get-local-api --output dist/base-api`,
-  # and substitute it for ts-get-published in the ts-diff requires list.
+  # NOTE: the per-branch `ts-diff` workflow no longer runs this job — it now
+  # compares this branch against main via `ts-build-branch` (the fork-point job
+  # the old comment here anticipated). This job is kept as a defined-but-
+  # unreferenced job so a "compare against the last npm release" path stays
+  # available. The recurring published comparison runs weekly in
+  # .github/workflows/weekly-api-diff.yml (yarn build:api-published +
+  # compare:apis), independent of this CircleCI job.
   ts-get-published:
     executor: rsp-large
     steps:
@@ -536,6 +538,31 @@ jobs:
           command: |
             cd rsp-api-checker
             target/release/rsp-api-check env-report --repo-root .. --output ../dist/base-api/env-report.json || true
+      - store_artifacts:
+          path: dist/base-api
+          destination: base-api
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist/base-api/
+
+  # Build the latest main as the API baseline so ts-diff compares THIS branch
+  # against main (fork point), not the npm release. get-ref-api snapshots the ref
+  # with `git archive` (pure read — doesn't touch the working tree), then yarn
+  # installs + builds it in a temp dir and extracts the api into dist/base-api;
+  # the only write back into the repo is that api.json tree.
+  ts-build-branch:
+    executor: rsp-2xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+      - attach_workspace:
+          at: ~/react-spectrum
+      - run:
+          name: build main API baseline (fork point)
+          command: |
+            cd rsp-api-checker
+            target/release/rsp-api-check get-ref-api --repo-root .. --ref origin/main --fetch --output ../dist/base-api
       - store_artifacts:
           path: dist/base-api
           destination: base-api
@@ -1072,7 +1099,7 @@ workflows:
       - lint:
           requires:
             - install
-      - ts-get-published:
+      - ts-build-branch:
           requires:
             - install
             - ts-build-binary
@@ -1081,17 +1108,9 @@ workflows:
               ignore:
                 - /main$/
                 - /gh-readonly-queue\/.*$/
-      - ts-build-branch:
-          requires:
-            - install
-          filters:
-            branches:
-              ignore:
-                - /main$/
-                - /gh-readonly-queue\/.*$/
       - ts-diff:
           requires:
-            - ts-get-published
+            - ts-build-branch
             - test-build
           filters:
             branches:
