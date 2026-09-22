@@ -35,11 +35,18 @@ import {
   SpectrumLabelableProps
 } from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {BaseCollection, CollectionNode} from 'react-aria/private/collections/BaseCollection';
 import {baseColor, centerPadding, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
-import {checkmark, description, icon, iconCenterWrapper, label, sectionHeading} from './Menu';
+import {
+  checkmark,
+  description,
+  icon,
+  iconCenterWrapper,
+  label,
+  loadingWrapperStyles,
+  sectionHeading
+} from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
@@ -78,6 +85,7 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import intlMessages from '../intl/*.json';
+import {isSeparatorHidden, SeparatorNode} from './separator-utils';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {Node} from '@react-types/shared';
@@ -208,15 +216,6 @@ const iconStyles = style({
     type: 'fill',
     value: 'currentColor'
   }
-});
-
-const loadingWrapperStyles = style({
-  gridColumnStart: '1',
-  gridColumnEnd: '-1',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginY: 8
 });
 
 const progressCircleStyles = style({
@@ -823,24 +822,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(
   );
 });
 
-class SeparatorNode extends CollectionNode<any> {
-  static readonly type = 'separator';
-
-  filter(
-    collection: BaseCollection<any>,
-    newCollection: BaseCollection<any>
-  ): CollectionNode<any> | null {
-    let prevItem = newCollection.getItem(this.prevKey!);
-    if (prevItem && prevItem.type !== 'separator') {
-      let clone = this.clone();
-      newCollection.addDescendants(clone, collection);
-      return clone;
-    }
-
-    return null;
-  }
-}
-
 export const Divider = /*#__PURE__*/ createLeafComponent(
   SeparatorNode,
   function Divider(
@@ -850,13 +831,7 @@ export const Divider = /*#__PURE__*/ createLeafComponent(
   ) {
     let listState = useContext(ListStateContext)!;
 
-    let nextNode = node.nextKey != null && listState.collection.getItem(node.nextKey);
-    if (
-      node.prevKey == null ||
-      !nextNode ||
-      nextNode.type === 'separator' ||
-      (nextNode.type === 'loader' && nextNode.nextKey == null)
-    ) {
+    if (isSeparatorHidden(node, listState.collection)) {
       return null;
     }
 

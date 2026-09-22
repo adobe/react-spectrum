@@ -32,7 +32,14 @@ const linkPropNames = new Set([
   'referrerPolicy'
 ]);
 
-const globalAttrs = new Set(['dir', 'lang', 'hidden', 'inert', 'translate']);
+const globalAttrs = new Set([
+  'dir',
+  'lang',
+  'hidden',
+  'inert',
+  'translate',
+  'suppressHydrationWarning'
+]);
 
 const globalEvents = new Set([
   'onClick',
