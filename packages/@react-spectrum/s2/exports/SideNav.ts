@@ -6,7 +6,6 @@ export {
   SideNavSection,
   SideNavHeader,
   SidePanel,
-  SidePanelBadge,
   SidePanelContext
 } from '../src/SideNav';
 export {Collection} from 'react-aria/Collection';
@@ -17,8 +16,7 @@ export type {
   SideNavItemLinkProps,
   SideNavSectionProps,
   SideNavHeaderProps,
-  SidePanelProps,
-  SidePanelBadgeProps
+  SidePanelProps
 } from '../src/SideNav';
 export type {Key} from '@react-types/shared';
 

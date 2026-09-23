@@ -44,7 +44,6 @@ import {
   SideNavProps,
   SideNavSection,
   SidePanel,
-  SidePanelBadge,
   SidePanelContext
 } from '../src/SideNav';
 import {style} from '../style' with {type: 'macro'};
@@ -756,7 +755,6 @@ export const SidePanelExample2 = {
               <SideNavItemLink>
                 <Files />
                 <Text>Files</Text>
-                <SidePanelBadge variant="informative" value={3} />
               </SideNavItemLink>
             </SideNavItemContent>
           </SideNavItem>
@@ -772,7 +770,6 @@ export const SidePanelExample2 = {
                 <SideNavItemLink>
                   <Images />
                   <Text>Photos</Text>
-                  <SidePanelBadge variant="negative" value={140} />
                 </SideNavItemLink>
               </SideNavItemContent>
             </SideNavItem>

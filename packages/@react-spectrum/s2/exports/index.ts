@@ -128,7 +128,6 @@ export {
   SideNavSection,
   SideNavHeader,
   SidePanel,
-  SidePanelBadge,
   SidePanelContext
 } from '../src/SideNav';
 export {Slider, SliderContext} from '../src/Slider';
@@ -277,8 +276,7 @@ export type {
   SideNavItemLinkProps,
   SideNavSectionProps,
   SideNavHeaderProps,
-  SidePanelProps,
-  SidePanelBadgeProps
+  SidePanelProps
 } from '../src/SideNav';
 export type {SkeletonProps} from '../src/Skeleton';
 export type {SkeletonCollectionProps} from '../src/SkeletonCollection';
