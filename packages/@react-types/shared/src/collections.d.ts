@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
+import {ForwardedRef, ReactElement, ReactNode} from 'react';
+import {Key} from './key';
 import {LinkDOMProps} from './dom';
-import {ReactElement, ReactNode} from 'react';
 
 export interface ItemProps<T> extends LinkDOMProps {
   /** Rendered contents of the item or child items. */
@@ -156,6 +156,12 @@ export interface LayoutDelegate {
   getKeyRange?(from: Key, to: Key): Key[];
 }
 
+/** A ScrollDelegate provides scroll actions for a collection. */
+export interface ScrollDelegate {
+  /** Scrolls a given collection key into view. */
+  scrollIntoView(key: Key, options?: ScrollIntoViewOptions): void;
+}
+
 /**
  * A generic interface to access a readonly sequential
  * collection of unique keyed items.
@@ -237,5 +243,5 @@ export interface Node<T> {
   /** @private */
   shouldInvalidate?: (context: any) => boolean;
   /** A function that renders this node to a React Element in the DOM. */
-  render?: (node: Node<any>) => ReactElement;
+  render?: (node: Node<any>, ref?: ForwardedRef<Element>) => ReactElement;
 }

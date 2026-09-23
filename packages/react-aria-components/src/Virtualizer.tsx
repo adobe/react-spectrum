@@ -15,17 +15,28 @@ import {
   CollectionRenderer,
   CollectionRendererContext,
   CollectionRootProps,
-  renderAfterDropIndicators
+  renderAfterDropIndicators,
+  usePersistedKeys
 } from './Collection';
-import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
+import {
+  DropTargetDelegate,
+  ItemDropTarget,
+  Key,
+  Node,
+  RefObject,
+  ScrollDelegate
+} from '@react-types/shared';
+import {flushSync} from 'react-dom';
 import {
   Layout,
   ReusableView,
   useVirtualizerState,
   VirtualizerState
 } from 'react-stately/useVirtualizerState';
-import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, JSX, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
+import {useSyncRef} from 'react-aria/private/utils/useSyncRef';
 import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
@@ -58,6 +69,9 @@ interface VirtualizerOptionsContextValue {
   layout: ILayout<any>;
   layoutOptions?: any;
   shouldObserveItemSize?: boolean;
+  rendered: Map<Key, Element>;
+  scrollRef: RefObject<HTMLElement | null>;
+  scrollKey: Key | null;
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
@@ -70,26 +84,51 @@ const VirtualizerOptionsContext = createContext<VirtualizerOptionsContextValue |
  */
 export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   let {children, layout: layoutProp, layoutOptions, shouldObserveItemSize} = props;
+  let [rendered] = useState(() => new Map<Key, Element>());
+  let [scrollKey, setScrollKey] = useState<Key | null>(null);
+  let scrollRef = useRef<HTMLElement | null>(null);
   let layout = useMemo(
     () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
     [layoutProp]
+  );
+  let delegate = useMemo<ScrollDelegate>(
+    () => ({
+      scrollIntoView(key: Key, options?: ScrollIntoViewOptions) {
+        let container = scrollRef.current;
+        let virtualizer = layout.virtualizer;
+        let item = virtualizer?.collection.getItem(key);
+
+        if (container != null && item != null) {
+          flushSync(() => setScrollKey(key));
+
+          let target = rendered.get(key);
+
+          if (target instanceof HTMLElement) {
+            scrollIntoView(container, target, options);
+          }
+        }
+      }
+    }),
+    [layout, rendered]
   );
   let renderer: CollectionRenderer = useMemo(
     () => ({
       isVirtualized: true,
       layoutDelegate: layout,
+      scrollDelegate: delegate,
       dropTargetDelegate: layout.getDropTargetFromPoint
         ? (layout as DropTargetDelegate)
         : undefined,
       CollectionRoot,
       CollectionBranch
     }),
-    [layout]
+    [layout, delegate]
   );
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <VirtualizerOptionsContext.Provider value={{layout, layoutOptions, shouldObserveItemSize}}>
+      <VirtualizerOptionsContext.Provider
+        value={{layout, layoutOptions, shouldObserveItemSize, scrollRef, scrollKey, rendered}}>
         {children}
       </VirtualizerOptionsContext.Provider>
     </CollectionRendererContext.Provider>
@@ -102,7 +141,16 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions, shouldObserveItemSize} = useContext(VirtualizerOptionsContext)!;
+  let {
+    layout,
+    layoutOptions,
+    shouldObserveItemSize,
+    scrollRef: ref,
+    scrollKey,
+    rendered
+  } = useContext(VirtualizerOptionsContext)!;
+  useSyncRef({ref}, scrollRef);
+  let persistedKeys2 = usePersistedKeys(scrollKey);
   // oxlint-disable-next-line react/react-compiler
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
@@ -110,7 +158,13 @@ function CollectionRoot({
     layout,
     collection,
     renderView: (type, item) => {
-      return item?.render?.(item);
+      return item?.render?.(item, element => {
+        if (element) {
+          rendered.set(item.key, element);
+        } else {
+          rendered.delete(item.key);
+        }
+      });
     },
     onVisibleRectChange(rect) {
       let element = scrollRef?.current;
@@ -120,7 +174,13 @@ function CollectionRoot({
         element.scrollTop = rect.y;
       }
     },
-    persistedKeys,
+    persistedKeys: useMemo(
+      () =>
+        persistedKeys && persistedKeys2
+          ? persistedKeys.union(persistedKeys2)
+          : persistedKeys || persistedKeys2,
+      [persistedKeys, persistedKeys2]
+    ),
     layoutOptions: useMemo(
       () =>
         layoutOptions && layoutOptions2
