@@ -11,71 +11,83 @@
  * limitations under the License.
  */
 
-import {RefObject} from '@react-types/shared';
-import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {CSSProperties} from 'react';
 
-let anchorSupport: boolean | null = null;
-function getAnchorSupport(): boolean {
-  if (anchorSupport === null) {
-    anchorSupport =
-      typeof CSS !== 'undefined' &&
-      typeof CSS.supports === 'function' &&
-      CSS.supports('anchor-name: --test');
-  }
-  return anchorSupport ?? false;
+/**
+ * Custom property used to point the hidden native input of a component (e.g.
+ * Checkbox, Radio) at an anchor name other than the component default. Custom
+ * properties inherit, so one declaration on the component or any ancestor
+ * reaches both the component's outer element and the input inside it.
+ *
+ * This is the override path for names declared outside of inline styles (for
+ * example in a class name), since an inline declaration always wins over a
+ * stylesheet rule for `anchor-name` itself.
+ */
+export const hiddenInputAnchorVar = '--react-aria-anchor-name';
+
+interface AnchorStyleProps extends CSSProperties {
+  anchorName?: string;
 }
 
 /**
- * Anchor positioning styles for the hidden native input of a component (e.g.
- * Checkbox, Radio). Applied inline and unconditionally at render: in browsers
- * without CSS anchor positioning support these values are inert, and the input
- * keeps today's 1x1px VisuallyHidden behavior. The `position-anchor` value is
- * resolved by useHiddenInputAnchor instead, since it depends on the computed
- * `anchor-name` of the component's outer element.
+ * Resolves the anchor name the hidden native input is tethered to. A consumer
+ * `anchorName` in the component's `style` wins, otherwise the custom property
+ * is read with the component default as its fallback.
  */
-export const hiddenInputAnchorStyles = {
-  position: 'fixed',
-  margin: 0,
-  top: 'anchor(top)',
-  left: 'anchor(left)',
-  width: 'anchor-size(width)',
-  height: 'anchor-size(height)'
-} as const;
+function getAnchorName(defaultAnchorName: string, style?: CSSProperties): string {
+  let override = (style as AnchorStyleProps | undefined)?.anchorName;
+  return override ?? `var(${hiddenInputAnchorVar}, ${defaultAnchorName})`;
+}
 
 /**
- * Resolves the anchor name used to position the hidden native input of a
- * component (e.g. Checkbox, Radio) over the component's outer element, so the
- * screen reader focus indicator (VoiceOver and NVDA draw the ring around the
- * native input) matches the visible component instead of collapsing to the
- * 1x1px VisuallyHidden box.
+ * Declares a component's outer element as the anchor for its hidden native
+ * input.
  *
- * If the outer element (or a consumer-provided class) declares an
- * `anchor-name`, that name is adopted; otherwise the component default is
- * applied inline. The input's positioning styles are applied at render, see
- * hiddenInputAnchorStyles. Browsers without CSS anchor positioning support
- * keep today's behavior.
- *
- * CSS can change without notifying React, so a later `anchor-name` change is
- * only picked up on re-render.
+ * The default name is per instance. Verified in Chrome 153: with several
+ * elements sharing one `anchor-name`, every input resolved to the same anchor
+ * and none covered its own component, since a name resolves to a single anchor.
+ * `anchor-scope` would localize a shared name, but it shipped later than anchor
+ * positioning itself (Chrome 131 vs 125), so a shared name would break in that
+ * window.
  */
-export function useHiddenInputAnchor(
-  anchorRef: RefObject<HTMLElement | null>,
-  inputRef: RefObject<HTMLInputElement | null>,
-  defaultAnchorName: string
-): void {
-  useLayoutEffect(() => {
-    let outer = anchorRef.current;
-    let input = inputRef.current;
-    if (!outer || !input || !getAnchorSupport()) {
-      return;
-    }
+export function getAnchorStyles(defaultAnchorName: string, style?: CSSProperties): CSSProperties {
+  return {
+    anchorName: getAnchorName(defaultAnchorName, style)
+  } as CSSProperties;
+}
 
-    let name = getComputedStyle(outer).getPropertyValue('anchor-name').trim();
-    if (!name || name === 'none') {
-      name = defaultAnchorName;
-      outer.style.setProperty('anchor-name', name);
-    }
-
-    input.style.setProperty('position-anchor', name);
-  });
+/**
+ * Positions the hidden native input of a component (e.g. Checkbox, Radio) over
+ * the component's outer element, so the screen reader focus indicator
+ * (VoiceOver and NVDA draw the ring around the native input) matches the
+ * visible component instead of collapsing to the 1x1px VisuallyHidden box.
+ *
+ * `position: fixed` is required. With `position: absolute` the input's
+ * containing block is still inside VisuallyHidden and `anchor()` does not
+ * resolve against the anchor: verified in Chrome 153, the used values fell back
+ * to the wrapper (used `top` 0px, used `width` 145px, box 153x21). `fixed`
+ * takes the input out of that containing-block chain so the anchor resolves by
+ * name.
+ *
+ * The `inset` shorthand is used rather than `top`/`left` plus
+ * `width`/`height: anchor-size(...)`, for two measured reasons. Sizing:
+ * `anchor-size()` sizes the content box, and the input's UA border and padding
+ * made the box 8x6px larger than the component, while the shorthand matched it
+ * exactly. Direction: the shorthand is correct in RTL, while routing
+ * `anchor(left)` through a logical property mirrored the input to the wrong
+ * side (measured -208px in RTL).
+ *
+ * In browsers without CSS anchor positioning support these declarations are
+ * inert and the input keeps the previous 1x1px VisuallyHidden behavior.
+ */
+export function getHiddenInputStyles(
+  defaultAnchorName: string,
+  style?: CSSProperties
+): CSSProperties {
+  return {
+    position: 'fixed',
+    margin: 0,
+    inset: 'anchor(top) anchor(right) anchor(bottom) anchor(left)',
+    positionAnchor: getAnchorName(defaultAnchorName, style)
+  } as CSSProperties;
 }

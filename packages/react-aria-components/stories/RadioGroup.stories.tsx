@@ -67,21 +67,6 @@ export const RadioGroupExample: RadioGroupStoryObj = {
   }
 };
 
-// Demonstrates the screen reader focus indicator tracking each radio. The
-// hidden input is anchored to the component's outer element via CSS anchor
-// positioning, so VoiceOver/NVDA draw the ring around the visible component.
-export const RadioGroupScreenReaderFocusRing: RadioGroupStoryObj = {
-  render: props => {
-    return (
-      <RadioGroup {...props} data-testid="radio-group-focus-ring">
-        <Label>Favorite pet</Label>
-        <Radio value="dogs">Dog</Radio>
-        <Radio value="cats">Cat</Radio>
-      </RadioGroup>
-    );
-  }
-};
-
 export const RadioGroupControlledExample: RadioGroupStory = props => {
   let [selected, setSelected] = useState<string | null>(null);
 

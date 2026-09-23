@@ -4,10 +4,11 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under
- * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
- * OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 // Verifies in a real browser (not jsdom) that the hidden native input is
@@ -36,8 +37,8 @@ function supportsAnchorPositioning() {
   return CSS.supports('anchor-name: --test');
 }
 
-// The input should cover the component. It may be up to 2px larger than the
-// label (subpixel rounding); that is fine for the screen reader focus ring.
+// The input should cover the component. Subpixel rounding can leave up to a
+// pixel of difference; that is fine for the screen reader focus ring.
 function covers(a: {width: number; height: number}, b: {width: number; height: number}) {
   return a.width >= b.width - 1 && a.height >= b.height - 1;
 }
@@ -62,9 +63,11 @@ it('Checkbox: the hidden input covers the component via anchor positioning', asy
     expect(inputRect.width).toBeLessThanOrEqual(labelRect.width + 2);
     expect(inputRect.height).toBeLessThanOrEqual(labelRect.height + 2);
 
-    // A consumer-provided anchor-name is used instead of the component default.
+    // The component declares the anchor on its outer element.
     let anchorName = getComputedStyle(label).getPropertyValue('anchor-name').trim();
     expect(anchorName).not.toBe('');
+    // And the input is tethered to that same name.
+    expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe(anchorName);
   }
 });
 
@@ -94,7 +97,86 @@ it('Radio: the hidden input covers the component via anchor positioning', async 
   }
 });
 
-it('the hidden input respects a custom anchor-name provided via CSS', async () => {
+it('each component anchors to itself, not to a sibling', async () => {
+  let screen = await render(
+    <div>
+      <Checkbox>One</Checkbox>
+      <Checkbox>Two</Checkbox>
+      <Checkbox>Three</Checkbox>
+    </div>
+  );
+
+  let labels = [...screen.container.querySelectorAll('label')];
+  let names = labels.map(l => getComputedStyle(l).getPropertyValue('anchor-name').trim());
+
+  // Every instance declares its own name, so no two share an anchor.
+  expect(new Set(names).size).toBe(labels.length);
+
+  if (supportsAnchorPositioning()) {
+    labels.forEach(label => {
+      let input = label.querySelector('input')!;
+      expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe(
+        getComputedStyle(label).getPropertyValue('anchor-name').trim()
+      );
+      let labelRect = rect(label);
+      let inputRect = rect(input);
+      expect(covers(inputRect, labelRect)).toBe(true);
+    });
+  }
+});
+
+it('the hidden input covers the component in RTL', async () => {
+  let screen = await render(
+    <div dir="rtl">
+      <Checkbox>Test</Checkbox>
+    </div>
+  );
+
+  let label = screen.container.querySelector('label')!;
+  let input = screen.container.querySelector('input')!;
+
+  let labelRect = rect(label);
+  let inputRect = rect(input);
+
+  if (supportsAnchorPositioning()) {
+    // The inset shorthand resolves physically, so it holds in RTL. Routing
+    // anchor(left) through a logical property mirrored the input to the wrong
+    // side instead.
+    expect(covers(inputRect, labelRect)).toBe(true);
+    expect(inputRect.width).toBeLessThanOrEqual(labelRect.width + 2);
+    expect(Math.abs(inputRect.x - labelRect.x)).toBeLessThanOrEqual(2);
+  }
+});
+
+it('the hidden input respects an anchor name provided via the custom property', async () => {
+  let style = document.createElement('style');
+  style.textContent = '.custom-anchor-host { --react-aria-anchor-name: --from-stylesheet; }';
+  document.head.appendChild(style);
+
+  let screen = await render(<Checkbox className="custom-anchor-host">Test</Checkbox>);
+
+  let input = screen.container.querySelector('input')!;
+  let label = screen.container.querySelector('label')!;
+
+  if (supportsAnchorPositioning()) {
+    // The custom property inherits, so the input picks up the consumer's name
+    // even though the declaration lives in a stylesheet.
+    expect(getComputedStyle(label).getPropertyValue('anchor-name').trim()).toBe(
+      '--from-stylesheet'
+    );
+    expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe(
+      '--from-stylesheet'
+    );
+
+    let labelRect = rect(label);
+    let inputRect = rect(input);
+    expect(covers(inputRect, labelRect)).toBe(true);
+  }
+
+  style.remove();
+});
+
+it('the hidden input respects an anchor name provided via inline style', async () => {
   let screen = await render(
     <Checkbox style={{position: 'relative', ['anchorName' as any]: '--custom-anchor'}}>
       Test
@@ -114,34 +196,4 @@ it('the hidden input respects a custom anchor-name provided via CSS', async () =
     let inputRect = rect(input);
     expect(covers(inputRect, labelRect)).toBe(true);
   }
-});
-
-it('the hidden input respects a custom anchor-name provided via a stylesheet class', async () => {
-  let style = document.createElement('style');
-  style.textContent = '.custom-anchor-host { anchor-name: --from-stylesheet; }';
-  document.head.appendChild(style);
-
-  let screen = await render(<Checkbox className="custom-anchor-host">Test</Checkbox>);
-
-  let input = screen.container.querySelector('input')!;
-  let label = screen.container.querySelector('label')!;
-
-  if (supportsAnchorPositioning()) {
-    // The name set in a stylesheet is readable via getComputedStyle, so the
-    // component can adopt a consumer anchor-name declared outside of inline
-    // styles.
-    expect(getComputedStyle(label).getPropertyValue('anchor-name').trim()).toBe(
-      '--from-stylesheet'
-    );
-    // The component uses the consumer's name instead of applying its default.
-    expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe(
-      '--from-stylesheet'
-    );
-
-    let labelRect = rect(label);
-    let inputRect = rect(input);
-    expect(covers(inputRect, labelRect)).toBe(true);
-  }
-
-  style.remove();
 });

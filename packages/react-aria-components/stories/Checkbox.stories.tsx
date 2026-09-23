@@ -27,19 +27,3 @@ export const CheckboxExample: CheckboxStory = {
     </Checkbox>
   )
 };
-
-// Demonstrates the screen reader focus indicator tracking the checkbox. The
-// hidden input is anchored to the component's outer element via CSS anchor
-// positioning, so VoiceOver/NVDA draw the ring around the visible component.
-export const CheckboxScreenReaderFocusRing: CheckboxStory = {
-  render: args => (
-    <Checkbox {...args}>
-      <div className="checkbox">
-        <svg viewBox="0 0 18 18" aria-hidden="true">
-          <polyline points="1 9 7 14 15 4" />
-        </svg>
-      </div>
-      Unsubscribe
-    </Checkbox>
-  )
-};
