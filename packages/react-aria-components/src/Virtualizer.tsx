@@ -108,6 +108,8 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
             scrollIntoView(container, target, options);
           }
         }
+
+        return Promise.resolve({interrupted: false});
       }
     }),
     [layout, rendered]
