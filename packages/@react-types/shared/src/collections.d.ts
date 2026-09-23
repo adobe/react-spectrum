@@ -159,7 +159,7 @@ export interface LayoutDelegate {
 /** A ScrollDelegate provides scroll actions for a collection. */
 export interface ScrollDelegate {
   /** Scrolls a given collection key into view. */
-  scrollIntoView(key: Key, options?: ScrollIntoViewOptions): void;
+  scrollIntoView(key: Key, options?: ScrollIntoViewOptions): Promise<void>;
 }
 
 /**

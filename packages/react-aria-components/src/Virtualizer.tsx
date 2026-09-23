@@ -93,7 +93,8 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   );
   let delegate = useMemo<ScrollDelegate>(
     () => ({
-      scrollIntoView(key: Key, options?: ScrollIntoViewOptions) {
+      // TODO(later): Properly promisify
+      async scrollIntoView(key: Key, options?: ScrollIntoViewOptions) {
         let container = scrollRef.current;
         let virtualizer = layout.virtualizer;
         let item = virtualizer?.collection.getItem(key);

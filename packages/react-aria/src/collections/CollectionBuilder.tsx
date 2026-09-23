@@ -215,8 +215,10 @@ export function createLeafComponent<P extends object, E extends Element>(
   render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null
 ): (props: P & React.RefAttributes<any>) => ReactElement | null {
   let Component = (forwardRef as forwardRefType)(
-    ({node}: {node: Node<any>}, ref: ForwardedRef<E>) =>
-      render(node.props, mergeRefs(node.props.ref, ref), node)
+    ({node}: {node: Node<any>}, ref?: ForwardedRef<E>) => {
+      let mergedRef = useMemo(() => mergeRefs(node.props.ref, ref), [node.props.ref, ref]);
+      return render(node.props, mergedRef, node);
+    }
   );
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let focusableProps = useContext(FocusableContext);
@@ -253,8 +255,10 @@ export function createBranchComponent<T, P extends {children?: any}, E extends E
   useChildren: (props: P) => ReactNode = useCollectionChildren
 ): (props: P & React.RefAttributes<E>) => ReactElement | null {
   let Component = (forwardRef as forwardRefType)(
-    ({node}: {node: Node<any>}, ref: ForwardedRef<E>) =>
-      render(node.props, mergeRefs(node.props.ref, ref), node)
+    ({node}: {node: Node<any>}, ref?: ForwardedRef<E>) => {
+      let mergedRef = useMemo(() => mergeRefs(node.props.ref, ref), [node.props.ref, ref]);
+      return render(node.props, mergedRef, node);
+    }
   );
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);
