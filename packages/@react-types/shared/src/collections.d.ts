@@ -144,6 +144,10 @@ export interface Size {
   height: number;
 }
 
+interface ScrollCompletion {
+  interrupted: boolean;
+}
+
 /** A LayoutDelegate provides layout information for collection items. */
 export interface LayoutDelegate {
   /** Returns a rectangle for the item with the given key. */
@@ -159,7 +163,7 @@ export interface LayoutDelegate {
 /** A ScrollDelegate provides scroll actions for a collection. */
 export interface ScrollDelegate {
   /** Scrolls a given collection key into view. */
-  scrollIntoView(key: Key, options?: ScrollIntoViewOptions): Promise<void>;
+  scrollIntoView(key: Key, options?: ScrollIntoViewOptions): Promise<ScrollCompletion>;
 }
 
 /**
