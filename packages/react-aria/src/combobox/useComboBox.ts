@@ -41,6 +41,7 @@ import {
 } from 'react';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
+import {getInteractionModality, setInteractionModality} from '../interactions/useFocusVisible';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {getItemId, listData} from '../listbox/utils';
 import {getOwnerDocument} from '../utils/domHelpers';
@@ -49,7 +50,6 @@ import {isAppleDevice} from '../utils/platform';
 import {ListKeyboardDelegate} from '../selection/ListKeyboardDelegate';
 import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
-import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
@@ -266,6 +266,12 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     allowRepeats: true
   });
 
+  // When the ComboBox is inside a FocusScope that contains focus (e.g. a modal Dialog), pressing outside of it:
+  //   1. blurs the input on pointerdown, which closes the menu,
+  //   2. then FocusScope moves focus back to the input in a requestAnimationFrame.
+  // That second focus is not a user action, so it should not reopen the menu when menuTrigger="focus".
+  let isBlurredByPointer = useRef(false);
+
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = nodeContains(buttonRef.current, e.relatedTarget as Element);
     let blurIntoPopover = nodeContains(popoverRef.current, e.relatedTarget);
@@ -280,6 +286,16 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     }
 
     state.setFocused(false);
+
+    if (getInteractionModality() === 'pointer') {
+      isBlurredByPointer.current = true;
+      // Reset the flag after FocusScope has had a chance to restore focus (its requestAnimationFrame was
+      // scheduled before this one). If focus was not moved back, e.g. outside a Dialog, the next focus
+      // will be from the user and should open the menu as usual.
+      requestAnimationFrame(() => {
+        isBlurredByPointer.current = false;
+      });
+    }
   };
 
   let onFocus = (e: FocusEvent<HTMLInputElement>) => {
@@ -291,7 +307,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       props.onFocus(e);
     }
 
-    state.setFocused(true);
+    // Don't open the menu if focus was moved back to the input after a press outside (see above).
+    state.setFocused(true, !isBlurredByPointer.current);
   };
 
   let valueId = useValueId([
