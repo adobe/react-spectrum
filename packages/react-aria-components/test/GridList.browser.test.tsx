@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {expect, it} from 'vitest';
+import {Collection} from 'react-aria/Collection';
+import {expect, it, vi} from 'vitest';
 import {GridLayout} from '../src/GridLayout';
-import {GridList, GridListItem} from '../src/GridList';
+import {GridList, GridListItem, GridListLoadMoreItem} from '../src/GridList';
 import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
 import {Size} from 'react-stately/useVirtualizerState';
@@ -119,4 +120,46 @@ it('virtualizer renders items after toggling display:none', async () => {
   await button.click();
   await button.click();
   await expect(tester.getRows().length).toBeGreaterThan(0);
+});
+
+const PAGE_SIZE = 20;
+const ROW_HEIGHT = 100;
+
+function PageScrollingGridList() {
+  let [page, setPage] = useState(1);
+  let [loadCount, setLoadCount] = useState(0);
+  let items = Array.from({length: page * PAGE_SIZE}, (_, i) => ({id: i, name: `Item ${i}`}));
+
+  return (
+    <>
+      <div data-testid="load-count">{loadCount}</div>
+      <GridList aria-label="Page scrolling list">
+        <Collection items={items}>
+          {item => (
+            <GridListItem id={item.id} style={{height: `${ROW_HEIGHT}px`}}>
+              {item.name}
+            </GridListItem>
+          )}
+        </Collection>
+        <GridListLoadMoreItem
+          onLoadMore={() => {
+            setLoadCount(count => count + 1);
+            setPage(currentPage => currentPage + 1);
+          }}
+        />
+      </GridList>
+    </>
+  );
+}
+
+it('loads more when a page-scrolling list reaches the sentinel', async () => {
+  let {container} = await render(<PageScrollingGridList />);
+  let loadCount = container.querySelector('[data-testid=load-count]') as HTMLElement;
+
+  await new Promise(resolve => setTimeout(resolve, 100));
+  expect(document.documentElement.scrollHeight).toBeGreaterThan(window.innerHeight * 2);
+  expect(loadCount.textContent).toBe('0');
+
+  window.scrollTo(0, document.documentElement.scrollHeight);
+  await vi.waitFor(() => expect(loadCount.textContent).toBe('1'), {timeout: 2000});
 });
