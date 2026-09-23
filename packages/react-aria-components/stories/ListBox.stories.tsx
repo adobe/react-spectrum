@@ -1179,15 +1179,13 @@ const ScrollListBoxExample = forwardRef<ScrollDelegate, ListBoxProps<any>>((prop
 });
 
 export const VirtualizedScrollToKey = () => {
-  let [currentKey, setCurrentKey] = useState(0);
+  let [currentKey, setCurrentKey] = useState<number>(0);
 
-  let domRef = useRef<ScrollDelegate>(null);
-  let virtualRef = useRef<ScrollDelegate>(null);
+  let delegateRef = useRef<ScrollDelegate>(null);
 
-  let scrollTo = useEffectEvent((next: number) => {
-    setCurrentKey(next);
-    domRef.current?.scrollIntoView(next);
-    virtualRef.current?.scrollIntoView(next);
+  let scrollTo = useEffectEvent((key: number) => {
+    setCurrentKey(key);
+    delegateRef.current?.scrollIntoView(key);
   });
 
   let onPrevious = useEffectEvent(() => scrollTo(currentKey - 1));
@@ -1208,7 +1206,11 @@ export const VirtualizedScrollToKey = () => {
         </Button>
       </div>
       <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 25}}>
-        <ScrollListBoxExample ref={virtualRef} selectionMode="single" selectedKeys={[currentKey]} />
+        <ScrollListBoxExample
+          ref={delegateRef}
+          selectionMode="single"
+          selectedKeys={[currentKey]}
+        />
       </Virtualizer>
     </div>
   );
