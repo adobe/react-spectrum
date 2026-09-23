@@ -17,7 +17,7 @@ import {createPortal} from 'react-dom';
 import {FocusableContext} from '../interactions/useFocusable';
 import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
-import {mergeRefs} from 'react-aria/mergeRefs';
+import {mergeRefs} from '../utils/mergeRefs';
 import React, {
   createContext,
   ForwardedRef,
