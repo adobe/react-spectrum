@@ -398,7 +398,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   let addWindowBlurListener = useCallback(
     (target: Element) => {
-      addGlobalListener(getOwnerWindow(target), 'blur', cancelOnWindowBlur, false);
+      addGlobalListener(getOwnerWindow(target), 'blur', cancelOnWindowBlur, {once: true});
     },
     [addGlobalListener, cancelOnWindowBlur]
   );
@@ -423,8 +423,8 @@ export function usePress(props: PressHookProps): PressResult {
             state.target = e.currentTarget;
             state.isPressed = true;
             state.pointerType = 'keyboard';
-            shouldStopPropagation = triggerPressStart(e, 'keyboard');
             addWindowBlurListener(e.currentTarget as Element);
+            shouldStopPropagation = triggerPressStart(e, 'keyboard');
           }
 
           // Focus may move before the key up event, so register the event on the document
@@ -588,6 +588,7 @@ export function usePress(props: PressHookProps): PressResult {
             disableTextSelection(state.target);
           }
 
+          addWindowBlurListener(e.currentTarget as Element);
           shouldStopPropagation = triggerPressStart(e, state.pointerType);
 
           // Release pointer capture so that touch interactions can leave the original target.
@@ -609,7 +610,6 @@ export function usePress(props: PressHookProps): PressResult {
             onPointerCancel,
             false
           );
-          addWindowBlurListener(e.currentTarget as Element);
         }
 
         if (shouldStopPropagation) {
@@ -748,6 +748,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.target = e.currentTarget;
         state.pointerType = isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse';
 
+        addWindowBlurListener(e.currentTarget as Element);
         // Flush sync so that focus moved during react re-renders occurs before we yield back to the browser.
         let shouldStopPropagation = flushSync(() => triggerPressStart(e, state.pointerType!));
         if (shouldStopPropagation) {
@@ -761,7 +762,6 @@ export function usePress(props: PressHookProps): PressResult {
           }
         }
         addGlobalListener(getOwnerDocument(e.currentTarget), 'mouseup', onMouseUp, false);
-        addWindowBlurListener(e.currentTarget as Element);
       };
 
       pressProps.onMouseEnter = e => {
@@ -852,6 +852,7 @@ export function usePress(props: PressHookProps): PressResult {
           disableTextSelection(state.target);
         }
 
+        addWindowBlurListener(e.currentTarget as Element);
         let shouldStopPropagation = triggerPressStart(
           createTouchEvent(state.target, e),
           state.pointerType
@@ -860,7 +861,6 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
         addGlobalListener(getOwnerWindow(e.currentTarget), 'scroll', onScroll, true);
-        addWindowBlurListener(e.currentTarget as Element);
       };
 
       pressProps.onTouchMove = e => {
