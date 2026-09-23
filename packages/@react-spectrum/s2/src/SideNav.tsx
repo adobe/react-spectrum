@@ -903,7 +903,7 @@ const sidePanelStyle = style(
   getAllowedOverrides({height: true})
 );
 
-export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function SidePanelProps<T>(
+export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function SidePanel<T>(
   props: SidePanelProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
