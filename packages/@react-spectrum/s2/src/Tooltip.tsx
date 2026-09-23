@@ -32,6 +32,7 @@ import {
 import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
+import {useIsMobileDevice} from './utils';
 import {useLocale} from 'react-aria/I18nProvider';
 
 export interface TooltipTriggerProps
@@ -216,6 +217,7 @@ export const Tooltip = forwardRef(function Tooltip(
   let colorScheme = useContext(ColorSchemeContext);
   let {locale, direction} = useLocale();
   let [borderRadius, setBorderRadius] = useState(0);
+  let isMobile = useIsMobileDevice();
 
   // TODO: should we pass through lang and dir props in RAC?
   let tooltipRef = useCallback(
@@ -241,7 +243,8 @@ export const Tooltip = forwardRef(function Tooltip(
       arrowBoundaryOffset={borderRadius}
       containerPadding={containerPadding}
       crossOffset={crossOffset}
-      offset={4 + 5} // 4px offset + 5px arrow height
+      // 4px offset + 5px arrow height, or 4px/5px (desktop/mobile) offset with no arrow
+      offset={hideArrow ? (isMobile ? 5 : 4) : 4 + 5}
       placement={placement}
       shouldFlip={shouldFlip}
       ref={tooltipRef}
