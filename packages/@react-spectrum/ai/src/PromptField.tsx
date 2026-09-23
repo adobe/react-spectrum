@@ -968,8 +968,8 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let {lang: langProp, isDisabled: isDisabledProp, onError, onToggle} = props;
   let {locale} = useLocale();
   let lang = langProp ?? locale;
-  let {prompt, setPrompt, inputRef, setListening} = useContext(PromptFieldContext);
-  let isDisabled = isDisabledProp;
+  let {prompt, setPrompt, inputRef, setListening, isGenerating} = useContext(PromptFieldContext);
+  let isDisabled = isDisabledProp ?? isGenerating;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   let basePromptRef = useRef<TokenFieldValue>(prompt);
