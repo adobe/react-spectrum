@@ -516,7 +516,7 @@ const SideNavItemContentInner = props => {
           data-do-not-hide
           className={indicator({
             isDisabled,
-            isSelected: isCurrent || (isCurrentAncestor && isCollapsed),
+            isSelected: isCurrent || (isCurrentAncestor && !isExpanded),
             isHovered
           })}
         />
@@ -738,12 +738,13 @@ export interface SideNavItemLinkProps {
 let SideNavItemButton = (
   props: SideNavItemLinkProps & {onExpandSidePanel: () => void}
 ): ReactNode => {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {children, onExpandSidePanel} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
   let linkProps = useContext(LinkContext);
   let {isCollapsed = false} = useContext(SidePanelContext);
   let labelId = useId();
-  let additionalExplanation = 'panel collapsed, click to expand';
+  let additionalExplanation = stringFormatter.format(`sidepanel.clickToExpand`);
   let additionalExplanationId = useId();
 
   let eventHandlers = linkProps
@@ -852,7 +853,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   );
 };
 
-interface SidePanelProps<T> extends Omit<SideNavProps<T>, 'children'> {
+export interface SidePanelProps<T> extends Omit<SideNavProps<T>, 'children'> {
   /** The content of the side panel. */
   children?: ReactNode;
   /** Whether the side panel is collapsed (controlled). */
@@ -863,12 +864,21 @@ interface SidePanelProps<T> extends Omit<SideNavProps<T>, 'children'> {
   onCollapsedChange?: (isCollapsed: boolean) => void;
 }
 
-export const SidePanelContext = createContext<{
+export interface SidePanelContextValue {
+  /** Whether the side panel is currently collapsed. */
   isCollapsed?: boolean;
+  /** Sets whether the side panel is collapsed. */
   setCollapsed?: (isCollapsed: boolean) => void;
+  /** Whether content that should not be visible during a collapse/expand transition is hidden. */
   isHidden?: boolean;
+  /**
+   * Whether the side panel has mounted. `false` during the first render so that transitions do not
+   * run on mount.
+   */
   isReady?: boolean;
-}>({});
+}
+
+export const SidePanelContext = createContext<SidePanelContextValue>({});
 
 const sidePanelStyle = style(
   {
@@ -1006,7 +1016,16 @@ const PanelIcon = createIcon(props => {
 });
 
 // TODO: NotificationBadge doesn't support all the colors
-export const SidePanelBadge = (props: Omit<BadgeProps, 'children'> & {value?: number | string}) => {
+export interface SidePanelBadgeProps extends Omit<BadgeProps, 'children'> {
+  /** The value displayed in the badge. Numbers are capped at 99 and localized. */
+  value?: number | string;
+}
+
+/**
+ * A SidePanelBadge renders a Badge while the SidePanel is expanded, and a NotificationBadge while
+ * it is collapsed.
+ */
+export const SidePanelBadge = (props: SidePanelBadgeProps): ReactNode => {
   let {isCollapsed = false} = useContext(SidePanelContext) ?? {};
   let {locale} = useLocale();
   let formattedValue = props.value;

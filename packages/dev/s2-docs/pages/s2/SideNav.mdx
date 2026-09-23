@@ -2,6 +2,8 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
+import {StaticTable} from '../../src/StaticTable';
+import {VersionBadge} from '../../src/VersionBadge';
 
 export const tags = ['hierarchy', 'navigation', 'nested'];
 export const relatedPages = [];
@@ -342,6 +344,283 @@ import Apps from '@react-spectrum/s2/icons/Apps';
 </RoutedSideNav>
 ```
 
+## SidePanel
+
+A `SidePanel` wraps a `SideNav`, along with any other app chrome, in a container that collapses down to a narrow icon rail. It renders its own collapse/expand toggle at the bottom of the panel, and animates its width between the two states.
+
+The expanded width comes from the `styles` prop you pass to `SidePanel`.
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
+"use client";
+import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNav';
+import {SidePanelApp} from './SidePanelApp';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
+import Files from '@react-spectrum/s2/icons/Files';
+import Images from '@react-spectrum/s2/icons/Images';
+import Project from '@react-spectrum/s2/icons/Project';
+
+<SidePanelApp defaultSelectedRoute="/files">
+  {({selectedRoute}) => (
+    /*- begin highlight -*/
+    <SidePanel
+      defaultCollapsed
+      styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+    {/*- end highlight -*/}
+      <SideNav
+        aria-label="Files"
+        selectedRoute={selectedRoute}
+        defaultExpandedKeys={['projects']}
+        styles={style({width: 'full'})}>
+        <SideNavItem href="/files" textValue="Files">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Files />
+              <Text>Files</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <CCLibrary />
+              <Text>Your Libraries</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem href="/photos" textValue="Photos">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Images />
+                <Text>Photos</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+        <SideNavSection>
+          <SideNavHeader>Work</SideNavHeader>
+          <SideNavItem id="projects" href="/projects" textValue="Projects">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Project />
+                <Text>Projects</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+            <SideNavItem href="/projects/website" textValue="Website redesign">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Text>Website redesign</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+            <SideNavItem href="/projects/mobile" textValue="Mobile app">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Text>Mobile app</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+          </SideNavItem>
+        </SideNavSection>
+      </SideNav>
+    </SidePanel>
+  )}
+</SidePanelApp>
+```
+
+### Collapsing
+
+The collapsed state is uncontrolled by default. Use `defaultCollapsed` for the initial state, or `isCollapsed` together with `onCollapsedChange` to control it — for example to persist the user's preference, or to collapse the panel from elsewhere in the app.
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
+"use client";
+import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SideNav';
+import {SidePanelApp} from './SidePanelApp';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import File from '@react-spectrum/s2/icons/File';
+import Files from '@react-spectrum/s2/icons/Files';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import Images from '@react-spectrum/s2/icons/Images';
+import {useState} from 'react';
+
+///- begin collapse -///
+interface Item {
+  id: number;
+  title: string;
+  type: 'directory' | 'file';
+  href?: string;
+  icon?: typeof Folder;
+  children?: Item[];
+}
+///- end collapse -///
+let items: Item[] = [
+  /*- begin highlight -*/
+  {id: 1, title: 'Documents', type: 'directory', href: '/documents', icon: Files, children: [
+  /*- end highlight -*/
+    {id: 2, title: 'Project', type: 'directory', href: '/documents/project', children: [
+      {id: 3, title: 'Notes', type: 'file', href: '/notes'},
+      {id: 4, title: 'Budget', type: 'file', href: '/budget'}
+    ]}
+  ]},
+  /*- begin highlight -*/
+  {id: 5, title: 'Photos', type: 'directory', href: '/photos', icon: Images, children: [
+  /*- end highlight -*/
+    {id: 6, title: 'Image 1', type: 'file', href: '/image-1'},
+    {id: 7, title: 'Image 2', type: 'file', href: '/image-2'}
+  ]}
+];
+
+function CollapsibleSidePanel() {
+  /*- begin highlight -*/
+  let [isCollapsed, setCollapsed] = useState(true);
+  /*- end highlight -*/
+
+  return (
+    <SidePanelApp
+      defaultSelectedRoute="/notes"
+      /*- begin highlight -*/
+      isCollapsed={isCollapsed}
+      onCollapsedChange={setCollapsed}>
+      {/*- end highlight -*/}
+      {({selectedRoute}) => (
+        /*- begin highlight -*/
+        <SidePanel
+          isCollapsed={isCollapsed}
+          onCollapsedChange={setCollapsed}
+          styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+        {/*- end highlight -*/}
+          <SideNav
+            aria-label="Files"
+            selectedRoute={selectedRoute}
+            items={items}
+            styles={style({width: 'full'})}>
+            {function renderItem(item) {
+              let Icon = item.icon ?? (item.type === 'directory' ? Folder : File);
+              return (
+                <SideNavItem textValue={item.title} href={item.href}>
+                  <SideNavItemContent>
+                    <SideNavItemLink>
+                      <Icon />
+                      <Text>{item.title}</Text>
+                    </SideNavItemLink>
+                  </SideNavItemContent>
+                  {item.children && <Collection items={item.children}>
+                    {renderItem}
+                  </Collection>}
+                </SideNavItem>
+              );
+            }}
+          </SideNav>
+        </SidePanel>
+      )}
+    </SidePanelApp>
+  );
+}
+
+<CollapsibleSidePanel />
+```
+
+### Animations
+
+`SidePanel` animates its own `width` between the expanded width you provide and the collapsed rail width, and `SideNav` animates its labels, chevrons, and nested rows in response. Custom components you place inside the panel should participate in the same transition, so the panel exposes its animation state on `SidePanelContext`.
+
+<StaticTable
+  headers={['Context value', 'Description']}
+  codeColumns={[0]}
+  rows={[
+    ['isCollapsed', 'The target state of the panel. Flips as soon as the toggle is activated, so it leads the width transition when expanding and matches it when collapsing.'],
+    ['isHidden', 'Whether content that should not be visible mid-transition is hidden. Equivalent to isCollapsed || isExpanding, so it stays true for the whole expand animation and only flips false once the panel has finished widening.'],
+    ['isReady', 'False during the first render and true after the panel mounts. So a panel that starts expanded does not animate open on load.'],
+    ['setCollapsed', 'Collapses or expands the panel. Useful for building your own toggle, or for expanding the panel when a collapsed control is activated.']
+  ]} />
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
+"use client";
+import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SideNav';
+import {SidePanelApp, AccountFooter} from './SidePanelApp';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import File from '@react-spectrum/s2/icons/File';
+import Files from '@react-spectrum/s2/icons/Files';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import Images from '@react-spectrum/s2/icons/Images';
+
+///- begin collapse -///
+interface Item {
+  id: number;
+  title: string;
+  type: 'directory' | 'file';
+  href?: string;
+  icon?: typeof Folder;
+  children?: Item[];
+}
+let items: Item[] = [
+  {id: 1, title: 'Documents', type: 'directory', href: '/documents', icon: Files, children: [
+    {id: 2, title: 'Project', type: 'directory', href: '/documents/project', children: [
+      {id: 3, title: 'Notes', type: 'file', href: '/notes'},
+      {id: 4, title: 'Budget', type: 'file', href: '/budget'}
+    ]}
+  ]},
+  {id: 5, title: 'Photos', type: 'directory', href: '/photos', icon: Images, children: [
+    {id: 6, title: 'Image 1', type: 'file', href: '/image-1'},
+    {id: 7, title: 'Image 2', type: 'file', href: '/image-2'}
+  ]}
+];
+///- end collapse -///
+
+<SidePanelApp defaultSelectedRoute="/notes">
+  {({selectedRoute}) => (
+    <SidePanel defaultCollapsed styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+      <SideNav
+        aria-label="Files"
+        selectedRoute={selectedRoute}
+        items={items}
+        styles={style({width: 'full'})}>
+        {function renderItem(item) {
+          let Icon = item.icon ?? (item.type === 'directory' ? Folder : File);
+          return (
+            <SideNavItem textValue={item.title} href={item.href}>
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Icon />
+                  <Text>{item.title}</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+              {item.children && <Collection items={item.children}>
+                {renderItem}
+              </Collection>}
+            </SideNavItem>
+          );
+        }}
+      </SideNav>
+      {/*- begin highlight -*/}
+      <AccountFooter />
+      {/*- end highlight -*/}
+    </SidePanel>
+  )}
+</SidePanelApp>
+```
+
+`AccountFooter` hides its label with `display: none` while `isHidden` is true, so the label needs `transitionBehavior: 'allow-discrete'` to animate `display` alongside `opacity`, and `'@starting-style': 0` so the fade runs in the entering direction too. Without the starting style the label would pop straight to full opacity when the panel finishes widening.
+
+#### Reduced motion
+
+`SidePanel` and `SideNav` disable their transitions under `@media (prefers-reduced-motion: reduce)`. Custom content should do the same, either with the same media query in the `style` macro, or by skipping the transition entirely.
+
+```tsx
+const label = style({
+  transition: {
+    default: 'none',
+    isReady: {
+      default: '[opacity, display]',
+      isHidden: 'none',
+      /*- begin highlight -*/
+      '@media (prefers-reduced-motion: reduce)': 'none'
+      /*- end highlight -*/
+    }
+  },
+  transitionDuration: 150
+});
+```
+
 ## API
 
 ```tsx links={{SideNav: '#sidenav', SideNavItem: '#sidenavitem', SideNavItemContent: '#sidenavitemcontent', SideNavItemLink: '#sidenavitemlink', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
@@ -363,6 +642,22 @@ import Apps from '@react-spectrum/s2/icons/Apps';
     </SideNavItemContent>
   </SideNavItem>
 </SideNav>
+```
+
+```tsx links={{SidePanel: '#sidepanel', SidePanelBadge: '#sidepanelbadge', SideNav: '#sidenav', SideNavItem: '#sidenavitem', SideNavItemContent: '#sidenavitemcontent', SideNavItemLink: '#sidenavitemlink', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
+<SidePanel>
+  <SideNav>
+    <SideNavItem href>
+      <SideNavItemContent>
+        <SideNavItemLink>
+          <Icon />
+          <Text />
+          <SidePanelBadge />
+        </SideNavItemLink>
+      </SideNavItemContent>
+    </SideNavItem>
+  </SideNav>
+</SidePanel>
 ```
 
 ### SideNav
@@ -388,3 +683,11 @@ import Apps from '@react-spectrum/s2/icons/Apps';
 ### SideNavHeader
 
 <PropTable component={docs.exports.SideNavHeader} links={docs.links} showDescription />
+
+### SidePanel
+
+<PropTable component={docs.exports.SidePanel} links={docs.links} />
+
+### SidePanelBadge
+
+<PropTable component={docs.exports.SidePanelBadge} links={docs.links} showDescription />
