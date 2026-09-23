@@ -13,7 +13,6 @@
 import {ActionButton} from './ActionButton';
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {Badge, BadgeContext, BadgeProps} from './Badge';
 import {baseColor, css, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
@@ -53,8 +52,6 @@ import {
   NavigationTreeSection,
   NavigationTreeSectionProps
 } from 'react-aria-components/NavigationTree';
-import {NotificationBadge, NotificationBadgeContext} from './NotificationBadge';
-import {NumberFormatter} from '@internationalized/number';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import {Text, TextContext} from './Content';
@@ -547,15 +544,7 @@ const SideNavItemContentInner = props => {
               }
             ],
             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
-            [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled, size: 'S'}],
-            [BadgeContext, {size: 'S', fillStyle: 'subtle', styles: style({gridArea: 'badge'})}],
-            [
-              NotificationBadgeContext,
-              {
-                size: 'S',
-                styles: style({position: 'absolute', insetEnd: 8, top: 4, gridArea: 'icon'})
-              }
-            ]
+            [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled, size: 'S'}]
           ]}>
           {typeof children === 'string' ? <Text>{children}</Text> : children}
         </Provider>
