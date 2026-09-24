@@ -88,6 +88,12 @@ export interface SelectableItemOptions extends DOMProps {
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override' | 'none';
+  /**
+   * Whether to skip resetting the selection when a link is selected.
+   *
+   * @default false
+   */
+  shouldSkipResetSelection?: boolean;
 }
 
 export interface SelectableItemStates {
@@ -138,7 +144,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isDisabled,
     onAction,
     allowsDifferentPressOrigin,
-    linkBehavior = 'action'
+    linkBehavior = 'action',
+    shouldSkipResetSelection = false
   } = options;
   let router = useRouter();
   id = useId(id);
@@ -154,8 +161,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         if (linkBehavior === 'selection' && ref.current) {
           let itemProps = manager.getItemProps(key);
           router.open(ref.current, e, itemProps.href, itemProps.routerOptions);
-          // Always set selected keys back to what they were so that select and combobox close.
-          manager.setSelectedKeys(manager.selectedKeys);
+          if (!shouldSkipResetSelection) {
+            // Always set selected keys back to what they were so that select and combobox close.
+            manager.setSelectedKeys(manager.selectedKeys);
+          }
           return;
         } else if (linkBehavior === 'override' || linkBehavior === 'none') {
           return;
