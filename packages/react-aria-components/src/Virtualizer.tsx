@@ -106,7 +106,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
     return () => setPersistedKeys(keys => keys.difference(new Set([node.key])));
   }, []);
 
-  // TODO(later): Unrender after scroll once scrollIntoView is promisified.
+  // TODO(later): Unpersist after scroll once scrollIntoView is promisified.
   let scrollTarget = useRef<Function | null>(null);
   let scrollDelegate = useMemo<ScrollDelegate>(
     () => ({
