@@ -2426,6 +2426,37 @@ describe('Table', () => {
         'No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.'
       );
     });
+
+    it('should throw an error if two rows share an id', () => {
+      function DuplicateRowIds() {
+        return (
+          <Table aria-label="Files">
+            <TableHeader>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="1">
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+              </Row>
+              <Row id="1">
+                <Cell>Program Files</Cell>
+                <Cell>File folder</Cell>
+              </Row>
+              <Row id="2">
+                <Cell>bootmgr</Cell>
+                <Cell>System file</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+        );
+      }
+
+      expect(() => render(<DuplicateRowIds />)).toThrow(
+        'Duplicate key "1" found in collection. Every item in a collection must have a unique key.'
+      );
+    });
   });
 
   describe('load more spinner', () => {
