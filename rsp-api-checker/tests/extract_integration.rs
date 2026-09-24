@@ -386,3 +386,93 @@ async fn import_type_queries_survive_extraction() {
         );
     }
 }
+
+/// The full pipeline for the shape that used to fail silently:
+/// `.d.ts` -> `import("react")` rewrite -> transformer -> `api.json` ->
+/// component normalization -> rendered diff.
+///
+/// `tsc` spells a forwardRef component this way whenever the source file has
+/// no `React` binding in scope. The transformer erases the type query to
+/// `any`, which dropped every prop of the affected components from the report
+/// without any error — the extract still "succeeded". This asserts the props
+/// make it all the way to the diff text.
+#[tokio::test]
+async fn forward_ref_component_props_survive_from_dts_to_diff_output() {
+    let root = repo_root();
+    if !ts_doc_available(&root) {
+        eprintln!("skipping: parcel3 not installed");
+        return;
+    }
+
+    let component_dts = |extra_prop: &str| {
+        format!(
+            "export interface ButtonProps {{ isDisabled?: boolean; {extra_prop} }}\n\
+             export declare const Button: import(\"react\").ForwardRefExoticComponent<\
+             ButtonProps & import(\"react\").RefAttributes<HTMLButtonElement>>;\n"
+        )
+    };
+
+    // Extract the same package twice: once as-is, once with an added prop.
+    let mut out_dirs = Vec::new();
+    let mut pkg_tmps = Vec::new();
+    for dts in [component_dts(""), component_dts("isFoo?: boolean;")] {
+        let pkgs_tmp = TempDir::new().unwrap();
+        let entries = vec![write_pkg(pkgs_tmp.path(), "@fix/button", &dts)];
+        let out = TempDir::new().unwrap();
+        extract_packages(
+            &entries,
+            &ExtractOpts {
+                repo_root: root.clone(),
+                output_dir: out.path().to_path_buf(),
+                check_build_freshness: false,
+                allow_empty: false,
+            },
+        )
+        .await
+        .expect("extract_packages failed");
+        out_dirs.push(out);
+        pkg_tmps.push(pkgs_tmp);
+    }
+
+    // The emitted api.json must not have collapsed the component to `any`.
+    let api_json =
+        std::fs::read_to_string(out_dirs[0].path().join("@fix/button/dist/api.json")).unwrap();
+    let parsed: serde_json::Value = serde_json::from_str(&api_json).unwrap();
+    assert_ne!(
+        parsed["exports"]["Button"]["type"], "any",
+        "the import() type query was erased: {api_json}"
+    );
+
+    let pairs = discover_pairs(out_dirs[0].path(), out_dirs[1].path()).unwrap();
+    assert_eq!(pairs.len(), 1);
+    let diff = diff_package(&pairs[0].package_name, &pairs[0].base, &pairs[0].branch, true);
+
+    let button = diff
+        .diffs
+        .iter()
+        .find(|d| d.qualified_name == "@fix/button:Button")
+        .unwrap_or_else(|| {
+            panic!(
+                "Button missing from the report: {:?}",
+                diff.diffs.iter().map(|d| &d.qualified_name).collect::<Vec<_>>()
+            )
+        });
+
+    assert!(
+        !button.diff_text.contains("UNTYPED"),
+        "Button lost its type:\n{}",
+        button.diff_text
+    );
+    assert!(
+        button.diff_text.contains("isFoo"),
+        "the added prop should reach the diff:\n{}",
+        button.diff_text
+    );
+    // The untouched prop proves props were really collected, not just the one
+    // that changed.
+    assert!(
+        button.diff_text.contains("isDisabled"),
+        "existing props should be rendered as context:\n{}",
+        button.diff_text
+    );
+}

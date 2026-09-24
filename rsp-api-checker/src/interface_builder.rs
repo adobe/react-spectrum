@@ -530,11 +530,13 @@ fn format_type_params(params: &[TypeNode], ctx: &mut RenderContext) -> Option<St
     if params.is_empty() {
         return None;
     }
+    // Declaration order, NOT sorted. Type parameter position is part of the
+    // API: `AsyncListOptions<T, C>` and `AsyncListOptions<C, T>` are different
+    // types to every caller that passes explicit type arguments. Sorting here
+    // both printed the wrong signature and hid a reordering — a breaking
+    // change — from the diff entirely.
     let rendered: Vec<String> = params.iter().map(|p| render_type(p, ctx)).collect();
-    // Sort for stable output
-    let mut sorted = rendered;
-    sorted.sort();
-    Some(format!("<{}>", sorted.join(", ")))
+    Some(format!("<{}>", rendered.join(", ")))
 }
 
 fn extract_extends(props: Option<&TypeNode>, ctx: &mut RenderContext) -> Option<String> {
