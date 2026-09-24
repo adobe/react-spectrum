@@ -342,8 +342,6 @@ export const PromptField = forwardRef(function PromptField(
       return;
     }
 
-    // voiceStopRef both stops the recognizer and suppresses the transcript re-commit that its onend would otherwise trigger, so the
-    // cleared prompt isn't repopulated
     props.onSubmit?.(prompt, attachments);
     voiceStopRef.current?.();
     if (!isPromptControlled) {
@@ -986,10 +984,6 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let updateBasePrompt = useEffectEvent(() => {
     basePromptRef.current = prompt;
   });
-
-  // True once a submit has ended the current voice session: blocks the transcript from being
-  // written back to the (now cleared) prompt if the recognizer keeps emitting before/while it
-  // stops. Cleared when a genuinely new session starts.
   let suppressedRef = useRef(false);
 
   let {
