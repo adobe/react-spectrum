@@ -1159,7 +1159,7 @@ const ScrollListBoxExample = forwardRef<ScrollDelegate, ListBoxProps<any>>((prop
     () => ({
       async scrollIntoView(key: Key, options?: ScrollIntoViewOptions) {
         if (scrollDelegate) scrollDelegate.scrollIntoView(key, options);
-        return Promise.resolve({interrupted: false});
+        return {interrupted: false};
       }
     }),
     [scrollDelegate]
