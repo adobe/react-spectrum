@@ -47,9 +47,14 @@ export interface TypeSelectAria {
  */
 export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
-  let state = useRef<{search: string; timeout: ReturnType<typeof setTimeout> | undefined}>({
+  let state = useRef<{
+    search: string;
+    timeout: ReturnType<typeof setTimeout> | undefined;
+    startKey: Key | null;
+  }>({
     search: '',
-    timeout: undefined
+    timeout: undefined,
+    startKey: null
   });
 
   let onKeyDownCapture = (e: KeyboardEvent) => {
@@ -67,11 +72,9 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
 
       if (keyboardDelegate.getKeyForSearch != null) {
         // Use the delegate to find a key to focus.
-        // Prioritize items after the currently focused item, falling back to searching the whole list.
-        let key = keyboardDelegate.getKeyForSearch(
-          state.current.search,
-          selectionManager.focusedKey
-        );
+        // Prioritize items after the item that was focused when the search started,
+        // falling back to searching the whole list.
+        let key = keyboardDelegate.getKeyForSearch(state.current.search, state.current.startKey);
 
         // If no key found, search from the top.
         if (key == null) {
@@ -106,12 +109,20 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       return;
     }
 
-    state.current.search += character;
+    // Typing the same character repeatedly cycles through items starting with that character
+    // rather than searching for a longer string, matching native browser behavior.
+    if (state.current.search === '' || state.current.search === character) {
+      state.current.search = character;
+      state.current.startKey = selectionManager.focusedKey;
+    } else {
+      state.current.search += character;
+    }
 
     if (keyboardDelegate.getKeyForSearch != null) {
       // Use the delegate to find a key to focus.
-      // Prioritize items after the currently focused item, falling back to searching the whole list.
-      let key = keyboardDelegate.getKeyForSearch(state.current.search, selectionManager.focusedKey);
+      // Prioritize items after the item that was focused when the search started,
+      // falling back to searching the whole list.
+      let key = keyboardDelegate.getKeyForSearch(state.current.search, state.current.startKey);
 
       if (key == null) {
         key = keyboardDelegate.getKeyForSearch(state.current.search);
@@ -138,6 +149,7 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     clearTimeout(state.current.timeout);
     state.current.timeout = setTimeout(() => {
       state.current.search = '';
+      state.current.startKey = null;
     }, TYPEAHEAD_DEBOUNCE_WAIT_MS);
   };
 
