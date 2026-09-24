@@ -533,6 +533,10 @@ export class SelectionManager implements MultipleSelectionManager {
     );
   }
 
+  isFocusableWhenDisabled(key: Key): boolean {
+    return !!this.collection.getItem(key)?.props?.allowFocusWhenDisabled;
+  }
+
   isLink(key: Key): boolean {
     return !!this.collection.getItem(key)?.props?.href;
   }
