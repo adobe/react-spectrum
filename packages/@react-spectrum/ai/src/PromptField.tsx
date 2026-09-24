@@ -128,6 +128,9 @@ interface PromptFieldState {
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   isListening: boolean;
   setListening: React.Dispatch<React.SetStateAction<boolean>>;
+  // Set by PromptFieldVoiceButton; lets submit stop dictation and suppress the post-stop
+  // re-commit of the transcript so the submitted (and cleared) prompt is not repopulated.
+  voiceStopRef: React.RefObject<(() => void) | null>;
 }
 
 // TODO: make this customizable
@@ -248,6 +251,7 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
   isGenerating: false,
   isListening: false,
   setListening: () => {},
+  voiceStopRef: createRef(),
   size: 'M'
 });
 
@@ -291,6 +295,7 @@ export const PromptField = forwardRef(function PromptField(
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
   let inputRef = useRef<HTMLDivElement>(null);
+  let voiceStopRef = useRef<(() => void) | null>(null);
   let domRef = useFocusableRef(ref, inputRef);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [prompt, setPrompt] = useControlledState(
@@ -337,7 +342,10 @@ export const PromptField = forwardRef(function PromptField(
       return;
     }
 
+    // voiceStopRef both stops the recognizer and suppresses the transcript re-commit that its onend would otherwise trigger, so the
+    // cleared prompt isn't repopulated
     props.onSubmit?.(prompt, attachments);
+    voiceStopRef.current?.();
     if (!isPromptControlled) {
       setPrompt(new PromptFieldValue([]));
     }
@@ -360,6 +368,7 @@ export const PromptField = forwardRef(function PromptField(
         isGenerating: isGenerating ?? false,
         isListening,
         setListening,
+        voiceStopRef,
         onStop,
         onAddAttachments,
         onRemoveAttachments,
@@ -968,7 +977,8 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let {lang: langProp, isDisabled: isDisabledProp, onError, onToggle} = props;
   let {locale} = useLocale();
   let lang = langProp ?? locale;
-  let {prompt, setPrompt, inputRef, setListening, isGenerating} = useContext(PromptFieldContext);
+  let {prompt, setPrompt, inputRef, setListening, isGenerating, voiceStopRef} =
+    useContext(PromptFieldContext);
   let isDisabled = isDisabledProp ?? isGenerating;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
@@ -976,6 +986,11 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let updateBasePrompt = useEffectEvent(() => {
     basePromptRef.current = prompt;
   });
+
+  // True once a submit has ended the current voice session: blocks the transcript from being
+  // written back to the (now cleared) prompt if the recognizer keeps emitting before/while it
+  // stops. Cleared when a genuinely new session starts.
+  let suppressedRef = useRef(false);
 
   let {
     isSupported,
@@ -985,8 +1000,23 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     stop
   } = useVoiceInput({lang, onError, onListeningChange: setListening});
 
+  // Stop dictation on submit and suppress any further transcript commits for this session.
+  let stopVoiceForSubmit = useEffectEvent(() => {
+    if (!isVoiceListening) {
+      return;
+    }
+    suppressedRef.current = true;
+    stop();
+  });
+  useEffect(() => {
+    voiceStopRef.current = stopVoiceForSubmit;
+    return () => {
+      voiceStopRef.current = null;
+    };
+  }, [voiceStopRef]);
+
   let restoreFocus = useEffectEvent(() => {
-    if (!inputRef.current || isDisabled) {
+    if (!inputRef.current || isDisabled || suppressedRef.current) {
       return;
     }
     // similar to useInsertPromptSegment, calling programatic focus on the input causes the caret positioning
@@ -1004,6 +1034,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let wasListeningRef = useRef(false);
   useEffect(() => {
     if (isVoiceListening) {
+      suppressedRef.current = false;
       updateBasePrompt();
       wasListeningRef.current = true;
       onToggleEvent(true);
@@ -1015,7 +1046,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   }, [isVoiceListening]);
 
   let applyVoiceTranscript = useEffectEvent(() => {
-    if (!transcript || !isVoiceListening || isDisabled) {
+    if (!transcript || !isVoiceListening || isDisabled || suppressedRef.current) {
       return;
     }
 
