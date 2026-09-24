@@ -1,6 +1,7 @@
 //! Drives Parcel 3's `@parcel/transformer-ts-doc` to extract per-package
 //! `api.json`, replacing the old Node `ts-extractor`.
 
+use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
 
@@ -95,6 +96,45 @@ pub fn resolve_types_entry(pkg_json: &Value) -> Option<String> {
         }
     }
     None
+}
+
+/// A package's declarations entry, and whether the package actually declared it.
+pub struct TypesEntry {
+    pub rel: String,
+    /// `false` when the path was inferred from `source` rather than read from a
+    /// `types`/`typings`/`exports` field.
+    pub declared: bool,
+}
+
+/// [`resolve_types_entry`], falling back to this repo's conventional output path
+/// for packages that ship declarations without advertising them.
+///
+/// A few published packages (e.g. `@react-spectrum/style-macro-s1`) declare only
+/// `source` and rely on consumers compiling from it, so they never gained a
+/// `types` field — but the build still emits declarations to `dist/types/`.
+/// Inferring that path keeps them in the API surface instead of dropping them.
+pub fn resolve_types_entry_or_convention(pkg_json: &Value) -> Option<TypesEntry> {
+    if let Some(rel) = resolve_types_entry(pkg_json) {
+        return Some(TypesEntry {
+            rel,
+            declared: true,
+        });
+    }
+    types_entry_from_source(pkg_json).map(|rel| TypesEntry {
+        rel,
+        declared: false,
+    })
+}
+
+/// `src/index.ts` -> `dist/types/src/index.d.ts`, matching how this repo emits
+/// declarations for every package that does declare a `types` entry.
+fn types_entry_from_source(pkg_json: &Value) -> Option<String> {
+    let source = pkg_json.get("source")?.as_str()?;
+    let rel = source.trim_start_matches("./");
+    let stem = rel
+        .strip_suffix(".tsx")
+        .or_else(|| rel.strip_suffix(".ts"))?;
+    Some(format!("dist/types/{stem}.d.ts"))
 }
 
 fn is_ts_source(s: &str) -> bool {
@@ -207,6 +247,152 @@ fn ensure_work_dir(repo_root: &Path, work_dir: &Path) -> Result<()> {
     Ok(())
 }
 
+/// Prepended to a rewritten `.d.ts` so the `React` namespace resolves.
+const REACT_NAMESPACE_IMPORT: &str = "import type * as React from 'react';\n";
+
+/// Rewrite `import("react").Foo` type queries into `React.Foo`.
+///
+/// `@parcel/transformer-ts-doc` cannot resolve an `import("...")` type query
+/// and emits a bare `{"type":"any"}` for the whole declaration, destroying
+/// every prop of the 67 Spectrum 2 components that `tsc` spells this way.
+///
+/// `tsc` only reaches for `import("react")` when the source file has no
+/// `React` binding in scope — files that do `import React, {forwardRef} from
+/// 'react'` already get the `React.ForwardRefExoticComponent` spelling, which
+/// the transformer resolves correctly. Reintroducing the namespace import
+/// therefore just restores the form the transformer already understands.
+///
+/// Returns `None` when the file needs no rewriting, so the caller can symlink
+/// it untouched.
+fn rewrite_react_import_types(source: &str) -> Option<String> {
+    if !source.contains("import(\"react\")") && !source.contains("import('react')") {
+        return None;
+    }
+    // Never shadow a `React` the file already binds. No emitted declaration in
+    // this repo does both, but a rewrite that collided would be a silent
+    // miscompile rather than a missing prop, so bail instead.
+    if source.contains("import React") || source.contains(" as React") {
+        return None;
+    }
+    let body = source
+        .replace("import(\"react\")", "React")
+        .replace("import('react')", "React");
+    Some(format!("{REACT_NAMESPACE_IMPORT}{body}"))
+}
+
+/// Every `.d.ts` under `root`, paired with its rewritten content when
+/// [`rewrite_react_import_types`] applies.
+///
+/// *All* declaration files are collected, not just the ones needing a rewrite:
+/// a symlinked `.d.ts` resolves its relative imports against its real path, so
+/// leaving one as a symlink would hop straight back out of the mirror and pull
+/// in the un-rewritten siblings.
+fn collect_dts(root: &Path) -> Vec<(PathBuf, Option<String>)> {
+    let pattern = root.join("**").join("*.d.ts");
+    let Ok(paths) = glob::glob(&pattern.to_string_lossy()) else {
+        return Vec::new();
+    };
+    paths
+        .flatten()
+        .filter(|p| !p.components().any(|c| c.as_os_str() == "node_modules"))
+        .filter_map(|p| {
+            let source = std::fs::read_to_string(&p).ok()?;
+            let rewritten = rewrite_react_import_types(&source);
+            Some((p, rewritten))
+        })
+        .collect()
+}
+
+/// Build a shadow copy of `src` at `dst` in which every `.d.ts` is a real file
+/// — rewritten where [`rewrite_react_import_types`] applies, copied verbatim
+/// otherwise — and *everything else is symlinked*.
+///
+/// Only the directories on the path to a declaration file become real; any
+/// subtree without one is symlinked whole. A package therefore costs a handful
+/// of inodes plus its (small) `.d.ts` tree rather than a full copy.
+fn mirror_with_rewrites(src: &Path, dst: &Path, dts: &[(PathBuf, Option<String>)]) -> Result<()> {
+    // Every directory between `src` and a declaration file has to be real.
+    let mut materialize: HashSet<PathBuf> = HashSet::new();
+    for (file, _) in dts {
+        let mut cur = file.parent();
+        while let Some(dir) = cur {
+            if !dir.starts_with(src) {
+                break;
+            }
+            if !materialize.insert(dir.to_path_buf()) {
+                break;
+            }
+            if dir == src {
+                break;
+            }
+            cur = dir.parent();
+        }
+    }
+    let contents: HashMap<&Path, Option<&str>> = dts
+        .iter()
+        .map(|(p, r)| (p.as_path(), r.as_deref()))
+        .collect();
+    mirror_dir(src, dst, &materialize, &contents)
+}
+
+fn mirror_dir(
+    src: &Path,
+    dst: &Path,
+    materialize: &HashSet<PathBuf>,
+    dts: &HashMap<&Path, Option<&str>>,
+) -> Result<()> {
+    std::fs::create_dir_all(dst)
+        .with_context(|| format!("creating mirror dir {}", dst.display()))?;
+    for entry in
+        std::fs::read_dir(src).with_context(|| format!("reading {}", src.display()))?
+    {
+        let entry = entry?;
+        let from = entry.path();
+        let to = dst.join(entry.file_name());
+        if std::fs::symlink_metadata(&to).is_ok() {
+            continue;
+        }
+        let is_dir = entry.file_type()?.is_dir();
+        if is_dir {
+            if materialize.contains(&from) {
+                mirror_dir(&from, &to, materialize, dts)?;
+                continue;
+            }
+        } else if let Some(rewritten) = dts.get(from.as_path()) {
+            match rewritten {
+                Some(text) => std::fs::write(&to, text)
+                    .with_context(|| format!("writing rewritten {}", to.display()))?,
+                None => {
+                    std::fs::copy(&from, &to)
+                        .with_context(|| format!("copying {} into the mirror", from.display()))?;
+                }
+            }
+            continue;
+        }
+        #[cfg(unix)]
+        std::os::unix::fs::symlink(&from, &to)
+            .with_context(|| format!("symlinking {} into the mirror", from.display()))?;
+        #[cfg(not(unix))]
+        bail!("windows is not supported for the parcel3 extractor work dir");
+    }
+    Ok(())
+}
+
+/// The package root `dts_abs` belongs to: the nearest ancestor with a
+/// `package.json`. Falls back to the `.d.ts`'s own directory (test fixtures
+/// are bare directories with no manifest).
+fn package_root_of(dts_abs: &Path) -> PathBuf {
+    let dir = dts_abs.parent().unwrap_or(dts_abs);
+    let mut cur = Some(dir);
+    while let Some(d) = cur {
+        if d.join("package.json").is_file() {
+            return d.to_path_buf();
+        }
+        cur = d.parent();
+    }
+    dir.to_path_buf()
+}
+
 /// Run transformer-ts-doc on a single `.d.ts`, returning its `{exports,links}`
 /// JSON. `stem` names the throwaway entry + dist dir; pass a per-package-unique
 /// slug so serial builds don't collide.
@@ -260,6 +446,30 @@ pub async fn run_ts_doc(
     // sibling files through the symlink.
     let src_dir_name = format!("{stem}-src");
     let src_link = work_dir.join(&src_dir_name);
+
+    // `tsc` writes `import("react").Foo` whenever the source file had no
+    // `React` binding, and transformer-ts-doc collapses that whole declaration
+    // to `any`. Stage a shadow tree with those queries rewritten (see
+    // `mirror_with_rewrites`); when a package has nothing to rewrite we keep
+    // the cheaper plain symlink.
+    let pkg_root = package_root_of(&dts_abs);
+    let dts_tree = collect_dts(&pkg_root);
+    let needs_rewrite = dts_tree.iter().any(|(_, r)| r.is_some());
+    let dts_dir = if !needs_rewrite {
+        dts_dir.to_path_buf()
+    } else {
+        let mirror = work_dir.join(format!("{stem}-mirror"));
+        let _ = std::fs::remove_dir_all(&mirror);
+        mirror_with_rewrites(&pkg_root, &mirror, &dts_tree)?;
+        // The entry `.d.ts` sits at the same spot inside the mirror.
+        mirror.join(
+            dts_dir
+                .strip_prefix(&pkg_root)
+                .unwrap_or_else(|_| Path::new("")),
+        )
+    };
+    let dts_dir = dts_dir.as_path();
+
     // Reuse the existing symlink only if it still points at this call's
     // `dts_dir` — a stale link (same `stem`, different `dts_abs`) would
     // otherwise silently extract the wrong `.d.ts`.
@@ -421,13 +631,14 @@ pub async fn extract_packages(entries: &[PackageEntry], opts: &ExtractOpts) -> R
             )
             .with_context(|| format!("parsing {}", pkg_json_path.display()))?;
 
-            let Some(types_rel) = resolve_types_entry(&pkg_json) else {
+            let Some(types_entry) = resolve_types_entry_or_convention(&pkg_json) else {
                 eprintln!("  skip {} (no types entry)", entry.name);
                 continue;
             };
+            let types_rel = types_entry.rel;
             let types_abs = entry.dir.join(&types_rel);
             if !types_abs.exists() {
-                if opts.check_build_freshness {
+                if opts.check_build_freshness && types_entry.declared {
                     bail!(
                         "Build incomplete for {}: declared types entry {} is missing. Run `yarn build` before extracting.",
                         entry.name, types_abs.display()
@@ -562,5 +773,70 @@ mod tests {
         assert!(!is_dev_package_location(Path::new("/abs/repo/packages/react-aria-components")));
         // a `dev` dir not directly under `packages` doesn't count
         assert!(!is_dev_package_location(Path::new("packages/@scope/dev/thing")));
+    }
+
+    #[test]
+    fn types_entry_falls_back_to_conventional_output_for_source_only_packages() {
+        // `@react-spectrum/style-macro-s1` ships declarations but never declares them.
+        let pkg = serde_json::json!({"name": "x", "source": "src/index.ts"});
+        assert_eq!(resolve_types_entry(&pkg), None);
+        let entry = resolve_types_entry_or_convention(&pkg).expect("should infer from source");
+        assert_eq!(entry.rel, "dist/types/src/index.d.ts");
+        assert!(!entry.declared);
+    }
+
+    #[test]
+    fn declared_types_entry_wins_over_the_source_convention() {
+        let pkg = serde_json::json!({
+            "name": "x",
+            "source": "src/index.ts",
+            "types": "./dist/types/custom.d.ts"
+        });
+        let entry = resolve_types_entry_or_convention(&pkg).unwrap();
+        assert_eq!(entry.rel, "./dist/types/custom.d.ts");
+        assert!(entry.declared);
+    }
+
+    #[test]
+    fn packages_without_types_or_source_are_still_skipped() {
+        let pkg = serde_json::json!({"name": "x", "main": "dist/main.js"});
+        assert!(resolve_types_entry_or_convention(&pkg).is_none());
+    }
+
+    #[test]
+    fn rewrite_react_import_types_prepends_namespace_and_substitutes() {
+        let out = rewrite_react_import_types(
+            "export declare const A: import(\"react\").ForwardRefExoticComponent<P>;\n",
+        )
+        .expect("a file containing an import(\"react\") query must be rewritten");
+        assert!(out.starts_with(REACT_NAMESPACE_IMPORT), "got {out}");
+        assert!(!out.contains("import(\"react\")"), "got {out}");
+        assert!(out.contains("React.ForwardRefExoticComponent<P>"), "got {out}");
+    }
+
+    #[test]
+    fn rewrite_react_import_types_handles_single_quotes() {
+        let out = rewrite_react_import_types("declare const A: import('react').FC;\n").unwrap();
+        assert!(out.contains("React.FC"), "got {out}");
+    }
+
+    #[test]
+    fn rewrite_react_import_types_skips_files_without_the_query() {
+        assert!(rewrite_react_import_types("export interface P { a?: number }\n").is_none());
+        assert!(rewrite_react_import_types("import(\"./local\").Thing;\n").is_none());
+    }
+
+    #[test]
+    fn rewrite_react_import_types_refuses_to_shadow_an_existing_react_binding() {
+        // Rewriting these would shadow the file's own `React`, which is a silent
+        // miscompile rather than a missing prop.
+        assert!(rewrite_react_import_types(
+            "import React from 'react';\ndeclare const A: import(\"react\").FC;\n"
+        )
+        .is_none());
+        assert!(rewrite_react_import_types(
+            "import * as React from 'react';\ndeclare const A: import(\"react\").FC;\n"
+        )
+        .is_none());
     }
 }

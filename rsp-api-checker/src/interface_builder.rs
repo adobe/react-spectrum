@@ -41,7 +41,7 @@ pub fn rebuild_interfaces(
     for (key, item) in &json.exports {
         ctx.current_export = key.clone();
 
-        let rebuilt = rebuild_single(key, item, ctx);
+        let rebuilt = rebuild_single(key, item, &json.links, ctx);
         let name = export_name(key, item);
         result.insert(name, rebuilt);
     }
@@ -60,7 +60,122 @@ fn export_name(key: &str, node: &TypeNode) -> String {
     }
 }
 
-fn rebuild_single(key: &str, item: &TypeNode, ctx: &mut RenderContext) -> RebuiltExport {
+/// Follow a `link` node to the declaration it names.
+///
+/// The legacy extractor bundled the whole program, so a component's `props`
+/// arrived as a fully inlined `interface` node. `transformer-ts-doc` instead
+/// emits a `link` plus a top-level `links` table, so resolving here restores
+/// the shape the rest of this module expects.
+///
+/// A generic component (`Breadcrumbs<T>`) arrives as
+/// `application(link(BreadcrumbsProps), [T])`; legacy inlined the interface
+/// and left `T` symbolic, so the type arguments are simply dropped.
+///
+/// Only used for component props: links elsewhere intentionally keep
+/// rendering as their bare name, which is what legacy did too.
+fn resolve_props<'a>(
+    node: &'a TypeNode,
+    links: &'a IndexMap<String, TypeNode>,
+) -> Option<&'a TypeNode> {
+    let id = match node {
+        TypeNode::Link { id: Some(id) } => id,
+        TypeNode::Application { base, .. } => match base.as_ref() {
+            TypeNode::Link { id: Some(id) } => id,
+            _ => return None,
+        },
+        _ => return None,
+    };
+    links.get(id)
+}
+
+/// Flatten a component's `props` type into `out`, following links, aliases and
+/// intersections. Returns `false` when the shape carried no properties we
+/// could resolve, so the caller can fall back to rendering it as a single
+/// entry (what legacy did for props it could not see into).
+fn collect_component_props(
+    node: &TypeNode,
+    links: &IndexMap<String, TypeNode>,
+    out: &mut IndexMap<String, PropertyData>,
+    ctx: &mut RenderContext,
+    depth: usize,
+) -> bool {
+    // Links can legitimately chain (alias → alias); bound the walk so a
+    // self-referential table can't hang the differ.
+    if depth > 8 {
+        return false;
+    }
+
+    match node {
+        TypeNode::Interface {
+            properties: iface_props,
+            ..
+        } => {
+            collect_properties(iface_props, out, ctx);
+            true
+        }
+        TypeNode::Object {
+            properties: Some(obj_props),
+            ..
+        } => {
+            collect_properties(obj_props, out, ctx);
+            true
+        }
+        TypeNode::Alias { value, .. } => {
+            collect_component_props(value, links, out, ctx, depth + 1)
+        }
+        // `Props & StyleProps`: legacy inlined every member.
+        TypeNode::Intersection { types } => {
+            let mut any = false;
+            for member in types {
+                any |= collect_component_props(member, links, out, ctx, depth + 1);
+            }
+            any
+        }
+        TypeNode::Link { .. } | TypeNode::Application { .. } => {
+            // `PropsWithoutRef<X>` only strips `ref`, which is rendered from the
+            // component's ref type instead. Its base is a plain identifier, so
+            // `resolve_props` cannot follow it — unwrap to `X` first, otherwise
+            // every prop of the wrapped type is silently dropped.
+            if let Some(inner) = unwrap_props_helper(node) {
+                return collect_component_props(inner, links, out, ctx, depth + 1);
+            }
+            match resolve_props(node, links) {
+                Some(target) => collect_component_props(target, links, out, ctx, depth + 1),
+                None => false,
+            }
+        }
+        _ => false,
+    }
+}
+
+/// `PropsWithoutRef<X>` / `PropsWithChildren<X>` -> `X`.
+///
+/// These are React utility types whose base is an unresolvable identifier, so
+/// they have to be peeled before prop collection.
+fn unwrap_props_helper(node: &TypeNode) -> Option<&TypeNode> {
+    let TypeNode::Application {
+        base,
+        type_parameters,
+    } = node
+    else {
+        return None;
+    };
+    let TypeNode::Identifier { name } = base.as_ref() else {
+        return None;
+    };
+    let short = name.rsplit('.').next().unwrap_or(name);
+    if !matches!(short, "PropsWithoutRef" | "PropsWithChildren") {
+        return None;
+    }
+    type_parameters.first()
+}
+
+fn rebuild_single(
+    key: &str,
+    item: &TypeNode,
+    links: &IndexMap<String, TypeNode>,
+    ctx: &mut RenderContext,
+) -> RebuiltExport {
     match item {
         TypeNode::Component {
             name,
@@ -71,15 +186,15 @@ fn rebuild_single(key: &str, item: &TypeNode, ctx: &mut RenderContext) -> Rebuil
             let mut properties = IndexMap::new();
             let display_name = name.as_deref().unwrap_or(key);
 
-            if let Some(props_node) = props {
-                match props_node.as_ref() {
-                    TypeNode::Interface {
-                        properties: iface_props,
-                        ..
-                    } => {
-                        collect_properties(iface_props, &mut properties, ctx);
-                    }
-                    TypeNode::Link { .. } | TypeNode::Identifier { .. } => {
+            if let Some(props_node) = props.as_deref() {
+                if !collect_component_props(props_node, links, &mut properties, ctx, 0) {
+                    // Props we can't see into (e.g. a link into a package that
+                    // isn't part of this extraction) render as a single entry,
+                    // matching the legacy output for the same situation.
+                    if matches!(
+                        props_node,
+                        TypeNode::Link { .. } | TypeNode::Identifier { .. }
+                    ) {
                         let val = render_type(props_node, ctx);
                         properties.insert(
                             display_name.to_string(),
@@ -90,13 +205,6 @@ fn rebuild_single(key: &str, item: &TypeNode, ctx: &mut RenderContext) -> Rebuil
                             },
                         );
                     }
-                    TypeNode::Object {
-                        properties: Some(obj_props),
-                        ..
-                    } => {
-                        collect_properties(obj_props, &mut properties, ctx);
-                    }
-                    _ => {}
                 }
             }
 
@@ -276,10 +384,46 @@ fn rebuild_single(key: &str, item: &TypeNode, ctx: &mut RenderContext) -> Rebuil
             }
         }
 
-        // Identifiers with no type info
-        TypeNode::Identifier { .. } => RebuiltExport::Untyped,
+        // `export const X = {...}` arrives as a bare object literal type. Flatten it
+        // the same way an interface is flattened so its members are comparable.
+        TypeNode::Object {
+            properties: Some(obj_props),
+            ..
+        } => {
+            let mut properties = IndexMap::new();
+            collect_sorted_properties(obj_props, &mut properties, ctx);
+            RebuiltExport::Interface {
+                type_params: None,
+                extends: None,
+                properties,
+            }
+        }
 
-        _ => RebuiltExport::Untyped,
+        TypeNode::Unknown => RebuiltExport::Untyped,
+
+        // Anything else still carries a renderable type (unions of overloads, aliases
+        // to lib types, tuples, ...). Emitting it as a single entry keeps the value in
+        // the comparison instead of collapsing the export to UNTYPED.
+        other => {
+            let rendered = render_type(other, ctx);
+            if rendered.is_empty() || rendered == "unknown" {
+                return RebuiltExport::Untyped;
+            }
+            let mut properties = IndexMap::new();
+            properties.insert(
+                key.to_string(),
+                PropertyData {
+                    optional: false,
+                    default_val: None,
+                    value: rendered,
+                },
+            );
+            RebuiltExport::Interface {
+                type_params: None,
+                extends: None,
+                properties,
+            }
+        }
     }
 }
 
@@ -689,6 +833,162 @@ mod tests {
         assert!(out.contains("UNTYPED"));
         assert!(out.contains("Mystery"));
     }
+
+    #[test]
+    fn test_format_interface_sorts_properties() {
+        let mut properties = IndexMap::new();
+        for name in ["zeta", "alpha", "middle"] {
+            properties.insert(
+                name.to_string(),
+                PropertyData {
+                    optional: false,
+                    default_val: None,
+                    value: "string".into(),
+                },
+            );
+        }
+        let out = format_interface(
+            "Unsorted",
+            &RebuiltExport::Interface {
+                type_params: None,
+                extends: None,
+                properties,
+            },
+        );
+        let order: Vec<&str> = out
+            .lines()
+            .filter_map(|l| l.strip_prefix("  "))
+            .filter_map(|l| l.split(&['?', ':'][..]).next())
+            .collect();
+        assert_eq!(order, vec!["alpha", "middle", "zeta"]);
+    }
+
+    #[test]
+    fn test_reordering_properties_is_not_a_diff() {
+        let build = |names: [&str; 3]| {
+            let mut properties = IndexMap::new();
+            for n in names {
+                properties.insert(
+                    n.to_string(),
+                    PropertyData {
+                        optional: false,
+                        default_val: None,
+                        value: "number".into(),
+                    },
+                );
+            }
+            format_interface(
+                "Same",
+                &RebuiltExport::Interface {
+                    type_params: None,
+                    extends: None,
+                    properties,
+                },
+            )
+        };
+        assert_eq!(build(["a", "b", "c"]), build(["c", "a", "b"]));
+    }
+
+    #[test]
+    fn test_props_without_ref_is_unwrapped_when_collecting_props() {
+        // `@react-spectrum/card:Card` is
+        // `ForwardRefExoticComponent<ItemProps<P> & PropsWithoutRef<P> & RefAttributes<T>>`.
+        // `PropsWithoutRef`'s base is a bare identifier, so without unwrapping it
+        // every prop of `P` is dropped.
+        let mut props = IndexMap::new();
+        props.insert(
+            "isQuiet".to_string(),
+            TypeNode::Property {
+                name: "isQuiet".into(),
+                value: Box::new(TypeNode::Boolean { value: None }),
+                optional: true,
+                default: None,
+                access: None,
+                index_type: None,
+                description: None,
+            },
+        );
+        let target = TypeNode::Interface {
+            id: Some("pkg:SpectrumCardProps".into()),
+            name: Some("SpectrumCardProps".into()),
+            extends: vec![],
+            properties: props,
+            type_parameters: vec![],
+            description: None,
+            access: None,
+        };
+        let mut links = IndexMap::new();
+        links.insert("pkg:SpectrumCardProps".to_string(), target);
+
+        let node = TypeNode::Application {
+            base: Box::new(TypeNode::Identifier {
+                name: "PropsWithoutRef".into(),
+            }),
+            type_parameters: vec![TypeNode::Link {
+                id: Some("pkg:SpectrumCardProps".into()),
+            }],
+        };
+
+        let mut out = IndexMap::new();
+        let mut ctx = RenderContext::new();
+        let collected = collect_component_props(&node, &links, &mut out, &mut ctx, 0);
+        assert!(collected, "PropsWithoutRef<P> should resolve to P");
+        assert!(out.contains_key("isQuiet"), "got {out:?}");
+    }
+
+    #[test]
+    fn test_object_export_is_flattened() {
+        // `export const ToastQueue = {...}` arrives as a bare object literal.
+        let mut props = IndexMap::new();
+        props.insert(
+            "info".to_string(),
+            TypeNode::Property {
+                name: "info".into(),
+                value: Box::new(TypeNode::String { value: None }),
+                optional: false,
+                default: None,
+                access: None,
+                index_type: None,
+                description: None,
+            },
+        );
+        let node = TypeNode::Object {
+            properties: Some(props),
+            exact: false,
+        };
+        let links = IndexMap::new();
+        let mut ctx = RenderContext::new();
+        let out = rebuild_single("ToastQueue", &node, &links, &mut ctx);
+        match out {
+            RebuiltExport::Interface { ref properties, .. } => {
+                assert!(properties.contains_key("info"), "got {properties:?}");
+            }
+            other => panic!("expected flattened interface, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn test_unhandled_node_renders_value_instead_of_untyped() {
+        // A top-level export whose type is an identifier we cannot resolve should
+        // still report the type name rather than collapsing to UNTYPED.
+        let node = TypeNode::Identifier {
+            name: "ValidityState".into(),
+        };
+        let links = IndexMap::new();
+        let mut ctx = RenderContext::new();
+        let out = rebuild_single("VALID_VALIDITY_STATE", &node, &links, &mut ctx);
+        let rendered = format_interface("VALID_VALIDITY_STATE", &out);
+        assert!(!rendered.contains("UNTYPED"), "got {rendered}");
+        assert!(rendered.contains("ValidityState"), "got {rendered}");
+    }
+
+    #[test]
+    fn test_unknown_node_stays_untyped() {
+        let links = IndexMap::new();
+        let mut ctx = RenderContext::new();
+        let out = rebuild_single("Mystery", &TypeNode::Unknown, &links, &mut ctx);
+        assert!(matches!(out, RebuiltExport::Untyped));
+    }
 }
 
 /// Format a single property as a display line.
@@ -728,8 +1028,12 @@ pub fn format_interface(name: &str, export: &RebuiltExport) -> String {
             // Extra blank line after header so interface names always diff together
             header.push_str(" {\n\n");
 
-            let props: Vec<String> = properties
-                .iter()
+            // Sort by name so that merely reordering members in the source does not
+            // register as an API change.
+            let mut entries: Vec<(&String, &PropertyData)> = properties.iter().collect();
+            entries.sort_by(|a, b| a.0.cmp(b.0));
+            let props: Vec<String> = entries
+                .into_iter()
                 .map(|(k, v)| format_prop(k, v))
                 .collect();
             format!("{header}{}\n}}\n", props.join("\n"))

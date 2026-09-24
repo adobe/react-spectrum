@@ -313,3 +313,76 @@ async fn extract_packages_works_with_relative_cli_paths() {
     result.expect("extract_packages must work with a relative repo_root + output_dir");
     assert!(produced_exists, "expected api.json at {}", produced.display());
 }
+
+
+/// `@parcel/transformer-ts-doc` cannot resolve an `import("react").Foo` type
+/// query and erases the whole declaration to `any`, which silently drops every
+/// prop of the components `tsc` spells that way. `run_ts_doc` works around it
+/// by staging a mirror in which those queries are rewritten to `React.Foo`
+/// behind a namespace import.
+///
+/// This pins that workaround: both spellings must come back as real component
+/// types, never `any`.
+#[tokio::test]
+async fn import_type_queries_survive_extraction() {
+    let root = repo_root();
+    if !ts_doc_available(&root) {
+        return;
+    }
+
+    // Must live inside the repo so that `react` resolves from node_modules.
+    let fixture = TempDir::new_in(&root).unwrap();
+    std::fs::write(
+        fixture.path().join("package.json"),
+        r#"{"name":"import-query-fixture"}"#,
+    )
+    .unwrap();
+
+    let decl = |ty: &str, name: &str| {
+        format!(
+            "export interface P {{ a?: number }}\n\
+             export declare const {name}: {ty}.ForwardRefExoticComponent<P & {ty}.RefAttributes<HTMLDivElement>>;\n"
+        )
+    };
+
+    std::fs::write(
+        fixture.path().join("erased.d.ts"),
+        decl("import(\"react\")", "Erased"),
+    )
+    .unwrap();
+    std::fs::write(
+        fixture.path().join("rewritten.d.ts"),
+        format!(
+            "import type * as React from 'react';\n{}",
+            decl("React", "Rewritten")
+        ),
+    )
+    .unwrap();
+
+    let work = TempDir::new().unwrap();
+    let export_of = |file: &str, name: &str| {
+        let path = fixture.path().join(format!("{file}.d.ts"));
+        let root = root.clone();
+        let work = work.path().to_path_buf();
+        let name = name.to_string();
+        async move {
+            let json = run_ts_doc(&root, &work, &path, &name).await.unwrap();
+            let v: serde_json::Value = serde_json::from_str(&json).unwrap();
+            v["exports"][&name].clone()
+        }
+    };
+
+    for (file, name) in [("erased", "Erased"), ("rewritten", "Rewritten")] {
+        let node = export_of(file, name).await;
+        assert_ne!(
+            node["type"], "any",
+            "{file}.d.ts was erased to `any` by the transformer: {node}"
+        );
+        assert!(
+            serde_json::to_string(&node)
+                .unwrap()
+                .contains("ForwardRefExoticComponent"),
+            "{file}.d.ts lost its component type: {node}"
+        );
+    }
+}
