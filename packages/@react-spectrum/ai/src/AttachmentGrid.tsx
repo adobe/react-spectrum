@@ -64,6 +64,7 @@ const gridStyles = style({
   overflowY: 'auto',
   overflowX: 'clip',
   boxSizing: 'border-box',
+  borderRadius: 'lg',
   ...focusRing(),
   outlineOffset: -2
 });
@@ -71,8 +72,6 @@ const gridStyles = style({
 /**
  * An AttachmentGrid displays file attachments as a wrapping, vertically-scrolling grid of
  * thumbnails. Unlike AttachmentList, it is display-only and does not support selection or removal.
- * Every attachment is disabled, so the grid itself becomes the sole tab stop, keeping the
- * overflow area keyboard-scrollable without letting individual attachments be focused or actioned.
  */
 export const AttachmentGrid = (forwardRef as forwardRefType)(function AttachmentGrid<T>(
   props: AttachmentGridProps<T>,
