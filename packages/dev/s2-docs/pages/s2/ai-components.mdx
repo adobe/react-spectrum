@@ -717,6 +717,26 @@ function GeneratingPrompt() {
 
 <PropTable component={docs.exports.UserMessage} links={docs.links} showDescription />
 
+#### AttachmentGrid
+
+Use `AttachmentGrid` to display file attachments as a wrapping, vertically-scrolling grid of
+thumbnails within a `UserMessage`. Unlike `PromptFieldAttachmentList`, it is display-only and does
+not support selection or removal.
+
+```tsx links={{AttachmentGrid: '#attachmentgrid', AttachmentGridItem: '#attachmentgriditem', AttachmentPreview: '#attachmentpreview'}}
+<AttachmentGrid aria-label="Uploaded files">
+  <AttachmentGridItem aria-label="file.pdf">
+    <AttachmentPreview mimeType="application/pdf" slot="thumbnail" src={src} />
+  </AttachmentGridItem>
+</AttachmentGrid>
+```
+
+<PropTable component={docs.exports.AttachmentGrid} links={docs.links} showDescription />
+
+#### AttachmentGridItem
+
+<PropTable component={docs.exports.AttachmentGridItem} links={docs.links} showDescription />
+
 ### ResponseStatus
 
 ```tsx links={{ResponseStatus: '#responsestatus', ResponseStatusTitle: '#responsestatustitle', ResponseStatusPanel: '#responsestatuspanel', ExecutionTrace: '#executiontrace', ExecutionTraceItem: '#executiontraceitem'}}

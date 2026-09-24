@@ -59,11 +59,13 @@ const gridStyles = style({
     }
   },
   gap: 8,
-  maxHeight: 240,
+  padding: 4,
+  maxHeight: 'inherit',
   overflowY: 'auto',
   overflowX: 'clip',
   boxSizing: 'border-box',
-  ...focusRing()
+  ...focusRing(),
+  outlineOffset: -2
 });
 
 /**
@@ -100,6 +102,7 @@ export interface AttachmentGridItemProps
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /** Whether the attachment has an error. */
   isInvalid?: boolean;
+  /** The upload progress percentage (0-100). Values under 100 render a loading state. */
   uploadProgress?: number;
   /** The children of the AttachmentGridItem. */
   children: ReactNode;

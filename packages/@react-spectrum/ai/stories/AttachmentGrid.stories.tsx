@@ -100,7 +100,7 @@ export const AIAttachmentGrid: Story = {
 export const Overflow: Story = {
   name: 'Overflow (vertical scroll fade)',
   render: args => (
-    <div style={{width: 404, resize: 'horizontal', overflow: 'hidden'}}>
+    <div style={{width: 404, maxHeight: 240, resize: 'horizontal', overflow: 'hidden'}}>
       <AttachmentGridDemo {...args} count={20} />
     </div>
   )
