@@ -111,7 +111,6 @@ let componentIds = new WeakMap();
 function useCounter(isDisabled = false) {
   let ctx = useContext(SSRContext);
   let ref = useRef<number | null>(null);
-  // eslint-disable-next-line rsp-rules/pure-render
   // oxlint-disable-next-line react/refs, rsp-rules/pure-render
   if (ref.current === null && !isDisabled) {
     // In strict mode, React renders components twice, and the ref will be reset to null on the second render.
@@ -144,12 +143,10 @@ function useCounter(isDisabled = false) {
       }
     }
 
-    // eslint-disable-next-line rsp-rules/pure-render
     // oxlint-disable-next-line react/immutability, rsp-rules/pure-render
     ref.current = ++ctx.current;
   }
 
-  // eslint-disable-next-line rsp-rules/pure-render
   // oxlint-disable-next-line react/refs, rsp-rules/pure-render
   return ref.current;
 }

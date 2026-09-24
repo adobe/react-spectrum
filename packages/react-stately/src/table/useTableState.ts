@@ -131,7 +131,6 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
       selectionMode,
       columns: []
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]
   );

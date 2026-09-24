@@ -99,7 +99,6 @@ function useSyncExternalStoreFallback<C>(
   // This is read immediately inside the wrapper, which also runs during render.
   // We just need a ref to avoid invalidating the callback itself, which
   // would cause React to re-run the callback more than necessary.
-  // eslint-disable-next-line rsp-rules/pure-render
   // oxlint-disable-next-line react/refs, rsp-rules/pure-render
   isSSRRef.current = isSSR;
 
@@ -293,7 +292,6 @@ export function Collection<T>(props: CollectionProps<T>): JSX.Element {
       dependencies,
       idScope
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     [idScope, ...dependencies]
   );

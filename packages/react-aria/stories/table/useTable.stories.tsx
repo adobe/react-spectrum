@@ -185,7 +185,6 @@ function ControlledTableResizing(props: {
   );
   let [savedCols, setSavedCols] = useState(widths);
   let [renderKey, setRenderKey] = useState(Math.random());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   let cols = useMemo(() => columns.map(col => ({...col})), [columns, widths]);
 
@@ -315,7 +314,6 @@ function ControlledDocsTable(props: {
   );
 
   // Needed to get past column caching so new sizes actually are rendered
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   let cols = useMemo(() => columns.map(col => ({...col})), [widths, columns]);
   return (

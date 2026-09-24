@@ -316,12 +316,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   // Update position when anything changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updatePosition, deps);
 

@@ -43,7 +43,6 @@ export function useCachedChildren<T>(props: CachedChildrenOptions<T>): ReactNode
   );
 
   // Invalidate the cache whenever dependencies change.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   let cache = useMemo(() => new WeakMap(), [...dependencies, childrenString]);
 

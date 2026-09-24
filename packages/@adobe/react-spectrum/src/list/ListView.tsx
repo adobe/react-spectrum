@@ -136,7 +136,6 @@ function useListLayout<T>(
       new ListViewLayout<T>({
         estimatedRowHeight: ROW_HEIGHTS[density || 'regular'][scale]
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     [scale, density, overflowMode]
   );
