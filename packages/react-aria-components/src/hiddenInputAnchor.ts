@@ -69,13 +69,17 @@ export function getAnchorStyles(defaultAnchorName: string, style?: CSSProperties
  * takes the input out of that containing-block chain so the anchor resolves by
  * name.
  *
- * The `inset` shorthand is used rather than `top`/`left` plus
- * `width`/`height: anchor-size(...)`, for two measured reasons. Sizing:
- * `anchor-size()` sizes the content box, and the input's UA border and padding
- * made the box 8x6px larger than the component, while the shorthand matched it
- * exactly. Direction: the shorthand is correct in RTL, while routing
- * `anchor(left)` through a logical property mirrored the input to the wrong
- * side (measured -208px in RTL).
+ * The `inset` shorthand is used rather than `top`/`left` for the offsets,
+ * because it is correct in RTL while routing `anchor(left)` through a logical
+ * property mirrored the input to the wrong side (measured -208px in RTL).
+ *
+ * `inset` alone is not enough, though: `width` and `height` have to be set
+ * explicitly. A checkbox or radio input is a replaced control with an intrinsic
+ * size, and WebKit positions it from `inset` without stretching it. Verified in
+ * WebKit 26: with `inset` alone the input stayed at its 12x12 intrinsic box and
+ * covered none of the component, while adding `anchor-size` sized it exactly.
+ * Chromium stretches the control from `inset` alone, so this only shows up on
+ * WebKit.
  *
  * In browsers without CSS anchor positioning support these declarations are
  * inert and the input keeps the previous 1x1px VisuallyHidden behavior.
@@ -88,6 +92,8 @@ export function getHiddenInputStyles(
     position: 'fixed',
     margin: 0,
     inset: 'anchor(top) anchor(right) anchor(bottom) anchor(left)',
+    width: 'anchor-size(width)',
+    height: 'anchor-size(height)',
     positionAnchor: getAnchorName(defaultAnchorName, style)
   } as CSSProperties;
 }

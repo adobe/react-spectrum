@@ -107,12 +107,14 @@ it('each component anchors to itself, not to a sibling', async () => {
   );
 
   let labels = [...screen.container.querySelectorAll('label')];
-  let names = labels.map(l => getComputedStyle(l).getPropertyValue('anchor-name').trim());
-
-  // Every instance declares its own name, so no two share an anchor.
-  expect(new Set(names).size).toBe(labels.length);
 
   if (supportsAnchorPositioning()) {
+    // Every instance declares its own name, so no two share an anchor. Without
+    // anchor positioning support the declaration is dropped and every label
+    // computes to the same empty value, so there is nothing to compare.
+    let names = labels.map(l => getComputedStyle(l).getPropertyValue('anchor-name').trim());
+    expect(new Set(names).size).toBe(labels.length);
+
     labels.forEach(label => {
       let input = label.querySelector('input')!;
       expect(getComputedStyle(input).getPropertyValue('position-anchor').trim()).toBe(
