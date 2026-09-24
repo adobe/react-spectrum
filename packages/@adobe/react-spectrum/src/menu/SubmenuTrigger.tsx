@@ -83,14 +83,14 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let overlay;
 
   if (isMobile) {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     delete submenuTriggerProps.onBlur;
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     delete submenuTriggerProps.onHoverChange;
     submenuProps.autoFocus ??= true;
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/refs
     if (trayContainerRef.current && submenuTriggerState.isOpen) {
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/refs
       overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
     }
   } else {
@@ -119,7 +119,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   }
 
   let menuContext = {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/refs
     ...mergeProps(submenuProps, {
       ref: menuRef,
       UNSAFE_style: isMobile

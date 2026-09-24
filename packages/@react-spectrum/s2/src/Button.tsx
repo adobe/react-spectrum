@@ -391,7 +391,7 @@ export function usePendingState(isPending: boolean) {
         setIsProgressVisible(true);
       }, 1000);
     } else {
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/set-state-in-effect
       setIsProgressVisible(false);
     }
     return () => {
@@ -410,8 +410,9 @@ export const Button = forwardRef(function Button(
   props: ButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
+  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {isPending = false, variant = 'primary', fillStyle = 'fill', size = 'M', staticColor} = props;
@@ -420,7 +421,7 @@ export const Button = forwardRef(function Button(
 
   let {isProgressVisible} = usePendingState(isPending);
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <RACButton
       {...props}
@@ -524,7 +525,7 @@ export const Button = forwardRef(function Button(
       )}
     </RACButton>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 });
 
 /**
@@ -535,14 +536,15 @@ export const LinkButton = forwardRef(function LinkButton(
   props: LinkButtonProps,
   ref: FocusableRef<HTMLAnchorElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
+  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let {fillStyle = 'fill', size = 'M', variant = 'primary', staticColor, styles, children} = props;
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <Link
       {...props}
@@ -606,5 +608,5 @@ export const LinkButton = forwardRef(function LinkButton(
       )}
     </Link>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 });

@@ -309,8 +309,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           : props.isRequired,
       onChange: state.setInputValue,
       onKeyDown: !isReadOnly
-        ? // oxlint-disable-next-line react/react-compiler
-          chain(
+        ? chain(
             state.isOpen && collectionProps.onKeyDown,
             keyboardProps.onKeyDown,
             repeatKeyboardProps.onKeyDown,
@@ -516,7 +515,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       onPressStart,
       isDisabled: isDisabled || isReadOnly
     },
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/refs
     inputProps: mergeProps(inputProps, {
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
@@ -568,7 +567,7 @@ function useValueId(depArray: ReadonlyArray<any> = []): string | undefined {
 
   useEffect(() => {
     if (exists && !document.getElementById(id)) {
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/set-state-in-effect
       setExists(false);
     }
   }, [id, exists, lastDeps]);

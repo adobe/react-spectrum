@@ -96,7 +96,7 @@ export const Pressable: React.ForwardRefExoticComponent<
     return React.cloneElement(child, {
       ...mergeProps(pressProps, focusableProps, child.props),
       // @ts-ignore
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/refs
       ref: mergeRefs(childRef, ref)
     });
   }

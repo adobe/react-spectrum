@@ -65,7 +65,7 @@ export const ClearButton = forwardRef(function ClearButton(
 ) {
   let {size = 'M', isStaticColor = false, ...rest} = props;
   let domRef = useFocusableRef(ref);
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <Button
       {...rest}
@@ -75,5 +75,5 @@ export const ClearButton = forwardRef(function ClearButton(
       <CrossIcon size={props.size} />
     </Button>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 });

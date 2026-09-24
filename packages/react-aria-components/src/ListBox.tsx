@@ -237,10 +237,8 @@ interface ListBoxInnerProps<T> {
 }
 
 function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerProps<T>) {
-  // oxlint-disable-next-line react/react-compiler
   [props, listBoxRef] = useContextProps(props, listBoxRef, SelectableCollectionContext);
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical', filter} = props;
-  // oxlint-disable-next-line react/react-compiler
   let state = UNSTABLE_useFilteredListState(inputState, filter);
   let {collection, selectionManager} = state;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -255,7 +253,6 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
     CollectionRoot
   } = useContext(CollectionRendererContext);
   let keyboardDelegate = useMemo(
-    // oxlint-disable-next-line react/react-compiler
     () =>
       props.keyboardDelegate ||
       new ListKeyboardDelegate({
@@ -270,14 +267,21 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
         layoutDelegate
       }),
     [
+      // oxlint-disable-next-line react/preserve-manual-memoization
       collection,
       collator,
+      // oxlint-disable-next-line react/preserve-manual-memoization
       listBoxRef,
+      // oxlint-disable-next-line react/preserve-manual-memoization
       disabledBehavior,
+      // oxlint-disable-next-line react/preserve-manual-memoization
       disabledKeys,
+      // oxlint-disable-next-line react/preserve-manual-memoization
       orientation,
       direction,
+      // oxlint-disable-next-line react/preserve-manual-memoization
       props.keyboardDelegate,
+      // oxlint-disable-next-line react/preserve-manual-memoization
       layout,
       layoutDelegate
     ]
@@ -320,13 +324,11 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
-    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, listBoxRef);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
@@ -336,7 +338,6 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
   }
 
   if (isListDroppable && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection,
       selectionManager
@@ -350,7 +351,6 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
         layout,
         direction
       });
-    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -662,7 +662,6 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
 function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
-  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,

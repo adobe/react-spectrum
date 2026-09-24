@@ -79,6 +79,7 @@ describe('useSlider', () => {
     function Example(props) {
       let trackRef = useRef(null);
       let state = useSliderState({...props, numberFormatter});
+      // oxlint-disable-next-line react/immutability
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;
@@ -229,6 +230,7 @@ describe('useSlider', () => {
     function Example(props) {
       let trackRef = useRef(null);
       let state = useSliderState({...props, numberFormatter});
+      // oxlint-disable-next-line react/immutability
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;

@@ -64,9 +64,9 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
   if (typeof document !== 'undefined') {
     // This if statement technically breaks the rules of hooks, but is safe
     // because the condition never changes after mounting.
-    // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
+    // oxlint-disable-next-line react-hooks/rules-of-hooks
     useLayoutEffect(() => {
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/set-state-in-effect
       setIsSSR(false);
     }, []);
   }
@@ -85,7 +85,6 @@ let warnedAboutSSRProvider = false;
  * This ensures that auto generated ids are consistent between the client and server.
  */
 export function SSRProvider(props: SSRProviderProps): JSX.Element {
-  // oxlint-disable-next-line react/react-compiler
   if (typeof React['useId'] === 'function') {
     if (
       process.env.NODE_ENV !== 'test' &&
@@ -95,7 +94,7 @@ export function SSRProvider(props: SSRProviderProps): JSX.Element {
       console.warn(
         'In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.'
       );
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/globals
       warnedAboutSSRProvider = true;
     }
     return <>{props.children}</>;
@@ -113,7 +112,7 @@ function useCounter(isDisabled = false) {
   let ctx = useContext(SSRContext);
   let ref = useRef<number | null>(null);
   // eslint-disable-next-line rsp-rules/pure-render
-  // oxlint-disable-next-line react/react-compiler, rsp-rules/pure-render
+  // oxlint-disable-next-line react/refs, rsp-rules/pure-render
   if (ref.current === null && !isDisabled) {
     // In strict mode, React renders components twice, and the ref will be reset to null on the second render.
     // This means our id counter will be incremented twice instead of once. This is a problem because on the
@@ -139,19 +138,19 @@ function useCounter(isDisabled = false) {
         // On the second render, the memoizedState gets reset by React.
         // Reset the counter, and remove from the weak map so we don't
         // do this for subsequent useId calls.
-        // oxlint-disable-next-line react/react-compiler
+        // oxlint-disable-next-line react/immutability
         ctx.current = prevComponentValue.id;
         componentIds.delete(currentOwner);
       }
     }
 
     // eslint-disable-next-line rsp-rules/pure-render
-    // oxlint-disable-next-line react/react-compiler, rsp-rules/pure-render
+    // oxlint-disable-next-line react/immutability, rsp-rules/pure-render
     ref.current = ++ctx.current;
   }
 
   // eslint-disable-next-line rsp-rules/pure-render
-  // oxlint-disable-next-line react/react-compiler, rsp-rules/pure-render
+  // oxlint-disable-next-line react/refs, rsp-rules/pure-render
   return ref.current;
 }
 
@@ -208,12 +207,10 @@ function subscribe(onStoreChange: () => void): () => void {
  */
 export function useIsSSR(): boolean {
   // In React 18, we can use useSyncExternalStore to detect if we're server rendering or hydrating.
-  // oxlint-disable-next-line react/react-compiler
   if (typeof React['useSyncExternalStore'] === 'function') {
-    // oxlint-disable-next-line react/react-compiler
     return React['useSyncExternalStore'](subscribe, getSnapshot, getServerSnapshot);
   }
 
-  // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
+  // oxlint-disable-next-line react-hooks/rules-of-hooks
   return useContext(IsSSRContext);
 }

@@ -179,7 +179,6 @@ function openSyntheticLink(target: Element, modifiers: Modifiers) {
 
 export function useSyntheticLinkProps(props: LinkDOMProps): DOMAttributes<HTMLElement> {
   let router = useRouter();
-  // oxlint-disable-next-line react/react-compiler
   const href = router.useHref(props.href ?? '');
   return {
     'data-href': props.href ? href : undefined,
@@ -205,7 +204,6 @@ export function getSyntheticLinkProps(props: LinkDOMProps): DOMAttributes<HTMLEl
 
 export function useLinkProps(props?: LinkDOMProps): LinkDOMProps {
   let router = useRouter();
-  // oxlint-disable-next-line react/react-compiler
   const href = router.useHref(props?.href ?? '');
   let linkProps: LinkDOMProps = {};
   if (props) {

@@ -89,7 +89,7 @@ export function useActionGroup<T>(
   }
 
   let {direction} = useLocale();
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/refs
   let focusManager = createFocusManager(ref);
   // ArrowLeft/ArrowRight follow the locale's text direction regardless of orientation, so
   // ArrowLeft always moves to the next item in RTL. ArrowUp/ArrowDown are never flipped.

@@ -126,7 +126,6 @@ export const ColorSwatch = forwardRef(function ColorSwatch(
 
   // ColorSwatchPicker needs to wrap the swatch in a ListBoxItem.
   if (ctx) {
-    // oxlint-disable-next-line react/react-compiler
     return ctx.useWrapper(swatch, color, rounding);
   }
 

@@ -110,6 +110,7 @@ export function useMove(props: MoveEvents): MoveResult {
           // Should be safe to use the useEffectEvent because these are equivalent https://github.com/reactjs/react.dev/issues/8075#issuecomment-3400179389
           // However, the compiler is not smart enough to know that. As such, this whole file must be manually optimised as the compiler will bail.
           //
+          // oxlint-disable-next-line react-hooks/rules-of-hooks
           moveEvent(
             e,
             'mouse',
@@ -121,7 +122,7 @@ export function useMove(props: MoveEvents): MoveResult {
       };
       let onMouseUp = (e: MouseEvent) => {
         if (e.button === 0) {
-          // oxlint-disable-next-line react/react-compiler
+          // oxlint-disable-next-line react-hooks/rules-of-hooks
           endEvent(e, 'mouse');
           let ownerWindow = getOwnerWindow(getEventTarget(e));
           removeGlobalListener(ownerWindow, 'mousemove', onMouseMove, false);
@@ -146,6 +147,7 @@ export function useMove(props: MoveEvents): MoveResult {
         );
         if (touch >= 0) {
           let {pageX, pageY} = e.changedTouches[touch];
+          // oxlint-disable-next-line react-hooks/rules-of-hooks
           moveEvent(
             e,
             'touch',
@@ -160,6 +162,7 @@ export function useMove(props: MoveEvents): MoveResult {
           ({identifier}) => identifier === state.current.id
         );
         if (touch >= 0) {
+          // oxlint-disable-next-line react-hooks/rules-of-hooks
           endEvent(e, 'touch');
           state.current.id = null;
           let ownerWindow = getOwnerWindow(getEventTarget(e));
@@ -192,6 +195,7 @@ export function useMove(props: MoveEvents): MoveResult {
           // Problems with PointerEvent#movementX/movementY:
           // 1. it is always 0 on macOS Safari.
           // 2. On Chrome Android, it's scaled by devicePixelRatio, but not on Chrome macOS
+          // oxlint-disable-next-line react-hooks/rules-of-hooks
           moveEvent(
             e,
             pointerType,
@@ -205,6 +209,7 @@ export function useMove(props: MoveEvents): MoveResult {
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
           let pointerType = (e.pointerType || 'mouse') as PointerType;
+          // oxlint-disable-next-line react-hooks/rules-of-hooks
           endEvent(e, pointerType);
           state.current.id = null;
           let ownerWindow = getOwnerWindow(getEventTarget(e));
@@ -231,7 +236,9 @@ export function useMove(props: MoveEvents): MoveResult {
 
     let triggerKeyboardMove = (e: EventBase, deltaX: number, deltaY: number) => {
       start();
+      // oxlint-disable-next-line react-hooks/rules-of-hooks
       moveEvent(e, 'keyboard', deltaX, deltaY);
+      // oxlint-disable-next-line react-hooks/rules-of-hooks
       endEvent(e, 'keyboard');
     };
 

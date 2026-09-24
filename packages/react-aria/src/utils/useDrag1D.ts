@@ -70,9 +70,9 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
 
   // Keep track of the current handlers in a ref so that the events can access them.
   let handlers = useRef({onPositionChange, onDrag});
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/refs
   handlers.current.onDrag = onDrag;
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/refs
   handlers.current.onPositionChange = onPositionChange;
 
   let onMouseDragged = (e: MouseEvent) => {

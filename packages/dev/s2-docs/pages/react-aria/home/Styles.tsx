@@ -271,7 +271,6 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
     }
   }, [selectedKey]);
 
-  // oxlint-disable react/react-compiler
   return (
     <Tabs
       className="-mx-8 md:-mx-2"
@@ -319,7 +318,6 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       </div>
     </Tabs>
   );
-  // oxlint-enable react/react-compiler
 }
 
 const people = [

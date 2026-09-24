@@ -165,7 +165,21 @@
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "warn",
 
-    "react/react-compiler": "error",
+    // React Compiler rules.
+    // These are correctness-category rules, which are disabled globally above, so
+    // they are enabled explicitly here.
+    "react/error-boundaries": "error",
+    "react/globals": "error",
+    "react/immutability": "error",
+    "react/incompatible-library": "error",
+    "react/preserve-manual-memoization": "error",
+    "react/purity": "error",
+    "react/refs": "error",
+    "react/set-state-in-effect": "error",
+    "react/set-state-in-render": "error",
+    "react/static-components": "error",
+    "react/use-memo": "error",
+    "react/void-use-memo": "error",
 
     "rsp-rules/no-react-key": ["error"],
     "rsp-rules/add-event-non-composing": ["error"],

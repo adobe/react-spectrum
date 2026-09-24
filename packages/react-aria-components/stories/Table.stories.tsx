@@ -2494,7 +2494,6 @@ export const TreeGridTableDnd: TableStory = () => {
               <NameCell>{item.value.title}</NameCell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
-              {/* oxlint-disable-next-line react/react-compiler */}
               {item.children && <Collection items={item.children}>{renderItem}</Collection>}
             </Row>
           );
