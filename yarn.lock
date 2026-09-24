@@ -30381,6 +30381,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tsdiff@workspace:packages/dev/tsdiff":
+  version: 0.0.0-use.local
+  resolution: "tsdiff@workspace:packages/dev/tsdiff"
+  dependencies:
+    "@parcel/config-default": "npm:^2.16.3"
+    "@parcel/parcel3": "npm:^0.0.6"
+    "@parcel/transformer-ts-doc": "npm:^0.0.2"
+  bin:
+    tsdiff: bin/tsdiff
+  languageName: unknown
+  linkType: soft
+
 "tslib@npm:2.4.0":
   version: 2.4.0
   resolution: "tslib@npm:2.4.0"

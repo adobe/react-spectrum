@@ -4,17 +4,22 @@
 //! This never modifies anything — purely read-only inspection. The output is
 //! meant to be persisted as a CI artifact and diffed against a local run.
 
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
 use serde::Serialize;
 
+use crate::config::RepoConfig;
 use crate::workspace::run_capture;
+use crate::workspaces::{discover, Workspace};
 
 #[derive(Debug)]
 pub struct EnvReportOpts {
-    /// Root of the monorepo.
+    /// Root of the repo.
     pub repo_root: PathBuf,
+    /// Explicit config file, overriding the `tsdiff.json` probe at the root.
+    pub config: Option<PathBuf>,
     /// Where to write the JSON report. If None, stdout only.
     pub output: Option<PathBuf>,
 }
@@ -103,7 +108,7 @@ struct WorkspaceDepResolution {
     lookup_path: String,
     /// What realpath resolved to. None if the path doesn't exist.
     resolved_to: Option<String>,
-    /// True when resolved_to points somewhere under `packages/` (i.e. this is
+    /// True when resolved_to points back inside the repo (i.e. this is
     /// a workspace symlink, not a separately-installed copy).
     is_workspace_symlink: bool,
     /// True when the resolved package has a types entry file on disk.
@@ -131,19 +136,19 @@ struct Summary {
 pub async fn execute(opts: EnvReportOpts) -> Result<()> {
     let repo_root = std::fs::canonicalize(&opts.repo_root)
         .context(format!("resolving repo root: {}", opts.repo_root.display()))?;
-    let packages_dir = repo_root.join("packages");
-    if !packages_dir.exists() {
-        anyhow::bail!(
-            "packages/ directory not found at {}",
-            packages_dir.display()
-        );
-    }
+    let cfg = RepoConfig::load(&repo_root, opts.config.as_deref())?;
 
     println!("Collecting environment report from {}", repo_root.display());
+    println!("{}", cfg.describe());
+
+    // include_private: the report wants to show every linked workspace, not
+    // just the publishable ones.
+    let workspaces = discover(&cfg, true).await?;
+    let workspace_names: HashSet<String> = workspaces.iter().map(|w| w.name.clone()).collect();
 
     let tools = collect_tool_versions(&repo_root).await;
     let git = collect_git_info(&repo_root).await;
-    let packages = collect_package_states(&repo_root, &packages_dir)?;
+    let packages = collect_package_states(&repo_root, &workspaces, &workspace_names)?;
     let summary = summarize(&packages);
 
     let report = EnvReport {
@@ -247,20 +252,27 @@ async fn collect_git_info(repo_root: &Path) -> GitInfo {
     g
 }
 
-fn collect_package_states(repo_root: &Path, packages_dir: &Path) -> Result<Vec<PackageState>> {
+fn collect_package_states(
+    repo_root: &Path,
+    workspaces: &[Workspace],
+    workspace_names: &HashSet<String>,
+) -> Result<Vec<PackageState>> {
     let mut states = Vec::new();
-    let mut names = Vec::new();
-    // Reuse the shared walker so the package set matches what the extractor sees.
-    crate::npm::walk_for_package_dirs(packages_dir, 0, &mut names)?;
-    for pkg_dir in names {
-        if let Ok(state) = inspect_package(repo_root, &pkg_dir) {
+    // Reuse the shared discovery so the package set matches what the
+    // extractor sees.
+    for ws in workspaces {
+        if let Ok(state) = inspect_package(repo_root, &ws.location, workspace_names) {
             states.push(state);
         }
     }
     Ok(states)
 }
 
-fn inspect_package(repo_root: &Path, pkg_dir: &Path) -> Result<PackageState> {
+fn inspect_package(
+    repo_root: &Path,
+    pkg_dir: &Path,
+    workspace_names: &HashSet<String>,
+) -> Result<PackageState> {
     let pkg_json_path = pkg_dir.join("package.json");
     let contents = std::fs::read_to_string(&pkg_json_path)
         .context(format!("reading {}", pkg_json_path.display()))?;
@@ -290,7 +302,8 @@ fn inspect_package(repo_root: &Path, pkg_dir: &Path) -> Result<PackageState> {
         _ => false,
     };
 
-    let workspace_dep_resolution = inspect_workspace_deps(&pkg, pkg_dir, repo_root);
+    let workspace_dep_resolution =
+        inspect_workspace_deps(&pkg, pkg_dir, repo_root, workspace_names);
     let dist_types_files = collect_dist_types_files(pkg_dir);
 
     let rel_dir = pkg_dir
@@ -448,17 +461,21 @@ fn inspect_workspace_deps(
     pkg: &serde_json::Value,
     pkg_dir: &Path,
     repo_root: &Path,
+    workspace_names: &HashSet<String>,
 ) -> Vec<WorkspaceDepResolution> {
     let mut out = Vec::new();
-    let packages_root = repo_root.join("packages");
+    let canonical_root =
+        std::fs::canonicalize(repo_root).unwrap_or_else(|_| repo_root.to_path_buf());
     for field in ["dependencies", "peerDependencies"] {
         let Some(deps) = pkg.get(field).and_then(|v| v.as_object()) else {
             continue;
         };
         for (dep_name, _version) in deps {
             // We only care about deps that *could* be workspace deps — i.e.
-            // under the scopes we publish. Keep this in sync with `is_our_package`.
-            if !is_our_scope(dep_name) {
+            // packages this repo itself publishes. Membership in the
+            // discovered workspace set replaces the old hard-coded scope list,
+            // which only knew about react-spectrum's scopes.
+            if !workspace_names.contains(dep_name) {
                 continue;
             }
             // Node-style upward resolution: walk up from pkg_dir looking for
@@ -466,12 +483,13 @@ fn inspect_workspace_deps(
             // node_modules, so a package-local lookup would spuriously miss
             // everything.
             let (lookup_path, resolved) = resolve_node_style(pkg_dir, dep_name);
+            // A genuine workspace link resolves back inside the repo — and
+            // not into a node_modules copy of the package.
             let is_workspace_symlink = resolved
                 .as_ref()
-                .and_then(|p| {
-                    std::fs::canonicalize(&packages_root)
-                        .ok()
-                        .map(|r| p.starts_with(&r))
+                .map(|p| {
+                    p.starts_with(&canonical_root)
+                        && !p.components().any(|c| c.as_os_str() == "node_modules")
                 })
                 .unwrap_or(false);
             let resolved_types_exist = resolved.as_ref().and_then(|r| {
@@ -511,18 +529,6 @@ fn resolve_node_style(start_dir: &Path, dep_name: &str) -> (String, Option<std::
             None => return (first.display().to_string(), None),
         }
     }
-}
-
-fn is_our_scope(name: &str) -> bool {
-    name.starts_with("@react-spectrum/")
-        || name.starts_with("@react-aria/")
-        || name.starts_with("@react-stately/")
-        || name.starts_with("@react-types/")
-        || name.starts_with("@internationalized/")
-        || name.starts_with("@adobe/react-spectrum")
-        || name == "react-aria"
-        || name == "react-aria-components"
-        || name == "react-stately"
 }
 
 fn summarize(packages: &[PackageState]) -> Summary {

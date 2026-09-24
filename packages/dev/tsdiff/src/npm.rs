@@ -1,7 +1,6 @@
 //! Query the npm registry to discover published packages and their latest versions.
 
 use std::collections::HashMap;
-use std::path::Path;
 use std::time::Duration;
 
 use anyhow::{Context, Result};
@@ -121,24 +120,20 @@ async fn check_published(
     }))
 }
 
-/// Discover all non-private packages under a directory and check which
-/// are published to npm. Returns the list of published packages.
+/// Check which of `names` are published to npm under `tag`, and at which
+/// version. Returns only the packages that are published.
 ///
-/// If `preresolved_names` is `Some`, skips the fs-walk and uses those names
-/// directly. Callers should prefer yarn-workspaces-based discovery when
-/// available — see [`crate::workspaces::discover_workspaces`].
+/// The caller supplies the names: [`crate::workspaces::discover`] is the
+/// single, config-driven source of truth for a repo's package set, so this
+/// module no longer walks the filesystem itself.
 pub async fn get_published_packages(
-    packages_dir: &Path,
+    names: Vec<String>,
     concurrency: usize,
     tag: &str,
-    preresolved_names: Option<Vec<String>>,
 ) -> Result<Vec<PublishedPackage>> {
-    let local_packages = match preresolved_names {
-        Some(names) => names,
-        None => discover_local_packages(packages_dir)?,
-    };
+    let local_packages = names;
     let client = reqwest::Client::builder()
-        .user_agent("rsp-api-check")
+        .user_agent("tsdiff")
         .build()?;
 
     println!(
@@ -195,185 +190,9 @@ pub async fn get_published_packages(
     Ok(published)
 }
 
-/// Walk a packages directory and return all non-private package names.
-fn discover_local_packages(dir: &Path) -> Result<Vec<String>> {
-    let mut names = Vec::new();
-    walk_for_packages(dir, 0, &mut names)?;
-    Ok(names)
-}
-
-/// Same traversal as `walk_for_packages`, but returns directory paths instead
-/// of names. Used by `env-report` to inspect each package's on-disk state.
-/// Includes private packages (the report wants to show them) — callers can
-/// filter after reading the package.json.
-pub(crate) fn walk_for_package_dirs(
-    dir: &Path,
-    depth: usize,
-    out: &mut Vec<std::path::PathBuf>,
-) -> Result<()> {
-    if depth > 4 {
-        return Ok(());
-    }
-    let entries = std::fs::read_dir(dir).context(format!("reading {}", dir.display()))?;
-    for entry in entries {
-        let entry = entry?;
-        let name = entry.file_name();
-        let name_str = name.to_string_lossy();
-        if name_str == "node_modules" || name_str == ".git" || name_str == "dev" {
-            continue;
-        }
-        let path = entry.path();
-        if path.is_dir() {
-            if path.join("package.json").exists() {
-                out.push(path.clone());
-            }
-            walk_for_package_dirs(&path, depth + 1, out)?;
-        }
-    }
-    Ok(())
-}
-
-pub(crate) fn walk_for_packages(dir: &Path, depth: usize, out: &mut Vec<String>) -> Result<()> {
-    if depth > 4 {
-        return Ok(());
-    }
-    let entries = std::fs::read_dir(dir).context(format!("reading {}", dir.display()))?;
-    for entry in entries {
-        let entry = entry?;
-        let name = entry.file_name();
-        let name_str = name.to_string_lossy();
-        if name_str == "node_modules" || name_str == ".git" || name_str == "dev" {
-            continue;
-        }
-        let path = entry.path();
-        if path.is_dir() {
-            let pkg_json = path.join("package.json");
-            if pkg_json.exists() {
-                if let Ok(contents) = std::fs::read_to_string(&pkg_json) {
-                    if let Ok(v) = serde_json::from_str::<serde_json::Value>(&contents) {
-                        let is_private = v.get("private").and_then(|p| p.as_bool()).unwrap_or(false);
-                        let pkg_name = v.get("name").and_then(|n| n.as_str());
-                        if let Some(name) = pkg_name {
-                            if !is_private {
-                                out.push(name.to_string());
-                            }
-                        }
-                    }
-                }
-            }
-            walk_for_packages(&path, depth + 1, out)?;
-        }
-    }
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
-    use tempfile::TempDir;
-
-    fn write_pkg_json(dir: &std::path::Path, name: &str, private: bool) {
-        let json = if private {
-            format!(r#"{{"name":"{name}","private":true}}"#)
-        } else {
-            format!(r#"{{"name":"{name}"}}"#)
-        };
-        fs::write(dir.join("package.json"), json).unwrap();
-    }
-
-    // ── discover_local_packages ────────────────────────────────────────────
-
-    #[test]
-    fn test_discovers_public_package() {
-        let dir = TempDir::new().unwrap();
-        let pkg = dir.path().join("button");
-        fs::create_dir(&pkg).unwrap();
-        write_pkg_json(&pkg, "@react-aria/button", false);
-
-        let names = discover_local_packages(dir.path()).unwrap();
-        assert!(names.contains(&"@react-aria/button".to_string()));
-    }
-
-    #[test]
-    fn test_skips_private_package() {
-        let dir = TempDir::new().unwrap();
-        let pkg = dir.path().join("internal");
-        fs::create_dir(&pkg).unwrap();
-        write_pkg_json(&pkg, "@internal/pkg", true);
-
-        let names = discover_local_packages(dir.path()).unwrap();
-        assert!(!names.contains(&"@internal/pkg".to_string()));
-    }
-
-    // @adobe/react-spectrum is a public API package and must be included in
-    // the npm check so that the published and local extractions are symmetric.
-    // If it is excluded here but the TypeScript extractor finds it under
-    // packages/, every one of its exports will appear as "added" in the diff.
-    #[test]
-    fn walk_for_packages_includes_adobe_react_spectrum() {
-        let dir = TempDir::new().unwrap();
-        let pkg = dir.path().join("adobe-pkg");
-        fs::create_dir(&pkg).unwrap();
-        write_pkg_json(&pkg, "@adobe/react-spectrum", false);
-
-        let mut names = Vec::new();
-        walk_for_packages(dir.path(), 0, &mut names).unwrap();
-        assert!(
-            names.contains(&"@adobe/react-spectrum".to_string()),
-            "@adobe/react-spectrum must be included in the npm package list: \
-             excluding it causes a spurious diff because the local extractor \
-             always finds it under packages/@adobe/react-spectrum/"
-        );
-    }
-
-    #[test]
-    fn test_skips_node_modules() {
-        let dir = TempDir::new().unwrap();
-        let nm = dir.path().join("node_modules").join("some-dep");
-        fs::create_dir_all(&nm).unwrap();
-        write_pkg_json(&nm, "some-dep", false);
-
-        let names = discover_local_packages(dir.path()).unwrap();
-        assert!(!names.contains(&"some-dep".to_string()));
-    }
-
-    #[test]
-    fn test_skips_git_directory() {
-        let dir = TempDir::new().unwrap();
-        let git = dir.path().join(".git").join("hooks");
-        fs::create_dir_all(&git).unwrap();
-        // .git itself doesn't have a package.json, but ensure we don't walk into it
-        let names = discover_local_packages(dir.path()).unwrap();
-        assert!(names.is_empty());
-    }
-
-    #[test]
-    fn test_discovers_nested_scoped_package() {
-        let dir = TempDir::new().unwrap();
-        let nested = dir.path().join("packages").join("scope").join("widget");
-        fs::create_dir_all(&nested).unwrap();
-        write_pkg_json(&nested, "@scope/widget", false);
-
-        let names = discover_local_packages(dir.path()).unwrap();
-        assert!(names.contains(&"@scope/widget".to_string()));
-    }
-
-    #[test]
-    fn test_depth_limit_stops_at_4() {
-        let dir = TempDir::new().unwrap();
-        // The walker finds a package when it reads its parent directory.
-        // walk(parent, depth) reads children and checks their package.json.
-        // walk stops when depth > 4, i.e. at depth 5.
-        // So a package whose parent would be processed at depth 5 is never found.
-        // Parent at depth 5 = dir/a/b/c/d/e → package in dir/a/b/c/d/e/f/
-        let deep = dir.path().join("a").join("b").join("c").join("d").join("e").join("f");
-        fs::create_dir_all(&deep).unwrap();
-        write_pkg_json(&deep, "@too/deep", false);
-
-        let names = discover_local_packages(dir.path()).unwrap();
-        assert!(!names.contains(&"@too/deep".to_string()));
-    }
 
     // ── dist-tags endpoint deserialization ────────────────────────────────
 

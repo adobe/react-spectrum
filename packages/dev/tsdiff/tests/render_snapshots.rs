@@ -18,9 +18,9 @@
 //! tested in `type_renderer`; these cases deliberately cover *composition* —
 //! how shapes behave nested inside a real export, through the whole pipeline.
 
-use rsp_api_check::api_json::ApiJson;
-use rsp_api_check::interface_builder::{format_interface, rebuild_interfaces};
-use rsp_api_check::type_renderer::RenderContext;
+use tsdiff::api_json::ApiJson;
+use tsdiff::interface_builder::{format_interface, rebuild_interfaces};
+use tsdiff::type_renderer::RenderContext;
 use std::fmt::Write as _;
 use tempfile::TempDir;
 

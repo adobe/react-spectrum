@@ -27,6 +27,17 @@ pub async fn run(cmd: &str, args: &[&str], cwd: &Path) -> Result<()> {
     Ok(())
 }
 
+/// [`run`] for a configured argv (e.g. `RepoConfig::install`), where the
+/// program and its arguments arrive as one owned list rather than a
+/// compile-time `&[&str]`.
+pub async fn run_argv(argv: &[String], cwd: &Path) -> Result<()> {
+    let Some((cmd, args)) = argv.split_first() else {
+        bail!("empty command \u{2014} check `install`/`build` in your tsdiff.json");
+    };
+    let args: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
+    run(cmd, &args, cwd).await
+}
+
 /// Run `npm install …`, capturing stderr. On failure, parse the output for
 /// 404 / ETARGET entries so we can tell the user *which* package(s) npm could
 /// not resolve — not just "the whole thing exploded".
@@ -192,7 +203,7 @@ npm error 404  'a@latest' is not in this registry.
 /// Write a minimal package.json for npm install.
 pub fn write_package_json(dir: &Path, deps: &[(String, String)]) -> Result<()> {
     let mut pkg = serde_json::json!({
-        "name": "rsp-api-check-workspace",
+        "name": "tsdiff-workspace",
         "version": "0.0.0",
         "private": true,
         "dependencies": {}

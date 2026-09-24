@@ -27,14 +27,14 @@ git pull origin main
 
 ## Step 3: Build the tool and the current API snapshot
 
-Build the extractor/differ (`rsp-api-check`; fast, cached after the first build),
+Build the extractor/differ (`tsdiff`; fast, cached after the first build),
 then build main in place and extract its type API:
 
 ```bash
 cd $HOME/dev/react-spectrum
-(cd rsp-api-checker && cargo build --release)
+(cd packages/dev/tsdiff && cargo build --release)
 yarn build
-rsp-api-checker/target/release/rsp-api-check get-local-api --repo-root . --output dist/branch-api
+packages/dev/tsdiff/target/release/tsdiff get-local-api --repo-root . --output dist/branch-api
 ```
 
 `yarn build` takes 10-30 minutes. Wait for it to complete. Output goes to $HOME/dev/react-spectrum/dist/branch-api/.
@@ -49,7 +49,7 @@ dir, and extracts into dist/base-api:
 cd $HOME/dev/react-spectrum
 BASELINE_REF=$(git rev-list -n 1 $(git tag -l 'react-aria-components@*' | grep -E '@[0-9]+\.[0-9]+\.0$' | sort -V | tail -1))
 echo "Baseline ref: $BASELINE_REF"
-rsp-api-checker/target/release/rsp-api-check get-ref-api --repo-root . --ref "$BASELINE_REF" --output dist/base-api
+packages/dev/tsdiff/target/release/tsdiff get-ref-api --repo-root . --ref "$BASELINE_REF" --output dist/base-api
 ```
 
 This also takes 10-30 minutes.
@@ -58,7 +58,7 @@ This also takes 10-30 minutes.
 
 ```bash
 cd $HOME/dev/react-spectrum
-rsp-api-checker/target/release/rsp-api-check compare \
+packages/dev/tsdiff/target/release/tsdiff compare \
   --base-api-dir dist/base-api \
   --branch-api-dir dist/branch-api \
   --ci | tee /tmp/diff-current.txt
@@ -99,8 +99,8 @@ cat $HOME/dev/react-spectrum-api-snapshots/last-main-hash.txt 2>/dev/null   # PR
 
 ```bash
 cd $HOME/dev/react-spectrum
-rsp-api-checker/target/release/rsp-api-check get-ref-api --repo-root . --ref "$PREV_MAIN" --output dist/last-week-api
-rsp-api-checker/target/release/rsp-api-check compare \
+packages/dev/tsdiff/target/release/tsdiff get-ref-api --repo-root . --ref "$PREV_MAIN" --output dist/last-week-api
+packages/dev/tsdiff/target/release/tsdiff compare \
   --base-api-dir dist/last-week-api \
   --branch-api-dir dist/branch-api \
   --ci | tee /tmp/weekly-delta.txt

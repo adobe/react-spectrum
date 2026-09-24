@@ -14,7 +14,7 @@
 //!
 //! The fixtures are minimized from real generator output, not invented.
 
-use rsp_api_check::differ::{diff_package, discover_pairs, format_output};
+use tsdiff::differ::{diff_package, discover_pairs, format_output};
 use std::fs;
 use tempfile::TempDir;
 

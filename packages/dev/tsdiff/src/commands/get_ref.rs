@@ -4,8 +4,8 @@
 //!
 //! Mechanism: snapshot the ref's tracked files with `git archive` + `tar` —
 //! a pure read of the object store (no worktree, no clone) that never
-//! touches the working tree or `.git` — then run `yarn install` + `yarn
-//! build` inside that throwaway copy, then extract via the same
+//! touches the working tree or `.git` — then run the repo's configured
+//! install + build inside that throwaway copy, then extract via the same
 //! `crate::extract::extract_packages` pipeline `get-local-api` uses.
 //!
 //! Hard constraint: the ONLY write to the user's repo is the api.json tree
@@ -19,16 +19,23 @@ use std::process::Stdio;
 use anyhow::{bail, Context, Result};
 use tempfile::{NamedTempFile, TempDir};
 
-use crate::extract::{discover_packages_fs, extract_packages, ExtractOpts, PackageEntry};
-use crate::workspace::{run, run_capture};
-use crate::workspaces::discover_workspaces;
+use crate::config::RepoConfig;
+use crate::extract::{extract_packages, resolve_toolchain_root, ExtractOpts, PackageEntry};
+use crate::workspace::{run, run_argv, run_capture};
+use crate::workspaces::discover;
 
 #[derive(Debug)]
 pub struct GetRefOpts {
-    /// Root of the monorepo (the git repo the ref is snapshotted from).
+    /// Root of the repo the ref is snapshotted from.
     pub repo_root: PathBuf,
     /// Where to write the extracted API files.
     pub output_dir: PathBuf,
+    /// Explicit config file. Defaults to the `tsdiff.json` inside the
+    /// snapshot, so a ref is always built with *its own* configuration.
+    pub config: Option<PathBuf>,
+    /// Repo supplying the parcel3 toolchain (defaults to the snapshot, which
+    /// has its own node_modules after the install below).
+    pub toolchain_root: Option<PathBuf>,
     /// Git ref (branch, tag, or SHA) to build.
     pub git_ref: String,
     /// Run `git fetch` first, so e.g. `--ref origin/main` is truly latest.
@@ -38,6 +45,9 @@ pub struct GetRefOpts {
     /// Keep the temp build directory instead of removing it when the
     /// command finishes. Useful for debugging a failed build.
     pub keep: bool,
+    /// Report packages that fail to extract and continue, rather than
+    /// aborting the run.
+    pub allow_failures: bool,
 }
 
 pub async fn execute(opts: GetRefOpts) -> Result<()> {
@@ -83,42 +93,39 @@ pub async fn execute(opts: GetRefOpts) -> Result<()> {
                 .context("removing existing output directory")?;
         }
 
-        println!("Installing dependencies (yarn install --no-immutable)...");
-        run("yarn", &["install", "--no-immutable"], &tmp_path).await?;
+        // Load the config from the *snapshot*, not the working tree: a ref has
+        // to be built with the configuration it shipped with, otherwise an
+        // old ref would be built under today's rules.
+        let cfg = RepoConfig::load(&tmp_path, opts.config.as_deref())?;
+        println!("{}", cfg.describe());
 
-        println!("Building `{}` (yarn build)...", opts.git_ref);
-        run("yarn", &["build"], &tmp_path).await?;
+        println!("Installing dependencies...");
+        run_argv(&cfg.install, &tmp_path).await?;
 
-        // Prefer yarn's workspace list (honors the ref's workspaces globs +
-        // private flag); fall back to a filesystem walk when yarn is
-        // unavailable. Both already exclude packages/dev/**.
-        let entries: Vec<PackageEntry> = match discover_workspaces(&tmp_path).await? {
-            Some(workspaces) => {
-                println!(
-                    "Using yarn workspaces list: {} public packages",
-                    workspaces.len()
-                );
-                workspaces
-                    .into_iter()
-                    .map(|w| PackageEntry { name: w.name, dir: w.location, private: false })
-                    .collect()
-            }
-            None => {
-                println!("yarn workspaces list unavailable — using filesystem walk");
-                discover_packages_fs(&tmp_path.join("packages"))
-            }
-        };
+        println!("Building `{}`...", opts.git_ref);
+        run_argv(&cfg.build, &tmp_path).await?;
+
+        let entries: Vec<PackageEntry> = discover(&cfg, false)
+            .await?
+            .into_iter()
+            .map(|w| PackageEntry {
+                name: w.name,
+                dir: w.location,
+                private: w.private,
+            })
+            .collect();
+        println!("Discovered {} public packages", entries.len());
+
+        let toolchain_root =
+            resolve_toolchain_root(opts.toolchain_root.as_deref(), &tmp_path);
 
         // check_build_freshness = false: an archived snapshot is immutable,
         // so its src-vs-dist mtimes are meaningless.
         extract_packages(
             &entries,
-            &ExtractOpts {
-                repo_root: tmp_path.clone(),
-                output_dir: opts.output_dir.clone(),
-                check_build_freshness: false,
-                allow_empty: false,
-            },
+            &ExtractOpts::new(toolchain_root, opts.output_dir.clone())
+                .with_config(&cfg)
+                .allowing_failures(opts.allow_failures),
         )
         .await?;
 
@@ -214,9 +221,14 @@ mod tests {
             .unwrap_or(false)
     }
 
-    /// crate dir is rsp-api-checker/; the react-spectrum repo root is its parent.
+    /// Repo root: the nearest ancestor of the crate dir holding `.git`, so
+    /// moving the crate within the monorepo doesn't break these tests.
     fn repo_root() -> PathBuf {
-        Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().to_path_buf()
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .ancestors()
+            .find(|p| p.join(".git").exists())
+            .expect("no `.git` ancestor above the crate directory")
+            .to_path_buf()
     }
 
     #[test]
@@ -233,11 +245,6 @@ mod tests {
         assert!(
             dest.path().join("package.json").exists(),
             "missing package.json in snapshot at {}",
-            dest.path().display()
-        );
-        assert!(
-            dest.path().join("rsp-api-checker").join("Cargo.toml").exists(),
-            "missing rsp-api-checker/Cargo.toml in snapshot at {}",
             dest.path().display()
         );
     }
@@ -278,9 +285,12 @@ mod tests {
         let result = execute(GetRefOpts {
             repo_root: root,
             output_dir: output_dir.clone(),
+            config: None,
+            toolchain_root: None,
             git_ref: bogus.clone(),
             fetch: false,
             keep: false,
+            allow_failures: false,
         })
         .await;
 

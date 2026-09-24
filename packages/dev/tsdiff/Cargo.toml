@@ -1,8 +1,8 @@
 [package]
-name = "rsp-api-check"
+name = "tsdiff"
 version = "0.1.0"
 edition = "2021"
-description = "API comparison tool for the react-spectrum monorepo"
+description = "Compare the public TypeScript API of a package or monorepo across two builds."
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }

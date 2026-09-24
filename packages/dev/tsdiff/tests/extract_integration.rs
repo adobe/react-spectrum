@@ -1,11 +1,36 @@
-use rsp_api_check::differ::{diff_package, discover_pairs};
-use rsp_api_check::extract::{extract_packages, run_ts_doc, ts_doc_available, ExtractOpts, PackageEntry};
+use tsdiff::differ::{diff_package, discover_pairs};
+use tsdiff::extract::{extract_packages, run_ts_doc, ts_doc_available, ExtractOpts, PackageEntry};
 use std::path::PathBuf;
 use tempfile::TempDir;
 
 fn repo_root() -> PathBuf {
-    // crate dir is rsp-api-checker/; repo root is its parent.
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().to_path_buf()
+    // Nearest ancestor of the crate dir holding `.git`, so moving the crate
+    // within the monorepo doesn't break these tests.
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .find(|p| p.join(".git").exists())
+        .expect("no `.git` ancestor above the crate directory")
+        .to_path_buf()
+}
+
+/// `repo_root()` expressed relative to the crate dir, which is the working
+/// directory for a test run.
+///
+/// The point of the test below is that a *relative* root works, so this must
+/// stay relative rather than just using `repo_root()` — but the depth is
+/// derived rather than written down, because a hardcoded `..` silently became
+/// wrong the moment the crate moved under `packages/dev/`.
+fn relative_repo_root() -> PathBuf {
+    let crate_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let depth = crate_dir
+        .strip_prefix(repo_root())
+        .expect("crate dir must live under the repo root")
+        .components()
+        .count();
+    if depth == 0 {
+        return PathBuf::from(".");
+    }
+    std::iter::repeat("..").take(depth).collect()
 }
 
 #[tokio::test]
@@ -32,9 +57,15 @@ async fn run_ts_doc_extracts_dts_with_cross_file_link() {
     ).unwrap();
 
     let work = TempDir::new().unwrap();
-    let json = run_ts_doc(&root, work.path(), &fixture.path().join("button.d.ts"), "button")
-        .await
-        .expect("run_ts_doc failed");
+    let json = run_ts_doc(
+        &root,
+        &root,
+        work.path(),
+        &fixture.path().join("button.d.ts"),
+        "button",
+    )
+    .await
+    .expect("run_ts_doc failed");
 
     let v: serde_json::Value = serde_json::from_str(&json).unwrap();
     let props = &v["exports"]["ButtonProps"];
@@ -47,7 +78,7 @@ async fn run_ts_doc_extracts_dts_with_cross_file_link() {
     assert!(link_id.ends_with(":PressEvent"), "unexpected link id: {link_id}");
 
     // And it deserializes into our model without hitting the Unknown fallback.
-    let _api: rsp_api_check::api_json::ApiJson = serde_json::from_str(&json).unwrap();
+    let _api: tsdiff::api_json::ApiJson = serde_json::from_str(&json).unwrap();
 }
 
 fn write_pkg(root: &std::path::Path, name: &str, dts: &str) -> PackageEntry {
@@ -75,12 +106,7 @@ async fn extract_packages_writes_compare_layout_and_self_diffs_clean() {
     ];
 
     let out = TempDir::new().unwrap();
-    extract_packages(&entries, &ExtractOpts {
-        repo_root: root.clone(),
-        output_dir: out.path().to_path_buf(),
-        check_build_freshness: false,
-        allow_empty: false,
-    }).await.expect("extract_packages failed");
+    extract_packages(&entries, &ExtractOpts { check_build_freshness: false, allow_empty: false, ..ExtractOpts::new(root.clone(), out.path().to_path_buf()) }).await.expect("extract_packages failed");
 
     // Layout: <out>/<name>/dist/api.json + <out>/<name>/package.json
     assert!(out.path().join("@fix/button/dist/api.json").exists());
@@ -99,10 +125,7 @@ async fn extract_packages_writes_compare_layout_and_self_diffs_clean() {
 async fn extract_packages_errors_on_empty_unless_allowed() {
     let root = repo_root();
     let out = TempDir::new().unwrap();
-    let opts = ExtractOpts {
-        repo_root: root, output_dir: out.path().to_path_buf(),
-        check_build_freshness: false, allow_empty: false,
-    };
+    let opts = ExtractOpts { check_build_freshness: false, allow_empty: false, ..ExtractOpts::new(root, out.path().to_path_buf()) };
     assert!(extract_packages(&[], &opts).await.is_err());
     let opts_ok = ExtractOpts { allow_empty: true, ..opts };
     assert!(extract_packages(&[], &opts_ok).await.is_ok());
@@ -135,12 +158,7 @@ async fn extract_packages_freshness_bails_on_missing_declared_types() {
     let out = TempDir::new().unwrap();
     let result = extract_packages(
         &entries,
-        &ExtractOpts {
-            repo_root: root,
-            output_dir: out.path().to_path_buf(),
-            check_build_freshness: true,
-            allow_empty: false,
-        },
+        &ExtractOpts { check_build_freshness: true, allow_empty: false, ..ExtractOpts::new(root, out.path().to_path_buf()) },
     )
     .await;
 
@@ -208,12 +226,7 @@ async fn extract_published_style_cross_package_resolves() {
     let out = TempDir::new().unwrap();
     let result = extract_packages(
         &entries,
-        &ExtractOpts {
-            repo_root: root,
-            output_dir: out.path().to_path_buf(),
-            check_build_freshness: false,
-            allow_empty: false,
-        },
+        &ExtractOpts { check_build_freshness: false, allow_empty: false, ..ExtractOpts::new(root, out.path().to_path_buf()) },
     )
     .await;
     assert!(
@@ -276,8 +289,9 @@ async fn extract_published_style_cross_package_resolves() {
 ///      the path (`.../.parcel-work/dist/branch-api/.parcel-work/...`), after
 ///      which the Rust side can't find the emitted dist dir.
 /// This drives the real `extract_packages` path with both relative, exactly as
-/// the CLI does. The test process runs from the crate dir, so `..` is the repo
-/// root; the throwaway output lives under the gitignored `target/` dir.
+/// the CLI does. The test process runs from the crate dir, so the repo root is
+/// some number of `..` above it; the throwaway output lives under the
+/// gitignored `target/` dir.
 #[tokio::test]
 async fn extract_packages_works_with_relative_cli_paths() {
     let root = repo_root();
@@ -297,12 +311,7 @@ async fn extract_packages_works_with_relative_cli_paths() {
     let _ = std::fs::remove_dir_all(&rel_out);
     let result = extract_packages(
         &[entry],
-        &ExtractOpts {
-            repo_root: std::path::PathBuf::from(".."),
-            output_dir: rel_out.clone(),
-            check_build_freshness: false,
-            allow_empty: false,
-        },
+        &ExtractOpts { check_build_freshness: false, allow_empty: false, ..ExtractOpts::new(relative_repo_root(), rel_out.clone()) },
     )
     .await;
 
@@ -366,7 +375,7 @@ async fn import_type_queries_survive_extraction() {
         let work = work.path().to_path_buf();
         let name = name.to_string();
         async move {
-            let json = run_ts_doc(&root, &work, &path, &name).await.unwrap();
+            let json = run_ts_doc(&root, &root, &work, &path, &name).await.unwrap();
             let v: serde_json::Value = serde_json::from_str(&json).unwrap();
             v["exports"][&name].clone()
         }
@@ -421,12 +430,7 @@ async fn forward_ref_component_props_survive_from_dts_to_diff_output() {
         let out = TempDir::new().unwrap();
         extract_packages(
             &entries,
-            &ExtractOpts {
-                repo_root: root.clone(),
-                output_dir: out.path().to_path_buf(),
-                check_build_freshness: false,
-                allow_empty: false,
-            },
+            &ExtractOpts { check_build_freshness: false, allow_empty: false, ..ExtractOpts::new(root.clone(), out.path().to_path_buf()) },
         )
         .await
         .expect("extract_packages failed");

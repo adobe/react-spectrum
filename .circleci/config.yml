@@ -409,7 +409,7 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-      # Bring in the rsp-api-check binary persisted by ts-build-binary so we
+      # Bring in the tsdiff binary persisted by ts-build-binary so we
       # can extract the branch API immediately after `make build`, while the
       # freshly-built workspace (with its gitignored subpath stubs at paths
       # like packages/react-aria/useButton/package.json) is still intact.
@@ -433,14 +433,12 @@ jobs:
       - run:
           name: extract branch API
           command: |
-            cd rsp-api-checker
-            target/release/rsp-api-check get-local-api --repo-root .. --output ../dist/branch-api
+            packages/dev/tsdiff/target/release/tsdiff get-local-api --repo-root . --output dist/branch-api
 
       - run:
           name: env-report (branch side)
           command: |
-            cd rsp-api-checker
-            target/release/rsp-api-check env-report --repo-root .. --output ../dist/branch-api/env-report.json || true
+            packages/dev/tsdiff/target/release/tsdiff env-report --repo-root . --output dist/branch-api/env-report.json || true
 
       - store_artifacts:
           path: dist/branch-api
@@ -479,7 +477,7 @@ jobs:
             yarn test:lint
             yarn lint
 
-  # Build the rsp-api-check Rust binary once and share it via workspace.
+  # Build the tsdiff Rust binary once and share it via workspace.
   # Runs in parallel with the yarn `install` job — no dependency needed.
   # The Cargo registry + target dir are cached by Cargo.lock hash so
   # incremental rebuilds are fast when only Rust source changes.
@@ -489,21 +487,21 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - rsp-api-check-v1-{{ checksum "rsp-api-checker/Cargo.lock" }}
-            - rsp-api-check-v1-
+            - tsdiff-v1-{{ checksum "packages/dev/tsdiff/Cargo.lock" }}
+            - tsdiff-v1-
       - run:
-          name: build rsp-api-check
-          command: cd rsp-api-checker && cargo build --release
+          name: build tsdiff
+          command: cd packages/dev/tsdiff && cargo build --release
       - save_cache:
-          key: rsp-api-check-v1-{{ checksum "rsp-api-checker/Cargo.lock" }}
+          key: tsdiff-v1-{{ checksum "packages/dev/tsdiff/Cargo.lock" }}
           paths:
             - ~/.cargo/registry
             - ~/.cargo/git
-            - rsp-api-checker/target
+            - packages/dev/tsdiff/target
       - persist_to_workspace:
           root: .
           paths:
-            - rsp-api-checker/target/release/rsp-api-check
+            - packages/dev/tsdiff/target/release/tsdiff
 
   # Fetch the last published release from npm and extract its type API (the
   # npm baseline).
@@ -528,16 +526,14 @@ jobs:
       - run:
           name: extract published API
           command: |
-            cd rsp-api-checker
-            target/release/rsp-api-check get-published-api --repo-root .. --output ../dist/base-api
+            packages/dev/tsdiff/target/release/tsdiff get-published-api --repo-root . --output dist/base-api
       - run:
           # Runs after extraction (the extraction wipes its output dir on start)
           # so the report lands next to the api.json tree. Non-fatal: if env
           # inspection itself errors, we still want the extracted api.json.
           name: env-report (published side)
           command: |
-            cd rsp-api-checker
-            target/release/rsp-api-check env-report --repo-root .. --output ../dist/base-api/env-report.json || true
+            packages/dev/tsdiff/target/release/tsdiff env-report --repo-root . --output dist/base-api/env-report.json || true
       - store_artifacts:
           path: dist/base-api
           destination: base-api
@@ -566,8 +562,7 @@ jobs:
             # host-key prompt. Same keyscan the old ts-build-fork-point job did.
             mkdir -p ~/.ssh
             ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
-            cd rsp-api-checker
-            target/release/rsp-api-check get-ref-api --repo-root .. --ref origin/main --fetch --output ../dist/base-api
+            packages/dev/tsdiff/target/release/tsdiff get-ref-api --repo-root . --ref origin/main --fetch --output dist/base-api
       - store_artifacts:
           path: dist/base-api
           destination: base-api
@@ -584,11 +579,10 @@ jobs:
       - run:
           name: compare APIs
           command: |
-            cd rsp-api-checker
-            target/release/rsp-api-check compare \
-              --base-api-dir ../dist/base-api \
-              --branch-api-dir ../dist/branch-api \
-              --ci | tee ../dist/ts-diff.txt
+            packages/dev/tsdiff/target/release/tsdiff compare \
+              --base-api-dir dist/base-api \
+              --branch-api-dir dist/branch-api \
+              --ci | tee dist/ts-diff.txt
       - store_artifacts:
           path: dist/ts-diff.txt
           destination: ts-diff.txt

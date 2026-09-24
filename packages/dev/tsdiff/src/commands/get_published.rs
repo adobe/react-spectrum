@@ -6,23 +6,31 @@ use std::path::{Path, PathBuf};
 use anyhow::{Context, Result};
 use tempfile::TempDir;
 
-use crate::extract::{extract_packages, ExtractOpts, PackageEntry};
+use crate::config::RepoConfig;
+use crate::extract::{extract_packages, resolve_toolchain_root, ExtractOpts, PackageEntry};
 use crate::npm::get_published_packages;
 use crate::workspace::{run_npm_install, write_package_json};
-use crate::workspaces::discover_workspaces;
+use crate::workspaces::discover_names;
 
 #[derive(Debug)]
 pub struct GetPublishedOpts {
-    /// Root of the monorepo (to discover which packages exist).
+    /// Root of the repo (to discover which packages exist).
     pub repo_root: PathBuf,
     /// Where to write the extracted API files.
     pub output_dir: PathBuf,
+    /// Explicit config file, overriding the `tsdiff.json` probe at the root.
+    pub config: Option<PathBuf>,
+    /// Repo supplying the parcel3 toolchain (defaults to `repo_root`).
+    pub toolchain_root: Option<PathBuf>,
     /// Max concurrent npm registry requests.
     pub concurrency: usize,
     /// npm dist-tag to install (e.g. "latest", "nightly").
     pub tag: String,
     /// Print per-phase timing breakdown on completion.
     pub timing: bool,
+    /// Report packages that fail to extract and continue, rather than
+    /// aborting the run.
+    pub allow_failures: bool,
 }
 
 /// Read the installed version of a package from `node_modules/<pkg>/package.json`.
@@ -85,13 +93,10 @@ mod tests {
 
 pub async fn execute(opts: GetPublishedOpts) -> Result<()> {
     let t_total = std::time::Instant::now();
-    let packages_dir = opts.repo_root.join("packages");
-    if !packages_dir.exists() {
-        anyhow::bail!(
-            "packages/ directory not found at {}",
-            packages_dir.display()
-        );
-    }
+    let cfg = RepoConfig::load(&opts.repo_root, opts.config.as_deref())?;
+    println!("{}", cfg.describe());
+    let toolchain_root =
+        resolve_toolchain_root(opts.toolchain_root.as_deref(), &opts.repo_root);
 
     // Clean output directory
     if opts.output_dir.exists() {
@@ -99,28 +104,22 @@ pub async fn execute(opts: GetPublishedOpts) -> Result<()> {
             .context("removing existing output directory")?;
     }
 
-    // 1. Discover workspace package names — ask yarn first (respects the
-    //    repo's workspaces globs and private flag), fall back to fs-walk when
-    //    yarn isn't installed.
+    // 1. Discover the repo's publishable workspace package names.
     let t_discover = std::time::Instant::now();
-    let preresolved_names = match discover_workspaces(&opts.repo_root).await? {
-        Some(workspaces) => {
-            println!(
-                "Using yarn workspaces list: {} public packages",
-                workspaces.len()
-            );
-            Some(workspaces.into_iter().map(|w| w.name).collect())
-        }
-        None => {
-            println!("yarn workspaces list unavailable — falling back to filesystem walk");
-            None
-        }
-    };
+    let names = discover_names(&cfg).await?;
+    println!("Discovered {} public packages", names.len());
+    if names.is_empty() {
+        anyhow::bail!(
+            "No workspace packages found under {}. Check the `workspaces` globs \
+             (currently [{}]) — set them explicitly in tsdiff.json if this repo \
+             has an unusual layout.",
+            opts.repo_root.display(),
+            cfg.workspaces.join(", ")
+        );
+    }
 
-    // 2. Query npm to find all published packages
-    let published =
-        get_published_packages(&packages_dir, opts.concurrency, &opts.tag, preresolved_names)
-            .await?;
+    // 2. Query npm to find which of them are published.
+    let published = get_published_packages(names, opts.concurrency, &opts.tag).await?;
     if published.is_empty() {
         anyhow::bail!("No published packages found");
     }
@@ -137,12 +136,14 @@ pub async fn execute(opts: GetPublishedOpts) -> Result<()> {
         .map(|p| (p.name.clone(), tag.clone()))
         .collect();
 
-    // React types are needed so the TS checker can resolve JSX.Element, ReactNode, etc.
-    // Pin to the SAME versions the local repo uses to avoid false diffs from
-    // external type definition changes between versions. Failing loudly here
-    // beats silently installing "latest" — a React types change between runs
-    // would look like our API changed.
-    for peer in ["react", "react-dom", "@types/react", "@types/react-dom"] {
+    // Pinned peers (for a React repo: react + @types/react) are needed so the
+    // TS checker can resolve JSX.Element, ReactNode, etc. Pin them to the SAME
+    // versions the local repo uses, to avoid false diffs from external type
+    // definition changes between versions. Failing loudly here beats silently
+    // installing "latest" — an external types change between runs would look
+    // like our API changed. Configure via `pinnedPeers` in tsdiff.json.
+    for peer in &cfg.pinned_peers {
+        let peer = peer.as_str();
         if !deps.iter().any(|(n, _)| n == peer) {
             let version = local_installed_version(&opts.repo_root, peer)
                 .with_context(|| format!(
@@ -181,7 +182,7 @@ pub async fn execute(opts: GetPublishedOpts) -> Result<()> {
     // 3. Extract each installed package's .d.ts via the parcel3 driver.
     //    Entries point at the tmp install's node_modules; transformer-ts-doc
     //    resolves cross-package types from there, while its plugin + the
-    //    parcel3 binary resolve from the repo's node_modules (via repo_root).
+    //    parcel3 binary resolve from the toolchain root's node_modules.
     //    check_build_freshness = false: published tarballs are immutable.
     let nm_dir = tmp_dir.join("node_modules");
     let entries: Vec<PackageEntry> = published
@@ -196,12 +197,9 @@ pub async fn execute(opts: GetPublishedOpts) -> Result<()> {
     let t_extract = std::time::Instant::now();
     extract_packages(
         &entries,
-        &ExtractOpts {
-            repo_root: opts.repo_root.clone(),
-            output_dir: opts.output_dir.clone(),
-            check_build_freshness: false,
-            allow_empty: false,
-        },
+        &ExtractOpts::new(toolchain_root, opts.output_dir.clone())
+            .with_config(&cfg)
+            .allowing_failures(opts.allow_failures),
     )
     .await?;
     let extract_elapsed = t_extract.elapsed();

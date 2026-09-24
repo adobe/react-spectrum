@@ -28,17 +28,17 @@ jobs:
 
       - run: yarn --immutable
 
-      # Build the rsp-api-check binary (the current extractor + differ). ubuntu
+      # Build the tsdiff binary (the current extractor + differ). ubuntu
       # runners ship a Rust toolchain, so no separate setup step is needed.
-      - name: Build rsp-api-check
-        run: cd rsp-api-checker && cargo build --release
+      - name: Build tsdiff
+        run: cd packages/dev/tsdiff && cargo build --release
 
       # Build current main API (~2 min, always fresh): build the checkout in
       # place, then extract its type API into dist/branch-api.
       - name: Build current API snapshot
         run: |
           yarn build
-          rsp-api-checker/target/release/rsp-api-check get-local-api --repo-root . --output dist/branch-api
+          packages/dev/tsdiff/target/release/tsdiff get-local-api --repo-root . --output dist/branch-api
 
       # Build the release baseline from the last minor/major release commit
       # (skips patch-only releases). get-ref-api snapshots that commit with
@@ -47,11 +47,11 @@ jobs:
         run: |
           BASELINE_REF=$(git rev-list -n 1 $(git tag -l 'react-aria-components@*' | grep -E '@[0-9]+\.[0-9]+\.0$' | sort -V | tail -1))
           echo "Baseline ref (last react-aria-components minor/major release): $BASELINE_REF"
-          rsp-api-checker/target/release/rsp-api-check get-ref-api --repo-root . --ref "$BASELINE_REF" --output dist/base-api
+          packages/dev/tsdiff/target/release/tsdiff get-ref-api --repo-root . --ref "$BASELINE_REF" --output dist/base-api
 
       - name: Generate diff
         run: |
-          rsp-api-checker/target/release/rsp-api-check compare \
+          packages/dev/tsdiff/target/release/tsdiff compare \
             --base-api-dir dist/base-api \
             --branch-api-dir dist/branch-api \
             --ci > /tmp/diff-current.md || true
@@ -112,8 +112,8 @@ jobs:
             elif [ "$PREV_MAIN" = "$CURRENT_MAIN" ]; then
               : > /tmp/weekly-delta.txt   # main unchanged since last run
             else
-              rsp-api-checker/target/release/rsp-api-check get-ref-api --repo-root . --ref "$PREV_MAIN" --output dist/last-week-api
-              rsp-api-checker/target/release/rsp-api-check compare \
+              packages/dev/tsdiff/target/release/tsdiff get-ref-api --repo-root . --ref "$PREV_MAIN" --output dist/last-week-api
+              packages/dev/tsdiff/target/release/tsdiff compare \
                 --base-api-dir dist/last-week-api \
                 --branch-api-dir dist/branch-api \
                 --ci > /tmp/weekly-delta.txt || true
