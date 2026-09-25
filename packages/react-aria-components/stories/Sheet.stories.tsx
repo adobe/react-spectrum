@@ -13,7 +13,7 @@
 import {Button, DialogTrigger, Heading} from 'react-aria-components';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Sheet, SheetContent, SheetOverlay, SheetUnderlay} from '../src/Sheet';
+import {Sheet, SheetBackdrop, SheetContent, SheetOverlay} from '../src/Sheet';
 import './Sheet.css';
 
 export default {
@@ -41,7 +41,7 @@ export const SheetExample: SheetStory = args => (
   <DialogTrigger>
     <Button>Open sheet</Button>
     <SheetOverlay position="bottom" {...args}>
-      <SheetUnderlay swipeAnimation="backdropAnimation" />
+      <SheetBackdrop swipeAnimation="backdropAnimation" />
       <Sheet overscrollPadding swipeAnimation="radius">
         <SheetContent>
           {({close}) => (
@@ -79,7 +79,7 @@ export const SheetDetents: SheetStory = args => (
     <Button>Open sheet</Button>
     {/* Opens with 180px of the sheet showing; drag up to full height or down to dismiss. */}
     <SheetOverlay position="bottom" snapPoints={['180px']} {...args}>
-      <SheetUnderlay swipeAnimation="backdropAnimation" swipeAnimationRange={{start: 0}} />
+      <SheetBackdrop swipeAnimation="backdropAnimation" swipeAnimationRange={{start: 0}} />
       <Sheet
         style={{height: '92dvh'}}
         overscrollPadding
@@ -119,7 +119,7 @@ export const SheetStacking: SheetStory = args => {
   // again, continuously tracking the drag.
   let renderSheet = (depth: number): React.ReactNode => (
     <SheetOverlay position="bottom" {...args}>
-      <SheetUnderlay swipeAnimation="backdropAnimation" />
+      <SheetBackdrop swipeAnimation="backdropAnimation" />
       <Sheet overscrollPadding swipeAnimation="radius" stackAnimation="scaleBack">
         <SheetContent>
           {({close}) => (

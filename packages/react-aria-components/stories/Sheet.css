@@ -37,7 +37,7 @@
   }
 }
 
-.react-aria-SheetUnderlay {
+.react-aria-SheetBackdrop {
   &[data-stack-index='0'] {
     background: rgb(0 0 0 / 0.4);
   }
