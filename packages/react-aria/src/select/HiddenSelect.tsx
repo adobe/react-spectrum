@@ -95,9 +95,6 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(
 
   useFormReset(props.selectRef, state.defaultValue, state.setValue);
 
-  // After the reset event, the browser restores each option from its `selected` attribute, which
-  // React doesn't set on a controlled <select>. Keep it in sync with the rendered value (as React
-  // does with the `value` attribute of inputs) so a reset doesn't clear the selection.
   useLayoutEffect(() => {
     let select = props.selectRef?.current;
     if (select instanceof HTMLSelectElement) {
