@@ -50,7 +50,8 @@ export function useDateSegment(
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let displayNames = useDisplayNames();
-  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state)!;
+  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager, keyboardNavigationBehavior} =
+    hookData.get(state)!;
 
   let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
@@ -412,7 +413,13 @@ export function useDateSegment(
         state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable
           ? undefined
           : ('numeric' as const),
-      tabIndex: state.isDisabled ? undefined : 0,
+      // When keyboardNavigationBehavior is 'tab', only the first segment is a Tab stop;
+      // Left/Right arrow keys (handled in useDatePickerGroup) still move focus between segments.
+      tabIndex: state.isDisabled
+        ? undefined
+        : keyboardNavigationBehavior === 'tab' && segment !== firstSegment
+          ? -1
+          : 0,
       onFocus,
       style: segmentStyle,
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
