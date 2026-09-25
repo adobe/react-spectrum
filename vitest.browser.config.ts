@@ -181,6 +181,8 @@ function getCDP(page: any, context: any): Promise<any> {
 declare module 'vitest/browser' {
   interface BrowserCommands {
     lockClipboard: () => Promise<void>;
+    // Emulate a pinch zoom of the top-level page via CDP. Chromium only.
+    pinchZoom: (scale: number) => Promise<void>;
     unlockClipboard: () => void;
     // Drive a real IME composition via CDP to emulate soft-keyboard (e.g. Android) input.
     // Chromium only. selectionStart/End and replacementStart/End are passed straight to
@@ -250,10 +252,16 @@ export default defineConfig({
   test: {
     globals: true,
     pool: 'threads',
+    fileParallelism: false,
     setupFiles: ['./test/browser/setup.ts'],
     include: ['packages/**/test/**/*.browser.test.{ts,tsx}'],
     browser: {
-      provider: playwright(),
+      provider: playwright({
+        launchOptions: {
+          ignoreDefaultArgs: ['--hide-scrollbars'],
+          firefoxUserPrefs: {'ui.useOverlayScrollbars': 0}
+        }
+      }),
       enabled: true,
       instances: [
         {
@@ -285,6 +293,10 @@ export default defineConfig({
               });
             });
           });
+        },
+        pinchZoom: async ({page, context}: any, scale: number) => {
+          const cdp = await getCDP(page, context);
+          await cdp.send('Emulation.setPageScaleFactor', {pageScaleFactor: scale});
         },
         unlockClipboard: () => {
           if (unlock) {

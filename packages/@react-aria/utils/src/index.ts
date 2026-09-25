@@ -41,6 +41,9 @@ export {
 } from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
 export {
   getActiveElement,
+  getParentElement,
+  getParentNode,
+  getPropagationTargets,
   getEventTarget,
   nodeContains,
   isFocusWithin
