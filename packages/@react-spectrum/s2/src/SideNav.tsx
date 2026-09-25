@@ -765,6 +765,10 @@ const sidePanelStyle = style(
   getAllowedOverrides({height: true})
 );
 
+/**
+ * A SidePanel contains a SideNav and other app chrome in a container that collapses to an icon
+ * rail.
+ */
 export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function SidePanel<T>(
   props: SidePanelProps<T>,
   ref: DOMRef<HTMLDivElement>
