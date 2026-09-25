@@ -35,6 +35,7 @@ import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {getAnchorStyles, getHiddenInputStyles} from './hiddenInputAnchor';
 import {HoverEvents} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
@@ -43,6 +44,7 @@ import React, {createContext, ForwardedRef, forwardRef, Ref, useContext, useMemo
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useId} from 'react-aria/useId';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useToggleState} from 'react-stately/useToggleState';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
@@ -506,6 +508,10 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
+  // The anchor name identifies this checkbox in the document, so it has to be unique per
+  // instance: a shared name resolves to a single anchor, not one per component.
+  let anchorName = `--react-aria-checkbox-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+
   let {hoverProps, isHovered} = useHover({
     ...props,
     isDisabled: isInteractionDisabled
@@ -536,6 +542,7 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
     <dom.label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
+      style={{...renderProps.style, ...getAnchorStyles(anchorName, renderProps.style)}}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={isIndeterminate || undefined}
@@ -548,7 +555,11 @@ export const CheckboxButton = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
       data-invalid={isInvalid || undefined}
       data-required={isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+        <input
+          {...mergeProps(inputProps, focusProps)}
+          ref={inputRef}
+          style={getHiddenInputStyles(anchorName, renderProps.style)}
+        />
       </VisuallyHidden>
       {renderProps.children}
     </dom.label>
