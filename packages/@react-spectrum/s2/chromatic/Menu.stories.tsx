@@ -21,7 +21,7 @@ import {
 import {Button} from '../src/Button';
 import {expect} from '@storybook/jest';
 import {Header, Heading} from '../src/Content';
-import {Menu, MenuItem, MenuSection, MenuTrigger} from '../src/Menu';
+import {Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {userEvent, within} from 'storybook/test';
@@ -213,5 +213,65 @@ export const WithSectionsAndLoadMore: Story = {
     let body = canvasElement.ownerDocument.body;
     let menu = await within(body).findByRole('menu');
     await within(menu).findByRole('progressbar', {hidden: true});
+  }
+};
+
+export const DefaultVirtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions for selected resource">
+        <NewIcon />
+      </Button>
+      <Menu isVirtualized>
+        <MenuItem>Favorite</MenuItem>
+        <MenuItem>Edit</MenuItem>
+        <MenuItem>Delete</MenuItem>
+        <SubmenuTrigger>
+          <MenuItem>Share</MenuItem>
+          <Menu isVirtualized>
+            <MenuItem>SMS</MenuItem>
+            <MenuItem>Email</MenuItem>
+          </Menu>
+        </SubmenuTrigger>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
+};
+
+export const WithSectionsVirtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test" isVirtualized>
+        <MenuSection>
+          <Header>
+            <Heading>Section 1</Heading>
+          </Header>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+        </MenuSection>
+        <MenuSection>
+          <Header>
+            <Heading>Section 2</Heading>
+          </Header>
+          <MenuItem>Paste</MenuItem>
+          <MenuItem>Delete</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
   }
 };

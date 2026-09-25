@@ -18,6 +18,7 @@ import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
 import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
+import {Collection} from 'react-aria/Collection';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
 import CommunityIcon from '../s2wf-icons/S2_Icon_Community_20_N.svg';
@@ -537,5 +538,77 @@ export const HoldAffordance: Story = {
         </Menu>
       </MenuTrigger>
     </div>
+  )
+};
+
+let virtualizedSections = Array.from({length: 5}, (_, sectionIndex) => ({
+  id: `section-${sectionIndex}`,
+  title: `Section ${sectionIndex + 1}`,
+  items: Array.from({length: 50}, (_, itemIndex) => ({
+    id: `item-${sectionIndex}-${itemIndex}`,
+    name: `Item ${sectionIndex * 50 + itemIndex + 1}`
+  }))
+}));
+
+export const Virtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="virtualized menu">
+        <NewIcon />
+      </Button>
+      <Menu isVirtualized styles={style({width: 240})} items={virtualizedSections}>
+        {section => (
+          <MenuSection id={section.id} items={section.items}>
+            <Header>
+              <Heading>{section.title}</Heading>
+            </Header>
+            <Collection items={section.items}>
+              {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
+            </Collection>
+          </MenuSection>
+        )}
+      </Menu>
+    </MenuTrigger>
+  )
+};
+
+let virtualizedSubmenuItems = Array.from({length: 100}, (_, index) => ({
+  id: `item-${index}`,
+  name: `Item ${index + 1}`,
+  hasSubmenu: index % 5 === 0
+}));
+
+let virtualizedSubmenuChildren = Array.from({length: 100}, (_, index) => ({
+  id: `child-${index}`,
+  name: `Child ${index + 1}`
+}));
+
+export const VirtualizedWithSubmenus: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="virtualized menu with submenus">
+        <NewIcon />
+      </Button>
+      <Menu isVirtualized styles={style({width: 240})} items={virtualizedSubmenuItems}>
+        {item => {
+          let menuItem = (
+            <MenuItem id={item.hasSubmenu ? `${item.id}-trigger` : item.id} textValue={item.name}>
+              <Text slot="label">{item.name}</Text>
+            </MenuItem>
+          );
+          if (!item.hasSubmenu) {
+            return menuItem;
+          }
+          return (
+            <SubmenuTrigger>
+              {menuItem}
+              <Menu styles={style({width: 240})} items={virtualizedSubmenuChildren}>
+                {child => <MenuItem id={`${item.id}-${child.id}`}>{child.name}</MenuItem>}
+              </Menu>
+            </SubmenuTrigger>
+          );
+        }}
+      </Menu>
+    </MenuTrigger>
   )
 };

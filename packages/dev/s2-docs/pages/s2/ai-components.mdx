@@ -136,6 +136,7 @@ function Example() {
             </PromptFieldAttachmentList>
             <PromptTokenField
               completionTrigger={/(?<=^|\s)[@/]/}
+              menuWidth={200}
               renderCompletions={(filterValue, valueType) => {
                 return renderCompletions(filterValue, {valueType, onClear: clearPrompt, onCompact: compactPrompt});
               }}>
@@ -357,6 +358,7 @@ function PromptSuggestions() {
       <PromptField value={value} onChange={setValue} onSubmit={console.log}>
         <PromptTokenField
           completionTrigger={/(?<=^|\s)@/}
+          menuWidth={200}
           /*- begin highlight -*/
           renderCompletions={filterValue =>
             people
