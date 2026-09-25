@@ -1,1 +1,1 @@
-export {useEnterAnimation, useExitAnimation} from '../../../src/utils/animation';
+export {useAnimation, useEnterAnimation, useExitAnimation} from '../../../src/utils/animation';
