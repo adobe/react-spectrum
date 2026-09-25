@@ -10,7 +10,7 @@ Closes <!-- Github issue # here -->
 - [ ] Updated documentation (if it already exists for this component).
 - [ ] Looked at the Accessibility Practices for this feature - [Aria Practices](https://www.w3.org/WAI/ARIA/apg/)
 - [ ] I understand every change in this PR and can explain why it's there.
-- [ ] If AI-assisted, I followed our [AI contribution guidance](/CONTRIBUTING.md#ai-assisted-contributions) and pointed my assistant at [AGENTS.md](/AGENTS.md).
+- [ ] If AI-assisted, I followed our [AI contribution guidance](https://github.com/adobe/react-spectrum/blob/main/CONTRIBUTING.md#ai-assisted-contributions) and pointed my assistant at [CLAUDE.md](https://github.com/adobe/react-spectrum/blob/main/CLAUDE.md).
 
 ## 📝 Test Instructions:
 
