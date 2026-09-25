@@ -35,7 +35,6 @@ import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {DOMRef, forwardRefType, Node} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusRing, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
-// @ts-ignore
 import {
   GridList,
   GridListItem,
@@ -44,6 +43,7 @@ import {
   GridListProps
 } from 'react-aria-components/GridList';
 import {inertValue} from 'react-aria/private/utils/inertValue';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from './ListLayout';
 import {ListStateContext} from 'react-aria-components/ListBox';
@@ -327,75 +327,62 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
         styles
       )}>
       <div
-        className={mergeStyles(
-          style({
-            position: 'relative',
-            flexGrow: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0
-          }),
-          styles
-        )}>
-        <div
-          className={style({
-            position: 'absolute',
-            bottom: 16,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 1
-          })}>
-          <ThreadScrollButton>
-            <ActionButton slot="scroll" aria-label="Scroll to bottom">
-              <ChevronDown />
-            </ActionButton>
-          </ThreadScrollButton>
-        </div>
-        <Virtualizer
-          layout={ListLayout}
-          layoutOptions={{
-            estimatedRowHeight: 100,
-            padding: promptFieldSize === 'S' ? 16 : 24,
-            gap: 16,
-            anchorTo: 'end',
-            loaderSize: 48,
-            scrollEndThreshold
-          }}
-          shouldObserveItemSize>
-          <GridList
-            ref={callbackRef}
-            disallowTypeAhead
-            onScroll={handleScroll}
-            keyboardNavigationBehavior="tab"
-            UNSTABLE_focusOnEntry="last"
-            items={items}
-            aria-label={ariaLabel}
-            aria-labelledby={ariaLabelledby}
-            // TODO: for now we enforce this, but to be configurable?
-            className={
-              scrollFade({y: 32}) +
-              ' ' +
-              style({
-                display: 'flex',
-                boxSizing: 'border-box',
-                minWidth: 0,
-                scrollbarGutter: 'stable',
-                flexGrow: 1,
-                overflowX: 'hidden',
-                overflowY: 'auto',
-                scrollPadding: {
-                  default: 24,
-                  promptFieldSize: {
-                    S: 16
-                  }
-                }
-              })({promptFieldSize})
-            }>
-            {children}
-          </GridList>
-        </Virtualizer>
+        className={style({
+          position: 'absolute',
+          bottom: 16,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1
+        })}>
+        <ThreadScrollButton>
+          <ActionButton slot="scroll">
+            <ChevronDown />
+          </ActionButton>
+        </ThreadScrollButton>
       </div>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          estimatedRowHeight: 100,
+          padding: promptFieldSize === 'S' ? 16 : 24,
+          gap: 16,
+          anchorTo: 'end',
+          loaderSize: 48,
+          scrollEndThreshold
+        }}
+        shouldObserveItemSize>
+        <GridList
+          ref={callbackRef}
+          disallowTypeAhead
+          onScroll={handleScroll}
+          keyboardNavigationBehavior="tab"
+          UNSTABLE_focusOnEntry="last"
+          items={items}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledby}
+          // TODO: for now we enforce this, but to be configurable?
+          className={
+            scrollFade({y: 32}) +
+            ' ' +
+            style({
+              display: 'flex',
+              boxSizing: 'border-box',
+              minWidth: 0,
+              scrollbarGutter: 'stable',
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              scrollPadding: {
+                default: 24,
+                promptFieldSize: {
+                  S: 16
+                }
+              }
+            })({promptFieldSize})
+          }>
+          {children}
+        </GridList>
+      </Virtualizer>
     </div>
   );
 }
