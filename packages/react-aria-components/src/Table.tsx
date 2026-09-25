@@ -699,7 +699,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   ref = useObjectRef(
     useMemo(
       () => mergeRefs(ref, tableContainerContext?.tableRef),
-      // oxlint-disable-next-line react/preserve-manual-memoization
       [ref, tableContainerContext?.tableRef]
     )
   );
@@ -708,7 +707,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
     props.onExpandedChange
   );
-  // oxlint-disable-next-line react/immutability, react/preserve-manual-memoization
+  // oxlint-disable-next-line react/immutability
   collection = useMemo(() => collection.withExpandedKeys(expandedKeys), [collection, expandedKeys]);
 
   let tableState = useTableState({

@@ -94,7 +94,6 @@ export const TextArea = React.forwardRef(function TextArea(
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
     }
-    // oxlint-disable-next-line react/preserve-manual-memoization
   }, [isQuiet, inputRef, props.height]);
 
   useLayoutEffect(() => {

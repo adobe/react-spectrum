@@ -311,7 +311,6 @@ function PopoverInner({
     if (props.triggerRef.current) {
       setTriggerWidth(props.triggerRef.current.getBoundingClientRect().width + 'px');
     }
-    // oxlint-disable-next-line react/preserve-manual-memoization
   }, [props.triggerRef]);
 
   useLayoutEffect(onResize, [onResize]);

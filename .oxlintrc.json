@@ -172,7 +172,6 @@
     "react/globals": "error",
     "react/immutability": "error",
     "react/incompatible-library": "error",
-    "react/preserve-manual-memoization": "error",
     "react/purity": "error",
     "react/refs": "error",
     "react/set-state-in-effect": "error",

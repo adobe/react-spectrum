@@ -64,7 +64,6 @@ export const ColorWheel = React.forwardRef(function ColorWheel(
         setWheelThickness(parseInt(thickness, 10));
       }
     }
-    // oxlint-disable-next-line react/preserve-manual-memoization
   }, [containerRef, setWheelRadius, setWheelThickness]);
 
   useLayoutEffect(() => {

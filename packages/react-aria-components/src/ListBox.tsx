@@ -267,21 +267,14 @@ function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerPro
         layoutDelegate
       }),
     [
-      // oxlint-disable-next-line react/preserve-manual-memoization
       collection,
       collator,
-      // oxlint-disable-next-line react/preserve-manual-memoization
       listBoxRef,
-      // oxlint-disable-next-line react/preserve-manual-memoization
       disabledBehavior,
-      // oxlint-disable-next-line react/preserve-manual-memoization
       disabledKeys,
-      // oxlint-disable-next-line react/preserve-manual-memoization
       orientation,
       direction,
-      // oxlint-disable-next-line react/preserve-manual-memoization
       props.keyboardDelegate,
-      // oxlint-disable-next-line react/preserve-manual-memoization
       layout,
       layoutDelegate
     ]
