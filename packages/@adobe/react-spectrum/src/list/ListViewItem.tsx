@@ -90,7 +90,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
 
   let draggableItem: DraggableItemResult | null = null;
   if (isListDraggable && dragAndDropHooks && dragState) {
-    // oxlint-disable-next-line react/react-compiler
     draggableItem = dragAndDropHooks.useDraggableItem!(
       {key: item.key, hasDragButton: true},
       dragState
@@ -106,7 +105,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
 
-    // oxlint-disable-next-line react/react-compiler
     dropIndicator = dragAndDropHooks.useDropIndicator!({target}, dropState, dropIndicatorRef);
   }
 

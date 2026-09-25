@@ -60,9 +60,10 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(
   props: SearchFieldProps,
   ref: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, SearchFieldContext);
   let formContext = useContext(FormContext);
+  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   let {
     label,

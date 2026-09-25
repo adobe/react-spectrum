@@ -707,7 +707,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let isUnavailable = useContext(UnavailableContext);
   let infoIconId = useId();
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <AriaMenuItem
       {...props}
@@ -819,7 +819,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
       }}
     </AriaMenuItem>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 }
 
 /**

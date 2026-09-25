@@ -74,11 +74,11 @@ export function useBreadcrumbItem(
   }
 
   if (isCurrent) {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     itemProps['aria-current'] = ariaCurrent || 'page';
     // isCurrent sets isDisabled === true for the current item,
     // so we have to restore the tabIndex in order to support autoFocus.
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     itemProps.tabIndex = props.autoFocus ? -1 : undefined;
   }
 

@@ -205,7 +205,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         }
         setValueChangedViaKeyboard(valueChanged);
         // set the focused input based on which axis has the greater delta
-        // oxlint-disable-next-line react/react-compiler
+        // oxlint-disable-next-line react/immutability
         focusedInput = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? 'y' : 'x';
         setFocusedInput(focusedInput);
       } else {
@@ -344,7 +344,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let colorAreaInteractions = isDisabled
     ? {}
     : mergeProps(
-        // oxlint-disable-next-line react/react-compiler
+        // oxlint-disable-next-line react/refs
         {
           ...(typeof PointerEvent !== 'undefined'
             ? {
@@ -381,7 +381,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let thumbInteractions = isDisabled
     ? {}
     : mergeProps(
-        // oxlint-disable-next-line react/react-compiler
+        // oxlint-disable-next-line react/refs
         {
           ...(typeof PointerEvent !== 'undefined'
             ? {

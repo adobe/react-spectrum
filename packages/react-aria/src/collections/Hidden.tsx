@@ -90,7 +90,7 @@ export function createHideableComponent<T, P = {}>(
       return null;
     }
 
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/refs
     return fn(props, ref);
   };
   // @ts-ignore - for react dev tools

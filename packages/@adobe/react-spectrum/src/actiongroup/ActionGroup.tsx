@@ -260,7 +260,6 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(
         return wrapperRef.current?.parentElement;
       }
     }),
-    // oxlint-disable-next-line react/react-compiler
     [wrapperRef]
   );
   useResizeObserver({
@@ -485,11 +484,11 @@ function ActionGroupMenu<T>({
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/actiongroup');
 
   // The menu button shouldn't act like an actual action group item.
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   delete buttonProps.onPress;
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   delete buttonProps.role;
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   delete buttonProps['aria-checked'];
 
   let {hoverProps, isHovered} = useHover({isDisabled});

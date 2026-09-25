@@ -74,9 +74,10 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(
   props: CheckboxGroupProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
+  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   let {
     label,

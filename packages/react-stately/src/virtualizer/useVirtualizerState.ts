@@ -56,7 +56,7 @@ export function useVirtualizerState<T extends object, V, O = any>(
   let [invalidationContext, setInvalidationContext] = useState<InvalidationContext>({});
   let visibleRectChanged = useRef(false);
   let [virtualizer] = useState(
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/refs
     () =>
       new Virtualizer<T, V>({
         collection: opts.collection,

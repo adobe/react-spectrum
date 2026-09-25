@@ -52,8 +52,9 @@ export const TextArea = React.forwardRef(function TextArea(
   props: SpectrumTextAreaProps,
   ref: Ref<TextFieldRef<HTMLTextAreaElement>>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   props = useProviderProps(props);
+  // oxlint-disable-next-line react/immutability
   props = useFormProps(props);
   let {
     isDisabled = false,
@@ -72,7 +73,6 @@ export const TextArea = React.forwardRef(function TextArea(
   );
   let inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // oxlint-disable-next-line react/react-compiler
   let onHeightChange = useCallback(() => {
     // Quiet textareas always grow based on their text content.
     // Standard textareas also grow by default, unless an explicit height is set.

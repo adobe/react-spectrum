@@ -2261,7 +2261,6 @@ function NestedInlineEditExample(args) {
               </EditableCell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
-              {/* oxlint-disable-next-line react/react-compiler */}
               <Collection items={item.children || []}>{renderItem}</Collection>
             </Row>
           );
@@ -2477,7 +2476,6 @@ function ReorderableTableWithNested(props) {
               <Cell>{item.value.title}</Cell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
-              {/* oxlint-disable-next-line react/react-compiler */}
               <Collection items={item.children ?? []}>{renderItem}</Collection>
             </Row>
           );

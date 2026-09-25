@@ -163,7 +163,6 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  // oxlint-disable-next-line react/react-compiler
   function buildTree(
     initialItems: T[] | null = [],
     map: Map<Key, TreeNode<T>>,

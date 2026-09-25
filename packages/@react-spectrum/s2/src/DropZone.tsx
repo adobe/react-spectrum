@@ -132,7 +132,7 @@ export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(
   ref: DOMRef<HTMLDivElement>
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
   let {size = 'M'} = props;
   let domRef = useDOMRef(ref);

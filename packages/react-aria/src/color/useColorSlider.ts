@@ -129,10 +129,10 @@ export function useColorSlider(
   let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
 
   if (channel === 'hue') {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     inputProps['aria-valuetext'] += `, ${value.getHueName(locale)}`;
   } else if (channel !== 'alpha') {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     inputProps['aria-valuetext'] += `, ${value.getColorName(locale)}`;
   }
 

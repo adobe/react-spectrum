@@ -27,7 +27,6 @@ export function InsertionIndicator(props: InsertionIndicatorProps): ReactNode | 
   const {target, rowProps} = props;
 
   let ref = useRef<HTMLDivElement | null>(null);
-  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(props, dropState!, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 

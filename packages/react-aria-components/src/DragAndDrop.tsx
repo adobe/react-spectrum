@@ -83,7 +83,6 @@ export function useRenderDropIndicator(
   let fn = useCallback(
     (target: ItemDropTarget) => {
       // Only show drop indicators when virtual dragging or this is the current drop target.
-      // oxlint-disable-next-line react/react-compiler
       if (isVirtualDragging || dropState?.isDropTarget(target)) {
         return renderDropIndicator ? (
           renderDropIndicator(target)
