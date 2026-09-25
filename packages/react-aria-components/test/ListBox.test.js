@@ -698,6 +698,31 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('should support isDisabled prop on the ListBox', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole, getAllByRole} = render(
+      <ListBox
+        aria-label="Test"
+        selectionMode="multiple"
+        isDisabled
+        onSelectionChange={onSelectionChange}>
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+
+    let listbox = getByRole('listbox');
+    let items = getAllByRole('option');
+    expect(listbox).toHaveAttribute('aria-disabled', 'true');
+    for (let item of items) {
+      expect(item).toHaveAttribute('aria-disabled', 'true');
+    }
+
+    await user.click(items[1]);
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
   it.each`
     interactionType
     ${'mouse'}

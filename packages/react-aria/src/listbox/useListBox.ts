@@ -36,6 +36,8 @@ import {useLabel} from '../label/useLabel';
 import {useSelectableList} from '../selection/useSelectableList';
 
 export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, FocusEvents {
+  /** Whether the listbox is disabled. */
+  isDisabled?: boolean;
   /** Whether to auto focus the listbox or an option. */
   autoFocus?: boolean | FocusStrategy;
   /** Whether focus should wrap around when the end/start is reached. */
@@ -150,7 +152,7 @@ export function useListBox<T>(
     ref,
     selectionManager: state.selectionManager,
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: props.isDisabled ? new Set(state.collection.getKeys()) : state.disabledKeys,
     linkBehavior
   });
 
@@ -164,6 +166,7 @@ export function useListBox<T>(
   let id = useId(props.id);
   listData.set(state, {
     id,
+    isDisabled: props.isDisabled,
     shouldUseVirtualFocus: props.shouldUseVirtualFocus,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp,
     shouldFocusOnHover: props.shouldFocusOnHover,
@@ -194,6 +197,7 @@ export function useListBox<T>(
         : {},
       {
         role: 'listbox',
+        'aria-disabled': props.isDisabled || undefined,
         'aria-orientation': orientation,
         ...mergeProps(fieldProps, listProps)
       }
