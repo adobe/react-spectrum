@@ -488,6 +488,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
         return this.buildLoader(node, x, y);
       case 'separator':
         return this.buildItem(node, x, y);
+      // uses buildSection instead of buildItem cuz it has a child node (the trigger)
+      // that need to be processed
+      case 'submenutrigger':
+        return this.buildSection(node, x, y);
       default:
         throw new Error('Unsupported node type: ' + node.type);
     }

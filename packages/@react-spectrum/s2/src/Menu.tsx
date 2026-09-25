@@ -49,6 +49,10 @@ import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
+import {
+  CollectionRendererContext,
+  DefaultCollectionRenderer
+} from 'react-aria-components/CollectionBuilder';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   control,
@@ -142,7 +146,8 @@ export interface MenuProps<T>
    */
   loadingState?: LoadingState;
   /**
-   * Whether the Menu should be virtualized.
+   * Whether the Menu should be virtualized. Submenus inherit this from their parent menu by
+   * default.
    *
    * @default false
    */
@@ -519,7 +524,11 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
-  let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
+  let {
+    isSubmenu,
+    size: ctxSize,
+    isVirtualized: isParentVirtualized
+  } = useContext(InternalMenuContext);
   let {
     children,
     size = ctxSize,
@@ -530,7 +539,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     items,
     loadingState,
     onLoadMore,
-    isVirtualized = false
+    isVirtualized = isParentVirtualized
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
   let inPopover = useContext(InPopoverContext);
@@ -602,6 +611,11 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     <Virtualizer layout={ListLayout} layoutOptions={virtualizedMenuLayoutOptions}>
       {menuContent}
     </Virtualizer>
+  ) : isParentVirtualized ? (
+    //  if user doesnt want their submenu to be virtualized we need to clear context from parent
+    <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+      {menuContent}
+    </CollectionRendererContext.Provider>
   ) : (
     menuContent
   );

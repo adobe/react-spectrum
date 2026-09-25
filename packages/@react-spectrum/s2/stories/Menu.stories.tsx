@@ -571,3 +571,44 @@ export const Virtualized: Story = {
     </MenuTrigger>
   )
 };
+
+let virtualizedSubmenuItems = Array.from({length: 100}, (_, index) => ({
+  id: `item-${index}`,
+  name: `Item ${index + 1}`,
+  hasSubmenu: index % 5 === 0
+}));
+
+let virtualizedSubmenuChildren = Array.from({length: 100}, (_, index) => ({
+  id: `child-${index}`,
+  name: `Child ${index + 1}`
+}));
+
+export const VirtualizedWithSubmenus: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="virtualized menu with submenus">
+        <NewIcon />
+      </Button>
+      <Menu isVirtualized styles={style({width: 240})} items={virtualizedSubmenuItems}>
+        {item => {
+          let menuItem = (
+            <MenuItem id={item.hasSubmenu ? `${item.id}-trigger` : item.id} textValue={item.name}>
+              <Text slot="label">{item.name}</Text>
+            </MenuItem>
+          );
+          if (!item.hasSubmenu) {
+            return menuItem;
+          }
+          return (
+            <SubmenuTrigger>
+              {menuItem}
+              <Menu styles={style({width: 240})} items={virtualizedSubmenuChildren}>
+                {child => <MenuItem id={`${item.id}-${child.id}`}>{child.name}</MenuItem>}
+              </Menu>
+            </SubmenuTrigger>
+          );
+        }}
+      </Menu>
+    </MenuTrigger>
+  )
+};
