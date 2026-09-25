@@ -11,8 +11,11 @@
  */
 
 import {expect, it} from 'vitest';
-import React from 'react';
+import {hydrateRoot} from 'react-dom/client';
+import React, {StrictMode, useEffect} from 'react';
 import {render} from 'vitest-browser-react';
+import {renderToString} from 'react-dom/server.browser';
+import {SelectionIndicator} from '../src/SelectionIndicator';
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 import {User} from '@react-aria/test-utils';
 
@@ -30,6 +33,82 @@ function TabsExample() {
     </Tabs>
   );
 }
+
+it.each([
+  {strict: false, selectedKey: 'one'},
+  {strict: false, selectedKey: 'five'},
+  {strict: true, selectedKey: 'one'},
+  {strict: true, selectedKey: 'five'}
+])(
+  'aligns the indicator after hydration (strict: $strict, selected: $selectedKey)',
+  async ({strict, selectedKey}) => {
+    let hydrated = false;
+    function HydrationMarker() {
+      useEffect(() => {
+        hydrated = true;
+      }, []);
+      return null;
+    }
+    let keys = ['one', 'two', 'three', 'four', 'five'];
+    let tree = (
+      <Tabs defaultSelectedKey={selectedKey}>
+        <HydrationMarker />
+        <TabList aria-label="Hydrated tabs" style={{display: 'flex', gap: 12}}>
+          {keys.map(key => (
+            <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
+              <SelectionIndicator
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  transitionProperty: 'translate, width, height',
+                  transitionDuration: '200ms'
+                }}
+              />
+              {key}
+            </Tab>
+          ))}
+        </TabList>
+        {keys.map(key => (
+          <TabPanel key={key} id={key}>
+            {key}
+          </TabPanel>
+        ))}
+      </Tabs>
+    );
+    if (strict) {
+      tree = <StrictMode>{tree}</StrictMode>;
+    }
+    let container = document.createElement('div');
+    document.body.appendChild(container);
+    container.innerHTML = renderToString(tree);
+    let root: ReturnType<typeof hydrateRoot> | undefined;
+    try {
+      root = hydrateRoot(container, tree);
+      await expect.poll(() => hydrated).toBe(true);
+      await expect
+        .poll(() => container.querySelector('[role="tab"][aria-selected="true"]')?.textContent)
+        .toBe(selectedKey);
+      let selectedTab = container.querySelector(
+        '[role="tab"][aria-selected="true"]'
+      ) as HTMLElement;
+      let indicator = selectedTab.querySelector('.react-aria-SelectionIndicator') as HTMLElement;
+      expect(selectedTab.textContent).toBe(selectedKey);
+      await expect.poll(() => indicator.style.translate).toBe('');
+      await expect
+        .poll(() =>
+          Math.abs(
+            indicator.getBoundingClientRect().left - selectedTab.getBoundingClientRect().left
+          )
+        )
+        .toBeLessThan(1);
+      expect(indicator.style.width).toBe('');
+      expect(indicator.style.height).toBe('');
+    } finally {
+      root?.unmount();
+      container.remove();
+    }
+  }
+);
 
 it.each`
   interactionType
