@@ -92,11 +92,6 @@ interface SideNavViewTransitions {
   header: string | null;
 }
 
-// A boundary resolves to 'none' for any transition type that isn't listed here. React skips such a
-// boundary before it flags the update as needing a view transition, so an update SideNav didn't
-// schedule — a route change, or the initial mount — never animates the nav. Collapsing the panel is
-// absent for the same reason: its contents are removed before the panel starts to narrow
-// so they don't reflow as it shrinks.
 const viewTransitions: SideNavViewTransitions = {
   item: {
     default: 'none',
@@ -104,15 +99,10 @@ const viewTransitions: SideNavViewTransitions = {
     [ITEM_COLLAPSE_TRANSITION]: sideNavCss['side-nav-item'],
     [ITEM_EXPAND_TRANSITION]: sideNavCss['side-nav-item']
   },
-  // Headers are named in plain CSS rather than through a boundary, so they can't opt out per type
-  // the way a row can. A name on its own animates nothing: an update that leaves a header where it
-  // was captures identical states and paints no differently, so an update SideNav didn't schedule
-  // still leaves the header alone.
   header: sideNavCss['side-nav-header']
 };
 
-// prefers-reduced-motion: A row's boundary is skipped rather than animated, and
-// a header goes unnamed so that it isn't captured at all.
+// for prefers-reduced-motion
 const noViewTransitions: SideNavViewTransitions = {item: 'none', header: null};
 
 const SideNavViewTransitionContext = createContext<SideNavViewTransitions>(noViewTransitions);
@@ -219,8 +209,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   let visibleExpandedKeys = isCollapsed ? emptySet : expandedKeys;
 
   // Expanding or collapsing an item moves every row below it and mounts or unmounts its children.
-  // Scheduling that as a transition lets the <ViewTransition> around each row slide the rows that
-  // move into place, and cross fade the ones that come and go.
+  // Scheduling that as a transition causes the <ViewTransition> around each row to animate.
   let toggleExpandedKeys = (keys: Set<Key>) => {
     startTransition(() => {
       addTransitionType(
@@ -657,12 +646,7 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
   return (
     <NavigationTreeHeader
       id={id}
-      // A row gets its boundary from React, but a header can't. A header is rendered from the
-      // collection rather than straight into the DOM, and the collection commits a render later than
-      // the update that scheduled the transition, so React has no name on it at the point the new
-      // state is captured. Naming it here instead doesn't depend on when it renders: the name is on
-      // it either way, so it's captured like any other row and SideNav.module.css can hold its fade
-      // back to the second half of the transition.
+      // For some reason I'm unable to use a ViewTransition component directly here. Not sure why
       style={header ? {viewTransitionName: `${id}-header`, viewTransitionClass: header} : undefined}
       className={style({
         position: 'relative',
@@ -758,7 +742,7 @@ const sidePanelStyle = style(
       default: '[width]',
       '@media (prefers-reduced-motion: reduce)': 'none'
     },
-    // Keep in sync with ANIMATION_DURATION.
+    // Keep in sync with ANIMATION_DURATION above.
     transitionDuration: 200,
     transitionTimingFunction: 'default'
   },
@@ -835,12 +819,11 @@ export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function S
       <div
         {...filteredProps}
         ref={domRef}
-        // Anything inside the panel that can't be in the layout before the panel starts to narrow
-        // is hidden from here. The panel renders straight into the DOM,
-        // while its contents come from a collection that commits a render cycle later.
+        // Allows any children to hide via css selector instead of the state.
+        // This can allow us to get ahead of the double render cycle for collections.
         data-side-panel-collapsed={contentCollapsed || undefined}
         // When collapsed, override the consumer's class-based (expanded) width with the fixed
-        // icon-rail width. The CSS width transition animates between the two.
+        // icon-rail width.
         style={{...UNSAFE_style, width: isCollapsed ? 'var(--collapsedWidth)' : undefined}}
         className={UNSAFE_className + sidePanelStyle(null, styles)}>
         <div
@@ -854,8 +837,6 @@ export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function S
           {children}
         </div>
         <div className={style({flexGrow: 0, flexShrink: 0, marginBottom: 4, marginTop: 4})}>
-          {/* The button follows the panel itself rather than its contents, so that it flips as soon
-           * as it is pressed rather than at the end of an expand. */}
           <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
         </div>
       </div>

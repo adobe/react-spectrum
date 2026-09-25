@@ -1158,7 +1158,6 @@ export const style = createTheme({
     transitionDelay: new ArbitraryProperty('transitionDelay', durationValue),
     transitionDuration: new ArbitraryProperty('transitionDuration', durationValue),
     transitionTimingFunction: timingFunction,
-    transitionBehavior: ['normal', 'allow-discrete'] as const,
     animation: new ArbitraryProperty<string>('animationName'),
     animationDuration: new ArbitraryProperty('animationDuration', durationValue),
     animationDelay: new ArbitraryProperty('animationDelay', durationValue),

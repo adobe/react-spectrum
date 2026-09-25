@@ -120,23 +120,19 @@ interface Item {
   icon?: typeof Folder;
   children?: Item[];
 }
-///- end collapse -///
 let items: Item[] = [
-  /*- begin highlight -*/
   {id: 1, title: 'Documents', type: 'directory', href: '/documents', icon: Files, children: [
-  /*- end highlight -*/
     {id: 2, title: 'Project', type: 'directory', href: '/documents/project', children: [
       {id: 3, title: 'Notes', type: 'file', href: '/notes'},
       {id: 4, title: 'Budget', type: 'file', href: '/budget'}
     ]}
   ]},
-  /*- begin highlight -*/
   {id: 5, title: 'Photos', type: 'directory', href: '/photos', icon: Images, children: [
-  /*- end highlight -*/
     {id: 6, title: 'Image 1', type: 'file', href: '/image-1'},
     {id: 7, title: 'Image 2', type: 'file', href: '/image-2'}
   ]}
 ];
+///- end collapse -///
 
 function CollapsibleSidePanel() {
   /*- begin highlight -*/
@@ -190,35 +186,19 @@ function CollapsibleSidePanel() {
 
 ## Animations
 
-`SidePanel` and [SideNav](SideNav) animate in two steps, and never at the same time. The panel's width animates with a CSS transition, so the rest of your page reflows along with it and no extra markup is required. Its contents animate separately, with a [view transition](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API): each `SideNavItem` row is wrapped in a [`<ViewTransition>`](https://react.dev/reference/react/ViewTransition) and each `SideNavHeader` is named in CSS, so rows slide to their new positions instead of jumping, and rows that come and go fade in and out.
+`SidePanel` and [SideNav](SideNav) animate themselves. The panel's width animates first, and its contents animate only once it has settled.
 
-The two are kept apart because a view transition animates a snapshot of an element towards its final geometry, which only reads well while the panel is standing still — a row that is also being resized ends up squashed or stretched against a layout that hasn't caught up. Labels are free to wrap while the panel is narrower than they are, too, so they can't be on screen during a width animation without reflowing everything below them. So collapsing empties the panel out first, in the same render that starts the width transition, and expanding fills it back in only once the panel has reached its full width.
+Because the contents wait for the width, the `isCollapsed` you read from `SidePanelContext` trails the panel itself while it is expanding.
 
-That leaves only one direction that animates its contents, plus item disclosure, which happens at a fixed width:
-
-<StaticTable
-  headers={['Transition type', 'Description']}
-  codeColumns={[0]}
-  rows={[
-    ['side-panel-expand', 'The panel filling back in, once it has finished widening.'],
-    ['side-nav-item-collapse / side-nav-item-expand', "A single item's children being disclosed or hidden."]
-  ]} />
-
-Expanding the panel puts section headers back into the layout, which pushes every row below them down, so a header holds its fade until the second half of the animation rather than appearing on top of the rows still sliding past it. When an individual item is disclosed, headers cross fade normally because they are only moving.
-
-Labels deliberately do not get their own `<ViewTransition>`. Naming a descendant would lift it out of its row's snapshot and animate it against the page rather than with its row, so it would drift independently of the row it belongs to.
+`AccountFooter` in the example below reads `isCollapsed` from `SidePanelContext` and hides its name with `display: none` while the panel is collapsed.
 
 <StaticTable
   headers={['Context value', 'Description']}
   codeColumns={[0]}
   rows={[
     ["isCollapsed", "Whether the panel's contents are collapsed. This trails the panel itself while it is expanding, since its contents are only brought back once it has finished widening."],
-    ['setCollapsed', 'Collapses or expands the panel. Useful for building your own toggle, or for expanding the panel when a collapsed control is activated.']
+    ['setCollapsed', 'Collapses or expands the panel. Useful for building your own expand and collapse trigger.']
   ]} />
-
-Read `isCollapsed` from `SidePanelContext` to render custom content you place inside the panel in its collapsed and expanded states. Because it trails the width, content that is only rendered when expanded is never on screen while the panel is changing size, so it can't reflow as the panel narrows.
-
-Both steps respect `prefers-reduced-motion` — the width transition and the view transitions are disabled when it is set.
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
 "use client";
@@ -285,8 +265,6 @@ let items: Item[] = [
   )}
 </SidePanelApp>
 ```
-
-`AccountFooter` reads `isCollapsed` from `SidePanelContext` and simply hides its name with `display: none` while the panel is collapsed. It needs no transition of its own: because `isCollapsed` trails the width when expanding, the name is only ever added or removed while the panel is standing still.
 
 ## API
 

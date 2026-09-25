@@ -560,9 +560,6 @@ const SidePanelExtraControls = () => {
         flexGrow: 0,
         gap: 8,
         padding: 4,
-        // Left aligned in both states, so that the contents sit at the same offset whatever the
-        // panel's width is. Centering them in the collapsed rail would drag them across the panel
-        // as it widens, since the centre moves but the rows on either side of it don't.
         alignItems: {
           default: 'center',
           isCollapsed: 'start'
