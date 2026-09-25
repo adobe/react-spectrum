@@ -1,0 +1,32 @@
+{
+  "name": "tsdiff",
+  "version": "0.1.0",
+  "description": "Compare the public TypeScript API of a package or monorepo across two builds.",
+  "license": "Apache-2.0",
+  "private": true,
+  "bin": "bin/tsdiff",
+  "files": [
+    "bin",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "cargo build --release",
+    "test": "cargo test",
+    "build:npm": "node scripts/build-npm-packages.mjs"
+  },
+  "dependencies": {
+    "@parcel/config-default": "^2.16.3",
+    "@parcel/parcel3": "^0.0.6",
+    "@parcel/transformer-ts-doc": "^0.0.2"
+  }
+}
