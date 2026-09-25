@@ -28,8 +28,8 @@ import {
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {ListState, useListState} from '../list/useListState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
 
 export type SelectionMode = 'single' | 'multiple';
 export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
@@ -120,6 +120,9 @@ export interface SelectState<T, M extends SelectionMode = 'single'>
   /** Sets the select value. */
   setValue(value: Key | readonly Key[] | null): void;
 
+  /** Registers a listener that is called when the user changes the select value. */
+  subscribeToValueChange(listener: (value: ChangeValueType<M>) => void): () => void;
+
   /**
    * The value of the first selected item.
    *
@@ -177,6 +180,16 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
     selectionMode === 'single' && Array.isArray(controlledValue)
       ? controlledValue[0]
       : controlledValue;
+  let valueChangeListeners = useRef(new Set<(value: ChangeValueType<M>) => void>());
+  let subscribeToValueChange = useCallback((listener: (value: ChangeValueType<M>) => void) => {
+    valueChangeListeners.current.add(listener);
+    return () => valueChangeListeners.current.delete(listener);
+  }, []);
+  let emitValueChange = useCallback((value: ChangeValueType<M>) => {
+    for (let listener of valueChangeListeners.current) {
+      listener(value);
+    }
+  }, []);
   let setValue = (value: Key | Key[] | null) => {
     if (selectionMode === 'single') {
       let key = Array.isArray(value) ? (value[0] ?? null) : value;
@@ -212,8 +225,11 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
       if (selectionMode === 'single') {
         let key = keys.values().next().value ?? null;
         setValue(key);
+        emitValueChange(key as ChangeValueType<M>);
       } else {
-        setValue([...keys]);
+        let value = [...keys];
+        setValue(value);
+        emitValueChange(value as ChangeValueType<M>);
       }
       if (shouldCloseOnSelect) {
         triggerState.close();
@@ -245,6 +261,7 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
     value: displayValue as ValueType<M>,
     defaultValue: defaultValue ?? (initialValue as ValueType<M>),
     setValue,
+    subscribeToValueChange,
     selectedKey,
     setSelectedKey: setValue,
     selectedItem: selectedItems[0] ?? null,
