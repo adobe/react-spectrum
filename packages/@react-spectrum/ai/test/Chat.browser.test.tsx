@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection} from 'react-aria-components';
-import {Chat, Thread, ThreadItem, ThreadLoadMoreItem, ThreadScrollButton} from '../src/Chat';
+import {Chat, Thread, ThreadItem, ThreadLoadMoreItem} from '../src/Chat';
+import {Collection} from 'react-aria-components';
 import {describe, expect, it, vi} from 'vitest';
 import React, {useCallback, useRef, useState} from 'react';
 import {render} from 'vitest-browser-react';
@@ -28,7 +28,7 @@ let scrollThreadStyles = style({
   rowGap: 16
 });
 
-// Applied to Chat when it must be the flex container for ScrollButton + Thread.
+// Applied to Chat when it must be the flex container for Thread.
 let chatFlexStyles = style({
   display: 'flex',
   flexDirection: 'column',
@@ -200,11 +200,13 @@ describeOrSkip('Chat browser', () => {
       ];
 
       let {container} = await render(
-        <Chat>
-          <Thread aria-label="Chat" items={messages}>
-            {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
-          </Thread>
-        </Chat>
+        <div style={{width: 600, height: 400, display: 'flex', flexDirection: 'column'}}>
+          <Chat>
+            <Thread aria-label="Chat" items={messages}>
+              {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
+            </Thread>
+          </Chat>
+        </div>
       );
 
       let gridlist = container.querySelector('[role=grid]') as HTMLElement;
@@ -400,11 +402,6 @@ describeOrSkip('Chat browser', () => {
             overflow: 'hidden'
           }}>
           <Chat styles={chatFlexStyles}>
-            <ThreadScrollButton>
-              <Button slot="scroll" data-testid="scroll-btn">
-                Scroll to bottom
-              </Button>
-            </ThreadScrollButton>
             <Thread items={messages} aria-label="Chat" styles={scrollThreadStyles}>
               {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
@@ -423,7 +420,7 @@ describeOrSkip('Chat browser', () => {
       );
 
       // Initially at the bottom — scroll button should be hidden.
-      expect(container.querySelector('[data-testid="scroll-btn"]')).not.toBeInTheDocument();
+      expect(container.querySelector('[aria-label="Scroll to bottom"]')).not.toBeInTheDocument();
 
       // Scroll to top (away from newest messages at bottom).
       grid.scrollTop = 0;
@@ -432,7 +429,7 @@ describeOrSkip('Chat browser', () => {
       // Scroll button should now appear.
       await vi.waitFor(
         () => {
-          expect(container.querySelector('[data-testid="scroll-btn"]')).toBeInTheDocument();
+          expect(container.querySelector('[aria-label="Scroll to bottom"]')).toBeInTheDocument();
         },
         {timeout: 2000}
       );
@@ -454,11 +451,6 @@ describeOrSkip('Chat browser', () => {
             overflow: 'hidden'
           }}>
           <Chat styles={chatFlexStyles}>
-            <ThreadScrollButton>
-              <Button slot="scroll" data-testid="scroll-btn">
-                Scroll to bottom
-              </Button>
-            </ThreadScrollButton>
             <Thread items={messages} aria-label="Chat" styles={scrollThreadStyles}>
               {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
@@ -477,7 +469,7 @@ describeOrSkip('Chat browser', () => {
       );
 
       // No manual scroll — still near bottom. Button should stay hidden.
-      expect(container.querySelector('[data-testid="scroll-btn"]')).not.toBeInTheDocument();
+      expect(container.querySelector('[aria-label="Scroll to bottom"]')).not.toBeInTheDocument();
     });
 
     it('scrolls back to the bottom when clicked', async () => {
@@ -496,11 +488,6 @@ describeOrSkip('Chat browser', () => {
             overflow: 'hidden'
           }}>
           <Chat styles={chatFlexStyles}>
-            <ThreadScrollButton>
-              <Button slot="scroll" data-testid="scroll-btn">
-                Scroll to bottom
-              </Button>
-            </ThreadScrollButton>
             <Thread items={messages} aria-label="Chat" styles={scrollThreadStyles}>
               {(item: Message) => <ThreadItem textValue={item.content}>{item.content}</ThreadItem>}
             </Thread>
@@ -524,17 +511,21 @@ describeOrSkip('Chat browser', () => {
 
       await vi.waitFor(
         () => {
-          expect(container.querySelector('[data-testid="scroll-btn"]')).toBeInTheDocument();
+          expect(container.querySelector('[aria-label="Scroll to bottom"]')).toBeInTheDocument();
         },
         {timeout: 2000}
       );
 
       // Click → scrolls back to bottom → button disappears.
-      await userEvent.click(container.querySelector('[data-testid="scroll-btn"]') as HTMLElement);
+      await userEvent.click(
+        container.querySelector('[aria-label="Scroll to bottom"]') as HTMLElement
+      );
 
       await vi.waitFor(
         () => {
-          expect(container.querySelector('[data-testid="scroll-btn"]')).not.toBeInTheDocument();
+          expect(
+            container.querySelector('[aria-label="Scroll to bottom"]')
+          ).not.toBeInTheDocument();
         },
         {timeout: 3000}
       );
