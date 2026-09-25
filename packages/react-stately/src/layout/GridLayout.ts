@@ -11,6 +11,7 @@
  */
 
 import {DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
+import {getChildNodes} from '../collections/getChildNodes';
 import {InvalidationContext} from '../virtualizer/types';
 import {Layout} from '../virtualizer/Layout';
 import {LayoutInfo} from '../virtualizer/LayoutInfo';
@@ -70,6 +71,17 @@ export interface GridLayoutOptions {
    */
   loaderHeight?: number;
   /**
+   * The fixed height of a section header in px. Section headers are laid out as
+   * full width rows interleaved with the grid items.
+   *
+   * @default 48
+   */
+  headingSize?: number;
+  /**
+   * The estimated height of a section header in px, when heading sizes are variable.
+   */
+  estimatedHeadingSize?: number;
+  /**
    * The layout direction. When `'rtl'`, drop target positions (`'before'`/`'after'`)
    * are computed correctly for right-to-left locales in multi-column grids.
    *
@@ -88,6 +100,8 @@ const DEFAULT_OPTIONS = {
   dropIndicatorThickness: 2,
   loaderHeight: 48
 };
+
+const DEFAULT_HEADING_SIZE = 48;
 
 /**
  * GridLayout is a virtualizer Layout implementation
@@ -123,6 +137,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
       ) ||
       newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace ||
       newOptions.loaderHeight !== oldOptions.loaderHeight ||
+      newOptions.headingSize !== oldOptions.headingSize ||
+      newOptions.estimatedHeadingSize !== oldOptions.estimatedHeadingSize ||
       newOptions.direction !== oldOptions.direction
     );
   }
@@ -137,6 +153,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
       maxColumns = DEFAULT_OPTIONS.maxColumns,
       dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness,
       loaderHeight = DEFAULT_OPTIONS.loaderHeight,
+      headingSize = null,
+      estimatedHeadingSize = null,
       direction = 'ltr' as const
     } = invalidationContext.layoutOptions || {};
     this.dropIndicatorThickness = dropIndicatorThickness;
@@ -178,74 +196,25 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
       (virtualizerWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2
     );
 
-    // If there is a skeleton loader within the last 2 items in the collection, increment the collection size
-    // so that an additional row is added for the skeletons.
     let collection = this.virtualizer!.collection;
-    let collectionSize = collection.size;
-    let lastKey = collection.getLastKey();
-    for (let i = 0; i < 2 && lastKey != null; i++) {
-      let item = collection.getItem(lastKey);
-      if (item?.type === 'skeleton') {
-        collectionSize++;
-        break;
-      }
-      lastKey = collection.getKeyBefore(lastKey);
-    }
-
-    let rows = Math.ceil(collectionSize / numColumns);
-    let iterator = collection[Symbol.iterator]();
-    let y = rows > 0 ? minSpace.height : 0;
-    let newLayoutInfos = new Map();
+    let y = collection.size > 0 ? minSpace.height : 0;
+    let newLayoutInfos = new Map<Key, LayoutInfo>();
     let skeleton: Node<T> | null = null;
     let skeletonCount = 0;
-    for (let row = 0; row < rows; row++) {
+
+    // The cells in the current (unfinished) row of the grid.
+    let rowLayoutInfos: LayoutInfo[] = [];
+    // The number of grid slots used in the current row. This can be greater than
+    // rowLayoutInfos.length because loaders consume a slot without producing a cell.
+    let colIndex = 0;
+
+    let finishRow = () => {
+      if (colIndex === 0) {
+        return;
+      }
+
       let maxHeight = 0;
-      let rowLayoutInfos: LayoutInfo[] = [];
-      for (let col = 0; col < numColumns; col++) {
-        // Repeat skeleton until the end of the current row.
-        let node = skeleton || iterator.next().value;
-        if (!node) {
-          break;
-        }
-
-        // We will add the loader after the skeletons so skip here
-        if (node.type === 'loader') {
-          continue;
-        }
-
-        if (node.type === 'skeleton') {
-          skeleton = node;
-        }
-
-        let key = skeleton ? `${skeleton.key}-${skeletonCount++}` : node.key;
-        let oldLayoutInfo = this.layoutInfos.get(key);
-        let content = node;
-        if (skeleton) {
-          content =
-            oldLayoutInfo && oldLayoutInfo.content.key === key
-              ? oldLayoutInfo.content
-              : {...skeleton, key};
-        }
-        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing) + this.margin;
-        let height = itemHeight;
-        let estimatedSize = !preserveAspectRatio;
-        if (oldLayoutInfo && estimatedSize) {
-          height = oldLayoutInfo.rect.height;
-          estimatedSize =
-            invalidationContext.layoutOptionsChanged ||
-            invalidationContext.sizeChanged ||
-            oldLayoutInfo.estimatedSize ||
-            oldLayoutInfo.content !== content;
-        }
-
-        let rect = new Rect(x, y, itemWidth, height);
-        let layoutInfo = new LayoutInfo(node.type, key, rect);
-        layoutInfo.estimatedSize = estimatedSize;
-        layoutInfo.allowOverflow = true;
-        layoutInfo.content = content;
-        newLayoutInfos.set(key, layoutInfo);
-        rowLayoutInfos.push(layoutInfo);
-
+      for (let layoutInfo of rowLayoutInfos) {
         maxHeight = Math.max(maxHeight, layoutInfo.rect.height);
       }
 
@@ -254,11 +223,149 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
       }
 
       y += maxHeight + minSpace.height;
+      rowLayoutInfos = [];
+      colIndex = 0;
+    };
 
-      // Keep adding skeleton rows until we fill the viewport
-      if (skeleton && row === rows - 1 && y < this.virtualizer!.size.height) {
-        rows++;
+    let layoutCell = (node: Node<T>, parentKey: Key | null) => {
+      let key = skeleton ? `${skeleton.key}-${skeletonCount++}` : node.key;
+      let oldLayoutInfo = this.layoutInfos.get(key);
+      let content = node;
+      if (skeleton) {
+        content =
+          oldLayoutInfo && oldLayoutInfo.content.key === key
+            ? oldLayoutInfo.content
+            : {...skeleton, key};
       }
+      let x = horizontalSpacing + colIndex * (itemWidth + horizontalSpacing) + this.margin;
+      let height = itemHeight;
+      let estimatedSize = !preserveAspectRatio;
+      if (oldLayoutInfo && estimatedSize) {
+        height = oldLayoutInfo.rect.height;
+        estimatedSize =
+          invalidationContext.layoutOptionsChanged ||
+          invalidationContext.sizeChanged ||
+          oldLayoutInfo.estimatedSize ||
+          oldLayoutInfo.content !== content;
+      }
+
+      let rect = new Rect(x, y, itemWidth, height);
+      let layoutInfo = new LayoutInfo(node.type, key, rect);
+      layoutInfo.estimatedSize = estimatedSize;
+      layoutInfo.allowOverflow = true;
+      layoutInfo.content = content;
+      layoutInfo.parentKey = parentKey;
+      newLayoutInfos.set(key, layoutInfo);
+      rowLayoutInfos.push(layoutInfo);
+      colIndex++;
+      if (colIndex === numColumns) {
+        finishRow();
+      }
+    };
+
+    // Section headers are laid out as full width rows, aligned with the grid content.
+    let headerX = this.margin + horizontalSpacing;
+    let headerWidth = virtualizerWidth - headerX * 2;
+
+    let layoutHeader = (node: Node<T>, parentKey: Key | null) => {
+      finishRow();
+      let height = headingSize;
+      let estimatedSize = false;
+      if (height == null) {
+        // If no explicit height is available, reuse the last measured height,
+        // or use an estimated height until the actual size is measured.
+        let oldLayoutInfo = this.layoutInfos.get(node.key);
+        if (oldLayoutInfo) {
+          height = oldLayoutInfo.rect.height;
+          estimatedSize =
+            invalidationContext.layoutOptionsChanged ||
+            invalidationContext.sizeChanged ||
+            oldLayoutInfo.estimatedSize ||
+            oldLayoutInfo.content !== node;
+        } else {
+          height = node.rendered ? (estimatedHeadingSize ?? DEFAULT_HEADING_SIZE) : 0;
+          estimatedSize = true;
+        }
+      }
+
+      let rect = new Rect(headerX, y, headerWidth, height);
+      let layoutInfo = new LayoutInfo('header', node.key, rect);
+      layoutInfo.estimatedSize = estimatedSize;
+      layoutInfo.allowOverflow = true;
+      layoutInfo.content = node;
+      layoutInfo.parentKey = parentKey;
+      newLayoutInfos.set(node.key, layoutInfo);
+      y = rect.maxY + (height > 0 ? minSpace.height : 0);
+    };
+
+    let layoutLoader = (node: Node<T>, parentKey: Key | null) => {
+      finishRow();
+      let height = node.props.isLoading ? loaderHeight : 0;
+      let rect = new Rect(headerX, y, headerWidth, height);
+      let layoutInfo = new LayoutInfo('loader', node.key, rect);
+      layoutInfo.parentKey = parentKey;
+      newLayoutInfos.set(node.key, layoutInfo);
+      if (height > 0) {
+        y = rect.maxY + minSpace.height;
+      }
+    };
+
+    let layoutSection = (node: Node<T>) => {
+      finishRow();
+      let sectionY = y;
+      let rect = new Rect(0, sectionY, virtualizerWidth, 0);
+      let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+      layoutInfo.allowOverflow = true;
+      // Add the section before its children so the map stays in topological order.
+      newLayoutInfos.set(node.key, layoutInfo);
+
+      for (let child of getChildNodes(node, collection)) {
+        switch (child.type) {
+          case 'header':
+            layoutHeader(child, node.key);
+            break;
+          case 'loader':
+            layoutLoader(child, node.key);
+            break;
+          default:
+            layoutCell(child, node.key);
+        }
+      }
+
+      finishRow();
+
+      // Exclude the trailing gap after the last row from the section height.
+      rect.height = Math.max(0, y - minSpace.height - sectionY);
+    };
+
+    for (let node of collection) {
+      if (node.type === 'section') {
+        layoutSection(node);
+      } else if (node.type === 'header') {
+        layoutHeader(node, null);
+      } else if (node.type === 'loader') {
+        // The loader is added after all other items, but still consumes a grid slot.
+        colIndex++;
+        if (colIndex === numColumns) {
+          finishRow();
+        }
+      } else if (node.type === 'skeleton') {
+        // Repeat the skeleton in every remaining cell, stopping below.
+        skeleton = node;
+        break;
+      } else {
+        layoutCell(node, null);
+      }
+    }
+
+    if (skeleton) {
+      // Fill the remainder of the current row with skeletons, and keep
+      // adding skeleton rows until we fill the viewport.
+      do {
+        layoutCell(skeleton, null);
+      } while (colIndex !== 0 || y < this.virtualizer!.size.height);
+    } else {
+      finishRow();
     }
 
     // Always add the loader sentinel if present in the collection so we can make sure it is never virtualized out.
@@ -290,12 +397,22 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
 
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
+    // Layout infos within a section are always preceded by their section in the map,
+    // so the result stays in topological order (parents before children).
+    let visibleSections = new Set<Key>();
     for (let layoutInfo of this.layoutInfos.values()) {
+      let isInVisibleSection =
+        layoutInfo.parentKey == null || visibleSections.has(layoutInfo.parentKey);
       if (
         layoutInfo.rect.intersects(rect) ||
         this.virtualizer!.isPersistedKey(layoutInfo.key) ||
-        layoutInfo.type === 'loader'
+        // Loaders and section headers are always visible within their section,
+        // e.g. to support load more sentinels and sticky headers.
+        ((layoutInfo.type === 'loader' || layoutInfo.type === 'header') && isInVisibleSection)
       ) {
+        if (layoutInfo.type === 'section') {
+          visibleSections.add(layoutInfo.key);
+        }
         layoutInfos.push(layoutInfo);
       }
     }
@@ -350,8 +467,13 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
       let candidates = this.getVisibleLayoutInfos(searchRect);
       let minDistance = Infinity;
       for (let candidate of candidates) {
-        // Ignore items outside the search rect, e.g. persisted keys.
-        if (!candidate.rect.intersects(searchRect)) {
+        // Ignore items outside the search rect, e.g. persisted keys,
+        // and section/header rows which are not valid drop targets.
+        if (
+          !candidate.rect.intersects(searchRect) ||
+          candidate.type === 'section' ||
+          candidate.type === 'header'
+        ) {
           continue;
         }
 
@@ -368,8 +490,13 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
       let candidates = this.getVisibleLayoutInfos(searchRect);
       let minDistance = Infinity;
       for (let candidate of candidates) {
-        // Ignore items outside the search rect, e.g. persisted keys.
-        if (!candidate.rect.intersects(searchRect)) {
+        // Ignore items outside the search rect, e.g. persisted keys,
+        // and section/header rows which are not valid drop targets.
+        if (
+          !candidate.rect.intersects(searchRect) ||
+          candidate.type === 'section' ||
+          candidate.type === 'header'
+        ) {
           continue;
         }
 
