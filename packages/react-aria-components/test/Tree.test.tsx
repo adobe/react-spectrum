@@ -1595,6 +1595,274 @@ describe('Tree', () => {
     });
   });
 
+  describe('focus on items inside collapsed items', () => {
+    let CollapsibleItem = props => (
+      <TreeItem id={props.id} textValue={props.id}>
+        <TreeItemContent>
+          {({hasChildItems}) => (
+            <>
+              {hasChildItems && <Button slot="chevron">⏵</Button>}
+              <Text>{props.id}</Text>
+            </>
+          )}
+        </TreeItemContent>
+        {props.children}
+      </TreeItem>
+    );
+
+    let CollapsibleTree = props => (
+      <>
+        <button>Before</button>
+        <Tree
+          aria-label="test tree"
+          selectionMode="single"
+          onSelectionChange={onSelectionChange}
+          {...props}>
+          <CollapsibleItem id="p1">
+            <CollapsibleItem id="child">
+              <CollapsibleItem id="grandchild" />
+            </CollapsibleItem>
+          </CollapsibleItem>
+          <CollapsibleItem id="p2" />
+          <CollapsibleItem id="p3" />
+        </Tree>
+        <button>After</button>
+      </>
+    );
+
+    let expectSingleTabStop = (tree: HTMLElement, row: HTMLElement) => {
+      expect(tree).toHaveAttribute('tabindex', '-1');
+      for (let r of within(tree).getAllByRole('row')) {
+        expect(r).toHaveAttribute('tabindex', r === row ? '0' : '-1');
+      }
+    };
+
+    it('should autoFocus the closest visible ancestor of a selected item inside a collapsed item', async () => {
+      let {getByRole, getAllByRole} = render(
+        <CollapsibleTree autoFocus defaultSelectedKeys={['child']} />
+      );
+      let tree = getByRole('treegrid');
+      let rows = getAllByRole('row');
+      expect(rows.map(row => row.getAttribute('data-key'))).toEqual(['p1', 'p2', 'p3']);
+      expect(document.activeElement).toBe(rows[0]);
+      expectSingleTabStop(tree, rows[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[0]);
+
+      await user.keyboard('{ArrowRight}');
+      rows = getAllByRole('row');
+      expect(rows[1]).toHaveAttribute('data-key', 'child');
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should focus the closest visible ancestor of a selected item when tabbing into the tree', async () => {
+      let {getByRole, getAllByRole, getByText} = render(
+        <CollapsibleTree defaultSelectedKeys={['child']} />
+      );
+      let tree = getByRole('treegrid');
+      let rows = getAllByRole('row');
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      expectSingleTabStop(tree, rows[0]);
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByText('After'));
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(rows[0]);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should focus the closest visible ancestor when several levels are collapsed', () => {
+      let {getByRole, getAllByRole} = render(
+        <CollapsibleTree
+          autoFocus
+          defaultSelectedKeys={['grandchild']}
+          defaultExpandedKeys={['p1']}
+        />
+      );
+      let rows = getAllByRole('row');
+      expect(rows.map(row => row.getAttribute('data-key'))).toEqual(['p1', 'child', 'p2', 'p3']);
+      expect(document.activeElement).toBe(rows[1]);
+      expectSingleTabStop(getByRole('treegrid'), rows[1]);
+    });
+
+    it('should focus the tree when the closest visible ancestor is disabled', async () => {
+      let {getByRole, getAllByRole} = render(
+        <CollapsibleTree autoFocus defaultSelectedKeys={['child']} disabledKeys={['p1']} />
+      );
+      let tree = getByRole('treegrid');
+      expect(document.activeElement).toBe(tree);
+      expect(tree).toHaveAttribute('tabindex', '0');
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getAllByRole('row')[1]);
+    });
+
+    it('should move focus to the closest visible ancestor when the focused item is collapsed externally', async () => {
+      function ControlledTree() {
+        let [expandedKeys, setExpandedKeys] = React.useState(new Set<any>(['p1']));
+        return (
+          <>
+            <CollapsibleTree
+              defaultSelectedKeys={['child']}
+              expandedKeys={expandedKeys}
+              onExpandedChange={setExpandedKeys}
+            />
+            <button onClick={() => setExpandedKeys(new Set())}>Collapse all</button>
+          </>
+        );
+      }
+
+      let {getByRole, getAllByRole, getByText} = render(<ControlledTree />);
+      let tree = getByRole('treegrid');
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(getAllByRole('row')[1]);
+      expect(document.activeElement).toHaveAttribute('data-key', 'child');
+
+      await user.click(getByText('Collapse all'));
+      let rows = getAllByRole('row');
+      expect(rows.map(row => row.getAttribute('data-key'))).toEqual(['p1', 'p2', 'p3']);
+      expectSingleTabStop(tree, rows[0]);
+
+      await user.tab({shift: true});
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(rows[0]);
+
+      await user.keyboard('{ArrowRight}');
+      expect(getAllByRole('row')[1]).toHaveAttribute('aria-selected', 'true');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    describe('virtualized', () => {
+      let clientWidth, clientHeight;
+      let items = Array.from({length: 30}, (_, i) => ({
+        id: `item-${i}`,
+        childItems: i === 20 ? [{id: 'item-20-child', childItems: []}] : []
+      }));
+      let renderItem = item => (
+        <CollapsibleItem id={item.id}>
+          <Collection items={item.childItems}>{renderItem}</Collection>
+        </CollapsibleItem>
+      );
+
+      beforeAll(() => {
+        clientWidth = jest
+          .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+          .mockImplementation(() => 100);
+        clientHeight = jest
+          .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+          .mockImplementation(() => 100);
+      });
+
+      afterAll(function () {
+        clientWidth.mockReset();
+        clientHeight.mockReset();
+      });
+
+      it.each`
+        selectedKey        | focusedKey
+        ${'item-25'}       | ${'item-25'}
+        ${'item-20-child'} | ${'item-20'}
+      `(
+        'should autoFocus $focusedKey when $selectedKey is selected and out of view',
+        ({selectedKey, focusedKey}) => {
+          let {getByRole} = render(
+            <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
+              <Tree
+                aria-label="test tree"
+                autoFocus
+                selectionMode="single"
+                defaultSelectedKeys={[selectedKey]}
+                items={items}>
+                {renderItem}
+              </Tree>
+            </Virtualizer>
+          );
+          expect(document.activeElement).toHaveAttribute('data-key', focusedKey);
+          expect(getByRole('treegrid')).toHaveAttribute('tabindex', '-1');
+        }
+      );
+    });
+
+    // React 16 warns when the cancelled drag updates the unmounted drag source (#10599).
+    (parseInt(React.version, 10) >= 17 ? it : it.skip)(
+      'should keep a visible tab stop when the drag source is collapsed during a keyboard drag',
+      async () => {
+        function MovingTree() {
+          let tree = useTreeData<any>({
+            initialItems: rows,
+            getKey: item => item.id,
+            getChildren: item => item.childItems ?? []
+          });
+          let {dragAndDropHooks} = useDragAndDrop({
+            getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
+            getAllowedDropOperations: () => ['move'],
+            onMove: () => {}
+          });
+          let renderItem = item => (
+            <TreeItem id={item.key} textValue={item.value.name}>
+              <TreeItemContent>
+                {({hasChildItems}) => (
+                  <>
+                    <Button slot="drag">≡</Button>
+                    {hasChildItems && <Button slot="chevron">⏵</Button>}
+                    <Text>{item.value.name}</Text>
+                  </>
+                )}
+              </TreeItemContent>
+              <Collection items={item.children ?? []}>{renderItem}</Collection>
+            </TreeItem>
+          );
+          return (
+            <Tree
+              aria-label="Movable tree"
+              items={tree.items}
+              defaultExpandedKeys={['projects', 'reports']}
+              dragAndDropHooks={dragAndDropHooks}>
+              {renderItem}
+            </Tree>
+          );
+        }
+
+        let {getByRole, getAllByRole} = render(<MovingTree />);
+
+        await user.tab();
+        await user.keyboard('{ArrowDown}{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Drag Project 1'}));
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        for (
+          let i = 0;
+          i < 8 && document.activeElement?.getAttribute('aria-label') !== 'Drop on Projects';
+          i++
+        ) {
+          await user.keyboard('{ArrowUp}');
+        }
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Projects');
+
+        await user.keyboard('{ArrowLeft}');
+        act(() => jest.runAllTimers());
+        await user.keyboard('{Escape}');
+        act(() => jest.runAllTimers());
+
+        let tree = getByRole('treegrid');
+        let projects = getAllByRole('row').find(
+          row => row.getAttribute('data-key') === 'projects'
+        )!;
+        expect(projects).toHaveAttribute('aria-expanded', 'false');
+        expectSingleTabStop(tree, projects);
+      }
+    );
+  });
+
   describe('empty state', () => {
     it('should allow the user to tab to the empty tree', async () => {
       let {getAllByRole, getByRole} = render(
