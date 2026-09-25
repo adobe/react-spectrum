@@ -387,7 +387,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
   );
 }
 
-export interface ThreadScrollButtonProps {
+interface ThreadScrollButtonProps {
   children?: ReactNode;
 }
 
@@ -396,7 +396,7 @@ export interface ThreadScrollButtonProps {
 /**
  * A ThreadScrollButton displays a button to scroll to the bottom of a Chat thread.
  */
-export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
+function ThreadScrollButton({children}: ThreadScrollButtonProps) {
   let {isNearBottom, scrollToBottom, ...buttonProps} = useContext(ThreadScrollButtonContext);
   let ref = useRef<HTMLDivElement>(null);
   let isVisible = !isNearBottom;
