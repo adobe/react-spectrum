@@ -138,7 +138,7 @@ describeOrSkip('PromptField', () => {
         await user.click(screen.getByRole('textbox'));
         await user.keyboard('@');
       });
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
 
       await act(async () => {
         jest.advanceTimersByTime(500);

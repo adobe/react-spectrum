@@ -634,28 +634,40 @@ export const Basic: Story = {
   render: args => <BasicRender {...args} />
 };
 
-export const AsyncCompletions = () => (
-  <PromptField>
-    <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-      <PromptTokenField
-        menuWidth={150}
-        shouldAnimatePixelLoader
-        completionTrigger={/(?<=^|\s)[@/]/}
-        renderCompletions={async filterValue => {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          return renderCompletions(filterValue);
-        }}>
-        {token => (
-          <PromptToken token={token}>
-            {getIcon(token)}
-            {token.text}
-          </PromptToken>
-        )}
-      </PromptTokenField>
-      <PromptFieldSubmitButton />
-    </div>
-  </PromptField>
-);
+function AsyncCompletionsRender({delay}: {delay: number}) {
+  return (
+    <PromptField>
+      <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+        <PromptTokenField
+          menuWidth={150}
+          shouldAnimatePixelLoader
+          completionTrigger={/(?<=^|\s)[@/]/}
+          renderCompletions={async filterValue => {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return renderCompletions(filterValue);
+          }}>
+          {token => (
+            <PromptToken token={token}>
+              {getIcon(token)}
+              {token.text}
+            </PromptToken>
+          )}
+        </PromptTokenField>
+        <PromptFieldSubmitButton />
+      </div>
+    </PromptField>
+  );
+}
+
+export const AsyncCompletions: StoryObj<typeof AsyncCompletionsRender> = {
+  render: args => <AsyncCompletionsRender {...args} />,
+  args: {
+    delay: 1000
+  },
+  argTypes: {
+    delay: {control: 'number'}
+  }
+};
 
 export const CustomAIDisclaimer: Story = {
   render: args => (

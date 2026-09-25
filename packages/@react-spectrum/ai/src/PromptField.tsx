@@ -22,7 +22,6 @@ import {
   createContext,
   createRef,
   forwardRef,
-  Suspense,
   use,
   useCallback,
   useContext,
@@ -805,33 +804,15 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
   let {filterAnchor, items, isFocused, menuWidth} = props;
   let {inputRef, prompt} = useContext(PromptFieldContext);
 
-  let isPromise = items instanceof Promise;
-  // if not async then the user may have passed a static list of items
-  let staticItems = Array.isArray(items) ? items : null;
-
-  // now that the use() call is in the menu, we need to figure out if the promise gave us a empty array so we can close
-  // the popover if no results are returned
-  // however cant use use() here cuz we dont want to suspend the popover because we want the child menu
-  // to update and render a loading spinner
-  let [emptyItems, setEmptyItems] = useState<typeof items>(null);
-  useEffect(() => {
-    if (items instanceof Promise) {
-      let cancelled = false;
-      items.then(resolved => {
-        if (!cancelled && (resolved == null || resolved.length === 0)) {
-          setEmptyItems(items);
-        }
-      });
-      return () => {
-        cancelled = true;
-      };
-    }
-  }, [items]);
-
+  let resolvedItems = items instanceof Promise ? use(items) : items;
   let isOpen =
-    isFocused &&
-    filterAnchor != null &&
-    ((isPromise && items !== emptyItems) || (staticItems != null && staticItems.length > 0));
+    isFocused && filterAnchor != null && resolvedItems != null && resolvedItems.length > 0;
+
+  // Cache items so that popover content doesn't flicker to empty while animating out
+  let [menuItems, setMenuItems] = useState(resolvedItems);
+  if (resolvedItems !== menuItems && resolvedItems != null && resolvedItems.length > 0) {
+    setMenuItems(resolvedItems);
+  }
 
   let key = 'popover';
   if (filterAnchor) {
@@ -860,28 +841,11 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       getTargetRect={target => {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
-      <Suspense fallback={<Menu loadingState="loading">{null}</Menu>}>
-        <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
-          <PromptCompletionMenu items={items} />
-        </PromptCompletionAnchorContext.Provider>
-      </Suspense>
+      <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
+        <Menu isVirtualized>{menuItems}</Menu>
+      </PromptCompletionAnchorContext.Provider>
     </Popover>
   );
-}
-
-function PromptCompletionMenu(props: {
-  items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
-}) {
-  let {items} = props;
-  let resolvedItems = items instanceof Promise ? use(items) : items;
-
-  // Cache items so that popover content doesn't flicker to empty while animating out.
-  let [menuItems, setMenuItems] = useState(resolvedItems);
-  if (resolvedItems !== menuItems && resolvedItems != null && resolvedItems.length > 0) {
-    setMenuItems(resolvedItems);
-  }
-
-  return <Menu isVirtualized>{menuItems}</Menu>;
 }
 
 export interface PromptTokenProps extends Omit<
