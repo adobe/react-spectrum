@@ -670,7 +670,10 @@ const executionTraceItemStyles = style({
       default: 'block',
       ':last-child': 'none'
     }
-  },
+  }
+});
+
+const executionTraceItemEntranceStyles = style({
   transition: '[opacity, translate]',
   transitionDuration: `[${EXECUTION_TRACE_ITEM_TRANSITION_DURATION}ms, 310ms]`,
   transitionTimingFunction: `[cubic-bezier(0.45, 0, 0.4, 1), ${EXECUTION_TRACE_ITEM_TIMING_FUNCTION}]`,
@@ -735,9 +738,27 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   let domProps = filterDOMProps(otherProps);
   let {isFocusVisible, focusProps} = useFocusRing();
   let hasDetail = detail != null;
+  // Play the entrance (fade + slide) once, then remove the animating styles.
+  // This is to prevent a flash that occurs when scrolling in virtualized containers
+  // because the browser keeps re-creating the layer these animations force it onto
+  let [hasEntered, setHasEntered] = useState(false);
 
   return (
-    <li {...domProps} ref={domRef} className={mergeStyles(executionTraceItemStyles, styles)}>
+    <li
+      {...domProps}
+      ref={domRef}
+      onTransitionEnd={e => {
+        // Only react to this item's own opacity transition (the longer of the two, so both the
+        // fade and slide have finished), not transitions bubbling up from descendants.
+        if (e.target === e.currentTarget && e.propertyName === 'opacity') {
+          setHasEntered(true);
+        }
+      }}
+      className={mergeStyles(
+        executionTraceItemStyles,
+        hasEntered ? undefined : executionTraceItemEntranceStyles,
+        styles
+      )}>
       <div className={executionTraceItemIconContainerStyles}>
         <CenterBaseline>
           {status === 'failed' && (
