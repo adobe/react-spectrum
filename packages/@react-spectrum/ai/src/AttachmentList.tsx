@@ -40,11 +40,11 @@ import Cross from '../ui-icons/Cross';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import File from '@react-spectrum/s2/icons/File';
 import FileText from '@react-spectrum/s2/icons/FileText';
+import {getMimeTypeLabel, matchMimeType} from './PromptField';
 import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
-import {matchMimeType} from './PromptField';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
@@ -224,7 +224,16 @@ const attachmentCard = style({
   }
 });
 
-const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+const disabledTextColor = {
+  default: baseColor('neutral'),
+  isDisabled: 'disabled',
+  forcedColors: {
+    default: 'ButtonText',
+    isDisabled: 'GrayText'
+  }
+} as const;
+
+const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isDisabled: boolean}>({
   font: 'title',
   fontSize: {
     size: {
@@ -235,11 +244,12 @@ const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
       XL: 'title-lg'
     }
   },
+  color: disabledTextColor,
   lineClamp: 1,
   gridArea: 'title'
 });
 
-const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
+const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isDisabled: boolean}>({
   font: 'body',
   fontSize: {
     size: {
@@ -250,6 +260,7 @@ const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'}>({
       XL: 'body'
     }
   },
+  color: disabledTextColor,
   lineClamp: 1,
   gridArea: 'description'
 });
@@ -601,8 +612,8 @@ function AttachmentCard({
             {
               slots: {
                 [DEFAULT_SLOT]: {},
-                title: {styles: attachmentTitle({size})},
-                description: {styles: attachmentDescription({size})}
+                title: {styles: attachmentTitle({size, isDisabled})},
+                description: {styles: attachmentDescription({size, isDisabled})}
               }
             }
           ],
@@ -805,7 +816,10 @@ const attachmentBadgeWrapper = style({
 });
 
 function AttachmentBadge({mimeType, isDisabled}: {mimeType: string; isDisabled?: boolean}) {
-  let label = matchMimeType(mimeType, ['application/pdf']) ? 'PDF' : 'FILE';
+  let label = getMimeTypeLabel(mimeType);
+  if (!label) {
+    return null;
+  }
   return (
     <div className={attachmentBadgeWrapper({isDisabled})}>
       <Badge

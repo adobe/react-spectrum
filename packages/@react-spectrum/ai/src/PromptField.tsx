@@ -278,6 +278,19 @@ export function matchMimeType(mimeType: string | undefined, acceptedMimeTypes: s
   });
 }
 
+export function getMimeTypeLabel(mimeType: string): string | null {
+  let subtype = mimeType.split('/')[1];
+  if (!subtype) {
+    return null;
+  }
+  subtype =
+    subtype
+      .replace(/^(x-|vnd\.)/, '')
+      .split(/[+.]/)
+      .pop() || subtype;
+  return subtype.slice(0, 4).toUpperCase();
+}
+
 /**
  * A PromptField allows users to compose and submit prompts containing text, tokens, and
  * attachments.

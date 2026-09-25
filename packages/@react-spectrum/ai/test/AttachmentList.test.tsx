@@ -94,4 +94,19 @@ describeOrSkip('AttachmentList', () => {
     );
     expect(queryByText('PDF')).not.toBeInTheDocument();
   });
+
+  it('should derive a badge label from the mime type subtype', () => {
+    let {getByText} = render(
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="clip.mp4" size="L">
+          <AttachmentPreview
+            mimeType="video/mp4"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+      </AttachmentList>
+    );
+    expect(getByText('MP4')).toBeInTheDocument();
+  });
 });

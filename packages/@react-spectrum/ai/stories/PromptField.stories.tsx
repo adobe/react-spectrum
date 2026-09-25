@@ -14,6 +14,7 @@ import {action} from 'storybook/actions';
 import {
   AttachFileMenuItem,
   CommandMenuItem,
+  getMimeTypeLabel,
   InsertMenuButton,
   InsertTextMenuItem,
   InsertTokenMenuItem,
@@ -476,9 +477,7 @@ function EverythingRender(args) {
                 {args.attachmentVariant === 'card' && (
                   <Content>
                     <Text slot="title">{attachment.file.name}</Text>
-                    <Text slot="description">
-                      {attachment.file.type.split('/').pop()?.toUpperCase()}
-                    </Text>
+                    <Text slot="description">{getMimeTypeLabel(attachment.file.type)}</Text>
                   </Content>
                 )}
               </Attachment>
