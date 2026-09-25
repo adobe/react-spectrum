@@ -11,6 +11,7 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils-internal';
+import {I18nProvider} from '../../src/i18n/I18nProvider';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../../src/overlays/useOverlayPosition';
 
@@ -200,6 +201,68 @@ describe('useOverlayPosition', function () {
       top: 350px;
       max-height: 150px;
     `);
+  });
+
+  it('should not flip in RTL when a user maxHeight fits within the available space', function () {
+    // 'start' cross-placement exercises the RTL codepath.
+    let res = render(
+      <I18nProvider locale="ar-AE">
+        <Example placement="bottom start" maxHeight={400} />
+      </I18nProvider>
+    );
+    let overlay = res.getByTestId('overlay');
+
+    expect(overlay).toHaveTextContent('placement: bottom');
+    expect(overlay).toHaveStyle('max-height: 400px;');
+  });
+
+  describe('flipping when the overlay outgrows its current placement', function () {
+    // Natural (unclamped) content height; tests mutate this to simulate content
+    // populating after the initial positioning pass.
+    let overlayNaturalHeight: number;
+
+    beforeEach(() => {
+      overlayNaturalHeight = 40;
+
+      // Simulates a scrollable overlay whose offsetHeight is clamped to its CSS max-height.
+      jest
+        .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
+        .mockImplementation(function (this: HTMLElement) {
+          if (this.getAttribute?.('data-testid') === 'overlay') {
+            let styleMaxHeight =
+              this.style.maxHeight !== '' ? parseInt(this.style.maxHeight, 10) : Infinity;
+            return Math.min(overlayNaturalHeight, styleMaxHeight);
+          }
+          return parseInt(this.style.height, 10) || 0;
+        });
+    });
+
+    it('flips to the top once content grows, when no maxHeight is set (self-heals)', function () {
+      let res = render(<Example triggerTop={606} />);
+      let overlay = res.getByTestId('overlay');
+
+      expect(overlay).toHaveTextContent('placement: bottom');
+
+      overlayNaturalHeight = 400;
+      fireEvent(window, new Event('resize'));
+
+      expect(overlay).toHaveTextContent('placement: top');
+      expect(parseInt(overlay.style.maxHeight, 10)).toBeGreaterThan(300);
+    });
+
+    it('flips to the top and grows toward the requested maxHeight, once a user maxHeight is set', function () {
+      let res = render(<Example triggerTop={606} maxHeight={300} />);
+      let overlay = res.getByTestId('overlay');
+
+      expect(overlay).toHaveTextContent('placement: top');
+      expect(parseInt(overlay.style.maxHeight, 10)).toBe(300);
+
+      overlayNaturalHeight = 400;
+      fireEvent(window, new Event('resize'));
+
+      expect(overlay).toHaveTextContent('placement: top');
+      expect(parseInt(overlay.style.maxHeight, 10)).toBe(300);
+    });
   });
 
   it('should close the overlay when the trigger scrolls', function () {
