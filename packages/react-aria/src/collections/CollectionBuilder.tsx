@@ -31,6 +31,7 @@ import React, {
   useState
 } from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);
@@ -303,6 +304,14 @@ export function Collection<T>(props: CollectionProps<T>): JSX.Element {
 
 function CollectionRoot({children}) {
   let doc = useContext(CollectionDocumentContext);
+  let isSSR = useIsSSR();
+
+  useLayoutEffect(() => {
+    if (doc && !isSSR) {
+      doc.finishSSR();
+    }
+  }, [doc, isSSR]);
+
   let wrappedChildren = useMemo(
     () => (
       <CollectionDocumentContext.Provider value={null}>
@@ -313,7 +322,7 @@ function CollectionRoot({children}) {
   );
   // During SSR, we render the content directly, and append nodes to the document during render.
   // The collection children return null so that nothing is actually rendered into the HTML.
-  return useIsSSR() ? (
+  return isSSR ? (
     <SSRContext.Provider value={doc}>{wrappedChildren}</SSRContext.Provider>
   ) : (
     createPortal(wrappedChildren, doc as unknown as Element)

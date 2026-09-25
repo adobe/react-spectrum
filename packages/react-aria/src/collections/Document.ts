@@ -438,6 +438,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   private subscriptions: Set<() => void> = new Set();
   private queuedRender = false;
   private inSubscription = false;
+  private isHydrating = false;
 
   constructor(collection: C) {
     // @ts-ignore
@@ -512,9 +513,9 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
-    // If in a subscription update, return return the existing collection.
+    // If in a subscription update or hydration, return the existing collection.
     // React will call getCollection again during render, at which point all the updates will be complete.
-    if (this.inSubscription) {
+    if (this.inSubscription || this.isHydrating) {
       return this.collection;
     }
 
@@ -526,6 +527,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   updateCollection(): void {
+    if (this.isHydrating) {
+      return;
+    }
+
     // First, remove disconnected nodes and update the indices of dirty element children.
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
@@ -568,7 +573,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   queueUpdate(): void {
-    if (this.dirtyNodes.size === 0 || this.queuedRender) {
+    if (this.isHydrating || this.dirtyNodes.size === 0 || this.queuedRender) {
       return;
     }
 
@@ -612,6 +617,23 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       this.lastChild = null;
       this.nodeId = 0;
       this.keyOwners.clear();
+
+      // Preserve the server snapshot until the client portal commits, including an empty collection.
+      this.isHydrating = true;
+      this.nextCollection = this.collection.clone();
+      for (let key of this.nextCollection.getKeys()) {
+        this.nextCollection.removeNode(key);
+      }
     }
+  }
+
+  finishSSR(): void {
+    if (!this.isHydrating) {
+      return;
+    }
+
+    this.isHydrating = false;
+    this.queuedRender = false;
+    this.queueUpdate();
   }
 }
