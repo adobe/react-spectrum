@@ -133,13 +133,6 @@ export interface PopoverRenderProps {
    */
   placement: PlacementAxis | null;
   /**
-   * Whether the popover is ready to be displayed. Use this to hide the popover while it is not yet
-   * ready to enter.
-   *
-   * @selector [data-open]
-   */
-  isOpen: boolean;
-  /**
    * Whether the popover is currently entering. Use this to apply animations.
    *
    * @selector [data-entering]
@@ -190,7 +183,6 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
       children = children({
         trigger: props.trigger || null,
         placement: 'bottom',
-        isOpen: false,
         isEntering: false,
         isExiting: false,
         defaultChildren: null
@@ -272,7 +264,6 @@ function PopoverInner({
       // oxlint-disable-next-line react/react-compiler
       trigger: props.trigger || null,
       placement,
-      isOpen: !!placement && isOpen,
       // oxlint-disable-next-line react/react-compiler
       isEntering,
       isExiting
@@ -362,7 +353,6 @@ function PopoverInner({
       dir={props.dir}
       data-trigger={props.trigger}
       data-placement={placement}
-      data-open={(!!placement && isOpen) || undefined}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}>
       {/* oxlint-disable-next-line react/react-compiler */}

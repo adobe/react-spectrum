@@ -94,13 +94,6 @@ const InternalModalContext = createContext<InternalModalContextValue | null>(nul
 
 export interface ModalRenderProps {
   /**
-   * Whether the modal is ready to be displayed. Use this to hide the modal while it is not yet
-   * ready to enter.
-   *
-   * @selector [data-open]
-   */
-  isOpen: boolean;
-  /**
    * Whether the modal is currently entering. Use this to apply animations.
    *
    * @selector [data-entering]
@@ -252,7 +245,6 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
     ...props,
     defaultClassName: 'react-aria-ModalOverlay',
     values: {
-      isOpen,
       isEntering: entering,
       isExiting: props.isExiting,
       state
@@ -292,7 +284,6 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
         {...renderProps}
         style={style}
         ref={props.overlayRef}
-        data-open={isOpen || undefined}
         data-entering={entering || undefined}
         data-exiting={props.isExiting || undefined}>
         <Provider
@@ -340,7 +331,6 @@ function ModalContent(props: ModalContentProps) {
     ...props,
     defaultClassName: 'react-aria-Modal',
     values: {
-      isOpen,
       isEntering: entering,
       isExiting,
       state
@@ -352,7 +342,6 @@ function ModalContent(props: ModalContentProps) {
       {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
       {...renderProps}
       ref={ref}
-      data-open={isOpen || undefined}
       data-entering={entering || undefined}
       data-exiting={isExiting || undefined}>
       {isDismissable && <DismissButton onDismiss={state.close} />}
