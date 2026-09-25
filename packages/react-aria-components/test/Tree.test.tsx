@@ -1652,7 +1652,6 @@ describe('Tree', () => {
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(rows[0]);
 
-      // The hidden item stays selected.
       await user.keyboard('{ArrowRight}');
       rows = getAllByRole('row');
       expect(rows[1]).toHaveAttribute('data-key', 'child');
@@ -1737,7 +1736,6 @@ describe('Tree', () => {
       await user.tab({shift: true});
       expect(document.activeElement).toBe(rows[0]);
 
-      // The hidden item stays selected.
       await user.keyboard('{ArrowRight}');
       expect(getAllByRole('row')[1]).toHaveAttribute('aria-selected', 'true');
       expect(onSelectionChange).not.toHaveBeenCalled();
@@ -1847,7 +1845,6 @@ describe('Tree', () => {
       }
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Projects');
 
-      // Collapse the drag source's parent, then cancel the drag.
       await user.keyboard('{ArrowLeft}');
       act(() => jest.runAllTimers());
       await user.keyboard('{Escape}');

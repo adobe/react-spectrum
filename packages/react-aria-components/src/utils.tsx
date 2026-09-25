@@ -411,9 +411,7 @@ export function removeDataAttributes<T>(props: T): T {
   return filteredProps;
 }
 
-// Walks up from `key` to the closest ancestor that is actually rendered (all ancestors expanded).
-// Returns `key` unchanged when already visible. A collapsed ancestor hides everything beneath it,
-// so the highest collapsed ancestor is the closest visible row.
+// A collapsed ancestor hides everything below it, so the highest one is the closest visible row.
 export function closestVisibleKey<T>(
   collection: Collection<Node<T>>,
   expandedKeys: Set<Key>,

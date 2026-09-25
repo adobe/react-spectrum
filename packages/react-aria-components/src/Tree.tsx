@@ -570,9 +570,7 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
-  // If the focused item is hidden inside a collapsed item, move focus to the closest visible
-  // ancestor. Selection is unaffected. Items being dragged are skipped so that focus can follow
-  // them once they are dropped.
+  // Dragged items keep focus so it can follow them when they are dropped.
   useEffect(() => {
     let focusedKey = state.selectionManager.focusedKey;
     if (focusedKey == null || dragState?.isDragging(focusedKey)) {

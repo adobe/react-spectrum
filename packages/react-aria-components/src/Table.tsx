@@ -851,9 +851,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
-  // If the focused row is hidden inside a collapsed row, move focus to the closest visible
-  // ancestor row. Selection is unaffected. Rows being dragged are skipped so that focus can follow
-  // them once they are dropped.
+  // Dragged rows keep focus so it can follow them when they are dropped.
   useEffect(() => {
     let node =
       selectionState.focusedKey != null ? collection.getItem(selectionState.focusedKey) : null;

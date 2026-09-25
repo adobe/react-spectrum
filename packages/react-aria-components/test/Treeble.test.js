@@ -580,7 +580,6 @@ describe('Treeble', () => {
     await user.keyboard('{ArrowDown}');
     expect(document.activeElement).toBe(rows[1]);
 
-    // The hidden row stays selected.
     await user.keyboard('{ArrowUp}');
     await user.keyboard('{ArrowRight}');
     expect(tester.getRowHeaders()[1]).toHaveTextContent('Mario Kart');
