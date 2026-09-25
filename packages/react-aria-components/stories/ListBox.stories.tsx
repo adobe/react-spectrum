@@ -13,7 +13,6 @@
 import {action} from 'storybook/actions';
 import {Button} from 'react-aria-components/Button';
 import {Collection} from 'react-aria/Collection';
-import {CollectionRendererContext} from '../src/Collection';
 import {
   DragAndDropHooks,
   DropIndicator,
@@ -26,7 +25,7 @@ import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyHeader, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-import React, {forwardRef, JSX, useContext, useImperativeHandle, useRef, useState} from 'react';
+import React, {JSX, useRef, useState} from 'react';
 import {Separator} from '../src/Separator';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
@@ -34,7 +33,7 @@ import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
-import {Key, ScrollDelegate} from '@react-types/shared';
+import {ScrollDelegate} from '@react-types/shared';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 
 export default {
@@ -1151,33 +1150,6 @@ export const DropOntoRoot = () => (
   </div>
 );
 
-const ScrollListBoxExample = forwardRef<ScrollDelegate, ListBoxProps<any>>((props, ref) => {
-  let {scrollDelegate} = useContext(CollectionRendererContext);
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      async scrollIntoView(key: Key, options?: ScrollIntoViewOptions) {
-        if (scrollDelegate) scrollDelegate.scrollIntoView(key, options);
-        return {interrupted: false};
-      }
-    }),
-    [scrollDelegate]
-  );
-
-  return (
-    <ListBox
-      className={styles.menu}
-      style={{height: 200, width: 200, overflow: 'auto'}}
-      aria-label="test listbox"
-      selectionMode={props.selectionMode}
-      selectedKeys={props.selectedKeys}
-      items={defaultItems}>
-      {item => <MyListBoxItem style={{minWidth: 0}}>{item.name}</MyListBoxItem>}
-    </ListBox>
-  );
-});
-
 export const VirtualizedScrollToKey = () => {
   let [currentKey, setCurrentKey] = useState<number>(0);
 
@@ -1205,12 +1177,16 @@ export const VirtualizedScrollToKey = () => {
           ▼
         </Button>
       </div>
-      <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 25}}>
-        <ScrollListBoxExample
-          ref={delegateRef}
+      <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 25}} ref={delegateRef}>
+        <ListBox
+          className={styles.menu}
+          style={{height: 200, width: 200, overflow: 'auto'}}
+          aria-label="test listbox"
           selectionMode="single"
           selectedKeys={[currentKey]}
-        />
+          items={defaultItems}>
+          {item => <MyListBoxItem style={{minWidth: 0}}>{item.name}</MyListBoxItem>}
+        </ListBox>
       </Virtualizer>
     </div>
   );
