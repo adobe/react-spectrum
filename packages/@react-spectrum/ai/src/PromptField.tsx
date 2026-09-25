@@ -17,7 +17,14 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button, ButtonContext} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  color,
+  css,
+  scrollFade,
+  space,
+  style,
+  StyleString
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   createContext,
   createRef,
@@ -55,7 +62,6 @@ import {
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import {Provider} from 'react-aria-components/slots';
-import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -260,7 +266,11 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
 // aka the difference between a slash command and using the + menu which won't have filter text
 const PromptCompletionAnchorContext = createContext<Position | null>(null);
 
-function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
+export function matchMimeType(mimeType: string | undefined, acceptedMimeTypes: string[]): boolean {
+  if (!mimeType) {
+    return false;
+  }
+
   return acceptedMimeTypes.some(type => {
     if (type === '*/*') {
       return true;
