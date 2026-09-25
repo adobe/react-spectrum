@@ -19,7 +19,7 @@ import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 
 export interface SheetRenderProps extends ModalRenderProps {
   /** The placement of the sheet on the screen. */
-  position?: 'bottom' | 'top' | 'left' | 'right' | 'center';
+  position: 'bottom' | 'top' | 'left' | 'right' | 'center';
   /** The direction the sheet can be swiped. */
   swipeDirection: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
   /** The index of the sheet in the stack. */
@@ -42,7 +42,7 @@ export interface SheetOverlayProps
   /** The placement of the sheet on the screen. */
   position?: 'bottom' | 'top' | 'left' | 'right' | 'center';
   /** The direction the sheet can be swiped. */
-  swipeDirection: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
+  swipeDirection?: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
   /**
    * Snap points the sheet will stop at, expressed as the amount of the sheet that is visible.
    * Sheets initially open to the first snap point.

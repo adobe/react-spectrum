@@ -1,0 +1,72 @@
+'use client';
+import React from 'react';
+import {type DialogProps} from 'react-aria-components/Dialog';
+import {
+  Sheet as RACSheet,
+  SheetBackdrop,
+  SheetContent,
+  SheetOverlay,
+  type SheetOverlayProps
+} from 'react-aria-components/Sheet';
+import {tv} from 'tailwind-variants';
+import {twMerge} from 'tailwind-merge';
+import './Sheet.css';
+
+// Only the bottom-most sheet in a stack dims the page behind it.
+const backdropStyles = tv({
+  base: "data-[stack-index='0']:bg-black/40"
+});
+
+const sheetStyles = tv({
+  // Establish a 3D space (perspective) so stacked sheets can scale backward along the z-axis.
+  base: 'font-sans text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 forced-colors:bg-[Canvas] outline-hidden overflow-clip rounded-2xl shadow-2xl border border-black/10 dark:border-white/10 z-[1] will-change-transform [transform:perspective(1000px)]',
+  variants: {
+    position: {
+      bottom: 'w-[calc(100%-1rem)] max-w-[800px] h-4/5 origin-[center_-20%]',
+      top: 'w-[calc(100%-1rem)] max-w-[800px] h-4/5 origin-[center_120%]',
+      center: 'w-[calc(100%-1rem)] max-w-[800px] h-4/5 origin-[center_-20%]',
+      left: 'w-[300px] h-[calc(100%-1rem)] origin-[120%_center]',
+      right: 'w-[300px] h-[calc(100%-1rem)] origin-[-20%_center]'
+    }
+  },
+  defaultVariants: {
+    position: 'bottom'
+  }
+});
+
+// Only scroll the inner content once the sheet is fully expanded. At a partial detent a swipe on the
+// content chains out to the sheet's scroll container instead, expanding the sheet (like iOS).
+const contentStyles = tv({
+  base: 'p-6 pb-[var(--sheet-scroll-padding-y)] box-border h-full outline-hidden overflow-hidden group-data-[expanded]/sheet:overflow-auto'
+});
+
+export interface SheetProps extends Omit<SheetOverlayProps, 'children'> {
+  /** The contents of the sheet. Rendered inside a Dialog. */
+  children?: DialogProps['children'];
+}
+
+export function Sheet({children, ...props}: SheetProps) {
+  let {snapPoints} = props;
+  return (
+    <SheetOverlay {...props} className={twMerge('group/sheet', props.className)}>
+      {/* The backdrop fades in as the sheet slides up. When snap points are used, it stays hidden
+        until the sheet is dragged past the first detent. */}
+      <SheetBackdrop
+        className={backdropStyles()}
+        swipeAnimation="sheet-backdrop"
+        swipeAnimationRange={snapPoints ? {start: 0} : undefined}
+      />
+      {/* overscrollPadding makes the sheet appear to continue past the edge of the screen when
+        overscrolled. The radius animation rounds the corners as it enters, and scaleBack scales a
+        parent sheet backward when a child sheet is opened on top of it. */}
+      <RACSheet
+        overscrollPadding
+        swipeAnimation="sheet-radius"
+        swipeAnimationRange={snapPoints ? {end: 0} : undefined}
+        stackAnimation="sheet-scale-back"
+        className={({position}) => sheetStyles({position})}>
+        <SheetContent className={contentStyles()}>{children}</SheetContent>
+      </RACSheet>
+    </SheetOverlay>
+  );
+}
