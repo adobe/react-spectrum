@@ -103,9 +103,10 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(
   );
 
   let setValue = state.setValue;
+  // Used for both onChange and onInput, so accept the common supertype of both event types.
   let onChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      let eventTarget = getEventTarget(e);
+    (e: React.SyntheticEvent<HTMLSelectElement>) => {
+      let eventTarget = getEventTarget(e) as HTMLSelectElement;
       if (eventTarget.multiple) {
         setValue(Array.from(eventTarget.selectedOptions, option => option.value) as any);
       } else {

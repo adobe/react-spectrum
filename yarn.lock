@@ -14725,10 +14725,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csstype@npm:^3.0.2":
-  version: 3.0.3
-  resolution: "csstype@npm:3.0.3"
-  checksum: 10c0/20f2e9f5cc3c419a9f110f45a8e1e8c653159cb8b403715bbbab7bd113b3f7d519d3c8efc587221d02900d76b7dc3c8c3110d4c7bd84a9e0b2bd421488ca6bdb
+"csstype@npm:^3.0.2, csstype@npm:^3.2.2":
+  version: 3.2.3
+  resolution: "csstype@npm:3.2.3"
+  checksum: 10c0/cd29c51e70fa822f1cecd8641a1445bed7063697469d35633b516e60fe8c1bde04b08f6c5b6022136bb669b64c63d4173af54864510fbb4ee23281801841a3ce
   languageName: node
   linkType: hard
 
