@@ -18,6 +18,7 @@ import {ButtonContext} from './Button';
 import {CheckboxContext, CheckboxFieldContext} from './Checkbox';
 import {
   ClassNameOrFunction,
+  closestVisibleKey,
   ContextValue,
   DEFAULT_SLOT,
   dom,
@@ -849,6 +850,24 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
+
+  // If the focused row is hidden inside a collapsed row, move focus to the closest visible
+  // ancestor row. Selection is unaffected. Rows being dragged are skipped so that focus can follow
+  // them once they are dropped.
+  useEffect(() => {
+    let node =
+      selectionState.focusedKey != null ? collection.getItem(selectionState.focusedKey) : null;
+    // A cell is visible whenever its row is.
+    let rowKey = node?.type === 'cell' ? node.parentKey : node?.key;
+    if (rowKey == null || dragState?.isDragging(rowKey)) {
+      return;
+    }
+    let visibleKey = closestVisibleKey(collection, expandedKeys, rowKey);
+    if (visibleKey !== rowKey) {
+      selectionState.setFocusedKey(visibleKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collection, expandedKeys, selectionState.focusedKey]);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({

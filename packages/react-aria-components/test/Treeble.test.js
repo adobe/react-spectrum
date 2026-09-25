@@ -559,6 +559,67 @@ describe('Treeble', () => {
     expect(document.activeElement).toBe(tester.getRows()[0]);
   });
 
+  it('should focus the closest visible ancestor row when tabbing in with a selected row inside a collapsed row', async () => {
+    let onSelectionChange = jest.fn();
+    let tree = render(
+      <Example
+        selectionMode="single"
+        defaultSelectedKeys={['mario']}
+        onSelectionChange={onSelectionChange}
+      />
+    );
+    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
+    let rows = tester.getRows();
+    expect(rows).toHaveLength(4);
+
+    await user.tab();
+    expect(document.activeElement).toBe(rows[0]);
+    expect(rows[0]).toHaveAttribute('tabindex', '0');
+    expect(tree.getByTestId('treeble')).toHaveAttribute('tabindex', '-1');
+
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(rows[1]);
+
+    // The hidden row stays selected.
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowRight}');
+    expect(tester.getRowHeaders()[1]).toHaveTextContent('Mario Kart');
+    expect(tester.getRows()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
+  it('should move focus to the closest visible ancestor row when a focused cell is collapsed externally', async () => {
+    function ControlledExample() {
+      let [expandedKeys, setExpandedKeys] = React.useState(new Set(['games']));
+      return (
+        <>
+          <Example expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} />
+          <button onClick={() => setExpandedKeys(new Set())}>Collapse all</button>
+        </>
+      );
+    }
+
+    let tree = render(<ControlledExample />);
+    let tester = utils.createTester('Table', {root: tree.getByTestId('treeble')});
+
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tester.getRowHeaders()[1]);
+    expect(tester.getRowHeaders()[1]).toHaveTextContent('Mario Kart');
+
+    await user.click(tree.getByText('Collapse all'));
+    let rows = tester.getRows();
+    expect(rows).toHaveLength(4);
+    expect(rows[0]).toHaveAttribute('tabindex', '0');
+    for (let row of rows.slice(1)) {
+      expect(row).toHaveAttribute('tabindex', '-1');
+    }
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(rows[0]);
+  });
+
   it('supports selection', async () => {
     let onSelectionChange = jest.fn();
     let tree = render(

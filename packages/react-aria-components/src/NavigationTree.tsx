@@ -13,6 +13,7 @@
 import {
   ChildrenOrFunction,
   ClassNameOrFunction,
+  closestVisibleKey,
   ContextValue,
   dom,
   Provider,
@@ -323,26 +324,6 @@ function findKeyForRoute(collection: Collection<Node<unknown>>, route: string): 
     }
   }
   return null;
-}
-
-// Walks up from `key` to the closest ancestor that is actually rendered (all ancestors expanded).
-// Returns `key` unchanged when already visible. A collapsed ancestor hides everything beneath it,
-// so the highest collapsed ancestor is the closest visible row.
-function closestVisibleKey(
-  collection: Collection<Node<unknown>>,
-  expandedKeys: Set<Key>,
-  key: Key
-): Key {
-  let target = key;
-  let node = collection.getItem(key);
-  while (node?.parentKey != null) {
-    let parent = collection.getItem(node.parentKey);
-    if (parent?.type === 'item' && !expandedKeys.has(node.parentKey)) {
-      target = node.parentKey;
-    }
-    node = parent;
-  }
-  return target;
 }
 
 // Moves the tree's focused key to the item matching selectedRoute. Runs when the route or the
