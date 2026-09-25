@@ -40,44 +40,36 @@ interface SidePanelAppProps {
 }
 
 /**
- * A user avatar and account menu, shown at the bottom of the side panel. It reads the panel's
- * animation state from `SidePanelContext` so its label fades out before the panel narrows, and
- * only fades back in once the panel has finished widening.
+ * A user avatar and account menu, shown at the bottom of the side panel. The name is hidden while
+ * the panel is collapsed. `isCollapsed` trails the panel's width when expanding, so the name is
+ * never in the layout while the panel is changing size and can't reflow as it narrows.
  */
 export function AccountFooter(): ReactNode {
-  let {isCollapsed = false, isHidden = false, isReady = false} = useContext(SidePanelContext);
+  let {isCollapsed = false} = useContext(SidePanelContext);
 
   return (
     <div
       className={style({
         display: 'flex',
         flexDirection: {default: 'row', isCollapsed: 'column-reverse'},
+        // Left aligned in both states, and with the same padding either way, so that the contents
+        // sit at the same offset whatever the panel's width is. Centering them in the collapsed
+        // rail would drag them across the panel as it widens, since the centre moves but the rows
+        // on either side of it don't.
         alignItems: {default: 'center', isCollapsed: 'start'},
         justifyContent: 'start',
         gap: 8,
-        paddingX: {default: 8, isCollapsed: 0},
-        paddingY: 8,
+        padding: 4,
         flexShrink: 0
       })({isCollapsed})}>
-      <Avatar
-        alt="Jordan Rivera"
-        src="https://i.imgur.com/xIe7Wlb.png"
-        size={24}
-        styles={style({marginStart: {isCollapsed: 4}})({isCollapsed})}
-      />
+      <Avatar alt="Jordan Rivera" src="https://i.imgur.com/xIe7Wlb.png" size={24} />
       <div
         className={style({
-          opacity: {default: 1, isHidden: 0, '@starting-style': 0},
+          display: {default: 'block', isCollapsed: 'none'},
           minWidth: 0,
-          flexGrow: 1,
-          transition: {default: 'none', isReady: {default: '[opacity, display]', isHidden: 'none'}},
-          transitionBehavior: 'allow-discrete',
-          transitionDuration: 150
-        })({isHidden, isReady})}>
-        <Text
-          styles={style({font: 'ui', display: {default: 'block', isHidden: 'none'}})({isHidden})}>
-          Jordan Rivera
-        </Text>
+          flexGrow: 1
+        })({isCollapsed})}>
+        <Text styles={style({font: 'ui'})}>Jordan Rivera</Text>
       </div>
       <ActionMenu aria-label="Account" isQuiet direction={isCollapsed ? 'right' : 'top'}>
         <ActionMenuItem>Profile</ActionMenuItem>

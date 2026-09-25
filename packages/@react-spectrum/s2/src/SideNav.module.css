@@ -1,0 +1,56 @@
+/* Collapse/expand animations for SideNav.
+ *
+ * SideNav puts a <ViewTransition> around every row and names every section header, and SidePanel
+ * animates its own width with a plain CSS transition so the rest of the page reflows along with it.
+ * The two never run at the same time. */
+
+::view-transition-group(.side-nav-item),
+::view-transition-group(.side-nav-header) {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1);
+}
+
+/* Rows keep their size across these transitions, so the snapshots are only ever cross faded and
+ * moved. Pinning them to the group is a safeguard for the one case that can still change height — a
+ * label long enough to wrap — where stretching reads better than the default, which pins the
+ * snapshot to the top left corner and leaves a gap. */
+::view-transition-old(.side-nav-item),
+::view-transition-new(.side-nav-item),
+::view-transition-old(.side-nav-header),
+::view-transition-new(.side-nav-header) {
+  width: 100%;
+  height: 100%;
+}
+
+/* Anything that isn't a named boundary is captured in the root snapshot, which cross fades by
+ * default. Only the nav should appear to animate, so the old snapshot is dropped and the new one —
+ * which renders the page live rather than as a still image — is shown immediately and unblended. */
+:root:active-view-transition-type(
+    side-panel-expand,
+    side-nav-item-collapse,
+    side-nav-item-expand
+  ):global(::view-transition-old(root)) {
+  animation: none;
+  opacity: 0;
+}
+
+:root:active-view-transition-type(
+    side-panel-expand,
+    side-nav-item-collapse,
+    side-nav-item-expand
+  ):global(::view-transition-new(root)) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Expanding the panel puts section headers back into the layout, which pushes every row below them
+ * down. A header comes back from display: none, so it has no box in the old state and enters rather
+ * than moves: it has only a new snapshot, which the UA fades in over the whole transition by
+ * default. Holding that fade back until the second half keeps the header from appearing on top of
+ * the rows that are still sliding past it. Expanding or collapsing a single item moves a header
+ * that was already there instead, so this is scoped to the panel's own transition type and leaves
+ * the default cross fade alone for the rest. */
+:root:active-view-transition-type(side-panel-expand)::view-transition-new(.side-nav-header) {
+  animation-duration: 100ms;
+  animation-delay: 100ms;
+}

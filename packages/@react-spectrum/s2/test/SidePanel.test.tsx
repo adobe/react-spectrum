@@ -19,8 +19,8 @@ import userEvent, {UserEvent} from '@testing-library/user-event';
 
 // "Files" is a top-level leaf (no children). "Libraries" is a parent with an href and a nested "Photos" leaf.
 // "Favorites" is a parent with no href but with a nested "Documents" leaf.
-// When the panel is collapsed, leaves stay links (and navigate immediately) while parents render as
-// expanding buttons.
+// Items are always links. An item with an href navigates when it is activated, whether or not it has
+// children and whether or not the panel is collapsed. An item without one toggles its category instead.
 function SidePanelExample(props: {
   defaultCollapsed?: boolean;
   onCollapsedChange?: (isCollapsed: boolean) => void;
@@ -76,10 +76,13 @@ function SidePanelExample(props: {
   return navigate ? <RouterProvider navigate={navigate}>{sidePanel}</RouterProvider> : sidePanel;
 }
 
-// When collapsed, a parent item renders as a button whose accessible name combines its label with a
-// hidden explanation. Helps disambiguate it from the per-item expand chevron (named "Expand <x>").
-function itemButtonName(label: string): string {
-  return `${label} panel collapsed, click to expand`;
+// Expanding the panel animates its width first and only puts its contents back once that has
+// finished, so nothing is reflowing while the panel is still changing size. jsdom doesn't run CSS
+// transitions, so no transitionend ever arrives and SidePanel falls back to its timeout.
+function finishExpanding(): void {
+  act(() => {
+    jest.advanceTimersByTime(250);
+  });
 }
 
 describe('SidePanel', () => {
@@ -99,33 +102,29 @@ describe('SidePanel', () => {
 
   it('collapses and expands via the provided toggle button', async () => {
     let onCollapsedChange = jest.fn();
-    let {getByRole, queryByRole} = render(
-      <SidePanelExample onCollapsedChange={onCollapsedChange} />
-    );
+    let {getByRole} = render(<SidePanelExample onCollapsedChange={onCollapsedChange} />);
 
-    expect(getByRole('link', {name: 'Files'})).toBeInTheDocument();
-    expect(getByRole('link', {name: 'Libraries'})).toBeInTheDocument();
     let toggle = getByRole('button', {name: 'Collapse side panel'});
 
     await user.click(toggle);
     expect(onCollapsedChange).toHaveBeenLastCalledWith(true);
-    // The leaf stays a link; the parent becomes an expanding button.
-    expect(getByRole('link', {name: 'Files'})).toBeInTheDocument();
-    expect(queryByRole('link', {name: 'Libraries'})).toBeNull();
-    expect(getByRole('button', {name: itemButtonName('Libraries')})).toBeInTheDocument();
+
     toggle = getByRole('button', {name: 'Expand side panel'});
 
     await user.click(toggle);
     expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
+    // The toggle itself flips as soon as it is pressed, ahead of the contents coming back.
+    expect(getByRole('button', {name: 'Collapse side panel'})).toBeInTheDocument();
+
+    finishExpanding();
     expect(getByRole('link', {name: 'Files'})).toBeInTheDocument();
     expect(getByRole('link', {name: 'Libraries'})).toBeInTheDocument();
-    expect(getByRole('button', {name: 'Collapse side panel'})).toBeInTheDocument();
   });
 
-  it('navigates immediately when a collapsed leaf link is clicked (no children)', async () => {
+  it('navigates without expanding the panel when a collapsed link is clicked, with or without children', async () => {
     let navigate = jest.fn();
     let onCollapsedChange = jest.fn();
-    let {getByRole, queryByRole} = render(
+    let {getByRole} = render(
       <SidePanelExample
         defaultCollapsed
         navigate={navigate}
@@ -133,30 +132,18 @@ describe('SidePanel', () => {
       />
     );
 
-    expect(queryByRole('button', {name: itemButtonName('Files')})).toBeNull();
-    let filesLink = getByRole('link', {name: 'Files'});
+    await user.click(getByRole('link', {name: 'Files'}));
+    expect(navigate).toHaveBeenLastCalledWith('/files', undefined);
 
-    await user.click(filesLink);
+    // A parent navigates the same way a leaf does rather than expanding anything.
+    await user.click(getByRole('link', {name: 'Libraries'}));
+    expect(navigate).toHaveBeenLastCalledWith('/libraries', undefined);
 
-    expect(navigate).toHaveBeenCalledWith('/files', undefined);
+    expect(getByRole('row', {name: 'Libraries'})).toHaveAttribute('aria-expanded', 'false');
     expect(onCollapsedChange).not.toHaveBeenCalled();
   });
 
-  it('expands the panel when a collapsed parent button is clicked with the mouse (has children)', async () => {
-    let onCollapsedChange = jest.fn();
-    let {getByRole, queryByRole} = render(
-      <SidePanelExample defaultCollapsed onCollapsedChange={onCollapsedChange} />
-    );
-
-    expect(queryByRole('link', {name: 'Libraries'})).toBeNull();
-
-    await user.click(getByRole('button', {name: itemButtonName('Libraries')}));
-
-    expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
-    expect(getByRole('link', {name: 'Libraries'})).toBeInTheDocument();
-  });
-
-  it('navigates immediately when a collapsed leaf link is activated via the keyboard (no children)', async () => {
+  it('navigates without expanding the panel when a collapsed link is activated via the keyboard', async () => {
     let navigate = jest.fn();
     let onCollapsedChange = jest.fn();
     let {getByRole} = render(
@@ -168,28 +155,19 @@ describe('SidePanel', () => {
     );
 
     await user.tab();
-    let filesLink = getByRole('link', {name: 'Files'});
-    expect(filesLink).toHaveFocus();
-
-    await user.keyboard('{Enter}');
-    expect(navigate).toHaveBeenCalledWith('/files', undefined);
-    expect(onCollapsedChange).not.toHaveBeenCalled();
-  });
-
-  it('expands the panel via the keyboard and moves focus to the same item link (parent with children)', async () => {
-    let {getByRole} = render(<SidePanelExample defaultCollapsed />);
-
-    await user.tab();
     expect(getByRole('link', {name: 'Files'})).toHaveFocus();
-    await user.keyboard('{ArrowDown}');
-    let librariesButton = getByRole('button', {name: itemButtonName('Libraries')});
-    expect(librariesButton).toHaveFocus();
 
-    // Activating the button expands the panel and keeps focus on the same item, now its link.
     await user.keyboard('{Enter}');
-    let librariesLink = getByRole('link', {name: 'Libraries'});
-    expect(librariesLink).toBeInTheDocument();
-    expect(librariesLink).toHaveFocus();
+    expect(navigate).toHaveBeenLastCalledWith('/files', undefined);
+
+    await user.keyboard('{ArrowDown}');
+    expect(getByRole('link', {name: 'Libraries'})).toHaveFocus();
+
+    await user.keyboard('{Enter}');
+    expect(navigate).toHaveBeenLastCalledWith('/libraries', undefined);
+
+    expect(getByRole('row', {name: 'Libraries'})).toHaveAttribute('aria-expanded', 'false');
+    expect(onCollapsedChange).not.toHaveBeenCalled();
   });
 
   it('hides a nested child while collapsed and restores it when expanded again', async () => {
@@ -204,16 +182,19 @@ describe('SidePanel', () => {
     await user.click(getByRole('button', {name: 'Collapse side panel'}));
     expect(onCollapsedChange).toHaveBeenLastCalledWith(true);
     expect(queryByRole('link', {name: 'Photos'})).toBeNull();
-    expect(queryByRole('button', {name: itemButtonName('Photos')})).toBeNull();
     expect(getByRole('row', {name: 'Libraries'})).toHaveAttribute('aria-expanded', 'false');
 
     await user.click(getByRole('button', {name: 'Expand side panel'}));
     expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
+    // The contents only come back once the panel has finished widening.
+    expect(queryByRole('link', {name: 'Photos'})).toBeNull();
+
+    finishExpanding();
     expect(getByRole('row', {name: 'Libraries'})).toHaveAttribute('aria-expanded', 'true');
     expect(getByRole('link', {name: 'Photos'})).toBeInTheDocument();
   });
 
-  it('toggles the category instead of navigating when a parent with no href is clicked (expanded panel)', async () => {
+  it('toggles the category instead of navigating when a parent with no href is clicked', async () => {
     let navigate = jest.fn();
     let {getByRole, queryByRole} = render(<SidePanelExample navigate={navigate} />);
 
@@ -228,26 +209,5 @@ describe('SidePanel', () => {
     expect(favoritesRow).toHaveAttribute('aria-expanded', 'true');
     expect(getByRole('link', {name: 'Documents'})).toBeInTheDocument();
     expect(navigate).not.toHaveBeenCalled();
-  });
-
-  it('renders a collapsed parent with no href as an expanding button (never a link)', async () => {
-    let navigate = jest.fn();
-    let onCollapsedChange = jest.fn();
-    let {getByRole, queryByRole} = render(
-      <SidePanelExample
-        defaultCollapsed
-        navigate={navigate}
-        onCollapsedChange={onCollapsedChange}
-      />
-    );
-
-    expect(queryByRole('link', {name: 'Favorites'})).toBeNull();
-    let favoritesButton = getByRole('button', {name: itemButtonName('Favorites')});
-
-    await user.click(favoritesButton);
-
-    expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
-    expect(navigate).not.toHaveBeenCalled();
-    expect(getByRole('link', {name: 'Favorites'})).toBeInTheDocument();
   });
 });

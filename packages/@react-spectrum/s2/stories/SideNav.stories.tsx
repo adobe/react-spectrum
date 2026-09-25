@@ -547,7 +547,7 @@ export const WithLandmark: AppLayoutStoryObj = {
 };
 
 const SidePanelExtraControls = () => {
-  let {isCollapsed = false, isHidden = false} = useContext(SidePanelContext);
+  let {isCollapsed = false} = useContext(SidePanelContext);
   return (
     <div
       className={style({
@@ -559,8 +559,14 @@ const SidePanelExtraControls = () => {
         flexShrink: 0,
         flexGrow: 0,
         gap: 8,
-        padding: 8,
-        alignItems: 'center',
+        padding: 4,
+        // Left aligned in both states, so that the contents sit at the same offset whatever the
+        // panel's width is. Centering them in the collapsed rail would drag them across the panel
+        // as it widens, since the centre moves but the rows on either side of it don't.
+        alignItems: {
+          default: 'center',
+          isCollapsed: 'start'
+        },
         backgroundColor: 'elevated',
         borderColor: 'white',
         borderRadius: 'default'
@@ -570,13 +576,13 @@ const SidePanelExtraControls = () => {
       </div>
       <div
         className={style({
-          display: {default: 'flex', isHidden: 'none'},
+          display: {default: 'flex', isCollapsed: 'none'},
           flexDirection: 'column',
-          gap: 2,
+          gap: '[1px]',
           flexGrow: 1
-        })({isHidden})}>
-        <Text styles={style({font: 'ui'})}>Jordan Rivera</Text>
-        <Text styles={style({font: 'detail'})}>Adobe</Text>
+        })({isCollapsed})}>
+        <Text styles={style({font: 'ui-sm'})}>Jordan Rivera</Text>
+        <Text styles={style({font: 'detail-sm'})}>Adobe</Text>
       </div>
       <ActionButton aria-label="Notifications" isQuiet>
         <Bell />
@@ -624,15 +630,15 @@ export const SidePanelExample = {
         aria-label="Side panel"
         defaultExpandedKeys={['projects']}>
         <SidePanelContext.Consumer>
-          {({isHidden}) => (
+          {({isCollapsed}) => (
             <div className={style({display: 'flex', flexDirection: 'column', gap: 2})}>
               <AIButton
-                key={isHidden ? 'hidden' : 'visible'}
+                key={isCollapsed ? 'hidden' : 'visible'}
                 size="M"
                 brandColor="#FF0000"
                 aria-label="Ask Coworker"
                 styles={style({marginStart: 8})}>
-                {isHidden ? undefined : 'Ask Coworker'}
+                {isCollapsed ? undefined : 'Ask Coworker'}
               </AIButton>
               <Divider styles={style({marginY: 16})} />
             </div>
