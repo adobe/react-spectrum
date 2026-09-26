@@ -1927,6 +1927,52 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(child3);
     });
 
+    it('should keep focus contained in a sibling scope when the previous scope unmounts', async function () {
+      function Portal({children}) {
+        return ReactDOM.createPortal(children, document.body);
+      }
+
+      function Test({showFirst, showSecond}) {
+        return (
+          <FocusScope contain restoreFocus>
+            <button data-testid="outside">Outside</button>
+            {showFirst && (
+              <Portal>
+                <FocusScope contain restoreFocus autoFocus>
+                  <button data-testid="first">First</button>
+                </FocusScope>
+              </Portal>
+            )}
+            {showSecond && (
+              <Portal>
+                <FocusScope contain restoreFocus autoFocus>
+                  <button data-testid="second1">September</button>
+                  <button data-testid="second2">2026</button>
+                  <button data-testid="second3">Next month</button>
+                </FocusScope>
+              </Portal>
+            )}
+          </FocusScope>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test showFirst />);
+      expect(document.activeElement).toBe(getByTestId('first'));
+
+      rerender(<Test showFirst showSecond />);
+      expect(document.activeElement).toBe(getByTestId('second1'));
+
+      rerender(<Test showSecond />);
+      expect(document.activeElement).toBe(getByTestId('second1'));
+
+      expect(focusScopeTree.size).toBe(3);
+      await user.tab();
+      expect(document.activeElement).toBe(getByTestId('second2'));
+      act(() => getByTestId('second1').focus());
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(getByTestId('second3'));
+    });
+
     it('should restore to the correct scope on unmount', async function () {
       function Test({show1, show2, show3}) {
         return (
