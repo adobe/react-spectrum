@@ -107,7 +107,7 @@ function preventScrollMobileWebKit() {
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
     let target = getEventTarget(e) as Element;
-    scrollable = isScrollable(target) ? target : getScrollParent(target, true);
+    scrollable = isScrollable(target, true) ? target : getScrollParent(target, true);
     allowTouchMove = false;
 
     // If the target is selected, don't preventDefault in touchmove to allow user to adjust selection.
