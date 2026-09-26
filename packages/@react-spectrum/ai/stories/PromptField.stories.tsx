@@ -624,6 +624,7 @@ function BasicRender({placeholder, ...args}: any) {
     <PromptField {...args}>
       <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
         <PromptTokenField placeholder={placeholder} shouldAnimatePixelLoader />
+        <PromptFieldVoiceButton onToggle={action('onToggle')} />
         <PromptFieldSubmitButton />
       </div>
     </PromptField>
