@@ -43,7 +43,7 @@ import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom
 import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {getItemId, listData} from '../listbox/utils';
-import {getOwnerDocument} from '../utils/domHelpers';
+import {getOwnerDocument, isShadowRoot} from '../utils/domHelpers';
 import intlMessages from '../../intl/combobox/*.json';
 import {isAppleDevice} from '../utils/platform';
 import {ListKeyboardDelegate} from '../selection/ListKeyboardDelegate';
@@ -268,7 +268,11 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = nodeContains(buttonRef.current, e.relatedTarget as Element);
-    let blurIntoPopover = nodeContains(popoverRef.current, e.relatedTarget);
+    let blurIntoPopover =
+      nodeContains(popoverRef.current, e.relatedTarget) ||
+      (isShadowRoot(e.relatedTarget?.shadowRoot) &&
+        'originalRelatedTarget' in e.nativeEvent &&
+        nodeContains(popoverRef.current, e.nativeEvent.originalRelatedTarget as Element));
 
     // Ignore blur if focused moved to the button(if exists) or into the popover.
     if (blurFromButton || blurIntoPopover) {
