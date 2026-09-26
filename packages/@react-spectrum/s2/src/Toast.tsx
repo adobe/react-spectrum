@@ -206,7 +206,14 @@ const toastRegion = style({
   },
   boxSizing: 'border-box',
   maxHeight: 'full',
-  borderRadius: 'lg'
+  borderRadius: 'lg',
+  // Spacing lives here rather than in the list so it does not scroll away with the toasts.
+  paddingY: {
+    isExpanded: 8
+  },
+  gap: {
+    isExpanded: 8
+  }
 });
 
 const toastList = style({
@@ -226,22 +233,6 @@ const toastList = style({
     default: 0,
     // Add padding when expanded to account for focus ring.
     isExpanded: 8
-  },
-  paddingBottom: {
-    isExpanded: {
-      placement: {
-        top: 8,
-        bottom: 16
-      }
-    }
-  },
-  paddingTop: {
-    isExpanded: {
-      placement: {
-        top: 16,
-        bottom: 8
-      }
-    }
   },
   margin: 0,
   marginX: {
