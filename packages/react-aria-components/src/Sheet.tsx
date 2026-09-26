@@ -18,13 +18,29 @@ import React, {
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 
 export interface SheetRenderProps extends ModalRenderProps {
-  /** The placement of the sheet on the screen. */
+  /**
+   * The placement of the sheet on the screen.
+   *
+   * @selector [data-position="bottom | top | left | right | center"]
+   */
   position: 'bottom' | 'top' | 'left' | 'right' | 'center';
-  /** The direction the sheet can be swiped. */
+  /**
+   * The direction the sheet can be swiped.
+   *
+   * @selector [data-swipe-direction="bottom | top | vertical | left | right | horizontal"]
+   */
   swipeDirection: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
-  /** The index of the sheet in the stack. */
+  /**
+   * The index of the sheet in the stack.
+   *
+   * @selector [data-stack-index="0 | 1 | 2 | ..."]
+   */
   stackIndex: number;
-  /** Whether the sheet is fully expanded to its last snap point. */
+  /**
+   * Whether the sheet is fully expanded to its last snap point.
+   *
+   * @selector [data-expanded]
+   */
   isExpanded: boolean;
 }
 
@@ -39,7 +55,11 @@ export interface SheetOverlayProps
    * @default 'react-aria-SheetOverlay'
    */
   className?: ClassNameOrFunction<SheetRenderProps>;
-  /** The placement of the sheet on the screen. */
+  /**
+   * The placement of the sheet on the screen.
+   *
+   * @default 'bottom'
+   */
   position?: 'bottom' | 'top' | 'left' | 'right' | 'center';
   /** The direction the sheet can be swiped. */
   swipeDirection?: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
@@ -48,6 +68,12 @@ export interface SheetOverlayProps
    * Sheets initially open to the first snap point.
    */
   snapPoints?: Array<number | string>;
+  /**
+   * Whether to close the sheet when the user swipes or interacts outside it.
+   *
+   * @default true
+   */
+  isDismissable?: boolean;
 }
 
 interface SheetContextValue extends SheetOverlayProps {
@@ -228,13 +254,14 @@ export function SheetOverlay(props: SheetOverlayProps) {
           : 'react-aria-SheetOverlay'
       }
       style={renderProps => ({
-        position: 'absolute',
+        position: 'fixed',
         top: axis === 'y' ? `${containerOffset}dvh` : 0,
         left: axis === 'x' ? `${containerOffset}vw` : 0,
         // The container is 2 viewports along the swipe axis and 1 viewport on the cross axis.
         height: axis === 'y' ? '200dvh' : '100dvh',
         width: axis === 'x' ? '200vw' : '100vw',
-        overflow: isDismissable ? 'auto' : 'hidden',
+        overflowX: axis === 'x' && isDismissable ? 'auto' : 'hidden',
+        overflowY: axis === 'y' && isDismissable ? 'auto' : 'hidden',
         scrollSnapType: `${axis} mandatory`,
         overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
         overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
@@ -563,7 +590,7 @@ export function Sheet(props: SheetProps) {
     position: 'relative'
   };
 
-  if (props.overscrollPadding) {
+  if (props.overscrollPadding && swipeDirection !== 'horizontal' && swipeDirection !== 'vertical') {
     // Extra padding to allow overscrolling, and a negative margin to offset it.
     switch (position) {
       case 'top':
@@ -668,7 +695,19 @@ export function Sheet(props: SheetProps) {
 
 export interface SheetBackdropProps
   extends RenderProps<SheetRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for
+   * the element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-SheetBackdrop'
+   */
+  className?: ClassNameOrFunction<SheetRenderProps>;
+  /** CSS `@keyframes` name for the animation that occurs while the user swipes. */
   swipeAnimation?: string;
+  /**
+   * The snap point indices between which the swipe animation occurs. If omitted, the animation will
+   * occur over the full range of the sheet's movement.
+   */
   swipeAnimationRange?: {start?: number; end?: number};
 }
 

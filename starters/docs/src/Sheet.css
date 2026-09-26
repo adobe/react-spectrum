@@ -10,6 +10,7 @@
   height: 80%;
   width: calc(100% - var(--spacing-4));
   max-width: 800px;
+  margin: var(--spacing-4);
   border-radius: var(--radius-xl);
   overflow: clip;
   outline: none;
@@ -51,7 +52,7 @@
 
 .react-aria-SheetContent {
   padding: var(--spacing-8);
-  padding-bottom: var(--sheet-scroll-padding-y);
+  padding-bottom: calc(var(--spacing-8) + var(--sheet-scroll-padding-y));
   box-sizing: border-box;
   height: 100%;
   outline: none;

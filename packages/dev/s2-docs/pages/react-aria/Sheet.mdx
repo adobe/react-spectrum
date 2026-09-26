@@ -1,0 +1,274 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Sheet';
+import '../../tailwind/tailwind.css';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
+export const tags = ['dialog', 'overlay', 'tray', 'drawer', 'sheet'];
+export const description = 'An overlay that slides in from the edge of the screen and can be swiped to dismiss.';
+
+# Sheet
+
+<PageDescription>{docs.exports.Sheet.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.Sheet} links={vanillaDocs.links} props={['position', 'swipeDirection', 'isDismissable', 'overscrollPadding']} type="vanilla" files={["starters/docs/src/Sheet.tsx", "starters/docs/src/Sheet.css"]}
+  "use client";
+  import {DialogTrigger} from 'react-aria-components/Dialog';
+  import {Sheet, Heading} from 'vanilla-starter/Sheet';
+  import {Button} from 'vanilla-starter/Button';
+  import {MessageCircle, Mail, Bookmark, Printer, Link as LinkIcon} from 'lucide-react';
+
+  function Example(props) {
+    let targets = [
+      {label: 'Messages', icon: <MessageCircle size={24} />, color: '#34c759'},
+      {label: 'Mail', icon: <Mail size={24} />, color: '#007aff'},
+      {label: 'Save', icon: <Bookmark size={24} />, color: '#ff9500'},
+      {label: 'Print', icon: <Printer size={24} />, color: '#8e8e93'}
+    ];
+    return (
+      <DialogTrigger>
+        <Button>Share…</Button>
+        {/*- begin focus -*/}
+        <Sheet {...props}/* PROPS */>
+          <Heading slot="title">Share “Sunset Hike.jpg”</Heading>
+          <div style={{display: 'flex', gap: 20, overflowX: 'auto', padding: '8px 0 20px'}}>
+            {targets.map(target => (
+              <div key={target.label} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8}}>
+                <span style={{width: 56, height: 56, borderRadius: '50%', background: target.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+                  {target.icon}
+                </span>
+                <span style={{fontSize: 12}}>{target.label}</span>
+              </div>
+            ))}
+          </div>
+          <Button slot="close" variant="secondary">
+            <LinkIcon size={18} />
+            <span>Copy link</span>
+          </Button>
+        </Sheet>
+        {/*- end focus -*/}
+      </DialogTrigger>
+    );
+  }
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.Sheet} links={vanillaDocs.links} props={['position', 'swipeDirection', 'isDismissable', 'overscrollPadding']} type="tailwind" files={["starters/tailwind/src/Sheet.tsx", "starters/tailwind/src/Sheet.css"]}
+  "use client";
+  import {DialogTrigger} from 'react-aria-components/Dialog';
+  import {Sheet} from 'tailwind-starter/Sheet';
+  import {Heading} from 'tailwind-starter/Dialog';
+  import {Button} from 'tailwind-starter/Button';
+  import {MessageCircle, Mail, Bookmark, Printer, Link as LinkIcon} from 'lucide-react';
+
+  function Example(props) {
+    let targets = [
+      {label: 'Messages', icon: <MessageCircle size={24} />, color: 'bg-green-500'},
+      {label: 'Mail', icon: <Mail size={24} />, color: 'bg-blue-500'},
+      {label: 'Save', icon: <Bookmark size={24} />, color: 'bg-orange-500'},
+      {label: 'Print', icon: <Printer size={24} />, color: 'bg-neutral-500'}
+    ];
+    return (
+      <DialogTrigger>
+        <Button>Share…</Button>
+        {/*- begin focus -*/}
+        <Sheet {...props}/* PROPS */>
+          <Heading slot="title" className="text-xl font-semibold mt-0 mb-4">Share “Sunset Hike.jpg”</Heading>
+          <div className="flex gap-5 overflow-x-auto pb-5">
+            {targets.map(target => (
+              <div key={target.label} className="flex flex-col items-center gap-2">
+                <span className={`w-14 h-14 rounded-full text-white flex items-center justify-center shrink-0 ${target.color}`}>
+                  {target.icon}
+                </span>
+                <span className="text-xs">{target.label}</span>
+              </div>
+            ))}
+          </div>
+          <Button slot="close" variant="secondary">
+            <LinkIcon size={18} />
+            <span>Copy link</span>
+          </Button>
+        </Sheet>
+        {/*- end focus -*/}
+      </DialogTrigger>
+    );
+  }
+  ```
+</ExampleSwitcher>
+
+A Sheet is composed of a [SheetOverlay](#sheetoverlay), a [SheetBackdrop](#sheetbackdrop), a [Sheet](#sheet), and a [SheetContent](#sheetcontent) element. Unlike a [Modal](Modal), a sheet is anchored to an edge of the screen and can be dragged to a resting position or swiped away, powered entirely by native browser scrolling — no JavaScript animation library required. Wrap it in a [DialogTrigger](Dialog#dialogtrigger) to open it from a button, or control it directly with the `isOpen` and `onOpenChange` props.
+
+## Position
+
+The `position` prop determines which edge of the screen the sheet is anchored to, and the direction it can be swiped to dismiss. Use `left` or `right` to build a navigation drawer, `bottom` for a classic mobile sheet, or `top` for a notification-style banner.
+
+```tsx render
+"use client";
+import {DialogTrigger} from 'react-aria-components/Dialog';
+import {Sheet, Heading} from 'vanilla-starter/Sheet';
+import {Button} from 'vanilla-starter/Button';
+import {Home, Compass, Library, Settings, LogOut} from 'lucide-react';
+
+function Example() {
+  let items = [
+    {label: 'Home', icon: <Home size={20} />},
+    {label: 'Explore', icon: <Compass size={20} />},
+    {label: 'Library', icon: <Library size={20} />},
+    {label: 'Settings', icon: <Settings size={20} />}
+  ];
+  return (
+    <DialogTrigger>
+      <Button variant="secondary">Open menu</Button>
+      {/*- begin highlight -*/}
+      <Sheet position="left">
+      {/*- end highlight -*/}
+        <Heading slot="title">Acme Music</Heading>
+        <nav style={{display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16}}>
+          {items.map(item => (
+            <Button key={item.label} slot="close" variant="quiet" style={{justifyContent: 'flex-start', gap: 12, width: '100%'}}>
+              {item.icon}
+              <span>{item.label}</span>
+            </Button>
+          ))}
+        </nav>
+        <Button slot="close" variant="secondary" style={{justifyContent: 'flex-start', gap: 12, width: '100%'}}>
+          <LogOut size={20} />
+          <span>Sign out</span>
+        </Button>
+      </Sheet>
+    </DialogTrigger>
+  );
+}
+```
+
+## Snap points
+
+By default, a sheet opens to reveal all of its content. Provide the `snapPoints` prop to make it rest partially open instead, exposing just enough content to preview it. Each value is the amount of the sheet that is visible at that detent — the sheet opens at the first snap point, and can be dragged up to its full height or swiped down to dismiss. This is ideal for progressive disclosure, like a map that shows a location preview before the full details.
+
+```tsx render
+"use client";
+import {DialogTrigger} from 'react-aria-components/Dialog';
+import {Sheet, Heading} from 'vanilla-starter/Sheet';
+import {Button} from 'vanilla-starter/Button';
+import {Star, MapPin, Clock, Phone} from 'lucide-react';
+
+function Example() {
+  return (
+    <DialogTrigger>
+      <Button>Show place</Button>
+      {/*- begin highlight -*/}
+      <Sheet position="bottom" snapPoints={['280px']}>
+      {/*- end highlight -*/}
+        <Heading slot="title" style={{fontSize: '1.5rem', marginBottom: 4}}>Blue Bottle Coffee</Heading>
+        <div style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-color-secondary, gray)', marginBottom: 32}}>
+          <Star size={16} fill="currentColor" style={{color: '#ff9500'}} />
+          <strong>4.6</strong> · Coffee shop · $$
+        </div>
+        <div style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'start'}}>
+          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><MapPin size={18} /> 300 Webster St, Oakland</div>
+          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><Clock size={18} /> Open until 6:00 PM</div>
+          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><Phone size={18} /> (510) 555-0142</div>
+          <p>Drag this sheet up to see more, or swipe down to dismiss. Snap points let you preview the most relevant content first, then expand for the full story.</p>
+          <div style={{height: 300, width: '100%', background: 'var(--gray-200)', borderRadius: 16}} />
+          <Button slot="close">Get directions</Button>
+        </div>
+      </Sheet>
+    </DialogTrigger>
+  );
+}
+```
+
+## Stacking
+
+A sheet can be nested inside another sheet's content to drill deeper into a flow. When a child sheet opens, set `stackAnimation` on the parent to scale it backward, creating a sense of depth. The starter `Sheet` component wires this up for you, so opening one sheet from within another just works.
+
+```tsx render
+"use client";
+import {DialogTrigger} from 'react-aria-components/Dialog';
+import {Sheet, Heading} from 'vanilla-starter/Sheet';
+import {Button} from 'vanilla-starter/Button';
+import {ChevronRight} from 'lucide-react';
+
+function Example() {
+  return (
+    <DialogTrigger>
+      <Button>Settings</Button>
+      <Sheet>
+        <Heading slot="title">Settings</Heading>
+        <p style={{marginTop: 0}}>Manage your account and preferences.</p>
+        {/*- begin highlight -*/}
+        <DialogTrigger>
+          <Button variant="secondary">
+            <span>Account</span>
+            <ChevronRight size={18} />
+          </Button>
+          <Sheet>
+            <Heading slot="title">Account</Heading>
+            <p style={{marginTop: 0}}>Swipe this sheet away to return to Settings.</p>
+            <Button slot="close">Done</Button>
+          </Sheet>
+        </DialogTrigger>
+        {/*- end highlight -*/}
+      </Sheet>
+    </DialogTrigger>
+  );
+}
+```
+
+## Dismissal
+
+By default a sheet is dismissable — the user can swipe it away or click the backdrop to close it. Set `isDismissable={false}` to require an explicit action to close, for example when the sheet contains a form that should not be lost accidentally. Use a `Button` with `slot="close"` to close the sheet from within its content.
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Always include a `Heading` with `slot="title"` inside a sheet's content so that assistive technology can announce it. Sheets trap focus and are labeled by their title, just like a [Dialog](Dialog).</Content>
+</InlineAlert>
+
+## API
+
+```tsx links={{DialogTrigger: 'Dialog', Button: 'Button', SheetOverlay: '#sheetoverlay', SheetBackdrop: '#sheetbackdrop', Sheet: '#sheet', SheetContent: '#sheetcontent', Heading: 'Dialog', Text: 'Dialog'}}
+<DialogTrigger>
+  <Button />
+  <SheetOverlay>
+    <SheetBackdrop />
+    <Sheet>
+      <SheetContent>
+        <Heading slot="title" />
+        <Text slot="description" />
+        <Button slot="close" />
+      </SheetContent>
+    </Sheet>
+  </SheetOverlay>
+</DialogTrigger>
+```
+
+### DialogTrigger
+
+<PropTable component={docs.exports.DialogTrigger} links={docs.links} showDescription />
+
+### SheetOverlay
+
+<PropTable
+  component={docs.exports.SheetOverlay}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--sheet-scroll-padding-y': 'The amount of the sheet obscured by browser UI or software keyboard along the vertical axis. Add as padding to the scrollable sheet content.',
+    '--sheet-scroll-padding-x': 'The amount of the sheet obscured by browser UI along the horizontal axis. Add as padding to the scrollable sheet content.',
+    '--visual-viewport-height': 'The height of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API), i.e. space above the software keyboard.',
+    '--visual-viewport-width': 'The width of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API).'
+  }} />
+
+### SheetBackdrop
+
+<PropTable component={docs.exports.SheetBackdrop} links={docs.links} showDescription />
+
+### Sheet
+
+<PropTable component={docs.exports.Sheet} links={docs.links} showDescription />
+
+### SheetContent
+
+<PropTable component={docs.exports.SheetContent} links={docs.links} showDescription />

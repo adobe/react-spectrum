@@ -37,12 +37,18 @@ const sheetStyles = tv({
 // Only scroll the inner content once the sheet is fully expanded. At a partial detent a swipe on the
 // content chains out to the sheet's scroll container instead, expanding the sheet (like iOS).
 const contentStyles = tv({
-  base: 'p-6 pb-[var(--sheet-scroll-padding-y)] box-border h-full outline-hidden overflow-hidden group-data-[expanded]/sheet:overflow-auto'
+  base: 'p-6 pb-[calc(var(--spacing-6) + var(--sheet-scroll-padding-y))] box-border h-full outline-hidden overflow-hidden group-data-[expanded]/sheet:overflow-auto'
 });
 
 export interface SheetProps extends Omit<SheetOverlayProps, 'children'> {
   /** The contents of the sheet. Rendered inside a Dialog. */
   children?: DialogProps['children'];
+  /**
+   * Whether to add padding to the sheet so that it appears to continue outside the viewport.
+   *
+   * @default true
+   */
+  overscrollPadding?: boolean;
 }
 
 export function Sheet({children, ...props}: SheetProps) {
@@ -50,17 +56,17 @@ export function Sheet({children, ...props}: SheetProps) {
   return (
     <SheetOverlay {...props} className={twMerge('group/sheet', props.className)}>
       {/* The backdrop fades in as the sheet slides up. When snap points are used, it stays hidden
-        until the sheet is dragged past the first detent. */}
+        until the sheet is dragged past the last detent. */}
       <SheetBackdrop
         className={backdropStyles()}
         swipeAnimation="sheet-backdrop"
-        swipeAnimationRange={snapPoints ? {start: 0} : undefined}
+        swipeAnimationRange={snapPoints ? {start: snapPoints.length - 1} : undefined}
       />
       {/* overscrollPadding makes the sheet appear to continue past the edge of the screen when
         overscrolled. The radius animation rounds the corners as it enters, and scaleBack scales a
         parent sheet backward when a child sheet is opened on top of it. */}
       <RACSheet
-        overscrollPadding
+        overscrollPadding={props.overscrollPadding ?? true}
         swipeAnimation="sheet-radius"
         swipeAnimationRange={snapPoints ? {end: 0} : undefined}
         stackAnimation="sheet-scale-back"
