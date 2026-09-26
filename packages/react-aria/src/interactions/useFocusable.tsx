@@ -67,7 +67,8 @@ function useFocusableContext(ref: RefObject<FocusableElement | null>): Focusable
 }
 
 /**
- * Provides DOM props to the nearest focusable child.
+ * Provides DOM props to the nearest focusable child that uses `useFocusable`.
+ * Only pass DOM attributes that are valid for the element consuming these props.
  */
 export const FocusableProvider: React.ForwardRefExoticComponent<
   FocusableProviderProps & React.RefAttributes<FocusableElement>
