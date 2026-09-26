@@ -15,11 +15,12 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import {HTMLAttributes} from 'react';
 import intlMessages from '../../intl/steplist/*.json';
 import {mergeProps} from '../utils/mergeProps';
-import {StepListProps, StepListState} from 'react-stately/private/steplist/useStepListState';
+import {StepListState, StepListStateOptions} from 'react-stately/private/steplist/useStepListState';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useSelectableList} from '../selection/useSelectableList';
 
-export interface AriaStepListProps<T> extends StepListProps<T>, AriaLabelingProps, DOMProps {}
+export interface AriaStepListProps<T>
+  extends StepListStateOptions<T>, AriaLabelingProps, DOMProps {}
 
 export interface StepListAria {
   listProps: HTMLAttributes<HTMLElement>;
