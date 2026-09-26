@@ -1055,6 +1055,56 @@ describeOrSkip('TokenField browser interactions', () => {
       }
       expect(getValue().toString()).toBe('hi');
     });
+
+    // Real OS clipboard round trips can't carry text/html reliably across engines in CI, and
+    // useTokenField reads the pasted HTML/plain-text pair off the `beforeinput` event's own
+    // `dataTransfer` (not off a native clipboard read), so these dispatch that event directly
+    // with a synthetic DataTransfer to exercise the same code path a real paste would use.
+    let pasteHtml = (el: Element, html: string, plainText: string) => {
+      let dt = new DataTransfer();
+      dt.setData('text/html', html);
+      dt.setData('text/plain', plainText);
+      el.dispatchEvent(
+        new InputEvent('beforeinput', {
+          inputType: 'insertFromPaste',
+          dataTransfer: dt,
+          bubbles: true,
+          cancelable: true
+        })
+      );
+    };
+
+    it('recovers a scheme dropped from a pasted rendered link', async () => {
+      // WebKit doesn't honor a synthetic `dataTransfer` passed to the InputEvent constructor,
+      // so this can't be exercised without a real (unavailable in CI) OS clipboard round trip.
+      if (isWebKit()) {
+        return;
+      }
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')));
+      await focusField(textbox);
+      pasteHtml(textbox.element(), '<a href="https://example.com">example.com</a>', 'example.com');
+      await waitForFieldText(getValue, 'https://example.com');
+    });
+
+    it('leaves a pasted link label alone when it is not a scheme-less rendering of its href', async () => {
+      if (isWebKit()) {
+        return;
+      }
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')));
+      await focusField(textbox);
+      pasteHtml(textbox.element(), '<a href="https://example.com">click here</a>', 'click here');
+      await waitForFieldText(getValue, 'click here');
+    });
+
+    it('pastes non-link HTML unchanged', async () => {
+      if (isWebKit()) {
+        return;
+      }
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')));
+      await focusField(textbox);
+      pasteHtml(textbox.element(), '<b>bold</b> text', 'bold text');
+      await waitForFieldText(getValue, 'bold text');
+    });
   });
 
   describe('undo and redo', () => {
