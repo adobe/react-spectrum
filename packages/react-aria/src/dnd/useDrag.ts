@@ -33,6 +33,7 @@ import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {
+  globalDndState,
   globalDropEffect,
   setGlobalAllowedDropOperations,
   setGlobalDropEffect,
@@ -298,9 +299,18 @@ export function useDrag(options: DragOptions): DragResult {
       // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
       if (
         isDraggingRef.current &&
-        !DragManager.isVirtualDragging() &&
         (!isDraggingRef.current.isConnected || parseInt(ReactVersion, 10) < 17)
       ) {
+        if (DragManager.isVirtualDragging()) {
+          // A collection owns drags after its source row disappears. A
+          // standalone source has no owner to finish the session.
+          // oxlint-disable-next-line react-hooks/exhaustive-deps
+          if (!globalDndState.draggingCollectionRef?.current?.isConnected) {
+            DragManager.cancelDragging();
+          }
+          return;
+        }
+
         if (typeof state.options.onDragEnd === 'function') {
           let event: DragEndEvent = {
             type: 'dragend',

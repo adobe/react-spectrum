@@ -2389,6 +2389,39 @@ describe('Tree', () => {
         document.activeElement?.dispatchEvent(event);
         expect(event.defaultPrevented).toBe(false);
       });
+
+      it('cancels the drag when the collection unmounts after its source row collapses', async () => {
+        let onMove = jest.fn();
+        let onDragEnd = jest.fn();
+        let {getByRole, unmount} = render(<MovingTree onMove={onMove} onDragEnd={onDragEnd} />);
+
+        await user.tab();
+        await user.keyboard('{ArrowDown}{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Drag Project 1'}));
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        for (
+          let i = 0;
+          i < 8 && document.activeElement?.getAttribute('aria-label') !== 'Drop on Projects';
+          i++
+        ) {
+          await user.keyboard('{ArrowUp}');
+        }
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Projects');
+        await user.keyboard('{ArrowLeft}');
+        act(() => jest.runAllTimers());
+        expect(onDragEnd).not.toHaveBeenCalled();
+
+        unmount();
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith(
+          expect.objectContaining({keys: new Set(['project-1']), dropOperation: 'cancel'})
+        );
+        expect(onMove).not.toHaveBeenCalled();
+        let event = new KeyboardEvent('keydown', {key: 'a', bubbles: true, cancelable: true});
+        document.dispatchEvent(event);
+        expect(event.defaultPrevented).toBe(false);
+      });
     });
 
     it('should render drop indicators', async () => {
