@@ -13,7 +13,15 @@
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {RouterProvider} from 'react-aria-components';
-import {SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SidePanel} from '../src/SideNav';
+import {
+  SideNav,
+  SideNavItem,
+  SideNavItemContent,
+  SideNavItemLink,
+  SideNavProps,
+  SidePanel,
+  SidePanelProps
+} from '../src/SideNav';
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
@@ -21,12 +29,12 @@ import userEvent, {UserEvent} from '@testing-library/user-event';
 // "Favorites" is a parent with no href but with a nested "Documents" leaf.
 // Items are always links. An item with an href navigates when it is activated, whether or not it has
 // children and whether or not the panel is collapsed. An item without one toggles its category instead.
-function SidePanelExample(props: {
-  defaultCollapsed?: boolean;
-  onCollapsedChange?: (isCollapsed: boolean) => void;
-  defaultExpandedKeys?: Array<string>;
-  navigate?: (path: string) => void;
-}) {
+function SidePanelExample(
+  props: SidePanelProps &
+    SideNavProps<any> & {
+      navigate?: (path: string) => void;
+    }
+) {
   let {navigate, defaultExpandedKeys, ...panelProps} = props;
   let sidePanel = (
     <SidePanel aria-label="Side panel" {...panelProps}>
@@ -98,6 +106,20 @@ describe('SidePanel', () => {
     act(() => {
       jest.runAllTimers();
     });
+  });
+
+  it('exposes a labelled region when an aria-label is provided', () => {
+    let {getByRole} = render(<SidePanelExample />);
+
+    // SidePanelExample passes aria-label="Side panel". The inner SideNav is labelled separately,
+    // so the panel should be its own labelled landmark rather than dropping the label.
+    expect(getByRole('region', {name: 'Side panel'})).toBeInTheDocument();
+  });
+
+  it('stays a plain container when no label is provided', () => {
+    let {queryByRole} = render(<SidePanelExample aria-label={undefined} />);
+
+    expect(queryByRole('region')).toBeNull();
   });
 
   it('collapses and expands via the provided toggle button', async () => {

@@ -13,6 +13,13 @@
 import {ActionButton} from './ActionButton';
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
+import {
+  AriaLabelingProps,
+  DOMRef,
+  forwardRefType,
+  GlobalDOMAttributes,
+  Key
+} from '@react-types/shared';
 import {baseColor, css, focusRing, space, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
@@ -27,15 +34,16 @@ import {
   ComponentType,
   createContext,
   forwardRef,
+  FunctionComponent,
   ReactNode,
+  SVGProps,
   useContext,
   useMemo,
   useRef,
   useState,
   ViewTransitionClass
 } from 'react';
-import {createIcon} from './Icon';
-import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {createIcon, IconProps} from './Icon';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {IconContext} from './Icon';
@@ -706,7 +714,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   );
 };
 
-export interface SidePanelProps<T> extends Omit<SideNavProps<T>, 'children'> {
+export interface SidePanelProps extends AriaLabelingProps, UnsafeStyles {
   /** The content of the side panel. */
   children?: ReactNode;
   /** Whether the side panel is collapsed (controlled). */
@@ -715,9 +723,11 @@ export interface SidePanelProps<T> extends Omit<SideNavProps<T>, 'children'> {
   defaultCollapsed?: boolean;
   /** Handler that is called when the collapsed state changes. */
   onCollapsedChange?: (isCollapsed: boolean) => void;
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight;
 }
 
-export interface SidePanelContextValue {
+interface SidePanelContextValue {
   /** Whether the side panel is currently collapsed. */
   isCollapsed?: boolean;
   /** Sets whether the side panel is collapsed. */
@@ -753,16 +763,25 @@ const sidePanelStyle = style(
  * A SidePanel contains a SideNav and other app chrome in a container that collapses to an icon
  * rail.
  */
-export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function SidePanel<T>(
-  props: SidePanelProps<T>,
+export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
+  props: SidePanelProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
+  let {
+    children,
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles,
+    isCollapsed: propIsCollapsed,
+    defaultCollapsed,
+    onCollapsedChange,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let [isCollapsed, setCollapsed] = useControlledState<boolean>(
-    props.isCollapsed,
-    props.defaultCollapsed ?? false,
-    props.onCollapsedChange
+    propIsCollapsed,
+    defaultCollapsed ?? false,
+    onCollapsedChange
   );
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
@@ -813,11 +832,14 @@ export const SidePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function S
     [contentCollapsed, setCollapsed]
   );
 
-  let filteredProps = filterDOMProps(otherProps);
+  let filteredProps = filterDOMProps(otherProps, {labelable: true});
+  // A labelled collapsible panel must have a role.
+  let hasLabel = filteredProps['aria-label'] != null || filteredProps['aria-labelledby'] != null;
   return (
     <SidePanelContext.Provider value={context}>
       <div
         {...filteredProps}
+        role={hasLabel ? 'region' : undefined}
         ref={domRef}
         // Allows any children to hide via css selector instead of the state.
         // This can allow us to get ahead of the double render cycle for collections.
@@ -858,7 +880,13 @@ function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: 
   );
 }
 
-function PanelToggleButton({isCollapsed, setCollapsed, ...otherProps}: any) {
+function PanelToggleButton(
+  props: AriaLabelingProps & {
+    isCollapsed: boolean;
+    setCollapsed: (isCollapsed: boolean) => void;
+  }
+) {
+  let {isCollapsed, setCollapsed, ...otherProps} = props;
   let [isHovered, setHovered] = useState(false);
   let {hoverProps} = useHover({onHoverChange: setHovered});
   return (
@@ -871,39 +899,48 @@ function PanelToggleButton({isCollapsed, setCollapsed, ...otherProps}: any) {
           setCollapsed(!isCollapsed);
           setHovered(false);
         }}>
-        {/* @ts-ignore */}
         <PanelIcon isCollapsed={isCollapsed} isHovered={isHovered} />
       </ActionButton>
     </div>
   );
 }
 
-const PanelIcon = createIcon(props => {
-  let {isCollapsed, isHovered, ...otherProps} = props as any;
-  return (
-    <svg viewBox="0 0 20 20" fill="var(--iconPrimary)" {...otherProps}>
-      <path
-        d="M15.75 18H4.25C3.00977 18 2 16.9907 2 15.75V4.25C2 3.00928 3.00977 2 4.25 2H15.75C16.9902 2 18 3.00928 18 4.25V15.75C18 16.9907 16.9902 18 15.75 18ZM4.25 3.5C3.83691 3.5 3.5 3.83643 3.5 4.25V15.75C3.5 16.1636 3.83691 16.5 4.25 16.5H15.75C16.1631 16.5 16.5 16.1636 16.5 15.75V4.25C16.5 3.83643 16.1631 3.5 15.75 3.5H4.25Z"
-        fill="var(--iconPrimary)"
-      />
-      <rect
-        x={5}
-        y={5}
-        rx={0.5}
-        height={10}
-        className={style({
-          transition: '[width]',
-          transitionDuration: 300,
-          width: {
-            default: '[5px]',
-            isHovered: '[1.5px]',
-            isCollapsed: {
-              default: '[1.5px]',
-              isHovered: '[5px]'
+interface PanelIconProps extends IconProps {
+  isCollapsed?: boolean;
+  isHovered?: boolean;
+}
+
+const PanelIcon = createIcon(
+  ({
+    isCollapsed,
+    isHovered,
+    ...otherProps
+  }: SVGProps<SVGSVGElement> & Pick<PanelIconProps, 'isCollapsed' | 'isHovered'>) => {
+    return (
+      <svg viewBox="0 0 20 20" fill="var(--iconPrimary)" {...otherProps}>
+        <path
+          d="M15.75 18H4.25C3.00977 18 2 16.9907 2 15.75V4.25C2 3.00928 3.00977 2 4.25 2H15.75C16.9902 2 18 3.00928 18 4.25V15.75C18 16.9907 16.9902 18 15.75 18ZM4.25 3.5C3.83691 3.5 3.5 3.83643 3.5 4.25V15.75C3.5 16.1636 3.83691 16.5 4.25 16.5H15.75C16.1631 16.5 16.5 16.1636 16.5 15.75V4.25C16.5 3.83643 16.1631 3.5 15.75 3.5H4.25Z"
+          fill="var(--iconPrimary)"
+        />
+        <rect
+          x={5}
+          y={5}
+          rx={0.5}
+          height={10}
+          className={style({
+            transition: '[width]',
+            transitionDuration: 300,
+            width: {
+              default: '[5px]',
+              isHovered: '[1.5px]',
+              isCollapsed: {
+                default: '[1.5px]',
+                isHovered: '[5px]'
+              }
             }
-          }
-        })({isCollapsed, isHovered})}
-      />
-    </svg>
-  );
-});
+          })({isCollapsed, isHovered})}
+        />
+      </svg>
+    );
+  }
+) as FunctionComponent<PanelIconProps>;
