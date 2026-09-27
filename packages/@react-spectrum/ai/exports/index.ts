@@ -1,5 +1,6 @@
 export {Alert} from '../src/Alert';
 export {Attachment, AttachmentList, AttachmentPreview} from '../src/AttachmentList';
+export {AttachmentGrid, AttachmentGridItem} from '../src/AttachmentGrid';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
@@ -44,6 +45,7 @@ export type {
   AttachmentListProps,
   AttachmentPreviewProps
 } from '../src/AttachmentList';
+export type {AttachmentGridProps, AttachmentGridItemProps} from '../src/AttachmentGrid';
 export type {
   PromptFieldProps,
   PromptFieldSubmitButtonProps,
