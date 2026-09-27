@@ -299,19 +299,12 @@ function CollectionRoot({children}) {
   let doc = useContext(CollectionDocumentContext);
   let isSSR = useIsSSR();
 
-  // After SSR is complete, reset the document to empty so it is ready for React to render the portal into.
-  // We do this _after_ getting the collection so that the collection still has content in it from SSR
-  // during the current render, before React has finished the client render.
-  if (!isSSR && doc?.isSSR) {
-    doc.resetAfterSSR();
-  }
-
-  // Ensure that React re-renders after switching from SSR to client rendering. If the portal rendered
-  // any items, appendChild will have already queued one and this is a no-op. If the tree is empty,
-  // we must still make sure to re-render so queue an update manually.
+  // Preserve the server collection between the hydration commit and the client portal commit.
   useLayoutEffect(() => {
-    if (!isSSR) {
-      doc?.queueUpdate();
+    if (isSSR) {
+      doc?.resetAfterSSR();
+    } else {
+      doc?.queueUpdateAfterSSR();
     }
   }, [doc, isSSR]);
 

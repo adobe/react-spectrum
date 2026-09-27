@@ -17,9 +17,11 @@ describe('Collection SSR', function () {
     ['useEffect', ['one', 'two'], []],
     ['useEffect', ['one', 'two'], ['three']],
     ['useEffect', [], ['one', 'two']],
+    ['useEffect', [], []],
     ['useLayoutEffect', ['one', 'two'], []],
     ['useLayoutEffect', ['one', 'two'], ['three']],
-    ['useLayoutEffect', [], ['one', 'two']]
+    ['useLayoutEffect', [], ['one', 'two']],
+    ['useLayoutEffect', [], []]
   ])(
     'should reflect collection changes from the first %s (%j to %j)',
     async function (effect, initialItems, items) {
@@ -46,6 +48,7 @@ describe('Collection SSR', function () {
               {collection => (
                 <output>
                   {JSON.stringify({
+                    frozen: collection.frozen,
                     size: collection.size,
                     keys: [...collection.getKeys()].sort(),
                     visible: [...collection].map(node => node.key)
@@ -63,6 +66,7 @@ describe('Collection SSR', function () {
     `,
         () => {
           expect(JSON.parse(screen.getByRole('status').textContent)).toEqual({
+            frozen: false,
             size: initialItems.length,
             keys: initialItems,
             visible: initialItems
@@ -71,6 +75,7 @@ describe('Collection SSR', function () {
       );
 
       expect(JSON.parse(screen.getByRole('status').textContent)).toEqual({
+        frozen: true,
         size: items.length,
         keys: items,
         visible: items
@@ -78,6 +83,7 @@ describe('Collection SSR', function () {
 
       fireEvent.click(screen.getByRole('button', {name: 'Restore'}));
       expect(JSON.parse(screen.getByRole('status').textContent)).toEqual({
+        frozen: true,
         size: 2,
         keys: ['one', 'two'],
         visible: ['two', 'one']
@@ -85,6 +91,7 @@ describe('Collection SSR', function () {
 
       fireEvent.click(screen.getByRole('button', {name: 'Clear'}));
       expect(JSON.parse(screen.getByRole('status').textContent)).toEqual({
+        frozen: true,
         size: 0,
         keys: [],
         visible: []
