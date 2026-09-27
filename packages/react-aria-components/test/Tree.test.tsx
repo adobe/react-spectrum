@@ -37,7 +37,8 @@ import {
   TreeItem,
   TreeItemContent,
   TreeLoadMoreItem,
-  TreeSection
+  TreeSection,
+  TreeStateContext
 } from '../src/Tree';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -1739,6 +1740,43 @@ describe('Tree', () => {
       await user.keyboard('{ArrowRight}');
       expect(getAllByRole('row')[1]).toHaveAttribute('aria-selected', 'true');
       expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should move focus to the closest visible ancestor when the focused key is set to a hidden item', async () => {
+      let state;
+      let StateReader = ({onState}) => {
+        let treeState = React.useContext(TreeStateContext);
+        React.useEffect(() => {
+          onState(treeState);
+        });
+        return null;
+      };
+
+      let {getByRole, getAllByRole} = render(
+        <Tree aria-label="test tree">
+          <CollapsibleItem id="p1">
+            <CollapsibleItem id="child" />
+          </CollapsibleItem>
+          <TreeItem id="p2" textValue="p2">
+            <TreeItemContent>
+              <Text>p2</Text>
+              <StateReader onState={s => (state = s)} />
+            </TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
+      let tree = getByRole('treegrid');
+      let rows = getAllByRole('row');
+
+      await user.tab();
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[1]);
+
+      act(() => state.selectionManager.setFocusedKey('child'));
+      rows = getAllByRole('row');
+      expect(rows.map(row => row.getAttribute('data-key'))).toEqual(['p1', 'p2']);
+      expect(document.activeElement).toBe(rows[0]);
+      expectSingleTabStop(tree, rows[0]);
     });
 
     describe('virtualized', () => {
