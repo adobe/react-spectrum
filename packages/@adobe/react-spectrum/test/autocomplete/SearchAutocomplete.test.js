@@ -3341,8 +3341,6 @@ describe('SearchAutocomplete', function () {
             jest.runAllTimers();
           });
 
-          // VoiceOver announces per-item details natively within a section, so we
-          // should not interrupt it with our own live region announcement.
           expect(announce).not.toHaveBeenCalledWith('One');
 
           await user.keyboard('{ArrowDown}');
@@ -3369,8 +3367,6 @@ describe('SearchAutocomplete', function () {
             'Entered group Section One, with 3 options. One'
           );
 
-          // Moving within the same section should not announce again, VoiceOver
-          // handles the per-item announcement natively.
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
@@ -3454,7 +3450,6 @@ describe('SearchAutocomplete', function () {
             jest.runAllTimers();
           });
 
-          // No per-item announcement when arrowing; VoiceOver handles that natively.
           expect(announce).not.toHaveBeenCalledWith('One');
 
           await user.keyboard('{Enter}');
