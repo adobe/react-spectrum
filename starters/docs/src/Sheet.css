@@ -3,7 +3,7 @@
 .react-aria-Sheet {
   background: var(--overlay-background);
   color: var(--text-color);
-  border: 1px solid var(--overlay-border);
+  outline: 1px solid var(--overlay-border);
   box-shadow: var(--popover-shadow);
   font-family: system-ui;
   font-size: var(--font-size);
@@ -13,7 +13,6 @@
   margin: var(--spacing-4);
   border-radius: var(--radius-xl);
   overflow: clip;
-  outline: none;
   z-index: 1;
   /* Establish a 3D space so stacked sheets can scale backward along the z-axis. */
   transform: perspective(1000px);
@@ -59,6 +58,7 @@
   /* Only scroll the inner content once the sheet is fully expanded. At a partial detent a swipe on
      the content chains out to the sheet's scroll container instead, expanding the sheet (like iOS). */
   overflow: hidden;
+  overscroll-behavior: auto;
 
   .react-aria-Heading[slot='title'] {
     margin-top: 0;

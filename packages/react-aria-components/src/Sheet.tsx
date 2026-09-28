@@ -2,7 +2,7 @@ import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
 import {Dialog, DialogProps} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
-import {isWebKit} from 'react-aria/private/utils/platform';
+import {isIOS, isSafari} from 'react-aria/private/utils/platform';
 import {Modal, ModalOverlay, ModalOverlayProps, ModalRenderProps} from './Modal';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {
@@ -147,18 +147,8 @@ export function SheetOverlay(props: SheetOverlayProps) {
     contextState!.close();
   });
 
-  let {
-    axis,
-    before,
-    after,
-    maxScroll,
-    enteredScroll,
-    containerOffset,
-    length,
-    viewRange,
-    viewDirection,
-    viewIterations
-  } = getSwipeConfig(swipeDirection);
+  let {axis, before, after, maxScroll, enteredScroll, viewRange, viewDirection, viewIterations} =
+    getSwipeConfig(swipeDirection);
 
   let id = useId();
   let stackItem = useMemo(
@@ -215,10 +205,6 @@ export function SheetOverlay(props: SheetOverlayProps) {
     [stackItem]
   );
 
-  let alignment = getPositionAlignment(position);
-  let justifyContent = axis === 'y' ? alignment.y : alignment.x;
-  let alignItems = axis === 'y' ? alignment.x : alignment.y;
-
   let sheetStack = useSyncExternalStore(subscribeStack, getSheetStack, getSheetStack);
   let index = Math.max(
     0,
@@ -254,48 +240,36 @@ export function SheetOverlay(props: SheetOverlayProps) {
           : 'react-aria-SheetOverlay'
       }
       style={renderProps => ({
-        position: 'fixed',
-        top: axis === 'y' ? `${containerOffset}dvh` : 0,
-        left: axis === 'x' ? `${containerOffset}vw` : 0,
-        // The container is 2 viewports along the swipe axis and 1 viewport on the cross axis.
-        height: axis === 'y' ? '200dvh' : '100dvh',
-        width: axis === 'x' ? '200vw' : '100vw',
-        overflowX: axis === 'x' && isDismissable ? 'auto' : 'hidden',
-        overflowY: axis === 'y' && isDismissable ? 'auto' : 'hidden',
-        scrollSnapType: `${axis} mandatory`,
-        overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
-        overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
-        scrollbarWidth: 'none',
+        // absolute rather than fixed so the modal is not clipped by iOS Safari.
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: 'max(var(--page-width), 100vw)',
+        height: 'max(var(--page-height), 100dvh)',
+        overflow: 'clip',
         // @ts-ignore
         '--sheet-scroll-padding-x': 'calc(100vw - var(--visual-viewport-width))',
         '--sheet-scroll-padding-y': 'calc(100dvh - var(--visual-viewport-height))',
-        '--sheet-stack-index': index,
         ...(typeof style === 'function' ? style({...renderProps, ...baseRenderProps}) : style)
       })}
       onEnter={element => {
+        // The overlay is the document-anchored wrapper; the swipe gesture scrolls the inner container.
+        let scroller = element.querySelector<HTMLElement>('[data-sheet-scroll]')!;
         let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
-        // Open at the first custom detent when provided, otherwise the fully-entered position. The
-        // detent marker snaps via scroll-margin, so scrollIntoView (which honors scroll-margin) lands
-        // exactly on its snap position — no manual math. Its start/end alignment matches the edge the
-        // sheet exits toward.
+        // Open at the first custom detent when provided, otherwise the fully-entered position.
         let initial = element.querySelector<HTMLElement>('[data-sheet-initial]');
         let scrollToRest = (smooth: boolean) => {
           if (initial) {
-            let behavior: ScrollBehavior = smooth ? 'smooth' : 'auto';
-            initial.scrollIntoView(
-              axis === 'y'
-                ? {behavior, block: after ? 'start' : 'end'}
-                : {behavior, inline: after ? 'start' : 'end', block: 'nearest'}
-            );
+            scrollDetentIntoView(scroller, initial, axis, after ? 'start' : 'end', smooth);
           } else {
-            scrollAlongAxis(element, axis, (enteredScroll / 100) * vp, smooth);
+            scrollAlongAxis(scroller, axis, (enteredScroll / 100) * vp, smooth);
           }
         };
         if (enteredScroll === 0) {
           // The rest position is at scroll 0, so the sheet mounts already entered. Jump to the exit
           // first, then animate back in on the next frame — doing both in the same task can leave
           // the browser stuck at the jumped-to position instead of running the smooth scroll.
-          scrollAlongAxis(element, axis, (maxScroll / 100) * vp);
+          scrollAlongAxis(scroller, axis, (maxScroll / 100) * vp);
           requestAnimationFrame(() => scrollToRest(true));
         } else {
           scrollToRest(true);
@@ -303,16 +277,17 @@ export function SheetOverlay(props: SheetOverlayProps) {
 
         return new Promise<void>(resolve => {
           // eslint-disable-next-line rsp-rules/no-non-composing-event-listener
-          element.addEventListener('scrollend', () => resolve(), {once: true});
+          scroller.addEventListener('scrollend', () => resolve(), {once: true});
         });
       }}
       onExit={element => {
+        let scroller = element.querySelector<HTMLElement>('[data-sheet-scroll]')!;
         if (!isVisible.current) {
-          // Wait for the end of the scroll gesture in Safari to avoid re-targeting to the sheet behind.
-          if (isWebKit()) {
+          // Wait for the end of the scroll gesture in Safari to avoid momentum scrolling re-targeting to the sheet behind.
+          if (isSafari() && !isIOS()) {
             return new Promise<void>(resolve => {
               // eslint-disable-next-line rsp-rules/no-non-composing-event-listener
-              element.addEventListener(
+              scroller.addEventListener(
                 'scrollend',
                 () => {
                   setTimeout(() => resolve(), 50);
@@ -326,7 +301,7 @@ export function SheetOverlay(props: SheetOverlayProps) {
 
         let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
         let maxScrollPx = (maxScroll / 100) * vp;
-        let current = axis === 'y' ? element.scrollTop : element.scrollLeft;
+        let current = axis === 'y' ? scroller.scrollTop : scroller.scrollLeft;
         let target: number;
         if (after && !before) {
           target = 0;
@@ -336,48 +311,27 @@ export function SheetOverlay(props: SheetOverlayProps) {
           // Dual direction: exit toward whichever edge is nearest the current position.
           target = current > (enteredScroll / 100) * vp ? maxScrollPx : 0;
         }
-        scrollAlongAxis(element, axis, target, true);
+        scrollAlongAxis(scroller, axis, target, true);
 
+        // The close event is dispatched on the overlay wrapper by the IntersectionObserver below.
         return new Promise<void>(resolve => {
           element.addEventListener('react-aria-sheet-close', () => resolve(), {once: true});
         });
       }}>
       {renderProps => (
-        <>
-          {/* Snap marker for the exit at scroll 0 (also the rest position for top/left). */}
-          <SnapPoint point={0} align="start" axis={axis} />
-          {/* When the sheet can exit both ways, add a center snap for the rest position. */}
-          {before && after && <SnapPoint point={100} align="start" axis={axis} />}
-          <div
-            style={{
-              position: 'absolute',
-              // The stage sits 1 viewport into the content along the swipe axis.
-              top: axis === 'y' ? '100dvh' : 0,
-              left: axis === 'x' ? '100vw' : 0,
-              height: '100dvh',
-              width: '100vw',
-              display: 'flex',
-              flexDirection: axis === 'y' ? 'column' : 'row',
-              alignItems,
-              justifyContent
-            }}>
-            <SheetContext.Provider
-              value={{
-                ...props,
-                index,
-                descendants,
-                isEntering: renderProps.isEntering,
-                isExiting: renderProps.isExiting,
-                isExpanded
-              }}>
-              {typeof children === 'function'
-                ? children({...renderProps, ...baseRenderProps})
-                : children}
-            </SheetContext.Provider>
-          </div>
-          {/* Snap marker for the exit at the far end of the scroll content. */}
-          <SnapPoint point={length - 100} align="end" axis={axis} />
-        </>
+        <SheetContext.Provider
+          value={{
+            ...props,
+            index,
+            descendants,
+            isEntering: renderProps.isEntering,
+            isExiting: renderProps.isExiting,
+            isExpanded
+          }}>
+          {typeof children === 'function'
+            ? children({...renderProps, ...baseRenderProps})
+            : children}
+        </SheetContext.Provider>
       )}
     </ModalOverlay>
   );
@@ -581,9 +535,10 @@ export function Sheet(props: SheetProps) {
     snapPoints,
     index,
     descendants,
-    isExpanded
+    isExpanded,
+    isDismissable = true
   } = useContext(SheetContext)!;
-  let {axis, after} = getSwipeConfig(swipeDirection);
+  let {axis, after, before, containerOffset, length} = getSwipeConfig(swipeDirection);
 
   let style: Record<string, string> = {
     // Positioned so the detent markers below anchor to the sheet's own box.
@@ -655,41 +610,83 @@ export function Sheet(props: SheetProps) {
     stackIndex: index
   };
 
+  let alignment = getPositionAlignment(position);
+  let justifyContent = axis === 'y' ? alignment.y : alignment.x;
+  let alignItems = axis === 'y' ? alignment.x : alignment.y;
+
   return (
-    <Modal
-      {...props}
-      ref={ref}
-      data-position={position}
-      data-swipe-direction={swipeDirection}
-      render={
-        props.render
-          ? (domProps, renderProps) => props.render!(domProps, {...renderProps, ...baseRenderProps})
-          : undefined
-      }
-      className={renderProps =>
-        props.className
-          ? typeof props.className === 'function'
-            ? props.className({...renderProps, ...baseRenderProps})
-            : props.className
-          : 'react-aria-Sheet'
-      }
-      style={renderProps => ({
-        ...(typeof props.style === 'function'
-          ? props.style({...renderProps, ...baseRenderProps})
-          : props.style),
-        ...style
-      })}>
-      {renderProps => (
-        <>
-          {snapPoints?.map((point, i) => (
-            <DetentPoint key={i} point={point} axis={axis} after={after} isInitial={i === 0} />
-          ))}
-          {typeof props.children === 'function'
-            ? props.children({...renderProps, ...baseRenderProps})
-            : props.children}
-        </>
-      )}
-    </Modal>
+    <div
+      data-sheet-scroll
+      style={{
+        position: 'absolute',
+        top: axis === 'y' ? `calc(${window.scrollY}px + ${containerOffset}dvh)` : window.scrollY,
+        left: axis === 'x' ? `${containerOffset}vw` : 0,
+        // The container is 2 viewports along the swipe axis and 1 viewport on the cross axis.
+        height: axis === 'y' ? '200dvh' : '100dvh',
+        width: axis === 'x' ? '200vw' : '100vw',
+        overflowX: axis === 'x' && isDismissable ? 'auto' : 'hidden',
+        overflowY: axis === 'y' && isDismissable ? 'auto' : 'hidden',
+        scrollSnapType: `${axis} mandatory`,
+        overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
+        overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
+        scrollbarWidth: 'none'
+      }}>
+      {/* Snap marker for the exit at scroll 0 (also the rest position for top/left). */}
+      <SnapPoint point={0} align="start" axis={axis} />
+      {/* When the sheet can exit both ways, add a center snap for the rest position. */}
+      {before && after && <SnapPoint point={100} align="start" axis={axis} />}
+      <div
+        style={{
+          position: 'absolute',
+          // The stage sits 1 viewport into the content along the swipe axis.
+          top: axis === 'y' ? '100dvh' : 0,
+          left: axis === 'x' ? '100vw' : 0,
+          height: '100dvh',
+          width: '100vw',
+          display: 'flex',
+          flexDirection: axis === 'y' ? 'column' : 'row',
+          alignItems,
+          justifyContent
+        }}>
+        <Modal
+          {...props}
+          ref={ref}
+          data-position={position}
+          data-swipe-direction={swipeDirection}
+          render={
+            props.render
+              ? (domProps, renderProps) =>
+                  props.render!(domProps, {...renderProps, ...baseRenderProps})
+              : undefined
+          }
+          className={renderProps =>
+            props.className
+              ? typeof props.className === 'function'
+                ? props.className({...renderProps, ...baseRenderProps})
+                : props.className
+              : 'react-aria-Sheet'
+          }
+          style={renderProps => ({
+            ...(typeof props.style === 'function'
+              ? props.style({...renderProps, ...baseRenderProps})
+              : props.style),
+            ...style
+          })}>
+          {renderProps => (
+            <>
+              {snapPoints?.map((point, i) => (
+                <DetentPoint key={i} point={point} axis={axis} after={after} isInitial={i === 0} />
+              ))}
+              {typeof props.children === 'function'
+                ? props.children({...renderProps, ...baseRenderProps})
+                : props.children}
+            </>
+          )}
+        </Modal>
+      </div>
+      {/* Snap marker for the exit at the far end of the scroll content. */}
+      <SnapPoint point={length - 100} align="end" axis={axis} />
+    </div>
   );
 }
 
@@ -728,7 +725,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SheetBackdrop',
-    defaultStyle: {...style, position: 'fixed', inset: 0},
+    defaultStyle: {...style, position: 'absolute', inset: 0},
     values: {
       position,
       swipeDirection,
@@ -754,7 +751,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
   );
 }
 
-function useSwipeAnimation(props) {
+function useSwipeAnimation(props: SheetBackdropProps) {
   let {
     position = 'bottom',
     swipeDirection = position === 'center' ? 'vertical' : position,
@@ -848,4 +845,42 @@ export function SheetContent(props: SheetContentProps) {
 function scrollAlongAxis(element: HTMLElement, axis: Axis, value: number, smooth = false) {
   let behavior: ScrollBehavior | undefined = smooth ? 'smooth' : undefined;
   element.scrollTo(axis === 'y' ? {top: value, behavior} : {left: value, behavior});
+}
+
+function scrollDetentIntoView(
+  scroller: HTMLElement,
+  marker: HTMLElement,
+  axis: Axis,
+  align: 'start' | 'end',
+  smooth = false
+) {
+  let behavior: ScrollBehavior = smooth ? 'smooth' : 'auto';
+  let markerRect = marker.getBoundingClientRect();
+  let scrollerRect = scroller.getBoundingClientRect();
+  let style = getComputedStyle(marker);
+  if (axis === 'y') {
+    if (align === 'start') {
+      let margin = parseFloat(style.scrollMarginTop) || 0;
+      // Rest the marker's start edge (less its scroll-margin) at the scrollport's start.
+      let top = markerRect.top - scrollerRect.top + scroller.scrollTop - margin;
+      scroller.scrollTo({top, behavior});
+    } else {
+      let margin = parseFloat(style.scrollMarginBottom) || 0;
+      // Rest the marker's end edge (plus its scroll-margin) at the scrollport's end.
+      let top =
+        markerRect.bottom - scrollerRect.top + scroller.scrollTop + margin - scroller.clientHeight;
+      scroller.scrollTo({top, behavior});
+    }
+  } else {
+    if (align === 'start') {
+      let margin = parseFloat(style.scrollMarginLeft) || 0;
+      let left = markerRect.left - scrollerRect.left + scroller.scrollLeft - margin;
+      scroller.scrollTo({left, behavior});
+    } else {
+      let margin = parseFloat(style.scrollMarginRight) || 0;
+      let left =
+        markerRect.right - scrollerRect.left + scroller.scrollLeft + margin - scroller.clientWidth;
+      scroller.scrollTo({left, behavior});
+    }
+  }
 }
