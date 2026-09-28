@@ -74,6 +74,7 @@ import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusableRef} from './useDOMRef';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useKeyboard} from 'react-aria/useKeyboard';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
@@ -330,7 +331,7 @@ export const PromptField = forwardRef(function PromptField(
   let {onFocusChange} = useContext(PromptFocusContext);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
   let {setPromptFieldSize} = useContext(InternalChatContext);
-  useEffect(() => {
+  useLayoutEffect(() => {
     setPromptFieldSize(size);
   }, [setPromptFieldSize, size]);
 
