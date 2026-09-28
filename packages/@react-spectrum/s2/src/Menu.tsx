@@ -604,7 +604,13 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
       {...props}
       className={menu(
         {size, isPopover, isVirtualized},
-        isPopover ? null : mergeStyles(virtualizedMenuWidth({isVirtualized}), styles)
+        isPopover
+          ? null
+          : mergeStyles(
+              // if in user provided popover use their width instead of applying a min to the menu
+              virtualizedMenuWidth({isVirtualized: isVirtualized && !inPopover}),
+              styles
+            )
       )}
       renderEmptyState={() =>
         loadingState === 'loading' ? (
