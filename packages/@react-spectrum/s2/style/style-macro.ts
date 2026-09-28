@@ -1197,13 +1197,12 @@ export function scrollFade(this: MacroContext | void, options: ScrollFadeOptions
   }
 
   if (start || end) {
-    // TODO: rtl
     inlineMask = `linear-gradient(
       to right,
-      transparent 0px ${inset > 0 ? `calc(var(--scroll-fade-left, ${inset}px) - ${start}px)` : ''},
-      black var(--scroll-fade-left, ${inset}px),
-      black var(--scroll-fade-right, calc(100% - ${end}px)),
-      transparent ${inset > 0 ? `calc(var(--scroll-fade-right, 100%) + ${end}px)` : ''} 100%
+      transparent 0px calc(var(--scroll-fade-left, var(--scroll-fade-left-edge)) - var(--scroll-fade-left-size)),
+      black var(--scroll-fade-left, var(--scroll-fade-left-edge)),
+      black var(--scroll-fade-right, calc(100% - var(--scroll-fade-right-edge))),
+      transparent calc(var(--scroll-fade-right, calc(100% - var(--scroll-fade-right-edge))) + var(--scroll-fade-right-size)) 100%
     )`;
   }
 
@@ -1225,44 +1224,81 @@ export function scrollFade(this: MacroContext | void, options: ScrollFadeOptions
     this,
     'left',
     '0px',
-    start ? `${start + inset}px` : '',
+    start || end ? 'var(--scroll-fade-left-edge)' : '',
     '0px'
   );
   let rightAnimation = scrollFadeKeyframes.call(
     this,
     'right',
-    end ? `calc(100% - ${end + inset}px)` : '',
+    start || end ? 'calc(100% - var(--scroll-fade-right-edge))' : '',
     '100%',
     '100%'
   );
-  let animations = [topAnimation, bottomAnimation, leftAnimation, rightAnimation];
-  let timeline = ['scroll(self y)', 'scroll(self y)', 'scroll(self x)', 'scroll(self x)']
-    .filter((_, i) => animations[i])
-    .join(', ');
-  let range = [
-    `0px ${top}px`,
-    `calc(100% - ${bottom}px) 100%`,
-    `0px ${start}px`,
-    `calc(100% - ${end}px) 100%`
-  ]
-    .filter((_, i) => animations[i])
-    .join(', ');
+  let animations = [
+    {name: topAnimation, timeline: 'scroll(self y)', range: `0px ${top}px`, rtlDirection: 'normal'},
+    {
+      name: bottomAnimation,
+      timeline: 'scroll(self y)',
+      range: `calc(100% - ${bottom}px) 100%`,
+      rtlDirection: 'normal'
+    },
+    {
+      name: leftAnimation,
+      timeline: 'scroll(self x)',
+      range: '0px var(--scroll-fade-left-size)',
+      rtlDirection: 'reverse'
+    },
+    {
+      name: rightAnimation,
+      timeline: 'scroll(self x)',
+      range: 'calc(100% - var(--scroll-fade-right-size)) 100%',
+      rtlDirection: 'reverse'
+    }
+  ].filter(animation => animation.name);
+  let timeline = animations.map(animation => animation.timeline).join(', ');
+  let range = animations.map(animation => animation.range).join(', ');
 
   if (blockMask || inlineMask) {
+    let inlineVariables =
+      start || end
+        ? `
+      --scroll-fade-left-size: ${start}px;
+      --scroll-fade-right-size: ${end}px;
+      --scroll-fade-left-edge: ${start + inset}px;
+      --scroll-fade-right-edge: ${end + inset}px;
+
+      &:dir(rtl) {
+        --scroll-fade-left-size: ${end}px;
+        --scroll-fade-right-size: ${start}px;
+        --scroll-fade-left-edge: ${end + inset}px;
+        --scroll-fade-right-edge: ${start + inset}px;
+      }
+    `
+        : '';
+
+    let animationDirection = animations.map(() => 'normal').join(', ');
+    let rtlAnimationDirection = animations.map(animation => animation.rtlDirection).join(', ');
+
     return css.call(
       this,
       `
+      ${inlineVariables}
       mask-image: ${[blockMask, inlineMask].filter(Boolean).join(', ')};
       mask-composite: intersect;
       mask-repeat: no-repeat;
 
       @supports (animation-timeline: scroll()) {
-        animation: ${animations.filter(Boolean).join(', ')};
+        animation: ${animations.map(animation => animation.name).join(', ')};
         animation-duration: 1ms;
         animation-timing-function: ease-in-out;
         animation-timeline: ${timeline};
         animation-range: ${range};
         animation-fill-mode: both;
+        animation-direction: ${animationDirection};
+
+        &:dir(rtl) {
+          animation-direction: ${rtlAnimationDirection};
+        }
       }
     `
     );

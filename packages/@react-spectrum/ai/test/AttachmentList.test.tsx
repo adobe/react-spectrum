@@ -56,8 +56,8 @@ describeOrSkip('AttachmentList', () => {
     scrollWidthSpy.mockRestore();
   });
 
-  it('should automatically show a mime-type badge on the large thumbnail variant', () => {
-    let {getByText} = render(
+  it('should automatically show a mime-type badge on large thumbnail variants', () => {
+    let {getAllByText} = render(
       <AttachmentList aria-label="Uploaded files">
         <Attachment aria-label="Demo file.pdf" size="L">
           <AttachmentPreview
@@ -66,9 +66,16 @@ describeOrSkip('AttachmentList', () => {
             src="https://example.com/image.png"
           />
         </Attachment>
+        <Attachment aria-label="Another file.pdf" size="XL">
+          <AttachmentPreview
+            mimeType="application/pdf"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
       </AttachmentList>
     );
-    expect(getByText('PDF')).toBeInTheDocument();
+    expect(getAllByText('PDF')).toHaveLength(2);
   });
 
   it('should not show a badge for other sizes or when no thumbnail image is provided', () => {

@@ -19,7 +19,6 @@ import {
   GlobalDOMAttributes
 } from '@react-types/shared';
 import AudioWave from '@react-spectrum/s2/icons/AudioWave';
-import {Badge} from '@react-spectrum/s2/Badge';
 import {
   baseColor,
   css,
@@ -28,6 +27,7 @@ import {
   keyframes,
   lightDark,
   scrollFade,
+  space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button, ButtonProps} from 'react-aria-components/Button';
@@ -229,15 +229,6 @@ const attachmentCard = style({
   }
 });
 
-const disabledTextColor = {
-  default: baseColor('neutral'),
-  isDisabled: 'disabled',
-  forcedColors: {
-    default: 'ButtonText',
-    isDisabled: 'GrayText'
-  }
-} as const;
-
 const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isDisabled: boolean}>({
   font: 'title',
   fontSize: {
@@ -249,7 +240,14 @@ const attachmentTitle = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isDisabled: 
       XL: 'title-lg'
     }
   },
-  color: disabledTextColor,
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
   lineClamp: 1,
   gridArea: 'title'
 });
@@ -265,7 +263,14 @@ const attachmentDescription = style<{size: 'XS' | 'S' | 'M' | 'L' | 'XL'; isDisa
       XL: 'body'
     }
   },
-  color: disabledTextColor,
+  color: {
+    default: baseColor('neutral'),
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
   lineClamp: 1,
   gridArea: 'description'
 });
@@ -651,14 +656,14 @@ export const Attachment = forwardRef(function Attachment(
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedby,
     styles,
-    isInvalid,
-    isDisabled,
+    isInvalid: isInvalidProp = false,
+    isDisabled = false,
     children,
     size = 'M'
   } = props;
   let domRef = useDOMRef(ref);
   let isLoading = !isDisabled && isAttachmentLoading(props.uploadProgress);
-  isInvalid = isInvalid && !isDisabled;
+  let isInvalid = isInvalidProp && !isDisabled;
   return (
     <Tag
       id={id}
@@ -676,8 +681,8 @@ export const Attachment = forwardRef(function Attachment(
         isDisabled={isDisabled}>
         <AttachmentPreviewContext.Provider
           value={{
-            isInvalid: !!isInvalid,
-            isDisabled: !!isDisabled,
+            isInvalid,
+            isDisabled,
             uploadProgress: isDisabled ? 100 : (props.uploadProgress ?? 100),
             size
           }}>
@@ -710,6 +715,16 @@ const attachmentPreviewWrapper = style({
   }
 });
 
+function AttachmentPreviewWrapper({
+  children,
+  isDisabled
+}: {
+  children: ReactNode;
+  isDisabled: boolean;
+}) {
+  return <div className={attachmentPreviewWrapper({isDisabled})}>{children}</div>;
+}
+
 export const AttachmentPreviewContext = createContext({
   isInvalid: false,
   isDisabled: false,
@@ -720,7 +735,7 @@ export const AttachmentPreviewContext = createContext({
 export interface AttachmentPreviewProps extends ImageProps {
   /**
    * The MIME type of the attachment. Determines the fallback icon, and enables the file-type badge
-   * on the large thumbnail variant.
+   * on large thumbnail variants.
    */
   mimeType?: string;
 }
@@ -735,31 +750,31 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
 
   if (isInvalid) {
     return (
-      <div className={attachmentPreviewWrapper({isDisabled})}>
+      <AttachmentPreviewWrapper isDisabled={isDisabled}>
         <AlertTriangleIcon size={size} />
-      </div>
+      </AttachmentPreviewWrapper>
     );
   }
 
   if (uploadProgress < 100) {
     return (
-      <div className={attachmentPreviewWrapper({isDisabled})}>
+      <AttachmentPreviewWrapper isDisabled={isDisabled}>
         <ProgressCircle
           aria-label={stringFormatter.format('promptfield.uploading')}
           value={uploadProgress}
           size="S"
         />
-      </div>
+      </AttachmentPreviewWrapper>
     );
   }
 
   if (otherProps.src) {
-    //only the large thumbnail variant should display the MIME type badge, and only if a
-    //mimeType was provided
+    // Only large thumbnail variants should display the MIME type badge, and only if a
+    // mimeType was provided.
     return (
       <>
         <Image {...otherProps} slot="thumbnail" />
-        {size === 'L' && mimeType && (
+        {(size === 'L' || size === 'XL') && mimeType && (
           <AttachmentBadge mimeType={mimeType} isDisabled={isDisabled} />
         )}
       </>
@@ -768,73 +783,96 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
 
   if (matchMimeType(mimeType, ['audio/*'])) {
     return (
-      <div className={attachmentPreviewWrapper({isDisabled})}>
+      <AttachmentPreviewWrapper isDisabled={isDisabled}>
         <AudioWave />
-      </div>
+      </AttachmentPreviewWrapper>
     );
   }
 
   if (matchMimeType(mimeType, ['video/*'])) {
     return (
-      <div className={attachmentPreviewWrapper({isDisabled})}>
+      <AttachmentPreviewWrapper isDisabled={isDisabled}>
         <Play />
-      </div>
+      </AttachmentPreviewWrapper>
     );
   }
 
   if (matchMimeType(mimeType, ['image/*'])) {
     return (
-      <div className={attachmentPreviewWrapper({isDisabled})}>
+      <AttachmentPreviewWrapper isDisabled={isDisabled}>
         <ImageIcon />
-      </div>
+      </AttachmentPreviewWrapper>
     );
   }
 
   if (matchMimeType(mimeType, ['text/*'])) {
     return (
-      <div className={attachmentPreviewWrapper({isDisabled})}>
+      <AttachmentPreviewWrapper isDisabled={isDisabled}>
         <FileText />
-      </div>
+      </AttachmentPreviewWrapper>
     );
   }
 
   return (
-    <div className={attachmentPreviewWrapper({isDisabled})}>
+    <AttachmentPreviewWrapper isDisabled={isDisabled}>
       <File />
-    </div>
+    </AttachmentPreviewWrapper>
   );
 }
 
-const attachmentBadgeStyles = style({
+const attachmentBadge = style({
   position: 'absolute',
   bottom: 4,
   insetStart: 4,
+  display: 'inline-flex',
+  alignItems: 'center',
+  minWidth: 0,
+  minHeight: 18,
   maxWidth: 64,
+  paddingX: space(6),
+  paddingY: space(2),
+  borderRadius: 'full',
+  overflow: 'hidden',
+  pointerEvents: 'none',
   visibility: '--badge-visibility'
 });
 
-const attachmentBadgeWrapper = style({
+const attachmentBadgeBackground = style<{isDisabled: boolean}>({
+  position: 'absolute',
+  inset: 0,
+  backgroundColor: {
+    default: 'neutral-subtle',
+    forcedColors: 'ButtonFace'
+  },
   opacity: {
     default: 0.9,
     isDisabled: 0.7
   }
 });
 
-function AttachmentBadge({mimeType, isDisabled}: {mimeType: string; isDisabled?: boolean}) {
+const attachmentBadgeLabel = style({
+  position: 'relative',
+  minWidth: 0,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  color: {
+    default: 'gray-1000',
+    forcedColors: 'ButtonText'
+  },
+  font: 'body',
+  fontSize: 'body-2xs'
+});
+
+function AttachmentBadge({mimeType, isDisabled = false}: {mimeType: string; isDisabled?: boolean}) {
   let label = getMimeTypeLabel(mimeType);
   if (!label) {
     return null;
   }
   return (
-    <div className={attachmentBadgeWrapper({isDisabled})}>
-      <Badge
-        size="S"
-        variant="neutral"
-        fillStyle="subtle"
-        overflowMode="truncate"
-        styles={attachmentBadgeStyles}>
-        {label}
-      </Badge>
+    <div className={attachmentBadge}>
+      <div aria-hidden className={attachmentBadgeBackground({isDisabled})} />
+      <div className={attachmentBadgeLabel}>{label}</div>
     </div>
   );
 }
