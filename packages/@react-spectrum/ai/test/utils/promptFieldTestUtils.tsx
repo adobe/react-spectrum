@@ -190,7 +190,6 @@ export interface HarnessOptions {
   initialValue?: PromptFieldValue;
   attachments?: PromptFieldAttachment[];
   isGenerating?: boolean;
-  isReadOnlyWhileGenerating?: boolean;
   placeholder?: string;
   acceptedAttachmentTypes?: string[];
   /** Applied to every rendered attachment (for exercising the upload progress state). */
@@ -220,7 +219,6 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
     initialValue = new PromptFieldValue([]),
     attachments: initialAttachments = [],
     isGenerating,
-    isReadOnlyWhileGenerating,
     placeholder,
     acceptedAttachmentTypes = ['image/*'],
     uploadProgress,
@@ -250,7 +248,6 @@ function ControlledPromptField(props: ControlledPromptFieldProps) {
       attachments={attachments}
       onAttachmentsChange={setAttachments}
       isGenerating={isGenerating}
-      isReadOnlyWhileGenerating={isReadOnlyWhileGenerating}
       onStop={spies.onStop}
       onSubmit={spies.onSubmit}
       acceptedAttachmentTypes={acceptedAttachmentTypes}

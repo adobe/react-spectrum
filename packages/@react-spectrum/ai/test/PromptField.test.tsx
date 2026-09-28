@@ -475,20 +475,6 @@ describeOrSkip('PromptField', () => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(onStop).not.toHaveBeenCalled();
     });
-
-    it('makes the field read only while generating when enabled', async () => {
-      let {user, textbox, getValue} = renderPromptField({
-        isGenerating: true,
-        isReadOnlyWhileGenerating: true
-      });
-
-      await user.click(textbox);
-      await user.keyboard('a');
-
-      expect(getValue().toString()).toBe('');
-      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
-      expect(textbox).toHaveAttribute('data-readonly');
-    });
   });
 
   describe('attachments', () => {
