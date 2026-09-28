@@ -49,6 +49,10 @@ import {centerBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
+import {
+  CollectionRendererContext,
+  DefaultCollectionRenderer
+} from 'react-aria-components/CollectionBuilder';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   control,
@@ -80,6 +84,7 @@ import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import intlMessages from '../intl/*.json';
 import {isSeparatorHidden, SeparatorNode} from './separator-utils';
 import LinkOutIcon from '../ui-icons/LinkOut';
+import {ListLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
@@ -140,6 +145,13 @@ export interface MenuProps<T>
    * The current loading state of the Menu.
    */
   loadingState?: LoadingState;
+  /**
+   * Whether the Menu should be virtualized. Submenus inherit this from their parent menu by
+   * default.
+   *
+   * @default false
+   */
+  isVirtualized?: boolean;
 }
 
 export const MenuContext =
@@ -154,6 +166,7 @@ const menuItemGrid = {
   }
 } as const;
 
+// TODO: this is baiscally Picker's "menu" styling now, but with maxWidths and stuff
 export let menu = style(
   {
     outlineStyle: 'none',
@@ -163,13 +176,18 @@ export let menu = style(
     maxHeight: 'inherit',
     width: 'full',
     overflow: {
-      isPopover: 'auto'
+      isPopover: 'auto',
+      // similar to Combobox/Picker, needs this for virtualized so we get scroll events for virtualizer
+      isVirtualized: 'auto'
     },
     maxWidth: {
       isPopover: 320
     },
     padding: {
-      isPopover: 8
+      isPopover: {
+        default: 8,
+        isVirtualized: 0
+      }
     },
     fontFamily: 'sans',
     fontSize: controlFont(),
@@ -177,6 +195,12 @@ export let menu = style(
   },
   getAllowedOverrides()
 );
+
+const virtualizedMenuWidth = style<{isVirtualized?: boolean}>({
+  width: {
+    isVirtualized: 150
+  }
+});
 
 export let section = style({
   gridColumnStart: 1,
@@ -190,10 +214,21 @@ export let section = style({
   gridTemplateColumns: menuItemGrid
 });
 
-export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
+export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'; isVirtualized?: boolean}>({
   color: 'neutral',
   gridColumnStart: 2,
   gridColumnEnd: -2,
+  // also from Combobox/Picker, but we want to keep the non virtualized menu styling too
+  marginX: {
+    isVirtualized: {
+      size: {
+        S: `[${edgeToText(24)}]`,
+        M: `[${edgeToText(32)}]`,
+        L: `[${edgeToText(40)}]`,
+        XL: `[${edgeToText(48)}]`
+      }
+    }
+  },
   boxSizing: 'border-box',
   minHeight: controlSize(),
   paddingY: centerPadding()
@@ -212,6 +247,7 @@ export let menuitem = style<
     isLink?: boolean;
     hasSubmenu?: boolean;
     isOpen?: boolean;
+    isVirtualized?: boolean;
   }
 >(
   {
@@ -248,7 +284,11 @@ export let menuitem = style<
       '. checkmark icon label       value keyboard descriptor .',
       '. .         .    description .     .        .          .'
     ],
-    gridTemplateColumns: 'subgrid',
+    gridTemplateColumns: {
+      default: 'subgrid',
+      // cant use subgrid since virtualizer div wrapper
+      isVirtualized: menuItemGrid
+    },
     gridTemplateRows: {
       // min-content prevents second row from 'auto'ing to a size larger then 0 when empty
       default: 'auto minmax(0, min-content)',
@@ -419,10 +459,12 @@ let InternalMenuContext = createContext<{
   size: 'S' | 'M' | 'L' | 'XL';
   isSubmenu: boolean;
   hideLinkOutIcon: boolean;
+  isVirtualized: boolean;
 }>({
   size: 'M',
   isSubmenu: false,
-  hideLinkOutIcon: false
+  hideLinkOutIcon: false,
+  isVirtualized: false
 });
 
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
@@ -468,6 +510,12 @@ const emptyStateText = style({
   paddingX: 'edge-to-text'
 });
 
+const virtualizedMenuLayoutOptions = {
+  estimatedRowSize: 32,
+  estimatedHeadingSize: 50,
+  padding: 8
+};
+
 /**
  * Menus display a list of actions or options that a user can choose.
  */
@@ -476,7 +524,11 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
-  let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
+  let {
+    isSubmenu,
+    size: ctxSize,
+    isVirtualized: isParentVirtualized
+  } = useContext(InternalMenuContext);
   let {
     children,
     size = ctxSize,
@@ -486,7 +538,8 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     hideLinkOutIcon = false,
     items,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    isVirtualized = isParentVirtualized
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
   let inPopover = useContext(InPopoverContext);
@@ -527,11 +580,51 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   }
 
   let isPopover = (ctx || isSubmenu) && !inPopover;
+  let menuContent = (
+    <AriaMenu
+      {...props}
+      className={menu(
+        {size, isPopover, isVirtualized},
+        isPopover ? null : mergeStyles(virtualizedMenuWidth({isVirtualized}), styles)
+      )}
+      renderEmptyState={() =>
+        loadingState === 'loading' ? (
+          <div className={loadingWrapperStyles}>
+            <ProgressCircle
+              isIndeterminate
+              size="S"
+              styles={progressCircleStyles}
+              aria-label={stringFormatter.format('table.loading')}
+            />
+          </div>
+        ) : (
+          <span className={emptyStateText({size})}>
+            {stringFormatter.format('combobox.noResults')}
+          </span>
+        )
+      }>
+      {renderer}
+    </AriaMenu>
+  );
+
+  let menuWithVirtualizer = isVirtualized ? (
+    <Virtualizer layout={ListLayout} layoutOptions={virtualizedMenuLayoutOptions}>
+      {menuContent}
+    </Virtualizer>
+  ) : isParentVirtualized ? (
+    //  if user doesnt want their submenu to be virtualized we need to clear context from parent
+    <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+      {menuContent}
+    </CollectionRendererContext.Provider>
+  ) : (
+    menuContent
+  );
+
   let content = (
-    <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon}}>
+    <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon, isVirtualized}}>
       <Provider
         values={[
-          [HeaderContext, {styles: sectionHeader({size})}],
+          [HeaderContext, {styles: sectionHeader({size, isVirtualized})}],
           [
             HeadingContext,
             {
@@ -550,27 +643,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
           ],
           [InPopoverContext, false]
         ]}>
-        <AriaMenu
-          {...props}
-          className={menu({size, isPopover}, isPopover ? null : styles)}
-          renderEmptyState={() =>
-            loadingState === 'loading' ? (
-              <div className={loadingWrapperStyles}>
-                <ProgressCircle
-                  isIndeterminate
-                  size="S"
-                  styles={progressCircleStyles}
-                  aria-label={stringFormatter.format('table.loading')}
-                />
-              </div>
-            ) : (
-              <span className={emptyStateText({size})}>
-                {stringFormatter.format('combobox.noResults')}
-              </span>
-            )
-          }>
-          {renderer}
-        </AriaMenu>
+        {menuWithVirtualizer}
       </Provider>
     </InternalMenuContext.Provider>
   );
@@ -580,7 +653,10 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
       <Popover ref={ref} padding="none" hideArrow>
         <div
           style={UNSAFE_style}
-          className={(UNSAFE_className || '') + mergeStyles(wrappingDiv, styles)}>
+          className={
+            (UNSAFE_className || '') +
+            mergeStyles(wrappingDiv, virtualizedMenuWidth({isVirtualized}), styles)
+          }>
           {content}
         </div>
       </Popover>
@@ -590,10 +666,28 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
+let dividerPlacement = style<{size?: 'S' | 'M' | 'L' | 'XL'; isVirtualized?: boolean}>({
+  display: 'grid',
+  gridColumnStart: 2,
+  gridColumnEnd: -2,
+  marginX: {
+    isVirtualized: {
+      size: {
+        S: `[${edgeToText(24)}]`,
+        M: `[${edgeToText(32)}]`,
+        L: `[${edgeToText(40)}]`,
+        XL: `[${edgeToText(48)}]`
+      }
+    }
+  },
+  marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
+});
+
 export const Divider = /*#__PURE__*/ createLeafComponent(
   SeparatorNode,
   function Divider(props: SeparatorProps, ref: ForwardedRef<HTMLElement>, node: Node<unknown>) {
     let state = useContext(MenuStateContext)!;
+    let {size: ctxSize, isVirtualized} = useContext(InternalMenuContext);
 
     if (isSeparatorHidden(node, state.collection)) {
       return null;
@@ -609,11 +703,7 @@ export const Divider = /*#__PURE__*/ createLeafComponent(
             orientation: 'horizontal',
             isStaticColor: false
           }),
-          style({
-            gridColumnStart: 2,
-            gridColumnEnd: -2,
-            marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
-          })
+          dividerPlacement({size: ctxSize, isVirtualized})
         )}
       />
     );
@@ -700,7 +790,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
-  let {size, hideLinkOutIcon} = useContext(InternalMenuContext);
+  let {size, hideLinkOutIcon, isVirtualized} = useContext(InternalMenuContext);
   let textValue =
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
@@ -722,7 +812,8 @@ export function MenuItem(props: MenuItemProps): ReactNode {
             ...renderProps,
             isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused,
             size,
-            isLink
+            isLink,
+            isVirtualized
           },
           props.styles
         )
