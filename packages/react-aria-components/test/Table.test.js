@@ -49,6 +49,7 @@ import React, {useMemo, useState} from 'react';
 import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
+import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 import {TableLayout} from '../src/TableLayout';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {User} from '@react-aria/test-utils';
@@ -517,6 +518,161 @@ describe('Table', () => {
     expect(dialog).not.toBeInTheDocument();
     expect(document.activeElement).toBe(tree.getByRole('button', {name: 'Open 2'}));
   });
+
+  it.each(['local', 'shared'])(
+    'should not rerender unrelated cell content when opening and closing a %s dialog',
+    async mode => {
+      let items = [{id: 'one'}, {id: 'two'}, {id: 'three'}];
+      let renderCell = jest.fn();
+      let renderContent = jest.fn();
+      let renderButton = jest.fn();
+      let renderTab = jest.fn();
+
+      function Content({id}) {
+        renderContent(id);
+        return (
+          <Tabs>
+            <TabList aria-label={`Details ${id}`}>
+              <Tab
+                id="first"
+                className={() => {
+                  renderTab(id);
+                  return '';
+                }}>
+                First
+              </Tab>
+              <Tab
+                id="second"
+                className={() => {
+                  renderTab(id);
+                  return '';
+                }}>
+                Second
+              </Tab>
+            </TabList>
+            <TabPanel id="first">First panel</TabPanel>
+            <TabPanel id="second">Second panel</TabPanel>
+          </Tabs>
+        );
+      }
+
+      function Example() {
+        let [isOpen, setOpen] = useState(false);
+        let dialog = (
+          <Dialog aria-label="Details">
+            <Button slot="close">Close</Button>
+          </Dialog>
+        );
+        return (
+          <>
+            <Table aria-label="Items">
+              <TableHeader>
+                <Column isRowHeader>Name</Column>
+                <Column>Details</Column>
+                <Column>Actions</Column>
+              </TableHeader>
+              <TableBody items={items}>
+                {item => {
+                  let button = (
+                    <Button
+                      className={() => {
+                        renderButton(item.id);
+                        return '';
+                      }}
+                      onPress={mode === 'shared' ? () => setOpen(true) : undefined}>
+                      Open {item.id}
+                    </Button>
+                  );
+                  let cellProps = {
+                    className: () => {
+                      renderCell(item.id);
+                      return '';
+                    }
+                  };
+                  return (
+                    <Row textValue={item.id}>
+                      <Cell {...cellProps}>{item.id}</Cell>
+                      <Cell {...cellProps} textValue="Details">
+                        {() => <Content id={item.id} />}
+                      </Cell>
+                      <Cell {...cellProps} textValue="Actions">
+                        {() =>
+                          mode === 'local' ? (
+                            <DialogTrigger>
+                              {button}
+                              <Modal>{dialog}</Modal>
+                            </DialogTrigger>
+                          ) : (
+                            button
+                          )
+                        }
+                      </Cell>
+                    </Row>
+                  );
+                }}
+              </TableBody>
+            </Table>
+            {mode === 'shared' && (
+              <Modal isOpen={isOpen} onOpenChange={setOpen}>
+                {dialog}
+              </Modal>
+            )}
+          </>
+        );
+      }
+
+      let tree = render(<Example />);
+      let renders = [renderCell, renderContent, renderButton, renderTab];
+      let checkUnrelatedRenders = () => {
+        for (let render of renders) {
+          expect(render.mock.calls.filter(([id]) => id !== 'one')).toEqual([]);
+        }
+      };
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+      let row = tableTester.getRows()[0];
+      let actionCell = tableTester.getCells({element: row})[1];
+      let button = tree.getByRole('button', {name: 'Open one'});
+      await user.pointer({target: button, keys: '[MouseLeft>]'});
+      expect(button).toHaveFocus();
+      expect(actionCell).toHaveAttribute('tabindex', '0');
+      expect(row).not.toHaveAttribute('data-focus-visible-within');
+      // Measure the dialog separately from first entering the table.
+      for (let render of renders) {
+        render.mockClear();
+      }
+
+      await user.pointer({keys: '[/MouseLeft]'});
+      expect(tree.getByRole('dialog')).toHaveFocus();
+      checkUnrelatedRenders();
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      expect(tree.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(button).toHaveFocus();
+      expect(actionCell).toHaveAttribute('tabindex', '0');
+      expect(row).toHaveAttribute('data-focus-visible-within');
+      checkUnrelatedRenders();
+
+      await user.keyboard('{Enter}');
+      expect(tree.getByRole('dialog')).toHaveFocus();
+      expect(row).not.toHaveAttribute('data-focus-visible-within');
+      checkUnrelatedRenders();
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      expect(tree.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(button).toHaveFocus();
+      expect(row).toHaveAttribute('data-focus-visible-within');
+      checkUnrelatedRenders();
+
+      await user.click(button);
+      expect(tree.getByRole('dialog')).toHaveFocus();
+      checkUnrelatedRenders();
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      expect(tree.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(button).toHaveFocus();
+      checkUnrelatedRenders();
+    }
+  );
 
   it('should render with default classes', () => {
     let {getByRole} = renderTable();
@@ -1285,6 +1441,139 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo');
     act(() => cells[0].focus());
     expect(cells[0]).toHaveTextContent('Foo (focused)');
+  });
+
+  describe('cell render props with pointer events', () => {
+    installPointerEvent();
+
+    it('should update cell render props when interaction state changes', async () => {
+      let cellProps = {
+        className: ({
+          isFocused,
+          isFocusVisible,
+          isFocusVisibleWithinRow,
+          isSelected,
+          isDisabled,
+          isHovered,
+          isPressed
+        }) =>
+          [
+            isFocused && 'focused',
+            isFocusVisible && 'focus-visible',
+            isFocusVisibleWithinRow && 'focus-within',
+            isSelected && 'selected',
+            isDisabled && 'disabled',
+            isHovered && 'hovered',
+            isPressed && 'pressed'
+          ]
+            .filter(Boolean)
+            .join(' ')
+      };
+      let tableProps = {
+        selectionMode: 'multiple',
+        selectionBehavior: 'replace',
+        disabledBehavior: 'all',
+        onCellAction: jest.fn()
+      };
+      let tree = renderTable({tableProps, cellProps});
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+      let row = tableTester.getRows()[0];
+      let [cell, nextCell] = tableTester.getRowHeaders();
+
+      await user.hover(cell);
+      expect(cell).toHaveClass('hovered');
+      await user.unhover(cell);
+      expect(cell).not.toHaveClass('hovered');
+
+      await user.tab();
+      expect(row).toHaveFocus();
+      expect(cell).toHaveClass('focus-within');
+      expect(cell).not.toHaveClass('focused');
+      await user.keyboard('{ArrowRight}');
+      expect(cell).toHaveFocus();
+      expect(cell).toHaveClass('focused', 'focus-visible', 'focus-within');
+      expect(cell).toHaveAttribute('tabindex', '0');
+
+      await user.keyboard('{ArrowDown}');
+      expect(nextCell).toHaveFocus();
+      expect(nextCell).toHaveClass('focused', 'focus-visible', 'focus-within');
+      expect(cell).not.toHaveClass('focused');
+      expect(cell).not.toHaveClass('focus-visible');
+      expect(cell).not.toHaveClass('focus-within');
+      expect(cell).toHaveAttribute('tabindex', '-1');
+
+      await user.click(row);
+      expect(cell).toHaveClass('selected');
+      expect(nextCell).not.toHaveClass('selected');
+      await user.pointer({target: cell, keys: '[MouseLeft>]'});
+      expect(cell).toHaveClass('pressed');
+      await user.pointer({target: cell, keys: '[/MouseLeft]'});
+      expect(cell).not.toHaveClass('pressed');
+      expect(tableProps.onCellAction).toHaveBeenCalledTimes(1);
+
+      tree.rerender(
+        <TestTable tableProps={{...tableProps, disabledKeys: ['1']}} cellProps={cellProps} />
+      );
+      expect(cell).toHaveClass('disabled');
+      tree.rerender(<TestTable tableProps={tableProps} cellProps={cellProps} />);
+      expect(cell).not.toHaveClass('disabled');
+    });
+  });
+
+  it('should update cell content when a row expands or the tree column changes', () => {
+    let renderCell = ({hasChildItems, isExpanded, isTreeColumn, level}) =>
+      `${hasChildItems ? (isExpanded ? 'Expanded' : 'Collapsed') : 'Leaf'} ${isTreeColumn ? 'tree' : 'cell'} at level ${level}`;
+    let children = (
+      <>
+        <TableHeader>
+          <Column id="name" isRowHeader>
+            Name
+          </Column>
+          <Column id="type">Type</Column>
+        </TableHeader>
+        <TableBody>
+          <Row id="parent" textValue="Parent">
+            <Cell>{renderCell}</Cell>
+            <Cell>{renderCell}</Cell>
+            <Row id="child" textValue="Child">
+              <Cell>{renderCell}</Cell>
+              <Cell>{renderCell}</Cell>
+            </Row>
+          </Row>
+        </TableBody>
+      </>
+    );
+    let tree = render(
+      <Table aria-label="Items" treeColumn="name" expandedKeys={[]}>
+        {children}
+      </Table>
+    );
+    let cell = tree.getByRole('rowheader');
+    expect(cell).toHaveTextContent('Collapsed tree at level 1');
+
+    tree.rerender(
+      <Table aria-label="Items" treeColumn="name" expandedKeys={['parent']}>
+        {children}
+      </Table>
+    );
+    expect(cell).toHaveTextContent('Expanded tree at level 1');
+    expect(tree.getAllByRole('rowheader')[1]).toHaveTextContent('Leaf tree at level 2');
+
+    tree.rerender(
+      <Table aria-label="Items" treeColumn="type" expandedKeys={['parent']}>
+        {children}
+      </Table>
+    );
+    expect(cell).toHaveTextContent('Expanded cell at level 1');
+    expect(tree.getAllByRole('gridcell')[0]).toHaveTextContent('Expanded tree at level 1');
+
+    tree.rerender(
+      <Table aria-label="Items" treeColumn="type" expandedKeys={[]}>
+        {children}
+      </Table>
+    );
+    expect(cell).toHaveTextContent('Collapsed cell at level 1');
+    expect(tree.getAllByRole('rowheader')).toHaveLength(1);
   });
 
   it('should support column index in render props', () => {

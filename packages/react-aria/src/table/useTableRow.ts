@@ -15,7 +15,7 @@ import {AriaButtonProps} from '../button/useButton';
 import {Collection, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {getRowLabelledBy} from './utils';
 import {GridRowAria, GridRowProps, useGridRow} from '../grid/useGridRow';
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, useMemo} from 'react';
 import intlMessages from '../../intl/table/*.json';
 import {ITableCollection} from 'react-stately/private/table/TableCollection';
 import {mergeProps} from '../utils/mergeProps';
@@ -79,7 +79,7 @@ export function useTableRow<T>(
   });
 
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
-  let expandButtonProps: AriaButtonProps = {};
+  let expandButtonProps = useMemo<AriaButtonProps>(() => ({}), []);
   if (state.treeColumn != null) {
     let treeNode = state.collection.getItem(node.key);
     if (treeNode != null) {

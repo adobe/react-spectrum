@@ -1839,6 +1839,23 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     }
 
     let dragButtonRef = useRef<HTMLButtonElement>(null);
+    let dragButtonProps = draggableItem?.dragButtonProps;
+    let buttonContext = useMemo<React.ContextType<typeof ButtonContext>>(
+      () => ({
+        slots: {
+          [DEFAULT_SLOT]: {},
+          chevron: expandButtonProps,
+          drag: {
+            ...dragButtonProps,
+            ref: dragButtonRef,
+            style: {
+              pointerEvents: 'none'
+            }
+          }
+        }
+      }),
+      [expandButtonProps, dragButtonProps, dragButtonRef]
+    );
     useEffect(() => {
       if (dragState && !dragButtonRef.current && process.env.NODE_ENV !== 'production') {
         console.warn(
@@ -1949,22 +1966,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                   }
                 }
               ],
-              [
-                ButtonContext,
-                {
-                  slots: {
-                    [DEFAULT_SLOT]: {},
-                    chevron: expandButtonProps,
-                    drag: {
-                      ...draggableItem?.dragButtonProps,
-                      ref: dragButtonRef,
-                      style: {
-                        pointerEvents: 'none'
-                      }
-                    }
-                  }
-                }
-              ],
+              [ButtonContext, buttonContext],
               [SelectionIndicatorContext, {isSelected: states.isSelected}],
               [RowFocusContext, {isFocusVisibleWithinRow: isFocusVisibleWithin}]
             ]}>
@@ -2153,11 +2155,10 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
       row.props.hasChildItems || state.collection.getItem(row.lastChildKey!)?.type !== 'cell';
     let isExpanded = hasChildItems && state.expandedKeys.has(cell.parentKey!);
     let isDisabled = state.selectionManager.isDisabled(cell.parentKey!);
-    let renderProps = useRenderProps({
-      ...props,
-      id: undefined,
-      defaultClassName: 'react-aria-Cell',
-      values: {
+    let level = row.level + 1;
+    let isTreeColumn = cell.column.key === state.treeColumn;
+    let renderValues = useMemo(
+      () => ({
         isFocused,
         isFocusVisible,
         isFocusVisibleWithinRow,
@@ -2169,9 +2170,30 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
         hasChildItems,
         isExpanded,
         isDisabled,
-        level: row.level + 1,
-        isTreeColumn: cell.column.key === state.treeColumn
-      }
+        level,
+        isTreeColumn
+      }),
+      [
+        isFocused,
+        isFocusVisible,
+        isFocusVisibleWithinRow,
+        isPressed,
+        isHovered,
+        isSelected,
+        cell.key,
+        columnIndex,
+        hasChildItems,
+        isExpanded,
+        isDisabled,
+        level,
+        isTreeColumn
+      ]
+    );
+    let renderProps = useRenderProps({
+      ...props,
+      id: undefined,
+      defaultClassName: 'react-aria-Cell',
+      values: renderValues
     });
 
     let DOMProps = filterDOMProps(props as any, {global: true});
@@ -2189,8 +2211,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
         data-column-index={columnIndex}
         data-expanded={isExpanded || undefined}
         data-has-child-items={hasChildItems || undefined}
-        data-level={row.level + 1}
-        data-tree-column={cell.column.key === state.treeColumn || undefined}
+        data-level={level}
+        data-tree-column={isTreeColumn || undefined}
         data-disabled={isDisabled || undefined}>
         <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
           {renderProps.children}
