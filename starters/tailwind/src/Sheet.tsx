@@ -9,7 +9,7 @@ import {
   type SheetOverlayProps
 } from 'react-aria-components/Sheet';
 import {tv} from 'tailwind-variants';
-import {twMerge} from 'tailwind-merge';
+import {composeTailwindRenderProps} from './utils';
 import './Sheet.css';
 
 // Only the bottom-most sheet in a stack dims the page behind it.
@@ -54,7 +54,7 @@ export interface SheetProps extends Omit<SheetOverlayProps, 'children'> {
 export function Sheet({children, ...props}: SheetProps) {
   let {snapPoints} = props;
   return (
-    <SheetOverlay {...props} className={twMerge('group/sheet', props.className)}>
+    <SheetOverlay {...props} className={composeTailwindRenderProps(props.className, 'group/sheet')}>
       {/* The backdrop fades in as the sheet slides up. When snap points are used, it stays hidden
         until the sheet is dragged past the last snap point. */}
       <SheetBackdrop

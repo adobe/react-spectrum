@@ -5,14 +5,15 @@ import {
   SheetBackdrop,
   SheetContent,
   SheetOverlay,
-  type SheetOverlayProps
+  type SheetOverlayProps,
+  type SheetProps as AriaSheetProps
 } from 'react-aria-components/Sheet';
 import './Sheet.css';
 
 export interface SheetProps
   extends
     Omit<SheetOverlayProps, 'children'>,
-    Pick<SheetProps, 'swipeAnimation' | 'swipeAnimationRange'> {
+    Pick<AriaSheetProps, 'swipeAnimation' | 'swipeAnimationRange'> {
   /** The contents of the sheet. Rendered inside a Dialog. */
   children?: DialogProps['children'];
   /**
