@@ -847,7 +847,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       isNonModal
       hideArrow
       placement="bottom start"
-      // since this is now virtualized we need a fallback width and padding is controled by virtualizeer
+      // since this is now virtualized we need a fallback width and padding is controlled by virtualizeer
       padding="none"
       UNSAFE_style={{width: menuWidth ?? 150}}
       key={key}

@@ -340,6 +340,10 @@ export let checkbox = style({
   marginEnd: 'text-to-control'
 });
 
+let hiddenCheckbox = style({
+  visibility: 'hidden'
+});
+
 export let icon = style({
   display: 'block',
   size: '1lh',
@@ -861,6 +865,8 @@ export function MenuItem(props: MenuItemProps): ReactNode {
           isRequired: false
         };
         let isFocused = (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused;
+        // virtualized doesnt use subgrid so always render a hidden checkbox for submenu triggers so they stay indented
+        let showSelectionIndicator = !renderProps.hasSubmenu || isVirtualized;
         return (
           <>
             <Provider
@@ -891,14 +897,24 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                 [KeyboardContext, {styles: keyboard({...renderProps, size, isFocused})}],
                 [ImageContext, {styles: image({size})}]
               ]}>
-              {renderProps.selectionMode === 'single' && !renderProps.hasSubmenu && (
+              {renderProps.selectionMode === 'single' && showSelectionIndicator && (
                 <CheckmarkIcon
                   size={checkmarkIconSize[size]}
-                  className={checkmark({...renderProps, size})}
+                  className={checkmark({
+                    ...renderProps,
+                    isSelected: renderProps.isSelected && !renderProps.hasSubmenu,
+                    size
+                  })}
                 />
               )}
-              {renderProps.selectionMode === 'multiple' && !renderProps.hasSubmenu && (
-                <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
+              {renderProps.selectionMode === 'multiple' && showSelectionIndicator && (
+                <div
+                  aria-hidden={renderProps.hasSubmenu || undefined}
+                  className={mergeStyles(
+                    checkbox,
+                    box(checkboxRenderProps),
+                    renderProps.hasSubmenu ? hiddenCheckbox : null
+                  )}>
                   <CheckmarkIcon size={size} className={iconStyles} />
                 </div>
               )}
