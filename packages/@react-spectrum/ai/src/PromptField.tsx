@@ -34,6 +34,7 @@ import {
 import {FocusableRef} from '@react-types/shared';
 import {getInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {IconContext, MenuTriggerProps} from '@react-spectrum/s2';
+import {InternalChatContext, PromptFocusContext} from './Chat';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
@@ -53,7 +54,6 @@ import {
   TokenSegment
 } from 'react-stately/useTokenFieldState';
 import {PromptFieldContainer} from './PromptFieldContainer';
-import {PromptFocusContext} from './Chat';
 import {Provider} from 'react-aria-components/slots';
 import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
@@ -94,6 +94,12 @@ export interface PromptFieldProps {
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
   onSubmit?: (prompt: PromptFieldValue, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
+  /**
+   * Whether the field should be read only while a response is generating.
+   *
+   * @default false
+   */
+  isReadOnlyWhileGenerating?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
@@ -124,10 +130,14 @@ interface PromptFieldState {
   onSubmit?: () => void;
   onStop?: () => void;
   isGenerating: boolean;
+  isReadOnlyWhileGenerating: boolean;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   isListening: boolean;
   setListening: React.Dispatch<React.SetStateAction<boolean>>;
+  // Set by PromptFieldVoiceButton; lets submit stop dictation and suppress the post-stop
+  // re-commit of the transcript so the submitted (and cleared) prompt is not repopulated.
+  voiceStopRef: React.RefObject<(() => void) | null>;
 }
 
 // TODO: make this customizable
@@ -246,8 +256,10 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false,
+  isReadOnlyWhileGenerating: false,
   isListening: false,
   setListening: () => {},
+  voiceStopRef: createRef(),
   size: 'M'
 });
 
@@ -279,7 +291,8 @@ export const PromptField = forwardRef(function PromptField(
   let {
     children,
     acceptedAttachmentTypes,
-    isGenerating,
+    isGenerating = false,
+    isReadOnlyWhileGenerating = false,
     onStop,
     styles,
     onAddAttachments,
@@ -291,6 +304,7 @@ export const PromptField = forwardRef(function PromptField(
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
   let inputRef = useRef<HTMLDivElement>(null);
+  let voiceStopRef = useRef<(() => void) | null>(null);
   let domRef = useFocusableRef(ref, inputRef);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let [prompt, setPrompt] = useControlledState(
@@ -329,6 +343,10 @@ export const PromptField = forwardRef(function PromptField(
   let [isListening, setListening] = useState(false);
   let {onFocusChange} = useContext(PromptFocusContext);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
+  let {setPromptFieldSize} = useContext(InternalChatContext);
+  useEffect(() => {
+    setPromptFieldSize(size);
+  }, [setPromptFieldSize, size]);
 
   let isPromptControlled = props.value !== undefined;
   let isAttachmentsControlled = props.attachments !== undefined;
@@ -338,6 +356,7 @@ export const PromptField = forwardRef(function PromptField(
     }
 
     props.onSubmit?.(prompt, attachments);
+    voiceStopRef.current?.();
     if (!isPromptControlled) {
       setPrompt(new PromptFieldValue([]));
     }
@@ -357,9 +376,11 @@ export const PromptField = forwardRef(function PromptField(
         setPrompt,
         inputRef,
         onSubmit,
-        isGenerating: isGenerating ?? false,
+        isGenerating,
+        isReadOnlyWhileGenerating,
         isListening,
         setListening,
+        voiceStopRef,
         onStop,
         onAddAttachments,
         onRemoveAttachments,
@@ -487,6 +508,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     inputRef,
     onSubmit,
     isGenerating,
+    isReadOnlyWhileGenerating,
     isListening,
     size
   } = useContext(PromptFieldContext);
@@ -556,7 +578,6 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   };
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown: onKeyDownProp,
     shortcuts: {
       Tab: () => tab(1),
       'Shift+Tab': () => tab(-1)
@@ -624,127 +645,132 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         />
       </CenterBaseline>
       <Autocomplete>
-        <TokenField
-          value={prompt}
-          onChange={setPrompt}
-          allowsNewlines
-          className={style({flexGrow: 1})}
-          aria-label={stringFormatter.format('promptfield.label')}
-          isReadOnly={isListening}
-          onSubmit={onSubmit}
-          onKeyDown={keyboardProps.onKeyDown}
-          onFocus={e => {
-            if (e.isTrusted) {
-              setFocused(true);
+        <div role="presentation" onKeyDown={onKeyDownProp}>
+          <TokenField
+            value={prompt}
+            onChange={setPrompt}
+            allowsNewlines
+            className={style({flexGrow: 1})}
+            aria-label={stringFormatter.format('promptfield.label')}
+            isReadOnly={isListening || (isGenerating && isReadOnlyWhileGenerating)}
+            onSubmit={onSubmit}
+            onKeyDown={keyboardProps.onKeyDown}
+            onFocus={e => {
+              if (e.isTrusted) {
+                setFocused(true);
 
-              // If shift tabbing into the prompt field, select the last placeholder if any.
-              if (
-                e.relatedTarget &&
-                getInteractionModality() === 'keyboard' &&
-                e.currentTarget.compareDocumentPosition(e.relatedTarget) &
-                  Node.DOCUMENT_POSITION_FOLLOWING
-              ) {
-                let lastPlaceholder = prompt.segments.findLastIndex(s => s.type === 'token');
-                if (lastPlaceholder >= 0) {
-                  setPrompt(value =>
-                    value.withSelectedRange(
-                      new TokenFieldValue.SelectedRange(
-                        {index: lastPlaceholder, offset: 0},
-                        {index: lastPlaceholder, offset: 1}
+                // If shift tabbing into the prompt field, select the last placeholder if any.
+                if (
+                  e.relatedTarget &&
+                  getInteractionModality() === 'keyboard' &&
+                  e.currentTarget.compareDocumentPosition(e.relatedTarget) &
+                    Node.DOCUMENT_POSITION_FOLLOWING
+                ) {
+                  let lastPlaceholder = prompt.segments.findLastIndex(s => s.type === 'token');
+                  if (lastPlaceholder >= 0) {
+                    setPrompt(value =>
+                      value.withSelectedRange(
+                        new TokenFieldValue.SelectedRange(
+                          {index: lastPlaceholder, offset: 0},
+                          {index: lastPlaceholder, offset: 1}
+                        )
                       )
-                    )
-                  );
+                    );
+                  }
                 }
               }
-            }
-          }}
-          onBlur={e => {
-            if (e.isTrusted) {
-              setFocused(false);
-            }
-          }}
-          onPaste={
-            acceptedAttachmentTypes
-              ? e => {
-                  let clipboardData = e.clipboardData as DataTransfer;
-                  let attachments: PromptFieldAttachment[] = [];
-                  for (let item of clipboardData.items) {
-                    if (item.kind === 'file' && matchMimeType(item.type, acceptedAttachmentTypes)) {
-                      let file = item.getAsFile()!;
-                      attachments.push({
-                        id: crypto.randomUUID(),
-                        file,
-                        image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
-                      });
+            }}
+            onBlur={e => {
+              if (e.isTrusted) {
+                setFocused(false);
+              }
+            }}
+            onPaste={
+              acceptedAttachmentTypes
+                ? e => {
+                    let clipboardData = e.clipboardData as DataTransfer;
+                    let attachments: PromptFieldAttachment[] = [];
+                    for (let item of clipboardData.items) {
+                      if (
+                        item.kind === 'file' &&
+                        matchMimeType(item.type, acceptedAttachmentTypes)
+                      ) {
+                        let file = item.getAsFile()!;
+                        attachments.push({
+                          id: crypto.randomUUID(),
+                          file,
+                          image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+                        });
+                      }
+                    }
+                    if (attachments.length > 0) {
+                      onAddAttachments?.(attachments);
+                      setAttachments(prev => [...prev, ...attachments]);
                     }
                   }
-                  if (attachments.length > 0) {
-                    onAddAttachments?.(attachments);
-                    setAttachments(prev => [...prev, ...attachments]);
-                  }
-                }
-              : undefined
-          }>
-          <TokenInput
-            data-placeholder={
-              placeholder ||
-              stringFormatter.format(
-                size === 'S' ? 'promptfield.placeholder.small' : 'promptfield.placeholder'
-              )
-            }
-            ref={inputRef}
-            className={
-              css('&:empty::before { content: attr(data-placeholder); }') +
-              ' ' +
-              scrollFade({y: 16}) +
-              style<{size: 'S' | 'M'; isFocused: boolean}>({
-                font: {
-                  default: 'ui-lg',
-                  size: {
-                    M: 'ui-lg',
-                    S: 'ui'
-                  }
-                },
-                color: {
-                  default: 'neutral',
-                  ':empty': {
-                    default: 'transparent-overlay-1000/56',
-                    isFocused: 'transparent-overlay-1000/80',
-                    forcedColors: 'GrayText'
-                  }
-                },
-                width: 'full',
-                height: 'full',
-                minHeight: 'calc(1lh + 32px)',
-                maxHeight: '30cqh',
-                overflow: 'auto',
-                paddingY: 16,
-                paddingEnd: 16,
-                scrollPaddingY: 16,
-                boxSizing: 'border-box',
-                outlineStyle: 'none',
-                cursor: 'text',
-                transition: 'colors',
-                transitionDuration: 700,
-                transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
-              })({size, isFocused})
+                : undefined
             }>
-            {useCallback(
-              (token: TokenSegment<PromptFieldTokenValue>) => {
-                if (token.value?.type === 'anchor') {
-                  return <Token>{token.text}</Token>;
-                } else {
-                  return children ? (
-                    children(token)
-                  ) : (
-                    <PromptToken token={token}>{token.text}</PromptToken>
-                  );
-                }
-              },
-              [children]
-            )}
-          </TokenInput>
-        </TokenField>
+            <TokenInput
+              data-placeholder={
+                placeholder ||
+                stringFormatter.format(
+                  size === 'S' ? 'promptfield.placeholder.small' : 'promptfield.placeholder'
+                )
+              }
+              ref={inputRef}
+              className={
+                css('&:empty::before { content: attr(data-placeholder); }') +
+                ' ' +
+                scrollFade({y: 16}) +
+                style<{size: 'S' | 'M'; isFocused: boolean}>({
+                  font: {
+                    default: 'ui-lg',
+                    size: {
+                      M: 'ui-lg',
+                      S: 'ui'
+                    }
+                  },
+                  color: {
+                    default: 'neutral',
+                    ':empty': {
+                      default: 'transparent-overlay-1000/56',
+                      isFocused: 'transparent-overlay-1000/80',
+                      forcedColors: 'GrayText'
+                    }
+                  },
+                  width: 'full',
+                  height: 'full',
+                  minHeight: 'calc(1lh + 32px)',
+                  maxHeight: '30cqh',
+                  overflow: 'auto',
+                  paddingY: 16,
+                  paddingEnd: 16,
+                  scrollPaddingY: 16,
+                  boxSizing: 'border-box',
+                  outlineStyle: 'none',
+                  cursor: 'text',
+                  transition: 'colors',
+                  transitionDuration: 700,
+                  transitionTimingFunction: '[cubic-bezier(0.32, 0.72, 0, 1)]'
+                })({size, isFocused})
+              }>
+              {useCallback(
+                (token: TokenSegment<PromptFieldTokenValue>) => {
+                  if (token.value?.type === 'anchor') {
+                    return <Token>{token.text}</Token>;
+                  } else {
+                    return children ? (
+                      children(token)
+                    ) : (
+                      <PromptToken token={token}>{token.text}</PromptToken>
+                    );
+                  }
+                },
+                [children]
+              )}
+            </TokenInput>
+          </TokenField>
+        </div>
         <PromptTokenFieldPopover
           filterAnchor={filterAnchor}
           items={useDeferredValue(items)}
@@ -819,13 +845,15 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       isNonModal
       hideArrow
       placement="bottom start"
-      UNSAFE_style={menuWidth != null ? {width: menuWidth} : undefined}
+      // since this is now virtualized we need a fallback width and padding is controled by virtualizeer
+      padding="none"
+      UNSAFE_style={{width: menuWidth ?? 150}}
       key={key}
       getTargetRect={target => {
         return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
       }}>
       <PromptCompletionAnchorContext.Provider value={props.filterAnchor ?? null}>
-        <Menu>{menuItems}</Menu>
+        <Menu isVirtualized>{menuItems}</Menu>
       </PromptCompletionAnchorContext.Provider>
     </Popover>
   );
@@ -934,7 +962,9 @@ export interface PromptFieldSubmitButtonProps {}
 /** PromptFieldSubmitButton submits the PromptField. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
-  let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  let {prompt, isGenerating, isReadOnlyWhileGenerating, onSubmit, onStop} =
+    useContext(PromptFieldContext);
+  let showSubmit = !isGenerating || (!isReadOnlyWhileGenerating && prompt.segments.length > 0);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Button
@@ -942,14 +972,14 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
       staticColor="auto"
       styles={style({alignSelf: 'end'})}
       // TODO: should it be possible to submit a prompt with only attachments?
-      isDisabled={prompt.segments.length === 0 && !isGenerating}
+      isDisabled={prompt.segments.length === 0 && showSubmit}
       aria-label={
-        isGenerating
-          ? stringFormatter.format('promptfield.stopButton')
-          : stringFormatter.format('promptfield.submitButton')
+        showSubmit
+          ? stringFormatter.format('promptfield.submitButton')
+          : stringFormatter.format('promptfield.stopButton')
       }
-      onPress={isGenerating ? onStop : onSubmit}>
-      {isGenerating ? <Stop /> : <Send />}
+      onPress={showSubmit ? onSubmit : onStop}>
+      {showSubmit ? <Send /> : <Stop />}
     </Button>
   );
 }
@@ -968,7 +998,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let {lang: langProp, isDisabled: isDisabledProp, onError, onToggle} = props;
   let {locale} = useLocale();
   let lang = langProp ?? locale;
-  let {prompt, setPrompt, inputRef, setListening} = useContext(PromptFieldContext);
+  let {prompt, setPrompt, inputRef, setListening, voiceStopRef} = useContext(PromptFieldContext);
   let isDisabled = isDisabledProp;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
@@ -976,6 +1006,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let updateBasePrompt = useEffectEvent(() => {
     basePromptRef.current = prompt;
   });
+  let suppressedRef = useRef(false);
 
   let {
     isSupported,
@@ -985,8 +1016,24 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
     stop
   } = useVoiceInput({lang, onError, onListeningChange: setListening});
 
+  // Stop dictation on submit and suppress any further transcript commits for this session.
+  let stopVoiceForSubmit = useEffectEvent(() => {
+    if (!isVoiceListening) {
+      return;
+    }
+    suppressedRef.current = true;
+    stop();
+  });
+
+  useEffect(() => {
+    voiceStopRef.current = stopVoiceForSubmit;
+    return () => {
+      voiceStopRef.current = null;
+    };
+  }, [voiceStopRef]);
+
   let restoreFocus = useEffectEvent(() => {
-    if (!inputRef.current) {
+    if (!inputRef.current || suppressedRef.current) {
       return;
     }
     // similar to useInsertPromptSegment, calling programatic focus on the input causes the caret positioning
@@ -1004,6 +1051,7 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   let wasListeningRef = useRef(false);
   useEffect(() => {
     if (isVoiceListening) {
+      suppressedRef.current = false;
       updateBasePrompt();
       wasListeningRef.current = true;
       onToggleEvent(true);
@@ -1015,12 +1063,13 @@ export function PromptFieldVoiceButton(props: PromptFieldVoiceButtonProps) {
   }, [isVoiceListening]);
 
   let applyVoiceTranscript = useEffectEvent(() => {
-    if (!transcript || !isVoiceListening) {
+    if (!transcript || !isVoiceListening || isDisabled || suppressedRef.current) {
       return;
     }
 
     setPrompt(buildVoicePrompt(basePromptRef.current, transcript));
   });
+
   useEffect(() => {
     applyVoiceTranscript();
   }, [transcript, isVoiceListening]);
