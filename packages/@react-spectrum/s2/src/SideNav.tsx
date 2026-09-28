@@ -63,7 +63,7 @@ import {
 } from 'react-aria-components/NavigationTree';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
-import * as ReactAPI from 'react';
+import React from 'react';
 import sideNavCss from './SideNav.module.css';
 import {Text, TextContext} from './Content';
 import {useControlledState} from 'react-stately/useControlledState';
@@ -79,10 +79,10 @@ import {useScale} from './utils';
 // Older React versions just render their children, so the panel collapses and expands without
 // animating.
 const ViewTransition: ComponentType<{children: ReactNode; default?: ViewTransitionClass}> =
-  ReactAPI.ViewTransition ?? (({children}) => children);
-const addTransitionType: (type: string) => void = ReactAPI.addTransitionType ?? (() => {});
+  React.ViewTransition ?? (({children}) => children);
+const addTransitionType: (type: string) => void = React.addTransitionType ?? (() => {});
 const startTransition: (scope: () => void) => void =
-  ReactAPI.startTransition ?? ((scope: () => void) => scope());
+  React.startTransition ?? ((scope: () => void) => scope());
 
 // How long the panel takes to animate between its collapsed and expanded widths. Keep in sync with
 // sidePanelStyle's transitionDuration below. SidePanel falls back to this when it has to wait for
