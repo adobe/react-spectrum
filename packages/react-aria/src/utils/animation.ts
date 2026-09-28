@@ -109,7 +109,11 @@ function useAnimation(
 
       let animations = ref.current
         .getAnimations()
-        .filter(a => a.timeline instanceof DocumentTimeline && a.playState === 'running');
+        .filter(
+          a =>
+            (typeof DocumentTimeline === 'undefined' || a.timeline instanceof DocumentTimeline) &&
+            a.playState === 'running'
+        );
       if (animations.length === 0 && !startPromise) {
         onEnd();
         return;

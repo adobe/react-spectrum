@@ -135,7 +135,9 @@ function getSheetStack() {
 }
 
 const supportsViewTimeline =
-  typeof CSS !== 'undefined' && CSS.supports('animation-timeline: view()');
+  typeof CSS !== 'undefined' &&
+  typeof CSS.supports === 'function' &&
+  CSS.supports('animation-timeline: view()');
 
 /**
  * A SheetOverlay is a container for a SheetBackdrop and a Sheet.
