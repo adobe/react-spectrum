@@ -102,9 +102,23 @@ describeOrSkip('AttachmentList', () => {
     expect(queryByText('PDF')).not.toBeInTheDocument();
   });
 
-  it('should derive a badge label from the mime type subtype', () => {
+  it('should map common mime types and derive fallback labels for other subtypes', () => {
     let {getByText} = render(
       <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="brief.docx" size="L">
+          <AttachmentPreview
+            mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
+        <Attachment aria-label="vector.svg" size="L">
+          <AttachmentPreview
+            mimeType="image/svg+xml"
+            slot="thumbnail"
+            src="https://example.com/image.png"
+          />
+        </Attachment>
         <Attachment aria-label="clip.mp4" size="L">
           <AttachmentPreview
             mimeType="video/mp4"
@@ -114,6 +128,8 @@ describeOrSkip('AttachmentList', () => {
         </Attachment>
       </AttachmentList>
     );
+    expect(getByText('DOCX')).toBeInTheDocument();
+    expect(getByText('SVG')).toBeInTheDocument();
     expect(getByText('MP4')).toBeInTheDocument();
   });
 });
