@@ -96,6 +96,7 @@ import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
@@ -510,10 +511,23 @@ const emptyStateText = style({
   paddingX: 'edge-to-text'
 });
 
-const virtualizedMenuLayoutOptions = {
-  estimatedRowSize: 32,
-  estimatedHeadingSize: 50,
-  padding: 8
+const ROW_HEIGHTS = {
+  S: {
+    medium: 24,
+    large: 30
+  },
+  M: {
+    medium: 32,
+    large: 40
+  },
+  L: {
+    medium: 40,
+    large: 50
+  },
+  XL: {
+    medium: 48,
+    large: 60
+  }
 };
 
 /**
@@ -544,6 +558,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   let ctx = useContext(InternalMenuTriggerContext);
   let inPopover = useContext(InPopoverContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let scale = useScale();
 
   let menuLoadingCircle = (
     <AriaMenuLoadMoreItem
@@ -608,7 +623,13 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   );
 
   let menuWithVirtualizer = isVirtualized ? (
-    <Virtualizer layout={ListLayout} layoutOptions={virtualizedMenuLayoutOptions}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        estimatedRowSize: ROW_HEIGHTS[size][scale],
+        estimatedHeadingSize: ROW_HEIGHTS[size][scale],
+        padding: 8
+      }}>
       {menuContent}
     </Virtualizer>
   ) : isParentVirtualized ? (
@@ -666,21 +687,27 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
-let dividerPlacement = style<{size?: 'S' | 'M' | 'L' | 'XL'; isVirtualized?: boolean}>({
+let dividerPlacement = style({
   display: 'grid',
   gridColumnStart: 2,
   gridColumnEnd: -2,
+  marginY: size(5)
+});
+
+// same approach as combobox, need a wrapper with a fixed height so virtualizer measures it properly
+let virtualizedDividerWrapper = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  height: 12,
   marginX: {
-    isVirtualized: {
-      size: {
-        S: `[${edgeToText(24)}]`,
-        M: `[${edgeToText(32)}]`,
-        L: `[${edgeToText(40)}]`,
-        XL: `[${edgeToText(48)}]`
-      }
+    size: {
+      S: `[${edgeToText(24)}]`,
+      M: `[${edgeToText(32)}]`,
+      L: `[${edgeToText(40)}]`,
+      XL: `[${edgeToText(48)}]`
     }
-  },
-  marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
+  }
 });
 
 export const Divider = /*#__PURE__*/ createLeafComponent(
@@ -693,19 +720,22 @@ export const Divider = /*#__PURE__*/ createLeafComponent(
       return null;
     }
 
+    let dividerStyles = divider({
+      size: 'M',
+      orientation: 'horizontal',
+      isStaticColor: false
+    });
+
+    if (isVirtualized) {
+      return (
+        <div className={virtualizedDividerWrapper({size: ctxSize})}>
+          <Separator {...props} ref={ref} className={dividerStyles} />
+        </div>
+      );
+    }
+
     return (
-      <Separator
-        {...props}
-        ref={ref}
-        className={mergeStyles(
-          divider({
-            size: 'M',
-            orientation: 'horizontal',
-            isStaticColor: false
-          }),
-          dividerPlacement({size: ctxSize, isVirtualized})
-        )}
-      />
+      <Separator {...props} ref={ref} className={mergeStyles(dividerStyles, dividerPlacement)} />
     );
   }
 );

@@ -479,6 +479,7 @@ export interface PromptTokenFieldProps {
   shouldAnimatePixelLoader?: boolean;
   placeholder?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   // TODO: temp api for coworker so that the weird popover shrinking behavior
   // doesn't appear when rendering near edge of page
   menuWidth?: number;
@@ -497,7 +498,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     shouldAnimatePixelLoader = false,
     placeholder,
     menuWidth,
-    onKeyDown: onKeyDownProp
+    onKeyDown: onKeyDownProp,
+    onKeyUp: onKeyUpProp
   } = props;
   let {
     prompt,
@@ -645,7 +647,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         />
       </CenterBaseline>
       <Autocomplete>
-        <div role="presentation" onKeyDown={onKeyDownProp}>
+        <div role="presentation" onKeyDown={onKeyDownProp} onKeyUp={onKeyUpProp}>
           <TokenField
             value={prompt}
             onChange={setPrompt}

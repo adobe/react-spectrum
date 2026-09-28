@@ -556,11 +556,12 @@ describeOrSkip('PromptField', () => {
     });
   });
 
-  it('fires onKeyDown when a key is pressed in the token field', async () => {
+  it('fires onKeyDown and onKeyUp when a key is pressed in the token field', async () => {
     let onKeyDown = jest.fn();
+    let onKeyUp = jest.fn();
     let {getByRole} = render(
       <PromptField>
-        <PromptTokenField onKeyDown={onKeyDown} />
+        <PromptTokenField onKeyDown={onKeyDown} onKeyUp={onKeyUp} />
       </PromptField>
     );
 
@@ -568,7 +569,10 @@ describeOrSkip('PromptField', () => {
     await user.click(input);
     await user.keyboard('a');
 
-    expect(onKeyDown).toHaveBeenCalled();
+    expect(onKeyDown).toHaveBeenCalledTimes(1);
+    expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({key: 'a'}));
+    expect(onKeyUp).toHaveBeenCalledTimes(1);
+    expect(onKeyUp).toHaveBeenCalledWith(expect.objectContaining({key: 'a'}));
   });
 
   it('does not fire onKeyDown when selecting a virtually focused completion', async () => {
