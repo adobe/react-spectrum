@@ -292,6 +292,7 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 import {MenuTrigger, Menu, MenuItem} from '@react-spectrum/s2/Menu';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface Character {
   name: string
@@ -318,6 +319,7 @@ function Example() {
     <MenuTrigger>
       <ActionButton>Select Character</ActionButton>
       <Menu
+        styles={style({width: 150})}
         aria-label="Star Wars Characters"
         items={list.items}
         /*- begin highlight -*/

@@ -87,15 +87,15 @@ let TestGridListSections = ({listBoxProps, itemProps}) => (
       </GridListItem>
     </GridListSection>
     <GridListSection aria-label="Favorite Ice Cream">
-      <GridListItem {...itemProps} id="cat" textValue="Vanilla">
+      <GridListItem {...itemProps} id="vanilla" textValue="Vanilla">
         <Checkbox slot="selection" />
         Vanilla
       </GridListItem>
-      <GridListItem {...itemProps} id="dog" textValue="Chocolate">
+      <GridListItem {...itemProps} id="chocolate" textValue="Chocolate">
         <Checkbox slot="selection" />
         Chocolate
       </GridListItem>
-      <GridListItem {...itemProps} id="kangaroo" textValue="Strawberry">
+      <GridListItem {...itemProps} id="strawberry" textValue="Strawberry">
         <Checkbox slot="selection" />
         Strawberry
       </GridListItem>
