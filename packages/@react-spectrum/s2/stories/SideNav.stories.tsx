@@ -646,7 +646,7 @@ export const SidePanelExample = {
             <SideNavItemContent>
               <SideNavItemLink>
                 <Files />
-                <Text>Files</Text>
+                <Text>Your files</Text>
               </SideNavItemLink>
             </SideNavItemContent>
           </SideNavItem>
@@ -757,7 +757,7 @@ export const SidePanelExample2 = {
             <SideNavItemContent>
               <SideNavItemLink>
                 <Files />
-                <Text>Files</Text>
+                <Text>Your files</Text>
               </SideNavItemLink>
             </SideNavItemContent>
           </SideNavItem>

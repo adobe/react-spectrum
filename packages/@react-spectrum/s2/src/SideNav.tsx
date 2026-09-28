@@ -685,11 +685,13 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
   let {isCollapsed = false} = useContext(SidePanelContext);
+  let textId = useId();
 
   return (
     <Link
       {...props}
       {...linkFocus}
+      aria-labelledby={textId}
       data-do-not-hide
       className={treeRowLink({isDisabled: linkFocus.isDisabled})}>
       <Provider
@@ -697,6 +699,7 @@ export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
           [
             TextContext,
             {
+              id: textId,
               styles: treeContent({isCollapsed})
             }
           ],
