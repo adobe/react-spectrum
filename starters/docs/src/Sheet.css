@@ -11,7 +11,7 @@
   width: calc(100% - var(--spacing-4));
   max-width: 800px;
   margin: var(--spacing-4);
-  border-radius: var(--radius-xl);
+  border-radius: 32px;
   overflow: clip;
   z-index: 1;
   /* Establish a 3D space so stacked sheets can scale backward along the z-axis. */
@@ -40,6 +40,49 @@
   &[data-position='right'] {
     transform-origin: -20% center;
   }
+
+  .sheet-handle {
+    border-radius: 6px;
+    background: var(--gray-300);
+    position: absolute;
+    z-index: 2;
+    transition: opacity 300ms;
+  }
+
+  &[data-swipe-direction='bottom'] .sheet-handle,
+  &[data-swipe-direction='vertical'] .sheet-handle {
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 6px;
+  }
+  &[data-swipe-direction='top'] .sheet-handle {
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 6px;
+  }
+  &[data-swipe-direction='left'] .sheet-handle,
+  &[data-swipe-direction='horizontal'] .sheet-handle {
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 80px;
+    width: 6px;
+  }
+  &[data-swipe-direction='right'] .sheet-handle {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 80px;
+    width: 6px;
+  }
+
+  &[data-has-descendants] .sheet-handle {
+    opacity: 0;
+  }
 }
 
 .react-aria-SheetBackdrop {
@@ -52,6 +95,12 @@
 .react-aria-SheetContent {
   padding: var(--spacing-8);
   padding-bottom: calc(var(--spacing-8) + var(--sheet-scroll-padding-y));
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0px var(--spacing-4),
+    black var(--spacing-8) calc(100% - var(--spacing-8)),
+    transparent
+  );
   box-sizing: border-box;
   height: 100%;
   outline: none;
@@ -62,23 +111,13 @@
 
   .react-aria-Heading[slot='title'] {
     margin-top: 0;
-    margin-bottom: 1em;
-    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-1);
+    font-size: 1.3rem;
   }
 }
 
 .react-aria-SheetOverlay[data-expanded] .react-aria-SheetContent {
   overflow: auto;
-}
-
-@keyframes sheet-radius {
-  from {
-    border-radius: 0;
-  }
-
-  to {
-    border-radius: var(--radius-xl);
-  }
 }
 
 @keyframes sheet-backdrop {

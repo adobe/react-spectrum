@@ -37,6 +37,12 @@ export interface SheetRenderProps extends ModalRenderProps {
    */
   stackIndex: number;
   /**
+   * Whether the sheet has descendants.
+   *
+   * @selector [data-has-descendants]
+   */
+  hasDescendants: boolean;
+  /**
    * Whether the sheet is fully expanded to its last snap point.
    *
    * @selector [data-expanded]
@@ -215,7 +221,8 @@ export function SheetOverlay(props: SheetOverlayProps) {
     position,
     swipeDirection,
     isExpanded,
-    stackIndex: index
+    stackIndex: index,
+    hasDescendants: descendants.length > 0
   };
 
   return (
@@ -227,6 +234,7 @@ export function SheetOverlay(props: SheetOverlayProps) {
       data-swipe-direction={swipeDirection}
       data-expanded={isExpanded || undefined}
       data-stack-index={index}
+      data-has-descendants={descendants.length > 0 || undefined}
       render={
         props.render
           ? (domProps, renderProps) => props.render!(domProps, {...renderProps, ...baseRenderProps})
@@ -601,13 +609,18 @@ export function Sheet(props: SheetProps) {
       style.animationComposition,
       descendants.map(() => 'accumulate').join(', ')
     );
+    style.animationTimingFunction = append(
+      style.animationTimingFunction,
+      descendants.map(() => 'linear').join(', ')
+    );
   }
 
   let baseRenderProps = {
     position,
     swipeDirection,
     isExpanded,
-    stackIndex: index
+    stackIndex: index,
+    hasDescendants: descendants.length > 0
   };
 
   let alignment = getPositionAlignment(position);
@@ -653,6 +666,9 @@ export function Sheet(props: SheetProps) {
           ref={ref}
           data-position={position}
           data-swipe-direction={swipeDirection}
+          data-expanded={isExpanded || undefined}
+          data-stack-index={index}
+          data-has-descendants={descendants.length > 0 || undefined}
           render={
             props.render
               ? (domProps, renderProps) =>
@@ -717,6 +733,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
     position = 'bottom',
     swipeDirection = position === 'center' ? 'vertical' : position,
     index,
+    descendants,
     isExpanded,
     isEntering,
     isExiting
@@ -730,6 +747,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
       position,
       swipeDirection,
       stackIndex: index,
+      hasDescendants: descendants.length > 0,
       isExpanded,
       isEntering,
       isExiting,
@@ -744,6 +762,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
       data-position={position}
       data-swipe-direction={swipeDirection}
       data-stack-index={index}
+      data-has-descendants={descendants.length > 0 || undefined}
       data-expanded={isExpanded || undefined}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}

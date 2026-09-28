@@ -1,13 +1,3 @@
-@keyframes sheet-radius {
-  from {
-    border-radius: 0;
-  }
-
-  to {
-    border-radius: 1rem;
-  }
-}
-
 @keyframes sheet-backdrop {
   from {
     opacity: 0;

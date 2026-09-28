@@ -9,7 +9,10 @@ import {
 } from 'react-aria-components/Sheet';
 import './Sheet.css';
 
-export interface SheetProps extends Omit<SheetOverlayProps, 'children'> {
+export interface SheetProps
+  extends
+    Omit<SheetOverlayProps, 'children'>,
+    Pick<SheetProps, 'swipeAnimation' | 'swipeAnimationRange'> {
   /** The contents of the sheet. Rendered inside a Dialog. */
   children?: DialogProps['children'];
   /**
@@ -21,23 +24,23 @@ export interface SheetProps extends Omit<SheetOverlayProps, 'children'> {
 }
 
 export function Sheet({children, ...props}: SheetProps) {
-  let {snapPoints} = props;
+  let {snapPoints, isDismissable = true} = props;
   return (
     <SheetOverlay {...props}>
       {/* The backdrop fades in as the sheet slides up. When snap points are used, it stays hidden
-        until the sheet is dragged past the last detent. */}
+        until the sheet is dragged past the last snap point. */}
       <SheetBackdrop
         swipeAnimation="sheet-backdrop"
         swipeAnimationRange={snapPoints ? {start: snapPoints.length - 1} : undefined}
       />
-      {/* overscrollPadding makes the sheet appear to continue past the edge of the screen when
-        overscrolled. The radius animation rounds the corners as it enters, and scaleBack scales a
-        parent sheet backward when a child sheet is opened on top of it. */}
+      {/* overscrollPadding makes the sheet appear to continue past the edge of the screen when overscrolled.
+        The scaleBack animation scales a parent sheet backward when a child sheet is opened on top of it. */}
       <RACSheet
         overscrollPadding={props.overscrollPadding ?? true}
-        swipeAnimation="sheet-radius"
-        swipeAnimationRange={snapPoints ? {end: 0} : undefined}
+        swipeAnimation={props.swipeAnimation}
+        swipeAnimationRange={props.swipeAnimationRange}
         stackAnimation="sheet-scale-back">
+        {isDismissable && <div className="sheet-handle" />}
         <SheetContent>{children}</SheetContent>
       </RACSheet>
     </SheetOverlay>
