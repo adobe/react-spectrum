@@ -25,8 +25,7 @@ const btoa = s => Buffer.from(s, 'utf8').toString('base64');
  * before handing it off (see also `toPackageExportSpecifier`).
  */
 function stripAbsNodeModulesPath(absPath) {
-  const sep = path.sep;
-  const splits = absPath.split(`node_modules${sep}`);
+  const splits = absPath.split(/node_modules[\\/]/);
   const last = splits[splits.length - 1];
   return path.posix.normalize(last.replace(/\\/g, '/'));
 }
