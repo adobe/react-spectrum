@@ -49,7 +49,7 @@ describe('ariaHideOutside', function () {
     expect(() => getByRole('button')).not.toThrow();
   });
 
-  it('should use the target document as the default root', function () {
+  it('should hide siblings inside and outside the target iframe', async function () {
     let iframe = document.createElement('iframe');
     let iframeSibling = document.createElement('div');
     document.body.appendChild(iframe);
@@ -61,16 +61,51 @@ describe('ariaHideOutside', function () {
 
     let revert = ariaHideOutside([target]);
 
-    expect(outside).toHaveAttribute('aria-hidden', 'true');
-    expect(target).not.toHaveAttribute('aria-hidden');
-    expect(iframe).not.toHaveAttribute('aria-hidden');
-    expect(iframeSibling).not.toHaveAttribute('aria-hidden');
-    expect(document.body).not.toHaveAttribute('aria-hidden');
+    let addedInside = iframeDocument.createElement('div');
+    let addedOutside = document.createElement('div');
+    try {
+      expect(outside).toHaveAttribute('aria-hidden', 'true');
+      expect(target).not.toHaveAttribute('aria-hidden');
+      expect(iframe).not.toHaveAttribute('aria-hidden');
+      expect(iframeSibling).toHaveAttribute('aria-hidden', 'true');
+      expect(document.body).not.toHaveAttribute('aria-hidden');
 
-    revert();
+      iframeDocument.body.appendChild(addedInside);
+      document.body.appendChild(addedOutside);
+      await waitFor(() => {
+        expect(addedInside).toHaveAttribute('aria-hidden', 'true');
+        expect(addedOutside).toHaveAttribute('aria-hidden', 'true');
+      });
+    } finally {
+      revert();
+      iframe.remove();
+      iframeSibling.remove();
+      addedOutside.remove();
+    }
     expect(outside).not.toHaveAttribute('aria-hidden');
-    iframe.remove();
-    iframeSibling.remove();
+    expect(iframeSibling).not.toHaveAttribute('aria-hidden');
+    expect(addedInside).not.toHaveAttribute('aria-hidden');
+    expect(addedOutside).not.toHaveAttribute('aria-hidden');
+  });
+
+  it('should keep an explicit root inside the iframe', function () {
+    let iframe = document.createElement('iframe');
+    let iframeSibling = document.createElement('div');
+    document.body.append(iframe, iframeSibling);
+    let iframeDocument = iframe.contentDocument;
+    iframeDocument.body.innerHTML = '<div id="outside"></div><div id="target"></div>';
+    let target = iframeDocument.getElementById('target');
+    let outside = iframeDocument.getElementById('outside');
+    let revert = ariaHideOutside([target], {root: iframeDocument.body});
+    try {
+      expect(outside).toHaveAttribute('aria-hidden', 'true');
+      expect(iframeSibling).not.toHaveAttribute('aria-hidden');
+      expect(document.body).not.toHaveAttribute('aria-hidden');
+    } finally {
+      revert();
+      iframe.remove();
+      iframeSibling.remove();
+    }
   });
 
   it('should hide everything except multiple elements', function () {
