@@ -22,11 +22,11 @@ const sheetStyles = tv({
   base: 'font-sans text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 forced-colors:bg-[Canvas] outline-hidden overflow-clip rounded-4xl shadow-2xl border border-black/10 dark:border-white/10 z-[1] will-change-transform [transform:perspective(1000px)]',
   variants: {
     position: {
-      bottom: 'w-[calc(100%-1rem)] max-w-[800px] h-4/5 origin-[center_-20%]',
-      top: 'w-[calc(100%-1rem)] max-w-[800px] h-4/5 origin-[center_120%]',
-      center: 'w-[calc(100%-1rem)] max-w-[800px] h-4/5 origin-[center_-20%]',
-      left: 'w-[300px] h-[calc(100%-1rem)] origin-[120%_center]',
-      right: 'w-[300px] h-[calc(100%-1rem)] origin-[-20%_center]'
+      bottom: 'w-[calc(100%-1rem)] max-w-[800px] max-h-[calc(100%_-_32px)] origin-[center_-150px]',
+      top: 'w-[calc(100%-1rem)] max-w-[800px] max-h-[calc(100%_-_32px)] origin-[center_150px]',
+      center: 'w-[calc(100%-1rem)] max-w-[800px] max-h-[calc(100%_-_32px)] origin-[center_-150px]',
+      left: 'w-[300px] h-[calc(100%-1rem)] origin-[150px_center]',
+      right: 'w-[300px] h-[calc(100%-1rem)] origin-[-150px_center]'
     }
   },
   defaultVariants: {

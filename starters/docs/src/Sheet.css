@@ -7,10 +7,11 @@
   box-shadow: var(--popover-shadow);
   font-family: system-ui;
   font-size: var(--font-size);
-  height: 80%;
-  width: calc(100% - var(--spacing-4));
+  height: auto;
+  max-height: calc(100% - 32px);
+  width: calc(100% - var(--spacing-3));
   max-width: 800px;
-  margin: var(--spacing-4);
+  margin: var(--spacing-2);
   border-radius: 32px;
   overflow: clip;
   z-index: 1;
@@ -20,25 +21,26 @@
 
   &[data-position='left'],
   &[data-position='right'] {
-    width: 300px;
-    height: calc(100% - var(--spacing-4));
+    width: 340px;
+    height: calc(100% - var(--spacing-3));
+    max-height: unset;
   }
 
   &[data-position='bottom'],
   &[data-position='center'] {
-    transform-origin: center -20%;
+    transform-origin: center -150px;
   }
 
   &[data-position='top'] {
-    transform-origin: center 120%;
+    transform-origin: center 150px;
   }
 
   &[data-position='left'] {
-    transform-origin: 120% center;
+    transform-origin: 150px center;
   }
 
   &[data-position='right'] {
-    transform-origin: -20% center;
+    transform-origin: -150px center;
   }
 
   .sheet-handle {
@@ -132,6 +134,6 @@
 
 @keyframes sheet-scale-back {
   to {
-    transform: translateZ(-60px);
+    transform: translateZ(-120px);
   }
 }

@@ -16,41 +16,65 @@ export const description = 'An overlay that slides in from the edge of the scree
 <ExampleSwitcher>
   ```tsx render docs={vanillaDocs.exports.Sheet} links={vanillaDocs.links} props={['position', 'swipeDirection', 'isDismissable', 'overscrollPadding']} type="vanilla" files={["starters/docs/src/Sheet.tsx", "starters/docs/src/Sheet.css"]}
   "use client";
+  import {useState} from 'react';
   import {DialogTrigger} from 'react-aria-components/Dialog';
   import {Sheet, Heading} from 'vanilla-starter/Sheet';
   import {Button} from 'vanilla-starter/Button';
-  import {MessageCircle, Mail, Bookmark, Printer, Link as LinkIcon} from 'lucide-react';
+  import {Minus, Plus, ShoppingCart} from 'lucide-react';
 
   function Example(props) {
-    let targets = [
-      {label: 'Messages', icon: <MessageCircle size={24} />, color: '#34c759'},
-      {label: 'Mail', icon: <Mail size={24} />, color: '#007aff'},
-      {label: 'Save', icon: <Bookmark size={24} />, color: '#ff9500'},
-      {label: 'Print', icon: <Printer size={24} />, color: '#8e8e93'}
-    ];
+    let [items, setItems] = useState([
+      {name: 'Pork Bao', detail: 'Steamed · 2 pieces', emoji: '🥟', price: 4.5, qty: 2},
+      {name: 'Spicy Ramen', detail: 'Extra spicy · Soft egg', emoji: '🍜', price: 13, qty: 1},
+      {name: 'Mango Boba', detail: 'Less ice · 50% sweet', emoji: '🧋', price: 5.75, qty: 1}
+    ]);
+    let update = (name, delta) => setItems(items => items
+      .map(item => item.name === name ? {...item, qty: item.qty + delta} : item)
+      .filter(item => item.qty > 0));
+    let subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+    let delivery = items.length ? 2.99 : 0;
+    
     return (
       <DialogTrigger>
-        <Button>Share…</Button>
-        {/*- begin focus -*/}
+        <Button>
+          <ShoppingCart size={18} />
+          <span>Cart ({items.reduce((n, item) => n + item.qty, 0)})</span>
+        </Button>
+        {/*- begin highlight -*/}
         <Sheet {...props}/* PROPS */>
-          <Heading slot="title">Share “Sunset Hike.jpg”</Heading>
-          <div style={{aspectRatio: '5/3', width: '100%', background: 'var(--gray-200)', borderRadius: 16, marginBlock: 16}} />
-          <div style={{display: 'flex', gap: 20, overflowX: 'auto', padding: '8px 0 20px'}}>
-            {targets.map(target => (
-              <div key={target.label} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8}}>
-                <span style={{width: 56, height: 56, borderRadius: '50%', background: 'var(--gray-200)', color: 'var(--gray-900)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
-                  {target.icon}
-                </span>
-                <span style={{fontSize: 12}}>{target.label}</span>
-              </div>
-            ))}
+        {/*- end highlight -*/}
+          {/*- begin collapse -*/}
+          <div style={{display: 'flex', flexDirection: 'column', minHeight: '100%'}}>
+            <Heading slot="title">Your order</Heading>
+            <p style={{margin: '0 0 20px', color: 'var(--gray-700)'}}>Delivering from Bao Bros · 25–35 min</p>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 16, flexGrow: 1}}>
+              {items.map(item => (
+                <div key={item.name} style={{display: 'flex', alignItems: 'center', gap: 12}}>
+                  <span style={{width: 56, height: 56, borderRadius: 12, background: 'var(--gray-200)', fontSize: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>{item.emoji}</span>
+                  <div style={{display: 'flex', alignItems: 'center', columnGap: 12, rowGap: 4, flexWrap: 'wrap', flexGrow: 1}}>
+                    <div style={{flexGrow: 100, minWidth: 0}}>
+                      <div style={{fontWeight: 600}}>{item.name}</div>
+                      <div style={{fontSize: 12, color: 'var(--gray-700)'}}>{item.detail}</div>
+                    </div>
+                    <div style={{display: 'flex', alignItems: 'center', gap: 4, flexGrow: 1}}>
+                      <Button aria-label={`Remove one ${item.name}`} variant="secondary" onPress={() => update(item.name, -1)}><Minus size={16} /></Button>
+                      <span style={{minWidth: 20, textAlign: 'center'}}>{item.qty}</span>
+                      <Button aria-label={`Add one ${item.name}`} variant="secondary" onPress={() => update(item.name, 1)}><Plus size={16} /></Button>
+                      <span style={{minWidth: '6ch', textAlign: 'end', flexGrow: 1}}>${(item.price * item.qty).toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 4, margin: '20px 0', paddingTop: 16, borderTop: '1px solid var(--gray-300)'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Delivery fee</span><span>${delivery.toFixed(2)}</span></div>
+              <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 600}}><span>Total</span><span>${(subtotal + delivery).toFixed(2)}</span></div>
+            </div>
+            <Button slot="close" style={{width: '100%'}}>Place order</Button>
           </div>
-          <Button slot="close" variant="secondary">
-            <LinkIcon size={18} />
-            <span>Copy link</span>
-          </Button>
+          {/*- end collapse -*/}
         </Sheet>
-        {/*- end focus -*/}
       </DialogTrigger>
     );
   }
@@ -58,41 +82,66 @@ export const description = 'An overlay that slides in from the edge of the scree
 
   ```tsx render docs={vanillaDocs.exports.Sheet} links={vanillaDocs.links} props={['position', 'swipeDirection', 'isDismissable', 'overscrollPadding']} type="tailwind" files={["starters/tailwind/src/Sheet.tsx", "starters/tailwind/src/Sheet.css"]}
   "use client";
+  import {useState} from 'react';
   import {DialogTrigger} from 'react-aria-components/Dialog';
   import {Sheet} from 'tailwind-starter/Sheet';
   import {Heading} from 'tailwind-starter/Dialog';
   import {Button} from 'tailwind-starter/Button';
-  import {MessageCircle, Mail, Bookmark, Printer, Link as LinkIcon} from 'lucide-react';
+  import {Minus, Plus, ShoppingCart} from 'lucide-react';
 
   function Example(props) {
-    let targets = [
-      {label: 'Messages', icon: <MessageCircle size={24} />, color: 'bg-green-500'},
-      {label: 'Mail', icon: <Mail size={24} />, color: 'bg-blue-500'},
-      {label: 'Save', icon: <Bookmark size={24} />, color: 'bg-orange-500'},
-      {label: 'Print', icon: <Printer size={24} />, color: 'bg-neutral-500'}
-    ];
+    let [items, setItems] = useState([
+      {name: 'Pork Bao', detail: 'Steamed · 2 pieces', emoji: '🥟', price: 4.5, qty: 2},
+      {name: 'Spicy Ramen', detail: 'Extra spicy · Soft egg', emoji: '🍜', price: 13, qty: 1},
+      {name: 'Mango Boba', detail: 'Less ice · 50% sweet', emoji: '🧋', price: 5.75, qty: 1}
+    ]);
+    let update = (name, delta) => setItems(items => items
+      .map(item => item.name === name ? {...item, qty: item.qty + delta} : item)
+      .filter(item => item.qty > 0));
+    let subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+    let delivery = items.length ? 2.99 : 0;
+    
     return (
       <DialogTrigger>
-        <Button>Share…</Button>
-        {/*- begin focus -*/}
+        <Button>
+          <ShoppingCart size={18} />
+          <span>Cart ({items.reduce((n, item) => n + item.qty, 0)})</span>
+        </Button>
+        {/*- begin highlight -*/}
         <Sheet {...props}/* PROPS */>
-          <Heading slot="title" className="text-xl font-semibold mt-0 mb-4">Share “Sunset Hike.jpg”</Heading>
-          <div className="flex gap-5 overflow-x-auto pb-5">
-            {targets.map(target => (
-              <div key={target.label} className="flex flex-col items-center gap-2">
-                <span className={`w-14 h-14 rounded-full text-white flex items-center justify-center shrink-0 ${target.color}`}>
-                  {target.icon}
-                </span>
-                <span className="text-xs">{target.label}</span>
-              </div>
-            ))}
+        {/*- end highlight -*/}
+        {/*- begin collapse -*/}
+          <div className="flex flex-col min-h-full">
+            <Heading slot="title" className="text-xl font-semibold mt-0 mb-0.5">Your order</Heading>
+            <p className="mt-0 mb-5 text-sm text-neutral-600 dark:text-neutral-400">Delivering from Bao Bros · 25–35 min</p>
+            <div className="flex flex-col gap-4 flex-1">
+              {items.map(item => (
+                <div key={item.name} className="flex items-center gap-3">
+                  <span className="w-14 h-14 rounded-xl bg-neutral-200 dark:bg-neutral-700 text-3xl flex items-center justify-center shrink-0">{item.emoji}</span>
+                  <div className="flex items-center flex-wrap gap-x-3 gap-y-1 grow">
+                    <div className="grow-100 min-w-0">
+                      <div className="text-sm font-semibold">{item.name}</div>
+                      <div className="text-xs text-neutral-600 dark:text-neutral-400">{item.detail}</div>
+                    </div>
+                    <div className="flex items-center gap-1 grow">
+                      <Button aria-label={`Remove one ${item.name}`} variant="secondary" onPress={() => update(item.name, -1)}><Minus size={16} /></Button>
+                      <span className="min-w-5 text-center">{item.qty}</span>
+                      <Button aria-label={`Add one ${item.name}`} variant="secondary" onPress={() => update(item.name, 1)}><Plus size={16} /></Button>
+                      <span className="min-w-[6ch] text-sm text-end grow">${(item.price * item.qty).toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col gap-1 my-5 pt-4 text-sm border-t border-neutral-300 dark:border-neutral-700">
+              <div className="flex justify-between"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Delivery fee</span><span>${delivery.toFixed(2)}</span></div>
+              <div className="flex justify-between font-semibold"><span>Total</span><span>${(subtotal + delivery).toFixed(2)}</span></div>
+            </div>
+            <Button slot="close" className="w-full">Place order</Button>
           </div>
-          <Button slot="close" variant="secondary">
-            <LinkIcon size={18} />
-            <span>Copy link</span>
-          </Button>
+          {/*- end collapse -*/}
         </Sheet>
-        {/*- end focus -*/}
       </DialogTrigger>
     );
   }
@@ -124,7 +173,7 @@ function Example() {
       <Sheet position="left">
       {/*- end highlight -*/}
         <div style={{display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'start'}}>
-          <Heading slot="title">Acme Music</Heading>
+          <Heading slot="title" style={{padding: '0 var(--spacing-3)', marginBottom: 16}}>Acme Music</Heading>
           <nav style={{display: 'flex', flexDirection: 'column', gap: 4, flexGrow: 1, width: '100%'}}>
             {items.map(item => (
               <Button key={item.label} slot="close" variant="quiet" style={{justifyContent: 'start', gap: 12}}>
@@ -230,28 +279,67 @@ Sheets can be nested to drill deeper into a flow. Set `stackAnimation` prop to a
 import {DialogTrigger} from 'react-aria-components/Dialog';
 import {Sheet, Heading} from 'vanilla-starter/Sheet';
 import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {RadioGroup, Radio} from 'vanilla-starter/RadioGroup';
+import {CheckboxGroup} from 'vanilla-starter/CheckboxGroup';
+import {Checkbox} from 'vanilla-starter/Checkbox';
 import {ChevronRight} from 'lucide-react';
 
 function Example() {
   return (
     <DialogTrigger>
       <Button>Settings</Button>
-      <Sheet>
+      <Sheet style={{height: 550}}>
         <Heading slot="title">Settings</Heading>
-        <p style={{marginTop: 0}}>Manage your account and preferences.</p>
-        {/*- begin highlight -*/}
-        <DialogTrigger>
-          <Button variant="secondary">
-            <span>Account</span>
-            <ChevronRight size={18} />
-          </Button>
-          <Sheet>
-            <Heading slot="title">Account</Heading>
-            <p style={{marginTop: 0}}>Swipe this sheet away to return to Settings.</p>
-            <Button slot="close">Done</Button>
-          </Sheet>
-        </DialogTrigger>
-        {/*- end highlight -*/}
+        <p style={{marginTop: 0, marginBottom: 32}}>Manage your account and preferences.</p>
+        <Form>
+          <TextField label="Homepage" defaultValue="react-aria.adobe.com" />
+          <RadioGroup label="Theme" defaultValue="auto">
+            <Radio value="auto">Auto</Radio>
+            <Radio value="light">Light</Radio>
+            <Radio value="dark">Dark</Radio>
+          </RadioGroup>
+          {/*- begin highlight -*/}
+          <DialogTrigger>
+            <Button variant="secondary">
+              <span>Account</span>
+              <ChevronRight size={18} />
+            </Button>
+            <Sheet style={{height: 550}}>
+            {/*- end highlight -*/}
+              <Heading slot="title">Account</Heading>
+              <p style={{marginTop: 0, marginBottom: 32}}>Swipe this sheet away to return to Settings.</p>
+              <Form>
+                <TextField label="Name" defaultValue="Devon Govett" />
+                <TextField label="Username" defaultValue="@devongovett" />
+                <TextField label="Email" defaultValue="devon@example.com" />
+                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                  <Button slot="close">Save</Button>
+                  <DialogTrigger>
+                    <Button variant="secondary">
+                      <span>Advanced</span>
+                      <ChevronRight size={18} />
+                    </Button>
+                    <Sheet style={{height: 550}}>
+                      <Heading slot="title">Advanced</Heading>
+                      <p style={{marginTop: 0, marginBottom: 32}}>Swipe this sheet away to return to Account.</p>
+                      <Form>
+                        <CheckboxGroup label="Notification settings" defaultValue={['account', 'dms']}>
+                          <Checkbox value="account">Account activity</Checkbox>
+                          <Checkbox value="mentions">Mentions</Checkbox>
+                          <Checkbox value="dms">Direct message</Checkbox>
+                          <Checkbox value="marketing">Marketing emails</Checkbox>
+                        </CheckboxGroup>
+                        <Button slot="close">Save</Button>
+                      </Form>
+                    </Sheet>
+                  </DialogTrigger>
+                </div>
+              </Form>
+            </Sheet>
+          </DialogTrigger>
+        </Form>
       </Sheet>
     </DialogTrigger>
   );

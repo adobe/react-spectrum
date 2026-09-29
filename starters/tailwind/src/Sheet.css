@@ -10,6 +10,6 @@
 
 @keyframes sheet-scale-back {
   to {
-    transform: translateZ(-60px);
+    transform: translateZ(-120px);
   }
 }

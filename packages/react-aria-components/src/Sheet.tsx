@@ -555,7 +555,7 @@ export function Sheet(props: SheetProps) {
     position: 'relative'
   };
 
-  if (props.overscrollPadding && swipeDirection !== 'horizontal' && swipeDirection !== 'vertical') {
+  if (props.overscrollPadding && position === swipeDirection) {
     // Extra padding to allow overscrolling, and a negative margin to offset it.
     switch (position) {
       case 'top':
