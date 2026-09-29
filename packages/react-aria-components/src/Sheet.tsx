@@ -965,8 +965,12 @@ export function SheetContent(props: SheetContentProps) {
   );
 }
 
+function reduceMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function scrollAlongAxis(element: HTMLElement, axis: Axis, value: number, smooth = false) {
-  let behavior: ScrollBehavior | undefined = smooth ? 'smooth' : undefined;
+  let behavior: ScrollBehavior | undefined = smooth && !reduceMotion() ? 'smooth' : undefined;
   element.scrollTo(axis === 'y' ? {top: value, behavior} : {left: value, behavior});
 }
 
@@ -977,7 +981,7 @@ function scrollDetentIntoView(
   align: 'start' | 'end',
   smooth = false
 ) {
-  let behavior: ScrollBehavior = smooth ? 'smooth' : 'auto';
+  let behavior: ScrollBehavior = smooth && !reduceMotion() ? 'smooth' : 'auto';
   let markerRect = marker.getBoundingClientRect();
   let scrollerRect = scroller.getBoundingClientRect();
   let style = getComputedStyle(marker);
