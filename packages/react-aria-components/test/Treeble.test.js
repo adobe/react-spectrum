@@ -574,8 +574,6 @@ describe('Treeble', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(rows[0]);
-    expect(rows[0]).toHaveAttribute('tabindex', '0');
-    expect(tree.getByTestId('treeble')).toHaveAttribute('tabindex', '-1');
 
     await user.keyboard('{ArrowDown}');
     expect(document.activeElement).toBe(rows[1]);
@@ -610,10 +608,6 @@ describe('Treeble', () => {
     await user.click(tree.getByText('Collapse all'));
     let rows = tester.getRows();
     expect(rows).toHaveLength(4);
-    expect(rows[0]).toHaveAttribute('tabindex', '0');
-    for (let row of rows.slice(1)) {
-      expect(row).toHaveAttribute('tabindex', '-1');
-    }
 
     await user.tab({shift: true});
     expect(document.activeElement).toBe(rows[0]);

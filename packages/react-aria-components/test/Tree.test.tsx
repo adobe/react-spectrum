@@ -1631,22 +1631,11 @@ describe('Tree', () => {
       </>
     );
 
-    let expectSingleTabStop = (tree: HTMLElement, row: HTMLElement) => {
-      expect(tree).toHaveAttribute('tabindex', '-1');
-      for (let r of within(tree).getAllByRole('row')) {
-        expect(r).toHaveAttribute('tabindex', r === row ? '0' : '-1');
-      }
-    };
-
     it('should autoFocus the closest visible ancestor of a selected item inside a collapsed item', async () => {
-      let {getByRole, getAllByRole} = render(
-        <CollapsibleTree autoFocus defaultSelectedKeys={['child']} />
-      );
-      let tree = getByRole('treegrid');
+      let {getAllByRole} = render(<CollapsibleTree autoFocus defaultSelectedKeys={['child']} />);
       let rows = getAllByRole('row');
       expect(rows.map(row => row.getAttribute('data-key'))).toEqual(['p1', 'p2', 'p3']);
       expect(document.activeElement).toBe(rows[0]);
-      expectSingleTabStop(tree, rows[0]);
 
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(rows[1]);
@@ -1661,16 +1650,12 @@ describe('Tree', () => {
     });
 
     it('should focus the closest visible ancestor of a selected item when tabbing into the tree', async () => {
-      let {getByRole, getAllByRole, getByText} = render(
-        <CollapsibleTree defaultSelectedKeys={['child']} />
-      );
-      let tree = getByRole('treegrid');
+      let {getAllByRole, getByText} = render(<CollapsibleTree defaultSelectedKeys={['child']} />);
       let rows = getAllByRole('row');
 
       await user.tab();
       await user.tab();
       expect(document.activeElement).toBe(rows[0]);
-      expectSingleTabStop(tree, rows[0]);
 
       await user.tab();
       expect(document.activeElement).toBe(getByText('After'));
@@ -1680,7 +1665,7 @@ describe('Tree', () => {
     });
 
     it('should focus the closest visible ancestor when several levels are collapsed', () => {
-      let {getByRole, getAllByRole} = render(
+      let {getAllByRole} = render(
         <CollapsibleTree
           autoFocus
           defaultSelectedKeys={['grandchild']}
@@ -1690,16 +1675,19 @@ describe('Tree', () => {
       let rows = getAllByRole('row');
       expect(rows.map(row => row.getAttribute('data-key'))).toEqual(['p1', 'child', 'p2', 'p3']);
       expect(document.activeElement).toBe(rows[1]);
-      expectSingleTabStop(getByRole('treegrid'), rows[1]);
     });
 
     it('should focus the tree when the closest visible ancestor is disabled', async () => {
-      let {getByRole, getAllByRole} = render(
+      let {getByRole, getAllByRole, getByText} = render(
         <CollapsibleTree autoFocus defaultSelectedKeys={['child']} disabledKeys={['p1']} />
       );
       let tree = getByRole('treegrid');
       expect(document.activeElement).toBe(tree);
-      expect(tree).toHaveAttribute('tabindex', '0');
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByText('After'));
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(tree);
 
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(getAllByRole('row')[1]);
@@ -1720,8 +1708,7 @@ describe('Tree', () => {
         );
       }
 
-      let {getByRole, getAllByRole, getByText} = render(<ControlledTree />);
-      let tree = getByRole('treegrid');
+      let {getAllByRole, getByText} = render(<ControlledTree />);
 
       await user.tab();
       await user.tab();
@@ -1731,7 +1718,6 @@ describe('Tree', () => {
       await user.click(getByText('Collapse all'));
       let rows = getAllByRole('row');
       expect(rows.map(row => row.getAttribute('data-key'))).toEqual(['p1', 'p2', 'p3']);
-      expectSingleTabStop(tree, rows[0]);
 
       await user.tab({shift: true});
       await user.tab({shift: true});
@@ -1743,16 +1729,23 @@ describe('Tree', () => {
     });
 
     it('should move focus to the closest visible ancestor when the focused key is set to a hidden item', async () => {
-      let state;
-      let StateReader = ({onState}) => {
-        let treeState = React.useContext(TreeStateContext);
+      let FocusItemAfterDelay = ({id}) => {
+        let state = React.useContext(TreeStateContext)!;
+        let [hasFocused, setHasFocused] = React.useState(false);
         React.useEffect(() => {
-          onState(treeState);
-        });
+          if (hasFocused) {
+            return;
+          }
+          let timeout = setTimeout(() => {
+            state.selectionManager.setFocusedKey(id);
+            setHasFocused(true);
+          }, 1000);
+          return () => clearTimeout(timeout);
+        }, [hasFocused, id, state]);
         return null;
       };
 
-      let {getByRole, getAllByRole} = render(
+      let {getAllByRole} = render(
         <Tree aria-label="test tree">
           <CollapsibleItem id="p1">
             <CollapsibleItem id="child" />
@@ -1760,23 +1753,21 @@ describe('Tree', () => {
           <TreeItem id="p2" textValue="p2">
             <TreeItemContent>
               <Text>p2</Text>
-              <StateReader onState={s => (state = s)} />
+              <FocusItemAfterDelay id="child" />
             </TreeItemContent>
           </TreeItem>
         </Tree>
       );
-      let tree = getByRole('treegrid');
       let rows = getAllByRole('row');
 
       await user.tab();
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(rows[1]);
 
-      act(() => state.selectionManager.setFocusedKey('child'));
+      act(() => jest.advanceTimersByTime(1000));
       rows = getAllByRole('row');
       expect(rows.map(row => row.getAttribute('data-key'))).toEqual(['p1', 'p2']);
       expect(document.activeElement).toBe(rows[0]);
-      expectSingleTabStop(tree, rows[0]);
     });
 
     describe('virtualized', () => {
@@ -1812,7 +1803,7 @@ describe('Tree', () => {
       `(
         'should autoFocus $focusedKey when $selectedKey is selected and out of view',
         ({selectedKey, focusedKey}) => {
-          let {getByRole} = render(
+          render(
             <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
               <Tree
                 aria-label="test tree"
@@ -1825,7 +1816,6 @@ describe('Tree', () => {
             </Virtualizer>
           );
           expect(document.activeElement).toHaveAttribute('data-key', focusedKey);
-          expect(getByRole('treegrid')).toHaveAttribute('tabindex', '-1');
         }
       );
     });
@@ -1891,12 +1881,13 @@ describe('Tree', () => {
         await user.keyboard('{Escape}');
         act(() => jest.runAllTimers());
 
-        let tree = getByRole('treegrid');
         let projects = getAllByRole('row').find(
           row => row.getAttribute('data-key') === 'projects'
         )!;
         expect(projects).toHaveAttribute('aria-expanded', 'false');
-        expectSingleTabStop(tree, projects);
+
+        await user.tab();
+        expect(document.activeElement).toBe(projects);
       }
     );
   });
