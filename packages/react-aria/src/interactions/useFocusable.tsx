@@ -72,6 +72,7 @@ function validateFocusableElement(
   ref: RefObject<FocusableElement | null>,
   isDisabled?: boolean
 ): void {
+  // oxlint-disable-next-line react/react-compiler
   let el = ref.current;
   if (!el || !(el instanceof getOwnerWindow(el).Element)) {
     console.error('<Focusable> child must forward its ref to a DOM element.');
