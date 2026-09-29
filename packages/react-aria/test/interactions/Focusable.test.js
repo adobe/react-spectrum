@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Focusable, FocusableProvider} from '../../exports/index';
+import {Focusable, FocusableProvider, useFocusable} from '../../exports/index';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useImperativeHandle} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -30,6 +30,23 @@ describe('Focusable', function () {
     );
 
     expect(getByRole('button')).toHaveAttribute('id', 'provider-id');
+  });
+
+  it('should validate a focusable descendant that consumes provider props', function () {
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let Component = () => {
+      let ref = React.useRef(null);
+      let {focusableProps} = useFocusable({}, ref);
+      return <span {...focusableProps} ref={ref}>Trigger</span>;
+    };
+
+    render(
+      <FocusableProvider aria-label="Trigger">
+        <Component />
+      </FocusableProvider>
+    );
+
+    expect(spy).toHaveBeenCalledWith('<Focusable> child must have an interactive ARIA role.');
   });
 
   it('should apply focusable props to child element', async function () {
