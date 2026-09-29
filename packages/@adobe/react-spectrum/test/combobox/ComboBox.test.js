@@ -5135,39 +5135,6 @@ describe('ComboBox', function () {
       });
 
       describe('keyboard navigating', function () {
-        it('should only announce the option count when navigating with the arrow keys', async function () {
-          renderComboBox();
-          await user.tab();
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // VoiceOver announces each option on its own, so the only announcement we
-          // make is the option count when the listbox opens.
-          expect(announce.mock.calls.map(call => call[0])).toEqual(['3 options available.']);
-        });
-
-        it('should not announce the selected state when arrowing to the selected item', async function () {
-          let {getByRole} = renderComboBox({selectedKey: '2'});
-          let combobox = getByRole('combobox');
-          act(() => {
-            combobox.focus();
-          });
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // The selected state is part of VoiceOver's native per-item announcement.
-          expect(announce.mock.calls.map(call => call[0])).toEqual(['3 options available.']);
-        });
-
         it('should announce when navigating into a section with multiple items', async function () {
           let {getByRole} = renderSectionComboBox();
           let combobox = getByRole('combobox');

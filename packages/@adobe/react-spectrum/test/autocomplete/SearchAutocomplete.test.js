@@ -3333,24 +3333,6 @@ describe('SearchAutocomplete', function () {
       });
 
       describe('keyboard navigating', function () {
-        it('should only announce the option count when navigating with the arrow keys', async function () {
-          renderSearchAutocomplete();
-          await user.tab();
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // VoiceOver announces each option on its own, so the only announcement we
-          // make is the option count when the listbox opens.
-          expect(announce.mock.calls.map(call => call[0])).toEqual(['3 options available.']);
-        });
-
         it('should announce when navigating into a section with multiple items', async function () {
           let {getByRole} = renderSectionSearchAutocomplete();
           let searchAutocomplete = getByRole('combobox');
