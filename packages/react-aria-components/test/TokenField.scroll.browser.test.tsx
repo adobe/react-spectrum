@@ -42,9 +42,14 @@ class TagFieldValue extends TokenFieldValue {
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
 
 describeOrSkip('TokenField scrolling', () => {
-  it.each(['ltr', 'rtl'] as const)(
-    'keeps a visible tag field in place after Enter and Backspace (%s)',
-    async dir => {
+  it.each([
+    {dir: 'ltr', delimiter: 'Enter', key: '{Enter}'},
+    {dir: 'rtl', delimiter: 'Enter', key: '{Enter}'},
+    {dir: 'ltr', delimiter: 'comma', key: ','},
+    {dir: 'rtl', delimiter: 'comma', key: ','}
+  ] as const)(
+    'keeps a visible tag field in place after $delimiter and Backspace ($dir)',
+    async ({dir, key}) => {
       let screen = await render(
         <div
           data-testid="scroller"
@@ -67,7 +72,7 @@ describeOrSkip('TokenField scrolling', () => {
       let scrollTop = scroller.scrollTop;
       expect(scrollTop).toBeGreaterThan(0);
 
-      await userEvent.keyboard('{Enter}');
+      await userEvent.keyboard(key);
       await expect.element(input).toHaveTextContent('Design');
       expect(input.element().querySelector('[data-react-aria-token]')).not.toBeNull();
       expect(scroller.scrollTop).toBe(scrollTop);
@@ -80,6 +85,46 @@ describeOrSkip('TokenField scrolling', () => {
       await userEvent.keyboard('{Backspace}{Backspace}');
       expect(input.element().querySelector('[data-react-aria-token]')).toBeNull();
       expect(scroller.scrollTop).toBe(scrollTop);
+    }
+  );
+
+  it.each(['ltr', 'rtl'] as const)(
+    'keeps a visible field in place when Backspace leaves a trailing token (%s)',
+    async dir => {
+      let screen = await render(
+        <div
+          data-testid="scroller"
+          dir={dir}
+          style={{height: 180, overflow: 'auto', marginTop: 200}}>
+          <div style={{height: 500}} />
+          <TokenField
+            aria-label="Tags"
+            defaultValue={
+              new TagFieldValue([
+                {type: 'token', text: 'Design'},
+                {type: 'text', text: 'x'}
+              ])
+            }>
+            <TokenInput style={{minHeight: 30}}>
+              {segment => <Token>{segment.text}</Token>}
+            </TokenInput>
+          </TokenField>
+          <div style={{height: 500}} />
+        </div>
+      );
+      let scroller = screen.getByTestId('scroller').element();
+      let input = screen.getByRole('textbox', {name: 'Tags'});
+      scroller.scrollTop = 450;
+      await userEvent.click(input);
+      await userEvent.keyboard('{End}');
+      let scrollTop = scroller.scrollTop;
+      expect(scrollTop).toBeGreaterThan(0);
+
+      await userEvent.keyboard('{Backspace}');
+      await expect.element(input).toHaveTextContent('Design');
+      expect(input.element().querySelector('[data-react-aria-token]')).not.toBeNull();
+      expect(scroller.scrollTop).toBe(scrollTop);
+      await expect.element(input).toHaveFocus();
     }
   );
 
