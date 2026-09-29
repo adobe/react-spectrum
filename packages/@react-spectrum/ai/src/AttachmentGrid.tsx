@@ -64,8 +64,7 @@ const gridStyles = style({
   overflowX: 'clip',
   boxSizing: 'border-box',
   borderRadius: 'lg',
-  ...focusRing(),
-  outlineOffset: -2
+  ...focusRing()
 });
 
 /**
@@ -83,6 +82,7 @@ export const AttachmentGrid = (forwardRef as forwardRefType)(function Attachment
     <ListBox
       {...otherProps}
       layout="grid"
+      selectionMode="none"
       items={items}
       dependencies={dependencies}
       ref={domRef}
@@ -114,6 +114,7 @@ const itemStyles = style({
   flexShrink: 0,
   flexGrow: 0,
   position: 'relative',
+  ...focusRing(),
   borderRadius: 'lg'
 });
 
@@ -133,9 +134,8 @@ export const AttachmentGridItem = forwardRef(function AttachmentGridItem(
       id={id}
       {...filterDOMProps(otherProps, {labelable: true})}
       textValue={textValue}
-      isDisabled
       ref={domRef}
-      className={mergeStyles(itemStyles, styles)}>
+      className={renderProps => mergeStyles(itemStyles({...renderProps}), styles)}>
       <AttachmentCard size={size} isInvalid={isInvalid} isLoading={isLoading}>
         <AttachmentPreviewContext.Provider
           value={{

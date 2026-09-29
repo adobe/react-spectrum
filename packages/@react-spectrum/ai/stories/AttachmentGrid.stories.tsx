@@ -66,9 +66,7 @@ function AttachmentGridDemo({
   );
 }
 
-const meta: Meta<typeof AttachmentGridDemo> = {
-  component: AttachmentGridDemo,
-  subcomponents: {AttachmentGrid, AttachmentGridItem},
+const meta: Meta<AttachmentGridDemoProps> = {
   parameters: {
     layout: 'centered'
   },
@@ -87,7 +85,7 @@ const meta: Meta<typeof AttachmentGridDemo> = {
 
 export default meta;
 
-type Story = StoryObj<typeof AttachmentGridDemo>;
+type Story = StoryObj<AttachmentGridDemoProps>;
 
 export const AIAttachmentGrid: Story = {
   render: args => (
@@ -100,7 +98,14 @@ export const AIAttachmentGrid: Story = {
 export const Overflow: Story = {
   name: 'Overflow (vertical scroll fade)',
   render: args => (
-    <div style={{width: 404, maxHeight: 240, resize: 'horizontal', overflow: 'hidden'}}>
+    <div
+      style={{
+        width: 388,
+        maxHeight: 240,
+        padding: 16,
+        resize: 'horizontal',
+        overflow: 'hidden'
+      }}>
       <AttachmentGridDemo {...args} count={20} />
     </div>
   )

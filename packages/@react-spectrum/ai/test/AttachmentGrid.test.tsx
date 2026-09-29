@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
 import {AttachmentGrid, AttachmentGridItem} from '@react-spectrum/ai';
 import {Image} from '@react-spectrum/s2/Image';
 import React from 'react';
+import {render} from '@react-spectrum/test-utils-internal';
+import userEvent from '@testing-library/user-event';
 
 // Conditionally skip the suite
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
 describeOrSkip('AttachmentGrid', () => {
-  it('should render as a non-interactive grid whose items are not focusable', () => {
+  it('should use a single tab stop with arrow key navigation between attachments', async () => {
+    let user = userEvent.setup({delay: null});
     let {getByRole, getAllByRole} = render(
       <AttachmentGrid aria-label="Uploaded files">
         <AttachmentGridItem aria-label="one.pdf" textValue="one.pdf">
@@ -30,32 +32,20 @@ describeOrSkip('AttachmentGrid', () => {
       </AttachmentGrid>
     );
 
-    // All options are disabled, so the grid itself becomes the sole tab stop, keeping the
-    // overflow area keyboard-scrollable even though no individual attachment is focusable.
     let grid = getByRole('listbox');
     expect(grid).toBeInTheDocument();
-    expect(grid).toHaveAttribute('tabIndex', '0');
-    let options = getAllByRole('option');
-    expect(options).toHaveLength(2);
-    for (let option of options) {
-      expect(option).toHaveAttribute('aria-disabled', 'true');
-      expect(option).not.toHaveAttribute('tabIndex');
-    }
     expect(grid).not.toHaveAttribute('aria-multiselectable');
-  });
 
-  it('should not intercept arrow keys, so the browser can natively scroll the grid', () => {
-    let {getByRole} = render(
-      <AttachmentGrid aria-label="Uploaded files">
-        <AttachmentGridItem aria-label="one.pdf" textValue="one.pdf">
-          <Image slot="thumbnail" src="https://example.com/image.png" />
-        </AttachmentGridItem>
-      </AttachmentGrid>
-    );
+    let [firstOption, secondOption] = getAllByRole('option');
 
-    let grid = getByRole('listbox');
-    act(() => grid.focus());
-    expect(fireEvent.keyDown(grid, {key: 'ArrowDown'})).toBe(true);
-    expect(fireEvent.keyDown(grid, {key: 'ArrowUp'})).toBe(true);
+    await user.tab();
+    expect(document.activeElement).toBe(firstOption);
+    expect(firstOption.tabIndex).toBe(0);
+    expect(secondOption.tabIndex).toBe(-1);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(secondOption);
+    expect(firstOption.tabIndex).toBe(-1);
+    expect(secondOption.tabIndex).toBe(0);
   });
 });

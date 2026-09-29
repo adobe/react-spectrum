@@ -740,6 +740,34 @@ export interface AttachmentPreviewProps extends ImageProps {
   mimeType?: string;
 }
 
+const previewIcons = {
+  audio: AudioWave,
+  video: Play,
+  image: ImageIcon,
+  text: FileText,
+  file: File
+};
+
+function getPreviewKind(mimeType?: string): keyof typeof previewIcons {
+  if (matchMimeType(mimeType, ['audio/*'])) {
+    return 'audio';
+  }
+
+  if (matchMimeType(mimeType, ['video/*'])) {
+    return 'video';
+  }
+
+  if (matchMimeType(mimeType, ['image/*'])) {
+    return 'image';
+  }
+
+  if (matchMimeType(mimeType, ['text/*'])) {
+    return 'text';
+  }
+
+  return 'file';
+}
+
 /**
  * AttachmentPreview renders a preview of a file attachment.
  */
@@ -781,49 +809,23 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
     );
   }
 
-  if (matchMimeType(mimeType, ['audio/*'])) {
-    return (
-      <AttachmentPreviewWrapper isDisabled={isDisabled}>
-        <AudioWave />
-      </AttachmentPreviewWrapper>
-    );
-  }
-
-  if (matchMimeType(mimeType, ['video/*'])) {
-    return (
-      <AttachmentPreviewWrapper isDisabled={isDisabled}>
-        <Play />
-      </AttachmentPreviewWrapper>
-    );
-  }
-
-  if (matchMimeType(mimeType, ['image/*'])) {
-    return (
-      <AttachmentPreviewWrapper isDisabled={isDisabled}>
-        <ImageIcon />
-      </AttachmentPreviewWrapper>
-    );
-  }
-
-  if (matchMimeType(mimeType, ['text/*'])) {
-    return (
-      <AttachmentPreviewWrapper isDisabled={isDisabled}>
-        <FileText />
-      </AttachmentPreviewWrapper>
-    );
-  }
+  let previewKind = getPreviewKind(mimeType);
+  let Icon = previewIcons[previewKind];
 
   return (
     <AttachmentPreviewWrapper isDisabled={isDisabled}>
-      <File />
+      <Icon />
     </AttachmentPreviewWrapper>
   );
 }
 
-const attachmentBadge = style({
+const attachmentBadgeInset = 4;
+const attachmentBadgeRadius = `calc(var(--image-border-radius) - ${attachmentBadgeInset}px)`;
+
+const attachmentBadge = style<{isDisabled: boolean}>({
   position: 'absolute',
-  bottom: 4,
-  insetStart: 4,
+  bottom: attachmentBadgeInset,
+  insetStart: attachmentBadgeInset,
   display: 'inline-flex',
   alignItems: 'center',
   minWidth: 0,
@@ -831,22 +833,22 @@ const attachmentBadge = style({
   maxWidth: 64,
   paddingX: space(6),
   paddingY: space(2),
-  borderRadius: 'full',
+  borderRadius: attachmentBadgeRadius,
   overflow: 'hidden',
   pointerEvents: 'none',
-  visibility: '--badge-visibility'
+  visibility: '--badge-visibility',
+  opacity: {
+    default: 1,
+    isDisabled: 0.5
+  }
 });
 
-const attachmentBadgeBackground = style<{isDisabled: boolean}>({
+const attachmentBadgeBackground = style({
   position: 'absolute',
   inset: 0,
   backgroundColor: {
     default: 'neutral-subtle',
     forcedColors: 'ButtonFace'
-  },
-  opacity: {
-    default: 0.9,
-    isDisabled: 0.7
   }
 });
 
@@ -870,8 +872,8 @@ function AttachmentBadge({mimeType, isDisabled = false}: {mimeType: string; isDi
     return null;
   }
   return (
-    <div className={attachmentBadge}>
-      <div aria-hidden className={attachmentBadgeBackground({isDisabled})} />
+    <div className={attachmentBadge({isDisabled})}>
+      <div aria-hidden className={attachmentBadgeBackground} />
       <div className={attachmentBadgeLabel}>{label}</div>
     </div>
   );

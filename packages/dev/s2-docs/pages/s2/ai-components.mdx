@@ -460,12 +460,22 @@ Compose a conversation from `Chat`, `Thread`, `ResponseStatus`, `Alert`, and mes
 
 ```tsx render type="s2"
 "use client";
-import {Alert, Chat, Thread, ThreadItem, UserMessage, ResponseStatus, ResponseStatusTitle, ResponseStatusPanel, ExecutionTrace, ExecutionTraceItem} from '@react-spectrum/ai';
+import {Alert, AttachmentGrid, AttachmentGridItem, AttachmentPreview, Chat, Thread, ThreadItem, UserMessage, ResponseStatus, ResponseStatusTitle, ResponseStatusPanel, ExecutionTrace, ExecutionTraceItem} from '@react-spectrum/ai';
 import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 let messages = [
-  {id: 1, type: 'user', text: 'Summarize the campaign results.'},
+  {
+    id: 1,
+    type: 'user',
+    text: 'Summarize the campaign results.',
+    attachments: Array.from({length: 20}, (_, i) => ({
+      id: i + 1,
+      name: `campaign-results-${i + 1}.pdf`,
+      mimeType: 'application/pdf',
+      src: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    }))
+  },
   {
     id: 2,
     type: 'status',
@@ -526,7 +536,27 @@ function BasicChat() {
                   <ThreadItem
                     textValue={message.text}
                     styles={style({display: 'flex', justifyContent: 'end'})}>
-                    <UserMessage>{message.text}</UserMessage>
+                    <UserMessage>
+                      <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
+                        {message.attachments && (
+                          <AttachmentGrid
+                            aria-label="Uploaded files"
+                            align="start"
+                            styles={style({width: 304, maxHeight: 96})}>
+                            {message.attachments.map(attachment => (
+                              <AttachmentGridItem key={attachment.id} aria-label={attachment.name} textValue={attachment.name}>
+                                <AttachmentPreview
+                                  mimeType={attachment.mimeType}
+                                  slot="thumbnail"
+                                  src={attachment.src}
+                                />
+                              </AttachmentGridItem>
+                            ))}
+                          </AttachmentGrid>
+                        )}
+                        <div>{message.text}</div>
+                      </div>
+                    </UserMessage>
                   </ThreadItem>
                 );
               case 'assistant':
@@ -899,4 +929,3 @@ not support selection or removal.
 ## PixelLoader
 
 <PropTable component={docs.exports.PixelLoader} links={docs.links} showDescription />
-
