@@ -66,10 +66,7 @@ function useFocusableContext(ref: RefObject<FocusableElement | null>): Focusable
   return otherProps;
 }
 
-function validateFocusableElement(
-  el: FocusableElement | null,
-  isDisabled?: boolean
-): void {
+function validateFocusableElement(el: FocusableElement | null, isDisabled?: boolean): void {
   if (!el || !(el instanceof getOwnerWindow(el).Element)) {
     console.error('<Focusable> child must forward its ref to a DOM element.');
     return;
