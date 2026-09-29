@@ -112,6 +112,70 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
     autoFocusRef.current = false;
   }, [domRef]);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
+
+    let el = domRef.current;
+    if (!el || !(el instanceof getOwnerWindow(el).Element)) {
+      console.error('<Focusable> child must forward its ref to a DOM element.');
+      return;
+    }
+
+    if (!props.isDisabled && !isFocusable(el, {skipVisibilityCheck: true})) {
+      console.warn(
+        '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+      );
+      return;
+    }
+
+    if (
+      el.localName !== 'button' &&
+      el.localName !== 'input' &&
+      el.localName !== 'select' &&
+      el.localName !== 'textarea' &&
+      el.localName !== 'a' &&
+      el.localName !== 'area' &&
+      el.localName !== 'summary' &&
+      el.localName !== 'img' &&
+      el.localName !== 'svg'
+    ) {
+      let role = el.getAttribute('role');
+      if (!role) {
+        console.warn('<Focusable> child must have an interactive ARIA role.');
+      } else if (
+        // https://w3c.github.io/aria/#widget_roles
+        role !== 'application' &&
+        role !== 'button' &&
+        role !== 'checkbox' &&
+        role !== 'combobox' &&
+        role !== 'gridcell' &&
+        role !== 'link' &&
+        role !== 'menuitem' &&
+        role !== 'menuitemcheckbox' &&
+        role !== 'menuitemradio' &&
+        role !== 'option' &&
+        role !== 'radio' &&
+        role !== 'searchbox' &&
+        role !== 'separator' &&
+        role !== 'slider' &&
+        role !== 'spinbutton' &&
+        role !== 'switch' &&
+        role !== 'tab' &&
+        role !== 'tabpanel' &&
+        role !== 'textbox' &&
+        role !== 'treeitem' &&
+        // aria-describedby is also announced on these roles
+        role !== 'img' &&
+        role !== 'meter' &&
+        role !== 'progressbar'
+      ) {
+        console.warn(`<Focusable> child must have an interactive ARIA role. Got "${role}".`);
+      }
+    }
+  }, [domRef, props.isDisabled]);
+
   // Always set a tabIndex so that Safari allows focusing native buttons and inputs.
   let tabIndex: number | undefined = props.excludeFromTabOrder ? -1 : 0;
   if (props.isDisabled) {
@@ -140,70 +204,6 @@ export const Focusable: React.ForwardRefExoticComponent<
     ref = useObjectRef(ref);
     let {focusableProps} = useFocusable(props, ref);
     let child = React.Children.only(children);
-
-    useEffect(() => {
-      if (process.env.NODE_ENV === 'production') {
-        return;
-      }
-
-      let el = ref.current;
-      if (!el || !(el instanceof getOwnerWindow(el).Element)) {
-        console.error('<Focusable> child must forward its ref to a DOM element.');
-        return;
-      }
-
-      if (!props.isDisabled && !isFocusable(el, {skipVisibilityCheck: true})) {
-        console.warn(
-          '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
-        );
-        return;
-      }
-
-      if (
-        el.localName !== 'button' &&
-        el.localName !== 'input' &&
-        el.localName !== 'select' &&
-        el.localName !== 'textarea' &&
-        el.localName !== 'a' &&
-        el.localName !== 'area' &&
-        el.localName !== 'summary' &&
-        el.localName !== 'img' &&
-        el.localName !== 'svg'
-      ) {
-        let role = el.getAttribute('role');
-        if (!role) {
-          console.warn('<Focusable> child must have an interactive ARIA role.');
-        } else if (
-          // https://w3c.github.io/aria/#widget_roles
-          role !== 'application' &&
-          role !== 'button' &&
-          role !== 'checkbox' &&
-          role !== 'combobox' &&
-          role !== 'gridcell' &&
-          role !== 'link' &&
-          role !== 'menuitem' &&
-          role !== 'menuitemcheckbox' &&
-          role !== 'menuitemradio' &&
-          role !== 'option' &&
-          role !== 'radio' &&
-          role !== 'searchbox' &&
-          role !== 'separator' &&
-          role !== 'slider' &&
-          role !== 'spinbutton' &&
-          role !== 'switch' &&
-          role !== 'tab' &&
-          role !== 'tabpanel' &&
-          role !== 'textbox' &&
-          role !== 'treeitem' &&
-          // aria-describedby is also announced on these roles
-          role !== 'img' &&
-          role !== 'meter' &&
-          role !== 'progressbar'
-        ) {
-          console.warn(`<Focusable> child must have an interactive ARIA role. Got "${role}".`);
-        }
-      }
-    }, [ref, props.isDisabled]);
 
     // @ts-ignore
     let childRef = parseInt(React.version, 10) < 19 ? child.ref : child.props.ref;
