@@ -35,6 +35,7 @@ import {
   DisclosureProps as RACDisclosureProps
 } from 'react-aria-components/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
 // @ts-ignore
@@ -763,7 +764,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
       onTransitionEnd={e => {
         // Only react to this item's own opacity transition (the longer of the two, so both the
         // fade and slide have finished), not transitions bubbling up from descendants.
-        if (e.target === e.currentTarget && e.propertyName === 'opacity') {
+        if (getEventTarget(e) === e.currentTarget && e.propertyName === 'opacity') {
           setHasEntered(true);
         }
       }}
