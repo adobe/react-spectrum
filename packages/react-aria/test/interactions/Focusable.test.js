@@ -11,7 +11,6 @@
  */
 
 import {Focusable, FocusableProvider} from '../../exports/index';
-import {FocusableProvider as FocusableProviderFromSubpath} from '../../exports/useFocusable';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useImperativeHandle} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -19,10 +18,6 @@ import userEvent from '@testing-library/user-event';
 describe('Focusable', function () {
   afterEach(() => {
     jest.resetAllMocks();
-  });
-
-  it('exports FocusableProvider from the useFocusable subpath', function () {
-    expect(FocusableProviderFromSubpath).toBe(FocusableProvider);
   });
 
   it('should provide DOM props to a focusable descendant', function () {
