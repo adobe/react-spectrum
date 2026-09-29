@@ -57,73 +57,34 @@ interface FocusableContextValue extends FocusableProviderProps {
 export let FocusableContext: React.Context<FocusableContextValue | null> =
   React.createContext<FocusableContextValue | null>(null);
 
-function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
-  let context = useContext(FocusableContext) || {};
+function useFocusableContext(
+  ref: RefObject<FocusableElement | null>
+): {props: FocusableProviderProps; isProvided: boolean} {
+  let context = useContext(FocusableContext);
   useSyncRef(context, ref);
 
   // eslint-disable-next-line
-  let {ref: _, ...otherProps} = context;
-  return otherProps;
+  let {ref: _, ...otherProps} = context || {};
+  return {props: otherProps, isProvided: context !== null};
 }
 
-/**
- * Provides DOM props to the nearest focusable child that uses `useFocusable`.
- * Only pass DOM attributes that are valid for the element consuming these props.
- */
-export const FocusableProvider: React.ForwardRefExoticComponent<
-  FocusableProviderProps & React.RefAttributes<FocusableElement>
-> = React.forwardRef(function FocusableProvider(
-  props: FocusableProviderProps,
-  ref: ForwardedRef<FocusableElement>
-) {
-  let {children, ...otherProps} = props;
-  let objRef = useObjectRef(ref);
-  let context = {
-    ...otherProps,
-    ref: objRef
-  };
-
-  return <FocusableContext.Provider value={context}>{children}</FocusableContext.Provider>;
-});
-
-export interface FocusableAria {
-  /** Props for the focusable element. */
-  focusableProps: DOMAttributes;
-}
-
-/**
- * Used to make an element focusable and capable of auto focus.
- */
-export function useFocusable<T extends FocusableElement = FocusableElement>(
-  props: FocusableOptions<T>,
-  domRef: RefObject<FocusableElement | null>
-): FocusableAria {
-  let {focusProps} = useFocus(props);
-  let {keyboardProps} = useKeyboard(props);
-  let interactions = mergeProps(focusProps, keyboardProps);
-  let domProps = useFocusableContext(domRef);
-  let interactionProps = props.isDisabled ? {} : domProps;
-  let autoFocusRef = useRef(props.autoFocus);
-
+function useFocusableValidation(
+  ref: RefObject<FocusableElement | null>,
+  isDisabled?: boolean,
+  isEnabled = true
+): void {
   useEffect(() => {
-    if (autoFocusRef.current && domRef.current) {
-      focusSafely(domRef.current);
-    }
-    autoFocusRef.current = false;
-  }, [domRef]);
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
+    if (!isEnabled || process.env.NODE_ENV === 'production') {
       return;
     }
 
-    let el = domRef.current;
+    let el = ref.current;
     if (!el || !(el instanceof getOwnerWindow(el).Element)) {
       console.error('<Focusable> child must forward its ref to a DOM element.');
       return;
     }
 
-    if (!props.isDisabled && !isFocusable(el, {skipVisibilityCheck: true})) {
+    if (!isDisabled && !isFocusable(el, {skipVisibilityCheck: true})) {
       console.warn(
         '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
       );
@@ -174,7 +135,56 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
         console.warn(`<Focusable> child must have an interactive ARIA role. Got "${role}".`);
       }
     }
-  }, [domRef, props.isDisabled]);
+  }, [ref, isDisabled, isEnabled]);
+}
+
+/**
+ * Provides DOM props to the nearest focusable child that uses `useFocusable`.
+ * Only pass DOM attributes that are valid for the element consuming these props.
+ */
+export const FocusableProvider: React.ForwardRefExoticComponent<
+  FocusableProviderProps & React.RefAttributes<FocusableElement>
+> = React.forwardRef(function FocusableProvider(
+  props: FocusableProviderProps,
+  ref: ForwardedRef<FocusableElement>
+) {
+  let {children, ...otherProps} = props;
+  let objRef = useObjectRef(ref);
+  let context = {
+    ...otherProps,
+    ref: objRef
+  };
+
+  return <FocusableContext.Provider value={context}>{children}</FocusableContext.Provider>;
+});
+
+export interface FocusableAria {
+  /** Props for the focusable element. */
+  focusableProps: DOMAttributes;
+}
+
+/**
+ * Used to make an element focusable and capable of auto focus.
+ */
+export function useFocusable<T extends FocusableElement = FocusableElement>(
+  props: FocusableOptions<T>,
+  domRef: RefObject<FocusableElement | null>
+): FocusableAria {
+  let {focusProps} = useFocus(props);
+  let {keyboardProps} = useKeyboard(props);
+  let interactions = mergeProps(focusProps, keyboardProps);
+  let {props: domProps, isProvided} = useFocusableContext(domRef);
+  let interactionProps = props.isDisabled ? {} : domProps;
+  let autoFocusRef = useRef(props.autoFocus);
+
+  useEffect(() => {
+    if (autoFocusRef.current && domRef.current) {
+      focusSafely(domRef.current);
+    }
+    autoFocusRef.current = false;
+  }, [domRef]);
+
+  useFocusableValidation(domRef, props.isDisabled, isProvided);
 
   // Always set a tabIndex so that Safari allows focusing native buttons and inputs.
   let tabIndex: number | undefined = props.excludeFromTabOrder ? -1 : 0;
@@ -202,7 +212,9 @@ export const Focusable: React.ForwardRefExoticComponent<
 > = forwardRef(
   ({children, ...props}: FocusableComponentProps, ref: ForwardedRef<FocusableElement>) => {
     ref = useObjectRef(ref);
+    let context = useContext(FocusableContext);
     let {focusableProps} = useFocusable(props, ref);
+    useFocusableValidation(ref, props.isDisabled, context === null);
     let child = React.Children.only(children);
 
     // @ts-ignore
