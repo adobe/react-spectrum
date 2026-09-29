@@ -19,6 +19,7 @@ import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
 import {runAfterKeyboard, runAfterKeyboardTransition} from '../utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
+import {willOpenKeyboard} from '../utils/keyboard';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -177,7 +178,7 @@ function preventScrollMobileWebKit() {
   let onBlur = (e: FocusEvent) => {
     let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
-    if (relatedTarget) {
+    if (relatedTarget && willOpenKeyboard(relatedTarget)) {
       // Re-focus programmatically to have the override below perform the scroll.
       relatedTarget.focus();
     } else {
