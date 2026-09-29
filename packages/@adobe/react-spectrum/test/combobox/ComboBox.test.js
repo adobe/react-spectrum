@@ -5135,7 +5135,7 @@ describe('ComboBox', function () {
       });
 
       describe('keyboard navigating', function () {
-        it('should not announce items when navigating with the arrow keys', async function () {
+        it('should only announce the option count when navigating with the arrow keys', async function () {
           renderComboBox();
           await user.tab();
           await user.keyboard('{ArrowDown}');
@@ -5143,17 +5143,17 @@ describe('ComboBox', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenCalledWith('One');
-
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenCalledWith('Two');
+          // VoiceOver announces each option on its own, so the only announcement we
+          // make is the option count when the listbox opens.
+          expect(announce.mock.calls.map(call => call[0])).toEqual(['3 options available.']);
         });
 
-        it('should not announce when navigating to the selected item', async function () {
+        it('should not announce the selected state when arrowing to the selected item', async function () {
           let {getByRole} = renderComboBox({selectedKey: '2'});
           let combobox = getByRole('combobox');
           act(() => {
@@ -5164,7 +5164,8 @@ describe('ComboBox', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenCalledWith('Two, selected');
+          // The selected state is part of VoiceOver's native per-item announcement.
+          expect(announce.mock.calls.map(call => call[0])).toEqual(['3 options available.']);
         });
 
         it('should announce when navigating into a section with multiple items', async function () {
@@ -5183,12 +5184,16 @@ describe('ComboBox', function () {
             'Entered group Section One, with 3 options. One'
           );
 
+          // Moving within the same section should not announce again.
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenLastCalledWith('Two');
+          expect(announce.mock.calls.map(call => call[0])).toEqual([
+            '6 options available.',
+            'Entered group Section One, with 3 options. One'
+          ]);
         });
 
         it('should announce when navigating into a section with a single item', async function () {
@@ -5290,14 +5295,15 @@ describe('ComboBox', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenCalledWith('One');
-
           await user.keyboard('{Enter}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('One, selected');
+          expect(announce.mock.calls.map(call => call[0])).toEqual([
+            '3 options available.',
+            'One, selected'
+          ]);
         });
       });
     });

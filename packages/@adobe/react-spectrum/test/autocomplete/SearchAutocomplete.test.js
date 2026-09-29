@@ -3333,7 +3333,7 @@ describe('SearchAutocomplete', function () {
       });
 
       describe('keyboard navigating', function () {
-        it('should not announce items when navigating with the arrow keys', async function () {
+        it('should only announce the option count when navigating with the arrow keys', async function () {
           renderSearchAutocomplete();
           await user.tab();
           await user.keyboard('{ArrowDown}');
@@ -3341,14 +3341,14 @@ describe('SearchAutocomplete', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenCalledWith('One');
-
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenCalledWith('Two');
+          // VoiceOver announces each option on its own, so the only announcement we
+          // make is the option count when the listbox opens.
+          expect(announce.mock.calls.map(call => call[0])).toEqual(['3 options available.']);
         });
 
         it('should announce when navigating into a section with multiple items', async function () {
@@ -3367,12 +3367,16 @@ describe('SearchAutocomplete', function () {
             'Entered group Section One, with 3 options. One'
           );
 
+          // Moving within the same section should not announce again.
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenLastCalledWith('Two');
+          expect(announce.mock.calls.map(call => call[0])).toEqual([
+            '6 options available.',
+            'Entered group Section One, with 3 options. One'
+          ]);
         });
 
         it('should announce when navigating into a section with a single item', async function () {
@@ -3450,14 +3454,15 @@ describe('SearchAutocomplete', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).not.toHaveBeenCalledWith('One');
-
           await user.keyboard('{Enter}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('One, selected');
+          expect(announce.mock.calls.map(call => call[0])).toEqual([
+            '3 options available.',
+            'One, selected'
+          ]);
         });
       });
     });
