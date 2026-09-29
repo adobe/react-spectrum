@@ -4,7 +4,9 @@ export {
   SideNavItemContent,
   SideNavItemLink,
   SideNavSection,
-  SideNavHeader
+  SideNavHeader,
+  SidePanel,
+  SidePanelContext
 } from '../src/SideNav';
 export {Collection} from 'react-aria/Collection';
 export type {
@@ -13,7 +15,8 @@ export type {
   SideNavItemContentProps,
   SideNavItemLinkProps,
   SideNavSectionProps,
-  SideNavHeaderProps
+  SideNavHeaderProps,
+  SidePanelProps
 } from '../src/SideNav';
 export type {Key} from '@react-types/shared';
 
