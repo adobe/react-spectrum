@@ -24,7 +24,7 @@ export interface AttachmentGridProps<T>
   extends
     DOMProps,
     AriaLabelingProps,
-    Pick<ListBoxProps<T>, 'items' | 'children' | 'dependencies'> {
+    Pick<ListBoxProps<T>, 'items' | 'children' | 'dependencies' | 'onAction'> {
   /**
    * The alignment of attachments within the grid.
    *
@@ -69,7 +69,7 @@ const gridStyles = style({
 
 /**
  * An AttachmentGrid displays file attachments as a wrapping, vertically-scrolling grid of
- * thumbnails. Unlike AttachmentList, it is display-only and does not support selection or removal.
+ * thumbnails. Unlike AttachmentList, it does not support selection or removal.
  */
 export const AttachmentGrid = (forwardRef as forwardRefType)(function AttachmentGrid<T>(
   props: AttachmentGridProps<T>,
@@ -104,6 +104,8 @@ export interface AttachmentGridItemProps
   uploadProgress?: number;
   /** The children of the AttachmentGridItem. */
   children: ReactNode;
+  /** Handler that is called when a user performs an action on the attachment. */
+  onAction?: () => void;
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
@@ -125,7 +127,7 @@ export const AttachmentGridItem = forwardRef(function AttachmentGridItem(
   props: AttachmentGridItemProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {id, textValue, styles, isInvalid, size = 'M', children, ...otherProps} = props;
+  let {id, textValue, styles, isInvalid, size = 'M', children, onAction, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let isLoading = isAttachmentLoading(props.uploadProgress);
 
@@ -134,6 +136,7 @@ export const AttachmentGridItem = forwardRef(function AttachmentGridItem(
       id={id}
       {...filterDOMProps(otherProps, {labelable: true})}
       textValue={textValue}
+      onAction={onAction}
       ref={domRef}
       className={renderProps => mergeStyles(itemStyles({...renderProps}), styles)}>
       <AttachmentCard size={size} isInvalid={isInvalid} isLoading={isLoading}>

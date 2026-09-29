@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {
   AttachmentGrid,
   AttachmentGridItem,
@@ -25,7 +26,7 @@ import {Text} from '@react-spectrum/s2/Text';
 interface AttachmentGridDemoProps
   extends
     Pick<AttachmentGridItemProps, 'isInvalid' | 'uploadProgress' | 'size'>,
-    Pick<AttachmentGridProps<unknown>, 'align'> {
+    Pick<AttachmentGridProps<unknown>, 'align' | 'onAction'> {
   /** Number of demo attachments to render. */
   count: number;
   /** Whether to show title/description content below the thumbnail. */
@@ -38,13 +39,19 @@ function AttachmentGridDemo({
   uploadProgress,
   showCardContent,
   size,
-  align
+  align,
+  onAction
 }: AttachmentGridDemoProps) {
   return (
-    <AttachmentGrid aria-label="Uploaded files" align={align} styles={style({width: 'full'})}>
+    <AttachmentGrid
+      aria-label="Uploaded files"
+      align={align}
+      onAction={onAction}
+      styles={style({width: 'full'})}>
       {Array.from({length: count}, (_, i) => (
         <AttachmentGridItem
           key={i}
+          id={`file-${i + 1}.pdf`}
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
           size={size}
@@ -77,9 +84,16 @@ const meta: Meta<AttachmentGridDemoProps> = {
     uploadProgress: {control: 'number', min: 0, max: 100},
     showCardContent: {control: 'boolean'},
     size: {control: 'select', options: ['XS', 'S', 'M', 'L', 'XL']},
-    align: {control: 'select', options: ['start', 'center', 'end']}
+    align: {control: 'select', options: ['start', 'center', 'end']},
+    onAction: {table: {category: 'Events'}}
   },
-  args: {isInvalid: false, showCardContent: false, size: 'M', align: 'start'},
+  args: {
+    isInvalid: false,
+    showCardContent: false,
+    size: 'M',
+    align: 'start',
+    onAction: action('onAction')
+  },
   title: 'AI/AttachmentGrid'
 };
 

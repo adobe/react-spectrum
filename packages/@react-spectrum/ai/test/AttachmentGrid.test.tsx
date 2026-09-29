@@ -48,4 +48,50 @@ describeOrSkip('AttachmentGrid', () => {
     expect(firstOption.tabIndex).toBe(-1);
     expect(secondOption.tabIndex).toBe(0);
   });
+
+  it('should call onAction when an attachment is clicked or activated with the keyboard', async () => {
+    let user = userEvent.setup({delay: null});
+    let onAction = jest.fn();
+    let {getByRole} = render(
+      <AttachmentGrid aria-label="Uploaded files">
+        <AttachmentGridItem aria-label="one.pdf" textValue="one.pdf" onAction={onAction}>
+          <Image slot="thumbnail" src="https://example.com/image.png" />
+        </AttachmentGridItem>
+      </AttachmentGrid>
+    );
+
+    let option = getByRole('option');
+
+    await user.click(option);
+    expect(onAction).toHaveBeenCalledTimes(1);
+
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(2);
+  });
+
+  it('should call onAction on the grid with the key of the activated attachment', async () => {
+    let user = userEvent.setup({delay: null});
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <AttachmentGrid aria-label="Uploaded files" onAction={onAction}>
+        <AttachmentGridItem id="one" aria-label="one.pdf" textValue="one.pdf">
+          <Image slot="thumbnail" src="https://example.com/image.png" />
+        </AttachmentGridItem>
+        <AttachmentGridItem id="two" aria-label="two.pdf" textValue="two.pdf">
+          <Image slot="thumbnail" src="https://example.com/image.png" />
+        </AttachmentGridItem>
+      </AttachmentGrid>
+    );
+
+    let [firstOption, secondOption] = getAllByRole('option');
+
+    await user.click(secondOption);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onAction).toHaveBeenLastCalledWith('two');
+
+    await user.keyboard('{ArrowLeft}{Enter}');
+    expect(document.activeElement).toBe(firstOption);
+    expect(onAction).toHaveBeenCalledTimes(2);
+    expect(onAction).toHaveBeenLastCalledWith('one');
+  });
 });
