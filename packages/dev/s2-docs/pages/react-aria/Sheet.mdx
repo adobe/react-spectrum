@@ -46,7 +46,7 @@ export const description = 'An overlay that slides in from the edge of the scree
           {/*- begin collapse -*/}
           <div style={{display: 'flex', flexDirection: 'column', minHeight: '100%'}}>
             <Heading slot="title">Your order</Heading>
-            <p style={{margin: '0 0 20px', color: 'var(--gray-700)'}}>Delivering from Bao Bros · 25–35 min</p>
+            <p style={{margin: '0 0 20px', color: 'var(--gray-1000)'}}>Delivering from Bao Bros · 25–35 min</p>
             <div style={{display: 'flex', flexDirection: 'column', gap: 16, flexGrow: 1}}>
               {items.map(item => (
                 <div key={item.name} style={{display: 'flex', alignItems: 'center', gap: 12}}>
@@ -54,7 +54,7 @@ export const description = 'An overlay that slides in from the edge of the scree
                   <div style={{display: 'flex', alignItems: 'center', columnGap: 12, rowGap: 4, flexWrap: 'wrap', flexGrow: 1}}>
                     <div style={{flexGrow: 100, minWidth: 0}}>
                       <div style={{fontWeight: 600}}>{item.name}</div>
-                      <div style={{fontSize: 12, color: 'var(--gray-700)'}}>{item.detail}</div>
+                      <div style={{fontSize: 12, color: 'var(--gray-1000)'}}>{item.detail}</div>
                     </div>
                     <div style={{display: 'flex', alignItems: 'center', gap: 4, flexGrow: 1}}>
                       <Button aria-label={`Remove one ${item.name}`} variant="secondary" onPress={() => update(item.name, -1)}><Minus size={16} /></Button>
@@ -212,7 +212,7 @@ function Example() {
       <Sheet position="bottom" snapPoints={['280px']}>
       {/*- end highlight -*/}
         <Heading slot="title" style={{marginBottom: 4}}>Blue Bottle Coffee</Heading>
-        <div style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-color-secondary, gray)', marginBottom: 32}}>
+        <div style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--gray-1000)', marginBottom: 32}}>
           <Star size={16} fill="currentColor" style={{color: '#ff9500'}} />
           <strong>4.6</strong> · Coffee shop · $$
         </div>
