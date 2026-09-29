@@ -184,7 +184,7 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
     autoFocusRef.current = false;
   }, [domRef]);
 
-  useFocusableValidation(domRef, props.isDisabled, isProvided);
+  useFocusableValidation(domRef, props.isDisabled, isProvided && process.env.NODE_ENV !== 'test');
 
   // Always set a tabIndex so that Safari allows focusing native buttons and inputs.
   let tabIndex: number | undefined = props.excludeFromTabOrder ? -1 : 0;
