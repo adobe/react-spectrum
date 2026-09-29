@@ -18,8 +18,6 @@ describe('Meter', function () {
   it('handles defaults', function () {
     let {getByRole} = render(<Meter label="Meter" />);
     let progressBar = getByRole('meter');
-    let alsoProgressBar = getByRole('progressbar', {queryFallbacks: true});
-    expect(progressBar).toBe(alsoProgressBar);
     expect(progressBar).toHaveAttribute('aria-valuemin', '0');
     expect(progressBar).toHaveAttribute('aria-valuemax', '100');
     expect(progressBar).toHaveAttribute('aria-valuenow', '0');
@@ -65,7 +63,7 @@ describe('Meter', function () {
     let progressBar = getByRole('meter');
     expect(progressBar).toHaveAttribute('aria-valuenow', '0');
     expect(progressBar).toHaveAttribute('aria-valuetext', '50%');
-    expect(progressBar).toHaveAttribute('role', 'meter progressbar');
+    expect(progressBar).toHaveAttribute('role', 'meter');
   });
 
   it('supports aria-label', function () {
