@@ -8,7 +8,6 @@
     // Disable PostCSS from running over style macro output
     "*.css": ["@parcel/transformer-css"],
     "*.svg": ["@parcel/transformer-svg-react"],
-    "*.{mdx,md}": ["parcel-transformer-mdx-storybook"],
     "raw:*": ["@parcel/transformer-raw"]
   }
 }

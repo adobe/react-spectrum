@@ -60,8 +60,7 @@ const events = ['onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange',
 const meta: Meta<typeof TableView> = {
   component: TableView,
   parameters: {
-    layout: 'centered',
-    controls: {exclude: ['onResize']}
+    layout: 'centered'
   },
   tags: ['autodocs'],
   args: {...getActionArgs(events)},

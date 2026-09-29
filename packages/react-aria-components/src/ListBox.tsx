@@ -718,7 +718,7 @@ const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
 export interface ListBoxLoadMoreItemProps
   extends
-    Omit<LoadMoreSentinelProps, 'collection'>,
+    Omit<LoadMoreSentinelProps, 'collection' | 'direction'>,
     StyleProps,
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
@@ -726,7 +726,7 @@ export interface ListBoxLoadMoreItemProps
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
    * element.
    *
-   * @default 'react-aria-ListBoxLoadMoreItem'
+   * @default 'react-aria-ListBoxLoadingIndicator'
    */
   className?: string;
   /**

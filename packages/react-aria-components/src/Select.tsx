@@ -98,7 +98,7 @@ export interface SelectRenderProps {
   isRequired: boolean;
 }
 
-export interface SelectProps<T, M extends SelectionMode = 'single'>
+export interface SelectProps<T = {}, M extends SelectionMode = 'single'>
   extends
     Omit<
       AriaSelectProps<T, M>,

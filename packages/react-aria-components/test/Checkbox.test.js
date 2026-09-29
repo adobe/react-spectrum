@@ -423,6 +423,15 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
     expect(inputRef.current).toBe(getByRole('checkbox'));
   });
 
+  it('should support callback ref', () => {
+    let cleanup = jest.fn();
+    let onRef = jest.fn(() => cleanup);
+    let {getByRole, unmount} = render(<Checkbox inputRef={onRef}>Test</Checkbox>);
+    expect(onRef).toHaveBeenCalledWith(getByRole('checkbox'));
+    unmount();
+    expect(cleanup).toHaveBeenCalledTimes(1);
+  });
+
   it('should support and merge input ref on context', () => {
     let inputRef = React.createRef();
     let contextInputRef = React.createRef();
@@ -464,5 +473,21 @@ describe.each(['Checkbox', 'CheckboxField'])('%s', comp => {
 
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).not.toHaveBeenCalled();
+  });
+
+  it('should support implicit form submission from a focused checkbox on Enter', async () => {
+    let onSubmit = jest.fn(e => e.preventDefault());
+    let {getByRole} = render(
+      <form onSubmit={onSubmit}>
+        <Checkbox>Test</Checkbox>
+        <button type="submit">Submit</button>
+      </form>
+    );
+
+    let checkbox = getByRole('checkbox');
+    await user.click(checkbox);
+    await user.keyboard('{Enter}');
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });

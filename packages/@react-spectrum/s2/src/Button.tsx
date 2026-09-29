@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {
   ButtonRenderProps,
   Button as RACButton,
@@ -478,7 +478,7 @@ export const Button = forwardRef(function Button(
                 {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: style({
-                    size: fontRelative(20),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     flexShrink: 0,
                     visibility: {
@@ -593,7 +593,7 @@ export const LinkButton = forwardRef(function LinkButton(
                 {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: style({
-                    size: fontRelative(20),
+                    size: '1lh',
                     marginStart: '--iconMargin',
                     flexShrink: 0
                   })

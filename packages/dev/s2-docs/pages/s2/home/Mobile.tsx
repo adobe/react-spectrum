@@ -4,9 +4,9 @@ import {lightDark, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import {useDateFormatter} from 'react-aria';
 // @ts-ignore
-import iphone from 'url:@react-spectrum/docs/pages/assets/iphone-frame.webp';
+import iphone from 'url:../../../assets/iphone-frame.webp';
 // @ts-ignore
-import iphoneMask from 'url:@react-spectrum/docs/pages/assets/iphone-mask.webp';
+import iphoneMask from 'url:../../../assets/iphone-mask.webp';
 import {WifiIcon} from 'lucide-react';
 import {Avatar, Button, Form, TextField, TextFieldRef} from '@react-spectrum/s2';
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
@@ -14,7 +14,7 @@ import Search from '@react-spectrum/s2/icons/Search';
 import More from '@react-spectrum/s2/icons/More';
 // @ts-ignore
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
-import {animate, useIntersectionObserver} from '@react-spectrum/docs/pages/react-aria/home/utils';
+import {animate, useIntersectionObserver} from '../../react-aria/home/utils';
 import {FocusableRefValue} from '@react-types/shared';
 
 const translate = (x: number, y: number) => `translate(${x}px, ${y}px)`;

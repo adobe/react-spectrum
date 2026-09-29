@@ -9,9 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
+import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 
 export interface TextProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<any, any> {
   elementType?: string;
@@ -19,8 +19,12 @@ export interface TextProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<a
 
 export const TextContext = createContext<ContextValue<TextProps, HTMLElement>>({});
 
-export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef<HTMLElement>) {
+export const Text = /*#__PURE__*/ createHideableComponent(function Text(
+  props: TextProps,
+  ref: ForwardedRef<HTMLElement>
+) {
   [props, ref] = useContextProps(props, ref, TextContext);
+
   let {elementType = 'span', ...domProps} = props;
   let ElementType = dom[elementType];
   // @ts-ignore

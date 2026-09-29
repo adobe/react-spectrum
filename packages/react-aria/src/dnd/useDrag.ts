@@ -40,6 +40,7 @@ import {
   writeToDataTransfer
 } from './utils';
 import intlMessages from '../../intl/dnd/*.json';
+import {isIOS, isWebKit} from '../utils/platform';
 import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
 import {useDescription} from '../utils/useDescription';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
@@ -360,7 +361,6 @@ export function useDrag(options: DragOptions): DragResult {
     // events such as selection from also occurring. We attempt to infer whether a
     // pointer event (e.g. long press) came from a touch screen reader, and then initiate
     // dragging in the native onDragStart listener above.
-
     interactions = {
       ...descriptionProps,
       onPointerDown(e) {
@@ -369,7 +369,7 @@ export function useDrag(options: DragOptions): DragResult {
           : e.pointerType;
 
         // Try to detect virtual drag passthrough gestures.
-        if (e.width < 1 && e.height < 1) {
+        if (e.width < 1 && e.height < 1 && isIOS() && isWebKit()) {
           // iOS VoiceOver.
           modalityOnPointerDown.current = 'virtual';
         } else {

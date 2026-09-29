@@ -1,0 +1,44 @@
+{
+  "transformers": {
+    "illustration:*.svg": [
+      {
+        "plugin": "@parcel/transformer-svg-jsx",
+        "config": {
+          "ref": true,
+          "svgoConfig": {
+            "default": true,
+            "prefixIds": true
+          },
+          "replaceAttrValues": {
+            "var(--iconPrimary,#222)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))",
+            "var(--iconPrimary,#222222)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))",
+            "var(--iconPrimary,#292929)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))",
+            "var(--spectrum-global-color-gray-800,#292929)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))"
+          },
+          "template": "'use client';\nimport {createIllustration} from '@react-spectrum/s2/Icon';\nexport default /*#__PURE__*/ createIllustration($ICON);"
+        }
+      }
+    ],
+    "packages/@react-spectrum/s2/s2wf-icons/**/*.svg": [
+      {
+        "plugin": "@parcel/transformer-svg-jsx",
+        "config": {
+          "ref": true,
+          "svgoConfig": {
+            "default": true,
+            "prefixIds": true
+          },
+          "replaceAttrValues": {
+            "var(--iconPrimary,#222)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))",
+            "var(--iconPrimary,#222222)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))",
+            "var(--iconPrimary,#292929)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))",
+            "var(--spectrum-global-color-gray-800,#292929)": "var(--iconPrimary, light-dark(rgb(41, 41, 41), rgb(219, 219, 219)))"
+          },
+          "template": "'use client';\nimport {createIcon} from '@react-spectrum/s2/Icon';\nexport default /*#__PURE__*/ createIcon($ICON);"
+        }
+      }
+    ],
+    "*.svg": ["@parcel/transformer-svg-jsx"]
+  },
+  "bundler": "@parcel/bundler-default"
+}

@@ -4,6 +4,7 @@ import {DARK_MODE_EVENT_NAME} from '@vueless/storybook-dark-mode';
 import React from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
 import {withScrollingSwitcher} from './custom-addons/scrolling';
+import {withShadowDOMSwitcher} from './custom-addons/shadowDOM';
 import {withStrictModeSwitcher} from './custom-addons/strictmode';
 
 // decorator order matters, the last one will be the outer most
@@ -72,6 +73,7 @@ export const parameters = {
 
 export const decorators = [
   withScrollingSwitcher,
+  withShadowDOMSwitcher,
   ...(process.env.NODE_ENV !== 'production' ? [withStrictModeSwitcher] : []),
   withProviderSwitcher
 ];

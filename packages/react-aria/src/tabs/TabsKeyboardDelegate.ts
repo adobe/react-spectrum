@@ -25,7 +25,9 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
     disabledKeys: Set<Key> = new Set()
   ) {
     this.collection = collection;
-    this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
+    // getKeyLeftOf/getKeyRightOf follow the locale's text direction regardless of orientation,
+    // so ArrowLeft always moves to the next tab in RTL. getKeyAbove/getKeyBelow are never flipped.
+    this.flipDirection = direction === 'rtl';
     this.disabledKeys = disabledKeys;
     this.tabDirection = orientation === 'horizontal';
   }

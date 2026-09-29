@@ -378,6 +378,14 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     },
     move(key: Key, toParentKey: Key | null, index: number) {
       setItems(({items, nodeMap: originalMap}) => {
+        let current = toParentKey;
+        while (current != null) {
+          if (current === key) {
+            throw new Error('Cannot move an item to be a child of itself.');
+          }
+          current = originalMap.get(current)?.parentKey ?? null;
+        }
+
         let node = originalMap.get(key);
         if (!node) {
           return {items, nodeMap: originalMap};
@@ -491,11 +499,11 @@ function moveItems<T extends object>(
 
   let parent = toParent;
   let removeKeys = new Set(keys);
-  while (parent?.parentKey != null) {
+  while (parent != null) {
     if (removeKeys.has(parent.key)) {
       throw new Error('Cannot move an item to be a child of itself.');
     }
-    parent = nodeMap.get(parent.parentKey!) ?? null;
+    parent = parent.parentKey != null ? (nodeMap.get(parent.parentKey) ?? null) : null;
   }
 
   let originalToIndex = toIndex;

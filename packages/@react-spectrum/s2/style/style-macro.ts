@@ -119,7 +119,9 @@ export type LengthPercentageUnit =
   | 'cqw'
   | 'cqh'
   | 'cqmin'
-  | 'cqmax';
+  | 'cqmax'
+  | 'lh'
+  | 'rlh';
 export type LengthPercentage = `${number}${LengthPercentageUnit}`;
 
 export class PercentageProperty<T extends CSSValue>
@@ -133,7 +135,7 @@ export class PercentageProperty<T extends CSSValue>
   toCSSValue(value: T | LengthPercentage): PropertyValueDefinition<Value> {
     if (
       typeof value === 'string' &&
-      /^-?\d+(?:\.\d+)?(%|vw|svw|dvw|vh|svh|dvh|vmin|svmin|dvmin|vmax|svmax|dvmax|cqw|cqh|cqmin|cqmax)$/.test(
+      /^-?\d+(?:\.\d+)?(%|vw|svw|dvw|vh|svh|dvh|vmin|svmin|dvmin|vmax|svmax|dvmax|cqw|cqh|cqmin|cqmax|lh|rlh)$/.test(
         value
       )
     ) {
@@ -374,13 +376,19 @@ export function createTheme<T extends Theme>(
     let css = '';
 
     // Declare layers for each priority ahead of time so the order is always correct.
+    // The `prose` layer is declared first so that it is always lower priority than
+    // the rest of the style macro layers. Reserving here will make more sense when
+    // prose eventually moves to live here after the API settles.
+    // See the prose macro in @react-spectrum/ai.
     css += '@layer ';
     let first = true;
     for (let i = 0; i <= usedPriorities; i++) {
+      if (!first) {
+        css += ', ';
+      }
       if (first) {
         first = false;
-      } else {
-        css += ', ';
+        css += '_.prose, ';
       }
       css += layerName(generateName(i, true));
     }

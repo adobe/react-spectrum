@@ -53,6 +53,7 @@ export interface PopoverProps
       | 'isKeyboardDismissDisabled'
       | 'shouldCloseOnInteractOutside'
       | 'shouldUpdatePosition'
+      | 'shouldSkipAnimation'
       | 'style'
       | 'className'
       | 'render'

@@ -53,41 +53,6 @@ function Example() {
 }
 ```
 
-{/* ## Integration
-
-ColorWheel works well alongside other color components to create complete color picking experiences.
-
-```tsx render hideImports
-"use client";
-import {ColorWheel, ColorSlider, ColorSwatch} from '@react-spectrum/s2';
-import {useState} from 'react';
-
-function Example() {
-  let [color, setColor] = useState('hsl(30, 80%, 60%)');
-
-  return (
-    <div style={{display: 'flex', gap: 20, alignItems: 'center'}}>
-      <ColorWheel
-        value={color}
-        onChange={setColor} />
-      <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
-        <ColorSlider
-          label="Saturation"
-          channel="saturation"
-          value={color}
-          onChange={setColor} />
-        <ColorSlider
-          label="Lightness"
-          channel="lightness"
-          value={color}
-          onChange={setColor} />
-        <ColorSwatch color={color} size="L" />
-      </div>
-    </div>
-  );
-}
-``` */}
-
 ## API
 
 <PropTable component={docs.exports.ColorWheel} links={docs.links} />

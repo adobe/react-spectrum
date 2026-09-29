@@ -15,9 +15,11 @@ import {
   installPointerEvent,
   pointerMap,
   render,
-  User
+  setupIntersectionObserverMock,
+  User,
+  within
 } from '@react-spectrum/test-utils-internal';
-import {ActionButton} from '../src/ActionButton';
+import {ActionButton, ActionButtonContext} from '../src/ActionButton';
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
@@ -31,6 +33,7 @@ import {
   SubmenuTrigger,
   UnavailableMenuItemTrigger
 } from '../src/Menu';
+import {Provider, useSlottedContext} from 'react-aria-components/slots';
 import React from 'react';
 import {Selection} from '@react-types/shared';
 import {ToggleButton} from '../src/ToggleButton';
@@ -145,6 +148,32 @@ describe('Menu unavailable', () => {
   });
 });
 
+describe('Context propagation', () => {
+  it('preserves the ActionButton context from its parent', () => {
+    function ContextActionButton() {
+      let {staticColor} = useSlottedContext(ActionButtonContext) || {};
+      return (
+        <ActionButton data-static-color={staticColor} aria-label="Menu button">
+          Menu button
+        </ActionButton>
+      );
+    }
+
+    let {getByRole} = render(
+      <Provider values={[[ActionButtonContext, {staticColor: 'auto'}]]}>
+        <MenuTrigger>
+          <ContextActionButton />
+          <Menu aria-label="Test">
+            <MenuItem id="item">Item</MenuItem>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+
+    expect(getByRole('button', {name: 'Menu button'})).toHaveAttribute('data-static-color', 'auto');
+  });
+});
+
 describe('long press support', function () {
   let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
   let user;
@@ -199,6 +228,110 @@ describe('long press support', function () {
     expect(menuTester.getTrigger()).toHaveAttribute('data-selected', 'true');
     await menuTester.open({needsLongPress: true});
     expect(menuTester.getMenu()).toBeTruthy();
+  });
+});
+
+describe('virtualized menu', function () {
+  let user;
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+    jest.restoreAllMocks();
+  });
+
+  it('sets aria-posinset and aria-setsize on menu items', async function () {
+    let virtualizedItems = Array.from({length: 50}, (_, index) => ({
+      id: index + 1,
+      name: `Item ${index + 1}`
+    }));
+    let {getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" items={virtualizedItems} isVirtualized>
+          {item => <MenuItem>{item.name}</MenuItem>}
+        </Menu>
+      </MenuTrigger>
+    );
+
+    await user.click(getByRole('button'));
+    act(() => jest.runAllTimers());
+
+    let menuItems = getAllByRole('menuitem');
+    expect(menuItems[0]).toHaveAttribute('aria-posinset', '1');
+    expect(menuItems[0]).toHaveAttribute('aria-setsize', '50');
+  });
+
+  it('supports submenus and virtualizes them by default', async function () {
+    let childItems = Array.from({length: 50}, (_, index) => ({
+      id: `child-${index + 1}`,
+      name: `Child ${index + 1}`
+    }));
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" isVirtualized>
+          <MenuItem id="open">Open</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem id="share">Share…</MenuItem>
+            <Menu aria-label="Share" items={childItems}>
+              {item => <MenuItem>{item.name}</MenuItem>}
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+
+    expect(menuTester.getOptions()).toHaveLength(2);
+    let submenuTriggers = menuTester.getSubmenuTriggers();
+    expect(submenuTriggers).toHaveLength(1);
+
+    let submenuTester = await menuTester.openSubmenu({submenuTrigger: submenuTriggers[0]});
+    let submenuItems = submenuTester.getOptions();
+    expect(submenuItems[0]).toHaveTextContent('Child 1');
+    expect(submenuItems[0]).toHaveAttribute('aria-setsize', '50');
+    expect(submenuItems.length).toBeLessThan(50);
+  });
+
+  it('allows submenus to opt out of virtualization', async function () {
+    let childItems = Array.from({length: 50}, (_, index) => ({
+      id: `child-${index + 1}`,
+      name: `Child ${index + 1}`
+    }));
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" isVirtualized>
+          <MenuItem id="open">Open</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem id="share">Share…</MenuItem>
+            <Menu aria-label="Share" items={childItems} isVirtualized={false}>
+              {item => <MenuItem>{item.name}</MenuItem>}
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+    let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
+    expect(submenuTester.getOptions()).toHaveLength(50);
   });
 });
 
@@ -351,4 +484,86 @@ AriaMenuTests({
         </MenuTrigger>
       )
   }
+});
+
+describe('Async loading', () => {
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+    jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  it('should show a "No results" message when there are no items and it is not loading', async () => {
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" items={[]}>
+          {(item: any) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+    expect(menuTester.getMenu()).toHaveTextContent('No results');
+  });
+
+  it('should show a progress circle when loadingState is "loading"', async () => {
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" items={[]} loadingState="loading">
+          {(item: any) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+    expect(
+      within(menuTester.getMenu()!).getByRole('progressbar', {hidden: true})
+    ).toBeInTheDocument();
+  });
+
+  it('should call onLoadMore when intersection is detected while loadingState is "loadingMore"', async () => {
+    let onLoadMore = jest.fn();
+    let observe = jest.fn();
+    let observer = setupIntersectionObserverMock({observe});
+
+    let {getByRole, getByTestId} = render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" loadingState="loadingMore" onLoadMore={onLoadMore}>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+          <MenuItem>Paste</MenuItem>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await menuTester.open();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(0);
+    let sentinel = getByTestId('loadMoreSentinel');
+    expect(observe).toHaveBeenLastCalledWith(sentinel);
+
+    await act(async () => {
+      await observer.instance.triggerCallback([{isIntersecting: true}]);
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
 });

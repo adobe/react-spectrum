@@ -75,6 +75,45 @@ function toggleBrowserTabs(win = window) {
   fireEvent(lastActiveElement, new Event('focus'));
 }
 
+// Focus the element the way the browser restores focus. useFocusVisible ignores untrusted focus
+// events and jsdom only marks its own as trusted, so go through jsdom's focus() rather than
+// fireEvent, using the unpatched copy saved by setupGlobalFocusEvents so it isn't recorded as a
+// programmatic focus. jsdom won't dispatch focus again for the element that already has it, hence
+// the blur first — useFocusVisible doesn't observe element blur, since its blur listener is on the
+// window without capture and blur doesn't bubble.
+function restoreFocus(element, win = window) {
+  const nativeFocus = hasSetupGlobalListeners.get(win).focus;
+  element.blur();
+  nativeFocus.call(element);
+}
+
+function toggleBrowserTabsSafari(win = window) {
+  // Safari fires the window/element focus pair twice when returning to a tab or app, and
+  // visibilitychange fires after all of the focus events.
+  // See https://github.com/adobe/react-spectrum/issues/7468
+  const lastActiveElement = win.document.activeElement;
+  // leave tab
+  fireEvent(lastActiveElement, new Event('blur'));
+  fireEvent(win, new Event('blur'));
+  Object.defineProperty(win.document, 'visibilityState', {
+    value: 'hidden',
+    writable: true
+  });
+  Object.defineProperty(win.document, 'hidden', {value: true, writable: true});
+  fireEvent(win.document, new Event('visibilitychange'));
+  // return to tab
+  fireEvent(win, new Event('focus', {target: win}));
+  restoreFocus(lastActiveElement, win);
+  fireEvent(win, new Event('focus', {target: win}));
+  restoreFocus(lastActiveElement, win);
+  Object.defineProperty(win.document, 'visibilityState', {
+    value: 'visible',
+    writable: true
+  });
+  Object.defineProperty(win.document, 'hidden', {value: false, writable: true});
+  fireEvent(win.document, new Event('visibilitychange'));
+}
+
 function toggleBrowserWindow(win = window) {
   fireEvent(win, new Event('blur', {target: win}));
   fireEvent(win, new Event('focus', {target: win}));
@@ -107,6 +146,27 @@ describe('useFocusVisible', function () {
 
     await user.click(el);
     toggleBrowserTabs();
+
+    expect(el.textContent).toBe('example');
+  });
+
+  it('returns positive isFocusVisible result after toggling browser tabs in Safari after keyboard navigation', async function () {
+    render(<Example />);
+    await user.tab();
+    let el = screen.getByText('example-focusVisible');
+
+    toggleBrowserTabsSafari();
+
+    expect(el.textContent).toBe('example-focusVisible');
+  });
+
+  it('returns negative isFocusVisible result after toggling browser tabs in Safari without prior keyboard navigation', async function () {
+    render(<Example />);
+    await user.tab();
+    let el = screen.getByText('example-focusVisible');
+
+    await user.click(el);
+    toggleBrowserTabsSafari();
 
     expect(el.textContent).toBe('example');
   });

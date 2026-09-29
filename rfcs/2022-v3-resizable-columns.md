@@ -37,7 +37,7 @@ The `defaultWidth` prop is used on the `<Column>` component to set the width for
 
 The `minWidth` and `maxWidth` props are used on the `<Column>` component to define the minimum and maximum allowed column widths respectively. These props support pixel values and percentages.
 
-The `onColumnResize`and `onColumnResizeEnd` props can be added to the `<TableView>` component. `onColumnResize` will call the onResize callback whenever columns are resized by the user, passing in an array of all the columns that were affected by the resize. `onColumnResizeEnd` is the same as `onColumnResize` but only get's called when done resizing.
+The `onColumnResize`and `onColumnResizeEnd` props can be added to the `<TableView>` component. `onColumnResize` will call the onResize callback whenever columns are resized by the user, passing in an array of all the columns that were affected by the resize. `onColumnResizeEnd` is the same as `onColumnResize` but only gets called when done resizing.
 
 ```
 <TableView width={800} onColumnResize={onResize} onColumnResizeEnd={onResizeEnd}>
@@ -52,9 +52,9 @@ The `onColumnResize`and `onColumnResizeEnd` props can be added to the `<TableVie
 
 ### Resize Behavior
 
-Code sandbox used to develop the resize alogrithm and test it: https://codesandbox.io/s/column-width-resizer-final-jo4rr?file=/src/column-utils.spec.js
+Code sandbox used to develop the resize algorithm and test it: https://codesandbox.io/s/column-width-resizer-final-jo4rr?file=/src/column-utils.spec.js
 
-Codepen demo of the resize alogrithm: https://codepen.io/mpeterson/pen/PoJpJvK
+Codepen demo of the resize algorithm: https://codepen.io/mpeterson/pen/PoJpJvK
 
 Columns get bucketed into two different categories when resizing. These buckets are static columns and dynamic columns. Static columns do not change size unless the user explicitly resizes them. Dynamic columns can change size when columns around them are resized as well as when they are explicitly resized by the user.
 
@@ -75,7 +75,7 @@ Calculating column widths follows this flow:
 1. Static columns are calculated first. Pixel values are straightforward, these are simply checked to see if they should be clamped by a min or max. Percent values are set as a percent of the visible table width (not the total width of all table contents).
 2. Dynamic columns are calculated next. With dynamic columns, the amount of space remaining is divided up amongst the remaining columns. If no `defaultWidth` is provided, the column defaults to `1fr`.
 
-### Accessibilty Functionality
+### Accessibility Functionality
 * Using arrow keys, users can navigate to the column header
 * While the column header is focused, pressing `return/enter` or `space` will activate a dropdown
 * One of the options in the dropdown will be to resize the column (if column is resizable)

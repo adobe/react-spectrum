@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "MCP server for React Aria documentation",
   "license": "Apache-2.0",
   "repository": {
@@ -33,7 +33,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "typescript": "^5.8.2"
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=18"

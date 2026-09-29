@@ -1,6 +1,7 @@
 import {
   AsyncLoadable,
   CollectionBase,
+  FocusStrategy,
   MultipleSelection,
   Node,
   SelectionBehavior
@@ -56,4 +57,5 @@ export function List<T extends object>(props: ListProps<T>): JSX.Element {
 
 export interface ListProps<T> extends CollectionBase<T>, AsyncLoadable, MultipleSelection {
   selectionBehavior?: SelectionBehavior;
+  autoFocus?: boolean | FocusStrategy;
 }

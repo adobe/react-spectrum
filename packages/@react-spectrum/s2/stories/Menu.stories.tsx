@@ -18,6 +18,7 @@ import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
 import {Button} from '../src/Button';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
+import {Collection} from 'react-aria/Collection';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
 import CommunityIcon from '../s2wf-icons/S2_Icon_Community_20_N.svg';
@@ -29,6 +30,7 @@ import CropRotate from '../s2wf-icons/S2_Icon_CropRotate_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
+import {focusRing, style} from '../style' with {type: 'macro'};
 import {Image} from '../src/Image';
 import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
@@ -46,12 +48,14 @@ import type {Meta, StoryObj} from '@storybook/react';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
+import {Button as RACButton} from 'react-aria-components';
 import {ReactElement, useState} from 'react';
 import {Selection} from '@react-types/shared';
 import StampClone from '../s2wf-icons/S2_Icon_StampClone_20_N.svg';
 import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
 import {ToggleButton} from '../src/ToggleButton';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
+import {useAsyncList} from 'react-stately/useAsyncList';
 
 const events = ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'];
 
@@ -402,6 +406,107 @@ export const UnavailableMenuItem: Story = {
   }
 };
 
+export const ContextMenu: Story = {
+  render: args => (
+    <MenuTrigger trigger="contextMenu" {...args}>
+      <RACButton
+        className={style({
+          ...focusRing(),
+          width: 256,
+          height: 144,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderWidth: 2,
+          borderStyle: 'dashed',
+          borderColor: {
+            default: 'gray-400',
+            forcedColors: 'ButtonBorder'
+          },
+          borderRadius: 'lg',
+          backgroundColor: 'transparent',
+          font: 'ui',
+          color: 'neutral',
+          cursor: 'default'
+        })}>
+        Right click here
+      </RACButton>
+      <Menu {...args}>
+        <MenuItem>Open</MenuItem>
+        <SubmenuTrigger>
+          <MenuItem>Open with</MenuItem>
+          <Menu>
+            <MenuItem>Preview</MenuItem>
+            <MenuItem>Photoshop</MenuItem>
+            <MenuItem>Safari</MenuItem>
+          </Menu>
+        </SubmenuTrigger>
+        <MenuItem>Get Info</MenuItem>
+        <MenuItem>Rename</MenuItem>
+        <MenuItem>Duplicate</MenuItem>
+        <MenuItem>Move to Trash</MenuItem>
+      </Menu>
+    </MenuTrigger>
+  )
+};
+
+interface Character {
+  name: string;
+}
+
+const AsyncMenuRender = (
+  args: MenuProps<Character> & {delay: number; isEmpty: boolean}
+): ReactElement => {
+  let {delay, isEmpty, ...menuTriggerArgs} = args;
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, delay));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <MenuTrigger {...menuTriggerArgs}>
+      <Button aria-label="Select Character">
+        <NewIcon />
+      </Button>
+      <Menu
+        {...menuTriggerArgs}
+        aria-label="Star Wars Characters"
+        items={isEmpty ? [] : list.items}
+        loadingState={isEmpty ? undefined : list.loadingState}
+        onLoadMore={isEmpty ? undefined : list.loadMore}>
+        {(item: Character) => <MenuItem id={item.name}>{item.name}</MenuItem>}
+      </Menu>
+    </MenuTrigger>
+  );
+};
+
+export type AsyncMenuStoryType = typeof AsyncMenuRender;
+export const AsyncMenuStory: StoryObj<AsyncMenuStoryType> = {
+  render: AsyncMenuRender,
+  args: {
+    delay: 2000,
+    isEmpty: false
+  },
+  argTypes: {
+    delay: {control: 'number'},
+    isEmpty: {control: 'boolean'}
+  },
+  name: 'Async loading menu'
+};
+
 export const HoldAffordance: Story = {
   render: args => (
     <div
@@ -433,5 +538,77 @@ export const HoldAffordance: Story = {
         </Menu>
       </MenuTrigger>
     </div>
+  )
+};
+
+let virtualizedSections = Array.from({length: 5}, (_, sectionIndex) => ({
+  id: `section-${sectionIndex}`,
+  title: `Section ${sectionIndex + 1}`,
+  items: Array.from({length: 50}, (_, itemIndex) => ({
+    id: `item-${sectionIndex}-${itemIndex}`,
+    name: `Item ${sectionIndex * 50 + itemIndex + 1}`
+  }))
+}));
+
+export const Virtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="virtualized menu">
+        <NewIcon />
+      </Button>
+      <Menu isVirtualized styles={style({width: 240})} items={virtualizedSections}>
+        {section => (
+          <MenuSection id={section.id} items={section.items}>
+            <Header>
+              <Heading>{section.title}</Heading>
+            </Header>
+            <Collection items={section.items}>
+              {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
+            </Collection>
+          </MenuSection>
+        )}
+      </Menu>
+    </MenuTrigger>
+  )
+};
+
+let virtualizedSubmenuItems = Array.from({length: 100}, (_, index) => ({
+  id: `item-${index}`,
+  name: `Item ${index + 1}`,
+  hasSubmenu: index % 5 === 0
+}));
+
+let virtualizedSubmenuChildren = Array.from({length: 100}, (_, index) => ({
+  id: `child-${index}`,
+  name: `Child ${index + 1}`
+}));
+
+export const VirtualizedWithSubmenus: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="virtualized menu with submenus">
+        <NewIcon />
+      </Button>
+      <Menu isVirtualized styles={style({width: 240})} items={virtualizedSubmenuItems}>
+        {item => {
+          let menuItem = (
+            <MenuItem id={item.hasSubmenu ? `${item.id}-trigger` : item.id} textValue={item.name}>
+              <Text slot="label">{item.name}</Text>
+            </MenuItem>
+          );
+          if (!item.hasSubmenu) {
+            return menuItem;
+          }
+          return (
+            <SubmenuTrigger>
+              {menuItem}
+              <Menu styles={style({width: 240})} items={virtualizedSubmenuChildren}>
+                {child => <MenuItem id={`${item.id}-${child.id}`}>{child.name}</MenuItem>}
+              </Menu>
+            </SubmenuTrigger>
+          );
+        }}
+      </Menu>
+    </MenuTrigger>
   )
 };

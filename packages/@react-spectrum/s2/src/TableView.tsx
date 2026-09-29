@@ -59,6 +59,7 @@ import {
   CollectionRendererContext,
   DefaultCollectionRenderer
 } from 'react-aria-components/CollectionBuilder';
+import {ColorSchemeContext} from './Provider';
 import {ColumnSize} from 'react-stately/useTableState';
 import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
@@ -97,6 +98,7 @@ import {Key} from '@react-types/shared';
 import {LayoutInfo, Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
+import MoreVertical from '../s2wf-icons/S2_Icon_MoreVertical_20_N.svg';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {ProgressCircle} from './ProgressCircle';
@@ -448,6 +450,7 @@ export const TableView = forwardRef(function TableView(
     selectionStyle = 'checkbox',
     dragAndDropHooks,
     disabledBehavior = 'all',
+    keyboardNavigationBehavior = 'arrow',
     ...otherProps
   } = props;
 
@@ -496,7 +499,8 @@ export const TableView = forwardRef(function TableView(
       setIsInResizeMode,
       selectionMode,
       selectionStyle,
-      disabledBehavior
+      disabledBehavior,
+      keyboardNavigationBehavior
     }),
     [
       isQuiet,
@@ -508,7 +512,8 @@ export const TableView = forwardRef(function TableView(
       setIsInResizeMode,
       selectionMode,
       selectionStyle,
-      disabledBehavior
+      disabledBehavior,
+      keyboardNavigationBehavior
     ]
   );
 
@@ -563,6 +568,7 @@ export const TableView = forwardRef(function TableView(
             onRowAction={onAction}
             dragAndDropHooks={dragAndDropHooks}
             disabledBehavior={disabledBehavior}
+            keyboardNavigationBehavior={keyboardNavigationBehavior}
             {...otherProps}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
@@ -770,13 +776,17 @@ export interface ColumnProps extends Omit<
  * A column within a `<Table>`.
  */
 export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef<HTMLDivElement>) {
-  let {isQuiet} = useContext(InternalTableContext);
+  let {isQuiet, keyboardNavigationBehavior} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
   let isMenu = allowsResizing || !!props.menuItems;
 
   return (
     <RACColumn
+      // will need to make sure that focusMode and allowsArrowNavigation are only both set if said cell
+      // doesn't have a textfield/interactive component that will need the arrow keys
+      focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+      allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
       {...props}
       ref={domRef}
       style={{borderInlineEndColor: 'transparent'}}
@@ -888,9 +898,7 @@ const resizableMenuButtonWrapper = style({
   paddingX: 16,
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  fontSize: controlFont(),
-  fontFamily: 'sans',
-  fontWeight: 'bold'
+  font: 'title-sm'
 });
 
 const resizerHandleContainer = style({
@@ -940,20 +948,24 @@ const resizerHandle = style<{isFocusVisible: boolean; isResizing: boolean}>({
 const columnHeaderText = style({
   truncate: true,
   // Make it so the text doesn't completely disappear when column is resized to smallest width + both sort and chevron icon is rendered
-  minWidth: fontRelative(16),
+  minWidth: fontRelative(18),
   flexGrow: 0,
   flexShrink: 1,
   flexBasis: 'auto'
 });
 
-const chevronIcon = style({
-  rotate: 90,
+const moreVerticalIcon = style({
+  size: '1lh',
   marginStart: 'text-to-visual',
   minWidth: fontRelative(16),
   flexShrink: 0,
   '--iconPrimary': {
     type: 'fill',
-    value: 'currentColor'
+    value: {
+      default: 'gray-700',
+      isHovered: 'gray-800',
+      isFocusVisible: 'gray-800'
+    }
   }
 });
 
@@ -1055,22 +1067,36 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
           className={renderProps =>
             resizableMenuButtonWrapper({...renderProps, align: buttonAlignment})
           }>
-          {allowsSorting && (
-            <Provider
-              values={[
-                [
-                  IconContext,
-                  {
-                    styles: sortIcon({isButton: true})
-                  }
-                ]
-              ]}>
-              {sortDirection != null &&
-                (sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />)}
-            </Provider>
+          {({isHovered, isFocusVisible}) => (
+            <>
+              {allowsSorting && (
+                <Provider
+                  values={[
+                    [
+                      IconContext,
+                      {
+                        styles: sortIcon({isButton: true})
+                      }
+                    ]
+                  ]}>
+                  {sortDirection != null &&
+                    (sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />)}
+                </Provider>
+              )}
+              <div className={columnHeaderText}>{children}</div>
+              <Provider
+                values={[
+                  [
+                    IconContext,
+                    {
+                      styles: moreVerticalIcon({isHovered, isFocusVisible})
+                    }
+                  ]
+                ]}>
+                <MoreVertical />
+              </Provider>
+            </>
           )}
-          <div className={columnHeaderText}>{children}</div>
-          <Chevron size="M" className={chevronIcon} />
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
           {items.length > 0 && (
@@ -1136,7 +1162,7 @@ const selectAllCheckboxColumn = style({
   },
   paddingEnd: {
     default: 0,
-    ':has(slot="selection")': 8
+    ':has([slot="selection"])': 8
   },
   paddingY: 0,
   height: 'full',
@@ -1184,7 +1210,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 ) {
   let scale = useScale();
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
-  let {isQuiet, selectionStyle} = useContext(InternalTableContext);
+  let {isQuiet, selectionStyle, keyboardNavigationBehavior} = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
@@ -1216,15 +1242,13 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           isSticky
           width={scale === 'medium' ? 40 : 52}
           minWidth={scale === 'medium' ? 40 : 52}
+          focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+          allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
           className={selectAllCheckboxColumn({isQuiet})}>
           {({isFocusVisible}) => (
             <>
-              {selectionMode === 'single' && (
-                <>
-                  {isFocusVisible && <CellFocusRing />}
-                  <VisuallyHiddenSelectAllLabel />
-                </>
-              )}
+              {isFocusVisible && <CellFocusRing />}
+              {selectionMode === 'single' && <VisuallyHiddenSelectAllLabel />}
               {selectionMode === 'multiple' && (
                 <Checkbox styles={selectAllCheckbox} slot="selection" />
               )}
@@ -1650,7 +1674,8 @@ function EditableCellInner(
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
 
-  let {density} = useContext(InternalTableContext);
+  let {density, keyboardNavigationBehavior} = useContext(InternalTableContext);
+  let colorScheme = useContext(ColorSchemeContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
   if (density === 'compact') {
     size = 'S';
@@ -1735,7 +1760,7 @@ function EditableCellInner(
                 isPending: isSaving,
                 isQuiet: !isSaving,
                 size,
-                excludeFromTabOrder: true,
+                excludeFromTabOrder: keyboardNavigationBehavior === 'arrow',
                 styles: style({
                   // TODO: really need access to display here instead, but not possible right now
                   // will be addressable with displayOuter
@@ -1781,7 +1806,7 @@ function EditableCellInner(
               // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
               zIndex: undefined
             }}
-            className={editPopover}>
+            className={renderProps => editPopover({...renderProps, colorScheme})}>
             <Provider values={[[OverlayTriggerStateContext, null]]}>
               <Form
                 ref={formRef}
@@ -2206,7 +2231,8 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
   ref: DOMRef<HTMLDivElement>
 ) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
-  let {selectionStyle, ...tableVisualOptions} = useContext(InternalTableContext);
+  let {selectionStyle, keyboardNavigationBehavior, ...tableVisualOptions} =
+    useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let isInFooter = useContext(FooterContext);
 
@@ -2236,6 +2262,8 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
         <RACCell
           // @ts-ignore
           isSticky
+          focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+          allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
           className={dragCellStyle}>
           {({isFocusVisibleWithinRow}) =>
             !(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
@@ -2249,8 +2277,12 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
         selectionStyle === 'checkbox' && (
           // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
           // The `spread` otherProps must be after className in Cell.
-          // @ts-ignore
-          <Cell isSticky className={checkboxCellStyle}>
+          <Cell
+            isSticky
+            // @ts-ignore
+            className={checkboxCellStyle}
+            focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+            allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}>
             <Checkbox slot="selection" styles={selectionCheckbox} />
           </Cell>
         )}

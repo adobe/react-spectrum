@@ -1,0 +1,346 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'July 31, 2026';
+export const title = 'v1.20.0';
+export const description = 'This release introduces two new components, along with several new features including support for context menus, a simplified API for keyboard shortcuts, and the ability to use interactive components within Table rows. It also adds new documentation for hooks.'
+export const isSubpage = true;
+
+# v1.20.0
+
+This release includes many new components and features!
+
+The new [PreviewTrigger](../PreviewTrigger) component shows a Popover on hover, focus, or long press. Unlike Tooltip, it may include interactive content, useful for hoverable link previews. Keyboard users can tab in and out of the popover, and it's accessible across devices. Includes open delay, safe area handling, and coordinated entry and exit animations.
+
+```tsx render hideCode
+"use client";
+import {PreviewTrigger} from 'react-aria-components/PreviewTrigger';
+import {Popover} from 'vanilla-starter/Popover';
+import {Link} from 'vanilla-starter/Link';
+import {Button} from 'vanilla-starter/Button';
+
+function ProfilePreview({handle, name, bio, avatar, href, ...popoverProps}) {
+  return (
+    <PreviewTrigger>
+      <Link href={href}>@{handle}</Link>
+      <Popover style={{width: 280}} {...popoverProps}>
+        <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+          <img alt="" src={avatar} style={{width: 40, height: 40, borderRadius: '50%'}} />
+          <div style={{minWidth: 0}}>
+            <div style={{fontWeight: 600, fontSize: 'var(--font-size)'}}>{name}</div>
+            <div style={{fontSize: 'var(--font-size-sm)'}}>@{handle}</div>
+          </div>
+          <Button style={{marginLeft: 'auto'}} variant="secondary">Follow</Button>
+        </div>
+        <div style={{fontSize: 'var(--font-size)', marginTop: 12}}>{bio}</div>
+      </Popover>
+    </PreviewTrigger>
+  );
+}
+
+function Example(props) {
+  return (
+    <p style={{maxWidth: 480}}>
+      Just shipped a new release with help from{' '}
+      <ProfilePreview
+        handle="mayachen"
+        name="Maya Chen"
+        bio="UI engineer, accessibility advocate, and component library enthusiast."
+        avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+        href="#"
+        {...props} />
+      {' '}and{' '}
+      <ProfilePreview
+        handle="cwebb"
+        name="Charles Webb"
+        bio="Design systems, docs, and developer experience."
+        avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+        href="#"
+        {...props} />
+      !
+    </p>
+  );
+}
+```
+
+[TokenField](../TokenField) (alpha) allows users to enter text with inline tokens, supporting autocomplete and auto-tokenization. Use it to build AI prompt fields, tag inputs, structured search fields, mention inputs, and multi-select comboboxes.
+
+```tsx render hideCode
+"use client";
+import {Autocomplete} from 'react-aria-components/Autocomplete';
+import {Text} from 'react-aria-components/Text';
+import {Token, TokenField} from 'vanilla-starter/TokenField';
+import {tokenFieldPositionToDOMRange} from 'react-aria/useTokenField';
+import {TokenFieldValue} from 'react-aria-components/TokenField';
+import {Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Popover} from 'vanilla-starter/Popover';
+import {useMemo, useRef, useState} from 'react';
+
+type Item = {username: string} | {command: string; description: string};
+
+/*- begin collapse -*/
+const usernames = [
+  {username: 'alexmiller'},
+  {username: 'sarahjones'},
+  {username: 'davidkim'},
+  {username: 'emmawatson'},
+  {username: 'oliverliu'},
+  {username: 'ellagreen'},
+  {username: 'lucasbrown'},
+  {username: 'amandarivera'},
+  {username: 'masonlee'},
+  {username: 'nataliasmith'},
+  {username: 'benjamintaylor'},
+  {username: 'zoewilson'},
+  {username: 'henrywalker'},
+  {username: 'madelineyoung'},
+  {username: 'noahscott'},
+  {username: 'lucygonzalez'},
+  {username: 'jacobmartin'},
+  {username: 'averymoore'},
+  {username: 'loganmurphy'},
+  {username: 'miahernandez'},
+  {username: 'danieladair'},
+  {username: 'sofiacox'},
+  {username: 'jackharris'},
+  {username: 'chloebaker'},
+  {username: 'liamrodriguez'}
+];
+/*- end collapse -*/
+
+/*- begin collapse -*/
+const slashCommands = [
+  {command: 'gif', description: 'Insert a GIF'},
+  {command: 'todo', description: 'Add a todo list item'},
+  {command: 'mention', description: 'Mention a user with @username'},
+  {command: 'date', description: 'Insert the current date'},
+  {command: 'quote', description: 'Insert a quote block'}
+];
+/*- end collapse -*/
+
+function Example() {
+  let inputRef = useRef(null);
+  let [value, setValue] = useState(
+    new TokenFieldValue([
+      {type: 'text', text: 'This example has autocomplete for '},
+      {type: 'token', text: '@usernames'},
+      {type: 'text', text: ' and '},
+      {type: 'token', text: '/commands'}
+    ])
+  );
+
+  let [filterAnchor, filterValue] = useMemo(() => {
+    let filterAnchor = value.findText(value.caretPosition, TokenFieldValue.Direction.Backward, /(?<=^|\s)[@/]/);
+    if (filterAnchor != null) {
+      let filterValue = value.slice(filterAnchor, value.caretPosition).toString();
+      return [filterAnchor, filterValue];
+    }
+    return [null, null];
+  }, [value]);
+
+  let items: Item[] = [];
+  if (filterValue != null && filterValue.startsWith('/')) {
+    items = slashCommands.filter(item => item.command.includes(filterValue.slice(1)));
+  } else if (filterValue != null && filterValue.startsWith('@')) {
+    items = usernames.filter(item => item.username.includes(filterValue.slice(1)));
+  }
+
+  return (
+    /*- begin highlight -*/
+    <Autocomplete>
+      <TokenField value={value} onChange={setValue} label="Prompt" allowsNewlines inputRef={inputRef}>
+        {segment => <Token>{segment.text}</Token>}
+      </TokenField>
+      <Popover
+        triggerRef={inputRef}
+        isOpen={filterAnchor != null && items.length > 0}
+        isNonModal
+        hideArrow
+        placement="bottom start"
+        trigger="MenuTrigger"
+        getTargetRect={target => {
+          return tokenFieldPositionToDOMRange(target, filterAnchor!).getBoundingClientRect();
+        }}>
+        <Menu items={items} dependencies={[filterAnchor]}>
+          {item => (
+            <MenuItem
+              id={'username' in item ? item.username : item.command}
+              onAction={() => {
+                setValue(value =>
+                  value.replaceRangeWithSegments(
+                    filterAnchor!,
+                    value.caretPosition,
+                    [
+                      {
+                        type: 'token',
+                        text: 'username' in item ? '@' + item.username : item.command
+                      },
+                      {type: 'text', text: ' '}
+                    ],
+                    false
+                  )
+                );
+              }}>
+              <Text slot="label">{'username' in item ? item.username : item.command}</Text>
+              {'description' in item ? <Text slot="description">{item.description}</Text> : null}
+            </MenuItem>
+          )}
+        </Menu>
+      </Popover>
+    </Autocomplete>
+    /*- end highlight -*/
+  );
+}
+```
+
+[MenuTrigger](/Menu#context-menu) now supports `trigger="contextMenu"`, enabling accessible context menus via mouse, keyboard, and touch input.
+
+```tsx render hideCode
+"use client";
+import {MenuTrigger, Menu, MenuItem, SubmenuTrigger, Separator} from 'vanilla-starter/Menu';
+import {Button} from 'react-aria-components/Button';
+
+<MenuTrigger trigger="contextMenu">
+  <Button className="context-menu-trigger">
+    Right click here
+  </Button>
+  <Menu>
+    <MenuItem>Open</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem>Open with</MenuItem>
+      <Menu>
+        <MenuItem>Preview</MenuItem>
+        <MenuItem>Photoshop</MenuItem>
+        <MenuItem>Safari</MenuItem>
+      </Menu>
+    </SubmenuTrigger>
+    <Separator />
+    <MenuItem>Get Info</MenuItem>
+    <MenuItem>Rename</MenuItem>
+    <MenuItem>Duplicate</MenuItem>
+    <MenuItem>Move to Trash</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+```css render hidden
+.context-menu-trigger {
+  width: 250px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--gray-400);
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+}
+```
+
+In addition, we have added a simpler API to implement keyboard shortcuts to [useKeyboard](../useKeyboard), and support for interactive components like textfields inside Table rows.
+
+Finally, the React Aria and React Stately hook documentation has been completely rewritten! The new docs use the same styles as our React Aria Components examples, and show how to use both components and hooks together.
+
+As always, thank you to all our contributors!
+
+## Changelog
+
+### General Changes
+- Add new React Aria hooks documentation - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10153), [PR](https://github.com/adobe/react-spectrum/pull/10355) 
+### Breadcrumbs
+- Prevent passing an empty string to the `href` attribute when undefined - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10286)
+### Checkbox
+- Fix Enter key presses on Checkbox inputs so they no longer block native implicit form submission  - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9972)
+### Collections
+- Add guide explaining how to update collection structure to documentation - [@patrickwehbe](https://github.com/patrickwehbe) - [PR](https://github.com/adobe/react-spectrum/pull/10232)
+- Support collections in React canary and Next.js 16's app router - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/10323)
+### ComboBox
+- Document `defaultFilter`'s default `contains` filter behavior - [@patrickwehbe](https://github.com/patrickwehbe) - [PR](https://github.com/adobe/react-spectrum/pull/10222)
+- Accept a readonly array for controlled multiple ComboBox `value` - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/10290)
+### Date and Time
+- Export `DayOfWeek` type from `@internationalized/date` - [@patrickwehbe](https://github.com/patrickwehbe) - [PR](https://github.com/adobe/react-spectrum/pull/10234)
+- Clamp milliseconds to a valid maximum of 999 - [@spokodev](https://github.com/spokodev) - [PR](https://github.com/adobe/react-spectrum/pull/10289)
+- Resolve locales with an explicit script to language-script strings - [@stas-m2muchcoffee](https://github.com/stas-m2muchcoffee) - [PR](https://github.com/adobe/react-spectrum/pull/10268)
+### DatePicker
+- Avoid stealing focus into a date segment from a `selectionchange` event in Firefox - [@doolse](https://github.com/doolse) - [PR](https://github.com/adobe/react-spectrum/pull/10260)
+### Dialog
+- Add `aria-describedby` support for the `alertdialog` role - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/9924)
+- Pass the overlay id to `PopoverContext` in Dialog - [@albertdugba](https://github.com/albertdugba) - [PR](https://github.com/adobe/react-spectrum/pull/9807)
+### Drag and drop
+- Prefer the ancestor drop target over the nearest-by-distance target in DragManager - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10170)
+- Prevent Android Chrome taps from being detected as a drag event - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10332)
+### DropZone
+- Prevent focus from moving to DropZone when clicking its hidden file input - [@pradeep-ramola](https://github.com/pradeep-ramola) - [PR](https://github.com/adobe/react-spectrum/pull/10173), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10336)
+### Link
+- Add `onPressChange` prop to `useLink` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
+### Menu
+- Add `useContextMenu` and `trigger="contextMenu"` to MenuTrigger - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10237)
+### Meter
+- Guard the percentage calculation against `NaN` when `min` equals `max` - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10169)
+### Overlays
+- Restore focus in `FocusScope` containment without scrolling- [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10339)
+- Add an `addGlobalScrollListener` utility and close overlays on scroll events inside a shadow DOM - [@pzaczkiewicz-athenahealth](https://github.com/pzaczkiewicz-athenahealth) - [PR](https://github.com/adobe/react-spectrum/pull/10188)
+### PreviewTrigger
+- Add PreviewTrigger component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10243)
+### ProgressBar
+- Guard the percentage calculation against `NaN` when `min` equals `max` - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10169)
+### RadioGroup
+- Fix `Enter` key presses on Radio inputs so they no longer block native implicit form submission  - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9972)
+### Select
+- Restore the default `type` for Select - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10361)
+### Switch
+- Delegate label `keydown` handling to the native input for switches so key events behave consistently - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9972)
+### Table
+- Support TextFields and other interactive components inside Table rows using `keyboardNavigationBehavior="tab"` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10159), [PR](https://github.com/adobe/react-spectrum/pull/10206)
+- Floor fractional table column widths so columns don't overflow - [@ardittirana](https://github.com/ardittirana) - [PR](https://github.com/adobe/react-spectrum/pull/10238)
+- Fix column resizing getting stuck after a press and hold - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10040)
+- Restore focus without an infinite loop when no focusable row remains in `useGridState` - [@RobHannay](https://github.com/RobHannay) - [PR](https://github.com/adobe/react-spectrum/pull/10241)
+### TokenField
+- Add TokenField component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10318)
+### Tree
+- Fix non-selection checkboxes in Tree items - [@mvanhorn](https://github.com/mvanhorn) - [PR](https://github.com/adobe/react-spectrum/pull/10274)
+- Prevent virtualized grid layouts from disappearing when hidden via `display: none` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10190)
+- Export `TreeSectionProps` and `TreeHeaderProps` types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10306)
+### useId
+- Prevent `FinalizationRegistry` entries from accumulating on every re-render - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9853)
+### useKeyboard
+- Adds support for new shortcuts that allow control over stopping prpagation and preventing default - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10200), [PR](https://github.com/adobe/react-spectrum/pull/10322), [PR](https://github.com/adobe/react-spectrum/pull/10285)
+### usePress
+- Fix press events not firing consistently for trackpad taps  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10225)
+### Virtualizer
+- Add `shouldObserveItemSize` to Virtualizer to force re-layout when items change size - [@yihuiliao](https://github.com/yihuiliao) -  [PR](https://github.com/adobe/react-spectrum/pull/10258)
+
+## Released packages
+
+```
+ - @internationalized/date@3.12.3
+ - @internationalized/string@3.2.10
+ - @react-types/shared@3.36.1
+ - @react-aria/optimize-locales-plugin@2.0.1
+ - react-aria@3.51.0
+ - react-aria-components@1.20.0
+ - react-stately@3.49.0
+```

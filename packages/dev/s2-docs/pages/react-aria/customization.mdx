@@ -6,6 +6,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const section = 'Guides';
 export const description = 'How to build custom component patterns.';
+export const tags = ['motion', 'framer', 'render', 'composeRenderProps', 'Provider', 'useContextProps', 'slots', 'useSlottedContext', 'hooks'];
 
 # Customization
 
@@ -43,6 +44,28 @@ The `render` prop is also useful for rendering link components from client-side 
     </ul>
   </Content>
 </InlineAlert>
+
+## Extending render props
+
+The [styling guide](styling#render-props) describes how to use render props to style and render components based on their current state. When building a custom component that wraps a React Aria component, use <TypeLink links={docs.links} type={docs.exports.composeRenderProps} /> to extend the `className`, `style`, or `children` while still allowing the user to pass their own value or function. It accepts the value provided by the user (which may itself be a value or a render props function), along with a function to wrap it. The result is a new render props function that receives the component's states.
+
+This example adds a default class name to a custom `Button`, while preserving any `className` the user passes (whether a string or a function):
+
+```tsx
+import {Button, ButtonProps, composeRenderProps} from 'react-aria-components';
+
+function MyButton(props: ButtonProps) {
+  return (
+    <Button
+      {...props}
+      /*- begin highlight -*/
+      className={composeRenderProps(props.className, (className, {isPressed}) =>
+        `my-button ${isPressed ? 'pressed' : ''} ${className ?? ''}`
+      )} />
+      /*- end highlight -*/
+  );
+}
+```
 
 ## Contexts
 
@@ -274,121 +297,4 @@ This enables a `<CalendarValue>` to be placed inside a `<Calendar>` to display t
   <CalendarValue />
   {/*- end highlight -*/}
 </Calendar>
-```
-
-## Hooks
-
-If you need to customize things even further, such as overriding behavior, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. Hooks only provide behavior and leave all rendering to you. This gives you more control and flexibility, but requires additional glue code to set up.
-
-React Aria Components and Hooks can be used together, allowing you to mix and match depending on the level of customization you require. We recommend starting with the component API by default, and only dropping down to hooks when you need to customize something that the component API does not allow.
-
-Some potential use cases for Hooks are:
-
-* Overriding which DOM element a component renders
-* Intercepting a DOM event to apply conditional logic
-* Overriding internal state management behavior
-* Customizing overlay positioning
-* Removing unused features to reduce bundle size
-
-### Setup
-
-As described [above](#contexts), each React Aria component exports a corresponding context. You can build a custom implementation of a component using Hooks by consuming from the relevant context with <TypeLink links={docs.links} type={docs.exports.useContextProps} />.
-
-This example shows how a custom checkbox could be set up using `CheckboxContext` from `react-aria-components` and the [useCheckbox](Checkbox/useCheckbox.html) hook from `react-aria`.
-
-```tsx
-import {CheckboxContext, type CheckboxProps} from 'react-aria-components/Checkbox';
-import {useContextProps} from 'react-aria-components/slots';
-import {useToggleState} from 'react-stately/useToggleState';
-import {useCheckbox} from 'react-aria/useCheckbox';
-
-const MyCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
-  // Merge the local props and ref with the ones provided via context.
-  ///- begin highlight -///
-  let [mergedProps, mergedRef] = useContextProps(props, ref, CheckboxContext);
-  ///- end highlight -///
-
-  // Follow the hook docs and implement your customizations...
-  let state = useToggleState(mergedProps);
-  let {inputProps} = useCheckbox(mergedProps, state, mergedRef);
-  return <input {...inputProps} ref={mergedRef} />;
-});
-```
-
-Since `MyCheckbox` consumes from `CheckboxContext` it can be used within other React Aria Components in place of the built-in `Checkbox`, such as within a [Table](Table) or [GridList](GridList). This lets you provide a custom checkbox implementation without rewriting all other React Aria Components you might use it in.
-
-```tsx
-<GridList>
-  <GridListItem>
-    {/*- begin highlight -*/}
-    <MyCheckbox slot="selection" />
-    {/*- end highlight -*/}
-    {/* ... */}
-  </GridListItem>
-</GridList>
-```
-
-### Reusing children
-
-You can also provide values for React Aria Components from a Hook-based implementation. This allows you to customize the parent component of a larger pattern, while reusing the existing implementations of the child elements from React Aria Components.
-
-This example shows how a custom number field could be set up. First, follow the docs for [useNumberField](NumberField/useNumberField.html), and then use [Provider](#provider) to send values returned by the hook to each of the child elements via their corresponding contexts.
-
-```tsx
-import type {NumberFieldProps} from 'react-aria-components/NumberField';
-import {Provider} from 'react-aria-components/slots';
-import {GroupContext} from 'react-aria-components/Group';
-import {InputContext} from 'react-aria-components/Input';
-import {LabelContext} from 'react-aria-components/Label';
-import {ButtonContext} from 'react-aria-components/Button';
-import {useNumberFieldState} from 'react-stately/useNumberFieldState';
-import {useNumberField} from 'react-aria/useNumberField';
-import {useLocale} from 'react-aria/I18nProvider';
-
-function CustomNumberField(props: NumberFieldProps) {
-  // Follow the hook docs...
-  let {locale} = useLocale();
-  let state = useNumberFieldState({...props, locale});
-  let ref = useRef<HTMLInputElement>(null);
-  let {
-    labelProps,
-    groupProps,
-    inputProps,
-    incrementButtonProps,
-    decrementButtonProps
-  } = useNumberField(props, state, ref);
-
-  // Provide values for the child components via context.
-  return (
-    /*- begin highlight -*/
-    <Provider
-      values={[
-        [GroupContext, groupProps],
-        [InputContext, {...inputProps, ref}],
-        [LabelContext, labelProps],
-        [ButtonContext, {
-          slots: {
-            increment: incrementButtonProps,
-            decrement: decrementButtonProps
-          }
-        }]
-      ]}>
-      {props.children}
-    </Provider>
-    /*- end highlight -*/
-  );
-}
-```
-
-Because `CustomNumberField` provides values for the `Group`, `Input`, `Label`, and `Button` components via context, the implementations from React Aria Components can be reused.
-
-```tsx
-<CustomNumberField>
-  <Label>Width</Label>
-  <Group>
-    <Input />
-    <Button slot="increment">+</Button>
-    <Button slot="decrement">-</Button>
-  </Group>
-</CustomNumberField>
 ```

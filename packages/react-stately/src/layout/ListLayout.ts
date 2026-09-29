@@ -301,9 +301,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>): boolean {
-    // Invalidate cache if the size of the collection changed.
-    // In this case, we need to recalculate the entire layout.
-    // Also invalidate if fixed sizes/gaps change.
     let options = invalidationContext.layoutOptions;
     return (
       invalidationContext.sizeChanged ||
@@ -449,6 +446,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       this.orientation === 'horizontal'
         ? new Size(offset, this.virtualizer!.size.height)
         : new Size(this.virtualizer!.size.width, offset);
+
     return nodes;
   }
 
@@ -490,6 +488,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
         return this.buildLoader(node, x, y);
       case 'separator':
         return this.buildItem(node, x, y);
+      // uses buildSection instead of buildItem cuz it has a child node (the trigger)
+      // that need to be processed
+      case 'submenutrigger':
+        return this.buildSection(node, x, y);
       default:
         throw new Error('Unsupported node type: ' + node.type);
     }

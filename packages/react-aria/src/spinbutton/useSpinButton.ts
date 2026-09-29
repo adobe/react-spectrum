@@ -125,7 +125,8 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         return false;
       }
-    }
+    },
+    allowRepeats: true
   });
 
   let isFocused = useRef(false);

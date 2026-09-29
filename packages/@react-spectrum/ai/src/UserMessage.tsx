@@ -54,7 +54,7 @@ const bubble = style({
     default: 16,
     ':has(img)': 8
   },
-  backgroundColor: 'gray-50',
+  backgroundColor: 'transparent-overlay-50',
   color: 'neutral',
   borderRadius: 'lg',
   font: 'body',

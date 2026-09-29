@@ -76,15 +76,28 @@ export function weirdColorToken(name: TokenName): ColorRef {
 
 type ReplaceColor<S extends string> = S extends `${infer S}-color-${infer N}` ? `${S}-${N}` : S;
 
+// Collects all tokens matching `${scale}-<number>` and returns them sorted by that
+// trailing number. Object key order in the tokens JSON is not guaranteed to be numeric
+// (e.g. `blue-1000` may have been emitted before `blue-900`), so we can't rely on insertion order.
+function sortedScaleTokens(scale: string): string[] {
+  let re = new RegExp(`^${scale}-(\\d+)$`);
+  let matches: [string, number][] = [];
+  for (let token in tokens) {
+    let m = re.exec(token);
+    if (m) {
+      matches.push([token, Number(m[1])]);
+    }
+  }
+  matches.sort((a, b) => a[1] - b[1]);
+  return matches.map(([token]) => token);
+}
+
 export function colorScale<S extends string>(
   scale: S
 ): Record<ReplaceColor<Extract<TokenName, `${S}-${number}`>>, ReturnType<typeof colorToken>> {
   let res: any = {};
-  let re = new RegExp(`^${scale}-\\d+$`);
-  for (let token in tokens) {
-    if (re.test(token)) {
-      res[token.replace('-color', '')] = colorToken(token as TokenName);
-    }
+  for (let token of sortedScaleTokens(scale)) {
+    res[token.replace('-color', '')] = colorToken(token as TokenName);
   }
   return res;
 }
@@ -93,11 +106,8 @@ export function simpleColorScale<S extends string>(
   scale: S
 ): Record<Extract<TokenName, `${S}-${number}`>, string> {
   let res: any = {};
-  let re = new RegExp(`^${scale}-\\d+$`);
-  for (let token in tokens) {
-    if (re.test(token)) {
-      res[token] = (tokens as any)[token].value;
-    }
+  for (let token of sortedScaleTokens(scale)) {
+    res[token] = (tokens as any)[token].value;
   }
   return res;
 }

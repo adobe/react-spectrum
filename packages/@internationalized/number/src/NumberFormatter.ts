@@ -20,37 +20,9 @@ try {
   // eslint-disable-next-line no-empty
 } catch {}
 
-let supportsUnit = false;
-try {
-  supportsUnit =
-    new Intl.NumberFormat('de-DE', {style: 'unit', unit: 'degree'}).resolvedOptions().style ===
-    'unit';
-  // eslint-disable-next-line no-empty
-} catch {}
-
-// Polyfill for units since Safari doesn't support them yet. See https://bugs.webkit.org/show_bug.cgi?id=215438.
-// Currently only polyfilling the unit degree in narrow format for ColorSlider in our supported locales.
-// Values were determined by switching to each locale manually in Chrome.
-const UNITS = {
-  degree: {
-    narrow: {
-      default: '°',
-      'ja-JP': ' 度',
-      'zh-TW': '度',
-      'sl-SI': ' °'
-      // Arabic?? But Safari already doesn't use Arabic digits so might be ok...
-      // https://bugs.webkit.org/show_bug.cgi?id=218139
-    }
-  }
-};
-
 export interface NumberFormatOptions extends Intl.NumberFormatOptions {
   /** Overrides default numbering system for the current locale. */
   numberingSystem?: string;
-}
-
-interface NumberRangeFormatPart extends Intl.NumberFormatPart {
-  source: 'startRange' | 'endRange' | 'shared';
 }
 
 /**
@@ -78,15 +50,6 @@ export class NumberFormatter implements Intl.NumberFormat {
       res = this.numberFormatter.format(value);
     }
 
-    if (this.options.style === 'unit' && !supportsUnit) {
-      let {unit, unitDisplay = 'short', locale} = this.resolvedOptions();
-      if (!unit) {
-        return res;
-      }
-      let values = UNITS[unit]?.[unitDisplay];
-      res += values[locale] || values.default;
-    }
-
     return res;
   }
 
@@ -111,7 +74,7 @@ export class NumberFormatter implements Intl.NumberFormat {
   }
 
   /** Formats a number range as an array of parts. */
-  formatRangeToParts(start: number, end: number): NumberRangeFormatPart[] {
+  formatRangeToParts(start: number, end: number): Intl.NumberRangeFormatPart[] {
     if (typeof this.numberFormatter.formatRangeToParts === 'function') {
       return this.numberFormatter.formatRangeToParts(start, end);
     }
@@ -123,9 +86,9 @@ export class NumberFormatter implements Intl.NumberFormat {
     let startParts = this.numberFormatter.formatToParts(start);
     let endParts = this.numberFormatter.formatToParts(end);
     return [
-      ...startParts.map(p => ({...p, source: 'startRange'}) as NumberRangeFormatPart),
+      ...startParts.map(p => ({...p, source: 'startRange'}) as Intl.NumberRangeFormatPart),
       {type: 'literal', value: ' – ', source: 'shared'},
-      ...endParts.map(p => ({...p, source: 'endRange'}) as NumberRangeFormatPart)
+      ...endParts.map(p => ({...p, source: 'endRange'}) as Intl.NumberRangeFormatPart)
     ];
   }
 
@@ -134,15 +97,6 @@ export class NumberFormatter implements Intl.NumberFormat {
     let options = this.numberFormatter.resolvedOptions();
     if (!supportsSignDisplay && this.options.signDisplay != null) {
       options = {...options, signDisplay: this.options.signDisplay};
-    }
-
-    if (!supportsUnit && this.options.style === 'unit') {
-      options = {
-        ...options,
-        style: 'unit',
-        unit: this.options.unit,
-        unitDisplay: this.options.unitDisplay
-      };
     }
 
     return options;
@@ -159,17 +113,6 @@ function getCachedNumberFormatter(
       locale += '-u-';
     }
     locale += `-nu-${numberingSystem}`;
-  }
-
-  if (options.style === 'unit' && !supportsUnit) {
-    let {unit, unitDisplay = 'short'} = options;
-    if (!unit) {
-      throw new Error('unit option must be provided with style: "unit"');
-    }
-    if (!UNITS[unit]?.[unitDisplay]) {
-      throw new Error(`Unsupported unit ${unit} with unitDisplay = ${unitDisplay}`);
-    }
-    options = {...options, style: 'decimal'};
   }
 
   let cacheKey =

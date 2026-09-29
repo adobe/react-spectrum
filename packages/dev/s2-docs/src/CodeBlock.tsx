@@ -2,7 +2,7 @@
 import assets from 'url:../pages/**/*.{png,jpg,svg}' with {env: 'react-client'};
 import {cache, ReactElement, ReactNode} from 'react';
 import {Code, ICodeProps} from './Code';
-import {CodePlatter, FileProvider, Pre} from './CodePlatter';
+import {CodePlatter, FileProvider, Pre, ShadcnProvider} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
 import {ExpandableCode, ExpandableCodeProvider} from './ExpandableCode';
 import {FileTabs} from './FileTabs';
@@ -13,6 +13,8 @@ import {highlight, Language} from 'tree-sitter-highlight';
 import path from 'path';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {VisualExample, VisualExampleProps} from './VisualExample';
+
+const baseDir = process.env.PARCEL_V3 ? __dirname + '/../../../../' : '../../../';
 
 const example = style({
   backgroundColor: 'layer-1',
@@ -60,6 +62,14 @@ export const standaloneCode = style({
   }
 });
 
+// Maps each starter alias to the directory under `starters/` it resolves to.
+const STARTER_DIRS: {[alias: string]: string} = {
+  'vanilla-starter': 'docs',
+  'tailwind-starter': 'tailwind',
+  'hooks-starter': 'hooks'
+};
+const STARTER_ALIAS_RE = new RegExp(`(${Object.keys(STARTER_DIRS).join('|')})/`, 'g');
+
 interface CodeBlockProps extends VisualExampleProps {
   render?: ReactNode;
   children: string;
@@ -67,6 +77,7 @@ interface CodeBlockProps extends VisualExampleProps {
   files?: string[];
   expanded?: boolean;
   hidden?: boolean;
+  hideCode?: boolean;
   showCoachMark?: boolean;
 }
 
@@ -77,13 +88,14 @@ export function CodeBlock({
   files,
   expanded,
   hidden,
+  hideCode,
   ...props
 }: CodeBlockProps) {
   if (hidden) {
     return null;
   }
 
-  let displayCode = children.replace(/(vanilla-starter|tailwind-starter)\//g, './');
+  let displayCode = children.replace(STARTER_ALIAS_RE, './');
 
   if (!render) {
     return (
@@ -96,7 +108,8 @@ export function CodeBlock({
   }
 
   let resolveFrom = path.resolve(
-    'pages',
+    baseDir,
+    'packages/dev/s2-docs/pages',
     dir || (props.type === 's2' ? 's2' : 'react-aria'),
     'index.tsx'
   );
@@ -120,30 +133,40 @@ export function CodeBlock({
     );
   }
 
+  // If the example imports a component from the hooks starter, offer a per-component
+  // "Install with shadcn" command pointing at its hooks registry item.
+  let hooksComponent = files
+    ?.map(f => /starters\/hooks\/src\/([A-Za-z0-9]+)\.tsx$/.exec(f)?.[1])
+    .find(Boolean);
+
   let content = (
-    <FileProvider value={downloadFiles}>
-      <CodePlatter type={props.type} showCoachMark={props.showCoachMark}>
-        {code}
-      </CodePlatter>
-    </FileProvider>
+    <ShadcnProvider value={hooksComponent ? {type: 'hooks', component: hooksComponent} : null}>
+      <FileProvider value={downloadFiles}>
+        <CodePlatter type={props.type} showCoachMark={props.showCoachMark}>
+          {code}
+        </CodePlatter>
+      </FileProvider>
+    </ShadcnProvider>
   );
 
   return (
     <div role="group" aria-label="Example" className={example}>
       <ExampleOutput component={render} align={props.align} />
-      <div>
-        {files ? (
-          <Files
-            files={files}
-            downloadFiles={downloadFiles.files}
-            maxLines={expanded ? Infinity : 6}
-            type={props.type}>
-            {content}
-          </Files>
-        ) : (
-          content
-        )}
-      </div>
+      {!hideCode && (
+        <div>
+          {files ? (
+            <Files
+              files={files}
+              downloadFiles={downloadFiles.files}
+              maxLines={expanded ? Infinity : 6}
+              type={props.type}>
+              {content}
+            </Files>
+          ) : (
+            content
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -255,9 +278,7 @@ export function File({
   maxLines?: number;
   type?: 'vanilla' | 'tailwind' | 's2';
 }) {
-  let contents = readFile(
-    path.isAbsolute(filename) ? filename : path.resolve('../../../', filename)
-  ).replace(/(vanilla-starter|tailwind-starter)\//g, './');
+  let contents = readFile(path.resolve(baseDir, filename)).replace(STARTER_ALIAS_RE, './');
   return (
     <CodePlatter type={type}>
       <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false} maxLines={maxLines}>
@@ -269,7 +290,7 @@ export function File({
 
 const readFileReplace = cache((file: string) => {
   let contents = readFile(file)
-    .replace(/(vanilla-starter|tailwind-starter)\//g, './')
+    .replace(STARTER_ALIAS_RE, './')
     .replace(/import (.*?) from ['"]url:(.*?)['"]/g, (_, name, specifier) => {
       return `const ${name} = '${resolveUrl(specifier, file)}'`;
     });
@@ -286,7 +307,7 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
 
   if (type === 'tailwind' && !fileContents['index.css']) {
     fileContents['index.css'] = readFileReplace(
-      path.resolve('../../../starters/tailwind/src/index.css')
+      path.resolve(baseDir, 'starters/tailwind/src/index.css')
     );
   }
 
@@ -294,7 +315,7 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
 }
 
 function findAllFiles(files: string[], npmDeps = {}) {
-  files = files.map(file => (path.isAbsolute(file) ? file : path.resolve('../../../', file)));
+  files = files.map(file => (path.isAbsolute(file) ? file : path.resolve(baseDir, file)));
 
   let queue: string[] = [...files];
   let allFiles = new Set<string>();
@@ -319,8 +340,8 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
   let deps = new Set<string>();
   for (let [, specifier] of contents.matchAll(/import (?:.|\n)*?['"](.+?)['"]/g)) {
     specifier = specifier.replace(
-      /(vanilla-starter|tailwind-starter)\//g,
-      (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/'
+      STARTER_ALIAS_RE,
+      (m, s) => 'starters/' + STARTER_DIRS[s] + '/src/'
     );
 
     if (specifier.startsWith('url:')) {
@@ -338,7 +359,7 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
 
     let resolved = specifier.startsWith('.')
       ? path.resolve(path.dirname(file), specifier)
-      : path.resolve('../../../' + specifier);
+      : path.resolve(baseDir, specifier);
     if (path.extname(resolved) === '') {
       if (fs.existsSync(resolved + '.tsx')) {
         resolved += '.tsx';

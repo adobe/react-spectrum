@@ -1,0 +1,73 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPIGroup} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/datepicker';
+import statelyDocs from 'docs:@react-stately/datepicker';
+import Anatomy from '/packages/dev/s2-docs/pages/react-aria/DateRangePickerAnatomy2.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a date range picker component.';
+export const isSubpage = true;
+
+# useDateRangePicker
+
+<PageDescription>{docs.exports.useDateRangePicker.description}</PageDescription>
+
+```tsx render files={["starters/hooks/src/DateRangePicker.tsx", "starters/hooks/src/DateRangePicker.css", "starters/hooks/src/DateField.css", "starters/hooks/src/RangeCalendar.css", "starters/hooks/src/Button.css", "starters/hooks/src/Form.css", "starters/hooks/src/Popover.css"]}
+"use client";
+import {DateRangePicker} from 'hooks-starter/DateRangePicker';
+
+<DateRangePicker label="Trip dates" />
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{DateInput: '../DateField', DateSegment: '../DateField', Button: '../Button', Popover: '../Popover', RangeCalendar: '../RangeCalendar'}}
+<DateRangePicker>
+  <Label />
+  <Group>
+    <DateInput slot="start">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <span aria-hidden="true">–</span>
+    <DateInput slot="end">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Popover>
+    <RangeCalendar />
+  </Popover>
+</DateRangePicker>
+```
+
+<FunctionAPIGroup
+  functions={[
+    {function: statelyDocs.exports.useDateRangePickerState, links: statelyDocs.links},
+    {function: docs.exports.useDateRangePicker, links: docs.links},
+  ]}
+/>
+
+### DateRangePickerState
+
+<InterfaceType {...statelyDocs.exports.DateRangePickerState} links={statelyDocs.links} />
+
+### AriaDateRangePickerProps
+
+<InterfaceType {...docs.exports.AriaDateRangePickerProps} />
+
+### DateRangePickerAria
+
+<InterfaceType {...docs.exports.DateRangePickerAria} />

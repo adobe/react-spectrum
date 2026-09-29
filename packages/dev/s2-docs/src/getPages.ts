@@ -2,18 +2,22 @@ import {cache} from 'react';
 import {getBaseUrl} from './pageUtils';
 import {glob, readFile} from 'fs/promises';
 import type {Page} from '@parcel/rsc';
+import path from 'path';
 // eslint-disable-next-line
 import {transformAsync} from '@parcel/rust/lib/index.js';
 
+const cwd = process.env.PARCEL_V3 ? __dirname : './src';
+
 export const getPages = cache(async () => {
   let pages: string[] = [];
-  for await (let page of glob('pages/*/**/*.mdx')) {
+  for await (let page of glob('../pages/*/**/*.mdx', {cwd})) {
     pages.push(page);
   }
 
   return Promise.all(
     pages.map(async page => {
-      let code = await readFile(page);
+      let file = path.join(cwd, page);
+      let code = await readFile(file);
       let res: any = await transformAsync({
         filename: page,
         code,
@@ -40,7 +44,7 @@ export const getPages = cache(async () => {
         inline_constants: false
       });
 
-      let name = page.slice(6, -4);
+      let name = page.slice('../pages/'.length, -4);
       return {
         name,
         url: getUrl(name),
