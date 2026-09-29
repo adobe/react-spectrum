@@ -212,7 +212,7 @@ export const Focusable: React.ForwardRefExoticComponent<
     let child = React.Children.only(children);
 
     useEffect(() => {
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV !== 'test') {
         return;
       }
 
