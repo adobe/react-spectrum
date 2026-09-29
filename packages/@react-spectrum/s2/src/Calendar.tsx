@@ -699,7 +699,7 @@ const CalendarCellInner = (
     (isInvalid || !isUnavailable) &&
     (isDateInRange(prevDay) || (nextDay.month === date.month && isDateInRange(nextDay)));
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <div
       className={style({
@@ -750,7 +750,7 @@ const CalendarCellInner = (
       )}
     </div>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 };
 
 type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';

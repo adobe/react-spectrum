@@ -329,8 +329,9 @@ export const ActionButton = forwardRef(function ActionButton(
   props: ActionButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
+  // oxlint-disable-next-line react/immutability
   props = useFormProps(props as any);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {isPending = false, holdAffordance} = props as ActionButtonContextProps;
@@ -351,7 +352,7 @@ export const ActionButton = forwardRef(function ActionButton(
   let {isProgressVisible} = usePendingState(isPending);
   let {direction} = useLocale();
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <RACButton
       {...props}
@@ -506,5 +507,5 @@ export const ActionButton = forwardRef(function ActionButton(
       )}
     </RACButton>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 });

@@ -53,7 +53,7 @@ export const Grid = forwardRef(function Grid(props: GridProps, ref: DOMRef<HTMLD
   let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
   if (styleProps.style) {
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/immutability
     styleProps.style.display = 'grid'; // inline-grid?
   }
   let domRef = useDOMRef(ref);

@@ -284,7 +284,6 @@ function MultipleInner() {
 }
 
 function IframeExample() {
-  // oxlint-disable-next-line react/react-compiler
   let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
@@ -346,7 +345,7 @@ function IframeExample() {
 
   useEffect(() => {
     let onMessage = (e: MessageEvent) => {
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/immutability
       let iframe = ref.current!;
       if (e.data.type === 'landmark-navigation') {
         // Move focus to the iframe so that when focus is restored there, and we can redirect it back inside (below).

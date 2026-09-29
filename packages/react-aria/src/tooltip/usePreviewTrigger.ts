@@ -185,6 +185,7 @@ export function usePreviewTrigger(
   let {hoverProps} = useHover({isDisabled, onHoverStart, onHoverEnd});
   let focusableProps = {
     onFocus: onTriggerFocus,
+    // oxlint-disable-next-line react-hooks/rules-of-hooks
     onBlur: checkClose,
     onKeyDown: onTriggerKeyDown
   };
@@ -226,14 +227,16 @@ export function usePreviewTrigger(
       }
       pointerInSafeArea.current = isInSafeArea;
       if (isInSafeArea) {
+        // oxlint-disable-next-line react-hooks/rules-of-hooks
         keepOpen();
       } else {
+        // oxlint-disable-next-line react-hooks/rules-of-hooks
         checkClose();
       }
     }
   });
 
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/refs
   let triggerProps = mergeProps(focusableProps, hoverProps, longPressProps);
   let describedBy = [triggerProps['aria-describedby'], state.isOpen ? popoverId : null]
     .filter(Boolean)
@@ -254,7 +257,9 @@ export function usePreviewTrigger(
     },
     popoverProps: {
       id: popoverId,
+      // oxlint-disable-next-line react-hooks/rules-of-hooks
       onFocusWithin: keepOpen,
+      // oxlint-disable-next-line react-hooks/rules-of-hooks
       onBlurWithin: checkClose
     }
   };

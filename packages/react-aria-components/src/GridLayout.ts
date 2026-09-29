@@ -21,9 +21,9 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
 {
   // Automatically determine the layout direction from the current locale.
   useLayoutOptions(): GridLayoutOptions {
-    // oxlint-disable react/react-compiler, react-hooks/rules-of-hooks
+    // oxlint-disable react-hooks/rules-of-hooks
     let {direction} = useLocale();
     return useMemo(() => ({direction}), [direction]);
-    // oxlint-enable react/react-compiler, react-hooks/rules-of-hooks
+    // oxlint-enable react-hooks/rules-of-hooks
   }
 }

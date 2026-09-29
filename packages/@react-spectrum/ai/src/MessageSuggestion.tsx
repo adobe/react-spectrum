@@ -110,7 +110,7 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
   let {groupSize} = useContext(MessageSuggestionContext);
   size = groupSize ? groupSize : size;
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <RACButton
       {...filterDOMProps(props, {labelable: true})}
@@ -140,7 +140,7 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
       </Provider>
     </RACButton>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 });
 
 export interface MessageSuggestionListProps extends DOMProps, AriaLabelingProps, SlotProps {

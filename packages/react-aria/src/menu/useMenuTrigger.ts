@@ -144,7 +144,7 @@ export function useMenuTrigger<T>(
   };
 
   // omit onPress from triggerProps since we override it above.
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   delete triggerProps.onPress;
 
   let {contextMenuProps} = useContextMenu({

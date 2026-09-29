@@ -90,9 +90,9 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element | null {
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
   // but when sent by context we want the title to win.
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   triggerProps.id = useId();
-  // oxlint-disable-next-line react/react-compiler
+  // oxlint-disable-next-line react/immutability
   overlayProps['aria-labelledby'] = triggerProps.id;
 
   // If within a collection (e.g. Tabs), render nothing.

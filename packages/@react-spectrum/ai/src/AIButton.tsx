@@ -246,7 +246,7 @@ export function AIButton({size = 'M', brandColor, children, ...otherProps}: AIBu
       {...otherProps}
       ref={ref}
       className={renderProps => bg + button({size, ...renderProps})}
-      // eslint-disable-next-line react/react-compiler
+      // eslint-disable-next-line react/refs
       style={pressScale(ref, {'--brand': brandColor} as CSSProperties)}>
       <IconContext.Provider value={{styles: style({size: fontRelative(16), flexShrink: 0})}}>
         <AIIcon />

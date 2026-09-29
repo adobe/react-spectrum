@@ -272,6 +272,7 @@ export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
       startingRef.current = false;
       if (micError) {
         setErrorCode(micError);
+        // oxlint-disable-next-line react-hooks/rules-of-hooks
         handleError(micError);
         return;
       }
@@ -283,7 +284,9 @@ export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
       const recognition = createRecognizer(ctor, lang ?? navigator.language ?? 'en-US', {
         recognitionRef,
         setListening: setIsListening,
+        // oxlint-disable-next-line react-hooks/rules-of-hooks
         onListeningChange: handleListeningChange,
+        // oxlint-disable-next-line react-hooks/rules-of-hooks
         onError: handleError,
         setError: setErrorCode,
         setInterim: setInterimTranscript,
@@ -292,7 +295,7 @@ export const useVoiceInput = (options: VoiceInputProps): VoiceInputResult => {
       recognitionRef.current = recognition;
       recognition.start();
     });
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps, react-hooks/rules-of-hooks
   }, [ctor, lang, handleError, handleListeningChange]);
 
   const toggle = useCallback(() => {

@@ -383,7 +383,7 @@ const SideNavInternalItemContext = createContext<{setLinkPressed?: (isPressed: b
 export const SideNavItem = (props: SideNavItemProps): ReactNode => {
   let [isLinkPressed, setLinkPressed] = useState(false);
   let rowRef = useRef<HTMLDivElement | null>(null);
-  // oxlint-disable-next-line react-compiler
+  // oxlint-disable-next-line react-compiler, react/refs
   let scaling = pressScale(rowRef);
   let viewTransitions = useContext(SideNavViewTransitionContext);
 

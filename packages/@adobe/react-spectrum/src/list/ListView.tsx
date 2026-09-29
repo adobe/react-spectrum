@@ -136,8 +136,7 @@ function useListLayout<T>(
       new ListViewLayout<T>({
         estimatedRowHeight: ROW_HEIGHTS[density || 'regular'][scale]
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [scale, density, overflowMode]
   );
 
@@ -192,13 +191,11 @@ export const ListView = React.forwardRef(function ListView<T extends object>(
   let dragState: DraggableCollectionState | null = null;
   let preview = useRef(null);
   if (isListDraggable && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection,
       selectionManager,
       preview
     });
-    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, domRef);
   }
   let layout = useListLayout(state, props.density || 'regular', overflowMode);
@@ -208,12 +205,10 @@ export const ListView = React.forwardRef(function ListView<T extends object>(
   let droppableCollection: DroppableCollectionResult | null = null;
   let isRootDropTarget = false;
   if (isListDroppable && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection,
       selectionManager
     });
-    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate: new ListKeyboardDelegate({

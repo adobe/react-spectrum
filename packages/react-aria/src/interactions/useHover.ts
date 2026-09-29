@@ -132,7 +132,6 @@ export function useHover(props: HoverProps): HoverResult {
             state.target &&
             !nodeContains(state.target, getEventTarget(e) as Element)
           ) {
-            // oxlint-disable-next-line react/react-compiler
             triggerHoverEnd(e, e.pointerType);
           }
         },

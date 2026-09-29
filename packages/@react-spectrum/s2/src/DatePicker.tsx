@@ -320,7 +320,7 @@ export function CalendarButton(props: {
 }): ReactElement {
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {isOpen, size, setButtonHasFocus} = props;
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <Button
       ref={buttonRef}
@@ -355,5 +355,5 @@ export function CalendarButton(props: {
       </Provider>
     </Button>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 }

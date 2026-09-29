@@ -77,7 +77,7 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
   // TODO: should we pass through lang and dir props in RAC?
   let modalRef = useCallback(
     (el: HTMLDivElement) => {
-      // oxlint-disable-next-line react/react-compiler
+      // oxlint-disable-next-line react/immutability
       (domRef as MutableRefObject<HTMLDivElement>).current = el;
       if (el) {
         el.lang = locale;

@@ -223,7 +223,7 @@ export function useColorWheel(
   let trackInteractions = isDisabled
     ? {}
     : mergeProps(
-        // oxlint-disable-next-line react/react-compiler
+        // oxlint-disable-next-line react/refs
         {
           ...(typeof PointerEvent !== 'undefined'
             ? {
@@ -260,7 +260,7 @@ export function useColorWheel(
   let thumbInteractions = isDisabled
     ? {}
     : mergeProps(
-        // oxlint-disable-next-line react/react-compiler
+        // oxlint-disable-next-line react/refs
         {
           ...(typeof PointerEvent !== 'undefined'
             ? {

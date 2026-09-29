@@ -244,7 +244,7 @@ export function useAutocomplete<T>(
 
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef(
-    // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/refs
     useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef])
   );
 

@@ -118,6 +118,7 @@ describe('TableView', () => {
         ...prevItem,
         isSaving: {...prevItem.isSaving, [columnId]: false}
       }));
+      // oxlint-disable-next-line react/immutability
       currentRequests.current.delete(id);
     });
     let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
@@ -571,6 +572,7 @@ describe('TableView', () => {
             ...prevItem,
             isSaving: {...prevItem.isSaving, [columnId]: false}
           }));
+          // oxlint-disable-next-line react/immutability
           currentRequests.current.delete(id);
         });
         let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());

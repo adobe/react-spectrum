@@ -262,7 +262,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
     '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
-  // oxlint-disable react/react-compiler
+  // oxlint-disable react/refs
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
       <dom.div
@@ -285,7 +285,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
       </dom.div>
     </Overlay>
   );
-  // oxlint-enable react/react-compiler
+  // oxlint-enable react/refs
 }
 
 interface ModalContentProps
