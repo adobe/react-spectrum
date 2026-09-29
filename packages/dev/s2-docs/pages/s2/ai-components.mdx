@@ -464,17 +464,39 @@ import {Alert, AttachmentGrid, AttachmentGridItem, AttachmentPreview, Chat, Thre
 import {prose} from '@react-spectrum/ai/style' with {type: 'macro'};
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
+let attachmentImages = [
+  {
+    name: 'Desert Sunset.png',
+    mimeType: 'image/png',
+    src: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  },
+  {
+    name: 'Hiking Trail.jpeg',
+    mimeType: 'image/jpeg',
+    src: 'https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  },
+  {
+    name: 'Lion.jpeg',
+    mimeType: 'image/jpeg',
+    src: 'https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  },
+  {
+    name: 'Mountain Sunrise.png',
+    mimeType: 'image/png',
+    src: 'https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  },
+  {
+    name: 'Peeking Leopard.jpeg',
+    mimeType: 'image/jpeg',
+    src: 'https://images.unsplash.com/photo-1456926631375-92c8ce872def?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  }
+];
+
 let messages = [
   {
     id: 1,
     type: 'user',
-    text: 'Summarize the campaign results.',
-    attachments: Array.from({length: 20}, (_, i) => ({
-      id: i + 1,
-      name: `campaign-results-${i + 1}.pdf`,
-      mimeType: 'application/pdf',
-      src: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-    }))
+    text: 'Summarize the campaign results.'
   },
   {
     id: 2,
@@ -514,6 +536,15 @@ let messages = [
   },
   {
     id: 6,
+    type: 'user',
+    text: 'I want to use the following images in future campaigns.',
+    attachments: Array.from({length: 20}, (_, i) => ({
+      id: i + 1,
+      ...attachmentImages[i % attachmentImages.length]
+    }))
+  },
+  {
+    id: 7,
     type: 'alert',
     variant: 'notice' as const,
     text: "This summary may be incomplete. The connected data source hasn't synced in 2 hours."
@@ -541,8 +572,8 @@ function BasicChat() {
                         {message.attachments && (
                           <AttachmentGrid
                             aria-label="Uploaded files"
-                            align="start"
-                            styles={style({width: 304, maxHeight: 96})}>
+                            align="end"
+                            styles={style({width: 380, maxHeight: 128})}>
                             {message.attachments.map(attachment => (
                               <AttachmentGridItem key={attachment.id} aria-label={attachment.name} textValue={attachment.name}>
                                 <AttachmentPreview

@@ -1172,13 +1172,15 @@ export interface ScrollFadeOptions {
  * @example
  *   import {scrollFade, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
- *   const styles = style({
- *     overflow: 'auto',
- *     ...scrollFade({y: 24})
- *   });
+ *   const styles =
+ *     style({
+ *       overflow: 'auto'
+ *     }) +
+ *     ' ' +
+ *     scrollFade({y: 24});
  *
  * @param options - Fade sizes (in px) per edge, or `x`/`y` shorthands for both edges on an axis.
- * @returns Style declarations to spread into a `style()` call.
+ * @returns A class name string to append to the result of `style()`.
  */
 export function scrollFade(this: MacroContext | void, options: ScrollFadeOptions) {
   let {x = 0, y = 0, top = y, bottom = y, start = x, end = x, inset = 0} = options;
