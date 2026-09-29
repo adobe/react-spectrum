@@ -16,6 +16,7 @@ import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions'
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
+import {isKeyboardOpen, willOpenKeyboard} from '../utils/keyboard';
 import {isScrollable} from '../utils/isScrollable';
 import {runAfterKeyboard, runAfterKeyboardTransition} from '../utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -177,10 +178,10 @@ function preventScrollMobileWebKit() {
   let onBlur = (e: FocusEvent) => {
     let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
-    if (relatedTarget) {
+    if (relatedTarget && willOpenKeyboard(relatedTarget)) {
       // Re-focus programmatically to have the override below perform the scroll.
       relatedTarget.focus();
-    } else {
+    } else if (!relatedTarget) {
       // When tapping the Done button on the keyboard, focus moves to the body.
       // FocusScope will then restore focus back to the input. Later when tapping
       // the same input again, it is already focused, so no blur event will fire,
@@ -200,7 +201,9 @@ function preventScrollMobileWebKit() {
       // Focus the element without scrolling the page.
       focus.call(this, {...opts, preventScroll: true});
 
-      if (!opts || !opts.preventScroll) {
+      // Only scroll when the keyboard is involved. Otherwise, scrolling would interfere
+      // with custom scroll positioning, e.g. sheet snap points.
+      if ((!opts || !opts.preventScroll) && (willOpenKeyboard(this) || isKeyboardOpen())) {
         let scroll = () => {
           let activeElement = getActiveElement();
 
