@@ -874,21 +874,6 @@ function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: 
 
   let label = stringFormatter.format(`sidepanel.${props.isCollapsed ? 'expand' : 'collapse'}`);
 
-  return (
-    <PanelToggleButton
-      isCollapsed={props.isCollapsed}
-      setCollapsed={props.setCollapsed}
-      aria-label={label}
-    />
-  );
-}
-
-function PanelToggleButton(
-  props: AriaLabelingProps & {
-    isCollapsed: boolean;
-    setCollapsed: (isCollapsed: boolean) => void;
-  }
-) {
   let {isCollapsed, setCollapsed, ...otherProps} = props;
   let [isHovered, setHovered] = useState(false);
   let {hoverProps} = useHover({onHoverChange: setHovered});
@@ -896,6 +881,7 @@ function PanelToggleButton(
     <div {...hoverProps} className={style({display: 'contents', marginBottom: 2})}>
       <ActionButton
         {...otherProps}
+        aria-label={label}
         isQuiet
         styles={style({alignSelf: 'start'})}
         onPress={() => {
