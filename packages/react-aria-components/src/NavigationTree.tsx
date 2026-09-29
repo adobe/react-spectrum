@@ -173,13 +173,7 @@ export interface NavigationTreeItemProps<T = object>
   extends
     Omit<
       TreeItemProps<T>,
-      | 'className'
-      | 'style'
-      | 'render'
-      | 'onAction'
-      | 'allowsArrowNavigation'
-      | 'focusMode'
-      | 'value'
+      'className' | 'style' | 'render' | 'onAction' | 'allowsArrowNavigation' | 'value'
     >,
     StyleRenderProps<NavigationTreeItemRenderProps> {
   /**
@@ -216,6 +210,7 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
       className,
       style,
       render,
+      focusMode,
       ...rest
     } = props;
     let {selectedRoute, treeRef} = useContext(InternalNavigationTreeContext);
@@ -266,7 +261,7 @@ export const NavigationTreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(
           {...rest}
           ref={objRef}
           href={href}
-          focusMode={hasLink ? 'child' : undefined}
+          focusMode={focusMode ?? (hasLink ? 'child' : undefined)}
           allowsArrowNavigation
           data-current={isCurrent || undefined}
           className={
