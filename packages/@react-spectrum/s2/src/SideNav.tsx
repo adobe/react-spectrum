@@ -744,6 +744,7 @@ const sidePanelStyle = style(
     display: 'flex',
     flexDirection: 'column',
     height: 'full',
+    minHeight: 0,
     // The expanded width is supplied by the consumer via the `styles` prop. When collapsed, SidePanel
     // applies an inline `width: var(--collapsedWidth)` (the fixed icon-rail size) which overrides that
     // class-based width.
@@ -857,7 +858,8 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
             flexShrink: 1,
             minHeight: 0,
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            height: 'full'
           })}>
           {children}
         </div>

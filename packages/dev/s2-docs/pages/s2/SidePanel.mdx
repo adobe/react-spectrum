@@ -207,8 +207,10 @@ import {SidePanelApp, AccountFooter} from './SidePanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import File from '@react-spectrum/s2/icons/File';
 import Files from '@react-spectrum/s2/icons/Files';
-import Folder from '@react-spectrum/s2/icons/Folder';
 import Images from '@react-spectrum/s2/icons/Images';
+import Archive from '@react-spectrum/s2/icons/Archive';
+import Images from '@react-spectrum/s2/icons/Images';
+import Folder from '@react-spectrum/s2/icons/Folder';
 
 ///- begin collapse -///
 interface Item {
@@ -229,6 +231,11 @@ let items: Item[] = [
   {id: 5, title: 'Photos', type: 'directory', href: '/photos', icon: Images, children: [
     {id: 6, title: 'Image 1', type: 'file', href: '/image-1'},
     {id: 7, title: 'Image 2', type: 'file', href: '/image-2'}
+  ]},
+  {id: 8, title: 'Archive', type: 'directory', href: '/archive', icon: Archive, children: [
+    {id: 9, title: 'Invoices', type: 'file', href: '/invoices'},
+    {id: 10, title: 'Contracts', type: 'file', href: '/contracts'},
+    {id: 11, title: 'Receipts', type: 'file', href: '/receipts'}
   ]}
 ];
 ///- end collapse -///
