@@ -150,7 +150,7 @@ export const description = 'An overlay that slides in from the edge of the scree
 
 ## Position
 
-The `position` prop determines which edge of the screen the sheet is anchored to, and the direction it can be swiped to dismiss. Use `left` or `right` to build a navigation drawer, `bottom` for a classic mobile sheet, or `top` for a notification-style banner.
+The `position` prop determines which edge of the screen the sheet is anchored to. `swipeDirection` controls the direction it can be swiped to dismiss, which defaults to the same as `position`. Use `left` or `right` to build a navigation drawer, `bottom` for a mobile sheet, or `top` for a notification-style banner.
 
 ```tsx render
 "use client";
