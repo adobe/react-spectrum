@@ -540,6 +540,39 @@ describe('ariaHideOutside', function () {
     revert();
     expect(row.parentElement).not.toHaveAttribute('aria-hidden', 'true');
   });
+
+  it('should hide elements within target owner document rather than global document', function () {
+    let iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    let iframeDoc = iframe.contentWindow.document;
+    let button = iframeDoc.createElement('button');
+    let checkbox = iframeDoc.createElement('input');
+    checkbox.type = 'checkbox';
+    iframeDoc.body.appendChild(button);
+    iframeDoc.body.appendChild(checkbox);
+
+    let mainCheckbox = document.createElement('input');
+    mainCheckbox.type = 'checkbox';
+    document.body.appendChild(mainCheckbox);
+
+    let revert = ariaHideOutside([button]);
+
+    expect(checkbox).toHaveAttribute('aria-hidden', 'true');
+    expect(button).not.toHaveAttribute('aria-hidden');
+    expect(mainCheckbox).not.toHaveAttribute('aria-hidden');
+    expect(iframe).not.toHaveAttribute('aria-hidden');
+
+    revert();
+
+    expect(checkbox).not.toHaveAttribute('aria-hidden');
+    expect(button).not.toHaveAttribute('aria-hidden');
+    expect(mainCheckbox).not.toHaveAttribute('aria-hidden');
+    expect(iframe).not.toHaveAttribute('aria-hidden');
+
+    iframe.remove();
+    mainCheckbox.remove();
+  });
 });
 
 describe('ariaHideOutside with shadow DOM', function () {
