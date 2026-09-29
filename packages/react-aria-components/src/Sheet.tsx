@@ -16,6 +16,7 @@ import React, {
   useSyncExternalStore
 } from 'react';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
 export interface SheetRenderProps extends ModalRenderProps {
   /**
@@ -362,8 +363,6 @@ interface SwipeConfig {
   enteredScroll: number;
   /** Offset of the scroll container along the swipe axis, in viewport percent. */
   containerOffset: number;
-  /** Total length of the scroll content along the swipe axis, in viewport percent. */
-  length: number;
   /** CSS animation range. */
   viewRange: 'cover' | 'exit' | 'entry';
   /** CSS animation direction. */
@@ -399,8 +398,6 @@ function getSwipeConfig(swipeDirection: SheetOverlayProps['swipeDirection']): Sw
   let enteredScroll = before && !after ? 0 : 100;
   // Position the container so the rest position lands in the real viewport.
   let containerOffset = before && !after ? -100 : 0;
-  // Content spans the stage plus a viewport of exit space on each exitable side.
-  let length = (2 + Number(before) + Number(after)) * 100;
 
   // The sheet crosses a single viewport edge (the swipe edge), so map the animation to just that
   // crossing. In view-timeline terms `entry` is the scrollport's end edge (bottom/right, where the
@@ -424,7 +421,6 @@ function getSwipeConfig(swipeDirection: SheetOverlayProps['swipeDirection']): Sw
     maxScroll,
     enteredScroll,
     containerOffset,
-    length,
     viewRange,
     viewDirection,
     viewIterations
@@ -453,7 +449,7 @@ function getPositionAlignment(position: NonNullable<SheetOverlayProps['position'
 
 interface SnapPointProps {
   point: number | string;
-  align: 'start' | 'end';
+  align: 'start' | 'end' | 'none';
   axis: Axis;
 }
 
@@ -538,7 +534,9 @@ export interface SheetProps
  * A Sheet is a swipeable overlay that slides in from the edge of the viewport.
  */
 export function Sheet(props: SheetProps) {
-  let ref = useRef(null);
+  let ref = useRef<HTMLDivElement>(null);
+  let scrollRef = useRef<HTMLDivElement>(null);
+  let stageRef = useRef<HTMLDivElement>(null);
   let {
     position = 'bottom',
     swipeDirection = position === 'center' ? 'vertical' : position,
@@ -546,9 +544,68 @@ export function Sheet(props: SheetProps) {
     index,
     descendants,
     isExpanded,
+    isEntering,
+    isExiting,
     isDismissable = true
   } = useContext(SheetContext)!;
-  let {axis, after, before, containerOffset, length} = getSwipeConfig(swipeDirection);
+  let {axis, after, before, containerOffset} = getSwipeConfig(swipeDirection);
+  let viewport = axis === 'y' ? '100dvh' : '100vw';
+
+  // A non-dismissable sheet can still be swiped between its snap points, but not past the smallest
+  // one. Enter/exit animations still need the exit space, so only clamp while settled.
+  let hasSnapPoints = !!snapPoints?.length && before !== after;
+  let isClamped = !isDismissable && !isEntering && !isExiting;
+  let sheetExtent = useSheetExtent(stageRef, ref, axis, before, !isDismissable && hasSnapPoints);
+
+  // Scroll travel between the smallest snap point and the fully revealed sheet. It is at least 1px
+  // so the scroll container remains scrollable, which lets the browser show its native overscroll
+  // bounce even when there is nowhere to snap to.
+  let clampedTravel = '1px';
+  if (hasSnapPoints) {
+    let points = snapPoints!.map(p => toLength(p, axis));
+    let minPoint = points.length > 1 ? `min(${points.join(', ')})` : points[0];
+    clampedTravel = `max(1px, calc(${sheetExtent}px - ${minPoint}))`;
+  }
+
+  // The stage normally sits 1 viewport in so the sheet can scroll fully off screen toward the start
+  // edge. When clamped, sheets exiting toward the end edge move it so scroll 0 rests at the smallest
+  // snap point. Sheets exiting toward the start edge rest at scroll 0 already, so only the end of
+  // the scroll content (the smallest snap point) moves. Dual direction sheets get 1px either side.
+  let stageStart = isClamped && after ? clampedTravel : viewport;
+  let endMarker: string;
+  if (isClamped && before && after) {
+    endMarker = `calc(${stageStart} + ${viewport} + 1px)`;
+  } else if (isClamped && before) {
+    endMarker = `calc(${clampedTravel} + ${viewport})`;
+  } else {
+    endMarker = `calc(${stageStart} + ${viewport}${before && after ? ` + ${viewport}` : ''})`;
+  }
+
+  // Keep the sheet visually in place when switching between the clamped and unclamped geometry.
+  // Scroll snapping is disabled while a non-dismissable sheet enters and exits so the browser
+  // doesn't re-snap when the geometry changes, which would otherwise differ between browsers.
+  let prevStageOffset = useRef<number | null>(null);
+  let prevClamped = useRef(isClamped);
+  useLayoutEffect(() => {
+    let stage = stageRef.current;
+    let scroller = scrollRef.current;
+    if (!stage || !scroller) {
+      return;
+    }
+    let offset = axis === 'y' ? stage.offsetTop : stage.offsetLeft;
+    if (prevClamped.current !== isClamped && prevStageOffset.current != null) {
+      let delta = offset - prevStageOffset.current;
+      if (delta !== 0) {
+        if (axis === 'y') {
+          scroller.scrollTop += delta;
+        } else {
+          scroller.scrollLeft += delta;
+        }
+      }
+    }
+    prevClamped.current = isClamped;
+    prevStageOffset.current = offset;
+  });
 
   let style: Record<string, string> = {
     // Positioned so the detent markers below anchor to the sheet's own box.
@@ -631,6 +688,7 @@ export function Sheet(props: SheetProps) {
 
   return (
     <div
+      ref={scrollRef}
       data-sheet-scroll
       style={{
         position: 'absolute',
@@ -639,23 +697,27 @@ export function Sheet(props: SheetProps) {
         // The container is 2 viewports along the swipe axis and 1 viewport on the cross axis.
         height: axis === 'y' ? '200dvh' : '100dvh',
         width: axis === 'x' ? '200vw' : '100vw',
-        overflowX: axis === 'x' && isDismissable ? 'auto' : 'hidden',
-        overflowY: axis === 'y' && isDismissable ? 'auto' : 'hidden',
-        scrollSnapType: `${axis} mandatory`,
+        overflowX: axis === 'x' ? 'auto' : 'hidden',
+        overflowY: axis === 'y' ? 'auto' : 'hidden',
+        // Snapping is only disabled when the geometry changes. Changing it during a swipe to dismiss
+        // cancels the momentum scroll in Safari without firing scrollend, which onExit waits for.
+        scrollSnapType: !isDismissable && (isEntering || isExiting) ? 'none' : `${axis} mandatory`,
         overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
         overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
         scrollbarWidth: 'none'
       }}>
-      {/* Snap marker for the exit at scroll 0 (also the rest position for top/left). */}
-      <SnapPoint point={0} align="start" axis={axis} />
+      {/* Snap marker for the exit at scroll 0 (also the rest position for top/left).
+        When clamped, the exit positions are unreachable so they are not snap targets. */}
+      <SnapPoint point={0} align={isClamped && after ? 'none' : 'start'} axis={axis} />
       {/* When the sheet can exit both ways, add a center snap for the rest position. */}
-      {before && after && <SnapPoint point={100} align="start" axis={axis} />}
+      {before && after && <SnapPoint point={stageStart} align="start" axis={axis} />}
       <div
+        ref={stageRef}
         style={{
           position: 'absolute',
-          // The stage sits 1 viewport into the content along the swipe axis.
-          top: axis === 'y' ? '100dvh' : 0,
-          left: axis === 'x' ? '100vw' : 0,
+          // The stage normally sits 1 viewport into the content along the swipe axis.
+          top: axis === 'y' ? stageStart : 0,
+          left: axis === 'x' ? stageStart : 0,
           height: '100dvh',
           width: '100vw',
           display: 'flex',
@@ -703,9 +765,49 @@ export function Sheet(props: SheetProps) {
         </Modal>
       </div>
       {/* Snap marker for the exit at the far end of the scroll content. */}
-      <SnapPoint point={length - 100} align="end" axis={axis} />
+      <SnapPoint point={endMarker} align={isClamped && before ? 'none' : 'end'} axis={axis} />
     </div>
   );
+}
+
+// Measures the distance from the sheet's leading edge to the stage's exit edge along the swipe axis,
+// i.e. how much of the sheet is visible when fully entered. Uses layout offsets rather than
+// bounding rects so swipe/stack animation transforms don't affect it.
+function useSheetExtent(
+  stageRef: React.RefObject<HTMLDivElement | null>,
+  sheetRef: React.RefObject<HTMLDivElement | null>,
+  axis: Axis,
+  before: boolean,
+  isEnabled: boolean
+): number {
+  let [extent, setExtent] = useState(0);
+  useLayoutEffect(() => {
+    let stage = stageRef.current;
+    let sheet = sheetRef.current;
+    if (!isEnabled || !stage || !sheet) {
+      return;
+    }
+
+    let measure = () => {
+      let offset = 0;
+      let el: HTMLElement | null = sheet;
+      while (el && el !== stage) {
+        offset += axis === 'y' ? el.offsetTop : el.offsetLeft;
+        el = el.offsetParent as HTMLElement | null;
+      }
+      let size = axis === 'y' ? sheet.offsetHeight : sheet.offsetWidth;
+      let stageSize = axis === 'y' ? stage.clientHeight : stage.clientWidth;
+      setExtent(before ? offset + size : stageSize - offset);
+    };
+
+    measure();
+    let observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    observer.observe(sheet);
+    return () => observer.disconnect();
+  }, [stageRef, sheetRef, axis, before, isEnabled]);
+
+  return extent;
 }
 
 export interface SheetBackdropProps
