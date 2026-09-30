@@ -95,7 +95,7 @@ export const SharedElement = forwardRef(function SharedElement(
   useLayoutEffect(() => {
     let element = ref.current;
     let scope = scopeRef.current;
-    let prevSnapshot = scope[name];
+    let prevSnapshot: Snapshot | undefined = scope[name];
     let frame: number | null = null;
     let restoreStyles: (() => void) | null = null;
     // StrictMode re-runs this effect on the same instance. Ignore async work from the

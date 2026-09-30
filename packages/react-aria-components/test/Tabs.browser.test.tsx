@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {useLayoutEffect} from '@react-aria/utils';
 import {expect, it} from 'vitest';
 import {hydrateRoot} from 'react-dom/client';
 import React, {StrictMode, useEffect, useRef} from 'react';
@@ -18,6 +17,7 @@ import {render} from 'vitest-browser-react';
 import {renderToString} from 'react-dom/server.browser';
 import {SelectionIndicator} from '../src/SelectionIndicator';
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
+import {useLayoutEffect} from '@react-aria/utils';
 import {User} from '@react-aria/test-utils';
 
 function TabsExample() {
