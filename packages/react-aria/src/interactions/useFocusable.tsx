@@ -102,6 +102,7 @@ function validateFocusableElement(el: FocusableElement | null, isDisabled?: bool
       role !== 'application' &&
       role !== 'button' &&
       role !== 'checkbox' &&
+      role !== 'columnheader' &&
       role !== 'combobox' &&
       role !== 'gridcell' &&
       role !== 'link' &&
@@ -110,6 +111,7 @@ function validateFocusableElement(el: FocusableElement | null, isDisabled?: bool
       role !== 'menuitemradio' &&
       role !== 'option' &&
       role !== 'radio' &&
+      role !== 'row' &&
       role !== 'searchbox' &&
       role !== 'separator' &&
       role !== 'slider' &&
