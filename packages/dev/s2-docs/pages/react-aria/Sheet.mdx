@@ -47,11 +47,11 @@ export const description = 'An overlay that slides in from the edge of the scree
           <div style={{display: 'flex', flexDirection: 'column', minHeight: '100%'}}>
             <Heading slot="title">Your order</Heading>
             <p style={{margin: '0 0 20px', color: 'var(--gray-1000)'}}>Delivering from Bao Bros · 25–35 min</p>
-            <div style={{display: 'flex', flexDirection: 'column', gap: 16, flexGrow: 1}}>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 'var(--spacing-4)', flexGrow: 1}}>
               {items.map(item => (
-                <div key={item.name} style={{display: 'flex', alignItems: 'center', gap: 12}}>
-                  <span style={{width: 56, height: 56, borderRadius: 12, background: 'var(--gray-200)', fontSize: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>{item.emoji}</span>
-                  <div style={{display: 'flex', alignItems: 'center', columnGap: 12, rowGap: 4, flexWrap: 'wrap', flexGrow: 1}}>
+                <div key={item.name} style={{display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)'}}>
+                  <span style={{width: 'calc(15 * var(--spacing))', height: 'calc(15 * var(--spacing))', borderRadius: 12, background: 'var(--gray-200)', fontSize: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>{item.emoji}</span>
+                  <div style={{display: 'flex', alignItems: 'center', columnGap: 'var(--spacing-3)', rowGap: 4, flexWrap: 'wrap', flexGrow: 1}}>
                     <div style={{flexGrow: 100, minWidth: 0}}>
                       <div style={{fontWeight: 600}}>{item.name}</div>
                       <div style={{fontSize: 12, color: 'var(--gray-1000)'}}>{item.detail}</div>
