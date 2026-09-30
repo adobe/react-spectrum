@@ -715,21 +715,7 @@ const executionTraceItemDividerEntranceStyles = style({
     default: 1,
     '@starting-style': 0
   }
-})
-
-// const executionTraceItemEntranceStyles = style({
-//   transition: '[opacity, translate]',
-//   transitionDuration: `[${EXECUTION_TRACE_ITEM_TRANSITION_DURATION}ms, 310ms]`,
-//   transitionTimingFunction: `[cubic-bezier(0.45, 0, 0.4, 1), ${EXECUTION_TRACE_ITEM_TIMING_FUNCTION}]`,
-//   opacity: {
-//     default: 1,
-//     '@starting-style': 0
-//   },
-//   translateY: {
-//     default: 0,
-//     '@starting-style': size(6)
-//   }
-// });
+});
 
 // Extra wrapper for padding to avoid transition jump
 const executationTradeDetailWrapperStyle = style({
@@ -837,7 +823,13 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
               </svg>
             ))}
         </CenterBaseline>
-        <div role="presentation" className={mergeStyles(executionTraceItemDividerStyles, hasEntered ? undefined : executionTraceItemDividerEntranceStyles)} />
+        <div
+          role="presentation"
+          className={mergeStyles(
+            executionTraceItemDividerStyles,
+            hasEntered ? undefined : executionTraceItemDividerEntranceStyles
+          )}
+        />
       </div>
       {hasDetail ? (
         <RACDisclosure className="" onExpandedChange={onExpandedChange}>
