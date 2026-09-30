@@ -12,13 +12,13 @@ import React, {
   useContext,
   useMemo,
   useRef,
-  useState,
-  useSyncExternalStore
+  useState
 } from 'react';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useId} from 'react-aria/useId';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 type SheetPosition = 'bottom' | 'top' | 'left' | 'right' | 'center';
 type SheetSwipeDirection = 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
