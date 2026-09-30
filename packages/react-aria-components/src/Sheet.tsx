@@ -7,6 +7,7 @@ import {Modal, ModalOverlay, ModalOverlayProps, ModalRenderProps} from './Modal'
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {
   createContext,
+  CSSProperties,
   useCallback,
   useContext,
   useId,
@@ -101,6 +102,8 @@ export interface SheetOverlayProps
   isDismissable?: boolean;
 }
 
+type SheetValues = Omit<SheetRenderProps, keyof ModalRenderProps>;
+
 interface SheetContextValue extends Omit<SheetOverlayProps, 'position' | 'swipeDirection'> {
   position: SheetPosition;
   swipeDirection: SheetSwipeDirection;
@@ -108,7 +111,7 @@ interface SheetContextValue extends Omit<SheetOverlayProps, 'position' | 'swipeD
   descendants: SheetStackEntry[];
   isEntering: boolean;
   isExiting: boolean;
-  isExpanded: boolean;
+  values: SheetValues;
 }
 
 const SheetContext = createContext<SheetContextValue | null>(null);
@@ -164,7 +167,7 @@ const supportsViewTimeline =
  * A SheetOverlay is a container for a SheetBackdrop and a Sheet.
  */
 export function SheetOverlay(props: SheetOverlayProps) {
-  let {children, isDismissable = true, style} = props;
+  let {children, isDismissable = true} = props;
   let {direction} = useLocale();
   let position = resolveDirection(props.position ?? 'bottom', direction);
   let swipeDirection = props.swipeDirection
@@ -241,49 +244,32 @@ export function SheetOverlay(props: SheetOverlayProps) {
     sheetStack.findIndex(e => e.id === id)
   );
   let descendants = sheetStack.slice(index + 1);
-  let baseRenderProps = {
+  let values: SheetValues = {
     position,
     swipeDirection,
     isExpanded,
     stackIndex: index,
     hasDescendants: descendants.length > 0
   };
+  let sheetProps = useSheetRenderProps(props, values, 'react-aria-SheetOverlay', {
+    // absolute rather than fixed so the modal is not clipped by iOS Safari.
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 'max(var(--page-width), 100vw)',
+    height: 'max(var(--page-height), 100dvh)',
+    overflow: 'clip',
+    // @ts-ignore
+    '--sheet-scroll-padding-x': 'calc(100vw - var(--visual-viewport-width))',
+    '--sheet-scroll-padding-y': 'calc(100dvh - var(--visual-viewport-height))'
+  });
 
   return (
     <ModalOverlay
       {...props}
       ref={ref}
       isDismissable={isDismissable}
-      data-position={position}
-      data-swipe-direction={swipeDirection}
-      data-expanded={isExpanded || undefined}
-      data-stack-index={index}
-      data-has-descendants={descendants.length > 0 || undefined}
-      render={
-        props.render
-          ? (domProps, renderProps) => props.render!(domProps, {...renderProps, ...baseRenderProps})
-          : undefined
-      }
-      className={renderProps =>
-        props.className
-          ? typeof props.className === 'function'
-            ? props.className({...renderProps, ...baseRenderProps})
-            : props.className
-          : 'react-aria-SheetOverlay'
-      }
-      style={renderProps => ({
-        // absolute rather than fixed so the modal is not clipped by iOS Safari.
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: 'max(var(--page-width), 100vw)',
-        height: 'max(var(--page-height), 100dvh)',
-        overflow: 'clip',
-        // @ts-ignore
-        '--sheet-scroll-padding-x': 'calc(100vw - var(--visual-viewport-width))',
-        '--sheet-scroll-padding-y': 'calc(100dvh - var(--visual-viewport-height))',
-        ...(typeof style === 'function' ? style({...renderProps, ...baseRenderProps}) : style)
-      })}
+      {...sheetProps}
       onEnter={element => {
         // The overlay is the document-anchored wrapper; the swipe gesture scrolls the inner container.
         let scroller = element.querySelector<HTMLElement>('[data-sheet-scroll]')!;
@@ -360,15 +346,51 @@ export function SheetOverlay(props: SheetOverlayProps) {
             descendants,
             isEntering: renderProps.isEntering,
             isExiting: renderProps.isExiting,
-            isExpanded
+            values
           }}>
-          {typeof children === 'function'
-            ? children({...renderProps, ...baseRenderProps})
-            : children}
+          {typeof children === 'function' ? children({...renderProps, ...values}) : children}
         </SheetContext.Provider>
       )}
     </ModalOverlay>
   );
+}
+
+function getDataAttributes(values: SheetValues) {
+  return {
+    'data-position': values.position,
+    'data-swipe-direction': values.swipeDirection,
+    'data-expanded': values.isExpanded || undefined,
+    'data-stack-index': values.stackIndex,
+    'data-has-descendants': values.hasDescendants || undefined
+  };
+}
+
+// Merges the sheet-specific values into the render props, className, and style of a Modal or ModalOverlay.
+function useSheetRenderProps(
+  props: RenderProps<SheetRenderProps>,
+  values: SheetValues,
+  defaultClassName: string,
+  defaultStyle: CSSProperties,
+  overrideStyle?: CSSProperties
+) {
+  return {
+    ...getDataAttributes(values),
+    render: props.render
+      ? (domProps: React.JSX.IntrinsicElements['div'], renderProps: ModalRenderProps) =>
+          props.render!(domProps, {...renderProps, ...values})
+      : undefined,
+    className: (renderProps: ModalRenderProps & {defaultClassName: string | undefined}) =>
+      typeof props.className === 'function'
+        ? props.className({...renderProps, ...values})
+        : props.className || defaultClassName,
+    style: (renderProps: ModalRenderProps & {defaultStyle: CSSProperties}) => ({
+      ...defaultStyle,
+      ...(typeof props.style === 'function'
+        ? props.style({...renderProps, ...values})
+        : props.style),
+      ...overrideStyle
+    })
+  };
 }
 
 function resolveDirection<T extends string>(
@@ -463,25 +485,14 @@ function getSwipeConfig(swipeDirection: SheetSwipeDirection): SwipeConfig {
   };
 }
 
-// Maps a sheet position to its resting alignment on each axis, independent of the swipe direction.
-function getPositionAlignment(position: SheetPosition): {
-  x: string;
-  y: string;
-} {
-  switch (position) {
-    case 'top':
-      return {x: 'center', y: 'flex-start'};
-    case 'bottom':
-      return {x: 'center', y: 'flex-end'};
-    case 'left':
-      return {x: 'flex-start', y: 'center'};
-    case 'right':
-      return {x: 'flex-end', y: 'center'};
-    case 'center':
-    default:
-      return {x: 'center', y: 'center'};
-  }
-}
+// The resting [x, y] flex alignment for each sheet position, independent of the swipe direction.
+const POSITION_ALIGNMENT: Record<SheetPosition, [string, string]> = {
+  top: ['center', 'flex-start'],
+  bottom: ['center', 'flex-end'],
+  left: ['flex-start', 'center'],
+  right: ['flex-end', 'center'],
+  center: ['center', 'center']
+};
 
 interface SnapPointProps {
   point: number | string;
@@ -579,10 +590,10 @@ export function Sheet(props: SheetProps) {
     snapPoints,
     index,
     descendants,
-    isExpanded,
     isEntering,
     isExiting,
-    isDismissable = true
+    isDismissable = true,
+    values
   } = useContext(SheetContext)!;
   let {direction} = useLocale();
   let {axis, after, before, containerOffset} = getSwipeConfig(swipeDirection);
@@ -675,53 +686,26 @@ export function Sheet(props: SheetProps) {
   Object.assign(style, swipeAnimation);
 
   if (props.stackAnimation && descendants.length > 0 && supportsViewTimeline) {
-    let append = (a: string | undefined, b: string) => (a ? `${a}, ${b}` : b);
-    style.animationName = append(
-      style.animationName,
-      descendants.map(() => props.stackAnimation).join(', ')
-    );
-    // @ts-ignore
-    style.animationTimeline = append(
-      style.animationTimeline,
-      descendants.map((_, i) => `--sheet-timeline-${index + 1 + i}`).join(', ')
-    );
-    style.animationDirection = append(
-      style.animationDirection,
-      descendants.map(d => `${d.direction}`).join(', ')
-    );
-    style.animationIterationCount = append(
-      style.animationIterationCount,
-      descendants.map(d => `${d.iterations}`).join(', ')
-    );
-    style.animationFillMode = append(
-      style.animationFillMode,
-      descendants.map(() => 'both').join(', ')
-    );
-    style.animationRange = append(
-      style.animationRange,
-      descendants.map(d => `${d.range}`).join(', ')
-    );
-    style.animationComposition = append(
-      style.animationComposition,
-      descendants.map(() => 'accumulate').join(', ')
-    );
-    style.animationTimingFunction = append(
-      style.animationTimingFunction,
-      descendants.map(() => 'linear').join(', ')
-    );
+    // Append one animation per descendant sheet, driven by that descendant's view timeline.
+    let stackStyle: Record<string, (d: SheetStackEntry, i: number) => string> = {
+      animationName: () => props.stackAnimation!,
+      animationTimeline: (_, i) => `--sheet-timeline-${index + 1 + i}`,
+      animationDirection: d => d.direction,
+      animationIterationCount: d => String(d.iterations),
+      animationFillMode: () => 'both',
+      animationRange: d => d.range,
+      animationComposition: () => 'accumulate',
+      animationTimingFunction: () => 'linear'
+    };
+    for (let [key, value] of Object.entries(stackStyle)) {
+      style[key] = [style[key], ...descendants.map(value)].filter(Boolean).join(', ');
+    }
   }
 
-  let baseRenderProps = {
-    position,
-    swipeDirection,
-    isExpanded,
-    stackIndex: index,
-    hasDescendants: descendants.length > 0
-  };
-
-  let alignment = getPositionAlignment(position);
-  let justifyContent = axis === 'y' ? alignment.y : alignment.x;
-  let alignItems = axis === 'y' ? alignment.x : alignment.y;
+  let sheetProps = useSheetRenderProps(props, values, 'react-aria-Sheet', {direction}, style);
+  let [x, y] = POSITION_ALIGNMENT[position];
+  let justifyContent = axis === 'y' ? y : x;
+  let alignItems = axis === 'y' ? x : y;
 
   return (
     <div
@@ -765,41 +749,14 @@ export function Sheet(props: SheetProps) {
           alignItems,
           justifyContent
         }}>
-        <Modal
-          {...props}
-          ref={ref}
-          data-position={position}
-          data-swipe-direction={swipeDirection}
-          data-expanded={isExpanded || undefined}
-          data-stack-index={index}
-          data-has-descendants={descendants.length > 0 || undefined}
-          render={
-            props.render
-              ? (domProps, renderProps) =>
-                  props.render!(domProps, {...renderProps, ...baseRenderProps})
-              : undefined
-          }
-          className={renderProps =>
-            props.className
-              ? typeof props.className === 'function'
-                ? props.className({...renderProps, ...baseRenderProps})
-                : props.className
-              : 'react-aria-Sheet'
-          }
-          style={renderProps => ({
-            direction,
-            ...(typeof props.style === 'function'
-              ? props.style({...renderProps, ...baseRenderProps})
-              : props.style),
-            ...style
-          })}>
+        <Modal {...props} ref={ref} {...sheetProps}>
           {renderProps => (
             <>
               {snapPoints?.map((point, i) => (
                 <DetentPoint key={i} point={point} axis={axis} after={after} isInitial={i === 0} />
               ))}
               {typeof props.children === 'function'
-                ? props.children({...renderProps, ...baseRenderProps})
+                ? props.children({...renderProps, ...values})
                 : props.children}
             </>
           )}
@@ -874,34 +831,20 @@ export interface SheetBackdropProps
  */
 export function SheetBackdrop(props: SheetBackdropProps) {
   let style = useSwipeAnimation(props);
-  let {position, swipeDirection, index, descendants, isExpanded, isEntering, isExiting} =
-    useContext(SheetContext)!;
+  let {values, isEntering, isExiting} = useContext(SheetContext)!;
   let state = useContext(OverlayTriggerStateContext)!;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SheetBackdrop',
     defaultStyle: {...style, position: 'absolute', inset: 0},
-    values: {
-      position,
-      swipeDirection,
-      stackIndex: index,
-      hasDescendants: descendants.length > 0,
-      isExpanded,
-      isEntering,
-      isExiting,
-      state
-    }
+    values: {...values, isEntering, isExiting, state}
   });
 
   return (
     <div
       {...filterDOMProps(props, {global: true})}
       {...renderProps}
-      data-position={position}
-      data-swipe-direction={swipeDirection}
-      data-stack-index={index}
-      data-has-descendants={descendants.length > 0 || undefined}
-      data-expanded={isExpanded || undefined}
+      {...getDataAttributes(values)}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}
     />
