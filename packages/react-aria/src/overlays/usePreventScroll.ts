@@ -181,7 +181,7 @@ function preventScrollMobileWebKit() {
     if (relatedTarget && willOpenKeyboard(relatedTarget)) {
       // Re-focus programmatically to have the override below perform the scroll.
       relatedTarget.focus();
-    } else {
+    } else if (!relatedTarget) {
       // When tapping the Done button on the keyboard, focus moves to the body.
       // FocusScope will then restore focus back to the input. Later when tapping
       // the same input again, it is already focused, so no blur event will fire,
