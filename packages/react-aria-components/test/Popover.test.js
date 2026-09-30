@@ -18,8 +18,8 @@ import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
-import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {Select, SelectValue} from '../src/Select';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
 
 let TestPopover = props => (
