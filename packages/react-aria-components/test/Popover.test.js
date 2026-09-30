@@ -13,11 +13,13 @@
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {Dialog, DialogTrigger} from '../src/Dialog';
+import {ListBox, ListBoxItem} from '../src/ListBox';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import {Pressable} from 'react-aria/Pressable';
 import React, {useRef} from 'react';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
+import {Select, SelectValue} from '../src/Select';
 import userEvent from '@testing-library/user-event';
 
 let TestPopover = props => (
@@ -148,6 +150,40 @@ describe('Popover', () => {
     fireEvent.mouseUp(document.body, {button: 0});
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('should not leak PopoverContext to nested popovers', () => {
+    function NestedPopover() {
+      let triggerRef = useRef(null);
+      return (
+        <>
+          <button ref={triggerRef}>anchor</button>
+          <Popover triggerRef={triggerRef} isOpen isNonModal data-testid="nested">
+            {({trigger}) => `nested trigger=${String(trigger)}`}
+          </Popover>
+        </>
+      );
+    }
+
+    let {getByTestId} = render(
+      <Select aria-label="Select" defaultOpen>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover data-testid="outer">
+          <ListBox>
+            <ListBoxItem id="a">a</ListBoxItem>
+          </ListBox>
+          <NestedPopover />
+        </Popover>
+      </Select>
+    );
+
+    expect(getByTestId('outer')).toHaveAttribute('data-trigger', 'Select');
+    let nested = getByTestId('nested');
+    expect(nested).toHaveTextContent('nested trigger=null');
+    expect(nested).not.toHaveAttribute('data-trigger');
+    expect(nested).not.toHaveAttribute('aria-labelledby');
   });
 
   it('isOpen and defaultOpen should override state from context', () => {

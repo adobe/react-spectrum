@@ -306,7 +306,12 @@ function PopoverInner({
         children = <Context.Provider value={null}>{children}</Context.Provider>;
       }
     }
-    return children;
+
+    return (
+      <PopoverContext.Provider value={null}>
+        {children}
+      </PopoverContext.Provider>
+    );
   }, [renderProps.children, clearContexts]);
 
   let [triggerWidth, setTriggerWidth] = useState<string | null>(null);
