@@ -23,13 +23,13 @@ export default {
     position: {
       control: {
         type: 'inline-radio',
-        options: ['bottom', 'top', 'left', 'right', 'center']
+        options: ['bottom', 'top', 'left', 'right', 'start', 'end', 'center']
       }
     },
     swipeDirection: {
       control: {
         type: 'inline-radio',
-        options: ['bottom', 'top', 'left', 'right', 'vertical', 'horizontal']
+        options: ['bottom', 'top', 'left', 'right', 'start', 'end', 'vertical', 'horizontal']
       }
     }
   }

@@ -17,20 +17,26 @@ import React, {
 } from 'react';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
+
+type SheetPosition = 'bottom' | 'top' | 'left' | 'right' | 'center';
+type SheetSwipeDirection = 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
 
 export interface SheetRenderProps extends ModalRenderProps {
   /**
-   * The placement of the sheet on the screen.
+   * The placement of the sheet on the screen. `start` and `end` are resolved to `left` or `right`
+   * based on the locale direction.
    *
    * @selector [data-position="bottom | top | left | right | center"]
    */
-  position: 'bottom' | 'top' | 'left' | 'right' | 'center';
+  position: SheetPosition;
   /**
-   * The direction the sheet can be swiped.
+   * The direction the sheet can be swiped. `start` and `end` are resolved to `left` or `right`
+   * based on the locale direction.
    *
    * @selector [data-swipe-direction="bottom | top | vertical | left | right | horizontal"]
    */
-  swipeDirection: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
+  swipeDirection: SheetSwipeDirection;
   /**
    * The index of the sheet in the stack.
    *
@@ -63,13 +69,25 @@ export interface SheetOverlayProps
    */
   className?: ClassNameOrFunction<SheetRenderProps>;
   /**
-   * The placement of the sheet on the screen.
+   * The placement of the sheet on the screen. `start` and `end` are mirrored in right-to-left
+   * locales.
    *
    * @default 'bottom'
    */
-  position?: 'bottom' | 'top' | 'left' | 'right' | 'center';
-  /** The direction the sheet can be swiped. */
-  swipeDirection?: 'bottom' | 'top' | 'vertical' | 'left' | 'right' | 'horizontal';
+  position?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end' | 'center';
+  /**
+   * The direction the sheet can be swiped. `start` and `end` are mirrored in right-to-left locales.
+   * Defaults to the same direction as `position`.
+   */
+  swipeDirection?:
+    | 'bottom'
+    | 'top'
+    | 'vertical'
+    | 'left'
+    | 'right'
+    | 'start'
+    | 'end'
+    | 'horizontal';
   /**
    * Snap points the sheet will stop at, expressed as the amount of the sheet that is visible.
    * Sheets initially open to the first snap point.
@@ -83,7 +101,9 @@ export interface SheetOverlayProps
   isDismissable?: boolean;
 }
 
-interface SheetContextValue extends SheetOverlayProps {
+interface SheetContextValue extends Omit<SheetOverlayProps, 'position' | 'swipeDirection'> {
+  position: SheetPosition;
+  swipeDirection: SheetSwipeDirection;
   index: number;
   descendants: SheetStackEntry[];
   isEntering: boolean;
@@ -144,13 +164,14 @@ const supportsViewTimeline =
  * A SheetOverlay is a container for a SheetBackdrop and a Sheet.
  */
 export function SheetOverlay(props: SheetOverlayProps) {
-  let {
-    children,
-    isDismissable = true,
-    position = 'bottom',
-    swipeDirection = position === 'center' ? 'vertical' : position,
-    style
-  } = props;
+  let {children, isDismissable = true, style} = props;
+  let {direction} = useLocale();
+  let position = resolveDirection(props.position ?? 'bottom', direction);
+  let swipeDirection = props.swipeDirection
+    ? resolveDirection(props.swipeDirection, direction)
+    : position === 'center'
+      ? 'vertical'
+      : position;
   let contextState = useContext(OverlayTriggerStateContext);
   let onClose = useEffectEvent(() => {
     contextState!.close();
@@ -333,6 +354,8 @@ export function SheetOverlay(props: SheetOverlayProps) {
         <SheetContext.Provider
           value={{
             ...props,
+            position,
+            swipeDirection,
             index,
             descendants,
             isEntering: renderProps.isEntering,
@@ -346,6 +369,19 @@ export function SheetOverlay(props: SheetOverlayProps) {
       )}
     </ModalOverlay>
   );
+}
+
+function resolveDirection<T extends string>(
+  value: T | 'start' | 'end',
+  direction: 'ltr' | 'rtl'
+): T | 'left' | 'right' {
+  if (value === 'start') {
+    return direction === 'rtl' ? 'right' : 'left';
+  }
+  if (value === 'end') {
+    return direction === 'rtl' ? 'left' : 'right';
+  }
+  return value as T;
 }
 
 type Axis = 'x' | 'y';
@@ -376,7 +412,7 @@ interface SwipeConfig {
 // gesture natively. The container is always 2 viewports along the axis; a fixed 1-viewport window
 // (the actual browser viewport) looks onto it. The stage always sits 1 viewport into the content,
 // and snap markers at the content extremes define the entered/exited resting positions.
-function getSwipeConfig(swipeDirection: SheetOverlayProps['swipeDirection']): SwipeConfig {
+function getSwipeConfig(swipeDirection: SheetSwipeDirection): SwipeConfig {
   let axis: Axis =
     swipeDirection === 'top' || swipeDirection === 'bottom' || swipeDirection === 'vertical'
       ? 'y'
@@ -428,7 +464,7 @@ function getSwipeConfig(swipeDirection: SheetOverlayProps['swipeDirection']): Sw
 }
 
 // Maps a sheet position to its resting alignment on each axis, independent of the swipe direction.
-function getPositionAlignment(position: NonNullable<SheetOverlayProps['position']>): {
+function getPositionAlignment(position: SheetPosition): {
   x: string;
   y: string;
 } {
@@ -538,8 +574,8 @@ export function Sheet(props: SheetProps) {
   let scrollRef = useRef<HTMLDivElement>(null);
   let stageRef = useRef<HTMLDivElement>(null);
   let {
-    position = 'bottom',
-    swipeDirection = position === 'center' ? 'vertical' : position,
+    position,
+    swipeDirection,
     snapPoints,
     index,
     descendants,
@@ -548,6 +584,7 @@ export function Sheet(props: SheetProps) {
     isExiting,
     isDismissable = true
   } = useContext(SheetContext)!;
+  let {direction} = useLocale();
   let {axis, after, before, containerOffset} = getSwipeConfig(swipeDirection);
   let viewport = axis === 'y' ? '100dvh' : '100vw';
 
@@ -704,7 +741,10 @@ export function Sheet(props: SheetProps) {
         scrollSnapType: !isDismissable && (isEntering || isExiting) ? 'none' : `${axis} mandatory`,
         overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
         overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
-        scrollbarWidth: 'none'
+        scrollbarWidth: 'none',
+        // The scroll geometry is physical, so keep the scroll origin and flex alignment
+        // left-to-right regardless of the document direction.
+        direction: 'ltr'
       }}>
       {/* Snap marker for the exit at scroll 0 (also the rest position for top/left).
         When clamped, the exit positions are unreachable so they are not snap targets. */}
@@ -747,6 +787,7 @@ export function Sheet(props: SheetProps) {
               : 'react-aria-Sheet'
           }
           style={renderProps => ({
+            direction,
             ...(typeof props.style === 'function'
               ? props.style({...renderProps, ...baseRenderProps})
               : props.style),
@@ -833,15 +874,8 @@ export interface SheetBackdropProps
  */
 export function SheetBackdrop(props: SheetBackdropProps) {
   let style = useSwipeAnimation(props);
-  let {
-    position = 'bottom',
-    swipeDirection = position === 'center' ? 'vertical' : position,
-    index,
-    descendants,
-    isExpanded,
-    isEntering,
-    isExiting
-  } = useContext(SheetContext)!;
+  let {position, swipeDirection, index, descendants, isExpanded, isEntering, isExiting} =
+    useContext(SheetContext)!;
   let state = useContext(OverlayTriggerStateContext)!;
   let renderProps = useRenderProps({
     ...props,
@@ -875,14 +909,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
 }
 
 function useSwipeAnimation(props: SheetBackdropProps) {
-  let {
-    position = 'bottom',
-    swipeDirection = position === 'center' ? 'vertical' : position,
-    snapPoints,
-    index,
-    isEntering,
-    isExiting
-  } = useContext(SheetContext)!;
+  let {swipeDirection, snapPoints, index, isEntering, isExiting} = useContext(SheetContext)!;
   let {axis, viewRange, viewDirection, viewIterations} = getSwipeConfig(swipeDirection);
 
   if (props.swipeAnimation) {
@@ -936,11 +963,7 @@ export interface SheetContentProps extends DialogProps {}
  * The scrollable content area of a sheet.
  */
 export function SheetContent(props: SheetContentProps) {
-  let {
-    position = 'bottom',
-    swipeDirection = position === 'center' ? 'vertical' : position,
-    index
-  } = useContext(SheetContext)!;
+  let {swipeDirection, index} = useContext(SheetContext)!;
   let {axis, before, after} = getSwipeConfig(swipeDirection);
   let viewportLength = axis === 'y' ? '100dvh' : '100vw';
 

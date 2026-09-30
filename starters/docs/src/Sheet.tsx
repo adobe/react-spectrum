@@ -27,7 +27,7 @@ export interface SheetProps
 export function Sheet({children, ...props}: SheetProps) {
   let {snapPoints, isDismissable = true} = props;
   return (
-    <SheetOverlay {...props} style={null}>
+    <SheetOverlay {...props} style={undefined}>
       {/* The backdrop fades in as the sheet slides up. When snap points are used, it stays hidden
         until the sheet is dragged past the last snap point. */}
       <SheetBackdrop

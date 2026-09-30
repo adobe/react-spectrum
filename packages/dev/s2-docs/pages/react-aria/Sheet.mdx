@@ -150,7 +150,7 @@ export const description = 'An overlay that slides in from the edge of the scree
 
 ## Position
 
-The `position` prop determines which edge of the screen the sheet is anchored to. `swipeDirection` controls the direction it can be swiped to dismiss, which defaults to the same as `position`. Use `left` or `right` to build a navigation drawer, `bottom` for a mobile sheet, or `top` for a notification-style banner.
+The `position` prop determines which edge of the screen the sheet is anchored to. `swipeDirection` controls the direction it can be swiped to dismiss, which defaults to the same as `position`. Use `start` or `end` to build a navigation drawer, `bottom` for a mobile sheet, or `top` for a notification banner. `start` and `end` are automatically mirrored in right-to-left locales, while `left` and `right` are always physical.
 
 ```tsx render
 "use client";
@@ -170,7 +170,7 @@ function Example() {
     <DialogTrigger>
       <Button variant="secondary">Open menu</Button>
       {/*- begin highlight -*/}
-      <Sheet position="left">
+      <Sheet position="start">
       {/*- end highlight -*/}
         <div style={{display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'start'}}>
           <Heading slot="title" style={{padding: '0 var(--spacing-3)', marginBottom: 16}}>Acme Music</Heading>

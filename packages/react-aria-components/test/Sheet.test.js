@@ -20,6 +20,7 @@ import {
 import {Button} from '../src/Button';
 import {DialogTrigger} from '../src/Dialog';
 import {Heading} from '../src/Heading';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import React from 'react';
 import {Sheet, SheetBackdrop, SheetContent, SheetOverlay} from '../src/Sheet';
 import userEvent from '@testing-library/user-event';
@@ -128,6 +129,37 @@ describe('Sheet', () => {
         expect(el).toHaveAttribute('data-position', position);
         expect(el).toHaveAttribute('data-swipe-direction', expectedDirection);
       }
+    }
+  );
+
+  it.each`
+    locale     | position    | swipeDirection | expectedPosition | expectedDirection
+    ${'en-US'} | ${'start'}  | ${undefined}   | ${'left'}        | ${'left'}
+    ${'en-US'} | ${'end'}    | ${undefined}   | ${'right'}       | ${'right'}
+    ${'ar-AE'} | ${'start'}  | ${undefined}   | ${'right'}       | ${'right'}
+    ${'ar-AE'} | ${'end'}    | ${undefined}   | ${'left'}        | ${'left'}
+    ${'ar-AE'} | ${'left'}   | ${undefined}   | ${'left'}        | ${'left'}
+    ${'en-US'} | ${'center'} | ${'start'}     | ${'center'}      | ${'left'}
+    ${'ar-AE'} | ${'center'} | ${'end'}       | ${'center'}      | ${'left'}
+  `(
+    'resolves position $position and swipeDirection $swipeDirection in $locale',
+    async ({locale, position, swipeDirection, expectedPosition, expectedDirection}) => {
+      let tree = render(
+        <I18nProvider locale={locale}>
+          <TestSheet overlayProps={{position, swipeDirection}} />
+        </I18nProvider>
+      );
+      await open(tree);
+
+      for (let testId of ['overlay', 'sheet', 'backdrop']) {
+        let el = tree.getByTestId(testId);
+        expect(el).toHaveAttribute('data-position', expectedPosition);
+        expect(el).toHaveAttribute('data-swipe-direction', expectedDirection);
+      }
+
+      let sheet = tree.getByTestId('sheet');
+      expect(sheet.parentElement.parentElement).toHaveStyle({direction: 'ltr'});
+      expect(sheet).toHaveStyle({direction: locale === 'ar-AE' ? 'rtl' : 'ltr'});
     }
   );
 
