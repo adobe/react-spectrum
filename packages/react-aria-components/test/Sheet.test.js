@@ -68,8 +68,21 @@ describe('Sheet', () => {
     jest.useFakeTimers();
   });
 
+  // jsdom does not implement Element#scrollTo.
+  beforeEach(() => {
+    Element.prototype.scrollTo = function (options) {
+      if (options?.top != null) {
+        this.scrollTop = options.top;
+      }
+      if (options?.left != null) {
+        this.scrollLeft = options.left;
+      }
+    };
+  });
+
   afterEach(() => {
     act(() => jest.runAllTimers());
+    delete Element.prototype.scrollTo;
   });
 
   async function open(tree) {
