@@ -14,10 +14,12 @@ import {Button} from '../src/Button';
 
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {Heading} from '../src/Heading';
+import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
 import React, {JSX, useEffect, useRef, useState} from 'react';
+import {Select, SelectValue} from '../src/Select';
 import styles from './styles.css';
 
 export default {
@@ -533,6 +535,53 @@ export const PopoverTriggerWidthExample: PopoverStory = () => (
       <Dialog>Should match the width of the trigger button</Dialog>
     </Popover>
   </DialogTrigger>
+);
+
+function NestedStandalonePopover() {
+  let triggerRef = useRef<HTMLSpanElement>(null);
+  return (
+    <>
+      <span ref={triggerRef} style={{display: 'inline-block', padding: 4}}>
+        Anchor
+      </span>
+      <Popover
+        triggerRef={triggerRef}
+        isOpen
+        isNonModal
+        placement="end"
+        style={{
+          background: 'Canvas',
+          color: 'CanvasText',
+          border: '1px solid gray',
+          padding: 8,
+          zIndex: 6
+        }}>
+        {({trigger}) => `Nested popover trigger: ${String(trigger)}`}
+      </Popover>
+    </>
+  );
+}
+
+export const PopoverNestedInSelect: PopoverStory = () => (
+  <Select aria-label="Select">
+    <Button>
+      <SelectValue />
+    </Button>
+    <Popover
+      style={{
+        background: 'Canvas',
+        color: 'CanvasText',
+        border: '1px solid gray',
+        padding: 8,
+        zIndex: 5
+      }}>
+      <ListBox aria-label="Items">
+        <ListBoxItem id="a">Option A</ListBoxItem>
+        <ListBoxItem id="b">Option B</ListBoxItem>
+      </ListBox>
+      <NestedStandalonePopover />
+    </Popover>
+  </Select>
 );
 
 function ScrollingBoundaryContainerExample(args) {
