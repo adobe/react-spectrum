@@ -819,21 +819,19 @@ export function AttachmentPreview(props: AttachmentPreviewProps) {
   );
 }
 
-const attachmentBadgeInset = 4;
-const attachmentBadgeRadius = `calc(var(--image-border-radius) - ${attachmentBadgeInset}px)`;
-
 const attachmentBadge = style<{isDisabled: boolean}>({
   position: 'absolute',
-  bottom: attachmentBadgeInset,
-  insetStart: attachmentBadgeInset,
+  bottom: 4,
+  insetStart: 4,
   display: 'inline-flex',
   alignItems: 'center',
+  boxSizing: 'border-box',
   minWidth: 0,
-  minHeight: 18,
-  maxWidth: 64,
-  paddingX: space(6),
-  paddingY: space(2),
-  borderRadius: attachmentBadgeRadius,
+  minHeight: 24,
+  maxWidth: 72,
+  paddingX: space(10),
+  paddingY: space(4),
+  borderRadius: 'calc(var(--image-border-radius) - 3px)',
   overflow: 'hidden',
   pointerEvents: 'none',
   visibility: '--badge-visibility',
@@ -862,8 +860,9 @@ const attachmentBadgeLabel = style({
     default: 'gray-1000',
     forcedColors: 'ButtonText'
   },
-  font: 'body',
-  fontSize: 'body-2xs'
+  font: 'body-xs',
+  fontWeight: 'medium',
+  lineHeight: '[16px]'
 });
 
 function AttachmentBadge({mimeType, isDisabled = false}: {mimeType: string; isDisabled?: boolean}) {
