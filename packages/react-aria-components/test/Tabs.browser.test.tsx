@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {useLayoutEffect} from '@react-aria/utils';
 import {expect, it} from 'vitest';
 import {hydrateRoot} from 'react-dom/client';
-import React, {StrictMode, useEffect, useLayoutEffect, useRef} from 'react';
+import React, {StrictMode, useEffect, useRef} from 'react';
 import {render} from 'vitest-browser-react';
 import {renderToString} from 'react-dom/server.browser';
 import {SelectionIndicator} from '../src/SelectionIndicator';
@@ -127,7 +128,6 @@ it.each`
   expect(tester.getSelectedTab()).toBe(tabs[1]);
 });
 
-
 const interruptedKeys = ['one', 'two', 'three'];
 
 interface EnteringTabsProps {
@@ -193,9 +193,7 @@ it('does not get stuck in the entering state when effects are double invoked', a
   );
 
   let getSelectedIndicator = () => {
-    let selectedTab = container.querySelector(
-      '[role="tab"][aria-selected="true"]'
-    ) as HTMLElement;
+    let selectedTab = container.querySelector('[role="tab"][aria-selected="true"]') as HTMLElement;
     return selectedTab.querySelector('.react-aria-SelectionIndicator') as HTMLElement;
   };
 
@@ -204,4 +202,3 @@ it('does not get stuck in the entering state when effects are double invoked', a
   // ...and must be cleared once the entering frame has run.
   await expect.poll(() => getSelectedIndicator().hasAttribute('data-entering')).toBe(false);
 });
-

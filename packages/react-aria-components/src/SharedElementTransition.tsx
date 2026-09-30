@@ -29,6 +29,7 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 interface Snapshot {
   rect: DOMRect;
   style: [string, string][];
+  element: HTMLElement;
 }
 
 const SharedElementContext = createContext<RefObject<{[name: string]: Snapshot}> | null>(null);
@@ -100,6 +101,12 @@ export const SharedElement = forwardRef(function SharedElement(
     // StrictMode re-runs this effect on the same instance. Ignore async work from the
     // cancelled run so a stale entering microtask cannot overwrite the remount path.
     let cancelled = false;
+    // StrictMode cleanup snapshots this same node. That is not a move between parents,
+    // so drop it and take the entering path on the replay.
+    if (prevSnapshot && element && prevSnapshot.element === element) {
+      delete scope[name];
+      prevSnapshot = undefined;
+    }
 
     if (element && isVisible && prevSnapshot) {
       // Element is transitioning from a previous instance.
@@ -198,7 +205,8 @@ export const SharedElement = forwardRef(function SharedElement(
           let transitionProperty = style.transitionProperty.split(/\s*,\s*/);
           scope[name] = {
             rect: element.getBoundingClientRect(),
-            style: transitionProperty.map(p => [p, style[p]])
+            style: transitionProperty.map(p => [p, style[p]]),
+            element
           };
         }
       }
