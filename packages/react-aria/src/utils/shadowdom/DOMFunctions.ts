@@ -23,7 +23,7 @@ export function nodeContains(
 
   let currentNode: HTMLElement | Node | null | undefined = otherNode;
 
-  while (currentNode !== null) {
+  while (currentNode != null) {
     if (currentNode === node) {
       return true;
     }

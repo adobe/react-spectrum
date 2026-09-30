@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '@react-spectrum/s2';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {ButtonContext} from 'react-aria-components/Button';
+import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {
   CollectionRendererContext,
   createLeafComponent
 } from 'react-aria-components/CollectionBuilder';
 import {
   createContext,
-  CSSProperties,
   ForwardedRef,
   forwardRef,
   ReactNode,
@@ -48,6 +49,7 @@ import {ListLayout} from './ListLayout';
 import {ListStateContext} from 'react-aria-components/ListBox';
 import {LoaderNode} from 'react-aria/private/collections/BaseCollection';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
@@ -88,12 +90,16 @@ interface InternalChatContextValue {
   announceItem: (text: string) => void;
   setIsNearBottom: (isNear: boolean) => void;
   setScrollElement: (element: HTMLElement | null) => void;
+  promptFieldSize: 'S' | 'M';
+  setPromptFieldSize: (size: 'S' | 'M') => void;
 }
 
-const InternalChatContext = createContext<InternalChatContextValue>({
+export const InternalChatContext = createContext<InternalChatContextValue>({
   announceItem: text => announce(text, 'polite'),
   setIsNearBottom: () => {},
-  setScrollElement: () => {}
+  setScrollElement: () => {},
+  promptFieldSize: 'M',
+  setPromptFieldSize: () => {}
 });
 
 interface ThreadScrollButtonContextValue {
@@ -159,6 +165,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
     el.scrollTo({top: el.scrollHeight - el.clientHeight, behavior: 'smooth'});
   }, []);
   let [isNearBottom, setIsNearBottom] = useState(true);
+  let [promptFieldSize, setPromptFieldSize] = useState<'S' | 'M'>('M');
 
   // only announce new items if user is in the prompt field, otherwise if they
   // are outside the field, only announce there are new responses. If not in chat at all, don't announce
@@ -209,7 +216,10 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   return (
     <Provider
       values={[
-        [InternalChatContext, {announceItem, setIsNearBottom, setScrollElement}],
+        [
+          InternalChatContext,
+          {announceItem, setIsNearBottom, setScrollElement, promptFieldSize, setPromptFieldSize}
+        ],
         [
           ThreadScrollButtonContext,
           {
@@ -227,7 +237,23 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
           }
         ]
       ]}>
-      <div ref={domRef} className={styles} {...focusWithinProps}>
+      <div
+        ref={domRef}
+        className={mergeStyles(
+          style({
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            flexGrow: 1,
+            paddingX: 16,
+            boxSizing: 'border-box',
+            minWidth: 0,
+            containerType: 'size',
+            height: 'full'
+          }),
+          styles
+        )}
+        {...focusWithinProps}>
         {children}
       </div>
     </Provider>
@@ -265,7 +291,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     'aria-labelledby': ariaLabelledby
   } = props;
 
-  let {setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
+  let {setIsNearBottom, setScrollElement, promptFieldSize} = useContext(InternalChatContext);
   let isNearBottomRef = useRef(true);
   let gridListRef = useRef<HTMLDivElement | null>(null);
   let callbackRef = useCallback(
@@ -288,43 +314,80 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
   }, [setIsNearBottom, scrollEndThreshold]);
 
   return (
-    <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        estimatedRowHeight: 100,
-        padding: 4,
-        gap: 8,
-        anchorTo: 'end',
-        loaderSize: 48,
-        scrollEndThreshold
-      }}
-      shouldObserveItemSize>
-      <GridList
-        ref={callbackRef}
-        disallowTypeAhead
-        onScroll={handleScroll}
-        keyboardNavigationBehavior="tab"
-        UNSTABLE_focusOnEntry="last"
-        items={items}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledby}
-        // TODO: for now we enforce this, but to be configurable?
-        style={
-          {
-            display: 'flex',
-            boxSizing: 'border-box',
-            minWidth: 0,
-            scrollbarGutter: 'stable'
-          } as CSSProperties
-        }
-        className={styles}>
-        {children}
-      </GridList>
-    </Virtualizer>
+    <div
+      className={mergeStyles(
+        style({
+          position: 'relative',
+          flexGrow: 1,
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0
+        }),
+        styles
+      )}>
+      <div
+        className={style({
+          position: 'absolute',
+          bottom: 16,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1
+        })}>
+        <ThreadScrollButton>
+          <ActionButton slot="scroll">
+            <ChevronDown />
+          </ActionButton>
+        </ThreadScrollButton>
+      </div>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          estimatedRowHeight: 100,
+          padding: promptFieldSize === 'S' ? 16 : 24,
+          gap: 16,
+          anchorTo: 'end',
+          loaderSize: 48,
+          scrollEndThreshold
+        }}
+        shouldObserveItemSize>
+        <GridList
+          ref={callbackRef}
+          disallowTypeAhead
+          onScroll={handleScroll}
+          keyboardNavigationBehavior="tab"
+          UNSTABLE_focusOnEntry="last"
+          items={items}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledby}
+          // TODO: for now we enforce this, but to be configurable?
+          className={
+            scrollFade({y: 32}) +
+            ' ' +
+            style({
+              display: 'flex',
+              boxSizing: 'border-box',
+              minWidth: 0,
+              scrollbarGutter: 'stable',
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              scrollPadding: {
+                default: 24,
+                promptFieldSize: {
+                  S: 16
+                }
+              }
+            })({promptFieldSize})
+          }>
+          {children}
+        </GridList>
+      </Virtualizer>
+    </div>
   );
 }
 
-export interface ThreadScrollButtonProps {
+interface ThreadScrollButtonProps {
   children?: ReactNode;
 }
 
@@ -333,7 +396,7 @@ export interface ThreadScrollButtonProps {
 /**
  * A ThreadScrollButton displays a button to scroll to the bottom of a Chat thread.
  */
-export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
+function ThreadScrollButton({children}: ThreadScrollButtonProps) {
   let {isNearBottom, scrollToBottom, ...buttonProps} = useContext(ThreadScrollButtonContext);
   let ref = useRef<HTMLDivElement>(null);
   let isVisible = !isNearBottom;

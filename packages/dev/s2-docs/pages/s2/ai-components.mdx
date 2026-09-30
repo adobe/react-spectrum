@@ -136,6 +136,7 @@ function Example() {
             </PromptFieldAttachmentList>
             <PromptTokenField
               completionTrigger={/(?<=^|\s)[@/]/}
+              menuWidth={200}
               renderCompletions={(filterValue, valueType) => {
                 return renderCompletions(filterValue, {valueType, onClear: clearPrompt, onCompact: compactPrompt});
               }}>
@@ -357,6 +358,7 @@ function PromptSuggestions() {
       <PromptField value={value} onChange={setValue} onSubmit={console.log}>
         <PromptTokenField
           completionTrigger={/(?<=^|\s)@/}
+          menuWidth={200}
           /*- begin highlight -*/
           renderCompletions={filterValue =>
             people
@@ -510,67 +512,62 @@ let messages = [
 
 function BasicChat() {
   return (
-    /*- begin highlight -*/
-    <Chat
-      /*- end highlight -*/
-      styles={style({width: 'full'})}>
-      <Thread
-        items={messages}
-        aria-label="Campaign discussion"
-        styles={style({
-          height: 350,
-          overflowX: 'hidden',
-          overflowY: 'auto',
-          scrollPadding: 8
-        })}>
-        {message => {
-          switch (message.type) {
-            case 'user':
-              return (
-                <ThreadItem
-                  textValue={message.text}
-                  styles={style({display: 'flex', justifyContent: 'end'})}>
-                  <UserMessage>{message.text}</UserMessage>
-                </ThreadItem>
-              );
-            case 'assistant':
-              return (
-                <ThreadItem textValue={message.text}>
-                  <div className={prose()}>{message.content}</div>
-                </ThreadItem>
-              );
-            case 'status':
-              return (
-                <ThreadItem textValue={message.text}>
-                  <ResponseStatus status={message.status}>
-                    <ResponseStatusTitle>{message.text}</ResponseStatusTitle>
-                    <ResponseStatusPanel>
-                      <ExecutionTrace>
-                        {message.steps?.map(step => (
-                          <ExecutionTraceItem
-                            key={step.id}
-                            status={step.status}
-                            detail={<p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>}>
-                            {step.label}
-                          </ExecutionTraceItem>
-                        ))}
-                      </ExecutionTrace>
-                    </ResponseStatusPanel>
-                  </ResponseStatus>
-                </ThreadItem>
-              );
-            case 'alert':
-              return (
-                <ThreadItem textValue={message.text}>
-                  <Alert variant={message.variant} >
-                    {message.text}
-                  </Alert>
-                </ThreadItem>
-              )
-          }
-        }}
-      </Thread>
-    </Chat>
+    <div className={style({height: 450, width: 'full'})}>
+      {/*- begin highlight -*/}
+      <Chat>
+        {/*- end highlight -*/}
+        <Thread
+          items={messages}
+          aria-label="Campaign discussion">
+          {message => {
+            switch (message.type) {
+              case 'user':
+                return (
+                  <ThreadItem
+                    textValue={message.text}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{message.text}</UserMessage>
+                  </ThreadItem>
+                );
+              case 'assistant':
+                return (
+                  <ThreadItem textValue={message.text}>
+                    <div className={prose()}>{message.content}</div>
+                  </ThreadItem>
+                );
+              case 'status':
+                return (
+                  <ThreadItem textValue={message.text}>
+                    <ResponseStatus status={message.status}>
+                      <ResponseStatusTitle>{message.text}</ResponseStatusTitle>
+                      <ResponseStatusPanel>
+                        <ExecutionTrace>
+                          {message.steps?.map(step => (
+                            <ExecutionTraceItem
+                              key={step.id}
+                              status={step.status}
+                              detail={<p className={style({font: 'body-sm', margin: 0})}>{step.detail}</p>}>
+                              {step.label}
+                            </ExecutionTraceItem>
+                          ))}
+                        </ExecutionTrace>
+                      </ResponseStatusPanel>
+                    </ResponseStatus>
+                  </ThreadItem>
+                );
+              case 'alert':
+                return (
+                  <ThreadItem textValue={message.text}>
+                    <Alert variant={message.variant} >
+                      {message.text}
+                    </Alert>
+                  </ThreadItem>
+                )
+            }
+          }}
+        </Thread>
+      </Chat>
+    </div>
   );
 }
 ```
@@ -673,12 +670,11 @@ function GeneratingPrompt() {
 
 ## API
 
-```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', ThreadScrollButton: '#threadscrollbutton', PromptField: '#promptfield'}}
+```tsx links={{Chat: '#chat', Thread: '#thread', ThreadItem: '#threaditem', PromptField: '#promptfield'}}
 <Chat>
   <Thread>
     <ThreadItem />
   </Thread>
-  <ThreadScrollButton />
   <PromptField />
 </Chat>
 ```
@@ -686,10 +682,6 @@ function GeneratingPrompt() {
 ## Chat
 
 <PropTable component={docs.exports.Chat} links={docs.links} showDescription />
-
-### ThreadScrollButton
-
-<PropTable component={docs.exports.ThreadScrollButton} links={docs.links} showDescription />
 
 ## Thread
 
@@ -716,6 +708,26 @@ function GeneratingPrompt() {
 ### UserMessage
 
 <PropTable component={docs.exports.UserMessage} links={docs.links} showDescription />
+
+#### AttachmentGrid
+
+Use `AttachmentGrid` to display file attachments as a wrapping, vertically-scrolling grid of
+thumbnails within a `UserMessage`. Unlike `PromptFieldAttachmentList`, it is display-only and does
+not support selection or removal.
+
+```tsx links={{AttachmentGrid: '#attachmentgrid', AttachmentGridItem: '#attachmentgriditem', AttachmentPreview: '#attachmentpreview'}}
+<AttachmentGrid aria-label="Uploaded files">
+  <AttachmentGridItem aria-label="file.pdf">
+    <AttachmentPreview mimeType="application/pdf" slot="thumbnail" src={src} />
+  </AttachmentGridItem>
+</AttachmentGrid>
+```
+
+<PropTable component={docs.exports.AttachmentGrid} links={docs.links} showDescription />
+
+#### AttachmentGridItem
+
+<PropTable component={docs.exports.AttachmentGridItem} links={docs.links} showDescription />
 
 ### ResponseStatus
 
