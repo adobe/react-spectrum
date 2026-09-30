@@ -176,7 +176,11 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
   }, [domRef]);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production' || !hasFocusableProvider) {
+    if (
+      process.env.NODE_ENV === 'production' ||
+      !hasFocusableProvider ||
+      !domRef.current
+    ) {
       return;
     }
 
