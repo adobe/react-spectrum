@@ -202,6 +202,18 @@ export function SheetOverlay(props: SheetOverlayProps) {
         return;
       }
 
+      // Sheets that rest at scroll 0 (top/left) mount already entered. Move them to the exit position
+      // before observing, since onEnter may be deferred (e.g. while waiting for the software keyboard),
+      // and the observer would otherwise see the sheet as entered and then close it once onEnter
+      // jumps to the exit position.
+      if (enteredScroll === 0) {
+        let scroller = element.querySelector<HTMLElement>('[data-sheet-scroll]');
+        if (scroller) {
+          let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
+          scrollAlongAxis(scroller, axis, (maxScroll / 100) * vp);
+        }
+      }
+
       let hasEntered = false;
       let observer = new IntersectionObserver(
         entries => {
@@ -235,7 +247,7 @@ export function SheetOverlay(props: SheetOverlayProps) {
         removeSheet();
       };
     },
-    [stackItem]
+    [stackItem, axis, maxScroll, enteredScroll]
   );
 
   let sheetStack = useSyncExternalStore(subscribeStack, getSheetStack, getSheetStack);
