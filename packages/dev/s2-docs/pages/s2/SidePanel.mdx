@@ -17,7 +17,7 @@ export const description = 'A collapsible container for a SideNav and other app 
 
 A `SidePanel` wraps a [SideNav](SideNav), along with any other app chrome, in a container that collapses down to a narrow icon rail. It renders its own collapse/expand toggle at the bottom of the panel, and animates its width between the two states.
 
-The expanded width comes from the `styles` prop you pass to `SidePanel`.
+The expanded width comes from the `width` prop. When collapsed, the panel narrows to a fixed icon rail instead.
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
 "use client";
@@ -34,7 +34,8 @@ import Project from '@react-spectrum/s2/icons/Project';
     /*- begin highlight -*/
     <SidePanel
       defaultCollapsed
-      styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+      width={208}
+      styles={style({gridArea: 'sidebar', marginX: 8})}>
     {/*- end highlight -*/}
       <SideNav
         aria-label="Files"
@@ -151,7 +152,8 @@ function CollapsibleSidePanel() {
         <SidePanel
           isCollapsed={isCollapsed}
           onCollapsedChange={setCollapsed}
-          styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+          width={208}
+          styles={style({gridArea: 'sidebar', marginX: 8})}>
         {/*- end highlight -*/}
           <SideNav
             aria-label="Files"
@@ -186,9 +188,7 @@ function CollapsibleSidePanel() {
 
 ## Animations
 
-`SidePanel` and [SideNav](SideNav) animate themselves. The panel's width animates first, and its contents animate only once it has settled.
-
-Because the contents wait for the width, the `isCollapsed` you read from `SidePanelContext` trails the panel itself while it is expanding.
+`SidePanel` and [SideNav](SideNav) animate themselves. The width and the contents animate at the same time: the width animates in the page, so the rest of your layout reflows with it, while a view transition fades the contents in and out on top.
 
 `AccountFooter` in the example below reads `isCollapsed` from `SidePanelContext` and hides its name with `display: none` while the panel is collapsed.
 
@@ -196,7 +196,7 @@ Because the contents wait for the width, the `isCollapsed` you read from `SidePa
   headers={['Context value', 'Description']}
   codeColumns={[0]}
   rows={[
-    ["isCollapsed", "Whether the panel's contents are collapsed. This trails the panel itself while it is expanding, since its contents are only brought back once it has finished widening."],
+    ["isCollapsed", "Whether the panel is collapsed. This changes in the same transition as the panel's width, so anything you show or hide with it animates along with the panel."],
     ['setCollapsed', 'Collapses or expands the panel. Useful for building your own expand and collapse trigger.']
   ]} />
 
@@ -205,6 +205,7 @@ Because the contents wait for the width, the `isCollapsed` you read from `SidePa
 import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SideNav';
 import {SidePanelApp, AccountFooter} from './SidePanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Archive from '@react-spectrum/s2/icons/Archive';
 import File from '@react-spectrum/s2/icons/File';
 import Files from '@react-spectrum/s2/icons/Files';
 import Images from '@react-spectrum/s2/icons/Images';
@@ -241,7 +242,7 @@ let items: Item[] = [
 
 <SidePanelApp defaultSelectedRoute="/notes">
   {({selectedRoute}) => (
-    <SidePanel defaultCollapsed styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+    <SidePanel defaultCollapsed width={208} styles={style({gridArea: 'sidebar', marginX: 8})}>
       <SideNav
         aria-label="Files"
         selectedRoute={selectedRoute}
