@@ -738,7 +738,7 @@ StyleDictionary.extend({
       </pre>
       <p>
         Run it after every change and components import semantic values instead of literals. See the{' '}
-        <a href="https://spectrum.adobe.com/page/design-tokens/">Spectrum design tokens docs</a> for
+        <a href="https://spectrum.adobe.com/foundations/design-data/design-tokens">Spectrum design tokens docs</a> for
         the full naming conventions.
       </p>
     </div>
