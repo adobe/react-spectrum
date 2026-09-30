@@ -13,8 +13,14 @@ import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
 import {Dialog, DialogProps} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
+import {
+  InternalModalContext,
+  Modal,
+  ModalOverlay,
+  ModalOverlayProps,
+  ModalRenderProps
+} from './Modal';
 import {isIOS, isSafari} from 'react-aria/private/utils/platform';
-import {Modal, ModalOverlay, ModalOverlayProps, ModalRenderProps} from './Modal';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {
   createContext,
@@ -618,6 +624,10 @@ export function Sheet(props: SheetProps) {
     isDismissable = true,
     values
   } = useContext(SheetContext)!;
+  // The ModalOverlay may defer its enter animation (e.g. until the software keyboard opens), during
+  // which isEntering is false. The sheet is not settled until it has opened, so treat it as entering.
+  let isOpen = useContext(InternalModalContext)?.isOpen ?? true;
+  let isTransitioning = !isOpen || isEntering || isExiting;
   let {direction} = useLocale();
   let {axis, after, before, containerOffset} = getSwipeConfig(swipeDirection);
   let viewport = axis === 'y' ? '100dvh' : '100vw';
@@ -625,7 +635,7 @@ export function Sheet(props: SheetProps) {
   // A non-dismissable sheet can still be swiped between its snap points, but not past the smallest
   // one. Enter/exit animations still need the exit space, so only clamp while settled.
   let hasSnapPoints = !!snapPoints?.length && before !== after;
-  let isClamped = !isDismissable && !isEntering && !isExiting;
+  let isClamped = !isDismissable && !isTransitioning;
   let sheetExtent = useSheetExtent(stageRef, ref, axis, before, !isDismissable && hasSnapPoints);
 
   // Scroll travel between the smallest snap point and the fully revealed sheet. It is at least 1px
@@ -745,7 +755,7 @@ export function Sheet(props: SheetProps) {
         overflowY: axis === 'y' ? 'auto' : 'hidden',
         // Snapping is only disabled when the geometry changes. Changing it during a swipe to dismiss
         // cancels the momentum scroll in Safari without firing scrollend, which onExit waits for.
-        scrollSnapType: !isDismissable && (isEntering || isExiting) ? 'none' : `${axis} mandatory`,
+        scrollSnapType: !isDismissable && isTransitioning ? 'none' : `${axis} mandatory`,
         overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
         overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
         scrollbarWidth: 'none',

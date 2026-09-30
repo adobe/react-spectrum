@@ -101,7 +101,7 @@ interface InternalModalContextValue {
 }
 
 export const ModalContext = createContext<ContextValue<ModalOverlayProps, HTMLDivElement>>(null);
-const InternalModalContext = createContext<InternalModalContextValue | null>(null);
+export const InternalModalContext = createContext<InternalModalContextValue | null>(null);
 
 export interface ModalRenderProps {
   /**
