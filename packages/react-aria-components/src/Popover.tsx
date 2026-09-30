@@ -52,6 +52,7 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {runAfterKeyboard} from 'react-aria/private/utils/runAfterKeyboard';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsHidden} from 'react-aria/private/collections/Hidden';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -233,6 +234,8 @@ function PopoverInner({
   let groupCtx = useContext(PopoverGroupContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
 
+  let [isOpen, setIsOpen] = useState(false);
+
   let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover(
     {
       ...props,
@@ -248,7 +251,7 @@ function PopoverInner({
   let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
   // Skip the automatic entry animation when opening instantly (e.g. swapping between previews
   // during warmup). An explicitly provided isEntering prop still takes precedence.
-  let enterAnimation = useEnterAnimation(ref, !!placement);
+  let enterAnimation = useEnterAnimation(ref, !!placement && isOpen);
   // oxlint-disable-next-line react/react-compiler
   let isEntering = props.isEntering || (!props.shouldSkipAnimation && enterAnimation) || false;
   // oxlint-disable-next-line react/react-compiler
@@ -330,6 +333,9 @@ function PopoverInner({
     ...renderProps.style,
     '--trigger-width': renderProps.style?.['--trigger-width'] || triggerWidth
   };
+
+  // Since our trigger may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
+  useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
   // oxlint-disable react/react-compiler
   let overlay = (
