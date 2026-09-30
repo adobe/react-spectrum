@@ -1510,7 +1510,8 @@ const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
   scrollbarGutter: {
     auto: 'https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter#auto',
     stable: 'https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter#stable',
-    'stable both-edges':'https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter#both-edges'
+    'stable both-edges':
+      'https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-gutter#both-edges'
   },
   scrollBehavior: {
     auto: 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior#auto',
