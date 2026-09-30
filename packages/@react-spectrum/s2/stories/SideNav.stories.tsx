@@ -622,7 +622,8 @@ export const SidePanelExample = {
       </div>
       <SidePanel
         defaultCollapsed
-        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
+        width={224}
+        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]'})}
         aria-label="Side panel">
         <SidePanelContext.Consumer>
           {({isCollapsed}) => (
@@ -750,7 +751,8 @@ export const SidePanelExample2 = {
       </div>
       <SidePanel
         defaultCollapsed
-        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
+        width={224}
+        styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]'})}
         aria-label="Side panel">
         <RoutedSideNav {...args} selectedRoute="/files">
           <SideNavItem href="/files" textValue="Files">

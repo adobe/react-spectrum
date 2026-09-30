@@ -41,8 +41,7 @@ interface SidePanelAppProps {
 
 /**
  * A user avatar and account menu, shown at the bottom of the side panel. The name is hidden while
- * the panel is collapsed. `isCollapsed` trails the panel's width when expanding, so the name is
- * never in the layout while the panel is changing size and can't reflow as it narrows.
+ * the panel is collapsed, in the same transition as the panel's width so it animates away with it.
  */
 export function AccountFooter(): ReactNode {
   let {isCollapsed = false} = useContext(SidePanelContext);
@@ -52,10 +51,8 @@ export function AccountFooter(): ReactNode {
       className={style({
         display: 'flex',
         flexDirection: {default: 'row', isCollapsed: 'column-reverse'},
-        // Left aligned in both states, and with the same padding either way, so that the contents
-        // sit at the same offset whatever the panel's width is. Centering them in the collapsed
-        // rail would drag them across the panel as it widens, since the centre moves but the rows
-        // on either side of it don't.
+        // Left aligned in both states, and with the same padding either way. The two states cross
+        // fade, so anything sitting at a different offset in each slides across as it fades.
         alignItems: {default: 'center', isCollapsed: 'start'},
         justifyContent: 'start',
         gap: 8,
