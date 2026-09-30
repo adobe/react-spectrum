@@ -10,13 +10,13 @@ import React, {
   CSSProperties,
   useCallback,
   useContext,
-  useId,
   useMemo,
   useRef,
   useState,
   useSyncExternalStore
 } from 'react';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useId} from 'react-aria/useId';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 
