@@ -172,7 +172,7 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
   }, [domRef]);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
+    if (process.env.NODE_ENV === 'production') {
       return;
     }
 
@@ -209,7 +209,7 @@ export const Focusable: React.ForwardRefExoticComponent<
     let child = React.Children.only(children);
 
     useEffect(() => {
-      if (process.env.NODE_ENV !== 'test') {
+      if (process.env.NODE_ENV === 'production') {
         return;
       }
 
