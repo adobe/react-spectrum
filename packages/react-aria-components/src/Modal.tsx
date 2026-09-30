@@ -71,8 +71,16 @@ export interface ModalOverlayProps
    * Whether the modal is currently performing an exit animation.
    */
   isExiting?: boolean;
-  onEnter?: (element: HTMLElement) => void;
-  onExit?: (element: HTMLElement) => void;
+  /**
+   * Callback when the modal starts entering. Return a promise to indicate when the entry animation
+   * has completed.
+   */
+  onEnter?: (element: HTMLElement) => void | Promise<void>;
+  /**
+   * Callback when the modal starts exiting. Return a promise to indicate when the exit animation
+   * has completed.
+   */
+  onExit?: (element: HTMLElement) => void | Promise<void>;
   /**
    * The container element in which the overlay portal will be placed. This may have unknown
    * behavior depending on where it is portalled to.
