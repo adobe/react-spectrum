@@ -17,6 +17,8 @@ import {
   css,
   focusRing,
   iconStyle,
+  keyframes,
+  scrollFade,
   size,
   space,
   style
@@ -39,7 +41,6 @@ import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {keyframes, scrollFade} from './tokens.macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {PixelLoader} from '../exports';
 import {Provider} from 'react-aria-components/slots';
@@ -655,6 +656,10 @@ export interface ExecutionTraceItemProps extends DOMProps, AriaLabelingProps {
   icon?: ReactNode;
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString;
+  /**
+   * Handler that is called when the trace is expanded or collapsed.
+   */
+  onExpandedChange?: (isExpanded: boolean) => void;
 }
 
 const EXECUTION_TRACE_ITEM_TRANSITION_DURATION = 650;
@@ -730,7 +735,16 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   props: ExecutionTraceItemProps,
   ref: DOMRef<HTMLLIElement>
 ) {
-  let {detail, detailMaxHeight, icon, children, styles, status = 'success', ...otherProps} = props;
+  let {
+    detail,
+    detailMaxHeight,
+    icon,
+    children,
+    styles,
+    status = 'success',
+    onExpandedChange,
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let domProps = filterDOMProps(otherProps);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -788,7 +802,7 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
         <div role="presentation" className={executionTraceItemDividerStyles} />
       </div>
       {hasDetail ? (
-        <RACDisclosure className="">
+        <RACDisclosure className="" onExpandedChange={onExpandedChange}>
           <DetailTrigger isPending={status === 'pending'}>{children}</DetailTrigger>
           <RACDisclosurePanel className={style(panelStyle)}>
             <div className={executationTradeDetailWrapperStyle}>
