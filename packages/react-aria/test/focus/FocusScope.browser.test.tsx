@@ -35,7 +35,7 @@ function SiblingScopes() {
       <button>Outside</button>
       {showFirst && (
         <Portal>
-          <FocusScope contain restoreFocus autoFocus>
+          <FocusScope contain={!showSecond} restoreFocus autoFocus>
             <button onClick={openSecond}>Choose date and time</button>
           </FocusScope>
         </Portal>
@@ -57,7 +57,7 @@ it.each([
   {direction: 'forward', shift: false, expected: '2026'},
   {direction: 'reverse', shift: true, expected: 'Next month'}
 ])(
-  'keeps $direction Tab navigation in a sibling scope after unmount',
+  'keeps $direction Tab navigation in a sibling scope after an exiting sibling unmounts',
   async ({shift, expected}) => {
     let {getByRole} = await render(<SiblingScopes />);
 
