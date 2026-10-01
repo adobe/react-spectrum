@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Focusable, FocusableProvider} from '../../src/interactions/useFocusable';
+import {Focusable, FocusableProvider, useFocusable} from '../../src/interactions/useFocusable';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useImperativeHandle} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -30,6 +30,38 @@ describe('Focusable', function () {
     );
 
     expect(getByRole('button')).toHaveAttribute('id', 'provider-id');
+  });
+
+  it('should not warn for useFocusable under FocusableProvider with non-widget roles', function () {
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    function Consumer({role}) {
+      let ref = React.useRef(null);
+      let {focusableProps} = useFocusable({}, ref);
+      return (
+        <div {...focusableProps} role={role} ref={ref}>
+          {role}
+        </div>
+      );
+    }
+
+    let {getByRole, rerender} = render(
+      <FocusableProvider id="provider-id">
+        <Consumer role="columnheader" />
+      </FocusableProvider>
+    );
+
+    expect(getByRole('columnheader')).toHaveAttribute('id', 'provider-id');
+    expect(spy).not.toHaveBeenCalled();
+
+    rerender(
+      <FocusableProvider id="provider-id">
+        <Consumer role="row" />
+      </FocusableProvider>
+    );
+
+    expect(getByRole('row')).toHaveAttribute('id', 'provider-id');
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('should apply focusable props to child element', async function () {
