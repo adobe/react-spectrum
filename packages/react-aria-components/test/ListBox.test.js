@@ -749,8 +749,12 @@ describe('ListBox', () => {
     expect(onSelectionChange).not.toHaveBeenCalled();
 
     rerender(listbox(false));
-    await user.tab();
-    await user.keyboard('{ArrowDown}{Enter}');
+    await user.click(getByRole('option', {name: 'Cat'}));
+    expect([...onSelectionChange.mock.calls[0][0]]).toEqual(['cat']);
+    onSelectionChange.mockClear();
+    keyPress('ArrowDown');
+    expect(document.activeElement).toBe(getByRole('option', {name: 'Dog'}));
+    keyPress('Enter');
     expect([...onSelectionChange.mock.calls[0][0]]).toEqual(['dog']);
     expect(getByRole('listbox')).not.toHaveAttribute('aria-disabled');
   });
