@@ -17,7 +17,14 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button, ButtonContext} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  color,
+  css,
+  scrollFade,
+  space,
+  style,
+  StyleString
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   createContext,
   createRef,
@@ -55,7 +62,6 @@ import {
 } from 'react-stately/useTokenFieldState';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {Provider} from 'react-aria-components/slots';
-import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -74,6 +80,7 @@ import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusableRef} from './useDOMRef';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useKeyboard} from 'react-aria/useKeyboard';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useVoiceInput, VoiceInputErrorCode} from './useVoiceInput';
@@ -94,12 +101,6 @@ export interface PromptFieldProps {
   onAttachmentsChange?: (attachments: PromptFieldAttachment[]) => void;
   onSubmit?: (prompt: PromptFieldValue, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
-  /**
-   * Whether the field should be read only while a response is generating.
-   *
-   * @default false
-   */
-  isReadOnlyWhileGenerating?: boolean;
   onStop?: () => void;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
@@ -130,7 +131,6 @@ interface PromptFieldState {
   onSubmit?: () => void;
   onStop?: () => void;
   isGenerating: boolean;
-  isReadOnlyWhileGenerating: boolean;
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   isListening: boolean;
@@ -256,7 +256,6 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
   setPrompt: () => {},
   inputRef: createRef(),
   isGenerating: false,
-  isReadOnlyWhileGenerating: false,
   isListening: false,
   setListening: () => {},
   voiceStopRef: createRef(),
@@ -268,7 +267,11 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
 // aka the difference between a slash command and using the + menu which won't have filter text
 const PromptCompletionAnchorContext = createContext<Position | null>(null);
 
-function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
+export function matchMimeType(mimeType: string | undefined, acceptedMimeTypes: string[]): boolean {
+  if (!mimeType) {
+    return false;
+  }
+
   return acceptedMimeTypes.some(type => {
     if (type === '*/*') {
       return true;
@@ -278,6 +281,45 @@ function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
     }
     return mimeType === type;
   });
+}
+
+const MIME_TYPE_LABELS: Record<string, string> = {
+  'application/json': 'JSON',
+  'application/msword': 'DOC',
+  'application/pdf': 'PDF',
+  'application/vnd.ms-excel': 'XLS',
+  'application/vnd.ms-powerpoint': 'PPT',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'PPTX',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'XLSX',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
+  'application/zip': 'ZIP',
+  'audio/mpeg': 'MP3',
+  'image/gif': 'GIF',
+  'image/jpeg': 'JPG',
+  'image/png': 'PNG',
+  'image/svg+xml': 'SVG',
+  'image/webp': 'WEBP',
+  'text/csv': 'CSV',
+  'text/plain': 'TXT'
+};
+
+export function getMimeTypeLabel(mimeType: string): string | null {
+  let mappedLabel = MIME_TYPE_LABELS[mimeType];
+  if (mappedLabel) {
+    return mappedLabel;
+  }
+
+  let subtype = mimeType.split('/')[1];
+  if (!subtype) {
+    return null;
+  }
+
+  subtype =
+    subtype
+      .replace(/^(x-|vnd\.)/, '')
+      .split(/[+.]/)
+      .pop() || subtype;
+  return subtype.slice(0, 4).toUpperCase();
 }
 
 /**
@@ -292,7 +334,6 @@ export const PromptField = forwardRef(function PromptField(
     children,
     acceptedAttachmentTypes,
     isGenerating = false,
-    isReadOnlyWhileGenerating = false,
     onStop,
     styles,
     onAddAttachments,
@@ -344,7 +385,7 @@ export const PromptField = forwardRef(function PromptField(
   let {onFocusChange} = useContext(PromptFocusContext);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
   let {setPromptFieldSize} = useContext(InternalChatContext);
-  useEffect(() => {
+  useLayoutEffect(() => {
     setPromptFieldSize(size);
   }, [setPromptFieldSize, size]);
 
@@ -377,7 +418,6 @@ export const PromptField = forwardRef(function PromptField(
         inputRef,
         onSubmit,
         isGenerating,
-        isReadOnlyWhileGenerating,
         isListening,
         setListening,
         voiceStopRef,
@@ -479,6 +519,7 @@ export interface PromptTokenFieldProps {
   shouldAnimatePixelLoader?: boolean;
   placeholder?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   // TODO: temp api for coworker so that the weird popover shrinking behavior
   // doesn't appear when rendering near edge of page
   menuWidth?: number;
@@ -497,7 +538,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     shouldAnimatePixelLoader = false,
     placeholder,
     menuWidth,
-    onKeyDown: onKeyDownProp
+    onKeyDown: onKeyDownProp,
+    onKeyUp: onKeyUpProp
   } = props;
   let {
     prompt,
@@ -508,7 +550,6 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     inputRef,
     onSubmit,
     isGenerating,
-    isReadOnlyWhileGenerating,
     isListening,
     size
   } = useContext(PromptFieldContext);
@@ -645,14 +686,14 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         />
       </CenterBaseline>
       <Autocomplete>
-        <div role="presentation" onKeyDown={onKeyDownProp}>
+        <div role="presentation" onKeyDown={onKeyDownProp} onKeyUp={onKeyUpProp}>
           <TokenField
             value={prompt}
             onChange={setPrompt}
             allowsNewlines
             className={style({flexGrow: 1})}
             aria-label={stringFormatter.format('promptfield.label')}
-            isReadOnly={isListening || (isGenerating && isReadOnlyWhileGenerating)}
+            isReadOnly={isListening}
             onSubmit={onSubmit}
             onKeyDown={keyboardProps.onKeyDown}
             onFocus={e => {
@@ -845,7 +886,7 @@ function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
       isNonModal
       hideArrow
       placement="bottom start"
-      // since this is now virtualized we need a fallback width and padding is controled by virtualizeer
+      // since this is now virtualized we need a fallback width and padding is controlled by virtualizeer
       padding="none"
       UNSAFE_style={{width: menuWidth ?? 150}}
       key={key}
@@ -962,9 +1003,8 @@ export interface PromptFieldSubmitButtonProps {}
 /** PromptFieldSubmitButton submits the PromptField. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
-  let {prompt, isGenerating, isReadOnlyWhileGenerating, onSubmit, onStop} =
-    useContext(PromptFieldContext);
-  let showSubmit = !isGenerating || (!isReadOnlyWhileGenerating && prompt.segments.length > 0);
+  let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  let showSubmit = !isGenerating || prompt.segments.length > 0;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Button

@@ -63,7 +63,7 @@ import {
 } from 'react-aria-components/NavigationTree';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
-import * as ReactAPI from 'react';
+import React from 'react';
 import sideNavCss from './SideNav.module.css';
 import {Text, TextContext} from './Content';
 import {useControlledState} from 'react-stately/useControlledState';
@@ -79,10 +79,10 @@ import {useScale} from './utils';
 // Older React versions just render their children, so the panel collapses and expands without
 // animating.
 const ViewTransition: ComponentType<{children: ReactNode; default?: ViewTransitionClass}> =
-  ReactAPI.ViewTransition ?? (({children}) => children);
-const addTransitionType: (type: string) => void = ReactAPI.addTransitionType ?? (() => {});
+  React.ViewTransition ?? (({children}) => children);
+const addTransitionType: (type: string) => void = React.addTransitionType ?? (() => {});
 const startTransition: (scope: () => void) => void =
-  ReactAPI.startTransition ?? ((scope: () => void) => scope());
+  React.startTransition ?? ((scope: () => void) => scope());
 
 // How long the panel takes to animate between its collapsed and expanded widths. Keep in sync with
 // sidePanelStyle's transitionDuration below. SidePanel falls back to this when it has to wait for
@@ -744,6 +744,7 @@ const sidePanelStyle = style(
     display: 'flex',
     flexDirection: 'column',
     height: 'full',
+    minHeight: 0,
     // The expanded width is supplied by the consumer via the `styles` prop. When collapsed, SidePanel
     // applies an inline `width: var(--collapsedWidth)` (the fixed icon-rail size) which overrides that
     // class-based width.
@@ -857,7 +858,8 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
             flexShrink: 1,
             minHeight: 0,
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            height: 'full'
           })}>
           {children}
         </div>
@@ -874,21 +876,6 @@ function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: 
 
   let label = stringFormatter.format(`sidepanel.${props.isCollapsed ? 'expand' : 'collapse'}`);
 
-  return (
-    <PanelToggleButton
-      isCollapsed={props.isCollapsed}
-      setCollapsed={props.setCollapsed}
-      aria-label={label}
-    />
-  );
-}
-
-function PanelToggleButton(
-  props: AriaLabelingProps & {
-    isCollapsed: boolean;
-    setCollapsed: (isCollapsed: boolean) => void;
-  }
-) {
   let {isCollapsed, setCollapsed, ...otherProps} = props;
   let [isHovered, setHovered] = useState(false);
   let {hoverProps} = useHover({onHoverChange: setHovered});
@@ -896,6 +883,7 @@ function PanelToggleButton(
     <div {...hoverProps} className={style({display: 'contents', marginBottom: 2})}>
       <ActionButton
         {...otherProps}
+        aria-label={label}
         isQuiet
         styles={style({alignSelf: 'start'})}
         onPress={() => {
