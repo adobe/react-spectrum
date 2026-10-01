@@ -199,7 +199,7 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(
         </label>
       </div>
     );
-  } else if (name) {
+  } else {
     let data = selectData.get(state) || {};
     let {validationBehavior} = data;
 

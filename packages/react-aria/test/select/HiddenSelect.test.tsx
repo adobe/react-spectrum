@@ -25,7 +25,13 @@ const HiddenSelectExample = (
         triggerRef={triggerRef}
         {...props.hiddenProps}
       />
-      <button ref={triggerRef}>trigger</button>
+      <button
+        type="button"
+        ref={triggerRef}
+        onClick={() => state.setValue(2)}>
+        trigger
+    </button>
+<span data-testid="selected-value">{String(state.value ?? '')}</span>
     </>
   );
 };
@@ -41,7 +47,41 @@ describe('<HiddenSelect />', () => {
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
+  it.each([
+    {size: 300, name: undefined},
+    {size: 301, name: undefined},
+    {size: 300, name: 'select'},
+    {size: 301, name: 'select'}
+  ])(
+    'should reset selection with $size items and name $name',
+    async ({size, name}) => {
+      let formRef = React.createRef<HTMLFormElement>();
 
+      render(
+        <form ref={formRef}>
+          <HiddenSelectExample
+            items={makeItems(size)}
+            defaultSelectedKey={1}
+            hiddenProps={{name}}
+          />
+          <button type="reset">Reset</button>
+        </form>
+      );
+
+      expect(screen.getByTestId('selected-value')).toHaveTextContent('1');
+
+      await user.click(screen.getByRole('button', {name: 'trigger'}));
+      expect(screen.getByTestId('selected-value')).toHaveTextContent('2');
+
+      await user.click(screen.getByRole('button', {name: 'Reset'}));
+      expect(screen.getByTestId('selected-value')).toHaveTextContent('1');
+
+      let formData = new FormData(formRef.current!);
+      expect(Array.from(formData.entries())).toEqual(
+        name ? [[name, '1']] : []
+      );
+    }
+  );
   it('should successfully render for collection.size <= 300 and no selected key', () => {
     render(<HiddenSelectExample items={makeItems(5)} />);
   });
