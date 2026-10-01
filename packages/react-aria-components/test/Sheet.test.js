@@ -435,8 +435,8 @@ describe('Sheet', () => {
     it.each`
       position   | property                | expected
       ${'top'}   | ${'scrollMarginBottom'} | ${'calc(100dvh - 180px)'}
-      ${'left'}  | ${'scrollMarginRight'}  | ${'calc(100vw - 180px)'}
-      ${'right'} | ${'scrollMarginLeft'}   | ${'calc(100vw - 180px)'}
+      ${'left'}  | ${'scrollMarginRight'}  | ${'calc(100dvw - 180px)'}
+      ${'right'} | ${'scrollMarginLeft'}   | ${'calc(100dvw - 180px)'}
     `(
       'anchors snap markers to the leading edge for $position sheets',
       async ({position, property, expected}) => {
@@ -543,7 +543,7 @@ describe('Sheet', () => {
       let tree = render(<NestedSheets />);
       await open(tree);
       expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe(
-        '--sheet-timeline-0, --sheet-timeline-1'
+        '--sheet-timeline-0'
       );
 
       await user.click(tree.getByRole('button', {name: 'Open child'}));
@@ -561,7 +561,7 @@ describe('Sheet', () => {
         expect(el).not.toHaveAttribute('data-has-descendants');
       }
       expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe(
-        '--sheet-timeline-0, --sheet-timeline-1, --sheet-timeline-2'
+        '--sheet-timeline-0, --sheet-timeline-1'
       );
 
       await user.click(within(child).getByRole('button', {name: 'Close child'}));
@@ -571,15 +571,13 @@ describe('Sheet', () => {
         expect(tree.getByTestId(testId)).not.toHaveAttribute('data-has-descendants');
       }
       expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe(
-        '--sheet-timeline-0, --sheet-timeline-1'
+        '--sheet-timeline-0'
       );
 
       await user.keyboard('{Escape}');
       act(() => jest.runAllTimers());
       expect(tree.queryByRole('dialog')).toBeNull();
-      expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe(
-        '--sheet-timeline-0'
-      );
+      expect(document.documentElement.style.getPropertyValue('timeline-scope')).toBe('');
     });
 
     it('animates parent sheets along the view timelines of their descendants', async () => {
@@ -724,8 +722,8 @@ describe('Sheet', () => {
       position    | axis   | inset
       ${'bottom'} | ${'y'} | ${'0 100dvh'}
       ${'top'}    | ${'y'} | ${'100dvh 0'}
-      ${'left'}   | ${'x'} | ${'100vw 0'}
-      ${'right'}  | ${'x'} | ${'0 100vw'}
+      ${'left'}   | ${'x'} | ${'100dvw 0'}
+      ${'right'}  | ${'x'} | ${'0 100dvw'}
       ${'center'} | ${'y'} | ${'0 100dvh'}
     `('uses a $axis axis view timeline for $position sheets', async ({position, axis, inset}) => {
       let tree = render(<TestSheet overlayProps={{position}} />);

@@ -21,10 +21,13 @@ import {
   ModalRenderProps
 } from './Modal';
 import {isIOS, isSafari} from 'react-aria/private/utils/platform';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {
   createContext,
   CSSProperties,
+  ForwardedRef,
+  forwardRef,
   useCallback,
   useContext,
   useMemo,
@@ -35,6 +38,7 @@ import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useId} from 'react-aria/useId';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 type SheetPosition = 'bottom' | 'top' | 'left' | 'right' | 'center';
@@ -77,7 +81,17 @@ export interface SheetRenderProps extends ModalRenderProps {
 
 export interface SheetOverlayProps
   extends
-    Omit<ModalOverlayProps, 'className' | 'style' | 'children' | 'render'>,
+    Omit<
+      ModalOverlayProps,
+      | 'className'
+      | 'style'
+      | 'children'
+      | 'render'
+      | 'onEnter'
+      | 'onExit'
+      | 'isEntering'
+      | 'isExiting'
+    >,
     RenderProps<SheetRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -121,7 +135,7 @@ export interface SheetOverlayProps
 
 type SheetValues = Omit<SheetRenderProps, keyof ModalRenderProps>;
 
-interface SheetContextValue extends Omit<SheetOverlayProps, 'position' | 'swipeDirection'> {
+interface InternalSheetContextValue extends Omit<SheetOverlayProps, 'position' | 'swipeDirection'> {
   position: SheetPosition;
   swipeDirection: SheetSwipeDirection;
   index: number;
@@ -131,7 +145,7 @@ interface SheetContextValue extends Omit<SheetOverlayProps, 'position' | 'swipeD
   values: SheetValues;
 }
 
-const SheetContext = createContext<SheetContextValue | null>(null);
+const InternalSheetContext = createContext<InternalSheetContextValue | null>(null);
 
 interface SheetStackEntry {
   id: string;
@@ -146,9 +160,8 @@ let stackListeners = new Set<() => void>();
 function emitStackChange() {
   // Hoist every mounted sheet's timeline name to the root so a parent
   // can still resolve the child's timeline by name.
-  // 1 extra because Safari needs timelines declared before the sheet mounts.
   // TODO: don't override existing timelines declared in CSS or inline styles.
-  let names = Array.from({length: sheetStack.length + 1})
+  let names = Array.from({length: sheetStack.length})
     .map((_, i) => `--sheet-timeline-${i}`)
     .join(', ');
   document.documentElement.style.setProperty('timeline-scope', names);
@@ -183,7 +196,10 @@ const supportsViewTimeline =
 /**
  * A SheetOverlay is a container for a SheetBackdrop and a Sheet.
  */
-export function SheetOverlay(props: SheetOverlayProps) {
+export const SheetOverlay = forwardRef(function SheetOverlay(
+  props: SheetOverlayProps,
+  domRef: ForwardedRef<HTMLDivElement>
+) {
   let {children, isDismissable = true} = props;
   let {direction} = useLocale();
   let position = resolveDirection(props.position ?? 'bottom', direction);
@@ -193,7 +209,7 @@ export function SheetOverlay(props: SheetOverlayProps) {
       ? 'vertical'
       : position;
   let contextState = useContext(OverlayTriggerStateContext);
-  let onClose = useEffectEvent(() => {
+  let onCloseEvent = useEffectEvent(() => {
     contextState!.close();
   });
 
@@ -245,7 +261,7 @@ export function SheetOverlay(props: SheetOverlayProps) {
           hasEntered ||= entry.intersectionRatio > 0;
           if (hasEntered && entry.intersectionRatio <= 0) {
             // eslint-disable-next-line react/react-compiler
-            onClose();
+            onCloseEvent();
             element.dispatchEvent(new CustomEvent('react-aria-sheet-close'));
           }
         },
@@ -266,6 +282,8 @@ export function SheetOverlay(props: SheetOverlayProps) {
     },
     [stackItem, axis, maxScroll, enteredScroll]
   );
+
+  let mergedRefs = useMemo(() => mergeRefs(ref, domRef), [ref, domRef]);
 
   let sheetStack = useSyncExternalStore(subscribeStack, getSheetStack, getSheetStack);
   let index = Math.max(
@@ -296,7 +314,7 @@ export function SheetOverlay(props: SheetOverlayProps) {
   return (
     <ModalOverlay
       {...props}
-      ref={ref}
+      ref={mergedRefs}
       isDismissable={isDismissable}
       // Moving the VoiceOver cursor into the sheet (via focus, or by making the content behind it
       // inert) scrolls, which interrupts the enter scroll animation on iOS. Wait until it has entered.
@@ -370,7 +388,7 @@ export function SheetOverlay(props: SheetOverlayProps) {
         });
       }}>
       {renderProps => (
-        <SheetContext.Provider
+        <InternalSheetContext.Provider
           value={{
             ...props,
             position,
@@ -382,11 +400,11 @@ export function SheetOverlay(props: SheetOverlayProps) {
             values
           }}>
           {typeof children === 'function' ? children({...renderProps, ...values}) : children}
-        </SheetContext.Provider>
+        </InternalSheetContext.Provider>
       )}
     </ModalOverlay>
   );
-}
+});
 
 function getDataAttributes(values: SheetValues) {
   return {
@@ -535,11 +553,11 @@ interface SnapPointProps {
 
 // Converts a snap point value to a CSS length along the swipe axis: numbers are viewport relative.
 function toLength(point: number | string, axis: Axis): string {
-  return typeof point === 'number' ? `${point}${axis === 'y' ? 'dvh' : 'vw'}` : point;
+  return typeof point === 'number' ? `${point}${axis === 'y' ? 'dvh' : 'dvw'}` : point;
 }
 
 function SnapPoint({point, align, axis}: SnapPointProps) {
-  let mainUnit = axis === 'y' ? 'dvh' : 'vw';
+  let mainUnit = axis === 'y' ? 'dvh' : 'dvw';
   let offset = toLength(point, axis);
   return (
     <div
@@ -567,7 +585,7 @@ interface DetentPointProps {
 // with a `scroll-margin` of `viewport - visibleAmount` rests the sheet with exactly `visibleAmount`
 // of it on screen.
 function DetentPoint({point, axis, after, isInitial}: DetentPointProps) {
-  let viewport = axis === 'y' ? '100dvh' : '100vw';
+  let viewport = axis === 'y' ? '100dvh' : '100dvw';
   let margin = `calc(${viewport} - ${toLength(point, axis)})`;
   let common: React.CSSProperties = {
     position: 'absolute',
@@ -588,7 +606,23 @@ function DetentPoint({point, axis, after, isInitial}: DetentPointProps) {
 
 export interface SheetProps
   extends
-    Omit<ModalOverlayProps, 'className' | 'style' | 'children' | 'render'>,
+    Omit<
+      ModalOverlayProps,
+      | 'className'
+      | 'style'
+      | 'children'
+      | 'render'
+      | 'onEnter'
+      | 'onExit'
+      | 'isEntering'
+      | 'isExiting'
+      | 'isDismissable'
+      | 'isOpen'
+      | 'defaultOpen'
+      | 'onOpenChange'
+      | 'isKeyboardDismissDisabled'
+      | 'shouldCloseOnInteractOutside'
+    >,
     RenderProps<SheetRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -613,8 +647,11 @@ export interface SheetProps
 /**
  * A Sheet is a swipeable overlay that slides in from the edge of the viewport.
  */
-export function Sheet(props: SheetProps) {
-  let ref = useRef<HTMLDivElement>(null);
+export const Sheet = forwardRef(function Sheet(
+  props: SheetProps,
+  domRef: ForwardedRef<HTMLDivElement>
+) {
+  let ref = useObjectRef(domRef);
   let scrollRef = useRef<HTMLDivElement>(null);
   let stageRef = useRef<HTMLDivElement>(null);
   let {
@@ -627,14 +664,14 @@ export function Sheet(props: SheetProps) {
     isExiting,
     isDismissable = true,
     values
-  } = useContext(SheetContext)!;
+  } = useContext(InternalSheetContext)!;
   // The ModalOverlay may defer its enter animation (e.g. until the software keyboard opens), during
   // which isEntering is false. The sheet is not settled until it has opened, so treat it as entering.
   let isOpen = useContext(InternalModalContext)?.isOpen ?? true;
   let isTransitioning = !isOpen || isEntering || isExiting;
   let {direction} = useLocale();
   let {axis, after, before, containerOffset} = getSwipeConfig(swipeDirection);
-  let viewport = axis === 'y' ? '100dvh' : '100vw';
+  let viewport = axis === 'y' ? '100dvh' : '100dvw';
 
   // A non-dismissable sheet can still be swiped between its snap points, but not past the smallest
   // one. Enter/exit animations still need the exit space, so only clamp while settled.
@@ -692,9 +729,11 @@ export function Sheet(props: SheetProps) {
     prevStageOffset.current = offset;
   });
 
-  let style: Record<string, string> = {
+  let swipeAnimation = useSwipeAnimation(props);
+  let style: Record<string, string | number | undefined> = {
     // Positioned so the detent markers below anchor to the sheet's own box.
-    position: 'relative'
+    position: 'relative',
+    ...swipeAnimation
   };
 
   if (props.overscrollPadding && position === swipeDirection) {
@@ -719,9 +758,6 @@ export function Sheet(props: SheetProps) {
     }
   }
 
-  let swipeAnimation = useSwipeAnimation(props);
-  Object.assign(style, swipeAnimation);
-
   if (props.stackAnimation && descendants.length > 0 && supportsViewTimeline) {
     // Append one animation per descendant sheet, driven by that descendant's view timeline.
     let stackStyle: Record<string, (d: SheetStackEntry, i: number) => string> = {
@@ -743,6 +779,7 @@ export function Sheet(props: SheetProps) {
   let [x, y] = POSITION_ALIGNMENT[position];
   let justifyContent = axis === 'y' ? y : x;
   let alignItems = axis === 'y' ? x : y;
+  let {scrollX, scrollY} = typeof window !== 'undefined' ? window : {scrollX: 0, scrollY: 0};
 
   return (
     <div
@@ -750,11 +787,11 @@ export function Sheet(props: SheetProps) {
       data-sheet-scroll
       style={{
         position: 'absolute',
-        top: axis === 'y' ? `calc(${window.scrollY}px + ${containerOffset}dvh)` : window.scrollY,
-        left: axis === 'x' ? `${containerOffset}vw` : 0,
+        top: axis === 'y' ? `calc(${scrollY}px + ${containerOffset}dvh)` : scrollY,
+        left: axis === 'x' ? `calc(${scrollX}px + ${containerOffset}dvw)` : scrollX,
         // The container is 2 viewports along the swipe axis and 1 viewport on the cross axis.
         height: axis === 'y' ? '200dvh' : '100dvh',
-        width: axis === 'x' ? '200vw' : '100vw',
+        width: axis === 'x' ? '200dvw' : '100dvw',
         overflowX: axis === 'x' ? 'auto' : 'hidden',
         overflowY: axis === 'y' ? 'auto' : 'hidden',
         // Snapping is only disabled when the geometry changes. Changing it during a swipe to dismiss
@@ -780,7 +817,7 @@ export function Sheet(props: SheetProps) {
           top: axis === 'y' ? stageStart : 0,
           left: axis === 'x' ? stageStart : 0,
           height: '100dvh',
-          width: '100vw',
+          width: '100dvw',
           display: 'flex',
           flexDirection: axis === 'y' ? 'column' : 'row',
           alignItems,
@@ -803,7 +840,7 @@ export function Sheet(props: SheetProps) {
       <SnapPoint point={endMarker} align={isClamped && before ? 'none' : 'end'} axis={axis} />
     </div>
   );
-}
+});
 
 // Measures the distance from the sheet's leading edge to the stage's exit edge along the swipe axis,
 // i.e. how much of the sheet is visible when fully entered. Uses layout offsets rather than
@@ -866,9 +903,12 @@ export interface SheetBackdropProps
 /**
  * The backdrop behind a sheet.
  */
-export function SheetBackdrop(props: SheetBackdropProps) {
+export const SheetBackdrop = forwardRef(function SheetBackdrop(
+  props: SheetBackdropProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   let style = useSwipeAnimation(props);
-  let {values, isEntering, isExiting} = useContext(SheetContext)!;
+  let {values, isEntering, isExiting} = useContext(InternalSheetContext)!;
   let state = useContext(OverlayTriggerStateContext)!;
   let renderProps = useRenderProps({
     ...props,
@@ -879,6 +919,7 @@ export function SheetBackdrop(props: SheetBackdropProps) {
 
   return (
     <div
+      ref={ref}
       {...filterDOMProps(props, {global: true})}
       {...renderProps}
       {...getDataAttributes(values)}
@@ -886,20 +927,21 @@ export function SheetBackdrop(props: SheetBackdropProps) {
       data-exiting={isExiting || undefined}
     />
   );
-}
+});
 
 function useSwipeAnimation(props: SheetBackdropProps) {
-  let {swipeDirection, snapPoints, index, isEntering, isExiting} = useContext(SheetContext)!;
+  let {swipeDirection, snapPoints, index, isEntering, isExiting} =
+    useContext(InternalSheetContext)!;
   let {axis, viewRange, viewDirection, viewIterations} = getSwipeConfig(swipeDirection);
 
   if (props.swipeAnimation) {
     let rangeStart =
       props.swipeAnimationRange?.start != null
-        ? toLength(snapPoints?.[props.swipeAnimationRange.start] || '0%', axis)
+        ? toLength(snapPoints?.[props.swipeAnimationRange.start] ?? '0%', axis)
         : '0%';
     let rangeEnd =
       props.swipeAnimationRange?.end != null
-        ? toLength(snapPoints?.[props.swipeAnimationRange.end] || '100%', axis)
+        ? toLength(snapPoints?.[props.swipeAnimationRange.end] ?? '100%', axis)
         : '100%';
     if (swipeDirection === 'top' || swipeDirection === 'left') {
       rangeStart = `calc(100% - ${rangeStart})`;
@@ -937,19 +979,31 @@ function useSwipeAnimation(props: SheetBackdropProps) {
   return {};
 }
 
-export interface SheetContentProps extends DialogProps {}
+export interface SheetContentProps extends Omit<DialogProps, 'className' | 'isEntering'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
+   * @default 'react-aria-SheetContent'
+   */
+  className?: string;
+}
 
 /**
  * The scrollable content area of a sheet.
  */
-export function SheetContent(props: SheetContentProps) {
-  let {swipeDirection, index} = useContext(SheetContext)!;
+export const SheetContent = forwardRef(function SheetContent(
+  props: SheetContentProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let {swipeDirection, index} = useContext(InternalSheetContext)!;
   let {axis, before, after} = getSwipeConfig(swipeDirection);
-  let viewportLength = axis === 'y' ? '100dvh' : '100vw';
+  let viewportLength = axis === 'y' ? '100dvh' : '100dvw';
 
   return (
     <Dialog
       {...props}
+      ref={ref}
       className={props.className || 'react-aria-SheetContent'}
       data-sheet-content
       style={{
@@ -966,7 +1020,7 @@ export function SheetContent(props: SheetContentProps) {
       }}
     />
   );
-}
+});
 
 function reduceMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
