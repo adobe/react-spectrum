@@ -525,6 +525,14 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         state.isPressed = false;
+        if (wasPressed && e.key === ' ' && !e.defaultPrevented) {
+          // Native controls may click after Space keyup. Keep their default action, but
+          // don't handle that click as another press. Clear this even if the click is canceled.
+          state.ignoreEmulatedMouseEvents = true;
+          setTimeout(() => {
+            state.ignoreEmulatedMouseEvents = false;
+          }, 0);
+        }
         state.metaKeyEvents?.delete(e.key);
       } else if (e.key === 'Meta' && state.metaKeyEvents?.size) {
         // If we recorded keydown events that occurred while the Meta key was pressed,
