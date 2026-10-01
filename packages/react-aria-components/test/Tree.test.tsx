@@ -1596,6 +1596,36 @@ describe('Tree', () => {
   });
 
   describe('empty state', () => {
+    it('should navigate to rows that arrive while the empty tree is focused', async () => {
+      let Example = ({items}: {items: Array<{id: string; name: string}>}) => (
+        <Tree aria-label="Async tree" items={items} renderEmptyState={() => 'No items'}>
+          {item => (
+            <TreeItem id={item.id} textValue={item.name}>
+              <TreeItemContent>{item.name}</TreeItemContent>
+            </TreeItem>
+          )}
+        </Tree>
+      );
+      let {getByRole, getAllByRole, rerender} = render(<Example items={[]} />);
+      let tree = getByRole('treegrid');
+
+      await user.tab();
+      expect(tree).toHaveFocus();
+
+      rerender(
+        <Example
+          items={[
+            {id: 'one', name: 'One'},
+            {id: 'two', name: 'Two'}
+          ]}
+        />
+      );
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[0]).toHaveFocus();
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[1]).toHaveFocus();
+    });
+
     it('should allow the user to tab to the empty tree', async () => {
       let {getAllByRole, getByRole} = render(
         <Tree

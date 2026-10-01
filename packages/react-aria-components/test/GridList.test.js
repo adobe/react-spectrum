@@ -512,6 +512,37 @@ describe('GridList', () => {
     expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
+  it.each([false, true])(
+    'should preserve focus when items arrive after an empty list (blurred: %s)',
+    async blurred => {
+      let Example = ({items}) => (
+        <>
+          <GridList aria-label="Async list" items={items} renderEmptyState={() => 'No results'}>
+            {item => <GridListItem id={item.id}>{item.name}</GridListItem>}
+          </GridList>
+          <button>After</button>
+        </>
+      );
+      let {getByRole, getAllByRole, rerender} = render(<Example items={[]} />);
+      await user.tab();
+      expect(getByRole('grid')).toHaveFocus();
+      if (blurred) {
+        await user.tab();
+      }
+
+      rerender(
+        <Example
+          items={[
+            {id: 'one', name: 'One'},
+            {id: 'two', name: 'Two'}
+          ]}
+        />
+      );
+      await user.keyboard('{ArrowDown}');
+      expect(blurred ? getByRole('button', {name: 'After'}) : getAllByRole('row')[0]).toHaveFocus();
+    }
+  );
+
   it('should support empty state', () => {
     render(
       <GridList aria-label="Test" renderEmptyState={() => 'No results'}>
