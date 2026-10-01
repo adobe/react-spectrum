@@ -14,9 +14,10 @@ import {Collection} from 'react-aria/Collection';
 import {expect, it, vi} from 'vitest';
 import {GridLayout} from '../src/GridLayout';
 import {GridList, GridListItem, GridListLoadMoreItem} from '../src/GridList';
+import {ListLayout, Size} from 'react-stately/useVirtualizerState';
 import React, {useState} from 'react';
 import {render} from 'vitest-browser-react';
-import {Size} from 'react-stately/useVirtualizerState';
+import {usePreventScroll} from 'react-aria/usePreventScroll';
 import {User} from '@react-aria/test-utils';
 import {Virtualizer} from '../src/Virtualizer';
 
@@ -125,29 +126,57 @@ it('virtualizer renders items after toggling display:none', async () => {
 const PAGE_SIZE = 20;
 const ROW_HEIGHT = 100;
 
-function PageScrollingGridList() {
+function PageScrollingGridList({isVirtualized = false}: {isVirtualized?: boolean}) {
   let [page, setPage] = useState(1);
   let [loadCount, setLoadCount] = useState(0);
   let items = Array.from({length: page * PAGE_SIZE}, (_, i) => ({id: i, name: `Item ${i}`}));
 
+  let list = (
+    <GridList
+      aria-label="Page scrolling list"
+      style={isVirtualized ? {height: 400, width: 400, overflow: 'auto'} : undefined}>
+      <Collection items={items}>
+        {item => (
+          <GridListItem id={item.id} style={{height: `${ROW_HEIGHT}px`}}>
+            {item.name}
+          </GridListItem>
+        )}
+      </Collection>
+      <GridListLoadMoreItem
+        onLoadMore={() => {
+          setLoadCount(count => count + 1);
+          setPage(currentPage => currentPage + 1);
+        }}
+      />
+    </GridList>
+  );
   return (
     <>
       <div data-testid="load-count">{loadCount}</div>
-      <GridList aria-label="Page scrolling list">
-        <Collection items={items}>
-          {item => (
-            <GridListItem id={item.id} style={{height: `${ROW_HEIGHT}px`}}>
-              {item.name}
-            </GridListItem>
-          )}
-        </Collection>
-        <GridListLoadMoreItem
-          onLoadMore={() => {
-            setLoadCount(count => count + 1);
-            setPage(currentPage => currentPage + 1);
-          }}
-        />
-      </GridList>
+      {isVirtualized ? (
+        <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: ROW_HEIGHT}}>
+          {list}
+        </Virtualizer>
+      ) : (
+        list
+      )}
+    </>
+  );
+}
+
+function ScrollLockedGridList({isVirtualized}: {isVirtualized: boolean}) {
+  let [isMounted, setMounted] = useState(false);
+  let [isLocked, setLocked] = useState(true);
+  usePreventScroll({isDisabled: !isLocked});
+  return (
+    <>
+      <button data-testid="mount-list" onClick={() => setMounted(true)}>
+        Mount list
+      </button>
+      <button data-testid="unlock-page" onClick={() => setLocked(false)}>
+        Unlock page
+      </button>
+      {isMounted && <PageScrollingGridList isVirtualized={isVirtualized} />}
     </>
   );
 }
@@ -163,3 +192,28 @@ it('loads more when a page-scrolling list reaches the sentinel', async () => {
   window.scrollTo(0, document.documentElement.scrollHeight);
   await vi.waitFor(() => expect(loadCount.textContent).toBe('1'), {timeout: 2000});
 });
+
+it.each([false, true])(
+  'loads a collection mounted during scroll lock (virtualized=%s)',
+  async isVirtualized => {
+    let {container} = await render(<ScrollLockedGridList isVirtualized={isVirtualized} />);
+    expect(document.documentElement.style.overflow).toBe('hidden');
+    (container.querySelector('[data-testid=mount-list]') as HTMLElement).click();
+    await vi.waitFor(() => expect(container.querySelector('[role=grid]')).not.toBeNull());
+
+    let loadCount = container.querySelector('[data-testid=load-count]') as HTMLElement;
+    let grid = container.querySelector('[role=grid]') as HTMLElement;
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(loadCount.textContent).toBe('0');
+
+    if (isVirtualized) {
+      expect(grid.scrollHeight).toBeGreaterThan(grid.clientHeight * 2);
+      grid.scrollTop = grid.scrollHeight;
+    } else {
+      (container.querySelector('[data-testid=unlock-page]') as HTMLElement).click();
+      await vi.waitFor(() => expect(document.documentElement.style.overflow).not.toBe('hidden'));
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    }
+    await vi.waitFor(() => expect(loadCount.textContent).toBe('1'), {timeout: 2000});
+  }
+);
