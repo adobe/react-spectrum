@@ -500,6 +500,41 @@ describe('ComboBox', () => {
     expect(queryByRole('listbox')).not.toBeInTheDocument();
   });
 
+  it('should scroll the first enabled option into view when opened with the keyboard', async () => {
+    let scrollIntoView = jest.fn();
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+    let items = [
+      {id: '1', name: 'Disabled 1', isDisabled: true},
+      {id: '2', name: 'Disabled 2', isDisabled: true},
+      {id: '3', name: 'Disabled 3', isDisabled: true},
+      {id: '4', name: 'Cat'},
+      {id: '5', name: 'Dog'}
+    ];
+
+    let {getByRole} = render(
+      <ComboBox defaultItems={items}>
+        <Label>Favorite Animal</Label>
+        <Input />
+        <Button />
+        <Popover>
+          <ListBox>
+            {item => <ListBoxItem isDisabled={item.isDisabled}>{item.name}</ListBoxItem>}
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let input = getByRole('combobox');
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    act(() => jest.runAllTimers());
+    delete window.HTMLElement.prototype.scrollIntoView;
+
+    let option = within(getByRole('listbox')).getByRole('option', {name: 'Cat'});
+    expect(input).toHaveAttribute('aria-activedescendant', option.id);
+    expect(scrollIntoView.mock.contexts).toContain(option);
+  });
+
   it('should support virtualizer', async () => {
     let items = [];
     for (let i = 0; i < 50; i++) {
