@@ -41,6 +41,13 @@ export interface AriaModalOverlayProps extends Pick<
    * cursor is not forced into the modal before it is ready.
    */
   isEntering?: boolean;
+  /**
+   * Whether to override the `focus()` method so it does not scroll the page.
+   * This is temporary and will be removed after fully testing all overlays.
+   *
+   * @private
+   */
+  UNSTABLE_overrideFocus?: boolean;
 }
 
 export interface ModalOverlayAria {
@@ -69,7 +76,8 @@ export function useModalOverlay(
   );
 
   usePreventScroll({
-    isDisabled: !state.isOpen
+    isDisabled: !state.isOpen,
+    UNSTABLE_overrideFocus: props.UNSTABLE_overrideFocus
   });
 
   useOverlayFocusContain();
