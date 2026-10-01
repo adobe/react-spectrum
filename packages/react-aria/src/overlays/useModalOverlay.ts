@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ariaHideOutside} from './ariaHideOutside';
+import {ariaHideOutside, keepVisible} from './ariaHideOutside';
 import {AriaOverlayProps, useOverlay} from './useOverlay';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {mergeProps} from '../utils/mergeProps';
@@ -35,6 +35,12 @@ export interface AriaModalOverlayProps extends Pick<
    * @default false
    */
   isKeyboardDismissDisabled?: boolean;
+  /**
+   * Whether the modal is currently performing an entry animation. Content outside the modal is
+   * not hidden from assistive technology until the animation completes, so that the screen reader
+   * cursor is not forced into the modal before it is ready.
+   */
+  isEntering?: boolean;
 }
 
 export interface ModalOverlayAria {
@@ -68,11 +74,16 @@ export function useModalOverlay(
 
   useOverlayFocusContain();
 
+  let {isEntering} = props;
   useEffect(() => {
     if (state.isOpen && ref.current) {
+      if (isEntering) {
+        // Prevent a parent modal from hiding this one while it is entering.
+        return keepVisible(ref.current);
+      }
       return ariaHideOutside([ref.current], {shouldUseInert: true});
     }
-  }, [state.isOpen, ref]);
+  }, [state.isOpen, isEntering, ref]);
 
   return {
     modalProps: mergeProps(overlayProps),

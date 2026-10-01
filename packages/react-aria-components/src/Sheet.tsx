@@ -298,6 +298,9 @@ export function SheetOverlay(props: SheetOverlayProps) {
       {...props}
       ref={ref}
       isDismissable={isDismissable}
+      // Moving the VoiceOver cursor into the sheet (via focus, or by making the content behind it
+      // inert) scrolls, which interrupts the enter scroll animation on iOS. Wait until it has entered.
+      UNSTABLE_deferUntilEntered
       {...sheetProps}
       onEnter={element => {
         // The overlay is the document-anchored wrapper; the swipe gesture scrolls the inner container.

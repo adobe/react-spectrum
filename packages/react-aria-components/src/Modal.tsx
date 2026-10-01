@@ -21,6 +21,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
+import {DialogContext, DialogProps, OverlayTriggerStateContext} from './Dialog';
 import {DismissButton, Overlay} from 'react-aria/Overlay';
 import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
@@ -32,7 +33,6 @@ import {
   OverlayTriggerState,
   useOverlayTriggerState
 } from 'react-stately/useOverlayTriggerState';
-import {OverlayTriggerStateContext} from './Dialog';
 import React, {
   createContext,
   ForwardedRef,
@@ -89,6 +89,13 @@ export interface ModalOverlayProps
    * @default document.body
    */
   UNSTABLE_portalContainer?: Element;
+  /**
+   * Whether to wait until the entry animation completes before hiding content outside the modal
+   * and moving focus into it.
+   *
+   * @private
+   */
+  UNSTABLE_deferUntilEntered?: boolean;
 }
 
 interface InternalModalContextValue {
@@ -250,14 +257,30 @@ export const ModalOverlay = /*#__PURE__*/ (forwardRef as forwardRefType)(
   ModalOverlayWithForwardRef
 );
 
-function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInnerProps) {
+function ModalOverlayInner({
+  UNSTABLE_portalContainer,
+  UNSTABLE_deferUntilEntered,
+  ...props
+}: ModalOverlayInnerProps) {
   let modalRef = props.modalRef;
   let {state} = props;
-  let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
 
   let [isOpen, setIsOpen] = useState(false);
   let entering =
     useEnterAnimation(props.overlayRef, isOpen, props.onEnter) || props.isEntering || false;
+  let isDeferred = !!UNSTABLE_deferUntilEntered && (!isOpen || entering);
+  let {modalProps, underlayProps} = useModalOverlay(
+    {...props, isEntering: isDeferred},
+    state,
+    modalRef
+  );
+
+  // Pass the entering state to the dialog so it waits to move focus until the modal has entered.
+  let dialogContext = useContext(DialogContext);
+  let mergedDialogContext = UNSTABLE_deferUntilEntered
+    ? mergeDialogContext(dialogContext, {isEntering: isDeferred})
+    : dialogContext;
+
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ModalOverlay',
@@ -316,7 +339,8 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
                 isDismissable: props.isDismissable
               }
             ],
-            [OverlayTriggerStateContext, state]
+            [OverlayTriggerStateContext, state],
+            [DialogContext, mergedDialogContext]
           ]}>
           {renderProps.children}
         </Provider>
@@ -324,6 +348,20 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
     </Overlay>
   );
   // oxlint-enable react/react-compiler
+}
+
+function mergeDialogContext(
+  context: ContextValue<DialogProps, HTMLElement>,
+  props: Partial<DialogProps>
+): ContextValue<DialogProps, HTMLElement> {
+  if (context && 'slots' in context && context.slots) {
+    let slots = {};
+    for (let key in context.slots) {
+      slots[key] = {...context.slots[key], ...props};
+    }
+    return {...context, slots};
+  }
+  return {...context, ...props};
 }
 
 interface ModalContentProps

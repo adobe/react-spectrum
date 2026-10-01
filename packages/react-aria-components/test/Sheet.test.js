@@ -275,6 +275,30 @@ describe('Sheet', () => {
     expect(document.activeElement).toBe(tree.getByRole('button', {name: 'Open sheet'}));
   });
 
+  it('defers hiding outside content and focusing the dialog until the enter animation completes', async () => {
+    // jsdom skips enter animations unless getAnimations is implemented.
+    Element.prototype.getAnimations = () => [];
+    try {
+      let tree = render(<TestSheet />);
+      let trigger = tree.getByRole('button', {name: 'Open sheet'});
+      let dialog = await open(tree);
+      let overlay = tree.getByTestId('overlay');
+      expect(overlay).toHaveAttribute('data-entering');
+      expect(document.activeElement).toBe(trigger);
+      expect(trigger.closest('[inert], [aria-hidden="true"]')).toBeNull();
+
+      let scroller = overlay.querySelector('[data-sheet-scroll]');
+      await act(async () => {
+        scroller.dispatchEvent(new Event('scrollend'));
+      });
+      expect(overlay).not.toHaveAttribute('data-entering');
+      expect(document.activeElement).toBe(dialog);
+      expect(trigger.closest('[inert], [aria-hidden="true"]')).not.toBeNull();
+    } finally {
+      delete Element.prototype.getAnimations;
+    }
+  });
+
   it('closes via the close function passed to SheetContent children', async () => {
     let tree = render(<TestSheet />);
     let dialog = await open(tree);
@@ -486,6 +510,34 @@ describe('Sheet', () => {
         </TestSheet>
       );
     }
+
+    it('does not hide a nested sheet while it is entering', async () => {
+      Element.prototype.getAnimations = () => [];
+      try {
+        let tree = render(<NestedSheets />);
+        await user.click(tree.getByRole('button', {name: 'Open sheet'}));
+        let enter = async overlay => {
+          await act(async () => {
+            overlay.querySelector('[data-sheet-scroll]').dispatchEvent(new Event('scrollend'));
+          });
+        };
+        await enter(tree.getByTestId('parent-overlay'));
+
+        await user.click(tree.getByRole('button', {name: 'Open child'}));
+        let hidden = '[inert], [aria-hidden="true"]';
+        let childSheet = tree.getByTestId('child-sheet');
+        let parentSheet = tree.getByTestId('parent-sheet');
+        expect(childSheet.closest(hidden)).toBeNull();
+        expect(parentSheet.closest(hidden)).toBeNull();
+
+        await enter(tree.getByTestId('child-overlay'));
+        expect(childSheet.closest(hidden)).toBeNull();
+        expect(parentSheet.closest(hidden)).not.toBeNull();
+        expect(document.activeElement).toBe(tree.getByRole('dialog', {name: 'Child sheet'}));
+      } finally {
+        delete Element.prototype.getAnimations;
+      }
+    });
 
     it('tracks the stack index and descendants of nested sheets', async () => {
       let tree = render(<NestedSheets />);
