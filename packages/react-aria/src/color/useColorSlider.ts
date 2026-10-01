@@ -126,7 +126,7 @@ export function useColorSlider(
     }
   };
 
-  let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
+  let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'} as const;
 
   if (channel === 'hue') {
     // oxlint-disable-next-line react/react-compiler
