@@ -29,7 +29,7 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import {listData} from './utils';
 import {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
-import {ReactNode} from 'react';
+import {ReactNode, useMemo} from 'react';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useId} from '../utils/useId';
 import {useLabel} from '../label/useLabel';
@@ -147,12 +147,16 @@ export function useListBox<T>(
     linkBehavior = 'override';
   }
 
+  let disabledKeys = useMemo(
+    () => (props.isDisabled ? new Set(state.collection.getKeys()) : state.disabledKeys),
+    [props.isDisabled, state.collection, state.disabledKeys]
+  );
   let {listProps} = useSelectableList({
     ...props,
     ref,
     selectionManager: state.selectionManager,
     collection: state.collection,
-    disabledKeys: props.isDisabled ? new Set(state.collection.getKeys()) : state.disabledKeys,
+    disabledKeys,
     linkBehavior
   });
 
