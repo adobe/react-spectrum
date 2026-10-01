@@ -241,6 +241,4 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(
 
     return <>{res}</>;
   }
-
-  return null;
 }
