@@ -424,6 +424,52 @@ describe('FocusScope', function () {
   });
 
   describe('focus restoration', function () {
+    it.each([false, true])('uses a fallback without overriding moved focus (%s)', moveFocus => {
+      function Test({show}) {
+        let fallbackRef = React.useRef(null);
+        return (
+          <>
+            {show && (
+              <FocusScope restoreFocus autoFocus restoreFocusFallbackRef={fallbackRef}>
+                <input data-testid="inside" />
+              </FocusScope>
+            )}
+            <button ref={fallbackRef}>Fallback</button>
+            <input data-testid="outside" />
+          </>
+        );
+      }
+      let {getByRole, getByTestId, rerender} = render(<Test show />);
+      expect(document.activeElement).toBe(getByTestId('inside'));
+      if (moveFocus) {
+        act(() => getByTestId('outside').focus());
+      }
+      rerender(<Test show={false} />);
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(moveFocus ? getByTestId('outside') : getByRole('button'));
+    });
+
+    it('does not restore focus to a fallback that has been removed', () => {
+      function Test({show, showFallback}) {
+        let fallbackRef = React.useRef(null);
+        return (
+          <>
+            {show && (
+              <FocusScope restoreFocus autoFocus restoreFocusFallbackRef={fallbackRef}>
+                <input data-testid="inside" />
+              </FocusScope>
+            )}
+            {showFallback && <button ref={fallbackRef}>Fallback</button>}
+          </>
+        );
+      }
+      let {rerender} = render(<Test show showFallback />);
+      rerender(<Test show />);
+      rerender(<Test />);
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(document.body);
+    });
+
     it('should restore focus to the previously focused node on unmount', function () {
       function Test({show}) {
         return (

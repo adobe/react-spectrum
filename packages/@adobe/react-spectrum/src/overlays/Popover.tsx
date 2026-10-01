@@ -83,7 +83,11 @@ export const Popover = forwardRef(function Popover(
   let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={wrapperRef}>
+    <Overlay
+      {...otherProps}
+      isOpen={state.isOpen}
+      nodeRef={wrapperRef}
+      restoreFocusFallbackRef={props.triggerRef}>
       <PopoverWrapper ref={domRef} {...props} wrapperRef={wrapperRef}>
         {children}
       </PopoverWrapper>
