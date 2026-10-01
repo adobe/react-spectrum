@@ -43,8 +43,13 @@ const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
 
 const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   'Browserslist: caniuse-lite is outdated',
-  'Browserslist: browsers data (caniuse-lite) is 6 months old.'
+  /Browserslist: browsers data \(caniuse-lite\) is \d+ months? old\./
 ];
+
+// Patterns may be strings (substring match) or regexes.
+function matchesPattern(message, pattern) {
+  return typeof pattern === 'string' ? message.indexOf(pattern) > -1 : pattern.test(message);
+}
 
 function failTestOnConsoleError() {
   const error = console.error;
@@ -52,7 +57,7 @@ function failTestOnConsoleError() {
   console.error = function (message) {
     const allowedPattern =
       typeof message === 'string' &&
-      ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+      ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => matchesPattern(message, pattern));
     if (allowedPattern) {
       return;
     }
@@ -68,7 +73,7 @@ function failTestOnConsoleWarn() {
   console.warn = function (message) {
     const allowedPattern =
       typeof message === 'string' &&
-      WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+      WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => matchesPattern(message, pattern));
 
     if (allowedPattern) {
       return;
