@@ -672,6 +672,7 @@ export function useSelectableCollection(
         }
 
         raf.current = requestAnimationFrame(() => {
+          raf.current = null;
           if (scrollRef.current) {
             scrollIntoView(scrollRef.current, element);
             // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
@@ -702,6 +703,10 @@ export function useSelectableCollection(
     return () => {
       if (raf.current) {
         cancelAnimationFrame(raf.current);
+        // React StrictMode runs this cleanup and then re-runs effects on mount, which would
+        // cancel the pending scroll for good. Make sure the scroll effect tries again.
+        raf.current = null;
+        didAutoFocusRef.current = true;
       }
     };
   }, []);
