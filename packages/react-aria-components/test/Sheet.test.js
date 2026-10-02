@@ -339,8 +339,13 @@ describe('Sheet', () => {
     act(() => jest.runAllTimers());
     expect(tree.getByRole('dialog')).toBeInTheDocument();
 
-    // Escape still closes the sheet.
+    // Escape does not close the sheet either.
     await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    expect(tree.getByRole('dialog')).toBeInTheDocument();
+
+    // It can still be closed programmatically.
+    await user.click(within(tree.getByRole('dialog')).getByRole('button', {name: 'Close'}));
     act(() => jest.runAllTimers());
     expect(tree.queryByRole('dialog')).toBeNull();
   });
@@ -473,37 +478,40 @@ describe('Sheet', () => {
 
   describe('snap points', () => {
     it('renders a snap marker for each snap point with the first as the initial position', async () => {
-      let tree = render(<TestSheet overlayProps={{snapPoints: ['180px', 50]}} />);
+      let tree = render(<TestSheet overlayProps={{snapPoints: ['180px', 50, '50%']}} />);
       await open(tree);
 
-      let sheet = tree.getByTestId('sheet');
-      let markers = Array.from(sheet.children).filter(
-        el => el.style.scrollSnapAlign && el.getAttribute('role') !== 'dialog'
-      );
-      expect(markers).toHaveLength(2);
+      let markers = tree.getByTestId('sheet').querySelectorAll('[data-sheet-detent]');
+      expect(markers).toHaveLength(3);
       expect(markers[0]).toHaveAttribute('data-sheet-initial');
       expect(markers[1]).not.toHaveAttribute('data-sheet-initial');
+      expect(markers[2]).not.toHaveAttribute('data-sheet-initial');
 
-      // Bottom sheets rest their leading (top) edge at the snap point.
+      // Bottom sheets place markers the snap point in from their leading (top) edge, and snap them
+      // one viewport from the top so that exactly that much of the sheet is visible.
       expect(markers[0].style.scrollSnapAlign).toBe('start');
-      expect(markers[0].style.scrollMarginTop).toBe('calc(100dvh - 180px)');
-      // Numeric snap points are relative to the viewport along the swipe axis.
-      expect(markers[1].style.scrollMarginTop).toBe('calc(100dvh - 50dvh)');
+      expect(markers[0].style.top).toBe('180px');
+      expect(markers[0].style.scrollMarginTop).toBe('100dvh');
+      // Numeric snap points are pixels.
+      expect(markers[1].style.top).toBe('50px');
+      // Percentages are relative to the size of the sheet.
+      expect(markers[2].style.top).toBe('50%');
     });
 
     it.each`
-      position   | property                | expected
-      ${'top'}   | ${'scrollMarginBottom'} | ${'calc(100dvh - 180px)'}
-      ${'left'}  | ${'scrollMarginRight'}  | ${'calc(100dvw - 180px)'}
-      ${'right'} | ${'scrollMarginLeft'}   | ${'calc(100dvw - 180px)'}
+      position   | edge        | marginProperty          | margin
+      ${'top'}   | ${'bottom'} | ${'scrollMarginBottom'} | ${'100dvh'}
+      ${'left'}  | ${'right'}  | ${'scrollMarginRight'}  | ${'100dvw'}
+      ${'right'} | ${'left'}   | ${'scrollMarginLeft'}   | ${'100dvw'}
     `(
       'anchors snap markers to the leading edge for $position sheets',
-      async ({position, property, expected}) => {
+      async ({position, edge, marginProperty, margin}) => {
         let tree = render(<TestSheet overlayProps={{position, snapPoints: ['180px']}} />);
         await open(tree);
 
         let marker = tree.getByTestId('sheet').querySelector('[data-sheet-initial]');
-        expect(marker.style[property]).toBe(expected);
+        expect(marker.style[edge]).toBe('180px');
+        expect(marker.style[marginProperty]).toBe(margin);
       }
     );
 
@@ -530,7 +538,7 @@ describe('Sheet', () => {
         let scroller = sheet.closest('[data-sheet-scroll]');
         expect(scroller.firstElementChild.style.scrollSnapAlign).toBe('none');
 
-        await user.keyboard('{Escape}');
+        await user.click(within(tree.getByRole('dialog')).getByRole('button', {name: 'Close'}));
         act(() => jest.runAllTimers());
         expect(disconnect).toHaveBeenCalled();
       } finally {
