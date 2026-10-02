@@ -24,6 +24,7 @@ import {CheckboxContext, CheckboxFieldContext} from './Checkbox';
 import {
   ChildrenOrFunction,
   ClassNameOrFunction,
+  closestVisibleKey,
   ContextValue,
   DEFAULT_SLOT,
   dom,
@@ -568,6 +569,19 @@ function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
+
+  // Dragged items keep focus so it can follow them when they are dropped.
+  useEffect(() => {
+    let focusedKey = state.selectionManager.focusedKey;
+    if (focusedKey == null || dragState?.isDragging(focusedKey)) {
+      return;
+    }
+    let visibleKey = closestVisibleKey(state.collection, expandedKeys, focusedKey);
+    if (visibleKey !== focusedKey) {
+      state.selectionManager.setFocusedKey(visibleKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.collection, expandedKeys, state.selectionManager.focusedKey]);
 
   let isTreeDraggable = !!(hasDragHooks && !dragState?.isDisabled);
 
