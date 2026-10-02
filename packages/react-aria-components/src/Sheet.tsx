@@ -91,6 +91,7 @@ export interface SheetOverlayProps
       | 'onExit'
       | 'isEntering'
       | 'isExiting'
+      | 'isDismissable'
       | 'isKeyboardDismissDisabled'
     >,
     RenderProps<SheetRenderProps> {
@@ -128,11 +129,12 @@ export interface SheetOverlayProps
    */
   snapPoints?: Array<number | string>;
   /**
-   * Whether to close the sheet when the user swipes or interacts outside it.
+   * Whether to prevent the user from closing the sheet by swiping, pressing Escape, or interacting
+   * outside it.
    *
-   * @default true
+   * @default false
    */
-  isDismissable?: boolean;
+  preventDismissal?: boolean;
 }
 
 type SheetValues = Omit<SheetRenderProps, keyof ModalRenderProps>;
@@ -202,7 +204,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
   props: SheetOverlayProps,
   domRef: ForwardedRef<HTMLDivElement>
 ) {
-  let {children, isDismissable = true} = props;
+  let {children, preventDismissal = false} = props;
   let {direction} = useLocale();
   let position = resolveDirection(props.position ?? 'bottom', direction);
   let swipeDirection = props.swipeDirection
@@ -317,8 +319,8 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
     <ModalOverlay
       {...props}
       ref={mergedRefs}
-      isDismissable={isDismissable}
-      isKeyboardDismissDisabled={!isDismissable}
+      isDismissable={!preventDismissal}
+      isKeyboardDismissDisabled={preventDismissal}
       // Moving the VoiceOver cursor into the sheet (via focus, or by making the content behind it
       // inert) scrolls, which interrupts the enter scroll animation on iOS. Wait until it has entered.
       UNSTABLE_deferUntilEntered
@@ -672,7 +674,7 @@ export const Sheet = forwardRef(function Sheet(
     descendants,
     isEntering,
     isExiting,
-    isDismissable = true,
+    preventDismissal = false,
     values
   } = useContext(InternalSheetContext)!;
   // The ModalOverlay may defer its enter animation (e.g. until the software keyboard opens), during
@@ -686,13 +688,13 @@ export const Sheet = forwardRef(function Sheet(
   // A non-dismissable sheet can still be swiped between its snap points, but not past the smallest
   // one. Enter/exit animations still need the exit space, so only clamp while settled.
   let hasSnapPoints = !!snapPoints?.length && before !== after;
-  let isClamped = !isDismissable && !isTransitioning;
+  let isClamped = preventDismissal && !isTransitioning;
   let snapTravel = useSnapPointTravel(
     stageRef,
     ref,
     axis,
     after,
-    !isDismissable && hasSnapPoints ? snapPoints!.join(' ') : null
+    preventDismissal && hasSnapPoints ? snapPoints!.join(' ') : null
   );
 
   // Scroll travel between the smallest snap point and the fully revealed sheet. It is at least 1px
@@ -809,7 +811,7 @@ export const Sheet = forwardRef(function Sheet(
         overflowY: axis === 'y' ? 'auto' : 'hidden',
         // Snapping is only disabled when the geometry changes. Changing it during a swipe to dismiss
         // cancels the momentum scroll in Safari without firing scrollend, which onExit waits for.
-        scrollSnapType: !isDismissable && isTransitioning ? 'none' : `${axis} mandatory`,
+        scrollSnapType: preventDismissal && isTransitioning ? 'none' : `${axis} mandatory`,
         overscrollBehaviorY: axis === 'y' ? 'contain' : 'none',
         overscrollBehaviorX: axis === 'x' ? 'contain' : 'none',
         scrollbarWidth: 'none',

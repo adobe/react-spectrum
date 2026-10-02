@@ -316,7 +316,7 @@ describe('Sheet', () => {
   });
 
   it('does not close when interacting outside a non-dismissable sheet', async () => {
-    let tree = render(<TestSheet overlayProps={{isDismissable: false}} />);
+    let tree = render(<TestSheet overlayProps={{preventDismissal: true}} />);
     await open(tree);
     await user.click(tree.getByTestId('backdrop'));
     act(() => jest.runAllTimers());
@@ -461,7 +461,7 @@ describe('Sheet', () => {
       window.ResizeObserver = jest.fn(() => ({observe, disconnect, unobserve: jest.fn()}));
       try {
         let tree = render(
-          <TestSheet overlayProps={{isDismissable: false, snapPoints: ['180px', 50]}} />
+          <TestSheet overlayProps={{preventDismissal: true, snapPoints: ['180px', 50]}} />
         );
         await open(tree);
         let sheet = tree.getByTestId('sheet');

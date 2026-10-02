@@ -25,7 +25,7 @@ export interface SheetProps
 }
 
 export function Sheet({children, ...props}: SheetProps) {
-  let {snapPoints, isDismissable = true} = props;
+  let {snapPoints, preventDismissal} = props;
   return (
     <SheetOverlay {...props} style={undefined}>
       {/* The backdrop fades in as the sheet slides up. When snap points are used, it stays hidden
@@ -42,7 +42,7 @@ export function Sheet({children, ...props}: SheetProps) {
         swipeAnimationRange={props.swipeAnimationRange}
         stackAnimation="sheet-scale-back"
         style={props.style}>
-        {isDismissable && <div className="sheet-handle" />}
+        {!preventDismissal && <div className="sheet-handle" />}
         <SheetContent>{children}</SheetContent>
       </RACSheet>
     </SheetOverlay>
