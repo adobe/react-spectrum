@@ -80,22 +80,18 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {useMediaQuery} from './useMediaQuery';
 import {useScale} from './utils';
 
-// Older React versions just render their children, so the panel collapses and expands without
-// animating.
+// Older React versions are not animated
 const ViewTransition: ComponentType<ViewTransitionProps> =
   React.ViewTransition ?? (({children}) => children);
 const addTransitionType: (type: string) => void = React.addTransitionType ?? (() => {});
 const startTransition: (scope: () => void) => void =
   React.startTransition ?? ((scope: () => void) => scope());
 
-// Transition types, so unrelated updates (a router navigation, say) don't animate the nav.
+// Transition types, we can easily turn off the animations.
 const PANEL_TRANSITION = sideNavCss['side-panel'];
-const ITEM_TRANSITION = sideNavCss['side-nav-item'];
-// RTL pins the snapshots to the opposite edge. The pseudo elements hang off the document root and
-// can't inherit the panel's direction.
 const PANEL_RTL_TRANSITION = sideNavCss['side-panel-rtl'];
-
 const SIDE_NAV_CLASS = sideNavCss['side-nav'];
+const ITEM_TRANSITION = sideNavCss['side-nav-item'];
 
 // `default: 'none'` opts elements out of transitions they aren't part of. Rows and headers are
 // already inside the panel's snapshot when it collapses, and capturing them again would lift them
@@ -114,9 +110,7 @@ const itemViewTransition: ViewTransitionClass = {
 // would nest the snapshots inside the nav's own group, but it is only implemented in Chrome, so
 // each snapshot gets a clip path holding it inside the nav instead.
 //
-// The clip follows the snapshot rather than predicting where it will be: the panel's width is a
-// plain CSS transition while the snapshot moves on the view transition's own clock, and anything
-// that assumes the two are in step drifts by however far apart they start.
+// The clip path follows the snapshot animation.
 
 /** A rect in the coordinates snapshots are placed in, which match the viewport. */
 interface Rect {
@@ -915,8 +909,6 @@ const SidePanelBoundsContext = createContext<RefObject<HTMLDivElement | null> | 
 const sidePanelStyle = style(
   {
     height: 'full',
-    // As a block box this is sized by its content unless the automatic minimum size is removed,
-    // which would let a tall nav push the panel past the height it was given instead of scrolling.
     minHeight: 0,
     boxSizing: 'border-box',
     // Not captured by the view transition, so it keeps painting live and the page reflows with it.
@@ -935,7 +927,7 @@ const sidePanelStyle = style(
   getAllowedOverrides({height: true})
 );
 
-// The captured element. Its width snaps rather than transitioning: a CSS transition still reports
+// The ViewTransition captured element. Its width snaps rather than transitioning. A CSS transition still reports
 // its starting width when the new state is captured, which would leave the snapshot at the old
 // width for the whole animation and then jump.
 const sidePanelContentStyle = style({
@@ -980,9 +972,10 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
   useLayoutEffect(() => {
     if (renderedCollapsed !== isCollapsed) {
       startTransition(() => {
-        addTransitionType(PANEL_TRANSITION);
         if (direction === 'rtl') {
           addTransitionType(PANEL_RTL_TRANSITION);
+        } else {
+          addTransitionType(PANEL_TRANSITION);
         }
         setRenderedCollapsed(isCollapsed);
       });
