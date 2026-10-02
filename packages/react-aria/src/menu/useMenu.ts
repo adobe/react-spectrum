@@ -26,6 +26,7 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import {menuData} from './utils';
 import {mergeProps} from '../utils/mergeProps';
 import {TreeState} from 'react-stately/useTreeState';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useSelectableList} from '../selection/useSelectableList';
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -84,6 +85,7 @@ export function useMenu<T>(
   ref: RefObject<HTMLElement | null>
 ): MenuAria {
   let {shouldFocusWrap = true, onKeyDown, onKeyUp, ...otherProps} = props;
+  let {keyboardProps} = useKeyboard({onKeyDown, onKeyUp});
 
   if (!props['aria-label'] && !props['aria-labelledby'] && process.env.NODE_ENV !== 'production') {
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
@@ -107,19 +109,15 @@ export function useMenu<T>(
   });
 
   return {
-    menuProps: mergeProps(
-      domProps,
-      {onKeyDown, onKeyUp},
-      {
-        role: 'menu',
-        ...listProps,
-        onKeyDown: e => {
-          // don't clear the menu selected keys if the user is presses escape since escape closes the menu
-          if (e.key !== 'Escape' || props.shouldUseVirtualFocus) {
-            listProps.onKeyDown?.(e);
-          }
+    menuProps: mergeProps(domProps, keyboardProps, {
+      role: 'menu',
+      ...listProps,
+      onKeyDown: e => {
+        // don't clear the menu selected keys if the user is presses escape since escape closes the menu
+        if (e.key !== 'Escape' || props.shouldUseVirtualFocus) {
+          listProps.onKeyDown?.(e);
         }
       }
-    )
+    })
   };
 }
