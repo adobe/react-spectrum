@@ -12,7 +12,13 @@
 
 import {clamp, snapValueToStep} from '../utils/number';
 
-import {LabelableProps, Orientation, RangeInputBase, ValueBase} from '@react-types/shared';
+import {
+  Direction,
+  LabelableProps,
+  Orientation,
+  RangeInputBase,
+  ValueBase
+} from '@react-types/shared';
 import {useCallback, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
@@ -24,6 +30,16 @@ export interface SliderProps<T = number | number[]>
    * @default 'horizontal'
    */
   orientation?: Orientation;
+  /**
+   * The layout direction of the slider track, pinned regardless of the UI locale.
+   * By default the track mirrors the locale, which is right for a slider that represents
+   * reading order. Controls whose direction comes from their content instead should set this:
+   * a media playback bar stays `'ltr'` in an RTL UI, and a manga page position bar stays
+   * `'rtl'` in an LTR UI. Has no effect on vertical sliders.
+   *
+   * @default the direction of the UI locale
+   */
+  direction?: Direction;
   /** Whether the whole Slider is disabled. */
   isDisabled?: boolean;
   /** Fired when the slider stops moving, due to being let go. */
@@ -194,6 +210,12 @@ export interface SliderState {
   /** The orientation of the slider. */
   readonly orientation: Orientation;
 
+  /**
+   * The layout direction of the slider track, pinned regardless of the UI locale,
+   * or undefined when the track follows the locale.
+   */
+  readonly direction: Direction | undefined;
+
   /** Whether the slider is disabled. */
   readonly isDisabled: boolean;
 }
@@ -223,7 +245,8 @@ export function useSliderState<T extends number | number[]>(
     maxValue = DEFAULT_MAX_VALUE,
     numberFormatter: formatter,
     step = DEFAULT_STEP_VALUE,
-    orientation = 'horizontal'
+    orientation = 'horizontal',
+    direction
   } = props;
 
   // Page step should be at least equal to step and always a multiple of the step.
@@ -403,6 +426,7 @@ export function useSliderState<T extends number | number[]>(
     step,
     pageSize,
     orientation,
+    direction,
     isDisabled
   };
 }
