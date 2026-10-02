@@ -888,6 +888,21 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   let DOMProps = filterDOMProps(props, {global: true});
 
+  let bodyNode = filteredState.collection.body;
+  let isBodyEmpty = filteredState.collection.size === 0;
+  let renderEmptyState = bodyNode?.props?.renderEmptyState;
+  let {rowGroupProps: emptyRowGroupProps} = useTableRowGroup();
+  let emptyStateRowGroup = isVirtualized && isBodyEmpty && renderEmptyState && (
+    <TableBodyElementType {...emptyRowGroupProps} data-empty="true">
+      {renderTableEmptyState(
+        renderEmptyState,
+        {isDropTarget: isRootDropTarget, isEmpty: isBodyEmpty},
+        filteredState.collection.columnCount,
+        isVirtualized
+      )}
+    </TableBodyElementType>
+  );
+
   return (
     <Provider
       values={[
@@ -921,6 +936,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
               scrollRef={tableContainerContext?.scrollRef ?? ref}
               persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             />
+            {emptyStateRowGroup}
           </SharedElementTransition>
         </TableElementType>
       </FocusScope>
@@ -1517,6 +1533,31 @@ let TableBodyElementType = forwardRef(function TableBodyElementType(
   return <dom.tbody {...props} ref={ref} />;
 });
 
+function renderTableEmptyState(
+  renderEmptyState: (props: TableBodyRenderProps) => ReactNode,
+  renderValues: TableBodyRenderProps,
+  numColumns: number,
+  isVirtualized: boolean
+) {
+  let rowProps = {};
+  let rowHeaderProps = {};
+  let style = {};
+  if (isVirtualized) {
+    rowHeaderProps['aria-colspan'] = numColumns;
+    style = {display: 'contents'};
+  } else {
+    rowHeaderProps['colSpan'] = numColumns;
+  }
+
+  return (
+    <TableRowElementType role="row" {...rowProps} style={style}>
+      <TableCellElementType role="rowheader" {...rowHeaderProps} style={style}>
+        {renderEmptyState(renderValues)}
+      </TableCellElementType>
+    </TableRowElementType>
+  );
+}
+
 /**
  * The body of a `<Table>`, containing the table rows.
  */
@@ -1552,24 +1593,11 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(
     let emptyState;
     let numColumns = collection.columnCount;
 
-    if (isEmpty && props.renderEmptyState && state) {
-      let rowProps = {};
-      let rowHeaderProps = {};
-      let style = {};
-      if (isVirtualized) {
-        rowHeaderProps['aria-colspan'] = numColumns;
-        style = {display: 'contents'};
-      } else {
-        rowHeaderProps['colSpan'] = numColumns;
-      }
-
-      emptyState = (
-        <TableRowElementType role="row" {...rowProps} style={style}>
-          <TableCellElementType role="rowheader" {...rowHeaderProps} style={style}>
-            {props.renderEmptyState(renderValues)}
-          </TableCellElementType>
-        </TableRowElementType>
-      );
+    // When virtualized, the empty state is rendered as a sibling of the CollectionRoot
+    // in TableInner instead, so that it can be sized by its own content rather than being
+    // trapped in a `contain: size` virtualizer-positioned box. See TableInner.
+    if (!isVirtualized && isEmpty && props.renderEmptyState && state) {
+      emptyState = renderTableEmptyState(props.renderEmptyState, renderValues, numColumns, isVirtualized);
     }
 
     let {rowGroupProps} = useTableRowGroup();
