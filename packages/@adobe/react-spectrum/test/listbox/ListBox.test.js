@@ -358,6 +358,27 @@ describe('ListBox', function () {
       fireEvent.keyDown(listbox, {key: 'ArrowUp', code: 38, charCode: 38});
       expect(document.activeElement).toBe(options[0]);
     });
+
+    it('supports disabling the entire listbox', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let tree = renderComponent({
+        onSelectionChange,
+        selectionMode: 'single',
+        isDisabled: true,
+        autoFocus: 'first'
+      });
+      let listbox = tree.getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+
+      expect(listbox).toHaveAttribute('aria-disabled', 'true');
+      for (let option of options) {
+        expect(option).toHaveAttribute('aria-disabled', 'true');
+      }
+
+      await user.click(options[1]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      expect(document.activeElement).toBe(listbox);
+    });
   });
 
   describe('supports multi selection', function () {
