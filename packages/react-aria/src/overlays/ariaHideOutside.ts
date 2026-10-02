@@ -50,25 +50,46 @@ let observerStack: Array<ObserverWrapper> = [];
 export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOptions | Element) {
   let windowObj = getOwnerWindow(targets?.[0]);
   let opts = options instanceof windowObj.Element ? {root: options} : options;
-  let root = opts?.root ?? document.body;
+  let root = opts?.root ?? windowObj.document.body;
   let shouldUseInert = opts?.shouldUseInert && supportsInert;
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
+  let roots = [root];
+
+  // Keep each containing iframe visible while hiding its siblings. A separate window has no
+  // frameElement, and an explicit root must not affect content outside that boundary.
+  if (!opts?.root) {
+    let ownerWindow: Window | null = windowObj;
+    while (ownerWindow) {
+      let frame: Element | null;
+      try {
+        frame = ownerWindow.frameElement;
+      } catch {
+        break;
+      }
+      if (!frame) {
+        break;
+      }
+      visibleNodes.add(frame);
+      roots.push(frame.ownerDocument.body);
+      ownerWindow = frame.ownerDocument.defaultView;
+    }
+  }
 
   let getHidden = (element: Element) => {
-    return shouldUseInert && element instanceof windowObj.HTMLElement
+    return shouldUseInert && element instanceof getOwnerWindow(element).HTMLElement
       ? element.inert
       : element.getAttribute('aria-hidden') === 'true';
   };
 
   let setHidden = (element: Element, hidden: boolean) => {
-    if (shouldUseInert && element instanceof windowObj.HTMLElement) {
+    if (shouldUseInert && element instanceof getOwnerWindow(element).HTMLElement) {
       element.inert = hidden;
     } else if (hidden) {
       element.setAttribute('aria-hidden', 'true');
     } else {
       element.removeAttribute('aria-hidden');
-      if (element instanceof windowObj.HTMLElement) {
+      if (element instanceof getOwnerWindow(element).HTMLElement) {
         // We only ever call setHidden with hidden = false when the nodeCount is 1 aka
         // we are trying to make the element visible to screen readers again, so remove inert as well
         element.inert = false;
@@ -83,7 +104,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     // needs its own MutationObserver because it does not cross shadow
     // boundaries, so the observer on `root` cannot see mutations inside them.
     let boundary = root.getRootNode();
-    for (let target of targets) {
+    for (let target of visibleNodes) {
       let current = target.getRootNode();
       while (isShadowRoot(current) && current !== boundary) {
         shadowRootsToWatch.add(current);
@@ -167,7 +188,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     observerStack[observerStack.length - 1].disconnect();
   }
 
-  walk(root);
+  for (let root of roots) {
+    walk(root);
+  }
 
   let observer = new MutationObserver(changes => {
     for (let change of changes) {
@@ -182,12 +205,13 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
         ![...visibleNodes, ...hiddenNodes].some(node => nodeContains(node, change.target))
       ) {
         for (let node of change.addedNodes) {
+          let ownerWindow = getOwnerWindow(node);
           if (
-            (node instanceof HTMLElement || node instanceof SVGElement) &&
+            (node instanceof ownerWindow.HTMLElement || node instanceof ownerWindow.SVGElement) &&
             isAlwaysVisibleNode(node)
           ) {
             visibleNodes.add(node);
-          } else if (node instanceof Element) {
+          } else if (node instanceof ownerWindow.Element) {
             walk(node);
           }
         }
@@ -205,7 +229,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     }
   });
 
-  observer.observe(root, {childList: true, subtree: true});
+  for (let root of roots) {
+    observer.observe(root, {childList: true, subtree: true});
+  }
   let shadowObservers = new Set<MutationObserver>();
   if (shadowDOM()) {
     for (let shadowRoot of shadowRootsToWatch) {
@@ -223,12 +249,14 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
             ![...visibleNodes, ...hiddenNodes].some(node => nodeContains(node, change.target))
           ) {
             for (let node of change.addedNodes) {
+              let ownerWindow = getOwnerWindow(node);
               if (
-                (node instanceof HTMLElement || node instanceof SVGElement) &&
+                (node instanceof ownerWindow.HTMLElement ||
+                  node instanceof ownerWindow.SVGElement) &&
                 isAlwaysVisibleNode(node)
               ) {
                 visibleNodes.add(node);
-              } else if (node instanceof Element) {
+              } else if (node instanceof ownerWindow.Element) {
                 walk(node);
               }
             }
@@ -254,7 +282,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     visibleNodes,
     hiddenNodes,
     observe() {
-      observer.observe(root, {childList: true, subtree: true});
+      for (let root of roots) {
+        observer.observe(root, {childList: true, subtree: true});
+      }
     },
     disconnect() {
       observer.disconnect();
