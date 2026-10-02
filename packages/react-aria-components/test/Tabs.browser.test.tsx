@@ -12,13 +12,22 @@
 
 import {expect, it} from 'vitest';
 import {hydrateRoot} from 'react-dom/client';
-import React, {StrictMode, useEffect, useRef} from 'react';
+import React, {StrictMode, useEffect} from 'react';
 import {render} from 'vitest-browser-react';
 import {renderToString} from 'react-dom/server.browser';
 import {SelectionIndicator} from '../src/SelectionIndicator';
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
-import {useLayoutEffect} from '@react-aria/utils';
 import {User} from '@react-aria/test-utils';
+
+const indicatorStyle = {
+  position: 'absolute' as const,
+  inset: 0,
+  border: '2px solid currentColor',
+  borderRadius: 4,
+  pointerEvents: 'none' as const,
+  transitionProperty: 'translate, width, height',
+  transitionDuration: '200ms'
+};
 
 function TabsExample() {
   return (
@@ -57,14 +66,7 @@ it.each([
         <TabList aria-label="Hydrated tabs" style={{display: 'flex', gap: 12}}>
           {keys.map(key => (
             <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
-              <SelectionIndicator
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  transitionProperty: 'translate, width, height',
-                  transitionDuration: '200ms'
-                }}
-              />
+              <SelectionIndicator style={indicatorStyle} />
               {key}
             </Tab>
           ))}
@@ -135,49 +137,31 @@ interface EnteringTabsProps {
 }
 
 function EnteringTabs({onEntering}: EnteringTabsProps) {
-  let ref = useRef<HTMLDivElement | null>(null);
-  // `data-entering` is only applied for a single frame, so observe it rather than polling
-  // for it. The observer is attached during the commit that mounts the tabs, which is
-  // before the microtask that applies the entering state runs.
-  useLayoutEffect(() => {
-    let observer = new MutationObserver(records => {
-      if (records.some(r => (r.target as HTMLElement).hasAttribute('data-entering'))) {
-        onEntering();
-      }
-    });
-    observer.observe(ref.current!, {
-      attributes: true,
-      attributeFilter: ['data-entering'],
-      subtree: true
-    });
-    return () => observer.disconnect();
-  }, [onEntering]);
-
   return (
-    <div ref={ref}>
-      <Tabs defaultSelectedKey="two">
-        <TabList aria-label="Entering tabs" style={{display: 'flex', gap: 12}}>
-          {interruptedKeys.map(key => (
-            <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
-              <SelectionIndicator
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  transitionProperty: 'translate, width, height',
-                  transitionDuration: '200ms'
-                }}
-              />
-              {key}
-            </Tab>
-          ))}
-        </TabList>
+    <Tabs defaultSelectedKey="two">
+      <TabList aria-label="Entering tabs" style={{display: 'flex', gap: 12}}>
         {interruptedKeys.map(key => (
-          <TabPanel key={key} id={key}>
+          <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
+            <SelectionIndicator
+              style={indicatorStyle}
+              // Prefer renderProps over a MutationObserver for the entering frame.
+              className={({isEntering}) => {
+                if (isEntering) {
+                  onEntering();
+                }
+                return 'react-aria-SelectionIndicator';
+              }}
+            />
             {key}
-          </TabPanel>
+          </Tab>
         ))}
-      </Tabs>
-    </div>
+      </TabList>
+      {interruptedKeys.map(key => (
+        <TabPanel key={key} id={key}>
+          {key}
+        </TabPanel>
+      ))}
+    </Tabs>
   );
 }
 
@@ -201,4 +185,46 @@ it('does not get stuck in the entering state when effects are double invoked', a
   await expect.poll(() => enteringCount).toBeGreaterThan(0);
   // ...and must be cleared once the entering frame has run.
   await expect.poll(() => getSelectedIndicator().hasAttribute('data-entering')).toBe(false);
+});
+
+it('animates the selection indicator in both directions', async () => {
+  let testUtilUser = new User();
+  let {container} = await render(
+    <Tabs defaultSelectedKey="one">
+      <TabList aria-label="Direction tabs" style={{display: 'flex', gap: 12}}>
+        {interruptedKeys.map(key => (
+          <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
+            <SelectionIndicator style={indicatorStyle} />
+            {key}
+          </Tab>
+        ))}
+      </TabList>
+      {interruptedKeys.map(key => (
+        <TabPanel key={key} id={key}>
+          {key}
+        </TabPanel>
+      ))}
+    </Tabs>
+  );
+
+  let tester = testUtilUser.createTester('Tabs', {
+    root: container.querySelector('[role=tablist]') as HTMLElement,
+    interactionType: 'keyboard'
+  });
+  let tabs = tester.getTabs();
+
+  let getIndicator = (tab: Element) =>
+    tab.querySelector('.react-aria-SelectionIndicator') as HTMLElement | null;
+
+  // Move forward (arrow right): indicator should leave tab one and land on tab two.
+  await tester.triggerTab({tab: tabs[1]});
+  expect(tester.getSelectedTab()).toBe(tabs[1]);
+  await expect.poll(() => getIndicator(tabs[1])).not.toBeNull();
+  await expect.poll(() => getIndicator(tabs[1])!.style.translate).toBe('');
+
+  // Move back (arrow left): indicator should return to tab one.
+  await tester.triggerTab({tab: tabs[0]});
+  expect(tester.getSelectedTab()).toBe(tabs[0]);
+  await expect.poll(() => getIndicator(tabs[0])).not.toBeNull();
+  await expect.poll(() => getIndicator(tabs[0])!.style.translate).toBe('');
 });

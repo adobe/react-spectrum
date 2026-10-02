@@ -29,12 +29,15 @@ export default {
 
 export type TabsStory = StoryFn<typeof Tabs>;
 
-// Use Storybook toolbar / `?strict=true` for StrictMode. Hydration coverage lives in Tabs.browser.test.tsx.
+// Manual playground for indicator motion (arrow keys / clicks). SSR/hydration is covered in Tabs.browser.test.tsx.
 export const AnimatedSelectionIndicator: TabsStory = () => (
   <Tabs defaultSelectedKey="settings">
     <TabList aria-label="Sections" style={{display: 'flex', gap: 12}}>
       {['overview', 'activity', 'settings'].map(key => (
-        <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
+        <Tab
+          key={key}
+          id={key}
+          style={{position: 'relative', padding: '12px 20px', outlineOffset: '2px'}}>
           <SelectionIndicator
             style={{
               position: 'absolute',

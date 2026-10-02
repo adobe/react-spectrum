@@ -102,8 +102,10 @@ export const SharedElement = forwardRef(function SharedElement(
     // cancelled run so a stale entering microtask cannot overwrite the remount path.
     let cancelled = false;
     // StrictMode cleanup snapshots this same node. That is not a move between parents,
-    // so drop it and take the entering path on the replay.
-    if (prevSnapshot && element && prevSnapshot.element === element) {
+    // so drop it and take the entering path on the replay. Only do this when visible:
+    // when isVisible flips to false the snapshot must stay so a sibling can consume it
+    // (otherwise forward tab moves delete the snapshot before the next indicator mounts).
+    if (isVisible && prevSnapshot && element && prevSnapshot.element === element) {
       delete scope[name];
       prevSnapshot = undefined;
     }
