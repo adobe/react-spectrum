@@ -76,6 +76,7 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   let {selectionManager, collection, selectedKey: currentSelectedKey} = state;
 
   let lastSelectedKey = useRef(currentSelectedKey);
+  let pendingSelection = useRef<{from: Key | null; to: Key} | null>(null);
   useEffect(() => {
     // Keep uncontrolled selection on an available tab when the collection changes.
     let selectedKey = currentSelectedKey;
@@ -87,10 +88,18 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
         selectionManager.isDisabled(selectedKey))
     ) {
       selectedKey = findDefaultSelectedKey(collection, state.disabledKeys);
-      if (selectedKey != null && selectedKey !== currentSelectedKey) {
-        // directly set selection because replace/toggle selection won't consider disabled keys
+      if (
+        selectedKey != null &&
+        selectedKey !== currentSelectedKey &&
+        (pendingSelection.current?.from !== currentSelectedKey ||
+          pendingSelection.current?.to !== selectedKey)
+      ) {
+        // A collection update may render again before the pending selection is committed.
+        pendingSelection.current = {from: currentSelectedKey, to: selectedKey};
         selectionManager.setSelectedKeys([selectedKey]);
       }
+    } else {
+      pendingSelection.current = null;
     }
 
     // If the tablist doesn't have focus and the selected key changes or if there isn't a focused key yet, change focused key to the selected key if it exists.
