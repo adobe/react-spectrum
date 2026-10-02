@@ -392,7 +392,7 @@ export const PromptField = forwardRef(function PromptField(
   let isPromptControlled = props.value !== undefined;
   let isAttachmentsControlled = props.attachments !== undefined;
   let onSubmit = () => {
-    if (prompt.segments.length === 0) {
+    if (prompt.segments.length === 0 && attachments.length === 0) {
       return;
     }
 
@@ -1003,7 +1003,7 @@ export interface PromptFieldSubmitButtonProps {}
 /** PromptFieldSubmitButton submits the PromptField. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
-  let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  let {prompt, attachments, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
   let showSubmit = !isGenerating || prompt.segments.length > 0;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
@@ -1011,8 +1011,7 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
       variant="primary"
       staticColor="auto"
       styles={style({alignSelf: 'end'})}
-      // TODO: should it be possible to submit a prompt with only attachments?
-      isDisabled={prompt.segments.length === 0 && showSubmit}
+      isDisabled={prompt.segments.length === 0 && attachments.length === 0 && showSubmit}
       aria-label={
         showSubmit
           ? stringFormatter.format('promptfield.submitButton')
