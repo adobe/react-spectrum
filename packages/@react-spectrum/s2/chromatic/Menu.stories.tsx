@@ -19,10 +19,13 @@ import {
   UnavailableMenuItem
 } from '../stories/Menu.stories';
 import {Button} from '../src/Button';
+import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import {expect} from '@storybook/jest';
-import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
+import {Header, Heading, Keyboard, Text} from '../src/Content';
+import {Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {style} from '../style' with {type: 'macro'};
 import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<typeof Menu<any>> = {
@@ -148,4 +151,184 @@ export const WithLoadMore: Story = {
     let menu = await within(body).findByRole('menu');
     await within(menu).findByRole('progressbar', {hidden: true});
   }
+};
+
+export const WithSections: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test">
+        <MenuSection>
+          <Header>
+            <Heading>Section 1</Heading>
+          </Header>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+        </MenuSection>
+        <MenuSection>
+          <Header>
+            <Heading>Section 2</Heading>
+          </Header>
+          <MenuItem>Paste</MenuItem>
+          <MenuItem>Delete</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
+};
+
+export const WithSectionsAndLoadMore: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test" loadingState="loadingMore">
+        <MenuSection>
+          <Header>
+            <Heading>Section 1</Heading>
+          </Header>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+        </MenuSection>
+        <MenuSection>
+          <Header>
+            <Heading>Section 2</Heading>
+          </Header>
+          <MenuItem>Paste</MenuItem>
+          <MenuItem>Delete</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    let menu = await within(body).findByRole('menu');
+    await within(menu).findByRole('progressbar', {hidden: true});
+  }
+};
+
+export const DefaultVirtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions for selected resource">
+        <NewIcon />
+      </Button>
+      <Menu isVirtualized>
+        <MenuItem>Favorite</MenuItem>
+        <MenuItem>Edit</MenuItem>
+        <MenuItem>Delete</MenuItem>
+        <SubmenuTrigger>
+          <MenuItem>Share</MenuItem>
+          <Menu isVirtualized>
+            <MenuItem>SMS</MenuItem>
+            <MenuItem>Email</MenuItem>
+          </Menu>
+        </SubmenuTrigger>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
+};
+
+export const WithSectionsVirtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu aria-label="Test" isVirtualized>
+        <MenuSection>
+          <Header>
+            <Heading>Section 1</Heading>
+          </Header>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+        </MenuSection>
+        <MenuSection>
+          <Header>
+            <Heading>Section 2</Heading>
+          </Header>
+          <MenuItem>Paste</MenuItem>
+          <MenuItem>Delete</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
+};
+
+export const WithSlotsVirtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu styles={style({width: 200})} isVirtualized selectionMode="multiple">
+        <MenuItem>
+          <Text slot="label">Label only</Text>
+        </MenuItem>
+        <MenuItem>
+          <Copy />
+          <Text slot="label">With icon</Text>
+        </MenuItem>
+        <MenuItem>
+          <Text slot="label">With description</Text>
+          <Text slot="description">Description</Text>
+        </MenuItem>
+        <MenuSection>
+          <Header>
+            <Heading>Menu section header</Heading>
+            <Text slot="description">Menu section description</Text>
+          </Header>
+          <MenuItem>
+            <Copy />
+            <Text slot="label">With icon and description</Text>
+            <Text slot="description">Description</Text>
+          </MenuItem>
+          <MenuItem>
+            <Text slot="label">With keyboard shortcut</Text>
+            <Keyboard>⌘C</Keyboard>
+          </MenuItem>
+          <MenuItem>
+            <Copy />
+            <Text slot="label">With all slots</Text>
+            <Text slot="description">Description</Text>
+            <Keyboard>⌘C</Keyboard>
+          </MenuItem>
+          <SubmenuTrigger>
+            <MenuItem id="open-in" textValue="open a copy">
+              <Copy />
+              <Text slot="label">Open a copy</Text>
+              <Text slot="description">Illustrator for iPad or desktop</Text>
+            </MenuItem>
+            <Menu selectionMode="single">
+              <MenuItem>Filler</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async context => await DefaultVirtualized.play!(context)
 };
