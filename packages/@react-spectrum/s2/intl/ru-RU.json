@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Выбрать…",
   "picker.selectedCount": "{count, plural, =0 {Нет выбранных элементов} one {# элемент выбран} other {# эл. выбрано}}",
+  "sidepanel.collapse": "Свернуть боковую панель",
+  "sidepanel.expand": "Развернуть боковую панель",
   "slider.maximum": "Максимум",
   "slider.minimum": "Минимум",
   "table.cancel": "Отмена",

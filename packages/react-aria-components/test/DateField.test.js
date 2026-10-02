@@ -559,6 +559,21 @@ describe('DateField', () => {
     expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
   });
 
+  it('does not crash when a calendar has an era with no localized name', async () => {
+    // The Coptic 'BCE' era has no name in CLDR, so Intl omits the era part when formatting it.
+    let {getByRole} = render(
+      <I18nProvider locale="ar-EG-u-ca-coptic">
+        <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+          <Label>Birth date</Label>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let eraSegment = getByRole('group').querySelector('[data-type=era]');
+    expect(eraSegment).toHaveTextContent('AM');
+  });
+
   it('should support autofill', async () => {
     let {getByRole} = render(
       <DateField>

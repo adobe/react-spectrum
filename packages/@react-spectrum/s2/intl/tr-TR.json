@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Seçin…",
   "picker.selectedCount": "{count, plural, =0 {Hiçbir öge seçilmedi} one {# öge seçildi} other {# öge seçildi}}",
+  "sidepanel.collapse": "Yan paneli daralt",
+  "sidepanel.expand": "Yan paneli genişlet",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
   "table.cancel": "İptal et",

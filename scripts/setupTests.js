@@ -43,8 +43,13 @@ const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
 
 const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   'Browserslist: caniuse-lite is outdated',
-  'Browserslist: browsers data (caniuse-lite) is'
+  /Browserslist: browsers data \(caniuse-lite\) is \d+ months? old\./
 ];
+
+// Patterns may be strings (substring match) or regexes.
+function matchesPattern(message, pattern) {
+  return typeof pattern === 'string' ? message.indexOf(pattern) > -1 : pattern.test(message);
+}
 
 function failTestOnConsoleError() {
   const error = console.error;
@@ -52,7 +57,7 @@ function failTestOnConsoleError() {
   console.error = function (message) {
     const allowedPattern =
       typeof message === 'string' &&
-      ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+      ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => matchesPattern(message, pattern));
     if (allowedPattern) {
       return;
     }
@@ -68,7 +73,7 @@ function failTestOnConsoleWarn() {
   console.warn = function (message) {
     const allowedPattern =
       typeof message === 'string' &&
-      WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+      WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => matchesPattern(message, pattern));
 
     if (allowedPattern) {
       return;
@@ -111,24 +116,20 @@ beforeEach(() => {
   });
   window.IntersectionObserver = mockIntersectionObserver;
 
-  // Set document.documentElement dimensions to match jsdom's default window.innerWidth/innerHeight
-  // This is needed because clientWidth/clientHeight default to 0 in jsdom unless explicitly set
+  // Proxy client dimensions to the window to match jsdom's default.
+  // This is needed because they default to 0 in jsdom unless explicitly set.
   Object.defineProperty(document.documentElement, 'clientWidth', {
-    writable: true,
-    configurable: true,
-    value: 1024
+    get: () => window.innerWidth,
+    configurable: true
   });
+
   Object.defineProperty(document.documentElement, 'clientHeight', {
-    writable: true,
-    configurable: true,
-    value: 768
+    get: () => window.innerHeight,
+    configurable: true
   });
 });
 
 afterEach(() => {
   delete window.IntersectionObserver;
-  // Clean up the clientWidth/clientHeight properties
-  delete document.documentElement.clientWidth;
-  delete document.documentElement.clientHeight;
   cleanupMatchMedia();
 });

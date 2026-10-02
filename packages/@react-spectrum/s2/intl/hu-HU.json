@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Kiválasztás…",
   "picker.selectedCount": "{count, plural, =0 {Nincs kijelölve elem} one {# elem kijelölve} other {# elem kijelölve}}",
+  "sidepanel.collapse": "Oldalpanel összecsukása",
+  "sidepanel.expand": "Oldalpanel kibontása",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.cancel": "Mégse",
