@@ -371,7 +371,6 @@ function PopoverInner({
     return (
       <Overlay
         {...props}
-        restoreFocusFallbackRef={props.triggerRef}
         shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
         isExiting={isExiting}
         portalContainer={UNSTABLE_portalContainer}>
@@ -394,7 +393,6 @@ function PopoverInner({
   return (
     <Overlay
       {...props}
-      restoreFocusFallbackRef={props.triggerRef}
       shouldContainFocus={isDialog && props.trigger !== 'PreviewTrigger'}
       isExiting={isExiting}
       portalContainer={UNSTABLE_portalContainer ?? groupCtx?.current ?? undefined}>

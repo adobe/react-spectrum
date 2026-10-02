@@ -15,7 +15,6 @@ import {FocusableContext} from '../interactions/useFocusable';
 import {FocusScope} from '../focus/FocusScope';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {RefObject} from '@react-types/shared';
 import {useIsSSR} from '../ssr/SSRProvider';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useUNSAFE_PortalContext} from './PortalProvider';
@@ -39,8 +38,6 @@ export interface OverlayProps {
    * Whether to contain focus within the overlay.
    */
   shouldContainFocus?: boolean;
-  /** A fallback focus target when no element was focused before the overlay opened. */
-  restoreFocusFallbackRef?: RefObject<Element | null>;
   /**
    * Whether the overlay is currently performing an exit animation. When true,
    * focus is allowed to move outside.
@@ -78,10 +75,7 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <FocusScope
-        restoreFocus
-        restoreFocusFallbackRef={props.restoreFocusFallbackRef}
-        contain={(props.shouldContainFocus || contain) && !isExiting}>
+      <FocusScope restoreFocus contain={(props.shouldContainFocus || contain) && !isExiting}>
         {contents}
       </FocusScope>
     );

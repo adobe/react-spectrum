@@ -27,8 +27,6 @@ When the `contain` prop is set, focus is contained within the scope. This is use
 implementing overlays like modal dialogs, which should not allow focus to escape them while open.
 In addition, the `restoreFocus` prop can be used to restore focus back to the previously focused
 element when the focus scope unmounts, for example, back to a button which opened a dialog.
-When a scope opens before anything has focus, `restoreFocusFallbackRef` can provide a
-fallback target such as the dialog's trigger. An existing focused element takes precedence.
 A FocusScope can also optionally auto focus the first focusable element within it on mount
 when the `autoFocus` prop is set.
 

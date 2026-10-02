@@ -38,9 +38,6 @@ export interface FocusScopeProps {
    */
   restoreFocus?: boolean;
 
-  /** A fallback focus target when no element was focused before the scope mounted. */
-  restoreFocusFallbackRef?: RefObject<Element | null>;
-
   /** Whether to auto focus the first focusable element in the focus scope on mount. */
   autoFocus?: boolean;
 }
@@ -89,7 +86,7 @@ let activeScope: ScopeRef = null;
  * to user events.
  */
 export function FocusScope(props: FocusScopeProps): JSX.Element {
-  let {children, contain, restoreFocus, restoreFocusFallbackRef, autoFocus} = props;
+  let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>(null);
   let endRef = useRef<HTMLSpanElement>(null);
   let scopeRef = useRef<Element[]>([]);
@@ -150,7 +147,7 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
 
   useActiveScopeTracker(scopeRef, restoreFocus, contain);
   useFocusContainment(scopeRef, contain);
-  useRestoreFocus(scopeRef, restoreFocus, contain, restoreFocusFallbackRef);
+  useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
   // This needs to be an effect so that activeScope is updated after the FocusScope tree is complete.
@@ -630,8 +627,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
 function useRestoreFocus(
   scopeRef: RefObject<Element[] | null>,
   restoreFocus?: boolean,
-  contain?: boolean,
-  fallbackRef?: RefObject<Element | null>
+  contain?: boolean
 ) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
 
@@ -643,16 +639,6 @@ function useRestoreFocus(
         ) as FocusableElement)
       : null
   );
-
-  // Wait until all sibling refs are attached, then retain the fallback for unmount.
-  // A real previously focused element always takes precedence.
-  useEffect(() => {
-    let treeNode = focusScopeTree.getTreeNode(scopeRef);
-    let fallback = fallbackRef?.current;
-    if (restoreFocus && fallback && treeNode?.nodeToRestore === getOwnerDocument(fallback).body) {
-      treeNode.nodeToRestore = fallback as FocusableElement;
-    }
-  }, [scopeRef, restoreFocus, fallbackRef]);
 
   // restoring scopes should all track if they are active regardless of contain, but contain already tracks it plus logic to contain the focus
   // restoring-non-containing scopes should only care if they become active so they can perform the restore
@@ -848,6 +834,30 @@ function restoreFocusToElement(node: FocusableElement) {
   // might still exist in the DOM but representing a different item.
   if (node.dispatchEvent(new CustomEvent(RESTORE_FOCUS_EVENT, {bubbles: true, cancelable: true}))) {
     focusElement(node);
+  }
+}
+
+/** @private */
+export function setFocusScopeRestoreTarget(element: Element, target: FocusableElement): void {
+  let scope: TreeNode | undefined;
+  for (let node of focusScopeTree.traverse()) {
+    if (
+      node.scopeRef &&
+      isElementInScope(element, node.scopeRef.current) &&
+      (!scope || isAncestorScope(scope.scopeRef, node.scopeRef))
+    ) {
+      scope = node;
+    }
+  }
+
+  // Only fill an empty restore target on the overlay's own scope. A surrounding
+  // scope that also contains the trigger must keep its original restore target.
+  if (
+    scope?.scopeRef &&
+    scope.nodeToRestore === getOwnerDocument(element).body &&
+    !isElementInScope(target, scope.scopeRef.current)
+  ) {
+    scope.nodeToRestore = target;
   }
 }
 

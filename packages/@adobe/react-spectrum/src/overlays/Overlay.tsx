@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef, RefObject} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {OpenTransition} from './OpenTransition';
 import {Provider} from '../provider/Provider';
 import React, {MutableRefObject, ReactNode, useCallback, useState} from 'react';
@@ -30,7 +30,6 @@ export interface OverlayProps {
   nodeRef: MutableRefObject<HTMLElement | null>;
   disableFocusManagement?: boolean;
   shouldContainFocus?: boolean;
-  restoreFocusFallbackRef?: RefObject<Element | null>;
 }
 
 export const Overlay = React.forwardRef(function Overlay(
@@ -80,7 +79,6 @@ export const Overlay = React.forwardRef(function Overlay(
       portalContainer={container}
       disableFocusManagement={disableFocusManagement}
       shouldContainFocus={shouldContainFocus}
-      restoreFocusFallbackRef={props.restoreFocusFallbackRef}
       isExiting={!isOpen}>
       <Provider
         ref={ref}

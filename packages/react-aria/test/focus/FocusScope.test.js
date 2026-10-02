@@ -21,7 +21,7 @@ import {
 import {defaultTheme} from '@adobe/react-spectrum/defaultTheme';
 import {DialogContainer} from '@adobe/react-spectrum/DialogContainer';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
-import {FocusScope, useFocusManager} from '../../src/focus/FocusScope';
+import {FocusScope, setFocusScopeRestoreTarget, useFocusManager} from '../../src/focus/FocusScope';
 import {focusScopeTree} from '../../src/focus/FocusScope';
 import {Provider} from '@adobe/react-spectrum/Provider';
 import React, {useEffect, useState} from 'react';
@@ -424,50 +424,46 @@ describe('FocusScope', function () {
   });
 
   describe('focus restoration', function () {
-    it.each([false, true])('uses a fallback without overriding moved focus (%s)', moveFocus => {
-      function Test({show}) {
-        let fallbackRef = React.useRef(null);
+    it('should set the fallback on the nearest restoring scope', function () {
+      function Test({show = true}) {
         return (
-          <>
+          <FocusScope restoreFocus>
+            <button>Trigger</button>
             {show && (
-              <FocusScope restoreFocus autoFocus restoreFocusFallbackRef={fallbackRef}>
-                <input data-testid="inside" />
+              <FocusScope restoreFocus>
+                <div data-testid="overlay">
+                  <input aria-label="Inside" />
+                </div>
               </FocusScope>
             )}
-            <button ref={fallbackRef}>Fallback</button>
-            <input data-testid="outside" />
-          </>
+          </FocusScope>
         );
       }
-      let {getByRole, getByTestId, rerender} = render(<Test show />);
-      expect(document.activeElement).toBe(getByTestId('inside'));
-      if (moveFocus) {
-        act(() => getByTestId('outside').focus());
-      }
+
+      let {getByRole, getByTestId, rerender} = render(<Test />);
+      let trigger = getByRole('button');
+      act(() => {
+        setFocusScopeRestoreTarget(getByTestId('overlay'), trigger);
+        getByRole('textbox').focus();
+      });
       rerender(<Test show={false} />);
       act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(moveFocus ? getByTestId('outside') : getByRole('button'));
+      expect(trigger).toHaveFocus();
     });
 
-    it('does not restore focus to a fallback that has been removed', () => {
-      function Test({show, showFallback}) {
-        let fallbackRef = React.useRef(null);
-        return (
-          <>
-            {show && (
-              <FocusScope restoreFocus autoFocus restoreFocusFallbackRef={fallbackRef}>
-                <input data-testid="inside" />
-              </FocusScope>
-            )}
-            {showFallback && <button ref={fallbackRef}>Fallback</button>}
-          </>
-        );
-      }
-      let {rerender} = render(<Test show showFallback />);
-      rerender(<Test show />);
-      rerender(<Test />);
-      act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(document.body);
+    it('should not change an ancestor scope that also contains the trigger', function () {
+      let {getByRole, getByTestId} = render(
+        <FocusScope restoreFocus>
+          <button>Trigger</button>
+          <div data-testid="overlay">
+            <input />
+          </div>
+        </FocusScope>
+      );
+      let scope = [...focusScopeTree.traverse()][0];
+      expect(scope.nodeToRestore).toBe(document.body);
+      setFocusScopeRestoreTarget(getByTestId('overlay'), getByRole('button'));
+      expect(scope.nodeToRestore).toBe(document.body);
     });
 
     it('should restore focus to the previously focused node on unmount', function () {
