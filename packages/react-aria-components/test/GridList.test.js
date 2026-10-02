@@ -1688,6 +1688,14 @@ describe('GridList', () => {
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     });
 
+    it('should use the document viewport when the list scrolls with the page', async () => {
+      let observer = setupIntersectionObserverMock();
+
+      render(<AsyncGridList items={items} onLoadMore={onLoadMore} />);
+
+      expect(observer.instance.root === window.document).toBe(true);
+    });
+
     it('should only fire loadMore when intersection is detected regardless of loading state', async () => {
       let observer = setupIntersectionObserverMock({
         observe
