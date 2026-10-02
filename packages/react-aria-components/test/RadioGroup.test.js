@@ -397,6 +397,46 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
     expect(onChange).toHaveBeenLastCalledWith('c');
   });
 
+  it('should fire a native form onChange event when a radio is clicked', async () => {
+    let formOnChange = jest.fn();
+    let onChange = jest.fn();
+    let {getAllByRole} = render(
+      <form onChange={formOnChange}>
+        <TestRadioGroup groupProps={{onChange}} />
+      </form>
+    );
+    let radios = getAllByRole('radio');
+
+    await user.click(radios[1]);
+    expect(radios[1]).toBeChecked();
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith('b');
+    expect(formOnChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('should fire a native form onChange event when selection changes via the keyboard', async () => {
+    let formOnChange = jest.fn();
+    let onChange = jest.fn();
+    let {getAllByRole} = render(
+      <form onChange={formOnChange}>
+        <TestRadioGroup groupProps={{onChange}} />
+      </form>
+    );
+    let radios = getAllByRole('radio');
+
+    await user.tab();
+    expect(radios[0]).toHaveFocus();
+
+    // user-event implements its own radio-group arrow navigation, which bypasses our own code
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+    expect(radios[1]).toBeChecked();
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith('b');
+    expect(formOnChange).toHaveBeenCalledTimes(1);
+  });
+
   it('should support read only state', () => {
     let className = ({isReadOnly}) => (isReadOnly ? 'readonly' : '');
     let {getByRole, getAllByRole} = renderGroup({isReadOnly: true, className}, {className});
