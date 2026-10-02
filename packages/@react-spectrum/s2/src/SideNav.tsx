@@ -744,6 +744,7 @@ const sidePanelStyle = style(
     display: 'flex',
     flexDirection: 'column',
     height: 'full',
+    minHeight: 0,
     // The expanded width is supplied by the consumer via the `styles` prop. When collapsed, SidePanel
     // applies an inline `width: var(--collapsedWidth)` (the fixed icon-rail size) which overrides that
     // class-based width.
@@ -857,7 +858,8 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
             flexShrink: 1,
             minHeight: 0,
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            height: 'full'
           })}>
           {children}
         </div>
@@ -874,21 +876,6 @@ function ExpandButton(props: {isCollapsed: boolean; setCollapsed: (isCollapsed: 
 
   let label = stringFormatter.format(`sidepanel.${props.isCollapsed ? 'expand' : 'collapse'}`);
 
-  return (
-    <PanelToggleButton
-      isCollapsed={props.isCollapsed}
-      setCollapsed={props.setCollapsed}
-      aria-label={label}
-    />
-  );
-}
-
-function PanelToggleButton(
-  props: AriaLabelingProps & {
-    isCollapsed: boolean;
-    setCollapsed: (isCollapsed: boolean) => void;
-  }
-) {
   let {isCollapsed, setCollapsed, ...otherProps} = props;
   let [isHovered, setHovered] = useState(false);
   let {hoverProps} = useHover({onHoverChange: setHovered});
@@ -896,6 +883,7 @@ function PanelToggleButton(
     <div {...hoverProps} className={style({display: 'contents', marginBottom: 2})}>
       <ActionButton
         {...otherProps}
+        aria-label={label}
         isQuiet
         styles={style({alignSelf: 'start'})}
         onPress={() => {

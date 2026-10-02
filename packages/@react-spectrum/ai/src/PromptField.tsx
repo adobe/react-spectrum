@@ -17,7 +17,14 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button, ButtonContext} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  color,
+  css,
+  scrollFade,
+  space,
+  style,
+  StyleString
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   createContext,
   createRef,
@@ -55,7 +62,6 @@ import {
 } from 'react-stately/useTokenFieldState';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {Provider} from 'react-aria-components/slots';
-import {scrollFade} from './tokens.macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -261,7 +267,11 @@ const PromptFieldContext = createContext<PromptFieldState & {size: 'S' | 'M'}>({
 // aka the difference between a slash command and using the + menu which won't have filter text
 const PromptCompletionAnchorContext = createContext<Position | null>(null);
 
-function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
+export function matchMimeType(mimeType: string | undefined, acceptedMimeTypes: string[]): boolean {
+  if (!mimeType) {
+    return false;
+  }
+
   return acceptedMimeTypes.some(type => {
     if (type === '*/*') {
       return true;
@@ -271,6 +281,45 @@ function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
     }
     return mimeType === type;
   });
+}
+
+const MIME_TYPE_LABELS: Record<string, string> = {
+  'application/json': 'JSON',
+  'application/msword': 'DOC',
+  'application/pdf': 'PDF',
+  'application/vnd.ms-excel': 'XLS',
+  'application/vnd.ms-powerpoint': 'PPT',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'PPTX',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'XLSX',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
+  'application/zip': 'ZIP',
+  'audio/mpeg': 'MP3',
+  'image/gif': 'GIF',
+  'image/jpeg': 'JPG',
+  'image/png': 'PNG',
+  'image/svg+xml': 'SVG',
+  'image/webp': 'WEBP',
+  'text/csv': 'CSV',
+  'text/plain': 'TXT'
+};
+
+export function getMimeTypeLabel(mimeType: string): string | null {
+  let mappedLabel = MIME_TYPE_LABELS[mimeType];
+  if (mappedLabel) {
+    return mappedLabel;
+  }
+
+  let subtype = mimeType.split('/')[1];
+  if (!subtype) {
+    return null;
+  }
+
+  subtype =
+    subtype
+      .replace(/^(x-|vnd\.)/, '')
+      .split(/[+.]/)
+      .pop() || subtype;
+  return subtype.slice(0, 4).toUpperCase();
 }
 
 /**
