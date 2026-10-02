@@ -111,12 +111,28 @@ export function useLongPress(props: LongPressProps): LongPressResult {
           timeRef.current = undefined;
         }, threshold);
 
-        // Prevent context menu, which may be opened on long press on touch devices
+        let ownerWindow = getOwnerWindow(e.target);
+
         if (e.pointerType === 'touch') {
+          // Prevent context menu, which may be opened on long press on touch devices
           addGlobalListener(e.target, 'contextmenu', e => e.preventDefault(), {once: true});
+
+          // A second finger cancels the long press, matching iOS and Android. The capture phase skips
+          // the pointerdown that started this press, and still sees the next one, which usePress
+          // stops bubbling.
+          addGlobalListener(
+            ownerWindow,
+            'pointerdown',
+            event => {
+              if (event.pointerType === 'touch' && timeRef.current) {
+                clearTimeout(timeRef.current);
+                timeRef.current = undefined;
+              }
+            },
+            true
+          );
         }
 
-        let ownerWindow = getOwnerWindow(e.target);
         addGlobalListener(
           ownerWindow,
           'pointerup',

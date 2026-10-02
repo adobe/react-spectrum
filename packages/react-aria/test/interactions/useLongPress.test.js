@@ -202,6 +202,250 @@ describe('useLongPress', function () {
     ]);
   });
 
+  it('should cancel the long press when a second touch begins', function () {
+    let events = [];
+    let addEvent = e => events.push(e);
+    let res = render(
+      <Example onLongPressStart={addEvent} onLongPressEnd={addEvent} onLongPress={addEvent} />
+    );
+
+    let el = res.getByText('test');
+
+    fireEvent.pointerDown(el, {pointerType: 'touch', pointerId: 1});
+    act(() => jest.advanceTimersByTime(100));
+    fireEvent.pointerDown(el, {pointerType: 'touch', pointerId: 2});
+    act(() => jest.advanceTimersByTime(600));
+    expect(events).toEqual([
+      {
+        type: 'longpressstart',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      }
+    ]);
+
+    fireEvent.pointerUp(el, {pointerType: 'touch', pointerId: 2});
+    fireEvent.pointerUp(el, {pointerType: 'touch', pointerId: 1});
+    act(() => jest.advanceTimersByTime(800));
+    expect(events).toEqual([
+      {
+        type: 'longpressstart',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpressend',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      }
+    ]);
+  });
+
+  it('should not cancel the long press when a mouse pointer goes down elsewhere', function () {
+    let events = [];
+    let addEvent = e => events.push(e);
+    let res = render(
+      <Example onLongPressStart={addEvent} onLongPressEnd={addEvent} onLongPress={addEvent} />
+    );
+
+    let el = res.getByText('test');
+
+    fireEvent.pointerDown(el, {pointerType: 'touch', pointerId: 1});
+    act(() => jest.advanceTimersByTime(100));
+    fireEvent.pointerDown(document.body, {pointerType: 'mouse', pointerId: 2});
+    act(() => jest.advanceTimersByTime(600));
+    expect(events).toEqual([
+      {
+        type: 'longpressstart',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpressend',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpress',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      }
+    ]);
+  });
+
+  it('should not cancel a mouse long press when a second pointer goes down', function () {
+    let events = [];
+    let addEvent = e => events.push(e);
+    let res = render(
+      <Example
+        pointerType="mouse"
+        onLongPressStart={addEvent}
+        onLongPressEnd={addEvent}
+        onLongPress={addEvent}
+      />
+    );
+
+    let el = res.getByText('test');
+
+    fireEvent.pointerDown(el, {pointerType: 'mouse', pointerId: 1});
+    act(() => jest.advanceTimersByTime(100));
+    fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 2});
+    act(() => jest.advanceTimersByTime(600));
+    expect(events).toEqual([
+      {
+        type: 'longpressstart',
+        target: el,
+        pointerType: 'mouse',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpressend',
+        target: el,
+        pointerType: 'mouse',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpress',
+        target: el,
+        pointerType: 'mouse',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      }
+    ]);
+  });
+
+  it('should perform a long press after a previous one has completed', function () {
+    let events = [];
+    let addEvent = e => events.push(e);
+    let res = render(
+      <Example onLongPressStart={addEvent} onLongPressEnd={addEvent} onLongPress={addEvent} />
+    );
+
+    let el = res.getByText('test');
+
+    fireEvent.pointerDown(el, {pointerType: 'touch', pointerId: 1});
+    act(() => jest.advanceTimersByTime(600));
+    fireEvent.pointerDown(el, {pointerType: 'touch', pointerId: 2});
+    act(() => jest.advanceTimersByTime(600));
+    expect(events).toEqual([
+      {
+        type: 'longpressstart',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpressend',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpress',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpressstart',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpressend',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      },
+      {
+        type: 'longpress',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 0,
+        y: 0
+      }
+    ]);
+  });
+
   it('should cancel other press events', function () {
     let events = [];
     let addEvent = e => events.push(e);
