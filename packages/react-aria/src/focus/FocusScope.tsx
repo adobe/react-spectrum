@@ -180,10 +180,8 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
       // Scope may have been re-parented.
       let parentScope = focusScopeTree.getTreeNode(scopeRef)?.parent?.scopeRef ?? null;
 
-      if (
-        (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope)) &&
-        (!parentScope || focusScopeTree.getTreeNode(parentScope))
-      ) {
+      // A descendant may remain active while an ancestor scope is unmounted.
+      if (scopeRef === activeScope && (!parentScope || focusScopeTree.getTreeNode(parentScope))) {
         activeScope = parentScope;
       }
       focusScopeTree.removeTreeNode(scopeRef);
