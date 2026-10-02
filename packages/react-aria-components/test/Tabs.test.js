@@ -405,6 +405,87 @@ describe('Tabs', () => {
     expect(document.activeElement).toBe(tabsTester.getTabpanels()[0]);
   });
 
+  it.each([
+    ['disabledKeys', false],
+    ['isDisabled', false],
+    ['disabledKeys', true],
+    ['isDisabled', true]
+  ])(
+    'keeps uncontrolled tabs reachable when the selection becomes disabled via %s (focused: %s)',
+    async (disableWith, keepFocus) => {
+      let onSelectionChange = jest.fn();
+      function Example({disabled = false}) {
+        return (
+          <>
+            <button>Re-run build</button>
+            <Tabs
+              onSelectionChange={onSelectionChange}
+              disabledKeys={disableWith === 'disabledKeys' && disabled ? ['b'] : []}>
+              <TabList aria-label="Build">
+                <Tab id="a">Logs</Tab>
+                <Tab id="b" isDisabled={disableWith === 'isDisabled' && disabled}>
+                  Artifacts
+                </Tab>
+              </TabList>
+              <TabPanel id="a">Logs content</TabPanel>
+              <TabPanel id="b">Artifacts content</TabPanel>
+            </Tabs>
+          </>
+        );
+      }
+      let {getAllByRole, getByRole, rerender} = render(<Example />);
+      let tabs = getAllByRole('tab');
+      await user.click(tabs[1]);
+      if (!keepFocus) {
+        await user.click(getByRole('button'));
+      }
+      onSelectionChange.mockClear();
+      rerender(<Example disabled />);
+      expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+      expect(tabs[0]).toHaveAttribute('tabindex', '0');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('a');
+      if (!keepFocus) {
+        await user.tab();
+      }
+      expect(document.activeElement).toBe(tabs[0]);
+    }
+  );
+
+  it('selects an enabled tab when an uncontrolled list becomes available', () => {
+    let onSelectionChange = jest.fn();
+    function Example({disabledKeys}) {
+      return (
+        <Tabs disabledKeys={disabledKeys} onSelectionChange={onSelectionChange}>
+          <TabList aria-label="Build">
+            <Tab id="a">Logs</Tab>
+            <Tab id="b">Artifacts</Tab>
+          </TabList>
+          <TabPanel id="a">Logs content</TabPanel>
+          <TabPanel id="b">Artifacts content</TabPanel>
+        </Tabs>
+      );
+    }
+    let {getAllByRole, rerender} = render(<Example disabledKeys={['a', 'b']} />);
+    let tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    onSelectionChange.mockClear();
+    rerender(<Example disabledKeys={['a', 'b']} />);
+    expect(onSelectionChange).not.toHaveBeenCalled();
+    rerender(<Example disabledKeys={['a']} />);
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    expect(tabs[1]).toHaveAttribute('tabindex', '0');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledWith('b');
+  });
+
+  it('leaves a controlled disabled selection to the application', () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderTabs({selectedKey: 'b', disabledKeys: ['b'], onSelectionChange});
+    expect(getAllByRole('tab')[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
   it('should support selected state', async () => {
     let onSelectionChange = jest.fn();
     let {getByRole} = renderTabs(

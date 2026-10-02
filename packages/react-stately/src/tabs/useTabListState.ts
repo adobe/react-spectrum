@@ -77,14 +77,17 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
 
   let lastSelectedKey = useRef(currentSelectedKey);
   useEffect(() => {
-    // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
+    // Keep uncontrolled selection on an available tab when the collection changes.
     let selectedKey = currentSelectedKey;
     if (
       props.selectedKey == null &&
-      (selectionManager.isEmpty || selectedKey == null || !collection.getItem(selectedKey))
+      (selectionManager.isEmpty ||
+        selectedKey == null ||
+        !collection.getItem(selectedKey) ||
+        selectionManager.isDisabled(selectedKey))
     ) {
       selectedKey = findDefaultSelectedKey(collection, state.disabledKeys);
-      if (selectedKey != null) {
+      if (selectedKey != null && selectedKey !== currentSelectedKey) {
         // directly set selection because replace/toggle selection won't consider disabled keys
         selectionManager.setSelectedKeys([selectedKey]);
       }
