@@ -36,10 +36,40 @@
   "files": [
     "*",
     "!docs/**",
+    "!exports/**",
     "!intl/**",
+    "!src/**",
     "!stories/**",
     "!test/**"
   ],
+  "publishConfig": {
+    "access": "public",
+    "source": null,
+    "exports": {
+      ".": {
+        "types": "./dist/types/exports/index.d.ts",
+        "import": "./dist/exports/index.mjs",
+        "require": "./dist/exports/index.cjs"
+      },
+      "./i18n": {
+        "types": "./i18n/index.d.ts",
+        "import": "./i18n/index.mjs",
+        "require": "./i18n/index.js"
+      },
+      "./i18n/*": {
+        "types": "./i18n/lang.d.ts",
+        "import": "./i18n/*.mjs",
+        "require": "./i18n/*.js"
+      },
+      "./package.json": "./package.json",
+      "./*": {
+        "types": "./dist/types/exports/*.d.ts",
+        "legacy-module": "./dist/exports/*.js",
+        "import": "./dist/exports/*.mjs",
+        "require": "./dist/exports/*.cjs"
+      }
+    }
+  },
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -65,9 +95,6 @@
     "@babel/core": "^7.24.3",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "targets": {
     "main": false,

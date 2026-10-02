@@ -12,7 +12,9 @@
     "*",
     "!docs/**",
     "!example/**",
+    "!exports/**",
     "!intl/**",
+    "!src/**",
     "!stories/**",
     "!test/**"
   ],
@@ -50,7 +52,33 @@
     "./private/*": null
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "source": null,
+    "exports": {
+      ".": {
+        "types": "./dist/types/exports/index.d.ts",
+        "import": "./dist/exports/index.mjs",
+        "require": "./dist/exports/index.cjs"
+      },
+      "./i18n": {
+        "types": "./i18n/index.d.ts",
+        "import": "./i18n/index.mjs",
+        "require": "./i18n/index.js"
+      },
+      "./i18n/*": {
+        "types": "./i18n/lang.d.ts",
+        "import": "./i18n/*.mjs",
+        "require": "./i18n/*.js"
+      },
+      "./package.json": "./package.json",
+      "./*": {
+        "types": "./dist/types/exports/*.d.ts",
+        "legacy-module": "./dist/exports/*.js",
+        "import": "./dist/exports/*.mjs",
+        "require": "./dist/exports/*.cjs"
+      },
+      "./private/*": null
+    }
   },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
