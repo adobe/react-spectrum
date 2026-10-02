@@ -566,15 +566,15 @@ describe('Menu', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
 
-      fireEvent.keyDown(menu, {key: 'B'});
+      fireEvent.keyDown(menu, {key: 'B'}); // bar
       expect(document.activeElement).toBe(menuItems[1]);
 
       act(() => {
         jest.runAllTimers();
       });
 
-      fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[1]);
+      fireEvent.keyDown(menu, {key: 'B'}); // baz
+      expect(document.activeElement).toBe(menuItems[2]);
     });
 
     it.each`
@@ -586,17 +586,18 @@ describe('Menu', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
 
-      fireEvent.keyDown(menu, {key: 'B'});
-      fireEvent.keyDown(menu, {key: 'L'});
-      fireEvent.keyDown(menu, {key: 'E'});
+      fireEvent.keyDown(menu, {key: 'B'}); // bar
+      fireEvent.keyDown(menu, {key: 'L'}); // blah
+      fireEvent.keyDown(menu, {key: 'E'}); // bleh
       expect(document.activeElement).toBe(menuItems[4]);
 
       act(() => {
         jest.runAllTimers();
       });
 
-      fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[4]);
+      // No items after "Bleh" start with "B", so the search wraps to the top of the menu.
+      fireEvent.keyDown(menu, {key: 'B'}); // bar
+      expect(document.activeElement).toBe(menuItems[1]);
     });
   });
 
