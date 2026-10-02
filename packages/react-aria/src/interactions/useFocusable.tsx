@@ -57,13 +57,17 @@ interface FocusableContextValue extends FocusableProviderProps {
 export let FocusableContext: React.Context<FocusableContextValue | null> =
   React.createContext<FocusableContextValue | null>(null);
 
-function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
-  let context = useContext(FocusableContext) || {};
-  useSyncRef(context, ref);
+function useFocusableContext(
+  ref: RefObject<FocusableElement | null>
+): [FocusableContextValue, boolean] {
+  let context = useContext(FocusableContext);
+  let hasFocusableProvider = context != null;
+  let contextValue = context || {};
+  useSyncRef(contextValue, ref);
 
   // eslint-disable-next-line
-  let {ref: _, ...otherProps} = context;
-  return otherProps;
+  let {ref: _, ...otherProps} = contextValue;
+  return [otherProps, hasFocusableProvider];
 }
 
 function validateFocusableElement(el: FocusableElement | null, isDisabled?: boolean): void {
@@ -98,6 +102,7 @@ function validateFocusableElement(el: FocusableElement | null, isDisabled?: bool
       role !== 'application' &&
       role !== 'button' &&
       role !== 'checkbox' &&
+      role !== 'columnheader' &&
       role !== 'combobox' &&
       role !== 'gridcell' &&
       role !== 'link' &&
@@ -106,6 +111,7 @@ function validateFocusableElement(el: FocusableElement | null, isDisabled?: bool
       role !== 'menuitemradio' &&
       role !== 'option' &&
       role !== 'radio' &&
+      role !== 'row' &&
       role !== 'searchbox' &&
       role !== 'separator' &&
       role !== 'slider' &&
@@ -160,7 +166,7 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
-  let domProps = useFocusableContext(domRef);
+  let [domProps, hasFocusableProvider] = useFocusableContext(domRef);
   let interactionProps = props.isDisabled ? {} : domProps;
   let autoFocusRef = useRef(props.autoFocus);
 
@@ -170,6 +176,14 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
     }
     autoFocusRef.current = false;
   }, [domRef]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production' || !hasFocusableProvider || !domRef.current) {
+      return;
+    }
+
+    validateFocusableElement(domRef.current, props.isDisabled);
+  }, [domRef, props.isDisabled, hasFocusableProvider]);
 
   // Always set a tabIndex so that Safari allows focusing native buttons and inputs.
   let tabIndex: number | undefined = props.excludeFromTabOrder ? -1 : 0;
