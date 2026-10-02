@@ -1,0 +1,394 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Sheet';
+import '../../tailwind/tailwind.css';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
+export const tags = ['dialog', 'overlay', 'tray', 'drawer', 'sheet'];
+export const description = 'An overlay that slides in from the edge of the screen and can be swiped to dismiss.';
+
+# Sheet
+
+<PageDescription>{docs.exports.Sheet.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.Sheet} links={vanillaDocs.links} props={['position', 'swipeDirection', 'preventDismissal', 'overscrollPadding']} type="vanilla" files={["starters/docs/src/Sheet.tsx", "starters/docs/src/Sheet.css"]}
+  "use client";
+  import {useState} from 'react';
+  import {SheetTrigger} from 'react-aria-components/Sheet';
+  import {Sheet, Heading} from 'vanilla-starter/Sheet';
+  import {Button} from 'vanilla-starter/Button';
+  import {Minus, Plus, ShoppingCart} from 'lucide-react';
+
+  function Example(props) {
+    let [items, setItems] = useState([
+      {name: 'Pork Bao', detail: 'Steamed · 2 pieces', emoji: '🥟', price: 4.5, qty: 2},
+      {name: 'Spicy Ramen', detail: 'Extra spicy · Soft egg', emoji: '🍜', price: 13, qty: 1},
+      {name: 'Mango Boba', detail: 'Less ice · 50% sweet', emoji: '🧋', price: 5.75, qty: 1}
+    ]);
+    let update = (name, delta) => setItems(items => items
+      .map(item => item.name === name ? {...item, qty: item.qty + delta} : item)
+      .filter(item => item.qty > 0));
+    let subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+    let delivery = items.length ? 2.99 : 0;
+    
+    return (
+      <SheetTrigger>
+        <Button>
+          <ShoppingCart size={18} />
+          <span>Cart ({items.reduce((n, item) => n + item.qty, 0)})</span>
+        </Button>
+        {/*- begin highlight -*/}
+        <Sheet {...props}/* PROPS */>
+        {/*- end highlight -*/}
+          {/*- begin collapse -*/}
+          <div style={{display: 'flex', flexDirection: 'column', minHeight: '100%'}}>
+            <Heading slot="title">Your order</Heading>
+            <p style={{margin: '0 0 20px', color: 'var(--gray-1000)'}}>Delivering from Bao Bros · 25–35 min</p>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 'var(--spacing-4)', flexGrow: 1}}>
+              {items.map(item => (
+                <div key={item.name} style={{display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)'}}>
+                  <span style={{width: 'calc(15 * var(--spacing))', height: 'calc(15 * var(--spacing))', borderRadius: 12, background: 'var(--gray-200)', fontSize: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>{item.emoji}</span>
+                  <div style={{display: 'flex', alignItems: 'center', columnGap: 'var(--spacing-3)', rowGap: 4, flexWrap: 'wrap', flexGrow: 1}}>
+                    <div style={{flexGrow: 100, minWidth: 0}}>
+                      <div style={{fontWeight: 600}}>{item.name}</div>
+                      <div style={{fontSize: 12, color: 'var(--gray-1000)'}}>{item.detail}</div>
+                    </div>
+                    <div style={{display: 'flex', alignItems: 'center', gap: 4, flexGrow: 1}}>
+                      <Button aria-label={`Remove one ${item.name}`} variant="secondary" onPress={() => update(item.name, -1)}><Minus size={16} /></Button>
+                      <span style={{minWidth: 20, textAlign: 'center'}}>{item.qty}</span>
+                      <Button aria-label={`Add one ${item.name}`} variant="secondary" onPress={() => update(item.name, 1)}><Plus size={16} /></Button>
+                      <span style={{minWidth: '6ch', textAlign: 'end', flexGrow: 1}}>${(item.price * item.qty).toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 4, margin: '20px 0', paddingTop: 16, borderTop: '1px solid var(--gray-300)'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Delivery fee</span><span>${delivery.toFixed(2)}</span></div>
+              <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 600}}><span>Total</span><span>${(subtotal + delivery).toFixed(2)}</span></div>
+            </div>
+            <Button slot="close" style={{width: '100%'}}>Place order</Button>
+          </div>
+          {/*- end collapse -*/}
+        </Sheet>
+      </SheetTrigger>
+    );
+  }
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.Sheet} links={vanillaDocs.links} props={['position', 'swipeDirection', 'preventDismissal', 'overscrollPadding']} type="tailwind" files={["starters/tailwind/src/Sheet.tsx", "starters/tailwind/src/Sheet.css"]}
+  "use client";
+  import {useState} from 'react';
+  import {SheetTrigger} from 'react-aria-components/Sheet';
+  import {Sheet} from 'tailwind-starter/Sheet';
+  import {Heading} from 'tailwind-starter/Dialog';
+  import {Button} from 'tailwind-starter/Button';
+  import {Minus, Plus, ShoppingCart} from 'lucide-react';
+
+  function Example(props) {
+    let [items, setItems] = useState([
+      {name: 'Pork Bao', detail: 'Steamed · 2 pieces', emoji: '🥟', price: 4.5, qty: 2},
+      {name: 'Spicy Ramen', detail: 'Extra spicy · Soft egg', emoji: '🍜', price: 13, qty: 1},
+      {name: 'Mango Boba', detail: 'Less ice · 50% sweet', emoji: '🧋', price: 5.75, qty: 1}
+    ]);
+    let update = (name, delta) => setItems(items => items
+      .map(item => item.name === name ? {...item, qty: item.qty + delta} : item)
+      .filter(item => item.qty > 0));
+    let subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+    let delivery = items.length ? 2.99 : 0;
+    
+    return (
+      <SheetTrigger>
+        <Button>
+          <ShoppingCart size={18} />
+          <span>Cart ({items.reduce((n, item) => n + item.qty, 0)})</span>
+        </Button>
+        {/*- begin highlight -*/}
+        <Sheet {...props}/* PROPS */>
+        {/*- end highlight -*/}
+        {/*- begin collapse -*/}
+          <div className="flex flex-col min-h-full">
+            <Heading slot="title" className="text-xl font-semibold mt-0 mb-0.5">Your order</Heading>
+            <p className="mt-0 mb-5 text-sm text-neutral-600 dark:text-neutral-400">Delivering from Bao Bros · 25–35 min</p>
+            <div className="flex flex-col gap-4 flex-1">
+              {items.map(item => (
+                <div key={item.name} className="flex items-center gap-3">
+                  <span className="w-14 h-14 rounded-xl bg-neutral-200 dark:bg-neutral-700 text-3xl flex items-center justify-center shrink-0">{item.emoji}</span>
+                  <div className="flex items-center flex-wrap gap-x-3 gap-y-1 grow">
+                    <div className="grow-100 min-w-0">
+                      <div className="text-sm font-semibold">{item.name}</div>
+                      <div className="text-xs text-neutral-600 dark:text-neutral-400">{item.detail}</div>
+                    </div>
+                    <div className="flex items-center gap-1 grow">
+                      <Button aria-label={`Remove one ${item.name}`} variant="secondary" onPress={() => update(item.name, -1)}><Minus size={16} /></Button>
+                      <span className="min-w-5 text-center">{item.qty}</span>
+                      <Button aria-label={`Add one ${item.name}`} variant="secondary" onPress={() => update(item.name, 1)}><Plus size={16} /></Button>
+                      <span className="min-w-[6ch] text-sm text-end grow">${(item.price * item.qty).toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col gap-1 my-5 pt-4 text-sm border-t border-neutral-300 dark:border-neutral-700">
+              <div className="flex justify-between"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Delivery fee</span><span>${delivery.toFixed(2)}</span></div>
+              <div className="flex justify-between font-semibold"><span>Total</span><span>${(subtotal + delivery).toFixed(2)}</span></div>
+            </div>
+            <Button slot="close" className="w-full">Place order</Button>
+          </div>
+          {/*- end collapse -*/}
+        </Sheet>
+      </SheetTrigger>
+    );
+  }
+  ```
+</ExampleSwitcher>
+
+## Position
+
+The `position` prop determines which edge of the screen the sheet is anchored to. `swipeDirection` controls the direction it can be swiped to dismiss, which defaults to the same as `position`. Use `start` or `end` to build a navigation drawer, `bottom` for a mobile sheet, or `top` for a notification banner. `start` and `end` are automatically mirrored in right-to-left locales, while `left` and `right` are always physical.
+
+```tsx render
+"use client";
+import {SheetTrigger} from 'react-aria-components/Sheet';
+import {Sheet, Heading} from 'vanilla-starter/Sheet';
+import {Button} from 'vanilla-starter/Button';
+import {Home, Compass, Library, Settings, LogOut} from 'lucide-react';
+
+function Example() {
+  let items = [
+    {label: 'Home', icon: <Home size={20} />},
+    {label: 'Explore', icon: <Compass size={20} />},
+    {label: 'Library', icon: <Library size={20} />},
+    {label: 'Settings', icon: <Settings size={20} />}
+  ];
+  return (
+    <SheetTrigger>
+      <Button variant="secondary">Open menu</Button>
+      {/*- begin highlight -*/}
+      <Sheet position="start">
+      {/*- end highlight -*/}
+        <div style={{display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'start'}}>
+          <Heading slot="title" style={{padding: '0 var(--spacing-3)', marginBottom: 16}}>Acme Music</Heading>
+          <nav style={{display: 'flex', flexDirection: 'column', gap: 4, flexGrow: 1, width: '100%'}}>
+            {items.map(item => (
+              <Button key={item.label} slot="close" variant="quiet" style={{justifyContent: 'start', gap: 12}}>
+                {item.icon}
+                <span>{item.label}</span>
+              </Button>
+            ))}
+          </nav>
+          <Button slot="close" variant="secondary" style={{gap: 12, marginTop: 'auto'}}>
+            <LogOut size={20} />
+            <span>Sign out</span>
+          </Button>
+        </div>
+      </Sheet>
+    </SheetTrigger>
+  );
+}
+```
+
+## Snap points
+
+By default, a sheet opens to reveal all of its content. Provide the `snapPoints` prop to make it stop partially open instead. Each value is the amount of the sheet that is visible, either as a number of pixels or a CSS length. Percentages are relative to the size of the sheet. The sheet opens at the first snap point, and can be dragged up to its full height or swiped down to dismiss.
+
+```tsx render
+"use client";
+import {SheetTrigger} from 'react-aria-components/Sheet';
+import {Sheet, Heading} from 'vanilla-starter/Sheet';
+import {Button} from 'vanilla-starter/Button';
+import {Star, MapPin, Clock, Phone} from 'lucide-react';
+
+function Example() {
+  return (
+    <SheetTrigger>
+      <Button>Show place</Button>
+      {/*- begin highlight -*/}
+      <Sheet position="bottom" snapPoints={[280]}>
+      {/*- end highlight -*/}
+        <Heading slot="title" style={{marginBottom: 4}}>Blue Bottle Coffee</Heading>
+        <div style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--gray-1000)', marginBottom: 32}}>
+          <Star size={16} fill="currentColor" style={{color: '#ff9500'}} />
+          <strong>4.6</strong> · Coffee shop · $$
+        </div>
+        <div style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'start'}}>
+          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><MapPin size={18} /> 300 Webster St, Oakland</div>
+          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><Clock size={18} /> Open until 6:00 PM</div>
+          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><Phone size={18} /> (510) 555-0142</div>
+          <p>Drag this sheet up to see more, or swipe down to dismiss. Snap points let you preview the most relevant content first, then expand for the full story.</p>
+          <div style={{height: 300, width: '100%', background: 'var(--gray-200)', borderRadius: 16}} />
+          <Button slot="close">Get directions</Button>
+        </div>
+      </Sheet>
+    </SheetTrigger>
+  );
+}
+```
+
+## Animation
+
+Use the `swipeAnimation` prop on `Sheet` and `SheetBackdrop` to define a CSS keyframe animation that is synchronized with the swipe gesture and entry/exit animations. `swipeAnimationRange` specifies the snap points between which the animation plays.
+
+```tsx render
+"use client";
+import {SheetTrigger} from 'react-aria-components/Sheet';
+import {Sheet, Heading} from 'vanilla-starter/Sheet';
+import {Button} from 'vanilla-starter/Button';
+
+function Example() {
+  return (
+    <SheetTrigger>
+      <Button>Settings</Button>
+      {/* By default, Sheet.tsx applies a fade transition to the backdrop.
+          This example adds a custom transform animation to the sheet. */}
+      <style>{`
+      @keyframes sheet-transform {
+        from {
+          transform-origin: top right;
+          transform: skew(10deg) scale(0.8);
+        }
+
+        to {
+          transform: skew(0deg) scale(1);
+        }
+      }`}</style>
+      {/*- begin highlight -*/}
+      <Sheet swipeAnimation="sheet-transform">
+      {/*- end highlight -*/}
+        <Heading slot="title">Sheet</Heading>
+        <p style={{marginTop: 0}}>This sheet has a custom swipe animation.</p>
+        <div style={{height: 300, width: '100%', background: 'var(--gray-200)', borderRadius: 16, marginBottom: 16}} />
+        <Button slot="close">Close</Button>
+      </Sheet>
+    </SheetTrigger>
+  );
+}
+```
+
+## Stacking
+
+Sheets can be nested to drill deeper into a flow. Set `stackAnimation` prop to a CSS keyframe animation to scale the parent sheet backward when a child is opened, synchronized with the swipe gesture. The `Sheet` component in this example wires this up automatically.
+
+```tsx render
+"use client";
+import {SheetTrigger} from 'react-aria-components/Sheet';
+import {Sheet, Heading} from 'vanilla-starter/Sheet';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {RadioGroup, Radio} from 'vanilla-starter/RadioGroup';
+import {CheckboxGroup} from 'vanilla-starter/CheckboxGroup';
+import {Checkbox} from 'vanilla-starter/Checkbox';
+import {ChevronRight} from 'lucide-react';
+
+function Example() {
+  return (
+    <SheetTrigger>
+      <Button>Settings</Button>
+      <Sheet style={{height: 550}}>
+        <Heading slot="title">Settings</Heading>
+        <p style={{marginTop: 0, marginBottom: 32}}>Manage your account and preferences.</p>
+        <Form>
+          <TextField label="Homepage" defaultValue="react-aria.adobe.com" />
+          <RadioGroup label="Theme" defaultValue="auto">
+            <Radio value="auto">Auto</Radio>
+            <Radio value="light">Light</Radio>
+            <Radio value="dark">Dark</Radio>
+          </RadioGroup>
+          {/*- begin highlight -*/}
+          <SheetTrigger>
+            <Button variant="secondary">
+              <span>Account</span>
+              <ChevronRight size={18} />
+            </Button>
+            <Sheet style={{height: 550}}>
+            {/*- end highlight -*/}
+              <Heading slot="title">Account</Heading>
+              <p style={{marginTop: 0, marginBottom: 32}}>Swipe this sheet away to return to Settings.</p>
+              <Form>
+                <TextField label="Name" defaultValue="Devon Govett" />
+                <TextField label="Username" defaultValue="@devongovett" />
+                <TextField label="Email" defaultValue="devon@example.com" />
+                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                  <Button slot="close">Save</Button>
+                  <SheetTrigger>
+                    <Button variant="secondary">
+                      <span>Advanced</span>
+                      <ChevronRight size={18} />
+                    </Button>
+                    <Sheet style={{height: 550}}>
+                      <Heading slot="title">Advanced</Heading>
+                      <p style={{marginTop: 0, marginBottom: 32}}>Swipe this sheet away to return to Account.</p>
+                      <Form>
+                        <CheckboxGroup label="Notification settings" defaultValue={['account', 'dms']}>
+                          <Checkbox value="account">Account activity</Checkbox>
+                          <Checkbox value="mentions">Mentions</Checkbox>
+                          <Checkbox value="dms">Direct message</Checkbox>
+                          <Checkbox value="marketing">Marketing emails</Checkbox>
+                        </CheckboxGroup>
+                        <Button slot="close">Save</Button>
+                      </Form>
+                    </Sheet>
+                  </SheetTrigger>
+                </div>
+              </Form>
+            </Sheet>
+          </SheetTrigger>
+        </Form>
+      </Sheet>
+    </SheetTrigger>
+  );
+}
+```
+
+## API
+
+```tsx links={{SheetTrigger: '#sheettrigger', Button: 'Button', SheetOverlay: '#sheetoverlay', SheetBackdrop: '#sheetbackdrop', Sheet: '#sheet', SheetContent: '#sheetcontent', Heading: 'Dialog', Text: 'Dialog'}}
+<SheetTrigger>
+  <Button />
+  <SheetOverlay>
+    <SheetBackdrop />
+    <Sheet>
+      <SheetContent>
+        <Heading slot="title" />
+        <Text slot="description" />
+        <Button slot="close" />
+      </SheetContent>
+    </Sheet>
+  </SheetOverlay>
+</SheetTrigger>
+```
+
+### SheetTrigger
+
+<PropTable component={docs.exports.SheetTrigger} links={docs.links} showDescription />
+
+### SheetOverlay
+
+<PropTable
+  component={docs.exports.SheetOverlay}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--sheet-scroll-padding-y': 'The amount of the sheet obscured by browser UI or software keyboard along the vertical axis. Add as padding to the scrollable sheet content.',
+    '--sheet-scroll-padding-x': 'The amount of the sheet obscured by browser UI along the horizontal axis. Add as padding to the scrollable sheet content.',
+    '--visual-viewport-height': 'The height of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API), i.e. space above the software keyboard.',
+    '--visual-viewport-width': 'The width of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API).'
+  }} />
+
+### SheetBackdrop
+
+<PropTable component={docs.exports.SheetBackdrop} links={docs.links} showDescription />
+
+### Sheet
+
+<PropTable component={docs.exports.Sheet} links={docs.links} showDescription />
+
+### SheetContent
+
+<PropTable component={docs.exports.SheetContent} links={docs.links} showDescription />
