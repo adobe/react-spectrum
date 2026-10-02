@@ -71,6 +71,27 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
   let renderGroup = (groupProps, checkboxProps) =>
     render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
 
+  it('clears all selected checkboxes when the form resets', async () => {
+    let {getAllByRole, getByRole} = render(
+      <form>
+        <TestCheckboxGroup groupProps={{name: 'letters'}} />
+        <button type="reset">Reset</button>
+      </form>
+    );
+
+    let checkboxes = getAllByRole('checkbox');
+    await user.click(checkboxes[0]);
+    await user.click(checkboxes[1]);
+
+    expect(checkboxes[0]).toBeChecked();
+    expect(checkboxes[1]).toBeChecked();
+
+    await user.click(getByRole('button', {name: 'Reset'}));
+
+    expect(checkboxes[0]).not.toBeChecked();
+    expect(checkboxes[1]).not.toBeChecked();
+  });
+
   it('should render a checkbox group with default classes', () => {
     let {getByRole, getAllByRole} = renderGroup();
     let group = getByRole('group');
