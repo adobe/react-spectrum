@@ -23,3 +23,8 @@ starters/docs/yarn.lock
 starters/tailwind/yarn.lock
 .scout/
 .codex/
+# Local AI/debug files
+IMPLEMENTATION-SUMMARY.md
+ISSUE-10443-FIX.md
+PULL-REQUEST-DESCRIPTION.md
+debug-storybook.log
