@@ -40,6 +40,7 @@ import {useId} from 'react-aria/useId';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
+import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 type SheetPosition = 'bottom' | 'top' | 'left' | 'right' | 'center';
@@ -227,9 +228,14 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
     : position === 'center'
       ? 'vertical'
       : position;
+  // Resolve the state the same way ModalOverlay does, so that swiping to close works
+  // both inside a SheetTrigger and when the open state is passed directly to SheetOverlay.
   let contextState = useContext(OverlayTriggerStateContext);
+  let localState = useOverlayTriggerState(props);
+  let state =
+    props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
   let onCloseEvent = useEffectEvent(() => {
-    contextState!.close();
+    state.close();
   });
 
   let {axis, before, after, maxScroll, enteredScroll, viewRange, viewDirection, viewIterations} =
@@ -333,6 +339,9 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
   return (
     <ModalOverlay
       {...props}
+      isOpen={state.isOpen}
+      defaultOpen={undefined}
+      onOpenChange={state.setOpen}
       ref={mergedRefs}
       isDismissable={!preventDismissal}
       isKeyboardDismissDisabled={preventDismissal}

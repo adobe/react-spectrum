@@ -60,6 +60,24 @@ function TestSheet({
   );
 }
 
+function StandaloneSheet(props) {
+  return (
+    <SheetOverlay data-testid="overlay" {...props}>
+      <SheetBackdrop data-testid="backdrop" />
+      <Sheet data-testid="sheet">
+        <SheetContent>
+          {({close}) => (
+            <>
+              <Heading slot="title">Sheet title</Heading>
+              <Button onPress={close}>Close</Button>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
+    </SheetOverlay>
+  );
+}
+
 describe('Sheet', () => {
   let user;
   beforeAll(() => {
@@ -397,6 +415,48 @@ describe('Sheet', () => {
       act(() => jest.runAllTimers());
       expect(onOpenChange).toHaveBeenLastCalledWith(false);
       expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('calls onOpenChange when a controlled sheet without a trigger is swiped out of view', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<StandaloneSheet isOpen onOpenChange={onOpenChange} />);
+      expect(tree.getByRole('dialog')).toBeInTheDocument();
+
+      intersect(1);
+      intersect(0);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+
+      tree.rerender(<StandaloneSheet isOpen={false} onOpenChange={onOpenChange} />);
+      act(() => jest.runAllTimers());
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('closes an uncontrolled sheet without a trigger when swiped out of view', async () => {
+      let onOpenChange = jest.fn();
+      let tree = render(<StandaloneSheet defaultOpen onOpenChange={onOpenChange} />);
+      expect(tree.getByRole('dialog')).toBeInTheDocument();
+
+      intersect(1);
+      intersect(0);
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(tree.queryByRole('dialog')).toBeNull();
+    });
+
+    it('calls the overlay onOpenChange when a controlled sheet inside a trigger is swiped out of view', async () => {
+      let triggerOnOpenChange = jest.fn();
+      let onOpenChange = jest.fn();
+      render(
+        <TestSheet
+          triggerProps={{onOpenChange: triggerOnOpenChange}}
+          overlayProps={{isOpen: true, onOpenChange}}
+        />
+      );
+
+      intersect(1);
+      intersect(0);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
+      expect(triggerOnOpenChange).not.toHaveBeenCalled();
     });
 
     it('does not close before the sheet has become visible', async () => {
