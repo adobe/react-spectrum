@@ -1,0 +1,12 @@
+{
+  "name": "parcel-namer-intl",
+  "version": "1.0.0",
+  "private": true,
+  "main": "IntlNamer.js",
+  "dependencies": {
+    "@parcel/plugin": "^2.16.3"
+  },
+  "engines": {
+    "parcel": "^2.0.0"
+  }
+}

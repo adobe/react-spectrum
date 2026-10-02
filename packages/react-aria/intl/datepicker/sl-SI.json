@@ -1,0 +1,18 @@
+{
+  "calendar": "Koledar",
+  "day": "dan",
+  "dayPeriod": "dop/pop",
+  "endDate": "Datum konca",
+  "era": "doba",
+  "hour": "ura",
+  "minute": "minuta",
+  "month": "mesec",
+  "second": "sekunda",
+  "selectedDateDescription": "Izbrani datum: {date}",
+  "selectedRangeDescription": "Izbrano območje: {startDate} do {endDate}",
+  "selectedTimeDescription": "Izbrani čas: {time}",
+  "startDate": "Datum začetka",
+  "timeZoneName": "časovni pas",
+  "weekday": "dan v tednu",
+  "year": "leto"
+}

@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Does nothing 1`] = `
+"import { Checkbox } from "@react-spectrum/s2";
+
+<div>
+  <Checkbox>Unsubscribe</Checkbox>
+</div>"
+`;

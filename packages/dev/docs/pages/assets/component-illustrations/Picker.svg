@@ -1,0 +1,46 @@
+<svg style="background:var(--anatomy-gray-100); width: calc(100% - 20px); padding: 10px; max-height: 205px;" viewBox="0 0 188 205">
+  <defs>
+    <filter id="Background" x="0" y="57" width="188" height="148" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Picker" transform="translate(6)">
+    <rect id="Placement_Area" data-name="Placement Area" width="176" height="56" fill="red" opacity="0"/>
+    <text id="Label" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Favorite color</tspan></text>
+    <g id="Field_Button" data-name="Field Button" transform="translate(0 24)" fill="var(--anatomy-gray-200)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <rect width="176" height="32" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
+    </g>
+    <text id="Text" transform="translate(12 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Orange</tspan></text>
+    <g id="Chevron">
+      <rect id="Frame" width="10" height="6" transform="translate(154 37)" fill="var(--anatomy-gray-900)" opacity="0"/>
+      <path id="Shape" d="M9.99,1.01A1,1,0,0,0,8.283.3L5,3.586,1.717.3A1,1,0,1,0,.3,1.717L4.293,5.7a1,1,0,0,0,1.414,0L9.7,1.717A1,1,0,0,0,9.99,1.01Z" transform="translate(154 37)" fill="var(--anatomy-gray-900)"/>
+    </g>
+    <g id="Menu">
+      <rect id="Placement_Area-2" data-name="Placement Area" width="176" height="132" transform="translate(0 62)" fill="red" opacity="0"/>
+      <g transform="matrix(1, 0, 0, 1, -6, 0)" filter="url(#Background)">
+        <g id="Background-2" data-name="Background" transform="translate(6 62)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+          <rect width="176" height="136" rx="4" stroke="none"/>
+          <rect x="0.5" y="0.5" width="175" height="135" rx="3.5" fill="none"/>
+        </g>
+      </g>
+      <rect id="Hover" width="174" height="32" transform="translate(1 98)" fill="var(--anatomy-gray-900)" fill-opacity="0.04"/>
+      <rect id="Menu_Item" data-name="Menu Item" width="46" height="32" transform="translate(12 66)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+      <text id="Red" transform="translate(12 86)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Red</tspan></text>
+      <rect id="Menu_Item-2" data-name="Menu Item" width="66" height="32" transform="translate(12 98)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+      <text id="Orange" transform="translate(12 118)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Orange</tspan></text>
+      <rect id="Menu_Item-3" data-name="Menu Item" width="61" height="32" transform="translate(12 130)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+      <text id="Yellow" transform="translate(12 150)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Yellow</tspan></text>
+      <rect id="Menu_Item-4" data-name="Menu Item" width="59" height="32" transform="translate(12 162)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+      <text id="Green" transform="translate(12 182)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Green</tspan></text>
+      <g id="Checkmark">
+        <rect id="Frame-2" data-name="Frame" width="12" height="12" transform="translate(154 108)" fill="var(--anatomy-gray-600)" opacity="0"/>
+        <path id="Shape-2" data-name="Shape" d="M4.5,10a1.023,1.023,0,0,1-.8-.384l-2.488-3A1,1,0,0,1,2.789,5.383L4.5,7.376,9.212,1.385a1,1,0,1,1,1.576,1.23l-5.511,7A.977.977,0,0,1,4.5,10Z" transform="translate(154 108)" fill="var(--anatomy-gray-600)"/>
+      </g>
+    </g>
+  </g>
+</svg>

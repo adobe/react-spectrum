@@ -1,0 +1,3 @@
+{
+  "invalidSelection": "選択した{selectedCount, plural, one {日付} other {日付}}は使用できません。"
+}

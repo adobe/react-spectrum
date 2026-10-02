@@ -1,0 +1,14 @@
+{
+  "dateRange": "С {startDate} по {endDate}",
+  "dateSelected": "Выбрано {date}",
+  "finishRangeSelectionPrompt": "Щелкните, чтобы завершить выбор диапазона дат",
+  "maximumDate": "Последняя доступная дата",
+  "minimumDate": "Первая доступная дата",
+  "next": "Далее",
+  "previous": "Назад",
+  "selectedDateDescription": "Выбранная дата: {date}",
+  "selectedRangeDescription": "Выбранный диапазон: {dateRange}",
+  "startRangeSelectionPrompt": "Щелкните, чтобы начать выбор диапазона дат",
+  "todayDate": "Сегодня, {date}",
+  "todayDateSelected": "Сегодня, выбрано {date}"
+}

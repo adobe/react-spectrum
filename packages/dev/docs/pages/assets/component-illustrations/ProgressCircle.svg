@@ -1,0 +1,8 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 32px) / 2) 10px" height="32" viewBox="0 0 32 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="32" height="32" fill="red" opacity="0"/>
+  <g id="Track" fill="rgba(255,0,0,0)" stroke="var(--anatomy-gray-300)" stroke-width="3">
+    <circle cx="16" cy="16" r="16" stroke="none"/>
+    <circle cx="16" cy="16" r="14.5" fill="none"/>
+  </g>
+  <path id="Fill" d="M0-16A16,16,0,0,1,13.772-8.145a16,16,0,0,1,.249,15.853L11.392,6.263a13,13,0,0,0-.2-12.88A13,13,0,0,0,0-13Z" transform="translate(16 16)" fill="var(--anatomy-gray-600)"/>
+</svg>

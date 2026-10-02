@@ -1,0 +1,138 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {AriaLabelingProps, DOMProps, forwardRefType} from '@react-types/shared';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
+import {HoverProps, useHover} from 'react-aria/useHover';
+import {mergeProps} from 'react-aria/mergeProps';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import {useFocusRing} from 'react-aria/useFocusRing';
+
+export interface GroupRenderProps {
+  /**
+   * Whether the group is currently hovered with a mouse.
+   *
+   * @selector [data-hovered]
+   */
+  isHovered: boolean;
+  /**
+   * Whether an element within the group is focused, either via a mouse or keyboard.
+   *
+   * @selector [data-focus-within]
+   */
+  isFocusWithin: boolean;
+  /**
+   * Whether an element within the group is keyboard focused.
+   *
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean;
+  /**
+   * Whether the group is disabled.
+   *
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean;
+  /**
+   * Whether the group is invalid.
+   *
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean;
+}
+
+export interface GroupProps
+  extends
+    AriaLabelingProps,
+    Omit<
+      HTMLAttributes<HTMLElement>,
+      'children' | 'className' | 'style' | 'render' | 'role' | 'slot'
+    >,
+    DOMProps,
+    HoverProps,
+    RenderProps<GroupRenderProps>,
+    SlotProps {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-Group'
+   */
+  className?: ClassNameOrFunction<GroupRenderProps>;
+  /** Whether the group is disabled. */
+  isDisabled?: boolean;
+  /** Whether the group is invalid. */
+  isInvalid?: boolean;
+  /** Whether the group is read only. */
+  isReadOnly?: boolean;
+  /**
+   * An accessibility role for the group. By default, this is set to `'group'`.
+   * Use `'region'` when the contents of the group is important enough to be
+   * included in the page table of contents. Use `'presentation'` if the group
+   * is visual only and does not represent a semantic grouping of controls.
+   *
+   * @default 'group'
+   */
+  role?: 'group' | 'region' | 'presentation';
+}
+
+export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
+
+/**
+ * A group represents a set of related UI controls, and supports interactive states for styling.
+ */
+export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group(
+  props: GroupProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  [props, ref] = useContextProps(props, ref, GroupContext);
+  let {isDisabled, isInvalid, isReadOnly, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} =
+    props;
+  isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
+  isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
+
+  let {hoverProps, isHovered} = useHover({onHoverStart, onHoverChange, onHoverEnd, isDisabled});
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({
+    within: true
+  });
+
+  let renderProps = useRenderProps({
+    ...props,
+    values: {isHovered, isFocusWithin: isFocused, isFocusVisible, isDisabled, isInvalid},
+    defaultClassName: 'react-aria-Group'
+  });
+
+  return (
+    <dom.div
+      {...mergeProps(otherProps, focusProps, hoverProps)}
+      {...renderProps}
+      ref={ref}
+      role={props.role ?? 'group'}
+      slot={props.slot ?? undefined}
+      data-focus-within={isFocused || undefined}
+      data-hovered={isHovered || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={isDisabled || undefined}
+      data-invalid={isInvalid || undefined}
+      data-readonly={isReadOnly || undefined}>
+      {renderProps.children}
+    </dom.div>
+  );
+});

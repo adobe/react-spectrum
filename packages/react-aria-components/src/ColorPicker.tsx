@@ -1,0 +1,83 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {
+  ChildrenOrFunction,
+  Provider,
+  SlotProps,
+  SlottedContextValue,
+  useRenderProps,
+  useSlottedContext
+} from './utils';
+import {Color} from 'react-stately/Color';
+
+import {ColorAreaContext} from './ColorArea';
+
+import {ColorFieldContext} from './ColorField';
+import {
+  ColorPickerState,
+  ColorPickerProps as StatelyColorPickerProps,
+  useColorPickerState
+} from 'react-stately/useColorPickerState';
+import {ColorSliderContext} from './ColorSlider';
+import {ColorSwatchContext} from './ColorSwatch';
+import {ColorSwatchPickerContext} from './ColorSwatchPicker';
+import {ColorWheelContext} from './ColorWheel';
+import {mergeProps} from 'react-aria/mergeProps';
+import React, {createContext, JSX} from 'react';
+
+export interface ColorPickerRenderProps {
+  /** The currently selected color. */
+  color: Color;
+}
+
+export interface ColorPickerProps extends StatelyColorPickerProps, SlotProps {
+  /**
+   * The children of the component. A function may be provided to alter the children based on
+   * component state.
+   */
+  children: ChildrenOrFunction<ColorPickerRenderProps>;
+}
+
+export const ColorPickerContext = createContext<SlottedContextValue<ColorPickerProps>>(null);
+export const ColorPickerStateContext = createContext<ColorPickerState | null>(null);
+
+/**
+ * A ColorPicker synchronizes a color value between multiple React Aria color components.
+ * It simplifies building color pickers with customizable layouts via composition.
+ */
+export function ColorPicker(props: ColorPickerProps): JSX.Element {
+  let ctx = useSlottedContext(ColorPickerContext, props.slot);
+  props = mergeProps(ctx, props);
+  let state = useColorPickerState(props);
+  let renderProps = useRenderProps({
+    ...props,
+    values: {
+      color: state.color
+    }
+  });
+
+  return (
+    <Provider
+      values={[
+        [ColorPickerStateContext, state],
+        [ColorSliderContext, {value: state.color, onChange: state.setColor}],
+        [ColorAreaContext, {value: state.color, onChange: state.setColor}],
+        [ColorWheelContext, {value: state.color, onChange: state.setColor}],
+        [ColorFieldContext, {value: state.color, onChange: state.setColor}],
+        [ColorSwatchContext, {color: state.color}],
+        [ColorSwatchPickerContext, {value: state.color, onChange: state.setColor}]
+      ]}>
+      {renderProps.children}
+    </Provider>
+  );
+}

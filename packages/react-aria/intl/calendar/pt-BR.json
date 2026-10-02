@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} a {endDate}",
+  "dateSelected": "{date} selecionado",
+  "finishRangeSelectionPrompt": "Clique para concluir a seleção do intervalo de datas",
+  "maximumDate": "Última data disponível",
+  "minimumDate": "Primeira data disponível",
+  "next": "Próximo",
+  "previous": "Anterior",
+  "selectedDateDescription": "Data selecionada: {date}",
+  "selectedRangeDescription": "Intervalo selecionado: {dateRange}",
+  "startRangeSelectionPrompt": "Clique para iniciar a seleção do intervalo de datas",
+  "todayDate": "Hoje, {date}",
+  "todayDateSelected": "Hoje, {date} selecionado"
+}

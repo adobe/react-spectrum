@@ -1,0 +1,221 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/textfield';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/textfield/package.json';
+
+```jsx import
+import {TextField} from '@react-spectrum/textfield';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Forms
+keywords: [text field, input]
+---
+
+# TextField
+
+<PageDescription>{docs.exports.TextField.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['TextField']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/text-field/'}
+  ]}
+  since="3.0.0" />
+
+## Example
+
+```tsx example
+<TextField label="Name" />
+```
+
+## Value
+
+A TextField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState('me@email.com');
+
+  return (
+    <Flex gap="size-150" wrap>
+      <TextField
+        label="Email (Uncontrolled)"
+        defaultValue="me@email.com" />
+
+      <TextField
+        label="Email (Controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+### HTML forms
+
+TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<TextField label="Email" name="email" type="email" />
+```
+
+## Labeling
+
+A visual label should be provided for the TextField using the `label` prop. If the TextField is required, the `isRequired` and
+`necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <TextField label="Street address" />
+  <TextField label="Street address" isRequired necessityIndicator="icon" />
+  <TextField label="Street address" isRequired necessityIndicator="label" />
+  <TextField label="Street address" necessityIndicator="label" />
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the TextField for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a TextField, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+## Events
+
+TextField accepts an `onChange` prop which is triggered whenever the value is edited by the user.
+For a full list of supported events, see the [Props](#props) table below.
+
+The example below uses `onChange` to update a separate `pre` element with the same text entered into the TextField.
+```tsx example
+function Example() {
+  let [text, setText] = React.useState('');
+
+  return (
+    <Flex direction="column" gap="size-150">
+      <TextField
+        onChange={setText}
+        label="Your text" />
+      <pre>Mirrored text: {text}</pre>
+    </Flex>
+  );
+}
+```
+
+## Validation
+
+TextField supports native HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation) props such as `isRequired`, `type="email"`, `minLength`, and `pattern`, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the text field or submits the form.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <TextField label="Email" name="email" type="email" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `TextField` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+## Props
+
+<PropTable component={docs.exports.TextField} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
+
+```tsx example
+<TextField label="Email" isQuiet />
+```
+
+### Disabled
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Disabled)
+
+```tsx example
+<TextField label="Email" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the TextField's text content immutable. Unlike `isDisabled`, the TextField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<TextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+By default, the label is positioned above the TextField. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the TextField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<TextField label="Search" labelPosition="side" labelAlign="end" />
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Help-text-(description-and-error-message))
+
+Both a description and an error message can be supplied to a TextField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+<Flex gap="size-100" wrap>
+  <TextField label="Name" defaultValue="John" validationState="valid" description="Enter your name." />
+  <TextField label="Name" validationState="invalid" errorMessage="Empty input is not allowed." />
+</Flex>
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TextField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<TextField
+  label="Password"
+  type="password"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Need help?</Heading>
+      <Content>If you're having trouble accessing your account, contact our customer support team for help.</Content>
+    </ContextualHelp>
+  } />
+```
+
+### Custom width
+
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+
+```tsx example
+<TextField label="Email" width="size-3600" maxWidth="100%" />
+```

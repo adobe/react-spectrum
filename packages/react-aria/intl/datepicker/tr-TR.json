@@ -1,0 +1,18 @@
+{
+  "calendar": "Takvim",
+  "day": "gün",
+  "dayPeriod": "ÖÖ/ÖS",
+  "endDate": "Bitiş Tarihi",
+  "era": "çağ",
+  "hour": "saat",
+  "minute": "dakika",
+  "month": "ay",
+  "second": "saniye",
+  "selectedDateDescription": "Seçilen Tarih: {date}",
+  "selectedRangeDescription": "Seçilen Aralık: {startDate} - {endDate}",
+  "selectedTimeDescription": "Seçilen Zaman: {time}",
+  "startDate": "Başlangıç Tarihi",
+  "timeZoneName": "saat dilimi",
+  "weekday": "haftanın günü",
+  "year": "yıl"
+}

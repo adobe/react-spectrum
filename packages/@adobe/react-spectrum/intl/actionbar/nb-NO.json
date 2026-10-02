@@ -1,0 +1,7 @@
+{
+  "actions": "Handlinger",
+  "actionsAvailable": "Tilgjengelige handlinger.",
+  "clearSelection": "Tøm utvalg",
+  "selected": "Valde element: {count}",
+  "selectedAll": "Alle er valgt"
+}

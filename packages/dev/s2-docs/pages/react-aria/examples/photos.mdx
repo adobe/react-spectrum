@@ -1,0 +1,35 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import App from './photos/App';
+import {ExampleApp} from '../../../src/ExampleApp';
+import {ComponentList} from '../../../src/ComponentCard';
+
+export const hideNav = true;
+export const isSubpage = true;
+export const section = 'Examples';
+export const keywords = ['react-aria', 'example', 'gridlist', 'autocomplete', 'searchfield', 'virtualizer', 'view transition', 'tree', 'selection', 'drag and drop', 'slider'];
+export const description = 'Virtualized photo grid, view transitions, folder tree, search, and drag and drop.';
+
+# Photo Library
+
+<PageDescription>A photo library app with virtualized scrolling, view transitions, adjustable waterfall layout, folder tree, search, multi-selection, and accessible drag and drop.</PageDescription>
+
+<App />
+
+<ExampleApp dir="packages/dev/s2-docs/pages/react-aria/examples/photos" defaultSelected="App.tsx" />
+
+## Components
+
+<ComponentList
+  pages={props.pages}
+  components={[
+    'react-aria/Autocomplete',
+    'react-aria/Button',
+    'react-aria/GridList',
+    'react-aria/SearchField',
+    'react-aria/Slider',
+    'react-aria/Tree',
+    'react-aria/Virtualizer',
+    'react-aria/dnd'
+  ]} />

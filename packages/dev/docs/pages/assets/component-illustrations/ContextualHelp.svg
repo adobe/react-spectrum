@@ -1,0 +1,33 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 140px) / 2) 10px" height="140" viewBox="0 0 252 140">
+  <defs>
+    <filter id="Union_44" x="0" y="25" width="252" height="115" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="ContextualHelp" transform="translate(-1110 -1566)">
+    <g transform="matrix(1, 0, 0, 1, 1110, 1566)" filter="url(#Union_44)">
+      <g id="Union_44-2" data-name="Union 44" transform="translate(-1511 -7387)" fill="var(--anatomy-gray-50)">
+        <path d="M 1753 7519.5 L 1521 7519.5 C 1519.070068359375 7519.5 1517.5 7517.9296875 1517.5 7516 L 1517.5 7421 C 1517.5 7419.0703125 1519.070068359375 7417.5 1521 7417.5 L 1753 7417.5 C 1754.929931640625 7417.5 1756.5 7419.0703125 1756.5 7421 L 1756.5 7516 C 1756.5 7517.9296875 1754.929931640625 7519.5 1753 7519.5 Z" stroke="none"/>
+        <path d="M 1521 7418 C 1519.345825195312 7418 1518 7419.345703125 1518 7421 L 1518 7516 C 1518 7517.654296875 1519.345825195312 7519 1521 7519 L 1753 7519 C 1754.654174804688 7519 1756 7517.654296875 1756 7516 L 1756 7421 C 1756 7419.345703125 1754.654174804688 7418 1753 7418 L 1521 7418 M 1521 7417 L 1753 7417 C 1755.209106445312 7417 1757 7418.791015625 1757 7421 L 1757 7516 C 1757 7518.208984375 1755.209106445312 7520 1753 7520 L 1521 7520 C 1518.790893554688 7520 1517 7518.208984375 1517 7516 L 1517 7421 C 1517 7418.791015625 1518.790893554688 7417 1521 7417 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+      </g>
+    </g>
+    <text id="Header" transform="translate(1128 1607)" fill="var(--anatomy-gray-900)" font-size="16" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="16">Permission required</tspan></text>
+    <g id="Action_button" data-name="Action button" transform="translate(1116 1566)">
+      <rect id="Placement_Area" data-name="Placement Area" width="24" height="24" fill="red" opacity="0"/>
+      <g id="Background" fill="var(--anatomy-gray-200)" stroke="var(--anatomy-gray-500)" stroke-width="1">
+        <rect width="24" height="24" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="23" height="23" rx="3.5" fill="none"/>
+      </g>
+      <g id="Icon">
+        <rect id="Canvas" width="16" height="16" transform="translate(4 4)" fill="var(--anatomy-gray-900)" opacity="0"/>
+        <path id="Path_3135" data-name="Path 3135" d="M9.011,5.389a.956.956,0,1,1-.956-.956h0A.956.956,0,0,1,9.011,5.389Zm.082,5.333H8.944V7.344a.178.178,0,0,0-.178-.178H7.018s-.518.014-.518.444.518.444.518.444h.148v2.667H7.018s-.518.014-.518.444.518.444.518.444H9.093s.518-.015.518-.444S9.093,10.722,9.093,10.722ZM8.056.5a7.556,7.556,0,1,0,7.556,7.556A7.556,7.556,0,0,0,8.056.5Zm0,13.489a5.933,5.933,0,1,1,5.933-5.933,5.933,5.933,0,0,1-5.933,5.933Z" transform="translate(3.944 3.944)" fill="var(--anatomy-gray-900)"/>
+      </g>
+    </g>
+    <text id="Body" transform="translate(1128 1629)" fill="var(--anatomy-gray-800)" font-size="13" font-family="var(--anatomy-font)"><tspan x="0" y="13">Your admin must grant you permission </tspan><tspan x="0" y="31.2">before you can create a segment.</tspan></text>
+    <text id="Link" transform="translate(1128 1686)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" text-decoration="underline"><tspan x="0" y="0">Learn about permissions</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} - {endDate}",
+  "dateSelected": "{date} seçildi",
+  "finishRangeSelectionPrompt": "Tarih aralığı seçimini tamamlamak için tıklayın",
+  "maximumDate": "Son müsait tarih",
+  "minimumDate": "İlk müsait tarih",
+  "next": "Sonraki",
+  "previous": "Önceki",
+  "selectedDateDescription": "Seçilen Tarih: {date}",
+  "selectedRangeDescription": "Seçilen Aralık: {dateRange}",
+  "startRangeSelectionPrompt": "Tarih aralığı seçimini başlatmak için tıklayın",
+  "todayDate": "Bugün, {date}",
+  "todayDateSelected": "Bugün, {date} seçildi"
+}

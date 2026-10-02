@@ -1,0 +1,4 @@
+{
+  "close": "Fermer",
+  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+}

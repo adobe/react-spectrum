@@ -1,0 +1,7 @@
+{
+  "name": "s1-to-s2-cli-fixture",
+  "private": true,
+  "devDependencies": {
+    "parcel": "^2.12.0"
+  }
+}

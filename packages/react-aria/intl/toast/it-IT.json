@@ -1,0 +1,4 @@
+{
+  "close": "Chiudi",
+  "notifications": "{count, plural, one {# notifica} other {# notifiche}}."
+}

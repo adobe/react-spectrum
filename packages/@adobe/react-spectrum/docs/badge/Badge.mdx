@@ -1,0 +1,105 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/badge';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/badge/package.json';
+
+```jsx import
+import {Badge} from '@react-spectrum/badge';
+```
+
+---
+category: Status
+keywords: [badge]
+---
+
+# Badge
+
+<PageDescription>{docs.exports.Badge.description}</PageDescription>
+
+<HeaderInfo
+packageData={packageData}
+componentNames={['Badge']}
+sourceData={[
+{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/badge/'}
+]}
+since="3.22.0" />
+
+## Example
+
+```tsx example
+<Badge variant="positive">Licensed</Badge>
+```
+
+## Content
+
+Badges can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the Badge.
+A visible label can be provided by passing a string or a Text component as a child, depending on whether the Badge has an accompanying icon.
+
+```tsx example
+import {Text} from '@react-spectrum/text';
+import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
+
+<Badge variant="positive">
+  <CheckmarkCircle aria-label="Done" />
+  <Text>Icon + Label</Text>
+</Badge>
+```
+
+### Accessibility
+If a visible label isn't specified, an `aria-label` must be provided to the icon for accessibility.
+
+
+### Internationalization
+
+To internationalize a Badge, a localized string should be set as the child content of the Badge.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the Badge is automatically flipped.
+
+## Props
+
+<PropTable component={docs.exports.Badge} links={docs.links} />
+
+## Visual options
+
+### Variant
+[View guidelines](https://spectrum.adobe.com/page/badge/#Semantic-variants)
+
+When badges have a semantic meaning, they should use semantic colors.
+Use the appropriate color to indicate status as follows.
+
+```tsx example
+import {Flex} from '@react-spectrum/layout';
+
+<Flex direction="column" gap={8}>
+  <Badge variant="positive">Green: Approved, Complete, Success, New, Purchased, Licensed</Badge>
+  <Badge variant="info">Blue: Active, In Use, Live, Published</Badge>
+  <Badge variant="negative">Red: Error, Alert, Rejected, Failed</Badge>
+  <Badge variant="neutral">Gray: Archived, Deleted, Paused, Draft, Not Started, Ended</Badge>
+</Flex>
+```
+
+When badges are used to color code categories, they use label colors. The ideal usage for these is when there
+are 8 or fewer categories being color coded.
+
+```tsx example
+import {Flex} from '@react-spectrum/layout';
+
+<Flex direction="column" gap={8}>
+  <Badge variant="seafoam">Seafoam</Badge>
+  <Badge variant="indigo">Indigo</Badge>
+  <Badge variant="purple">Purple</Badge>
+  <Badge variant="fuchsia">Fuchsia</Badge>
+  <Badge variant="magenta">Magenta</Badge>
+  <Badge variant="yellow">Yellow</Badge>
+</Flex>
+```

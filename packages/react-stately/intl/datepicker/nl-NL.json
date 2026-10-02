@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Waarde moet {maxValue} of eerder zijn.",
+  "rangeReversed": "De startdatum moet voor de einddatum liggen.",
+  "rangeUnderflow": "Waarde moet {minValue} of later zijn.",
+  "unavailableDate": "Geselecteerde datum niet beschikbaar."
+}

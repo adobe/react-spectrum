@@ -1,0 +1,48 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 108px) / 2) 10px" height="108" viewBox="0 0 231 108">
+  <defs>
+    <clipPath id="clip-path">
+      <rect width="136" height="20" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <rect width="207" height="20" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="useFocusWithin" transform="translate(-2006 -1710)">
+    <g id="Rectangle_82" data-name="Rectangle 82" transform="translate(2006 1710)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+      <rect width="231" height="50" rx="6" stroke="none"/>
+      <rect x="1" y="1" width="229" height="48" rx="5" fill="none"/>
+    </g>
+    <g id="Text_field" data-name="Text field" transform="translate(2018 1720)">
+      <rect id="Placement_Area" data-name="Placement Area" width="63" height="30" fill="red" opacity="0"/>
+      <g id="Field" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+        <rect width="63" height="30" rx="5" stroke="none"/>
+        <rect x="0.5" y="0.5" width="62" height="29" rx="4.5" fill="none"/>
+      </g>
+      <text id="Text" transform="translate(11 20)" fill="var(--anatomy-gray-900)" font-size="10" font-family="var(--anatomy-font)"><tspan x="0" y="0"> </tspan></text>
+      <rect id="Caret" width="1" height="19" transform="translate(11 5)" fill="var(--anatomy-gray-900)"/>
+    </g>
+    <g id="Repeat_Grid_10" data-name="Repeat Grid 10" transform="translate(2089 1725)" clip-path="url(#clip-path)">
+      <g transform="translate(-2094 -1723)">
+        <rect id="Rectangle_83" data-name="Rectangle 83" width="63" height="20" rx="4" transform="translate(2094 1723)" fill="var(--anatomy-gray-200)"/>
+      </g>
+      <g transform="translate(-2023 -1723)">
+        <rect id="Rectangle_83-2" data-name="Rectangle 83" width="63" height="20" rx="4" transform="translate(2094 1723)" fill="var(--anatomy-gray-200)"/>
+      </g>
+    </g>
+    <g id="Rectangle_84" data-name="Rectangle 84" transform="translate(2006 1768)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-300)" stroke-width="1">
+      <rect width="231" height="50" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="230" height="49" rx="5.5" fill="none"/>
+    </g>
+    <g id="Repeat_Grid_11" data-name="Repeat Grid 11" transform="translate(2018 1783)" clip-path="url(#clip-path-2)">
+      <g transform="translate(-2094 -1723)">
+        <rect id="Rectangle_83-3" data-name="Rectangle 83" width="63" height="20" rx="4" transform="translate(2094 1723)" fill="var(--anatomy-gray-200)"/>
+      </g>
+      <g transform="translate(-2023 -1723)">
+        <rect id="Rectangle_83-4" data-name="Rectangle 83" width="63" height="20" rx="4" transform="translate(2094 1723)" fill="var(--anatomy-gray-200)"/>
+      </g>
+      <g transform="translate(-1952 -1723)">
+        <rect id="Rectangle_83-5" data-name="Rectangle 83" width="63" height="20" rx="4" transform="translate(2094 1723)" fill="var(--anatomy-gray-200)"/>
+      </g>
+    </g>
+  </g>
+</svg>

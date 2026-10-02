@@ -1,0 +1,18 @@
+{
+  "calendar": "Календар",
+  "day": "ден",
+  "dayPeriod": "пр.об./сл.об.",
+  "endDate": "Крайна дата",
+  "era": "ера",
+  "hour": "час",
+  "minute": "минута",
+  "month": "месец",
+  "second": "секунда",
+  "selectedDateDescription": "Избрана дата: {date}",
+  "selectedRangeDescription": "Избран диапазон: {startDate} до {endDate}",
+  "selectedTimeDescription": "Избрано време: {time}",
+  "startDate": "Начална дата",
+  "timeZoneName": "часова зона",
+  "weekday": "ден от седмицата",
+  "year": "година"
+}

@@ -1,0 +1,18 @@
+{
+  "namers": ["@parcel/namer-default"],
+  "bundler": "@parcel/bundler-library",
+  "transformers": {
+    "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "*.tsx": ["@parcel/transformer-raw"]
+  },
+  "packagers": {
+    "*": "@parcel/packager-raw"
+  },
+  "reporters": ["@parcel/reporter-cli"],
+  "resolvers": ["@parcel/resolver-default"],
+  "optimizers": {},
+  "compressors": {
+    "*": ["@parcel/compressor-raw"]
+  }
+}

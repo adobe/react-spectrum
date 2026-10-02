@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "يجب أن تكون القيمة {maxValue} أو قبل ذلك.",
+  "rangeReversed": "تاريخ البدء يجب أن يكون قبل تاريخ الانتهاء.",
+  "rangeUnderflow": "يجب أن تكون القيمة {minValue} أو بعد ذلك.",
+  "unavailableDate": "البيانات المحددة غير متاحة."
+}

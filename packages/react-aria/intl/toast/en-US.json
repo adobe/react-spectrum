@@ -1,0 +1,4 @@
+{
+  "close": "Close",
+  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+}

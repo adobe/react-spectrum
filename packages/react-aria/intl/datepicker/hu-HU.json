@@ -1,0 +1,18 @@
+{
+  "calendar": "Naptár",
+  "day": "nap",
+  "dayPeriod": "napszak",
+  "endDate": "Befejező dátum",
+  "era": "éra",
+  "hour": "óra",
+  "minute": "perc",
+  "month": "hónap",
+  "second": "másodperc",
+  "selectedDateDescription": "Kijelölt dátum: {date}",
+  "selectedRangeDescription": "Kijelölt tartomány: {startDate}–{endDate}",
+  "selectedTimeDescription": "Kijelölt idő: {time}",
+  "startDate": "Kezdő dátum",
+  "timeZoneName": "időzóna",
+  "weekday": "hét napja",
+  "year": "év"
+}

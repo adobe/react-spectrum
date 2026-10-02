@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Değer, {maxValue} veya öncesi olmalıdır.",
+  "rangeReversed": "Başlangıç tarihi bitiş tarihinden önce olmalıdır.",
+  "rangeUnderflow": "Değer, {minValue} veya sonrası olmalıdır.",
+  "unavailableDate": "Seçilen tarih kullanılamıyor."
+}

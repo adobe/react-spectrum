@@ -1,0 +1,294 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@internationalized/date';
+import {HeaderInfo, FunctionAPI, ClassAPI, TypeContext, InterfaceType, TypeLink, PageDescription, renderHTMLfromMarkdown} from '@react-spectrum/docs';
+import packageData from '@internationalized/date/package.json';
+import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import styles from '@react-spectrum/docs/src/docs.css';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+
+---
+category: Date and Time
+keywords: [date, calendar, internationalization]
+---
+
+# Calendar
+
+<PageDescription>{docs.exports.Calendar.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Calendar']}
+  sourceData={[]} />
+
+## Introduction
+
+While the Gregorian calendar is the most common, many other calendar systems are used throughout the world. The `Calendar` interface represents calendar systems in the `@internationalized/date` library. It encapsulates information such as the number of days in a month, the number of months in a year, and the list of eras in a calendar system, as well as methods that handle correct arithmetic of dates in that calendar system, as well as converting dates between calendar systems. Many implementations of this interface are provided in `@internationalized/date` to handle the most commonly used calendar systems.
+
+As described in the docs for [CalendarDate](CalendarDate.html#calendar-systems) and other date objects, you can pass a `Calendar` instance to a date to represent a date in that calendar. Date manipulation follows the rules defined by that calendar system. You can also convert between calendar systems using the <TypeLink links={docs.links} type={docs.exports.toCalendar} /> function.
+
+```tsx
+import {HebrewCalendar, GregorianCalendar, toCalendar} from '@internationalized/date';
+
+let hebrewDate = new CalendarDate(new HebrewCalendar(), 5781, 1, 1);
+toCalendar(hebrewDate, new GregorianCalendar());
+// => new CalendarDate(new GregorianCalendar(), 2020, 9, 19);
+```
+
+### Calendar identifiers
+
+While it is possible to construct `Calendar` objects manually, a common usecase is to get a calendar object for a certain locale. Each calendar has an associated string identifier that can be used to retrieve an instance of that calendar using the <TypeLink links={docs.links} type={docs.exports.createCalendar} /> function. A list of supported calendar identifiers is available [below](#implementations).
+
+```tsx
+import {createCalendar} from '@internationalized/date';
+
+createCalendar('gregory');
+createCalendar('hebrew');
+createCalendar('japanese');
+```
+
+Locales are typically represented as strings such as `en-US`, and represent information about a user's preferences, such as language, script, number format, and calendar. Most of this is automatically determined based on data, but it can also be provided in the locale string itself via a [locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string). For example, the locale `"hi-IN-u-ca-indian"` represents the Hindi language, in the country of India, using the `indian` calendar.
+
+The [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat) object can be used to get the calendar identifier from a locale string, either provided explicitly or implicitly. This can then be passed to the `createCalendar` function to retrieve a `Calendar` instance.
+
+```tsx
+// Get the calendar identifier for the current user.
+let calendarIdentifier = new Intl.DateTimeFormat().resolvedOptions().calendar; // e.g. 'gregory'
+createCalendar(calendarIdentifier); // new GregorianCalendar()
+
+// Language and region provided, calendar inferred.
+let calendarIdentifier = new Intl.DateTimeFormat('th-TH').resolvedOptions().calendar; // 'buddhist'
+createCalendar(calendarIdentifier); // new BuddhistCalendar()
+
+// Calendar system set explicitly.
+let calendarIdentifier = new Intl.DateTimeFormat('hi-IN-u-ca-indian').resolvedOptions().calendar; // 'indian'
+createCalendar(calendarIdentifier); // new IndianCalendar()
+```
+
+**Note**: importing `createCalendar` into your project will result in all available calendars being included in your bundle. If you wish to limit the supported calendars to reduce bundle sizes, you can create your own implementation that only imports the desired classes. This way, your bundler can tree-shake the unused calendar implementations.
+
+```tsx
+import {GregorianCalendar, JapaneseCalendar} from '@internationalized/date';
+
+function createCalendar(identifier) {
+  switch (identifier) {
+    case 'gregory':
+      return new GregorianCalendar();
+    case 'japanese':
+      return new JapaneseCalendar();
+    default:
+      throw new Error(`Unsupported calendar ${identifier}`);
+  }
+}
+```
+
+## Implementations
+
+<table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
+  <thead>
+    <tr>
+      <th className={tableStyles['spectrum-Table-headCell']}>Class</th>
+      <th className={tableStyles['spectrum-Table-headCell']}>Identifier</th>
+      <th className={tableStyles['spectrum-Table-headCell']}>Description</th>
+    </tr>
+  </thead>
+  <tbody className={tableStyles['spectrum-Table-body']}>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.GregorianCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'gregory'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{docs.exports.GregorianCalendar.description}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.BuddhistCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'buddhist'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{docs.exports.BuddhistCalendar.description}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.EthiopicCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'ethiopic'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{docs.exports.EthiopicCalendar.description}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.EthiopicAmeteAlemCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'ethioaa'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{docs.exports.EthiopicAmeteAlemCalendar.description}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.CopticCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'coptic'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{docs.exports.CopticCalendar.description}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.HebrewCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'hebrew'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{docs.exports.HebrewCalendar.description}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.IndianCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'indian'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{docs.exports.IndianCalendar.description}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.IslamicCivilCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'islamic-civil'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(docs.exports.IslamicCivilCalendar.description)}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.IslamicTabularCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'islamic-tbla'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(docs.exports.IslamicTabularCalendar.description)}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.IslamicUmalquraCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'islamic-umalqura'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(docs.exports.IslamicUmalquraCalendar.description)}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.JapaneseCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'japanese'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(docs.exports.JapaneseCalendar.description)}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.PersianCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'persian'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(docs.exports.PersianCalendar.description)}</td>
+    </tr>
+    <tr className={tableStyles['spectrum-Table-row']}>
+      <td className={tableStyles['spectrum-Table-cell']}><TypeLink links={docs.links} type={docs.exports.TaiwanCalendar} /></td>
+      <td className={tableStyles['spectrum-Table-cell']}>
+        <code className={typographyStyles['spectrum-Code4']}>
+          <span className="token hljs-string">'roc'</span>
+        </code>
+      </td>
+      <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(docs.exports.TaiwanCalendar.description)}</td>
+    </tr>
+  </tbody>
+</table>
+
+## Interface
+
+<ClassAPI links={docs.links} class={docs.exports.Calendar} />
+
+## Custom calendars
+
+You can create your own custom calendar system by implementing the `Calendar` interface shown above. This enables calendars that follow custom business rules. An example would be a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar.
+
+To implement a calendar, either extend an existing implementation (e.g. `GregorianCalendar`) or implement the `Calendar` interface from scratch. The most important methods are `fromJulianDay` and `toJulianDay`, which convert between the calendar's year/month/day numbering system and a [Julian Day Number](https://en.wikipedia.org/wiki/Julian_day). This allows converting dates between calendar systems. Other methods such as `getDaysInMonth` and `getMonthsInYear` can be implemented to define how dates are organized in your calendar system.
+
+The following code is an example of how you might implement a custom 4-5-4 calendar (though implementing a true 4-5-4 calendar would be more nuanced than this).
+
+```tsx
+import type {AnyCalendarDate, Calendar} from '@internationalized/date';
+import {CalendarDate, GregorianCalendar, startOfWeek} from '@internationalized/date';
+
+const weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
+
+class Custom454 extends GregorianCalendar {
+  // Months always have either 4 or 5 full weeks.
+  getDaysInMonth(date) {
+    return weekPattern[date.month - 1] * 7;
+  }
+
+  // Enable conversion between calendar systems.
+  fromJulianDay(jd: number): CalendarDate {
+    let gregorian = super.fromJulianDay(jd);
+
+    // Start from the beginning of the first week of the gregorian year
+    // and add weeks until we find the month.
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    for (let months = 0; months < weekPattern.length; months++) {
+      let weeksInMonth = weekPattern[months];
+      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      if (monthEnd.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+      }
+      monthStart = monthEnd;
+    }
+
+    throw Error('Date is not in any month somehow!');
+  }
+
+  toJulianDay(date: AnyCalendarDate): number {
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    for (let month = 1; month < date.month; month++) {
+      monthStart = monthStart.add({weeks: weekPattern[month - 1]});
+    }
+
+    let gregorian = monthStart.add({days: date.day - 1});
+    return super.toJulianDay(gregorian);
+  }
+
+  isEqual(other: Calendar) {
+    return other instanceof Custom454;
+  }
+}
+```
+
+This enables dates to be converted between calendar systems.
+
+```tsx
+import {GregorianCalendar, toCalendar} from '@internationalized/date';
+
+let date = new CalendarDate(new Custom454(), 2024, 2, 1);
+let gregorianDate = toCalendar(date, new GregorianCalendar());
+// => new CalendarDate(new GregorianCalendar(), 2024, 1, 29);
+```

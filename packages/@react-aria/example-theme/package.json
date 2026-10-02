@@ -1,0 +1,22 @@
+{
+  "name": "@react-aria/example-theme",
+  "version": "1.1.1",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "source": "src/index.css",
+  "main": "dist/index.css",
+  "publishConfig": {
+    "access": "public"
+  },
+  "out": "dist/index.css",
+  "targets": {
+    "main": false,
+    "out": {
+      "optimize": false
+    }
+  }
+}

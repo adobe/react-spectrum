@@ -1,0 +1,11 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 72 32">
+  <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+    <rect width="72" height="32" stroke="none"/>
+    <rect x="0.5" y="0.5" width="71" height="31" fill="none"/>
+  </g>
+  <g id="Background" fill="var(--anatomy-gray-600)" stroke="rgba(0,0,0,0)" stroke-width="1">
+    <rect width="72" height="32" rx="16" stroke="none"/>
+    <rect x="0.5" y="0.5" width="71" height="31" rx="15.5" fill="none"/>
+  </g>
+  <text id="Text" transform="translate(22 20)" fill="white" font-size="14" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="0">Save</tspan></text>
+</svg>

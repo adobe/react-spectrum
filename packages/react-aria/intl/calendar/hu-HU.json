@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate}–{endDate}",
+  "dateSelected": "{date} kiválasztva",
+  "finishRangeSelectionPrompt": "Kattintson a dátumtartomány kijelölésének befejezéséhez",
+  "maximumDate": "Utolsó elérhető dátum",
+  "minimumDate": "Az első elérhető dátum",
+  "next": "Következő",
+  "previous": "Előző",
+  "selectedDateDescription": "Kijelölt dátum: {date}",
+  "selectedRangeDescription": "Kijelölt tartomány: {dateRange}",
+  "startRangeSelectionPrompt": "Kattintson a dátumtartomány kijelölésének indításához",
+  "todayDate": "Ma, {date}",
+  "todayDateSelected": "Ma, {date} kijelölve"
+}

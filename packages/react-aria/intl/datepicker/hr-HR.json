@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalendar",
+  "day": "dan",
+  "dayPeriod": "AM/PM",
+  "endDate": "Datum završetka",
+  "era": "era",
+  "hour": "sat",
+  "minute": "minuta",
+  "month": "mjesec",
+  "second": "sekunda",
+  "selectedDateDescription": "Odabrani datum: {date}",
+  "selectedRangeDescription": "Odabrani raspon: {startDate} do {endDate}",
+  "selectedTimeDescription": "Odabrano vrijeme: {time}",
+  "startDate": "Datum početka",
+  "timeZoneName": "vremenska zona",
+  "weekday": "dan u tjednu",
+  "year": "godina"
+}

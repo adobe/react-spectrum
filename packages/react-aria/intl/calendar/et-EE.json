@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} kuni {endDate}",
+  "dateSelected": "{date} valitud",
+  "finishRangeSelectionPrompt": "Klõpsake kuupäevavahemiku valimise lõpetamiseks",
+  "maximumDate": "Viimane saadaolev kuupäev",
+  "minimumDate": "Esimene saadaolev kuupäev",
+  "next": "Järgmine",
+  "previous": "Eelmine",
+  "selectedDateDescription": "Valitud kuupäev: {date}",
+  "selectedRangeDescription": "Valitud vahemik: {dateRange}",
+  "startRangeSelectionPrompt": "Klõpsake kuupäevavahemiku valimiseks",
+  "todayDate": "Täna, {date}",
+  "todayDateSelected": "Täna, {date} valitud"
+}

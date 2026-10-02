@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Does nothing 1`] = `
+"import {Provider, defaultTheme} from '@adobe/react-spectrum';
+
+<Provider theme={defaultTheme} locale="en-US">
+  Test
+</Provider>"
+`;

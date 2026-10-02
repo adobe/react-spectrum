@@ -1,0 +1,79 @@
+<svg style="background: var(--anatomy-gray-100); padding: 10px; min-height: 152px; box-sizing: border-box" height="173" viewBox="0 0 300 173">
+  <g id="Table" transform="translate(-438 -1218)">
+    <g id="Group_16612" data-name="Group 16612" transform="translate(96 1088)">
+      <text id="Typography" transform="translate(606.996 150)" fill="var(--anatomy-gray-600)" font-size="11" font-family="var(--anatomy-font)" font-weight="600" letter-spacing="0.06em"><tspan x="-21.791" y="0">SIZE</tspan></text>
+      <g id="rectangle-33" transform="translate(342 161)" fill="var(--anatomy-gray-50)">
+        <path d="M 296 141.5 L 4 141.5 C 2.070076942443848 141.5 0.5 140.3761138916016 0.5 138.9946899414062 L 0.5 3.005307674407959 C 0.5 1.623884558677673 2.070076942443848 0.5 4 0.5 L 296 0.5 C 297.929931640625 0.5 299.5 1.623884558677673 299.5 3.005307674407959 L 299.5 138.9946899414062 C 299.5 140.3761138916016 297.929931640625 141.5 296 141.5 Z" stroke="none"/>
+        <path d="M 4 1 C 2.37384033203125 1 1 1.918304443359375 1 3.00531005859375 L 1 138.9946899414062 C 1 140.0816955566406 2.37384033203125 141 4 141 L 296 141 C 297.6261596679688 141 299 140.0816955566406 299 138.9946899414062 L 299 3.00531005859375 C 299 1.918304443359375 297.6261596679688 1 296 1 L 4 1 M 4 0 L 296 0 C 298.2091064453125 0 300 1.345504760742188 300 3.00531005859375 L 300 138.9946899414062 C 300 140.6544952392578 298.2091064453125 142 296 142 L 4 142 C 1.79083251953125 142 0 140.6544952392578 0 138.9946899414062 L 0 3.00531005859375 C 0 1.345504760742188 1.79083251953125 0 4 0 Z" stroke="none" fill="var(--anatomy-gray-300)"/>
+      </g>
+      <text id="Typography-2" data-name="Typography" transform="translate(623 189)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="-37.1" y="0">214 KB</tspan></text>
+      <rect id="rectangle-34" width="298" height="1" transform="translate(343 208)" fill="var(--anatomy-gray-300)"/>
+      <rect id="rectangle-34-2" data-name="rectangle-34" width="298" height="1" transform="translate(343 255)" fill="var(--anatomy-gray-300)"/>
+      <rect id="rectangle-34-3" data-name="rectangle-34" width="298" height="1" transform="translate(343 302)" fill="var(--anatomy-gray-300)"/>
+      <text id="Typography-3" data-name="Typography" transform="translate(623 236)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="-37.324" y="0">120 KB</tspan></text>
+      <text id="Typography-4" data-name="Typography" transform="translate(623 283)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="-37.156" y="0">139 KB</tspan></text>
+      <text id="Proposal" transform="translate(395 190)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Proposal</tspan></text>
+      <text id="Budget" transform="translate(395 237)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Budget</tspan></text>
+      <text id="Onboarding" transform="translate(395 284)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Onboarding</tspan></text>
+      <text id="Typography-5" data-name="Typography" transform="translate(392.996 150)" fill="var(--anatomy-gray-600)" font-size="11" font-family="var(--anatomy-font)" font-weight="600" letter-spacing="0.06em"><tspan x="0" y="0">FILE NAME</tspan></text>
+      <path id="Path_3123" data-name="Path 3123" d="M9,7a1,1,0,0,0-1.71-.71L6,7.59V2A1,1,0,1,0,4,2V7.59L2.71,6.29A1,1,0,0,0,1.29,7.71l3,3a1,1,0,0,0,1.41,0l3-3A1,1,0,0,0,9,7Z" transform="translate(611 140)" fill="var(--anatomy-gray-600)"/>
+      <g id="Checkbox" transform="translate(359 169)">
+        <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+          <rect width="14" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
+        </g>
+        <g id="Box" transform="translate(0 9)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+          <rect width="14" height="14" rx="2" stroke="none"/>
+          <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
+        </g>
+      </g>
+      <g id="Checkbox-2" data-name="Checkbox" transform="translate(359 263)">
+        <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+          <rect width="14" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
+        </g>
+        <g id="Box-2" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+          <rect width="14" height="14" rx="2" stroke="none"/>
+          <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
+        </g>
+      </g>
+      <g id="Checkbox-3" data-name="Checkbox" transform="translate(359 216)">
+        <g id="Placement_Area-3" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+          <rect width="14" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
+        </g>
+        <g id="Box-3" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+          <rect width="14" height="14" rx="2" stroke="none"/>
+          <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
+        </g>
+      </g>
+      <g id="Checkbox-4" data-name="Checkbox" transform="translate(359 169)">
+        <g id="Placement_Area-4" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+          <rect width="14" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="13" height="31" fill="none"/>
+        </g>
+        <g id="Box-4" data-name="Box" transform="translate(0 9)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+          <rect width="14" height="14" rx="2" stroke="none"/>
+          <rect x="1" y="1" width="12" height="12" rx="1" fill="none"/>
+        </g>
+      </g>
+      <rect id="rectangle-34-4" data-name="rectangle-34" width="1" height="142" transform="translate(564 161)" fill="var(--anatomy-gray-300)"/>
+      <g id="Checkbox-5" data-name="Checkbox" transform="translate(359 130)">
+        <rect id="Placement_Area-5" data-name="Placement Area" width="14" height="32" fill="red" opacity="0"/>
+        <rect id="Box-5" data-name="Box" width="14" height="14" rx="2" transform="translate(0 9)" fill="var(--anatomy-gray-700)"/>
+        <g id="Checkmark">
+          <rect id="Frame" width="10" height="10" transform="translate(2 11)" fill="var(--anatomy-gray-75)" opacity="0"/>
+          <path id="Shape" d="M8,4H2A1,1,0,0,0,2,6H8A1,1,0,0,0,8,4Z" transform="translate(2 11)" fill="var(--anatomy-gray-75)"/>
+        </g>
+      </g>
+    </g>
+    <g id="Checkbox-6" data-name="Checkbox" transform="translate(455 1257)">
+      <rect id="Placement_Area-6" data-name="Placement Area" width="14" height="32" fill="red" opacity="0"/>
+      <rect id="Box-6" data-name="Box" width="14" height="14" rx="2" transform="translate(0 9)" fill="var(--anatomy-gray-700)"/>
+      <g id="Checkmark-2" data-name="Checkmark">
+        <rect id="Frame-2" data-name="Frame" width="10" height="10" transform="translate(2 11)" fill="var(--anatomy-gray-75)" opacity="0"/>
+        <path id="Shape-2" data-name="Shape" d="M3.788,9A1,1,0,0,1,3,8.615l-2.288-3a1,1,0,1,1,1.576-1.23l1.5,1.991L7.712,1.385a1,1,0,1,1,1.576,1.23l-4.712,6A1,1,0,0,1,3.788,9Z" transform="translate(2 11)" fill="var(--anatomy-gray-75)"/>
+      </g>
+    </g>
+  </g>
+</svg>

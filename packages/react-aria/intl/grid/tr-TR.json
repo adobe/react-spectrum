@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} seçilmedi.",
+  "longPressToSelect": "Seçim moduna girmek için uzun basın.",
+  "select": "Seç",
+  "selectedAll": "Tüm ögeler seçildi.",
+  "selectedCount": "{count, plural, =0 {Hiçbir öge seçilmedi} one {# öge seçildi} other {# öge seçildi}}.",
+  "selectedItem": "{item} seçildi."
+}

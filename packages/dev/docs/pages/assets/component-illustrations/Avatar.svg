@@ -1,0 +1,12 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 32 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="32" height="32" fill="red" opacity="0"/>
+  <g clip-path="url(#clip0_avatar)">
+    <rect width="32" height="32" rx="16" fill="var(--anatomy-gray-600)"/>
+  </g>
+  <text id="Initials" transform="translate(16 21)" fill="white" font-size="14" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">RS</tspan></text>
+  <defs>
+    <clipPath id="clip0_avatar">
+      <rect width="32" height="32" fill="white"/>
+    </clipPath>
+  </defs>
+</svg>

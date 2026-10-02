@@ -1,0 +1,34 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 32px) / 2) 10px" height="32" viewBox="0 0 270 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="270" height="32" fill="red" opacity="0"/>
+  <g id="Divider">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="270" height="2" transform="translate(0 30)" fill="red" opacity="0"/>
+    <rect id="Bar" width="270" height="2" rx="1" transform="translate(0 30)" fill="var(--anatomy-gray-300)"/>
+  </g>
+  <rect id="Underline" width="66" height="2" rx="1" transform="translate(0 30)" fill="var(--anatomy-gray-900)"/>
+  <g id="Tab">
+    <rect id="Placement_Area-3" data-name="Placement Area" width="66" height="32" fill="red" opacity="0"/>
+    <text id="Label" transform="translate(26 20)" fill="var(--anatomy-gray-900)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Photos</tspan></text>
+    <g id="Icon">
+      <rect id="Canvas" width="18" height="18" transform="translate(0 7)" fill="var(--anatomy-gray-900)" opacity="0"/>
+      <path id="Path_41" data-name="Path 41" d="M9,6a3,3,0,1,0,3,3A3,3,0,0,0,9,6Z" transform="translate(0 7)" fill="var(--anatomy-gray-900)"/>
+      <path id="Path_42" data-name="Path 42" d="M16.5,4H13.475L11.8,2.163A.5.5,0,0,0,11.429,2H6.57a.5.5,0,0,0-.37.163L4.525,4H1.5a.5.5,0,0,0-.5.5v10a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V4.5A.5.5,0,0,0,16.5,4ZM9,13.1A4.1,4.1,0,1,1,13.1,9,4.1,4.1,0,0,1,9,13.1Z" transform="translate(0 7)" fill="var(--anatomy-gray-900)"/>
+    </g>
+  </g>
+  <g id="Tab-2" data-name="Tab" transform="translate(90)">
+    <rect id="Placement_Area-4" data-name="Placement Area" width="64" height="32" fill="red" opacity="0"/>
+    <text id="Label-2" data-name="Label" transform="translate(26 20)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Videos</tspan></text>
+    <g id="Icon-2" data-name="Icon">
+      <rect id="Canvas-2" data-name="Canvas" width="18" height="18" transform="translate(0 7)" fill="var(--anatomy-gray-700)" opacity="0"/>
+      <path id="Path_43" data-name="Path 43" d="M16.2,5.1,12,8.25V4.909A.909.909,0,0,0,11.091,4H2.909A.909.909,0,0,0,2,4.909v8.182A.909.909,0,0,0,2.909,14h8.182A.909.909,0,0,0,12,13.091V9.75l4.2,3.15a.5.5,0,0,0,.8-.4v-7a.5.5,0,0,0-.8-.4Z" transform="translate(0 7)" fill="var(--anatomy-gray-700)"/>
+    </g>
+  </g>
+  <g id="Tab-3" data-name="Tab" transform="translate(178)">
+    <rect id="Placement_Area-5" data-name="Placement Area" width="92" height="32" fill="red" opacity="0"/>
+    <text id="Label-3" data-name="Label" transform="translate(26 20)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Documents</tspan></text>
+    <g id="Icon-3" data-name="Icon">
+      <rect id="Canvas-3" data-name="Canvas" width="18" height="18" transform="translate(0 7)" fill="var(--anatomy-gray-700)" opacity="0"/>
+      <path id="Path_44" data-name="Path 44" d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z" transform="translate(0 7)" fill="var(--anatomy-gray-700)"/>
+      <path id="Path_45" data-name="Path 45" d="M11,1h.043a.5.5,0,0,1,.353.146L14.854,4.6A.5.5,0,0,1,15,4.957V5H11Z" transform="translate(0 7)" fill="var(--anatomy-gray-700)"/>
+    </g>
+  </g>
+</svg>

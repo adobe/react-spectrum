@@ -1,0 +1,137 @@
+import {ClassNameOrFunction, dom, RenderProps, useRenderProps} from './utils';
+import {Color} from 'react-stately/Color';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {GlobalDOMAttributes, HoverEvents, RefObject} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  useContext
+} from 'react';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+
+interface ColorState {
+  getDisplayColor(): Color;
+  isDragging: boolean;
+}
+
+interface InternalColorThumbContextValue {
+  state: ColorState;
+  thumbProps: HTMLAttributes<HTMLElement>;
+  inputXRef: RefObject<HTMLInputElement | null>;
+  inputYRef?: RefObject<HTMLInputElement | null>;
+  xInputProps: InputHTMLAttributes<HTMLInputElement>;
+  yInputProps?: InputHTMLAttributes<HTMLInputElement>;
+  isDisabled?: boolean;
+}
+
+export const InternalColorThumbContext = createContext<InternalColorThumbContextValue | null>(null);
+
+export interface ColorThumbRenderProps {
+  /**
+   * The selected color, excluding the alpha channel.
+   */
+  color: Color;
+  /**
+   * Whether this thumb is currently being dragged.
+   *
+   * @selector [data-dragging]
+   */
+  isDragging: boolean;
+  /**
+   * Whether the thumb is currently hovered with a mouse.
+   *
+   * @selector [data-hovered]
+   */
+  isHovered: boolean;
+  /**
+   * Whether the thumb is currently focused.
+   *
+   * @selector [data-focused]
+   */
+  isFocused: boolean;
+  /**
+   * Whether the thumb is keyboard focused.
+   *
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean;
+  /**
+   * Whether the thumb is disabled.
+   *
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean;
+}
+
+export interface ColorThumbProps
+  extends HoverEvents, RenderProps<ColorThumbRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-ColorThumb'
+   */
+  className?: ClassNameOrFunction<ColorThumbRenderProps>;
+}
+
+/**
+ * A color thumb appears within a ColorArea, ColorSlider, or ColorWheel and allows a user to drag to
+ * adjust the color value.
+ */
+export const ColorThumb = forwardRef(function ColorThumb(
+  props: ColorThumbProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let {
+    state,
+    thumbProps,
+    inputXRef,
+    inputYRef,
+    xInputProps,
+    yInputProps,
+    isDisabled = false
+  } = useContext(InternalColorThumbContext)!;
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover(props);
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-ColorThumb',
+    defaultStyle: {
+      ...thumbProps.style,
+      backgroundColor: state.getDisplayColor().toString()
+    },
+    values: {
+      color: state.getDisplayColor(),
+      isHovered,
+      isDragging: state.isDragging,
+      isFocused,
+      isFocusVisible,
+      isDisabled
+    }
+  });
+
+  let DOMProps = filterDOMProps(props, {global: true});
+  delete DOMProps.id;
+
+  return (
+    <dom.div
+      {...mergeProps(thumbProps, hoverProps, DOMProps)}
+      {...renderProps}
+      ref={ref}
+      data-hovered={isHovered || undefined}
+      data-dragging={state.isDragging || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={isDisabled || undefined}>
+      <input ref={inputXRef} {...xInputProps} {...focusProps} />
+      {yInputProps && <input ref={inputYRef} {...yInputProps} {...focusProps} />}
+      {renderProps.children}
+    </dom.div>
+  );
+});

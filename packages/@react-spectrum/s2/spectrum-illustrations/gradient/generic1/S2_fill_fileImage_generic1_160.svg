@@ -1,0 +1,44 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+<radialGradient id="paint0_radial_5481_89780" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(90.282 16.1459) rotate(90) scale(60.2331)">
+<stop offset="0.166667" stop-color="#FF709F"/>
+<stop offset="1" stop-color="#FF709F" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="paint1_linear_5481_89780" x1="-22.7944" y1="134.5" x2="202.298" y2="-2.4442" gradientUnits="userSpaceOnUse">
+<stop offset="0.0598452" stop-color="#8480FE"/>
+<stop offset="0.599632" stop-color="#8480FE" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_5481_89780" x1="157.843" y1="36.2771" x2="61.2786" y2="140.11" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EB1000"/>
+<stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint3_linear_5481_89780" x1="40.4918" y1="154.441" x2="211.674" y2="58.5472" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FC7D00" stop-opacity="0"/>
+<stop offset="0.432292" stop-color="#FC7D00"/>
+<stop offset="0.609375" stop-color="#FC7D00"/>
+<stop offset="1" stop-color="#FC7D00" stop-opacity="0"/>
+</linearGradient>
+<radialGradient id="paint4_radial_5481_89780" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(142.38 35.7885) rotate(90) scale(60.2331)">
+<stop offset="0.166667" stop-color="#EB1000"/>
+<stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+</radialGradient>
+<clipPath id="clip0_5481_89780">
+<rect x="12" y="10.7754" width="138.449" height="138.449" rx="3.46124" fill="white"/>
+</clipPath>
+</defs>
+<clipPath id="mask0_5481_89780">
+<path fill-rule="evenodd" d="M87.5147 31.5147L120.485 64.4853C122.736 66.7357 124 69.788 124 72.9706V120C124 126.627 118.627 132 112 132H48C41.3726 132 36 126.627 36 120V40C36 33.3726 41.3726 28 48 28H79.0294C82.212 28 85.2643 29.2643 87.5147 31.5147ZM94.4995 68C90.3574 68 86.9995 71.3578 86.9995 75.5C86.9995 79.6422 90.3574 83 94.4995 83C98.6417 83 102 79.6422 102 75.5C102 71.3578 98.6417 68 94.4995 68ZM54.0046 116H105.994C107.559 116 108.518 114.285 107.698 112.952L96.511 94.7688C95.7301 93.4995 93.885 93.4995 93.1041 94.7688L84.2882 109.098L71.1969 86.8994C70.422 85.5933 68.5315 85.5933 67.7568 86.8994L52.2845 112.98C51.4936 114.313 52.4544 116 54.0046 116Z" fill="white"/>
+</clipPath>
+<g clip-path="url(#mask0_5481_89780)">
+<g clip-path="url(#clip0_5481_89780)">
+<rect x="12" y="10.7754" width="138.449" height="138.449" rx="3.46124" fill="#FFECCF"/>
+<rect width="138.449" height="138.449" transform="translate(12 10.7754)" fill="#FFECCF"/>
+<circle cx="90.282" cy="16.1459" r="60.2331" transform="rotate(-0.0800682 90.282 16.1459)" fill="url(#paint0_radial_5481_89780)"/>
+<path d="M64.8428 -13.6806C54.21 -20.2602 40.7383 -20.3005 30.066 -13.7846L-76.6763 51.3888C-87.1304 57.7718 -87.1478 72.8381 -76.708 79.2453L29.329 144.326C39.9854 150.866 53.4571 150.858 64.1042 144.303L169.923 79.1611C180.307 72.7676 180.326 57.7855 169.954 51.3678L64.8428 -13.6806Z" fill="url(#paint1_linear_5481_89780)"/>
+<path d="M31.9524 76.5077C34.3187 24.8204 78.1378 -15.162 129.825 -12.7957C181.512 -10.4293 221.495 33.3898 219.128 85.077C216.762 136.764 172.943 176.747 121.256 174.38C69.5685 172.014 29.586 128.195 31.9524 76.5077Z" fill="url(#paint2_linear_5481_89780)"/>
+<path d="M-44.0928 110.588C-23.547 101.823 -1.38862 102.199 17.8088 109.865C56.2233 125.245 78.5754 115.736 94.0786 77.4095C101.801 58.1774 116.878 41.8896 137.446 33.1147C178.571 15.5979 226.047 34.6049 243.539 75.6077C261.031 116.61 241.885 164.012 200.771 181.552C180.156 190.346 157.955 189.934 138.728 182.199C100.376 166.902 78.0664 176.446 62.5828 214.819C54.841 234.005 39.7677 250.237 19.2219 259.002C-21.8696 276.532 -69.3459 257.525 -86.8283 216.545C-104.311 175.565 -85.1843 128.118 -44.0928 110.588Z" fill="url(#paint3_linear_5481_89780)"/>
+<circle cx="142.38" cy="35.7885" r="60.2331" transform="rotate(-0.0800682 142.38 35.7885)" fill="url(#paint4_radial_5481_89780)"/>
+</g>
+</g>
+
+</svg>

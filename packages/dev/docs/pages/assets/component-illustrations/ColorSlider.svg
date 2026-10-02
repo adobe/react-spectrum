@@ -1,0 +1,28 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 24px) / 2) 10px" height="24" viewBox="0 0 200 24">
+  <defs>
+    <linearGradient id="linear-gradient" x2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="var(--anatomy-gray-300)"/>
+      <stop offset="1" stop-color="var(--anatomy-gray-500)"/>
+    </linearGradient>
+  </defs>
+  <rect id="Rectangle_6" data-name="Rectangle 6" width="200" height="24" rx="4" fill="var(--anatomy-gray-50)"/>
+  <g id="Track" stroke="var(--anatomy-gray-900)" stroke-opacity="0.1" stroke-width="1" fill="url(#linear-gradient)">
+    <rect width="200" height="24" rx="4" stroke="none"/>
+    <rect x="0.5" y="0.5" width="199" height="23" rx="3.5" fill="none"/>
+  </g>
+  <g id="Handle">
+    <g id="Handle_Ring" data-name="Handle Ring" transform="translate(122 4)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-50)" stroke-width="2">
+      <circle cx="8" cy="8" r="8" stroke="none"/>
+      <circle cx="8" cy="8" r="7" fill="none"/>
+    </g>
+    <g id="Handle_Border_Outside" data-name="Handle Border Outside" transform="translate(121 3)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-900)" stroke-opacity="0.42" stroke-width="1">
+      <circle cx="9" cy="9" r="9" stroke="none"/>
+      <circle cx="9" cy="9" r="8.5" fill="none"/>
+    </g>
+    <circle id="Handle_Fill" data-name="Handle Fill" cx="6" cy="6" r="6" transform="translate(124 6)" fill="var(--anatomy-gray-400)"/>
+    <g id="Handle_Border_Inside" data-name="Handle Border Inside" transform="translate(124 6)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-900)" stroke-opacity="0.42" stroke-width="1">
+      <circle cx="6" cy="6" r="6" stroke="none"/>
+      <circle cx="6" cy="6" r="5.5" fill="none"/>
+    </g>
+  </g>
+</svg>

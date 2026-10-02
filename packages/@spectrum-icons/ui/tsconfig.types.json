@@ -1,0 +1,16 @@
+{
+  "extends": "../../../tsconfig",
+  "compilerOptions": {
+    "outDir": "./",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "isolatedModules": false,
+    "noEmit": false,
+    "allowJs": false,
+    "emitDeclarationOnly": true,
+    "types": ["node"]
+  },
+  "include": ["src", "../../@react-types/shared/src/css.d.ts"],
+  "exclude": ["scripts", "node_modules", "stories", "chromatic"]
+}

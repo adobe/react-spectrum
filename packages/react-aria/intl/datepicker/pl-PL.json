@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalendarz",
+  "day": "dzień",
+  "dayPeriod": "rano / po południu / wieczorem",
+  "endDate": "Data końcowa",
+  "era": "era",
+  "hour": "godzina",
+  "minute": "minuta",
+  "month": "miesiąc",
+  "second": "sekunda",
+  "selectedDateDescription": "Wybrana data: {date}",
+  "selectedRangeDescription": "Wybrany zakres: {startDate} do {endDate}",
+  "selectedTimeDescription": "Wybrany czas: {time}",
+  "startDate": "Data początkowa",
+  "timeZoneName": "strefa czasowa",
+  "weekday": "dzień tygodnia",
+  "year": "rok"
+}

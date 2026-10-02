@@ -1,0 +1,4 @@
+{
+  "close": "关闭",
+  "notifications": "{count, plural, one {# 个通知} other {# 个通知}}。"
+}

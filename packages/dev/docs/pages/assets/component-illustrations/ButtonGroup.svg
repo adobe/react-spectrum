@@ -1,0 +1,19 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 162 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="162" height="32" fill="red" opacity="0"/>
+  <g id="Button">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="72" height="32" fill="red" opacity="0"/>
+    <g id="Background" fill="rgba(0,0,0,0)" stroke="var(--anatomy-gray-400)" stroke-width="2">
+      <rect width="72" height="32" rx="16" stroke="none"/>
+      <rect x="1" y="1" width="70" height="30" rx="15" fill="none"/>
+    </g>
+    <text id="Text" transform="translate(17 20)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="0">Cancel</tspan></text>
+  </g>
+  <g id="Button-2" data-name="Button">
+    <rect id="Placement_Area-3" data-name="Placement Area" width="74" height="32" transform="translate(88)" fill="red" opacity="0"/>
+    <g id="Background-2" data-name="Background" transform="translate(88)" fill="rgba(0,0,0,0)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+      <rect width="74" height="32" rx="16" stroke="none"/>
+      <rect x="1" y="1" width="72" height="30" rx="15" fill="none"/>
+    </g>
+    <text id="Text-2" data-name="Text" transform="translate(104 20)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="0">Submit</tspan></text>
+  </g>
+</svg>

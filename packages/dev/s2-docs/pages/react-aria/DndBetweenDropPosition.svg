@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="222.223" height="128" viewBox="0 0 222.223 128">
+  <defs>
+    <filter id="Path_35502" x="16.223" y="67" width="206" height="44" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="BetweenDropPosition" transform="translate(-347 -123)">
+    <g id="Group_152168" data-name="Group 152168" transform="translate(7.223 -52)">
+      <g id="Group_152145" data-name="Group 152145" transform="translate(-2959 -782)" opacity="0.3">
+        <rect id="Rectangle_139994" data-name="Rectangle 139994" width="193.812" height="32" rx="4" transform="translate(3310 1021)" fill="var(--anatomy-gray-900)" fill-opacity="0.06" opacity="0.001"/>
+        <text id="Dragged_Folder" data-name="Dragged Folder" transform="translate(3348 1027)" fill="var(--anatomy-gray-900)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="14">Dragged Folder</tspan></text>
+        <g id="Group_151515" data-name="Group 151515" transform="translate(3322 1028)">
+          <rect id="Canvas" width="18" height="18" fill="var(--anatomy-gray-600)" opacity="0"/>
+          <path id="Path_35493" data-name="Path 35493" d="M16.5,4H9.334L7.682,2.3A1,1,0,0,0,6.965,2H2A1,1,0,0,0,1,3V14.5a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V4.5A.5.5,0,0,0,16.5,4ZM2,3H6.965L8.908,5H2Z" fill="var(--anatomy-gray-900)"/>
+        </g>
+      </g>
+      <g id="Group_152146" data-name="Group 152146" transform="translate(-2959 -814)">
+        <rect id="Rectangle_139994-2" data-name="Rectangle 139994" width="193.812" height="32" rx="4" transform="translate(3310 1021)" fill="var(--anatomy-gray-900)" fill-opacity="0.06" opacity="0"/>
+        <text id="Folder" transform="translate(3348 1027)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="14">Pictures</tspan></text>
+        <g id="Group_151515-2" data-name="Group 151515" transform="translate(3322 1028)">
+          <rect id="Canvas-2" data-name="Canvas" width="18" height="18" fill="var(--anatomy-gray-600)" opacity="0"/>
+          <path id="Path_35493-2" data-name="Path 35493" d="M16.5,4H9.334L7.682,2.3A1,1,0,0,0,6.965,2H2A1,1,0,0,0,1,3V14.5a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V4.5A.5.5,0,0,0,16.5,4ZM2,3H6.965L8.908,5H2Z" fill="var(--anatomy-gray-700)"/>
+        </g>
+      </g>
+      <g id="Group_152147" data-name="Group 152147" transform="translate(-2959 -846)">
+        <rect id="Rectangle_139994-3" data-name="Rectangle 139994" width="193.812" height="32" rx="4" transform="translate(3310 1021)" fill="var(--anatomy-gray-900)" fill-opacity="0.06" opacity="0"/>
+        <text id="Destination" transform="translate(3348 1027)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="14">Documents</tspan></text>
+        <g id="Group_151515-3" data-name="Group 151515" transform="translate(3322 1028)">
+          <rect id="Canvas-3" data-name="Canvas" width="18" height="18" fill="var(--anatomy-gray-600)" opacity="0"/>
+          <path id="Path_35493-3" data-name="Path 35493" d="M16.5,4H9.334L7.682,2.3A1,1,0,0,0,6.965,2H2A1,1,0,0,0,1,3V14.5a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V4.5A.5.5,0,0,0,16.5,4ZM2,3H6.965L8.908,5H2Z" fill="var(--anatomy-gray-700)"/>
+        </g>
+      </g>
+      <g id="Group_152144" data-name="Group 152144" transform="translate(-2959 -750)">
+        <rect id="Rectangle_139994-4" data-name="Rectangle 139994" width="193.812" height="32" rx="4" transform="translate(3310 1021)" fill="var(--anatomy-gray-900)" fill-opacity="0.06" opacity="0"/>
+        <text id="Folder-2" data-name="Folder" transform="translate(3348 1027)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="14">Downloads</tspan></text>
+        <g id="Group_151515-4" data-name="Group 151515" transform="translate(3322 1028)">
+          <rect id="Canvas-4" data-name="Canvas" width="18" height="18" fill="var(--anatomy-gray-600)" opacity="0"/>
+          <path id="Path_35493-4" data-name="Path 35493" d="M16.5,4H9.334L7.682,2.3A1,1,0,0,0,6.965,2H2A1,1,0,0,0,1,3V14.5a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V4.5A.5.5,0,0,0,16.5,4ZM2,3H6.965L8.908,5H2Z" fill="var(--anatomy-gray-700)"/>
+        </g>
+      </g>
+      <g id="Group_152135" data-name="Group 152135" transform="translate(259.777 1630.159) rotate(-90)">
+        <rect id="Rectangle_1093" data-name="Rectangle 1093" width="2" height="210.063" transform="translate(1390 84)" fill="var(--anatomy-gray-800)"/>
+        <g id="Path_35501" data-name="Path 35501" transform="translate(1385 284.063)" fill="var(--anatomy-gray-100)">
+          <path d="M 6 11 C 3.242990016937256 11 1 8.757010459899902 1 6 C 1 3.242990016937256 3.242990016937256 1 6 1 C 8.757010459899902 1 11 3.242990016937256 11 6 C 11 8.757010459899902 8.757010459899902 11 6 11 Z" stroke="none"/>
+          <path d="M 6 2 C 3.794389724731445 2 2 3.794389724731445 2 6 C 2 8.205610275268555 3.794389724731445 10 6 10 C 8.205610275268555 10 10 8.205610275268555 10 6 C 10 3.794389724731445 8.205610275268555 2 6 2 M 6 0 C 9.31371021270752 0 12 2.68628978729248 12 6 C 12 9.31371021270752 9.31371021270752 12 6 12 C 2.68628978729248 12 0 9.31371021270752 0 6 C 0 2.68628978729248 2.68628978729248 0 6 0 Z" stroke="none" fill="var(--anatomy-gray-800)"/>
+        </g>
+        <g id="Path_35500" data-name="Path 35500" transform="translate(1385 80)" fill="var(--anatomy-gray-100)">
+          <path d="M 6 11 C 3.242990016937256 11 1 8.757010459899902 1 6 C 1 3.242990016937256 3.242990016937256 1 6 1 C 8.757010459899902 1 11 3.242990016937256 11 6 C 11 8.757010459899902 8.757010459899902 11 6 11 Z" stroke="none"/>
+          <path d="M 6 2 C 3.794389724731445 2 2 3.794389724731445 2 6 C 2 8.205610275268555 3.794389724731445 10 6 10 C 8.205610275268555 10 10 8.205610275268555 10 6 C 10 3.794389724731445 8.205610275268555 2 6 2 M 6 0 C 9.31371021270752 0 12 2.68628978729248 12 6 C 12 9.31371021270752 9.31371021270752 12 6 12 C 2.68628978729248 12 0 9.31371021270752 0 6 C 0 2.68628978729248 2.68628978729248 0 6 0 Z" stroke="none" fill="var(--anatomy-gray-800)"/>
+        </g>
+      </g>
+      <g id="Group_152115" data-name="Group 152115" transform="translate(-2948 -774)">
+        <g id="Group_151893" data-name="Group 151893" transform="translate(553 -48)">
+          <g id="Group_151892" data-name="Group 151892" transform="translate(10 702)">
+            <g transform="matrix(1, 0, 0, 1, 2724.78, 295)" filter="url(#Path_35502)">
+              <g id="Path_35502-2" data-name="Path 35502" transform="translate(22.22 72)" fill="var(--anatomy-gray-75)">
+                <path d="M 190 31.5 L 4 31.5 C 2.070100069046021 31.5 0.5 29.92989921569824 0.5 28 L 0.5 4 C 0.5 2.070100069046021 2.070100069046021 0.5 4 0.5 L 190 0.5 C 191.9299011230469 0.5 193.5 2.070100069046021 193.5 4 L 193.5 28 C 193.5 29.92989921569824 191.9299011230469 31.5 190 31.5 Z" stroke="none"/>
+                <path d="M 4 1 C 2.345794677734375 1 1 2.345800399780273 1 4 L 1 28 C 1 29.65419960021973 2.345794677734375 31 4 31 L 190 31 C 191.6542053222656 31 193 29.65419960021973 193 28 L 193 4 C 193 2.345800399780273 191.6542053222656 1 190 1 L 4 1 M 4 0 L 190 0 C 192.2091217041016 0 194 1.790849685668945 194 4 L 194 28 C 194 30.20915031433105 192.2091217041016 32 190 32 L 4 32 C 1.790847778320312 32 0 30.20915031433105 0 28 L 0 4 C 0 1.790849685668945 1.790847778320312 0 4 0 Z" stroke="none" fill="var(--anatomy-gray-800)"/>
+              </g>
+            </g>
+            <rect id="Rectangle_139994-5" data-name="Rectangle 139994" width="193.812" height="32" rx="4" transform="translate(2747 367)" fill="none"/>
+            <text id="Dragged_Folder-2" data-name="Dragged Folder" transform="translate(2785 373)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="14">Dragged Folder</tspan></text>
+            <g id="Group_151515-5" data-name="Group 151515" transform="translate(2759 374)">
+              <rect id="Canvas-5" data-name="Canvas" width="18" height="18" fill="var(--anatomy-gray-600)" opacity="0"/>
+              <path id="Path_35493-5" data-name="Path 35493" d="M16.5,4H9.334L7.682,2.3A1,1,0,0,0,6.965,2H2A1,1,0,0,0,1,3V14.5a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V4.5A.5.5,0,0,0,16.5,4ZM2,3H6.965L8.908,5H2Z" fill="var(--anatomy-gray-700)"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Page-1" transform="translate(492 196)">
+      <g id="pointer">
+        <g id="bg" opacity="0.01">
+          <rect id="Rectangle_140823" data-name="Rectangle 140823" width="35" height="35" fill="#fff"/>
+        </g>
+        <path id="point-border" d="M12,24.422V8.407L23.591,20.026H16.81l-.411.124Z" fill="#fff" fill-rule="evenodd"/>
+        <path id="stem-border" d="M21.084,25.1l-3.6,1.535L12.8,15.542l3.686-1.553Z" fill="#fff" fill-rule="evenodd"/>
+        <path id="stem" d="M19.751,24.416l-1.844.774-3.1-7.374,1.841-.775Z" fill-rule="evenodd"/>
+        <path id="point" d="M13,10.814V22l2.969-2.866L16.4,19h4.768Z" fill-rule="evenodd"/>
+      </g>
+    </g>
+  </g>
+</svg>

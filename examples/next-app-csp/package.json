@@ -1,0 +1,33 @@
+{
+  "name": "next-app",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "../../packages/react-aria-components",
+    "../../packages/react-aria",
+    "../../packages/react-stately",
+    "../../packages/*/*"
+  ],
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "16.2.9",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "glob": "^11.0.3",
+    "typescript": "^5"
+  },
+  "resolutions": {
+    "react": "link:../../node_modules/react",
+    "react-dom": "link:../../node_modules/react-dom"
+  }
+}

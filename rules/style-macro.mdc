@@ -1,0 +1,405 @@
+---
+description: Using the React Spectrum S2 Style Macro
+globs: 
+alwaysApply: false
+---
+# React Spectrum S2 Style Macro
+
+The React Spectrum `style` macro generates atomic CSS at build time, which can be applied to any DOM element or Spectrum component. Style properties use Spectrum tokens such as colors, spacing, sizing, and typography, helping you work more quickly with TypeScript autocomplete, reduce the design choices you need to make, and improve consistency between Adobe applications.
+
+```jsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+<div className={style({backgroundColor: 'red-400', color: 'white'})}>
+  {/* ... */}
+</div>
+```
+
+## Values
+The `style` macro supports a constrained set of values for each CSS property, which conform to the Spectrum design system. For example, the `backgroundColor` property supports Spectrum colors, and does not allow arbitrary hex or rgb values by default. This helps make it easier to build consistent UIs that are maintainable over time.
+
+### Colors
+
+The Spectrum 2 color palette is available across all color properties. See the following sections for color values available for each property.
+
+#### Background Colors
+
+These colors are specifically intended for use with the `backgroundColor` property. Prefer these over global colors for backgrounds where applicable. Some automatically adjust based on interaction states (e.g., hover).
+
+- `base`
+- `layer-1`
+- `layer-2`
+- `pasteboard`
+- `elevated`
+- `accent`
+- `accent-subtle`
+- `neutral`
+- `neutral-subdued`
+- `neutral-subtle`
+- `negative`
+- `negative-subtle`
+- `informative`
+- `informative-subtle`
+- `positive`
+- `positive-subtle`
+- `notice`
+- `notice-subtle`
+- `gray`
+- `gray-subtle`
+- `red`
+- `red-subtle`
+- `orange`
+- `orange-subtle`
+- `yellow`
+- `yellow-subtle`
+- `chartreuse`
+- `chartreuse-subtle`
+- `celery`
+- `celery-subtle`
+- `green`
+- `green-subtle`
+- `seafoam`
+- `seafoam-subtle`
+- `cyan`
+- `cyan-subtle`
+- `blue`
+- `blue-subtle`
+- `indigo`
+- `indigo-subtle`
+- `purple`
+- `purple-subtle`
+- `fuchsia`
+- `fuchsia-subtle`
+- `magenta`
+- `magenta-subtle`
+- `pink`
+- `pink-subtle`
+- `turquoise`
+- `turquoise-subtle`
+- `cinnamon`
+- `cinnamon-subtle`
+- `brown`
+- `brown-subtle`
+- `silver`
+- `silver-subtle`
+- `disabled`
+
+#### Text Colors
+
+These colors are specifically intended for use with the `color` property for text elements. Prefer these over global colors for text where applicable. Some automatically adjust based on interaction states.
+
+- `accent`
+- `neutral`
+- `neutral-subdued`
+- `negative`
+- `disabled`
+- `heading`
+- `title`
+- `body`
+- `detail`
+- `code`
+
+#### Semantic Colors
+
+These colors convey specific meanings (e.g., success, error) and are available across all color properties. Prefer semantic colors over global colors when the color represents a specific meaning. They typically come in a scale from 100 to 1600 (e.g., `accent-color-100` to `accent-color-1600`).
+
+- `accent-color` (range: 100-1600)
+- `informative-color` (range: 100-1600)
+- `negative-color` (range: 100-1600)
+- `notice-color` (range: 100-1600)
+- `positive-color` (range: 100-1600)
+
+#### Global Colors
+
+These are general-purpose colors available across all color properties. They come in a scale, typically from 25 or 50 up to 1600 (e.g., `gray-50` to `gray-1000`, `blue-100` to `blue-1600`).
+
+- `gray` (range: 25-1000)
+- `blue` (range: 100-1600)
+- `red` (range: 100-1600)
+- `orange` (range: 100-1600)
+- `yellow` (range: 100-1600)
+- `chartreuse` (range: 100-1600)
+- `celery` (range: 100-1600)
+- `green` (range: 100-1600)
+- `seafoam` (range: 100-1600)
+- `cyan` (range: 100-1600)
+- `indigo` (range: 100-1600)
+- `purple` (range: 100-1600)
+- `fuchsia` (range: 100-1600)
+- `magenta` (range: 100-1600)
+- `pink` (range: 100-1600)
+- `turquoise` (range: 100-1600)
+- `brown` (range: 100-1600)
+- `silver` (range: 100-1600)
+- `cinnamon` (range: 100-1600)
+
+### Spacing
+
+Spacing properties such as `margin` and `padding` support a limited set of values. The API is represented in pixels, however, only values conforming to a 4px grid are allowed. This helps ensure that spacing and sizing are visually consistent. Spacing values are automatically converted to rems, which scale according to the user's font size preference.
+
+In addition to numeric values, the following spacing options are available:
+- `text-to-control` – The default horizontal spacing between text and a UI control, for example between a label and input. This value automatically adjusts based on the font size.
+- `text-to-visual` – The default horizontal spacing between text and a visual element, such as an icon. This value automatically adjusts based on the font size.
+- `edge-to-text` – The default horizontal spacing between the edge of a UI control and text within it. This value is calculated relative to the height of the control.
+- `pill` – The default horizontal spacing between the edge of a pill-shaped UI control (e.g. a fully rounded button) and text within it. This value is calculated relative to the height of the control.
+
+### Sizing
+
+Sizing properties such as `width` and `height` accept arbitrary pixel values. Internally, sizes are converted to rems, which scale according to the user's font size preference. Additionally, size values are multiplied by 1.25x on touch screen devices to help increase the size of hit targets.
+
+### Typography
+
+Spectrum 2 does not include specific components for typography. Instead, you can use the style macro to apply Spectrum typography to any HTML element or component.
+
+The `font` shorthand applies default values for the `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color` properties, following Spectrum design pairings. These individual properties can also be set to override the default set by the shorthand.
+
+```jsx
+<main>
+  <h1 className={style({font: 'heading-xl'})}>Heading</h1>
+  <p className={style({font: 'body'})}>Body</p>
+  <ul className={style({font: 'body-sm', fontWeight: 'bold'})}>
+    <li>List item</li>
+  </ul>
+</main>
+```
+
+There are several different type scales.
+- **Body** – use for the content of pages that are primarily text.
+- **Heading** – use for headings in content pages.
+- **Title** – use for titles within UI components such as cards or panels.
+- **Detail** – use for less important metadata.
+- **Code** – use for source code.
+
+Each type scale has a default size, and several t-shirt size modifiers for additional sizes.
+- ui-xs
+- ui-sm
+- ui
+- ui-lg
+- ui-xl
+- ui-2xl
+- ui-3xl
+- body-2xs
+- body-xs
+- body-sm
+- body
+- body-lg
+- body-xl
+- body-2xl
+- body-3xl
+- heading-2xs
+- heading-xs
+- heading-sm
+- heading
+- heading-lg
+- heading-xl
+- heading-2xl
+- heading-3xl
+- title-xs
+- title-sm
+- title
+- title-lg
+- title-xl
+- title-2xl
+- title-3xl
+- detail-sm
+- detail
+- detail-lg
+- detail-xl
+- code-sm
+- code
+- code-lg
+- code-xl
+
+> **Important Note**
+> 
+> Only use `<Heading>` and `<Text>` inside other Spectrum components with predefined styles, such as `<Dialog>` and `<MenuItem>`. They do not include any styles by default, and should not be used standalone. Use HTML elements with the style macro directly instead.
+
+## Conditional styles
+
+The `style` macro also supports conditional styles, such as media queries, UI states such as hover and press, and component variants. Conditional values are defined as an object where each key is a condition. This keeps all values for each property together in one place so it is easy to see where overrides are coming from.
+This example sets the padding of a div to 8px by default, and 32px at the large media query breakpoint (1024px) defined by Spectrum.
+
+```jsx
+<div
+  className={style({
+    padding: {
+      default: 8,
+      lg: 32
+    }
+  })} />
+```
+
+Conditions are mutually exclusive, following object property order. The `style` macro uses [CSS cascade layers](mdc:https:/developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_layers) to ensure that there are no specificity issues to worry about. The last matching condition always wins.
+
+### Runtime conditions
+
+The `style` macro also supports conditions that are resolved in JavaScript at runtime, such as variant props and UI states. When a runtime condition is detected, the `style` macro returns a function that can be called at runtime to apply.
+
+Runtime conditions can be named however you like, and values are defined as an object. This example changes the background color depending on a `variant` prop:
+
+```jsx
+let styles = style({
+  backgroundColor: {
+    variant: {
+      primary: 'accent',
+      secondary: 'neutral'
+    }
+  }
+});
+function MyComponent({variant}) {
+  return <div className={styles({variant})} />
+}
+```
+
+Boolean conditions starting with `is` do not need to be nested in an object:
+
+```jsx
+let styles = style({
+  backgroundColor: {
+    default: 'gray-100',
+    isSelected: 'gray-900'
+  }
+});
+<div className={styles({isSelected: true})} />
+```
+
+Runtime conditions also work well with the @render props in React Aria Components. If you define your styles inline, you'll even get autocomplete for all of the available conditions.
+
+```jsx
+import {Checkbox} from 'react-aria-components';
+<Checkbox
+  className={style({
+    backgroundColor: {
+      default: 'gray-100',
+      isHovered: 'gray-200',
+      isSelected: 'gray-900'
+    }
+  })} />
+```
+
+### Nesting conditions
+
+Conditions can be nested to apply styles when multiple conditions are true. Keep in mind that conditions at the same level are mutually exclusive, with the last matching condition winning. Since only one value can apply at a time, there are no specificity issues to worry about.
+
+```jsx
+let styles = style({
+  backgroundColor: {
+    default: 'gray-25',
+    isSelected: {
+      default: 'neutral',
+      isEmphasized: 'accent',
+      forcedColors: 'Highlight',
+      isDisabled: {
+        default: 'gray-400',
+        forcedColors: 'GrayText'
+      }
+    }
+  }
+});
+
+<div className={styles({isSelected, isEmphasized, isDisabled})} />
+```
+
+The above example has three runtime conditions (`isSelected`, `isEmphasized`, and `isDisabled`), and uses the `forcedColors` condition to apply styles for [Windows High Contrast Mode](mdc:https:/developer.mozilla.org/en-US/docs/Web/CSS/@media/forced-colors). The order of precedence follows the order the conditions are defined in the object, with the `isSelected` + `isDisabled` + `forcedColors` state having the highest priority.
+
+## Reusing styles
+
+Styles can be reused by extracting common properties into objects, and spreading them into `style` calls. These must either be constants (declared with `const`) in the same file, or imported from another file as a macro (`with {type: 'macro'}`). Properties can be overridden just like normal JS objects – the last value always wins.
+
+```jsx
+const horizontalStack = {
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: 8
+};
+const styles = style({
+  ...horizontalStack,
+  columnGap: 4
+});
+```
+
+You can also create custom utilities by defining your own macros. These are normal functions whatever computations you like to generate styles.
+
+```jsx
+// style-utils.ts
+export function horizontalStack(gap: number) {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    columnGap: gap
+  };
+}
+```
+
+Then, import your macro and use it in a component.
+
+```jsx
+// component.tsx
+import {horizontalStack} from './style-utils' with {type: 'macro'};
+const styles = style({
+  ...horizontalStack(4),
+  backgroundColor: 'base'
+});
+```
+
+### Built-in Utilities
+
+The `focusRing` utility generates styles for the standard Spectrum focus ring, allowing you to reuse it in custom components.
+
+```jsx
+import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button} from 'react-aria-components';
+
+const buttonStyle = style({
+  ...focusRing(),
+  // ...
+});
+        
+export function CustomButton(props) {
+  return <Button {...props} className={buttonStyle} />;
+}
+```
+
+## CSS optimization
+
+The style macro relies on CSS bundling and minification to generate optimized output. When configuring your build tool, follow these best practices:
+- Ensure that the styles are extracted into a CSS bundle and not injected at runtime by `<style>` elements.
+- Use a CSS minifier such as [Lightning CSS](mdc:https:/lightningcss.dev) to deduplicate common rules used between components. Consider running this during development as well to reduce style duplication in developer tools for improved debugging.
+- Configure your bundler to combine all CSS for S2 components and style macros into a single bundle instead of code splitting. Atomic CSS results in a lot of overlap between components. With code splitting, common rules are duplicated between bundles by default. To avoid this, load the CSS for all used S2 components in a single bundle. Because of the high degree of overlap between components, this initial bundle will be quite small.
+
+Guidance for specific build tools is below.
+
+### Parcel
+
+Parcel includes support for macros out of the box, and automatically optimizes CSS with [Lightning CSS](mdc:https:/lightningcss.dev). You can configure it to bundle all CSS for S2 components and style macros into a single file using the [manual shared bundles](mdc:https:/parceljs.org/features/code-splitting/#manual-shared-bundles) feature.
+
+```json
+// package.json
+{
+  "@parcel/bundler-default": {
+    "manualSharedBundles": [
+      {
+        "name": "s2-styles",
+        "assets": [
+          "**/@react-spectrum/s2/**",
+          // Update this glob as needed to match your source files.
+          "src/**/*.{js,jsx,ts,tsx}"
+        ],
+        "types": ["css"]
+      }
+    ]
+  }
+}
+```
+
+### Webpack
+
+- Use [MiniCssExtractPlugin](mdc:https:/webpack.js.org/plugins/mini-css-extract-plugin) to extract the generated styles into a CSS bundle. Do not use `style-loader`, which injects individual `<style>` rules at runtime.
+- Use [CssMinimizerWebpackPlugin](mdc:https:/webpack.js.org/plugins/css-minimizer-webpack-plugin) to optimize the generated CSS using [Lightning CSS](mdc:https:/lightningcss.dev). You can also configure this to run in development to remove duplicate rules and improve debugging.
+- Use [SplitChunksPlugin](mdc:https:/webpack.js.org/plugins/split-chunks-plugin) to bundle all S2 and style-macro generated CSS into a single bundle.
+See our [webpack example](mdc:https:/github.com/adobe/react-spectrum/blob/main/examples/s2-webpack-5-example/webpack.config.js) for full configuration options.
+
+### Vite
+
+- Configure the `cssMinify` option to use [Lightning CSS](mdc:https:/lightningcss.dev), which produces much smaller output than the default minifier.
+- Configure Rollup to bundle all S2 and style-macro generated CSS into a single bundle using the [manualChunks](mdc:https:/rollupjs.org/configuration-options/#output-manualchunks) feature.
+See our [Vite example](mdc:https:/github.com/adobe/react-spectrum/blob/main/examples/s2-vite-project/vite.config.ts) for full configuration options.

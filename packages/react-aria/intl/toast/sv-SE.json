@@ -1,0 +1,4 @@
+{
+  "close": "Stäng",
+  "notifications": "{count, plural, one {# meddelande} other {# meddelanden}}."
+}

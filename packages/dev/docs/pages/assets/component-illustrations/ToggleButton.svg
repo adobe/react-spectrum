@@ -1,0 +1,20 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 62 32">
+  <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+    <rect width="62" height="32" stroke="none"/>
+    <rect x="0.5" y="0.5" width="61" height="31" fill="none"/>
+  </g>
+  <g id="Background" fill="var(--anatomy-gray-200)" stroke="rgba(0,0,0,0)" stroke-width="1">
+    <rect width="62" height="32" rx="4" stroke="none"/>
+    <rect x="0.5" y="0.5" width="61" height="31" rx="3.5" fill="none"/>
+  </g>
+  <path id="Border" d="M4,0H58a4,4,0,0,1,4,4V28a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V4A4,4,0,0,1,4,0ZM4,1A3,3,0,0,0,1,4V28a3,3,0,0,0,3,3H58a3,3,0,0,0,3-3V4a3,3,0,0,0-3-3Z" fill="var(--anatomy-gray-400)"/>
+  <g id="Icon">
+    <g id="Canvas" transform="translate(7 7)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1" opacity="0">
+      <rect width="18" height="18" stroke="none"/>
+      <rect x="0.5" y="0.5" width="17" height="17" fill="none"/>
+    </g>
+    <path id="Path_14" data-name="Path 14" d="M5.823,11l1.189,1.19L1.962,17.2,0,18l.822-1.987Z" transform="translate(7 7)" fill="var(--anatomy-gray-700)"/>
+    <path id="Path_15" data-name="Path 15" d="M11.977,13.16,12,10.144,16.146,6l1.135-.011a.726.726,0,0,0,.5-1.24L15.521,2.48,13.25.242a.723.723,0,0,0-1.234.505L12,1.854,7.853,6l-3.012.022a.723.723,0,0,0-.554,1.233h0l3.229,3.229,3.229,3.229a.721.721,0,0,0,1.231-.554Z" transform="translate(7 7)" fill="var(--anatomy-gray-700)"/>
+  </g>
+  <text id="Text" transform="translate(32 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Pin</tspan></text>
+</svg>

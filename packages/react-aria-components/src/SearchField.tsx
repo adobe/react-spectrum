@@ -1,0 +1,189 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {AriaSearchFieldProps, useSearchField} from 'react-aria/useSearchField';
+import {ButtonContext} from './Button';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
+import {FieldErrorContext} from './FieldError';
+import {FieldInputContext} from './Autocomplete';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FormContext} from './Form';
+import {GlobalDOMAttributes} from '@react-types/shared';
+import {GroupContext} from './Group';
+import {InputContext} from './Input';
+import {LabelContext} from './Label';
+import React, {createContext, ForwardedRef, useRef} from 'react';
+import {SearchFieldState, useSearchFieldState} from 'react-stately/useSearchFieldState';
+import {TextContext} from './Text';
+
+export interface SearchFieldRenderProps {
+  /**
+   * Whether the search field is empty.
+   *
+   * @selector [data-empty]
+   */
+  isEmpty: boolean;
+  /**
+   * Whether the search field is disabled.
+   *
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean;
+  /**
+   * Whether the search field is invalid.
+   *
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean;
+  /**
+   * Whether the search field is read only.
+   *
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean;
+  /**
+   * Whether the search field is required.
+   *
+   * @selector [data-required]
+   */
+  isRequired: boolean;
+  /**
+   * State of the search field.
+   */
+  state: SearchFieldState;
+}
+
+export interface SearchFieldProps
+  extends
+    Omit<
+      AriaSearchFieldProps,
+      | 'label'
+      | 'placeholder'
+      | 'description'
+      | 'errorMessage'
+      | 'validationState'
+      | 'validationBehavior'
+    >,
+    RACValidation,
+    RenderProps<SearchFieldRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-SearchField'
+   */
+  className?: ClassNameOrFunction<SearchFieldRenderProps>;
+}
+
+export const SearchFieldContext =
+  createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
+
+/**
+ * A search field allows a user to enter and clear a search query.
+ */
+export const SearchField = /*#__PURE__*/ createHideableComponent(function SearchField(
+  props: SearchFieldProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  [props, ref] = useContextProps(props, ref, SearchFieldContext);
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
+  let inputRef = useRef<HTMLInputElement>(null);
+  [props, inputRef as unknown] = useContextProps(props, inputRef, FieldInputContext);
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let state = useSearchFieldState({
+    ...props,
+    validationBehavior
+  });
+
+  let {
+    labelProps,
+    inputProps,
+    clearButtonProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validation
+  } = useSearchField(
+    {
+      ...removeDataAttributes(props),
+      label,
+      validationBehavior
+    },
+    state,
+    inputRef
+  );
+
+  let renderProps = useRenderProps({
+    ...props,
+    values: {
+      isEmpty: state.value === '',
+      isDisabled: props.isDisabled || false,
+      isInvalid: validation.isInvalid || false,
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false,
+      state
+    },
+    defaultClassName: 'react-aria-SearchField'
+  });
+
+  let DOMProps = filterDOMProps(props, {global: true});
+  delete DOMProps.id;
+
+  return (
+    <dom.div
+      {...DOMProps}
+      {...renderProps}
+      ref={ref}
+      slot={props.slot || undefined}
+      data-empty={state.value === '' || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-invalid={validation.isInvalid || undefined}
+      data-readonly={props.isReadOnly || undefined}
+      data-required={props.isRequired || undefined}>
+      <Provider
+        values={[
+          [LabelContext, {...labelProps, ref: labelRef}],
+          [InputContext, {...inputProps, ref: inputRef}],
+          [ButtonContext, clearButtonProps],
+          [
+            TextContext,
+            {
+              slots: {
+                description: descriptionProps,
+                errorMessage: errorMessageProps
+              }
+            }
+          ],
+          [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
+          [FieldErrorContext, validation]
+        ]}>
+        {renderProps.children}
+      </Provider>
+    </dom.div>
+  );
+});

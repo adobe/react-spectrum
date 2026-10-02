@@ -1,0 +1,14 @@
+<svg style="background:var(--anatomy-gray-100);padding:10px calc((100% - 176px) / 2);height:calc(152px - 20px);width:176px" viewBox="8 53 264 52">
+  <g id="Group_151081" data-name="Group 151081" transform="translate(-341 -39)">
+    <g id="Group_3804" data-name="Group 3804" transform="translate(309 38)">
+      <rect id="Rectangle_64" data-name="Rectangle 64" width="264" height="84" transform="translate(40 30)" fill="red" opacity="0"/>
+      <g id="rectangle-18" transform="translate(40 66)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
+        <rect width="264" height="48" rx="6" stroke="none"/>
+        <rect x="0.75" y="0.75" width="262.5" height="46.5" rx="5.25" fill="none"/>
+      </g>
+      <text id="Typography" transform="translate(40 54)" fill="var(--anatomy-gray-700)" font-size="18" font-family="var(--anatomy-font)"><tspan x="0" y="0">Event date</tspan></text>
+    </g>
+    <rect id="Rectangle_148423" data-name="Rectangle 148423" width="23" height="26" rx="2" transform="translate(366 115)" fill="var(--anatomy-gray-700)"/>
+    <text id="Typography-2" data-name="Typography" transform="translate(367 134)" fill="var(--anatomy-gray-50)" font-size="21" font-family="var(--anatomy-font)"><tspan x="8" y="0" xml:space="preserve">8</tspan><tspan y="0" xml:space="preserve" fill="var(--anatomy-gray-700)"> / 15 / 2022</tspan></text>
+  </g>
+</svg>

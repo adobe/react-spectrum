@@ -1,0 +1,17 @@
+<svg style="background:var(--anatomy-gray-100); padding: 50px 10px" height="32" viewBox="0 0 120 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="120" height="32" fill="red" opacity="0"/>
+  <g id="Heart_Icon">
+    <rect width="32" height="32" fill="var(--anatomy-gray-300)" opacity="0"/>
+    <path d="M16,28 C16,28 4,20 4,12 C4,8 6,6 9,6 C11,6 13,7 16,10 C19,7 21,6 23,6 C26,6 28,8 28,12 C28,20 16,28 16,28 Z" fill="var(--anatomy-gray-700)"/>
+  </g>
+  <g id="Star_Icon" transform="translate(44 0)">
+    <rect width="32" height="32" fill="var(--anatomy-gray-300)" opacity="0"/>
+    <path d="M16,4 L19,13 L28,14 L22,20 L24,28 L16,24 L8,28 L10,20 L4,14 L13,13 Z" fill="var(--anatomy-gray-700)"/>
+  </g>
+  <g id="Warning_Icon" transform="translate(88 0)">
+    <rect width="32" height="32" fill="var(--anatomy-gray-300)" opacity="0"/>
+    <path d="M16,6 L26,26 L6,26 Z" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="2"/>
+    <circle cx="16" cy="22" r="1.2" fill="var(--anatomy-gray-700)"/>
+    <path d="M16,12 L16,18" stroke="var(--anatomy-gray-700)" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

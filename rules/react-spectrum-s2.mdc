@@ -1,0 +1,312 @@
+---
+description: Using React Spectrum (S2) components from `@react-spectrum/s2`
+globs: 
+alwaysApply: false
+---
+# React Spectrum (with Spectrum 2)
+
+When implementing UI components in React, use the React Spectrum (S2) library to ensure that your components are accessible and follow Adobe's Spectrum 2 design system. Components should be imported from the `@react-spectrum/s2` package. Using the older `@adobe/react-spectrum` package (also called React Spectrum v3) should be avoided unless explicitly requested.
+If you are able to browse the web, the full docs for React Spectrum (S2) are available at [https://react-spectrum.adobe.com/s2/](mdc:https:/react-spectrum.adobe.com/s2).
+
+## Configuring your bundler
+
+React Spectrum supports styling via macros, a new bundler feature that enables functions to run at build time. Currently, Parcel v2.12.0 and newer supports macros out of the box. When using other build tools, you can install a plugin to enable them. The other build tools setup instructions are in the sections below for "Webpack, Next.js, Vite, Rollup, or ESBuild".
+
+### Webpack, Next.js, Vite, Rollup, or ESBuild
+
+First, ensure `unplugin-parcel-macros` is installed (it can be a dev dependency).
+
+Then, ensure your bundler is configured according to the examples below. Note that plugin order is important: `unplugin-parcel-macros` must run before other plugins like Babel.
+
+#### webpack
+
+```js
+// webpack.config.js
+const macros = require('unplugin-parcel-macros');
+module.exports = {
+  // ...
+  plugins: [
+    macros.webpack()
+  ]
+};
+```
+
+#### Next.js
+
+```js
+// next.config.js
+const macros = require('unplugin-parcel-macros');
+// Create a single instance of the plugin that's shared between server and client builds.
+let plugin = macros.webpack();
+module.exports = {
+  webpack(config) {
+    config.plugins.push(plugin);
+    return config;
+  }
+};
+```
+
+#### Vite
+
+```js
+// vite.config.js
+import macros from 'unplugin-parcel-macros';
+export default {
+  plugins: [
+    macros.vite()
+  ]
+};
+```
+
+#### Rollup
+
+```js
+// rollup.config.js
+import macros from 'unplugin-parcel-macros';
+export default {
+  plugins: [
+    macros.rollup()
+  ]
+};
+```
+
+#### Esbuild
+
+```js
+import {build} from 'esbuild';
+import macros from 'unplugin-parcel-macros';
+build({
+  plugins: [
+    macros.esbuild()
+  ]
+});
+```
+
+## App setup
+
+IMPORTANT: `Provider` is not required (unlike in React Spectrum v3). Instead, import `@react-spectrum/s2/page.css` in the entry component of your app to apply the background color and color scheme to the `<html>` element. This ensures that the entire page has the proper styles even before your JavaScript runs.
+
+```jsx
+import '@react-spectrum/s2/page.css';
+import {Button} from '@react-spectrum/s2';
+function App() {
+  return (
+    <Button
+      variant="accent"
+      onPress={() => alert('Hey there!')}>
+      Hello Spectrum 2!
+    </Button>
+  );
+}
+```
+
+**Note**: If you're embedding Spectrum 2 as a section of a larger page rather than taking over the whole window, follow the 'Embedded sections' section below instead of using `page.css`.
+
+### Overriding the color scheme
+
+By default, the page follows the user's operating system color scheme setting, supporting both light and dark mode. The page background is set to the `base` Spectrum background layer by default. This can be configured by setting the `data-color-scheme` and `data-background` attributes on the `<html>` element. For example, to force the application to only render in light mode, set `data-color-scheme="light"`.
+```html
+<html data-color-scheme="light">
+  <!-- ... -->
+</html>
+```
+
+### Overriding the locale
+
+By default, React Spectrum uses the browser/operating system language setting for localized strings, date and number formatting, and to determine the layout direction (left-to-right or right-to-left). This can be overridden by rendering a `<Provider>` component at the root of your app, and setting the `locale` prop.
+
+```jsx
+import {Provider} from '@react-spectrum/s2';
+<Provider locale="en-US">
+  {/* your app */}
+</Provider>
+```
+
+### Embedded sections
+
+If you're building an embedded section of a larger page using Spectrum 2, use the `<Provider>` component to set the background instead of importing `page.css`. The `background` prop should be set to the Spectrum background layer appropriate for your app, and the `colorScheme` can be overridden as well.
+
+```jsx
+import {Provider} from '@react-spectrum/s2';
+<Provider background="base">
+  {/* your app */}
+</Provider>
+```
+
+## Collection components
+
+For dynamic collections, instead of using `Array.map`, use the following JSX-based interface, which maps over your data and applies a function for each item to render it.
+
+```jsx
+<Menu items={list.items}>
+  {(item) => <MenuItem key={item.name}>{item.name}</MenuItem>}
+</Menu>
+```
+
+## Pressable components
+
+For pressable components such as Button, use `onPress` instead of `onClick`. Similarly, use `onPressStart`, `onPressEnd`, `onPressChange`, and `onPressUp` where appropriate.
+Press event handlers are type `(e: PressEvent) => void` where `PressEvent` is defined as:
+
+```ts
+interface PressEvent {
+  type: 'pressstart' | 'pressend' | 'pressup' | 'press';
+  pointerType: 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
+  target: Element;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  altKey: boolean;
+  x: number;
+  y: number;
+}
+```
+
+## Input components
+
+For input field components such as TextField, the `onChange` event handler is type `(value: string) => void`.
+
+## Styling
+
+React Spectrum v3 supported a limited set of style props for layout and positioning using Spectrum-defined values. In Spectrum 2, there is a more flexible style macro. This offers additional Spectrum tokens, improves performance by generating CSS at build time rather than runtime, and works with any DOM element for use in custom components.
+
+Macros are a new bundler feature that enable functions to run at build time. The React Spectrum `style` macro uses this to generate CSS that can be applied to any DOM element or component. Import the `style` macro using the with `{type: 'macro'}` import attribute, and pass the result to the `styles` prop of any React Spectrum component to provide it with styles.
+
+```jsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ActionButton} from '@react-spectrum/s2';
+<ActionButton styles={style({marginStart: 8})}>
+  Edit
+</ActionButton>
+```
+
+The `styles` prop accepts a limited set of CSS properties, including layout, spacing, sizing, and positioning. Other styles such as colors and internal padding cannot be customized within Spectrum components.
+
+### Supported CSS properties on Spectrum components
+- `margin`
+- `marginStart`
+- `marginEnd`
+- `marginTop`
+- `marginBottom`
+- `marginX`
+- `marginY`
+- `width`
+- `minWidth`
+- `maxWidth`
+- `flexGrow`
+- `flexShrink`
+- `flexBasis`
+- `justifySelf`
+- `alignSelf`
+- `order`
+- `gridArea`
+- `gridRow`
+- `gridRowStart`
+- `gridRowEnd`
+- `gridColumn`
+- `gridColumnStart`
+- `gridColumnEnd`
+- `position`
+- `zIndex`
+- `top`
+- `bottom`
+- `inset`
+- `insetX`
+- `insetY`
+- `insetStart`
+- `insetEnd`
+
+### UNSAFE Style Overrides
+
+We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using React Aria Components with our style macro to build a custom component with Spectrum styles instead.
+That said, just like in React Spectrum v3, the `UNSAFE_className` and `UNSAFE_style` props are supported on Spectrum 2 components as last-resort escape hatches.
+
+```jsx
+/* YourComponent.tsx */
+import {Button} from '@react-spectrum/s2';
+import './YourComponent.css';
+function YourComponent() {
+  return <Button UNSAFE_className="your-unsafe-class">Button</Button>;
+}
+```
+
+```css
+/* YourComponent.css */
+.your-unsafe-class {
+  background: red;
+}
+```
+
+Note that the style macro being passed to UNSAFE_className will result in a TypeScript error. This is not allowed because UNSAFE_className is appended to the component's own styles, not merged.
+
+### CSS Resets
+
+CSS resets are strongly discouraged. Global CSS selectors can unintentionally affect elements that were not intended to have their styles be modified, leading to style clashes. Since Spectrum 2 uses [CSS Cascade Layers](mdc:https:/developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_layers), global CSS outside a `@layer` will override S2's CSS. Therefore, if you cannot remove your CSS reset, it must be placed in a lower layer. This can be done by declaring your reset layer before the `_` layer used by S2.
+
+```css
+/* App.css */
+@layer reset, _;
+@import "reset.css" layer(reset);
+```
+
+### CSS optimization
+
+The style macro relies on CSS bundling and minification to generate optimized output. When configuring your build tool, follow these best practices:
+- Ensure that the styles are extracted into a CSS bundle and not injected at runtime by `<style>` elements.
+- Use a CSS minifier such as [Lightning CSS](mdc:https:/lightningcss.dev) to deduplicate common rules used between components. Consider running this during development as well to reduce style duplication in developer tools for improved debugging.
+- Configure your bundler to combine all CSS for S2 components and style macros into a single bundle instead of code splitting. Atomic CSS results in a lot of overlap between components. With code splitting, common rules are duplicated between bundles by default. To avoid this, load the CSS for all used S2 components in a single bundle. Because of the high degree of overlap between components, this initial bundle will be quite small.
+
+Guidance for specific build tools is below.
+
+### Parcel
+
+Parcel includes support for macros out of the box, and automatically optimizes CSS with [Lightning CSS](mdc:https:/lightningcss.dev). You can configure it to bundle all CSS for S2 components and style macros into a single file using the [manual shared bundles](mdc:https:/parceljs.org/features/code-splitting/#manual-shared-bundles) feature.
+
+```json
+// package.json
+{
+  "@parcel/bundler-default": {
+    "manualSharedBundles": [
+      {
+        "name": "s2-styles",
+        "assets": [
+          "**/@react-spectrum/s2/**",
+          // Update this glob as needed to match your source files.
+          "src/**/*.{js,jsx,ts,tsx}"
+        ],
+        "types": ["css"]
+      }
+    ]
+  }
+}
+```
+
+### Webpack
+
+- Use [MiniCssExtractPlugin](mdc:https:/webpack.js.org/plugins/mini-css-extract-plugin) to extract the generated styles into a CSS bundle. Do not use `style-loader`, which injects individual `<style>` rules at runtime.
+- Use [CssMinimizerWebpackPlugin](mdc:https:/webpack.js.org/plugins/css-minimizer-webpack-plugin) to optimize the generated CSS using [Lightning CSS](mdc:https:/lightningcss.dev). You can also configure this to run in development to remove duplicate rules and improve debugging.
+- Use [SplitChunksPlugin](mdc:https:/webpack.js.org/plugins/split-chunks-plugin) to bundle all S2 and style-macro generated CSS into a single bundle.
+See our [webpack example](mdc:https:/github.com/adobe/react-spectrum/blob/main/examples/s2-webpack-5-example/webpack.config.js) for full configuration options.
+
+### Vite
+
+- Configure the `cssMinify` option to use [Lightning CSS](mdc:https:/lightningcss.dev), which produces much smaller output than the default minifier.
+- Configure Rollup to bundle all S2 and style-macro generated CSS into a single bundle using the [manualChunks](mdc:https:/rollupjs.org/configuration-options/#output-manualchunks) feature.
+See our [Vite example](mdc:https:/github.com/adobe/react-spectrum/blob/main/examples/s2-vite-project/vite.config.ts) for full configuration options.
+
+## Other tips
+
+### Virtualized collections
+
+When using virtualized components such as `TableView` or `CardView`, ensure the height is constrained.
+
+### Tooltips on elements
+
+Tooltips need to be accessible to keyboard and screen reader users, so we want to ensure that they are only placed on focusable and hoverable elements. For example, plain text on a page isn't focusable, so keyboard and screen reader users would be unable to access the information in that tooltip.
+
+If you need to display some additional context, consider using the `ContextualHelp` component.
+
+### Typography
+
+Note that the Text and Heading components are not general typography components, but instead are meant to be used WITHIN other components so default styles can be inherited (i.e. a Heading inside a Dialog or MenuItem). These components should not be used standalone. Spectrum 2 does not include specific components for typography. Instead, you can use the style macro to apply Spectrum typography to any HTML element or component.
+ 

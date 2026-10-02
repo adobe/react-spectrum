@@ -1,0 +1,22 @@
+diff --git a/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js b/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
+index 78d0e8f..7b0f454 100644
+--- a/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
++++ b/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
+@@ -138,7 +138,7 @@ class TSModuleGraph {
+     for (let e of module.exports) {
+       if (e.name === name) {
+         return this.getExport(module, e);
+-      } else if (e.specifier) {
++      } else if (e.specifier && this.getModule(e.specifier)) {
+         const m = this.resolveExport((0, _nullthrows().default)(this.getModule(e.specifier)), name);
+         if (m) {
+           return m;
+@@ -154,7 +154,7 @@ class TSModuleGraph {
+         if (exp) {
+           res.push(exp);
+         }
+-      } else if (e.specifier) {
++      } else if (e.specifier && this.getModule(e.specifier)) {
+         let m = this.getModule(e.specifier);
+         if (m) {
+           res.push(...this.getAllExports(m, true));

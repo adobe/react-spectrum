@@ -1,0 +1,41 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+declare module 'bundle-text:*' {
+  const content: string;
+  export default content;
+}
+
+declare module 'url:*' {
+  const content: string;
+  export default content;
+}
+
+declare module '*.svg' {
+  import {FunctionComponent, SVGProps} from 'react';
+  // Our icon and illustration props extend SlotProps, which allows `slot={null}` to opt out of a
+  // slotted context. @types/react declares `slot` as `string` on SVGAttributes, so widen it here to
+  // match the props these components are given.
+  const content: FunctionComponent<Omit<SVGProps<SVGSVGElement>, 'slot'> & {slot?: string | null}>;
+  export default content;
+}
+
+declare module '*.json' {
+  const content: any;
+  export default content;
+}
+
+declare module '*.mdx' {
+  import {ElementType, FunctionComponent} from 'react';
+  const MDXComponent: FunctionComponent<{components?: Record<string, ElementType>}>;
+  export default MDXComponent;
+}

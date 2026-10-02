@@ -1,0 +1,39 @@
+:root {
+  /* todo: fix this in DNA */
+  --spectrum-colorwheel-border-color: var(--spectrum-colorarea-border-color);
+}
+
+.spectrum-ColorWheel {
+  &.is-disabled {
+    .spectrum-ColorWheel-gradient {
+      background: var(--spectrum-colorwheel-fill-color-disabled) !important;
+
+      &:before,
+      &:after {
+        border-color: var(--spectrum-colorwheel-border-color-disabled);
+      }
+    }
+
+    /* hide all the little colored bits */
+    .spectrum-ColorWheel-segment {
+      display: none;
+    }
+  }
+}
+
+.spectrum-ColorWheel-gradient {
+  &:before,
+  &:after {
+    border-color: var(--spectrum-colorwheel-border-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-ColorWheel {
+    forced-color-adjust: none;
+    --spectrum-colorwheel-fill-color-disabled: GrayText;
+    --spectrum-colorwheel-border-color-disabled: GrayText;
+    --spectrum-colorwheel-border-color: ButtonText;
+    --spectrum-colorarea-border-color: ButtonText;
+  }
+}

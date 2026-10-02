@@ -1,0 +1,14 @@
+{
+  "dateRange": "Nuo {startDate} iki {endDate}",
+  "dateSelected": "Pasirinkta {date}",
+  "finishRangeSelectionPrompt": "Spustelėkite, kad baigtumėte pasirinkti datų intervalą",
+  "maximumDate": "Paskutinė galima data",
+  "minimumDate": "Pirmoji galima data",
+  "next": "Paskesnis",
+  "previous": "Ankstesnis",
+  "selectedDateDescription": "Pasirinkta data: {date}",
+  "selectedRangeDescription": "Pasirinktas intervalas: {dateRange}",
+  "startRangeSelectionPrompt": "Spustelėkite, kad pradėtumėte pasirinkti datų intervalą",
+  "todayDate": "Šiandien, {date}",
+  "todayDateSelected": "Šiandien, pasirinkta {date}"
+}

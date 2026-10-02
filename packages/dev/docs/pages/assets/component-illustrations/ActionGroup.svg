@@ -1,0 +1,39 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 94 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="94" height="32" fill="red" opacity="0"/>
+  <g id="Action_Button" data-name="Action Button">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="32" height="32" fill="red" opacity="0"/>
+    <path id="Background" d="M4,0H32V32H4a4,4,0,0,1-4-4V4A4,4,0,0,1,4,0Z" fill="var(--anatomy-gray-700)"/>
+    <path id="Border" d="M4,0H32V32H4a4,4,0,0,1-4-4V4A4,4,0,0,1,4,0ZM4,1A3,3,0,0,0,1,4V28a3,3,0,0,0,3,3H32a1,1,0,0,0-1,1V0a1,1,0,0,0,1,1Z" fill="var(--anatomy-gray-700)"/>
+    <g id="Icon">
+      <rect id="Canvas" width="18" height="18" transform="translate(7 7)" fill="var(--anatomy-gray-50)" opacity="0"/>
+      <rect id="Rectangle_31" data-name="Rectangle 31" width="12" height="2" rx="0.5" transform="translate(9 21)" fill="var(--anatomy-gray-50)"/>
+      <rect id="Rectangle_32" data-name="Rectangle 32" width="15" height="2" rx="0.5" transform="translate(9 9)" fill="var(--anatomy-gray-50)"/>
+      <rect id="Rectangle_33" data-name="Rectangle 33" width="12" height="2" rx="0.5" transform="translate(9 13)" fill="var(--anatomy-gray-50)"/>
+      <rect id="Rectangle_34" data-name="Rectangle 34" width="15" height="2" rx="0.5" transform="translate(9 17)" fill="var(--anatomy-gray-50)"/>
+    </g>
+  </g>
+  <g id="Action_Button-2" data-name="Action Button">
+    <rect id="Placement_Area-3" data-name="Placement Area" width="32" height="32" transform="translate(31)" fill="red" opacity="0"/>
+    <path id="Background-2" data-name="Background" d="M0,0H32V32H0Z" transform="translate(31)" fill="var(--anatomy-gray-75)"/>
+    <path id="Border-2" data-name="Border" d="M0,0H32V32H0ZM0,1A1,1,0,0,0,1,0V32a1,1,0,0,0-1-1H32a1,1,0,0,0-1,1V0a1,1,0,0,0,1,1Z" transform="translate(31)" fill="var(--anatomy-gray-400)"/>
+    <g id="Icon-2" data-name="Icon">
+      <rect id="Canvas-2" data-name="Canvas" width="18" height="18" transform="translate(38 7)" fill="var(--anatomy-gray-700)" opacity="0"/>
+      <rect id="Rectangle_35" data-name="Rectangle 35" width="10" height="2" rx="0.5" transform="translate(42 21)" fill="var(--anatomy-gray-700)"/>
+      <rect id="Rectangle_36" data-name="Rectangle 36" width="16" height="2" rx="0.5" transform="translate(39 17)" fill="var(--anatomy-gray-700)"/>
+      <rect id="Rectangle_37" data-name="Rectangle 37" width="16" height="2" rx="0.5" transform="translate(39 9)" fill="var(--anatomy-gray-700)"/>
+      <rect id="Rectangle_38" data-name="Rectangle 38" width="10" height="2" rx="0.5" transform="translate(42 13)" fill="var(--anatomy-gray-700)"/>
+    </g>
+  </g>
+  <g id="Action_Button-3" data-name="Action Button">
+    <rect id="Placement_Area-4" data-name="Placement Area" width="32" height="32" transform="translate(62)" fill="red" opacity="0"/>
+    <path id="Background-3" data-name="Background" d="M0,0H28a4,4,0,0,1,4,4V28a4,4,0,0,1-4,4H0Z" transform="translate(62)" fill="var(--anatomy-gray-75)"/>
+    <path id="Border-3" data-name="Border" d="M0,0H28a4,4,0,0,1,4,4V28a4,4,0,0,1-4,4H0ZM0,1A1,1,0,0,0,1,0V32a1,1,0,0,0-1-1H28a3,3,0,0,0,3-3V4a3,3,0,0,0-3-3Z" transform="translate(62)" fill="var(--anatomy-gray-400)"/>
+    <g id="Icon-3" data-name="Icon">
+      <rect id="Canvas-3" data-name="Canvas" width="18" height="18" transform="translate(69 7)" fill="var(--anatomy-gray-700)" opacity="0"/>
+      <rect id="Rectangle_39" data-name="Rectangle 39" width="12" height="2" rx="0.5" transform="translate(73 21)" fill="var(--anatomy-gray-700)"/>
+      <rect id="Rectangle_40" data-name="Rectangle 40" width="15" height="2" rx="0.5" transform="translate(70 9)" fill="var(--anatomy-gray-700)"/>
+      <rect id="Rectangle_41" data-name="Rectangle 41" width="12" height="2" rx="0.5" transform="translate(73 13)" fill="var(--anatomy-gray-700)"/>
+      <rect id="Rectangle_42" data-name="Rectangle 42" width="15" height="2" rx="0.5" transform="translate(70 17)" fill="var(--anatomy-gray-700)"/>
+    </g>
+  </g>
+</svg>

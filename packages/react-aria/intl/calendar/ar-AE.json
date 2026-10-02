@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} إلى {endDate}",
+  "dateSelected": "{date} المحدد",
+  "finishRangeSelectionPrompt": "انقر لإنهاء عملية تحديد نطاق التاريخ",
+  "maximumDate": "آخر تاريخ متاح",
+  "minimumDate": "أول تاريخ متاح",
+  "next": "التالي",
+  "previous": "السابق",
+  "selectedDateDescription": "تاريخ محدد: {date}",
+  "selectedRangeDescription": "المدى الزمني المحدد: {dateRange}",
+  "startRangeSelectionPrompt": "انقر لبدء عملية تحديد نطاق التاريخ",
+  "todayDate": "اليوم، {date}",
+  "todayDateSelected": "اليوم، {date} محدد"
+}

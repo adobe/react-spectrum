@@ -1,0 +1,242 @@
+/*
+ * Copyright 2025 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {dom, RenderProps, useRenderProps} from './utils';
+import {flushSync} from 'react-dom';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  HTMLAttributes,
+  ReactNode,
+  RefObject,
+  useContext,
+  useRef,
+  useState
+} from 'react';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useObjectRef} from 'react-aria/useObjectRef';
+
+interface Snapshot {
+  rect: DOMRect;
+  style: [string, string][];
+  element: HTMLElement;
+}
+
+const SharedElementContext = createContext<RefObject<{[name: string]: Snapshot}> | null>(null);
+
+export interface SharedElementTransitionProps {
+  children: ReactNode;
+}
+
+/**
+ * A scope for SharedElements, which animate between parents.
+ */
+export function SharedElementTransition(props: SharedElementTransitionProps) {
+  let ref = useRef({});
+  return (
+    <SharedElementContext.Provider value={ref}>{props.children}</SharedElementContext.Provider>
+  );
+}
+
+export interface SharedElementRenderProps {
+  /**
+   * Whether the element is currently entering.
+   *
+   * @selector [data-entering]
+   */
+  isEntering: boolean;
+  /**
+   * Whether the element is currently exiting.
+   *
+   * @selector [data-exiting]
+   */
+  isExiting: boolean;
+}
+
+export interface SharedElementPropsBase
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>,
+    RenderProps<SharedElementRenderProps> {}
+
+export interface SharedElementProps extends SharedElementPropsBase {
+  name: string;
+  isVisible?: boolean;
+}
+
+/**
+ * An element that animates between its old and new position when moving between parents.
+ */
+export const SharedElement = forwardRef(function SharedElement(
+  props: SharedElementProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let {name, isVisible = true, children, className, style, render, ...divProps} = props;
+  let [state, setState] = useState(isVisible ? 'visible' : 'hidden');
+  let scopeRef = useContext(SharedElementContext);
+  if (!scopeRef) {
+    throw new Error('<SharedElement> must be rendered inside a <SharedElementTransition>');
+  }
+
+  if (isVisible && state === 'hidden') {
+    setState('visible');
+  }
+
+  ref = useObjectRef(ref);
+  useLayoutEffect(() => {
+    let element = ref.current;
+    let scope = scopeRef.current;
+    let prevSnapshot: Snapshot | undefined = scope[name];
+    let frame: number | null = null;
+    let restoreStyles: (() => void) | null = null;
+    // StrictMode re-runs this effect on the same instance. Ignore async work from the
+    // cancelled run so a stale entering microtask cannot overwrite the remount path.
+    let cancelled = false;
+    // StrictMode cleanup snapshots this same node. That is not a move between parents,
+    // so drop it and take the entering path on the replay. Only do this when visible:
+    // when isVisible flips to false the snapshot must stay so a sibling can consume it
+    // (otherwise forward tab moves delete the snapshot before the next indicator mounts).
+    if (isVisible && prevSnapshot && element && prevSnapshot.element === element) {
+      delete scope[name];
+      prevSnapshot = undefined;
+    }
+
+    if (element && isVisible && prevSnapshot) {
+      // Element is transitioning from a previous instance.
+      setState('visible');
+      let animations = element.getAnimations();
+
+      // Set properties to animate from.
+      let values = prevSnapshot.style.map(([property, prevValue]) => {
+        let value = element.style[property];
+        if (property === 'translate') {
+          let prevRect = prevSnapshot.rect;
+          let currentItem = element.getBoundingClientRect();
+          let deltaX = prevRect.left - currentItem?.left;
+          let deltaY = prevRect.top - currentItem?.top;
+          element.style.translate = `${deltaX}px ${deltaY}px`;
+        } else {
+          element.style[property] = prevValue;
+        }
+        return [property, value];
+      });
+
+      // Cancel any new animations triggered by these properties.
+      for (let a of element.getAnimations()) {
+        if (!animations.includes(a)) {
+          a.cancel();
+        }
+      }
+
+      // Remove overrides after one frame to animate to the current values.
+      restoreStyles = () => {
+        for (let [property, value] of values) {
+          element.style[property] = value;
+        }
+      };
+      frame = requestAnimationFrame(() => {
+        if (cancelled) {
+          return;
+        }
+        frame = null;
+        restoreStyles?.();
+      });
+
+      delete scope[name];
+    } else if (element && isVisible && !prevSnapshot) {
+      // No previous instance exists, apply the entering state.
+      queueMicrotask(() => {
+        if (cancelled) {
+          return;
+        }
+        flushSync(() => setState('entering'));
+      });
+      frame = requestAnimationFrame(() => {
+        if (cancelled) {
+          return;
+        }
+        frame = null;
+        setState('visible');
+      });
+    } else if (element && !isVisible) {
+      // Wait until layout effects finish, and check if a snapshot still exists.
+      // If so, no new SharedElement consumed it, so enter the exiting state.
+      queueMicrotask(() => {
+        if (cancelled) {
+          return;
+        }
+        if (scope[name]) {
+          delete scope[name];
+          flushSync(() => setState('exiting'));
+          Promise.all(element.getAnimations().map(a => a.finished))
+            .then(() => {
+              if (!cancelled) {
+                setState('hidden');
+              }
+            })
+            .catch(() => {});
+        } else {
+          // Snapshot was consumed by another instance, unmount.
+          setState('hidden');
+        }
+      });
+    }
+
+    return () => {
+      cancelled = true;
+      if (frame != null) {
+        cancelAnimationFrame(frame);
+        // Restore before the next snapshot. StrictMode cleanup otherwise leaves
+        // the temporary translate/width/height overrides in place.
+        restoreStyles?.();
+      }
+
+      if (element && element.isConnected && !element.hasAttribute('data-exiting')) {
+        // On unmount, store a snapshot of the rectangle and computed style for transitioning properties.
+        let style = window.getComputedStyle(element);
+        if (style.transitionProperty !== 'none') {
+          let transitionProperty = style.transitionProperty.split(/\s*,\s*/);
+          scope[name] = {
+            rect: element.getBoundingClientRect(),
+            style: transitionProperty.map(p => [p, style[p]]),
+            element
+          };
+        }
+      }
+    };
+  }, [ref, scopeRef, name, isVisible]);
+
+  let renderProps = useRenderProps({
+    children,
+    className,
+    style,
+    render,
+    values: {
+      isEntering: state === 'entering',
+      isExiting: state === 'exiting'
+    }
+  });
+
+  if (state === 'hidden') {
+    return null;
+  }
+
+  return (
+    <dom.div
+      {...divProps}
+      {...renderProps}
+      ref={ref}
+      data-entering={state === 'entering' || undefined}
+      data-exiting={state === 'exiting' || undefined}
+    />
+  );
+});

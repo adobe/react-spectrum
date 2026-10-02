@@ -1,0 +1,35 @@
+<svg style="max-height: 232px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="86 40 365 236">
+  <title>Tabs anatomy diagram</title>
+  <desc>Shows a tabs component with labels for each tab, a selection state, and the tab panel.</desc>
+  <g id="tabs_anatomy_desktop">
+    <g id="Tab" transform="translate(176 66)">
+      <g id="Tab-2">
+        <text id="Section_1" transform="translate(0 35)" fill="var(--anatomy-gray-800)" font-size="17" font-family="var(--anatomy-font)"><tspan x="0" y="0">Section 1</tspan></text>
+      </g>
+      <g id="Tab-3" transform="translate(91)">
+        <text id="Section_2" transform="translate(0 35)" fill="var(--anatomy-gray-600)" font-size="17" font-family="var(--anatomy-font)"><tspan x="0" y="0">Section 2</tspan></text>
+      </g>
+      <g id="Underline" transform="translate(0 58)">
+        <rect id="Bar" width="271.906" height="2" rx="1" fill="var(--anatomy-gray-200)"/>
+      </g>
+      <rect id="Underline-2" width="61" height="2" rx="1" transform="translate(0 58)" fill="var(--anatomy-gray-800)"/>
+    </g>
+    <g id="Group_4076" transform="translate(-106 395)">
+      <text id="Tab_item" transform="translate(402 -342)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic" font-style="italic"><tspan x="-10" y="0">Tab</tspan></text>
+      <path id="Union_63" d="M-9998-346.5a2.5,2.5,0,0,1,2-2.449V-372h1v23.049a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9998-346.5Z" transform="translate(10397.5 35)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="Group_4101" transform="translate(-197 395)">
+      <text id="Tab_item_selected_" transform="translate(402 -342)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic" font-style="italic"><tspan x="-30" y="0">Tab (selected)</tspan></text>
+      <path id="Union_63-2" d="M-9998-346.5a2.5,2.5,0,0,1,2-2.449V-372h1v23.049a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9998-346.5Z" transform="translate(10397.5 35)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <rect id="Rectangle_1809" width="271.906" height="170" transform="translate(176 134)" fill="var(--anatomy-gray-200)" opacity="0.5"/>
+    <g id="Group_3783" transform="translate(-20 70)">
+      <text id="Tabs" transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic" font-style="italic"><tspan x="-36" y="0">Tab list</tspan></text>
+      <path id="Union_7" d="M72.05-35H52v-1H72.05a2.5,2.5,0,0,1,2.45-2A2.5,2.5,0,0,1,77-35.5,2.5,2.5,0,0,1,74.5-33,2.5,2.5,0,0,1,72.05-35Z" transform="translate(108 67.5)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="Group_3916" transform="translate(-20 177)">
+      <text id="Tab_view" transform="translate(156 35)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" style="font-style: italic" font-style="italic"><tspan x="-48" y="0">Tab panel</tspan></text>
+      <path id="Union_7-2" d="M18.717,3H0V2H18.717a2.5,2.5,0,1,1,0,1Z" transform="translate(161 29.5)" fill="var(--anatomy-gray-500)"/>
+    </g>
+  </g>
+</svg>

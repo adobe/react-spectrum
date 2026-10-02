@@ -1,0 +1,102 @@
+<svg style="max-height: 165px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 4px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 208 165.002">
+  <g id="Group_156764" data-name="Group 156764" transform="translate(-228 -823)">
+    <g id="Group_156666" data-name="Group 156666" transform="translate(-17 681)">
+      <g id="Path_35562" data-name="Path 35562" transform="translate(245 142)" fill="var(--anatomy-gray-50)">
+        <path d="M 204 164.5020904541016 L 4 164.5020904541016 C 2.070105314254761 164.5020904541016 0.5 163.2821197509766 0.5 161.7825317382812 L 0.5 3.219563961029053 C 0.5 1.719985008239746 2.070105314254761 0.5000112652778625 4 0.5000112652778625 L 204 0.5000112652778625 C 205.9299011230469 0.5000112652778625 207.5 1.719985008239746 207.5 3.219563961029053 L 207.5 161.7825317382812 C 207.5 163.2821197509766 205.9299011230469 164.5020904541016 204 164.5020904541016 Z" stroke="none"/>
+        <path d="M 4 0.9999847412109375 C 3.158843994140625 0.9999847412109375 2.377029418945312 1.25640869140625 1.798583984375 1.72198486328125 C 1.283599853515625 2.136489868164062 1 2.668319702148438 1 3.219558715820312 L 1 161.7825317382812 C 1 162.3337554931641 1.283599853515625 162.8655853271484 1.798583984375 163.2800903320312 C 2.377029418945312 163.7456665039062 3.158843994140625 164.0020599365234 4 164.0020599365234 L 204 164.0020599365234 C 204.8411560058594 164.0020599365234 205.6229705810547 163.7456665039062 206.201416015625 163.2800903320312 C 206.7164001464844 162.8655853271484 207 162.3337554931641 207 161.7825317382812 L 207 3.219558715820312 C 207 2.668319702148438 206.7164001464844 2.136489868164062 206.201416015625 1.72198486328125 C 205.6229705810547 1.25640869140625 204.8411560058594 0.9999847412109375 204 0.9999847412109375 L 4 0.9999847412109375 M 4 -1.52587890625e-05 L 204 -1.52587890625e-05 C 206.2091369628906 -1.52587890625e-05 208 1.441436767578125 208 3.219558715820312 L 208 161.7825317382812 C 208 163.5606384277344 206.2091369628906 165.0020599365234 204 165.0020599365234 L 4 165.0020599365234 C 1.790863037109375 165.0020599365234 0 163.5606384277344 0 161.7825317382812 L 0 3.219558715820312 C 0 1.441436767578125 1.790863037109375 -1.52587890625e-05 4 -1.52587890625e-05 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+      </g>
+      <g id="Group_156760" data-name="Group 156760">
+        <g id="Group_156664" data-name="Group 156664" transform="translate(246 266)">
+          <g id="Group_1" data-name="Group 1" transform="translate(8)">
+            <rect id="Rectangle_142237" data-name="Rectangle 142237" width="207" height="40" transform="translate(-8.229)" fill="var(--anatomy-gray-50)" fill-opacity="0"/>
+            <g id="Group_156662" data-name="Group 156662" transform="translate(177 4)">
+              <rect id="Rectangle_139996" data-name="Rectangle 139996" width="10" height="32" fill="red" opacity="0"/>
+            </g>
+            <g id="Group_156660" data-name="Group 156660" transform="translate(12 10)">
+              <text id="Panda" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Panda</tspan></text>
+            </g>
+          </g>
+        </g>
+        <g id="Group_156668" data-name="Group 156668" transform="translate(246 225)">
+          <rect id="Rectangle_142240" data-name="Rectangle 142240" width="206" height="1" transform="translate(0 40)" fill="var(--anatomy-gray-400)"/>
+          <g id="Group_1-2" data-name="Group 1">
+            <path id="Path_35563" data-name="Path 35563" d="M0,0H206V40H0Z" fill="none"/>
+            <g id="Group_156662-2" data-name="Group 156662" transform="translate(184 4)">
+              <rect id="Rectangle_139996-2" data-name="Rectangle 139996" width="10" height="32" fill="red" opacity="0"/>
+            </g>
+            <g id="Group_156660-2" data-name="Group 156660" transform="translate(20 10)">
+              <text id="Kangaroo" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Kangaroo</tspan></text>
+            </g>
+          </g>
+        </g>
+        <g id="Group_156663" data-name="Group 156663" transform="translate(246 184)">
+          <g id="Group_1-3" data-name="Group 1" transform="translate(8)">
+            <rect id="Rectangle_142237-2" data-name="Rectangle 142237" width="207" height="40" transform="translate(-8.062)" fill="var(--anatomy-gray-50)" fill-opacity="0"/>
+            <g id="Group_156662-3" data-name="Group 156662" transform="translate(177 4)">
+              <rect id="Rectangle_139996-3" data-name="Rectangle 139996" width="10" height="32" fill="red" opacity="0"/>
+            </g>
+            <g id="Group_156660-3" data-name="Group 156660" transform="translate(12 10)">
+              <text id="Dog" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Dog</tspan></text>
+            </g>
+          </g>
+          <rect id="Rectangle_142240-2" data-name="Rectangle 142240" width="206" height="1" transform="translate(0 40)" fill="var(--anatomy-gray-400)"/>
+        </g>
+        <g id="Group_156659" data-name="Group 156659" transform="translate(246 143)">
+          <g id="Group_1-4" data-name="Group 1" transform="translate(8)">
+            <rect id="Rectangle_142237-3" data-name="Rectangle 142237" width="50" height="25" transform="translate(-8 6)" fill="var(--anatomy-gray-50)" fill-opacity="0"/>
+            <g id="Group_156660-4" data-name="Group 156660" transform="translate(12 10)">
+              <text id="Cat" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Cat</tspan></text>
+            </g>
+          </g>
+          <rect id="Rectangle_142240-3" data-name="Rectangle 142240" width="206" height="1" transform="translate(0 40)" fill="var(--anatomy-gray-400)"/>
+        </g>
+      </g>
+    </g>
+    <g id="Smock_DragHandle_18_N" transform="translate(230 837.5)">
+      <g id="Canvas" transform="translate(0 72.5)" fill="none">
+        <path d="M 12 31 L 4 31 C 2.345789909362793 31 1 29.65420913696289 1 28 L 1 4 C 1 2.345789909362793 2.345789909362793 1 4 1 L 12 1 C 13.65421009063721 1 15 2.345789909362793 15 4 L 15 28 C 15 29.65420913696289 13.65421009063721 31 12 31 Z" stroke="none"/>
+        <path d="M 4 2 C 2.897199630737305 2 2 2.897199630737305 2 4 L 2 28 C 2 29.1028003692627 2.897199630737305 30 4 30 L 12 30 C 13.1028003692627 30 14 29.1028003692627 14 28 L 14 4 C 14 2.897199630737305 13.1028003692627 2 12 2 L 4 2 M 4 0 L 12 0 C 14.20913982391357 0 16 1.790859222412109 16 4 L 16 28 C 16 30.20914077758789 14.20913982391357 32 12 32 L 4 32 C 1.790860176086426 32 0 30.20914077758789 0 28 L 0 4 C 0 1.790859222412109 1.790860176086426 0 4 0 Z" stroke="none" fill="var(--anatomy-gray-900)"/>
+      </g>
+      <g id="Group_156361" data-name="Group 156361" transform="translate(0.5 73)">
+        <circle id="Ellipse_9370" data-name="Ellipse 9370" cx="1" cy="1" r="1" transform="translate(5 19)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9371" data-name="Ellipse 9371" cx="1" cy="1" r="1" transform="translate(5 16)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9372" data-name="Ellipse 9372" cx="1" cy="1" r="1" transform="translate(5 13)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9373" data-name="Ellipse 9373" cx="1" cy="1" r="1" transform="translate(5 10)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9374" data-name="Ellipse 9374" cx="1" cy="1" r="1" transform="translate(8 19)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9375" data-name="Ellipse 9375" cx="1" cy="1" r="1" transform="translate(8 16)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9376" data-name="Ellipse 9376" cx="1" cy="1" r="1" transform="translate(8 13)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9377" data-name="Ellipse 9377" cx="1" cy="1" r="1" transform="translate(8 10)" fill="var(--anatomy-gray-800)"/>
+      </g>
+      <g id="Group_156761" data-name="Group 156761" transform="translate(0.5 31)">
+        <circle id="Ellipse_9370-2" data-name="Ellipse 9370" cx="1" cy="1" r="1" transform="translate(5 19)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9371-2" data-name="Ellipse 9371" cx="1" cy="1" r="1" transform="translate(5 16)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9372-2" data-name="Ellipse 9372" cx="1" cy="1" r="1" transform="translate(5 13)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9373-2" data-name="Ellipse 9373" cx="1" cy="1" r="1" transform="translate(5 10)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9374-2" data-name="Ellipse 9374" cx="1" cy="1" r="1" transform="translate(8 19)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9375-2" data-name="Ellipse 9375" cx="1" cy="1" r="1" transform="translate(8 16)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9376-2" data-name="Ellipse 9376" cx="1" cy="1" r="1" transform="translate(8 13)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9377-2" data-name="Ellipse 9377" cx="1" cy="1" r="1" transform="translate(8 10)" fill="var(--anatomy-gray-800)"/>
+      </g>
+      <g id="Group_156762" data-name="Group 156762" transform="translate(0.5 -10)">
+        <circle id="Ellipse_9370-3" data-name="Ellipse 9370" cx="1" cy="1" r="1" transform="translate(5 19)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9371-3" data-name="Ellipse 9371" cx="1" cy="1" r="1" transform="translate(5 16)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9372-3" data-name="Ellipse 9372" cx="1" cy="1" r="1" transform="translate(5 13)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9373-3" data-name="Ellipse 9373" cx="1" cy="1" r="1" transform="translate(5 10)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9374-3" data-name="Ellipse 9374" cx="1" cy="1" r="1" transform="translate(8 19)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9375-3" data-name="Ellipse 9375" cx="1" cy="1" r="1" transform="translate(8 16)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9376-3" data-name="Ellipse 9376" cx="1" cy="1" r="1" transform="translate(8 13)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9377-3" data-name="Ellipse 9377" cx="1" cy="1" r="1" transform="translate(8 10)" fill="var(--anatomy-gray-800)"/>
+      </g>
+      <g id="Group_156763" data-name="Group 156763" transform="translate(0.5 113)">
+        <circle id="Ellipse_9370-4" data-name="Ellipse 9370" cx="1" cy="1" r="1" transform="translate(5 19)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9371-4" data-name="Ellipse 9371" cx="1" cy="1" r="1" transform="translate(5 16)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9372-4" data-name="Ellipse 9372" cx="1" cy="1" r="1" transform="translate(5 13)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9373-4" data-name="Ellipse 9373" cx="1" cy="1" r="1" transform="translate(5 10)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9374-4" data-name="Ellipse 9374" cx="1" cy="1" r="1" transform="translate(8 19)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9375-4" data-name="Ellipse 9375" cx="1" cy="1" r="1" transform="translate(8 16)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9376-4" data-name="Ellipse 9376" cx="1" cy="1" r="1" transform="translate(8 13)" fill="var(--anatomy-gray-800)"/>
+        <circle id="Ellipse_9377-4" data-name="Ellipse 9377" cx="1" cy="1" r="1" transform="translate(8 10)" fill="var(--anatomy-gray-800)"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,18 @@
+{
+  "calendar": "לוח שנה",
+  "day": "יום",
+  "dayPeriod": "לפנה״צ/אחה״צ",
+  "endDate": "תאריך סיום",
+  "era": "תקופה",
+  "hour": "שעה",
+  "minute": "דקה",
+  "month": "חודש",
+  "second": "שנייה",
+  "selectedDateDescription": "תאריך נבחר: {date}",
+  "selectedRangeDescription": "טווח נבחר: {startDate} עד {endDate}",
+  "selectedTimeDescription": "זמן נבחר: {time}",
+  "startDate": "תאריך התחלה",
+  "timeZoneName": "אזור זמן",
+  "weekday": "יום בשבוע",
+  "year": "שנה"
+}

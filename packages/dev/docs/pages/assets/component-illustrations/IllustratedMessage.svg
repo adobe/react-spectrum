@@ -1,0 +1,10 @@
+<svg style="background:var(--anatomy-gray-100); padding: 20px 10px" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+  <rect id="Placement_Area" data-name="Placement Area" width="140" height="140" fill="red" opacity="0"/>
+  <g id="Cloud" transform="translate(22 0)">
+    <path d="M69.9137 41.5243C69.9162 41.3982 69.9229 41.2732 69.9229 41.1464C69.9229 31.2765 62.2568 23.2754 52.8003 23.2754C45.1714 23.2754 38.7107 28.484 36.4972 35.6788C35.0284 35.0457 33.4208 34.6919 31.733 34.6919C24.8317 34.6919 19.2372 40.531 19.2372 47.7339C19.2372 48.7486 19.3592 49.7316 19.5692 50.6797C15.0107 51.9829 11.6562 56.326 11.6562 61.4973C11.6562 67.6348 16.3767 72.6141 22.234 72.7151V72.7246H68.9728V72.7224C69.0008 72.7225 69.0283 72.7246 69.0564 72.7246C77.3185 72.7246 84.0162 65.7341 84.0162 57.1108C84.0162 48.7881 77.7766 41.9883 69.9137 41.5243Z" fill="var(--anatomy-gray-500)"/>
+  </g>
+  <g id="Message">
+    <text transform="translate(70 100)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">No results</tspan></text>
+    <text transform="translate(70 116)" fill="var(--anatomy-gray-600)" font-size="11" font-family="var(--anatomy-font)" text-anchor="middle"><tspan x="0" y="0">Try another search</tspan></text>
+  </g>
+</svg>

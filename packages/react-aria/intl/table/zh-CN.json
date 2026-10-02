@@ -1,0 +1,13 @@
+{
+  "ascending": "升序",
+  "ascendingSort": "按列 {columnName} 升序排序",
+  "collapse": "折叠",
+  "columnSize": "{value} 像素",
+  "descending": "降序",
+  "descendingSort": "按列 {columnName} 降序排序",
+  "expand": "扩展",
+  "resizerDescription": "按 Enter 开始调整大小。",
+  "select": "选择",
+  "selectAll": "全选",
+  "sortable": "可排序的列"
+}

@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} nije izabrano.",
+  "longPressToSelect": "Dugo pritisnite za ulazak u režim biranja.",
+  "select": "Izaberite",
+  "selectedAll": "Izabrane su sve stavke.",
+  "selectedCount": "{count, plural, =0 {Nije izabrana nijedna stavka} one {Izabrana je # stavka} other {Izabrano je # stavki}}.",
+  "selectedItem": "{item} je izabrano."
+}

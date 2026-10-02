@@ -1,0 +1,115 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/inlinealert';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/inlinealert/package.json';
+
+```jsx import
+import {InlineAlert} from '@react-spectrum/inlinealert';
+import {Content} from '@adobe/react-spectrum';
+import {Heading} from '@react-spectrum/text';
+```
+
+---
+category: Status
+keywords: [inline alert, alert]
+---
+
+# InlineAlert
+
+<PageDescription>{docs.exports.InlineAlert.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['InlineAlert']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/in-line-alert/'}
+  ]}
+  since="3.29.0" />
+
+## Example
+
+```tsx example
+<InlineAlert>
+  <Heading>Payment Information</Heading>
+  <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
+</InlineAlert>
+```
+
+## Content
+
+Inline alerts contain a title and body. They also include an icon for non-neutral variants.
+
+```tsx example
+<InlineAlert variant="positive">
+  <Heading>Payment Information</Heading>
+  <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
+</InlineAlert>
+```
+
+### Accessibility
+
+Inline alerts are given the [alert role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role), which means they should only be used for information that requires the user's immediate attention.
+
+### Internationalization
+
+To internationalize an InlineAlert, localized strings should be set as the title and body content of the InlineAlert.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the InlineAlert is automatically flipped.
+
+## Props
+
+<PropTable component={docs.exports.InlineAlert} links={docs.links} />
+
+## Visual options
+
+### Variant
+[View guidelines](https://spectrum.adobe.com/page/in-line-alert/#Options)
+
+When inline alerts have a semantic meaning, they should use the appropriate variant.
+The default variant is neutral, and should be used when the message is neutral in tone or when its semantics do not fit any of the other variants.
+
+#### Informative
+
+```tsx example
+<InlineAlert variant="info">
+  <Heading>Accepted Payment Methods</Heading>
+  <Content>Only major credit cards are accepted for payment. Direct debit is currently unavailable.</Content>
+</InlineAlert>
+```
+
+#### Positive
+
+```tsx example
+<InlineAlert variant="positive">
+  <Heading>Purchase completed</Heading>
+  <Content>You'll get a confirmation email with your order details shortly.</Content>
+</InlineAlert>
+```
+
+#### Notice
+
+```tsx example
+<InlineAlert variant="notice">
+  <Heading>Update payment information</Heading>
+  <Content>The saved credit card for your account has expired. Update your payment information to complete the purchase.</Content>
+</InlineAlert>
+```
+
+#### Negative
+
+```tsx example
+<InlineAlert variant="negative">
+  <Heading>Unable to process payment</Heading>
+  <Content>There was an error processing your payment. Please check that your credit card information is correct, then try again.</Content>
+</InlineAlert>
+```

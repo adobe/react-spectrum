@@ -1,0 +1,13 @@
+diff --git a/index.d.ts b/index.d.ts
+index c5da87629f94c457947bc712439c94b028cd5d81..3bec2ed83b30a40f84f51665eebf7a67d1a628c1 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -4,7 +4,7 @@
+  *
+  * @type {import('unified').Plugin<[Options?]|Array<void>, Root>}
+  */
+-export default function remarkMdx(options?: void | import("micromark-extension-mdx-expression/dev/lib/syntax").Options | undefined): void | import("unified").Transformer<import("mdast").Root, import("mdast").Root>;
++export default function remarkMdx(options?: void | import("micromark-extension-mdx-expression").Options | undefined): void | import("unified").Transformer<import("mdast").Root, import("mdast").Root>;
+ export type Root = import('mdast').Root;
+ export type Options = import('micromark-extension-mdxjs').Options;
+ export type DoNotTouchAsThisImportItIncludesMdxInTree = typeof import("mdast-util-mdx");

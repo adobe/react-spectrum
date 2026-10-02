@@ -1,0 +1,5 @@
+{
+  "decrease": "Μείωση {fieldLabel}",
+  "increase": "Αύξηση {fieldLabel}",
+  "numberField": "Πεδίο αριθμού"
+}

@@ -1,0 +1,7 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 45px) / 2) 10px" height="45" viewBox="0 0 55 45">
+  <g id="Label">
+    <rect id="Placement_Area" data-name="Placement Area" width="54" height="30" fill="red" opacity="0"/>
+    <text id="Text" transform="translate(0 20)" fill="var(--anatomy-gray-700)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">Aperture</tspan></text>
+  </g>
+  <text id="Text-2" data-name="Text" transform="translate(0 41)" fill="var(--anatomy-gray-800)" font-size="17" font-family="var(--anatomy-font)"><tspan x="0" y="0">f/1.5</tspan></text>
+</svg>

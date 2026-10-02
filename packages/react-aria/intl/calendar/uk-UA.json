@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} — {endDate}",
+  "dateSelected": "Вибрано {date}",
+  "finishRangeSelectionPrompt": "Натисніть, щоб завершити вибір діапазону дат",
+  "maximumDate": "Остання доступна дата",
+  "minimumDate": "Перша доступна дата",
+  "next": "Наступний",
+  "previous": "Попередній",
+  "selectedDateDescription": "Вибрана дата: {date}",
+  "selectedRangeDescription": "Вибраний діапазон: {dateRange}",
+  "startRangeSelectionPrompt": "Натисніть, щоб почати вибір діапазону дат",
+  "todayDate": "Сьогодні, {date}",
+  "todayDateSelected": "Сьогодні, вибрано {date}"
+}

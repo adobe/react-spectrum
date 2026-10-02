@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Renames variants 1`] = `
+"import { ProgressCircle } from "@react-spectrum/s2";
+<div>
+  <ProgressCircle staticColor="white"/>
+</div>"
+`;

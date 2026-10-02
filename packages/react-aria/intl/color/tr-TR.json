@@ -1,0 +1,8 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Renk Seçici",
+  "colorSwatch": "renk örneği",
+  "transparent": "saydam",
+  "twoDimensionalSlider": "2D sürgü"
+}

@@ -1,0 +1,19 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="48" viewBox="0 0 240 48">
+  <rect id="Placement_Area" data-name="Placement Area" width="240" height="48" fill="red" opacity="0"/>
+  <g id="Background" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+    <rect width="240" height="48" rx="6" stroke="none"/>
+    <rect x="0.5" y="0.5" width="239" height="47" rx="5.5" fill="none"/>
+  </g>
+  <g id="Close_Button" transform="translate(20 24)">
+    <path d="M-4,-4 L4,4 M4,-4 L-4,4" stroke="var(--anatomy-gray-700)" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text id="Selected_Text" transform="translate(40 28)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-weight="600"><tspan x="0" y="0">3 selected</tspan></text>
+  <g id="Edit_Button" transform="translate(154 12)">
+    <rect width="36" height="24" rx="4" fill="var(--anatomy-gray-600)"/>
+    <text transform="translate(18 16)" fill="white" font-size="11" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">Edit</tspan></text>
+  </g>
+  <g id="Delete_Button" transform="translate(196 12)">
+    <rect width="36" height="24" rx="4" fill="var(--anatomy-gray-600)"/>
+    <text transform="translate(18 16)" fill="white" font-size="11" font-family="var(--anatomy-font)" font-weight="600" text-anchor="middle"><tspan x="0" y="0">Delete</tspan></text>
+  </g>
+</svg>

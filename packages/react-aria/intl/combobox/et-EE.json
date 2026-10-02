@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Kuva soovitused",
+  "countAnnouncement": "{optionCount, plural, one {# valik} other {# valikud}} saadaval.",
+  "focusAnnouncement": "{isGroupChange, select, true {Sisestatud rühm {groupTitle}, valikuga {groupCount, plural, one {# valik} other {# valikud}}. } other {}}{optionText}{isSelected, select, true {, valitud} other {}}",
+  "listboxLabel": "Soovitused",
+  "selectedAnnouncement": "{optionText}, valitud"
+}

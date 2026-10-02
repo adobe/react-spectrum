@@ -1,0 +1,3 @@
+{
+  "invalidSelection": "{selectedCount, plural, one {Data selectată nu este disponibilă} other {Datele selectate nu sunt disponibile}}."
+}

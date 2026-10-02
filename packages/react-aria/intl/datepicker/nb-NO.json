@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalender",
+  "day": "dag",
+  "dayPeriod": "a.m./p.m.",
+  "endDate": "Sluttdato",
+  "era": "tidsalder",
+  "hour": "time",
+  "minute": "minutt",
+  "month": "måned",
+  "second": "sekund",
+  "selectedDateDescription": "Valgt dato: {date}",
+  "selectedRangeDescription": "Valgt område: {startDate} til {endDate}",
+  "selectedTimeDescription": "Valgt tid: {time}",
+  "startDate": "Startdato",
+  "timeZoneName": "tidssone",
+  "weekday": "ukedag",
+  "year": "år"
+}

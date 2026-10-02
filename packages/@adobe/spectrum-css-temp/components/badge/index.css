@@ -1,0 +1,74 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+.spectrum-Badge {
+  display: inline-flex;
+  position: relative;
+
+  width: fit-content;
+
+  padding: var(--spectrum-global-dimension-size-50) 0;
+
+  border-radius: var(--spectrum-border-radius);
+
+  font-size: var(--spectrum-global-dimension-size-150);
+  line-height: var(--spectrum-global-font-line-height-medium);
+
+  cursor: default;
+
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  font-smoothing: subpixel-antialiased;
+
+  /* label should always have padding at the end */
+  .spectrum-Badge-label {
+    order: 1; /* always be after the icon, regardless of DOM order */
+    padding-inline-end: var(--spectrum-global-dimension-size-115);
+  }
+
+  .spectrum-Badge-icon {
+    flex-shrink: 0;
+    order: 0; /* always be before the label, regardless of DOM order */
+    padding-inline-start: var(--spectrum-global-dimension-size-115);
+  }
+  /* icon + text buttons should have padding between the text and icon no matter the order */
+  .spectrum-Badge-icon + .spectrum-Badge-label {
+    padding-inline-start: var(--spectrum-global-dimension-size-100);
+  }
+
+  .spectrum-Badge-label:not([hidden]) + .spectrum-Badge-icon {
+    padding-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+
+  /* text only buttons should have padding at the start */
+  .spectrum-Badge-label:only-child {
+    padding-inline-start: var(--spectrum-global-dimension-size-115);
+  }
+
+  /* icon only buttons should have padding at the end */
+  .spectrum-Badge-icon:only-child {
+    padding-inline-start: var(--spectrum-global-dimension-size-50);
+    padding-inline-end: var(--spectrum-global-dimension-size-50);
+  }
+}
+
+.spectrum-Badge--large {
+  font-size: var(--spectrum-global-dimension-size-175);
+  padding: var(--spectrum-global-dimension-size-100) var(--spectrum-global-dimension-size-150);
+}
+
+.spectrum-Badge--small {
+  font-size: var(--spectrum-global-dimension-font-size-50);
+  padding: var(--spectrum-global-dimension-size-40) var(--spectrum-global-dimension-size-85);
+}

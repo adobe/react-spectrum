@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} non sélectionné.",
+  "longPressToSelect": "Appuyez de manière prolongée pour passer en mode de sélection.",
+  "select": "Sélectionner",
+  "selectedAll": "Tous les éléments sélectionnés.",
+  "selectedCount": "{count, plural, =0 {Aucun élément sélectionné} one {# élément sélectionné} other {# éléments sélectionnés}}.",
+  "selectedItem": "{item} sélectionné."
+}

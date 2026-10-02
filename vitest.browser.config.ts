@@ -1,0 +1,363 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {defineConfig} from 'vitest/config';
+import fs from 'fs';
+import macros from 'unplugin-parcel-macros';
+import path from 'path';
+import {playwright} from '@vitest/browser-playwright';
+import type {Plugin} from 'vite';
+import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
+
+const s2Dir = path.resolve(__dirname, 'packages/@react-spectrum/s2');
+
+// Handles ../intl/*.json and ../intl/<feature>/*.json imports.
+function intlJsonPlugin(): Plugin {
+  return {
+    name: 'intl-json-loader',
+    async resolveId(source, importer) {
+      if (importer && /\/intl\/.*\*.json$/.test(source)) {
+        const dir = path.dirname(importer);
+        const intlDir = path.resolve(dir, source.replace('*.json', ''));
+        return `virtual:intl-messages:${intlDir}`;
+      }
+      return null;
+    },
+    async load(id) {
+      if (id.startsWith('virtual:intl-messages:')) {
+        const intlDir = id.replace('virtual:intl-messages:', '');
+        try {
+          const files = fs.readdirSync(intlDir).filter(f => f.endsWith('.json'));
+          const messages: Record<string, Record<string, string>> = {};
+
+          for (const file of files) {
+            const locale = path.basename(file, '.json');
+            const content = fs.readFileSync(path.join(intlDir, file), 'utf-8');
+            messages[locale] = JSON.parse(content);
+          }
+
+          return `export default ${JSON.stringify(messages)};`;
+        } catch {
+          return 'export default {};';
+        }
+      }
+      return null;
+    }
+  };
+}
+
+// Resolve @react-spectrum/s2/illustrations/* imports
+function illustrationResolverPlugin(): Plugin {
+  return {
+    name: 'illustration-resolver',
+    enforce: 'pre',
+    resolveId(source) {
+      if (source.startsWith('@react-spectrum/s2/illustrations/')) {
+        const illustrationPath = source.replace('@react-spectrum/s2/illustrations/', '');
+        const tsxPath = path.resolve(s2Dir, 'spectrum-illustrations', illustrationPath + '.tsx');
+
+        if (fs.existsSync(tsxPath)) {
+          return tsxPath;
+        }
+
+        return null;
+      }
+      return null;
+    }
+  };
+}
+
+/**
+ * Handle S2 illustrations.
+ *
+ * Resolves the SVG and wraps it with createIllustration from Icon.tsx.
+ */
+function illustrationPlugin(): Plugin {
+  const VIRTUAL_PREFIX = '\0s2-illustration:';
+  return {
+    name: 'illustration-loader',
+    enforce: 'pre',
+    resolveId(source, importer) {
+      if (source.startsWith('illustration:')) {
+        const svgPath = source.replace('illustration:', '');
+        if (importer) {
+          const dir = path.dirname(importer);
+          const resolvedPath = path.resolve(dir, svgPath);
+          return VIRTUAL_PREFIX + resolvedPath;
+        }
+      }
+      return null;
+    },
+    load(id) {
+      if (id.startsWith(VIRTUAL_PREFIX)) {
+        const svgPath = id.slice(VIRTUAL_PREFIX.length).replaceAll('\\', '/');
+        return [
+          `import {createIllustration} from '${path.resolve(s2Dir, 'src/Icon.tsx').replaceAll('\\', '/')}';`,
+          `import SvgComponent from '${svgPath}';`,
+          `export default /*#__PURE__*/ createIllustration(SvgComponent);`
+        ].join('\n');
+      }
+      return null;
+    }
+  };
+}
+
+/**
+ * Handle S2 workflow icons.
+ *
+ * Resolves the SVG and wraps it with createIcon from Icon.tsx.
+ */
+function iconWrapperPlugin(): Plugin {
+  const VIRTUAL_PREFIX = '\0s2-icon:';
+  const iconsDir = path.resolve(s2Dir, 's2wf-icons');
+
+  // Build a map from icon name -> absolute SVG path
+  const iconMap = new Map<string, string>();
+  if (fs.existsSync(iconsDir)) {
+    for (const file of fs.readdirSync(iconsDir)) {
+      const match = file.match(/^S2_Icon_(.+)_20_N\.svg$/);
+      if (match) {
+        iconMap.set(match[1], path.resolve(iconsDir, file));
+      }
+    }
+  }
+
+  return {
+    name: 'icon-wrapper',
+    enforce: 'pre',
+    resolveId(source) {
+      // Match both the bare specifier and the form produced after the
+      // `@react-spectrum/s2` -> exports alias rewrites it to `.../exports/icons/<Name>`.
+      const match = source.match(/(?:@react-spectrum\/s2|[\\/]exports)[\\/]icons[\\/](.+)$/);
+      if (match) {
+        const iconName = match[1];
+        if (iconMap.has(iconName)) {
+          return VIRTUAL_PREFIX + iconName;
+        }
+      }
+      return null;
+    },
+    load(id) {
+      if (id.startsWith(VIRTUAL_PREFIX)) {
+        const iconName = id.slice(VIRTUAL_PREFIX.length);
+        const svgPath = iconMap.get(iconName);
+        if (svgPath) {
+          return [
+            `import {createIcon} from '${path.resolve(s2Dir, 'src/Icon.tsx').replaceAll('\\', '/')}';`,
+            `import SvgComponent from '${svgPath.replaceAll('\\', '/')}';`,
+            `export default /*#__PURE__*/ createIcon(SvgComponent);`
+          ].join('\n');
+        }
+      }
+      return null;
+    }
+  };
+}
+
+let unlock: ((value: any) => void) | null = null;
+
+// Cache one CDP session per page so we don't re-attach on every composition step.
+// Chromium only — used by the IME/composition commands below.
+const cdpSessions = new WeakMap<object, Promise<any>>();
+function getCDP(page: any, context: any): Promise<any> {
+  let session = cdpSessions.get(page);
+  if (!session) {
+    session = context.newCDPSession(page);
+    cdpSessions.set(page, session!);
+  }
+  return session!;
+}
+
+declare module 'vitest/browser' {
+  interface BrowserCommands {
+    lockClipboard: () => Promise<void>;
+    unlockClipboard: () => void;
+    // Drive a real IME composition via CDP to emulate soft-keyboard (e.g. Android) input.
+    // Chromium only. selectionStart/End and replacementStart/End are passed straight to
+    // Input.imeSetComposition (offsets are relative to the current caret).
+    setComposition: (
+      text: string,
+      selectionStart: number,
+      selectionEnd: number,
+      replacementStart?: number,
+      replacementEnd?: number
+    ) => Promise<void>;
+    // Commit text that doesn't come from a key press (finalizes an active composition).
+    commitComposition: (text: string) => Promise<void>;
+    // Placeholder until newer version of library
+    mouseDownOnElement: (selector: string, offsetX?: number, offsetY?: number) => Promise<void>;
+    // Same as above
+    mouseUp: () => Promise<void>;
+  }
+}
+
+export default defineConfig({
+  define: {
+    // run in dev mode so virtualizer and other test-env shortcuts are disabled
+    'process.env.NODE_ENV': '"development"',
+    'process.env.CI': JSON.stringify(process.env.CI)
+  },
+  plugins: [
+    // @ts-expect-error
+    macros.vite(), // Must be first!
+    // @ts-expect-error
+    iconWrapperPlugin(), // Wrap @react-spectrum/s2/icons/* SVGs with createIcon
+    // @ts-expect-error
+    illustrationResolverPlugin(), // Resolve @react-spectrum/s2/illustrations/* imports
+    // @ts-expect-error
+    illustrationPlugin(), // Handle illustration: protocol
+    // @ts-expect-error
+    svgr({
+      // Process all SVG files as React components
+      include: [
+        '**/s2wf-icons/**/*.svg',
+        '**/ui-icons/**/*.svg',
+        '**/spectrum-illustrations/**/*.svg'
+      ],
+      exclude: ['**/node_modules/**'],
+      svgrOptions: {
+        ref: true,
+        typescript: false,
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  removeViewBox: false
+                }
+              }
+            }
+          ]
+        }
+      }
+    }),
+    // @ts-expect-error
+    react(),
+    // @ts-expect-error
+    intlJsonPlugin()
+  ],
+  test: {
+    globals: true,
+    pool: 'threads',
+    setupFiles: ['./test/browser/setup.ts'],
+    include: ['packages/**/test/**/*.browser.test.{ts,tsx}'],
+    browser: {
+      provider: playwright(),
+      enabled: true,
+      instances: [
+        {
+          browser: 'chromium',
+          name: 'chromium-desktop',
+          viewport: {width: 1280, height: 720},
+          headless: true
+        },
+        {
+          browser: 'firefox',
+          name: 'firefox-desktop',
+          viewport: {width: 1280, height: 720},
+          headless: true
+        },
+        {
+          browser: 'webkit',
+          name: 'webkit-desktop',
+          viewport: {width: 1280, height: 720},
+          headless: true
+        }
+      ],
+      commands: {
+        lockClipboard: async () => {
+          await new Promise(resolve => {
+            navigator.locks.request('clipboard', async () => {
+              resolve(null);
+              await new Promise(resolve1 => {
+                unlock = resolve1;
+              });
+            });
+          });
+        },
+        unlockClipboard: () => {
+          if (unlock) {
+            unlock(null);
+            unlock = null;
+          }
+        },
+        setComposition: async (
+          {page, context}: any,
+          text,
+          selectionStart,
+          selectionEnd,
+          replacementStart,
+          replacementEnd
+        ) => {
+          const cdp = await getCDP(page, context);
+          const params: Record<string, unknown> = {text, selectionStart, selectionEnd};
+          if (replacementStart != null) {
+            params.replacementStart = replacementStart;
+          }
+          if (replacementEnd != null) {
+            params.replacementEnd = replacementEnd;
+          }
+          await cdp.send('Input.imeSetComposition', params);
+        },
+        commitComposition: async ({page, context}: any, text) => {
+          const cdp = await getCDP(page, context);
+          await cdp.send('Input.insertText', {text});
+        },
+        // Once we upgrade to a newer version, we can use the below and delete mouseDownOnElement
+        // await userEvent.hover(button)
+        // await userEvent.pointer({ keys: '[MouseLeft>]', target: button })
+        // await userEvent.pointer('[/MouseLeft]')
+        mouseDownOnElement: async (
+          {page, iframe}: any,
+          selector: string,
+          offsetX: number = 5,
+          offsetY?: number
+        ) => {
+          const box = await iframe.locator(selector).boundingBox();
+          const x = box.x + offsetX;
+          const y = offsetY == null ? box.y + box.height / 2 : box.y + offsetY;
+          await page.mouse.move(x, y);
+          await page.mouse.down();
+        },
+        mouseUp: async ({page}: any) => {
+          await page.mouse.up();
+        }
+      }
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      include: ['packages/**/src/**/*.{ts,tsx}'],
+      exclude: ['packages/**/src/**/*.d.ts', 'packages/**/src/index.ts']
+    },
+    testTimeout: 20000
+  },
+  resolve: {
+    conditions: ['source', 'import', 'module', 'default'],
+    extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.svg'],
+    alias: {
+      '@react-spectrum/s2/illustrations': path.resolve(s2Dir, 'spectrum-illustrations'),
+      '@react-spectrum/s2': path.resolve(s2Dir, 'exports')
+    }
+  },
+  optimizeDeps: {
+    exclude: ['@parcel/macros']
+  },
+  css: {
+    postcss: {
+      // @ts-expect-error
+      config: false
+    }
+  }
+});

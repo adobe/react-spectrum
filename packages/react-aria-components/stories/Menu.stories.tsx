@@ -1,0 +1,757 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {action} from 'storybook/actions';
+import {Button} from '../src/Button';
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {Collection} from 'react-aria/Collection';
+import {Header} from '../src/Header';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Keyboard} from '../src/Keyboard';
+import {Label} from '../src/Label';
+import {ListLayout} from 'react-stately/useVirtualizerState';
+import {LoadingSpinner, MyMenuItem} from './utils';
+import {
+  Menu,
+  MenuItem,
+  MenuItemProps,
+  MenuLoadMoreItem,
+  MenuSection,
+  MenuTrigger,
+  SubmenuTrigger,
+  SubmenuTriggerProps
+} from '../src/Menu';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import {Popover} from '../src/Popover';
+import React, {createContext, JSX, ReactElement, useContext, useRef} from 'react';
+import {Separator} from '../src/Separator';
+import styles from '../example/index.css';
+import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {useAsyncList} from 'react-stately/useAsyncList';
+import {Virtualizer} from '../src/Virtualizer';
+import './styles.css';
+
+export default {
+  title: 'React Aria Components/Menu',
+  component: Menu
+} as Meta<typeof Menu>;
+
+export type MenuStory = StoryFn<typeof Menu>;
+
+export const MenuExample: MenuStory = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MenuSection className={styles.group} aria-label={'Section 1'}>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+          <MyMenuItem href="https://google.com">Google</MyMenuItem>
+        </MenuSection>
+        <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+        <MenuSection className={styles.group}>
+          <Header style={{fontSize: '1.2em'}}>Section 2</Header>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+        </MenuSection>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+export const MenuComplex: MenuStory = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu}>
+        <MyMenuItem>
+          <Text slot="label">Copy</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘C</Keyboard>
+        </MyMenuItem>
+        <MyMenuItem>
+          <Text slot="label">Cut</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘X</Keyboard>
+        </MyMenuItem>
+        <MyMenuItem>
+          <Text slot="label">Paste</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘V</Keyboard>
+        </MyMenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+export const MenuScrollPaddingExample: MenuStory = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu
+        className={styles.menu}
+        onAction={action('onAction')}
+        style={{
+          maxHeight: 200,
+          position: 'relative',
+          scrollPaddingTop: '25px',
+          scrollPaddingBottom: '25px',
+          paddingBottom: '25px' // needed due to absolute-positioned footer
+        }}>
+        <Header
+          style={{
+            fontSize: '1.2em',
+            position: 'sticky',
+            top: 0,
+            height: '25px',
+            background: 'lightgray',
+            borderBottom: '1px solid gray'
+          }}>
+          Section 1
+        </Header>
+        {Array.from({length: 30}).map((_, i) => (
+          <MyMenuItem key={i}>Item {i + 1}</MyMenuItem>
+        ))}
+      </Menu>
+      {/* Menu doesn't have a footer, so have to put one outside to
+        and position it absolutely to demo scroll padding bottom support. */}
+      <div
+        style={{
+          fontSize: '1.2em',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          height: '24px', // with the border it'll be 25px
+          borderTop: '1px solid gray',
+          background: 'lightgray'
+        }}>
+        A footer
+      </div>
+    </Popover>
+  </MenuTrigger>
+);
+
+function SubmenuExampleRender(
+  args: Omit<SubmenuTriggerProps, 'children'> & {delay: number}
+): JSX.Element {
+  return (
+    <MenuTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu className={styles.menu} onAction={action('onAction')}>
+          <MyMenuItem id="Foo">Foo</MyMenuItem>
+          <SubmenuTrigger {...args}>
+            <MyMenuItem id="Bar">Bar</MyMenuItem>
+            <Popover className={styles.popover}>
+              <Menu className={styles.menu} onAction={action('onAction')}>
+                <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+                <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+                <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MyMenuItem id="Baz">Baz</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">
+            Google
+          </MyMenuItem>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+type SubmenuExampleStory = StoryObj<typeof SubmenuExampleRender>;
+export const SubmenuExample: SubmenuExampleStory = {
+  render: args => <SubmenuExampleRender {...args} />,
+  args: {
+    delay: 200
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    }
+  }
+};
+
+export const SubmenuNestedExample: SubmenuExampleStory = {
+  render: args => (
+    <MenuTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu className={styles.menu} onAction={action('onAction')}>
+          <MyMenuItem id="Foo">Foo</MyMenuItem>
+          <SubmenuTrigger {...args}>
+            <MyMenuItem id="Bar">Bar</MyMenuItem>
+            <Popover className={styles.popover}>
+              <Menu className={styles.menu} onAction={action('onAction')}>
+                <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+                <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+                <SubmenuTrigger {...args}>
+                  <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+                  <Popover className={styles.popover}>
+                    <Menu className={styles.menu} onAction={action('onAction')}>
+                      <MyMenuItem id="Second Submenu Foo">Second Submenu Foo</MyMenuItem>
+                      <MyMenuItem id="Second Submenu Bar">Second Submenu Bar</MyMenuItem>
+                      <MyMenuItem id="Second Submenu Baz">Second Submenu Baz</MyMenuItem>
+                    </Menu>
+                  </Popover>
+                </SubmenuTrigger>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MyMenuItem id="Baz">Baz</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">
+            Google
+          </MyMenuItem>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  ),
+  args: {
+    delay: 200
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    }
+  }
+};
+
+let manyItemsSubmenu = [
+  {id: 'Lvl 1 Item 1', name: 'Lvl 1 Item 1'},
+  {
+    id: 'Lvl 1 Item 2',
+    name: 'Lvl 1 Item 2',
+    children: [
+      ...[...Array(30)].map((_, i) => ({id: `Lvl 2 Item ${i + 1}`, name: `Lvl 2 Item ${i + 1}`})),
+      {
+        id: 'Lvl 2 Item 31',
+        name: 'Lvl 2 Item 31',
+        children: [
+          {id: 'Lvl 3 Item 1', name: 'Lvl 3 Item 1'},
+          {id: 'Lvl 3 Item 2', name: 'Lvl 3 Item 2'},
+          {id: 'Lvl 3 Item 3', name: 'Lvl 3 Item 3'}
+        ]
+      }
+    ]
+  },
+  ...[...Array(30)].map((_, i) => ({id: `Lvl 1 Item ${i + 3}`, name: `Lvl 1 Item ${i + 3}`}))
+];
+
+let dynamicRenderFunc = (item, args) => {
+  if (item.children) {
+    return (
+      <SubmenuTrigger {...args}>
+        <MyMenuItem key={item.name}>{item.name}</MyMenuItem>
+        <Popover className={styles.popover}>
+          <Menu items={item.children} className={styles.menu} onAction={action('onAction')}>
+            {item => dynamicRenderFunc(item, args)}
+          </Menu>
+        </Popover>
+      </SubmenuTrigger>
+    );
+  } else {
+    return <MyMenuItem key={item.name}>{item.name}</MyMenuItem>;
+  }
+};
+
+export const SubmenuManyItemsExample: SubmenuExampleStory = {
+  render: args => (
+    <MenuTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu items={manyItemsSubmenu} className={styles.menu} onAction={action('onAction')}>
+          {item => dynamicRenderFunc(item, args)}
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  ),
+  args: {
+    delay: 200
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    }
+  }
+};
+
+export const SubmenuDisabledExample: SubmenuExampleStory = {
+  render: args => (
+    <MenuTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu className={styles.menu} onAction={action('onAction')} disabledKeys={['Bar']}>
+          <MyMenuItem id="Foo">Foo</MyMenuItem>
+          <SubmenuTrigger {...args}>
+            <MyMenuItem id="Bar">Bar</MyMenuItem>
+            <Popover className={styles.popover}>
+              <Menu className={styles.menu} onAction={action('onAction')}>
+                <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+                <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+                <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MyMenuItem id="Baz">Baz</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">
+            Google
+          </MyMenuItem>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  ),
+  args: {
+    delay: 200
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    }
+  }
+};
+
+export const SubmenuSectionsExample: SubmenuExampleStory = {
+  render: args => (
+    <MenuTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu className={styles.menu} onAction={action('onAction')}>
+          <MenuSection className={styles.group}>
+            <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+            <MyMenuItem>Foo</MyMenuItem>
+            <SubmenuTrigger {...args}>
+              <MyMenuItem id="Bar">Bar</MyMenuItem>
+              <Popover className={styles.popover}>
+                <Menu className={styles.menu} onAction={action('onAction')}>
+                  <MenuSection className={styles.group}>
+                    <Header style={{fontSize: '1.2em'}}>Submenu Section 1</Header>
+                    <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+                    <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+                    <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+                    <MyMenuItem href="https://google.com">Google</MyMenuItem>
+                  </MenuSection>
+                  <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+                  <MenuSection className={styles.group}>
+                    <Header style={{fontSize: '1.2em'}}>Submenu Section 2</Header>
+                    <MyMenuItem id="Submenu Foo 2">Submenu Foo</MyMenuItem>
+                    <MyMenuItem id="Submenu Bar 2">Submenu Bar</MyMenuItem>
+                    <MyMenuItem id="Submenu Baz 2">Submenu Baz</MyMenuItem>
+                  </MenuSection>
+                </Menu>
+              </Popover>
+            </SubmenuTrigger>
+            <MyMenuItem>Baz</MyMenuItem>
+            <MyMenuItem href="https://google.com">Google</MyMenuItem>
+          </MenuSection>
+          <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+          <MenuSection className={styles.group}>
+            <Header style={{fontSize: '1.2em'}}>Section 2</Header>
+            <MyMenuItem>Foo</MyMenuItem>
+            <MyMenuItem>Bar</MyMenuItem>
+            <MyMenuItem>Baz</MyMenuItem>
+          </MenuSection>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  )
+};
+
+// TODO: figure out why it is autofocusing the Menu in the SubDialog
+export const SubdialogExample: SubmenuExampleStory = {
+  render: args => (
+    <MenuTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu className={styles.menu} onAction={action('onAction')}>
+          <MyMenuItem id="Foo">Foo</MyMenuItem>
+          <SubmenuTrigger {...args}>
+            <MyMenuItem id="Bar">Bar</MyMenuItem>
+            <Popover
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 5
+              }}>
+              <form style={{display: 'flex', flexDirection: 'column'}}>
+                <Heading slot="title">Sign up</Heading>
+                <TextField autoFocus>
+                  <Label>First Name: </Label>
+                  <Input />
+                </TextField>
+                <TextField>
+                  <Label>Last Name: </Label>
+                  <Input />
+                </TextField>
+                <Menu>
+                  <SubmenuTrigger {...args}>
+                    <MyMenuItem>SubMenu</MyMenuItem>
+                    <Popover
+                      style={{
+                        background: 'Canvas',
+                        color: 'CanvasText',
+                        border: '1px solid gray',
+                        padding: 5
+                      }}>
+                      <Menu>
+                        <MyMenuItem>1</MyMenuItem>
+                        <MyMenuItem>2</MyMenuItem>
+                        <MyMenuItem>3</MyMenuItem>
+                      </Menu>
+                    </Popover>
+                  </SubmenuTrigger>
+                  <SubmenuTrigger {...args}>
+                    <MyMenuItem>SubDialog</MyMenuItem>
+                    <Popover
+                      style={{
+                        background: 'Canvas',
+                        color: 'CanvasText',
+                        border: '1px solid gray',
+                        padding: 5
+                      }}>
+                      <form style={{display: 'flex', flexDirection: 'column'}}>
+                        <Heading slot="title">Contact</Heading>
+                        <TextField autoFocus>
+                          <Label>Email: </Label>
+                          <Input />
+                        </TextField>
+                        <TextField>
+                          <Label>Contact number: </Label>
+                          <Input />
+                        </TextField>
+                        <Button style={{marginTop: 10}}>Submit</Button>
+                      </form>
+                    </Popover>
+                  </SubmenuTrigger>
+                  <MyMenuItem>C</MyMenuItem>
+                </Menu>
+                <Button style={{marginTop: 10}}>Submit</Button>
+              </form>
+            </Popover>
+          </SubmenuTrigger>
+          <MyMenuItem id="Baz">Baz</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">
+            Google
+          </MyMenuItem>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  ),
+  args: {
+    delay: 200
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    }
+  }
+};
+
+export const MenuCustomRender: MenuStory = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MenuItemWithCustomElement href="https://google.com">Google</MenuItemWithCustomElement>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+function MenuItemWithCustomElement(props: MenuItemProps) {
+  // NOTE: href still gets passed through the RAC component, not directly to the RouterLink, so that
+  // RAC knows what element type to expect (<a> or <div>). This is necessary because we change the props and
+  // behaviors of the component. However, this means that the href still gets passed through the RouterProvider as well.
+  // If the href is a different type than string (common in some routers), this won't make it through.
+  // Could hack it by passing through a "dummy" href to RAC to force it to be a link, and then pass the real href directly.
+  // Otherwise we'd need another way to set the expected element type.
+  return (
+    <MyMenuItem
+      {...props}
+      render={domProps =>
+        'href' in domProps ? <RouterLink {...domProps} /> : <div {...domProps} />
+      }
+    />
+  );
+}
+
+function RouterLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  return (
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
+    <a
+      {...mergeProps(props, {
+        onClick: e => {
+          e.preventDefault();
+          console.log('click');
+        }
+      })}
+    />
+  );
+}
+
+let items = Array.from({length: 600}, (_, index) => {
+  // Return the object structure for each element
+  return {
+    id: index + 1,
+    name: `Object ${index + 1}`,
+    value: Math.random()
+  };
+});
+export const VirtualizedExample: MenuStory = () => {
+  return (
+    <MenuTrigger>
+      <Button aria-label="Actions">Menu ☰</Button>
+      <Popover>
+        <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 36}}>
+          <Menu className={styles.menu} items={items}>
+            {item => {
+              return <MyMenuItem>{item.name}</MyMenuItem>;
+            }}
+          </Menu>
+        </Virtualizer>
+      </Popover>
+    </MenuTrigger>
+  );
+};
+
+export const ContextMenuExample: MenuStory = () => (
+  <MenuTrigger trigger="contextMenu">
+    <Button
+      style={{
+        width: 250,
+        height: 150,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '2px dashed gray',
+        borderRadius: 10,
+        background: 'transparent',
+        font: 'inherit',
+        color: 'inherit',
+        cursor: 'default'
+      }}>
+      Right click here
+    </Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem>Open</MyMenuItem>
+        <SubmenuTrigger>
+          <MyMenuItem>Open with</MyMenuItem>
+          <Popover className={styles.popover}>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem>Preview</MyMenuItem>
+              <MyMenuItem>Photoshop</MyMenuItem>
+              <MyMenuItem>Safari</MyMenuItem>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+        <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+        <MyMenuItem>Get Info</MyMenuItem>
+        <MyMenuItem>Rename</MyMenuItem>
+        <MyMenuItem>Duplicate</MyMenuItem>
+        <MyMenuItem>Move to Trash</MyMenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+let UnavailableContext = createContext(false);
+
+function UnavailableMenuItemTrigger(props: {isUnavailable?: boolean; children: ReactElement[]}) {
+  let {isUnavailable = false, children} = props;
+  if (isUnavailable) {
+    return (
+      <UnavailableContext.Provider value>
+        <SubmenuTrigger>
+          {children[0]}
+          <Popover className={classNames(styles, 'unavailable-popover')}>{children[1]}</Popover>
+        </SubmenuTrigger>
+      </UnavailableContext.Provider>
+    );
+  }
+  return children[0];
+}
+
+function UnavailableMenuItem(props: MenuItemProps) {
+  let isUnavailable = useContext(UnavailableContext);
+  return (
+    <MenuItem
+      {...props}
+      className={({isFocused, isSelected, isOpen, isFocusVisible}) =>
+        classNames(
+          styles,
+          'item',
+          {
+            focused: isFocused,
+            selected: isSelected,
+            open: isOpen,
+            focusVisible: isFocusVisible
+          },
+          isUnavailable ? 'unavailable' : undefined
+        )
+      }>
+      {renderProps => (
+        <>
+          {typeof props.children === 'function' ? props.children(renderProps) : props.children}
+          {renderProps.hasSubmenu && isUnavailable && (
+            <span style={{justifySelf: 'end'}} aria-hidden>
+              ⓘ
+            </span>
+          )}
+        </>
+      )}
+    </MenuItem>
+  );
+}
+
+export const UnavailableMenuItemExample: MenuStory = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem id="favorite">Favorite</MyMenuItem>
+        <UnavailableMenuItemTrigger>
+          <UnavailableMenuItem id="edit">Edit</UnavailableMenuItem>
+          <div style={{padding: 8, maxWidth: 200}}>
+            Contact your administrator for permissions to edit this item.
+          </div>
+        </UnavailableMenuItemTrigger>
+        <UnavailableMenuItemTrigger isUnavailable>
+          <UnavailableMenuItem id="delete">Delete</UnavailableMenuItem>
+          <div style={{padding: 8, maxWidth: 200}}>
+            Contact your administrator for permissions to delete this item.
+          </div>
+        </UnavailableMenuItemTrigger>
+        <SubmenuTrigger>
+          <MyMenuItem id="share">Share</MyMenuItem>
+          <Popover className={styles.popover}>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem id="sms">SMS</MyMenuItem>
+              <MyMenuItem id="email">Email</MyMenuItem>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+interface Character {
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
+}
+
+const MyMenuLoaderIndicator = props => {
+  return (
+    <MenuLoadMoreItem
+      style={{
+        height: 30,
+        width: '100%',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      {...props}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </MenuLoadMoreItem>
+  );
+};
+
+type AsyncMenuArgs = {delay: number; isEmpty: boolean};
+
+function AsyncMenuRender(args: AsyncMenuArgs) {
+  let hasOpenedRef = useRef(false);
+
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (!hasOpenedRef.current) {
+        return {items: []};
+      }
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+
+  return (
+    <MenuTrigger
+      onOpenChange={open => {
+        if (open && !hasOpenedRef.current && !args.isEmpty) {
+          hasOpenedRef.current = true;
+          list.reload();
+        }
+      }}>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Menu
+          className={styles.menu}
+          aria-label="Star Wars characters"
+          renderEmptyState={() => (
+            <div style={{height: 30, width: '100%'}}>
+              {!args.isEmpty && isLoading ? (
+                <LoadingSpinner
+                  style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}}
+                />
+              ) : (
+                'No results'
+              )}
+            </div>
+          )}
+          onAction={action('onAction')}>
+          <Collection items={args.isEmpty ? [] : list.items}>
+            {(item: Character) => <MenuItem id={item.name}>{item.name}</MenuItem>}
+          </Collection>
+          {!args.isEmpty && (
+            <MyMenuLoaderIndicator
+              isLoading={list.loadingState === 'loadingMore'}
+              onLoadMore={list.loadMore}
+            />
+          )}
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+
+export const AsyncMenu: StoryObj<typeof AsyncMenuRender> = {
+  render: args => <AsyncMenuRender {...args} />,
+  args: {
+    delay: 2000,
+    isEmpty: false
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    },
+    isEmpty: {
+      control: 'boolean'
+    }
+  }
+};

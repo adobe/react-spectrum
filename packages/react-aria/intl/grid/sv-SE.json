@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} ej markerat.",
+  "longPressToSelect": "Tryck länge när du vill öppna väljarläge.",
+  "select": "Markera",
+  "selectedAll": "Alla markerade objekt.",
+  "selectedCount": "{count, plural, =0 {Inga markerade objekt} one {# markerat objekt} other {# markerade objekt}}.",
+  "selectedItem": "{item} markerat."
+}
