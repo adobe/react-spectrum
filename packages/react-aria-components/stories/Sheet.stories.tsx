@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, DialogTrigger, Heading} from 'react-aria-components';
+import {Button, Heading} from 'react-aria-components';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
-import {Sheet, SheetBackdrop, SheetContent, SheetOverlay} from '../src/Sheet';
+import {Sheet, SheetBackdrop, SheetContent, SheetOverlay, SheetTrigger} from '../src/Sheet';
 import './Sheet.css';
 
 export default {
@@ -38,7 +38,7 @@ export default {
 export type SheetStory = StoryFn<typeof SheetOverlay>;
 
 export const SheetExample: SheetStory = args => (
-  <DialogTrigger>
+  <SheetTrigger>
     <Button>Open sheet</Button>
     <SheetOverlay position="bottom" {...args}>
       <SheetBackdrop swipeAnimation="backdropAnimation" />
@@ -71,11 +71,11 @@ export const SheetExample: SheetStory = args => (
         </SheetContent>
       </Sheet>
     </SheetOverlay>
-  </DialogTrigger>
+  </SheetTrigger>
 );
 
 export const SheetDetents: SheetStory = args => (
-  <DialogTrigger>
+  <SheetTrigger>
     <Button>Open sheet</Button>
     {/* Opens with 180px of the sheet showing; drag up to full height or down to dismiss. */}
     <SheetOverlay position="bottom" snapPoints={['180px']} {...args}>
@@ -110,7 +110,7 @@ export const SheetDetents: SheetStory = args => (
         </SheetContent>
       </Sheet>
     </SheetOverlay>
-  </DialogTrigger>
+  </SheetTrigger>
 );
 
 export const SheetStacking: SheetStory = args => {
@@ -132,10 +132,10 @@ export const SheetStacking: SheetStory = args => {
                 away to bring this one forward again.
               </p>
               {depth < 4 && (
-                <DialogTrigger>
+                <SheetTrigger>
                   <Button>Open sheet {depth + 1}</Button>
                   {renderSheet(depth + 1)}
-                </DialogTrigger>
+                </SheetTrigger>
               )}
               <Button onPress={close}>Close sheet {depth}</Button>
             </div>
@@ -146,9 +146,9 @@ export const SheetStacking: SheetStory = args => {
   );
 
   return (
-    <DialogTrigger>
+    <SheetTrigger>
       <Button>Open sheet 1</Button>
       {renderSheet(1)}
-    </DialogTrigger>
+    </SheetTrigger>
   );
 };

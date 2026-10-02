@@ -18,11 +18,10 @@ import {
   within
 } from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
-import {DialogTrigger} from '../src/Dialog';
 import {Heading} from '../src/Heading';
 import {I18nProvider} from 'react-aria/I18nProvider';
 import React from 'react';
-import {Sheet, SheetBackdrop, SheetContent, SheetOverlay} from '../src/Sheet';
+import {Sheet, SheetBackdrop, SheetContent, SheetOverlay, SheetTrigger} from '../src/Sheet';
 import userEvent from '@testing-library/user-event';
 
 // Sheet detects view timeline support when it loads. jsdom does not implement CSS.supports, so
@@ -41,7 +40,7 @@ function TestSheet({
   children
 }) {
   return (
-    <DialogTrigger {...triggerProps}>
+    <SheetTrigger {...triggerProps}>
       <Button>Open sheet</Button>
       <SheetOverlay data-testid="overlay" {...overlayProps}>
         <SheetBackdrop data-testid="backdrop" {...backdropProps} />
@@ -57,7 +56,7 @@ function TestSheet({
           </SheetContent>
         </Sheet>
       </SheetOverlay>
-    </DialogTrigger>
+    </SheetTrigger>
   );
 }
 
@@ -194,7 +193,7 @@ describe('Sheet', () => {
     let backdropStyle = jest.fn(() => ({opacity: 0.5}));
 
     let tree = render(
-      <DialogTrigger>
+      <SheetTrigger>
         <Button>Open sheet</Button>
         <SheetOverlay
           data-testid="overlay"
@@ -225,7 +224,7 @@ describe('Sheet', () => {
             );
           }}
         </SheetOverlay>
-      </DialogTrigger>
+      </SheetTrigger>
     );
     await open(tree);
 
@@ -491,7 +490,7 @@ describe('Sheet', () => {
             stackAnimation: 'scaleBack'
           }}
           backdropProps={{'data-testid': 'parent-backdrop'}}>
-          <DialogTrigger>
+          <SheetTrigger>
             <Button>Open child</Button>
             <SheetOverlay data-testid="child-overlay">
               <SheetBackdrop data-testid="child-backdrop" />
@@ -506,7 +505,7 @@ describe('Sheet', () => {
                 </SheetContent>
               </Sheet>
             </SheetOverlay>
-          </DialogTrigger>
+          </SheetTrigger>
         </TestSheet>
       );
     }

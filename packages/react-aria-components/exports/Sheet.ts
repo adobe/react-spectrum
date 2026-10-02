@@ -14,11 +14,12 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {SheetOverlay, Sheet, SheetBackdrop, SheetContent} from '../src/Sheet';
+export {SheetTrigger, SheetOverlay, Sheet, SheetBackdrop, SheetContent} from '../src/Sheet';
 export type {
   SheetOverlayProps,
   SheetProps,
   SheetRenderProps,
   SheetBackdropProps,
-  SheetContentProps
+  SheetContentProps,
+  SheetTriggerProps
 } from '../src/Sheet';

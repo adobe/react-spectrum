@@ -17,7 +17,7 @@ export const description = 'An overlay that slides in from the edge of the scree
   ```tsx render docs={vanillaDocs.exports.Sheet} links={vanillaDocs.links} props={['position', 'swipeDirection', 'preventDismissal', 'overscrollPadding']} type="vanilla" files={["starters/docs/src/Sheet.tsx", "starters/docs/src/Sheet.css"]}
   "use client";
   import {useState} from 'react';
-  import {DialogTrigger} from 'react-aria-components/Dialog';
+  import {SheetTrigger} from 'react-aria-components/Sheet';
   import {Sheet, Heading} from 'vanilla-starter/Sheet';
   import {Button} from 'vanilla-starter/Button';
   import {Minus, Plus, ShoppingCart} from 'lucide-react';
@@ -35,7 +35,7 @@ export const description = 'An overlay that slides in from the edge of the scree
     let delivery = items.length ? 2.99 : 0;
     
     return (
-      <DialogTrigger>
+      <SheetTrigger>
         <Button>
           <ShoppingCart size={18} />
           <span>Cart ({items.reduce((n, item) => n + item.qty, 0)})</span>
@@ -75,7 +75,7 @@ export const description = 'An overlay that slides in from the edge of the scree
           </div>
           {/*- end collapse -*/}
         </Sheet>
-      </DialogTrigger>
+      </SheetTrigger>
     );
   }
   ```
@@ -83,7 +83,7 @@ export const description = 'An overlay that slides in from the edge of the scree
   ```tsx render docs={vanillaDocs.exports.Sheet} links={vanillaDocs.links} props={['position', 'swipeDirection', 'preventDismissal', 'overscrollPadding']} type="tailwind" files={["starters/tailwind/src/Sheet.tsx", "starters/tailwind/src/Sheet.css"]}
   "use client";
   import {useState} from 'react';
-  import {DialogTrigger} from 'react-aria-components/Dialog';
+  import {SheetTrigger} from 'react-aria-components/Sheet';
   import {Sheet} from 'tailwind-starter/Sheet';
   import {Heading} from 'tailwind-starter/Dialog';
   import {Button} from 'tailwind-starter/Button';
@@ -102,7 +102,7 @@ export const description = 'An overlay that slides in from the edge of the scree
     let delivery = items.length ? 2.99 : 0;
     
     return (
-      <DialogTrigger>
+      <SheetTrigger>
         <Button>
           <ShoppingCart size={18} />
           <span>Cart ({items.reduce((n, item) => n + item.qty, 0)})</span>
@@ -142,7 +142,7 @@ export const description = 'An overlay that slides in from the edge of the scree
           </div>
           {/*- end collapse -*/}
         </Sheet>
-      </DialogTrigger>
+      </SheetTrigger>
     );
   }
   ```
@@ -154,7 +154,7 @@ The `position` prop determines which edge of the screen the sheet is anchored to
 
 ```tsx render
 "use client";
-import {DialogTrigger} from 'react-aria-components/Dialog';
+import {SheetTrigger} from 'react-aria-components/Sheet';
 import {Sheet, Heading} from 'vanilla-starter/Sheet';
 import {Button} from 'vanilla-starter/Button';
 import {Home, Compass, Library, Settings, LogOut} from 'lucide-react';
@@ -167,7 +167,7 @@ function Example() {
     {label: 'Settings', icon: <Settings size={20} />}
   ];
   return (
-    <DialogTrigger>
+    <SheetTrigger>
       <Button variant="secondary">Open menu</Button>
       {/*- begin highlight -*/}
       <Sheet position="start">
@@ -188,7 +188,7 @@ function Example() {
           </Button>
         </div>
       </Sheet>
-    </DialogTrigger>
+    </SheetTrigger>
   );
 }
 ```
@@ -199,14 +199,14 @@ By default, a sheet opens to reveal all of its content. Provide the `snapPoints`
 
 ```tsx render
 "use client";
-import {DialogTrigger} from 'react-aria-components/Dialog';
+import {SheetTrigger} from 'react-aria-components/Sheet';
 import {Sheet, Heading} from 'vanilla-starter/Sheet';
 import {Button} from 'vanilla-starter/Button';
 import {Star, MapPin, Clock, Phone} from 'lucide-react';
 
 function Example() {
   return (
-    <DialogTrigger>
+    <SheetTrigger>
       <Button>Show place</Button>
       {/*- begin highlight -*/}
       <Sheet position="bottom" snapPoints={[280]}>
@@ -225,7 +225,7 @@ function Example() {
           <Button slot="close">Get directions</Button>
         </div>
       </Sheet>
-    </DialogTrigger>
+    </SheetTrigger>
   );
 }
 ```
@@ -236,13 +236,13 @@ Use the `swipeAnimation` prop on `Sheet` and `SheetBackdrop` to define a CSS key
 
 ```tsx render
 "use client";
-import {DialogTrigger} from 'react-aria-components/Dialog';
+import {SheetTrigger} from 'react-aria-components/Sheet';
 import {Sheet, Heading} from 'vanilla-starter/Sheet';
 import {Button} from 'vanilla-starter/Button';
 
 function Example() {
   return (
-    <DialogTrigger>
+    <SheetTrigger>
       <Button>Settings</Button>
       {/* By default, Sheet.tsx applies a fade transition to the backdrop.
           This example adds a custom transform animation to the sheet. */}
@@ -265,7 +265,7 @@ function Example() {
         <div style={{height: 300, width: '100%', background: 'var(--gray-200)', borderRadius: 16, marginBottom: 16}} />
         <Button slot="close">Close</Button>
       </Sheet>
-    </DialogTrigger>
+    </SheetTrigger>
   );
 }
 ```
@@ -276,7 +276,7 @@ Sheets can be nested to drill deeper into a flow. Set `stackAnimation` prop to a
 
 ```tsx render
 "use client";
-import {DialogTrigger} from 'react-aria-components/Dialog';
+import {SheetTrigger} from 'react-aria-components/Sheet';
 import {Sheet, Heading} from 'vanilla-starter/Sheet';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'vanilla-starter/Form';
@@ -288,7 +288,7 @@ import {ChevronRight} from 'lucide-react';
 
 function Example() {
   return (
-    <DialogTrigger>
+    <SheetTrigger>
       <Button>Settings</Button>
       <Sheet style={{height: 550}}>
         <Heading slot="title">Settings</Heading>
@@ -301,7 +301,7 @@ function Example() {
             <Radio value="dark">Dark</Radio>
           </RadioGroup>
           {/*- begin highlight -*/}
-          <DialogTrigger>
+          <SheetTrigger>
             <Button variant="secondary">
               <span>Account</span>
               <ChevronRight size={18} />
@@ -316,7 +316,7 @@ function Example() {
                 <TextField label="Email" defaultValue="devon@example.com" />
                 <div style={{display: 'flex', justifyContent: 'space-between'}}>
                   <Button slot="close">Save</Button>
-                  <DialogTrigger>
+                  <SheetTrigger>
                     <Button variant="secondary">
                       <span>Advanced</span>
                       <ChevronRight size={18} />
@@ -334,22 +334,22 @@ function Example() {
                         <Button slot="close">Save</Button>
                       </Form>
                     </Sheet>
-                  </DialogTrigger>
+                  </SheetTrigger>
                 </div>
               </Form>
             </Sheet>
-          </DialogTrigger>
+          </SheetTrigger>
         </Form>
       </Sheet>
-    </DialogTrigger>
+    </SheetTrigger>
   );
 }
 ```
 
 ## API
 
-```tsx links={{DialogTrigger: 'Dialog', Button: 'Button', SheetOverlay: '#sheetoverlay', SheetBackdrop: '#sheetbackdrop', Sheet: '#sheet', SheetContent: '#sheetcontent', Heading: 'Dialog', Text: 'Dialog'}}
-<DialogTrigger>
+```tsx links={{SheetTrigger: '#sheettrigger', Button: 'Button', SheetOverlay: '#sheetoverlay', SheetBackdrop: '#sheetbackdrop', Sheet: '#sheet', SheetContent: '#sheetcontent', Heading: 'Dialog', Text: 'Dialog'}}
+<SheetTrigger>
   <Button />
   <SheetOverlay>
     <SheetBackdrop />
@@ -361,12 +361,12 @@ function Example() {
       </SheetContent>
     </Sheet>
   </SheetOverlay>
-</DialogTrigger>
+</SheetTrigger>
 ```
 
-### DialogTrigger
+### SheetTrigger
 
-<PropTable component={docs.exports.DialogTrigger} links={docs.links} showDescription />
+<PropTable component={docs.exports.SheetTrigger} links={docs.links} showDescription />
 
 ### SheetOverlay
 

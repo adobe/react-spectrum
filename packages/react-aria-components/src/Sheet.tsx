@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
-import {Dialog, DialogProps} from './Dialog';
+import {Dialog, DialogProps, DialogTrigger, DialogTriggerProps} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {
@@ -23,6 +23,7 @@ import {
 import {isIOS, isSafari} from 'react-aria/private/utils/platform';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {OverlayTriggerStateContext} from './Dialog';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import React, {
   createContext,
   CSSProperties,
@@ -196,6 +197,20 @@ const supportsViewTimeline =
   typeof CSS !== 'undefined' &&
   typeof CSS.supports === 'function' &&
   CSS.supports('animation-timeline: view()');
+
+export interface SheetTriggerProps extends DialogTriggerProps {}
+
+/**
+ * A SheetTrigger opens a sheet when a trigger element is pressed.
+ */
+export function SheetTrigger(props: SheetTriggerProps) {
+  return (
+    <DialogTrigger {...props}>
+      {/* Prevent the trigger element from appearing stuck while the sheet is open. */}
+      <PressResponder isPressed={false}>{props.children}</PressResponder>
+    </DialogTrigger>
+  );
+}
 
 /**
  * A SheetOverlay is a container for a SheetBackdrop and a Sheet.

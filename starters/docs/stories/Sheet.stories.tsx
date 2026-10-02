@@ -1,5 +1,5 @@
 import {Button} from '../src/Button';
-import {DialogTrigger} from '../src/Dialog';
+import {SheetTrigger} from 'react-aria-components/Sheet';
 import {Heading, Sheet} from '../src/Sheet';
 import type {Meta, StoryFn} from '@storybook/react';
 import {TextField} from '../src/TextField';
@@ -22,7 +22,7 @@ export default meta;
 type Story = StoryFn<typeof Sheet>;
 
 export const Example: Story = args => (
-  <DialogTrigger>
+  <SheetTrigger>
     <Button>Sign up…</Button>
     <Sheet {...args}>
       {({close}) => (
@@ -36,7 +36,7 @@ export const Example: Story = args => (
         </form>
       )}
     </Sheet>
-  </DialogTrigger>
+  </SheetTrigger>
 );
 
 Example.args = {
@@ -46,7 +46,7 @@ Example.args = {
 // Snap points let the sheet rest partially open. It opens showing 180px of content, and can be
 // dragged up to full height or down to dismiss.
 export const SnapPoints: Story = args => (
-  <DialogTrigger>
+  <SheetTrigger>
     <Button>Show details…</Button>
     <Sheet {...args}>
       {({close}) => (
@@ -60,7 +60,7 @@ export const SnapPoints: Story = args => (
         </>
       )}
     </Sheet>
-  </DialogTrigger>
+  </SheetTrigger>
 );
 
 SnapPoints.args = {
