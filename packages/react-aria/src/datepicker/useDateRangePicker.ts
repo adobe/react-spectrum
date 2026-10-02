@@ -36,6 +36,7 @@ import {
   privateValidationStateProp
 } from 'react-stately/private/form/useFormValidationState';
 import {filterDOMProps} from '../utils/filterDOMProps';
+import {FocusEvent, useMemo, useRef} from 'react';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
@@ -48,10 +49,13 @@ import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useId} from '../utils/useId';
 import {useLocale} from '../i18n/I18nProvider';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
-import {useMemo, useRef} from 'react';
 
-export interface AriaDateRangePickerProps<T extends DateValue>
-  extends DateRangePickerProps<T>, AriaLabelingProps, Omit<InputDOMProps, 'name'>, DOMProps {}
+export interface AriaDateRangePickerProps<T extends DateValue, Target extends Element = Element>
+  extends
+    DateRangePickerProps<T, Target>,
+    AriaLabelingProps,
+    Omit<InputDOMProps, 'name'>,
+    DOMProps {}
 
 export interface DateRangePickerAria extends ValidationResult {
   /** Props for the date range picker's visible label element, if any. */
@@ -79,8 +83,8 @@ export interface DateRangePickerAria extends ValidationResult {
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-export function useDateRangePicker<T extends DateValue>(
-  props: AriaDateRangePickerProps<T>,
+export function useDateRangePicker<T extends DateValue, Target extends Element = Element>(
+  props: AriaDateRangePickerProps<T, Target>,
   state: DateRangePickerState,
   ref: RefObject<Element | null>
 ): DateRangePickerAria {
@@ -158,14 +162,14 @@ export function useDateRangePicker<T extends DateValue>(
       let dialog = document.getElementById(dialogId);
       if (!nodeContains(dialog, e.relatedTarget)) {
         isFocused.current = false;
-        props.onBlur?.(e);
+        props.onBlur?.(e as FocusEvent<Target>);
         props.onFocusChange?.(false);
       }
     },
     onFocusWithin: e => {
       if (!isFocused.current) {
         isFocused.current = true;
-        props.onFocus?.(e);
+        props.onFocus?.(e as FocusEvent<Target>);
         props.onFocusChange?.(true);
       }
     }
