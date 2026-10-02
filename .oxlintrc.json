@@ -305,6 +305,12 @@
       }
     },
     {
+      "files": ["**/*.browser.test.ts", "**/*.browser.test.tsx"],
+      "rules": {
+        "rsp-rules/act-events-test": "off"
+      }
+    },
+    {
       "files": ["**/dev/**", "**/scripts/**"],
       "rules": {
         "rsp-rules/safe-event-target": "off",
