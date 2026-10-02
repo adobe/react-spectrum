@@ -91,6 +91,7 @@ export interface SheetOverlayProps
       | 'onExit'
       | 'isEntering'
       | 'isExiting'
+      | 'isKeyboardDismissDisabled'
     >,
     RenderProps<SheetRenderProps> {
   /**
@@ -317,6 +318,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
       {...props}
       ref={mergedRefs}
       isDismissable={isDismissable}
+      isKeyboardDismissDisabled={!isDismissable}
       // Moving the VoiceOver cursor into the sheet (via focus, or by making the content behind it
       // inert) scrolls, which interrupts the enter scroll animation on iOS. Wait until it has entered.
       UNSTABLE_deferUntilEntered
