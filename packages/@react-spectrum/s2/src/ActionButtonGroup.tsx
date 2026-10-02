@@ -41,7 +41,7 @@ export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles,
   density?: 'compact' | 'regular';
   /**
    * Whether the button should be displayed with a [quiet
-   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   * style](https://spectrum.adobe.com/web/rsp/components/action-button#component-options).
    */
   isQuiet?: boolean;
   /** Whether the buttons should divide the container width equally. */

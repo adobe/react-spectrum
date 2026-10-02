@@ -24,6 +24,13 @@ import {willOpenKeyboard} from '../utils/keyboard';
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
   isDisabled?: boolean;
+  /**
+   * Whether to override the `focus()` method so it does not scroll the page.
+   * This is temporary and will be removed after fully testing all overlays.
+   *
+   * @private
+   */
+  UNSTABLE_overrideFocus?: boolean;
 }
 
 const visualViewport = typeof document !== 'undefined' && window.visualViewport;
@@ -38,7 +45,7 @@ let restore;
  * shift due to the scrollbars disappearing.
  */
 export function usePreventScroll(options: PreventScrollOptions = {}): void {
-  let {isDisabled} = options;
+  let {isDisabled, UNSTABLE_overrideFocus} = options;
 
   useLayoutEffect(() => {
     if (isDisabled) {
@@ -50,7 +57,7 @@ export function usePreventScroll(options: PreventScrollOptions = {}): void {
       if (isIOS() && isWebKit()) {
         restore = preventScrollMobileWebKit();
       } else {
-        restore = preventScrollStandard();
+        restore = preventScrollStandard(UNSTABLE_overrideFocus);
       }
     }
 
@@ -60,12 +67,12 @@ export function usePreventScroll(options: PreventScrollOptions = {}): void {
         restore();
       }
     };
-  }, [isDisabled]);
+  }, [isDisabled, UNSTABLE_overrideFocus]);
 }
 
 // For most browsers, all we need to do is set `overflow: hidden` on the root element, and
 // add some padding to prevent the page from shifting when the scrollbar is hidden.
-function preventScrollStandard() {
+function preventScrollStandard(UNSTABLE_overrideFocus?: boolean) {
   let scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
   return chain(
     scrollbarWidth > 0 &&
@@ -73,7 +80,8 @@ function preventScrollStandard() {
       ('scrollbarGutter' in document.documentElement.style
         ? setStyle(document.documentElement, 'scrollbar-gutter', 'stable')
         : setStyle(document.documentElement, 'padding-right', `${scrollbarWidth}px`)),
-    setStyle(document.documentElement, 'overflow', 'hidden')
+    setStyle(document.documentElement, 'overflow', 'hidden'),
+    UNSTABLE_overrideFocus && overrideFocus()
   );
 }
 
@@ -107,7 +115,7 @@ function preventScrollMobileWebKit() {
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
     let target = getEventTarget(e) as Element;
-    scrollable = isScrollable(target) ? target : getScrollParent(target, true);
+    scrollable = isScrollable(target, true) ? target : getScrollParent(target, true);
     allowTouchMove = false;
 
     // If the target is selected, don't preventDefault in touchmove to allow user to adjust selection.
@@ -192,6 +200,22 @@ function preventScrollMobileWebKit() {
     }
   };
 
+  let restoreFocus = overrideFocus();
+  let removeEvents = chain(
+    addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
+    addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
+    addEvent(document, 'blur', onBlur, true)
+  );
+
+  return () => {
+    restoreOverflow();
+    removeEvents();
+    style.remove();
+    restoreFocus();
+  };
+}
+
+function overrideFocus() {
   // Override programmatic focus to scroll into view without scrolling the whole page.
   let focus = HTMLElement.prototype.focus;
   Reflect.defineProperty(HTMLElement.prototype, 'focus', {
@@ -217,16 +241,7 @@ function preventScrollMobileWebKit() {
     }
   });
 
-  let removeEvents = chain(
-    addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
-    addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
-    addEvent(document, 'blur', onBlur, true)
-  );
-
   return () => {
-    restoreOverflow();
-    removeEvents();
-    style.remove();
     Reflect.defineProperty(HTMLElement.prototype, 'focus', {
       configurable: true,
       writable: true,
