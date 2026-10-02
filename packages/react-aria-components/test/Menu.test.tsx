@@ -313,6 +313,26 @@ describe('Menu', () => {
     expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
+  it('should move focus to the menu when the pointer leaves it entirely', async () => {
+    let onAction = jest.fn();
+    let {getByRole, getAllByRole} = renderMenu({onAction});
+    let menu = getByRole('menu');
+    let item = getAllByRole('menuitem')[0];
+
+    await user.hover(item);
+    expect(item).toHaveAttribute('data-focused', 'true');
+    expect(document.activeElement).toBe(item);
+
+    await user.unhover(item);
+    expect(item).not.toHaveAttribute('data-focused');
+    expect(document.activeElement).toBe(menu);
+
+    // Enter shouldn't re-trigger the item that was hovered before the pointer left the menu.
+    fireEvent.keyDown(menu, {key: 'Enter'});
+    fireEvent.keyUp(menu, {key: 'Enter'});
+    expect(onAction).not.toHaveBeenCalled();
+  });
+
   it('should support slots', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">
@@ -994,6 +1014,44 @@ describe('Menu', () => {
       expect(onAction).toHaveBeenLastCalledWith('email', undefined);
       expect(menu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
+    });
+    it('should keep the submenu trigger focused when the pointer leaves the parent menu towards its open submenu', async () => {
+      let {getByRole, getAllByRole} = render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu>
+              <MenuItem id="open">Open</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Menu>
+                    <MenuItem id="email">Email</MenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      await user.click(getByRole('button'));
+      let menu = getAllByRole('menu')[0];
+      let triggerItem = getAllByRole('menuitem')[1];
+
+      await user.pointer({target: triggerItem});
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
+      expect(triggerItem).toHaveAttribute('data-focused', 'true');
+
+      // The submenu popover isn't a DOM descendant of the parent menu, so moving the pointer from
+      // the trigger item towards it leaves the parent menu's bounding box. The trigger item should
+      // stay focused while its submenu remains open, matching the existing hover-follows-focus behavior.
+      fireEvent.pointerLeave(menu, {pointerType: 'mouse', pointerId: 1});
+      expect(triggerItem).toHaveAttribute('data-focused', 'true');
+      expect(document.activeElement).not.toBe(menu);
     });
     it('should support nested submenu triggers', async () => {
       let onAction = jest.fn();
