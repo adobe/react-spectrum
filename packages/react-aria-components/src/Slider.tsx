@@ -47,6 +47,7 @@ import React, {
 import {SliderState, useSliderState} from 'react-stately/useSliderState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -371,6 +372,133 @@ export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         {renderProps.children}
       </Provider>
     </dom.div>
+  );
+});
+
+export interface SliderMarkRenderProps extends SliderRenderProps {
+  /**
+   * The value along the track that the mark is positioned at.
+   */
+  value: number;
+  /**
+   * Whether the mark is currently hovered with a mouse.
+   *
+   * @selector [data-hovered]
+   */
+  isHovered: boolean;
+}
+
+export interface SliderMarkProps
+  extends HoverEvents, RenderProps<SliderMarkRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /** The value along the track that the mark is positioned at. */
+  value: number;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-SliderMark'
+   */
+  className?: ClassNameOrFunction<SliderMarkRenderProps>;
+}
+
+/**
+ * A slider mark labels a value along the track. Pressing it moves the nearest thumb to that value.
+ */
+export const SliderMark = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderMark(
+  props: SliderMarkProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let {value, onHoverStart, onHoverEnd, onHoverChange, ...otherProps} = props;
+  let state = useContext(SliderStateContext)!;
+  let {direction} = useLocale();
+  let {hoverProps, isHovered} = useHover({
+    onHoverStart,
+    onHoverEnd,
+    onHoverChange,
+    isDisabled: state.isDisabled
+  });
+
+  // Marks sit inside the track, which moves the nearest thumb to wherever the pointer went down.
+  // Stop that here so the thumb lands on the mark's exact value, including for labels rendered
+  // outside the track's bounds.
+  let onDown = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    let index = state.getClosestThumbIndex(value);
+    if (index < 0 || !state.isThumbEditable(index)) {
+      return;
+    }
+
+    e.preventDefault();
+    state.setFocusedThumb(index);
+    state.setThumbDragging(index, true);
+    state.setThumbPercent(index, state.getValuePercent(value));
+    state.setThumbDragging(index, false);
+  };
+
+  let isVertical = state.orientation === 'vertical';
+  let percent = state.getValuePercent(value);
+  if (isVertical || direction === 'rtl') {
+    percent = 1 - percent;
+  }
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-SliderMark',
+    defaultStyle: {
+      position: 'absolute',
+      [isVertical ? 'top' : 'left']: `${percent * 100}%`,
+      transform: 'translate(-50%, -50%)'
+    },
+    values: {
+      orientation: state.orientation,
+      isDisabled: state.isDisabled,
+      isHovered,
+      value,
+      state
+    }
+  });
+
+  // Pointer events are dispatched before their mouse and touch equivalents, so only one handler
+  // acts on an interaction and the rest just stop propagation. JSDOM has no PointerEvent, so tests
+  // fall through to the mouse and touch handlers.
+  let hasPointerEvents = typeof PointerEvent !== 'undefined';
+  let interactions: HTMLAttributes<HTMLDivElement> = !state.isDisabled
+    ? {
+        onPointerDown: (e: React.PointerEvent) => {
+          if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+            return;
+          }
+          onDown(e);
+        },
+        onMouseDown: (e: React.MouseEvent) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          if (hasPointerEvents) {
+            e.stopPropagation();
+          } else {
+            onDown(e);
+          }
+        },
+        onTouchStart: (e: React.TouchEvent) => {
+          if (hasPointerEvents) {
+            e.stopPropagation();
+          } else {
+            onDown(e);
+          }
+        }
+      }
+    : {};
+
+  return (
+    <dom.div
+      {...mergeProps(otherProps, hoverProps, interactions)}
+      {...renderProps}
+      ref={ref}
+      data-hovered={isHovered || undefined}
+      data-orientation={state.orientation || undefined}
+      data-disabled={state.isDisabled || undefined}
+    />
   );
 });
 
