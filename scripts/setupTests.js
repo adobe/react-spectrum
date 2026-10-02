@@ -43,7 +43,7 @@ const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
 
 const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   'Browserslist: caniuse-lite is outdated',
-  'Browserslist: browsers data (caniuse-lite) is 6 months old.'
+  'Browserslist: browsers data (caniuse-lite) is'
 ];
 
 function failTestOnConsoleError() {
