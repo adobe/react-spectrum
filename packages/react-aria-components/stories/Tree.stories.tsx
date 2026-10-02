@@ -2045,3 +2045,63 @@ export const VirtualizedTreeInShadowDOMStory: StoryObj<typeof VirtualizedTreeInS
   },
   name: 'Virtualized Tree in Shadow DOM'
 };
+
+const animatedTreeStyles = `
+  .animated-tree .react-aria-TreeItem {
+    box-sizing: border-box;
+    height: var(--tree-item-height, auto);
+    overflow: clip;
+    transition: height 250ms, padding 250ms, opacity 250ms;
+  }
+
+  .animated-tree .react-aria-TreeItem[data-entering],
+  .animated-tree .react-aria-TreeItem[data-exiting] {
+    padding-block: 0;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animated-tree .react-aria-TreeItem {
+      transition: none;
+    }
+  }
+`;
+
+const AnimatedTreeRender = (args: TreeProps<unknown>): JSX.Element => (
+  <>
+    <style>{animatedTreeStyles}</style>
+    <Tree
+      {...args}
+      className={`${styles.menu} animated-tree`}
+      aria-label="Animated tree"
+      defaultExpandedKeys={['projects', 'projects-1']}
+      style={{height: '400px'}}>
+      <StaticTreeItem id="Photos" textValue="Photos">
+        Photos
+      </StaticTreeItem>
+      <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+        <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+          <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+            Projects-1A
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-2" textValue="Projects-2">
+          Projects-2
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-3" textValue="Projects-3">
+          Projects-3
+        </StaticTreeItem>
+      </StaticTreeItem>
+    </Tree>
+  </>
+);
+
+export const AnimatedTree: StoryObj<typeof AnimatedTreeRender> = {
+  render: args => <AnimatedTreeRender {...args} />,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection'
+  },
+  name: 'Animated expand/collapse'
+};
