@@ -195,7 +195,7 @@ function Example() {
 
 ## Snap points
 
-By default, a sheet opens to reveal all of its content. Provide the `snapPoints` prop to make it stop partially open instead. Each value is the amount of the sheet that is visible. The sheet opens at the first snap point, and can be dragged up to its full height or swiped down to dismiss.
+By default, a sheet opens to reveal all of its content. Provide the `snapPoints` prop to make it stop partially open instead. Each value is the amount of the sheet that is visible, either as a number of pixels or a CSS length. Percentages are relative to the size of the sheet. The sheet opens at the first snap point, and can be dragged up to its full height or swiped down to dismiss.
 
 ```tsx render
 "use client";
@@ -209,7 +209,7 @@ function Example() {
     <DialogTrigger>
       <Button>Show place</Button>
       {/*- begin highlight -*/}
-      <Sheet position="bottom" snapPoints={['280px']}>
+      <Sheet position="bottom" snapPoints={[280]}>
       {/*- end highlight -*/}
         <Heading slot="title" style={{marginBottom: 4}}>Blue Bottle Coffee</Heading>
         <div style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--gray-1000)', marginBottom: 32}}>

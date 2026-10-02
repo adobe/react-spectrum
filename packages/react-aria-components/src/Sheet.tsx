@@ -122,7 +122,8 @@ export interface SheetOverlayProps
     | 'horizontal';
   /**
    * Snap points the sheet will stop at, expressed as the amount of the sheet that is visible.
-   * Sheets initially open to the first snap point.
+   * Numbers are pixels, and percentages are relative to the size of the sheet. Sheets initially
+   * open to the first snap point.
    */
   snapPoints?: Array<number | string>;
   /**
@@ -551,14 +552,14 @@ interface SnapPointProps {
   axis: Axis;
 }
 
-// Converts a snap point value to a CSS length along the swipe axis: numbers are viewport relative.
-function toLength(point: number | string, axis: Axis): string {
-  return typeof point === 'number' ? `${point}${axis === 'y' ? 'dvh' : 'dvw'}` : point;
+// Converts a snap point value to a CSS length: numbers are pixels.
+function toLength(point: number | string): string {
+  return typeof point === 'number' ? `${point}px` : point;
 }
 
 function SnapPoint({point, align, axis}: SnapPointProps) {
   let mainUnit = axis === 'y' ? 'dvh' : 'dvw';
-  let offset = toLength(point, axis);
+  let offset = toLength(point);
   return (
     <div
       style={{
@@ -581,12 +582,13 @@ interface DetentPointProps {
   isInitial?: boolean;
 }
 
-// A snap marker anchored to the sheet's leading edge. Because it moves with the sheet, snapping it
-// with a `scroll-margin` of `viewport - visibleAmount` rests the sheet with exactly `visibleAmount`
-// of it on screen.
+// A snap marker placed inside the sheet, `point` in from its leading edge. Because it moves with
+// the sheet, snapping it with a `scroll-margin` of one viewport rests the marker at the edge of the
+// visible viewport, leaving exactly `point` of the sheet on screen. Since `point` is an inset rather
+// than part of the margin, percentages resolve relative to the sheet's size.
 function DetentPoint({point, axis, after, isInitial}: DetentPointProps) {
   let viewport = axis === 'y' ? '100dvh' : '100dvw';
-  let margin = `calc(${viewport} - ${toLength(point, axis)})`;
+  let offset = toLength(point);
   let common: React.CSSProperties = {
     position: 'absolute',
     width: 1,
@@ -596,12 +598,18 @@ function DetentPoint({point, axis, after, isInitial}: DetentPointProps) {
   let edge: React.CSSProperties =
     axis === 'y'
       ? after
-        ? {top: 0, left: 0, scrollMarginTop: margin}
-        : {bottom: 0, left: 0, scrollMarginBottom: margin}
+        ? {top: offset, left: 0, scrollMarginTop: viewport}
+        : {bottom: offset, left: 0, scrollMarginBottom: viewport}
       : after
-        ? {top: 0, left: 0, scrollMarginLeft: margin}
-        : {top: 0, right: 0, scrollMarginRight: margin};
-  return <div data-sheet-initial={isInitial || undefined} style={{...common, ...edge}} />;
+        ? {top: 0, left: offset, scrollMarginLeft: viewport}
+        : {top: 0, right: offset, scrollMarginRight: viewport};
+  return (
+    <div
+      data-sheet-detent
+      data-sheet-initial={isInitial || undefined}
+      style={{...common, ...edge}}
+    />
+  );
 }
 
 export interface SheetProps
@@ -677,17 +685,18 @@ export const Sheet = forwardRef(function Sheet(
   // one. Enter/exit animations still need the exit space, so only clamp while settled.
   let hasSnapPoints = !!snapPoints?.length && before !== after;
   let isClamped = !isDismissable && !isTransitioning;
-  let sheetExtent = useSheetExtent(stageRef, ref, axis, before, !isDismissable && hasSnapPoints);
+  let snapTravel = useSnapPointTravel(
+    stageRef,
+    ref,
+    axis,
+    after,
+    !isDismissable && hasSnapPoints ? snapPoints!.join(' ') : null
+  );
 
   // Scroll travel between the smallest snap point and the fully revealed sheet. It is at least 1px
   // so the scroll container remains scrollable, which lets the browser show its native overscroll
   // bounce even when there is nowhere to snap to.
-  let clampedTravel = '1px';
-  if (hasSnapPoints) {
-    let points = snapPoints!.map(p => toLength(p, axis));
-    let minPoint = points.length > 1 ? `min(${points.join(', ')})` : points[0];
-    clampedTravel = `max(1px, calc(${sheetExtent}px - ${minPoint}))`;
-  }
+  let clampedTravel = `${hasSnapPoints ? Math.max(1, snapTravel) : 1}px`;
 
   // The stage normally sits 1 viewport in so the sheet can scroll fully off screen toward the start
   // edge. When clamped, sheets exiting toward the end edge move it so scroll 0 rests at the smallest
@@ -736,7 +745,9 @@ export const Sheet = forwardRef(function Sheet(
     ...swipeAnimation
   };
 
+  let overscrollInset: string | undefined;
   if (props.overscrollPadding && position === swipeDirection) {
+    overscrollInset = axis === 'y' ? '100vh' : '100vw';
     // Extra padding to allow overscrolling, and a negative margin to offset it.
     switch (position) {
       case 'top':
@@ -826,9 +837,26 @@ export const Sheet = forwardRef(function Sheet(
         <Modal {...props} ref={ref} {...sheetProps}>
           {renderProps => (
             <>
-              {snapPoints?.map((point, i) => (
-                <DetentPoint key={i} point={point} axis={axis} after={after} isInitial={i === 0} />
-              ))}
+              {snapPoints && (
+                // Excludes the overscroll padding so percentages are relative to the visible sheet.
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    ...(overscrollInset ? {[position]: overscrollInset} : null),
+                    pointerEvents: 'none'
+                  }}>
+                  {snapPoints.map((point, i) => (
+                    <DetentPoint
+                      key={i}
+                      point={point}
+                      axis={axis}
+                      after={after}
+                      isInitial={i === 0}
+                    />
+                  ))}
+                </div>
+              )}
               {typeof props.children === 'function'
                 ? props.children({...renderProps, ...values})
                 : props.children}
@@ -842,34 +870,42 @@ export const Sheet = forwardRef(function Sheet(
   );
 });
 
-// Measures the distance from the sheet's leading edge to the stage's exit edge along the swipe axis,
-// i.e. how much of the sheet is visible when fully entered. Uses layout offsets rather than
-// bounding rects so swipe/stack animation transforms don't affect it.
-function useSheetExtent(
+// Measures how far the sheet must scroll from its smallest snap point to be fully revealed, i.e. the
+// distance from that snap point's marker to the stage's exit edge. Measuring the rendered markers
+// means snap points can use any CSS length, including percentages of the sheet. Uses layout offsets
+// rather than bounding rects so swipe/stack animation transforms don't affect it.
+function useSnapPointTravel(
   stageRef: React.RefObject<HTMLDivElement | null>,
   sheetRef: React.RefObject<HTMLDivElement | null>,
   axis: Axis,
-  before: boolean,
-  isEnabled: boolean
+  after: boolean,
+  // Space-separated snap points, so markers are re-measured when they change. Null to disable.
+  snapPointsKey: string | null
 ): number {
-  let [extent, setExtent] = useState(0);
+  let [travel, setTravel] = useState(0);
   useLayoutEffect(() => {
     let stage = stageRef.current;
     let sheet = sheetRef.current;
-    if (!isEnabled || !stage || !sheet) {
+    if (snapPointsKey == null || !stage || !sheet) {
       return;
     }
 
     let measure = () => {
-      let offset = 0;
-      let el: HTMLElement | null = sheet;
-      while (el && el !== stage) {
-        offset += axis === 'y' ? el.offsetTop : el.offsetLeft;
-        el = el.offsetParent as HTMLElement | null;
-      }
-      let size = axis === 'y' ? sheet.offsetHeight : sheet.offsetWidth;
       let stageSize = axis === 'y' ? stage.clientHeight : stage.clientWidth;
-      setExtent(before ? offset + size : stageSize - offset);
+      let max = 0;
+      for (let marker of sheet.querySelectorAll<HTMLElement>('[data-sheet-detent]')) {
+        let offset = 0;
+        let el: HTMLElement | null = marker;
+        while (el && el !== stage) {
+          offset += axis === 'y' ? el.offsetTop : el.offsetLeft;
+          el = el.offsetParent as HTMLElement | null;
+        }
+        // Markers sit at the snap point's start edge for sheets exiting toward the end edge, and at
+        // its end edge for sheets exiting toward the start edge. The smallest snap point travels most.
+        let size = axis === 'y' ? marker.offsetHeight : marker.offsetWidth;
+        max = Math.max(max, after ? stageSize - offset : offset + size);
+      }
+      setTravel(max);
     };
 
     measure();
@@ -877,9 +913,9 @@ function useSheetExtent(
     observer.observe(stage);
     observer.observe(sheet);
     return () => observer.disconnect();
-  }, [stageRef, sheetRef, axis, before, isEnabled]);
+  }, [stageRef, sheetRef, axis, after, snapPointsKey]);
 
-  return extent;
+  return travel;
 }
 
 export interface SheetBackdropProps
@@ -932,16 +968,16 @@ export const SheetBackdrop = forwardRef(function SheetBackdrop(
 function useSwipeAnimation(props: SheetBackdropProps) {
   let {swipeDirection, snapPoints, index, isEntering, isExiting} =
     useContext(InternalSheetContext)!;
-  let {axis, viewRange, viewDirection, viewIterations} = getSwipeConfig(swipeDirection);
+  let {viewRange, viewDirection, viewIterations} = getSwipeConfig(swipeDirection);
 
   if (props.swipeAnimation) {
     let rangeStart =
       props.swipeAnimationRange?.start != null
-        ? toLength(snapPoints?.[props.swipeAnimationRange.start] ?? '0%', axis)
+        ? toLength(snapPoints?.[props.swipeAnimationRange.start] ?? '0%')
         : '0%';
     let rangeEnd =
       props.swipeAnimationRange?.end != null
-        ? toLength(snapPoints?.[props.swipeAnimationRange.end] ?? '100%', axis)
+        ? toLength(snapPoints?.[props.swipeAnimationRange.end] ?? '100%')
         : '100%';
     if (swipeDirection === 'top' || swipeDirection === 'left') {
       rangeStart = `calc(100% - ${rangeStart})`;
