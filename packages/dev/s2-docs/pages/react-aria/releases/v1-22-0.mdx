@@ -1,0 +1,103 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'October 2, 2026';
+export const title = 'v1.22.0';
+export const description = 'This release adds a new Sheet component, Turbopack support for locale optimization, and improved handling of interactive widgets in overlay placement, along with many accessibility and stability fixes.';
+export const isSubpage = true;
+
+# v1.22.0
+
+This release introduces `Sheet`, a swipeable overlay that slides in from the edge of the viewport and is built on native browser scroll gestures. 
+
+(Add Sheet Example)
+
+It also adds Turbopack support to `@react-aria/optimize-locales-plugin`, overlay placement that accounts for the virtual keyboard, and many bug fixes!
+
+As always, many thanks to all of our contributors!
+
+## Changelog
+
+### General Changes
+- Add `suppressHydrationWarning` to `GlobalDOMAttributes` so it can be forwarded by `filterDOMProps` - [@miszuto](https://github.com/miszuto) - [PR](https://github.com/adobe/react-spectrum/pull/10527)
+- Fix `TypeError` in `preventFocus` when the window is focused or blurred during a press - [@microbit-matt-hillsdon](https://github.com/microbit-matt-hillsdon) - [PR](https://github.com/adobe/react-spectrum/pull/10592)
+- Skips the visibility check in `Focusable` and `Pressable` development warnings so children inside hidden subtrees no longer warn - [@SimenB](https://github.com/SimenB) - [PR](https://github.com/adobe/react-spectrum/pull/10547)
+- Throw an error on invalid `rgb()` and `rgba()` color strings - [@giaBaoJS](https://github.com/giaBaoJS) - [PR](https://github.com/adobe/react-spectrum/pull/10580)
+- Enable the `useControlledState` early effect in React Native - [@su-jin1425](https://github.com/su-jin1425) - [PR](https://github.com/adobe/react-spectrum/pull/10550)
+- Add support for interactive widgets, such as the virtual keyboard, when positioning overlays - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/10102)
+- Add Turbopack support to `@react-aria/optimize-locales-plugin` - [@stefanprobst](https://github.com/stefanprobst) - [PR](https://github.com/adobe/react-spectrum/pull/10462)
+
+### Collections
+- Throw dev warning when there are duplicate keys in collections - [@greglum](https://github.com/greglum) - [PR](https://github.com/adobe/react-spectrum/pull/10605)
+
+### ComboBox
+- Re-open popover when async items arrive after an empty response - [@costajohnt](https://github.com/costajohnt) - [PR](https://github.com/adobe/react-spectrum/pull/9823)
+
+### Date/Time
+- Include the final constrained year in the year picker - [@ZedingZhang](https://github.com/ZedingZhang) - [PR](https://github.com/adobe/react-spectrum/pull/10536)
+- Use default era when localized value is not supported in CLDR - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10698)
+
+### Docs
+- Fixes typos - [@olitreadwell](https://github.com/olitreadwell) - [PR](https://github.com/adobe/react-spectrum/pull/10578)
+
+### Forms
+- Add development warnings that detect invalid focus movement in forms - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10492)
+
+### Link
+- Add `aria-current` support to `LinkContext` - [@andrew-pledge-io](https://github.com/andrew-pledge-io) - [PR](https://github.com/adobe/react-spectrum/pull/10573)
+
+### Table
+- Fix `useGridCell` overriding focus restoration for focusable children, such as a dialog trigger inside a cell - [@jsmitrah](https://github.com/jsmitrah) - [PR](https://github.com/adobe/react-spectrum/pull/10228)
+
+### Tailwind
+- Add note to the Tailwind plugin documentation about how data attributes map to Tailwind selectors - [@travisrcory](https://github.com/travisrcory) - [PR](https://github.com/adobe/react-spectrum/pull/10574)
+
+### TokenField
+- Export `TokenFieldContext` as a value rather than a type - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10612)
+- Fix TokenField scroll jumps after token edits - [@minwookshin](https://github.com/minwookshin) - [PR](https://github.com/adobe/react-spectrum/pull/10676)
+
+### Tree
+- Fix `useTreeData` subtree move validation - [@su-jin1425](https://github.com/su-jin1425) - [PR](https://github.com/adobe/react-spectrum/pull/10560)
+
+### Sheet
+- Add a new `Sheet` component, a swipeable overlay that slides in from the edge of the viewport with support for snap points, stacking, and multiple placements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10674)
+
+### SideNav
+- Fix NavigationTree documentation example so the Shared row expands on press - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10567)
+
+## Released packages
+
+```
+[TODO: paste output of yarn bumpVersions here]
+```
+
+
+
+{/* dropped: chore: Yarn upgrade [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9817) — internal tooling */}
+{/* dropped: chore: Format with oxfmt [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10030) — internal tooling */}
+{/* dropped: chore: Migrate from eslint to oxlint [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10049) — internal tooling */}
+{/* dropped: use caret ranges in individual packages - Devon Govett — internal tooling */}
+{/* dropped: update yarn lock - Devon Govett — internal tooling */}
+{/* dropped: docs: New hook docs follow-up fixes [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10355) — internal tooling */}
+{/* dropped: docs: Update NavigationTree docs to no longer use RouterProvider [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10549) — internal tooling */}
+{/* dropped: chore: upgrade react 19 types [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10636) — internal tooling */}
+{/* dropped: chore: Remove some old browser workarounds [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10654) — internal tooling */}
+{/* dropped: feat: Expose submit button when streaming, S2 virtualized menu support and other fixes [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10614) — covered in Spectrum 2 release notes */}
+{/* dropped: feat: SidePanel S2 [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10421) — covered in Spectrum 2 release notes */}
+{/* dropped: fix: update links to new spectrum docs [@misterbrownlee](https://github.com/misterbrownlee) - [PR](https://github.com/adobe/react-spectrum/pull/10691) — internal tooling */}
