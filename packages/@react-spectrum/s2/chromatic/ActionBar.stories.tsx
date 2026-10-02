@@ -24,9 +24,11 @@ import {
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode} from 'react';
+import {shortName} from './utils';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
@@ -39,6 +41,38 @@ const meta: Meta<typeof ActionBar> = {
 };
 
 export default meta;
+
+type Story = StoryObj<typeof ActionBar>;
+
+let states = [{isEmphasized: [false, true]}];
+let combinations = generatePowerset(states);
+
+const Template = (args: ActionBarProps): ReactNode => {
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 24, width: 960})}>
+      {combinations.map(c => {
+        let key =
+          Object.keys(c)
+            .map(k => shortName(k, c[k]))
+            .join(' ') || 'default';
+
+        return (
+          <div key={key} className={style({position: 'relative', height: 96})}>
+            <ActionBar {...args} {...c} selectedItemCount={3}>
+              <ActionButton>Edit</ActionButton>
+              <ActionButton>Copy</ActionButton>
+              <ActionButton>Delete</ActionButton>
+            </ActionBar>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+export const Default: Story = {
+  render: args => <Template {...args} />
+};
 
 let columns = [
   {name: 'Foo', id: 'foo', isRowHeader: true},
@@ -72,6 +106,9 @@ interface ExampleProps extends Omit<ActionBarProps, 'children'> {
   tableStyles?: TableViewProps['styles'];
   isIconOnly?: boolean;
 }
+
+// ActionBar is positioned relative to the scrollable collection it floats above, so these stories
+// render it through TableView's renderActionBar rather than standalone.
 const Example = ({
   defaultSelectedKeys,
   tableStyles = defaultTable,
@@ -112,9 +149,9 @@ const Example = ({
   </TableView>
 );
 
-type Story = StoryObj<typeof Example>;
+type ExampleStory = StoryObj<typeof Example>;
 
-export const Default: Story = {
+export const InTableView: ExampleStory = {
   render: args => (
     <div className={style({display: 'flex', gap: 24})}>
       <Example {...args} />
@@ -123,7 +160,7 @@ export const Default: Story = {
   )
 };
 
-export const IsEmphasized: Story = {
+export const IsEmphasized: ExampleStory = {
   render: args => <Example {...args} />,
   args: {
     isEmphasized: true,
@@ -131,7 +168,7 @@ export const IsEmphasized: Story = {
   }
 };
 
-export const LargeWidth: Story = {
+export const LargeWidth: ExampleStory = {
   render: args => <Example {...args} />,
   args: {
     defaultSelectedKeys: [1, 2, 3],
@@ -139,7 +176,7 @@ export const LargeWidth: Story = {
   }
 };
 
-export const IconOnly: Story = {
+export const IconOnly: ExampleStory = {
   render: args => <Example {...args} />,
   args: {
     defaultSelectedKeys: [1, 2, 3],
@@ -148,7 +185,7 @@ export const IconOnly: Story = {
   }
 };
 
-export const AllSelected: Story = {
+export const AllSelected: ExampleStory = {
   render: args => <Example {...args} />,
   args: {
     isEmphasized: true,
