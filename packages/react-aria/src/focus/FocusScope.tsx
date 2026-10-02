@@ -837,6 +837,30 @@ function restoreFocusToElement(node: FocusableElement) {
   }
 }
 
+/** @private */
+export function setFocusScopeRestoreTarget(element: Element, target: FocusableElement): void {
+  let scope: TreeNode | undefined;
+  for (let node of focusScopeTree.traverse()) {
+    if (
+      node.scopeRef &&
+      isElementInScope(element, node.scopeRef.current) &&
+      (!scope || isAncestorScope(scope.scopeRef, node.scopeRef))
+    ) {
+      scope = node;
+    }
+  }
+
+  // Only fill an empty restore target on the overlay's own scope. A surrounding
+  // scope that also contains the trigger must keep its original restore target.
+  if (
+    scope?.scopeRef &&
+    scope.nodeToRestore === getOwnerDocument(element).body &&
+    !isElementInScope(target, scope.scopeRef.current)
+  ) {
+    scope.nodeToRestore = target;
+  }
+}
+
 /**
  * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
  * that matches all focusable/tabbable elements.
