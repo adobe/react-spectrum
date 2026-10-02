@@ -5135,38 +5135,6 @@ describe('ComboBox', function () {
       });
 
       describe('keyboard navigating', function () {
-        it('should announce items when navigating with the arrow keys', async function () {
-          renderComboBox();
-          await user.tab();
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          expect(announce).toHaveBeenLastCalledWith('One');
-
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          expect(announce).toHaveBeenLastCalledWith('Two');
-        });
-
-        it('should announce when navigating to the selected item', async function () {
-          let {getByRole} = renderComboBox({selectedKey: '2'});
-          let combobox = getByRole('combobox');
-          act(() => {
-            combobox.focus();
-          });
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          expect(announce).toHaveBeenLastCalledWith('Two, selected');
-        });
-
         it('should announce when navigating into a section with multiple items', async function () {
           let {getByRole} = renderSectionComboBox();
           let combobox = getByRole('combobox');
@@ -5183,12 +5151,16 @@ describe('ComboBox', function () {
             'Entered group Section One, with 3 options. One'
           );
 
+          // Moving within the same section should not announce again.
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('Two');
+          expect(announce.mock.calls.map(call => call[0])).toEqual([
+            '6 options available.',
+            'Entered group Section One, with 3 options. One'
+          ]);
         });
 
         it('should announce when navigating into a section with a single item', async function () {
@@ -5290,14 +5262,15 @@ describe('ComboBox', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('One');
-
           await user.keyboard('{Enter}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('One, selected');
+          expect(announce.mock.calls.map(call => call[0])).toEqual([
+            '3 options available.',
+            'One, selected'
+          ]);
         });
       });
     });
@@ -5396,9 +5369,8 @@ describe('ComboBox', function () {
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
-        expect(announce).toHaveBeenCalledTimes(2);
+        expect(announce).toHaveBeenCalledTimes(1);
         expect(announce).toHaveBeenNthCalledWith(1, '3 options available.');
-        expect(announce).toHaveBeenNthCalledWith(2, 'One');
         platformMock.mockRestore();
       });
 
