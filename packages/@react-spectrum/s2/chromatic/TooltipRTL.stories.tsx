@@ -27,4 +27,4 @@ const meta: Meta<typeof Tooltip> = {
 };
 
 export default meta;
-export {Default, WithLongLabel} from './Tooltip.stories';
+export {Default, WithLongLabel, Informative, Negative, HideArrow} from './Tooltip.stories';
