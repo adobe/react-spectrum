@@ -16,7 +16,8 @@ import {
   ItemDropTarget,
   Key,
   LayoutDelegate,
-  RefObject
+  RefObject,
+  ScrollDelegate
 } from '@react-types/shared';
 import {createBranchComponent} from 'react-aria/CollectionBuilder';
 import {
@@ -190,6 +191,8 @@ export interface CollectionRenderer {
   isVirtualized?: boolean;
   /** A delegate object that provides layout information for items in the collection. */
   layoutDelegate?: LayoutDelegate;
+  /** A delegate object that provides scroll actions for the collection. */
+  scrollDelegate?: ScrollDelegate;
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate?: DropTargetDelegate;
   /** A component that renders the root collection items. */
