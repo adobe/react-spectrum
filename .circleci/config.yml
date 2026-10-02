@@ -48,6 +48,14 @@ executors:
     environment: *global-environment
     working_directory: ~/react-spectrum
 
+  rsp-rust:
+    docker:
+      - image: cimg/rust:1.86.0
+    resource_class: large
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
 commands:
   deploy-s3:
     parameters:
@@ -401,6 +409,15 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+      # Bring in the tsdiff binary persisted by ts-build-binary so we
+      # can extract the branch API immediately after `make build`, while the
+      # freshly-built workspace (with its gitignored subpath stubs at paths
+      # like packages/react-aria/useButton/package.json) is still intact.
+      # Doing it here avoids the Node10 resolution breakage we saw when the
+      # stubs had to cross a persist_to_workspace boundary into a separate
+      # ts-build-branch job.
+      - attach_workspace:
+          at: ~/react-spectrum
 
       - run:
           name: test
@@ -408,6 +425,31 @@ jobs:
             make build
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
             node scripts/testCJS.cjs
+
+      # Type extraction now uses the repo's Parcel 3 binary
+      # (node_modules/.bin/parcel3 + @parcel/transformer-ts-doc), provided by the
+      # restored react-spectrum node_modules cache — no separate install step.
+
+      - run:
+          name: extract branch API
+          command: |
+            packages/dev/tsdiff/target/release/tsdiff get-local-api --repo-root . --output dist/branch-api
+
+      - run:
+          name: env-report (branch side)
+          command: |
+            packages/dev/tsdiff/target/release/tsdiff env-report --repo-root . --output dist/branch-api/env-report.json || true
+
+      - store_artifacts:
+          path: dist/branch-api
+          destination: branch-api
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - 'packages/*/dist/'
+            - 'packages/@*/*/dist/'
+            - 'dist/branch-api/'
 
   test-browser:
     docker:
@@ -435,55 +477,115 @@ jobs:
             yarn test:lint
             yarn lint
 
-  ts-build-branch:
-    executor: rsp-large
+  # Build the tsdiff Rust binary once and share it via workspace.
+  # Runs in parallel with the yarn `install` job — no dependency needed.
+  # The Cargo registry + target dir are cached by Cargo.lock hash so
+  # incremental rebuilds are fast when only Rust source changes.
+  ts-build-binary:
+    executor: rsp-rust
     steps:
+      - checkout
       - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
+          keys:
+            - tsdiff-v1-{{ checksum "packages/dev/tsdiff/Cargo.lock" }}
+            - tsdiff-v1-
       - run:
-          name: build branch apis
-          command: yarn build:api-branch
-
-      - persist_to_workspace:
-          root: dist
+          name: build tsdiff
+          command: cd packages/dev/tsdiff && cargo build --release
+      - save_cache:
+          key: tsdiff-v1-{{ checksum "packages/dev/tsdiff/Cargo.lock" }}
           paths:
-            - 'branch-api/'
+            - ~/.cargo/registry
+            - ~/.cargo/git
+            - packages/dev/tsdiff/target
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packages/dev/tsdiff/target/release/tsdiff
 
-  ts-build-fork-point:
+  # Fetch the last published release from npm and extract its type API (the
+  # npm baseline).
+  #
+  # NOTE: the per-branch `ts-diff` workflow no longer runs this job — it now
+  # compares this branch against main via `ts-build-branch` (the fork-point job
+  # the old comment here anticipated). This job is kept as a defined-but-
+  # unreferenced job so a "compare against the last npm release" path stays
+  # available. The recurring published comparison runs weekly in
+  # .github/workflows/weekly-api-diff.yml (yarn build:api-published +
+  # compare:apis), independent of this CircleCI job.
+  ts-get-published:
     executor: rsp-large
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
+      - attach_workspace:
+          at: ~/react-spectrum
+      # Type extraction now uses the repo's Parcel 3 binary
+      # (node_modules/.bin/parcel3 + @parcel/transformer-ts-doc), provided by the
+      # restored react-spectrum node_modules cache — no separate install step.
       - run:
-          name: build fork-point apis
+          name: extract published API
           command: |
+            packages/dev/tsdiff/target/release/tsdiff get-published-api --repo-root . --output dist/base-api
+      - run:
+          # Runs after extraction (the extraction wipes its output dir on start)
+          # so the report lands next to the api.json tree. Non-fatal: if env
+          # inspection itself errors, we still want the extracted api.json.
+          name: env-report (published side)
+          command: |
+            packages/dev/tsdiff/target/release/tsdiff env-report --repo-root . --output dist/base-api/env-report.json || true
+      - store_artifacts:
+          path: dist/base-api
+          destination: base-api
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist/base-api/
+
+  # Build the latest main as the API baseline so ts-diff compares THIS branch
+  # against main (fork point), not the npm release. get-ref-api snapshots the ref
+  # with `git archive` (pure read — doesn't touch the working tree), then yarn
+  # installs + builds it in a temp dir and extracts the api into dist/base-api;
+  # the only write back into the repo is that api.json tree.
+  ts-build-branch:
+    executor: rsp-2xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+      - attach_workspace:
+          at: ~/react-spectrum
+      - run:
+          name: build main API baseline (fork point)
+          command: |
+            # `get-ref-api --fetch` shells out to `git fetch` over SSH, so
+            # github.com has to be a known host or the fetch stalls on the
+            # host-key prompt. Same keyscan the old ts-build-fork-point job did.
             mkdir -p ~/.ssh
             ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
-            yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
-
+            packages/dev/tsdiff/target/release/tsdiff get-ref-api --repo-root . --ref origin/main --fetch --output dist/base-api
+      - store_artifacts:
+          path: dist/base-api
+          destination: base-api
       - persist_to_workspace:
-          root: dist
+          root: .
           paths:
-            - 'base-api/'
+            - dist/base-api/
 
   ts-diff:
-    executor: rsp-large
+    executor: rsp
     steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
       - attach_workspace:
-          at: /tmp/dist
-
+          at: ~/react-spectrum
       - run:
-          name: compare api
+          name: compare APIs
           command: |
-            yarn test:parcel
-            mkdir -p dist
-            yarn compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
-
+            packages/dev/tsdiff/target/release/tsdiff compare \
+              --base-api-dir dist/base-api \
+              --branch-api-dir dist/branch-api \
+              --ci | tee dist/ts-diff.txt
+      - store_artifacts:
+          path: dist/ts-diff.txt
+          destination: ts-diff.txt
       - persist_to_workspace:
           root: dist
           paths:
@@ -981,26 +1083,25 @@ workflows:
       - test-ssr-18:
           requires:
             - install-18
+      # ts-build-binary has to run on every branch (including main) because
+      # test-build now consumes it to extract the branch API. The cost is
+      # small: Cargo caches by Cargo.lock hash, so this is typically a
+      # seconds-long cache hit.
+      - ts-build-binary
       - test-build:
           requires:
             - install
+            - ts-build-binary
       - test-browser:
           requires:
             - install
       - lint:
           requires:
             - install
-      - ts-build-fork-point:
-          requires:
-            - install
-          filters:
-            branches:
-              ignore:
-                - /main$/
-                - /gh-readonly-queue\/.*$/
       - ts-build-branch:
           requires:
             - install
+            - ts-build-binary
           filters:
             branches:
               ignore:
@@ -1008,8 +1109,8 @@ workflows:
                 - /gh-readonly-queue\/.*$/
       - ts-diff:
           requires:
-            - ts-build-fork-point
             - ts-build-branch
+            - test-build
           filters:
             branches:
               ignore:
