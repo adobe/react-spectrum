@@ -26,7 +26,7 @@ import {I18nProvider} from 'react-aria';
 import {Key} from '@react-types/shared';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {userEvent} from 'vitest/browser';
+import userEvent from '@testing-library/user-event';
 
 it.each([
   {name: 'collapsed borders', tableStyle: {borderCollapse: 'collapse' as const}},
@@ -142,11 +142,15 @@ it.each(['ltr', 'rtl'] as const)(
     let table = screen.container.querySelector('table')!;
     let header = table.querySelector('th')!;
     await expect.poll(() => header.getBoundingClientRect().width).toBe(200);
-    await screen.getByRole('button', {name: 'Resize Name'}).click();
+    // Keep keyboard actions within this document when browser tests run in parallel.
+    let user = userEvent.setup({delay: null});
+    await user.click(screen.getByRole('button', {name: 'Resize Name'}).element());
     await expect.element(screen.getByRole('slider', {name: 'Resize Name'})).toHaveFocus();
-    await userEvent.keyboard(direction === 'rtl' ? '{ArrowLeft}' : '{ArrowRight}');
-    await userEvent.keyboard('{Enter}');
-    await expect.poll(() => header.getBoundingClientRect().width).toBeGreaterThan(200);
+    await user.keyboard(direction === 'rtl' ? '{ArrowLeft}' : '{ArrowRight}');
+    await expect.poll(() => header.getBoundingClientRect().width).toBe(210);
+    await user.keyboard('{Enter}');
+    await expect.poll(() => header.hasAttribute('data-resizing')).toBe(false);
+    expect(header.getBoundingClientRect().width).toBe(210);
     expect(header.getBoundingClientRect().width).toBeLessThanOrEqual(250);
     let resizedWidth = header.getBoundingClientRect().width;
     for (let width of [800, 500]) {
