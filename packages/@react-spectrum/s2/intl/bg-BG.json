@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Изберете…",
   "picker.selectedCount": "{count, plural, =0 {Няма избрани елементи} one {# избран елемент} other {# избрани елемента}}",
+  "sidepanel.collapse": "Сгъване на страничния панел",
+  "sidepanel.expand": "Разгъване на страничния панел",
   "slider.maximum": "Максимум",
   "slider.minimum": "Минимум",
   "table.cancel": "Отказ",

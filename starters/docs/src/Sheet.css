@@ -1,66 +1,139 @@
-.sheet-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--page-width);
-  height: var(--page-height);
-  background: rgba(0 0 0 / 0.3);
-  backdrop-filter: blur(10px);
-  z-index: 100;
-  overflow: clip;
+@import './theme.css';
 
-  &[data-entering] {
-    animation: sheet-blur 300ms;
-  }
-
-  &[data-exiting] {
-    animation: sheet-blur 300ms reverse ease-in;
-  }
-}
-
-.sheet {
-  position: sticky;
-  left: 0;
-  width: 300px;
-  /* Extra padding to account for iOS floating browser UI. */
-  top: -100px;
-  height: calc(100dvh + 200px);
-  padding: 100px 0;
-  margin-left: auto;
+.react-aria-Sheet {
   background: var(--overlay-background);
-  outline: none;
-  border-left: 1px solid var(--overlay-border);
-  box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
+  color: var(--text-color);
+  outline: 1px solid var(--overlay-border);
+  box-shadow: var(--popover-shadow);
   font-family: system-ui;
-  font-size: 0.875rem;
+  font-size: var(--font-size);
+  height: auto;
+  max-height: calc(100% - 32px);
+  width: calc(100% - var(--spacing-3));
+  max-width: 800px;
+  margin: var(--spacing-2);
+  border-radius: 32px;
+  overflow: clip;
+  z-index: 1;
+  /* Establish a 3D space so stacked sheets can scale backward along the z-axis. */
+  transform: perspective(1000px);
+  will-change: transform;
 
-  &[data-entering] {
-    animation: sheet-slide 300ms;
+  &[data-position='left'],
+  &[data-position='right'] {
+    width: 340px;
+    height: calc(100% - var(--spacing-3));
+    max-height: unset;
   }
 
-  &[data-exiting] {
-    animation: sheet-slide 300ms reverse ease-in;
+  &[data-position='bottom'],
+  &[data-position='center'] {
+    transform-origin: center -150px;
+  }
+
+  &[data-position='top'] {
+    transform-origin: center 150px;
+  }
+
+  &[data-position='left'] {
+    transform-origin: 150px center;
+  }
+
+  &[data-position='right'] {
+    transform-origin: -150px center;
+  }
+
+  .sheet-handle {
+    border-radius: 6px;
+    background: var(--gray-300);
+    position: absolute;
+    z-index: 2;
+    transition: opacity 300ms;
+  }
+
+  &[data-swipe-direction='bottom'] .sheet-handle,
+  &[data-swipe-direction='vertical'] .sheet-handle {
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 6px;
+  }
+  &[data-swipe-direction='top'] .sheet-handle {
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 6px;
+  }
+  &[data-swipe-direction='left'] .sheet-handle,
+  &[data-swipe-direction='horizontal'] .sheet-handle {
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 80px;
+    width: 6px;
+  }
+  &[data-swipe-direction='right'] .sheet-handle {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 80px;
+    width: 6px;
+  }
+
+  &[data-has-descendants] .sheet-handle {
+    opacity: 0;
   }
 }
 
-@keyframes sheet-blur {
-  from {
-    background: rgba(0 0 0 / 0);
-    backdrop-filter: blur(0);
-  }
-
-  to {
-    background: rgba(0 0 0 / 0.3);
-    backdrop-filter: blur(10px);
+.react-aria-SheetBackdrop {
+  /* Only the bottom-most sheet in a stack dims the page behind it. */
+  &[data-stack-index='0'] {
+    background: rgb(0 0 0 / 0.4);
   }
 }
 
-@keyframes sheet-slide {
+.react-aria-SheetContent {
+  padding: var(--spacing-8);
+  padding-bottom: calc(var(--spacing-8) + var(--sheet-scroll-padding-y));
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0px var(--spacing-4),
+    black var(--spacing-8) calc(100% - var(--spacing-8)),
+    transparent
+  );
+  box-sizing: border-box;
+  height: 100%;
+  outline: none;
+  /* Only scroll the inner content once the sheet is fully expanded. At a partial detent a swipe on
+     the content chains out to the sheet's scroll container instead, expanding the sheet (like iOS). */
+  overflow: hidden;
+  overscroll-behavior: auto;
+
+  .react-aria-Heading[slot='title'] {
+    margin-top: 0;
+    margin-bottom: var(--spacing-1);
+    font-size: 1.3rem;
+  }
+}
+
+.react-aria-SheetOverlay[data-expanded] .react-aria-SheetContent {
+  overflow: auto;
+}
+
+@keyframes sheet-backdrop {
   from {
-    transform: translateX(100%);
+    opacity: 0;
   }
 
   to {
-    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-scale-back {
+  to {
+    transform: translateZ(-120px);
   }
 }

@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "選択…",
   "picker.selectedCount": "{count, plural, =0 {項目が選択されていません} one {# 項目を選択しました} other {# 項目を選択しました}}",
+  "sidepanel.collapse": "サイドパネルを折りたたむ",
+  "sidepanel.expand": "サイドパネルを展開",
   "slider.maximum": "最大",
   "slider.minimum": "最小",
   "table.cancel": "キャンセル",

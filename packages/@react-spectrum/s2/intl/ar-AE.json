@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "تحديد…",
   "picker.selectedCount": "{count, plural, =0 {لم يتم تحديد أي عنصر} one {تم تحديد عنصر واحد} two {تم تحديد عنصرين} few {تم تحديد # عناصر} other {تم تحديد # عنصر}}",
+  "sidepanel.collapse": "طي اللوحة الجانبية",
+  "sidepanel.expand": "توسيع اللوحة الجانبية",
   "slider.maximum": "أقصى",
   "slider.minimum": "أدنى",
   "table.cancel": "إلغاء",

@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Вибрати…",
   "picker.selectedCount": "{count, plural, =0 {Жодних елементів не вибрано} one {# елемент вибрано} other {Елементів вибрано: #}}",
+  "sidepanel.collapse": "Згорнути бічну панель",
+  "sidepanel.expand": "Розгорнути бічну панель",
   "slider.maximum": "Максимум",
   "slider.minimum": "Мінімум",
   "table.cancel": "Скасувати",

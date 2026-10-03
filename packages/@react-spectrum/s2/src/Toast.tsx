@@ -129,7 +129,7 @@ function addToast(
     ...filterDOMProps(options)
   };
 
-  // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
+  // Minimum time of 5s from https://spectrum.adobe.com/web/rsp/components/toast#component-options
   // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
   // It is debatable whether non-actionable toasts would also fail.
   let timeout =

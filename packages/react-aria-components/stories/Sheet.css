@@ -1,0 +1,84 @@
+.react-aria-Sheet {
+  color-scheme: light dark;
+  background: light-dark(white, #222);
+  color: CanvasText;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid light-dark(#eee, #333);
+  height: 80%;
+  overflow: clip;
+  width: calc(100% - 16px);
+  max-width: 800px;
+  border-radius: 40px;
+  z-index: 1;
+  transform: perspective(1000px);
+  will-change: transform;
+
+  &[data-position='left'],
+  &[data-position='right'] {
+    width: 300px;
+    height: calc(100% - 16px);
+  }
+
+  &[data-position='bottom'],
+  &[data-position='center'] {
+    transform-origin: center -20%;
+  }
+
+  &[data-position='top'] {
+    transform-origin: center 120%;
+  }
+
+  &[data-position='left'] {
+    transform-origin: 120% center;
+  }
+
+  &[data-position='right'] {
+    transform-origin: -20% center;
+  }
+}
+
+.react-aria-SheetBackdrop {
+  &[data-stack-index='0'] {
+    background: rgb(0 0 0 / 0.4);
+  }
+}
+
+.react-aria-SheetContent {
+  padding: 30px;
+  padding-bottom: var(--sheet-scroll-padding-y);
+  box-sizing: border-box;
+  height: 100%;
+  /* Only scroll the inner content once the sheet is fully expanded. At a partial detent a swipe on
+     the content chains out to the sheet's scroll container instead, expanding the sheet (like iOS). */
+  overflow: hidden;
+}
+
+.react-aria-SheetOverlay[data-expanded] .react-aria-SheetContent {
+  overflow: auto;
+}
+
+@keyframes radius {
+  from {
+    border-radius: 0;
+  }
+
+  to {
+    border-radius: 40px;
+  }
+}
+
+@keyframes backdropAnimation {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleBack {
+  to {
+    transform: translateZ(-60px);
+  }
+}

@@ -28,6 +28,8 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Επιλογή…",
   "picker.selectedCount": "{count, plural, =0 {Δεν επιλέχθηκαν στοιχεία} one {Επιλέχθηκε # στοιχείο} other {Επιλέχθηκαν # στοιχεία}}",
+  "sidepanel.collapse": "Σύμπτυξη πλευρικού πλαισίου",
+  "sidepanel.expand": "Επέκταση πλευρικού πλαισίου",
   "slider.maximum": "Μέγιστο",
   "slider.minimum": "Ελάχιστο",
   "table.cancel": "Ακύρωση",
