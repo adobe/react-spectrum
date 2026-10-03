@@ -184,11 +184,14 @@ export class Virtualizer<T extends object, V> {
     // On first render _visibleViews is empty so no anchor will be found.
     let anchor: ScrollAnchor | null = null;
     if (anchorInfo) {
-      anchor = this._scrollAnchor.captureBeforeLayout(
-        anchorInfo,
-        this.getVisibleLayoutInfos(),
-        this.visibleRect
-      );
+      let preLayoutInfos: [Key, LayoutInfo][] = [];
+      for (let [key, view] of this._visibleViews) {
+        let layoutInfo = this.layout.getLayoutInfo(key) ?? view.layoutInfo;
+        if (layoutInfo) {
+          preLayoutInfos.push([key, layoutInfo]);
+        }
+      }
+      anchor = this._scrollAnchor.captureBeforeLayout(anchorInfo, preLayoutInfos, this.visibleRect);
     }
 
     let previousContentSize = this.contentSize;
