@@ -11,8 +11,8 @@
  */
 
 import {createShadowTreeWalker} from '../utils/shadowdom/ShadowTreeWalker';
-
-import {getOwnerDocument, getOwnerWindow, isShadowRoot} from '../utils/domHelpers';
+import {getOwnerDocument, getOwnerWindow} from '../utils/domHelpers';
+import {isShadowRoot} from '../utils/typeHelpers';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {shadowDOM} from 'react-stately/private/flags/flags';
 
