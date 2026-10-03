@@ -301,6 +301,38 @@ describe('Toolbar', () => {
     expect(zoomOut).toHaveFocus();
   });
 
+  it('scrolls the newly focused item into view when navigating with arrow keys', async () => {
+    let scrollIntoView = jest.fn();
+    let originalScrollIntoView = window.HTMLElement.prototype.scrollIntoView;
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(
+        <Toolbar aria-label="Tools">
+          <Button>First</Button>
+          <Button>Last</Button>
+        </Toolbar>
+      );
+      let first = screen.getByRole('button', {name: 'First'});
+      let last = screen.getByRole('button', {name: 'Last'});
+
+      await user.tab();
+      expect(first).toHaveFocus();
+
+      scrollIntoView.mockClear();
+      await user.keyboard('{ArrowRight}');
+      expect(last).toHaveFocus();
+      expect(scrollIntoView).toHaveBeenCalledWith({block: 'nearest'});
+      expect(scrollIntoView.mock.instances[0]).toBe(last);
+
+      scrollIntoView.mockClear();
+      await user.keyboard('{ArrowLeft}');
+      expect(first).toHaveFocus();
+      expect(scrollIntoView.mock.instances[0]).toBe(first);
+    } finally {
+      window.HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+    }
+  });
+
   it('supports keyboard navigation with orientation vertical', async () => {
     render(
       <>
