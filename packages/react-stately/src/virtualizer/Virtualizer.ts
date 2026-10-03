@@ -476,7 +476,9 @@ export class Virtualizer<T extends object, V> {
 
   private isEdgeContent(key: Key): boolean {
     // @ts-ignore
-    let anchorInfo = this.layout.UNSTABLE_getScrollAnchorInfo?.(this._invalidationContext.layoutOptions);
+    let anchorInfo = this.layout.UNSTABLE_getScrollAnchorInfo?.(
+      this._invalidationContext.layoutOptions
+    );
     return anchorInfo?.isEdgeContent?.(key) ?? true;
   }
 }
