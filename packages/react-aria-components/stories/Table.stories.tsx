@@ -61,6 +61,31 @@ export default {
 export type TableStory = StoryFn<typeof Table>;
 export type TableStoryObj = StoryObj<typeof Table>;
 
+export const ResizableFlexTable: TableStory = () => (
+  <div style={{display: 'flex', width: 600}}>
+    <div style={{display: 'flex', flex: 1}}>
+      <ResizableTableContainer style={{flex: 1}}>
+        <Table aria-label="Files in a flex layout" style={{borderSpacing: 4}}>
+          <TableHeader>
+            <MyColumn isRowHeader style={{padding: 8}}>
+              Name
+            </MyColumn>
+            <MyColumn style={{padding: 8}}>Type</MyColumn>
+            <MyColumn style={{padding: 8}}>Date Modified</MyColumn>
+          </TableHeader>
+          <TableBody>
+            <Row id="documents">
+              <Cell>Documents</Cell>
+              <Cell>Folder</Cell>
+              <Cell>January 1</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
+  </div>
+);
+
 const ReorderableTable = ({initialItems}: {initialItems: {id: string; name: string}[]}) => {
   let list = useListData({initialItems});
 
