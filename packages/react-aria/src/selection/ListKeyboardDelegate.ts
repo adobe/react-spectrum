@@ -92,7 +92,9 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return (
       this.disabledBehavior === 'all' &&
       (item.props?.isDisabled || this.disabledKeys.has(item.key)) &&
-      item.props?.disabledBehavior !== 'selection'
+      item.props?.disabledBehavior !== 'selection' &&
+      // Items that opt into staying focusable while disabled remain navigable.
+      !item.props?.allowFocusWhenDisabled
     );
   }
 
