@@ -65,6 +65,70 @@ describe('captureScrollAnchor', () => {
 
     expect(anchor?.key).toBe('closer');
   });
+
+  it('does not anchor to a substantially-visible item clipped at the leading edge', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468); // viewport 1000-1468
+    let clipped = new LayoutInfo('item', 'clipped', new Rect(0, 962, 400, 76)); // top clipped, 38px visible
+    let fullyVisible = new LayoutInfo('item', 'fully-visible', new Rect(0, 1040, 400, 60));
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [
+      ['clipped', clipped],
+      ['fully-visible', fullyVisible]
+    ]);
+
+    expect(anchor?.key).toBe('fully-visible');
+    expect(anchor?.corner).toBe('topLeft');
+    expect(anchor?.offset).toBe(40);
+  });
+
+  it('anchors along the x axis by the left edge when anchoring to end', () => {
+    // Branch coverage for the horizontal corner branch (topLeft on the x axis).
+    let visibleRect = new Rect(1000, 0, 468, 400); // viewport x 1000-1468
+    let leftClipped = new LayoutInfo('item', 'left-clipped', new Rect(962, 0, 76, 400)); // left clipped
+    let fullyVisible = new LayoutInfo('item', 'fully-visible', new Rect(1040, 0, 60, 400));
+
+    let anchor = captureScrollAnchor('end', 'x', visibleRect, [
+      ['left-clipped', leftClipped],
+      ['fully-visible', fullyVisible]
+    ]);
+
+    expect(anchor?.key).toBe('fully-visible');
+    expect(anchor?.corner).toBe('topLeft');
+    expect(anchor?.offset).toBe(40);
+  });
+
+  it('falls back to a clipped item when it is the only substantial candidate', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468); // viewport 1000-1468
+    let taller = new LayoutInfo('item', 'taller', new Rect(0, 900, 400, 800)); // spans 900-1700
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [['taller', taller]]);
+
+    expect(anchor?.key).toBe('taller');
+  });
+
+  it('returns a substantial clipped item over a fully-visible sub-overlap sliver', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468); // viewport 1000-1468
+    // Fully visible (top at 1002) but only 2px tall -> overlap 2 < MIN_ANCHOR_OVERLAP.
+    let sliver = new LayoutInfo('item', 'sliver', new Rect(0, 1002, 400, 2));
+    // Top-clipped but 38px visible -> substantial overlap, reaches the fallback.
+    let clipped = new LayoutInfo('item', 'clipped', new Rect(0, 962, 400, 76));
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [
+      ['sliver', sliver],
+      ['clipped', clipped]
+    ]);
+
+    expect(anchor?.key).toBe('clipped');
+  });
+
+  it('excludes an item that is both clipped and sub-overlap at the overlap gate', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468);
+    let clippedSliver = new LayoutInfo('item', 'clipped-sliver', new Rect(0, 960, 400, 42)); // 2px visible at top
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [['clipped-sliver', clippedSliver]]);
+
+    expect(anchor).toBeNull();
+  });
 });
 
 describe('computeScrollAnchorTarget', () => {
@@ -216,6 +280,119 @@ describe('resolveScrollAdjustment', () => {
     expect(result?.y).toBe(600);
   });
 
+  it('keeps the anchor when the user has scrolled away from the edge, even as items resize', () => {
+    // The user is NOT near the edge (they scrolled up to read), and an item resizes and grows
+    // content. Their reading position must be preserved via the anchor, not yanked to the edge.
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
+
+    let result = resolveScrollAdjustment(
+      'end',
+      'y',
+      anchor,
+      false, // wasNearAnchorEdge -- scrolled away
+      false, // isScrolling
+      true, // itemSizeChanged
+      50, // contentSizeDelta > 0
+      () => layoutInfo,
+      visibleRect,
+      contentSize
+    );
+
+    // Anchor target (600), never the edge-snap target (2000 - 468 = 1532).
+    expect(result?.y).toBe(600);
+  });
+
+  it('follows the edge over the anchor while items settle near the edge', () => {
+    // The user is following the edge (near it, not scrolling) and items are measuring bigger.
+    // Even though the anchor resolves to a different target, we must snap to the edge -- the
+    // anchor only compensates for growth on its side of the viewport, so restoring it would
+    // strand the edge off-screen (the initial-render "partly scrolled up" bug).
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
+
+    let result = resolveScrollAdjustment(
+      'end',
+      'y',
+      anchor,
+      true, // wasNearAnchorEdge -- following the edge
+      false, // isScrolling
+      true, // itemSizeChanged -- measurement settle
+      50, // contentSizeDelta > 0
+      () => layoutInfo,
+      visibleRect,
+      contentSize
+    );
+
+    // Edge-snap target (2000 - 468 = 1532), not the anchor target (600).
+    expect(result?.y).toBe(2000 - 468);
+  });
+
+  it('follows the edge over the anchor while items settle smaller near the edge', () => {
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
+
+    let result = resolveScrollAdjustment(
+      'end',
+      'y',
+      anchor,
+      true, // wasNearAnchorEdge -- following the edge
+      false, // isScrolling
+      true, // itemSizeChanged -- measurement settle
+      -50, // contentSizeDelta < 0 (content shrank)
+      () => layoutInfo,
+      visibleRect,
+      contentSize
+    );
+
+    // Edge-snap target (2000 - 468 = 1532), not the anchor target (600).
+    expect(result?.y).toBe(2000 - 468);
+  });
+
+  it('preserves the anchor over the edge when the change was not at the edge', () => {
+    // Near the edge and an item resized, but the change was NOT at the anchored edge (e.g. a
+    // mid-list item grew while the user reads up top). We must preserve the anchor, not snap.
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
+
+    let result = resolveScrollAdjustment(
+      'end',
+      'y',
+      anchor,
+      true, // wasNearAnchorEdge
+      false, // isScrolling
+      true, // itemSizeChanged
+      50, // contentSizeDelta > 0
+      () => layoutInfo,
+      visibleRect,
+      contentSize,
+      false // changeIsAtEdge -- the change was NOT at the anchored edge
+    );
+
+    // Anchor target (600), not the edge-snap target (2000 - 468 = 1532).
+    expect(result?.y).toBe(600);
+  });
+
+  it('does not snap to the edge when the change was not at the edge and no anchor resolves', () => {
+    // Fallback path: null anchor, near the edge, an item resized, but not at the anchored edge.
+    // Without gating the fallback too, this would still snap. It must stay put.
+    let result = resolveScrollAdjustment(
+      'end',
+      'y',
+      null,
+      true, // wasNearAnchorEdge
+      false, // isScrolling
+      true, // itemSizeChanged
+      50, // contentSizeDelta > 0
+      () => null,
+      visibleRect,
+      contentSize,
+      false // changeIsAtEdge
+    );
+
+    expect(result).toBeNull();
+  });
+
   it('falls back to snapping to the edge when there is no anchor and near the edge', () => {
     let result = resolveScrollAdjustment(
       'end',
@@ -352,7 +529,6 @@ describe('ScrollAnchorTracker', () => {
     let result = tracker.resolveAfterLayout({
       anchorInfo: null,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: visibleRect,
       previousContentSize: contentSize,
       contentSize,
@@ -371,7 +547,6 @@ describe('ScrollAnchorTracker', () => {
     let result = tracker.resolveAfterLayout({
       anchorInfo,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: new Rect(0, 0, 0, 0),
       previousContentSize: contentSize,
       contentSize,
@@ -392,7 +567,6 @@ describe('ScrollAnchorTracker', () => {
     let result = tracker.resolveAfterLayout({
       anchorInfo,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: visibleRect,
       previousContentSize: contentSize,
       contentSize,
@@ -413,7 +587,6 @@ describe('ScrollAnchorTracker', () => {
     tracker.resolveAfterLayout({
       anchorInfo,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: visibleRect,
       previousContentSize: contentSize,
       contentSize,
@@ -425,7 +598,6 @@ describe('ScrollAnchorTracker', () => {
     let result = tracker.resolveAfterLayout({
       anchorInfo,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: visibleRect,
       previousContentSize: contentSize,
       contentSize,
@@ -445,7 +617,6 @@ describe('ScrollAnchorTracker', () => {
     tracker.resolveAfterLayout({
       anchorInfo,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: visibleRect,
       previousContentSize: contentSize,
       contentSize,
@@ -458,7 +629,6 @@ describe('ScrollAnchorTracker', () => {
     let result = tracker.resolveAfterLayout({
       anchorInfo,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: visibleRect,
       previousContentSize: contentSize,
       contentSize: grownContentSize,
@@ -470,6 +640,132 @@ describe('ScrollAnchorTracker', () => {
     expect(result?.y).toBe(2200 - 468);
   });
 
+  it('holds the viewport with the anchor when content grows without an item resize (prepend near the edge)', () => {
+    // Older content is prepended above the viewport while the user sits near the edge: content
+    // grows (contentSizeDelta > 0) but no item resized (itemSizeChanged is false). This is not a
+    // measurement settle, so the anchor wins and the viewport stays put instead of snapping to
+    // the new edge -- the prepended content shouldn't yank the user's view down.
+    let tracker = new ScrollAnchorTracker();
+
+    // Pass 1 establishes hasSnappedToEdge so the next pass is a normal relayout, not the first.
+    let firstContentSize = new Size(400, 2000);
+    tracker.resolveAfterLayout({
+      anchorInfo,
+      anchor: null,
+      previousVisibleRect: new Rect(0, 2000 - 468, 400, 468),
+      previousContentSize: firstContentSize,
+      contentSize: firstContentSize,
+      itemSizeChanged: false,
+      isScrolling: false,
+      getLayoutInfo: () => null
+    });
+
+    // Pass 2: viewport near the old edge (snap-eligible) and content grew 2000 -> 2200, but an
+    // anchor resolves, so the anchor wins over the snap.
+    let nearOldEdge = new Rect(0, 1520, 400, 468); // 12px from the old bottom edge
+    let grownContentSize = new Size(400, 2200);
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let anchorLayoutInfo = new LayoutInfo('item', 'item', new Rect(0, 1510, 400, 40));
+
+    let result = tracker.resolveAfterLayout({
+      anchorInfo,
+      anchor,
+      previousVisibleRect: nearOldEdge,
+      previousContentSize: firstContentSize,
+      contentSize: grownContentSize,
+      itemSizeChanged: false,
+      isScrolling: false,
+      getLayoutInfo: () => anchorLayoutInfo
+    });
+
+    // Anchor target (1510 - 10 = 1500), never the edge snap (2200 - 468 = 1732).
+    expect(result?.y).toBe(1500);
+  });
+
+  it('follows the edge to the real bottom as estimated items measure on initial render', () => {
+    // Reproduces the initial-render settle: pass 1 snaps to the estimated bottom, then items
+    // measure bigger and content grows. An anchor is captured and it "moves" (items above it
+    // grew too), so a terminal anchor restore would land the viewport short of the new bottom
+    // -- the "partly scrolled up on first render" bug. Because the user is following the edge and
+    // items are settling, we must snap to the real bottom instead.
+    let tracker = new ScrollAnchorTracker();
+
+    // Pass 1: first anchored layout snaps to the estimated bottom (1296 - 468 = 828).
+    let estimatedContentSize = new Size(400, 1296);
+    tracker.resolveAfterLayout({
+      anchorInfo,
+      anchor: null,
+      previousVisibleRect: new Rect(0, 0, 400, 468),
+      previousContentSize: estimatedContentSize,
+      contentSize: estimatedContentSize,
+      itemSizeChanged: false,
+      isScrolling: false,
+      getLayoutInfo: () => null
+    });
+
+    // Pass 2: items measured, content grew 1296 -> 1692. The anchor resolves to 960 (it moved
+    // down 132px as items above it grew), but restoring it would strand the bottom 264px off.
+    let atEstimatedBottom = new Rect(0, 828, 400, 468);
+    let measuredContentSize = new Size(400, 1692);
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let movedAnchorInfo = new LayoutInfo('item', 'item', new Rect(0, 970, 400, 40));
+
+    let result = tracker.resolveAfterLayout({
+      anchorInfo,
+      anchor,
+      previousVisibleRect: atEstimatedBottom,
+      previousContentSize: estimatedContentSize,
+      contentSize: measuredContentSize,
+      itemSizeChanged: true,
+      isScrolling: false,
+      getLayoutInfo: () => movedAnchorInfo
+    });
+
+    // The real bottom (1692 - 468 = 1224), not the anchor target (960).
+    expect(result?.y).toBe(1692 - 468);
+  });
+
+  it('preserves the reading position when a change not at the edge settles after the first pass', () => {
+    // Mirrors the initial-settle case, but the growth was NOT at the anchored edge (a mid-thread
+    // item resized while the user is scrolled up). Instead of snapping to the real bottom, keep
+    // the anchor so the reading position is preserved.
+    let tracker = new ScrollAnchorTracker();
+
+    // Pass 1: establish hasSnappedToEdge so pass 2 is a normal relayout, not the first.
+    let firstContentSize = new Size(400, 1296);
+    tracker.resolveAfterLayout({
+      anchorInfo,
+      anchor: null,
+      previousVisibleRect: new Rect(0, 0, 400, 468),
+      previousContentSize: firstContentSize,
+      contentSize: firstContentSize,
+      itemSizeChanged: false,
+      isScrolling: false,
+      getLayoutInfo: () => null
+    });
+
+    // Pass 2: content grew from a mid-thread resize (changeIsAtEdge false). The anchor resolves to
+    // 960; we return that instead of the edge snap (1692 - 468 = 1224).
+    let scrolledUp = new Rect(0, 828, 400, 468);
+    let measuredContentSize = new Size(400, 1692);
+    let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
+    let movedAnchorInfo = new LayoutInfo('item', 'item', new Rect(0, 970, 400, 40));
+
+    let result = tracker.resolveAfterLayout({
+      anchorInfo,
+      anchor,
+      previousVisibleRect: scrolledUp,
+      previousContentSize: firstContentSize,
+      contentSize: measuredContentSize,
+      itemSizeChanged: true,
+      isScrolling: false,
+      getLayoutInfo: () => movedAnchorInfo,
+      changeIsAtEdge: false
+    });
+
+    expect(result?.y).toBe(960);
+  });
+
   it('reset() clears tracked state so the next call behaves like a first pass again', () => {
     let tracker = new ScrollAnchorTracker();
     let visibleRect = new Rect(0, 2000 - 468, 400, 468);
@@ -478,7 +774,6 @@ describe('ScrollAnchorTracker', () => {
     tracker.resolveAfterLayout({
       anchorInfo,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: visibleRect,
       previousContentSize: contentSize,
       contentSize,
@@ -495,7 +790,6 @@ describe('ScrollAnchorTracker', () => {
     let result = tracker.resolveAfterLayout({
       anchorInfo,
       anchor: null,
-      postLayoutInfos: new Map(),
       previousVisibleRect: farRect,
       previousContentSize: contentSize,
       contentSize,
@@ -505,70 +799,5 @@ describe('ScrollAnchorTracker', () => {
     });
 
     expect(result?.y).toBe(2000 - 468);
-  });
-
-  it('reuses the pre-resize "near edge" decision across a settling cascade instead of recomputing mid-resize', () => {
-    let tracker = new ScrollAnchorTracker();
-    let contentSize = new Size(400, 2000);
-    // Near the bottom edge before resizing starts.
-    let nearEdgeRect = new Rect(0, 2000 - 468, 400, 468);
-    // Later, after items grew, the same viewport position is far from the (new, larger) edge.
-    let farRect = new Rect(0, 0, 400, 468);
-
-    // Pass 1 (first pass, no estimated items): establishes hasSnappedToEdge and records that
-    // the viewport was near the edge.
-    tracker.resolveAfterLayout({
-      anchorInfo,
-      anchor: null,
-      postLayoutInfos: new Map(),
-      previousVisibleRect: nearEdgeRect,
-      previousContentSize: contentSize,
-      contentSize,
-      itemSizeChanged: false,
-      isScrolling: false,
-      getLayoutInfo: () => null
-    });
-
-    // Pass 2 (resize begins): an estimated-size item shows up. The previous pass wasn't
-    // estimating, so this pass still freely recomputes "near edge" using the still-near rect,
-    // and records true.
-    let estimatedItem = new LayoutInfo('item', 'item', new Rect(0, 0, 400, 40));
-    estimatedItem.estimatedSize = true;
-    let midResizeContentSize = new Size(400, 2100);
-
-    let midResult = tracker.resolveAfterLayout({
-      anchorInfo,
-      anchor: null,
-      postLayoutInfos: new Map([['item', estimatedItem]]),
-      previousVisibleRect: nearEdgeRect,
-      previousContentSize: contentSize,
-      contentSize: midResizeContentSize,
-      itemSizeChanged: true,
-      isScrolling: false,
-      getLayoutInfo: () => null
-    });
-
-    expect(midResult?.y).toBe(midResizeContentSize.height - nearEdgeRect.height);
-
-    // Pass 3 (settling): sizes are no longer estimated, but the rect passed in for this pass
-    // has drifted far from the (new) edge -- if the tracker recomputed naively it would decide
-    // "not near edge" and refuse to snap. Because pass 2 had estimated items, this pass reuses
-    // pass 2's recorded decision (true) instead, and still snaps.
-    let settledItem = new LayoutInfo('item', 'item', new Rect(0, 0, 400, 40));
-    let finalContentSize = new Size(400, 2200);
-
-    let settledResult = tracker.resolveAfterLayout({
-      anchorInfo,
-      anchor: null,
-      postLayoutInfos: new Map([['item', settledItem]]),
-      previousVisibleRect: farRect,
-      previousContentSize: midResizeContentSize,
-      contentSize: finalContentSize,
-      itemSizeChanged: true,
-      isScrolling: false,
-      getLayoutInfo: () => null
-    });
-
-    expect(settledResult?.y).toBe(finalContentSize.height - farRect.height);
   });
 });

@@ -37,6 +37,7 @@ import {
   DisclosureProps as RACDisclosureProps
 } from 'react-aria-components/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
 // @ts-ignore
@@ -675,7 +676,10 @@ const executionTraceItemStyles = style({
       default: 'block',
       ':last-child': 'none'
     }
-  },
+  }
+});
+
+const executionTraceItemEntranceStyles = style({
   transition: '[opacity, translate]',
   transitionDuration: `[${EXECUTION_TRACE_ITEM_TRANSITION_DURATION}ms, 310ms]`,
   transitionTimingFunction: `[cubic-bezier(0.45, 0, 0.4, 1), ${EXECUTION_TRACE_ITEM_TIMING_FUNCTION}]`,
@@ -702,7 +706,10 @@ const executionTraceItemDividerStyles = style({
   marginY: 0,
   minHeight: 12,
   backgroundColor: 'gray-200',
-  display: 'var(--divider-display, flex)',
+  display: 'var(--divider-display, flex)'
+});
+
+const executionTraceItemDividerEntranceStyles = style({
   transition: 'opacity',
   transitionDuration: EXECUTION_TRACE_ITEM_TRANSITION_DURATION,
   opacity: {
@@ -749,9 +756,27 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
   let domProps = filterDOMProps(otherProps);
   let {isFocusVisible, focusProps} = useFocusRing();
   let hasDetail = detail != null;
+  // Play the entrance (fade + slide) once, then remove the animating styles.
+  // This is to prevent a flash that occurs when scrolling in virtualized containers
+  // because the browser keeps re-creating the layer these animations force it onto
+  let [hasEntered, setHasEntered] = useState(false);
 
   return (
-    <li {...domProps} ref={domRef} className={mergeStyles(executionTraceItemStyles, styles)}>
+    <li
+      {...domProps}
+      ref={domRef}
+      onTransitionEnd={e => {
+        // Only react to this item's own opacity transition (the longer of the two, so both the
+        // fade and slide have finished), not transitions bubbling up from descendants.
+        if (getEventTarget(e) === e.currentTarget && e.propertyName === 'opacity') {
+          setHasEntered(true);
+        }
+      }}
+      className={mergeStyles(
+        executionTraceItemStyles,
+        hasEntered ? undefined : executionTraceItemEntranceStyles,
+        styles
+      )}>
       <div className={executionTraceItemIconContainerStyles}>
         <CenterBaseline>
           {status === 'failed' && (
@@ -799,7 +824,13 @@ export const ExecutionTraceItem = forwardRef(function ExecutionTraceItem(
               </svg>
             ))}
         </CenterBaseline>
-        <div role="presentation" className={executionTraceItemDividerStyles} />
+        <div
+          role="presentation"
+          className={mergeStyles(
+            executionTraceItemDividerStyles,
+            hasEntered ? undefined : executionTraceItemDividerEntranceStyles
+          )}
+        />
       </div>
       {hasDetail ? (
         <RACDisclosure className="" onExpandedChange={onExpandedChange}>
