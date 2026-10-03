@@ -76,7 +76,7 @@ export class Virtualizer<T extends object, V> {
   // Together they classify whether the changed content was at the anchored (e.g. bottom) edge to avoid
   // following the edge when only a mid-list item resized in a short chat.
   private _hadItemResize: boolean;
-  private _batchIncludedNewestContent: boolean;
+  private _batchIncludedEdgeContent: boolean;
 
   constructor(options: VirtualizerOptions<T, V>) {
     this.delegate = options.delegate;
@@ -94,7 +94,7 @@ export class Virtualizer<T extends object, V> {
     this._overscanManager = new OverscanManager();
     this._scrollAnchor = new ScrollAnchorTracker();
     this._hadItemResize = false;
-    this._batchIncludedNewestContent = false;
+    this._batchIncludedEdgeContent = false;
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
@@ -206,7 +206,7 @@ export class Virtualizer<T extends object, V> {
     // Decide whether the change that triggered this relayout was at the anchored edge. If items
     // resized but none of them were the newest content, we don't follow the edge and we keep the
     // user's reading position instead.
-    let changeIsAtEdge = !this._hadItemResize || this._batchIncludedNewestContent;
+    let changeIsAtEdge = !this._hadItemResize || this._batchIncludedEdgeContent;
 
     let target = this._scrollAnchor.resolveAfterLayout({
       anchorInfo,
@@ -222,9 +222,9 @@ export class Virtualizer<T extends object, V> {
 
     // Clear these flags because a relayout can also run for reasons unrelated to a resize
     // (scrolling, a new message, a window resize). If we left the flags set, the next relayout
-    // would still see this pass's "an item resized / it was the newest" values and make the wrong call.
+    // would still see this pass's "an item resized / it was at the edge" values and make the wrong call.
     this._hadItemResize = false;
-    this._batchIncludedNewestContent = false;
+    this._batchIncludedEdgeContent = false;
 
     if (target) {
       // Queues a new render cycle. Return early to skip updateSubviews — running it now
@@ -467,26 +467,16 @@ export class Virtualizer<T extends object, V> {
     if (changed) {
       this._hadItemResize = true;
       // "Batch" refers to the set of updateItemSize calls that happen between one relayout and the next
-      this._batchIncludedNewestContent ||= this.isNewestContent(key);
+      this._batchIncludedEdgeContent ||= this.isEdgeContent(key);
       this.invalidate({
         itemSizeChanged: true
       });
     }
   }
 
-  /**
-   * Whether `key` is the newest real item in the collection — i.e. the last non-loader node.
-   */
-  private isNewestContent(key: Key): boolean {
-    let lastKey = this.collection.getLastKey();
-    while (lastKey != null) {
-      let node = this.collection.getItem(lastKey) as {type?: string} | null;
-      if (node?.type !== 'loader') {
-        break;
-      }
-      lastKey = this.collection.getKeyBefore(lastKey);
-    }
-
-    return lastKey != null && lastKey === key;
+  private isEdgeContent(key: Key): boolean {
+    // @ts-ignore
+    let anchorInfo = this.layout.UNSTABLE_getScrollAnchorInfo?.(this._invalidationContext.layoutOptions);
+    return anchorInfo?.isEdgeContent?.(key) ?? true;
   }
 }

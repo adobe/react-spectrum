@@ -35,6 +35,8 @@ export interface ScrollAnchorInfo {
    * selected as the anchor. Defaults to allowing any layoutInfo.
    */
   isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
+  /** Whether an item's resize should follow the anchored edge. Defaults to allowing any key. */
+  isEdgeContent?: (key: Key) => boolean;
 }
 
 /**
