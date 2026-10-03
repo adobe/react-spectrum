@@ -107,6 +107,7 @@ import React, {
 } from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
+import {TextContext} from './Text';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {TreeState, useTreeState} from 'react-stately/useTreeState';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
@@ -782,8 +783,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let isDraggable =
       dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
 
-    // TODO: remove this when we support description in tree row
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem(
       {
         node: item,
@@ -1020,7 +1019,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
                     }
                   }
                 ],
-                // TODO: support description in the tree row
+                [TextContext, {slots: {[DEFAULT_SLOT]: {}, description: descriptionProps}}],
                 // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
                 [
                   ButtonContext,
