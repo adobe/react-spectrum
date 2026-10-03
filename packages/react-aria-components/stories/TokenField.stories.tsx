@@ -284,6 +284,23 @@ export const TagField: TokenFieldStory = () => {
   );
 };
 
+export const ScrollableTagField: TokenFieldStory = TagField.bind({});
+ScrollableTagField.decorators = [
+  Story => (
+    <div
+      ref={element => {
+        if (element) {
+          element.scrollTop = 450;
+        }
+      }}
+      style={{height: 180, overflow: 'auto', marginTop: 200}}>
+      <div style={{height: 500}} />
+      <Story />
+      <div style={{height: 500}} />
+    </div>
+  )
+];
+
 export const Search: TokenFieldStory = () => {
   let inputRef = useRef(null);
   let [value, setValue] = useState(

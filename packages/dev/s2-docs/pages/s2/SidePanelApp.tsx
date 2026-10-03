@@ -62,7 +62,9 @@ export function AccountFooter(): ReactNode {
         padding: 4,
         flexShrink: 0
       })({isCollapsed})}>
-      <Avatar alt="Jordan Rivera" src="https://i.imgur.com/xIe7Wlb.png" size={24} />
+      <ActionButton isQuiet>
+        <Avatar alt="Jordan Rivera" src="https://i.imgur.com/xIe7Wlb.png" size={24} />
+      </ActionButton>
       <div
         className={style({
           display: {default: 'block', isCollapsed: 'none'},

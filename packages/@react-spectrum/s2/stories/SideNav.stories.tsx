@@ -623,9 +623,7 @@ export const SidePanelExample = {
       <SidePanel
         defaultCollapsed
         styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
-        {...args}
-        aria-label="Side panel"
-        defaultExpandedKeys={['projects']}>
+        aria-label="Side panel">
         <SidePanelContext.Consumer>
           {({isCollapsed}) => (
             <div className={style({display: 'flex', flexDirection: 'column', gap: 2})}>
@@ -641,7 +639,11 @@ export const SidePanelExample = {
             </div>
           )}
         </SidePanelContext.Consumer>
-        <RoutedSideNav {...args} styles={style({width: 'full'})} selectedRoute="/files">
+        <RoutedSideNav
+          {...args}
+          styles={style({width: 'full'})}
+          selectedRoute="/files"
+          defaultExpandedKeys={['projects']}>
           <SideNavItem href="/files" textValue="Files">
             <SideNavItemContent>
               <SideNavItemLink>
@@ -668,7 +670,7 @@ export const SidePanelExample = {
           </SideNavItem>
           <SideNavSection>
             <SideNavHeader>Work</SideNavHeader>
-            <SideNavItem href="/projects" textValue="Projects">
+            <SideNavItem href="/projects" id="projects" textValue="Projects">
               <SideNavItemContent>
                 <SideNavItemLink>
                   <Project />
@@ -749,9 +751,7 @@ export const SidePanelExample2 = {
       <SidePanel
         defaultCollapsed
         styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
-        {...args}
-        aria-label="Side panel"
-        defaultExpandedKeys={['projects']}>
+        aria-label="Side panel">
         <RoutedSideNav {...args} selectedRoute="/files">
           <SideNavItem href="/files" textValue="Files">
             <SideNavItemContent>
@@ -791,6 +791,118 @@ export const SidePanelExample2 = {
   parameters: {
     layout: {
       fullscreen: true
+    }
+  }
+};
+
+// The SidePanel is a flex column, so the nav has to grow and let its SideNav child shrink.
+const sidePanelNav = style({
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  flexShrink: 1,
+  minHeight: 0
+});
+
+export const SidePanelWithNav = {
+  render: args => (
+    <div
+      className={style({
+        width: 'full',
+        height: '100vh',
+        display: 'grid',
+        gridTemplateAreas: ['header header', 'sidebar main'],
+        gridTemplateColumns: 'auto 1fr',
+        gridTemplateRows: 'auto 1fr',
+        backgroundColor: 'layer-1'
+      })}>
+      <div
+        className={style({
+          gridArea: 'header',
+          display: 'flex',
+          alignItems: 'center',
+          paddingX: 8,
+          paddingY: 16
+        })}>
+        <AdobeLogo size={28} />
+      </div>
+      <SidePanel
+        styles={style({
+          gridArea: 'sidebar',
+          marginStart: '[6px]',
+          marginEnd: '[10px]',
+          width: 224
+        })}>
+        <nav aria-label="Main" className={sidePanelNav}>
+          <RoutedSideNav {...args} selectedRoute="/files" defaultExpandedKeys={['projects']}>
+            <SideNavItem href="/files" textValue="Files">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Files />
+                  <Text>Your files</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+            <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <CCLibrary />
+                  <Text>Your Libraries</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+              <SideNavItem id="photos" href="/photos" textValue="Photos">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Images />
+                    <Text>Photos</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+              </SideNavItem>
+            </SideNavItem>
+            <SideNavSection>
+              <SideNavHeader>Work</SideNavHeader>
+              <SideNavItem href="/projects" id="projects" textValue="Projects">
+                <SideNavItemContent>
+                  <SideNavItemLink>
+                    <Project />
+                    <Text>Projects</Text>
+                  </SideNavItemLink>
+                </SideNavItemContent>
+                <SideNavItem href="/projects-2" textValue="Projects-2">
+                  <SideNavItemContent>
+                    <SideNavItemLink>
+                      <Text>Projects-2</Text>
+                    </SideNavItemLink>
+                  </SideNavItemContent>
+                </SideNavItem>
+              </SideNavItem>
+            </SideNavSection>
+          </RoutedSideNav>
+        </nav>
+        <SidePanelExtraControls />
+      </SidePanel>
+      <main
+        className={style({
+          gridArea: 'main',
+          backgroundColor: 'layer-2',
+          borderTopStartRadius: 'lg',
+          padding: 16
+        })}>
+        <Heading level={2} styles={style({font: 'heading', marginTop: 0})}>
+          Workspace
+        </Heading>
+        <Text styles={style({font: 'body'})}>
+          The SideNav is wrapped in a nav element inside the SidePanel, so only the navigation is
+          exposed as a navigation landmark. The panel's other chrome stays outside of it.
+        </Text>
+      </main>
+    </div>
+  ),
+  name: 'Side Panel with nav',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      disable: true
     }
   }
 };
