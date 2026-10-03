@@ -29,6 +29,8 @@ import {
 } from 'react';
 import {DialogProps, OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {focusSafely} from 'react-aria/private/interactions/focusSafely';
+import {getActiveElement, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {
   getAllowedOverrides,
   heightProperties,
@@ -154,6 +156,9 @@ let popover = style(
     isolation: 'isolate',
     pointerEvents: {
       isExiting: 'none'
+    },
+    overflow: {
+      isArrowHidden: 'auto'
     }
   },
   getAllowedOverrides()
@@ -253,7 +258,8 @@ export const PopoverBase = forwardRef(function PopoverBase(
             size,
             isArrowShown: !hideArrow,
             colorScheme,
-            isSubmenu: renderProps.trigger === 'SubmenuTrigger'
+            isSubmenu: renderProps.trigger === 'SubmenuTrigger',
+            isArrowHidden: hideArrow
           }),
           styles
         )
@@ -324,10 +330,12 @@ const innerDivStyle = style(
     boxSizing: 'border-box',
     outlineStyle: 'none',
     borderRadius: 'inherit',
-    overflow: 'auto',
     position: 'relative',
     width: 'full',
-    maxSize: 'inherit'
+    maxSize: 'inherit',
+    overflow: {
+      isArrowShown: 'auto'
+    }
   },
   getAllowedOverrides({height: true})
 );
@@ -343,12 +351,27 @@ export const Popover = forwardRef(function Popover(
   let domRef = useDOMRef(ref);
   let {UNSAFE_className, UNSAFE_style, styles, padding = 'default', ...otherProps} = props;
 
+  // Fires each time the inner div is inserted into the DOM (i.e.
+  // each time the popover opens). By the time RAC's useEffect checks
+  // isFocusWithin on the outer container, focus is already here, so RAC
+  // leaves it alone.
+  let innerRef = useCallback((el: HTMLDivElement | null) => {
+    if (el && !nodeContains(el, getActiveElement(document))) {
+      focusSafely(el);
+    }
+  }, []);
+
   return (
     <PopoverBase {...otherProps} ref={domRef}>
       {composeRenderProps(props.children, children => (
         <div
+          ref={otherProps.hideArrow ? undefined : innerRef}
+          tabIndex={otherProps.hideArrow ? undefined : -1}
           style={UNSAFE_style}
-          className={(UNSAFE_className || '') + innerDivStyle({padding}, styles)}>
+          className={
+            (UNSAFE_className || '') +
+            innerDivStyle({padding, isArrowShown: !otherProps.hideArrow}, styles)
+          }>
           {/* Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
           <OverlayTriggerStateContext.Provider value={null}>
             {children}
