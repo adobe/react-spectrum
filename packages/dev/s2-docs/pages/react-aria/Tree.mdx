@@ -448,15 +448,18 @@ function Example() {
 
 ## API
 
+Place a `<Text slot="description">` inside `TreeItemContent` to provide an accessible description for a row. It is associated with the row using `aria-describedby`, keeping the row's accessible name separate from its description.
+
 <Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
 
-```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', TreeSection: '#treesection', TreeHeader: '#treeheader', Button: 'Button', Checkbox: 'Checkbox', TreeLoadMoreItem: '#treeloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
+```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', TreeSection: '#treesection', TreeHeader: '#treeheader', Button: 'Button', Checkbox: 'Checkbox', TreeLoadMoreItem: '#treeloadmoreitem', Text: 'Text', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <Tree>
   <TreeItem>
     <TreeItemContent>
       <Button slot="chevron" />
       <Checkbox slot="selection" /> or <SelectionIndicator />
       <Button slot="drag" />
+      <Text slot="description" />
     </TreeItemContent>
     <TreeItem>
       {/* ... */}

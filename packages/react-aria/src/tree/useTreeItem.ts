@@ -81,6 +81,14 @@ export function useTreeItem<T>(
   // TODO: should it return a state specifically for isExpanded? Or is aria attribute sufficient?
   return {
     ...gridListAria,
+    rowProps: {
+      ...gridListAria.rowProps,
+      'aria-labelledby': undefined,
+      'aria-describedby':
+        [node.props['aria-describedby'], gridListAria.descriptionProps.id]
+          .filter(Boolean)
+          .join(' ') || undefined
+    },
     expandButtonProps
   };
 }
