@@ -784,7 +784,8 @@ function getPosition(
   let style = window.getComputedStyle(node);
   let offset: Offset;
   if (style.position === 'fixed') {
-    offset = overrideRect || getRect(node, ignoreScale);
+    let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
+    offset = {top, left, width, height};
   } else {
     offset = getOffset(node, ignoreScale, overrideRect);
     let parentOffset = getOffset(parent, ignoreScale);
