@@ -1004,7 +1004,7 @@ export interface PromptFieldSubmitButtonProps {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
   let {prompt, attachments, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
-  let showSubmit = !isGenerating || prompt.segments.length > 0;
+  let showSubmit = !isGenerating || prompt.segments.length > 0 || attachments.length > 0;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Button

@@ -484,6 +484,18 @@ describeOrSkip('PromptField', () => {
       await user.click(submit);
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
+
+    it('enables submit with attachments and no text during generation', async () => {
+      let {user, onSubmit} = renderPromptField({
+        isGenerating: true,
+        attachments: [imageAttachment('a1')]
+      });
+      let submit = screen.getByRole('button', {name: 'Send'});
+      expect(submit).toBeEnabled();
+
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('attachments', () => {
