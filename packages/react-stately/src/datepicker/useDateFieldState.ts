@@ -287,14 +287,14 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     return segments.slice(minIndex, maxIndex + 1);
   }, [props.maxGranularity, granularity, hourCycle]);
 
-  let [displaySnapshot, setDisplaySnapshot] = useState({calendarValue, calendar, hourCycle});
+  let [lastCalendarValue, setLastCalendarValue] = useState(calendarValue);
   if (
-    calendarValue !== displaySnapshot.calendarValue ||
-    hourCycle !== displaySnapshot.hourCycle ||
-    !isEqualCalendar(calendar, displaySnapshot.calendar)
+    calendarValue !== lastCalendarValue ||
+    hourCycle !== displayValue.hourCycle ||
+    !isEqualCalendar(calendar, displayValue.calendar)
   ) {
     displayValue = new IncompleteDate(calendar, hourCycle, calendarValue);
-    setDisplaySnapshot({calendarValue, calendar, hourCycle});
+    setLastCalendarValue(calendarValue);
     setDisplayValue(displayValue);
   }
 
