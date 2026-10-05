@@ -89,6 +89,43 @@ describe('Form', () => {
     expect(input.validity.valid).toBe(true);
   });
 
+  it.each(['native', 'aria'])(
+    'shows reused server errors after an intervening update with %s validation',
+    async validationBehavior => {
+      function Test({errors}) {
+        return (
+          <Form validationErrors={errors} validationBehavior={validationBehavior}>
+            <TextField name="name">
+              <Label>Name</Label>
+              <Input />
+              <FieldError />
+            </TextField>
+            <Button type="reset">Reset</Button>
+          </Form>
+        );
+      }
+
+      let errors = {name: 'Invalid name.'};
+      let {getByRole, queryByText, rerender} = render(<Test errors={errors} />);
+      expect(queryByText('Invalid name.')).toBeInTheDocument();
+
+      await user.type(getByRole('textbox'), 'Devon');
+      await user.tab();
+      expect(queryByText('Invalid name.')).not.toBeInTheDocument();
+
+      rerender(<Test errors={errors} />);
+      expect(queryByText('Invalid name.')).not.toBeInTheDocument();
+
+      rerender(<Test errors={{}} />);
+      rerender(<Test errors={errors} />);
+      expect(queryByText('Invalid name.')).toBeInTheDocument();
+
+      await user.click(getByRole('button', {name: 'Reset'}));
+      rerender(<Test errors={errors} />);
+      expect(queryByText('Invalid name.')).not.toBeInTheDocument();
+    }
+  );
+
   it('should use validationBehavior="native" by default', async () => {
     function Test() {
       return (
