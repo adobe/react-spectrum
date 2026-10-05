@@ -30,6 +30,7 @@ import {
   PromptTokenField
 } from '../src/PromptField';
 import {Attachment, AttachmentPreview} from '../src/AttachmentList';
+import {Autocomplete, TokenFieldValue, useFilter} from 'react-aria-components';
 import Brand from '@react-spectrum/s2/icons/Brand';
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
@@ -52,9 +53,10 @@ import LinkIcon from '@react-spectrum/s2/icons/Link';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
+import {Popover} from '@react-spectrum/s2/Popover';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
+import {SearchField} from '@react-spectrum/s2/SearchField';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
-import {TokenFieldValue} from 'react-aria-components';
 import {TokenSegment} from 'react-stately';
 import {useRef, useState} from 'react';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
@@ -348,12 +350,158 @@ let prompts = [
   prompt4
 ];
 
+type ReferenceOption = {
+  id: string;
+  label: string;
+  description: string;
+};
+
+type ReferenceSubmenuItem = {
+  id: string;
+  label: string;
+  options: ReferenceOption[];
+};
+
+let referenceSubmenus: ReferenceSubmenuItem[] = [
+  {
+    id: 'sandbox',
+    label: 'Sandbox',
+    options: [
+      {id: 'va7-rtcdp', label: 'Stage (VA7) - RTCDP', description: 'Sandbox'},
+      {id: 'va6-rtcdp', label: 'Stage (VA6) - RTCDP', description: 'Sandbox'},
+      {id: 'va5', label: 'Stage (VA5)', description: 'Sandbox'},
+      {id: 'va4', label: 'Stage (VA4)', description: 'Sandbox'},
+      {id: 'va3-rtcdp', label: 'Production (VA3) - RTCDP', description: 'Sandbox'},
+      {id: 'va2', label: 'Development (VA2)', description: 'Sandbox'}
+    ]
+  },
+  {
+    id: 'instance',
+    label: 'Instance',
+    options: [
+      {id: 'adoberm-stage', label: 'Adoberm Stage', description: 'Instance'},
+      {id: 'customer-profile-stage', label: 'Customer Profile - Stage', description: 'Instance'},
+      {id: 'journey-optimizer-dev', label: 'Journey Optimizer - Dev', description: 'Instance'},
+      {id: 'rtcdp-production', label: 'Real-Time CDP - Production', description: 'Instance'},
+      {id: 'analytics-sandbox', label: 'Analytics Sandbox', description: 'Instance'}
+    ]
+  },
+  {
+    id: 'dataview',
+    label: 'Dataview',
+    options: [
+      {id: 'adobe-analytics', label: 'Adobe analytics', description: 'Dataview'},
+      {id: 'journey-performance', label: 'Journey performance', description: 'Dataview'},
+      {id: 'audience-growth', label: 'Audience growth', description: 'Dataview'},
+      {id: 'campaign-engagement', label: 'Campaign engagement', description: 'Dataview'},
+      {id: 'profile-conversions', label: 'Profile conversions', description: 'Dataview'}
+    ]
+  }
+];
+
+let referenceSubmenuContainerStyle = style({
+  width: 320,
+  padding: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8,
+  height: 320
+});
+
+let referenceStickySearchStyle = style({
+  position: 'sticky',
+  top: 0,
+  zIndex: 1,
+  backgroundColor: 'layer-2',
+  padding: 8
+});
+
+// Keep focused MenuItems inset within the scroll viewport without shifting the list.
+let referenceSubmenuListStyle = style({
+  minHeight: 0,
+  flexGrow: 1,
+  overflow: 'auto',
+  padding: 4,
+  margin: -4,
+  scrollPaddingTop: 48
+});
+
+let referenceSubmenuSelectedValueStyle = style({
+  gridArea: 'keyboard',
+  marginStart: 8,
+  font: 'ui',
+  textAlign: 'end',
+  color: {
+    default: 'gray-600',
+    forcedColors: {
+      default: 'inherit'
+    }
+  },
+  unicodeBidi: 'plaintext'
+});
+
+function SearchableReferenceSubmenu({
+  item,
+  selectedKey,
+  onSelectedKeyChange
+}: {
+  item: ReferenceSubmenuItem;
+  selectedKey: string | null;
+  onSelectedKeyChange: (key: string | null) => void;
+}) {
+  let {contains} = useFilter({sensitivity: 'base'});
+  let selectedOption = item.options.find(option => option.id === selectedKey);
+
+  return (
+    <SubmenuTrigger>
+      <MenuItem id={item.id} textValue={item.label}>
+        <Text slot="label">{item.label}</Text>
+        {selectedOption && (
+          <span slot="keyboard" className={referenceSubmenuSelectedValueStyle}>
+            {selectedOption.label}
+          </span>
+        )}
+      </MenuItem>
+      <Popover>
+        <Autocomplete filter={contains}>
+          <div className={referenceSubmenuContainerStyle}>
+            <div className={referenceStickySearchStyle}>
+              <SearchField aria-label={`Search ${item.label}`} />
+            </div>
+            <div className={referenceSubmenuListStyle}>
+              <Menu
+                aria-label={item.label}
+                items={item.options}
+                selectionMode="single"
+                selectedKeys={selectedKey == null ? [] : [selectedKey]}
+                onSelectionChange={keys => {
+                  let key = keys === 'all' ? null : ([...keys][0] ?? null);
+                  onSelectedKeyChange(key == null ? null : String(key));
+                }}>
+                {option => (
+                  <MenuItem id={option.id} textValue={option.label}>
+                    <Text slot="label">{option.label}</Text>
+                    <Text slot="description">{option.description}</Text>
+                  </MenuItem>
+                )}
+              </Menu>
+            </div>
+          </div>
+        </Autocomplete>
+      </Popover>
+    </SubmenuTrigger>
+  );
+}
+
 function EverythingRender(args) {
   let {placeholder, menuWidth = 200, ...otherArgs} = args;
   let [value, setValue] = useState<TokenFieldValue>(() => new PromptFieldValue([]));
   let promptFieldRef = useRef<FocusableRefValue<HTMLDivElement>>(null);
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
+  let [selectedKeys, setSelectedKeys] = useState<Record<string, string | null>>(() =>
+    Object.fromEntries(referenceSubmenus.map(item => [item.id, item.options[0]?.id ?? null]))
+  );
   let historyRef = useRef<TokenFieldValue[]>([]);
   let historyIndexRef = useRef(-1);
   let isHistoryNavigating = useRef(false);
@@ -510,6 +658,18 @@ function EverythingRender(args) {
         <PromptFieldToolbar>
           <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
             <InsertMenuButton>
+              <MenuSection aria-label="Data sources">
+                {referenceSubmenus.map(item => (
+                  <SearchableReferenceSubmenu
+                    key={item.id}
+                    item={item}
+                    selectedKey={selectedKeys[item.id] ?? null}
+                    onSelectedKeyChange={selectedKey => {
+                      setSelectedKeys(prev => ({...prev, [item.id]: selectedKey}));
+                    }}
+                  />
+                ))}
+              </MenuSection>
               <AttachFileMenuItem />
               <SubmenuTrigger>
                 <MenuItem>
