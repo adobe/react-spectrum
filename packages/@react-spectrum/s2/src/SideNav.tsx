@@ -130,7 +130,6 @@ export interface SideNavItemProps extends Omit<
   | 'render'
   | 'onClick'
   | 'allowsArrowNavigation'
-  | 'focusMode'
   | 'value'
   | 'onAction'
   | keyof GlobalDOMAttributes
