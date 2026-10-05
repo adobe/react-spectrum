@@ -300,8 +300,6 @@ describe('resolveScrollAdjustment', () => {
   });
 
   it('keeps the anchor when the user has scrolled away from the edge, even as items resize', () => {
-    // The user is NOT near the edge (they scrolled up to read), and an item resizes and grows
-    // content. Their reading position must be preserved via the anchor, not yanked to the edge.
     let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
     let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
 
@@ -323,10 +321,6 @@ describe('resolveScrollAdjustment', () => {
   });
 
   it('follows the edge over the anchor while items settle near the edge', () => {
-    // The user is following the edge (near it, not scrolling) and items are measuring bigger.
-    // Even though the anchor resolves to a different target, we must snap to the edge -- the
-    // anchor only compensates for growth on its side of the viewport, so restoring it would
-    // strand the edge off-screen (the initial-render "partly scrolled up" bug).
     let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
     let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
 
@@ -369,8 +363,6 @@ describe('resolveScrollAdjustment', () => {
   });
 
   it('preserves the anchor over the edge when the change was not at the edge', () => {
-    // Near the edge and an item resized, but the change was NOT at the anchored edge (e.g. a
-    // mid-list item grew while the user reads up top). We must preserve the anchor, not snap.
     let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
     let layoutInfo = new LayoutInfo('item', 'item', new Rect(0, 610, 400, 40));
 
@@ -393,8 +385,6 @@ describe('resolveScrollAdjustment', () => {
   });
 
   it('does not snap to the edge when the change was not at the edge and no anchor resolves', () => {
-    // Fallback path: null anchor, near the edge, an item resized, but not at the anchored edge.
-    // Without gating the fallback too, this would still snap. It must stay put.
     let result = resolveScrollAdjustment(
       'end',
       'y',
