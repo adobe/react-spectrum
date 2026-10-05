@@ -77,6 +77,8 @@ export interface PressHookProps extends PressProps {
 interface PressState {
   isPressed: boolean;
   ignoreEmulatedMouseEvents: boolean;
+  ignoreSpaceClick: boolean;
+  ignoreSpaceClickTimeout?: ReturnType<typeof setTimeout>;
   didFirePressStart: boolean;
   isTriggeringEvent: boolean;
   activePointerId: any;
@@ -211,6 +213,7 @@ export function usePress(props: PressHookProps): PressResult {
   let ref = useRef<PressState>({
     isPressed: false,
     ignoreEmulatedMouseEvents: false,
+    ignoreSpaceClick: false,
     didFirePressStart: false,
     isTriggeringEvent: false,
     activePointerId: null,
@@ -459,11 +462,15 @@ export function usePress(props: PressHookProps): PressResult {
 
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
-          if (
-            !state.ignoreEmulatedMouseEvents &&
-            !state.isPressed &&
-            (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))
-          ) {
+          let isVirtualClickEvent =
+            !state.isPressed && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent));
+          if (state.ignoreSpaceClick && isVirtualClickEvent) {
+            state.ignoreSpaceClick = false;
+            if (state.ignoreSpaceClickTimeout != null) {
+              clearTimeout(state.ignoreSpaceClickTimeout);
+              state.ignoreSpaceClickTimeout = undefined;
+            }
+          } else if (!state.ignoreEmulatedMouseEvents && isVirtualClickEvent) {
             let stopPressStart = triggerPressStart(e, 'virtual');
             let stopPressUp = triggerPressUpEvent(e, 'virtual');
             let stopPressEnd = triggerPressEndEvent(e, 'virtual');
@@ -505,6 +512,20 @@ export function usePress(props: PressHookProps): PressResult {
         let wasPressed = nodeContains(state.target, target as Element);
         triggerPressEndEvent(createEvent(state.target, e), 'keyboard', wasPressed);
         if (wasPressed) {
+          if (
+            e.key === ' ' &&
+            state.target instanceof HTMLButtonElement &&
+            (state.target.type === 'submit' || state.target.type === 'reset')
+          ) {
+            state.ignoreSpaceClick = true;
+            if (state.ignoreSpaceClickTimeout != null) {
+              clearTimeout(state.ignoreSpaceClickTimeout);
+            }
+            state.ignoreSpaceClickTimeout = setTimeout(() => {
+              state.ignoreSpaceClick = false;
+              state.ignoreSpaceClickTimeout = undefined;
+            }, 0);
+          }
           triggerSyntheticClick(e, state.target);
         }
         removeAllGlobalListeners();

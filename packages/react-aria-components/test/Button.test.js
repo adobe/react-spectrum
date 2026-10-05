@@ -384,6 +384,30 @@ describe('Button', () => {
     expect(onSubmitSpy).not.toHaveBeenCalled();
   });
 
+  it.each(['submit', 'reset'])(
+    'should fire press and click once and perform native %s with Space',
+    async type => {
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let onSubmit = jest.fn(e => e.preventDefault());
+      let onReset = jest.fn();
+      render(
+        <form onSubmit={onSubmit} onReset={onReset}>
+          <Button type={type} onPress={onPress} onClick={onClick}>
+            Test
+          </Button>
+        </form>
+      );
+      await user.tab();
+      await user.keyboard(' ');
+
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledTimes(type === 'submit' ? 1 : 0);
+      expect(onReset).toHaveBeenCalledTimes(type === 'reset' ? 1 : 0);
+    }
+  );
+
   // Note: two inputs are needed, otherwise https://www.w3.org/TR/2011/WD-html5-20110525/association-of-controls-and-forms.html#implicit-submission
   // Implicit form submission can happen if there's only one.
   it('should prevent implicit form submission when isPending', async function () {
