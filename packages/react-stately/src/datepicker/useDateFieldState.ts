@@ -287,18 +287,14 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     return segments.slice(minIndex, maxIndex + 1);
   }, [props.maxGranularity, granularity, hourCycle]);
 
-  let [lastValue, setLastValue] = useState(calendarValue);
-  let [lastCalendar, setLastCalendar] = useState(calendar);
-  let [lastHourCycle, setLastHourCycle] = useState(hourCycle);
+  let [displaySnapshot, setDisplaySnapshot] = useState({calendarValue, calendar, hourCycle});
   if (
-    calendarValue !== lastValue ||
-    hourCycle !== lastHourCycle ||
-    !isEqualCalendar(calendar, lastCalendar)
+    calendarValue !== displaySnapshot.calendarValue ||
+    hourCycle !== displaySnapshot.hourCycle ||
+    !isEqualCalendar(calendar, displaySnapshot.calendar)
   ) {
     displayValue = new IncompleteDate(calendar, hourCycle, calendarValue);
-    setLastValue(calendarValue);
-    setLastCalendar(calendar);
-    setLastHourCycle(hourCycle);
+    setDisplaySnapshot({calendarValue, calendar, hourCycle});
     setDisplayValue(displayValue);
   }
 

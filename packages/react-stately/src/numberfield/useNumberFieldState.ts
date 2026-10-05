@@ -190,21 +190,15 @@ export function useNumberFieldState(props: NumberFieldStateOptions): NumberField
     clampStep = 0.01;
   }
 
-  // Update the input value when the number value or format options change. This is done
-  // in a useEffect so that the controlled behavior is correct and we only update the
-  // textfield after prop changes.
-  let [prevValue, setPrevValue] = useState(numberValue);
-  let [prevLocale, setPrevLocale] = useState(locale);
-  let [prevFormatOptions, setPrevFormatOptions] = useState(formatOptions);
+  // Reset the editable text during render when the number value, locale, or format options change.
+  let [inputSnapshot, setInputSnapshot] = useState({numberValue, locale, formatOptions});
   if (
-    !Object.is(numberValue, prevValue) ||
-    locale !== prevLocale ||
-    !isEqualFormatOptions(formatOptions, prevFormatOptions)
+    !Object.is(numberValue, inputSnapshot.numberValue) ||
+    locale !== inputSnapshot.locale ||
+    !isEqualFormatOptions(formatOptions, inputSnapshot.formatOptions)
   ) {
     setInputValue(format(numberValue));
-    setPrevValue(numberValue);
-    setPrevLocale(locale);
-    setPrevFormatOptions(formatOptions);
+    setInputSnapshot({numberValue, locale, formatOptions});
   }
 
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
