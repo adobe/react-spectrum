@@ -573,7 +573,7 @@ function BasicChat() {
                           <AttachmentGrid
                             aria-label="Uploaded files"
                             align="end"
-                            styles={style({width: 380, height: 128})}>
+                            styles={style({maxWidth: 380, height: 128})}>
                             {message.attachments.map(attachment => (
                               <AttachmentGridItem key={attachment.id} aria-label={attachment.name} textValue={attachment.name}>
                                 <AttachmentPreview
