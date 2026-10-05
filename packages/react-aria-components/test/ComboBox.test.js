@@ -309,6 +309,44 @@ describe('ComboBox', () => {
     expect(comboboxTester.getListbox()).toBeNull();
   });
 
+  it.each([false, true])(
+    'should close before synchronizing an external selection change with controlled input: %s',
+    async isInputControlled => {
+      let events = [];
+      let onChange = jest.fn();
+      let props = {
+        defaultInputValue: undefined,
+        inputValue: isInputControlled ? 'Cat' : undefined,
+        onChange,
+        onInputChange: value => events.push(['input', value]),
+        onOpenChange: (isOpen, trigger) => events.push(['open', isOpen, trigger])
+      };
+      let tree = render(<TestComboBox {...props} value="1" />);
+      let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+      await comboboxTester.open();
+      expect(comboboxTester.getListbox()).toBeVisible();
+      events.length = 0;
+
+      tree.rerender(<TestComboBox {...props} value="2" />);
+
+      expect(comboboxTester.getListbox()).toBeNull();
+      expect(comboboxTester.getCombobox()).toHaveValue(isInputControlled ? 'Cat' : 'Dog');
+      expect(onChange).not.toHaveBeenCalled();
+      expect(events).toEqual(
+        isInputControlled
+          ? [['open', false, undefined]]
+          : [
+              ['open', false, undefined],
+              ['input', 'Dog']
+            ]
+      );
+
+      tree.rerender(<TestComboBox {...props} value="2" />);
+      expect(events).toHaveLength(isInputControlled ? 1 : 2);
+      expect(comboboxTester.getListbox()).toBeNull();
+    }
+  );
+
   it.each(['click', 'tab'])(
     'should not fire extra onSelectionChange calls after focus moves away in fully controlled mode via %s',
     async focusMove => {

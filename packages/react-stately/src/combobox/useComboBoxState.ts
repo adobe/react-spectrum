@@ -303,7 +303,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
         : filterCollection(collection, inputValue, defaultFilter),
     [collection, inputValue, defaultFilter, props.items]
   );
-  let [lastCollection, setLastCollection] = useState(filteredCollection);
+  let [lastDisplayedCollection, setLastDisplayedCollection] = useState(filteredCollection);
 
   // Track what action is attempting to open the menu
   let menuOpenTrigger = useRef<MenuTriggerAction | undefined>('focus');
@@ -346,15 +346,15 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
   };
 
   // Save the current collection before closing so the menu contents stay frozen as the popover closes.
-  let updateLastCollection = useCallback(() => {
-    setLastCollection(showAllItems ? originalCollection : filteredCollection);
+  let updateLastDisplayedCollection = useCallback(() => {
+    setLastDisplayedCollection(showAllItems ? originalCollection : filteredCollection);
   }, [showAllItems, originalCollection, filteredCollection]);
 
   let toggle = (focusStrategy: FocusStrategy | null = null, trigger?: MenuTriggerAction) => {
     if (!triggerState.isOpen) {
       open(focusStrategy, trigger);
     } else {
-      updateLastCollection();
+      updateLastDisplayedCollection();
       setFocusStrategy(focusStrategy);
       triggerState.toggle();
     }
@@ -362,46 +362,53 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
 
   let closeMenu = useCallback(() => {
     if (triggerState.isOpen) {
-      updateLastCollection();
+      updateLastDisplayedCollection();
       triggerState.close();
     }
-  }, [triggerState, updateLastCollection]);
+  }, [triggerState, updateLastDisplayedCollection]);
 
-  let [lastValue, setLastValue] = useState(inputValue);
+  let getSelectedItemText = () =>
+    selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
+
+  // Input changes are compared against this baseline. Programmatic resets advance it too,
+  // so they don't reopen the menu. Keep it in state so a rejected controlled update is reconciled.
+  let [inputValueBaseline, setInputValueBaseline] = useState(inputValue);
   let resetInputValue = () => {
-    let itemText = selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
-    setLastValue(itemText);
+    let itemText = getSelectedItemText();
+    setInputValueBaseline(itemText);
     setInputValue(itemText);
   };
 
-  let lastValueRef = useRef(displayValue);
-  let lastSelectedKeyText = useRef(
-    selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : ''
-  );
-  // intentional omit dependency array, want this to happen on every render
+  // Track selection changes separately from input changes. Committing a custom value advances
+  // this ref before clearing the selection, preserving the custom text during reconciliation.
+  let selectionBaseline = useRef(displayValue);
+  let lastSelectedItemText = useRef(getSelectedItemText());
+
+  // Reconcile after every render, in order. Keep ref-dependent decisions next to their updates,
+  // since callbacks in earlier steps may synchronously change the refs.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // Open and close menu automatically when the input value changes if the input is focused,
-    // and there are items in the collection or allowEmptyCollection is true.
-    if (
+    let inputChanged = inputValue !== inputValueBaseline;
+
+    let shouldOpenOnInput =
       isFocused &&
       (filteredCollection.size > 0 || allowsEmptyCollection) &&
       !triggerState.isOpen &&
-      inputValue !== lastValue &&
-      menuTrigger !== 'manual'
-    ) {
+      inputChanged &&
+      menuTrigger !== 'manual';
+    if (shouldOpenOnInput) {
       // oxlint-disable-next-line react/react-compiler
       open(null, 'input');
     }
 
     // Close the menu if the collection is empty. Don't close menu if filtered collection size is 0
     // but we are currently showing all items via button press
-    if (
+    let shouldCloseOnEmpty =
       !showAllItems &&
       !allowsEmptyCollection &&
       triggerState.isOpen &&
-      filteredCollection.size === 0
-    ) {
+      filteredCollection.size === 0;
+    if (shouldCloseOnEmpty) {
       closedDueToEmpty.current = true;
       closeMenu();
     }
@@ -410,38 +417,37 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     // an empty collection (e.g. async load completed with results after a previous empty response).
     // This works for both controlled items on ComboBox and Collection patterns
     // (where items are provided on the ListBox rather than the ComboBox).
-    if (
+    let shouldReopenOnItems =
       isFocused &&
       closedDueToEmpty.current &&
       filteredCollection.size > 0 &&
       !triggerState.isOpen &&
-      menuTrigger !== 'manual'
-    ) {
+      menuTrigger !== 'manual';
+    if (shouldReopenOnItems) {
       closedDueToEmpty.current = false;
       open(null, 'input');
     }
 
-    // Close when an item is selected.
-    if (
+    let shouldCloseOnSelection =
       displayValue != null &&
-      displayValue !== lastValueRef.current &&
-      selectionMode === 'single'
-    ) {
+      displayValue !== selectionBaseline.current &&
+      selectionMode === 'single';
+    if (shouldCloseOnSelection) {
       closeMenu();
     }
 
     // Clear focused key when input value changes and display filtered collection again.
-    if (inputValue !== lastValue) {
+    if (inputChanged) {
       selectionManager.setFocusedKey(null);
       setShowAllItems(false);
 
       // Set value to null when the user clears the input.
       // If controlled, this is the application developer's responsibility.
-      if (
+      let shouldClearSelection =
         selectionMode === 'single' &&
         inputValue === '' &&
-        (props.inputValue === undefined || value === undefined)
-      ) {
+        (props.inputValue === undefined || value === undefined);
+      if (shouldClearSelection) {
         setValue(null);
       }
     }
@@ -449,35 +455,33 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     // If the value changed, update the input value.
     // Do nothing if both inputValue and value are controlled.
     // In this case, it's the user's responsibility to update inputValue in onSelectionChange.
-    if (
-      displayValue !== lastValueRef.current &&
-      (props.inputValue === undefined || value === undefined)
-    ) {
+    let shouldResetInputValue =
+      displayValue !== selectionBaseline.current &&
+      (props.inputValue === undefined || value === undefined);
+    if (shouldResetInputValue) {
       resetInputValue();
-    } else if (lastValue !== inputValue) {
-      setLastValue(inputValue);
+    } else if (inputChanged) {
+      setInputValueBaseline(inputValue);
     }
 
     // Update the inputValue if the selected item's text changes from its last tracked value.
     // This is to handle cases where a selectedKey is specified but the items aren't available (async loading) or the selected item's text value updates.
     // Only reset if the user isn't currently within the field so we don't erroneously modify user input.
     // If inputValue is controlled, it is the user's responsibility to update the inputValue when items change.
-    let selectedItemText =
-      selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
-    if (
+    let selectedItemText = getSelectedItemText();
+    let shouldUpdateSelectedItemText =
       !isFocused &&
       selectedKey != null &&
       props.inputValue === undefined &&
-      selectedKey === lastValueRef.current
-    ) {
-      if (lastSelectedKeyText.current !== selectedItemText) {
-        setLastValue(selectedItemText);
-        setInputValue(selectedItemText);
-      }
+      selectedKey === selectionBaseline.current &&
+      lastSelectedItemText.current !== selectedItemText;
+    if (shouldUpdateSelectedItemText) {
+      setInputValueBaseline(selectedItemText);
+      setInputValue(selectedItemText);
     }
 
-    lastValueRef.current = displayValue;
-    lastSelectedKeyText.current = selectedItemText;
+    selectionBaseline.current = displayValue;
+    lastSelectedItemText.current = selectedItemText;
   });
 
   let validation = useFormValidationState({
@@ -505,13 +509,13 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     if (selectionMode === 'multiple') {
       // In multi-select mode, the input's custom text is independent from the selected items.
       // Closing or committing the field should not clear the existing selection.
-      setLastValue(inputValue);
+      setInputValueBaseline(inputValue);
       closeMenu();
       return;
     }
 
     let value = null;
-    lastValueRef.current = value as any;
+    selectionBaseline.current = value as any;
     setValue(value);
     closeMenu();
   };
@@ -520,14 +524,14 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     // If multiple things are controlled, call onSelectionChange only when selecting the focused item,
     // or when inputValue needs to be synced back to the selected item on commit/blur.
     if (value !== undefined && props.inputValue !== undefined) {
-      let itemText = selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
+      let itemText = getSelectedItemText();
       if (shouldForceSelectionChange || selectionMode === 'multiple' || inputValue !== itemText) {
         props.onSelectionChange?.(selectedKey);
         props.onChange?.(displayValue as ChangeValueType<M>);
       }
 
       // Stop menu from reopening from useEffect
-      setLastValue(itemText);
+      setInputValueBaseline(itemText);
       closeMenu();
     } else {
       // If only a single aspect of combobox is controlled, reset input value and close menu for the user
@@ -539,8 +543,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
   const commitValue = () => {
     closedDueToEmpty.current = false;
     if (allowsCustomValue) {
-      const itemText =
-        selectedKey != null ? (collection.getItem(selectedKey)?.textValue ?? '') : '';
+      const itemText = getSelectedItemText();
       inputValue === itemText ? commitSelection() : commitCustomValue();
     } else {
       // Reset inputValue and close menu
@@ -591,9 +594,15 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
         return filteredCollection;
       }
     } else {
-      return lastCollection;
+      return lastDisplayedCollection;
     }
-  }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems, lastCollection]);
+  }, [
+    triggerState.isOpen,
+    originalCollection,
+    filteredCollection,
+    showAllItems,
+    lastDisplayedCollection
+  ]);
 
   let defaultSelectedKey =
     props.defaultSelectedKey ?? (selectionMode === 'single' ? (initialValue as Key) : null);
