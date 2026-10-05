@@ -53,8 +53,8 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     }
   }, [onLoadMore, ref, scrollOffset]);
 
-  let lastItems = useRef(items);
   useLayoutEffect(() => {
+    let lastItems = prevProps.current.items;
     // Only update isLoadingRef if props object actually changed,
     // not if a local state change occurred.
     if (props !== prevProps.current) {
@@ -69,15 +69,13 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
       ref?.current &&
       !isLoadingRef.current &&
       onLoadMore &&
-      (!items || items !== lastItems.current) &&
+      (!items || items !== lastItems) &&
       ref.current.clientHeight === ref.current.scrollHeight;
 
     if (shouldLoadMore) {
       isLoadingRef.current = true;
       onLoadMore?.();
     }
-
-    lastItems.current = items;
   }, [isLoading, onLoadMore, props, ref, items]);
 
   // TODO: maybe this should still just return scroll props?
