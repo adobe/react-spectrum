@@ -39,14 +39,6 @@ export interface ScrollAnchorInfo {
   isEdgeContent?: (key: Key) => boolean;
 }
 
-/**
- * Minimum overlap an item must have with the viewport, along the scroll axis,
- * to be eligible as a scroll anchor. Without this, an item that only overlaps the viewport
- * by a sliver (e.g. 1px, essentially scrolled out of view) can still "win" the anchor
- * tie-break over a substantially visible item.
- */
-const MIN_ANCHOR_OVERLAP = 4;
-
 function dimensionForAxis(axis: ScrollAnchorAxis): 'width' | 'height' {
   return axis === 'x' ? 'width' : 'height';
 }
@@ -110,7 +102,7 @@ export function captureScrollAnchor(
       continue;
     }
     let overlap = layoutInfo.rect.intersection(visibleRect)[dimension];
-    if (layoutInfo.rect.area <= 0 || overlap < MIN_ANCHOR_OVERLAP) {
+    if (layoutInfo.rect.area <= 0 || overlap <= 0) {
       continue;
     }
     let offset = layoutInfo.rect[corner][axis] - visibleRect[axis];

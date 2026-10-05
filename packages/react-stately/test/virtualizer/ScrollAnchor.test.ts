@@ -24,7 +24,7 @@ import {ScrollAnchor, ScrollAnchorInfo} from '../../src/virtualizer/ScrollAnchor
 import {Size} from '../../src/virtualizer/Size';
 
 describe('captureScrollAnchor', () => {
-  it('does not anchor to an item that only slivers into the viewport by a pixel or two', () => {
+  it('prefers an item with a visible top over a clipped sliver', () => {
     let visibleRect = new Rect(0, 1023, 400, 468);
 
     // Substantially visible: fully inside the viewport, 9px from the top.
@@ -44,13 +44,13 @@ describe('captureScrollAnchor', () => {
     expect(anchor?.key).toBe('substantially-visible');
   });
 
-  it('returns null when the only candidate is a sub-threshold sliver, rather than anchoring to it', () => {
+  it('falls back to a one-pixel sliver when it is the only visible candidate', () => {
     let visibleRect = new Rect(0, 1023, 400, 468);
     let onlyCandidate = new LayoutInfo('item', 'only-candidate', new Rect(0, 976, 400, 48));
 
     let anchor = captureScrollAnchor('end', 'y', visibleRect, [['only-candidate', onlyCandidate]]);
 
-    expect(anchor).toBeNull();
+    expect(anchor).toEqual({key: 'only-candidate', corner: 'topLeft', offset: -47});
   });
 
   it('picks the item with the smallest offset among multiple substantially-visible candidates', () => {
@@ -104,13 +104,15 @@ describe('captureScrollAnchor', () => {
     let anchor = captureScrollAnchor('end', 'y', visibleRect, [['taller', taller]]);
 
     expect(anchor?.key).toBe('taller');
+    expect(anchor?.corner).toBe('topLeft');
+    expect(anchor?.offset).toBe(-100);
   });
 
-  it('returns a substantial clipped item over a fully-visible sub-overlap sliver', () => {
+  it('prefers a tiny fully-visible item over a clipped item', () => {
     let visibleRect = new Rect(0, 1000, 400, 468); // viewport 1000-1468
-    // Fully visible (top at 1002) but only 2px tall -> overlap 2 < MIN_ANCHOR_OVERLAP.
+    // Fully visible (top at 1002) and only 2px tall.
     let sliver = new LayoutInfo('item', 'sliver', new Rect(0, 1002, 400, 2));
-    // Top-clipped but 38px visible -> substantial overlap, reaches the fallback.
+    // Top-clipped with 38px visible.
     let clipped = new LayoutInfo('item', 'clipped', new Rect(0, 962, 400, 76));
 
     let anchor = captureScrollAnchor('end', 'y', visibleRect, [
@@ -118,14 +120,31 @@ describe('captureScrollAnchor', () => {
       ['clipped', clipped]
     ]);
 
-    expect(anchor?.key).toBe('clipped');
+    expect(anchor).toEqual({key: 'sliver', corner: 'topLeft', offset: 2});
   });
 
-  it('excludes an item that is both clipped and sub-overlap at the overlap gate', () => {
+  it('falls back to a clipped sliver when no item has a visible top', () => {
     let visibleRect = new Rect(0, 1000, 400, 468);
     let clippedSliver = new LayoutInfo('item', 'clipped-sliver', new Rect(0, 960, 400, 42)); // 2px visible at top
 
     let anchor = captureScrollAnchor('end', 'y', visibleRect, [['clipped-sliver', clippedSliver]]);
+
+    expect(anchor).toEqual({key: 'clipped-sliver', corner: 'topLeft', offset: -40});
+  });
+
+  it('does not anchor to items outside or only touching the viewport', () => {
+    let visibleRect = new Rect(0, 1000, 400, 468);
+    let above = new LayoutInfo('item', 'above', new Rect(0, 900, 400, 40));
+    let touchingTop = new LayoutInfo('item', 'touching-top', new Rect(0, 960, 400, 40));
+    let touchingBottom = new LayoutInfo('item', 'touching-bottom', new Rect(0, 1468, 400, 40));
+    let below = new LayoutInfo('item', 'below', new Rect(0, 1500, 400, 40));
+
+    let anchor = captureScrollAnchor('end', 'y', visibleRect, [
+      ['above', above],
+      ['touching-top', touchingTop],
+      ['touching-bottom', touchingBottom],
+      ['below', below]
+    ]);
 
     expect(anchor).toBeNull();
   });
@@ -640,11 +659,7 @@ describe('ScrollAnchorTracker', () => {
     expect(result?.y).toBe(2200 - 468);
   });
 
-  it('holds the viewport with the anchor when content grows without an item resize (prepend near the edge)', () => {
-    // Older content is prepended above the viewport while the user sits near the edge: content
-    // grows (contentSizeDelta > 0) but no item resized (itemSizeChanged is false). This is not a
-    // measurement settle, so the anchor wins and the viewport stays put instead of snapping to
-    // the new edge -- the prepended content shouldn't yank the user's view down.
+  it('preserves the anchor offset when content is prepended near the edge without an item resize', () => {
     let tracker = new ScrollAnchorTracker();
 
     // Pass 1 establishes hasSnappedToEdge so the next pass is a normal relayout, not the first.
@@ -661,11 +676,11 @@ describe('ScrollAnchorTracker', () => {
     });
 
     // Pass 2: viewport near the old edge (snap-eligible) and content grew 2000 -> 2200, but an
-    // anchor resolves, so the anchor wins over the snap.
+    // anchor moves from 1530 to 1730, so scroll must increase by 200 to preserve its offset.
     let nearOldEdge = new Rect(0, 1520, 400, 468); // 12px from the old bottom edge
     let grownContentSize = new Size(400, 2200);
     let anchor: ScrollAnchor = {key: 'item', corner: 'topLeft', offset: 10};
-    let anchorLayoutInfo = new LayoutInfo('item', 'item', new Rect(0, 1510, 400, 40));
+    let anchorLayoutInfo = new LayoutInfo('item', 'item', new Rect(0, 1730, 400, 40));
 
     let result = tracker.resolveAfterLayout({
       anchorInfo,
@@ -678,16 +693,11 @@ describe('ScrollAnchorTracker', () => {
       getLayoutInfo: () => anchorLayoutInfo
     });
 
-    // Anchor target (1510 - 10 = 1500), never the edge snap (2200 - 468 = 1732).
-    expect(result?.y).toBe(1500);
+    // Anchor target (1730 - 10 = 1720), never the edge snap (2200 - 468 = 1732).
+    expect(result?.y).toBe(1720);
   });
 
   it('follows the edge to the real bottom as estimated items measure on initial render', () => {
-    // Reproduces the initial-render settle: pass 1 snaps to the estimated bottom, then items
-    // measure bigger and content grows. An anchor is captured and it "moves" (items above it
-    // grew too), so a terminal anchor restore would land the viewport short of the new bottom
-    // -- the "partly scrolled up on first render" bug. Because the user is following the edge and
-    // items are settling, we must snap to the real bottom instead.
     let tracker = new ScrollAnchorTracker();
 
     // Pass 1: first anchored layout snaps to the estimated bottom (1296 - 468 = 828).
@@ -726,9 +736,6 @@ describe('ScrollAnchorTracker', () => {
   });
 
   it('preserves the reading position when a change not at the edge settles after the first pass', () => {
-    // Mirrors the initial-settle case, but the growth was NOT at the anchored edge (a mid-thread
-    // item resized while the user is scrolled up). Instead of snapping to the real bottom, keep
-    // the anchor so the reading position is preserved.
     let tracker = new ScrollAnchorTracker();
 
     // Pass 1: establish hasSnappedToEdge so pass 2 is a normal relayout, not the first.
