@@ -55,10 +55,10 @@ import LinkIcon from '@react-spectrum/s2/icons/Link';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
-import PluginGear from '@react-spectrum/s2/icons/PluginGear';
 import {Popover} from '@react-spectrum/s2/Popover';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import {SearchField} from '@react-spectrum/s2/SearchField';
+import Settings from '@react-spectrum/s2/icons/Settings';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
 import {TokenSegment} from 'react-stately';
 import {useRef, useState} from 'react';
@@ -646,7 +646,7 @@ function EverythingRender(args) {
           )}
         </PromptTokenField>
         <PromptFieldToolbar>
-          <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+          <div className={style({display: 'flex', gap: 4, alignItems: 'center'})}>
             <InsertMenuButton>
               <AttachFileMenuItem />
               <SubmenuTrigger>
@@ -742,7 +742,7 @@ function EverythingRender(args) {
             </InsertMenuButton>
             <MenuTrigger>
               <ActionButton aria-label="Configuration" staticColor="auto" isQuiet>
-                <PluginGear />
+                <Settings />
               </ActionButton>
               <Menu aria-label="Configurations" items={referenceSubmenus}>
                 {item => {
