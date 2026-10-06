@@ -141,4 +141,46 @@ describe('runAfterTransition', () => {
 
     expect(callback).toHaveBeenCalled();
   });
+
+  it.each([
+    ['hidden', false],
+    ['removed from the document', true]
+  ])(
+    'calls callback after multiple transitions are cancelled on an element that is %s',
+    (_, isRemoved) => {
+      const element = appendElement(document.createElement('div'));
+      const callback = jest.fn();
+
+      for (const propertyName of ['opacity', 'transform']) {
+        element.dispatchEvent(
+          new TransitionEvent('transitionrun', {
+            propertyName,
+            bubbles: true
+          })
+        );
+      }
+
+      runAfterTransition(callback);
+      act(() => {
+        jest.runOnlyPendingTimers();
+      });
+      expect(callback).not.toHaveBeenCalled();
+
+      if (isRemoved) {
+        cleanupElements();
+      }
+
+      // Browsers dispatch one transitioncancel per property.
+      for (const propertyName of ['opacity', 'transform']) {
+        element.dispatchEvent(
+          new TransitionEvent('transitioncancel', {
+            propertyName,
+            bubbles: true
+          })
+        );
+      }
+
+      expect(callback).toHaveBeenCalled();
+    }
+  );
 });
