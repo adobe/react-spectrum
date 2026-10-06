@@ -11,6 +11,7 @@
  */
 
 import {action} from 'storybook/actions';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {
   AttachFileMenuItem,
   CommandMenuItem,
@@ -41,6 +42,7 @@ import {
   Menu,
   MenuItem,
   MenuSection,
+  MenuTrigger,
   SubmenuTrigger,
   Text
 } from '@react-spectrum/s2/Menu';
@@ -53,6 +55,7 @@ import LinkIcon from '@react-spectrum/s2/icons/Link';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
+import PluginGear from '@react-spectrum/s2/icons/PluginGear';
 import {Popover} from '@react-spectrum/s2/Popover';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import {SearchField} from '@react-spectrum/s2/SearchField';
@@ -440,7 +443,7 @@ let referenceSubmenuSelectedValueStyle = style({
   unicodeBidi: 'plaintext'
 });
 
-function SearchableReferenceSubmenu({
+function SandboxSubMenu({
   item,
   selectedKey,
   onSelectedKeyChange
@@ -450,46 +453,33 @@ function SearchableReferenceSubmenu({
   onSelectedKeyChange: (key: string | null) => void;
 }) {
   let {contains} = useFilter({sensitivity: 'base'});
-  let selectedOption = item.options.find(option => option.id === selectedKey);
 
   return (
-    <SubmenuTrigger>
-      <MenuItem id={item.id} textValue={item.label}>
-        <Text slot="label">{item.label}</Text>
-        {selectedOption && (
-          <span slot="keyboard" className={referenceSubmenuSelectedValueStyle}>
-            {selectedOption.label}
-          </span>
-        )}
-      </MenuItem>
-      <Popover>
-        <Autocomplete filter={contains}>
-          <div className={referenceSubmenuContainerStyle}>
-            <div className={referenceStickySearchStyle}>
-              <SearchField aria-label={`Search ${item.label}`} />
-            </div>
-            <div className={referenceSubmenuListStyle}>
-              <Menu
-                aria-label={item.label}
-                items={item.options}
-                selectionMode="single"
-                selectedKeys={selectedKey == null ? [] : [selectedKey]}
-                onSelectionChange={keys => {
-                  let key = keys === 'all' ? null : ([...keys][0] ?? null);
-                  onSelectedKeyChange(key == null ? null : String(key));
-                }}>
-                {option => (
-                  <MenuItem id={option.id} textValue={option.label}>
-                    <Text slot="label">{option.label}</Text>
-                    <Text slot="description">{option.description}</Text>
-                  </MenuItem>
-                )}
-              </Menu>
-            </div>
-          </div>
-        </Autocomplete>
-      </Popover>
-    </SubmenuTrigger>
+    <Autocomplete filter={contains}>
+      <div className={referenceSubmenuContainerStyle}>
+        <div className={referenceStickySearchStyle}>
+          <SearchField aria-label={`Search ${item.label}`} />
+        </div>
+        <div className={referenceSubmenuListStyle}>
+          <Menu
+            aria-label={item.label}
+            items={item.options}
+            selectionMode="single"
+            selectedKeys={selectedKey == null ? [] : [selectedKey]}
+            onSelectionChange={keys => {
+              let key = keys === 'all' ? null : ([...keys][0] ?? null);
+              onSelectedKeyChange(key == null ? null : String(key));
+            }}>
+            {option => (
+              <MenuItem id={option.id} textValue={option.label}>
+                <Text slot="label">{option.label}</Text>
+                <Text slot="description">{option.description}</Text>
+              </MenuItem>
+            )}
+          </Menu>
+        </div>
+      </div>
+    </Autocomplete>
   );
 }
 
@@ -658,18 +648,6 @@ function EverythingRender(args) {
         <PromptFieldToolbar>
           <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
             <InsertMenuButton>
-              <MenuSection aria-label="Data sources">
-                {referenceSubmenus.map(item => (
-                  <SearchableReferenceSubmenu
-                    key={item.id}
-                    item={item}
-                    selectedKey={selectedKeys[item.id] ?? null}
-                    onSelectedKeyChange={selectedKey => {
-                      setSelectedKeys(prev => ({...prev, [item.id]: selectedKey}));
-                    }}
-                  />
-                ))}
-              </MenuSection>
               <AttachFileMenuItem />
               <SubmenuTrigger>
                 <MenuItem>
@@ -762,6 +740,39 @@ function EverythingRender(args) {
                 </Menu>
               </SubmenuTrigger>
             </InsertMenuButton>
+            <MenuTrigger>
+              <ActionButton aria-label="Configuration" staticColor="auto" isQuiet>
+                <PluginGear />
+              </ActionButton>
+              <Menu aria-label="Configurations" items={referenceSubmenus}>
+                {item => {
+                  let selectedKey = selectedKeys[item.id] ?? null;
+                  let selectedOption = item.options.find(option => option.id === selectedKey);
+
+                  return (
+                    <SubmenuTrigger>
+                      <MenuItem textValue={item.label}>
+                        <Text slot="label">{item.label}</Text>
+                        {selectedOption && (
+                          <span slot="keyboard" className={referenceSubmenuSelectedValueStyle}>
+                            {selectedOption.label}
+                          </span>
+                        )}
+                      </MenuItem>
+                      <Popover>
+                        <SandboxSubMenu
+                          item={item}
+                          selectedKey={selectedKey}
+                          onSelectedKeyChange={selectedKey => {
+                            setSelectedKeys(prev => ({...prev, [item.id]: selectedKey}));
+                          }}
+                        />
+                      </Popover>
+                    </SubmenuTrigger>
+                  );
+                }}
+              </Menu>
+            </MenuTrigger>
           </div>
           {/* TODO is this kind of styling expected from the user? Or should we have a slot that places the mic button next to the submit button? */}
           <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
