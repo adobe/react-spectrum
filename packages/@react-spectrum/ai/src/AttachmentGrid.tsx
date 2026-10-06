@@ -117,6 +117,7 @@ export interface AttachmentGridItemProps
 const itemStyles = style({
   flexShrink: 0,
   flexGrow: 0,
+  flexBasis: '0%',
   position: 'relative',
   ...focusRing(),
   borderRadius: 'lg'
