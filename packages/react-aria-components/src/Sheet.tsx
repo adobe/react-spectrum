@@ -213,6 +213,10 @@ export function SheetTrigger(props: SheetTriggerProps) {
   );
 }
 
+// Additional padding added to the viewport to account for browser toolbar.
+// More content than 100lvh is actually visible on iOS, even when the toolbar is collapsed.
+const VIEWPORT_PADDING = isIOS() && isSafari() ? 'calc(100lvh - 100svh + 58px)' : '0px';
+
 /**
  * A SheetOverlay is a container for a SheetBackdrop and a Sheet.
  */
@@ -272,6 +276,10 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
         }
       }
 
+      // iOS displays content outside the reported viewport, e.g. behind the browser toolbar.
+      // Add additional margin to account for that so that the sheet disappears only when it is entirely invisible.
+      let rootMargin = `0px 0px ${axis === 'y' && after ? calcToPx(VIEWPORT_PADDING) : '0px'} 0px`;
+
       let hasEntered = false;
       let observer = new IntersectionObserver(
         entries => {
@@ -290,7 +298,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
             element.dispatchEvent(new CustomEvent('react-aria-sheet-close'));
           }
         },
-        {threshold: [0, 1]}
+        {threshold: [0, 1], rootMargin}
       );
 
       let el = element.querySelector('[data-sheet-content]');
@@ -305,7 +313,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
         removeSheet();
       };
     },
-    [stackItem, axis, maxScroll, enteredScroll]
+    [stackItem, axis, maxScroll, enteredScroll, after]
   );
 
   let mergedRefs = useMemo(() => mergeRefs(ref, domRef), [ref, domRef]);
@@ -730,7 +738,9 @@ export const Sheet = forwardRef(function Sheet(
   // edge. When clamped, sheets exiting toward the end edge move it so scroll 0 rests at the smallest
   // snap point. Sheets exiting toward the start edge rest at scroll 0 already, so only the end of
   // the scroll content (the smallest snap point) moves. Dual direction sheets get 1px either side.
-  let stageStart = isClamped && after ? clampedTravel : viewport;
+  // viewportPadding pushes bottom sheets down so that they can scroll beyond the viewport behind the iOS toolbar.
+  let viewportPadding = after && axis === 'y' ? VIEWPORT_PADDING : '0px';
+  let stageStart = isClamped && after ? clampedTravel : `calc(${viewport} + ${viewportPadding})`;
   let endMarker: string;
   if (isClamped && before && after) {
     endMarker = `calc(${stageStart} + ${viewport} + 1px)`;
@@ -1131,4 +1141,22 @@ function scrollDetentIntoView(
       scroller.scrollTo({left, behavior});
     }
   }
+}
+
+function calcToPx(calc: string) {
+  if (!calc.startsWith('calc(')) {
+    return calc;
+  }
+
+  let measure = document.createElement('div');
+  measure.inert = true;
+  measure.style.position = 'absolute';
+  measure.style.top = '0px';
+  measure.style.left = '0px';
+  measure.style.contain = 'strict';
+  measure.style.height = calc;
+  document.body.appendChild(measure);
+  let height = window.getComputedStyle(measure).height;
+  measure.remove();
+  return height;
 }
