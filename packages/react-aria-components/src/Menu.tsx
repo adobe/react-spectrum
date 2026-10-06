@@ -390,7 +390,7 @@ function MenuInner<T>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
             // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
             [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
-          <SharedElementTransition>
+          <SharedElementTransition containerRef={ref}>
             <CollectionRoot
               collection={state.collection}
               persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}

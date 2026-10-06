@@ -26,24 +26,40 @@ import React, {
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
+interface Position {
+  left: number;
+  top: number;
+}
+
 interface Snapshot {
-  rect: DOMRect;
-  ancestors: Map<Element, DOMRect>;
+  position: Position;
   style: [string, string][];
 }
 
-function getAncestorRects(element: Element): Map<Element, DOMRect> {
-  let rects = new Map<Element, DOMRect>();
-  for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) {
-    rects.set(ancestor, ancestor.getBoundingClientRect());
-  }
-  return rects;
-}
-
 const SharedElementContext = createContext<RefObject<{[name: string]: Snapshot}> | null>(null);
+const SharedElementContainerContext = createContext<RefObject<Element | null> | undefined>(
+  undefined
+);
+
+// The snapshot is taken in a layout effect cleanup, which runs mid-commit, so the viewport position of anything
+// that depends on DOM swapped in the same commit may be one it never paints. Its position within the container is.
+// The container is read when measuring: on mount, a SharedElement's layout effect runs before its ref is attached.
+function getPosition(element: Element, container: Element | null | undefined): Position {
+  let rect = element.getBoundingClientRect();
+  let containerRect = container?.getBoundingClientRect();
+  return {
+    left: rect.left - (containerRect?.left ?? 0),
+    top: rect.top - (containerRect?.top ?? 0)
+  };
+}
 
 export interface SharedElementTransitionProps {
   children: ReactNode;
+  /**
+   * The element containing the SharedElements. Transitions are measured relative to it rather than
+   * the viewport.
+   */
+  containerRef?: RefObject<Element | null>;
 }
 
 /**
@@ -52,7 +68,11 @@ export interface SharedElementTransitionProps {
 export function SharedElementTransition(props: SharedElementTransitionProps) {
   let ref = useRef({});
   return (
-    <SharedElementContext.Provider value={ref}>{props.children}</SharedElementContext.Provider>
+    <SharedElementContext.Provider value={ref}>
+      <SharedElementContainerContext.Provider value={props.containerRef}>
+        {props.children}
+      </SharedElementContainerContext.Provider>
+    </SharedElementContext.Provider>
   );
 }
 
@@ -91,6 +111,7 @@ export const SharedElement = forwardRef(function SharedElement(
   let {name, isVisible = true, children, className, style, render, ...divProps} = props;
   let [state, setState] = useState(isVisible ? 'visible' : 'hidden');
   let scopeRef = useContext(SharedElementContext);
+  let containerRef = useContext(SharedElementContainerContext);
   if (!scopeRef) {
     throw new Error('<SharedElement> must be rendered inside a <SharedElementTransition>');
   }
@@ -115,24 +136,10 @@ export const SharedElement = forwardRef(function SharedElement(
       let values = prevSnapshot.style.map(([property, prevValue]) => {
         let value = element.style[property];
         if (property === 'translate') {
-          let prevRect = prevSnapshot.rect;
-          let currentItem = element.getBoundingClientRect();
-          let deltaX = prevRect.left - currentItem.left;
-          let deltaY = prevRect.top - currentItem.top;
-
-          // The snapshot is taken in a layout effect cleanup, which runs mid-commit. An ancestor whose position
-          // depends on DOM swapped in the same commit (e.g. a centered dialog whose content changes) may have
-          // been measured somewhere it never paints, so measure relative to the nearest ancestor both share.
-          let ancestor = element.parentElement;
-          while (ancestor && !prevSnapshot.ancestors.has(ancestor)) {
-            ancestor = ancestor.parentElement;
-          }
-          if (ancestor) {
-            let prevAncestorRect = prevSnapshot.ancestors.get(ancestor)!;
-            let currentAncestorRect = ancestor.getBoundingClientRect();
-            deltaX -= prevAncestorRect.left - currentAncestorRect.left;
-            deltaY -= prevAncestorRect.top - currentAncestorRect.top;
-          }
+          let prevPosition = prevSnapshot.position;
+          let currentPosition = getPosition(element, containerRef?.current);
+          let deltaX = prevPosition.left - currentPosition.left;
+          let deltaY = prevPosition.top - currentPosition.top;
           element.style.translate = `${deltaX}px ${deltaY}px`;
         } else {
           element.style[property] = prevValue;
@@ -191,14 +198,15 @@ export const SharedElement = forwardRef(function SharedElement(
         if (style.transitionProperty !== 'none') {
           let transitionProperty = style.transitionProperty.split(/\s*,\s*/);
           scope[name] = {
-            rect: element.getBoundingClientRect(),
-            ancestors: getAncestorRects(element),
+            // The container outlives this element, so its current node is the one to measure against.
+            // oxlint-disable-next-line react-hooks/exhaustive-deps
+            position: getPosition(element, containerRef?.current),
             style: transitionProperty.map(p => [p, style[p]])
           };
         }
       }
     };
-  }, [ref, scopeRef, name, isVisible]);
+  }, [ref, scopeRef, containerRef, name, isVisible]);
 
   let renderProps = useRenderProps({
     children,
