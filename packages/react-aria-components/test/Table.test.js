@@ -46,9 +46,10 @@ import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {Label} from '../src/Label';
 import {Modal} from '../src/Modal';
-import {queryObjects} from 'node:v8';
 import React, {useContext, useMemo, useState} from 'react';
 import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
+import {runInNewContext} from 'node:vm';
+import {setFlagsFromString} from 'node:v8';
 import {setImmediate} from 'node:timers';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
@@ -1189,9 +1190,10 @@ describe('Table', () => {
     expect(document.activeElement).toBe(getByRole('row', {name: '5'}));
     await user.keyboard('{ArrowDown}');
     expect(document.activeElement).toBe(getByRole('row', {name: '6'}));
-    // Release WeakRef's current-job protection before requesting a full GC.
+    // Release WeakRef's current-job protection, then force a full GC the way Jest's leak detector does.
     await new Promise(setImmediate);
-    queryObjects(collection.constructor);
+    setFlagsFromString('--expose-gc');
+    runInNewContext('gc')();
     // React may keep the initial and most recent collections; intermediate updates must be freed.
     for (let previous of previousCollections.slice(1, -1)) {
       expect(previous.deref()).toBeUndefined();
