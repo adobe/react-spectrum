@@ -478,7 +478,7 @@ describeOrSkip('PromptField', () => {
 
     it('enables submit with attachments and no text', async () => {
       let {user, onSubmit} = renderPromptField({attachments: [imageAttachment('a1')]});
-      let submit = screen.getByRole('button', {name: 'Send'});
+      let submit = screen.getByRole('button', {name: /^(?:Send|Submit AI prompt)$/});
       expect(submit).toBeEnabled();
 
       await user.click(submit);
@@ -490,7 +490,7 @@ describeOrSkip('PromptField', () => {
         isGenerating: true,
         attachments: [imageAttachment('a1')]
       });
-      let submit = screen.getByRole('button', {name: 'Send'});
+      let submit = screen.getByRole('button', {name: /^(?:Send|Submit AI prompt)$/});
       expect(submit).toBeEnabled();
 
       await user.click(submit);
