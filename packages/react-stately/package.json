@@ -3,24 +3,8 @@
   "version": "3.50.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
-  },
-  "source": "exports/index.ts",
-  "files": [
-    "*",
-    "!docs/**",
-    "!exports/**",
-    "!intl/**",
-    "!src/**",
-    "!stories/**",
-    "!test/**"
-  ],
-  "sideEffects": false,
   "main": "./dist/exports/index.cjs",
   "module": "./dist/exports/index.js",
-  "types": "./dist/types/exports/index.d.ts",
   "exports": {
     ".": {
       "source": "./exports/index.ts",
@@ -37,8 +21,21 @@
       "require": "./dist/exports/*.cjs"
     }
   },
-  "publishConfig": {
-    "access": "public"
+  "types": "./dist/types/exports/index.d.ts",
+  "source": "exports/index.ts",
+  "files": [
+    "*",
+    "!docs/**",
+    "!exports/**",
+    "!intl/**",
+    "!src/**",
+    "!stories/**",
+    "!test/**"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "scripts": {
     "prepack": "node ../../scripts/prepareForPublish.js prepare",
@@ -52,13 +49,16 @@
     "@swc/helpers": "^0.5.0",
     "use-sync-external-store": "^1.6.0"
   },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  },
   "devDependencies": {
     "@babel/cli": "^7.24.1",
     "@babel/core": "^7.24.3",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
-  "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  "publishConfig": {
+    "access": "public"
   },
   "targets": {
     "main": false,
