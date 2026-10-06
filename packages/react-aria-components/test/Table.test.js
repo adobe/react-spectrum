@@ -34,6 +34,7 @@ import {
   TableFooter,
   TableHeader,
   TableLoadMoreItem,
+  TableStateContext,
   useTableOptions
 } from '../src/Table';
 
@@ -45,8 +46,10 @@ import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {Label} from '../src/Label';
 import {Modal} from '../src/Modal';
-import React, {useMemo, useState} from 'react';
+import {queryObjects} from 'node:v8';
+import React, {useContext, useMemo, useState} from 'react';
 import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
+import {setImmediate} from 'node:timers';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
 import {TableLayout} from '../src/TableLayout';
@@ -1139,6 +1142,60 @@ describe('Table', () => {
     expect(body).toHaveAttribute('data-empty', 'true');
     let cell = getByRole('rowheader');
     expect(cell).toHaveTextContent('No results');
+  });
+
+  it('should not retain previous collections when a live table body updates', async () => {
+    let updateRows;
+    let collection;
+
+    function CollectionObserver({children}) {
+      collection = useContext(TableStateContext).collection;
+      return children;
+    }
+
+    function LiveBody() {
+      let [rows, setRows] = useState([{id: 0}, {id: 1}]);
+      updateRows = setRows;
+      return (
+        <TableBody items={rows}>
+          {row => (
+            <Row id={row.id}>
+              <Cell>
+                <CollectionObserver>{row.id}</CollectionObserver>
+              </Cell>
+            </Row>
+          )}
+        </TableBody>
+      );
+    }
+
+    let {getByRole, getAllByRole} = render(
+      <Table aria-label="Live events" selectionMode="single">
+        <TableHeader>
+          <Column isRowHeader>Event</Column>
+        </TableHeader>
+        <LiveBody />
+      </Table>
+    );
+
+    let previousCollections = [];
+    for (let id = 2; id < 7; id++) {
+      previousCollections.push(new WeakRef(collection));
+      act(() => updateRows(rows => [...rows.slice(1), {id}]));
+    }
+
+    expect(getAllByRole('row')).toHaveLength(3);
+    await user.tab();
+    expect(document.activeElement).toBe(getByRole('row', {name: '5'}));
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(getByRole('row', {name: '6'}));
+    // Release WeakRef's current-job protection before requesting a full GC.
+    await new Promise(setImmediate);
+    queryObjects(collection.constructor);
+    // React may keep the initial and most recent collections; intermediate updates must be freed.
+    for (let previous of previousCollections.slice(1, -1)) {
+      expect(previous.deref()).toBeUndefined();
+    }
   });
 
   it('supports removing rows', async () => {
