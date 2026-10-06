@@ -1751,6 +1751,94 @@ describe('Table', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Games');
     });
 
+    describe('pointerDragSource', () => {
+      it('should allow dragging from anywhere on the row by default', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(<DraggableTable onDragStart={onDragStart} />);
+        let row = getAllByRole('row')[1];
+        let button = within(row).getByRole('button');
+        expect(row).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveAttribute('draggable');
+        expect(button).toHaveStyle({pointerEvents: 'none'});
+
+        let cell = within(row).getAllByRole('rowheader')[0];
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+      });
+
+      it('should only allow pointer dragging from the drag button when set to "dragButton"', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableTable pointerDragSource="dragButton" onDragStart={onDragStart} />
+        );
+        let row = getAllByRole('row')[1];
+        let button = within(row).getByRole('button');
+        expect(row).not.toHaveAttribute('draggable');
+        expect(button).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveStyle({pointerEvents: 'none'});
+
+        for (let pointerType of ['mouse', 'touch']) {
+          let cell = within(row).getAllByRole('rowheader')[0];
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(cell, {pointerType, button: 0, pointerId: 1});
+          fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+          act(() => jest.runAllTimers());
+          expect(onDragStart).not.toHaveBeenCalled();
+          expect(row).not.toHaveAttribute('data-dragging');
+        }
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(button, {pointerType: 'mouse', button: 0, pointerId: 1});
+        fireEvent(button, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith(expect.objectContaining({keys: new Set(['1'])}));
+        expect(row).toHaveAttribute('data-dragging', 'true');
+        // Without a custom drag preview, the whole row is used as the drag image.
+        expect(dataTransfer._dragImage.node).toBe(row);
+
+        fireEvent(button, new DragEvent('dragend', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(row).not.toHaveAttribute('data-dragging');
+      });
+
+      it('should not select the row when clicking the drag button when set to "dragButton"', async () => {
+        let onSelectionChange = jest.fn();
+        function SelectableTable() {
+          let {dragAndDropHooks} = useDragAndDrop({
+            getItems: keys => [...keys].map(key => ({'text/plain': key})),
+            pointerDragSource: 'dragButton'
+          });
+          return (
+            <TestTable
+              tableProps={{dragAndDropHooks, selectionMode: 'multiple', onSelectionChange}}
+            />
+          );
+        }
+        let {getAllByRole} = render(<SelectableTable />);
+        let row = getAllByRole('row')[1];
+        let button = within(row).getAllByRole('button')[0];
+        await user.click(button);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(row).toHaveAttribute('aria-selected', 'false');
+      });
+
+      it('should support keyboard dragging via the drag button when set to "dragButton"', async () => {
+        let onDragStart = jest.fn();
+        render(<DraggableTable pointerDragSource="dragButton" onDragStart={onDragStart} />);
+        await user.tab();
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        await user.keyboard('{Escape}');
+        act(() => jest.runAllTimers());
+      });
+    });
+
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(

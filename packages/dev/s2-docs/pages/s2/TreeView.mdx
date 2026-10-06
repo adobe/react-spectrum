@@ -449,6 +449,8 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 TreeView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or reorder items. React Spectrum supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=TreeView) to learn more.
 
+If items contain interactive elements such as text fields, set `pointerDragSource: 'dragButton'` to restrict mouse and touch dragging to the drag handle.
+
 You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.DragPreview} /> or your own custom drag preview element to `useDragAndDrop`'s `renderDragPreview`. `DragPreview` supports leading icons and `Text` with `label` and `description` slots.
 
 ```tsx render type="s2"

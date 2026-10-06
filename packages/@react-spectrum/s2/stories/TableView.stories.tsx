@@ -2313,7 +2313,10 @@ let dragColumns = [
   {name: 'Type', id: 'type'}
 ];
 
-function ReorderableTableExample(props) {
+function ReorderableTableExample({
+  pointerDragSource,
+  ...props
+}: Partial<TableViewProps> & {pointerDragSource?: 'item' | 'dragButton'; overflowMode?: string}) {
   let list = useListData({initialItems: folderList1});
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
@@ -2357,7 +2360,8 @@ function ReorderableTableExample(props) {
     acceptedDragTypes,
     renderDragPreview: items => (
       <CustomDragPreview parentList={list} items={items} overflowMode={props.overflowMode} />
-    )
+    ),
+    pointerDragSource
   });
 
   return (
@@ -2387,9 +2391,85 @@ function ReorderableTableExample(props) {
   );
 }
 
-export const DragAndDropReorder: StoryObj<typeof TableView> = {
+export const DragAndDropReorder: StoryObj<typeof ReorderableTableExample> = {
   render: args => <ReorderableTableExample {...args} />,
-  name: 'Drag and drop reorder'
+  name: 'Drag and drop reorder',
+  argTypes: {
+    pointerDragSource: {
+      control: 'radio',
+      options: ['item', 'dragButton']
+    }
+  }
+};
+
+function DragHandleTableWithTextFields({
+  pointerDragSource,
+  ...props
+}: Partial<TableViewProps> & {pointerDragSource?: 'item' | 'dragButton'}) {
+  let list = useListData({
+    initialItems: folderList1.map(item => ({...item, notes: ''}))
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys =>
+      [...keys].map(key => {
+        let item = list.getItem(key)!;
+        return {
+          id: item.id,
+          'text/plain': item.name
+        };
+      }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDragPreview: items => <CustomDragPreview parentList={list} items={items} />,
+    pointerDragSource
+  });
+
+  return (
+    <TableView
+      aria-label="Files with notes"
+      dragAndDropHooks={dragAndDropHooks}
+      styles={style({width: 500, height: 320})}
+      {...props}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Notes</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row id={item.id}>
+            <Cell>{item.name}</Cell>
+            <Cell>
+              <TextField
+                aria-label={`Notes for ${item.name}`}
+                value={item.notes}
+                onChange={notes => list.update(item.id, {...item, notes})}
+              />
+            </Cell>
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export const DragHandleWithTextFields: StoryObj<typeof DragHandleTableWithTextFields> = {
+  render: args => <DragHandleTableWithTextFields {...args} />,
+  name: 'Drag and drop with text fields',
+  args: {
+    pointerDragSource: 'dragButton'
+  },
+  argTypes: {
+    pointerDragSource: {
+      control: 'radio',
+      options: ['item', 'dragButton']
+    }
+  }
 };
 
 function ReorderableTableWithNested(props) {

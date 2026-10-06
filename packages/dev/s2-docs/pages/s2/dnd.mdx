@@ -106,6 +106,37 @@ function DraggableCOMPONENT() {
 
 </ExampleSwitcher>
 
+## Drag handle
+
+By default, mouse and touch users can start a drag from anywhere within an item, and the drag handle is only shown to keyboard users. When items contain interactive elements such as text fields, set `pointerDragSource` to `"dragButton"` to restrict mouse and touch dragging to the drag handle. In this mode, the drag handle is always visible. Keyboard and screen reader drag and drop is unaffected.
+
+<ExampleSwitcher type="component" examples={['ListView', 'TreeView', 'TableView']}>
+
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/PokemonCOMPONENT.tsx']}
+"use client";
+import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {PokemonCOMPONENT, Pokemon} from './PokemonCOMPONENT';
+
+function DraggableCOMPONENT() {
+  let {dragAndDropHooks} = useDragAndDrop<Pokemon>({
+    ///- begin collapse -///
+    getItems(keys, items: Pokemon[]) {
+      return items.map(item => ({
+        'text/plain': item.name
+      }));
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    pointerDragSource: 'dragButton'
+    ///- end highlight -///
+  });
+
+  return <PokemonCOMPONENT dragAndDropHooks={dragAndDropHooks} />;
+}
+```
+
+</ExampleSwitcher>
+
 ## Drop items
 
 Users can drop one or more **drop items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
@@ -881,6 +912,7 @@ Note that because mouse and touch drag and drop interactions utilize the native 
     'Drag source': [
       'getItems',
       'renderDragPreview',
+      'pointerDragSource',
       'getAllowedDropOperations',
       'onDragStart',
       'onDragMove',

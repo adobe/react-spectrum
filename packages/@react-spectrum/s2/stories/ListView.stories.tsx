@@ -29,7 +29,7 @@ import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Image} from '../src/Image';
 import {Key} from '@react-types/shared';
-import {ListView, ListViewItem} from '../src/ListView';
+import {ListView, ListViewItem, ListViewProps} from '../src/ListView';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useState} from 'react';
@@ -710,7 +710,10 @@ function CustomDragPreview(props) {
   );
 }
 
-function ReorderExample(props) {
+function ReorderExample({
+  pointerDragSource,
+  ...props
+}: Partial<ListViewProps<any>> & {pointerDragSource?: 'item' | 'dragButton'}) {
   let list = useListData({
     initialItems: reorderItems
   });
@@ -733,7 +736,8 @@ function ReorderExample(props) {
     },
     renderDragPreview: items => (
       <CustomDragPreview parentList={list} items={items} overflowMode={props.overflowMode} />
-    )
+    ),
+    pointerDragSource
   });
 
   return (
@@ -753,9 +757,15 @@ function ReorderExample(props) {
   );
 }
 
-export const Reorderable: Story = {
+export const Reorderable: StoryObj<typeof ReorderExample> = {
   render: args => <ReorderExample {...args} />,
-  name: 'Drag and drop reordering'
+  name: 'Drag and drop reordering',
+  argTypes: {
+    pointerDragSource: {
+      control: 'radio',
+      options: ['item', 'dragButton']
+    }
+  }
 };
 
 let folderList1 = [

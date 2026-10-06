@@ -23,6 +23,7 @@ import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxField} from '../src/Ch
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
 import {ComboBox} from '../src/ComboBox';
+import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
@@ -1251,6 +1252,74 @@ describe('GridList', () => {
       let {getAllByRole} = render(<DraggableGridList />);
       let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('aria-label', 'Drag Cat');
+    });
+
+    describe('pointerDragSource', () => {
+      it('should allow dragging from anywhere on the item by default', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(<DraggableGridList onDragStart={onDragStart} />);
+        let row = getAllByRole('row')[0];
+        let button = within(row).getAllByRole('button')[0];
+        expect(button).toHaveAttribute('aria-label', 'Drag Cat');
+        expect(row).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveAttribute('draggable');
+        expect(button).toHaveStyle({pointerEvents: 'none'});
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(row, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+      });
+
+      it('should only allow pointer dragging from the drag button when set to "dragButton"', () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableGridList pointerDragSource="dragButton" onDragStart={onDragStart} />
+        );
+        let row = getAllByRole('row')[0];
+        let button = within(row).getAllByRole('button')[0];
+        expect(button).toHaveAttribute('aria-label', 'Drag Cat');
+        expect(row).not.toHaveAttribute('draggable');
+        expect(button).toHaveAttribute('draggable', 'true');
+        expect(button).not.toHaveStyle({pointerEvents: 'none'});
+
+        for (let pointerType of ['mouse', 'touch']) {
+          let content = within(row).getByText('Cat');
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(content, {pointerType, button: 0, pointerId: 1});
+          fireEvent(content, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+          act(() => jest.runAllTimers());
+          expect(onDragStart).not.toHaveBeenCalled();
+          expect(row).not.toHaveAttribute('data-dragging');
+        }
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(button, {pointerType: 'mouse', button: 0, pointerId: 1});
+        fireEvent(button, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith(expect.objectContaining({keys: new Set(['cat'])}));
+        expect(row).toHaveAttribute('data-dragging', 'true');
+        expect(dataTransfer._dragImage.node).toBe(row);
+
+        fireEvent(button, new DragEvent('dragend', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expect(row).not.toHaveAttribute('data-dragging');
+      });
+
+      it('should support keyboard dragging via the drag button when set to "dragButton"', async () => {
+        let onDragStart = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableGridList pointerDragSource="dragButton" onDragStart={onDragStart} />
+        );
+        let button = within(getAllByRole('row')[0]).getAllByRole('button')[0];
+        act(() => button.focus());
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        await user.keyboard('{Escape}');
+        act(() => jest.runAllTimers());
+      });
     });
 
     it('should render drop indicators', async () => {

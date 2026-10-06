@@ -99,6 +99,9 @@ interface ButtonContextValue extends ButtonProps {
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
+// Allows collection items to make their drag button the native drag source (e.g. pointerDragSource="dragButton").
+const dragPropNames = new Set(['draggable', 'onDragStart', 'onDrag', 'onDragEnd']);
+
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
  */
@@ -156,7 +159,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(props, {global: true, propNames: dragPropNames});
   delete DOMProps.onClick;
 
   return (

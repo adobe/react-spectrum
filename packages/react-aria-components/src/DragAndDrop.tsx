@@ -14,13 +14,17 @@ import type {DropIndicatorProps as AriaDropIndicatorProps} from 'react-aria/useD
 import type {ClassNameOrFunction, RenderProps} from './utils';
 import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
+import type {DraggableItemResult} from 'react-aria/useDraggableCollection';
 import type {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
-import type {ItemDropTarget, Key} from '@react-types/shared';
+import type {ItemDropTarget, Key, RefObject} from '@react-types/shared';
 import type {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import React, {
   createContext,
+  CSSProperties,
+  DragEvent,
   ForwardedRef,
   forwardRef,
+  HTMLAttributes,
   JSX,
   ReactNode,
   useCallback,
@@ -148,4 +152,62 @@ export function useDndPersistedKeys(
   return useMemo(() => {
     return new Set([focusedKey, dropTargetKey].filter(k => k != null));
   }, [focusedKey, dropTargetKey]);
+}
+
+interface DraggableItemSlotProps {
+  /** Props to merge onto the draggable item element. */
+  itemProps: HTMLAttributes<HTMLElement> | undefined;
+  /** Props to provide to the item's `<Button slot="drag">`. */
+  dragButtonProps: DraggableItemResult['dragButtonProps'] &
+    Pick<HTMLAttributes<HTMLElement>, 'draggable' | 'onDrag' | 'onDragEnd'> & {
+      onDragStart?: (e: DragEvent<HTMLElement>) => void;
+      style?: CSSProperties;
+    };
+}
+
+/**
+ * Distributes the props returned by useDraggableItem between a collection item and its drag button,
+ * depending on whether mouse/touch dragging may start from anywhere on the item or only from the
+ * drag button.
+ */
+export function getDraggableItemSlotProps(
+  draggableItem: DraggableItemResult | null | undefined,
+  dragAndDropHooks: DragAndDropHooks | undefined,
+  itemRef: RefObject<HTMLElement | null>
+): DraggableItemSlotProps {
+  if (dragAndDropHooks?.pointerDragSource !== 'dragButton') {
+    return {
+      itemProps: draggableItem?.dragProps,
+      dragButtonProps: {
+        ...draggableItem?.dragButtonProps,
+        style: {
+          pointerEvents: 'none'
+        }
+      }
+    };
+  }
+
+  // With hasDragButton, useDraggableItem only returns native drag props for the item element.
+  let {draggable, onDragStart, onDrag, onDragEnd} = draggableItem?.dragProps ?? {};
+  return {
+    itemProps: undefined,
+    dragButtonProps: {
+      ...draggableItem?.dragButtonProps,
+      draggable,
+      onDrag,
+      onDragEnd,
+      onDragStart: onDragStart
+        ? (e: DragEvent<HTMLElement>) => {
+            onDragStart(e);
+            // Without a custom preview, the browser would only render the drag button under the pointer.
+            // Use the whole item instead, matching the default when dragging from anywhere on the item.
+            let item = itemRef.current;
+            if (!e.defaultPrevented && !dragAndDropHooks.renderDragPreview && item) {
+              let rect = item.getBoundingClientRect();
+              e.dataTransfer.setDragImage(item, e.clientX - rect.x, e.clientY - rect.y);
+            }
+          }
+        : undefined
+    }
+  };
 }

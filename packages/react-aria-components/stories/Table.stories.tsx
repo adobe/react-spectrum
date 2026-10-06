@@ -2396,6 +2396,99 @@ export const TableWithTextfield: StoryObj<typeof TableWithTextfieldRender> = {
     }
   }
 };
+
+function DndTableWithTextFieldsRender({
+  pointerDragSource,
+  selectionMode
+}: {
+  pointerDragSource: 'item' | 'dragButton';
+  selectionMode: 'none' | 'single' | 'multiple';
+}) {
+  let list = useListData({
+    initialItems: [
+      {id: '1', name: 'Games', type: 'File folder'},
+      {id: '2', name: 'Program Files', type: 'File folder'},
+      {id: '3', name: 'bootmgr', type: 'System file'},
+      {id: '4', name: 'log.txt', type: 'Text Document'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    pointerDragSource,
+    getItems: keys => [...keys].map(key => ({'text/plain': list.getItem(key)!.name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  return (
+    <Table
+      aria-label="Editable reorderable table"
+      selectionMode={selectionMode}
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column />
+        {selectionMode !== 'none' && (
+          <Column>{selectionMode === 'multiple' && <MyCheckbox slot="selection" />}</Column>
+        )}
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            <Cell>
+              <Button slot="drag" style={{cursor: 'grab'}}>
+                ≡
+              </Button>
+            </Cell>
+            {selectionMode !== 'none' && (
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
+            )}
+            <Cell>
+              <TextField
+                aria-label="Name"
+                value={item.name}
+                onChange={name => list.update(item.id, {...item, name})}>
+                <Input />
+              </TextField>
+            </Cell>
+            <Cell>{item.type}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+
+export const DndTableWithTextFields: StoryObj<typeof DndTableWithTextFieldsRender> = {
+  render: args => <DndTableWithTextFieldsRender {...args} />,
+  args: {
+    pointerDragSource: 'dragButton',
+    selectionMode: 'multiple'
+  },
+  argTypes: {
+    pointerDragSource: {
+      control: 'radio',
+      options: ['item', 'dragButton']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    }
+  },
+  parameters: {
+    description: {
+      data: 'With pointerDragSource="dragButton", mouse and touch dragging can only start from the drag button, so text in the fields can be selected.'
+    }
+  }
+};
 export const TreeGridTableDnd: TableStory = () => {
   let tree = useTreeData({
     initialItems: [

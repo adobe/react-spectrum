@@ -245,6 +245,10 @@
     border-radius: var(--radius);
     color: var(--text-color);
 
+    &[draggable='true'] {
+      cursor: grab;
+    }
+
     &[data-focus-visible] {
       border-radius: 4px;
       outline: 2px solid var(--focus-ring-color);

@@ -420,4 +420,54 @@ describe('TableView', () => {
       expect(document.activeElement).toBe(notesCell);
     });
   });
+
+  describe('pointerDragSource', () => {
+    function DraggableTable(props) {
+      let {dragAndDropHooks} = useDragAndDrop({
+        getItems: keys => [...keys].map(key => ({'text/plain': `${key}`})),
+        pointerDragSource: props.pointerDragSource
+      });
+      return (
+        <TableView aria-label="Draggable table" dragAndDropHooks={dragAndDropHooks}>
+          <TableHeader>
+            <Column isRowHeader>Name</Column>
+            <Column>Notes</Column>
+          </TableHeader>
+          <TableBody>
+            <Row id="1" textValue="Foo 1">
+              <Cell>Foo 1</Cell>
+              <Cell>
+                <input type="text" aria-label="Foo 1 notes" />
+              </Cell>
+            </Row>
+            <Row id="2" textValue="Foo 2">
+              <Cell>Foo 2</Cell>
+              <Cell>
+                <input type="text" aria-label="Foo 2 notes" />
+              </Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      );
+    }
+
+    it('should make the row draggable and visually hide the drag button by default', () => {
+      let {getAllByRole} = render(<DraggableTable />);
+      let row = getAllByRole('row')[1];
+      let dragButton = within(row).getByRole('button');
+      expect(row).toHaveAttribute('draggable', 'true');
+      expect(dragButton).not.toHaveAttribute('draggable');
+      expect(dragButton.style.position).toBe('absolute');
+    });
+
+    it('should make only the drag button draggable and always show it when pointerDragSource is dragButton', () => {
+      let {getAllByRole} = render(<DraggableTable pointerDragSource="dragButton" />);
+      let row = getAllByRole('row')[1];
+      let dragButton = within(row).getByRole('button');
+      expect(row).not.toHaveAttribute('draggable');
+      expect(dragButton).toHaveAttribute('draggable', 'true');
+      expect(dragButton.style.position).not.toBe('absolute');
+      expect(dragButton.style.pointerEvents).not.toBe('none');
+    });
+  });
 });

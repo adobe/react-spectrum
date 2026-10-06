@@ -1027,7 +1027,10 @@ function CustomDragPreview(props) {
   );
 }
 
-function ReorderableTree(props: TreeViewProps<any>) {
+function ReorderableTree({
+  pointerDragSource,
+  ...props
+}: TreeViewProps<any> & {pointerDragSource?: 'item' | 'dragButton'}) {
   let treeData = useTreeData<TreeViewItemType>({
     initialItems: rows,
     getKey: item => item.id as Key,
@@ -1083,7 +1086,8 @@ function ReorderableTree(props: TreeViewProps<any>) {
         console.error(error);
       }
     },
-    renderDragPreview: items => <CustomDragPreview parentList={treeData} items={items} />
+    renderDragPreview: items => <CustomDragPreview parentList={treeData} items={items} />,
+    pointerDragSource
   });
 
   return (
@@ -1108,7 +1112,13 @@ function ReorderableTree(props: TreeViewProps<any>) {
 
 export const Reorderable: StoryObj<typeof ReorderableTree> = {
   render: args => <ReorderableTree {...args} />,
-  name: 'Drag and drop reordering'
+  name: 'Drag and drop reordering',
+  argTypes: {
+    pointerDragSource: {
+      control: 'radio',
+      options: ['item', 'dragButton']
+    }
+  }
 };
 
 function BetweenTrees(props: TreeViewProps<any>) {

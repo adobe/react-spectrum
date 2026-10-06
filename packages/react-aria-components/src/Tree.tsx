@@ -65,6 +65,7 @@ import {
 import {
   DragAndDropContext,
   DropIndicatorContext,
+  getDraggableItemSlotProps,
   useDndPersistedKeys,
   useRenderDropIndicator
 } from './DragAndDrop';
@@ -939,6 +940,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let draggableSlotProps = getDraggableItemSlotProps(draggableItem, dragAndDropHooks, ref);
 
     return (
       <>
@@ -977,7 +979,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
             focusProps,
             hoverProps,
             focusWithinProps,
-            draggableItem?.dragProps
+            draggableSlotProps.itemProps
           )}
           {...renderProps}
           ref={ref}
@@ -1032,11 +1034,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
                         ref: expandButtonRef
                       },
                       drag: {
-                        ...draggableItem?.dragButtonProps,
-                        ref: dragButtonRef,
-                        style: {
-                          pointerEvents: 'none'
-                        }
+                        ...draggableSlotProps.dragButtonProps,
+                        ref: dragButtonRef
                       }
                     }
                   }

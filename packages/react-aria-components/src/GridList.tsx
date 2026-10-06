@@ -51,6 +51,7 @@ import {
   DragAndDropContext,
   DropIndicatorContext,
   DropIndicatorProps,
+  getDraggableItemSlotProps,
   useDndPersistedKeys,
   useRenderDropIndicator
 } from './DragAndDrop';
@@ -630,6 +631,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
+  let draggableSlotProps = getDraggableItemSlotProps(draggableItem, dragAndDropHooks, ref);
 
   return (
     <>
@@ -653,7 +655,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
           focusProps,
           focusWithinProps,
           hoverProps,
-          draggableItem?.dragProps
+          draggableSlotProps.itemProps
         )}
         ref={ref}
         data-selected={states.isSelected || undefined}
@@ -698,11 +700,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
                   slots: {
                     [DEFAULT_SLOT]: buttonProps,
                     drag: {
-                      ...draggableItem?.dragButtonProps,
-                      ref: dragButtonRef,
-                      style: {
-                        pointerEvents: 'none'
-                      }
+                      ...draggableSlotProps.dragButtonProps,
+                      ref: dragButtonRef
                     }
                   }
                 }

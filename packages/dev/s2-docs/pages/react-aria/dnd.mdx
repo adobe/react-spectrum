@@ -131,6 +131,43 @@ function DraggableCOMPONENT() {
 }
 ```
 
+### Drag handle
+
+By default, mouse and touch users can start a drag from anywhere within an item. When items contain interactive elements such as text fields, set `pointerDragSource` to `"dragButton"` to restrict mouse and touch dragging to the item's `<Button slot="drag">`. This leaves text selection and other pointer interactions within the rest of the item untouched. Keyboard and screen reader drag and drop via the drag button is unaffected. This option is supported by GridList, Tree, and Table.
+
+<ExampleSwitcher type="component" examples={['GridList', 'Tree', 'Table']}>
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DroppableCOMPONENT.tsx']}
+"use client";
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+import {PokemonCOMPONENT, Pokemon} from './PokemonCOMPONENT';
+import {DroppableCOMPONENT} from './DroppableCOMPONENT';
+
+function DraggableCOMPONENT() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    ///- begin collapse -///
+    getItems(keys, items: Pokemon[]) {
+      return items.map(item => ({
+        'text/plain': item.name
+      }));
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    pointerDragSource: 'dragButton'
+    ///- end highlight -///
+  });
+
+  return <PokemonCOMPONENT dragAndDropHooks={dragAndDropHooks} />;
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
+  <DraggableCOMPONENT />
+  <DroppableCOMPONENT />
+</div>
+```
+
+</ExampleSwitcher>
+
 ## Drop items
 
 Users can drop one or more **drop items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
@@ -900,6 +937,7 @@ Note that because mouse and touch drag and drop interactions utilize the native 
     'Drag source': [
       'getItems',
       'renderDragPreview',
+      'pointerDragSource',
       'getAllowedDropOperations',
       'onDragStart',
       'onDragMove',

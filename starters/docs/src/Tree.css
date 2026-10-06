@@ -196,6 +196,10 @@
     width: var(--spacing-4);
     text-align: center;
 
+    &[draggable='true'] {
+      cursor: grab;
+    }
+
     &[data-focus-visible] {
       border-radius: 4px;
       outline: 2px solid var(--focus-ring-color);

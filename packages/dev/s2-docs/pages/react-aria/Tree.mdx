@@ -371,6 +371,8 @@ import {TextField} from 'vanilla-starter/TextField';
 
 Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=Tree) to learn more.
 
+If items contain interactive elements such as text fields, set `pointerDragSource: 'dragButton'` to restrict mouse and touch dragging to the drag button.
+
 ```tsx render
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';

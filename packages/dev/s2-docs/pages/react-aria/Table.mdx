@@ -773,6 +773,8 @@ let files = [
 
 Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=Table) to learn more.
 
+If rows contain interactive elements such as text fields, set `pointerDragSource: 'dragButton'` to restrict mouse and touch dragging to the drag button.
+
 ```tsx render
 "use client";
 import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
