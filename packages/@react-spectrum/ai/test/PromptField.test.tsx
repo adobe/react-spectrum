@@ -435,7 +435,7 @@ describeOrSkip('PromptField', () => {
   describe('submit / generate state', () => {
     it('disables submit when empty and enables it with content', async () => {
       let {user, textbox, getValue, onSubmit} = renderPromptField();
-      let submit = screen.getByRole('button', {name: 'Send'});
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
       expect(submit).toBeDisabled();
 
       await user.click(textbox);
@@ -450,7 +450,7 @@ describeOrSkip('PromptField', () => {
 
     it('shows a Stop button while generating and calls onStop', async () => {
       let {user, onStop} = renderPromptField({isGenerating: true});
-      let stop = screen.getByRole('button', {name: 'Stop'});
+      let stop = screen.getByRole('button', {name: 'Stop AI prompt'});
       expect(stop).toBeEnabled();
 
       await user.click(stop);
@@ -459,18 +459,18 @@ describeOrSkip('PromptField', () => {
 
     it('switches back to submit while typing during generation', async () => {
       let {user, textbox, onSubmit, onStop} = renderPromptField({isGenerating: true});
-      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Stop AI prompt'})).toBeInTheDocument();
 
       await user.click(textbox);
       await user.keyboard('a');
 
-      let submit = screen.getByRole('button', {name: 'Send'});
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
       expect(submit).toBeEnabled();
       await user.keyboard('{Backspace}');
-      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Stop AI prompt'})).toBeInTheDocument();
 
       await user.keyboard('a');
-      submit = screen.getByRole('button', {name: 'Send'});
+      submit = screen.getByRole('button', {name: 'Submit AI prompt'});
       await user.click(submit);
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(onStop).not.toHaveBeenCalled();
