@@ -59,6 +59,7 @@ const gridStyles = style({
   },
   gap: 8,
   padding: 4,
+  scrollPaddingY: 4,
   maxHeight: 'inherit',
   overflowY: 'auto',
   overflowX: 'clip',
