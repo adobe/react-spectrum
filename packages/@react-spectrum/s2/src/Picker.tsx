@@ -354,7 +354,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       className={loadingWrapperStyles}
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}>
-      <PickerProgressCircle size={size} aria-label={stringFormatter.format('table.loadingMore')} />
+      <PickerProgressCircle size={size} aria-label={stringFormatter.format('picker.loadingMore')} />
     </ListBoxLoadMoreItem>
   );
 
@@ -425,7 +425,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 <PickerProgressCircle
                   id={spinnerId}
                   size={size}
-                  aria-label={stringFormatter.format('table.loading')}
+                  aria-label={stringFormatter.format('picker.loading')}
                 />
               }
             />

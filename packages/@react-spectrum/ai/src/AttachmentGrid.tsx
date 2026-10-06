@@ -13,10 +13,11 @@
 import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
 import {AttachmentCard, AttachmentPreviewContext, isAttachmentLoading} from './AttachmentList';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {focusRing, scrollFade, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {forwardRef, ReactNode} from 'react';
 import {ListBox, ListBoxItem, ListBoxItemProps, ListBoxProps} from 'react-aria-components/ListBox';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 

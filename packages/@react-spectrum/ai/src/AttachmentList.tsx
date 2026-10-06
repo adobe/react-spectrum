@@ -24,9 +24,7 @@ import {
   css,
   focusRing,
   iconStyle,
-  keyframes,
   lightDark,
-  scrollFade,
   space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -45,6 +43,7 @@ import {Image, ImageContext, ImageProps} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import ImageIcon from '@react-spectrum/s2/icons/Image';
 import intlMessages from '../intl/*.json';
+import {keyframes, scrollFade} from './style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import Play from '@react-spectrum/s2/icons/Play';
 import {pressScale} from '@react-spectrum/s2/pressScale';
