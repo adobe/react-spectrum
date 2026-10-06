@@ -28,7 +28,16 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 
 interface Snapshot {
   rect: DOMRect;
+  ancestors: Map<Element, DOMRect>;
   style: [string, string][];
+}
+
+function getAncestorRects(element: Element): Map<Element, DOMRect> {
+  let rects = new Map<Element, DOMRect>();
+  for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) {
+    rects.set(ancestor, ancestor.getBoundingClientRect());
+  }
+  return rects;
 }
 
 const SharedElementContext = createContext<RefObject<{[name: string]: Snapshot}> | null>(null);
@@ -108,8 +117,22 @@ export const SharedElement = forwardRef(function SharedElement(
         if (property === 'translate') {
           let prevRect = prevSnapshot.rect;
           let currentItem = element.getBoundingClientRect();
-          let deltaX = prevRect.left - currentItem?.left;
-          let deltaY = prevRect.top - currentItem?.top;
+          let deltaX = prevRect.left - currentItem.left;
+          let deltaY = prevRect.top - currentItem.top;
+
+          // The snapshot is taken in a layout effect cleanup, which runs mid-commit. An ancestor whose position
+          // depends on DOM swapped in the same commit (e.g. a centered dialog whose content changes) may have
+          // been measured somewhere it never paints, so measure relative to the nearest ancestor both share.
+          let ancestor = element.parentElement;
+          while (ancestor && !prevSnapshot.ancestors.has(ancestor)) {
+            ancestor = ancestor.parentElement;
+          }
+          if (ancestor) {
+            let prevAncestorRect = prevSnapshot.ancestors.get(ancestor)!;
+            let currentAncestorRect = ancestor.getBoundingClientRect();
+            deltaX -= prevAncestorRect.left - currentAncestorRect.left;
+            deltaY -= prevAncestorRect.top - currentAncestorRect.top;
+          }
           element.style.translate = `${deltaX}px ${deltaY}px`;
         } else {
           element.style[property] = prevValue;
@@ -169,6 +192,7 @@ export const SharedElement = forwardRef(function SharedElement(
           let transitionProperty = style.transitionProperty.split(/\s*,\s*/);
           scope[name] = {
             rect: element.getBoundingClientRect(),
+            ancestors: getAncestorRects(element),
             style: transitionProperty.map(p => [p, style[p]])
           };
         }
