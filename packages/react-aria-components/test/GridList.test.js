@@ -512,10 +512,9 @@ describe('GridList', () => {
     expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
-  it.each([false, true])(
-    'should preserve focus when items arrive after an empty list (blurred: %s)',
-    async blurred => {
-      let Example = ({items}) => (
+  describe('items arriving after an empty list', () => {
+    function Example({items}) {
+      return (
         <>
           <GridList aria-label="Async list" items={items} renderEmptyState={() => 'No results'}>
             {item => <GridListItem id={item.id}>{item.name}</GridListItem>}
@@ -523,25 +522,36 @@ describe('GridList', () => {
           <button>After</button>
         </>
       );
+    }
+
+    let items = [
+      {id: 'one', name: 'One'},
+      {id: 'two', name: 'Two'}
+    ];
+
+    it('should navigate to the new rows while the list is focused', async () => {
       let {getByRole, getAllByRole, rerender} = render(<Example items={[]} />);
       await user.tab();
       expect(getByRole('grid')).toHaveFocus();
-      if (blurred) {
-        await user.tab();
-      }
 
-      rerender(
-        <Example
-          items={[
-            {id: 'one', name: 'One'},
-            {id: 'two', name: 'Two'}
-          ]}
-        />
-      );
+      rerender(<Example items={items} />);
       await user.keyboard('{ArrowDown}');
-      expect(blurred ? getByRole('button', {name: 'After'}) : getAllByRole('row')[0]).toHaveFocus();
-    }
-  );
+      expect(getAllByRole('row')[0]).toHaveFocus();
+    });
+
+    it('should leave focus outside the list when items arrive after tabbing away', async () => {
+      let {getByRole, rerender} = render(<Example items={[]} />);
+      await user.tab();
+      expect(getByRole('grid')).toHaveFocus();
+      await user.tab();
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+
+      rerender(<Example items={items} />);
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+      await user.keyboard('{ArrowDown}');
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+    });
+  });
 
   it('should support empty state', () => {
     render(

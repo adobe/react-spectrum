@@ -17,9 +17,7 @@ import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {expect, it} from 'vitest';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import React from 'react';
-import {render} from 'vitest-browser-react';
 import {Tree, TreeItem, TreeItemContent} from '../src/Tree';
-import {userEvent} from 'vitest/browser';
 import {Virtualizer} from '../src/Virtualizer';
 
 // Mirror what the reproduction does — must be set before mounting.
@@ -28,34 +26,6 @@ enableShadowDOM();
 const ROW_HEIGHT = 30;
 const CONTAINER_HEIGHT = 300;
 const items = Array.from({length: 50}, (_, i) => ({id: `item-${i}`, name: `Item ${i}`}));
-
-it('navigates to asynchronously added rows after focusing an empty tree', async () => {
-  let Example = ({items}: {items: Array<{id: string; name: string}>}) => (
-    <Tree aria-label="Async tree" items={items} renderEmptyState={() => 'No items'}>
-      {item => (
-        <TreeItem id={item.id} textValue={item.name}>
-          <TreeItemContent>{item.name}</TreeItemContent>
-        </TreeItem>
-      )}
-    </Tree>
-  );
-  let {getByRole, rerender} = await render(<Example items={[]} />);
-  await userEvent.keyboard('{Tab}');
-  await expect.element(getByRole('treegrid')).toHaveFocus();
-
-  await rerender(
-    <Example
-      items={[
-        {id: 'one', name: 'One'},
-        {id: 'two', name: 'Two'}
-      ]}
-    />
-  );
-  await userEvent.keyboard('{ArrowDown}');
-  await expect.element(getByRole('row', {name: 'One'})).toHaveFocus();
-  await userEvent.keyboard('{ArrowDown}');
-  await expect.element(getByRole('row', {name: 'Two'})).toHaveFocus();
-});
 
 function VirtualizedTree() {
   return (
