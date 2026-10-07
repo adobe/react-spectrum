@@ -11,7 +11,6 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {SideNavPanel, SideNavPanelProps} from '../src/SideNavPanel';
 import React from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {
@@ -21,6 +20,7 @@ import {
   SideNavItemLink,
   SideNavProps
 } from '../src/SideNav';
+import {SideNavPanel, SideNavPanelProps} from '../src/SideNavPanel';
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 

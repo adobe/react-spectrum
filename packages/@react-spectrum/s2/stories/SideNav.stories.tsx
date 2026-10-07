@@ -30,7 +30,6 @@ import {Image} from '../src/Image';
 import Images from '@react-spectrum/s2/icons/Images';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
-import {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import React, {ReactElement, ReactNode, useContext, useRef, useState} from 'react';
@@ -45,6 +44,7 @@ import {
   SideNavProps,
   SideNavSection
 } from '../src/SideNav';
+import {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 import {style} from '../style' with {type: 'macro'};
 import {useLandmark} from 'react-aria';
 

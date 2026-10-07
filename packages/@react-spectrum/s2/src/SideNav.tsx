@@ -48,11 +48,11 @@ import {
   NavigationTreeSection,
   NavigationTreeSectionProps
 } from 'react-aria-components/NavigationTree';
-import {SideNavPanelContext} from './SideNavPanel';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import React from 'react';
 import sideNavCss from './SideNav.module.css';
+import {SideNavPanelContext} from './SideNavPanel';
 import {Text, TextContext} from './Content';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
