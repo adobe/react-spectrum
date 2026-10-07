@@ -1255,6 +1255,78 @@ describe('GridList', () => {
     });
 
     describe('pointerDragSource', () => {
+      describe('after touch selection', () => {
+        installPointerEvent();
+
+        it.each([
+          ['item', 'touch'],
+          ['item', 'mouse'],
+          ['handle', 'touch'],
+          ['handle', 'mouse']
+        ])(
+          'should drag from the %s with %s after long pressing to select',
+          async (pointerDragSource, pointerType) => {
+            let onDragStart = jest.fn();
+            let onDragEnd = jest.fn();
+            let onAction = jest.fn();
+            function SelectableGridList() {
+              let {dragAndDropHooks} = useDragAndDrop({
+                pointerDragSource,
+                getItems: keys => [...keys].map(key => ({'text/plain': key})),
+                onDragStart,
+                onDragEnd
+              });
+              return (
+                <GridList
+                  aria-label="Test"
+                  selectionMode="multiple"
+                  onAction={onAction}
+                  dragAndDropHooks={dragAndDropHooks}>
+                  <GridListItem id="cat" textValue="Cat">
+                    <Button slot="drag">≡</Button>
+                    Cat
+                  </GridListItem>
+                </GridList>
+              );
+            }
+
+            let {getByRole} = render(<SelectableGridList />);
+            let row = getByRole('row');
+            await user.pointer({target: row, keys: '[TouchA>]'});
+            act(() => jest.advanceTimersByTime(800));
+            expect(row).toHaveAttribute('aria-selected', 'true');
+
+            let dataTransfer = new DataTransfer();
+            if (pointerDragSource === 'item') {
+              let event = new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0});
+              fireEvent(row, event);
+              expect(event.defaultPrevented).toBe(true);
+              expect(onDragStart).not.toHaveBeenCalled();
+            }
+            await user.pointer({target: row, keys: '[/TouchA]'});
+
+            let source = pointerDragSource === 'handle' ? within(row).getByRole('button') : row;
+            let pointer = pointerType === 'touch' ? 'TouchA' : 'MouseLeft';
+            await user.pointer({target: source, keys: `[${pointer}>]`});
+            fireEvent(source, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+            act(() => jest.runAllTimers());
+            expect(onDragStart).toHaveBeenCalledTimes(1);
+            expect(onDragStart).toHaveBeenCalledWith(
+              expect.objectContaining({keys: new Set(['cat'])})
+            );
+            expect(row).toHaveAttribute('data-dragging', 'true');
+            expect(row).toHaveAttribute('aria-selected', 'true');
+
+            fireEvent(source, new DragEvent('dragend', {dataTransfer, clientX: 0, clientY: 0}));
+            await user.pointer({target: source, keys: `[/${pointer}]`});
+            act(() => jest.runAllTimers());
+            expect(onDragEnd).toHaveBeenCalledTimes(1);
+            expect(row).not.toHaveAttribute('data-dragging');
+            expect(onAction).not.toHaveBeenCalled();
+          }
+        );
+      });
+
       it('should allow dragging from anywhere on the item by default', () => {
         let onDragStart = jest.fn();
         let {getAllByRole} = render(<DraggableGridList onDragStart={onDragStart} />);
