@@ -113,7 +113,7 @@ All of this geometry flips depending on the `swipeDirection` and `position` prop
 
 ## Gesture-synced animations
 
-The backdrop and the sheet itself support a `swipeAnimation` prop, which is a CSS keyframe animation synchronized with the swipe gesture. For example, the backdrop might fade in and out, and the sheet could apply a transform or adjust its corner radius based on the swipe progress. This uses CSS [`view-timeline`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/view-timeline), which tracks how much of an element is visible and uses this to drive a keyframe animation. We use [`view-timeline-inset: 0 100dvh`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/view-timeline-inset) so that swipe animations begin when the sheet is visible, not when clipped by the window viewport.
+The backdrop and the sheet itself support a `swipeAnimation` prop, which is a CSS keyframe animation synchronized with the swipe gesture. For example, the backdrop might fade in and out, and the sheet could apply a transform or adjust its corner radius based on the swipe progress. This uses CSS [`view-timeline`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/view-timeline), which tracks how much of an element is visible and uses this to drive a keyframe animation. We use [`view-timeline-inset: 0 100dvh`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/view-timeline-inset) so that swipe animations begin when the sheet is visible, not when clipped by the window viewport. Swipe the demo below to see how it works.
 
 <SheetTimelineDemo />
 
