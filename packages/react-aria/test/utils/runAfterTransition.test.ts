@@ -146,7 +146,7 @@ describe('runAfterTransition', () => {
     ['hidden', false],
     ['removed from the document', true]
   ])(
-    'calls callback after multiple transitions are cancelled on an element that is %s',
+    'releases an element after its multiple transitions are cancelled when it is %s',
     (_, isRemoved) => {
       const element = appendElement(document.createElement('div'));
       const callback = jest.fn();
