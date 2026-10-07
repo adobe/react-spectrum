@@ -31,7 +31,8 @@ import {
   useMemo,
   useRef,
   useState,
-  ViewTransitionClass
+  ViewTransitionClass,
+  ViewTransitionProps
 } from 'react';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -51,8 +52,13 @@ import {
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import React from 'react';
+import {
+  Rect,
+  SidePanelBoundsContext,
+  SidePanelContext,
+  useClippedViewTransition
+} from './SidePanel';
 import sideNavCss from './SideNav.module.css';
-import {SidePanelContext} from './SidePanel';
 import {Text, TextContext} from './Content';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
@@ -61,38 +67,51 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useMediaQuery} from './useMediaQuery';
 import {useScale} from './utils';
 
-// Older React versions just render their children, so the panel collapses and expands without
-// animating.
-const ViewTransition: ComponentType<{children: ReactNode; default?: ViewTransitionClass}> =
+// Older React versions are not animated
+const ViewTransition: ComponentType<ViewTransitionProps> =
   React.ViewTransition ?? (({children}) => children);
 const addTransitionType: (type: string) => void = React.addTransitionType ?? (() => {});
 const startTransition: (scope: () => void) => void =
   React.startTransition ?? ((scope: () => void) => scope());
-const EXPAND_TRANSITION = sideNavCss['side-panel-expand'];
-const ITEM_COLLAPSE_TRANSITION = sideNavCss['side-nav-item-collapse'];
-const ITEM_EXPAND_TRANSITION = sideNavCss['side-nav-item-expand'];
 
-interface SideNavViewTransitions {
-  /** The `view-transition-class` for each row. */
-  item: ViewTransitionClass;
-  /** The `view-transition-class` for each section header, or null when headers shouldn't animate. */
-  header: string | null;
-}
+// Transition types, we can easily turn off the animations.
+const SIDE_NAV_CLASS = sideNavCss['side-nav'];
+const ITEM_TRANSITION = sideNavCss['side-nav-item'];
 
-const viewTransitions: SideNavViewTransitions = {
-  item: {
-    default: 'none',
-    [EXPAND_TRANSITION]: sideNavCss['side-nav-item'],
-    [ITEM_COLLAPSE_TRANSITION]: sideNavCss['side-nav-item'],
-    [ITEM_EXPAND_TRANSITION]: sideNavCss['side-nav-item']
-  },
-  header: sideNavCss['side-nav-header']
+// `default: 'none'` opts elements out of transitions they aren't part of. Rows and headers are
+// already inside the panel's snapshot when it collapses, and capturing them again would lift them
+// out of it and let them animate past its edges.
+const itemViewTransition: ViewTransitionClass = {
+  default: 'none',
+  [ITEM_TRANSITION]: SIDE_NAV_CLASS
 };
 
-// for prefers-reduced-motion
-const noViewTransitions: SideNavViewTransitions = {item: 'none', header: null};
+function intersect(a: Rect, b: Rect): Rect {
+  return {
+    top: Math.max(a.top, b.top),
+    right: Math.min(a.right, b.right),
+    bottom: Math.min(a.bottom, b.bottom),
+    left: Math.max(a.left, b.left)
+  };
+}
 
-const SideNavViewTransitionContext = createContext<SideNavViewTransitions>(noViewTransitions);
+interface SideNavViewTransitionValue {
+  /** The class applied to each row and header snapshot. */
+  transition: ViewTransitionClass;
+  /** Reads the bounds to clip snapshots to, as they are for the frame being drawn. */
+  getClipBounds: () => Rect | null;
+}
+
+const SideNavViewTransitionContext = createContext<SideNavViewTransitionValue>({
+  transition: 'none',
+  getClipBounds: () => null
+});
+
+/** Props for the `<ViewTransition>` around each row and header. */
+function useSideNavViewTransition(): Omit<ViewTransitionProps, 'children'> {
+  let {transition, getClipBounds} = useContext(SideNavViewTransitionContext);
+  return useClippedViewTransition(transition, getClipBounds);
+}
 
 export interface SideNavProps<T>
   extends
@@ -181,6 +200,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   let domRef = useDOMRef(ref);
   let {isCollapsed} = useContext(SidePanelContext) ?? {};
   let isInSidePanel = isCollapsed !== undefined;
+  let panelRef = useContext(SidePanelBoundsContext);
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
     propExpandedKeys ? new Set(propExpandedKeys) : undefined,
@@ -198,18 +218,34 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   // Scheduling that as a transition causes the <ViewTransition> around each row to animate.
   let toggleExpandedKeys = (keys: Set<Key>) => {
     startTransition(() => {
-      addTransitionType(
-        keys.size > visibleExpandedKeys.size ? ITEM_EXPAND_TRANSITION : ITEM_COLLAPSE_TRANSITION
-      );
+      addTransitionType(ITEM_TRANSITION);
       setExpandedKeys(keys);
     });
   };
 
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
+  let viewTransition = useMemo(
+    (): SideNavViewTransitionValue => ({
+      transition: reduceMotion ? 'none' : itemViewTransition,
+      getClipBounds: () => {
+        let nav = domRef.current;
+        if (!nav) {
+          return null;
+        }
+
+        // Rows stay within the nav, and within the panel while it is still widening or narrowing
+        // around them, so they never reach the content beside it either.
+        let bounds = nav.getBoundingClientRect();
+        let panel = panelRef?.current;
+        return panel ? intersect(bounds, panel.getBoundingClientRect()) : bounds;
+      }
+    }),
+    [reduceMotion, domRef, panelRef]
+  );
+
   return (
-    <SideNavViewTransitionContext.Provider
-      value={reduceMotion ? noViewTransitions : viewTransitions}>
+    <SideNavViewTransitionContext.Provider value={viewTransition}>
       <div
         ref={domRef}
         className={(UNSAFE_className ?? '') + sideNavWrapper({isInSidePanel}, props.styles)}
@@ -363,7 +399,7 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
   let rowRef = useRef<HTMLDivElement | null>(null);
   // oxlint-disable-next-line react-compiler
   let scaling = pressScale(rowRef);
-  let viewTransitions = useContext(SideNavViewTransitionContext);
+  let viewTransition = useSideNavViewTransition();
 
   return (
     <SideNavInternalItemContext.Provider value={{setLinkPressed}}>
@@ -373,7 +409,7 @@ export const SideNavItem = (props: SideNavItemProps): ReactNode => {
         style={({isPressed}) => scaling({isPressed: isLinkPressed || isPressed})}
         className={renderProps => treeRow(renderProps)}
         render={domProps => (
-          <ViewTransition default={viewTransitions.item}>
+          <ViewTransition {...viewTransition}>
             <div {...domProps} />
           </ViewTransition>
         )}
@@ -627,19 +663,22 @@ export interface SideNavHeaderProps extends Omit<
 > {}
 
 export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
-  let {header} = useContext(SideNavViewTransitionContext);
-  let id = useId();
+  let viewTransition = useSideNavViewTransition();
+  // Hidden via state rather than a descendant selector so the header re-renders, which is what
+  // includes it in the view transition.
+  let {isCollapsed = false} = useContext(SidePanelContext);
   return (
     <NavigationTreeHeader
-      id={id}
-      // For some reason I'm unable to use a ViewTransition component directly here. Not sure why
-      style={header ? {viewTransitionName: `${id}-header`, viewTransitionClass: header} : undefined}
-      className={style({
+      render={domProps => (
+        <ViewTransition {...viewTransition}>
+          <div {...domProps} />
+        </ViewTransition>
+      )}
+      className={style<{isCollapsed: boolean}>({
         position: 'relative',
-        // Hidden by the panel rather than by the header itself — see the attribute in SidePanel.
         display: {
           default: 'block',
-          ':is([data-side-panel-collapsed] *)': 'none'
+          isCollapsed: 'none'
         },
         font: 'ui-sm',
         // Component/S/Medium for the font, doesn't appear to match our fonts
@@ -648,7 +687,7 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
         paddingStart: 'edge-to-text',
         marginBottom: '[8px]',
         height: 16
-      })}>
+      })({isCollapsed})}>
       {props.children}
     </NavigationTreeHeader>
   );

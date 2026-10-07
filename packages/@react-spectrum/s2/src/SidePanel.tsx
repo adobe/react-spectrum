@@ -19,17 +19,23 @@ import {
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {
+  ComponentType,
   createContext,
   forwardRef,
   FunctionComponent,
   ReactNode,
+  RefObject,
   SVGProps,
+  useCallback,
   useMemo,
-  useState
+  useState,
+  ViewTransitionClass,
+  ViewTransitionInstance,
+  ViewTransitionProps,
+  ViewTransitionPseudoElement
 } from 'react';
 import sideNavCss from './SideNav.module.css';
 import {style} from '../style' with {type: 'macro'};
@@ -37,18 +43,162 @@ import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
 import {useHover} from 'react-aria/useHover';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMediaQuery} from './useMediaQuery';
 
+// Older React versions are not animated
+const ViewTransition: ComponentType<ViewTransitionProps> =
+  React.ViewTransition ?? (({children}) => children);
 const addTransitionType: (type: string) => void = React.addTransitionType ?? (() => {});
 const startTransition: (scope: () => void) => void =
   React.startTransition ?? ((scope: () => void) => scope());
-const ANIMATION_DURATION = 200;
-const EXPAND_TRANSITION = sideNavCss['side-panel-expand'];
+
+// Transition types, we can easily turn off the animations.
+const PANEL_TRANSITION = sideNavCss['side-panel'];
+// Added alongside PANEL_TRANSITION rather than instead of it. It only tells the stylesheet which
+// edge of the snapshots to anchor, so everything keyed on PANEL_TRANSITION still has to match.
+const PANEL_RTL_TRANSITION = sideNavCss['side-panel-rtl'];
+const SIDE_NAV_CLASS = sideNavCss['side-nav'];
+
+// `default: 'none'` opts elements out of transitions they aren't part of. Rows and headers are
+// already inside the panel's snapshot when it collapses, and capturing them again would lift them
+// out of it and let them animate past its edges.
+const panelViewTransition: ViewTransitionClass = {
+  default: 'none',
+  [PANEL_TRANSITION]: SIDE_NAV_CLASS
+};
+
+// A snapshot is a pseudo element on the document root, so the nav's `overflow: clip` doesn't reach
+// it and rows sliding in or out paint over the rest of the app. `view-transition-group: contain`
+// would nest the snapshots inside the nav's own group, but it is only implemented in Chrome, so
+// each snapshot gets a clip path holding it inside the nav instead.
+//
+// The clip path follows the snapshot animation.
+
+/** A rect in the coordinates snapshots are placed in, which match the viewport. */
+export interface Rect {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+/**
+ * Converts bounds into a `clip-path` for a snapshot, which is clipped before its group's transform
+ * places it, so the bounds have to be mapped back through that transform. Sides that fall outside
+ * the snapshot clamp to zero, leaving whatever part of it is within the bounds.
+ */
+function getClipPath(group: ViewTransitionPseudoElement, bounds: Rect): string {
+  let style = group.getComputedStyle();
+  let width = parseFloat(style.width);
+  let height = parseFloat(style.height);
+
+  // Firefox reports the origin as percentages where other browsers resolve it to pixels.
+  let [x = '0', y = '0'] = style.transformOrigin.split(' ');
+  let resolve = (value: string, size: number) =>
+    (value.endsWith('%') ? (parseFloat(value) / 100) * size : parseFloat(value)) || 0;
+  let originX = resolve(x, width);
+  let originY = resolve(y, height);
+
+  let toLocal = new DOMMatrixReadOnly()
+    .translate(originX, originY)
+    .multiply(new DOMMatrixReadOnly(style.transform === 'none' ? '' : style.transform))
+    .translate(-originX, -originY)
+    .inverse();
+  let topLeft = toLocal.transformPoint({x: bounds.left, y: bounds.top});
+  let bottomRight = toLocal.transformPoint({x: bounds.right, y: bounds.bottom});
+
+  let insets = [topLeft.y, width - bottomRight.x, height - bottomRight.y, topLeft.x];
+  return `inset(${insets.map(inset => Math.max(0, inset) + 'px').join(' ')})`;
+}
+
+/** Measures a snapshot, returning a function that applies what it measured. */
+type Clip = () => () => void;
+
+let clips = new Set<Clip>();
+let clipFrame = 0;
+
+function updateClips() {
+  // Every snapshot is measured before any of them is clipped, so a clip never invalidates the
+  // style the next measurement needs, which would recalculate the layout once per snapshot.
+  let writes = Array.from(clips, read => read());
+  for (let write of writes) {
+    write();
+  }
+
+  clipFrame = clips.size > 0 ? requestAnimationFrame(updateClips) : 0;
+}
+
+/**
+ * Runs `clip` now and on every frame until the returned function is called. Animations are updated
+ * before frame callbacks run, so a snapshot measured here is where it is about to be drawn rather
+ * than where it was drawn last frame, and every snapshot in a transition shares this one loop so
+ * they are all clipped for the same frame.
+ */
+function trackClip(clip: Clip): () => void {
+  clip()();
+  clips.add(clip);
+  if (clipFrame === 0) {
+    clipFrame = requestAnimationFrame(updateClips);
+  }
+
+  return () => {
+    clips.delete(clip);
+    if (clips.size === 0 && clipFrame !== 0) {
+      cancelAnimationFrame(clipFrame);
+      clipFrame = 0;
+    }
+  };
+}
+
+/**
+ * Props for a `<ViewTransition>` whose snapshot has to stay inside `getBounds()`, which is read
+ * fresh each frame so the clip tracks anything the bounds are still animating to.
+ */
+export function useClippedViewTransition(
+  transition: ViewTransitionClass,
+  getBounds: () => Rect | null
+): Omit<ViewTransitionProps, 'children'> {
+  return useMemo(() => {
+    let clip = ({group}: ViewTransitionInstance) => {
+      // A zero length animation holds its value indefinitely, which is the only way to set a
+      // property on a pseudo element that no selector can reach but that we get from React instead.
+      let animation = group.animate([], {duration: 0, fill: 'forwards'});
+      let effect = animation.effect as KeyframeEffect;
+
+      let stop = trackClip(() => {
+        let bounds = getBounds();
+        let clipPath = bounds && getClipPath(group, bounds);
+        return () => {
+          if (clipPath) {
+            // Both keyframes are the same since it's first -> second. If they match,
+            // then there can be no intermediate interpolated frames.
+            effect.setKeyframes([{clipPath}, {clipPath}]);
+          }
+        };
+      });
+
+      // React only cleans up the animations that were already there when it captured the snapshot.
+      return () => {
+        stop();
+        animation.cancel();
+      };
+    };
+
+    return {default: transition, onEnter: clip, onExit: clip, onUpdate: clip};
+  }, [transition, getBounds]);
+}
 
 export interface SidePanelProps extends AriaLabelingProps, UnsafeStyles {
   /** The content of the side panel. */
   children?: ReactNode;
+  /**
+   * The width of the side panel when it is expanded, in pixels.
+   *
+   * @default 208
+   */
+  width?: number;
   /** Whether the side panel is collapsed (controlled). */
   isCollapsed?: boolean;
   /** Whether the side panel is collapsed by default (uncontrolled). */
@@ -68,28 +218,41 @@ interface SidePanelContextValue {
 
 export const SidePanelContext = createContext<SidePanelContextValue>({});
 
+/** The panel a SideNav is inside, which it clips its snapshots to while the width transitions. */
+export const SidePanelBoundsContext = createContext<RefObject<HTMLDivElement | null> | null>(null);
+
 const sidePanelStyle = style(
   {
-    display: 'flex',
-    flexDirection: 'column',
     height: 'full',
     minHeight: 0,
+    boxSizing: 'border-box',
+    // Not captured by the view transition, so it keeps painting live and the page reflows with it.
+    transition: {
+      default: '[width]',
+      '@media (prefers-reduced-motion: reduce)': 'none'
+    },
+    // Keep in sync with the group animation in SideNav.module.css.
+    transitionDuration: 200,
+    transitionTimingFunction: 'default',
     // The expanded width is supplied by the consumer via `styles`; when collapsed, the inline
     // width below overrides it with the fixed icon-rail size.
     '--collapsedWidth': {
       type: 'width',
       value: 42
-    },
-    transition: {
-      default: '[width]',
-      '@media (prefers-reduced-motion: reduce)': 'none'
-    },
-    // Keep in sync with ANIMATION_DURATION above.
-    transitionDuration: ANIMATION_DURATION,
-    transitionTimingFunction: 'default'
+    }
   },
   getAllowedOverrides({height: true})
 );
+
+// The ViewTransition captured element. Its width snaps rather than transitioning. A CSS transition still reports
+// its starting width when the new state is captured, which would leave the snapshot at the old
+// width for the whole animation and then jump.
+const sidePanelContentStyle = style({
+  display: 'flex',
+  flexDirection: 'column',
+  height: 'full',
+  minHeight: 0
+});
 
 /**
  * A SidePanel contains a SideNav and other app chrome in a container that collapses to an icon
@@ -104,6 +267,7 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
     UNSAFE_className = '',
     UNSAFE_style,
     styles,
+    width = 208,
     isCollapsed: propIsCollapsed,
     defaultCollapsed,
     onCollapsedChange,
@@ -116,88 +280,84 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
     onCollapsedChange
   );
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
-  // The panel's width and its contents are never animated at the same time.
-  let [contentCollapsed, setContentCollapsed] = useState(isCollapsed);
+  let {direction} = useLocale();
 
-  // Apply content collapse in the same render that starts the width transition.
-  if (isCollapsed && !contentCollapsed) {
-    setContentCollapsed(true);
-  }
-
+  // `isCollapsed` can change from anywhere (the toggle below, or a controlled prop), so the
+  // transition starts here rather than at each call site. The extra render keeps the old state on
+  // screen for the transition to capture.
+  let [renderedCollapsed, setRenderedCollapsed] = useState(isCollapsed);
   useLayoutEffect(() => {
-    if (isCollapsed || !contentCollapsed) {
-      return;
-    }
-
-    let expand = () => {
+    if (renderedCollapsed !== isCollapsed) {
       startTransition(() => {
-        addTransitionType(EXPAND_TRANSITION);
-        setContentCollapsed(false);
+        addTransitionType(PANEL_TRANSITION);
+        if (direction === 'rtl') {
+          addTransitionType(PANEL_RTL_TRANSITION);
+        }
+        setRenderedCollapsed(isCollapsed);
       });
-    };
-
-    if (reduceMotion) {
-      expand();
-      return;
     }
-
-    let panel = domRef.current;
-    let onTransitionEnd = (e: TransitionEvent) => {
-      if (getEventTarget(e) === panel && e.propertyName === 'width') {
-        expand();
-      }
-    };
-    panel?.addEventListener('transitionend', onTransitionEnd);
-    // The expanded width may equal the collapsed width, in which case no transitionend arrives.
-    let timeout = setTimeout(expand, ANIMATION_DURATION + 50);
-    return () => {
-      panel?.removeEventListener('transitionend', onTransitionEnd);
-      clearTimeout(timeout);
-    };
-  }, [isCollapsed, contentCollapsed, reduceMotion, domRef]);
+  }, [isCollapsed, renderedCollapsed, direction]);
 
   let context = useMemo(
-    () => ({isCollapsed: contentCollapsed, setCollapsed}),
-    [contentCollapsed, setCollapsed]
+    () => ({isCollapsed: renderedCollapsed, setCollapsed}),
+    [renderedCollapsed, setCollapsed]
   );
+  // The panel's own snapshot animates to the new width on the view transition's clock, while the
+  // panel underneath it transitions on its own. Clipping it to the panel keeps whichever one is
+  // ahead from painting over the content beside it.
+  let getPanelBounds = useCallback(() => domRef.current?.getBoundingClientRect() ?? null, [domRef]);
+  let viewTransition = useClippedViewTransition(
+    reduceMotion ? 'none' : panelViewTransition,
+    getPanelBounds
+  );
+
+  // Both elements share a width so the snapshot lines up with the live element underneath it.
+  let panelWidth = renderedCollapsed
+    ? 'var(--collapsedWidth)'
+    : `calc(${width / 16} * var(--rem, 1rem) * var(--s2-scale, 1))`;
 
   let filteredProps = filterDOMProps(otherProps, {labelable: true});
   // A labelled collapsible panel must have a role.
   let hasLabel = filteredProps['aria-label'] != null || filteredProps['aria-labelledby'] != null;
   return (
     <SidePanelContext.Provider value={context}>
-      <div
-        {...filteredProps}
-        role={hasLabel ? 'region' : undefined}
-        ref={domRef}
-        // Allow children to hide via CSS instead of waiting for another state render.
-        data-side-panel-collapsed={contentCollapsed || undefined}
-        // Override the consumer's class-based width while collapsed.
-        style={{...UNSAFE_style, width: isCollapsed ? 'var(--collapsedWidth)' : undefined}}
-        className={UNSAFE_className + sidePanelStyle(null, styles)}>
+      <SidePanelBoundsContext.Provider value={domRef}>
         <div
-          className={style({
-            flexGrow: 1,
-            flexShrink: 1,
-            minHeight: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            height: 'full'
-          })}>
-          {children}
+          {...filteredProps}
+          role={hasLabel ? 'region' : undefined}
+          ref={domRef}
+          // Allow children to hide via CSS instead of waiting for another state render.
+          data-side-panel-collapsed={renderedCollapsed || undefined}
+          style={{...UNSAFE_style, width: panelWidth}}
+          className={UNSAFE_className + sidePanelStyle(null, styles)}>
+          <ViewTransition {...viewTransition}>
+            <div className={sidePanelContentStyle} style={{width: panelWidth}}>
+              <div
+                className={style({
+                  flexGrow: 1,
+                  flexShrink: 1,
+                  minHeight: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 'full'
+                })}>
+                {children}
+              </div>
+              <div
+                className={style({
+                  flexGrow: 0,
+                  flexShrink: 0,
+                  marginBottom: 4,
+                  marginTop: 4,
+                  display: 'flex',
+                  marginStart: 4
+                })}>
+                <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
+              </div>
+            </div>
+          </ViewTransition>
         </div>
-        <div
-          className={style({
-            flexGrow: 0,
-            flexShrink: 0,
-            marginBottom: 4,
-            marginTop: 4,
-            display: 'flex',
-            marginStart: 4
-          })}>
-          <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
-        </div>
-      </div>
+      </SidePanelBoundsContext.Provider>
     </SidePanelContext.Provider>
   );
 });
