@@ -410,7 +410,10 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
           return;
         }
 
-        let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
+        let vp =
+          axis === 'y'
+            ? window.innerHeight + parseFloat(calcToPx(viewportPadding(after, axis)))
+            : window.innerWidth;
         let maxScrollPx = (maxScroll / 100) * vp;
         let current = axis === 'y' ? scroller.scrollTop : scroller.scrollLeft;
         let target: number;
