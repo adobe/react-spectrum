@@ -19,7 +19,7 @@ import React, {ReactNode, useContext, useState} from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {SearchField} from '@react-spectrum/s2/SearchField';
 import Settings from '@react-spectrum/s2/icons/Settings';
-import {SidePanelContext} from '@react-spectrum/s2/SideNav';
+import {SidePanelContext} from '@react-spectrum/s2/SidePanel';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface SidePanelAppProps {

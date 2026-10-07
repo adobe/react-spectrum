@@ -463,7 +463,7 @@ export const ActionButton = forwardRef(function ActionButton(
                 })({isProgressVisible, isPending})}>
                 <ProgressCircle
                   isIndeterminate
-                  aria-label={stringFormatter.format('button.pending')}
+                  aria-label={stringFormatter.format('actionbutton.pending')}
                   size="S"
                   staticColor={staticColor}
                   styles={style({size: '1lh'})}

@@ -17,14 +17,7 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button, ButtonContext} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {
-  color,
-  css,
-  scrollFade,
-  space,
-  style,
-  StyleString
-} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   createContext,
   createRef,
@@ -62,6 +55,7 @@ import {
 } from 'react-stately/useTokenFieldState';
 import {PromptFieldContainer} from './PromptFieldContainer';
 import {Provider} from 'react-aria-components/slots';
+import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {setTokenFieldSelection} from 'react-aria/useTokenField';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -392,7 +386,7 @@ export const PromptField = forwardRef(function PromptField(
   let isPromptControlled = props.value !== undefined;
   let isAttachmentsControlled = props.attachments !== undefined;
   let onSubmit = () => {
-    if (prompt.segments.length === 0) {
+    if (prompt.segments.length === 0 && attachments.length === 0) {
       return;
     }
 
@@ -1003,16 +997,15 @@ export interface PromptFieldSubmitButtonProps {}
 /** PromptFieldSubmitButton submits the PromptField. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
-  let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
-  let showSubmit = !isGenerating || prompt.segments.length > 0;
+  let {prompt, attachments, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  let showSubmit = !isGenerating || prompt.segments.length > 0 || attachments.length > 0;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   return (
     <Button
       variant="primary"
       staticColor="auto"
       styles={style({alignSelf: 'end'})}
-      // TODO: should it be possible to submit a prompt with only attachments?
-      isDisabled={prompt.segments.length === 0 && showSubmit}
+      isDisabled={prompt.segments.length === 0 && attachments.length === 0 && showSubmit}
       aria-label={
         showSubmit
           ? stringFormatter.format('promptfield.submitButton')
