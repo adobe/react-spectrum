@@ -101,13 +101,13 @@ Our implementation is entirely built using native CSS scroll snapping and view t
 
 ## Setting up the viewport
 
-To create the illusion of swiping to open and close a sheet, we use regular CSS overflow scrolling. The sheet overlay is a scrollable element positioned above the rest of the page, hiding its scrollbar with [`scrollbar-width: none`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scrollbar-width). It is double the height of the window viewport, and positioned so that only the top half is visible, with the sheet in the bottom half. The sheet is inside a "stage", which is a viewport sized flex container that positions the sheet itself on the edge of the viewport (e.g. the bottom). We add [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll_snap) points at the top and bottom of the sheet so that it always stops either fully open or fully closed.
+To create the illusion of swiping to open and close a sheet, we use regular CSS overflow scrolling. The sheet overlay is a scrollable element positioned above the rest of the page, hiding its scrollbar with [`scrollbar-width: none`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scrollbar-width). It is double the height of the window viewport, and positioned so that only the top half is visible, with the sheet in the bottom half. The sheet is inside a "stage", which is a viewport-sized flex container that positions the sheet itself on the edge of the viewport (e.g. the bottom). We add [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll_snap) points at the top and bottom of the sheet so that it always stops either fully open or fully closed.
 
 <ViewportDiagram role="img" aria-label="Diagram of the sheet scroller in its closed and open states. The scroller is twice the height of the window, containing an exit snap point, the stage with the sheet, and another exit snap point. When closed, scrollTop is 0 and the window shows the empty exit snap point while the stage is clipped below. When open, the scroller is scrolled to its maximum and the window shows the stage with the sheet." style={{width: '100%', maxWidth: 849, height: 'auto', display: 'block', margin: '20px auto'}} />
 
 When the sheet is closed, the scroll position is zero, so the sheet is off screen (clipped by the window viewport). When it opens, it scrolls down to 100% with [`scroll-behavior: smooth`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-behavior), which animates the sheet up and into view. The user can swipe it away by scrolling to the top (moving the sheet down). Once we detect that the sheet is completely out of view (via an [`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)), it is unmounted.
 
-To account for native rubber band scrolling physics, the `overflowPadding` prop adds additional padding to the edge of the sheet so that it appears to stretch beyond the viewport when dragged.
+To account for native rubber band scrolling physics, the `overscrollPadding` prop adds additional padding to the edge of the sheet so that it appears to stretch beyond the viewport when dragged.
 
 All of this geometry flips depending on the `swipeDirection` and `position` props, so it works for top, left, right, and center sheets as well.
 
@@ -157,7 +157,7 @@ function Example() {
           <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><MapPin size={18} /> 300 Harbor St, Port Marlow</div>
           <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><Clock size={18} /> Open until 6:00 PM</div>
           <div style={{display: 'flex', gap: 12, alignItems: 'center'}}><Phone size={18} /> (510) 555-0142</div>
-          <p>Drag this sheet up to see more, or swipe down to dismiss. Snap points let you preview the most relevant content first, then expand for the full story.</p>
+          <p>Drag this sheet up to see more, or swipe down to collapse. Snap points let you preview the most relevant content first, then expand for the full story. Use the close button to dismiss.</p>
           <Map />
           <Button slot="close">Get directions</Button>
           <h3 style={{margin: '8px 0 0'}}>Reviews</h3>
