@@ -70,11 +70,13 @@ it.each`
 it('shows a grabbing cursor when a drag handle is pressed or dragging', async () => {
   let onDrop = vi.fn();
   let onDropEnter = vi.fn();
+  let onDragStart = vi.fn();
   let onDragEnd = vi.fn();
   function Example() {
     let {dragAndDropHooks} = useDragAndDrop({
       pointerDragSource: 'handle',
       getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
+      onDragStart,
       onDragEnd
     });
     return (
@@ -98,24 +100,26 @@ it('shows a grabbing cursor when a drag handle is pressed or dragging', async ()
 
   await render(<Example />);
   let button = page.getByRole('button', {name: /^Drag /});
-  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+  await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
   await server.commands.mouseDownOnElement('button[slot="drag"]');
   try {
     await expect.element(button).toHaveAttribute('data-pressed');
-    expect(getComputedStyle(button.element()).cursor).toBe('grabbing');
+    await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grabbing');
   } finally {
     await server.commands.mouseUp();
   }
   await expect.element(button).not.toHaveAttribute('data-pressed');
-  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+  await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
+  expect(onDragStart).not.toHaveBeenCalled();
 
   onDropEnter.mockImplementation(() => ({
     cursor: getComputedStyle(button.element()).cursor,
     isPressed: button.element().hasAttribute('data-pressed')
   }));
   await userEvent.dragAndDrop(button, page.getByText('Drop here'));
+  expect(onDragStart).toHaveBeenCalledTimes(1);
   await expect.poll(() => onDrop).toHaveBeenCalledTimes(1);
   expect(onDropEnter).toHaveReturnedWith({cursor: 'grabbing', isPressed: false});
   await expect.poll(() => onDragEnd).toHaveBeenCalledTimes(1);
-  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+  await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
 });

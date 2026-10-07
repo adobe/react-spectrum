@@ -96,17 +96,17 @@ it.each(['GridList', 'Table', 'Tree'])('should drag from styled %s handles', asy
 
   await render(<Example />);
   let button = page.getByRole('button', {name: /^Drag /});
-  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+  await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
 
   await server.commands.mouseDownOnElement('button[slot="drag"]');
   try {
     await expect.element(button).toHaveAttribute('data-pressed');
-    expect(getComputedStyle(button.element()).cursor).toBe('grabbing');
+    await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grabbing');
   } finally {
     await server.commands.mouseUp();
   }
   await expect.element(button).not.toHaveAttribute('data-pressed');
-  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+  await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
   expect(onDragStart).not.toHaveBeenCalled();
 
   onDropEnter.mockImplementation(() => ({
@@ -123,5 +123,5 @@ it.each(['GridList', 'Table', 'Tree'])('should drag from styled %s handles', asy
   expect(await onRootDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('cat');
   await expect.poll(() => onDragEnd).toHaveBeenCalledTimes(1);
   expect(onDragEnd).toHaveBeenCalledWith(expect.objectContaining({dropOperation: 'copy'}));
-  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+  await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
 });
