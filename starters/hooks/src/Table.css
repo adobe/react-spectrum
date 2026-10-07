@@ -123,6 +123,11 @@
       height: var(--spacing-4);
     }
 
+    &[draggable='true'] {
+      cursor: grab;
+      -webkit-user-drag: element;
+    }
+
     &[data-focus-visible] {
       border-radius: 4px;
       outline: 2px solid var(--focus-ring-color);

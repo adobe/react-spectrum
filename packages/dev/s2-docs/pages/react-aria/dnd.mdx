@@ -148,7 +148,8 @@ function DraggableCOMPONENT() {
     ///- begin collapse -///
     getItems(keys, items: Pokemon[]) {
       return items.map(item => ({
-        'text/plain': item.name
+        'text/plain': item.name,
+        'pokemon': JSON.stringify(item)
       }));
     },
     ///- end collapse -///

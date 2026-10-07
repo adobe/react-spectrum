@@ -247,6 +247,7 @@
 
     &[draggable='true'] {
       cursor: grab;
+      -webkit-user-drag: element;
     }
 
     &[data-focus-visible] {
