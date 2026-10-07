@@ -18,8 +18,8 @@ import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
 import {runAfterKeyboard, runAfterKeyboardTransition} from '../utils/runAfterKeyboard';
+import {supportsKeyboard, willOpenKeyboard} from '../utils/keyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
-import {willOpenKeyboard} from '../utils/keyboard';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -81,7 +81,8 @@ function preventScrollStandard(UNSTABLE_overrideFocus?: boolean) {
         ? setStyle(document.documentElement, 'scrollbar-gutter', 'stable')
         : setStyle(document.documentElement, 'padding-right', `${scrollbarWidth}px`)),
     setStyle(document.documentElement, 'overflow', 'hidden'),
-    UNSTABLE_overrideFocus && overrideFocus()
+    UNSTABLE_overrideFocus && overrideFocus(),
+    UNSTABLE_overrideFocus && supportsKeyboard() && handleBlur()
   );
 }
 
@@ -183,6 +184,22 @@ function preventScrollMobileWebKit() {
     }
   };
 
+  let restoreFocus = overrideFocus();
+  let removeEvents = chain(
+    addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
+    addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
+    handleBlur()
+  );
+
+  return () => {
+    restoreOverflow();
+    removeEvents();
+    style.remove();
+    restoreFocus();
+  };
+}
+
+function handleBlur() {
   let onBlur = (e: FocusEvent) => {
     let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
@@ -200,19 +217,7 @@ function preventScrollMobileWebKit() {
     }
   };
 
-  let restoreFocus = overrideFocus();
-  let removeEvents = chain(
-    addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
-    addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
-    addEvent(document, 'blur', onBlur, true)
-  );
-
-  return () => {
-    restoreOverflow();
-    removeEvents();
-    style.remove();
-    restoreFocus();
-  };
+  return addEvent(document, 'blur', onBlur, true);
 }
 
 function overrideFocus() {
