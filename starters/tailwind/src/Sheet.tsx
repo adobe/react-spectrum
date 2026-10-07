@@ -37,7 +37,7 @@ const sheetStyles = tv({
 // Only scroll the inner content once the sheet is fully expanded. At a partial detent a swipe on the
 // content chains out to the sheet's scroll container instead, expanding the sheet (like iOS).
 const contentStyles = tv({
-  base: 'p-6 pb-[calc(var(--spacing-6) + var(--sheet-scroll-padding-y))] box-border h-full outline-hidden overflow-hidden group-data-[expanded]/sheet:overflow-auto'
+  base: 'p-6 pb-[calc(var(--spacing-6) + var(--sheet-scroll-padding-y))] box-border h-full outline-hidden overscroll-auto scrollbar-gutter-stable overflow-hidden group-data-[expanded]/sheet:overflow-auto'
 });
 
 export interface SheetProps extends Omit<SheetOverlayProps, 'children'> {

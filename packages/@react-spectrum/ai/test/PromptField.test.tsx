@@ -475,6 +475,27 @@ describeOrSkip('PromptField', () => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(onStop).not.toHaveBeenCalled();
     });
+
+    it('enables submit with attachments and no text', async () => {
+      let {user, onSubmit} = renderPromptField({attachments: [imageAttachment('a1')]});
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
+      expect(submit).toBeEnabled();
+
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it('enables submit with attachments and no text during generation', async () => {
+      let {user, onSubmit} = renderPromptField({
+        isGenerating: true,
+        attachments: [imageAttachment('a1')]
+      });
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
+      expect(submit).toBeEnabled();
+
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('attachments', () => {

@@ -1,3 +1,5 @@
+export {SidePanel, SidePanelContext} from '../src/SidePanel';
+export type {SidePanelProps} from '../src/SidePanel';
 export {
   SideNav,
   SideNavItem,
@@ -16,5 +18,4 @@ export type {
   SideNavHeaderProps
 } from '../src/SideNav';
 export type {Key} from '@react-types/shared';
-
 export {Text} from '../src/Content';
