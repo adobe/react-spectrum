@@ -61,7 +61,7 @@ interface PositionOpts {
   crossOffset: number;
   maxHeight?: number;
   arrowBoundaryOffset?: number;
-  targetRect?: Offset | null | undefined;
+  targetRect?: Readonly<Offset> | null | undefined;
 }
 
 type HeightGrowthDirection = 'top' | 'bottom';
@@ -763,7 +763,7 @@ export function getRect(node: Element, ignoreScale: boolean) {
 function getOffset(
   node: Element,
   ignoreScale: boolean,
-  overrideRect?: Offset | null | undefined
+  overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
   let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
   let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
@@ -779,7 +779,7 @@ function getPosition(
   node: Element,
   parent: Element,
   ignoreScale: boolean,
-  overrideRect?: Offset | null | undefined
+  overrideRect?: Readonly<Offset> | null | undefined
 ): Offset {
   let style = window.getComputedStyle(node);
   let offset: Offset;

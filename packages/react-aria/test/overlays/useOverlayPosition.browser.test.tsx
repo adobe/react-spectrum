@@ -20,7 +20,7 @@ it.each(['fixed', 'absolute'] as const)(
   'positions an overlay against a %s target without modifying its rectangle',
   async position => {
     for (let rectType of ['DOMRect', 'DOMRectReadOnly', 'object', 'default']) {
-      let rects: DOMRect[] = [];
+      let rects: DOMRectReadOnly[] = [];
       let originalRects: string[] = [];
       function Example() {
         let targetRef = useRef<HTMLButtonElement>(null);
@@ -35,7 +35,7 @@ it.each(['fixed', 'absolute'] as const)(
             rectType === 'default'
               ? undefined
               : target => {
-                  let rect = target.getBoundingClientRect();
+                  let rect: DOMRectReadOnly = target.getBoundingClientRect();
                   if (rectType === 'DOMRectReadOnly') {
                     rect = DOMRectReadOnly.fromRect(rect);
                   } else if (rectType === 'object') {
