@@ -11,28 +11,28 @@ export const relatedPages = [
 export const version = 'alpha';
 export const description = 'A collapsible container for a SideNav and other app chrome.';
 
-# SidePanel
+# NavPanel
 
-<PageDescription>{docs.exports.SidePanel.description}</PageDescription>
+<PageDescription>{docs.exports.NavPanel.description}</PageDescription>
 
-A `SidePanel` wraps a [SideNav](SideNav), along with any other app chrome, in a container that collapses down to a narrow icon rail. It renders its own collapse/expand toggle at the bottom of the panel, and animates its width between the two states.
+A `NavPanel` wraps a [SideNav](SideNav), along with any other app chrome, in a container that collapses down to a narrow icon rail. It renders its own collapse/expand toggle at the bottom of the panel, and animates its width between the two states.
 
-The expanded width comes from the `styles` prop you pass to `SidePanel`.
+The expanded width comes from the `styles` prop you pass to `NavPanel`.
 
-```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/NavPanelApp.tsx']}
 "use client";
-import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SidePanel';
-import {SidePanelApp} from './SidePanelApp';
+import {NavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/NavPanel';
+import {NavPanelApp} from './NavPanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
 import Files from '@react-spectrum/s2/icons/Files';
 import Images from '@react-spectrum/s2/icons/Images';
 import Project from '@react-spectrum/s2/icons/Project';
 
-<SidePanelApp defaultSelectedRoute="/files">
+<NavPanelApp defaultSelectedRoute="/files">
   {({selectedRoute}) => (
     /*- begin highlight -*/
-    <SidePanel
+    <NavPanel
       defaultCollapsed
       styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
     {/*- end highlight -*/}
@@ -91,19 +91,19 @@ import Project from '@react-spectrum/s2/icons/Project';
           </SideNavItem>
         </SideNavSection>
       </SideNav>
-    </SidePanel>
+    </NavPanel>
   )}
-</SidePanelApp>
+</NavPanelApp>
 ```
 
 ## Collapsing
 
 The collapsed state is uncontrolled by default. Use `defaultCollapsed` for the initial state, or `isCollapsed` together with `onCollapsedChange` to control it — for example to persist the user's preference, or to collapse the panel from elsewhere in the app.
 
-```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/NavPanelApp.tsx']}
 "use client";
-import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SidePanel';
-import {SidePanelApp} from './SidePanelApp';
+import {NavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/NavPanel';
+import {NavPanelApp} from './NavPanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import File from '@react-spectrum/s2/icons/File';
 import Files from '@react-spectrum/s2/icons/Files';
@@ -134,13 +134,13 @@ let items: Item[] = [
 ];
 ///- end collapse -///
 
-function CollapsibleSidePanel() {
+function CollapsibleNavPanel() {
   /*- begin highlight -*/
   let [isCollapsed, setCollapsed] = useState(true);
   /*- end highlight -*/
 
   return (
-    <SidePanelApp
+    <NavPanelApp
       defaultSelectedRoute="/notes"
       /*- begin highlight -*/
       isCollapsed={isCollapsed}
@@ -148,7 +148,7 @@ function CollapsibleSidePanel() {
       {/*- end highlight -*/}
       {({selectedRoute}) => (
         /*- begin highlight -*/
-        <SidePanel
+        <NavPanel
           isCollapsed={isCollapsed}
           onCollapsedChange={setCollapsed}
           styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
@@ -175,22 +175,22 @@ function CollapsibleSidePanel() {
               );
             }}
           </SideNav>
-        </SidePanel>
+        </NavPanel>
       )}
-    </SidePanelApp>
+    </NavPanelApp>
   );
 }
 
-<CollapsibleSidePanel />
+<CollapsibleNavPanel />
 ```
 
 ## Animations
 
-`SidePanel` and [SideNav](SideNav) animate themselves. The panel's width animates first, and its contents animate only once it has settled.
+`NavPanel` and [SideNav](SideNav) animate themselves. The panel's width animates first, and its contents animate only once it has settled.
 
-Because the contents wait for the width, the `isCollapsed` you read from `SidePanelContext` trails the panel itself while it is expanding.
+Because the contents wait for the width, the `isCollapsed` you read from `NavPanelContext` trails the panel itself while it is expanding.
 
-`AccountFooter` in the example below reads `isCollapsed` from `SidePanelContext` and hides its name with `display: none` while the panel is collapsed.
+`AccountFooter` in the example below reads `isCollapsed` from `NavPanelContext` and hides its name with `display: none` while the panel is collapsed.
 
 <StaticTable
   headers={['Context value', 'Description']}
@@ -200,10 +200,10 @@ Because the contents wait for the width, the `isCollapsed` you read from `SidePa
     ['setCollapsed', 'Collapses or expands the panel. Useful for building your own expand and collapse trigger.']
   ]} />
 
-```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
+```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/NavPanelApp.tsx']}
 "use client";
-import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/SidePanel';
-import {SidePanelApp, AccountFooter} from './SidePanelApp';
+import {NavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, Collection, Text} from '@react-spectrum/s2/NavPanel';
+import {NavPanelApp, AccountFooter} from './NavPanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import File from '@react-spectrum/s2/icons/File';
 import Files from '@react-spectrum/s2/icons/Files';
@@ -239,9 +239,9 @@ let items: Item[] = [
 ];
 ///- end collapse -///
 
-<SidePanelApp defaultSelectedRoute="/notes">
+<NavPanelApp defaultSelectedRoute="/notes">
   {({selectedRoute}) => (
-    <SidePanel defaultCollapsed styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+    <NavPanel defaultCollapsed styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
       <SideNav
         aria-label="Files"
         selectedRoute={selectedRoute}
@@ -267,15 +267,15 @@ let items: Item[] = [
       {/*- begin highlight -*/}
       <AccountFooter />
       {/*- end highlight -*/}
-    </SidePanel>
+    </NavPanel>
   )}
-</SidePanelApp>
+</NavPanelApp>
 ```
 
 ## API
 
-```tsx links={{SidePanel: '#sidepanel', SideNav: 'SideNav', SideNavItem: 'SideNav#sidenavitem', SideNavItemContent: 'SideNav#sidenavitemcontent', SideNavItemLink: 'SideNav#sidenavitemlink', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
-<SidePanel>
+```tsx links={{NavPanel: '#sidepanel', SideNav: 'SideNav', SideNavItem: 'SideNav#sidenavitem', SideNavItemContent: 'SideNav#sidenavitemcontent', SideNavItemLink: 'SideNav#sidenavitemlink', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
+<NavPanel>
   <SideNav>
     <SideNavItem href>
       <SideNavItemContent>
@@ -286,9 +286,9 @@ let items: Item[] = [
       </SideNavItemContent>
     </SideNavItem>
   </SideNav>
-</SidePanel>
+</NavPanel>
 ```
 
-### SidePanel Props
+### NavPanel Props
 
-<PropTable component={docs.exports.SidePanel} links={docs.links} />
+<PropTable component={docs.exports.NavPanel} links={docs.links} />

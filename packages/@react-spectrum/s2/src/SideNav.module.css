@@ -1,6 +1,6 @@
 /* Collapse/expand animations for SideNav.
  *
- * SideNav puts a <ViewTransition> around every row and names every section header, and SidePanel
+ * SideNav puts a <ViewTransition> around every row and names every section header, and NavPanel
  * animates its own width with a plain CSS transition so the rest of the page reflows along with it.
  * The two never run at the same time. */
 

@@ -48,11 +48,11 @@ import {
   NavigationTreeSection,
   NavigationTreeSectionProps
 } from 'react-aria-components/NavigationTree';
+import {NavPanelContext} from './NavPanel';
 import {pressScale} from './pressScale';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import React from 'react';
 import sideNavCss from './SideNav.module.css';
-import {SidePanelContext} from './SidePanel';
 import {Text, TextContext} from './Content';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useDOMRef} from './useDOMRef';
@@ -127,7 +127,7 @@ const sideNavWrapper = style(
     flexGrow: 1,
     minWidth: {
       default: 160,
-      isInSidePanel: 'unset'
+      isInNavPanel: 'unset'
     },
     display: 'flex',
     isolation: 'isolate',
@@ -179,8 +179,8 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
   } = props;
 
   let domRef = useDOMRef(ref);
-  let {isCollapsed} = useContext(SidePanelContext) ?? {};
-  let isInSidePanel = isCollapsed !== undefined;
+  let {isCollapsed} = useContext(NavPanelContext) ?? {};
+  let isInNavPanel = isCollapsed !== undefined;
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
     propExpandedKeys ? new Set(propExpandedKeys) : undefined,
@@ -212,14 +212,14 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
       value={reduceMotion ? noViewTransitions : viewTransitions}>
       <div
         ref={domRef}
-        className={(UNSAFE_className ?? '') + sideNavWrapper({isInSidePanel}, props.styles)}
+        className={(UNSAFE_className ?? '') + sideNavWrapper({isInNavPanel}, props.styles)}
         style={UNSAFE_style}>
         <NavigationTree
           {...rest}
           expandedKeys={visibleExpandedKeys}
           onExpandedChange={toggleExpandedKeys}
           selectedRoute={selectedRoute}
-          className={renderProps => tree({...renderProps, isInSidePanel})}>
+          className={renderProps => tree({...renderProps, isInNavPanel})}>
           {children}
         </NavigationTree>
       </div>
@@ -434,7 +434,7 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
 };
 
 const SideNavItemContentInner = props => {
-  let {isCollapsed = false} = useContext(SidePanelContext);
+  let {isCollapsed = false} = useContext(NavPanelContext);
   let {
     isExpanded,
     hasChildItems,
@@ -636,7 +636,7 @@ export const SideNavHeader = (props: SideNavHeaderProps): ReactNode => {
       style={header ? {viewTransitionName: `${id}-header`, viewTransitionClass: header} : undefined}
       className={style({
         position: 'relative',
-        // Hidden by the panel rather than by the header itself — see the attribute in SidePanel.
+        // Hidden by the panel rather than by the header itself — see the attribute in NavPanel.
         display: {
           default: 'block',
           ':is([data-side-panel-collapsed] *)': 'none'
@@ -662,7 +662,7 @@ export interface SideNavItemLinkProps {
 export const SideNavItemLink = (props: SideNavItemLinkProps): ReactNode => {
   let {children} = props;
   let linkFocus = useContext(SideNavItemLinkContext);
-  let {isCollapsed = false} = useContext(SidePanelContext);
+  let {isCollapsed = false} = useContext(NavPanelContext);
   let textId = useId();
 
   return (

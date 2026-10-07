@@ -19,12 +19,12 @@ import React, {ReactNode, useContext, useState} from 'react';
 import {RouterProvider} from 'react-aria-components';
 import {SearchField} from '@react-spectrum/s2/SearchField';
 import Settings from '@react-spectrum/s2/icons/Settings';
-import {SidePanelContext} from '@react-spectrum/s2/SidePanel';
+import {NavPanelContext} from '@react-spectrum/s2/NavPanel';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-interface SidePanelAppProps {
+interface NavPanelAppProps {
   /**
-   * Rendered with the currently selected route. Return a `SidePanel` with `gridArea: 'sidebar'` in
+   * Rendered with the currently selected route. Return a `NavPanel` with `gridArea: 'sidebar'` in
    * its `styles`.
    */
   children: ({selectedRoute}: {selectedRoute: string}) => ReactNode;
@@ -45,7 +45,7 @@ interface SidePanelAppProps {
  * never in the layout while the panel is changing size and can't reflow as it narrows.
  */
 export function AccountFooter(): ReactNode {
-  let {isCollapsed = false} = useContext(SidePanelContext);
+  let {isCollapsed = false} = useContext(NavPanelContext);
 
   return (
     <div
@@ -130,11 +130,11 @@ function ProfileMenu({isCollapsed, onCollapsedChange}: ProfileMenuProps) {
 }
 
 /**
- * A miniature application frame used by the SidePanel examples. It provides a header,
+ * A miniature application frame used by the NavPanel examples. It provides a header,
  * a grid area for the panel, and a main content area, and keeps track of the selected
  * route so links in the SideNav don't perform a real navigation.
  */
-export function SidePanelApp(props: SidePanelAppProps): ReactNode {
+export function NavPanelApp(props: NavPanelAppProps): ReactNode {
   let {children, defaultSelectedRoute, isCollapsed, onCollapsedChange} = props;
   let [selectedRoute, setSelectedRoute] = useState(defaultSelectedRoute);
 

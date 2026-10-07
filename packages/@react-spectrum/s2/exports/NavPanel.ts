@@ -1,5 +1,5 @@
-export {SidePanel, SidePanelContext} from '../src/SidePanel';
-export type {SidePanelProps} from '../src/SidePanel';
+export {NavPanel, NavPanelContext} from '../src/NavPanel';
+export type {NavPanelProps} from '../src/NavPanel';
 export {
   SideNav,
   SideNavItem,

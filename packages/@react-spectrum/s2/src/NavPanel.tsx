@@ -46,7 +46,7 @@ const startTransition: (scope: () => void) => void =
 const ANIMATION_DURATION = 200;
 const EXPAND_TRANSITION = sideNavCss['side-panel-expand'];
 
-export interface SidePanelProps extends AriaLabelingProps, UnsafeStyles {
+export interface NavPanelProps extends AriaLabelingProps, UnsafeStyles {
   /** The content of the side panel. */
   children?: ReactNode;
   /** Whether the side panel is collapsed (controlled). */
@@ -59,16 +59,16 @@ export interface SidePanelProps extends AriaLabelingProps, UnsafeStyles {
   styles?: StylesPropWithHeight;
 }
 
-interface SidePanelContextValue {
+interface NavPanelContextValue {
   /** Whether the side panel is currently collapsed. */
   isCollapsed?: boolean;
   /** Sets whether the side panel is collapsed. */
   setCollapsed?: (isCollapsed: boolean) => void;
 }
 
-export const SidePanelContext = createContext<SidePanelContextValue>({});
+export const NavPanelContext = createContext<NavPanelContextValue>({});
 
-const sidePanelStyle = style(
+const navPanelStyle = style(
   {
     display: 'flex',
     flexDirection: 'column',
@@ -92,11 +92,11 @@ const sidePanelStyle = style(
 );
 
 /**
- * A SidePanel contains a SideNav and other app chrome in a container that collapses to an icon
+ * A NavPanel contains a SideNav and other app chrome in a container that collapses to an icon
  * rail.
  */
-export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
-  props: SidePanelProps,
+export const NavPanel = /*#__PURE__*/ forwardRef(function NavPanel(
+  props: NavPanelProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {
@@ -165,7 +165,7 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
   // A labelled collapsible panel must have a role.
   let hasLabel = filteredProps['aria-label'] != null || filteredProps['aria-labelledby'] != null;
   return (
-    <SidePanelContext.Provider value={context}>
+    <NavPanelContext.Provider value={context}>
       <div
         {...filteredProps}
         role={hasLabel ? 'region' : undefined}
@@ -174,7 +174,7 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
         data-side-panel-collapsed={contentCollapsed || undefined}
         // Override the consumer's class-based width while collapsed.
         style={{...UNSAFE_style, width: isCollapsed ? 'var(--collapsedWidth)' : undefined}}
-        className={UNSAFE_className + sidePanelStyle(null, styles)}>
+        className={UNSAFE_className + navPanelStyle(null, styles)}>
         <div
           className={style({
             flexGrow: 1,
@@ -198,7 +198,7 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
           <ExpandButton isCollapsed={isCollapsed} setCollapsed={setCollapsed} />
         </div>
       </div>
-    </SidePanelContext.Provider>
+    </NavPanelContext.Provider>
   );
 });
 
