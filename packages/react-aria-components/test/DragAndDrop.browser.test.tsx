@@ -24,7 +24,11 @@ import '../../../starters/docs/src/GridList.css';
 import '../../../starters/docs/src/Table.css';
 import '../../../starters/docs/src/Tree.css';
 
-it.each(['GridList', 'Table', 'Tree'])('should drag from styled %s handles', async component => {
+// Playwright's Firefox reports an empty pointerType for mouse presses, causing
+// usePress to treat the release as virtual and start accessible dragging.
+const itDrag = it.skipIf(/firefox/i.test(navigator.userAgent)).each(['GridList', 'Table', 'Tree']);
+
+itDrag('should drag from styled %s handles', async component => {
   let onDragStart = vi.fn();
   let onDragEnd = vi.fn();
   let onRootDrop = vi.fn();
