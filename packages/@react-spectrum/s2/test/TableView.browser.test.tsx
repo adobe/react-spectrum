@@ -11,9 +11,12 @@
  */
 
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../src/TableView';
-import {expect, it} from 'vitest';
+import {DropZone} from '../src/DropZone';
+import {expect, it, vi} from 'vitest';
+import {page, server, userEvent} from 'vitest/browser';
 import React from 'react';
 import {render} from './utils/render';
+import {useDragAndDrop} from '../src/useDragAndDrop';
 import {User} from '@react-aria/test-utils';
 
 let columns = [
@@ -62,4 +65,57 @@ it.each`
   });
   await tester.toggleRowSelection({row: 2});
   expect(tester.getRows()[2].getAttribute('aria-selected')).toBe('true');
+});
+
+it('shows a grabbing cursor when a drag handle is pressed or dragging', async () => {
+  let onDrop = vi.fn();
+  let onDropEnter = vi.fn();
+  let onDragEnd = vi.fn();
+  function Example() {
+    let {dragAndDropHooks} = useDragAndDrop({
+      pointerDragSource: 'dragButton',
+      getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
+      onDragEnd
+    });
+    return (
+      <div style={{width: 400}}>
+        <TableView aria-label="Source" dragAndDropHooks={dragAndDropHooks}>
+          <TableHeader>
+            <Column isRowHeader>Name</Column>
+          </TableHeader>
+          <TableBody>
+            <Row id="cat" textValue="Cat">
+              <Cell>Cat</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+        <DropZone onDrop={onDrop} onDropEnter={onDropEnter}>
+          Drop here
+        </DropZone>
+      </div>
+    );
+  }
+
+  await render(<Example />);
+  let button = page.getByRole('button', {name: /^Drag /});
+  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+  await server.commands.mouseDownOnElement('button[slot="drag"]');
+  try {
+    await expect.element(button).toHaveAttribute('data-pressed');
+    expect(getComputedStyle(button.element()).cursor).toBe('grabbing');
+  } finally {
+    await server.commands.mouseUp();
+  }
+  await expect.element(button).not.toHaveAttribute('data-pressed');
+  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+
+  onDropEnter.mockImplementation(() => ({
+    cursor: getComputedStyle(button.element()).cursor,
+    isPressed: button.element().hasAttribute('data-pressed')
+  }));
+  await userEvent.dragAndDrop(button, page.getByText('Drop here'));
+  await expect.poll(() => onDrop).toHaveBeenCalledTimes(1);
+  expect(onDropEnter).toHaveReturnedWith({cursor: 'grabbing', isPressed: false});
+  await expect.poll(() => onDragEnd).toHaveBeenCalledTimes(1);
+  expect(getComputedStyle(button.element()).cursor).toBe('grab');
 });

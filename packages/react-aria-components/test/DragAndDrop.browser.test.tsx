@@ -14,7 +14,7 @@ import {Button} from '../src/Button';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
 import {expect, it, vi} from 'vitest';
 import {GridList, GridListItem} from '../src/GridList';
-import {page, userEvent} from 'vitest/browser';
+import {page, server, userEvent} from 'vitest/browser';
 import React from 'react';
 import {render} from 'vitest-browser-react';
 import {Tree, TreeItem, TreeItemContent} from '../src/Tree';
@@ -28,6 +28,7 @@ it.each(['GridList', 'Table', 'Tree'])('should drag from styled %s handles', asy
   let onDragStart = vi.fn();
   let onDragEnd = vi.fn();
   let onRootDrop = vi.fn();
+  let onDropEnter = vi.fn();
   function Example() {
     let {dragAndDropHooks} = useDragAndDrop({
       pointerDragSource: 'dragButton',
@@ -36,7 +37,7 @@ it.each(['GridList', 'Table', 'Tree'])('should drag from styled %s handles', asy
       onDragStart,
       onDragEnd
     });
-    let {dragAndDropHooks: dropHooks} = useDragAndDrop({onRootDrop});
+    let {dragAndDropHooks: dropHooks} = useDragAndDrop({onRootDrop, onDropEnter});
     let dragButton = (
       <Button slot="drag" className={component === 'Table' ? 'drag-button' : undefined}>
         ≡
@@ -94,14 +95,33 @@ it.each(['GridList', 'Table', 'Tree'])('should drag from styled %s handles', asy
   }
 
   await render(<Example />);
-  await userEvent.dragAndDrop(
-    page.getByRole('button', {name: /^Drag /}),
-    page.getByRole('grid', {name: 'Target'})
-  );
+  let button = page.getByRole('button', {name: /^Drag /});
+  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+
+  await server.commands.mouseDownOnElement('button[slot="drag"]');
+  try {
+    await expect.element(button).toHaveAttribute('data-pressed');
+    expect(getComputedStyle(button.element()).cursor).toBe('grabbing');
+  } finally {
+    await server.commands.mouseUp();
+  }
+  await expect.element(button).not.toHaveAttribute('data-pressed');
+  expect(getComputedStyle(button.element()).cursor).toBe('grab');
+  expect(onDragStart).not.toHaveBeenCalled();
+
+  onDropEnter.mockImplementation(() => ({
+    cursor: getComputedStyle(button.element()).cursor,
+    isPressed: button.element().hasAttribute('data-pressed')
+  }));
+  await userEvent.dragAndDrop(button, page.getByRole('grid', {name: 'Target'}));
+  // Reset WebKit's pointer state after the native drag before the next test.
+  await server.commands.mouseUp();
   expect(onDragStart).toHaveBeenCalledTimes(1);
   expect(onDragStart).toHaveBeenCalledWith(expect.objectContaining({keys: new Set(['cat'])}));
   await expect.poll(() => onRootDrop).toHaveBeenCalledTimes(1);
+  expect(onDropEnter).toHaveReturnedWith({cursor: 'grabbing', isPressed: false});
   expect(await onRootDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('cat');
   await expect.poll(() => onDragEnd).toHaveBeenCalledTimes(1);
   expect(onDragEnd).toHaveBeenCalledWith(expect.objectContaining({dropOperation: 'copy'}));
+  expect(getComputedStyle(button.element()).cursor).toBe('grab');
 });

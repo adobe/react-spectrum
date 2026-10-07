@@ -248,6 +248,11 @@
     &[draggable='true'] {
       cursor: grab;
       -webkit-user-drag: element;
+
+      &[data-pressed],
+      &:is([data-dragging] *) {
+        cursor: grabbing;
+      }
     }
 
     &[data-focus-visible] {

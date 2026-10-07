@@ -85,11 +85,19 @@ export function InsertionIndicator({target}: {target: ItemDropTarget}) {
   );
 }
 
-let dragButton = style<{isFocusVisible: boolean; isDragButtonPointerSource: boolean}>({
+let dragButton = style<{
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  isDragButtonPointerSource: boolean;
+}>({
   color: 'inherit',
   cursor: {
     default: 'default',
-    isDragButtonPointerSource: 'grab'
+    isDragButtonPointerSource: {
+      default: 'grab',
+      isPressed: 'grabbing',
+      ':is([data-dragging] *)': 'grabbing'
+    }
   },
   display: 'flex',
   alignItems: 'center',
