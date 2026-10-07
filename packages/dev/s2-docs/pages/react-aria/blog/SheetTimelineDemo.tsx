@@ -104,7 +104,12 @@ export function SheetTimelineDemo(): JSX.Element {
       scrollRef.current.scrollTop = H;
     }
     setSupported(typeof CSS !== 'undefined' && CSS.supports('view-timeline-name', '--a'));
-    requestAnimationFrame(() => update());
+
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(update);
+    });
+
+    return () => cancelAnimationFrame(frame);
   }, [update]);
 
   useEffect(() => {
