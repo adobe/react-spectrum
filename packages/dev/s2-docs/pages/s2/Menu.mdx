@@ -463,6 +463,35 @@ function Example() {
 }
 ```
 
+### Virtualized content
+
+Set `isVirtualized` on a `Menu` to virtualize its contents.
+
+```tsx render
+"use client";
+import {Menu, MenuTrigger, MenuItem} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+let items = Array.from({length: 100}, (_, index) => ({
+  id: `item-${index}`,
+  name: `Item ${index + 1}`
+}));
+
+<MenuTrigger>
+  <ActionButton>Open menu</ActionButton>
+  <Menu
+    ///- begin highlight -///
+    isVirtualized
+    styles={style({width: 120})}
+    ///- end highlight -///
+    aria-label="Virtualized menu"
+    items={items}>
+    {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
+  </Menu>
+</MenuTrigger>
+```
+
 ## Selection
 
 Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Menu) for more details.

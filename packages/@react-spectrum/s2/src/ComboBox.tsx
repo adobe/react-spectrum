@@ -653,8 +653,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
         isIndeterminate
         size="S"
         styles={progressCircleStyles({})}
-        // Same loading string as table
-        aria-label={stringFormatter.format('table.loadingMore')}
+        aria-label={stringFormatter.format('combobox.loadingMore')}
       />
     </ListBoxLoadMoreItem>
   );
@@ -724,7 +723,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
               isIndeterminate
               size="S"
               styles={progressCircleStyles({isInput: true})}
-              aria-label={stringFormatter.format('table.loading')}
+              aria-label={stringFormatter.format('combobox.loading')}
             />
           )}
           <Button
@@ -805,7 +804,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
                   renderEmptyState={() => (
                     <span className={emptyStateText({size})}>
                       {loadingState === 'loading'
-                        ? stringFormatter.format('table.loading')
+                        ? stringFormatter.format('combobox.loading')
                         : stringFormatter.format('combobox.noResults')}
                     </span>
                   )}

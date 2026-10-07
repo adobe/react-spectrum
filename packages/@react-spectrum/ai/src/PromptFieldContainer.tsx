@@ -3,7 +3,6 @@ import {
   convertColor,
   defaultBrand,
   defineProperties,
-  keyframes,
   outerBorderStops,
   stops,
   token
@@ -12,6 +11,7 @@ import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {ty
 import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
+import {keyframes} from './style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useState} from 'react';
 

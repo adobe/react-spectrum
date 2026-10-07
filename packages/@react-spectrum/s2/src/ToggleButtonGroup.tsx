@@ -32,7 +32,7 @@ export interface ToggleButtonGroupProps
     DOMProps {
   /**
    * Whether the button should be displayed with an [emphasized
-   * style](https://spectrum.adobe.com/page/action-button/#Emphasis).
+   * style](https://spectrum.adobe.com/web/rsp/components/action-button#component-options).
    */
   isEmphasized?: boolean;
 }

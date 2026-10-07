@@ -33,13 +33,14 @@ const meta: Meta<typeof AttachmentList> = {
     ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}},
     isInvalid: {control: 'boolean'},
+    isDisabled: {control: 'boolean'},
     uploadProgress: {control: 'number', min: 0, max: 100},
     size: {
       control: 'radio',
       options: ['XS', 'S', 'M', 'L', 'XL']
     }
   },
-  args: {isInvalid: false, size: 'M', ...getActionArgs(events)},
+  args: {isInvalid: false, isDisabled: false, size: 'M', ...getActionArgs(events)},
   title: 'AI/AttachmentList'
 };
 
@@ -48,12 +49,13 @@ export default meta;
 type Story = StoryObj<typeof AttachmentList>;
 
 function AttachmentListRender(args) {
-  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  let {isInvalid, isDisabled, size, uploadProgress, ...listArgs} = args;
   return (
     <AttachmentList {...listArgs} styles={style({width: 500})}>
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
+        isDisabled={isDisabled}
         size={size}
         aria-label="Demo file.pdf">
         <AttachmentPreview
@@ -65,6 +67,7 @@ function AttachmentListRender(args) {
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
+        isDisabled={isDisabled}
         size={size}
         aria-label="Alligator.pdf">
         <AttachmentPreview
@@ -76,6 +79,7 @@ function AttachmentListRender(args) {
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
+        isDisabled={isDisabled}
         size={size}
         aria-label="Rules.pdf">
         <AttachmentPreview
@@ -87,6 +91,7 @@ function AttachmentListRender(args) {
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
+        isDisabled={isDisabled}
         size={size}
         aria-label="Echidna.pdf">
         <AttachmentPreview
@@ -108,12 +113,13 @@ export const AIAttachmentList: Story = {
 };
 
 function NonImageAttachmentListRender(args) {
-  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  let {isInvalid, isDisabled, size, uploadProgress, ...listArgs} = args;
   return (
     <AttachmentList {...listArgs} styles={style({width: 500})}>
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
+        isDisabled={isDisabled}
         size={size}
         aria-label="report.pdf">
         <AttachmentPreview mimeType="application/pdf" />
@@ -121,6 +127,7 @@ function NonImageAttachmentListRender(args) {
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
+        isDisabled={isDisabled}
         size={size}
         aria-label="notes.txt">
         <AttachmentPreview mimeType="text/plain" />
@@ -132,6 +139,7 @@ function NonImageAttachmentListRender(args) {
       <AttachmentComponent
         uploadProgress={uploadProgress}
         isInvalid={isInvalid}
+        isDisabled={isDisabled}
         size={size}
         aria-label="data.csv">
         <AttachmentPreview mimeType="text/csv" />
@@ -172,7 +180,7 @@ export const LongContents: Story = {
 };
 
 function MixedAttachments(args) {
-  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  let {isInvalid, isDisabled, size, uploadProgress, ...listArgs} = args;
 
   return (
     <div className={style({flexDirection: 'column', display: 'flex', gap: 16})}>
@@ -180,6 +188,7 @@ function MixedAttachments(args) {
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label="banner.png">
           <AttachmentPreview
@@ -191,6 +200,7 @@ function MixedAttachments(args) {
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label="notes.tsx">
           <AttachmentPreview mimeType="text/typescript" />
@@ -198,6 +208,7 @@ function MixedAttachments(args) {
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label="video.mp4">
           <AttachmentPreview mimeType="video/mp4" />
@@ -205,6 +216,7 @@ function MixedAttachments(args) {
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label="debug.zip">
           <AttachmentPreview mimeType="application/zip" />
@@ -214,6 +226,7 @@ function MixedAttachments(args) {
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label="banner.png">
           <AttachmentPreview
@@ -229,6 +242,7 @@ function MixedAttachments(args) {
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label="notes.txt">
           <AttachmentPreview slot="thumbnail" mimeType="text/plain" />
@@ -240,6 +254,7 @@ function MixedAttachments(args) {
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label="video.mp4">
           <AttachmentPreview slot="thumbnail" mimeType="video/mp4" />
@@ -251,6 +266,7 @@ function MixedAttachments(args) {
         <AttachmentComponent
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label="debug.zip">
           <AttachmentPreview slot="thumbnail" mimeType="application/zip" />
@@ -270,7 +286,7 @@ export const Mixed: Story = {
 };
 
 function CarouselRender(args) {
-  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  let {isInvalid, isDisabled, size, uploadProgress, ...listArgs} = args;
   return (
     <AttachmentList {...listArgs} styles={style({width: 500, maxWidth: 'calc(100vw - 32px)'})}>
       {Array.from({length: 8}, (_, i) => (
@@ -278,6 +294,7 @@ function CarouselRender(args) {
           key={i}
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label={`file-${i + 1}.pdf`}>
           <AttachmentPreview
@@ -297,7 +314,7 @@ export const Carousel: Story = {
 };
 
 function CarouselCardsRender(args) {
-  let {isInvalid, size, uploadProgress, ...listArgs} = args;
+  let {isInvalid, isDisabled, size, uploadProgress, ...listArgs} = args;
   return (
     <AttachmentList {...listArgs} styles={style({width: 500, maxWidth: 'calc(100vw - 32px)'})}>
       {Array.from({length: 6}, (_, i) => (
@@ -305,6 +322,7 @@ function CarouselCardsRender(args) {
           key={i}
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
+          isDisabled={isDisabled}
           size={size}
           aria-label={`Card_file_${i + 1}.pdf`}>
           <AttachmentPreview

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from 'storybook/actions';
 import {
   AttachmentGrid,
   AttachmentGridItem,
@@ -25,7 +26,7 @@ import {Text} from '@react-spectrum/s2/Text';
 interface AttachmentGridDemoProps
   extends
     Pick<AttachmentGridItemProps, 'isInvalid' | 'uploadProgress' | 'size'>,
-    Pick<AttachmentGridProps<unknown>, 'align'> {
+    Pick<AttachmentGridProps<unknown>, 'align' | 'onAction'> {
   /** Number of demo attachments to render. */
   count: number;
   /** Whether to show title/description content below the thumbnail. */
@@ -38,13 +39,19 @@ function AttachmentGridDemo({
   uploadProgress,
   showCardContent,
   size,
-  align
+  align,
+  onAction
 }: AttachmentGridDemoProps) {
   return (
-    <AttachmentGrid aria-label="Uploaded files" align={align} styles={style({width: 'full'})}>
+    <AttachmentGrid
+      aria-label="Uploaded files"
+      align={align}
+      onAction={onAction}
+      styles={style({width: 'full'})}>
       {Array.from({length: count}, (_, i) => (
         <AttachmentGridItem
           key={i}
+          id={`file-${i + 1}.pdf`}
           uploadProgress={uploadProgress}
           isInvalid={isInvalid}
           size={size}
@@ -66,9 +73,7 @@ function AttachmentGridDemo({
   );
 }
 
-const meta: Meta<typeof AttachmentGridDemo> = {
-  component: AttachmentGridDemo,
-  subcomponents: {AttachmentGrid, AttachmentGridItem},
+const meta: Meta<AttachmentGridDemoProps> = {
   parameters: {
     layout: 'centered'
   },
@@ -79,15 +84,22 @@ const meta: Meta<typeof AttachmentGridDemo> = {
     uploadProgress: {control: 'number', min: 0, max: 100},
     showCardContent: {control: 'boolean'},
     size: {control: 'select', options: ['XS', 'S', 'M', 'L', 'XL']},
-    align: {control: 'select', options: ['start', 'center', 'end']}
+    align: {control: 'select', options: ['start', 'center', 'end']},
+    onAction: {table: {category: 'Events'}}
   },
-  args: {isInvalid: false, showCardContent: false, size: 'M', align: 'start'},
+  args: {
+    isInvalid: false,
+    showCardContent: false,
+    size: 'M',
+    align: 'start',
+    onAction: action('onAction')
+  },
   title: 'AI/AttachmentGrid'
 };
 
 export default meta;
 
-type Story = StoryObj<typeof AttachmentGridDemo>;
+type Story = StoryObj<AttachmentGridDemoProps>;
 
 export const AIAttachmentGrid: Story = {
   render: args => (
@@ -100,7 +112,14 @@ export const AIAttachmentGrid: Story = {
 export const Overflow: Story = {
   name: 'Overflow (vertical scroll fade)',
   render: args => (
-    <div style={{width: 404, maxHeight: 240, resize: 'horizontal', overflow: 'hidden'}}>
+    <div
+      style={{
+        width: 388,
+        maxHeight: 240,
+        padding: 16,
+        resize: 'horizontal',
+        overflow: 'hidden'
+      }}>
       <AttachmentGridDemo {...args} count={20} />
     </div>
   )
