@@ -460,8 +460,8 @@ describe('TableView', () => {
       expect(dragButton.style.position).toBe('absolute');
     });
 
-    it('should make only the drag button draggable and always show it when pointerDragSource is dragButton', () => {
-      let {getAllByRole} = render(<DraggableTable pointerDragSource="dragButton" />);
+    it('should make only the drag button draggable and always show it when pointerDragSource is handle', () => {
+      let {getAllByRole} = render(<DraggableTable pointerDragSource="handle" />);
       let row = getAllByRole('row')[1];
       let dragButton = within(row).getByRole('button');
       expect(row).not.toHaveAttribute('draggable');

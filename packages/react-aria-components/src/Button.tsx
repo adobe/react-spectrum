@@ -99,7 +99,7 @@ interface ButtonContextValue extends ButtonProps {
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
-// Allows collection items to make their drag button the native drag source (e.g. pointerDragSource="dragButton").
+// Allows collection items to make their drag button the native drag source (e.g. pointerDragSource="handle").
 const dragPropNames = new Set(['draggable', 'onDragStart', 'onDrag', 'onDragEnd']);
 
 /**

@@ -2401,7 +2401,7 @@ function DndTableWithTextFieldsRender({
   pointerDragSource,
   selectionMode
 }: {
-  pointerDragSource: 'item' | 'dragButton';
+  pointerDragSource: 'item' | 'handle';
   selectionMode: 'none' | 'single' | 'multiple';
 }) {
   let list = useListData({
@@ -2470,13 +2470,13 @@ function DndTableWithTextFieldsRender({
 export const DndTableWithTextFields: StoryObj<typeof DndTableWithTextFieldsRender> = {
   render: args => <DndTableWithTextFieldsRender {...args} />,
   args: {
-    pointerDragSource: 'dragButton',
+    pointerDragSource: 'handle',
     selectionMode: 'multiple'
   },
   argTypes: {
     pointerDragSource: {
       control: 'radio',
-      options: ['item', 'dragButton']
+      options: ['item', 'handle']
     },
     selectionMode: {
       control: 'radio',
@@ -2485,7 +2485,7 @@ export const DndTableWithTextFields: StoryObj<typeof DndTableWithTextFieldsRende
   },
   parameters: {
     description: {
-      data: 'With pointerDragSource="dragButton", mouse and touch dragging can only start from the drag button, so text in the fields can be selected.'
+      data: 'With pointerDragSource="handle", mouse and touch dragging can only start from the drag handle, so text in the fields can be selected.'
     }
   }
 };

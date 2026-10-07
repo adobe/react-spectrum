@@ -76,7 +76,7 @@ interface DragHooks<T = object> {
     items: DragItem[]
   ) => JSX.Element | {element: JSX.Element; x: number; y: number};
   isVirtualDragging?: () => boolean;
-  pointerDragSource?: 'item' | 'dragButton';
+  pointerDragSource?: 'item' | 'handle';
 }
 
 interface DropHooks {
@@ -141,13 +141,12 @@ export interface DragAndDropOptions<T = object>
   isDisabled?: boolean;
   /**
    * Controls where mouse and touch dragging can start. `'item'` allows dragging from anywhere on
-   * an item. `'dragButton'` only allows dragging from the item's `<Button slot="drag">`, which
-   * enables interactive content such as text fields within draggable items. Keyboard and screen
-   * reader dragging always start from the drag button.
+   * an item. `'handle'` restricts dragging to the drag handle, enabling interactive content such
+   * as text fields within draggable items. Keyboard and screen reader dragging are unaffected.
    *
    * @default 'item'
    */
-  pointerDragSource?: 'item' | 'dragButton';
+  pointerDragSource?: 'item' | 'handle';
 }
 
 /**

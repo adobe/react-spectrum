@@ -31,7 +31,7 @@ it.each(['GridList', 'Table', 'Tree'])('should drag from styled %s handles', asy
   let onDropEnter = vi.fn();
   function Example() {
     let {dragAndDropHooks} = useDragAndDrop({
-      pointerDragSource: 'dragButton',
+      pointerDragSource: 'handle',
       getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
       getAllowedDropOperations: () => ['copy'],
       onDragStart,

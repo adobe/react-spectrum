@@ -1769,10 +1769,10 @@ describe('Table', () => {
         expect(onDragStart).toHaveBeenCalledTimes(1);
       });
 
-      it('should only allow pointer dragging from the drag button when set to "dragButton"', () => {
+      it('should only allow pointer dragging from the drag button when set to "handle"', () => {
         let onDragStart = jest.fn();
         let {getAllByRole} = render(
-          <DraggableTable pointerDragSource="dragButton" onDragStart={onDragStart} />
+          <DraggableTable pointerDragSource="handle" onDragStart={onDragStart} />
         );
         let row = getAllByRole('row')[1];
         let button = within(row).getByRole('button');
@@ -1805,12 +1805,12 @@ describe('Table', () => {
         expect(row).not.toHaveAttribute('data-dragging');
       });
 
-      it('should not select the row when clicking the drag button when set to "dragButton"', async () => {
+      it('should not select the row when clicking the drag button when set to "handle"', async () => {
         let onSelectionChange = jest.fn();
         function SelectableTable() {
           let {dragAndDropHooks} = useDragAndDrop({
             getItems: keys => [...keys].map(key => ({'text/plain': key})),
-            pointerDragSource: 'dragButton'
+            pointerDragSource: 'handle'
           });
           return (
             <TestTable
@@ -1826,9 +1826,9 @@ describe('Table', () => {
         expect(row).toHaveAttribute('aria-selected', 'false');
       });
 
-      it('should support keyboard dragging via the drag button when set to "dragButton"', async () => {
+      it('should support keyboard dragging via the drag button when set to "handle"', async () => {
         let onDragStart = jest.fn();
-        render(<DraggableTable pointerDragSource="dragButton" onDragStart={onDragStart} />);
+        render(<DraggableTable pointerDragSource="handle" onDragStart={onDragStart} />);
         await user.tab();
         await user.keyboard('{ArrowRight}');
         await user.keyboard('{Enter}');

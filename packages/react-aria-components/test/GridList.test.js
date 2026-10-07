@@ -1271,10 +1271,10 @@ describe('GridList', () => {
         expect(onDragStart).toHaveBeenCalledTimes(1);
       });
 
-      it('should only allow pointer dragging from the drag button when set to "dragButton"', () => {
+      it('should only allow pointer dragging from the drag button when set to "handle"', () => {
         let onDragStart = jest.fn();
         let {getAllByRole} = render(
-          <DraggableGridList pointerDragSource="dragButton" onDragStart={onDragStart} />
+          <DraggableGridList pointerDragSource="handle" onDragStart={onDragStart} />
         );
         let row = getAllByRole('row')[0];
         let button = within(row).getAllByRole('button')[0];
@@ -1307,10 +1307,10 @@ describe('GridList', () => {
         expect(row).not.toHaveAttribute('data-dragging');
       });
 
-      it('should support keyboard dragging via the drag button when set to "dragButton"', async () => {
+      it('should support keyboard dragging via the drag button when set to "handle"', async () => {
         let onDragStart = jest.fn();
         let {getAllByRole} = render(
-          <DraggableGridList pointerDragSource="dragButton" onDragStart={onDragStart} />
+          <DraggableGridList pointerDragSource="handle" onDragStart={onDragStart} />
         );
         let button = within(getAllByRole('row')[0]).getAllByRole('button')[0];
         act(() => button.focus());

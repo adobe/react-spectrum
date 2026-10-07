@@ -175,7 +175,7 @@ export function getDraggableItemSlotProps(
   dragAndDropHooks: DragAndDropHooks | undefined,
   itemRef: RefObject<HTMLElement | null>
 ): DraggableItemSlotProps {
-  if (dragAndDropHooks?.pointerDragSource !== 'dragButton') {
+  if (dragAndDropHooks?.pointerDragSource !== 'handle') {
     return {
       itemProps: draggableItem?.dragProps,
       dragButtonProps: {

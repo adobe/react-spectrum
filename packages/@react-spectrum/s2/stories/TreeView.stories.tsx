@@ -1030,7 +1030,7 @@ function CustomDragPreview(props) {
 function ReorderableTree({
   pointerDragSource,
   ...props
-}: TreeViewProps<any> & {pointerDragSource?: 'item' | 'dragButton'}) {
+}: TreeViewProps<any> & {pointerDragSource?: 'item' | 'handle'}) {
   let treeData = useTreeData<TreeViewItemType>({
     initialItems: rows,
     getKey: item => item.id as Key,
@@ -1116,7 +1116,7 @@ export const Reorderable: StoryObj<typeof ReorderableTree> = {
   argTypes: {
     pointerDragSource: {
       control: 'radio',
-      options: ['item', 'dragButton']
+      options: ['item', 'handle']
     }
   }
 };

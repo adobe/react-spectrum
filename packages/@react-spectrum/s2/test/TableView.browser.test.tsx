@@ -73,7 +73,7 @@ it('shows a grabbing cursor when a drag handle is pressed or dragging', async ()
   let onDragEnd = vi.fn();
   function Example() {
     let {dragAndDropHooks} = useDragAndDrop({
-      pointerDragSource: 'dragButton',
+      pointerDragSource: 'handle',
       getItems: keys => [...keys].map(key => ({'text/plain': String(key)})),
       onDragEnd
     });

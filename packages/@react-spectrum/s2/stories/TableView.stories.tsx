@@ -2316,7 +2316,7 @@ let dragColumns = [
 function ReorderableTableExample({
   pointerDragSource,
   ...props
-}: Partial<TableViewProps> & {pointerDragSource?: 'item' | 'dragButton'; overflowMode?: string}) {
+}: Partial<TableViewProps> & {pointerDragSource?: 'item' | 'handle'; overflowMode?: string}) {
   let list = useListData({initialItems: folderList1});
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
@@ -2397,7 +2397,7 @@ export const DragAndDropReorder: StoryObj<typeof ReorderableTableExample> = {
   argTypes: {
     pointerDragSource: {
       control: 'radio',
-      options: ['item', 'dragButton']
+      options: ['item', 'handle']
     }
   }
 };
@@ -2405,7 +2405,7 @@ export const DragAndDropReorder: StoryObj<typeof ReorderableTableExample> = {
 function DragHandleTableWithTextFields({
   pointerDragSource,
   ...props
-}: Partial<TableViewProps> & {pointerDragSource?: 'item' | 'dragButton'}) {
+}: Partial<TableViewProps> & {pointerDragSource?: 'item' | 'handle'}) {
   let list = useListData({
     initialItems: folderList1.map(item => ({...item, notes: ''}))
   });
@@ -2462,12 +2462,12 @@ export const DragHandleWithTextFields: StoryObj<typeof DragHandleTableWithTextFi
   render: args => <DragHandleTableWithTextFields {...args} />,
   name: 'Drag and drop with text fields',
   args: {
-    pointerDragSource: 'dragButton'
+    pointerDragSource: 'handle'
   },
   argTypes: {
     pointerDragSource: {
       control: 'radio',
-      options: ['item', 'dragButton']
+      options: ['item', 'handle']
     }
   }
 };

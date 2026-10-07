@@ -594,7 +594,7 @@ describe('TreeView', () => {
   });
 
   describe('pointerDragSource', () => {
-    function DraggableTree(props: {pointerDragSource?: 'item' | 'dragButton'}) {
+    function DraggableTree(props: {pointerDragSource?: 'item' | 'handle'}) {
       let {dragAndDropHooks} = useDragAndDrop({
         getItems: keys => [...keys].map(key => ({'text/plain': `${key}`})),
         pointerDragSource: props.pointerDragSource
@@ -624,8 +624,8 @@ describe('TreeView', () => {
       expect(dragButton.style.position).toBe('absolute');
     });
 
-    it('should make only the drag button draggable and always show it when pointerDragSource is dragButton', () => {
-      let {getAllByRole} = render(<DraggableTree pointerDragSource="dragButton" />);
+    it('should make only the drag button draggable and always show it when pointerDragSource is handle', () => {
+      let {getAllByRole} = render(<DraggableTree pointerDragSource="handle" />);
       let row = getAllByRole('row')[0];
       let dragButton = row.querySelector('[slot="drag"]') as HTMLElement;
       expect(row).not.toHaveAttribute('draggable');

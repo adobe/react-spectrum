@@ -713,7 +713,7 @@ function CustomDragPreview(props) {
 function ReorderExample({
   pointerDragSource,
   ...props
-}: Partial<ListViewProps<any>> & {pointerDragSource?: 'item' | 'dragButton'}) {
+}: Partial<ListViewProps<any>> & {pointerDragSource?: 'item' | 'handle'}) {
   let list = useListData({
     initialItems: reorderItems
   });
@@ -763,7 +763,7 @@ export const Reorderable: StoryObj<typeof ReorderExample> = {
   argTypes: {
     pointerDragSource: {
       control: 'radio',
-      options: ['item', 'dragButton']
+      options: ['item', 'handle']
     }
   }
 };

@@ -16,7 +16,7 @@ import React from 'react';
 import {useDragAndDrop} from '../src/useDragAndDrop';
 
 describe('ListView', () => {
-  let offsetWidth, offsetHeight;
+  let offsetWidth, offsetHeight, scrollWidth, scrollHeight;
 
   beforeAll(function () {
     offsetWidth = jest
@@ -25,6 +25,13 @@ describe('ListView', () => {
     offsetHeight = jest
       .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
       .mockImplementation(() => 400);
+    // Variable-height rows are measured using their scroll size, which is zero in JSDOM.
+    scrollWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get')
+      .mockImplementation(() => 400);
+    scrollHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+      .mockImplementation(() => 40);
     jest.useFakeTimers();
   });
 
@@ -37,10 +44,12 @@ describe('ListView', () => {
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+    scrollWidth.mockRestore();
+    scrollHeight.mockRestore();
   });
 
   describe('pointerDragSource', () => {
-    function DraggableListView(props: {pointerDragSource?: 'item' | 'dragButton'}) {
+    function DraggableListView(props: {pointerDragSource?: 'item' | 'handle'}) {
       let {dragAndDropHooks} = useDragAndDrop({
         getItems: keys => [...keys].map(key => ({'text/plain': `${key}`})),
         pointerDragSource: props.pointerDragSource
@@ -62,8 +71,8 @@ describe('ListView', () => {
       expect(dragButton.style.position).toBe('absolute');
     });
 
-    it('should make only the drag button draggable and always show it when pointerDragSource is dragButton', () => {
-      let {getAllByRole} = render(<DraggableListView pointerDragSource="dragButton" />);
+    it('should make only the drag button draggable and always show it when pointerDragSource is handle', () => {
+      let {getAllByRole} = render(<DraggableListView pointerDragSource="handle" />);
       let row = getAllByRole('row')[0];
       let dragButton = within(row).getByRole('button');
       expect(row).not.toHaveAttribute('draggable');
