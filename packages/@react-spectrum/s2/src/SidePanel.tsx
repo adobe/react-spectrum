@@ -163,7 +163,7 @@ export function useClippedViewTransition(
   return useMemo(() => {
     let clip = ({group}: ViewTransitionInstance) => {
       // A zero length animation holds its value indefinitely, which is the only way to set a
-      // property on a pseudo element that no selector can reach.
+      // property on a pseudo element that no selector can reach but that we get from React instead.
       let animation = group.animate([], {duration: 0, fill: 'forwards'});
       let effect = animation.effect as KeyframeEffect;
 
@@ -172,8 +172,8 @@ export function useClippedViewTransition(
         let clipPath = bounds && getClipPath(group, bounds);
         return () => {
           if (clipPath) {
-            // Both keyframes get the same value because a lone keyframe is the one to animate
-            // *to*, which would leave the clip interpolating out of whatever was underneath it.
+            // Both keyframes are the same since it's first -> second. If they match,
+            // then there can be no intermediate interpolated frames.
             effect.setKeyframes([{clipPath}, {clipPath}]);
           }
         };

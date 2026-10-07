@@ -12,7 +12,8 @@
 
 /* The group animates between the collapsed and expanded widths. Sizing the snapshots to it stops
  * them deriving a huge height from the changing aspect ratio, and `object-fit: none` then keeps
- * their contents from scaling with it, so rows only fade and the group clips them. */
+ * their contents from scaling with it, so rows only fade and the group clips them.
+ * Think of the snapshot like an `img` tag. */
 ::view-transition-old(.side-nav),
 ::view-transition-new(.side-nav) {
   width: 100%;
