@@ -113,7 +113,9 @@ export function CodeBlock({
     dir || (props.type === 's2' ? 's2' : 'react-aria'),
     'index.tsx'
   );
-  let downloadFiles = getExampleFiles(resolveFrom, children, props.type);
+  let downloadFiles = hideCode
+    ? {files: {}, deps: {}}
+    : getExampleFiles(resolveFrom, children, props.type);
 
   let code = (
     <TruncatedCode maxLines={expanded ? Infinity : 6} {...props}>
@@ -129,6 +131,7 @@ export function CodeBlock({
         files={files}
         downloadFiles={downloadFiles}
         code={code}
+        hideCode={hideCode}
       />
     );
   }

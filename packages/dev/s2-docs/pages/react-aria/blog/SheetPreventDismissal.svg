@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 0 863 570">
+<g style="--fg: light-dark(#24292f, #e6edf3); --muted: light-dark(#57606a, #9198a1); --line: light-dark(#8c959f, #6e7681); --hatch-bg: light-dark(#f6f8fa, #161b22); --hatch-line: light-dark(#d0d7de, #30363d); --surface: light-dark(#ffffff, #21262d); --grabber: light-dark(#afb8c1, #6e7681); --stage: light-dark(#0969da, #4493f8); --stage-bg: light-dark(#ddf4ff, #0d2a4d); --viewport: light-dark(#bf5700, #f0883e); --marker: light-dark(#8250df, #ab7df8); --sans: var(--anatomy-font, system-ui), system-ui, sans-serif; --mono: ui-monospace, SFMono-Regular, Menlo, monospace; font-family: var(--sans)" fill="var(--fg)" font-size="13">
+  <defs>
+    <pattern id="sheet-prevent-dismissal-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="var(--hatch-bg)"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="var(--hatch-line)" stroke-width="2"/>
+    </pattern>
+    <filter id="sheet-prevent-dismissal-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/>
+    </filter>
+    <marker id="sheet-prevent-dismissal-a-muted" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+    <marker id="sheet-prevent-dismissal-a-mk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--marker)"/></marker>
+    <marker id="sheet-prevent-dismissal-a-stage" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--stage)"/></marker>
+  </defs>
+<text x="30" y="30" font-size="15" font-weight="600">Dismissible</text>
+<text x="30" y="50" fill="var(--muted)">Scroll range reaches the exit snap point.</text>
+<text x="60" y="84" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="end">0</text><line x1="64" y1="80" x2="70" y2="80" stroke="var(--line)"/><text x="60" y="234" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="end">1V</text><line x1="64" y1="230" x2="70" y2="230" stroke="var(--line)"/><text x="60" y="384" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="end">2V</text><line x1="64" y1="380" x2="70" y2="380" stroke="var(--line)"/><text x="60" y="534" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="end">3V</text><line x1="64" y1="530" x2="70" y2="530" stroke="var(--line)"/>
+<rect x="70" y="80" width="190" height="150" fill="url(#sheet-prevent-dismissal-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/><text x="165.0" y="153.0" font-weight="600" text-anchor="middle">exit snap point</text><text x="165.0" y="171.0" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scroll-snap-align: start</text>
+<rect x="70" y="230" width="190" height="150" fill="var(--stage-bg)" stroke="var(--stage)"/>
+<text x="76" y="245" fill="var(--stage)" font-weight="600" font-size="12">stage</text>
+<path d="M82,270 q0,-10 10,-10 h146 q10,0 10,10 v110 h-166 z" fill="var(--surface)" stroke="var(--fg)" filter="url(#sheet-prevent-dismissal-shadow)"/><rect x="147.0" y="266" width="36" height="5" rx="2.5" fill="var(--grabber)"/><text x="165.0" y="298" font-weight="600" text-anchor="middle">Sheet</text>
+<circle cx="82" cy="300" r="5" fill="var(--marker)" stroke="var(--surface)" stroke-width="2"/>
+<rect x="70" y="380" width="190" height="150" fill="url(#sheet-prevent-dismissal-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/><text x="165.0" y="453.0" font-weight="600" text-anchor="middle">exit snap point</text><text x="165.0" y="471.0" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scroll-snap-align: end</text>
+<path d="M272,82 h8 v146 h-8" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<text x="288" y="100" fill="var(--viewport)" font-weight="600" font-size="12">scrollTop = 0</text>
+<text x="288" y="116" fill="var(--muted)" font-size="12">sheet off screen</text>
+<text x="288" y="132" fill="var(--muted)" font-size="12">→ dismissed</text>
+<path d="M372,152 h8 v146 h-8" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<text x="388" y="210" fill="var(--viewport)" font-weight="600" font-size="12">snap point</text>
+<text x="388" y="226" fill="var(--muted)" font-size="12">p₀ visible</text>
+<text x="445" y="30" font-size="15" font-weight="600">preventDismissal</text>
+<text x="445" y="50" fill="var(--muted)">Stage moves up so scrollTop = 0 is p₀.</text>
+<text x="485" y="84" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="end">0</text><line x1="489" y1="80" x2="495" y2="80" stroke="var(--line)"/><text x="485" y="164" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="end">T</text><line x1="489" y1="160" x2="495" y2="160" stroke="var(--line)"/><text x="485" y="314" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="end">T+1V</text><line x1="489" y1="310" x2="495" y2="310" stroke="var(--line)"/><text x="485" y="464" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="end">T+2V</text><line x1="489" y1="460" x2="495" y2="460" stroke="var(--line)"/>
+<rect x="495" y="80" width="190" height="80" fill="none" stroke="var(--line)" stroke-dasharray="5 4"/>
+<text x="590.0" y="118.0" fill="var(--muted)" font-size="12" text-anchor="middle">exit snap point</text>
+<text x="590.0" y="134.0" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scroll-snap-align: none</text>
+<rect x="495" y="160" width="190" height="150" fill="var(--stage-bg)" stroke="var(--stage)"/>
+<text x="501" y="175" fill="var(--stage)" font-weight="600" font-size="12">stage</text>
+<path d="M507,200 q0,-10 10,-10 h146 q10,0 10,10 v110 h-166 z" fill="var(--surface)" stroke="var(--fg)" filter="url(#sheet-prevent-dismissal-shadow)"/><rect x="572.0" y="196" width="36" height="5" rx="2.5" fill="var(--grabber)"/><text x="590.0" y="228" font-weight="600" text-anchor="middle">Sheet</text>
+<line x1="495" y1="230" x2="685" y2="230" stroke="var(--marker)" stroke-dasharray="3 3"/>
+<circle cx="507" cy="230" r="5" fill="var(--marker)" stroke="var(--surface)" stroke-width="2"/>
+<line x1="645" y1="194" x2="645" y2="227" stroke="var(--marker)" stroke-width="1.5" marker-start="url(#sheet-prevent-dismissal-a-mk)" marker-end="url(#sheet-prevent-dismissal-a-mk)"/>
+<text x="653" y="220" fill="var(--marker)" font-weight="600" font-size="12">p₀</text>
+<line x1="645" y1="233" x2="645" y2="306" stroke="var(--stage)" stroke-width="1.5" marker-start="url(#sheet-prevent-dismissal-a-stage)" marker-end="url(#sheet-prevent-dismissal-a-stage)"/>
+<text x="653" y="280" fill="var(--stage)" font-weight="600" font-size="12">T</text>
+<rect x="495" y="310" width="190" height="150" fill="url(#sheet-prevent-dismissal-hatch)" stroke="var(--line)" stroke-dasharray="5 4"/><text x="590.0" y="383.0" font-weight="600" text-anchor="middle">end snap point</text><text x="590.0" y="401.0" style="font-family: var(--mono)" font-size="12" fill="var(--muted)" text-anchor="middle">scroll-snap-align: end</text>
+<path d="M697,82 h8 v146 h-8" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<text x="713" y="100" fill="var(--viewport)" font-weight="600" font-size="12">scrollTop = 0</text>
+<text x="713" y="116" fill="var(--muted)" font-size="12">p₀ visible</text>
+<text x="713" y="132" fill="var(--muted)" font-size="12">(can't go lower)</text>
+<path d="M797,162 h8 v146 h-8" fill="none" stroke="var(--viewport)" stroke-width="2.5"/>
+<text x="813" y="222" fill="var(--viewport)" font-weight="600" font-size="12">scrollTop</text>
+<text x="813" y="238" fill="var(--viewport)" font-weight="600" font-size="12">= T</text>
+<text x="813" y="254" fill="var(--muted)" font-size="12">fully open</text>
+<text x="445" y="500" style="font-family: var(--mono)" font-size="12">T = max(1px, distance from the</text>
+<text x="445" y="518" style="font-family: var(--mono)" font-size="12">    smallest snap point to the</text>
+<text x="445" y="536" style="font-family: var(--mono)" font-size="12">    stage edge)</text>
+</g>
+</svg>
