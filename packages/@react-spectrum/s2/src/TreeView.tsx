@@ -733,7 +733,7 @@ export const TreeViewLoadMoreItem = (props: TreeViewLoadMoreItemProps): ReactNod
           <div className={centeredWrapper}>
             <ProgressCircle
               isIndeterminate
-              aria-label={stringFormatter.format('table.loadingMore')}
+              aria-label={stringFormatter.format('treeview.loadingMore')}
             />
           </div>
         );

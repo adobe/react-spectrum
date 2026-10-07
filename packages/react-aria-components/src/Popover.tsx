@@ -301,10 +301,8 @@ function PopoverInner({
 
   let children = useMemo(() => {
     let children = renderProps.children;
-    if (clearContexts) {
-      for (let Context of clearContexts) {
-        children = <Context.Provider value={null}>{children}</Context.Provider>;
-      }
+    for (let Context of [PopoverContext, ...(clearContexts ?? [])]) {
+      children = <Context.Provider value={null}>{children}</Context.Provider>;
     }
     return children;
   }, [renderProps.children, clearContexts]);
