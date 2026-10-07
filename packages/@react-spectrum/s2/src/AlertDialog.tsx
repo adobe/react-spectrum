@@ -30,7 +30,9 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 
 export interface AlertDialogProps extends AriaLabelingProps, DOMProps, UnsafeStyles {
   /**
-   * The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.
+   * The [visual
+   * style](https://spectrum.adobe.com/web/rsp/components/alert-dialog#component-options) of the
+   * AlertDialog.
    *
    * @default 'confirmation'
    */

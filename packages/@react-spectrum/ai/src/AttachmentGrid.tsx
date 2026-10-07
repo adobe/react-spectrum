@@ -17,7 +17,7 @@ import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {forwardRef, ReactNode} from 'react';
 import {ListBox, ListBoxItem, ListBoxItemProps, ListBoxProps} from 'react-aria-components/ListBox';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
-import {scrollFade} from './tokens.macro' with {type: 'macro'};
+import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 
@@ -25,7 +25,7 @@ export interface AttachmentGridProps<T>
   extends
     DOMProps,
     AriaLabelingProps,
-    Pick<ListBoxProps<T>, 'items' | 'children' | 'dependencies'> {
+    Pick<ListBoxProps<T>, 'items' | 'children' | 'dependencies' | 'onAction'> {
   /**
    * The alignment of attachments within the grid.
    *
@@ -60,18 +60,18 @@ const gridStyles = style({
   },
   gap: 8,
   padding: 4,
+  scrollPaddingY: 4,
   maxHeight: 'inherit',
   overflowY: 'auto',
   overflowX: 'clip',
   boxSizing: 'border-box',
   borderRadius: 'lg',
-  ...focusRing(),
-  outlineOffset: -2
+  ...focusRing()
 });
 
 /**
  * An AttachmentGrid displays file attachments as a wrapping, vertically-scrolling grid of
- * thumbnails. Unlike AttachmentList, it is display-only and does not support selection or removal.
+ * thumbnails. Unlike AttachmentList, it does not support selection or removal.
  */
 export const AttachmentGrid = (forwardRef as forwardRefType)(function AttachmentGrid<T>(
   props: AttachmentGridProps<T>,
@@ -84,6 +84,7 @@ export const AttachmentGrid = (forwardRef as forwardRefType)(function Attachment
     <ListBox
       {...otherProps}
       layout="grid"
+      selectionMode="none"
       items={items}
       dependencies={dependencies}
       ref={domRef}
@@ -105,6 +106,8 @@ export interface AttachmentGridItemProps
   uploadProgress?: number;
   /** The children of the AttachmentGridItem. */
   children: ReactNode;
+  /** Handler that is called when a user performs an action on the attachment. */
+  onAction?: () => void;
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
@@ -114,7 +117,9 @@ export interface AttachmentGridItemProps
 const itemStyles = style({
   flexShrink: 0,
   flexGrow: 0,
+  flexBasis: '0%',
   position: 'relative',
+  ...focusRing(),
   borderRadius: 'lg'
 });
 
@@ -125,7 +130,7 @@ export const AttachmentGridItem = forwardRef(function AttachmentGridItem(
   props: AttachmentGridItemProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {id, textValue, styles, isInvalid, size = 'M', children, ...otherProps} = props;
+  let {id, textValue, styles, isInvalid, size = 'M', children, onAction, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let isLoading = isAttachmentLoading(props.uploadProgress);
 
@@ -134,12 +139,17 @@ export const AttachmentGridItem = forwardRef(function AttachmentGridItem(
       id={id}
       {...filterDOMProps(otherProps, {labelable: true})}
       textValue={textValue}
-      isDisabled
+      onAction={onAction}
       ref={domRef}
-      className={mergeStyles(itemStyles, styles)}>
+      className={renderProps => mergeStyles(itemStyles({...renderProps}), styles)}>
       <AttachmentCard size={size} isInvalid={isInvalid} isLoading={isLoading}>
         <AttachmentPreviewContext.Provider
-          value={{isInvalid: !!isInvalid, uploadProgress: props.uploadProgress ?? 100, size}}>
+          value={{
+            isInvalid: !!isInvalid,
+            isDisabled: false,
+            uploadProgress: props.uploadProgress ?? 100,
+            size
+          }}>
           {children}
         </AttachmentPreviewContext.Provider>
       </AttachmentCard>

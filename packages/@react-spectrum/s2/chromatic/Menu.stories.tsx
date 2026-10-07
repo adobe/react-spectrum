@@ -19,11 +19,13 @@ import {
   UnavailableMenuItem
 } from '../stories/Menu.stories';
 import {Button} from '../src/Button';
+import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import {expect} from '@storybook/jest';
-import {Header, Heading} from '../src/Content';
+import {Header, Heading, Keyboard, Text} from '../src/Content';
 import {Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {style} from '../style' with {type: 'macro'};
 import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<typeof Menu<any>> = {
@@ -274,4 +276,59 @@ export const WithSectionsVirtualized: Story = {
     let body = canvasElement.ownerDocument.body;
     await within(body).findByRole('menu');
   }
+};
+
+export const WithSlotsVirtualized: Story = {
+  render: () => (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        <NewIcon />
+      </Button>
+      <Menu styles={style({width: 200})} isVirtualized selectionMode="multiple">
+        <MenuItem>
+          <Text slot="label">Label only</Text>
+        </MenuItem>
+        <MenuItem>
+          <Copy />
+          <Text slot="label">With icon</Text>
+        </MenuItem>
+        <MenuItem>
+          <Text slot="label">With description</Text>
+          <Text slot="description">Description</Text>
+        </MenuItem>
+        <MenuSection>
+          <Header>
+            <Heading>Menu section header</Heading>
+            <Text slot="description">Menu section description</Text>
+          </Header>
+          <MenuItem>
+            <Copy />
+            <Text slot="label">With icon and description</Text>
+            <Text slot="description">Description</Text>
+          </MenuItem>
+          <MenuItem>
+            <Text slot="label">With keyboard shortcut</Text>
+            <Keyboard>⌘C</Keyboard>
+          </MenuItem>
+          <MenuItem>
+            <Copy />
+            <Text slot="label">With all slots</Text>
+            <Text slot="description">Description</Text>
+            <Keyboard>⌘C</Keyboard>
+          </MenuItem>
+          <SubmenuTrigger>
+            <MenuItem id="open-in" textValue="open a copy">
+              <Copy />
+              <Text slot="label">Open a copy</Text>
+              <Text slot="description">Illustrator for iPad or desktop</Text>
+            </MenuItem>
+            <Menu selectionMode="single">
+              <MenuItem>Filler</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  ),
+  play: async context => await DefaultVirtualized.play!(context)
 };

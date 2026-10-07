@@ -42,10 +42,9 @@ import {
   SideNavItemContent,
   SideNavItemLink,
   SideNavProps,
-  SideNavSection,
-  SidePanel,
-  SidePanelContext
+  SideNavSection
 } from '../src/SideNav';
+import {SidePanel, SidePanelContext} from '../src/SidePanel';
 import {style} from '../style' with {type: 'macro'};
 import {useLandmark} from 'react-aria';
 

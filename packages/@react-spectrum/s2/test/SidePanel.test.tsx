@@ -18,10 +18,9 @@ import {
   SideNavItem,
   SideNavItemContent,
   SideNavItemLink,
-  SideNavProps,
-  SidePanel,
-  SidePanelProps
+  SideNavProps
 } from '../src/SideNav';
+import {SidePanel, SidePanelProps} from '../src/SidePanel';
 import {Text} from '../src/Content';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 

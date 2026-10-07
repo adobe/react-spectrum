@@ -435,7 +435,7 @@ describeOrSkip('PromptField', () => {
   describe('submit / generate state', () => {
     it('disables submit when empty and enables it with content', async () => {
       let {user, textbox, getValue, onSubmit} = renderPromptField();
-      let submit = screen.getByRole('button', {name: 'Send'});
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
       expect(submit).toBeDisabled();
 
       await user.click(textbox);
@@ -450,7 +450,7 @@ describeOrSkip('PromptField', () => {
 
     it('shows a Stop button while generating and calls onStop', async () => {
       let {user, onStop} = renderPromptField({isGenerating: true});
-      let stop = screen.getByRole('button', {name: 'Stop'});
+      let stop = screen.getByRole('button', {name: 'Stop AI prompt'});
       expect(stop).toBeEnabled();
 
       await user.click(stop);
@@ -459,35 +459,42 @@ describeOrSkip('PromptField', () => {
 
     it('switches back to submit while typing during generation', async () => {
       let {user, textbox, onSubmit, onStop} = renderPromptField({isGenerating: true});
-      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Stop AI prompt'})).toBeInTheDocument();
 
       await user.click(textbox);
       await user.keyboard('a');
 
-      let submit = screen.getByRole('button', {name: 'Send'});
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
       expect(submit).toBeEnabled();
       await user.keyboard('{Backspace}');
-      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Stop AI prompt'})).toBeInTheDocument();
 
       await user.keyboard('a');
-      submit = screen.getByRole('button', {name: 'Send'});
+      submit = screen.getByRole('button', {name: 'Submit AI prompt'});
       await user.click(submit);
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(onStop).not.toHaveBeenCalled();
     });
 
-    it('makes the field read only while generating when enabled', async () => {
-      let {user, textbox, getValue} = renderPromptField({
+    it('enables submit with attachments and no text', async () => {
+      let {user, onSubmit} = renderPromptField({attachments: [imageAttachment('a1')]});
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
+      expect(submit).toBeEnabled();
+
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it('enables submit with attachments and no text during generation', async () => {
+      let {user, onSubmit} = renderPromptField({
         isGenerating: true,
-        isReadOnlyWhileGenerating: true
+        attachments: [imageAttachment('a1')]
       });
+      let submit = screen.getByRole('button', {name: 'Submit AI prompt'});
+      expect(submit).toBeEnabled();
 
-      await user.click(textbox);
-      await user.keyboard('a');
-
-      expect(getValue().toString()).toBe('');
-      expect(screen.getByRole('button', {name: 'Stop'})).toBeInTheDocument();
-      expect(textbox).toHaveAttribute('data-readonly');
+      await user.click(submit);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -556,11 +563,12 @@ describeOrSkip('PromptField', () => {
     });
   });
 
-  it('fires onKeyDown when a key is pressed in the token field', async () => {
+  it('fires onKeyDown and onKeyUp when a key is pressed in the token field', async () => {
     let onKeyDown = jest.fn();
+    let onKeyUp = jest.fn();
     let {getByRole} = render(
       <PromptField>
-        <PromptTokenField onKeyDown={onKeyDown} />
+        <PromptTokenField onKeyDown={onKeyDown} onKeyUp={onKeyUp} />
       </PromptField>
     );
 
@@ -568,7 +576,10 @@ describeOrSkip('PromptField', () => {
     await user.click(input);
     await user.keyboard('a');
 
-    expect(onKeyDown).toHaveBeenCalled();
+    expect(onKeyDown).toHaveBeenCalledTimes(1);
+    expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({key: 'a'}));
+    expect(onKeyUp).toHaveBeenCalledTimes(1);
+    expect(onKeyUp).toHaveBeenCalledWith(expect.objectContaining({key: 'a'}));
   });
 
   it('does not fire onKeyDown when selecting a virtually focused completion', async () => {

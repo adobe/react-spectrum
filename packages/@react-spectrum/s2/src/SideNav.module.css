@@ -5,7 +5,7 @@
  * Expanding an item is a separate transition, where rows are captured individually instead. */
 
 ::view-transition-group(.side-nav) {
-  /* Keep in sync with the transition on SidePanel in SideNav.tsx. */
+  /* Keep in sync with the transition on SidePanel in SidePanel.tsx. */
   animation-duration: 200ms;
   animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1);
 }

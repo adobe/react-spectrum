@@ -67,9 +67,10 @@ const meta: Meta<typeof CombinedMenu> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', events),
-    children: {table: {disable: true}}
+    children: {table: {disable: true}},
+    isVirtualized: {control: 'boolean'}
   },
-  args: {...getActionArgs(events)},
+  args: {...getActionArgs(events), isVirtualized: false},
   title: 'Menu'
 };
 
@@ -516,7 +517,7 @@ export const HoldAffordance: Story = {
       }}>
       <MenuTrigger trigger="longPress" {...args}>
         <ActionButton size={args.size}>Copy</ActionButton>
-        <Menu>
+        <Menu isVirtualized={args.isVirtualized}>
           <MenuItem>Copy as plain text</MenuItem>
           <MenuItem>Copy as rich text</MenuItem>
           <MenuItem>Copy URL</MenuItem>
@@ -526,7 +527,7 @@ export const HoldAffordance: Story = {
         <ToggleButton aria-label="Crop" size={args.size}>
           <Crop />
         </ToggleButton>
-        <Menu>
+        <Menu isVirtualized={args.isVirtualized}>
           <MenuItem>
             <CropRotate />
             <Text>Crop Rotate</Text>
