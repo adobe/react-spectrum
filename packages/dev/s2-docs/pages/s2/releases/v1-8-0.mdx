@@ -19,27 +19,27 @@ export const section = 'Releases';
 export const tags = ['release', 'S2'];
 export const date = 'October 2, 2026';
 export const title = 'v1.8.0';
-export const description = "This release introduces the new SidePanel component, adds async and virtualized support for Menu, and brings several exciting updates to React Spectrum's AI components!";
+export const description = "This release introduces the new SideNavPanel component, adds async and virtualized support for Menu, and brings several exciting updates to React Spectrum's AI components!";
 export const isSubpage = true;
 
 # v1.8.0
 
-This release introduces [SidePanel](../SidePanel), a component that wraps SideNav and other app chrome in a container that can collapse into a compact icon rail. 
+This release introduces [SideNavPanel](../SideNavPanel), a component that wraps SideNav and other app chrome in a container that can collapse into a compact icon rail. 
 
-```tsx render hideCode type="s2" dir="s2/releases" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
+```tsx render hideCode type="s2" dir="s2/releases" files={['packages/dev/s2-docs/pages/s2/SideNavPanelApp.tsx']}
 "use client";
-import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SidePanel';
-import {SidePanelApp} from '../SidePanelApp';
+import {SideNavPanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNavPanel';
+import {SideNavPanelApp} from '../SideNavPanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
 import Files from '@react-spectrum/s2/icons/Files';
 import Images from '@react-spectrum/s2/icons/Images';
 import Project from '@react-spectrum/s2/icons/Project';
 
-<SidePanelApp defaultSelectedRoute="/files">
+<SideNavPanelApp defaultSelectedRoute="/files">
   {({selectedRoute}) => (
     /*- begin highlight -*/
-    <SidePanel
+    <SideNavPanel
       defaultCollapsed
       styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
     {/*- end highlight -*/}
@@ -98,9 +98,9 @@ import Project from '@react-spectrum/s2/icons/Project';
           </SideNavItem>
         </SideNavSection>
       </SideNav>
-    </SidePanel>
+    </SideNavPanel>
   )}
-</SidePanelApp>
+</SideNavPanelApp>
 ```
 
 It also adds [async loading](../Menu#asynchronous-loading) and [virtualization support](../Menu#virtualized-content) to Menu, and updates the TableView [column menu icon](../TableView#column-menus).
@@ -115,7 +115,6 @@ The Chat and Thread APIs have been simplified, with more styling now handled by 
 ## Changelog
 
 ### General Changes
-- Add `SidePanel` component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10421), [PR](https://github.com/adobe/react-spectrum/pull/10678)
 - Add `scrollbarGutter` to style macro theme - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10682)
 - Update links to the new Spectrum documentation - [@misterbrownlee](https://github.com/misterbrownlee) - [PR](https://github.com/adobe/react-spectrum/pull/10691)
 ### AI Components
@@ -135,6 +134,8 @@ The Chat and Thread APIs have been simplified, with more styling now handled by 
 ### Menu
 - Add async loading support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10541), [PR](https://github.com/adobe/react-spectrum/pull/10609)
 - Add virtualization support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10614), [PR](https://github.com/adobe/react-spectrum/pull/10673)
+### SideNavPanel
+- Add `SideNavPanel` component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10421), [PR](https://github.com/adobe/react-spectrum/pull/10678)
 ### TableView
 - Update column menu icon - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10586)
 
