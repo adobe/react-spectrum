@@ -28,7 +28,7 @@ This release introduces [SidePanel](../SidePanel), a component that wraps SideNa
 
 ```tsx render hideCode type="s2" dir="s2/releases" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
 "use client";
-import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNav';
+import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SidePanel';
 import {SidePanelApp} from '../SidePanelApp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
@@ -110,7 +110,7 @@ It also adds [async loading](../Menu#asynchronous-loading) and [virtualization s
 This release introduces the new [AttachmentGrid](../ai-components#chat-threads) component for displaying collections of attachments, adds disabled state support to [Attachment](../ai-components#attachments-and-actions), and enables attachment-only submissions in PromptField. It also improves accessibility with updated PromptField ARIA labels, fine-tunes the visual layout of UserMessage with updated padding, and includes several bug fixes!
 
 ### Chat/Thread API Updates:
-The Chat and Thread APIs have been simplified, with more styling now handled by the components rather than requiring custom styles. Components like ThreadScrollButton are now automatically included in the Thread and can be removed from your implementation. See the updated [documentation](../ai-components) for usage examples.
+The Chat and Thread APIs have been simplified, with more styling now handled by the components rather than requiring custom styles. Components like ThreadScrollButton are now automatically included in the Thread and must be removed from your implementation. See the updated [documentation](../ai-components) for usage examples.
 
 ## Changelog
 
