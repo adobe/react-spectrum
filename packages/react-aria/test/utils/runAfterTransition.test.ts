@@ -180,7 +180,7 @@ describe('runAfterTransition', () => {
         );
       }
 
-      expect(callback).toHaveBeenCalled();
+      expect(callback).toHaveBeenCalledTimes(1);
     }
   );
 });
