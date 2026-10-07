@@ -128,7 +128,7 @@ export {
   SideNavSection,
   SideNavHeader
 } from '../src/SideNav';
-export {NavPanel, NavPanelContext} from '../src/NavPanel';
+export {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 export {Slider, SliderContext} from '../src/Slider';
 export {Skeleton, useIsSkeleton} from '../src/Skeleton';
 export {SkeletonCollection} from '../src/SkeletonCollection';
@@ -276,7 +276,7 @@ export type {
   SideNavSectionProps,
   SideNavHeaderProps
 } from '../src/SideNav';
-export type {NavPanelProps} from '../src/NavPanel';
+export type {SideNavPanelProps} from '../src/SideNavPanel';
 export type {SkeletonProps} from '../src/Skeleton';
 export type {SkeletonCollectionProps} from '../src/SkeletonCollection';
 export type {StatusLightProps} from '../src/StatusLight';

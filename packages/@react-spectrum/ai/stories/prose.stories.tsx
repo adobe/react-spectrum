@@ -584,7 +584,7 @@ const chatMessages: ChatMessage[] = [
   {id: 1, type: 'prose'}
 ];
 
-function NavPanelExample() {
+function SideNavPanelExample() {
   let [fontSize, setFontSize] = useState(14);
 
   return (
@@ -732,8 +732,8 @@ function NavPanelExample() {
     </div>
   );
 }
-export const NavPanel = {
-  render: () => <NavPanelExample />,
+export const SideNavPanel = {
+  render: () => <SideNavPanelExample />,
   parameters: {
     layout: 'fullscreen'
   }

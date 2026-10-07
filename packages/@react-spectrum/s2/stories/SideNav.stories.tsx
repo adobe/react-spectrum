@@ -30,7 +30,7 @@ import {Image} from '../src/Image';
 import Images from '@react-spectrum/s2/icons/Images';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
-import {NavPanel, NavPanelContext} from '../src/NavPanel';
+import {SideNavPanel, SideNavPanelContext} from '../src/SideNavPanel';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import React, {ReactElement, ReactNode, useContext, useRef, useState} from 'react';
@@ -545,8 +545,8 @@ export const WithLandmark: AppLayoutStoryObj = {
   }
 };
 
-const NavPanelExtraControls = () => {
-  let {isCollapsed = false} = useContext(NavPanelContext);
+const SideNavPanelExtraControls = () => {
+  let {isCollapsed = false} = useContext(SideNavPanelContext);
   return (
     <div
       className={style({
@@ -598,7 +598,7 @@ const NavPanelExtraControls = () => {
   );
 };
 
-export const NavPanelExample = {
+export const SideNavPanelExample = {
   render: args => (
     <div
       className={style({
@@ -619,11 +619,11 @@ export const NavPanelExample = {
         })}>
         <AdobeLogo size={28} />
       </div>
-      <NavPanel
+      <SideNavPanel
         defaultCollapsed
         styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
         aria-label="Side panel">
-        <NavPanelContext.Consumer>
+        <SideNavPanelContext.Consumer>
           {({isCollapsed}) => (
             <div className={style({display: 'flex', flexDirection: 'column', gap: 2})}>
               <AIButton
@@ -637,7 +637,7 @@ export const NavPanelExample = {
               <Divider styles={style({marginY: 16})} />
             </div>
           )}
-        </NavPanelContext.Consumer>
+        </SideNavPanelContext.Consumer>
         <RoutedSideNav
           {...args}
           styles={style({width: 'full'})}
@@ -707,8 +707,8 @@ export const NavPanelExample = {
             </SideNavItem>
           </SideNavSection>
         </RoutedSideNav>
-        <NavPanelExtraControls />
-      </NavPanel>
+        <SideNavPanelExtraControls />
+      </SideNavPanel>
       <div
         className={style({
           gridArea: 'main',
@@ -725,7 +725,7 @@ export const NavPanelExample = {
   }
 };
 
-export const NavPanelExample2 = {
+export const SideNavPanelExample2 = {
   render: args => (
     <div
       className={style({
@@ -747,7 +747,7 @@ export const NavPanelExample2 = {
         })}>
         <AdobeLogo size={28} />
       </div>
-      <NavPanel
+      <SideNavPanel
         defaultCollapsed
         styles={style({gridArea: 'sidebar', marginStart: '[6px]', marginEnd: '[10px]', width: 224})}
         aria-label="Side panel">
@@ -777,7 +777,7 @@ export const NavPanelExample2 = {
             </SideNavItem>
           </SideNavItem>
         </RoutedSideNav>
-      </NavPanel>
+      </SideNavPanel>
       <div
         className={style({
           gridArea: 'main',
@@ -794,8 +794,8 @@ export const NavPanelExample2 = {
   }
 };
 
-// The NavPanel is a flex column, so the nav has to grow and let its SideNav child shrink.
-const navPanelNav = style({
+// The SideNavPanel is a flex column, so the nav has to grow and let its SideNav child shrink.
+const sideNavPanelNav = style({
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
@@ -803,7 +803,7 @@ const navPanelNav = style({
   minHeight: 0
 });
 
-export const NavPanelWithNav = {
+export const SideNavPanelWithNav = {
   render: args => (
     <div
       className={style({
@@ -825,14 +825,14 @@ export const NavPanelWithNav = {
         })}>
         <AdobeLogo size={28} />
       </div>
-      <NavPanel
+      <SideNavPanel
         styles={style({
           gridArea: 'sidebar',
           marginStart: '[6px]',
           marginEnd: '[10px]',
           width: 224
         })}>
-        <nav aria-label="Main" className={navPanelNav}>
+        <nav aria-label="Main" className={sideNavPanelNav}>
           <RoutedSideNav {...args} selectedRoute="/files" defaultExpandedKeys={['projects']}>
             <SideNavItem href="/files" textValue="Files">
               <SideNavItemContent>
@@ -878,8 +878,8 @@ export const NavPanelWithNav = {
             </SideNavSection>
           </RoutedSideNav>
         </nav>
-        <NavPanelExtraControls />
-      </NavPanel>
+        <SideNavPanelExtraControls />
+      </SideNavPanel>
       <main
         className={style({
           gridArea: 'main',
@@ -891,7 +891,7 @@ export const NavPanelWithNav = {
           Workspace
         </Heading>
         <Text styles={style({font: 'body'})}>
-          The SideNav is wrapped in a nav element inside the NavPanel, so only the navigation is
+          The SideNav is wrapped in a nav element inside the SideNavPanel, so only the navigation is
           exposed as a navigation landmark. The panel's other chrome stays outside of it.
         </Text>
       </main>
