@@ -89,6 +89,8 @@ const startTransition: (scope: () => void) => void =
 
 // Transition types, we can easily turn off the animations.
 const PANEL_TRANSITION = sideNavCss['side-panel'];
+// Added alongside PANEL_TRANSITION rather than instead of it. It only tells the stylesheet which
+// edge of the snapshots to anchor, so everything keyed on PANEL_TRANSITION still has to match.
 const PANEL_RTL_TRANSITION = sideNavCss['side-panel-rtl'];
 const SIDE_NAV_CLASS = sideNavCss['side-nav'];
 const ITEM_TRANSITION = sideNavCss['side-nav-item'];
@@ -972,10 +974,9 @@ export const SidePanel = /*#__PURE__*/ forwardRef(function SidePanel(
   useLayoutEffect(() => {
     if (renderedCollapsed !== isCollapsed) {
       startTransition(() => {
+        addTransitionType(PANEL_TRANSITION);
         if (direction === 'rtl') {
           addTransitionType(PANEL_RTL_TRANSITION);
-        } else {
-          addTransitionType(PANEL_TRANSITION);
         }
         setRenderedCollapsed(isCollapsed);
       });
