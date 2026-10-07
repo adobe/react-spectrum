@@ -432,13 +432,15 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   });
 
-  // Prevent native dragging of the item itself on long press if we also select on long press.
+  // Prevent native dragging of the item on long press if we also select on long press.
+  // Descendant drag handles are independent of the item's long press.
   // Once the user is in selection mode, they can long press again to drag.
   // Use a capturing listener to ensure this runs before useDrag, regardless of
   // the order the props get merged.
   let onDragStartCapture = e => {
+    let dragSource = (getEventTarget(e) as Element).closest('[draggable="true"]');
     if (
-      getEventTarget(e) === e.currentTarget &&
+      dragSource === e.currentTarget &&
       modality.current === 'touch' &&
       longPressEnabledOnPressStart.current
     ) {

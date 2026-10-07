@@ -1298,10 +1298,12 @@ describe('GridList', () => {
 
             let dataTransfer = new DataTransfer();
             if (pointerDragSource === 'item') {
-              let event = new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0});
-              fireEvent(row, event);
-              expect(event.defaultPrevented).toBe(true);
-              expect(onDragStart).not.toHaveBeenCalled();
+              for (let target of [row, within(row).getByRole('gridcell')]) {
+                let event = new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0});
+                fireEvent(target, event);
+                expect(event.defaultPrevented).toBe(true);
+                expect(onDragStart).not.toHaveBeenCalled();
+              }
             }
             await user.pointer({target: row, keys: '[/TouchA]'});
 
