@@ -739,7 +739,7 @@ export const Sheet = forwardRef(function Sheet(
   // snap point. Sheets exiting toward the start edge rest at scroll 0 already, so only the end of
   // the scroll content (the smallest snap point) moves. Dual direction sheets get 1px either side.
   // viewportPadding pushes bottom sheets down so that they can scroll beyond the viewport behind the iOS toolbar.
-  let viewportPadding = after && axis === 'y' ? VIEWPORT_PADDING : '0px';
+  let viewportPadding = after && axis === 'y' && !preventDismissal ? VIEWPORT_PADDING : '0px';
   let stageStart = isClamped && after ? clampedTravel : `calc(${viewport} + ${viewportPadding})`;
   let endMarker: string;
   if (isClamped && before && after) {
