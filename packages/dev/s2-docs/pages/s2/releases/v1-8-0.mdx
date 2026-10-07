@@ -19,28 +19,122 @@ export const section = 'Releases';
 export const tags = ['release', 'S2'];
 export const date = 'October 2, 2026';
 export const title = 'v1.8.0';
-export const description = 'This release adds the SidePanel component, async and virtualized support for Menu, and updates the TableView column menu icon.';
+export const description = "This release introduces the new SidePanel component, adds async and virtualized support for Menu, and brings several exciting updates to React Spectrum's AI components!";
 export const isSubpage = true;
 
 # v1.8.0
 
-This release introduces `SidePanel`, a component that wraps `SideNav` and other app chrome in a container that can collapse into a compact icon rail. It also adds async loading and virtualization support to `Menu`, and updates the TableView column menu icon.
+This release introduces [SidePanel](../SidePanel), a component that wraps SideNav and other app chrome in a container that can collapse into a compact icon rail. 
 
+```tsx render hideCode type="s2" dir="s2/releases" files={['packages/dev/s2-docs/pages/s2/SidePanelApp.tsx']}
+"use client";
+import {SidePanel, SideNav, SideNavItem, SideNavItemContent, SideNavItemLink, SideNavSection, SideNavHeader, Text} from '@react-spectrum/s2/SideNav';
+import {SidePanelApp} from '../SidePanelApp';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import CCLibrary from '@react-spectrum/s2/icons/CCLibrary';
+import Files from '@react-spectrum/s2/icons/Files';
+import Images from '@react-spectrum/s2/icons/Images';
+import Project from '@react-spectrum/s2/icons/Project';
+
+<SidePanelApp defaultSelectedRoute="/files">
+  {({selectedRoute}) => (
+    /*- begin highlight -*/
+    <SidePanel
+      defaultCollapsed
+      styles={style({gridArea: 'sidebar', width: 208, marginX: 8})}>
+    {/*- end highlight -*/}
+      <SideNav
+        aria-label="Files"
+        selectedRoute={selectedRoute}
+        defaultExpandedKeys={['projects']}
+        styles={style({width: 'full'})}>
+        <SideNavItem href="/files" textValue="Files">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <Files />
+              <Text>Files</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+        </SideNavItem>
+        <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
+          <SideNavItemContent>
+            <SideNavItemLink>
+              <CCLibrary />
+              <Text>Your Libraries</Text>
+            </SideNavItemLink>
+          </SideNavItemContent>
+          <SideNavItem href="/photos" textValue="Photos">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Images />
+                <Text>Photos</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+          </SideNavItem>
+        </SideNavItem>
+        <SideNavSection>
+          <SideNavHeader>Work</SideNavHeader>
+          <SideNavItem id="projects" href="/projects" textValue="Projects">
+            <SideNavItemContent>
+              <SideNavItemLink>
+                <Project />
+                <Text>Projects</Text>
+              </SideNavItemLink>
+            </SideNavItemContent>
+            <SideNavItem href="/projects/website" textValue="Website redesign">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Text>Website redesign</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+            <SideNavItem href="/projects/mobile" textValue="Mobile app">
+              <SideNavItemContent>
+                <SideNavItemLink>
+                  <Text>Mobile app</Text>
+                </SideNavItemLink>
+              </SideNavItemContent>
+            </SideNavItem>
+          </SideNavItem>
+        </SideNavSection>
+      </SideNav>
+    </SidePanel>
+  )}
+</SidePanelApp>
+```
+
+It also adds [async loading](../Menu#asynchronous-loading) and [virtualization support](../Menu#virtualized-content) to Menu, and updates the TableView [column menu icon](../TableView#column-menus).
+
+## AI Components:
+
+This release introduces the new [AttachmentGrid](../ai-components#chat-threads) component for displaying collections of attachments, adds disabled state support to [Attachment](../ai-components#attachments-and-actions), and enables attachment-only submissions in PromptField. It also improves accessibility with updated PromptField ARIA labels, fine-tunes the visual layout of UserMessage with updated padding, and includes several bug fixes!
+
+### Chat/Thread API Updates:
+The Chat and Thread APIs have been simplified, with more styling now handled by the components rather than requiring custom styles. Components like ThreadScrollButton are now automatically included in the Thread and can be removed from your implementation. See the updated [documentation](../ai-components) for usage examples.
 
 ## Changelog
 
 ### General Changes
-- Add `SidePanel` component, including collapsing SideNav behavior - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10421), [PR](https://github.com/adobe/react-spectrum/pull/10678)
-- Add scrollbarGutter to style macro theme - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10682)
+- Add `SidePanel` component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10421), [PR](https://github.com/adobe/react-spectrum/pull/10678)
+- Add `scrollbarGutter` to style macro theme - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10682)
 - Update links to the new Spectrum documentation - [@misterbrownlee](https://github.com/misterbrownlee) - [PR](https://github.com/adobe/react-spectrum/pull/10691)
-
+### AI Components
+- Add `AttachmentGrid` component - [@DPandyan](https://github.com/DPandyan) - [PR](https://github.com/adobe/react-spectrum/pull/10561)
+- Add `AttachmentBadge` - [@DPandyan](https://github.com/DPandyan) - [PR](https://github.com/adobe/react-spectrum/pull/10594)
+- Add disabled-state support to `AttachmentPreview` - [@DPandyan](https://github.com/DPandyan) - [PR](https://github.com/adobe/react-spectrum/pull/10594)
+- Export `scrollFade` - [@DPandyan](https://github.com/DPandyan) - [PR](https://github.com/adobe/react-spectrum/pull/10594)
+- Refine Chat API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10577)
+- Improve accessibility labels in PromptField - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10693)
+- Update UserMessage padding - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10693)
+- Prevent PromptFieldVoiceButton from overwriting the prompt after submission while dictating- [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10624)
+- Add `onExpandedChange` to ResponseStatus - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10614)
+- Prevent Autocomplete key events from triggering PromptTokenField’s onKeyDownhandler - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10614)
+- Allow users to submit only attachments in PromptField - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10703)
 ### Icons
 - Upgrade open-source workflow icons package - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10586)
-
 ### Menu
 - Add async loading support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10541), [PR](https://github.com/adobe/react-spectrum/pull/10609)
-- Add virtualized Menu support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10614), [PR](https://github.com/adobe/react-spectrum/pull/10673)
-
+- Add virtualization support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10614), [PR](https://github.com/adobe/react-spectrum/pull/10673)
 ### TableView
 - Update column menu icon - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10586)
 
