@@ -216,6 +216,8 @@ export function SheetTrigger(props: SheetTriggerProps) {
 // Additional padding added to the viewport to account for browser toolbar.
 // More content than 100lvh is actually visible on iOS, even when the toolbar is collapsed.
 const VIEWPORT_PADDING = isIOS() && isSafari() ? 'calc(100lvh - 100svh + 58px)' : '0px';
+const viewportPadding = (after: boolean, axis: Axis) =>
+  after && axis === 'y' ? VIEWPORT_PADDING : '0px';
 
 /**
  * A SheetOverlay is a container for a SheetBackdrop and a Sheet.
@@ -278,7 +280,7 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
 
       // iOS displays content outside the reported viewport, e.g. behind the browser toolbar.
       // Add additional margin to account for that so that the sheet disappears only when it is entirely invisible.
-      let rootMargin = `0px 0px ${axis === 'y' && after ? calcToPx(VIEWPORT_PADDING) : '0px'} 0px`;
+      let rootMargin = `0px 0px ${calcToPx(viewportPadding(after, axis))} 0px`;
 
       let hasEntered = false;
       let observer = new IntersectionObserver(
@@ -361,7 +363,10 @@ export const SheetOverlay = forwardRef(function SheetOverlay(
       onEnter={element => {
         // The overlay is the document-anchored wrapper; the swipe gesture scrolls the inner container.
         let scroller = element.querySelector<HTMLElement>('[data-sheet-scroll]')!;
-        let vp = axis === 'y' ? window.innerHeight : window.innerWidth;
+        let vp =
+          axis === 'y'
+            ? window.innerHeight + parseFloat(calcToPx(viewportPadding(after, axis)))
+            : window.innerWidth;
         // Open at the first custom detent when provided, otherwise the fully-entered position.
         let initial = element.querySelector<HTMLElement>('[data-sheet-initial]');
         let scrollToRest = (smooth: boolean) => {
@@ -739,8 +744,10 @@ export const Sheet = forwardRef(function Sheet(
   // snap point. Sheets exiting toward the start edge rest at scroll 0 already, so only the end of
   // the scroll content (the smallest snap point) moves. Dual direction sheets get 1px either side.
   // viewportPadding pushes bottom sheets down so that they can scroll beyond the viewport behind the iOS toolbar.
-  let viewportPadding = after && axis === 'y' && !preventDismissal ? VIEWPORT_PADDING : '0px';
-  let stageStart = isClamped && after ? clampedTravel : `calc(${viewport} + ${viewportPadding})`;
+  let stageStart =
+    isClamped && after
+      ? `calc(${clampedTravel} + ${isTransitioning ? viewportPadding(after, axis) : '0px'})`
+      : `calc(${viewport} + ${viewportPadding(after, axis)})`;
   let endMarker: string;
   if (isClamped && before && after) {
     endMarker = `calc(${stageStart} + ${viewport} + 1px)`;
