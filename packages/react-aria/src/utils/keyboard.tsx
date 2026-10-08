@@ -102,7 +102,7 @@ if (
 if (
   process.env.NODE_ENV === 'test' &&
   typeof window !== 'undefined' &&
-  !Reflect.has(window.screen, 'orientation')
+  !window.screen.orientation
 ) {
   const orientation = Object.assign(new EventTarget(), {
     type: 'landscape-primary'
@@ -129,7 +129,7 @@ function getTouchScreen(): TouchScreen {
   return {
     width: screenWidth * visualScale,
     height: screenHeight * visualScale,
-    angle: window.screen.orientation.angle
+    angle: window.screen.orientation?.angle ?? 0
   };
 }
 
