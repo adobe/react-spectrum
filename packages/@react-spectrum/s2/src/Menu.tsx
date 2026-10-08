@@ -573,8 +573,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
         isIndeterminate
         size="S"
         styles={progressCircleStyles}
-        // Same loading string as table
-        aria-label={stringFormatter.format('table.loadingMore')}
+        aria-label={stringFormatter.format('menu.loadingMore')}
       />
     </AriaMenuLoadMoreItem>
   );
@@ -619,13 +618,11 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
               isIndeterminate
               size="S"
               styles={progressCircleStyles}
-              aria-label={stringFormatter.format('table.loading')}
+              aria-label={stringFormatter.format('menu.loading')}
             />
           </div>
         ) : (
-          <span className={emptyStateText({size})}>
-            {stringFormatter.format('combobox.noResults')}
-          </span>
+          <span className={emptyStateText({size})}>{stringFormatter.format('menu.noResults')}</span>
         )
       }>
       {renderer}

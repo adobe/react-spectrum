@@ -296,7 +296,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     renderEmptyState = () => (
       <div className={centeredWrapper}>
         <div className={loadingSpinnerWrapper}>
-          <ProgressCircle isIndeterminate aria-label={stringFormatter.format('table.loading')} />
+          <ProgressCircle isIndeterminate aria-label={stringFormatter.format('listview.loading')} />
         </div>
       </div>
     );
@@ -311,7 +311,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
         <div className={loadingSpinnerWrapper}>
           <ProgressCircle
             isIndeterminate
-            aria-label={stringFormatter.format('table.loadingMore')}
+            aria-label={stringFormatter.format('listview.loadingMore')}
           />
         </div>
       </div>

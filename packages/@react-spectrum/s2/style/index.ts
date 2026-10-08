@@ -22,8 +22,7 @@ import type {MacroContext} from '@parcel/macros';
 import {StyleString} from './types';
 
 export {baseColor, color, lightDark, colorMix, size, style} from './spectrum-theme';
-export {css, keyframes, scrollFade} from './style-macro';
-export type {ScrollFadeOptions} from './style-macro';
+export {css} from './style-macro';
 export {centerPadding, setColorScheme} from '../src/style-utils';
 export type {StyleString} from './types';
 
