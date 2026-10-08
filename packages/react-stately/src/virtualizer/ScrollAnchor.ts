@@ -194,11 +194,7 @@ export function resolveScrollAdjustment(
   // Two possible responses when content settles: "preserve the anchor" (keep the item the user is
   // looking at in place) or "follow the edge" (keep the viewport pinned to the
   // content edge, e.g. the bottom of a chat)
-  let followEdge =
-    wasNearAnchorEdge &&
-    itemSizeChanged &&
-    contentSizeDelta !== 0 &&
-    changeIsAtEdge;
+  let followEdge = wasNearAnchorEdge && itemSizeChanged && contentSizeDelta !== 0 && changeIsAtEdge;
   if (anchor && !followEdge) {
     let target = computeScrollAnchorTarget(
       anchor,
@@ -212,11 +208,7 @@ export function resolveScrollAdjustment(
     }
   }
 
-  if (
-    wasNearAnchorEdge &&
-    (!itemSizeChanged || contentSizeDelta !== 0) &&
-    changeIsAtEdge
-  ) {
+  if (wasNearAnchorEdge && (!itemSizeChanged || contentSizeDelta !== 0) && changeIsAtEdge) {
     let target = withTarget(getEdgeSnapTarget(edge, axis, contentSize, previousVisibleRect));
     return target.equals(previousVisibleRect) ? null : target;
   }
