@@ -83,26 +83,6 @@ export const description = 'An overlay element which blocks interaction with ele
   ```
 </ExampleSwitcher>
 
-## Sheet
-
-Overlays such as trays, drawers, and sheets can be built using a `Modal` with custom entry and exit animations.
-
-```tsx render type="vanilla" files={["starters/docs/src/Sheet.tsx", "starters/docs/src/Sheet.css"]}
-"use client";
-import {DialogTrigger} from 'react-aria-components/Modal';
-import {Sheet, Heading} from 'vanilla-starter/Sheet';
-import {Button} from 'vanilla-starter/Button';
-
-<DialogTrigger>
-  <Button>Open sheet</Button>
-  <Sheet>
-    <Heading slot="title">Notice</Heading>
-    <p>This is a modal with a custom modal overlay.</p>
-    <Button slot="close">Close</Button>
-  </Sheet>
-</DialogTrigger>
-```
-
 ## Controlled
 
 Use the `isOpen` prop to show a modal programmatically or mount in a different part of the JSX tree (e.g. outside a menu).
@@ -174,10 +154,6 @@ const CustomTrigger = React.forwardRef((props, ref) => (
   <button {...props} ref={ref} />
 ));
 ```
-
-## Examples
-
-<ExampleList tag="modal" pages={props.pages} />
 
 ## API
 
