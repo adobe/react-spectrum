@@ -380,14 +380,10 @@ describe('keyboard without screen.orientation', function () {
     }
   });
 
-  it('does not throw on import when screen.orientation is undefined', function () {
+  it('does not throw on import when screen.orientation is unavailable', function () {
     // Outside of NODE_ENV=test, the jsdom orientation shim is not installed.
     process.env.NODE_ENV = 'production';
-    Object.defineProperty(window.screen, 'orientation', {
-      value: undefined,
-      configurable: true,
-      writable: true
-    });
+    Reflect.deleteProperty(window.screen, 'orientation');
 
     jest.isolateModules(() => {
       expect(() => require('../../src/utils/keyboard')).not.toThrow();
