@@ -564,6 +564,49 @@ describe('GridList', () => {
     expect(gridList).toHaveAttribute('data-empty', 'true');
   });
 
+  it.each([false, true])('should tab through interactive empty state (shift=%s)', async shift => {
+    let {getByRole} = render(
+      <>
+        <button>Before</button>
+        <GridList
+          aria-label="Test"
+          renderEmptyState={() => (
+            <div>
+              <a href="/#">No results</a>
+              <a href="/#">Another link</a>
+            </div>
+          )}>
+          {[]}
+        </GridList>
+        <button>After</button>
+      </>
+    );
+
+    await user.click(getByRole('button', {name: shift ? 'After' : 'Before'}));
+    for (let name of shift ? ['Another link', 'No results'] : ['No results', 'Another link']) {
+      await user.tab({shift});
+      expect(getByRole('link', {name})).toHaveFocus();
+    }
+    await user.tab({shift});
+    expect(getByRole('button', {name: shift ? 'Before' : 'After'})).toHaveFocus();
+  });
+
+  it('should allow text selection in an empty state input', async () => {
+    let {getByRole} = render(
+      <GridList
+        aria-label="Test"
+        selectionMode="multiple"
+        renderEmptyState={() => <input aria-label="Search" defaultValue="hello" />}>
+        {[]}
+      </GridList>
+    );
+
+    let input = getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{Control>}a{/Control}x');
+    expect(input).toHaveValue('x');
+  });
+
   it('should support dynamic collections', () => {
     let items = [
       {id: 'cat', name: 'Cat'},

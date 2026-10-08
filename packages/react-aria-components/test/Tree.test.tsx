@@ -1596,6 +1596,33 @@ describe('Tree', () => {
   });
 
   describe('empty state', () => {
+    it.each([false, true])('should tab through interactive empty state (shift=%s)', async shift => {
+      let {getByRole} = render(
+        <>
+          <button>Before</button>
+          <Tree
+            aria-label="Test"
+            renderEmptyState={() => (
+              <div>
+                <a href="/#">No results</a>
+                <a href="/#">Another link</a>
+              </div>
+            )}>
+            {[]}
+          </Tree>
+          <button>After</button>
+        </>
+      );
+
+      await user.click(getByRole('button', {name: shift ? 'After' : 'Before'}));
+      for (let name of shift ? ['Another link', 'No results'] : ['No results', 'Another link']) {
+        await user.tab({shift});
+        expect(getByRole('link', {name})).toHaveFocus();
+      }
+      await user.tab({shift});
+      expect(getByRole('button', {name: shift ? 'Before' : 'After'})).toHaveFocus();
+    });
+
     it('should navigate to rows that arrive while the empty tree is focused', async () => {
       let Example = ({items}: {items: Array<{id: string; name: string}>}) => (
         <Tree aria-label="Async tree" items={items} renderEmptyState={() => 'No items'}>

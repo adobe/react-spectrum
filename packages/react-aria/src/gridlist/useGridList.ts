@@ -159,6 +159,8 @@ export function useGridList<T>(
     layoutDelegate,
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
+    allowsTabNavigation: state.collection.size === 0,
+    disallowSelectAll: state.collection.size === 0,
     shouldFocusWrap: props.shouldFocusWrap,
     linkBehavior,
     disallowTypeAhead,
