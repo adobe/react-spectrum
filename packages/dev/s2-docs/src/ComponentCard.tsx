@@ -414,6 +414,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Accessible Color Descriptions for Improved Color Pickers': [ColorPickerLight, ColorPickerDark],
   'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark],
   'Introducing React Spectrum': [AdobeLight, AdobeDark],
+  'Scrolling is All You Need: Building a Swipeable Sheet': [SheetLight, SheetDark],
   // Internationalized
   'Internationalized Date': [DateRangePickerLight, DateRangePickerDark],
   'Calendar Interface': [CalendarLight, CalendarDark],
