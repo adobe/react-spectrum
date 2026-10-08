@@ -39,6 +39,7 @@ beforeAll(() => {
   }
   execFileSync(process.execPath, [yarn, 'install', '--mode=skip-build'], {
     cwd: fixture,
+    env: {...process.env, YARN_ENABLE_IMMUTABLE_INSTALLS: 'false'},
     stdio: 'inherit'
   });
 }, 120000);
