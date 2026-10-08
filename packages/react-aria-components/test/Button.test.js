@@ -189,8 +189,8 @@ describe('Button', () => {
 
     act(() => {
       button.blur();
-      fireEvent.keyDown(document.body, {key: 'Tab'});
-      fireEvent.keyUp(document.body, {key: 'Tab'});
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     });
     expect(button).not.toHaveAttribute('data-focused');
     expect(button).not.toHaveAttribute('data-focus-visible');
