@@ -289,7 +289,6 @@ describe('resolveScrollAdjustment', () => {
       anchor,
       false,
       false,
-      false,
       0,
       () => layoutInfo,
       visibleRect,
@@ -308,7 +307,6 @@ describe('resolveScrollAdjustment', () => {
       'y',
       anchor,
       false, // wasNearAnchorEdge -- scrolled away
-      false, // isScrolling
       true, // itemSizeChanged
       50, // contentSizeDelta > 0
       () => layoutInfo,
@@ -329,7 +327,6 @@ describe('resolveScrollAdjustment', () => {
       'y',
       anchor,
       true, // wasNearAnchorEdge -- following the edge
-      false, // isScrolling
       true, // itemSizeChanged -- measurement settle
       50, // contentSizeDelta > 0
       () => layoutInfo,
@@ -350,7 +347,6 @@ describe('resolveScrollAdjustment', () => {
       'y',
       anchor,
       true, // wasNearAnchorEdge -- following the edge
-      false, // isScrolling
       true, // itemSizeChanged -- measurement settle
       -50, // contentSizeDelta < 0 (content shrank)
       () => layoutInfo,
@@ -371,7 +367,6 @@ describe('resolveScrollAdjustment', () => {
       'y',
       anchor,
       true, // wasNearAnchorEdge
-      false, // isScrolling
       true, // itemSizeChanged
       50, // contentSizeDelta > 0
       () => layoutInfo,
@@ -390,7 +385,6 @@ describe('resolveScrollAdjustment', () => {
       'y',
       null,
       true, // wasNearAnchorEdge
-      false, // isScrolling
       true, // itemSizeChanged
       50, // contentSizeDelta > 0
       () => null,
@@ -409,7 +403,6 @@ describe('resolveScrollAdjustment', () => {
       null,
       true,
       false,
-      false,
       0,
       () => null,
       visibleRect,
@@ -425,7 +418,6 @@ describe('resolveScrollAdjustment', () => {
       'y',
       null,
       true,
-      false,
       true,
       50,
       () => null,
@@ -446,7 +438,6 @@ describe('resolveScrollAdjustment', () => {
       null,
       true,
       false,
-      false,
       0,
       () => null,
       atEdge,
@@ -463,24 +454,6 @@ describe('resolveScrollAdjustment', () => {
       null,
       false,
       false,
-      false,
-      0,
-      () => null,
-      visibleRect,
-      contentSize
-    );
-
-    expect(result).toBeNull();
-  });
-
-  it('returns null when the user is actively scrolling, even if near the edge', () => {
-    let result = resolveScrollAdjustment(
-      'end',
-      'y',
-      null,
-      true,
-      true,
-      false,
       0,
       () => null,
       visibleRect,
@@ -496,7 +469,6 @@ describe('resolveScrollAdjustment', () => {
       'y',
       null,
       true,
-      false,
       true,
       0,
       () => null,
@@ -542,7 +514,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -560,7 +531,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -580,7 +550,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -600,7 +569,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -611,7 +579,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -630,7 +597,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -642,7 +608,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize: grownContentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -661,7 +626,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: firstContentSize,
       contentSize: firstContentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -679,7 +643,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: firstContentSize,
       contentSize: grownContentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => anchorLayoutInfo
     });
 
@@ -699,7 +662,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: estimatedContentSize,
       contentSize: estimatedContentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -717,7 +679,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: estimatedContentSize,
       contentSize: measuredContentSize,
       itemSizeChanged: true,
-      isScrolling: false,
       getLayoutInfo: () => movedAnchorInfo
     });
 
@@ -737,7 +698,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: firstContentSize,
       contentSize: firstContentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -755,7 +715,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: firstContentSize,
       contentSize: measuredContentSize,
       itemSizeChanged: true,
-      isScrolling: false,
       getLayoutInfo: () => movedAnchorInfo,
       changeIsAtEdge: false
     });
@@ -775,7 +734,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 
@@ -791,7 +749,6 @@ describe('ScrollAnchorTracker', () => {
       previousContentSize: contentSize,
       contentSize,
       itemSizeChanged: false,
-      isScrolling: false,
       getLayoutInfo: () => null
     });
 

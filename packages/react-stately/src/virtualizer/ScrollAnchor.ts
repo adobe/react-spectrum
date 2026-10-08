@@ -169,7 +169,6 @@ export function resolveScrollAdjustment(
   axis: ScrollAnchorAxis,
   anchor: ScrollAnchor | null,
   wasNearAnchorEdge: boolean,
-  isScrolling: boolean,
   itemSizeChanged: boolean,
   contentSizeDelta: number,
   getLayoutInfo: (key: Key) => LayoutInfo | null,
@@ -197,7 +196,6 @@ export function resolveScrollAdjustment(
   // content edge, e.g. the bottom of a chat)
   let followEdge =
     wasNearAnchorEdge &&
-    !isScrolling &&
     itemSizeChanged &&
     contentSizeDelta !== 0 &&
     changeIsAtEdge;
@@ -216,7 +214,6 @@ export function resolveScrollAdjustment(
 
   if (
     wasNearAnchorEdge &&
-    !isScrolling &&
     (!itemSizeChanged || contentSizeDelta !== 0) &&
     changeIsAtEdge
   ) {
@@ -235,7 +232,6 @@ export interface ResolveAfterLayoutOptions {
   previousContentSize: Size;
   contentSize: Size;
   itemSizeChanged: boolean;
-  isScrolling: boolean;
   getLayoutInfo: (key: Key) => LayoutInfo | null;
   /**
    * Whether the content that changed this pass was at the anchored edge (e.g. the newest item in a
@@ -289,7 +285,6 @@ export class ScrollAnchorTracker {
       previousContentSize,
       contentSize,
       itemSizeChanged,
-      isScrolling,
       getLayoutInfo,
       changeIsAtEdge = true
     } = options;
@@ -329,7 +324,6 @@ export class ScrollAnchorTracker {
       anchorInfo.axis,
       effectiveAnchor,
       wasNearAnchorEdge,
-      isScrolling,
       itemSizeChanged,
       contentSizeDelta,
       getLayoutInfo,

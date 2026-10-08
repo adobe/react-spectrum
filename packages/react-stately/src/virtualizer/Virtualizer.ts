@@ -215,7 +215,6 @@ export class Virtualizer<T extends object, V> {
       previousContentSize,
       contentSize: this.contentSize,
       itemSizeChanged: context.itemSizeChanged ?? false,
-      isScrolling: this._isScrolling,
       getLayoutInfo: (key: Key) => this.layout.getLayoutInfo(key),
       changeIsAtEdge
     });
