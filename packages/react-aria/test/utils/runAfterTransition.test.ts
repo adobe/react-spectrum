@@ -142,45 +142,80 @@ describe('runAfterTransition', () => {
     expect(callback).toHaveBeenCalled();
   });
 
-  it.each([
-    ['hidden', false],
-    ['removed from the document', true]
-  ])(
-    'releases an element after its multiple transitions are cancelled when it is %s',
-    (_, isRemoved) => {
-      const element = appendElement(document.createElement('div'));
-      const callback = jest.fn();
+  it('calls transition end only after all its multiple transitions are cancelled', () => {
+    const element = appendElement(document.createElement('div'));
+    const callback = jest.fn();
 
-      for (const propertyName of ['opacity', 'transform']) {
-        element.dispatchEvent(
-          new TransitionEvent('transitionrun', {
-            propertyName,
-            bubbles: true
-          })
-        );
-      }
-
-      runAfterTransition(callback);
-      act(() => {
-        jest.runOnlyPendingTimers();
-      });
-      expect(callback).not.toHaveBeenCalled();
-
-      if (isRemoved) {
-        cleanupElements();
-      }
-
-      // Browsers dispatch one transitioncancel per property.
-      for (const propertyName of ['opacity', 'transform']) {
-        element.dispatchEvent(
-          new TransitionEvent('transitioncancel', {
-            propertyName,
-            bubbles: true
-          })
-        );
-      }
-
-      expect(callback).toHaveBeenCalledTimes(1);
+    for (const propertyName of ['opacity', 'transform']) {
+      element.dispatchEvent(
+        new TransitionEvent('transitionrun', {
+          propertyName,
+          bubbles: true
+        })
+      );
     }
-  );
+
+    runAfterTransition(callback);
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+    expect(callback).not.toHaveBeenCalled();
+
+    // Browsers dispatch one transitioncancel per property.
+    element.dispatchEvent(
+      new TransitionEvent('transitioncancel', {
+        propertyName: 'opacity',
+        bubbles: true
+      })
+    );
+    expect(callback).not.toHaveBeenCalled();
+
+    element.dispatchEvent(
+      new TransitionEvent('transitioncancel', {
+        propertyName: 'transform',
+        bubbles: true
+      })
+    );
+
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls transition end after multiple transitions are cancelled even after being removed from the document', () => {
+    const element = appendElement(document.createElement('div'));
+    const callback = jest.fn();
+
+    for (const propertyName of ['opacity', 'transform']) {
+      element.dispatchEvent(
+        new TransitionEvent('transitionrun', {
+          propertyName,
+          bubbles: true
+        })
+      );
+    }
+
+    runAfterTransition(callback);
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+    expect(callback).not.toHaveBeenCalled();
+
+    cleanupElements();
+
+    element.dispatchEvent(
+      new TransitionEvent('transitioncancel', {
+        propertyName: 'opacity',
+        bubbles: true
+      })
+    );
+    expect(callback).not.toHaveBeenCalled();
+
+    element.dispatchEvent(
+      new TransitionEvent('transitioncancel', {
+        propertyName: 'transform',
+        bubbles: true
+      })
+    );
+
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
 });
