@@ -36,7 +36,6 @@ import {useDescription} from '../utils/useDescription';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useId} from '../utils/useId';
-import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMemo, useRef} from 'react';
@@ -128,11 +127,6 @@ export function useDatePicker<T extends DateValue>(
     }
   });
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown: props.onKeyDown,
-    onKeyUp: props.onKeyUp
-  });
-
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
       role: 'group' as const,
@@ -144,14 +138,18 @@ export function useDatePicker<T extends DateValue>(
           return;
         }
 
-        keyboardProps.onKeyDown?.(e);
+        if (props.onKeyDown) {
+          props.onKeyDown(e);
+        }
       },
       onKeyUp(e: KeyboardEvent) {
         if (state.isOpen) {
           return;
         }
 
-        keyboardProps.onKeyUp?.(e);
+        if (props.onKeyUp) {
+          props.onKeyUp(e);
+        }
       }
     }),
     labelProps: {
