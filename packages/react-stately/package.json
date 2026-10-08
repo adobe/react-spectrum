@@ -1,6 +1,6 @@
 {
   "name": "react-stately",
-  "version": "3.50.0",
+  "version": "3.51.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "./dist/exports/index.cjs",
@@ -43,9 +43,9 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
-    "@internationalized/number": "^3.6.8",
+    "@internationalized/number": "^3.6.9",
     "@internationalized/string": "^3.2.10",
-    "@react-types/shared": "^3.36.1",
+    "@react-types/shared": "^3.37.0",
     "@swc/helpers": "^0.5.0",
     "use-sync-external-store": "^1.6.0"
   },
