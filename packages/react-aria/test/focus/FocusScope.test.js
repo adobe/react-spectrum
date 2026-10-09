@@ -21,7 +21,7 @@ import {
 import {defaultTheme} from '@adobe/react-spectrum/defaultTheme';
 import {DialogContainer} from '@adobe/react-spectrum/DialogContainer';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
-import {FocusScope, useFocusManager} from '../../src/focus/FocusScope';
+import {FocusScope, setFocusScopeRestoreTarget, useFocusManager} from '../../src/focus/FocusScope';
 import {focusScopeTree} from '../../src/focus/FocusScope';
 import {Provider} from '@adobe/react-spectrum/Provider';
 import React, {useEffect, useState} from 'react';
@@ -424,6 +424,48 @@ describe('FocusScope', function () {
   });
 
   describe('focus restoration', function () {
+    it('should set the fallback on the nearest restoring scope', function () {
+      function Test({show = true}) {
+        return (
+          <FocusScope restoreFocus>
+            <button>Trigger</button>
+            {show && (
+              <FocusScope restoreFocus>
+                <div data-testid="overlay">
+                  <input aria-label="Inside" />
+                </div>
+              </FocusScope>
+            )}
+          </FocusScope>
+        );
+      }
+
+      let {getByRole, getByTestId, rerender} = render(<Test />);
+      let trigger = getByRole('button');
+      act(() => {
+        setFocusScopeRestoreTarget(getByTestId('overlay'), trigger);
+        getByRole('textbox').focus();
+      });
+      rerender(<Test show={false} />);
+      act(() => jest.runAllTimers());
+      expect(trigger).toHaveFocus();
+    });
+
+    it('should not change an ancestor scope that also contains the trigger', function () {
+      let {getByRole, getByTestId} = render(
+        <FocusScope restoreFocus>
+          <button>Trigger</button>
+          <div data-testid="overlay">
+            <input />
+          </div>
+        </FocusScope>
+      );
+      let scope = [...focusScopeTree.traverse()][0];
+      expect(scope.nodeToRestore).toBe(document.body);
+      setFocusScopeRestoreTarget(getByTestId('overlay'), getByRole('button'));
+      expect(scope.nodeToRestore).toBe(document.body);
+    });
+
     it('should restore focus to the previously focused node on unmount', function () {
       function Test({show}) {
         return (
