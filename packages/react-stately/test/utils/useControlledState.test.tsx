@@ -142,6 +142,50 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
+  it.each(['value', 'function'])(
+    'resets to the controlled value after repeated rejected %s updates',
+    updateType => {
+      let onChange = jest.fn();
+      let {result} = renderHook(() => useControlledState(10, 10, onChange));
+
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        act(() => {
+          result.current[1](updateType === 'function' ? value => value + 1 : 11, attempt);
+        });
+        expect(result.current[0]).toBe(10);
+        expect(onChange).toHaveBeenCalledTimes(attempt);
+        expect(onChange).toHaveBeenLastCalledWith(11, attempt);
+      }
+
+      act(() => {
+        result.current[1](value => {
+          expect(value).toBe(10);
+          return value;
+        });
+      });
+      expect(onChange).toHaveBeenCalledTimes(3);
+    }
+  );
+
+  it('uses each pending update before the controlled parent accepts a value', () => {
+    let onChange = jest.fn();
+    let {result} = renderHook(() => useControlledState(10, 10, onChange));
+
+    act(() => {
+      result.current[1](value => value + 1);
+      expect(onChange).toHaveBeenLastCalledWith(11);
+      result.current[1](value => value + 1);
+      expect(onChange).toHaveBeenLastCalledWith(12);
+      result.current[1](12);
+      expect(onChange).toHaveBeenCalledTimes(2);
+    });
+    expect(result.current[0]).toBe(10);
+
+    act(() => result.current[1](value => value + 1));
+    expect(onChange.mock.calls).toEqual([[11], [12], [11]]);
+    expect(result.current[0]).toBe(10);
+  });
+
   it('can handle controlled callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() =>

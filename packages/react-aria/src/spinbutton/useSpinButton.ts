@@ -59,10 +59,8 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
   } = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/spinbutton');
 
-  let isSpinning = useRef(false);
   const clearAsync = useCallback(() => {
     clearTimeout(_async.current);
-    isSpinning.current = false;
   }, []);
   const clearAsyncEvent = useEffectEvent(() => {
     clearAsync();
@@ -178,7 +176,6 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
 
   const onIncrementPressStartEvent = useEffectEvent((initialStepDelay: number) => {
     clearAsyncEvent();
-    isSpinning.current = true;
     // Start spinning after initial delay
     _async.current = window.setTimeout(stepUpEvent, initialStepDelay);
   });
@@ -199,7 +196,6 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
 
   const onDecrementPressStartEvent = useEffectEvent((initialStepDelay: number) => {
     clearAsyncEvent();
-    isSpinning.current = true;
     // Start spinning after initial delay
     _async.current = window.setTimeout(stepDownEvent, initialStepDelay);
   });
@@ -261,8 +257,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         } else {
           addGlobalListener(window, 'pointercancel', onPointerCancel, {capture: true});
           isUp.current = false;
-          // For touch users, don't trigger a decrement on press start, we'll wait for the press end to trigger it if
-          // the control isn't spinning.
+          // For touch users, wait for press end to increment.
           setIsIncrementPressed('touch');
         }
         addGlobalListener(window, 'contextmenu', cancelContextMenu);
@@ -278,7 +273,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       onPressEnd: e => {
         clearAsync();
         if (e.pointerType === 'touch') {
-          if (!isSpinning.current && isUp.current) {
+          if (isUp.current) {
             onIncrement?.();
           }
         }
@@ -297,8 +292,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         } else {
           addGlobalListener(window, 'pointercancel', onPointerCancel, {capture: true});
           isUp.current = false;
-          // For touch users, don't trigger a decrement on press start, we'll wait for the press end to trigger it if
-          // the control isn't spinning.
+          // For touch users, wait for press end to decrement.
           setIsDecrementPressed('touch');
         }
       },
@@ -313,7 +307,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       onPressEnd: e => {
         clearAsync();
         if (e.pointerType === 'touch') {
-          if (!isSpinning.current && isUp.current) {
+          if (isUp.current) {
             onDecrement?.();
           }
         }

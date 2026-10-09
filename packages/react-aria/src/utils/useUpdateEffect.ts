@@ -15,22 +15,16 @@ import {useEffectEvent} from './useEffectEvent';
 
 // Like useEffect, but only called for updates after the initial render.
 export function useUpdateEffect(cb: EffectCallback, dependencies: any[]): void {
-  const isInitialMount = useRef(true);
   const lastDeps = useRef<any[] | null>(null);
   let cbEvent = useEffectEvent(cb);
 
   useEffect(() => {
-    isInitialMount.current = true;
-    return () => {
-      isInitialMount.current = false;
-    };
+    lastDeps.current = null;
   }, []);
 
   useEffect(() => {
     let prevDeps = lastDeps.current;
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else if (!prevDeps || dependencies.some((dep, i) => !Object.is(dep, prevDeps[i]))) {
+    if (prevDeps && dependencies.some((dep, i) => !Object.is(dep, prevDeps[i]))) {
       cbEvent();
     }
     lastDeps.current = dependencies;
