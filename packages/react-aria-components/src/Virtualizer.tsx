@@ -17,15 +17,36 @@ import {
   CollectionRootProps,
   renderAfterDropIndicators
 } from './Collection';
-import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
+import {
+  DropTargetDelegate,
+  ItemDropTarget,
+  Key,
+  Node,
+  RefObject,
+  ScrollDelegate
+} from '@react-types/shared';
+import {flushSync} from 'react-dom';
 import {
   Layout,
   ReusableView,
   useVirtualizerState,
   VirtualizerState
 } from 'react-stately/useVirtualizerState';
-import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useContext,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {scrollIntoView} from 'react-aria/private/utils/scrollIntoView';
 import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
+import {useSyncRef} from 'react-aria/private/utils/useSyncRef';
 import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
@@ -40,6 +61,8 @@ interface ILayout<O>
 interface LayoutClass<O> {
   new (): ILayout<O>;
 }
+
+export interface VirtualizerRef extends ScrollDelegate {}
 
 export interface VirtualizerProps<O> {
   /** The child collection to virtualize (e.g. ListBox, GridList, or Table). */
@@ -58,6 +81,9 @@ interface VirtualizerOptionsContextValue {
   layout: ILayout<any>;
   layoutOptions?: any;
   shouldObserveItemSize?: boolean;
+  scrollRef: RefObject<HTMLElement | null>;
+  rendered: Map<Key, Element>;
+  persistedKeys: Set<Key>;
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
@@ -68,33 +94,85 @@ const VirtualizerOptionsContext = createContext<VirtualizerOptionsContextValue |
  * It supports very large collections by only rendering visible items to the DOM, reusing
  * them as the user scrolls.
  */
-export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
+export const Virtualizer = /*#__PURE__*/ forwardRef(function Virtualizer<O>(
+  props: VirtualizerProps<O>,
+  forwardedRef: ForwardedRef<VirtualizerRef>
+) {
   let {children, layout: layoutProp, layoutOptions, shouldObserveItemSize} = props;
+
   let layout = useMemo(
     () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
     [layoutProp]
   );
+
+  let [rendered] = useState<Map<Key, Element>>(() => new Map());
+  let [persistedKeys, setPersistedKeys] = useState<Set<Key>>(() => new Set());
+
+  let render = useCallback((type: string, node: Node<unknown>) => {
+    setPersistedKeys(keys => keys.union(new Set([node.key])));
+    return () => setPersistedKeys(keys => keys.difference(new Set([node.key])));
+  }, []);
+
+  // TODO(later): Unpersist after scroll once scrollIntoView is promisified.
+  let scrollRef = useRef<HTMLElement | null>(null);
+  let scrollTarget = useRef<Function | null>(null);
+  let scrollDelegate = useMemo<ScrollDelegate>(
+    () => ({
+      async scrollIntoView(key: Key, options?: ScrollIntoViewOptions) {
+        let container = scrollRef.current;
+        let virtualizer = layout.virtualizer;
+
+        let item = virtualizer?.collection.getItem(key);
+
+        if (container == null || item == null) {
+          return {interrupted: false};
+        }
+
+        scrollTarget.current?.();
+        scrollTarget.current = flushSync(() => render(item.type, item));
+
+        let target = rendered.get(key);
+        if (target instanceof HTMLElement) {
+          scrollIntoView(container, target, options);
+        }
+
+        return {interrupted: false};
+      }
+    }),
+    [layout, render, rendered]
+  );
+
+  useImperativeHandle(
+    forwardedRef,
+    () => ({
+      ...scrollDelegate
+    }),
+    [scrollDelegate]
+  );
+
   let renderer: CollectionRenderer = useMemo(
     () => ({
       isVirtualized: true,
       layoutDelegate: layout,
+      scrollDelegate: scrollDelegate,
       dropTargetDelegate: layout.getDropTargetFromPoint
         ? (layout as DropTargetDelegate)
         : undefined,
       CollectionRoot,
       CollectionBranch
     }),
-    [layout]
+    [layout, scrollDelegate]
   );
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <VirtualizerOptionsContext.Provider value={{layout, layoutOptions, shouldObserveItemSize}}>
+      <VirtualizerOptionsContext.Provider
+        value={{layout, layoutOptions, shouldObserveItemSize, persistedKeys, scrollRef, rendered}}>
         {children}
       </VirtualizerOptionsContext.Provider>
     </CollectionRendererContext.Provider>
   );
-}
+});
 
 function CollectionRoot({
   collection,
@@ -102,7 +180,15 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions, shouldObserveItemSize} = useContext(VirtualizerOptionsContext)!;
+  let {
+    layout,
+    layoutOptions,
+    shouldObserveItemSize,
+    persistedKeys: persistedKeys2,
+    scrollRef: ref,
+    rendered
+  } = useContext(VirtualizerOptionsContext)!;
+  useSyncRef({ref}, scrollRef);
   // oxlint-disable-next-line react/react-compiler
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
@@ -110,7 +196,13 @@ function CollectionRoot({
     layout,
     collection,
     renderView: (type, item) => {
-      return item?.render?.(item);
+      return item?.render?.(item, element => {
+        if (element) {
+          rendered.set(item.key, element);
+        } else {
+          rendered.delete(item.key);
+        }
+      });
     },
     onVisibleRectChange(rect) {
       let element = scrollRef?.current;
@@ -120,7 +212,13 @@ function CollectionRoot({
         element.scrollTop = rect.y;
       }
     },
-    persistedKeys,
+    persistedKeys: useMemo(
+      () =>
+        persistedKeys && persistedKeys2
+          ? persistedKeys.union(persistedKeys2)
+          : persistedKeys || persistedKeys2,
+      [persistedKeys, persistedKeys2]
+    ),
     layoutOptions: useMemo(
       () =>
         layoutOptions && layoutOptions2

@@ -17,6 +17,7 @@ import {createPortal} from 'react-dom';
 import {FocusableContext} from '../interactions/useFocusable';
 import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
+import {mergeRefs} from '../utils/mergeRefs';
 import React, {
   createContext,
   ForwardedRef,
@@ -162,7 +163,7 @@ function useSSRCollectionNode<T extends Element>(
   ref: ForwardedRef<T>,
   rendered?: any,
   children?: ReactNode,
-  render?: (node: Node<any>) => ReactElement
+  render?: (node: Node<any>, ref?: ForwardedRef<T>) => ReactElement
 ) {
   // To prevent breaking change, if CollectionNodeClass is a string, create a CollectionNodeClass using the string as the type
   if (typeof CollectionNodeClass === 'string') {
@@ -213,7 +214,12 @@ export function createLeafComponent<P extends object, E extends Element>(
   CollectionNodeClass: CollectionNodeClass<any> | string,
   render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null
 ): (props: P & React.RefAttributes<any>) => ReactElement | null {
-  let Component = ({node}) => render(node.props, node.props.ref, node);
+  let Component = (forwardRef as forwardRefType)(
+    ({node}: {node: Node<any>}, ref?: ForwardedRef<E>) => {
+      let mergedRef = useMemo(() => mergeRefs(node.props.ref, ref), [node.props.ref, ref]);
+      return render(node.props, mergedRef, node);
+    }
+  );
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let focusableProps = useContext(FocusableContext);
     let isShallow = useContext(ShallowRenderContext);
@@ -230,10 +236,10 @@ export function createLeafComponent<P extends object, E extends Element>(
       ref,
       'children' in props ? props.children : null,
       null,
-      node => (
+      (node, ref) => (
         // Forward FocusableContext to real DOM tree so tooltips work.
         <FocusableContext.Provider value={focusableProps}>
-          <Component node={node} />
+          <Component node={node} ref={ref} />
         </FocusableContext.Provider>
       )
     );
@@ -248,12 +254,17 @@ export function createBranchComponent<T, P extends {children?: any}, E extends E
   render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null,
   useChildren: (props: P) => ReactNode = useCollectionChildren
 ): (props: P & React.RefAttributes<E>) => ReactElement | null {
-  let Component = ({node}) => render(node.props, node.props.ref, node);
+  let Component = (forwardRef as forwardRefType)(
+    ({node}: {node: Node<any>}, ref?: ForwardedRef<E>) => {
+      let mergedRef = useMemo(() => mergeRefs(node.props.ref, ref), [node.props.ref, ref]);
+      return render(node.props, mergedRef, node);
+    }
+  );
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);
     return (
-      useSSRCollectionNode(CollectionNodeClass, props, ref, null, children, node => (
-        <Component node={node} />
+      useSSRCollectionNode(CollectionNodeClass, props, ref, null, children, (node, ref) => (
+        <Component node={node} ref={ref} />
       )) ?? <></>
     );
   });
