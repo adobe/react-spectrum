@@ -17,11 +17,10 @@ import {
   ClipboardEventHandler,
   CompositionEventHandler,
   CSSProperties,
-  FormEvent,
-  FormEventHandler,
   FormHTMLAttributes,
   HTMLAttributeAnchorTarget,
   HTMLAttributeReferrerPolicy,
+  InputEventHandler,
   MouseEventHandler,
   PointerEventHandler,
   DOMAttributes as ReactDOMAttributes,
@@ -33,6 +32,7 @@ import {
   WheelEventHandler
 } from 'react';
 import {ValidationErrors} from './inputs';
+import {ReactSubmitEventHandler} from './events';
 
 export interface AriaLabelingProps {
   /**
@@ -138,12 +138,12 @@ export interface TextInputDOMEvents<T = HTMLInputElement> {
    * Handler that is called when the input value is about to be modified. See
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event).
    */
-  onBeforeInput?: FormEventHandler<T>;
+  onBeforeInput?: InputEventHandler<T>;
   /**
    * Handler that is called when the input value is modified. See
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
    */
-  onInput?: FormEventHandler<T>;
+  onInput?: InputEventHandler<T>;
 }
 
 export interface InputDOMProps {
@@ -431,15 +431,15 @@ export interface FormProps extends AriaLabelingProps {
   /**
    * Triggered when a user submits the form.
    */
-  onSubmit?: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit?: ReactSubmitEventHandler<HTMLFormElement>;
   /**
    * Triggered when a user resets the form.
    */
-  onReset?: (event: FormEvent<HTMLFormElement>) => void;
+  onReset?: ReactEventHandler<HTMLFormElement>;
   /**
    * Triggered for each invalid field when a user submits the form.
    */
-  onInvalid?: (event: FormEvent<HTMLFormElement>) => void;
+  onInvalid?: ReactEventHandler<HTMLFormElement>;
   /**
    * Indicates whether input elements can by default have their values automatically completed by
    * the browser. See
