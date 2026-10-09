@@ -26,7 +26,9 @@ import {I18nProvider} from 'react-aria';
 import {Key} from '@react-types/shared';
 import React from 'react';
 import {render} from 'vitest-browser-react';
+import {TableLayout} from '../src/TableLayout';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../src/Virtualizer';
 
 it('keeps changing column collections within a fixed viewport', async () => {
   function Example({count}: {count: number}) {
@@ -133,9 +135,9 @@ it('preserves fixed and percentage column constraints as the viewport changes', 
     [280, 75]
   ]) {
     await screen.rerender(<Example width={width} />);
-    await expect.poll(() => share.offsetWidth).toBe(shareWidth);
+    await expect.poll(() => table.offsetWidth).toBe(Math.max(width, 350));
+    expect(share.offsetWidth).toBe(shareWidth);
     expect(fixed.offsetWidth).toBe(200);
-    expect(table.offsetWidth).toBe(Math.max(width, 350));
   }
 });
 
@@ -311,5 +313,39 @@ it.each(
       await expect.poll(() => table.getBoundingClientRect().width).toBe(width);
       expect(header.getBoundingClientRect().width).toBe(resizedWidth);
     }
+  }
+);
+
+it.each(['block', 'table', 'inline-table'] as const)(
+  'preserves virtualized div table widths with display: %s',
+  async display => {
+    let {container} = await render(
+      <ResizableTableContainer style={{width: 600}}>
+        <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 30, headingHeight: 30}}>
+          <Table aria-label="Files" style={{display, width: 600, height: 120, overflow: 'auto'}}>
+            <TableHeader>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="files">
+                <Cell>Documents</Cell>
+                <Cell>Folder</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+        </Virtualizer>
+      </ResizableTableContainer>
+    );
+    let table = container.querySelector<HTMLElement>('[role="grid"]')!;
+    expect(table.tagName).toBe('DIV');
+    await expect
+      .poll(() =>
+        Array.from(table.querySelectorAll<HTMLElement>('[role="columnheader"]')).map(
+          column => column.style.width
+        )
+      )
+      .toEqual(['300px', '300px']);
+    expect(table.offsetWidth).toBe(600);
   }
 );

@@ -9,7 +9,7 @@ function hasResizeObserver() {
 type useResizeObserverOptionsType<T> = {
   ref: RefObject<T | undefined | null> | undefined;
   box?: ResizeObserverBoxOptions;
-  onResize: (entry?: ResizeObserverEntry) => void;
+  onResize: () => void;
 };
 
 export function useResizeObserver<T extends Element>(
@@ -27,10 +27,9 @@ export function useResizeObserver<T extends Element>(
     }
 
     if (!hasResizeObserver()) {
-      let onResize = () => onResizeEvent();
-      window.addEventListener('resize', onResize, false);
+      window.addEventListener('resize', onResizeEvent, false);
       return () => {
-        window.removeEventListener('resize', onResize, false);
+        window.removeEventListener('resize', onResizeEvent, false);
       };
     } else {
       const resizeObserverInstance = new window.ResizeObserver(entries => {
@@ -38,7 +37,7 @@ export function useResizeObserver<T extends Element>(
           return;
         }
 
-        onResizeEvent(entries[0]);
+        onResizeEvent();
       });
       resizeObserverInstance.observe(element, {box});
 

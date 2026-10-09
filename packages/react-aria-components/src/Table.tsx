@@ -119,7 +119,6 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
 import {useObjectRef} from 'react-aria/useObjectRef';
-import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {
   useTable,
   useTableCell,
@@ -509,23 +508,28 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
     scrollRef.current = table;
   }, [containerRef]);
 
-  let updateWidth = useCallback((entry?: ResizeObserverEntry) => {
+  let updateWidth = useCallback((entries: ResizeObserverEntry[] = []) => {
     let width = scrollRef.current?.clientWidth ?? 0;
     let table = tableRef.current;
-    if (table?.tagName === 'TABLE') {
+    let style = table && window.getComputedStyle(table);
+    if (
+      table &&
+      style &&
+      (style.display === 'table' || style.display === 'inline-table') &&
+      table.style.width === 'min-content'
+    ) {
       if (!allocatedWidth.current) {
         return;
       }
       // Spacing outside the columns must not feed back into their available width.
       // Otherwise a flex ancestor's intrinsic minimum grows on every resize.
-      let style = window.getComputedStyle(table);
       width -= (parseFloat(style.marginLeft) || 0) + (parseFloat(style.marginRight) || 0);
       if (scrollRef.current && scrollRef.current !== table) {
         let scrollStyle = window.getComputedStyle(scrollRef.current);
         width -=
           (parseFloat(scrollStyle.paddingLeft) || 0) + (parseFloat(scrollStyle.paddingRight) || 0);
       }
-      let box = entry?.target === table ? entry.borderBoxSize?.[0] : undefined;
+      let box = entries.find(entry => entry.target === table)?.borderBoxSize?.[0];
       let tableWidth = box
         ? style.writingMode === 'horizontal-tb'
           ? box.inlineSize
@@ -536,19 +540,23 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
     setWidth(Math.max(0, width));
   }, []);
 
-  useResizeObserver({
-    ref: scrollRef,
-    box: 'border-box',
-    onResize: updateWidth
-  });
+  useLayoutEffect(() => updateWidth(), [updateWidth]);
 
-  useResizeObserver({
-    ref: tableRef,
-    box: 'border-box',
-    onResize: updateWidth
-  });
-
-  useLayoutEffect(updateWidth, [updateWidth]);
+  useEffect(() => {
+    if (typeof ResizeObserver === 'undefined') {
+      let onResize = () => updateWidth();
+      window.addEventListener('resize', onResize);
+      return () => window.removeEventListener('resize', onResize);
+    }
+    let observer = new ResizeObserver(updateWidth);
+    if (scrollRef.current) {
+      observer.observe(scrollRef.current, {box: 'border-box'});
+    }
+    if (tableRef.current && tableRef.current !== scrollRef.current) {
+      observer.observe(tableRef.current, {box: 'border-box'});
+    }
+    return () => observer.disconnect();
+  }, [updateWidth]);
 
   let onColumnWidthsChange = useCallback(
     (width: number) => {

@@ -2140,7 +2140,7 @@ describe('Table', () => {
           onResizeStart={onResizeStart}
           onResize={onResize}
           onResizeEnd={onResizeEnd}>
-          <Table aria-label="Files" style={{borderSpacing: 0}} {...otherProps}>
+          <Table aria-label="Files" {...otherProps}>
             <MyTableHeader columns={columns}>
               {column => (
                 <MyColumn {...column} isRowHeader={column.id === 'name'}>
@@ -2173,7 +2173,7 @@ describe('Table', () => {
             props.onResize?.(w);
           }}
           onResizeEnd={props.onResizeEnd}>
-          <Table aria-label="Files" style={{borderSpacing: 0}}>
+          <Table aria-label="Files">
             <MyTableHeader columns={cols}>
               {column => (
                 <MyColumn
