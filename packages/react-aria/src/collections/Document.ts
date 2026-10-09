@@ -438,6 +438,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   private subscriptions: Set<() => void> = new Set();
   private queuedRender = false;
   private inSubscription = false;
+  private isHydrating = false;
 
   constructor(collection: C) {
     // @ts-ignore
@@ -512,7 +513,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
-    // If in a subscription update, return return the existing collection.
+    // If in a subscription update, return the existing collection.
     // React will call getCollection again during render, at which point all the updates will be complete.
     if (this.inSubscription) {
       return this.collection;
@@ -526,6 +527,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   updateCollection(): void {
+    if (this.isHydrating) {
+      return;
+    }
+
     // First, remove disconnected nodes and update the indices of dirty element children.
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
@@ -568,7 +573,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   queueUpdate(): void {
-    if (this.dirtyNodes.size === 0 || this.queuedRender) {
+    if (this.isHydrating || this.dirtyNodes.size === 0 || this.queuedRender) {
       return;
     }
 
@@ -585,6 +590,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     // the new collection.
     if (!this.isSSR) {
       this.collection = this.collection.clone();
+      this.nextCollection = this.collection;
     }
 
     for (let fn of this.subscriptions) {
@@ -607,11 +613,24 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   resetAfterSSR(): void {
     if (this.isSSR) {
-      this.isSSR = false;
+      for (let node of this) {
+        node.parentNode = null;
+      }
       this.firstChild = null;
       this.lastChild = null;
+      this.nextCollection = null;
+      this.isHydrating = true;
       this.nodeId = 0;
       this.keyOwners.clear();
+    }
+  }
+
+  queueUpdateAfterSSR(): void {
+    if (this.isHydrating) {
+      this.isSSR = false;
+      this.isHydrating = false;
+      this.queuedRender = false;
+      this.queueUpdate();
     }
   }
 }
