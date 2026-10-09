@@ -150,7 +150,7 @@ export interface AriaPositionProps extends PositionProps {
    * @default target.getBoundingClientRect()
    * @param target - The target element.
    */
-  getTargetRect?: (target: Element) => DOMRect | null | undefined;
+  getTargetRect?: (target: Element) => DOMRectReadOnly | null | undefined;
 }
 
 export interface PositionAria {
