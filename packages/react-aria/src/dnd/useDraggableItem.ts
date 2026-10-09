@@ -13,11 +13,16 @@
 import {AriaButtonProps} from '../button/useButton';
 import {
   clearGlobalDnDState,
+  getDragModality,
+  globalDndState,
   isInternalDropOperation,
   setDraggingKeys,
   useDragModality
 } from './utils';
 import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
+import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
+import {getItemElement} from '../selection/utils';
+import {getOwnerWindow} from '../utils/domHelpers';
 import {HTMLAttributes} from 'react';
 import intlMessages from '../../intl/dnd/*.json';
 import {Key} from '@react-types/shared';
@@ -91,6 +96,27 @@ export function useDraggableItem(
     },
     onDragEnd(e) {
       let {dropOperation} = e;
+      // A keyboard/virtual drag can outlive its row when a tree branch collapses.
+      // Restore to the nearest mounted ancestor before the application callback,
+      // which remains free to choose a different focus destination.
+      let collectionRef = globalDndState.draggingCollectionRef;
+      let modality = getDragModality();
+      if (
+        dropOperation === 'cancel' &&
+        (modality === 'keyboard' || modality === 'virtual') &&
+        collectionRef?.current &&
+        !getItemElement(collectionRef, props.key)
+      ) {
+        let item = state.collection.getItem(props.key);
+        while (item?.parentKey != null) {
+          let element = getItemElement(collectionRef, item.parentKey);
+          if (element instanceof getOwnerWindow(collectionRef.current).HTMLElement) {
+            focusWithoutScrolling(element);
+            break;
+          }
+          item = state.collection.getItem(item.parentKey);
+        }
+      }
       let isInternal = dropOperation === 'cancel' ? false : isInternalDropOperation();
       state.endDrag({...e, keys: state.draggingKeys, isInternal});
       clearGlobalDnDState();
