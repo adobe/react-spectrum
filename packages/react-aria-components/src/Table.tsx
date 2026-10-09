@@ -446,7 +446,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
 interface ResizableTableContainerContextValue {
   tableWidth: number;
-  onColumnsChange: (columnCount: number) => void;
+  onColumnWidthsChange: (width: number) => void;
   tableRef: RefObject<HTMLTableElement | null>;
   scrollRef: RefObject<HTMLElement | null>;
   // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using ResizableTableContainer.
@@ -494,7 +494,7 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
   let tableRef = useRef<HTMLTableElement>(null);
   let scrollRef = useRef<HTMLElement | null>(null);
   let [width, setWidth] = useState(0);
-  let columnCount = useRef(0);
+  let allocatedWidth = useRef(0);
 
   useLayoutEffect(() => {
     // Walk up the DOM from the Table to the ResizableTableContainer and stop
@@ -509,11 +509,11 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
     scrollRef.current = table;
   }, [containerRef]);
 
-  let updateWidth = useCallback(() => {
+  let updateWidth = useCallback((entry?: ResizeObserverEntry) => {
     let width = scrollRef.current?.clientWidth ?? 0;
     let table = tableRef.current;
     if (table?.tagName === 'TABLE') {
-      if (!columnCount.current) {
+      if (!allocatedWidth.current) {
         return;
       }
       // Spacing outside the columns must not feed back into their available width.
@@ -525,22 +525,13 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
         width -=
           (parseFloat(scrollStyle.paddingLeft) || 0) + (parseFloat(scrollStyle.paddingRight) || 0);
       }
-      if (style.borderCollapse === 'separate') {
-        width -= (parseFloat(style.borderSpacing) || 0) * (columnCount.current + 1);
-        width -= (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
-        width -=
-          (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
-      } else {
-        // Collapsed outer borders can come from cells rather than the table.
-        let row = table.tHead?.rows[0];
-        if (row) {
-          let columnsWidth = Array.from(row.cells).reduce(
-            (width, cell) => width + cell.getBoundingClientRect().width,
-            0
-          );
-          width -= Math.max(0, table.getBoundingClientRect().width - columnsWidth);
-        }
-      }
+      let box = entry?.target === table ? entry.borderBoxSize?.[0] : undefined;
+      let tableWidth = box
+        ? style.writingMode === 'horizontal-tb'
+          ? box.inlineSize
+          : box.blockSize
+        : table.offsetWidth;
+      width -= Math.max(0, tableWidth - allocatedWidth.current);
     }
     setWidth(Math.max(0, width));
   }, []);
@@ -551,11 +542,17 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
     onResize: updateWidth
   });
 
+  useResizeObserver({
+    ref: tableRef,
+    box: 'border-box',
+    onResize: updateWidth
+  });
+
   useLayoutEffect(updateWidth, [updateWidth]);
 
-  let onColumnsChange = useCallback(
-    (count: number) => {
-      columnCount.current = count;
+  let onColumnWidthsChange = useCallback(
+    (width: number) => {
+      allocatedWidth.current = width;
       updateWidth();
     },
     [updateWidth]
@@ -566,14 +563,14 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
       tableRef,
       scrollRef,
       tableWidth: width,
-      onColumnsChange,
+      onColumnWidthsChange,
       // oxlint-disable-next-line react/react-compiler
       useTableColumnResizeState,
       onResizeStart: props.onResizeStart,
       onResize: props.onResize,
       onResizeEnd: props.onResizeEnd
     }),
-    [tableRef, width, onColumnsChange, props.onResizeStart, props.onResize, props.onResizeEnd]
+    [tableRef, width, onColumnWidthsChange, props.onResizeStart, props.onResize, props.onResizeEnd]
   );
 
   return (
@@ -765,11 +762,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   // oxlint-disable-next-line react/react-compiler
   let filteredState = UNSTABLE_useFilteredTableState(tableState, filter);
-  let onColumnsChange = tableContainerContext?.onColumnsChange;
-  let columnCount = filteredState.collection.columns.length;
-  useLayoutEffect(() => {
-    onColumnsChange?.(columnCount);
-  }, [onColumnsChange, columnCount]);
   let {
     isVirtualized,
     layoutDelegate,
@@ -933,6 +925,15 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       };
     }
   }
+
+  let onColumnWidthsChange = tableContainerContext?.onColumnWidthsChange;
+  let columnWidths = layoutState?.columnWidths;
+  useLayoutEffect(() => {
+    let allocatedWidth = columnWidths
+      ? Array.from(columnWidths.values()).reduce((total, width) => total + width, 0)
+      : 0;
+    onColumnWidthsChange?.(allocatedWidth);
+  }, [onColumnWidthsChange, columnWidths]);
 
   let DOMProps = filterDOMProps(props, {global: true});
 
@@ -1340,7 +1341,7 @@ export const Column = /*#__PURE__*/ createLeafComponent(
 
     let style = renderProps.style;
     if (layoutState) {
-      style = {...style, boxSizing: 'border-box', width: layoutState.getColumnWidth(column.key)};
+      style = {...style, width: layoutState.getColumnWidth(column.key)};
     }
 
     let DOMProps = filterDOMProps(props as any, {global: true});
