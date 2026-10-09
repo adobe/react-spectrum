@@ -1,0 +1,155 @@
+#!/usr/bin/env node
+'use strict';
+
+/**
+ * Launcher for the `tsdiff` native binary.
+ *
+ * The binary is Rust, published one package per platform and pulled in through
+ * `optionalDependencies`, so this file only has to hand off to whichever one
+ * the package manager installed for this host. Inside the react-spectrum
+ * monorepo nothing is published at all, so it falls back to a local `cargo
+ * build` output.
+ *
+ * It also locates the Parcel toolchain. `tsdiff` shells out to `parcel3` with
+ * `@parcel/transformer-ts-doc` to turn a `.d.ts` into `api.json`, and those are
+ * ordinary dependencies of this package. Where they physically land depends on
+ * hoisting, so rather than guess we resolve one of them and hand the answer to
+ * the binary — that is what `--toolchain-root` would otherwise have to be told
+ * by hand for every repo that isn't react-spectrum.
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const NAME = 'tsdiff';
+const EXECUTABLE = process.platform === 'win32' ? `${NAME}.exe` : NAME;
+
+/**
+ * Platform packages that could serve this host, best first.
+ *
+ * `process.platform` and `process.arch` already use the same vocabulary as
+ * npm's `os` and `cpu` fields, so the names are derived rather than listed and
+ * a new target needs no change here.
+ *
+ * On Linux the name also depends on the C library. Rather than detect it and
+ * trust the answer, try both: package managers that honour `libc` install only
+ * the right one, and the wrong name simply fails to resolve. The musl check
+ * only decides which to try first, for the managers that ignore `libc`.
+ */
+function candidates() {
+  const base = `${NAME}-${process.platform}-${process.arch}`;
+  if (process.platform !== 'linux') {
+    return [base];
+  }
+  return isMusl() ? [`${base}-musl`, base] : [base, `${base}-musl`];
+}
+
+function isMusl() {
+  try {
+    return fs.readdirSync('/lib').some((entry) => entry.startsWith('ld-musl-'));
+  } catch {
+    return false;
+  }
+}
+
+/** A published platform package, if one was installed for this host. */
+function resolvePublished() {
+  for (const pkg of candidates()) {
+    try {
+      return require.resolve(`${pkg}/${EXECUTABLE}`);
+    } catch {}
+  }
+  return null;
+}
+
+/**
+ * A `cargo build` output next to this file. This is the path every
+ * react-spectrum run takes: the crate lives in the monorepo and CI builds it
+ * from source, so no platform package exists to resolve.
+ */
+function resolveLocalBuild() {
+  const root = path.join(__dirname, '..');
+  for (const profile of ['release', 'debug']) {
+    const candidate = path.join(root, 'target', profile, EXECUTABLE);
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
+/**
+ * Directory whose `node_modules` holds the Parcel toolchain.
+ *
+ * Resolving the transformer and walking back up to the `node_modules` that
+ * contains it works under hoisting, pnpm's nested store and a plain monorepo
+ * alike, because it asks the resolver where the package actually is instead of
+ * assuming a layout.
+ */
+function toolchainRoot() {
+  let dir;
+  try {
+    dir = path.dirname(require.resolve('@parcel/transformer-ts-doc/package.json'));
+  } catch {
+    return null;
+  }
+
+  for (let cur = dir; ; ) {
+    const parent = path.dirname(cur);
+    if (parent === cur) {
+      return null;
+    }
+    if (path.basename(parent) === 'node_modules') {
+      return path.dirname(parent);
+    }
+    cur = parent;
+  }
+}
+
+const binPath = resolvePublished() ?? resolveLocalBuild();
+if (binPath == null) {
+  process.stderr.write(
+    `tsdiff could not find its "${candidates()[0]}" binary for ${process.platform} ${process.arch}.\n\n` +
+      'It arrives through optionalDependencies, so `--no-optional` and `--omit=optional` both skip it, ' +
+      'as does copying node_modules from a machine of a different platform; reinstalling on this machine ' +
+      'fixes those. If you are working in the react-spectrum monorepo, build it instead:\n\n' +
+      '  cd packages/dev/tsdiff && cargo build --release\n'
+  );
+  process.exit(1);
+}
+
+run();
+
+function run() {
+  const env = {...process.env};
+
+  // Only fill this in when the caller has not, so an explicit
+  // TSDIFF_TOOLCHAIN_ROOT (and the --toolchain-root flag, which outranks both)
+  // still wins.
+  if (!env.TSDIFF_TOOLCHAIN_ROOT) {
+    const root = toolchainRoot();
+    if (root != null) {
+      env.TSDIFF_TOOLCHAIN_ROOT = root;
+    }
+  }
+
+  const args = process.argv.slice(2);
+
+  // Replacing this process rather than forking keeps signals, the exit code and
+  // terminal handling native. Node gained execve in 23.11 and never has it on
+  // Windows, hence the fallback.
+  if (typeof process.execve === 'function') {
+    try {
+      process.execve(binPath, [binPath, ...args], env);
+    } catch {}
+  }
+
+  const result = require('child_process').spawnSync(binPath, args, {stdio: 'inherit', env});
+  if (result.error) {
+    throw result.error;
+  }
+  // Signal death has no exit code of its own; 128 + signal is what a shell reports.
+  process.exit(
+    result.signal ? 128 + require('os').constants.signals[result.signal] : result.status
+  );
+}

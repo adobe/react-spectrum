@@ -1,0 +1,5 @@
+{
+  "exclude": ["packages/dev/**"],
+  "pinnedPeers": ["react", "react-dom", "@types/react", "@types/react-dom"],
+  "build": ["yarn", "build"]
+}
