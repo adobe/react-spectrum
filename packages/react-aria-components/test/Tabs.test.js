@@ -431,6 +431,21 @@ describe('Tabs', () => {
     expect(tabs[0]).toHaveClass('selected');
   });
 
+  it('should not select a tab again on hover after the window loses focus', async () => {
+    let onSelectionChange = jest.fn(() => fireEvent(window, new Event('blur')));
+    let {getAllByRole} = renderTabs({defaultSelectedKey: 'a', onSelectionChange});
+    let tab = getAllByRole('tab')[1];
+
+    await user.pointer({target: tab, keys: '[MouseLeft>]'});
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+    await user.unhover(tab);
+    await user.hover(tab);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+    await user.pointer({keys: '[/MouseLeft]'});
+  });
+
   it('should update TabPanel ID when current tab is changed', async () => {
     let onSelectionChange = jest.fn();
     let {getByRole} = render(

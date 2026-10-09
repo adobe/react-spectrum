@@ -746,6 +746,40 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should cancel press when the window loses focus', function () {
+      let events = [];
+      let addEvent = e => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+        />
+      );
+
+      let el = res.getByText('test');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(window, new Event('blur'));
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse'}));
+
+      expect(events).toEqual([
+        expect.objectContaining({
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse'
+        }),
+        {type: 'presschange', pressed: true},
+        expect.objectContaining({
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse'
+        }),
+        {type: 'presschange', pressed: false}
+      ]);
+    });
+
     it('should cancel press on dragstart', function () {
       let events = [];
       let addEvent = e => events.push(e);
