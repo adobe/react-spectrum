@@ -127,13 +127,13 @@ export interface DatePickerProps<T extends DateValue>
    */
   className?: ClassNameOrFunction<DatePickerRenderProps>;
 }
-export interface DateRangePickerProps<T extends DateValue>
+export interface DateRangePickerProps<T extends DateValue, Target extends Element = Element>
   extends
     Omit<
-      AriaDateRangePickerProps<T>,
+      AriaDateRangePickerProps<T, Target>,
       'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'
     >,
-    Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>,
+    Pick<DateRangePickerStateOptions<T, Target>, 'shouldCloseOnSelect'>,
     RACValidation,
     RenderProps<DateRangePickerRenderProps>,
     SlotProps,
@@ -271,8 +271,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
  * users to enter or select a date and time range.
  */
 export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(
-  function DateRangePicker<T extends DateValue>(
-    props: DateRangePickerProps<T>,
+  function DateRangePicker<T extends DateValue, Target extends Element = Element>(
+    props: DateRangePickerProps<T, Target>,
     ref: ForwardedRef<HTMLDivElement>
   ) {
     [props, ref] = useContextProps(props, ref, DateRangePickerContext);

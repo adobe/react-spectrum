@@ -96,3 +96,10 @@ motion(RAC.Text);
 motion(RAC.TextField);
 motion(RAC.ToggleButton);
 motion(RAC.Tooltip);
+
+// DateRangePicker should accept form library focus handlers targeting an HTMLElement.
+let dateRangePickerFormProps = {
+  onBlur: (event?: React.FocusEvent<HTMLElement>) => event?.currentTarget.focus(),
+  onFocus: (event?: React.FocusEvent<HTMLElement>) => event?.currentTarget.focus()
+} satisfies RAC.DateRangePickerProps<RAC.DateValue, HTMLElement>;
+<RAC.DateRangePicker {...dateRangePickerFormProps} />;
