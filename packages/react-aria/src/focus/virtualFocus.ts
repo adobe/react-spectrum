@@ -14,13 +14,13 @@ export function moveVirtualFocus(to: Element | null): void {
 }
 
 export function dispatchVirtualBlur(from: Element, to: Element | null): void {
-  from.dispatchEvent(new FocusEvent('blur', {relatedTarget: to}));
-  from.dispatchEvent(new FocusEvent('focusout', {bubbles: true, relatedTarget: to}));
+  from.dispatchEvent(createFocusEvent('blur', {relatedTarget: to}));
+  from.dispatchEvent(createFocusEvent('focusout', {bubbles: true, relatedTarget: to}));
 }
 
 export function dispatchVirtualFocus(to: Element, from: Element | null): void {
-  to.dispatchEvent(new FocusEvent('focus', {relatedTarget: from}));
-  to.dispatchEvent(new FocusEvent('focusin', {bubbles: true, relatedTarget: from}));
+  to.dispatchEvent(createFocusEvent('focus', {relatedTarget: from}));
+  to.dispatchEvent(createFocusEvent('focusin', {bubbles: true, relatedTarget: from}));
 }
 
 export function getVirtuallyFocusedElement(document: Document): Element | null {
@@ -31,4 +31,19 @@ export function getVirtuallyFocusedElement(document: Document): Element | null {
   }
 
   return activeElement;
+}
+
+const originalRelatedTargetMap = new WeakMap<FocusEvent, EventTarget>();
+
+function createFocusEvent(type: string, eventInitDict?: FocusEventInit): FocusEvent {
+  const event = new FocusEvent(type, eventInitDict);
+  const relatedTarget = event.relatedTarget;
+  if (relatedTarget !== null) {
+    originalRelatedTargetMap.set(event, relatedTarget);
+  }
+  return event;
+}
+
+export function getOriginalRelatedTarget(event: FocusEvent): EventTarget | null {
+  return originalRelatedTargetMap.get(event) ?? event.relatedTarget;
 }
