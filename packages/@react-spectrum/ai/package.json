@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/ai",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Spectrum 2 UI AI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -46,12 +46,12 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
-    "@internationalized/number": "^3.6.8",
-    "@react-spectrum/s2": "1.7.1",
-    "@react-types/shared": "^3.36.1",
-    "react-aria": "3.52.1",
-    "react-aria-components": "1.21.1",
-    "react-stately": "3.50.0"
+    "@internationalized/number": "^3.6.9",
+    "@react-spectrum/s2": "1.8.0",
+    "@react-types/shared": "^3.37.0",
+    "react-aria": "3.53.0",
+    "react-aria-components": "1.22.0",
+    "react-stately": "3.51.0"
   },
   "devDependencies": {
     "@react-aria/test-utils": "^1.0.0-alpha.8",
