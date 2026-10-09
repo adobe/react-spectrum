@@ -29,6 +29,7 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 interface Snapshot {
   rect: DOMRect;
   style: [string, string][];
+  element: HTMLElement;
 }
 
 const SharedElementContext = createContext<RefObject<{[name: string]: Snapshot}> | null>(null);
@@ -94,8 +95,20 @@ export const SharedElement = forwardRef(function SharedElement(
   useLayoutEffect(() => {
     let element = ref.current;
     let scope = scopeRef.current;
-    let prevSnapshot = scope[name];
+    let prevSnapshot: Snapshot | undefined = scope[name];
     let frame: number | null = null;
+    let restoreStyles: (() => void) | null = null;
+    // StrictMode re-runs this effect on the same instance. Ignore async work from the
+    // cancelled run so a stale entering microtask cannot overwrite the remount path.
+    let cancelled = false;
+    // StrictMode cleanup snapshots this same node. That is not a move between parents,
+    // so drop it and take the entering path on the replay. Only do this when visible:
+    // when isVisible flips to false the snapshot must stay so a sibling can consume it
+    // (otherwise forward tab moves delete the snapshot before the next indicator mounts).
+    if (isVisible && prevSnapshot && element && prevSnapshot.element === element) {
+      delete scope[name];
+      prevSnapshot = undefined;
+    }
 
     if (element && isVisible && prevSnapshot) {
       // Element is transitioning from a previous instance.
@@ -125,18 +138,32 @@ export const SharedElement = forwardRef(function SharedElement(
       }
 
       // Remove overrides after one frame to animate to the current values.
-      frame = requestAnimationFrame(() => {
-        frame = null;
+      restoreStyles = () => {
         for (let [property, value] of values) {
           element.style[property] = value;
         }
+      };
+      frame = requestAnimationFrame(() => {
+        if (cancelled) {
+          return;
+        }
+        frame = null;
+        restoreStyles?.();
       });
 
       delete scope[name];
     } else if (element && isVisible && !prevSnapshot) {
       // No previous instance exists, apply the entering state.
-      queueMicrotask(() => flushSync(() => setState('entering')));
+      queueMicrotask(() => {
+        if (cancelled) {
+          return;
+        }
+        flushSync(() => setState('entering'));
+      });
       frame = requestAnimationFrame(() => {
+        if (cancelled) {
+          return;
+        }
         frame = null;
         setState('visible');
       });
@@ -144,11 +171,18 @@ export const SharedElement = forwardRef(function SharedElement(
       // Wait until layout effects finish, and check if a snapshot still exists.
       // If so, no new SharedElement consumed it, so enter the exiting state.
       queueMicrotask(() => {
+        if (cancelled) {
+          return;
+        }
         if (scope[name]) {
           delete scope[name];
           flushSync(() => setState('exiting'));
           Promise.all(element.getAnimations().map(a => a.finished))
-            .then(() => setState('hidden'))
+            .then(() => {
+              if (!cancelled) {
+                setState('hidden');
+              }
+            })
             .catch(() => {});
         } else {
           // Snapshot was consumed by another instance, unmount.
@@ -158,8 +192,12 @@ export const SharedElement = forwardRef(function SharedElement(
     }
 
     return () => {
+      cancelled = true;
       if (frame != null) {
         cancelAnimationFrame(frame);
+        // Restore before the next snapshot. StrictMode cleanup otherwise leaves
+        // the temporary translate/width/height overrides in place.
+        restoreStyles?.();
       }
 
       if (element && element.isConnected && !element.hasAttribute('data-exiting')) {
@@ -169,7 +207,8 @@ export const SharedElement = forwardRef(function SharedElement(
           let transitionProperty = style.transitionProperty.split(/\s*,\s*/);
           scope[name] = {
             rect: element.getBoundingClientRect(),
-            style: transitionProperty.map(p => [p, style[p]])
+            style: transitionProperty.map(p => [p, style[p]]),
+            element
           };
         }
       }
