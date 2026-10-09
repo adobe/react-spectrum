@@ -698,6 +698,67 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('should support isDisabled prop on the ListBox', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole, getAllByRole} = render(
+      <ListBox
+        aria-label="Test"
+        selectionMode="multiple"
+        isDisabled
+        onSelectionChange={onSelectionChange}>
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+
+    let listbox = getByRole('listbox');
+    let items = getAllByRole('option');
+    expect(listbox).toHaveAttribute('aria-disabled', 'true');
+    for (let item of items) {
+      expect(item).toHaveAttribute('aria-disabled', 'true');
+    }
+
+    await user.click(items[1]);
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
+  it('should keep a disabled listbox disabled as items change and re-enable keyboard selection', async () => {
+    let onSelectionChange = jest.fn();
+    let items = [{id: 'cat', name: 'Cat'}];
+    let listbox = isDisabled => (
+      <ListBox
+        aria-label="Animals"
+        items={items}
+        isDisabled={isDisabled}
+        selectionMode="single"
+        onSelectionChange={onSelectionChange}>
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </ListBox>
+    );
+    let {getByRole, getAllByRole, rerender} = render(listbox(true));
+
+    await user.click(getByRole('option', {name: 'Cat'}));
+    expect(onSelectionChange).not.toHaveBeenCalled();
+    items = [...items, {id: 'dog', name: 'Dog'}];
+    rerender(listbox(true));
+    for (let item of getAllByRole('option')) {
+      expect(item).toHaveAttribute('aria-disabled', 'true');
+    }
+    await user.click(getByRole('option', {name: 'Dog'}));
+    expect(onSelectionChange).not.toHaveBeenCalled();
+
+    rerender(listbox(false));
+    await user.click(getByRole('option', {name: 'Cat'}));
+    expect([...onSelectionChange.mock.calls[0][0]]).toEqual(['cat']);
+    onSelectionChange.mockClear();
+    keyPress('ArrowDown');
+    expect(document.activeElement).toBe(getByRole('option', {name: 'Dog'}));
+    keyPress('Enter');
+    expect([...onSelectionChange.mock.calls[0][0]]).toEqual(['dog']);
+    expect(getByRole('listbox')).not.toHaveAttribute('aria-disabled');
+  });
+
   it.each`
     interactionType
     ${'mouse'}
