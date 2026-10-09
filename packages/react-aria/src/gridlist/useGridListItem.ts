@@ -107,7 +107,7 @@ export function useGridListItem<T>(
   let {direction} = useLocale();
   let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} =
     listMap.get(state)!;
-  let descriptionId = useSlotId();
+  let descriptionId = useSlotId([node]);
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
