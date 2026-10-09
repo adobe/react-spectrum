@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Focusable} from '../../src/interactions/useFocusable';
+import {Focusable, FocusableProvider} from '../../exports/index';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useImperativeHandle} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -18,6 +18,44 @@ import userEvent from '@testing-library/user-event';
 describe('Focusable', function () {
   afterEach(() => {
     jest.resetAllMocks();
+  });
+
+  it('should provide DOM props to a focusable descendant', function () {
+    let {getByRole} = render(
+      <FocusableProvider id="provider-id">
+        <Focusable>
+          <span role="button">Button</span>
+        </Focusable>
+      </FocusableProvider>
+    );
+
+    expect(getByRole('button')).toHaveAttribute('id', 'provider-id');
+  });
+
+  it('should not warn for row or columnheader under FocusableProvider', function () {
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    let {getByRole, rerender} = render(
+      <FocusableProvider id="provider-id">
+        <Focusable>
+          <div role="columnheader">Column</div>
+        </Focusable>
+      </FocusableProvider>
+    );
+
+    expect(getByRole('columnheader')).toHaveAttribute('id', 'provider-id');
+    expect(spy).not.toHaveBeenCalled();
+
+    rerender(
+      <FocusableProvider id="provider-id">
+        <Focusable>
+          <div role="row">Row</div>
+        </Focusable>
+      </FocusableProvider>
+    );
+
+    expect(getByRole('row')).toHaveAttribute('id', 'provider-id');
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('should apply focusable props to child element', async function () {

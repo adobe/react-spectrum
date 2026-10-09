@@ -57,17 +57,83 @@ interface FocusableContextValue extends FocusableProviderProps {
 export let FocusableContext: React.Context<FocusableContextValue | null> =
   React.createContext<FocusableContextValue | null>(null);
 
-function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
-  let context = useContext(FocusableContext) || {};
-  useSyncRef(context, ref);
+function useFocusableContext(
+  ref: RefObject<FocusableElement | null>
+): [FocusableContextValue, boolean] {
+  let context = useContext(FocusableContext);
+  let hasFocusableProvider = context != null;
+  let contextValue = context || {};
+  useSyncRef(contextValue, ref);
 
   // eslint-disable-next-line
-  let {ref: _, ...otherProps} = context;
-  return otherProps;
+  let {ref: _, ...otherProps} = contextValue;
+  return [otherProps, hasFocusableProvider];
+}
+
+function validateFocusableElement(el: FocusableElement | null, isDisabled?: boolean): void {
+  if (!el || !(el instanceof getOwnerWindow(el).Element)) {
+    console.error('<Focusable> child must forward its ref to a DOM element.');
+    return;
+  }
+
+  if (!isDisabled && !isFocusable(el, {skipVisibilityCheck: true})) {
+    console.warn(
+      '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+    );
+    return;
+  }
+
+  if (
+    el.localName !== 'button' &&
+    el.localName !== 'input' &&
+    el.localName !== 'select' &&
+    el.localName !== 'textarea' &&
+    el.localName !== 'a' &&
+    el.localName !== 'area' &&
+    el.localName !== 'summary' &&
+    el.localName !== 'img' &&
+    el.localName !== 'svg'
+  ) {
+    let role = el.getAttribute('role');
+    if (!role) {
+      console.warn('<Focusable> child must have an interactive ARIA role.');
+    } else if (
+      // https://w3c.github.io/aria/#widget_roles
+      role !== 'application' &&
+      role !== 'button' &&
+      role !== 'checkbox' &&
+      role !== 'columnheader' &&
+      role !== 'combobox' &&
+      role !== 'gridcell' &&
+      role !== 'link' &&
+      role !== 'menuitem' &&
+      role !== 'menuitemcheckbox' &&
+      role !== 'menuitemradio' &&
+      role !== 'option' &&
+      role !== 'radio' &&
+      role !== 'row' &&
+      role !== 'searchbox' &&
+      role !== 'separator' &&
+      role !== 'slider' &&
+      role !== 'spinbutton' &&
+      role !== 'switch' &&
+      role !== 'tab' &&
+      role !== 'tabpanel' &&
+      role !== 'textbox' &&
+      role !== 'treeitem' &&
+      // aria-describedby is also announced on these roles
+      role !== 'img' &&
+      role !== 'meter' &&
+      role !== 'progressbar'
+    ) {
+      console.warn(`<Focusable> child must have an interactive ARIA role. Got "${role}".`);
+    }
+  }
 }
 
 /**
- * Provides DOM props to the nearest focusable child.
+ * Provides DOM props to the nearest focusable child that uses `useFocusable`.
+ * Only pass DOM attributes that are valid for the element consuming these props.
  */
 export const FocusableProvider: React.ForwardRefExoticComponent<
   FocusableProviderProps & React.RefAttributes<FocusableElement>
@@ -100,7 +166,7 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
-  let domProps = useFocusableContext(domRef);
+  let [domProps, hasFocusableProvider] = useFocusableContext(domRef);
   let interactionProps = props.isDisabled ? {} : domProps;
   let autoFocusRef = useRef(props.autoFocus);
 
@@ -110,6 +176,14 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(
     }
     autoFocusRef.current = false;
   }, [domRef]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production' || !hasFocusableProvider || !domRef.current) {
+      return;
+    }
+
+    validateFocusableElement(domRef.current, props.isDisabled);
+  }, [domRef, props.isDisabled, hasFocusableProvider]);
 
   // Always set a tabIndex so that Safari allows focusing native buttons and inputs.
   let tabIndex: number | undefined = props.excludeFromTabOrder ? -1 : 0;
@@ -145,63 +219,7 @@ export const Focusable: React.ForwardRefExoticComponent<
         return;
       }
 
-      let el = ref.current;
-      if (!el || !(el instanceof getOwnerWindow(el).Element)) {
-        console.error('<Focusable> child must forward its ref to a DOM element.');
-        return;
-      }
-
-      if (!props.isDisabled && !isFocusable(el, {skipVisibilityCheck: true})) {
-        console.warn(
-          '<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.'
-        );
-        return;
-      }
-
-      if (
-        el.localName !== 'button' &&
-        el.localName !== 'input' &&
-        el.localName !== 'select' &&
-        el.localName !== 'textarea' &&
-        el.localName !== 'a' &&
-        el.localName !== 'area' &&
-        el.localName !== 'summary' &&
-        el.localName !== 'img' &&
-        el.localName !== 'svg'
-      ) {
-        let role = el.getAttribute('role');
-        if (!role) {
-          console.warn('<Focusable> child must have an interactive ARIA role.');
-        } else if (
-          // https://w3c.github.io/aria/#widget_roles
-          role !== 'application' &&
-          role !== 'button' &&
-          role !== 'checkbox' &&
-          role !== 'combobox' &&
-          role !== 'gridcell' &&
-          role !== 'link' &&
-          role !== 'menuitem' &&
-          role !== 'menuitemcheckbox' &&
-          role !== 'menuitemradio' &&
-          role !== 'option' &&
-          role !== 'radio' &&
-          role !== 'searchbox' &&
-          role !== 'separator' &&
-          role !== 'slider' &&
-          role !== 'spinbutton' &&
-          role !== 'switch' &&
-          role !== 'tab' &&
-          role !== 'tabpanel' &&
-          role !== 'textbox' &&
-          role !== 'treeitem' &&
-          // aria-describedby is also announced on these roles
-          role !== 'img' &&
-          role !== 'meter' &&
-          role !== 'progressbar'
-        ) {
-          console.warn(`<Focusable> child must have an interactive ARIA role. Got "${role}".`);
-        }
-      }
+      validateFocusableElement(ref.current, props.isDisabled);
     }, [ref, props.isDisabled]);
 
     // @ts-ignore
