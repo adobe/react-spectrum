@@ -225,10 +225,14 @@
     /* forced-color-adjust: none, so that box-shadow style will render */
     forced-color-adjust: none;
   }
+}
 
-  .react-spectrum-Table-cellWrapper.react-spectrum-Table-cellWrapper--dropTarget {
-    background-color: var(--spectrum-table-droptarget-background-color);
-  }
+/* Deliberately not chained with .react-spectrum-Table-cellWrapper: that class is only applied while
+   the cell height is not an estimate, so chaining it here drops the drop target background whenever
+   the table is still measuring. The .react-spectrum-Table ancestor supplies the specificity instead,
+   so this still wins over .spectrum-Table--quiet .spectrum-Table-row .spectrum-Table-cellWrapper. */
+.react-spectrum-Table .react-spectrum-Table-row .react-spectrum-Table-cellWrapper--dropTarget {
+  background-color: var(--spectrum-table-droptarget-background-color);
 }
 
 @media (forced-colors: active) {

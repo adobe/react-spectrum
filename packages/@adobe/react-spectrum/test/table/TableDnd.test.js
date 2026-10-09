@@ -3953,5 +3953,100 @@ describe('TableView', function () {
         fireEvent.keyUp(document.body, {key: 'Escape'});
       });
     });
+
+    describe('drop target highlight', function () {
+      // The highlight is painted on the row (border) and on each of its cell wrappers (background),
+      // because the cell wrappers are opaque and sit on top of the row. See issue #5404.
+      function getCellWrappers(row) {
+        return [...row.children];
+      }
+
+      function expectHighlighted(row, isHighlighted) {
+        expect(row.className.includes('react-spectrum-Table-row--dropTarget')).toBe(isHighlighted);
+        let wrappers = getCellWrappers(row);
+        expect(wrappers.length).toBeGreaterThan(0);
+        for (let wrapper of wrappers) {
+          expect(wrapper.className.includes('react-spectrum-Table-cellWrapper--dropTarget')).toBe(
+            isHighlighted
+          );
+        }
+      }
+
+      it('should highlight the row and its cells while dragging over an item drop target', async function () {
+        let {getByRole} = render(<DragOntoRowExample />);
+        let grid = getByRole('grid');
+        let rows = within(within(grid).getAllByRole('rowgroup')[1]).getAllByRole('row');
+
+        let dragCell = within(rows[1]).getAllByRole('rowheader')[0];
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(dragCell, {
+          pointerType: 'mouse',
+          button: 0,
+          pointerId: 1,
+          clientX: 0,
+          clientY: 0
+        });
+        fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        expectHighlighted(rows[0], false);
+
+        // Drop onto the middle of the first row, which is an "on" drop position.
+        fireEvent(rows[0], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 20}));
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        expectHighlighted(rows[0], true);
+        expectHighlighted(rows[3], false);
+
+        // "Three" is not a folder, so it only accepts insert positions. Dragging over it must clear
+        // the highlight rather than leaving it behind on the previous target.
+        fireEvent(rows[3], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 145}));
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        expectHighlighted(rows[0], false);
+        expectHighlighted(rows[3], false);
+
+        fireEvent.pointerUp(dragCell, {
+          pointerType: 'mouse',
+          button: 0,
+          pointerId: 1,
+          clientX: 1,
+          clientY: 145
+        });
+        fireEvent(rows[3], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 145}));
+        fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 145}));
+        act(() => jest.runAllTimers());
+      });
+
+      it('should highlight the row and its cells when a keyboard drag targets an item', async function () {
+        let {getByRole} = render(<DragOntoRowExample />);
+        let grid = getByRole('grid');
+        // Rows other than the active drop target are aria-hidden during a keyboard drag, so the
+        // hidden option is needed to reach them.
+        let findRow = name =>
+          within(grid)
+            .getAllByRole('row', {hidden: true})
+            .find(row => within(row).queryByText(name));
+
+        // Start a keyboard drag from "Folder 1". "Folder 2" is the only other row that accepts an
+        // "on" drop, so it is the first drop target.
+        await user.tab();
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{Enter}');
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Folder 2');
+
+        expectHighlighted(findRow('Folder 2'), true);
+        expectHighlighted(findRow('Six'), false);
+
+        fireEvent.keyDown(document.body, {key: 'Escape'});
+        fireEvent.keyUp(document.body, {key: 'Escape'});
+        act(() => jest.runAllTimers());
+        expectHighlighted(findRow('Folder 2'), false);
+      });
+    });
   });
 });
