@@ -143,7 +143,7 @@ function getContainerDimensions(
       left = Math.max(0, visualViewport.pageLeft - (scroll.left ?? 0));
     }
   } else {
-    ({width, height, top, left} = getOffset(containerNode, false));
+    ({width, height, top, left} = getRect(containerNode, false));
     scroll.top = containerNode.scrollTop;
     scroll.left = containerNode.scrollLeft;
     totalWidth = width;
