@@ -100,14 +100,17 @@ export function useDateField<T extends DateValue>(
   });
 
   let valueOnFocus = useRef<DateValue | null>(null);
+  let isFocused = useRef(false);
   let {focusWithinProps} = useFocusWithin({
     ...props,
     onFocusWithin(e) {
       valueOnFocus.current = state.value;
+      isFocused.current = true;
       props.onFocus?.(e);
     },
     onBlurWithin: e => {
       state.confirmPlaceholder();
+      isFocused.current = false;
       if (state.value !== valueOnFocus.current) {
         state.commitValidation();
       }
@@ -178,6 +181,7 @@ export function useDateField<T extends DateValue>(
   useFormValidation(
     {
       ...props,
+      isFocusWithin: () => isFocused.current,
       focus() {
         focusManager.focusFirst();
       }

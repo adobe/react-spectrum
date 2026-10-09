@@ -96,6 +96,7 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(
   useFormValidation(
     {
       validationBehavior,
+      isFocusWithin: state.isFocused,
       focus: () => triggerRef.current?.focus()
     },
     state,
