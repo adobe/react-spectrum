@@ -91,7 +91,211 @@ function setupGridLayout(options: GridLayoutOptions = {}, itemCount = 4, viewpor
   return layout;
 }
 
+interface SectionDescription {
+  id: string;
+  itemCount: number;
+  hasHeader?: boolean;
+}
+
+/**
+ * Creates a mock virtualizer and a collection containing sections with headers and items,
+ * then calls layout.update() so the layout has valid internal state for testing.
+ */
+function setupSectionedGridLayout(
+  options: GridLayoutOptions = {},
+  sections: SectionDescription[],
+  viewportWidth = 400
+) {
+  let layout = new GridLayout<Node<unknown>, GridLayoutOptions>();
+
+  let rootNodes: Node<unknown>[] = [];
+  let nodesByKey = new Map<Key, Node<unknown>>();
+  for (let section of sections) {
+    let children: Node<unknown>[] = [];
+    if (section.hasHeader ?? true) {
+      children.push({
+        type: 'header',
+        key: `${section.id}-header`,
+        rendered: 'Header',
+        textValue: '',
+        parentKey: section.id,
+        childNodes: [],
+        props: {}
+      } as unknown as Node<unknown>);
+    }
+
+    for (let i = 0; i < section.itemCount; i++) {
+      children.push({
+        type: 'item',
+        key: `${section.id}-item-${i}`,
+        rendered: null,
+        textValue: `Item ${i}`,
+        parentKey: section.id,
+        childNodes: [],
+        props: {}
+      } as unknown as Node<unknown>);
+    }
+
+    let sectionNode = {
+      type: 'section',
+      key: section.id,
+      rendered: null,
+      textValue: '',
+      parentKey: null,
+      childNodes: children,
+      props: {}
+    } as unknown as Node<unknown>;
+    rootNodes.push(sectionNode);
+    nodesByKey.set(sectionNode.key, sectionNode);
+    for (let child of children) {
+      nodesByKey.set(child.key, child);
+    }
+  }
+
+  let collection = {
+    size: nodesByKey.size,
+    getItem(key: Key) {
+      return nodesByKey.get(key) ?? null;
+    },
+    getFirstKey() {
+      return rootNodes[0]?.key ?? null;
+    },
+    getLastKey() {
+      return rootNodes[rootNodes.length - 1]?.key ?? null;
+    },
+    [Symbol.iterator]() {
+      return rootNodes[Symbol.iterator]();
+    }
+  };
+
+  (layout as any).virtualizer = {
+    collection,
+    visibleRect: new Rect(0, 0, viewportWidth, 600),
+    size: new Size(viewportWidth, 600),
+    isPersistedKey: () => false
+  };
+
+  layout.update({
+    layoutOptions: {
+      minItemSize: new Size(100, 100),
+      maxItemSize: new Size(100, 100),
+      minSpace: new Size(10, 10),
+      ...options
+    },
+    sizeChanged: true,
+    offsetChanged: false,
+    layoutOptionsChanged: true
+  });
+
+  return layout;
+}
+
 describe('GridLayout', () => {
+  // With a 400px viewport, 100x100 items and 10px min space: 3 columns,
+  // 25px horizontal spacing, so columns are at x = 25, 150 and 275.
+  describe('sections', () => {
+    it('lays out headers as full width rows interleaved with grid rows', () => {
+      let layout = setupSectionedGridLayout({headingSize: 40}, [
+        {id: 's1', itemCount: 4},
+        {id: 's2', itemCount: 2}
+      ]);
+
+      // Section 1: header row, then a row of 3 items and a row with 1 item.
+      expect(layout.getLayoutInfo('s1-header')!.rect).toEqual(new Rect(25, 10, 350, 40));
+      expect(layout.getLayoutInfo('s1-item-0')!.rect).toEqual(new Rect(25, 60, 100, 100));
+      expect(layout.getLayoutInfo('s1-item-1')!.rect).toEqual(new Rect(150, 60, 100, 100));
+      expect(layout.getLayoutInfo('s1-item-2')!.rect).toEqual(new Rect(275, 60, 100, 100));
+      expect(layout.getLayoutInfo('s1-item-3')!.rect).toEqual(new Rect(25, 170, 100, 100));
+
+      // Section 2 starts on a new row below section 1.
+      expect(layout.getLayoutInfo('s2-header')!.rect).toEqual(new Rect(25, 280, 350, 40));
+      expect(layout.getLayoutInfo('s2-item-0')!.rect).toEqual(new Rect(25, 330, 100, 100));
+      expect(layout.getLayoutInfo('s2-item-1')!.rect).toEqual(new Rect(150, 330, 100, 100));
+
+      expect(layout.getContentSize().height).toBe(440);
+    });
+
+    it('produces section layout infos containing their children', () => {
+      let layout = setupSectionedGridLayout({headingSize: 40}, [
+        {id: 's1', itemCount: 4},
+        {id: 's2', itemCount: 2}
+      ]);
+
+      let s1 = layout.getLayoutInfo('s1')!;
+      expect(s1.type).toBe('section');
+      expect(s1.rect).toEqual(new Rect(0, 10, 400, 260));
+      expect(layout.getLayoutInfo('s2')!.rect).toEqual(new Rect(0, 280, 400, 150));
+
+      expect(layout.getLayoutInfo('s1-header')!.parentKey).toBe('s1');
+      expect(layout.getLayoutInfo('s1-item-0')!.parentKey).toBe('s1');
+      expect(layout.getLayoutInfo('s2-item-1')!.parentKey).toBe('s2');
+    });
+
+    it('aligns columns across sections', () => {
+      let layout = setupSectionedGridLayout({}, [
+        {id: 's1', itemCount: 4},
+        {id: 's2', itemCount: 3}
+      ]);
+
+      // Keyboard navigation across section boundaries depends on this.
+      expect(layout.getLayoutInfo('s2-item-0')!.rect.x).toBe(
+        layout.getLayoutInfo('s1-item-0')!.rect.x
+      );
+      expect(layout.getLayoutInfo('s2-item-1')!.rect.x).toBe(
+        layout.getLayoutInfo('s1-item-1')!.rect.x
+      );
+    });
+
+    it('supports sections without headers', () => {
+      let layout = setupSectionedGridLayout({}, [
+        {id: 's1', itemCount: 3, hasHeader: false},
+        {id: 's2', itemCount: 3, hasHeader: false}
+      ]);
+
+      expect(layout.getLayoutInfo('s1')!.rect).toEqual(new Rect(0, 10, 400, 100));
+      expect(layout.getLayoutInfo('s1-item-0')!.rect).toEqual(new Rect(25, 10, 100, 100));
+      expect(layout.getLayoutInfo('s2-item-0')!.rect).toEqual(new Rect(25, 120, 100, 100));
+    });
+
+    it('uses estimatedHeadingSize until headers are measured', () => {
+      let layout = setupSectionedGridLayout({estimatedHeadingSize: 60}, [{id: 's1', itemCount: 1}]);
+
+      let header = layout.getLayoutInfo('s1-header')!;
+      expect(header.rect.height).toBe(60);
+      expect(header.estimatedSize).toBe(true);
+
+      // Headers with a fixed headingSize are not estimated.
+      layout = setupSectionedGridLayout({headingSize: 40}, [{id: 's1', itemCount: 1}]);
+      header = layout.getLayoutInfo('s1-header')!;
+      expect(header.rect.height).toBe(40);
+      expect(header.estimatedSize).toBe(false);
+    });
+
+    it('returns sections before their children in getVisibleLayoutInfos', () => {
+      let layout = setupSectionedGridLayout({headingSize: 40}, [
+        {id: 's1', itemCount: 4},
+        {id: 's2', itemCount: 2}
+      ]);
+
+      let visible = layout.getVisibleLayoutInfos(new Rect(0, 0, 400, 100));
+      let keys = visible.map(v => v.key);
+      expect(keys).toEqual(['s1', 's1-header', 's1-item-0', 's1-item-1', 's1-item-2']);
+    });
+
+    it('includes headers of visible sections even when scrolled past', () => {
+      let layout = setupSectionedGridLayout({headingSize: 40}, [
+        {id: 's1', itemCount: 12},
+        {id: 's2', itemCount: 2}
+      ]);
+
+      // A rect in the middle of section 1, past its header.
+      let visible = layout.getVisibleLayoutInfos(new Rect(0, 170, 400, 100));
+      let keys = visible.map(v => v.key);
+      expect(keys).toContain('s1-header');
+      expect(keys).not.toContain('s2-header');
+    });
+  });
+
   describe('getDropTargetFromPoint', () => {
     let isValidDropTarget = () => true;
 
