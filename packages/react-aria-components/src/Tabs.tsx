@@ -59,6 +59,7 @@ import {inertValue} from 'react-aria/private/utils/inertValue';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Orientation} from '@react-types/shared';
 import React, {
+  AriaAttributes,
   createContext,
   ForwardedRef,
   forwardRef,
@@ -150,6 +151,12 @@ export interface TabProps
   id?: Key;
   /** Whether the tab is disabled. */
   isDisabled?: boolean;
+  /**
+   * The `aria-current` value applied to the tab while it is selected (the current item
+   * within a set), e.g. `aria-current="step"` when used as a step in a step list. Applied
+   * only to the selected tab, and omitted otherwise.
+   */
+  'aria-current'?: AriaAttributes['aria-current'];
 }
 
 export interface TabRenderProps {
@@ -434,6 +441,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent(
       <ElementType
         {...mergeProps(DOMProps, renderProps, tabProps, focusProps, hoverProps)}
         ref={ref}
+        aria-current={isSelected ? props['aria-current'] : undefined}
         data-selected={isSelected || undefined}
         data-disabled={isDisabled || undefined}
         data-focused={isFocused || undefined}

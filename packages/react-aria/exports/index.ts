@@ -132,6 +132,8 @@ export {useSeparator} from '../src/separator/useSeparator';
 export {SSRProvider, useIsSSR} from '../src/ssr/SSRProvider';
 export {useSlider} from '../src/slider/useSlider';
 export {useSliderThumb} from '../src/slider/useSliderThumb';
+export {useStepList} from '../src/steplist/useStepList';
+export {useStepListItem} from '../src/steplist/useStepListItem';
 export {useSwitch} from '../src/switch/useSwitch';
 export {useTable} from '../src/table/useTable';
 export {useTableCell} from '../src/table/useTableCell';
@@ -454,6 +456,8 @@ export type {
   SliderThumbAria,
   SliderThumbProps
 } from '../src/slider/useSliderThumb';
+export type {AriaStepListProps, StepListAria} from '../src/steplist/useStepList';
+export type {AriaStepListItemProps, StepListItemAria} from '../src/steplist/useStepListItem';
 export type {AriaSwitchProps, SwitchAria, SwitchProps} from '../src/switch/useSwitch';
 export type {AriaTableCellProps, TableCellAria} from '../src/table/useTableCell';
 export type {
