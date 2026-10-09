@@ -96,7 +96,9 @@ export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(
         data-orientation={props.orientation || 'horizontal'}
         data-disabled={props.isDisabled || undefined}>
         <ToggleGroupStateContext.Provider value={state}>
-          <SharedElementTransition>{renderProps.children}</SharedElementTransition>
+          <SharedElementTransition containerRef={ref}>
+            {renderProps.children}
+          </SharedElementTransition>
         </ToggleGroupStateContext.Provider>
       </dom.div>
     );

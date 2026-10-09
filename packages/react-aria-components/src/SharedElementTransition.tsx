@@ -19,6 +19,7 @@ import React, {
   HTMLAttributes,
   ReactNode,
   RefObject,
+  useCallback,
   useContext,
   useRef,
   useState
@@ -26,24 +27,59 @@ import React, {
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
+interface Position {
+  left: number;
+  top: number;
+}
+
 interface Snapshot {
-  rect: DOMRect;
+  position: Position;
   style: [string, string][];
 }
 
 const SharedElementContext = createContext<RefObject<{[name: string]: Snapshot}> | null>(null);
+// The snapshot is taken in a layout effect cleanup, which runs mid-commit, so the viewport position of anything
+// that depends on DOM swapped in the same commit may be one it never paints. Its position within the container is.
+function getPosition(element: Element, container: Element | null | undefined): Position {
+  let rect = element.getBoundingClientRect();
+  let containerRect = container?.getBoundingClientRect();
+  return {
+    left: rect.left - (containerRect?.left ?? 0),
+    top: rect.top - (containerRect?.top ?? 0)
+  };
+}
+
+const SharedElementPositionContext = createContext<(element: Element) => Position>(element =>
+  getPosition(element, null)
+);
 
 export interface SharedElementTransitionProps {
   children: ReactNode;
+  /**
+   * The element containing the SharedElements. Transitions are measured relative to it rather than
+   * the viewport.
+   */
+  containerRef?: RefObject<Element | null>;
 }
 
 /**
  * A scope for SharedElements, which animate between parents.
  */
 export function SharedElementTransition(props: SharedElementTransitionProps) {
+  let {containerRef} = props;
   let ref = useRef({});
+  // Read the container when measuring, not when a SharedElement's effect runs: on mount, children's
+  // layout effects run before the container's ref is attached.
+  let measure = useCallback(
+    (element: Element) => getPosition(element, null),
+    [containerRef]
+  );
   return (
-    <SharedElementContext.Provider value={ref}>{props.children}</SharedElementContext.Provider>
+    <SharedElementContext.Provider value={ref}>
+      <SharedElementPositionContext.Provider value={measure}>
+        {props.children}
+      </SharedElementPositionContext.Provider>
+    </SharedElementContext.Provider>
   );
 }
 
@@ -82,6 +118,7 @@ export const SharedElement = forwardRef(function SharedElement(
   let {name, isVisible = true, children, className, style, render, ...divProps} = props;
   let [state, setState] = useState(isVisible ? 'visible' : 'hidden');
   let scopeRef = useContext(SharedElementContext);
+  let measure = useContext(SharedElementPositionContext);
   if (!scopeRef) {
     throw new Error('<SharedElement> must be rendered inside a <SharedElementTransition>');
   }
@@ -106,10 +143,10 @@ export const SharedElement = forwardRef(function SharedElement(
       let values = prevSnapshot.style.map(([property, prevValue]) => {
         let value = element.style[property];
         if (property === 'translate') {
-          let prevRect = prevSnapshot.rect;
-          let currentItem = element.getBoundingClientRect();
-          let deltaX = prevRect.left - currentItem?.left;
-          let deltaY = prevRect.top - currentItem?.top;
+          let prevPosition = prevSnapshot.position;
+          let currentPosition = measure(element);
+          let deltaX = prevPosition.left - currentPosition.left;
+          let deltaY = prevPosition.top - currentPosition.top;
           element.style.translate = `${deltaX}px ${deltaY}px`;
         } else {
           element.style[property] = prevValue;
@@ -168,13 +205,13 @@ export const SharedElement = forwardRef(function SharedElement(
         if (style.transitionProperty !== 'none') {
           let transitionProperty = style.transitionProperty.split(/\s*,\s*/);
           scope[name] = {
-            rect: element.getBoundingClientRect(),
+            position: measure(element),
             style: transitionProperty.map(p => [p, style[p]])
           };
         }
       }
     };
-  }, [ref, scopeRef, name, isVisible]);
+  }, [ref, scopeRef, measure, name, isVisible]);
 
   let renderProps = useRenderProps({
     children,

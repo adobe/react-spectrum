@@ -375,7 +375,7 @@ function TabListInner<T>({props, forwardedRef: ref}: TabListInnerProps<T>) {
       {...mergeProps(DOMProps, renderProps, tabListProps)}
       ref={objectRef}
       data-orientation={orientation || undefined}>
-      <SharedElementTransition>
+      <SharedElementTransition containerRef={objectRef}>
         <CollectionRoot
           collection={state.collection}
           persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
