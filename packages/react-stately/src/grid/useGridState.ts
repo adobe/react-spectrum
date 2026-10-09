@@ -42,13 +42,18 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
 ): GridState<T, C> {
   let {collection, focusMode} = props;
   // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-  let selectionState = props.UNSAFE_selectionState || useMultipleSelectionState(props);
+  let baseSelectionState = props.UNSAFE_selectionState || useMultipleSelectionState(props);
+  // Preserve live getters without mutating the selection state shared with the caller.
+  let selectionState = useMemo<MultipleSelectionState>(
+    () => Object.create(baseSelectionState),
+    [baseSelectionState]
+  );
   let disabledKeys = useMemo(
     () => (props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()),
     [props.disabledKeys]
   );
 
-  let setFocusedKey = selectionState.setFocusedKey;
+  let setFocusedKey = baseSelectionState.setFocusedKey;
   // oxlint-disable-next-line react/react-compiler
   selectionState.setFocusedKey = (key, child) => {
     // If focusMode is cell and an item is focused, focus a child cell instead.
