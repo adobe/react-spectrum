@@ -339,4 +339,25 @@ describe('useCheckboxGroupState', () => {
 
     expect(container.textContent).toBe('test');
   });
+  it('should remove multiple values in the same update', () => {
+    let removeValue: (value: string) => void;
+
+    function Test() {
+      const state = useCheckboxGroupState({defaultValue: ['foo', 'bar', 'baz']});
+      useEffect(() => {
+        removeValue = state.removeValue;
+      }, [state]);
+
+      return <>{state.value.join(', ')}</>;
+    }
+
+    const {container} = render(<Test />);
+
+    act(() => {
+      removeValue('foo');
+      removeValue('bar');
+    });
+
+    expect(container.textContent).toBe('baz');
+  });
 });
