@@ -1751,6 +1751,26 @@ describe('Table', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Games');
     });
 
+    it('should remove cell tabIndex on the first drag interaction', async () => {
+      let {getAllByRole} = render(<DraggableTable />);
+      let button = getAllByRole('button')[0];
+
+      let cell = button.closest('[role="gridcell"]');
+      expect(cell).toHaveAttribute('tabindex', '-1');
+
+      fireEvent.pointerDown(cell, {
+        pointerType: 'mouse',
+        button: 0,
+        pointerId: 1
+      });
+
+      expect(cell).not.toHaveAttribute('tabindex');
+
+      act(() => jest.runAllTimers());
+
+      expect(cell).toHaveAttribute('tabindex', '-1');
+    });
+
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(
