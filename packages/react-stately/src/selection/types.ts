@@ -115,6 +115,12 @@ export interface MultipleSelectionManager extends FocusState {
   canSelectItem(key: Key): boolean;
   /** Returns whether the given key is non-interactive, i.e. both selection and actions are disabled. */
   isDisabled(key: Key): boolean;
+  /**
+   * Returns whether the given key should remain focusable while disabled, following the
+   * ARIA APG "focusability of disabled controls" pattern. Such items are still non-interactive
+   * (no selection/action, `aria-disabled`) but remain reachable via keyboard navigation.
+   */
+  isFocusableWhenDisabled?(key: Key): boolean;
   /** Sets the selection behavior for the collection. */
   setSelectionBehavior(selectionBehavior: SelectionBehavior): void;
   /** Returns whether the given key is a hyperlink. */

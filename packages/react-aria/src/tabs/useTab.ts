@@ -60,6 +60,10 @@ export function useTab<T>(
   let isSelected = key === selectedKey;
 
   let isDisabled = propsDisabled || state.isDisabled || state.selectionManager.isDisabled(key);
+  // A tab disabled per-key may opt into staying focusable (ARIA APG "focusability of disabled
+  // controls"). It stays non-selectable with `aria-disabled`, but keeps its roving tabindex.
+  let isFocusableWhenDisabled =
+    isDisabled && !state.isDisabled && (manager.isFocusableWhenDisabled?.(key) ?? false);
   let item = state.collection.getItem(key);
   let {itemProps, isPressed} = useSelectableItem({
     selectionManager: manager,
@@ -94,7 +98,7 @@ export function useTab<T>(
       'aria-selected': isSelected,
       'aria-disabled': isDisabled || undefined,
       'aria-controls': isSelected ? tabPanelId : undefined,
-      tabIndex: isDisabled ? undefined : tabIndex,
+      tabIndex: isDisabled && !isFocusableWhenDisabled ? undefined : tabIndex,
       role: 'tab'
     }),
     isSelected,
