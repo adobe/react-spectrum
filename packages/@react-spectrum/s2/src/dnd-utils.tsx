@@ -85,8 +85,20 @@ export function InsertionIndicator({target}: {target: ItemDropTarget}) {
   );
 }
 
-let dragButton = style({
+let dragButton = style<{
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  isHandlePointerSource: boolean;
+}>({
   color: 'inherit',
+  cursor: {
+    default: 'default',
+    isHandlePointerSource: {
+      default: 'grab',
+      isPressed: 'grabbing',
+      ':is([data-dragging] *)': 'grabbing'
+    }
+  },
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -116,11 +128,15 @@ let dragButton = style({
 
 export function DragHandleButton({isFocusVisibleWithin}: {isFocusVisibleWithin: boolean}) {
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let {dragAndDropHooks} = useContext(DragAndDropContext) ?? {};
+  // When pointer dragging is restricted to the handle, it must always be visible so mouse and touch users can find it.
+  let isHandlePointerSource = dragAndDropHooks?.pointerDragSource === 'handle';
+  let isHidden = !isFocusVisibleWithin && !isHandlePointerSource;
   return (
     <Button
       slot="drag"
-      style={!isFocusVisibleWithin ? visuallyHiddenProps.style : {}}
-      className={dragButton}>
+      style={isHidden ? visuallyHiddenProps.style : {}}
+      className={renderProps => dragButton({...renderProps, isHandlePointerSource})}>
       <DragHandle size="M" />
     </Button>
   );

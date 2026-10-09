@@ -55,6 +55,7 @@ import {
   DragAndDropContext,
   DropIndicatorContext,
   DropIndicatorProps,
+  getDraggableItemSlotProps,
   useDndPersistedKeys,
   useRenderDropIndicator
 } from './DragAndDrop';
@@ -1883,6 +1884,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
+    let draggableSlotProps = getDraggableItemSlotProps(draggableItem, dragAndDropHooks, ref);
 
     return (
       <>
@@ -1908,7 +1910,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             rowProps,
             focusProps,
             hoverProps,
-            draggableItem?.dragProps,
+            draggableSlotProps.itemProps,
             focusWithinProps
           )}
           ref={ref as any}
@@ -1956,11 +1958,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                     [DEFAULT_SLOT]: {},
                     chevron: expandButtonProps,
                     drag: {
-                      ...draggableItem?.dragButtonProps,
-                      ref: dragButtonRef,
-                      style: {
-                        pointerEvents: 'none'
-                      }
+                      ...draggableSlotProps.dragButtonProps,
+                      ref: dragButtonRef
                     }
                   }
                 }
