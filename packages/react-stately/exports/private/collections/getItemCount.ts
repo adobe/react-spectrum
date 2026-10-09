@@ -1,1 +1,1 @@
-export {getItemCount} from '../../../src/collections/getItemCount';
+export {getItemCount, getItemIndex} from '../../../src/collections/getItemCount';
