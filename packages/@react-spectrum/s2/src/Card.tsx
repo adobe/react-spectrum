@@ -11,6 +11,14 @@
  */
 
 import {ActionMenuContext} from './ActionMenu';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  DOMRef,
+  DOMRefValue,
+  GlobalDOMAttributes,
+  PressEvent
+} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
@@ -18,9 +26,8 @@ import {color, focusRing, lightDark, space, style} from '../style' with {type: '
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, RefObject, useContext} from 'react';
 import {DividerContext} from './Divider';
-import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
@@ -31,6 +38,7 @@ import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Link} from 'react-aria-components/Link';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
+import {Button as RACButton} from 'react-aria-components/Button';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -38,6 +46,17 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 interface CardRenderProps {
   /** The size of the Card. */
   size: 'XS' | 'S' | 'M' | 'L' | 'XL';
+}
+
+/**
+ * Interaction state of an interactive standalone Card. Both Link's and Button's render
+ * props are supersets of this, so a single set of callbacks can style either element.
+ */
+interface CardInteractionState {
+  isHovered: boolean;
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  isDisabled: boolean;
 }
 
 export interface CardProps
@@ -54,6 +73,7 @@ export interface CardProps
       | 'onClick'
       | keyof GlobalDOMAttributes
     >,
+    AriaLabelingProps,
     StyleProps {
   /** The children of the Card. */
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode);
@@ -139,10 +159,12 @@ let card = style(
     contain: 'layout',
     disableTapHighlight: true,
     userSelect: {
-      isCardView: 'none'
+      isCardView: 'none',
+      isInteractive: 'none'
     },
     cursor: {
-      isLink: 'pointer'
+      isLink: 'pointer',
+      isInteractive: 'pointer'
     },
     width: {
       size: {
@@ -218,7 +240,13 @@ let card = style(
       variant: {
         quiet: 'none'
       }
-    }
+    },
+    /* Default Button styles override */
+    textAlign: 'start',
+    appearance: 'none',
+    borderStyle: 'none',
+    borderWidth: 0
+    /* End Default Button styles override */
   },
   getAllowedOverrides()
 );
@@ -420,10 +448,27 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     UNSAFE_style,
     styles,
     id,
+    onPress,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    onAction,
+    isDisabled,
     ...otherProps
   } = props;
   let isQuiet = variant === 'quiet';
   let isSkeleton = useIsSkeleton();
+
+  // A standalone card (one not rendered inside a CardView) is interactive when it has an
+  // href, or when the caller provided at least one press/action callback.
+  let isStandalone = ElementType === 'div' && !isSkeleton;
+  let isLink = isStandalone && !!props.href;
+  let isInteractiveStandalone =
+    isStandalone &&
+    !props.href &&
+    !!(onPress || onPressStart || onPressEnd || onPressChange || onPressUp || onAction);
+
   let children = (
     <Provider
       values={[
@@ -462,35 +507,75 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
 
   // oxlint-disable-next-line react/react-compiler
   let press = pressScale(domRef, UNSAFE_style);
-  if (ElementType === 'div' && !isSkeleton && props.href) {
-    // Standalone Card that has an href should be rendered as a Link.
-    // NOTE: In this case, the card must not contain interactive elements.
-    return (
+  if (isLink || isInteractiveStandalone) {
+    // A standalone interactive Card renders as a Link when it has an href, and as a Button
+    // otherwise. Both are RAC render prop components exposing the same interaction state,
+    // so they share their press handling, styling, and context wiring below.
+    // NOTE: In either case, the card must not contain interactive elements.
+    let pressProps = {
+      onPress:
+        onPress || onAction
+          ? (e: PressEvent) => {
+              onPress?.(e);
+              onAction?.();
+            }
+          : undefined,
+      onPressStart,
+      onPressEnd,
+      onPressChange,
+      onPressUp,
+      isDisabled
+    };
+    let getClassName = (renderProps: CardInteractionState) =>
+      UNSAFE_className +
+      card(
+        {
+          ...renderProps,
+          size,
+          density,
+          variant,
+          isCardView: false,
+          isLink,
+          isInteractive: !isLink,
+          isSelected: false
+        },
+        styles
+      );
+    // Only the preview in quiet cards scales down on press
+    let getStyle = (renderProps: CardInteractionState) =>
+      variant === 'quiet' ? UNSAFE_style : press(renderProps);
+    let renderCard = (renderProps: CardInteractionState) => (
+      <InternalCardContext.Provider
+        value={{...renderProps, size, isQuiet, isCheckboxSelection: false, isSelected: false}}>
+        {children}
+      </InternalCardContext.Provider>
+    );
+
+    return isLink ? (
       <Link
-        {...filterDOMProps(otherProps, {isLink: true})}
+        {...filterDOMProps(otherProps, {isLink: true, labelable: true})}
+        {...pressProps}
         ref={domRef as any}
-        className={renderProps =>
-          UNSAFE_className +
-          card({...renderProps, size, density, variant, isCardView: false, isLink: true}, styles)
-        }
-        style={renderProps =>
-          // Only the preview in quiet cards scales down on press
-          variant === 'quiet' ? UNSAFE_style : press(renderProps)
-        }>
-        {renderProps => (
-          <InternalCardContext.Provider
-            value={{size, isQuiet, isCheckboxSelection: false, isSelected: false, ...renderProps}}>
-            {children}
-          </InternalCardContext.Provider>
-        )}
+        className={getClassName}
+        style={getStyle}>
+        {renderCard}
       </Link>
+    ) : (
+      <RACButton
+        {...filterDOMProps(otherProps, {labelable: true})}
+        {...pressProps}
+        ref={domRef as unknown as RefObject<HTMLButtonElement>}
+        className={getClassName}
+        style={getStyle}>
+        {renderCard}
+      </RACButton>
     );
   }
 
   if (ElementType === 'div' || isSkeleton) {
     return (
       <div
-        {...filterDOMProps(otherProps)}
+        {...filterDOMProps(otherProps, {labelable: true})}
         id={id != null ? String(id) : undefined}
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
