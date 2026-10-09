@@ -66,8 +66,15 @@ export function useLoadMoreSentinel(
       // For direction='start', right/left margins have no affect for vertical scroll containers. We are not supporting reverse horizontal scroll containers for now.
       const rootMargin =
         direction === 'start' ? `${margin}% 0px 0px 0px` : `0px ${margin}% ${margin}% ${margin}%`;
+      let scrollParent = getScrollParent(ref.current);
+      let ownerDocument = scrollParent.ownerDocument;
+      let root =
+        scrollParent === ownerDocument.scrollingElement ||
+        scrollParent === ownerDocument.documentElement
+          ? ownerDocument
+          : scrollParent;
       sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {
-        root: getScrollParent(ref?.current) as HTMLElement,
+        root,
         rootMargin
       });
       sentinelObserver.current.observe(ref.current);
