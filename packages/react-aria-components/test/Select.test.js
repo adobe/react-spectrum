@@ -916,6 +916,62 @@ describe('Select', () => {
     expect(selectValue).toHaveTextContent('select value: 1');
   });
 
+  it.each([
+    {
+      selectionMode: 'single',
+      defaultProps: {defaultSelectedKey: 'dog'},
+      defaultText: 'Dog',
+      defaultFormValue: ['dog'],
+      option: 'Cat',
+      changedFormValue: ['cat']
+    },
+    {
+      selectionMode: 'multiple',
+      defaultProps: {defaultValue: ['cat', 'kangaroo']},
+      defaultText: 'Cat and Kangaroo',
+      defaultFormValue: ['cat', 'kangaroo'],
+      option: 'Dog',
+      changedFormValue: ['cat', 'dog', 'kangaroo']
+    }
+  ])(
+    'should submit the default value after a form reset ($selectionMode)',
+    async ({
+      selectionMode,
+      defaultProps,
+      defaultText,
+      defaultFormValue,
+      option,
+      changedFormValue
+    }) => {
+      let {getByTestId} = render(
+        <form data-testid="form">
+          <TestSelect name="select" isRequired selectionMode={selectionMode} {...defaultProps} />
+          <input type="reset" />
+        </form>
+      );
+      let form = getByTestId('form');
+      let reset = document.querySelector('input[type="reset"]');
+      let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+
+      act(() => form.reset());
+      expect(selectTester.getTrigger()).toHaveTextContent(defaultText);
+      expect(new FormData(form).getAll('select')).toEqual(defaultFormValue);
+      expect(form.checkValidity()).toBe(true);
+
+      await selectTester.toggleOptionSelection({option});
+      await selectTester.close();
+      expect(new FormData(form).getAll('select')).toEqual(changedFormValue);
+
+      await user.click(reset);
+      expect(selectTester.getTrigger()).toHaveTextContent(defaultText);
+      expect(new FormData(form).getAll('select')).toEqual(defaultFormValue);
+
+      await user.click(reset);
+      expect(selectTester.getTrigger()).toHaveTextContent(defaultText);
+      expect(new FormData(form).getAll('select')).toEqual(defaultFormValue);
+    }
+  );
+
   it('should not throw when rendered inside a Dialog with a Text errorMessage slot', () => {
     render(
       <Dialog aria-label="Dialog">
