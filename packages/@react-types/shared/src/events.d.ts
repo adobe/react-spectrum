@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableElement} from './dom';
 import {
   EventHandler,
   FocusEvent,
@@ -18,6 +17,7 @@ import {
   KeyboardEvent as ReactKeyboardEvent,
   SyntheticEvent
 } from 'react';
+import {FocusableElement} from './dom';
 
 // Type helper to extract the target element type from an event
 export type EventTargetType<T> = T extends SyntheticEvent<infer E, any> ? E : EventTarget;

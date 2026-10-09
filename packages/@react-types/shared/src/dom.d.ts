@@ -31,8 +31,8 @@ import {
   UIEventHandler,
   WheelEventHandler
 } from 'react';
-import {ValidationErrors} from './inputs';
 import {ReactSubmitEventHandler} from './events';
+import {ValidationErrors} from './inputs';
 
 export interface AriaLabelingProps {
   /**
