@@ -24,3 +24,4 @@ export * from './labelable';
 export * from './orientation';
 export * from './locale';
 export * from './key';
+export * from './layout';

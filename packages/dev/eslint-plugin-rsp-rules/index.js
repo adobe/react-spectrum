@@ -22,6 +22,8 @@ import noReactKey from './rules/no-react-key.js';
 import pureRender from './rules/pure-render.js';
 import safeEventTarget from './rules/safe-event-target.js';
 import shadowSafeActiveElement from './rules/shadow-safe-active-element.js';
+// import shadowSafeParentElement from './rules/shadow-safe-parent-element.js';
+// import shadowSafeParentNode from './rules/shadow-safe-parent-node.js';
 import sortImports from './rules/sort-imports.js';
 import useLayoutEffectRule from './rules/use-layout-effect-rule.js';
 
@@ -36,6 +38,8 @@ const rules = {
   'no-non-shadow-contains': noNonShadowContains,
   'safe-event-target': safeEventTarget,
   'shadow-safe-active-element': shadowSafeActiveElement,
+  // 'shadow-safe-parent-element': shadowSafeParentElement,
+  // 'shadow-safe-parent-node': shadowSafeParentNode,
   'faster-node-contains': fasterNodeContains,
   imports,
   'use-layout-effect-rule': useLayoutEffectRule,

@@ -11,6 +11,7 @@
  */
 
 export {triggerLongPress} from './utils';
+export {TestContainer} from './testContainer';
 export {installMouseEvent, installPointerEvent} from './testSetup';
 export {pointerMap} from './userEventMaps';
 export {User} from './user';
