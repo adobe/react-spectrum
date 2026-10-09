@@ -19,6 +19,7 @@ import React, {
   HTMLAttributes,
   ReactNode,
   RefObject,
+  useCallback,
   useContext,
   useRef,
   useState
@@ -37,13 +38,8 @@ interface Snapshot {
 }
 
 const SharedElementContext = createContext<RefObject<{[name: string]: Snapshot}> | null>(null);
-const SharedElementContainerContext = createContext<RefObject<Element | null> | undefined>(
-  undefined
-);
-
 // The snapshot is taken in a layout effect cleanup, which runs mid-commit, so the viewport position of anything
 // that depends on DOM swapped in the same commit may be one it never paints. Its position within the container is.
-// The container is read when measuring: on mount, a SharedElement's layout effect runs before its ref is attached.
 function getPosition(element: Element, container: Element | null | undefined): Position {
   let rect = element.getBoundingClientRect();
   let containerRect = container?.getBoundingClientRect();
@@ -52,6 +48,10 @@ function getPosition(element: Element, container: Element | null | undefined): P
     top: rect.top - (containerRect?.top ?? 0)
   };
 }
+
+const SharedElementPositionContext = createContext<(element: Element) => Position>(element =>
+  getPosition(element, null)
+);
 
 export interface SharedElementTransitionProps {
   children: ReactNode;
@@ -66,12 +66,19 @@ export interface SharedElementTransitionProps {
  * A scope for SharedElements, which animate between parents.
  */
 export function SharedElementTransition(props: SharedElementTransitionProps) {
+  let {containerRef} = props;
   let ref = useRef({});
+  // Read the container when measuring, not when a SharedElement's effect runs: on mount, children's
+  // layout effects run before the container's ref is attached.
+  let measure = useCallback(
+    (element: Element) => getPosition(element, null),
+    [containerRef]
+  );
   return (
     <SharedElementContext.Provider value={ref}>
-      <SharedElementContainerContext.Provider value={props.containerRef}>
+      <SharedElementPositionContext.Provider value={measure}>
         {props.children}
-      </SharedElementContainerContext.Provider>
+      </SharedElementPositionContext.Provider>
     </SharedElementContext.Provider>
   );
 }
@@ -111,7 +118,7 @@ export const SharedElement = forwardRef(function SharedElement(
   let {name, isVisible = true, children, className, style, render, ...divProps} = props;
   let [state, setState] = useState(isVisible ? 'visible' : 'hidden');
   let scopeRef = useContext(SharedElementContext);
-  let containerRef = useContext(SharedElementContainerContext);
+  let measure = useContext(SharedElementPositionContext);
   if (!scopeRef) {
     throw new Error('<SharedElement> must be rendered inside a <SharedElementTransition>');
   }
@@ -137,7 +144,7 @@ export const SharedElement = forwardRef(function SharedElement(
         let value = element.style[property];
         if (property === 'translate') {
           let prevPosition = prevSnapshot.position;
-          let currentPosition = getPosition(element, containerRef?.current);
+          let currentPosition = measure(element);
           let deltaX = prevPosition.left - currentPosition.left;
           let deltaY = prevPosition.top - currentPosition.top;
           element.style.translate = `${deltaX}px ${deltaY}px`;
@@ -198,15 +205,13 @@ export const SharedElement = forwardRef(function SharedElement(
         if (style.transitionProperty !== 'none') {
           let transitionProperty = style.transitionProperty.split(/\s*,\s*/);
           scope[name] = {
-            // The container outlives this element, so its current node is the one to measure against.
-            // oxlint-disable-next-line react-hooks/exhaustive-deps
-            position: getPosition(element, containerRef?.current),
+            position: measure(element),
             style: transitionProperty.map(p => [p, style[p]])
           };
         }
       }
     };
-  }, [ref, scopeRef, containerRef, name, isVisible]);
+  }, [ref, scopeRef, measure, name, isVisible]);
 
   let renderProps = useRenderProps({
     children,
