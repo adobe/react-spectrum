@@ -42,6 +42,8 @@ export interface ScrollAnchorInfo {
    * selected as the anchor. Defaults to allowing any layoutInfo.
    */
   isAnchorable?: (layoutInfo: LayoutInfo) => boolean;
+  /** Whether an item's resize should follow the anchored edge. Defaults to allowing any key. */
+  isEdgeContent?: (key: Key) => boolean;
 }
 
 export interface ListLayoutOptions {
@@ -238,7 +240,26 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       return null;
     }
     let threshold = layoutOptions?.scrollEndThreshold ?? this.scrollEndThreshold;
-    return {edge: 'end', axis: 'y', threshold, isAnchorable: isLoaderAnchorable};
+    return {
+      edge: 'end',
+      axis: 'y',
+      threshold,
+      isAnchorable: isLoaderAnchorable,
+      isEdgeContent: key => key === this.getNewestKey()
+    };
+  }
+
+  private getNewestKey(): Key | null {
+    let lastKey = this.collection.getLastKey();
+    while (lastKey != null) {
+      let node = this.collection.getItem(lastKey);
+      if (node?.type !== 'loader') {
+        break;
+      }
+      lastKey = this.collection.getKeyBefore(lastKey);
+    }
+
+    return lastKey;
   }
 
   // Backward compatibility for subclassing.
