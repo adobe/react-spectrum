@@ -114,6 +114,20 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       // Call focus on nextElem so that keyboard navigation scrolls the radio into view
       nextElem.focus();
       state.setSelectedValue(nextElem.value);
+
+      // The state update above only changes the DOM `checked` property via React's controlled
+      // re-render — it does not dispatch any native event the way a real click does. React's own
+      // change detection for checkbox/radio inputs is keyed off the "click" event (a legacy
+      // browser-compat shim), not "change" or "input", so we replay a native click to make an
+      // ancestor <form onChange> (or any other native DOM listener) observe keyboard-driven
+      // selection the same way it observes a mouse click.
+      let checkedSetter = Object.getOwnPropertyDescriptor(
+        Object.getPrototypeOf(nextElem),
+        'checked'
+      )!.set!;
+      checkedSetter.call(nextElem, true);
+      nextElem.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+
       return true;
     }
     return false;
