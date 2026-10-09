@@ -1596,6 +1596,63 @@ describe('Tree', () => {
   });
 
   describe('empty state', () => {
+    it.each([false, true])('should tab through interactive empty state (shift=%s)', async shift => {
+      let {getByRole} = render(
+        <>
+          <button>Before</button>
+          <Tree
+            aria-label="Test"
+            renderEmptyState={() => (
+              <div>
+                <a href="/#">No results</a>
+                <a href="/#">Another link</a>
+              </div>
+            )}>
+            {[]}
+          </Tree>
+          <button>After</button>
+        </>
+      );
+
+      await user.click(getByRole('button', {name: shift ? 'After' : 'Before'}));
+      for (let name of shift ? ['Another link', 'No results'] : ['No results', 'Another link']) {
+        await user.tab({shift});
+        expect(getByRole('link', {name})).toHaveFocus();
+      }
+      await user.tab({shift});
+      expect(getByRole('button', {name: shift ? 'Before' : 'After'})).toHaveFocus();
+    });
+
+    it('should navigate to rows that arrive while the empty tree is focused', async () => {
+      let Example = ({items}: {items: Array<{id: string; name: string}>}) => (
+        <Tree aria-label="Async tree" items={items} renderEmptyState={() => 'No items'}>
+          {item => (
+            <TreeItem id={item.id} textValue={item.name}>
+              <TreeItemContent>{item.name}</TreeItemContent>
+            </TreeItem>
+          )}
+        </Tree>
+      );
+      let {getByRole, getAllByRole, rerender} = render(<Example items={[]} />);
+      let tree = getByRole('treegrid');
+
+      await user.tab();
+      expect(tree).toHaveFocus();
+
+      rerender(
+        <Example
+          items={[
+            {id: 'one', name: 'One'},
+            {id: 'two', name: 'Two'}
+          ]}
+        />
+      );
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[0]).toHaveFocus();
+      await user.keyboard('{ArrowDown}');
+      expect(getAllByRole('row')[1]).toHaveFocus();
+    });
+
     it('should allow the user to tab to the empty tree', async () => {
       let {getAllByRole, getByRole} = render(
         <Tree

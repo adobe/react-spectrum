@@ -818,6 +818,35 @@ function renderEmptyLoader({isLoading}) {
   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
 }
 
+export const PopulateFocusedEmptyTree = () => {
+  let [items, setItems] = useState<Array<{id: string; name: string}>>([]);
+
+  return (
+    <div
+      onKeyDownCapture={event => {
+        if (event.key === 'Enter' && items.length === 0) {
+          setItems([
+            {id: 'one', name: 'One'},
+            {id: 'two', name: 'Two'}
+          ]);
+        }
+      }}>
+      <p>Tab to the empty tree, press Enter to add items, then use the arrow keys to navigate.</p>
+      <Tree
+        aria-label="Files"
+        className={styles.tree}
+        items={items}
+        renderEmptyState={() => 'No files'}>
+        {item => (
+          <TreeItem id={item.id} textValue={item.name}>
+            <TreeItemContent>{item.name}</TreeItemContent>
+          </TreeItem>
+        )}
+      </Tree>
+    </div>
+  );
+};
+
 const EmptyTreeStatic = <T extends any>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element => (
   <Tree
     {...args}
