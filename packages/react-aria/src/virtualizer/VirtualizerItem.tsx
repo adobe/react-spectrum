@@ -12,7 +12,7 @@
 
 import {Direction} from '@react-types/shared';
 import {LayoutInfo} from 'react-stately/useVirtualizerState';
-import React, {CSSProperties, JSX, ReactNode, useRef} from 'react';
+import React, {CSSProperties, JSX, memo, ReactNode, useRef} from 'react';
 import {useLocale} from '../i18n/I18nProvider';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
@@ -25,7 +25,9 @@ interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
   shouldObserveItemSize?: boolean;
 }
 
-export function VirtualizerItem(props: VirtualizerItemProps): JSX.Element {
+export const VirtualizerItem = memo(function VirtualizerItem(
+  props: VirtualizerItemProps
+): JSX.Element {
   let {style, className, layoutInfo, virtualizer, parent, children, shouldObserveItemSize} = props;
   let {direction} = useLocale();
   let ref = useRef<HTMLDivElement | null>(null);
@@ -44,6 +46,24 @@ export function VirtualizerItem(props: VirtualizerItemProps): JSX.Element {
       style={{...layoutInfoToStyle(layoutInfo, direction, parent), ...style}}>
       {children}
     </div>
+  );
+}, areVirtualizerItemPropsEqual);
+
+function areVirtualizerItemPropsEqual(
+  prev: VirtualizerItemProps,
+  next: VirtualizerItemProps
+): boolean {
+  // Items with an estimated size always re-render so that useVirtualizerItem can measure them,
+  // e.g. if a previous measurement was skipped because the item was hidden.
+  return (
+    !next.layoutInfo.estimatedSize &&
+    prev.layoutInfo === next.layoutInfo &&
+    prev.parent === next.parent &&
+    prev.virtualizer === next.virtualizer &&
+    prev.children === next.children &&
+    prev.style === next.style &&
+    prev.className === next.className &&
+    prev.shouldObserveItemSize === next.shouldObserveItemSize
   );
 }
 
