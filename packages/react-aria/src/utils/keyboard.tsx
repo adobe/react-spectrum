@@ -129,7 +129,7 @@ function getTouchScreen(): TouchScreen {
   return {
     width: screenWidth * visualScale,
     height: screenHeight * visualScale,
-    angle: window.screen.orientation.angle
+    angle: window.screen.orientation?.angle ?? 0
   };
 }
 
