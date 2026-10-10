@@ -235,9 +235,15 @@ export function useDateFieldState<T extends DateValue = DateValue>(
 
   let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
-  let [displayValue, setDisplayValue] = useState(
+  let [displayValue, setDisplayValueState] = useState(
     () => new IncompleteDate(calendar, hourCycle, calendarValue)
   );
+  let setDisplayValue = (value: IncompleteDate) => {
+    // Moving focus can trigger blur before the next render.
+    // oxlint-disable-next-line react/react-compiler
+    displayValue = value;
+    setDisplayValueState(value);
+  };
 
   let showEra = calendar.identifier === 'gregory' && displayValue.era === 'BC';
   let formatOpts = useMemo(
