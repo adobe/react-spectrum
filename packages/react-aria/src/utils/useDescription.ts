@@ -18,8 +18,6 @@ let descriptionId = 0;
 const descriptionNodes = new Map<string, {refCount: number; element: Element}>();
 
 export function useDescription(description?: string): AriaLabelingProps {
-  // Reuse the id of an existing description node so components that mount
-  // after it don't need a second render to reference it.
   let [id, setId] = useState<string | undefined>(() =>
     description ? descriptionNodes.get(description)?.element.id : undefined
   );

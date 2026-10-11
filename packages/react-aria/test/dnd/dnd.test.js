@@ -3363,7 +3363,6 @@ describe('useDrag and useDrop', function () {
         );
       }
 
-      // Profiler reports commits rather than render calls, so this also holds under StrictMode.
       let updated = [];
       let onRender = (id, phase) => {
         if (phase !== 'mount') {
@@ -3392,7 +3391,6 @@ describe('useDrag and useDrop', function () {
       expect(tree.getByText('second')).toHaveAttribute('aria-describedby', descriptionId);
       expect(tree.getByText('third')).toHaveAttribute('aria-describedby', descriptionId);
 
-      // Once every user unmounts, the description node is removed and a new one is created.
       tree.rerender(<></>);
       expect(document.getElementById(descriptionId)).toBeNull();
 
