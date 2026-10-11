@@ -2618,6 +2618,89 @@ describe('usePress', function () {
   });
 
   describe('keyboard events', function () {
+    describe('Enter default actions', function () {
+      it.each([
+        ['Mac', false, false],
+        ['Mac', true, true],
+        ['Linux', false, false],
+        ['Linux', true, false]
+      ])('handles Enter on %s with ctrlKey=%s', function (platform, ctrlKey, allowDefault) {
+        using spy = jest.spyOn(window.navigator, 'platform', 'get').mockReturnValue(platform);
+        let {getByText} = render(<Example />);
+        let element = getByText('test');
+        act(() => element.focus());
+
+        expect(fireEvent.keyDown(element, {key: 'Enter', ctrlKey})).toBe(allowDefault);
+        expect(fireEvent.keyUp(element, {key: 'Enter', ctrlKey})).toBe(allowDefault);
+        spy.mockRestore();
+      });
+
+      it.each([
+        ['a', {href: '#target'}, true],
+        ['button', {type: 'submit'}, true],
+        ['button', {type: 'reset'}, true],
+        ['button', {type: 'button'}, false],
+        ['input', {type: 'checkbox'}, true],
+        ['input', {type: 'radio'}, true]
+      ])(
+        'preserves native Enter behavior for %s %j on macOS',
+        function (Element, props, allowDefault) {
+          using spy = jest.spyOn(window.navigator, 'platform', 'get').mockReturnValue('Mac');
+          function NativePressable() {
+            let {pressProps} = usePress({});
+            return <Element {...pressProps} {...props} data-testid="pressable" />;
+          }
+          let {getByTestId} = render(<NativePressable />);
+          let element = getByTestId('pressable');
+          act(() => element.focus());
+
+          expect(fireEvent.keyDown(element, {key: 'Enter'})).toBe(allowDefault);
+          expect(fireEvent.keyUp(element, {key: 'Enter'})).toBe(allowDefault);
+          spy.mockRestore();
+        }
+      );
+
+      it('prevents plain Enter when selecting an option restores focus to its trigger on macOS', function () {
+        using spy = jest.spyOn(window.navigator, 'platform', 'get').mockReturnValue('Mac');
+        let triggerRef = React.createRef();
+        let onSelect = jest.fn();
+
+        function Option() {
+          let {pressProps} = usePress({
+            onPressStart(e) {
+              if (e.pointerType === 'keyboard') {
+                onSelect();
+                act(() => triggerRef.current.focus());
+              }
+            }
+          });
+          return (
+            <div {...pressProps} role="option" aria-selected={false} tabIndex={0}>
+              Red
+            </div>
+          );
+        }
+
+        let {getByRole} = render(
+          <>
+            <button ref={triggerRef} type="button">
+              Blue
+            </button>
+            <Option />
+          </>
+        );
+        let option = getByRole('option');
+        let trigger = getByRole('button');
+        act(() => option.focus());
+
+        expect(fireEvent.keyDown(option, {key: 'Enter'})).toBe(false);
+        expect(onSelect).toHaveBeenCalledTimes(1);
+        expect(document.activeElement).toBe(trigger);
+        fireEvent.keyUp(trigger, {key: 'Enter'});
+        spy.mockRestore();
+      });
+    });
+
     it('should fire press events when the element is not a link', function () {
       let events = [];
       let addEvent = e => events.push(e);
