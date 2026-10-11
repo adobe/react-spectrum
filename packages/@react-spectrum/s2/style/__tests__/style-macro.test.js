@@ -40,26 +40,26 @@ describe('style-macro', () => {
 "@layer _.prose, _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs18:first-child {
+  .Jbs181:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv18:first-child {
+    .Jbpv181:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
-.-macro-static-SVj2X {
-        --macro-data-SVj2X: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+.-macro-static-k3W3fd {
+        --macro-data-k3W3fd: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
-    expect(js).toMatchInlineSnapshot(`" Jbs18 Jbpv18 -macro-static-SVj2X"`);
+    expect(js).toMatchInlineSnapshot(`" Jbs181 Jbpv181 -macro-static-k3W3fd"`);
   });
 
   it('should support self references', () => {
@@ -73,60 +73,60 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  ._kc18 {
+  ._kc181 {
     border-top-width: 2px;
   }
 
 
-  .hc18 {
+  .hc181 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc18 {
+  .mCPFGYc181 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc18 {
+  .lc181 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc18 {
+  .SMBFGYc181 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv18 {
+  .Rv181 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd18 {
+  .ZjUQgKd181 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc18 {
+  .-m_-mc181 {
     --m: 2px;
   }
 
 
-  .-S_-Sv18 {
+  .-S_-Sv181 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
-.-macro-static-kmzpnd {
-        --macro-data-kmzpnd: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+.-macro-static-1b73cb {
+        --macro-data-1b73cb: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
 
     expect(js).toMatchInlineSnapshot(
-      `" _kc18 hc18 mCPFGYc18 lc18 SMBFGYc18 Rv18 ZjUQgKd18 -m_-mc18 -S_-Sv18 -macro-static-kmzpnd"`
+      `" _kc181 hc181 mCPFGYc181 lc181 SMBFGYc181 Rv181 ZjUQgKd181 -m_-mc181 -S_-Sv181 -macro-static-1b73cb"`
     );
   });
 
@@ -144,9 +144,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gw18 pg18 -macro-dynamic-8zfsty"`);
-    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb18 pHJ3AUd18 -macro-static-OdmzX"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb18 pg18 -macro-dynamic-xzkvk2"`);
+    expect(js()).toMatchInlineSnapshot(`"  gw181 pg181 -macro-dynamic-1h8noyg"`);
+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb181 pHJ3AUd181 -macro-static-GECTtc"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb181 pg181 -macro-dynamic-6my2as"`);
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -161,11 +161,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B18 __Ya18 -macro-dynamic-1rpz13b"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D18 __Ya18 -macro-static-PYBxje"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  -_7PloMd-D18 __Ya18 -macro-dynamic-taihft"`
-    );
+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B181 __Ya181 -macro-dynamic-1od5ond"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D181 __Ya181 -macro-static-VgWx6"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_7PloMd-D181 __Ya181 -macro-dynamic-3rf"`);
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -180,10 +178,10 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  Tk18 Qk18 Sk18 Rk18 -macro-dynamic-17wzg3t"`);
-    expect(overrides).toMatchInlineSnapshot(`" Tm18 Qm18 Sm18 Rm18 -macro-static-tJD4dd"`);
+    expect(js()).toMatchInlineSnapshot(`"  Tk181 Qk181 Sk181 Rk181 -macro-dynamic-yaeigd"`);
+    expect(overrides).toMatchInlineSnapshot(`" Tm181 Qm181 Sm181 Rm181 -macro-static-Ho2L0c"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  Tm18 Qm18 Sm18 Rm18 -macro-dynamic-csz1ld"`
+      `"  Tm181 Qm181 Sm181 Rm181 -macro-dynamic-1pu5iph"`
     );
   });
 
@@ -199,9 +197,11 @@ describe('style-macro', () => {
       fontSize: 'ui-xs'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc18 vx18 -macro-dynamic-12bvpra"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a18 vx18 -macro-static-G8AL3c"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a18 vx18 -macro-dynamic-px7il4"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc181 vx181 -macro-dynamic-1txlay0"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a181 vx181 -macro-static-EKTuZ"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      `"  -_6BNtrc-a181 vx181 -macro-dynamic-1dyyspm"`
+    );
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -216,9 +216,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gE18 -macro-dynamic-n9d72c"`);
-    expect(overrides).toMatchInlineSnapshot(`" Nk18 -macro-static-VLN6Ie"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk18 gE18 -macro-dynamic-7d7i86"`);
+    expect(js()).toMatchInlineSnapshot(`"  gE181 -macro-dynamic-1or0zkl"`);
+    expect(overrides).toMatchInlineSnapshot(`" Nk181 -macro-static-q9JiY"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk181 gE181 -macro-dynamic-o2d3ns"`);
   });
 
   it('should support runtime conditions', () => {
@@ -239,32 +239,32 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .gH18 {
+  .gH181 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF18 {
+  .gF181 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE18 {
+  .gE181 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt18 {
+  .pt181 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po18 {
+  .po181 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm18 {
+  .pm181 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -272,9 +272,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  gH18 pt18 -macro-dynamic-3710tw"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF18 po18 -macro-dynamic-1d9pt71"`);
-    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE18 pm18 -macro-dynamic-fc87nu"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH181 pt181 -macro-dynamic-11ae2e"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF181 po181 -macro-dynamic-bktsfj"`);
+    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE181 pm181 -macro-dynamic-j8l7cc"`);
   });
 
   it('should support nested runtime conditions', () => {
@@ -293,33 +293,33 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .gH18 {
+  .gH181 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF18 {
+  .gF181 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h18 {
+  .g_h181 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g318 {
+  .g3181 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot(`"  gH18 -macro-dynamic-10lxinb"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF18 -macro-dynamic-1fdxbl1"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h18 -macro-dynamic-1xv1jfq"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH181 -macro-dynamic-41v7yw"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF181 -macro-dynamic-1tj0f12"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h181 -macro-dynamic-zxv4dz"`);
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      `"  g318 -macro-dynamic-e73bjm"`
+      `"  g3181 -macro-dynamic-19sfbb7"`
     );
   });
 
@@ -334,9 +334,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY18 -macro-dynamic-hjn9nc"`);
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe18 -macro-dynamic-h5e47m"`);
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw18 -macro-dynamic-8z2diu"`);
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY181 -macro-dynamic-e8hgrt"`);
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe181 -macro-dynamic-163hcz"`);
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw181 -macro-dynamic-fhs8jr"`);
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -354,14 +354,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb18 {
+    .plb181 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple18 {
+    .ple181 {
       color: HighlightText;
     }
   }
@@ -370,8 +370,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  plb18 -macro-dynamic-whmumu"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple18 -macro-dynamic-19u767t"`);
+    expect(js({})).toMatchInlineSnapshot(`"  plb181 -macro-dynamic-a6bbhj"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple181 -macro-dynamic-oi9luy"`);
   });
 
   it('inherits parent default when nested branch has no default key', () => {
@@ -387,9 +387,9 @@ describe('style-macro', () => {
     });
     // forcedColors.default should apply when variant=highlight but !isSelected
     expect(css).toContain('ButtonText');
-    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb18 -macro-dynamic-whmumu"`);
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb181 -macro-dynamic-a6bbhj"`);
     expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot(
-      `"  ple18 -macro-dynamic-19u767t"`
+      `"  ple181 -macro-dynamic-oi9luy"`
     );
   });
 
@@ -398,33 +398,33 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot(`" Th18 Qh18 Sh18 Rh18 -macro-static-zKXlkb"`);
+    expect(js).toMatchInlineSnapshot(`" Th181 Qh181 Sh181 Rh181 -macro-static-7DghO"`);
     expect(css).toMatchInlineSnapshot(`
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .Th18 {
+  .Th181 {
     padding-top: 24px;
   }
 
 
-  .Qh18 {
+  .Qh181 {
     padding-bottom: 24px;
   }
 
 
-  .Sh18 {
+  .Sh181 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh18 {
+  .Rh181 {
     padding-inline-end: 24px;
   }
 }
 
-.-macro-static-zKXlkb {
-        --macro-data-zKXlkb: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+.-macro-static-7DghO {
+        --macro-data-7DghO: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -440,13 +440,13 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .gpQzfVb18 {
+  .gpQzfVb181 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
 
-.-macro-static-gTBE9d {
-        --macro-data-gTBE9d: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+.-macro-static-RPoXQ {
+        --macro-data-RPoXQ: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -465,13 +465,13 @@ describe('style-macro', () => {
 "@layer _.prose, _.a;
 
 @layer _.a {
-  .-FUeYm-gE18 {
+  .-FUeYm-gE181 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
 
-.-macro-static-IjtpCd {
-        --macro-data-IjtpCd: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+.-macro-static-1GOyUb {
+        --macro-data-1GOyUb: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
       }
 
 "
