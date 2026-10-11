@@ -127,6 +127,11 @@ export function useRadio(
     isDisabled,
     onPress(e) {
       onPress?.(e);
+      // Keyboard interactions are handled directly on the input.
+      if (e.pointerType === 'keyboard') {
+        return;
+      }
+
       state.setSelectedValue(value);
       ref.current?.focus();
     }
