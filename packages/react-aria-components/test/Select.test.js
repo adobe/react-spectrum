@@ -49,7 +49,45 @@ describe('Select', () => {
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
+  it.each([300, 301])(
+    'restores the default selection on form reset without a name with %i items',
+    async size => {
+      let items = Array.from({length: size}, (_, i) => ({
+        id: `k${i}`,
+        name: `Item ${i}`
+      }));
 
+      let {getByTestId, getByRole} = render(
+        <form>
+          <Select data-testid="select" aria-label="Choose an item" defaultSelectedKey="k0">
+            <Button>
+              <SelectValue />
+            </Button>
+            <Popover>
+              <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
+            </Popover>
+          </Select>
+          <button type="reset">Reset</button>
+        </form>
+      );
+
+      let selectTester = testUtilUser.createTester('Select', {
+        root: getByTestId('select')
+      });
+      let trigger = selectTester.getTrigger();
+
+      expect(trigger).toHaveTextContent('Item 0');
+
+      await selectTester.open();
+      await user.click(selectTester.getOptions()[1]);
+
+      expect(trigger).toHaveTextContent('Item 1');
+
+      await user.click(getByRole('button', {name: 'Reset'}));
+
+      expect(trigger).toHaveTextContent('Item 0');
+    }
+  );
   it('provides slots', async () => {
     let {getByTestId} = render(<TestSelect />);
     let wrapper = getByTestId('select');
