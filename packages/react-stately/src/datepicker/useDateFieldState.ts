@@ -33,7 +33,8 @@ import {getPlaceholder} from './placeholders';
 import {IncompleteDate} from './IncompleteDate';
 import {NumberFormatter} from '@internationalized/number';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
+import {useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export type DateSegmentType =
@@ -238,12 +239,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(
   let [displayValue, setDisplayValueState] = useState(
     () => new IncompleteDate(calendar, hourCycle, calendarValue)
   );
-  let setDisplayValue = (value: IncompleteDate) => {
-    // Moving focus can trigger blur before the next render.
-    // oxlint-disable-next-line react/react-compiler
-    displayValue = value;
-    setDisplayValueState(value);
-  };
 
   let showEra = calendar.identifier === 'gregory' && displayValue.era === 'BC';
   let formatOpts = useMemo(
@@ -305,8 +300,21 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     setLastValue(calendarValue);
     setLastCalendar(calendar);
     setLastHourCycle(hourCycle);
-    setDisplayValue(displayValue);
+    setDisplayValueState(displayValue);
   }
+
+  // Entering the last digit of a segment moves focus to the next one. When that is in another
+  // field (e.g. in a date range picker), the field blurs and confirmPlaceholder runs in the same
+  // event, before the state update from the keystroke has rendered. Track the latest display
+  // value in a ref so it isn't read from a stale closure.
+  let displayValueRef = useRef(displayValue);
+  useLayoutEffect(() => {
+    displayValueRef.current = displayValue;
+  }, [displayValue]);
+  let setDisplayValue = (value: IncompleteDate) => {
+    displayValueRef.current = value;
+    setDisplayValueState(value);
+  };
 
   let setValue = (newValue: DateValue | IncompleteDate | null) => {
     if (props.isDisabled || props.isReadOnly) {
@@ -429,6 +437,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(
       if (props.isDisabled || props.isReadOnly) {
         return;
       }
+
+      // Use the latest display value in case a segment was updated earlier in this event.
+      let displayValue = displayValueRef.current;
 
       // If the display value is complete but invalid, we need to constrain it and emit onChange on blur.
       if (displayValue.isComplete(displaySegments)) {
