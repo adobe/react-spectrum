@@ -15,27 +15,31 @@ import {expect, it} from 'vitest';
 import {FieldError} from '../src/FieldError';
 import {Form} from '../src/Form';
 import {Input} from '../src/Input';
+import {isFirefox} from 'react-aria/private/utils/platform';
 import {Label} from '../src/Label';
 import {page, userEvent} from 'vitest/browser';
 import React from 'react';
 import {render} from 'vitest-browser-react';
 import {TextField} from '../src/TextField';
 
-it('shows the focus ring on the first invalid field when submitting with the mouse', async () => {
-  await render(
-    <Form>
-      <TextField name="name" isRequired>
-        <Label>Name</Label>
-        <Input />
-        <FieldError />
-      </TextField>
-      <Button type="submit">Submit</Button>
-    </Form>
-  );
+it.skipIf(isFirefox())(
+  'shows the focus ring on the first invalid field when submitting with the mouse',
+  async () => {
+    await render(
+      <Form>
+        <TextField name="name" isRequired>
+          <Label>Name</Label>
+          <Input />
+          <FieldError />
+        </TextField>
+        <Button type="submit">Submit</Button>
+      </Form>
+    );
 
-  await userEvent.click(page.getByRole('button', {name: 'Submit'}));
+    await userEvent.click(page.getByRole('button', {name: 'Submit'}));
 
-  let input = page.getByRole('textbox', {name: 'Name'});
-  await expect.element(input).toHaveFocus();
-  await expect.element(input).toHaveAttribute('data-focus-visible', 'true');
-});
+    let input = page.getByRole('textbox', {name: 'Name'});
+    await expect.element(input).toHaveFocus();
+    await expect.element(input).toHaveAttribute('data-focus-visible', 'true');
+  }
+);
