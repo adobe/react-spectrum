@@ -52,7 +52,7 @@ export function Docs() {
         <P>
           <Strong>
             Introducing{' '}
-            <Link href="https://s2.spectrum.adobe.com" target="_blank">
+            <Link href="https://spectrum.adobe.com" target="_blank">
               Spectrum 2
             </Link>
           </Strong>{' '}
