@@ -771,7 +771,7 @@ function scrollCaretIntoView(root: HTMLElement): void {
       rect = root.getBoundingClientRect();
     } else {
       // Otherwise find the next sibling element (e.g. trailing <br>) and use its rect in this case.
-      let nextSibling = node === root ? null : node.nextSibling;
+      let nextSibling = node === root ? root.childNodes[range.endOffset] : node.nextSibling;
       while (node && node !== root && !nextSibling) {
         node = node.parentNode as Node | null;
         nextSibling = node && node !== root ? node.nextSibling : null;
@@ -822,7 +822,7 @@ function getDOMRectPosition(root: Element, pos: Position): [Node, number] {
     let text = root.lastChild.lastChild;
     return [text, text.textContent!.length];
   }
-  if (child && child.nodeType === Node.ELEMENT_NODE) {
+  if (child && child.nodeType === Node.ELEMENT_NODE && child.firstChild) {
     // Place the position inside the zero width space wrappers around the token.
     if (pos.offset > 0) {
       return [child.lastChild!, 1];
