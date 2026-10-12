@@ -14,6 +14,7 @@ import type {
   DragAndDrop,
   DragAndDropOptions as RACDragAndDropOptions
 } from 'react-aria-components/useDragAndDrop';
+import {useMediaQuery} from './useMediaQuery';
 import {useDragAndDrop as useRACDragAndDrop} from 'react-aria-components/useDragAndDrop';
 
 export type {DragAndDrop};
@@ -21,12 +22,24 @@ export type {DragAndDrop};
 export interface DragAndDropOptions<T = object> extends Omit<
   RACDragAndDropOptions<T>,
   'renderDropIndicator'
-> {}
+> {
+  /**
+   * Whether mouse dragging can start from the entire item or only from its drag handle.
+   * On touch devices, dragging can always start from the entire item.
+   *
+   * @default 'item'
+   */
+  pointerDragSource?: 'item' | 'handle';
+}
 
 /**
  * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible
  * collection component.
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
-  return useRACDragAndDrop(options);
+  let isTouchDevice = useMediaQuery('(pointer: coarse)');
+  return useRACDragAndDrop({
+    ...options,
+    pointerDragSource: isTouchDevice ? 'item' : options.pointerDragSource
+  });
 }

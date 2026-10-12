@@ -104,6 +104,7 @@ itDrag('shows a grabbing cursor when a drag handle is pressed or dragging', asyn
 
   await render(<Example />);
   let button = page.getByRole('button', {name: /^Drag /});
+  await userEvent.hover(page.getByRole('row').nth(1));
   await expect.poll(() => getComputedStyle(button.element()).cursor).toBe('grab');
   await server.commands.mouseDownOnElement('button[slot="drag"]');
   try {

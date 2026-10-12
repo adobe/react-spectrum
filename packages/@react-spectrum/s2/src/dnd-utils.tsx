@@ -89,8 +89,18 @@ let dragButton = style<{
   isFocusVisible: boolean;
   isPressed: boolean;
   isHandlePointerSource: boolean;
+  isFocusVisibleWithin: boolean;
 }>({
   color: 'inherit',
+  // Preserve the handle's size when hover ends during native drag initiation.
+  opacity: {
+    default: 1,
+    isHandlePointerSource: {
+      default: 0,
+      ':is([data-hovered] *)': 1,
+      isFocusVisibleWithin: 1
+    }
+  },
   cursor: {
     default: 'default',
     isHandlePointerSource: {
@@ -129,14 +139,15 @@ let dragButton = style<{
 export function DragHandleButton({isFocusVisibleWithin}: {isFocusVisibleWithin: boolean}) {
   let {visuallyHiddenProps} = useVisuallyHidden();
   let {dragAndDropHooks} = useContext(DragAndDropContext) ?? {};
-  // When pointer dragging is restricted to the handle, it must always be visible so mouse and touch users can find it.
   let isHandlePointerSource = dragAndDropHooks?.pointerDragSource === 'handle';
   let isHidden = !isFocusVisibleWithin && !isHandlePointerSource;
   return (
     <Button
       slot="drag"
       style={isHidden ? visuallyHiddenProps.style : {}}
-      className={renderProps => dragButton({...renderProps, isHandlePointerSource})}>
+      className={renderProps =>
+        dragButton({...renderProps, isHandlePointerSource, isFocusVisibleWithin})
+      }>
       <DragHandle size="M" />
     </Button>
   );

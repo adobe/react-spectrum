@@ -19,6 +19,7 @@ import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import {MenuItem, MenuSection} from '../src/Menu';
 import {pointerMap, User} from '@react-aria/test-utils';
 import React, {useState} from 'react';
+import {setMedia} from 'mock-match-media';
 import {Tab, TabList, Tabs} from '../src/Tabs';
 import {Text} from '../src/Content';
 import {useDragAndDrop} from '../src/useDragAndDrop';
@@ -460,7 +461,7 @@ describe('TableView', () => {
       expect(dragButton.style.position).toBe('absolute');
     });
 
-    it('should make only the drag button draggable and always show it when pointerDragSource is handle', () => {
+    it('should restrict mouse dragging to the handle while preserving its layout space', () => {
       let {getAllByRole} = render(<DraggableTable pointerDragSource="handle" />);
       let row = getAllByRole('row')[1];
       let dragButton = within(row).getByRole('button');
@@ -468,6 +469,17 @@ describe('TableView', () => {
       expect(dragButton).toHaveAttribute('draggable', 'true');
       expect(dragButton.style.position).not.toBe('absolute');
       expect(dragButton.style.pointerEvents).not.toBe('none');
+    });
+
+    it('should allow whole-item dragging on touch devices even when pointerDragSource is handle', () => {
+      setMedia({hover: 'none', pointer: 'coarse'});
+      let {getAllByRole} = render(<DraggableTable pointerDragSource="handle" />);
+      let row = getAllByRole('row')[1];
+      let dragButton = within(row).getByRole('button');
+      expect(row).toHaveAttribute('draggable', 'true');
+      expect(dragButton).not.toHaveAttribute('draggable');
+      expect(dragButton.style.position).toBe('absolute');
+      expect(dragButton.style.pointerEvents).toBe('none');
     });
   });
 });

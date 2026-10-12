@@ -108,7 +108,7 @@ function DraggableCOMPONENT() {
 
 ## Drag handle
 
-By default, mouse and touch users can start a drag from anywhere within an item, and the drag handle is only shown to keyboard users. When items contain interactive elements such as text fields, set `pointerDragSource` to `"handle"` to restrict mouse and touch dragging to the drag handle. In this mode, the drag handle is always visible. Keyboard and screen reader drag and drop is unaffected.
+By default, mouse and touch users can start a drag from anywhere within an item, and the drag handle is only shown to keyboard users. When items contain interactive elements such as text fields, set `pointerDragSource` to `"handle"` to restrict mouse dragging to the drag handle. In this mode, the drag handle is shown when an item is hovered or has keyboard focus within it. On touch devices, dragging can always start from anywhere within an item. Keyboard and screen reader drag and drop is unaffected.
 
 <ExampleSwitcher type="component" examples={['ListView', 'TreeView', 'TableView']}>
 

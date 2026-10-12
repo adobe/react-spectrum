@@ -13,6 +13,7 @@
 import {act, render, within} from '@react-spectrum/test-utils-internal';
 import {ListView, ListViewItem} from '../src/ListView';
 import React from 'react';
+import {setMedia} from 'mock-match-media';
 import {useDragAndDrop} from '../src/useDragAndDrop';
 
 describe('ListView', () => {
@@ -71,7 +72,7 @@ describe('ListView', () => {
       expect(dragButton.style.position).toBe('absolute');
     });
 
-    it('should make only the drag button draggable and always show it when pointerDragSource is handle', () => {
+    it('should restrict mouse dragging to the handle while preserving its layout space', () => {
       let {getAllByRole} = render(<DraggableListView pointerDragSource="handle" />);
       let row = getAllByRole('row')[0];
       let dragButton = within(row).getByRole('button');
@@ -79,6 +80,17 @@ describe('ListView', () => {
       expect(dragButton).toHaveAttribute('draggable', 'true');
       expect(dragButton.style.position).not.toBe('absolute');
       expect(dragButton.style.pointerEvents).not.toBe('none');
+    });
+
+    it('should allow whole-item dragging on touch devices even when pointerDragSource is handle', () => {
+      setMedia({hover: 'none', pointer: 'coarse'});
+      let {getAllByRole} = render(<DraggableListView pointerDragSource="handle" />);
+      let row = getAllByRole('row')[0];
+      let dragButton = within(row).getByRole('button');
+      expect(row).toHaveAttribute('draggable', 'true');
+      expect(dragButton).not.toHaveAttribute('draggable');
+      expect(dragButton.style.position).toBe('absolute');
+      expect(dragButton.style.pointerEvents).toBe('none');
     });
   });
 });

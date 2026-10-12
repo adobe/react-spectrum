@@ -6,6 +6,7 @@ import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import {MenuItem} from '../src/Menu';
 import React, {useState} from 'react';
+import {setMedia} from 'mock-match-media';
 import {Text} from '../src/Content';
 import {TreeView, TreeViewItem, TreeViewItemContent} from '../src/TreeView';
 import {useDragAndDrop} from '../src/useDragAndDrop';
@@ -624,7 +625,7 @@ describe('TreeView', () => {
       expect(dragButton.style.position).toBe('absolute');
     });
 
-    it('should make only the drag button draggable and always show it when pointerDragSource is handle', () => {
+    it('should restrict mouse dragging to the handle while preserving its layout space', () => {
       let {getAllByRole} = render(<DraggableTree pointerDragSource="handle" />);
       let row = getAllByRole('row')[0];
       let dragButton = row.querySelector('[slot="drag"]') as HTMLElement;
@@ -632,6 +633,17 @@ describe('TreeView', () => {
       expect(dragButton).toHaveAttribute('draggable', 'true');
       expect(dragButton.style.position).not.toBe('absolute');
       expect(dragButton.style.pointerEvents).not.toBe('none');
+    });
+
+    it('should allow whole-item dragging on touch devices even when pointerDragSource is handle', () => {
+      setMedia({hover: 'none', pointer: 'coarse'});
+      let {getAllByRole} = render(<DraggableTree pointerDragSource="handle" />);
+      let row = getAllByRole('row')[0];
+      let dragButton = row.querySelector('[slot="drag"]') as HTMLElement;
+      expect(row).toHaveAttribute('draggable', 'true');
+      expect(dragButton).not.toHaveAttribute('draggable');
+      expect(dragButton.style.position).toBe('absolute');
+      expect(dragButton.style.pointerEvents).toBe('none');
     });
   });
 });
