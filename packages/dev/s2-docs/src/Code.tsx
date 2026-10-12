@@ -116,6 +116,10 @@ export function Code({
     <code
       className={style({
         font: 'code-sm',
+        color: {
+          default: 'code',
+          ':is(a>code)': 'inherit'
+        },
         backgroundColor: 'layer-1',
         paddingX: 4,
         borderWidth: 1,
