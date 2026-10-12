@@ -13,10 +13,11 @@
 import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
 import {AttachmentCard, AttachmentPreviewContext, isAttachmentLoading} from './AttachmentList';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {focusRing, scrollFade, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {forwardRef, ReactNode} from 'react';
 import {ListBox, ListBoxItem, ListBoxItemProps, ListBoxProps} from 'react-aria-components/ListBox';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import {scrollFade} from './style/style-macro' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 
@@ -59,6 +60,7 @@ const gridStyles = style({
   },
   gap: 8,
   padding: 4,
+  scrollPaddingY: 4,
   maxHeight: 'inherit',
   overflowY: 'auto',
   overflowX: 'clip',
@@ -115,6 +117,7 @@ export interface AttachmentGridItemProps
 const itemStyles = style({
   flexShrink: 0,
   flexGrow: 0,
+  flexBasis: '0%',
   position: 'relative',
   ...focusRing(),
   borderRadius: 'lg'

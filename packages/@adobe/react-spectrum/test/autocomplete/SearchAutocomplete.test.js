@@ -3333,24 +3333,6 @@ describe('SearchAutocomplete', function () {
       });
 
       describe('keyboard navigating', function () {
-        it('should announce items when navigating with the arrow keys', async function () {
-          renderSearchAutocomplete();
-          await user.tab();
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          expect(announce).toHaveBeenLastCalledWith('One');
-
-          await user.keyboard('{ArrowDown}');
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          expect(announce).toHaveBeenLastCalledWith('Two');
-        });
-
         it('should announce when navigating into a section with multiple items', async function () {
           let {getByRole} = renderSectionSearchAutocomplete();
           let searchAutocomplete = getByRole('combobox');
@@ -3367,12 +3349,16 @@ describe('SearchAutocomplete', function () {
             'Entered group Section One, with 3 options. One'
           );
 
+          // Moving within the same section should not announce again.
           await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('Two');
+          expect(announce.mock.calls.map(call => call[0])).toEqual([
+            '6 options available.',
+            'Entered group Section One, with 3 options. One'
+          ]);
         });
 
         it('should announce when navigating into a section with a single item', async function () {
@@ -3450,14 +3436,15 @@ describe('SearchAutocomplete', function () {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('One');
-
           await user.keyboard('{Enter}');
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(announce).toHaveBeenLastCalledWith('One, selected');
+          expect(announce.mock.calls.map(call => call[0])).toEqual([
+            '3 options available.',
+            'One, selected'
+          ]);
         });
       });
     });
@@ -3544,9 +3531,8 @@ describe('SearchAutocomplete', function () {
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
-        expect(announce).toHaveBeenCalledTimes(2);
+        expect(announce).toHaveBeenCalledTimes(1);
         expect(announce).toHaveBeenNthCalledWith(1, '3 options available.');
-        expect(announce).toHaveBeenNthCalledWith(2, 'One');
         platformMock.mockRestore();
       });
 
