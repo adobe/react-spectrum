@@ -822,8 +822,9 @@ function getDOMRectPosition(root: Element, pos: Position): [Node, number] {
     let text = root.lastChild.lastChild;
     return [text, text.textContent!.length];
   }
-  if (child && child.nodeType === Node.ELEMENT_NODE) {
+  if (child?.nodeType === Node.ELEMENT_NODE && child.firstChild) {
     // Place the position inside the zero width space wrappers around the token.
+    // Other elements (e.g. a trailing <br>) have no children, so fall back to getDOMPosition.
     if (pos.offset > 0) {
       return [child.lastChild!, 1];
     } else {
