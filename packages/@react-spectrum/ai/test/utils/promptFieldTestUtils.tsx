@@ -353,7 +353,7 @@ export function renderPromptField(options: HarnessOptions = {}): PromptFieldHarn
     getValue: () => valueRef.current,
     getAttachments: () => attachmentsRef.current,
     setValue: (...args) => setValueRef.current(...args),
-    textbox: tree.getByRole('textbox', {name: 'Prompt'}),
+    textbox: tree.getByRole('textbox', {name: 'AI Prompt'}),
     container: tree.container
   };
 }

@@ -202,7 +202,6 @@ const darkV5ColorsToV6Colors = {
   'blue-700': 'blue-1000'
 };
 
-// https://s2.spectrum.corp.adobe.com/page/grays/#migration-guide
 const v6ColorsToS2 = {
   'gray-50': 'gray-25',
   'gray-75': 'gray-50',
