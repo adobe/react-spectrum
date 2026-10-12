@@ -37,8 +37,7 @@ function Example({
       {component === 'ListView' && (
         <ListView aria-label="Source" dragAndDropHooks={dragAndDropHooks}>
           <ListViewItem id="cat" textValue="Cat">
-            <Text>Cat</Text>
-            {content}
+            <Text>Cat {content}</Text>
           </ListViewItem>
         </ListView>
       )}
@@ -46,8 +45,7 @@ function Example({
         <TreeView aria-label="Source" dragAndDropHooks={dragAndDropHooks}>
           <TreeViewItem id="cat" textValue="Cat">
             <TreeViewItemContent>
-              <Text>Cat</Text>
-              {content}
+              <Text>Cat {content}</Text>
             </TreeViewItemContent>
           </TreeViewItem>
         </TreeView>
@@ -75,17 +73,17 @@ it.each(['ListView', 'TableView', 'TreeView'] as const)(
   '%s reveals handle-only dragging on row hover and keyboard focus within editable content',
   async component => {
     await render(<Example component={component} pointerDragSource="handle" />);
-    let row = page.getByRole('row').last();
     let handle = page.getByRole('button', {name: /^Drag /});
+    let input = page.getByRole('textbox', {name: 'Notes'});
     let isHidden = () => getComputedStyle(handle.element()).opacity === '0';
     await userEvent.click(page.getByRole('button', {name: 'After'}));
     await expect.poll(isHidden).toBe(true);
-    await userEvent.hover(row);
+    await userEvent.hover(input);
     await expect.poll(isHidden).toBe(false);
     await userEvent.hover(page.getByRole('button', {name: 'After'}));
     await expect.poll(isHidden).toBe(true);
     await userEvent.tab();
-    page.getByRole('textbox', {name: 'Notes'}).element().focus();
+    input.element().focus();
     await expect.poll(isHidden).toBe(false);
     await userEvent.click(page.getByRole('button', {name: 'After'}));
     await expect.poll(isHidden).toBe(true);
@@ -96,7 +94,7 @@ it.each(['ListView', 'TableView', 'TreeView'] as const)(
   '%s keeps the handle hidden on hover when dragging from the whole item',
   async component => {
     await render(<Example component={component} pointerDragSource="item" />);
-    await userEvent.hover(page.getByRole('row').last());
+    await userEvent.hover(page.getByRole('textbox', {name: 'Notes'}));
     let handle = page.getByRole('button', {name: /^Drag /});
     await expect.poll(() => getComputedStyle(handle.element()).clipPath).not.toBe('none');
   }
