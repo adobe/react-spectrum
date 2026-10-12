@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, FocusableElement, Orientation, RefObject} from '@react-types/shared';
 import {createFocusManager} from '../focus/FocusScope';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {FocusEventHandler, HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 
@@ -67,23 +68,24 @@ export function useToolbar(
     if (!nodeContains(e.currentTarget, getEventTarget(e) as HTMLElement)) {
       return;
     }
+    let nextFocused: FocusableElement | null = null;
     if (
       (orientation === 'horizontal' && e.key === 'ArrowRight') ||
       (orientation === 'vertical' && e.key === 'ArrowDown')
     ) {
       if (shouldReverse) {
-        focusManager.focusPrevious();
+        nextFocused = focusManager.focusPrevious();
       } else {
-        focusManager.focusNext();
+        nextFocused = focusManager.focusNext();
       }
     } else if (
       (orientation === 'horizontal' && e.key === 'ArrowLeft') ||
       (orientation === 'vertical' && e.key === 'ArrowUp')
     ) {
       if (shouldReverse) {
-        focusManager.focusNext();
+        nextFocused = focusManager.focusNext();
       } else {
-        focusManager.focusPrevious();
+        nextFocused = focusManager.focusPrevious();
       }
     } else if (e.key === 'Tab') {
       // When the tab key is pressed, we want to move focus
@@ -100,6 +102,12 @@ export function useToolbar(
     } else {
       // if we didn't handle anything, return early so we don't preventDefault
       return;
+    }
+
+    // Focusing an item that is only partially visible doesn't scroll it fully into view,
+    // so scroll it manually (e.g. the last button in an overflowing toolbar).
+    if (nextFocused) {
+      scrollIntoViewport(nextFocused, {containingElement: ref.current});
     }
 
     // Prevent arrow keys from being handled by nested action groups.

@@ -393,7 +393,7 @@ function PromptSuggestions() {
 
 Use `PromptFieldAttachmentList` to render a preview of attached files the user has dragged onto the PromptField or added via the `InsertMenuButton` in the toolbar. Custom menu items and toolbar controls can be added as well.
 
-```tsx render type="s2"
+```tsx render type="s2" docs={docs.exports.Attachment} props={['isInvalid', 'isDisabled']}
 "use client";
 import {useState} from 'react';
 import {
@@ -414,7 +414,7 @@ import {
 import {Text} from '@react-spectrum/s2';
 import CommentText from '@react-spectrum/s2/icons/CommentText';
 
-function PromptAttachments() {
+function PromptAttachments(props) {
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([
     {id: '0', file: new File([], 'preview.png', {type: 'image/png'}), image: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
     {id: '1', file: new File([], 'notes.txt', {type: 'text/plain'}), image: ''}
@@ -427,9 +427,12 @@ function PromptAttachments() {
       onAttachmentsChange={setAttachments}
       acceptedAttachmentTypes={['*/*']}>
       {/*- begin highlight -*/}
-      <PromptFieldAttachmentList>
+      <PromptFieldAttachmentList dependencies={[props.isInvalid, props.isDisabled]}>
         {attachment => (
-          <Attachment textValue={attachment.file.name}>
+          <Attachment
+            textValue={attachment.file.name}
+            isInvalid={props.isInvalid}
+            isDisabled={props.isDisabled}>
             <AttachmentPreview mimeType={attachment.file.type} src={attachment.image} />
           </Attachment>
         )}
