@@ -10,11 +10,12 @@ export interface FileItem {
 }
 
 interface EditableTableViewProps {
+  items?: FileItem[];
   dragAndDropHooks?: DragAndDropHooks<FileItem>;
 }
 
 ///- begin collapse -///
-let files: FileItem[] = [
+export let defaultItems: FileItem[] = [
   {id: 'brief', name: 'Project brief.pdf'},
   {id: 'report', name: 'Quarterly report.docx'},
   {id: 'budget', name: 'Budget.xlsx'}
@@ -22,18 +23,19 @@ let files: FileItem[] = [
 ///- end collapse -///
 
 export function EditableTableView(props: EditableTableViewProps) {
+  let {items = defaultItems, dragAndDropHooks} = props;
   return (
     <TableView
       aria-label="Shared files"
       keyboardNavigationBehavior="tab"
       selectionMode="multiple"
-      dragAndDropHooks={props.dragAndDropHooks}
+      dragAndDropHooks={dragAndDropHooks}
       styles={style({height: 280, width: 'full', maxWidth: 520})}>
       <TableHeader>
         <Column isRowHeader>Name</Column>
         <Column>Notes</Column>
       </TableHeader>
-      <TableBody items={files}>
+      <TableBody items={items}>
         {item => (
           <Row textValue={item.name}>
             <Cell>{item.name}</Cell>

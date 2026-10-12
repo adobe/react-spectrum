@@ -115,9 +115,12 @@ By default, mouse and touch users can start a drag from anywhere within an item,
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/EditableCOMPONENT.tsx']}
 "use client";
 import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
-import {EditableCOMPONENT, FileItem} from './EditableCOMPONENT';
+import {useTreeData} from '@react-spectrum/s2/useTreeData';
+import {EditableCOMPONENT, FileItem, defaultItems} from './EditableCOMPONENT';
 
 function DraggableCOMPONENT() {
+  let tree = useTreeData({initialItems: defaultItems});
+
   let {dragAndDropHooks} = useDragAndDrop<FileItem>({
     ///- begin collapse -///
     getItems(keys, items: FileItem[]) {
@@ -125,13 +128,25 @@ function DraggableCOMPONENT() {
         'text/plain': item.name
       }));
     },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      }
+    },
     ///- end collapse -///
     ///- begin highlight -///
     pointerDragSource: 'handle'
     ///- end highlight -///
   });
 
-  return <EditableCOMPONENT dragAndDropHooks={dragAndDropHooks} />;
+  let processItem = item => ({
+    ...item.value,
+    children: item.children.map(processItem)
+  });
+
+  return <EditableCOMPONENT items={tree.items.map(processItem)} dragAndDropHooks={dragAndDropHooks} />;
 }
 ```
 

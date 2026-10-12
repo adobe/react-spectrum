@@ -17,11 +17,12 @@ export interface FileItem {
 }
 
 interface EditableTreeViewProps {
+  items?: FileItem[];
   dragAndDropHooks?: DragAndDropHooks<FileItem>;
 }
 
 ///- begin collapse -///
-let files: FileItem[] = [
+export let defaultItems: FileItem[] = [
   {
     id: 'documents',
     name: 'Documents',
@@ -35,14 +36,15 @@ let files: FileItem[] = [
 ///- end collapse -///
 
 export function EditableTreeView(props: EditableTreeViewProps) {
+  let {items = defaultItems, dragAndDropHooks} = props;
   return (
     <TreeView
       aria-label="Shared files"
       keyboardNavigationBehavior="tab"
       selectionMode="multiple"
-      items={files}
+      items={items}
       defaultExpandedKeys={['documents']}
-      dragAndDropHooks={props.dragAndDropHooks}
+      dragAndDropHooks={dragAndDropHooks}
       styles={style({height: 280, width: 'full', maxWidth: 520})}>
       {renderItem}
     </TreeView>

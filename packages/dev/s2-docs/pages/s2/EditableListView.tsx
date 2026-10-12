@@ -10,11 +10,12 @@ export interface FileItem {
 }
 
 interface EditableListViewProps {
+  items?: FileItem[];
   dragAndDropHooks?: DragAndDropHooks<FileItem>;
 }
 
 ///- begin collapse -///
-let files: FileItem[] = [
+export let defaultItems: FileItem[] = [
   {id: 'brief', name: 'Project brief.pdf'},
   {id: 'report', name: 'Quarterly report.docx'},
   {id: 'budget', name: 'Budget.xlsx'}
@@ -22,13 +23,14 @@ let files: FileItem[] = [
 ///- end collapse -///
 
 export function EditableListView(props: EditableListViewProps) {
+  let {items = defaultItems, dragAndDropHooks} = props;
   return (
     <ListView
       aria-label="Shared files"
       keyboardNavigationBehavior="tab"
       selectionMode="multiple"
-      items={files}
-      dragAndDropHooks={props.dragAndDropHooks}
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
       styles={style({height: 280, width: 'full', maxWidth: 520})}>
       {item => (
         <ListViewItem textValue={item.name}>
