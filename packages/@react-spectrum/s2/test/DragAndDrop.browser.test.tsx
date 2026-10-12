@@ -22,10 +22,12 @@ import {useDragAndDrop} from '../src/useDragAndDrop';
 
 function Example({
   component,
-  pointerDragSource
+  pointerDragSource,
+  selectionMode = 'none'
 }: {
   component: 'ListView' | 'TableView' | 'TreeView';
   pointerDragSource: 'item' | 'handle';
+  selectionMode?: 'none' | 'multiple';
 }) {
   let {dragAndDropHooks} = useDragAndDrop({
     pointerDragSource,
@@ -35,14 +37,20 @@ function Example({
   return (
     <div style={{width: 400}}>
       {component === 'ListView' && (
-        <ListView aria-label="Source" dragAndDropHooks={dragAndDropHooks}>
+        <ListView
+          aria-label="Source"
+          dragAndDropHooks={dragAndDropHooks}
+          selectionMode={selectionMode}>
           <ListViewItem id="cat" textValue="Cat">
             <Text>Cat {content}</Text>
           </ListViewItem>
         </ListView>
       )}
       {component === 'TreeView' && (
-        <TreeView aria-label="Source" dragAndDropHooks={dragAndDropHooks}>
+        <TreeView
+          aria-label="Source"
+          dragAndDropHooks={dragAndDropHooks}
+          selectionMode={selectionMode}>
           <TreeViewItem id="cat" textValue="Cat">
             <TreeViewItemContent>
               <Text>Cat {content}</Text>
@@ -51,7 +59,10 @@ function Example({
         </TreeView>
       )}
       {component === 'TableView' && (
-        <TableView aria-label="Source" dragAndDropHooks={dragAndDropHooks}>
+        <TableView
+          aria-label="Source"
+          dragAndDropHooks={dragAndDropHooks}
+          selectionMode={selectionMode}>
           <TableHeader>
             <Column isRowHeader>Name</Column>
             <Column>Notes</Column>
@@ -91,9 +102,44 @@ it.each(['ListView', 'TableView', 'TreeView'] as const)(
 );
 
 it.each(['ListView', 'TableView', 'TreeView'] as const)(
-  '%s keeps the handle hidden on hover when dragging from the whole item',
+  '%s keeps the drag handle visible for selected items until deselected',
   async component => {
-    await render(<Example component={component} pointerDragSource="item" />);
+    await render(
+      <Example component={component} pointerDragSource="handle" selectionMode="multiple" />
+    );
+    let row = page.getByRole('row').last();
+    let checkbox = row.getByRole('checkbox');
+    let handle = page.getByRole('button', {name: /^Drag /});
+    let after = page.getByRole('button', {name: 'After'});
+    let isHidden = () => getComputedStyle(handle.element()).opacity === '0';
+    await userEvent.click(after);
+    await expect.poll(isHidden).toBe(true);
+
+    checkbox.element().focus();
+    await userEvent.keyboard(' ');
+    await expect.element(row).toHaveAttribute('aria-selected', 'true');
+    await userEvent.click(after);
+    await expect.poll(isHidden).toBe(false);
+
+    checkbox.element().focus();
+    await userEvent.keyboard(' ');
+    await expect.element(row).toHaveAttribute('aria-selected', 'false');
+    await userEvent.click(after);
+    await expect.poll(isHidden).toBe(true);
+  }
+);
+
+it.each(['ListView', 'TableView', 'TreeView'] as const)(
+  '%s keeps the handle hidden on hover and selection when dragging from the whole item',
+  async component => {
+    await render(
+      <Example component={component} pointerDragSource="item" selectionMode="multiple" />
+    );
+    let row = page.getByRole('row').last();
+    row.getByRole('checkbox').element().focus();
+    await userEvent.keyboard(' ');
+    await expect.element(row).toHaveAttribute('aria-selected', 'true');
+    await userEvent.click(page.getByRole('button', {name: 'After'}));
     await userEvent.hover(page.getByRole('textbox', {name: 'Notes'}));
     let handle = page.getByRole('button', {name: /^Drag /});
     await expect.poll(() => getComputedStyle(handle.element()).clipPath).not.toBe('none');

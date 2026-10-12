@@ -98,6 +98,7 @@ let dragButton = style<{
     isHandlePointerSource: {
       default: 0,
       ':is([data-hovered] *)': 1,
+      ':is([data-selected] *)': 1,
       isFocusVisibleWithin: 1
     }
   },
