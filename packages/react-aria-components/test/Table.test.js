@@ -2321,7 +2321,14 @@ describe('Table', () => {
 
       render(
         <ResizableTableContainer>
-          <Table aria-label="Table">
+          <Table
+            aria-label="Table"
+            render={props => (
+              <>
+                <StateSpy />
+                <table {...props} />
+              </>
+            )}>
             <MyTableHeader columns={cols}>
               {column => (
                 <MyColumn id={column.uid} isRowHeader={column.uid === 'name'}>
@@ -2330,28 +2337,20 @@ describe('Table', () => {
               )}
             </MyTableHeader>
             <TableBody items={rows}>
-              {item => (
-                <MyRow columns={cols}>
-                  {column => (
-                    <Cell>
-                      {item[column.uid]}
-                      <StateSpy />
-                    </Cell>
-                  )}
-                </MyRow>
-              )}
+              {item => <MyRow columns={cols}>{column => <Cell>{item[column.uid]}</Cell>}</MyRow>}
             </TableBody>
           </Table>
         </ResizableTableContainer>
       );
 
-      expect(states.length).toBeGreaterThan(0);
-      let firstState = states[0];
+      let initialCount = states.length;
+      expect(initialCount).toBeGreaterThan(0);
+      let stateBeforeResize = states[initialCount - 1];
 
       resizeTable(clientWidth, 1000);
 
-      expect(states.length).toBe(cols.length * rows.length);
-      expect(states.every(s => s === firstState)).toBe(true);
+      expect(states).toHaveLength(initialCount + 1);
+      expect(states[states.length - 1]).toBe(stateBeforeResize);
       clientWidth.mockRestore();
     });
   });

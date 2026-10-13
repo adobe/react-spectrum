@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, renderHook} from '@react-spectrum/test-utils-internal';
 import {GridNode} from '../../src/grid/GridCollection';
 import {ITableCollection, TableCollection} from '../../src/table/TableCollection';
-import {renderHook} from '@react-spectrum/test-utils-internal';
 import {SortDescriptor} from '@react-types/shared';
 import {UNSTABLE_useFilteredTableState, useTableState} from '../../src/table/useTableState';
 import {useMultipleSelectionState} from '../../src/selection/useMultipleSelectionState';
@@ -106,6 +106,40 @@ describe('useTableState', () => {
     rerender({collection, expandedKeys: new Set(['1', '2'])});
     expect(result.current).not.toBe(initial);
     expect(result.current.expandedKeys).toEqual(new Set(['1', '2']));
+  });
+
+  it('supports uncontrolled expansion toggleKey', () => {
+    let collection = createTableCollection();
+    let {result} = renderHook(() =>
+      useTableState({collection, defaultExpandedKeys: new Set(['1'])})
+    );
+
+    let initial = result.current;
+    expect(initial.expandedKeys).toEqual(new Set(['1']));
+
+    act(() => {
+      initial.toggleKey('2');
+    });
+    expect(result.current.expandedKeys).toEqual(new Set(['1', '2']));
+    expect(result.current).not.toBe(initial);
+
+    act(() => {
+      result.current.toggleKey('1');
+    });
+    expect(result.current.expandedKeys).toEqual(new Set(['2']));
+  });
+
+  it('supports controlled expansion toggleKey calling onExpandedChange', () => {
+    let collection = createTableCollection();
+    let onExpandedChange = jest.fn();
+    let {result} = renderHook(() =>
+      useTableState({collection, expandedKeys: new Set(['1']), onExpandedChange})
+    );
+
+    act(() => {
+      result.current.toggleKey('2');
+    });
+    expect(onExpandedChange).toHaveBeenCalledWith(new Set(['1', '2']));
   });
 
   it('updates state when collection changes', () => {
