@@ -82,15 +82,18 @@ describe('ListView', () => {
       expect(dragButton.style.pointerEvents).not.toBe('none');
     });
 
-    it('should allow whole-item dragging on touch devices even when pointerDragSource is handle', () => {
-      setMedia({hover: 'none', pointer: 'coarse'});
-      let {getAllByRole} = render(<DraggableListView pointerDragSource="handle" />);
-      let row = getAllByRole('row')[0];
-      let dragButton = within(row).getByRole('button');
-      expect(row).toHaveAttribute('draggable', 'true');
-      expect(dragButton).not.toHaveAttribute('draggable');
-      expect(dragButton.style.position).toBe('absolute');
-      expect(dragButton.style.pointerEvents).toBe('none');
-    });
+    it.each(['coarse', 'fine'] as const)(
+      'should allow whole-item dragging without hover and with a %s pointer even when pointerDragSource is handle',
+      pointer => {
+        setMedia({hover: 'none', pointer});
+        let {getAllByRole} = render(<DraggableListView pointerDragSource="handle" />);
+        let row = getAllByRole('row')[0];
+        let dragButton = within(row).getByRole('button');
+        expect(row).toHaveAttribute('draggable', 'true');
+        expect(dragButton).not.toHaveAttribute('draggable');
+        expect(dragButton.style.position).toBe('absolute');
+        expect(dragButton.style.pointerEvents).toBe('none');
+      }
+    );
   });
 });

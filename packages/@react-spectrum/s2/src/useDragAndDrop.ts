@@ -37,7 +37,7 @@ export interface DragAndDropOptions<T = object> extends Omit<
  * collection component.
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
-  let isTouchDevice = useMediaQuery('(pointer: coarse)');
+  let isTouchDevice = useMediaQuery('not ((hover: hover) and (pointer: fine))');
   return useRACDragAndDrop({
     ...options,
     pointerDragSource: isTouchDevice ? 'item' : options.pointerDragSource
