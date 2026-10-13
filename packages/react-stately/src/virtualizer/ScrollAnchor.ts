@@ -82,8 +82,8 @@ export function captureScrollAnchor(
   isAnchorable: (layoutInfo: LayoutInfo) => boolean = () => true
 ): ScrollAnchor | null {
   let dimension = dimensionForAxis(axis);
-  // The corner on the item's leading edge - the side where content is added/removed. For 'end'
-  // that's the start of the axis (top/left); for 'start' it's the end of the axis (bottom/right).
+  // Preserve the item's top/left edge for 'end' anchoring,
+  // or its bottom/right edge for 'start' anchoring.
   let corner: RectCorner =
     axis === 'x'
       ? edge === 'end'
