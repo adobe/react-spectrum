@@ -721,7 +721,6 @@ export function setTokenFieldSelection(
     // anchor comes after the current position (backward selections).
     let [anchorNode, anchorOffset] = getDOMPosition(root, selectedRange.anchor);
     let [focusNode, focusOffset] = getDOMPosition(root, selectedRange.current);
-    root[isProgrammaticSelectionChange] = !fireEvent;
 
     // Only set selection if it has changed, because this can clobber the browser's selection direction.
     if (
@@ -730,6 +729,7 @@ export function setTokenFieldSelection(
       selection.focusNode !== focusNode ||
       selection.focusOffset !== focusOffset
     ) {
+      root[isProgrammaticSelectionChange] = !fireEvent;
       selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
     }
   }

@@ -210,6 +210,30 @@ describeOrSkip('TokenField browser interactions', () => {
       await waitForSelection(textbox, {index: 0, offset: 1});
     });
 
+    it('updates the selected range in the value on every caret move', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(abTokCd);
+      await focusField(textbox);
+      await userEvent.keyboard('{Home}');
+      await waitForCaret(getValue, {index: 0, offset: 0});
+      let positions = [
+        {index: 0, offset: 1},
+        {index: 0, offset: 2},
+        {index: 2, offset: 0},
+        {index: 2, offset: 1},
+        {index: 2, offset: 2}
+      ];
+      for (let position of positions) {
+        await userEvent.keyboard('{ArrowRight}');
+        await waitForSelection(textbox, position);
+        await waitForCaret(getValue, position);
+      }
+      for (let position of positions.slice(0, -1).reverse()) {
+        await userEvent.keyboard('{ArrowLeft}');
+        await waitForSelection(textbox, position);
+        await waitForCaret(getValue, position);
+      }
+    });
+
     it('moves to field start with Home on single line', async () => {
       let list = segments(text('hello'));
       let {textbox} = await renderControlledTokenField(list);
