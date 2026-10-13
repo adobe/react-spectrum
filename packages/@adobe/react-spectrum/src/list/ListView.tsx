@@ -33,6 +33,7 @@ import intlMessages from '../../intl/list/*.json';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {ListState, useListState} from 'react-stately/useListState';
 import listStyles from './styles.css';
+import {ListViewContext} from './ListViewContext';
 import {ListViewItem} from './ListViewItem';
 import {ListViewLayout} from './ListViewLayout';
 import {mergeProps} from 'react-aria/mergeProps';
@@ -95,20 +96,7 @@ export interface SpectrumListViewProps<T>
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks'];
 }
 
-interface ListViewContextValue<T> {
-  state: ListState<T>;
-  dragState: DraggableCollectionState | null;
-  dropState: DroppableCollectionState | null;
-  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'];
-  onAction?: (key: Key) => void;
-  isListDraggable: boolean;
-  isListDroppable: boolean;
-  layout: ListViewLayout<T>;
-  loadingState?: LoadingState;
-  renderEmptyState?: () => JSX.Element;
-}
-
-export const ListViewContext = React.createContext<ListViewContextValue<unknown> | null>(null);
+export {ListViewContext};
 
 const ROW_HEIGHTS = {
   compact: {

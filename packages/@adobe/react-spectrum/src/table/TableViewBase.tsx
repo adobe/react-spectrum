@@ -25,7 +25,6 @@ import {
   Key,
   RefObject
 } from '@react-types/shared';
-import type {DragAndDropHooks} from '../dnd/useDragAndDrop';
 import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 import type {DraggableItemResult} from 'react-aria/useDraggableCollection';
 import type {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
@@ -75,6 +74,12 @@ import {SpectrumTableProps} from './TableView';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {ITableCollection as TableCollection} from 'react-stately/private/table/TableCollection';
+import {
+  TableContext,
+  useTableContext,
+  useVirtualizerContext,
+  VirtualizerContext
+} from './TableContext';
 import {TableState, useTableColumnResizeState} from 'react-stately/useTableState';
 import {TableViewLayout} from './TableViewLayout';
 import {Tooltip} from '../tooltip/Tooltip';
@@ -142,41 +147,8 @@ const LEVEL_OFFSET_WIDTH = {
   large: 20
 };
 
-export interface TableContextValue<T> {
-  state: TableState<T>;
-  dragState: DraggableCollectionState | null;
-  dropState: DroppableCollectionState | null;
-  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'];
-  isTableDraggable: boolean;
-  isTableDroppable: boolean;
-  layout: TableViewLayout<T>;
-  headerRowHovered: boolean;
-  isInResizeMode: boolean;
-  setIsInResizeMode: (val: boolean) => void;
-  isEmpty: boolean;
-  onFocusedResizer: () => void;
-  onResizeStart?: (widths: Map<Key, ColumnSize>) => void;
-  onResize?: (widths: Map<Key, ColumnSize>) => void;
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void;
-  headerMenuOpen: boolean;
-  setHeaderMenuOpen: (val: boolean) => void;
-  renderEmptyState?: () => ReactElement;
-}
-
-export const TableContext = React.createContext<TableContextValue<unknown> | null>(null);
-export function useTableContext(): TableContextValue<unknown> {
-  return useContext(TableContext)!;
-}
-
-export const VirtualizerContext = React.createContext<{width: number; key: Key | null} | null>(
-  null
-);
-export function useVirtualizerContext(): {
-  width: number;
-  key: Key | null;
-} | null {
-  return useContext(VirtualizerContext);
-}
+export {TableContext, useTableContext, useVirtualizerContext, VirtualizerContext};
+export type {TableContextValue} from './TableContext';
 
 interface TableBaseProps<T> extends SpectrumTableProps<T> {
   state: TableState<T> | TreeGridState<T>;

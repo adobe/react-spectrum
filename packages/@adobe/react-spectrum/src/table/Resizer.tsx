@@ -15,7 +15,7 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useTableColumnResize} from 'react-aria/useTable';
-import {useTableContext, useVirtualizerContext} from './TableViewBase';
+import {useTableContext, useVirtualizerContext} from './TableContext';
 import {useUNSAFE_PortalContext} from 'react-aria/PortalProvider';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
