@@ -2202,10 +2202,6 @@ describe('Table', () => {
 
     it('does not re-render cells when container width changes', () => {
       let cellRenderCount = 0;
-      function CountingCell({children, ...props}) {
-        cellRenderCount++;
-        return <Cell {...props}>{children}</Cell>;
-      }
 
       let clientWidth = jest
         .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
@@ -2230,7 +2226,14 @@ describe('Table', () => {
             <TableBody items={rows}>
               {item => (
                 <MyRow columns={cols}>
-                  {column => <CountingCell>{item[column.uid]}</CountingCell>}
+                  {column => (
+                    <Cell>
+                      {() => {
+                        cellRenderCount++;
+                        return item[column.uid];
+                      }}
+                    </Cell>
+                  )}
                 </MyRow>
               )}
             </TableBody>
@@ -2249,10 +2252,6 @@ describe('Table', () => {
 
     it('does not re-render cells when container width changes with controlled expandedKeys', () => {
       let cellRenderCount = 0;
-      function CountingCell({children, ...props}) {
-        cellRenderCount++;
-        return <Cell {...props}>{children}</Cell>;
-      }
 
       let clientWidth = jest
         .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
@@ -2278,7 +2277,14 @@ describe('Table', () => {
             <TableBody items={rows}>
               {item => (
                 <MyRow columns={cols}>
-                  {column => <CountingCell>{item[column.uid]}</CountingCell>}
+                  {column => (
+                    <Cell>
+                      {() => {
+                        cellRenderCount++;
+                        return item[column.uid];
+                      }}
+                    </Cell>
+                  )}
                 </MyRow>
               )}
             </TableBody>

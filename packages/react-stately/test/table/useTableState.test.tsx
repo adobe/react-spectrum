@@ -13,6 +13,7 @@
 import {GridNode} from '../../src/grid/GridCollection';
 import {ITableCollection, TableCollection} from '../../src/table/TableCollection';
 import {renderHook} from '@react-spectrum/test-utils-internal';
+import {SortDescriptor} from '@react-types/shared';
 import {UNSTABLE_useFilteredTableState, useTableState} from '../../src/table/useTableState';
 import {useMultipleSelectionState} from '../../src/selection/useMultipleSelectionState';
 
@@ -77,6 +78,49 @@ describe('useTableState', () => {
     expect(Object.is(result.current, initial)).toBe(true);
   });
 
+  it('updates state when sortDescriptor changes', () => {
+    let collection = createTableCollection();
+    let {result, rerender} = renderHook(props => useTableState(props), {
+      initialProps: {
+        collection,
+        sortDescriptor: {column: 'col1', direction: 'ascending'} as SortDescriptor
+      }
+    });
+
+    let initial = result.current;
+    rerender({
+      collection,
+      sortDescriptor: {column: 'col1', direction: 'descending'} as SortDescriptor
+    });
+    expect(result.current).not.toBe(initial);
+    expect(result.current.sortDescriptor).toEqual({column: 'col1', direction: 'descending'});
+  });
+
+  it('updates state when expandedKeys changes', () => {
+    let collection = createTableCollection();
+    let {result, rerender} = renderHook(props => useTableState(props), {
+      initialProps: {collection, expandedKeys: new Set(['1'])}
+    });
+
+    let initial = result.current;
+    rerender({collection, expandedKeys: new Set(['1', '2'])});
+    expect(result.current).not.toBe(initial);
+    expect(result.current.expandedKeys).toEqual(new Set(['1', '2']));
+  });
+
+  it('updates state when collection changes', () => {
+    let col1 = createTableCollection();
+    let col2 = createTableCollection();
+    let {result, rerender} = renderHook(props => useTableState(props), {
+      initialProps: {collection: col1}
+    });
+
+    let initial = result.current;
+    rerender({collection: col2});
+    expect(result.current).not.toBe(initial);
+    expect(result.current.collection).toBe(col2);
+  });
+
   describe('UNSTABLE_useFilteredTableState', () => {
     it('returns the same state when unfiltered', () => {
       let collection = createTableCollection();
@@ -109,6 +153,29 @@ describe('useTableState', () => {
       let initialFiltered = result.current;
       rerender({state, filter: filterFn});
       expect(result.current).toBe(initialFiltered);
+    });
+
+    it('updates filtered state when underlying state changes', () => {
+      let col1 = createTableCollection() as ITableCollection<object>;
+      let col2 = createTableCollection() as ITableCollection<object>;
+      col1.filter = jest.fn(() => col1);
+      col2.filter = jest.fn(() => col2);
+      let {result: stateResult, rerender: rerenderState} = renderHook(
+        props => useTableState(props),
+        {initialProps: {collection: col1}}
+      );
+      let filterFn = () => true;
+
+      let {result, rerender} = renderHook(
+        ({state, filter}) => UNSTABLE_useFilteredTableState(state, filter),
+        {initialProps: {state: stateResult.current, filter: filterFn}}
+      );
+
+      let initial = result.current;
+      rerenderState({collection: col2});
+      rerender({state: stateResult.current, filter: filterFn});
+
+      expect(result.current).not.toBe(initial);
     });
   });
 });
