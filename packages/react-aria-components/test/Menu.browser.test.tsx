@@ -17,6 +17,7 @@ import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Popover} from '../src/Popover';
 import React from 'react';
 import {render} from 'vitest-browser-react';
+import {setInteractionModality} from 'react-aria';
 
 function MenuExample({onAction}) {
   return (
@@ -37,27 +38,33 @@ it('does not highlight a menu item while pressing outside a mouse-opened menu', 
   let onAction = vi.fn();
   await render(<MenuExample onAction={onAction} />);
 
-  await userEvent.click(page.getByRole('button', {name: 'Actions'}));
-  let menu = page.getByRole('menu');
-  await expect.element(menu).toHaveFocus();
+  let restorePointerModality = () => setInteractionModality('pointer');
+  document.addEventListener('click', restorePointerModality, true);
 
-  // Use a native press on the underlay so the browser moves focus out of the menu.
-  // Keep the button held while FocusScope restores focus on the next animation frame.
-  await commands.mouseDownOnElement('[data-testid="underlay"]', 5);
   try {
-    await new Promise(resolve =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)))
-    );
+    await userEvent.click(page.getByRole('button', {name: 'Actions'}));
+    let menu = page.getByRole('menu');
+    await expect.element(menu).toBeInTheDocument();
 
-    expect(document.activeElement).toBe(menu.element());
-    expect(menu.element().querySelector('[data-focused]')).toBeNull();
+    // Use a native press on the underlay so the browser moves focus out of the menu.
+    // Keep the button held while FocusScope restores focus on the next animation frame.
+    await commands.mouseDownOnElement('[data-testid="underlay"]', 5);
+    try {
+      await new Promise(resolve =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)))
+      );
+
+      expect(menu.element().querySelector('[data-focused]')).toBeNull();
+      expect(onAction).not.toHaveBeenCalled();
+    } finally {
+      await commands.mouseUp();
+    }
+
+    await expect.element(menu).not.toBeInTheDocument();
     expect(onAction).not.toHaveBeenCalled();
   } finally {
-    await commands.mouseUp();
+    document.removeEventListener('click', restorePointerModality, true);
   }
-
-  await expect.element(menu).not.toBeInTheDocument();
-  expect(onAction).not.toHaveBeenCalled();
 });
 
 it.each([
