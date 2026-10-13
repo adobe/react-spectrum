@@ -482,10 +482,12 @@ export function useSelectableCollection(
       navigateToKey(
         UNSTABLE_focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.()
       );
-    } else if (manager.focusedKey == null) {
+    } else if (manager.focusedKey == null && modality !== 'pointer') {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
+      // Don't move focus to an item when a pointer interaction restores focus to the collection,
+      // e.g. when pressing outside a menu within a containing FocusScope.
       let relatedTarget = e.relatedTarget as Element;
       if (
         relatedTarget &&

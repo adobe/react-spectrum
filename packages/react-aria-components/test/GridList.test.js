@@ -885,6 +885,9 @@ describe('GridList', () => {
 
         let row2 = rows[2];
         expect(onSelectionChange).toHaveBeenCalledTimes(0);
+        if (type === 'keyboard') {
+          await user.tab();
+        }
         await gridListTester.toggleRowSelection({row: 'Kangaroo', selectionBehavior: 'replace'});
         expect(row2).toHaveAttribute('aria-selected', 'true');
         expect(row2).toHaveAttribute('data-selected', 'true');
@@ -953,6 +956,9 @@ describe('GridList', () => {
         }
 
         let row2 = rows[2];
+        if (type === 'keyboard') {
+          await user.tab();
+        }
         await gridListTester.toggleRowSelection({row: 'Kangaroo', selectionBehavior: 'replace'});
         expect(row2).toHaveAttribute('aria-selected', 'true');
         expect(row2).toHaveAttribute('data-selected', 'true');
