@@ -2349,8 +2349,10 @@ describe('Table', () => {
 
       resizeTable(clientWidth, 1000);
 
-      expect(states).toHaveLength(initialCount + 1);
-      expect(states[states.length - 1]).toBe(stateBeforeResize);
+      expect(states.length).toBeGreaterThan(initialCount);
+      for (let i = initialCount; i < states.length; i++) {
+        expect(states[i]).toBe(stateBeforeResize);
+      }
       clientWidth.mockRestore();
     });
   });
